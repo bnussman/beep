@@ -1,0 +1,65 @@
+{
+  "name": "Beep",
+  "displayName": "Beep",
+  "expo": {
+    "name": "Beep",
+    "slug": "Beep",
+    "owner": "bnussman",
+    "version": "1.0.3",
+    "githubUrl": "https://github.com/bnussman/Beep",
+    "primaryColor": "#ecc94b",
+    "icon": "./assets/icon.png",
+    "notification": {
+      "iosDisplayInForeground": true
+    },
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "url": "https://sentry.nussman.us",
+            "setCommits": true,
+            "organization": "beep",
+            "project": "beep-app",
+            "authToken": "d709299058674807ae8c0d730cdd89379830246b75fd405a8e1362a556f44cbf"
+          }
+        }
+      ]
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.ridebeep.App",
+      "buildNumber": "7",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "The Beep App uses your location to pick origins, destinations, and predict ride times",
+        "NSLocationAlwaysUsageDescription": "The Beep App will use your location to provide ETA's to yourself and others",
+        "UIBackgroundModes": [
+          "location"
+        ]
+      }
+    },
+    "android": {
+      "package": "app.ridebeep.App",
+      "versionCode": 25,
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true,
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION", "FOREGROUND_SERVICE", "VIBRATE"]
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "707230715534",
+    "firebase_url": "https://ride-beep-app.firebaseio.com",
+    "project_id": "ride-beep-app",
+    "storage_bucket": "ride-beep-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707230715534:android:e6dda445dafd88734643df",
+        "android_client_info": {
+          "package_name": "app.ridebeep.App"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707230715534-5n3glj445fu6taifh1oa7lhjo8f4leq5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkAiNCI90kBeJqtEVUB6LK9gMSXBKGh1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707230715534-5n3glj445fu6taifh1oa7lhjo8f4leq5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
