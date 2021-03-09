@@ -4,20 +4,12 @@
     "description": "REST API for the Beep App in Typescript",
     "main": "build/src/server.js",
     "scripts": {
-        "test": "npx jest",
         "build": "npx tsc",
         "start": "node build/server.js"
     },
     "repository": {
         "type": "git",
         "url": "https://gitlab.nussman.us/beep-app/Beep.git"
-    },
-    "jest": {
-        "preset": "ts-jest",
-        "testEnvironment": "node",
-        "roots": [
-            "<rootDir>/src"
-        ]
     },
     "author": "Banks Nussman",
     "license": "ISC",
@@ -48,7 +40,6 @@
     "devDependencies": {
         "@types/aws-sdk": "^2.7.0",
         "@types/cors": "^2.8.9",
-        "@types/jest": "^26.0.20",
         "@types/multer": "^1.4.5",
         "@types/node-fetch": "^2.5.8",
         "@types/nodemailer": "^6.4.0",
@@ -56,8 +47,6 @@
         "@typescript-eslint/eslint-plugin": "^4.15.0",
         "@typescript-eslint/parser": "^4.15.0",
         "eslint": "^7.19.0",
-        "jest": "^26.6.3",
-        "ts-jest": "^26.5.1",
         "typescript": "^4.1.4"
     }
 }
