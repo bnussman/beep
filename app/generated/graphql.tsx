@@ -117,7 +117,6 @@ export type PartialUser = {
   role?: Maybe<Scalars['String']>;
   pushToken?: Maybe<Scalars['String']>;
   photoUrl?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
 };
 
 export type TokenEntry = {
