@@ -1,27 +1,16 @@
 import { deleteUser } from '../account/helpers';
 import { BeepORM } from '../app';
 import { wrap } from '@mikro-orm/core';
-import { User, UserRole } from '../entities/User';
-import { Arg, Args, Authorized, ClassType, Ctx, Field, Info, Int, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
+import { PartialUser, User, UserRole } from '../entities/User';
+import { Arg, Args, Authorized, ClassType, Ctx, Field, Info, Int, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import PaginationArgs from '../args/Pagination';
 import { Beep } from '../entities/Beep';
 import { QueueEntry } from '../entities/QueueEntry';
 import EditUserValidator from '../validators/user/EditUser';
-import {Context} from 'src/utils/context';
-import {GraphQLResolveInfo} from 'graphql';
+import { Context } from '../utils/context';
+import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
-
-export function Paginated<T>(TItemClass: ClassType<T>) {
-    @ObjectType({ isAbstract: true })
-    abstract class PaginatedResponseClass {
-        @Field(() => [TItemClass])
-        items!: T[];
-
-        @Field(() => Int)
-        count!: number;
-    }
-    return PaginatedResponseClass;
-}
+import { Paginated } from '../utils/paginated';
 
 @ObjectType()
 class UsersResponse extends Paginated(User) {}
@@ -59,7 +48,7 @@ export class UserResolver {
 
     @Mutation(() => User)
     @Authorized(UserRole.ADMIN)
-    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator): Promise<User> {
+    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
         const user = await BeepORM.userRepository.findOne(id);
 
         if (!user) {
@@ -68,13 +57,13 @@ export class UserResolver {
 
         wrap(user).assign(data);
 
+        pubSub.publish("User" + id, data);
+
         await BeepORM.userRepository.persistAndFlush(user);
 
         return user;
     }
 
-
-    //@Query(() => Paginated<User>(User))
     @Query(() => UsersResponse)
     @Authorized(UserRole.ADMIN)
     public async getUsers(@Args() { offset, show }: PaginationArgs): Promise<UsersResponse> {
@@ -103,15 +92,14 @@ export class UserResolver {
     public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
         const relationPaths = fieldsToRelations(info);
         const r = await BeepORM.queueEntryRepository.find({ beeper: id || ctx.user.id }, relationPaths);
-        
-        /*
-        for (let i = 0; i < r.length; i++) {
-           if (r[i].state == -1) {
-               BeepORM.queueEntryRepository.nativeDelete(r[i]);
-           }
-        }
-        */
 
-        return r.filter(entry => entry.state != -1);
+        return r;
+    }
+
+    @Subscription(() => PartialUser, {
+        topics: ({ args }) => "User" + args.topic,
+    })
+    public getUserUpdates(@Arg("topic") topic: string, @Root() user: User): Partial<User> {
+        return user;
     }
 }

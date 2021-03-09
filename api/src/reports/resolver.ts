@@ -6,13 +6,10 @@ import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } fro
 import { Context } from '../utils/context';
 import { ReportInput, UpdateReportInput } from '../validators/report';
 import PaginationArgs from '../args/Pagination';
-import {Paginated} from '../users/resolver';
+import { Paginated } from '../utils/paginated';
 
-// we need to create a temporary class for the abstract, generic class "instance"
 @ObjectType()
-class ReportsResponse extends Paginated(Report) {
-  // you can add more fields here if you need
-}
+class ReportsResponse extends Paginated(Report) {}
 
 @Resolver(Report)
 export class ReportsResolver {
@@ -28,7 +25,6 @@ export class ReportsResolver {
 
         return true;
     }
-
     
     @Query(() => ReportsResponse)
     @Authorized(UserRole.ADMIN)

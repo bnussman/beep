@@ -1,64 +1,40 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Platform, StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native"
 import { Input, Button, Layout, TopNavigation, TopNavigationAction } from "@ui-kitten/components";
 import { BackIcon } from "../../utils/Icons";
-import { config } from "../../utils/config";
-import { UserContext } from '../../utils/UserContext';
 import { LoadingIndicator, ReportIcon } from "../../utils/Icons";
-import { handleFetchError, parseError } from "../../utils/Errors";
+import { gql, useMutation } from "@apollo/client";
+import { ReportUserMutation } from "../../generated/graphql";
 
 interface Props {
     route: any;
     navigation: any;
 }
 
-interface State {
-    isLoading: boolean;
-    reason: string;
-}
-
-export class ReportScreen extends Component<Props, State> {
-    static contextType = UserContext;
-
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            isLoading: false,
-            reason: ""
-        };
+const ReportUser = gql`
+    mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
+        reportUser(input: { userId: $userId, reason: $reason, beepId: $beepId })
     }
+`;
 
-    async reportUser() {
-        this.setState({ isLoading: true });
-        
-        try {
-            const result = await fetch(config.apiUrl + "/reports", {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + this.context.user.token,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    id: this.props.route.params.id,
-                    reason: this.state.reason,
-                    beepEventId: this.props.route.params.beepEventId
-                })
-            });
+export function ReportScreen(props: Props) {
+    const [reason, setReason] = useState<string>();
+    const [report, { data, loading, error }] = useMutation<ReportUserMutation>(ReportUser, { errorPolicy: 'all' });
 
-            const data = await result.json();
-
-            alert(parseError(data.message));
-
-            this.setState({ isLoading: false });
+        async function reportUser() {
+                const result = await report({
+                    variables: {
+                        userId: props.route.params.id,
+                        beep: props.route.params.beep,
+                        reason: reason
+                    }
+                });
+                if (result) alert("Successfully Reported User");
+                else alert(error);
         }
-        catch(error) {
-            this.setState({ isLoading: handleFetchError(error) });
-        }
-    }
 
-    render () {
         const BackAction = () => (
-            <TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+            <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
         );
 
         return (
@@ -70,7 +46,7 @@ export class ReportScreen extends Component<Props, State> {
                         <Input
                             placeholder="User"
                             label="User"
-                            value={this.props.route.params.first + " " + this.props.route.params.last}
+                            value={props.route.params.first + " " + props.route.params.last}
                             disabled={true}
                         />
                         <Input
@@ -79,12 +55,12 @@ export class ReportScreen extends Component<Props, State> {
                             placeholder="Your reason for reporting here"
                             returnKeyType="go"
                             textStyle={{ minHeight: 64 }}
-                            onChangeText={(text) => this.setState({ reason: text })}
-                            onSubmitEditing={() => this.reportUser()}
+                            onChangeText={(text) => setReason(text)}
+                            onSubmitEditing={() => reportUser()}
                             blurOnSubmit={true}
                         />
-                        {!this.state.isLoading ?
-                            <Button accessoryRight={ReportIcon} onPress={() => this.reportUser()}>
+                        {!loading ?
+                            <Button accessoryRight={ReportIcon} onPress={() => reportUser()}>
                                 Report User
                             </Button>
                             :
@@ -97,7 +73,6 @@ export class ReportScreen extends Component<Props, State> {
             </TouchableWithoutFeedback>
             </>
         );
-    }
 }
 
 const styles = StyleSheet.create({

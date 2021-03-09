@@ -1,9 +1,11 @@
-import { Paginated } from '../users/resolver';
-import { Arg, Args, Authorized, ObjectType, Query, Resolver } from 'type-graphql';
+import { Paginated } from '../utils/paginated';
+import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { UserRole } from '../entities/User';
 import PaginationArgs from '../args/Pagination';
 import {BeepORM} from '../app';
 import { Location } from '../entities/Location';
+import { Context } from '../utils/context';
+import { LocationInput } from '../validators/location';
 
 @ObjectType()
 class LocationsResponse extends Paginated(Location) {}
@@ -22,4 +24,25 @@ export class LocationResolver {
         };
     }
 
+    @Mutation(() => Boolean)
+    @Authorized()
+    public async insertLocation(@Ctx() ctx: Context, @Arg('location') location: LocationInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
+        const l = new Location(location);
+
+        pubSub.publish("Location" + ctx.user.id, l);
+
+        l.user = ctx.user;
+
+        BeepORM.locationRepository.persist(l);
+
+        return true;
+    }
+
+    @Subscription(() => Location, {
+        nullable: true,
+        topics: ({ args }) => "Location" + args.topic,
+    })
+    public getLocationUpdates(@Arg("topic") topic: string, @Root() entry: Location): Location {
+        return entry;
+    }
 }

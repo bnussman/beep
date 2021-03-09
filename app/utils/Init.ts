@@ -1,9 +1,7 @@
 import * as SplashScreen from 'expo-splash-screen';
-import { initializeSentry } from './Sentry';
+import { handleUpdateCheck } from './Updates';
 
 export default function init(): void {
-    initializeSentry();
-    SplashScreen.preventAutoHideAsync()
-        .then(result => console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`))
-        .catch(console.warn);
+    handleUpdateCheck();
+    SplashScreen.preventAutoHideAsync();
 }

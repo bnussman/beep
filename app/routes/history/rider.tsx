@@ -7,80 +7,38 @@ import { UserContext } from '../../utils/UserContext';
 import ProfilePicture from '../../components/ProfilePicture';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {MainNavParamList} from '../../navigators/MainTabs';
-import {UserPluckResult} from '../../types/Beep';
-
-export interface RiderEventEntry {
-    beep: {
-        beepersid: string;
-        destination: string;
-        doneTime: string;
-        groupSize: string;
-        id: string;
-        isAccepted: boolean;
-        origin: string;
-        riderid: string;
-        state: number;
-        timeEnteredQueue: number;
-    };
-    beeper: {
-        first: string;
-        id: string;
-        last: string;
-        photoUrl: string;
-        username: string;
-    };
-}
+import {User} from '../../types/Beep';
+import { gql, useQuery } from '@apollo/client';
+import { GetRideHistoryQuery } from '../../generated/graphql';
 
 interface Props {
     navigation: BottomTabNavigationProp<MainNavParamList>;
 }
 
-interface State {
-    isLoading: boolean;
-    riderList: UserPluckResult[];
-}
-
-export class RiderRideLogScreen extends Component<Props, State> {
-    static contextType = UserContext;
-
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            isLoading: true,
-            riderList: []
-        }
-    }
-
-    async getRiderList(): Promise<void> {
-        try {
-            const result = await fetch(config.apiUrl + "/users/" + this.context.user.id + "/history/rider", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${this.context.user.token}`
-                }
-            });
-
-            const data = await result.json();
-
-            if (data.status == "success") {
-                this.setState({ isLoading: false, riderList: data.data });
-            }
-            else {
-                this.setState({ isLoading: handleFetchError(data.message) });
+const GetRideHistory = gql`
+    query GetRideHistory {
+        getRideHistory {
+            id
+            timeEnteredQueue
+            doneTime
+            groupSize
+            origin
+            destination
+            beeper {
+                id
+                name
+                first
+                last
+                photoUrl
             }
         }
-        catch(error) {
-            this.setState({ isLoading: handleFetchError(error) });
-        }
     }
+`;
 
-    componentDidMount(): void {
-        this.getRiderList();
-    }
+export function RiderRideLogScreen(props: Props) {
+    const { data, loading, error, refetch } = useQuery<GetRideHistoryQuery>(GetRideHistory);
 
-    render() {
-        const renderItem = ({ item }: { item: RiderEventEntry }) => (
+        const renderItem = ({ item }) => (
             <ListItem
                 accessoryLeft={() => {
                     return (
@@ -90,19 +48,19 @@ export class RiderRideLogScreen extends Component<Props, State> {
                         />
                     );
                 }}
-                onPress={() => this.props.navigation.push("Profile", { id: item.beeper.id, beepEventId: item.beep.id })}
+                onPress={() => props.navigation.push("Profile", { id: item.beeper.id, beepEventId: item.id })}
                 title={`${item.beeper.first} ${item.beeper.last} beeped you`}
-                description={`Group size: ${item.beep.groupSize}\nOrigin: ${item.beep.origin}\nDestination: ${item.beep.destination}\nDate: ${new Date(item.beep.timeEnteredQueue)}`}
+                description={`Group size: ${item.groupSize}\nOrigin: ${item.origin}\nDestination: ${item.destination}\nDate: ${new Date(item.timeEnteredQueue)}`}
             />
         );
         
-        if (!this.state.isLoading) {
-            if (this.state.riderList && this.state.riderList.length != 0) {
+        if (!loading) {
+            if (data?.getRideHistory && data.getRideHistory.length != 0) {
                 return (
                 <Layout style={styles.container}>
                     <List
                         style={{width:"100%"}}
-                        data={this.state.riderList}
+                        data={data?.getRideHistory}
                         ItemSeparatorComponent={Divider}
                         renderItem={renderItem}
                     />
@@ -126,7 +84,6 @@ export class RiderRideLogScreen extends Component<Props, State> {
                 </Layout>
             );
         }
-    } 
 }
 
 const styles = StyleSheet.create({

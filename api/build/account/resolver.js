@@ -21,9 +21,8 @@ const core_1 = require("@mikro-orm/core");
 const type_graphql_1 = require("type-graphql");
 const account_1 = require("../validators/account");
 const User_1 = require("../entities/User");
-const apollo_server_1 = require("apollo-server");
 let AccountResolver = class AccountResolver {
-    async editAccount(ctx, input) {
+    async editAccount(ctx, input, pubSub) {
         if (input.venmo && input.venmo.charAt(0) == '@') {
             input.venmo = input.venmo.substr(1, input.venmo.length);
         }
@@ -36,6 +35,7 @@ let AccountResolver = class AccountResolver {
             await app_1.BeepORM.userRepository.persistAndFlush(ctx.user);
             helpers_1.createVerifyEmailEntryAndSendEmail(ctx.user, input.email, input.first);
         }
+        pubSub.publish("User" + ctx.user.id, ctx.user);
         return ctx.user;
     }
     async changePassword(ctx, password) {
@@ -49,7 +49,7 @@ let AccountResolver = class AccountResolver {
         await app_1.BeepORM.userRepository.persistAndFlush(ctx.user);
         return true;
     }
-    async verifyAccount(id) {
+    async verifyAccount(id, pubSub) {
         const entry = await app_1.BeepORM.verifyEmailRepository.findOne(id, { populate: true });
         if (!entry) {
             throw new Error("Invalid verify email token");
@@ -79,6 +79,7 @@ let AccountResolver = class AccountResolver {
         if (!user)
             throw new Error("You tried to verify an account that does not exist");
         core_1.wrap(user).assign(update);
+        pubSub.publish("User" + user.id, update);
         await app_1.BeepORM.userRepository.persistAndFlush(user);
         await app_1.BeepORM.verifyEmailRepository.removeAndFlush(entry);
         return true;
@@ -91,17 +92,13 @@ let AccountResolver = class AccountResolver {
     async deleteAccount(ctx) {
         return await helpers_2.deleteUser(ctx.user);
     }
-    async uploadPhoto(photo) {
-        console.log(photo);
-        return true;
-    }
 };
 __decorate([
     type_graphql_1.Mutation(() => User_1.User),
     type_graphql_1.Authorized(),
-    __param(0, type_graphql_1.Ctx()), __param(1, type_graphql_1.Arg('input')),
+    __param(0, type_graphql_1.Ctx()), __param(1, type_graphql_1.Arg('input')), __param(2, type_graphql_1.PubSub()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, account_1.EditAccountInput]),
+    __metadata("design:paramtypes", [Object, account_1.EditAccountInput, type_graphql_1.PubSubEngine]),
     __metadata("design:returntype", Promise)
 ], AccountResolver.prototype, "editAccount", null);
 __decorate([
@@ -122,9 +119,9 @@ __decorate([
 ], AccountResolver.prototype, "updatePushToken", null);
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
-    __param(0, type_graphql_1.Arg('id')),
+    __param(0, type_graphql_1.Arg('id')), __param(1, type_graphql_1.PubSub()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, type_graphql_1.PubSubEngine]),
     __metadata("design:returntype", Promise)
 ], AccountResolver.prototype, "verifyAccount", null);
 __decorate([
@@ -143,13 +140,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AccountResolver.prototype, "deleteAccount", null);
-__decorate([
-    type_graphql_1.Mutation(() => Boolean),
-    __param(0, type_graphql_1.Arg('photo', () => apollo_server_1.GraphQLUpload)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AccountResolver.prototype, "uploadPhoto", null);
 AccountResolver = __decorate([
     type_graphql_1.Resolver()
 ], AccountResolver);

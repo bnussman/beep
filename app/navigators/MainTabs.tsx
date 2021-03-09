@@ -6,13 +6,14 @@ import { StartBeepingScreen } from '../routes/beep/StartBeeping';
 import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components';
 import { CarIcon, MapIcon, SettingsIcon } from '../utils/Icons';
 
+
 export type MainNavParamList = {
     Ride: undefined;
     Beep: undefined;
     Settings: undefined;
     MainFindBeepScreen: undefined;
     PickBeepScreen: { handlePick: (id: string) => Promise<void> } | undefined;
-    Profile: { id: string | undefined} | undefined;
+    Profile: { id: string | undefined, beep?: string } | undefined;
     EditProfileScreen: undefined;
     ProfilePhotoScreen: undefined;
     ChangePasswordScreen: undefined;
@@ -25,7 +26,6 @@ interface NavState {
 }
 
 const { Navigator, Screen } = createBottomTabNavigator<MainNavParamList>();
-
 
 const BottomTabBar = ({ navigation, state }: { navigation: BottomTabNavigationProp<MainNavParamList>, state: NavState}) => (
     <BottomNavigation
@@ -42,8 +42,8 @@ export class MainTabs extends Component {
     render() {
        return (
             <Navigator tabBar={props => <BottomTabBar {...props} />}>
-                <Screen name='Ride' component={FindBeepScreen}/>
-                <Screen name='Beep' component={StartBeepingScreen} />
+                <Screen name='Get a Beep' component={FindBeepScreen}/>
+                <Screen name='Start Beeping' component={StartBeepingScreen} />
                 <Screen name='Settings' component={SettingsScreen}/>
             </Navigator>
         );

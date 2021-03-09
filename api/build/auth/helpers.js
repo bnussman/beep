@@ -96,7 +96,6 @@ exports.getUserFromEmail = getUserFromEmail;
  * @returns Promise<UserPluckResult>
  */
 async function getUserFromId(id, ...pluckItems) {
-    //TODO is id ok? or do i need to make it a ObjectId
     const user = await app_1.BeepORM.userRepository.findOne(id, { fields: pluckItems });
     if (user) {
         return user;

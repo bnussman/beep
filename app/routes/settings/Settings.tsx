@@ -1,82 +1,66 @@
-import React, {ReactNode} from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Layout, Button, Card, Text } from '@ui-kitten/components';
-import { ThemeContext, ThemeContextData } from '../../utils/ThemeContext';
-import { UserContext, UserContextData } from '../../utils/UserContext';
-import socket from '../../utils/Socket';
+import { ThemeContext } from '../../utils/ThemeContext';
+import { AuthenticatedUserContextData, UserContext } from '../../utils/UserContext';
 import { PhotoIcon, LogIcon, ThemeIcon, LogoutIcon, ProfileIcon, PasswordIcon, ForwardIcon } from '../../utils/Icons';
-import { config } from "../../utils/config";
 import AsyncStorage from '@react-native-community/async-storage';
 import ProfilePicture from '../../components/ProfilePicture';
 import ResendButton from '../../components/ResendVarificationEmailButton';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {MainNavParamList} from '../../navigators/MainTabs';
-import {User} from '../../types/Beep';
+import {gql, useMutation} from '@apollo/client';
+import {LogoutMutation} from '../../generated/graphql';
 
-export function MainSettingsScreen({ navigation }: { navigation: BottomTabNavigationProp<MainNavParamList> }): ReactNode {
-    const themeContext: ThemeContextData | null = React.useContext(ThemeContext);
-    const userContext: UserContextData | null = React.useContext(UserContext);
+const Logout = gql`
+    mutation Logout {
+        logout (isApp: true)
+    }
+`;
 
-    async function logout() {
+export function MainSettingsScreen({ navigation }: any) {
+    const themeContext: any = React.useContext(ThemeContext);
+    const userContext: AuthenticatedUserContextData = React.useContext(UserContext)!;
+    const [logout, { loading: loading, error: error }] = useMutation<LogoutMutation>(Logout);
+
+    async function doLogout() {
         try {
-            await fetch(config.apiUrl + "/auth/logout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${userContext?.user?.token}`
-                },
-                body: JSON.stringify({
-                    isApp: true
-                })
-            });
-
-            AsyncStorage.multiRemove(['@user', '@tokenid'], (err) => {
-                if (err) { 
-                    console.error(err);
-                }
-            });
-
-            socket.emit('stopGetQueue');
-            socket.emit('stopGetRiderStatus');
-            socket.emit('stopGetUser');
-            socket.off('updateRiderStatus');
-            socket.off('updateQueue');
-            socket.off('connect');
-            socket.off('hereIsBeepersLocation');
+            const result = await logout();
+            AsyncStorage.clear();
+            userContext.unsubscribe();
         }
         catch (error) {
-            //Probably no internet. Save tokenid so we can call the token revoker upon the next signin or signup
-            if (userContext?.user?.tokenid) AsyncStorage.setItem("@tokenid", userContext?.user?.tokenid);
-            AsyncStorage.removeItem("@user", (error) => {
+            AsyncStorage.setItem("token", userContext.user.tokens.tokenid);
+            AsyncStorage.removeItem("auth", (error) => {
                 console.log("Removed all except tokenid and expoPushToken from storage.", error);
             });
         }
 
-        //Reset the navigation state and as a callback, remove the user from context
         await navigation.reset({
             index: 0,
             routes: [
                 { name: 'Login' },
             ],
             key: null
-        }, () => userContext?.setUser(null));
+        }, () => userContext.setUser(null));
+
     }
 
-    function UserHeader(props: { user: User | undefined }) {
+    function UserHeader(props: any) {
         return <Layout style={{flexDirection: 'row', marginHorizontal: -16}}>
+            {props.user.photoUrl &&
             <ProfilePicture
                 style={{marginHorizontal: 8}}
                 size={50}
-                url={userContext?.user?.photoUrl || null}
+                url={props.user.photoUrl}
             />
+            }
             <Layout>
                 <Text category='h4'>
-                    {props.user?.first + " " + props.user?.last}
+                    {props.user.first + " " + props.user.last}
                 </Text>
                 <Text
                     appearance='hint'
                     category='s1'>
-                    {props.user?.venmo}
+                    {props.user.venmo}
                 </Text>
             </Layout>
         </Layout>
@@ -85,22 +69,22 @@ export function MainSettingsScreen({ navigation }: { navigation: BottomTabNaviga
     return (
         <Layout style={styles.wrapper}>
             <Layout style={styles.container}>
-                <Card style={{width: "80%", marginBottom: 20}} onPress={() => navigation.navigate("Profile", { id: userContext?.user?.id })} >
-                    <UserHeader user={userContext?.user} />
+                <Card style={{width: "80%", marginBottom: 20}} onPress={() => navigation.navigate("Profile", { id: userContext.user.user.id })} >
+                    <UserHeader user={userContext.user.user} />
                 </Card>
-                {!userContext?.user?.isEmailVerified &&
+                {!userContext.user.user.isEmailVerified &&
                     <Card status="danger" style={{maxWidth: 400, marginBottom: 6}}>
                         <Text category="h6">Your email is not verified!</Text>
                     </Card>
                 }
-                {!userContext?.user?.isEmailVerified && <ResendButton />}
+                {!userContext.user.user.isEmailVerified && <ResendButton />}
                 <Button
-                    onPress={themeContext?.toggleTheme}
+                    onPress={themeContext.toggleTheme}
                     accessoryLeft={ThemeIcon}
                     style={styles.button}
                     appearance='ghost'
                 >
-                    {(themeContext?.theme == "light") ? "Dark Mode" : "Light Mode"}
+                    {(themeContext.theme == "light") ? "Dark Mode" : "Light Mode"}
                 </Button>
                 <Button
                     onPress={() => navigation.navigate("EditProfileScreen")}
@@ -139,12 +123,12 @@ export function MainSettingsScreen({ navigation }: { navigation: BottomTabNaviga
                     Ride Log
                 </Button>
                 <Button
-                    onPress={logout}
+                    onPress={() => doLogout()}
                     accessoryLeft={LogoutIcon}
                     style={styles.button}
                     appearance='ghost'
                 >
-                    Logout
+                    {loading ? "Logging you out..." : "Logout"}
                 </Button>
             </Layout>
         </Layout>

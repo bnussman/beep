@@ -37,7 +37,7 @@ Auth = __decorate([
 ], Auth);
 let AuthResolver = class AuthResolver {
     async login(input) {
-        const user = await app_1.BeepORM.userRepository.findOne({ username: input.username }, { populate: ['password'] });
+        const user = await app_1.BeepORM.userRepository.findOne({ username: input.username });
         if (!user) {
             throw new Error("User not found");
         }

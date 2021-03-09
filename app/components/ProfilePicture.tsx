@@ -1,13 +1,11 @@
-import {Styles} from "@ui-kitten/components";
 import React, { Component } from "react";
-import { View, Image } from "react-native";
+import { View, Image, Text } from "react-native";
 import { LoadingIndicator } from "../utils/Icons";
-import userImage from "../assets/userImage.png";
 
 interface Props {
-    url: string | null | undefined;
+    url: string;
     size: number;
-    style?: Styles<unknown>;
+    style?: any;
 }
 
 interface State {
@@ -34,7 +32,7 @@ export default class ProfilePicture extends Component<Props, State> {
             <>
                 <Image
                     style={{...this.props.style, width: (this.state.isLoading ? 1 : this.props.size), height: (this.state.isLoading ? 1 : this.props.size), borderRadius: this.props.size/ 2 }}
-                    source={this.props.url ? { uri: this.props.url } : userImage}
+                    source={{uri: this.props.url}}
                     onLoadEnd={() => this.setState({ isLoading: false })}
                     onError={(error) => {
                         console.error(error)

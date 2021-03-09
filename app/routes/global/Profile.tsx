@@ -6,65 +6,55 @@ import { config } from "../../utils/config";
 import ProfilePicture from "../../components/ProfilePicture";
 import { handleFetchError } from "../../utils/Errors";
 import { UserContext } from '../../utils/UserContext';
+import { useContext } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { DrawerLayoutAndroid } from "react-native-gesture-handler";
+import { launchCameraAsync } from "expo-image-picker";
+import { GetUserQuery } from "../../generated/graphql";
 
 interface Props {
     route: any; 
     navigation: any;
 }
 
-interface State {
-    isLoading: boolean;
-    user: any;
-}
-
-export class ProfileScreen extends Component<Props, State> {
-    static contextType = UserContext;
-
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            isLoading: true,
-            user: {}
-        };
-    }
-
-    async getUser() {
-        try {
-            const result = await fetch(config.apiUrl + "/users/" + this.props.route.params.id, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-
-            const data = await result.json();
-
-            this.setState({isLoading: false, user: data.user});
-        }
-        catch(error) {
-            this.setState({isLoading: handleFetchError(error)});
+const GetUser = gql`
+    query GetUser($id: String!) {
+        getUser(id: $id) {
+            id
+            first
+            last
+            isBeeping
+            isStudent
+            role
+            venmo
+            singlesRate
+            groupRate
+            capacity
+            masksRequired
+            photoUrl
+            queueSize
         }
     }
-    
-    handleReport() {
-        this.props.navigation.navigate("Report", {
-            id: this.props.route.params.id,
-            first: this.state.user.first,
-            last: this.state.user.last,
-            beepEventId: this.props.route.params.beepEventId
+`;
+
+export function ProfileScreen(props: Props) {
+    const userContext = useContext(UserContext);
+    const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: props.route.params.id } }); 
+
+    function handleReport() {
+        props.navigation.navigate("Report", {
+            id: props.route.params.id,
+            first: data?.getUser.first,
+            last: data?.getUser.last,
+            beep: props.route.params.beep
         });
     }
-    
-    componentDidMount() {
-        this.getUser();
-    }
 
-    render () {
-        const BackAction = () => (
-            <TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
-        );
+    const BackAction = () => (
+        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
+    );
 
-        if (this.state.isLoading) {
+        if (loading) {
             return (
                 <>
                     <TopNavigation title='User Profile' alignment='center' accessoryLeft={BackAction}/>
@@ -74,7 +64,8 @@ export class ProfileScreen extends Component<Props, State> {
                 </>
             );
         }
-        else if (this.state.user?.first == null) {
+
+        if (error || !data?.getUser) {
             return (
                 <>
                     <TopNavigation title='User Profile' alignment='center' accessoryLeft={BackAction}/>
@@ -85,7 +76,7 @@ export class ProfileScreen extends Component<Props, State> {
             );
         }
         else {
-            const user = this.state.user;
+            const user = data?.getUser;
 
             return (
                 <>
@@ -103,7 +94,7 @@ export class ProfileScreen extends Component<Props, State> {
                         <Layout style={styles.row}>
                             {user.isBeeping && <Button size='tiny' status='primary' style={styles.tag}>Currently Beeping 🚗</Button>}
                             {user.masksRequired && <Button status="info" size='tiny' style={styles.tag}>Masks Required</Button>}
-                            {user.userLevel > 0 && <Button size='tiny' status='danger' style={styles.tag}>Founder</Button>}
+                            {user.role == "ADMIN" && <Button size='tiny' status='danger' style={styles.tag}>Founder</Button>}
                             {user.isStudent && <Button status="basic" size='tiny' style={styles.tag}>Student</Button>}
                         </Layout>
                         
@@ -135,14 +126,14 @@ export class ProfileScreen extends Component<Props, State> {
                                 <Text>${user.groupRate}</Text>
                             </Layout>
                         </Layout>
-                        {(this.props.route.params.id != this.context.user.id) &&
-                            <Button onPress={() => this.handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
+                        {(props.route.params.id != userContext?.user?.user.id) &&
+                            <Button onPress={() => handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
                         }
                     </Layout>
                 </>
             );
         }
-    }
+
 }
 
 const styles = StyleSheet.create({

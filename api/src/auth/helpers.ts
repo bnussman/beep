@@ -1,4 +1,3 @@
-import { UserPluckResult } from '../types/beep';
 import * as nodemailer from "nodemailer";
 import { transporter } from "../utils/mailer";
 import * as Sentry from "@sentry/node";
@@ -82,8 +81,7 @@ export async function getUserFromEmail(email: string): Promise<User | null> {
  * @param pluckItems are items we want to pluck in the db query 
  * @returns Promise<UserPluckResult>
  */
-export async function getUserFromId(id: string, ...pluckItems: string[]): Promise<UserPluckResult | null> {
-    //TODO is id ok? or do i need to make it a ObjectId
+export async function getUserFromId(id: string, ...pluckItems: string[]): Promise<Partial<User> | null> {
     const user = await BeepORM.userRepository.findOne(id, { fields: pluckItems });
 
     if (user) {

@@ -2,8 +2,8 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { Vibration, Platform } from 'react-native';
-import { config } from '../utils/config';
-import AsyncStorage from '@react-native-community/async-storage';
+import { gql } from '@apollo/client';
+import { client } from '../utils/Apollo';
 
 /**
  * Checks for permssion for Notifications, asks expo for push token, sets up notification listeners, returns 
@@ -27,7 +27,7 @@ export async function getPushToken(): Promise<string | null> {
  * function to get existing or prompt for notification permission
  * @returns boolean true if client has location permissions
  */
-async function getNotificationPermission(): Promise<boolean> {
+async function getNotificationPermission() {
     if (!Constants.isDevice) {
         return false;
     }
@@ -57,101 +57,45 @@ async function getNotificationPermission(): Promise<boolean> {
  * Set listiner function(s)
  */
 function setNotificationHandlers() {
-    const enteredBeeperQueueActions: Notifications.NotificationAction[] = [
+    const enteredBeeperQueueActions = [
         {
-            identifier: "accept",
-            buttonTitle: "Accept ✅",
-            options: {
-                //opensAppToForeground: false
-            }
+            actionId: "accept",
+            identifiter: "accept",
+            buttonTitle: "Accept"
         },
         {
-            identifier: "deny",
-            buttonTitle: "Deny ❌",
+            actionId: "deny",
+            identifiter: "deny",
+            buttonTitle: "Deny",
             options: {
-                isDestructive: true,
-                //opensAppToForeground: false
+                isDestructive: true
             }
         }
 
     ];
-    Notifications.setNotificationCategoryAsync("enteredBeeperQueue", enteredBeeperQueueActions, {
-        allowAnnouncement: true
-    });
+    //@ts-ignore
+    Notifications.setNotificationCategoryAsync("enteredBeeperQueue", enteredBeeperQueueActions);
+    //@ts-ignore
     Notifications.addNotificationReceivedListener(handleNotification);
-    Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
 }
 
 /**
  * call getPushToken and send to backend
  * @param token a user's auth token
  */
-export async function updatePushToken(token: string): Promise<void> {
-    try {
-        const result = await fetch(config.apiUrl + "/account/pushtoken", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                pushToken: await getPushToken()
-            })
-        });
-
-        const data = await result.json();
-
-        if (data.status == "error") {
-            console.log(data.message);
+export async function updatePushToken(): Promise<void> {
+    const UpdatePushToken = gql`
+        mutation UpdatePushToken($token: String!) {
+          updatePushToken (pushToken: $token)
         }
-    }
-    catch(error) {
-        console.log("[Login.js] [API] Error fetching from the Beep (Login) API: ", error);
-    }
+    `;
+
+    await client.mutate({ mutation: UpdatePushToken, variables: { token: await getPushToken() }}); 
 }
 
-async function handleNotification(notification: Notifications.Notification) {
+async function handleNotification(notification: Notification): Promise<void> {
     //Vibrate when we recieve a notification
     Vibration.vibrate();
     //Log the entire notification to the console
-    console.log("Notification:", notification);
-}
-
-async function handleNotificationResponse(response: Notifications.NotificationResponse) {
-    console.log(response);
-    if (response.actionIdentifier == "accept" || response.actionIdentifier == "deny") {
-        updateQueueEntryStatus(response.notification.request.content.data.queueID as string, response.notification.request.content.data.riderID as string, response.actionIdentifier);        
-    }
-}
-
-async function updateQueueEntryStatus(queueID: string, riderID: string, value: string): Promise<void> {
-    const user = await AsyncStorage.getItem('@user');
-
-    if (!user) return;
-
-    const userObj = JSON.parse(user);
-
-    try {
-        const result = await fetch(config.apiUrl + "/beeper/queue/status", {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + userObj.token
-            },
-            body: JSON.stringify({
-                value: value,
-                queueID: queueID,
-                riderID: riderID
-            })
-        });
-
-        const data = await result.json();
-
-        if (data.status === "error") {
-            console.log(data.message);
-        }
-    }
-    catch (error) {
-        console.log(error);
-    }
+    //console.log("Notification:", notification);
 }

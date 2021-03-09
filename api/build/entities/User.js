@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.UserRole = void 0;
+exports.PartialUser = exports.User = exports.UserRole = void 0;
 const core_1 = require("@mikro-orm/core");
 const mongodb_1 = require("@mikro-orm/mongodb");
 const type_graphql_1 = require("type-graphql");
@@ -83,7 +83,7 @@ __decorate([
 ], User.prototype, "venmo", void 0);
 __decorate([
     type_graphql_1.Field(),
-    core_1.Property({ lazy: true }),
+    core_1.Property(),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
@@ -133,8 +133,7 @@ __decorate([
 ], User.prototype, "role", void 0);
 __decorate([
     type_graphql_1.Field({ nullable: true }),
-    core_1.Property({ nullable: true, lazy: true }),
-    type_graphql_1.Authorized(UserRole.ADMIN),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "pushToken", void 0);
 __decorate([
@@ -168,3 +167,85 @@ User = __decorate([
     core_1.Entity()
 ], User);
 exports.User = User;
+let PartialUser = class PartialUser {
+};
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "id", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "first", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "last", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "username", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "email", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "phone", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "venmo", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "password", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Boolean)
+], PartialUser.prototype, "isBeeping", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Boolean)
+], PartialUser.prototype, "isEmailVerified", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Boolean)
+], PartialUser.prototype, "isStudent", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Number)
+], PartialUser.prototype, "groupRate", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Number)
+], PartialUser.prototype, "singlesRate", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Number)
+], PartialUser.prototype, "capacity", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Boolean)
+], PartialUser.prototype, "masksRequired", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Number)
+], PartialUser.prototype, "queueSize", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "role", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "pushToken", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PartialUser.prototype, "photoUrl", void 0);
+PartialUser = __decorate([
+    type_graphql_1.ObjectType()
+], PartialUser);
+exports.PartialUser = PartialUser;

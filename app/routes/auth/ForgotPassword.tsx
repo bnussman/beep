@@ -1,62 +1,41 @@
-import React, { Component, ReactNode } from 'react';
+import React, { Component, ReactNode, useState } from 'react';
 import { config } from "../../utils/config";
 import { Layout, Button, Input, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { StyleSheet, Platform, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { BackIcon, EmailIcon } from "../../utils/Icons";
 import { handleFetchError } from "../../utils/Errors";
+import { gql, useMutation } from '@apollo/client';
+import { ForgotPasswordMutation } from '../../generated/graphql';
 
 interface Props {
     navigation: any;
 }
 
-interface State {
-    isLoading: boolean;
-    email: string;
-}
+const ForgotPassword = gql`
+    mutation ForgotPassword($email: String!) {
+        forgotPassword(email: $email)
+    }
+`;
 
-export default class ForgotPassword extends Component<Props, State> {
+export function ForgotPasswordScreen(props: Props) {
+    const [forgot, { data, loading, error }] = useMutation<ForgotPasswordMutation>(ForgotPassword);
+    const [email, setEmail] = useState<string>();
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            isLoading: false,
-            email: ""
+    async function handleForgotPassword() {
+        const result = await forgot({
+            variables: { email: email }
+        });
+        
+        if (result) {
+            alert("Check your email for a link to reset your password");
+        }
+        else {
+            alert(error);
         }
     }
 
-    async handleForgotPassword(): Promise<void> {
-        this.setState({ isLoading: true });
-
-        try {
-            const result = await fetch(config.apiUrl + "/auth/password/forgot", {
-                method: "POST",
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email: this.state.email })
-            });
-
-            const data = await result.json();
-
-            this.setState({ isLoading: false });
-
-            if (data.status == "success") {
-                alert(data.message);
-                this.props.navigation.goBack();
-            } 
-            else {
-                this.setState({ isLoading: handleFetchError(data.message) });
-            }
-        }
-        catch (error) {
-            this.setState({ isLoading: handleFetchError(error) });
-        }
-    }
-
-    render(): ReactNode {
         const BackAction = () => (
-            <TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+            <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
         );
 
         return (
@@ -69,10 +48,10 @@ export default class ForgotPassword extends Component<Props, State> {
                             textContentType="emailAddress"
                             placeholder="example@ridebeep.app"
                             returnKeyType="go"
-                            onChangeText={(text) => this.setState({email:text})}
-                            onSubmitEditing={() => this.handleForgotPassword()} />
-                    {!this.state.isLoading ? 
-                        <Button onPress={() => this.handleForgotPassword()} accessoryRight={EmailIcon}>
+                            onChangeText={(text) => setEmail(text)}
+                            onSubmitEditing={() => handleForgotPassword()} />
+                    {!loading ? 
+                        <Button onPress={() => handleForgotPassword()} accessoryRight={EmailIcon}>
                             Send Password Reset Email
                         </Button>
                         :
@@ -85,7 +64,6 @@ export default class ForgotPassword extends Component<Props, State> {
                 </TouchableWithoutFeedback>
             </>
         );
-    }
 }
 
 const styles = StyleSheet.create({

@@ -1,33 +1,21 @@
+import { gql } from '@apollo/client';
 import AsyncStorage from '@react-native-community/async-storage';
-import { config } from './config';
+import { client } from '../App';
+
+const RemoveToken = gql`
+    mutation RemoveToken($token: String!) {
+        removeToken(token: $token)
+    }
+`;
 
 export async function removeOldToken(): Promise<void> {
-    try {
-        const tokenid = await AsyncStorage.getItem('@tokenid');
+    const tokenid = await AsyncStorage.getItem('token');
 
-        if (tokenid !== null) {
-            try {
-                const result = await fetch(config.apiUrl + "/auth/token", {
-                    method: "POST",
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ tokenid: tokenid })
-                });
+    if (tokenid !== null) {
+        const result = await client.mutate({ mutation: RemoveToken, variables: { token: tokenid }});
 
-                const data = await result.json();
-
-                if (data.status == "success") {
-                    AsyncStorage.removeItem("@tokenid");
-                }
-            }
-            catch (error) {
-                console.log("Error");
-            }
+        if (result) {
+            AsyncStorage.removeItem("token");
         }
-    }
-    catch (error) {
-        console.log("[OfflineToken.js] [AsyncStorage] ", error);
     }
 }

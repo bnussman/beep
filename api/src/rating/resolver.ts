@@ -1,11 +1,7 @@
-import { Report } from '../entities/Report';
 import { BeepORM } from '../app';
-import { QueryOrder, wrap } from '@mikro-orm/core';
-import { User, UserRole } from '../entities/User';
-import { Arg, Args, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { User } from '../entities/User';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
-import { ReportInput, UpdateReportInput } from '../validators/report';
-import PaginationArgs from '../args/Pagination';
 import { Rating } from '../entities/Rating';
 import { RatingInput } from '../validators/rating';
 import { Beep } from '../entities/Beep';

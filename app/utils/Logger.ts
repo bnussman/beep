@@ -1,5 +1,4 @@
 import * as Sentry from 'sentry-expo';
-import { Platform } from 'react-native';
 import { isMobile } from './config';
 
 class Logger {

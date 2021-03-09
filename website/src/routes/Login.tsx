@@ -6,6 +6,7 @@ import { TextInput } from '../components/Input';
 import { Caption } from '../components/Typography';
 import {gql, useMutation} from '@apollo/client';
 import {LoginMutation} from '../generated/graphql';
+import { ErrorBanner } from '../components/ErrorBanner';
 
 const LoginGraphQL = gql`
     mutation Login($username: String!, $password: String!) {
@@ -71,7 +72,7 @@ function Login() {
 
     return (
         <div className="lg:container px-4 mx-auto">
-            {error && <p>{error.message}</p>}
+            {error && <ErrorBanner error={error}/>}
             <form onSubmit={handleLogin}>
                 <TextInput
                     className="mb-4"
@@ -86,7 +87,7 @@ function Login() {
                     label="Password"
                     onChange={(value: any) => setPassword(value.target.value)}
                 />
-                <button type="submit" className="mb-4 shadow bg-yellow-500 hover:bg-yellow-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
+                <button type="submit" className="mb-4 shadow bg-yellow-400 hover:bg-yellow-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
                     {loading ? "Logging in..." : "Login"}
                 </button>
             </form>

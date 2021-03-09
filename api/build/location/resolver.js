@@ -16,13 +16,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocationResolver = void 0;
-const resolver_1 = require("../users/resolver");
+const paginated_1 = require("../utils/paginated");
 const type_graphql_1 = require("type-graphql");
 const User_1 = require("../entities/User");
 const Pagination_1 = __importDefault(require("../args/Pagination"));
 const app_1 = require("../app");
 const Location_1 = require("../entities/Location");
-let LocationsResponse = class LocationsResponse extends resolver_1.Paginated(Location_1.Location) {
+const location_1 = require("../validators/location");
+let LocationsResponse = class LocationsResponse extends paginated_1.Paginated(Location_1.Location) {
 };
 LocationsResponse = __decorate([
     type_graphql_1.ObjectType()
@@ -35,6 +36,16 @@ let LocationResolver = class LocationResolver {
             count: count
         };
     }
+    async insertLocation(ctx, location, pubSub) {
+        const l = new Location_1.Location(location);
+        pubSub.publish("Location" + ctx.user.id, l);
+        l.user = ctx.user;
+        app_1.BeepORM.locationRepository.persist(l);
+        return true;
+    }
+    getLocationUpdates(topic, entry) {
+        return entry;
+    }
 };
 __decorate([
     type_graphql_1.Query(() => LocationsResponse),
@@ -44,6 +55,24 @@ __decorate([
     __metadata("design:paramtypes", [Pagination_1.default, String]),
     __metadata("design:returntype", Promise)
 ], LocationResolver.prototype, "getLocations", null);
+__decorate([
+    type_graphql_1.Mutation(() => Boolean),
+    type_graphql_1.Authorized(),
+    __param(0, type_graphql_1.Ctx()), __param(1, type_graphql_1.Arg('location')), __param(2, type_graphql_1.PubSub()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, location_1.LocationInput, type_graphql_1.PubSubEngine]),
+    __metadata("design:returntype", Promise)
+], LocationResolver.prototype, "insertLocation", null);
+__decorate([
+    type_graphql_1.Subscription(() => Location_1.Location, {
+        nullable: true,
+        topics: ({ args }) => "Location" + args.topic,
+    }),
+    __param(0, type_graphql_1.Arg("topic")), __param(1, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Location_1.Location]),
+    __metadata("design:returntype", Location_1.Location)
+], LocationResolver.prototype, "getLocationUpdates", null);
 LocationResolver = __decorate([
     type_graphql_1.Resolver(Location_1.Location)
 ], LocationResolver);

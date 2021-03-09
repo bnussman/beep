@@ -23,7 +23,7 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async login(@Arg('input') input: LoginInput): Promise<Auth> {
-        const user = await BeepORM.userRepository.findOne({ username: input.username }, { populate: ['password'] });
+        const user = await BeepORM.userRepository.findOne({ username: input.username });
 
         if (!user) {
             throw new Error("User not found");

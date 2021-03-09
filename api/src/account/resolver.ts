@@ -3,26 +3,17 @@ import { createVerifyEmailEntryAndSendEmail } from "../auth/helpers";
 import { isEduEmail, deleteUser } from './helpers';
 import { BeepORM } from '../app';
 import { wrap } from '@mikro-orm/core';
-import { Arg, Authorized, Ctx, Field, InputType, Mutation, Resolver } from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { EditAccountInput } from '../validators/account';
 import { User } from '../entities/User';
-import {GraphQLUpload} from 'apollo-server';
-import {Stream} from 'nodemailer/lib/xoauth2';
-
-export interface Upload {
-    filename: string;
-    mimetype: string;
-    encoding: string;
-    createReadStream: () => Stream;
-}
 
 @Resolver()
 export class AccountResolver {
 
     @Mutation(() => User)
     @Authorized()
-    public async editAccount(@Ctx() ctx: Context, @Arg('input') input: EditAccountInput): Promise<User> {
+    public async editAccount(@Ctx() ctx: Context, @Arg('input') input: EditAccountInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
         if (input.venmo && input.venmo.charAt(0) == '@') {
             input.venmo = input.venmo.substr(1, input.venmo.length);
         }
@@ -42,6 +33,8 @@ export class AccountResolver {
 
             createVerifyEmailEntryAndSendEmail(ctx.user, input.email, input.first);
         }
+
+        pubSub.publish("User" + ctx.user.id, ctx.user);
 
         return ctx.user;
     }
@@ -69,7 +62,7 @@ export class AccountResolver {
     }
 
     @Mutation(() => Boolean)
-    public async verifyAccount(@Arg('id') id: string): Promise<boolean> {
+    public async verifyAccount(@Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
         const entry = await BeepORM.verifyEmailRepository.findOne(id, { populate: true });
 
         if (!entry) {
@@ -109,6 +102,8 @@ export class AccountResolver {
 
         wrap(user).assign(update);
 
+        pubSub.publish("User" + user.id, update);
+
         await BeepORM.userRepository.persistAndFlush(user);
 
         await BeepORM.verifyEmailRepository.removeAndFlush(entry);
@@ -130,12 +125,5 @@ export class AccountResolver {
     @Authorized()
     public async deleteAccount(@Ctx() ctx: Context): Promise<boolean> {
         return await deleteUser(ctx.user);
-    }
-
-    @Mutation(() => Boolean)
-    //@ts-ignore
-    public async uploadPhoto(@Arg('photo', () => GraphQLUpload) photo: Upload): Promise<boolean> {
-        console.log(photo);
-        return true;
     }
 }

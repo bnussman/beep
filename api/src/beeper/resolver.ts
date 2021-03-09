@@ -2,11 +2,11 @@ import { sendNotification } from '../utils/notifications';
 import { wrap } from '@mikro-orm/core';
 import { BeepORM } from '../app';
 import { Beep } from '../entities/Beep';
-import { User } from '../entities/User';
-import { Arg, Authorized, Ctx, Mutation, Resolver } from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from '../validators/beeper';
 import * as Sentry from '@sentry/node';
+import {QueueEntry} from '../entities/QueueEntry';
 
 @Resolver(Beep)
 export class BeeperResolver {
@@ -14,7 +14,9 @@ export class BeeperResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput): Promise<boolean> {
-        if ((input.isBeeping == false) && (ctx.user.queueSize > 0)) {
+        await BeepORM.userRepository.populate(ctx.user, 'queue');
+
+        if (!input.isBeeping && (ctx.user.queue.length > 0)) {
             throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
         }
 
@@ -22,13 +24,11 @@ export class BeeperResolver {
 
         await BeepORM.userRepository.persistAndFlush(ctx.user);
 
-        await BeepORM.em.populate(ctx.user, ['queue']);
-
         return true;
     }
     
     @Mutation(() => Boolean)
-    public async setBeeperQueue(@Ctx() ctx: Context, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
+    public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
         const queueEntry = await BeepORM.queueEntryRepository.findOneOrFail(input.queueId, { populate: true });
 
         if (input.value == 'accept' || input.value == 'deny') {
@@ -57,8 +57,6 @@ export class BeeperResolver {
             BeepORM.userRepository.persist(ctx.user);
 
             await BeepORM.em.flush();
-
-            return true;
         }
         else if (input.value == 'deny' || input.value == 'complete') {
             const finishedBeep = new Beep();
@@ -76,17 +74,13 @@ export class BeeperResolver {
 
             BeepORM.userRepository.persist(ctx.user);
 
-            queueEntry.state = -1;
-
-            BeepORM.queueEntryRepository.persist(queueEntry);
+            BeepORM.queueEntryRepository.remove(queueEntry);
 
             await BeepORM.em.flush();
 
             if (input.value == "deny") {
                 sendNotification(queueEntry.rider, `${ctx.user.name} has denied your beep request`, "Open your app to find a diffrent beeper.");
             }
-
-            return true;
         }
         else {
             queueEntry.state++;
@@ -105,8 +99,40 @@ export class BeeperResolver {
             }
 
             await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
-
-            return true;
         }
+
+        pubSub.publish("Beeper" + ctx.user.id, null);
+
+        const t = (input.value == 'deny' || input.value == 'complete') ? null : queueEntry;
+
+        pubSub.publish("Rider" + queueEntry.rider.id, t);
+
+        this.sendRiderUpdates(queueEntry.rider.id, ctx.user.id, pubSub);
+
+        return true;
+    }
+
+    private async sendRiderUpdates(skipId: string, beeperId: string, pubSub: PubSubEngine) {
+        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId } , { populate: true });
+
+        for (const entry of queues) {
+
+            if (entry.rider.id == skipId) continue;
+
+            const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
+
+            entry.ridersQueuePosition = ridersQueuePosition;
+
+            pubSub.publish("Rider" + entry.rider.id, entry);
+        }
+    }
+
+    @Subscription(() => [QueueEntry], {
+        topics: ({ args }) => "Beeper" + args.topic,
+    })
+    public async getBeeperUpdates(@Arg("topic") topic: string, @Root() entry: QueueEntry): Promise<QueueEntry[]> {
+        console.log(topic);
+        const r = await BeepORM.queueEntryRepository.find({ beeper: topic }, { populate: true });
+        return r.filter(entry => entry.state != -1);
     }
 }

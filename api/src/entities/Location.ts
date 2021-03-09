@@ -49,4 +49,8 @@ export class Location {
     @Field()
     @Property()
     timestamp: number = Date.now();
+
+    constructor(data: Partial<Location>) {
+        Object.assign(this, data);
+    }
 }

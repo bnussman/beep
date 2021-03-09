@@ -12,6 +12,7 @@ const GetEditableUser = gql`
             last
             isBeeping
             isStudent
+            isEmailVerified
             role
             venmo
             singlesRate
@@ -73,7 +74,7 @@ function EditUserPage() {
                                 return (
                                     <div key={key}>
                                         <Heading5>{key}</Heading5>
-                                        <Field type="number" name={key} className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500"/>
+                                        <Field type="number" name={key} className="w-full px-4 py-2 leading-tight text-gray-700 bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-yellow-500"/>
                                     </div>
                                 );
                             }
@@ -84,7 +85,7 @@ function EditUserPage() {
                                         {type === "boolean" ?
                                         <Field type="checkbox" name={key}/>
                                         :
-                                        <Field type="text" name={key} className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500"/>
+                                        <Field type="text" name={key} className="w-full px-4 py-2 leading-tight text-gray-700 bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-yellow-500"/>
                                         }
                                     </div>
                                 );

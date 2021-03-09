@@ -48,10 +48,10 @@
     },
     "android": {
       "package": "app.ridebeep.App",
-      "versionCode": 25,
+      "versionCode": 21,
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION", "FOREGROUND_SERVICE", "VIBRATE"]
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION", "VIBRATE"]
     },
     "splash": {
       "image": "./assets/splash.png",

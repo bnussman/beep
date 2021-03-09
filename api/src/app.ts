@@ -1,5 +1,5 @@
 import { initializeSentry } from "./utils/sentry";
-import { EntityManager, EntityRepository, MikroORM } from "@mikro-orm/core";
+import { MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
 import { User } from "./entities/User";
 import { VerifyEmail } from "./entities/VerifyEmail";
@@ -11,24 +11,16 @@ import { Location } from "./entities/Location";
 import { GraphQLSchema } from "graphql";
 import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
-import { ApolloServer, gql } from "apollo-server";
+import { ApolloServer } from "apollo-server";
 import { Rating } from "./entities/Rating";
+import { ORM } from "./utils/ORM";
+import { RedisCacheAdapter } from 'mikro-orm-cache-adapter-redis';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+import Redis from 'ioredis';
 
 const url = `mongodb+srv://banks:${process.env.MONGODB_PASSWORD}@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
 
-export const BeepORM = {} as {
-    orm: MikroORM,
-    em: EntityManager
-    userRepository: EntityRepository<User>,
-    queueEntryRepository: EntityRepository<QueueEntry>,
-    tokenRepository: EntityRepository<TokenEntry>,
-    verifyEmailRepository: EntityRepository<VerifyEmail>,
-    beepRepository: EntityRepository<Beep>,
-    forgotPasswordRepository: EntityRepository<ForgotPassword>,
-    reportRepository: EntityRepository<Report>,
-    locationRepository: EntityRepository<Location>,
-    ratingRepository: EntityRepository<Rating>,
-};
+export const BeepORM = {} as ORM;
 
 export default class BeepAPIServer {
 
@@ -44,7 +36,15 @@ export default class BeepAPIServer {
             dbName: 'beep',
             type: 'mongo',
             clientUrl: url,
-            debug: true
+            debug: true,
+            resultCache: {
+                adapter: RedisCacheAdapter,
+                options: {
+                    host: '192.168.1.135',
+                    port: 6379,
+                    password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
+                }
+            }
         });
 
         BeepORM.em = BeepORM.orm.em;
@@ -60,19 +60,45 @@ export default class BeepAPIServer {
 
         initializeSentry();
 
+        const options = {
+            host: '192.168.1.135',
+            port: 6379,
+            password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q',
+            db: 1
+        };
+
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],
-            authChecker: authChecker
+            authChecker: authChecker,
+            pubSub: new RedisPubSub({
+                publisher: new Redis(options),
+                subscriber: new Redis(options)
+            })
         });
 
         const server = new ApolloServer({
             schema,
-            context: async ({ req }) => {
+            subscriptions: {
+                path: "/subscriptions",
+                //@ts-ignore
+                onConnect: async (params: { token: string }) => {
+                    if (!params || !params.token) throw new Error("No auth token");
+
+                    const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, params.token, { populate: ['user'] });
+                    
+                    if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
+                }
+            },
+            context: async ({ req, connection }) => {
+                if (!req) {
+                    return connection?.context;
+                }
+
                 const token: string | undefined = req.get("Authorization")?.split(" ")[1];
 
                 if (!token) return;
 
-                const tokenEntryResult = await BeepORM.tokenRepository.findOne(token, { populate: true });
+                const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, token, { populate: ['user'] });
 
                 if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
             }

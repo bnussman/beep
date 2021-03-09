@@ -3,14 +3,11 @@ import { Beep } from '../entities/Beep';
 import { QueryOrder } from '@mikro-orm/core';
 import { Arg, Args, Authorized, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import PaginationArgs from '../args/Pagination';
-import {Paginated} from '../users/resolver';
-import {UserRole} from '../entities/User';
+import { Paginated } from '../utils/paginated';
+import { UserRole } from '../entities/User';
 
-// we need to create a temporary class for the abstract, generic class "instance"
 @ObjectType()
-class BeepsResponse extends Paginated(Beep) {
-  // you can add more fields here if you need
-}
+class BeepsResponse extends Paginated(Beep) {}
 
 @Resolver(Beep)
 export class BeepResolver {

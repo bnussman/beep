@@ -15,8 +15,9 @@ const mongodb_1 = require("@mikro-orm/mongodb");
 const type_graphql_1 = require("type-graphql");
 const User_1 = require("./User");
 let Location = class Location {
-    constructor() {
+    constructor(data) {
         this.timestamp = Date.now();
+        Object.assign(this, data);
     }
 };
 __decorate([
@@ -75,6 +76,7 @@ __decorate([
 ], Location.prototype, "timestamp", void 0);
 Location = __decorate([
     type_graphql_1.ObjectType(),
-    core_1.Entity()
+    core_1.Entity(),
+    __metadata("design:paramtypes", [Object])
 ], Location);
 exports.Location = Location;

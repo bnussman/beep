@@ -26,7 +26,6 @@ exports.FilesController = void 0;
 const Sentry = __importStar(require("@sentry/node"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const multer_1 = __importDefault(require("multer"));
-const Error_1 = require("../utils/Error");
 const app_1 = require("../app");
 class FilesController {
     async uploadFile(request) {
@@ -64,20 +63,20 @@ class FilesController {
                 console.log(request.user.user.photoUrl);
                 await app_1.BeepORM.userRepository.persistAndFlush(request.user.user);
                 return {
-                    status: Error_1.APIStatus.Success,
+                    status: "Success",
                     message: "Successfully set profile photo",
                     url: result.Location
                 };
             }
             else {
                 Sentry.captureException("No result from AWS");
-                return new Error_1.APIResponse(Error_1.APIStatus.Error, "Error");
+                return null;
             }
         }
         catch (error) {
             console.error(error);
             Sentry.captureException(error);
-            return new Error_1.APIResponse(Error_1.APIStatus.Error, error);
+            return error;
         }
     }
     handleFile(request) {

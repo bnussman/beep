@@ -23,9 +23,8 @@ const User_1 = require("../entities/User");
 const type_graphql_1 = require("type-graphql");
 const report_1 = require("../validators/report");
 const Pagination_1 = __importDefault(require("../args/Pagination"));
-const resolver_1 = require("../users/resolver");
-// we need to create a temporary class for the abstract, generic class "instance"
-let ReportsResponse = class ReportsResponse extends resolver_1.Paginated(Report_1.Report) {
+const paginated_1 = require("../utils/paginated");
+let ReportsResponse = class ReportsResponse extends paginated_1.Paginated(Report_1.Report) {
 };
 ReportsResponse = __decorate([
     type_graphql_1.ObjectType()

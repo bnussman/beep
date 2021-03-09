@@ -21,10 +21,9 @@ const Beep_1 = require("../entities/Beep");
 const core_1 = require("@mikro-orm/core");
 const type_graphql_1 = require("type-graphql");
 const Pagination_1 = __importDefault(require("../args/Pagination"));
-const resolver_1 = require("../users/resolver");
+const paginated_1 = require("../utils/paginated");
 const User_1 = require("../entities/User");
-// we need to create a temporary class for the abstract, generic class "instance"
-let BeepsResponse = class BeepsResponse extends resolver_1.Paginated(Beep_1.Beep) {
+let BeepsResponse = class BeepsResponse extends paginated_1.Paginated(Beep_1.Beep) {
 };
 BeepsResponse = __decorate([
     type_graphql_1.ObjectType()

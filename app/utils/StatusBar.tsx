@@ -1,5 +1,6 @@
 import React from 'react';
-import { Platform, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
+import { isIOS } from './config';
 
 export type barStyles = "light-content" | "dark-content";
 
@@ -13,7 +14,7 @@ export default function ThemedStatusBar(props: Props) {
 
     const barColor: string = (props.theme === "dark") ? "#000000" : "#ffffff";
 
-    if (Platform.OS == "ios") return <StatusBar barStyle={barStyle} />
+    if (isIOS) return <StatusBar barStyle={barStyle} />
 
     return <StatusBar translucent barStyle={barStyle} backgroundColor={barColor} />;
 }

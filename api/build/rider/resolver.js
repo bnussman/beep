@@ -24,7 +24,7 @@ const User_1 = require("../entities/User");
 const type_graphql_1 = require("type-graphql");
 const rider_1 = __importDefault(require("../validators/rider"));
 let RiderResolver = class RiderResolver {
-    async chooseBeep(ctx, beeperId, input) {
+    async chooseBeep(ctx, pubSub, beeperId, input) {
         const beeper = await app_1.BeepORM.userRepository.findOne(beeperId);
         if (!beeper) {
             throw new Error("Beeper not found");
@@ -47,6 +47,9 @@ let RiderResolver = class RiderResolver {
         await app_1.BeepORM.userRepository.persistAndFlush(beeper);
         notifications_1.sendNotification(beeper, `${ctx.user.name} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
         q.ridersQueuePosition = -1;
+        const e = await app_1.BeepORM.queueEntryRepository.findOne({ rider: ctx.user.id }, true);
+        pubSub.publish("Beeper" + beeper.id, e);
+        pubSub.publish("Rider" + ctx.user.id, e);
         return q;
     }
     async findBeep() {
@@ -58,10 +61,8 @@ let RiderResolver = class RiderResolver {
     }
     async getRiderStatus(ctx) {
         const entry = await app_1.BeepORM.queueEntryRepository.findOne({ rider: ctx.user }, { populate: ['beeper'] });
-        if (entry?.state == -1)
-            await app_1.BeepORM.queueEntryRepository.nativeDelete(entry);
-        if (!entry || entry.state == -1) {
-            throw new Error("Currently, user is not getting a beep.");
+        if (!entry) {
+            return null;
         }
         const ridersQueuePosition = await app_1.BeepORM.queueEntryRepository.count({ beeper: entry.beeper, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
         entry.ridersQueuePosition = ridersQueuePosition;
@@ -73,29 +74,34 @@ let RiderResolver = class RiderResolver {
         }
         return entry;
     }
-    async riderLeaveQueue(ctx) {
+    async riderLeaveQueue(ctx, pubSub) {
         const entry = await app_1.BeepORM.queueEntryRepository.findOne({ rider: ctx.user });
         if (!entry) {
             throw new Error("Unable to leave queue");
         }
         if (entry.isAccepted)
             entry.beeper.queueSize--;
-        await app_1.BeepORM.userRepository.persistAndFlush(entry.beeper);
-        entry.state = -1;
-        await app_1.BeepORM.queueEntryRepository.persistAndFlush(entry);
+        const id = entry.beeper.id;
+        app_1.BeepORM.userRepository.persistAndFlush(entry.beeper);
+        app_1.BeepORM.queueEntryRepository.removeAndFlush(entry);
+        pubSub.publish("Beeper" + id, null);
+        pubSub.publish("Rider" + ctx.user.id, null);
         notifications_1.sendNotification(entry.beeper, `${ctx.user.name} left your queue`, "They decided they did not want a beep from you! :(");
         return true;
     }
     async getBeeperList() {
         return await app_1.BeepORM.userRepository.find({ isBeeping: true });
     }
+    getRiderUpdates(topic, entry) {
+        return entry;
+    }
 };
 __decorate([
     type_graphql_1.Mutation(() => QueueEntry_1.QueueEntry),
     type_graphql_1.Authorized(),
-    __param(0, type_graphql_1.Ctx()), __param(1, type_graphql_1.Arg('beeperId')), __param(2, type_graphql_1.Arg('input')),
+    __param(0, type_graphql_1.Ctx()), __param(1, type_graphql_1.PubSub()), __param(2, type_graphql_1.Arg('beeperId')), __param(3, type_graphql_1.Arg('input')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, rider_1.default]),
+    __metadata("design:paramtypes", [Object, type_graphql_1.PubSubEngine, String, rider_1.default]),
     __metadata("design:returntype", Promise)
 ], RiderResolver.prototype, "chooseBeep", null);
 __decorate([
@@ -106,7 +112,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RiderResolver.prototype, "findBeep", null);
 __decorate([
-    type_graphql_1.Query(() => QueueEntry_1.QueueEntry),
+    type_graphql_1.Query(() => QueueEntry_1.QueueEntry, { nullable: true }),
     type_graphql_1.Authorized(),
     __param(0, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
@@ -116,18 +122,28 @@ __decorate([
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
     type_graphql_1.Authorized(),
-    __param(0, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Ctx()), __param(1, type_graphql_1.PubSub()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, type_graphql_1.PubSubEngine]),
     __metadata("design:returntype", Promise)
 ], RiderResolver.prototype, "riderLeaveQueue", null);
 __decorate([
-    type_graphql_1.Query(returns => [User_1.User]),
+    type_graphql_1.Query(() => [User_1.User]),
     type_graphql_1.Authorized(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], RiderResolver.prototype, "getBeeperList", null);
+__decorate([
+    type_graphql_1.Subscription(() => QueueEntry_1.QueueEntry, {
+        nullable: true,
+        topics: ({ args }) => "Rider" + args.topic,
+    }),
+    __param(0, type_graphql_1.Arg("topic")), __param(1, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, QueueEntry_1.QueueEntry]),
+    __metadata("design:returntype", Object)
+], RiderResolver.prototype, "getRiderUpdates", null);
 RiderResolver = __decorate([
     type_graphql_1.Resolver()
 ], RiderResolver);

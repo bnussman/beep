@@ -1,16 +1,11 @@
-import React, { Component, ReactNode } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Spinner } from "@ui-kitten/components";
-import { UserContext } from '../utils/UserContext';
-import { config } from "../utils/config";
-import { handleFetchError } from "../utils/Errors";
+import { gql, useMutation } from "@apollo/client";
+import { UpdateBeeperQueueMutation } from "../generated/graphql";
 
 interface Props {
-    item: { id: string, riderid: string, state: number };
-}
-
-interface State {
-    isLoading: boolean;
+    item: any;
 }
 
 const LoadingIndicator = () => (
@@ -19,49 +14,36 @@ const LoadingIndicator = () => (
   </View>
 );
 
-export default class ActionButton extends Component<Props, State> {
-    static contextType = UserContext;
-
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            isLoading: false
-        };
+const UpdateBeeperQueue = gql`
+    mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
+        setBeeperQueue(input: {
+        queueId: $queueId,
+        riderId: $riderId,
+        value: $value
+    })
     }
+`;
 
-    UNSAFE_componentWillReceiveProps(): void {
-        this.setState({ isLoading: false });
-    }
+function ActionButton(props: Props) {
+    const [loading, setLoading] = useState<boolean>(false);
+    const [update, { data, error }] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
 
-    async updateStatus(queueID: string, riderID: string, value: string | boolean): Promise<void> {
-        this.setState({ isLoading: true });
+    useEffect( () => { setLoading(false) }, [ props.item.state ] );
 
-        try {
-            const result = await fetch(config.apiUrl + "/beeper/queue/status", {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${this.context.user.token}`
-                },
-                body: JSON.stringify({
-                    value: value,
-                    queueID: queueID,
-                    riderID: riderID
-                })
-            });
-
-            const data = await result.json();
-            if (data.status === "error") {
-                this.setState({ isLoading: handleFetchError(data.message) });
+    async function updateStatus(queueId: string, riderId: string, value: string | boolean): Promise<void> {
+        setLoading(true);
+        
+        const result = await update({
+            variables: {
+                queueId: queueId,
+                riderId: riderId,
+                value: value
             }
-        }
-        catch(error) {
-            this.setState({ isLoading: handleFetchError(error) });
-        }
+        });
     }
 
-    getMessage(): string {
-        switch(this.props.item.state) {
+    function getMessage(): string {
+        switch(props.item.state) {
             case 0:
                 return "I'm on the way";
             case 1:
@@ -75,8 +57,7 @@ export default class ActionButton extends Component<Props, State> {
         }
     }
 
-    render(): ReactNode {
-        if (this.state.isLoading) {
+        if (loading) {
             return (
                 <Button size="giant" appearance='outline' accessoryLeft={LoadingIndicator}>
                     Loading
@@ -85,11 +66,10 @@ export default class ActionButton extends Component<Props, State> {
         }
 
         return (
-            <Button size="giant" onPress={() => this.updateStatus(this.props.item.id, this.props.item.riderid, (this.props.item.state < 3) ? "next" : "complete")}>
-                {this.getMessage()}
+            <Button size="giant" onPress={() => updateStatus(props.item.id, props.item.rider.id, (props.item.state < 3) ? "next" : "complete")}>
+                {getMessage()}
             </Button>
         ) 
-    }
 } 
 
 const styles = StyleSheet.create({
@@ -105,3 +85,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
+
+export default ActionButton;
