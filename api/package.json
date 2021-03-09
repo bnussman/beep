@@ -20,7 +20,7 @@
         "@sentry/node": "^6.1.0",
         "@sentry/tracing": "^6.1.0",
         "apollo-server": "^2.21.0",
-        "aws-sdk": "^2.841.0",
+        "aws-sdk": "^2.860.0",
         "class-validator": "^0.13.1",
         "cors": "^2.8.5",
         "graphql": "^15.5.0",
