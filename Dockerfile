@@ -4,11 +4,11 @@ WORKDIR /usr/api
 
 COPY api/package*.json ./
 
-RUN npm install && npm install typescript -g
+RUN npm ci
 
 COPY api/ .
 
-RUN npm run build
+RUN npx tsc
 
 EXPOSE 3001
 
