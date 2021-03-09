@@ -1,4 +1,4 @@
-FROM node:latest-alpine
+FROM node:current-alpine
 
 WORKDIR /usr/api
 
