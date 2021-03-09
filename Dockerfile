@@ -1,6 +1,6 @@
 FROM node:latest
 
-WORKDIR /usr/beep-api-v3
+WORKDIR /usr/api
 
 COPY api/package.json .
 
@@ -12,4 +12,4 @@ RUN npm run build
 
 EXPOSE 3001
 
-CMD [ "node", "build/src/server.js" ]
+CMD [ "node", "build/server.js" ]
