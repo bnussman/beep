@@ -5,7 +5,8 @@
     "main": "build/src/server.js",
     "scripts": {
         "build": "npx tsc",
-        "start": "node build/server.js"
+        "start": "node build/server.js",
+        "dev": "concurrently \"tsc -w\" \"nodemon build/server.js\""
     },
     "repository": {
         "type": "git",
@@ -46,7 +47,9 @@
         "@types/uuid": "^8.3.0",
         "@typescript-eslint/eslint-plugin": "^4.15.0",
         "@typescript-eslint/parser": "^4.15.0",
+        "concurrently": "^6.0.0",
         "eslint": "^7.19.0",
+        "nodemon": "^2.0.7",
         "typescript": "^4.1.4"
     }
 }
