@@ -26,9 +26,9 @@ const Resend = gql`
     }
 `;
 
-const BeepAppBar = (props: props) => {
-    const [logout, { loading, error }] = useMutation<LogoutMutation>(Logout);
-    const [resend, { loading: resendLoading, error: resendError }] = useMutation<ResendEmailMutation>(Resend);
+function BeepAppBar(props: props) {
+    const [logout, { error }] = useMutation<LogoutMutation>(Logout);
+    const [resend] = useMutation<ResendEmailMutation>(Resend);
     const { user, setUser } = useContext(UserContext);
     const [toggleNav, setToggle] = useState(false);
     const [resendStatus, setResendStatus] = useState<string>();
@@ -36,7 +36,7 @@ const BeepAppBar = (props: props) => {
     let history = useHistory();
 
     // Collapse nav on route change
-    history.listen((location, action) => {
+    history.listen(() => {
         setToggle(false);
     })
 
@@ -97,7 +97,7 @@ const BeepAppBar = (props: props) => {
                     <Nav direction={toggleNav ? 'col' : 'row'} className={toggleNav ? 'pl-0 pt-4' : ''}>
                         <NavItem to="/faq">FAQ</NavItem>
                         <NavItem to="/about">About Us</NavItem>
-                        {(user && user.user.role == UserRole.ADMIN) &&
+                        {(user && user.user.role === UserRole.ADMIN) &&
                             <NavItem to="/admin/users">Admin</NavItem>
                         }
 

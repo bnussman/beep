@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from "react-router-dom";
 import { Heading1, Heading3, Heading5 } from '../../../components/Typography';
 import { Formik, Form, Field } from 'formik';
 import {gql, useMutation, useQuery} from '@apollo/client';
-import {EditUserMutation, GetEditableUserQuery, GetUserQuery} from '../../../generated/graphql';
+import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graphql';
 
 const GetEditableUser = gql`
     query GetEditableUser($id: String!) {
@@ -38,9 +38,9 @@ const EditUser = gql`
 function EditUserPage() {
     const { userId } = useParams<{ userId: string }>();
     const { data: user, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, { variables: { id: userId } }); 
-    const [edit, {data, loading: editLoading, error: editError}] = useMutation<EditUserMutation>(EditUser);
+    const [edit, {data, error: editError}] = useMutation<EditUserMutation>(EditUser);
 
-    async function updateUser(values) {
+    async function updateUser(values: any) {
         await edit({ variables: {
             id: userId,
             data: values
@@ -95,7 +95,7 @@ function EditUserPage() {
                             type="submit"
                             className={`mt-3 inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm bg-yellow-500 hover:bg-yellow-600 focus:outline-white`}
                             disabled={isSubmitting}>
-                            Update User
+                            {isSubmitting ? "Loading..." : "Update User"}
                         </button>
                     </Form>
                 )}

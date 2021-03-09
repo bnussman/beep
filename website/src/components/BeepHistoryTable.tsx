@@ -34,7 +34,7 @@ const Hisory = gql`
 `;
 
 function BeepHistoryTable(props: Props) {
-    const { data, loading, error } = useQuery<GetBeeperHistoryQuery>(Hisory, { variables: { id: props.userId }});
+    const { data } = useQuery<GetBeeperHistoryQuery>(Hisory, { variables: { id: props.userId }});
 
     return <>
         <div className="m-4">

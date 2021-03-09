@@ -80,6 +80,7 @@ function App() {
                 setUser({ ...currentState });
             }
         });
+        // eslint-disable-next-line
     }, []);
 
     return (

@@ -45,8 +45,8 @@ const GetBeep = gql`
 
 function BeepPage() {
     const { beepId } = useParams<{ beepId: string }>();
-    const { data, loading, error } = useQuery<GetBeepQuery>(GetBeep, { variables: { id: beepId}});
-    const [deleteBeep, { data: deleteData, loading: deleteLoading, error: deleteError }] = useMutation<DeleteBeepMutation>(DeleteBeep);
+    const { data } = useQuery<GetBeepQuery>(GetBeep, { variables: { id: beepId}});
+    const [deleteBeep, { loading: deleteLoading }] = useMutation<DeleteBeepMutation>(DeleteBeep);
     const history = useHistory();
 
     async function doDeleteBeep() {
@@ -68,13 +68,13 @@ function BeepPage() {
                     </iframe>
 
                     <div className="flex flex-wrap">
-                        <Card className="mb-4 flex-grow sm:mr-2">
+                        <Card className="flex-grow mb-4 sm:mr-2">
                             <div className="m-4">
                                 <Heading5>Beeper</Heading5>
                                 <div className="flex flex-row items-center">
                                     {data.getBeep.beeper.photoUrl && (
                                         <div className="flex mr-3">
-                                            <img className="h-10 w-10 shadow-lg rounded-full" src={data.getBeep.beeper.photoUrl} alt={`${data.getBeep.beeper.first} ${data.getBeep.beeper.last}`}></img>
+                                            <img className="w-10 h-10 rounded-full shadow-lg" src={data.getBeep.beeper.photoUrl} alt={`${data.getBeep.beeper.first} ${data.getBeep.beeper.last}`}></img>
                                         </div>
                                     )}
                                     <NavLink to={`/admin/users/${data.getBeep.beeper.id}`}>
@@ -83,13 +83,13 @@ function BeepPage() {
                                 </div>
                             </div>
                         </Card>
-                        <Card className="mb-4 flex-grow">
+                        <Card className="flex-grow mb-4">
                             <div className="m-4">
                                 <Heading5>Rider</Heading5>
                                 <div className="flex flex-row items-center">
                                     {data.getBeep.rider.photoUrl && (
                                         <div className="flex mr-3">
-                                            <img className="h-10 w-10 shadow-lg rounded-full" src={data.getBeep.rider.photoUrl} alt={`${data.getBeep.rider.first} ${data.getBeep.rider.last}`}></img>
+                                            <img className="w-10 h-10 rounded-full shadow-lg" src={data.getBeep.rider.photoUrl} alt={`${data.getBeep.rider.first} ${data.getBeep.rider.last}`}></img>
                                         </div>
                                     )}
                                     <NavLink to={`/admin/users/${data.getBeep.rider.id}`}>
@@ -101,13 +101,13 @@ function BeepPage() {
                     </div>
 
                     <div className="flex flex-wrap">
-                        <Card className="mb-4 flex-grow sm:mr-2">
+                        <Card className="flex-grow mb-4 sm:mr-2">
                             <div className="p-4">
                                 <Heading5>Origin</Heading5>
                                 <Body1>{data.getBeep.origin}</Body1>
                             </div>
                         </Card>
-                        <Card className="mb-4 flex-grow">
+                        <Card className="flex-grow mb-4">
                             <div className="p-4">
                                 <Heading5>Destination</Heading5>
                                 <Body1>{data.getBeep.destination}</Body1>
@@ -121,13 +121,13 @@ function BeepPage() {
                         </div>
                     </Card>
                     <div className="flex flex-wrap">
-                        <Card className="mb-4 flex-grow sm:mr-2">
+                        <Card className="flex-grow mb-4 sm:mr-2">
                             <div className="p-4">
                                 <Heading5>Beep Started</Heading5>
                                 <Body1>{new Date(data.getBeep.timeEnteredQueue).toLocaleString()} - {dayjs().to(data.getBeep.timeEnteredQueue)}</Body1>
                             </div>
                         </Card>
-                        <Card className="mb-4 flex-grow">
+                        <Card className="flex-grow mb-4">
                             <div className="p-4">
                                 <Heading5>Beep Ended</Heading5>
                                 <Body1>{new Date(data.getBeep.doneTime).toLocaleString()} - {dayjs().to(data.getBeep.doneTime)}</Body1>
@@ -135,7 +135,7 @@ function BeepPage() {
                         </Card>
                     </div>
                 </div>
-                <Button onClick={() => doDeleteBeep()} className="text-white bg-red-500 hover:bg-red-700">Delete Beep</Button></>
+                    <Button onClick={() => doDeleteBeep()} className="text-white bg-red-500 hover:bg-red-700">{!deleteLoading ? "Delete Beep" : "Loading"}</Button></>
             :
             <Heading1>Loading</Heading1>
             }

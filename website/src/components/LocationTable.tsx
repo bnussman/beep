@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from './Card';
@@ -33,7 +33,7 @@ const Location = gql`
 
 function LocationTable(props: Props) {
     const pageLimit = 5;
-    const { data, loading, error, refetch } = useQuery<GetLocationsQuery>(Location, { variables: { id: props.userId, show: pageLimit, offset: 0}});
+    const { data, refetch } = useQuery<GetLocationsQuery>(Location, { variables: { id: props.userId, show: pageLimit, offset: 0}});
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     async function fetchLocation(page: number) {

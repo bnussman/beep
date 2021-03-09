@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
-import { config } from '../utils/config';
 import { Button, TextInput } from '../components/Input';
 import APIResultBanner from '../components/APIResultBanner';
 import {gql, useMutation} from '@apollo/client';
@@ -41,7 +40,7 @@ function ChangePassword() {
         }
 
         try {
-            const response = await changePassword({ variables: {
+            await changePassword({ variables: {
                 password: password
             }});
         }
@@ -51,7 +50,7 @@ function ChangePassword() {
     }
 
     return (
-        <div className="lg:container px-4 mx-auto">
+        <div className="px-4 mx-auto lg:container">
             {data?.changePassword && <p>Success</p>}
             {error && error}
             {loading && <p>Loading</p>}

@@ -24,13 +24,14 @@ const BeepersGraphQL = gql`
 `;
 
 function Beepers() {
-    const { data, loading, error, stopPolling, startPolling } = useQuery<GetBeepersQuery>(BeepersGraphQL);
+    const { data, stopPolling, startPolling } = useQuery<GetBeepersQuery>(BeepersGraphQL);
 
     useEffect(() => {
-        startPolling(6000);
+        startPolling(4000);
         return () => {
             stopPolling();
         };
+        // eslint-disable-next-line
     }, []);
 
     return <>

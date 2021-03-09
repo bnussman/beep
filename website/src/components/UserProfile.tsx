@@ -11,7 +11,7 @@ import QueueTable from './QueueTable';
 import LocationTable from './LocationTable';
 import { UserRole } from '../types/User';
 import {gql, useMutation} from '@apollo/client';
-import {RemoveUserMutation} from '../generated/graphql';
+import {RemoveUserMutation, User} from '../generated/graphql';
 
 const RemoveUser = gql`
     mutation RemoveUser($id: String!) {
@@ -19,9 +19,14 @@ const RemoveUser = gql`
     }
 `;
 
-function UserProfile(props) {
+interface Props {
+    user: Partial<User>;
+    admin?: boolean;
+}
+
+function UserProfile(props: Props) {
     const history = useHistory();
-    const [remove, { data, loading, error}] = useMutation<RemoveUserMutation>(RemoveUser);
+    const [remove, { loading }] = useMutation<RemoveUserMutation>(RemoveUser);
 
     async function deleteUser(id: string) {
         await remove({ variables: {id: id} });
@@ -74,7 +79,7 @@ function UserProfile(props) {
                             <Button>Edit {props.admin ? 'user' : 'profile'}</Button>
                         </NavLink>
 
-                        {props.admin && <Button onClick={() => deleteUser(user.id)} className="text-white bg-red-500 hover:bg-red-700 dark:text-white">Delete User</Button>}
+                        {props.admin && <Button onClick={() => deleteUser(user.id)} className="text-white bg-red-500 hover:bg-red-700 dark:text-white">{!loading ? "Delete User" : "Loading"}</Button>}
 
                         { !props.admin &&
                             <NavLink to={'password/change'}>

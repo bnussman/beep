@@ -1,16 +1,9 @@
 import React, { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
-import { config } from '../utils/config';
 import { Button, TextInput } from '../components/Input';
-import APIResultBanner from '../components/APIResultBanner';
 import {gql, useMutation} from '@apollo/client';
 import {ForgotPasswordMutation} from '../generated/graphql';
-
-interface Status {
-    status: string;
-    message: string;
-}
 
 const ForgotPasswordGraphQL = gql`
     mutation ForgotPassword($email: String!) {
@@ -26,7 +19,7 @@ function ForgotPassword() {
     async function handleForgotPassword(e: FormEvent): Promise<void> {
         e.preventDefault();
         try {
-            const response = await forgot({ variables: {
+            await forgot({ variables: {
                 email: email
             }});
         }
@@ -40,7 +33,7 @@ function ForgotPassword() {
     }
     
     return (
-        <div className="lg:container px-4 mx-auto">
+        <div className="px-4 mx-auto lg:container">
             {error && error.message}
             {loading && <p>Loading</p>}
             {data?.forgotPassword && <p>Successfully sent password reset email</p>}

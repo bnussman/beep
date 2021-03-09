@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../UserContext';
+import React, { useEffect } from 'react';
 import { Heading1 } from '../components/Typography';
 import {gql, useMutation} from '@apollo/client';
 
@@ -10,13 +9,12 @@ const VerifyAccountGraphQL = gql`
 `;
 
 function VerifyAccount({ match }) {
-    const { user, setUser } = useContext(UserContext);
     const id = match.params.id;
     const [verify, {data, loading, error}] = useMutation(VerifyAccountGraphQL);
     
     async function handleVerify(): Promise<void> {
         try {
-            const response = await verify({ variables: {
+            await verify({ variables: {
                 id: id
             }});
         }
@@ -27,10 +25,11 @@ function VerifyAccount({ match }) {
 
     useEffect(() => {
         handleVerify();
+        // eslint-disable-next-line
     }, []);
 
     return (
-        <div className="lg:container px-4 mx-auto">
+        <div className="px-4 mx-auto lg:container">
             {loading && "Loading"}
             {data ? 
                 <div role="alert" className={data ? "bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" : "bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" }>

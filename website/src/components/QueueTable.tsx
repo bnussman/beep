@@ -37,13 +37,14 @@ const Queue = gql`
 `;
 
 function QueueTable(props: Props) {
-    const { data, loading, error, startPolling, stopPolling } = useQuery<GetQueueQuery>(Queue, { variables: { id: props.userId }});
+    const { data, startPolling, stopPolling } = useQuery<GetQueueQuery>(Queue, { variables: { id: props.userId }});
 
     useEffect(() => {
-        startPolling(4000); 
+        startPolling(3000); 
         return () => {
             stopPolling();
         };
+        // eslint-disable-next-line
     }, []);
 
     function getStatus(value: number): string {

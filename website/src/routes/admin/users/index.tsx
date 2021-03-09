@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { formatPhone } from '../../../utils/formatters';
 import { Heading3 } from '../../../components/Typography';
 import { Card } from '../../../components/Card';
 import { Table, THead, TH, TBody, TR, TDProfile, TDText } from '../../../components/Table';
 import { Indicator } from '../../../components/Indicator';
 import Pagination from '../../../components/Pagination';
-import { TextInput } from '../../../components/Input';
 import {gql, useQuery} from '@apollo/client';
 import { GetUsersQuery } from '../../../generated/graphql';
 
@@ -28,7 +27,7 @@ const UsersGraphQL = gql`
         }
     }
 `;
-function Users(props) {
+function Users() {
     const { loading, error, data, refetch } = useQuery<GetUsersQuery>(UsersGraphQL, { variables: { offset: 0, show: 25 }});
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageLimit = 25;

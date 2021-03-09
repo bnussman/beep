@@ -69,8 +69,8 @@ const GetReport = gql`
 function ReportPage() {
     const { reportId } = useParams<{reportId: string}>();
     const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id: reportId }});
-    const [update, { data: updateData, loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
-    const [deleteReport, { data: deleteData, loading: deleteLoading, error: deleteError }] = useMutation<DeleteReportMutation>(DeleteReport);
+    const [update, { error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
+    const [deleteReport, { loading: deleteLoading }] = useMutation<DeleteReportMutation>(DeleteReport);
     const history = useHistory();
 
     async function doDeleteReport() {
@@ -78,9 +78,9 @@ function ReportPage() {
         history.goBack();
     }
 
-    async function updateReport(values) {
+    async function updateReport(values: any) {
         const result = await update({ variables: { id: reportId, ...values }});
-        if (data) {
+        if (result) {
             refetch();
         }
     }
@@ -94,13 +94,13 @@ function ReportPage() {
         {data?.getReport ?
             <>
                 <div className="flex flex-wrap">
-                    <Card className="mb-4 flex-grow sm:mr-2">
+                    <Card className="flex-grow mb-4 sm:mr-2">
                         <div className="m-4">
                             <Heading5>Reporter</Heading5>
                             <div className="flex flex-row items-center">
                                 {data.getReport.reporter.photoUrl && (
                                     <div className="flex mr-3">
-                                        <img className="h-10 w-10 shadow-lg rounded-full" src={data.getReport.reporter.photoUrl} alt={`${data.getReport.reporter.first} ${data.getReport.reporter.last}`}></img>
+                                        <img className="w-10 h-10 rounded-full shadow-lg" src={data.getReport.reporter.photoUrl} alt={`${data.getReport.reporter.first} ${data.getReport.reporter.last}`}></img>
                                     </div>
                                 )}
                                 <NavLink to={`/admin/users/${data.getReport.reporter.id}`}>
@@ -109,13 +109,13 @@ function ReportPage() {
                             </div>
                         </div>
                     </Card>
-                    <Card className="mb-4 flex-grow">
+                    <Card className="flex-grow mb-4">
                         <div className="m-4">
                             <Heading5>Reported</Heading5>
                             <div className="flex flex-row items-center">
                                 {data.getReport.reported.photoUrl && (
                                     <div className="flex mr-3">
-                                        <img className="h-10 w-10 shadow-lg rounded-full" src={data.getReport.reported.photoUrl} alt={`${data.getReport.reported.first} ${data.getReport.reported.last}`}></img>
+                                        <img className="w-10 h-10 rounded-full shadow-lg" src={data.getReport.reported.photoUrl} alt={`${data.getReport.reported.first} ${data.getReport.reported.last}`}></img>
                                     </div>
                                 )}
                                 <NavLink to={`/admin/users/${data.getReport.reported.id}`}>
@@ -164,7 +164,7 @@ function ReportPage() {
                                     <div className="flex flex-row items-center">
                                         {data.getReport.handledBy.photoUrl && (
                                             <div className="flex mr-3">
-                                                <img className="h-10 w-10 shadow-lg rounded-full" src={data.getReport.handledBy.photoUrl} alt={`${data.getReport.handledBy.first} ${data.getReport.handledBy.last}`}></img>
+                                                <img className="w-10 h-10 rounded-full shadow-lg" src={data.getReport.handledBy.photoUrl} alt={`${data.getReport.handledBy.first} ${data.getReport.handledBy.last}`}></img>
                                             </div>
                                         )}
                                         <NavLink to={`/admin/users/${data.getReport.handledBy.id}`}>
@@ -186,6 +186,7 @@ function ReportPage() {
                 </Card>
             <div className="mt-8">
             <Heading3>Update Report Info</Heading3>
+                {updateError && <p>updateError.message</p>}
             <Formik
                 initialValues={{
                     notes: data.getReport.notes,
@@ -200,7 +201,7 @@ function ReportPage() {
                     <Form>
                         <div>
                             <Heading5>Admin Notes</Heading5>
-                            <Field type="text" component="textarea" name="notes" className="h-32 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500"/>
+                            <Field type="text" component="textarea" name="notes" className="w-full h-32 px-4 py-2 leading-tight text-gray-700 bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-yellow-500"/>
                         </div>
                         <div>
                             <Heading5>Handled</Heading5>
@@ -210,9 +211,9 @@ function ReportPage() {
                             type="submit"
                             className={`mt-3 inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm bg-yellow-500 hover:bg-yellow-600 focus:outline-white`}
                             disabled={isSubmitting}>
-                            Update Report
+                            {isSubmitting ? "Upading..."  : "Update Report"}
                         </button>
-                        <Button onClick={() => doDeleteReport()} className="text-white bg-red-500 hover:bg-red-700">Delete Report</Button>
+                        <Button onClick={() => doDeleteReport()} className="text-white bg-red-500 hover:bg-red-700">{!deleteLoading ? "Delete Report" : "Deleteing..."}</Button>
                     </Form>
                 )}
             </Formik>

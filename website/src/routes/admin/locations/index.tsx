@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from '../../../components/Card';
-import { Table, THead, TH, TBody, TR, TDText, TDButton, TDProfile } from '../../../components/Table';
+import { Table, THead, TH, TBody, TR, TDText, TDProfile } from '../../../components/Table';
 import { Heading3 } from '../../../components/Typography';
 import Pagination from '../../../components/Pagination';
 import {gql, useQuery} from '@apollo/client';

@@ -42,11 +42,11 @@ const ReportsGraphQL = gql`
 
 function Reports() {
 
-    const { loading, error, data, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, { variables: { offset: 0, show: 25 }});
+    const { data, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, { variables: { offset: 0, show: 25 }});
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageLimit = 25;
 
-    async function fetchReports(page) {
+    async function fetchReports(page: number) {
         refetch({ variables: {
             offset: page
         }});

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from "react-router-dom";
 import UserProfile from '../../../components/UserProfile';
 import { Heading1, Heading3 } from '../../../components/Typography';
@@ -27,7 +27,7 @@ const GetUser = gql`
     }
 `;
 
-function UserPage(props) {
+function UserPage() {
     const { userId } = useParams<{ userId: string }>();
     const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } }); 
 

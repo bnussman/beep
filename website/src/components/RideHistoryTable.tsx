@@ -34,7 +34,7 @@ const Hisory = gql`
 `;
 
 function RideHistoryTable(props: Props) {
-    const { data, loading, error } = useQuery<GetRideHistoryQuery>(Hisory, { variables: { id: props.userId }});
+    const { data } = useQuery<GetRideHistoryQuery>(Hisory, { variables: { id: props.userId }});
 
     return <>
         <div className="m-4">
