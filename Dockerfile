@@ -2,7 +2,7 @@ FROM node:latest
 
 WORKDIR /usr/api
 
-COPY api/package*.json .
+COPY api/package*.json ./
 
 RUN npm ci --quiet --only=production && npm install typescript -g
 

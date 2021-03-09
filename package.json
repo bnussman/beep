@@ -5,8 +5,19 @@
     "workspaces": [
         "./*"
     ],
+    "scripts": {
+        "install:all": "yarn install --frozen-lockfile",
+        "build:api": "yarn workspace @beep/api build",
+        "build": "yarn build:api && yarn workspace @beep/api build",
+        "up": "yarn build:api && yarn start:all",
+        "start:all": "concurrently \"yarn workspace @beep/app start\" \"yarn workspace @beep/api start\""
+    },
     "license": "SEE LICENSE IN LICENSE.MD",
     "private": true,
-    "dependencies": {},
-    "devDependencies": {}
+    "dependencies": {
+        "concurrently": "^6.0.0"
+    },
+    "devDependencies": {
+        "expo-yarn-workspaces": "^1.3.1"
+    }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "beep-api",
+    "name": "@beep/api",
     "version": "1.0.0",
     "description": "REST API for the Beep App in Typescript",
     "main": "build/src/server.js",
@@ -10,7 +10,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://gitlab.nussman.us/banks/Beep-API-v3.git"
+        "url": "https://gitlab.nussman.us/beep-app/Beep.git"
     },
     "jest": {
         "preset": "ts-jest",
