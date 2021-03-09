@@ -4,7 +4,7 @@ WORKDIR /usr/api
 
 COPY api/package*.json ./
 
-RUN npm ci --quiet --only=production && npm install typescript -g
+RUN npm install && npm install typescript -g
 
 COPY api/ .
 
