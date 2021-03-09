@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Platform, Image, StyleSheet } from 'react-native';
 import { Text, Layout, Button, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { UserContext } from '../../utils/UserContext';
-import { config } from "../../utils/config";
 import { LoadingIndicator } from "../../utils/Icons";
 import { BackIcon } from '../../utils/Icons';
 import AsyncStorage from '@react-native-community/async-storage';
