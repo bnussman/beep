@@ -5,6 +5,8 @@ import { Button, TextInput } from '../components/Input';
 import { Caption } from '../components/Typography';
 import {gql, useMutation} from '@apollo/client';
 import { EditAccountMutation } from '../generated/graphql';
+import {Success} from '../components/Success';
+import {Error} from '../components/Error';
 
 const EditAccount = gql`
     mutation EditAccount($first: String, $last: String, $email: String, $phone: String, $venmo: String) {
@@ -85,8 +87,8 @@ function EditProfile() {
 
         return (
             <div className="px-4 mx-auto lg:container">
-                {error && error.message}
-                {data && <p>Success</p>}
+                {error && <Error error={error} />}
+                {data && <Success message="Profile Updated"/>}
 
                 <form onSubmit={(e) => handleEdit(e)}>
                     <TextInput

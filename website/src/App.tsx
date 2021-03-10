@@ -14,11 +14,9 @@ import Faq from './routes/FAQ';
 import BeepAppBar from './components/AppBar';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { UserContext } from './UserContext';
-import socket, { didUserChange } from "./utils/Socket";
 import About from './routes/About';
 import { ApolloClient, ApolloProvider, createHttpLink, DefaultOptions, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { APIResponse } from './types/types';
 import {ThemeProvider} from './ThemeContext';
 
 const httpLink = createHttpLink({
@@ -63,24 +61,6 @@ function App() {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
     
     useEffect(() => {
-        if (user) {
-            socket.emit("getUser", user.tokens.id);
-        }
-
-        socket.on('updateUser', (data: APIResponse) => {
-            if (data.status === "error") return console.log(data.message);
-            
-            if (didUserChange(user, data)) {
-                const currentState = user;
-                for (const key in data) {
-                    currentState["user"][key] = data[key];
-                    console.log(key, "updated");
-                }
-                localStorage.setItem("user", JSON.stringify(currentState));
-                setUser({ ...currentState });
-            }
-        });
-        // eslint-disable-next-line
     }, []);
 
     return (

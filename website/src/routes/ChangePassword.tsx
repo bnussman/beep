@@ -2,19 +2,20 @@ import React, { useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
 import { Button, TextInput } from '../components/Input';
-import APIResultBanner from '../components/APIResultBanner';
+import { Error } from '../components/Error';
 import {gql, useMutation} from '@apollo/client';
 import {ChangePasswordMutation} from '../generated/graphql';
+import {Success} from '../components/Success';
 
 const ChangePasswordGraphQL = gql`
     mutation ChangePassword($password: String!) {
         changePassword (password: $password)
     }
 `;
+
 function ChangePassword() {
     const [changePassword, { data, loading, error }] = useMutation<ChangePasswordMutation>(ChangePasswordGraphQL);
     const { user } = useContext(UserContext);
-    const [status, setStatus]: [any, any] = useState();
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
 
@@ -24,20 +25,6 @@ function ChangePassword() {
 
     async function handleEdit(e: any): Promise<void> {
         e.preventDefault();
-
-        if (password !== password2) {
-            return setStatus({
-                status: "error",
-                message: "Your passwords do not match."
-            });
-        }
-
-        if (!password || !password2) {
-            return setStatus({
-                status: "error",
-                message: "Please enter a new password."
-            });
-        }
 
         try {
             await changePassword({ variables: {
@@ -51,10 +38,9 @@ function ChangePassword() {
 
     return (
         <div className="px-4 mx-auto lg:container">
-            {data?.changePassword && <p>Success</p>}
-            {error && error}
+            {data?.changePassword && <Success message="Successfully changed your password"/>}
+            {error && <Error error={error} />}
             {loading && <p>Loading</p>}
-            {status && <APIResultBanner response={status} setResponse={setStatus}/>}
             <form onSubmit={handleEdit}>
                 <TextInput
                     className="mb-4"

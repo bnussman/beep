@@ -2,7 +2,7 @@ import { deleteUser } from '../account/helpers';
 import { BeepORM } from '../app';
 import { wrap } from '@mikro-orm/core';
 import { PartialUser, User, UserRole } from '../entities/User';
-import { Arg, Args, Authorized, ClassType, Ctx, Field, Info, Int, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import PaginationArgs from '../args/Pagination';
 import { Beep } from '../entities/Beep';
 import { QueueEntry } from '../entities/QueueEntry';
@@ -19,9 +19,8 @@ class UsersResponse extends Paginated(User) {}
 export class UserResolver {
 
     @Query(() => User)
-    public async getUser(@Arg("id") id: string, @Info() info: GraphQLResolveInfo): Promise<User> {
-        const relationPaths = fieldsToRelations(info);
-        const user = await BeepORM.userRepository.findOne(id, relationPaths);
+    public async getUser(@Arg("id") id: string): Promise<User> {
+        const user = await BeepORM.userRepository.findOne(id, false);
 
         if (!user) {
             throw new Error("User not found");
@@ -78,13 +77,13 @@ export class UserResolver {
     @Query(() => [Beep])
     @Authorized()
     public async getRideHistory(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Beep[]> {
-        return await BeepORM.beepRepository.find({ rider: id || ctx.user}, { populate: true });
+        return await BeepORM.beepRepository.find({ rider: id || ctx.user}, { populate: ['beeper', 'rider'] });
     }
 
     @Query(() => [Beep])
     @Authorized()
     public async getBeepHistory(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Beep[]>  {
-        return await BeepORM.beepRepository.find({ beeper: id || ctx.user }, { populate: true });
+        return await BeepORM.beepRepository.find({ beeper: id || ctx.user }, { populate: ['beeper', 'rider'] });
     }
 
     @Query(() => [QueueEntry])

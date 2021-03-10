@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { NavLink } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
-import socket from "../utils/Socket";
 import { Nav, NavItem } from './Nav';
 import {Indicator} from './Indicator';
 import { UserRole } from '../types/User';
@@ -46,7 +45,6 @@ function BeepAppBar(props: props) {
 
             localStorage.clear();
             setUser(null);
-            socket.emit("stopGetUser");
             history.push("/");
         }
         catch(error) {

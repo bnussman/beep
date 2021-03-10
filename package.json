@@ -9,7 +9,7 @@
         "install:all": "yarn install --frozen-lockfile",
         "build:api": "yarn workspace @beep/api build",
         "build": "yarn build:api && yarn workspace @beep/api build",
-        "up": "yarn install:all && yarn build:api && yarn start:all",
+        "up": "yarn build:api && yarn start:all",
         "start:all": "concurrently \"yarn workspace @beep/app start\" \"yarn workspace @beep/api dev\" \"yarn workspace @beep/website start\"",
         "codegen": "concurrently \"yarn workspace @beep/app codegen\" \"yarn workspace @beep/website codegen\""
     },

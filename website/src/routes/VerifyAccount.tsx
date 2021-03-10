@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { Heading1 } from '../components/Typography';
 import {gql, useMutation} from '@apollo/client';
+import {Error} from '../components/Error';
+import {Success} from '../components/Success';
 
 const VerifyAccountGraphQL = gql`
     mutation VerifyAccount($id: String!) {
@@ -31,14 +32,8 @@ function VerifyAccount({ match }) {
     return (
         <div className="px-4 mx-auto lg:container">
             {loading && "Loading"}
-            {data ? 
-                <div role="alert" className={data ? "bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" : "bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" }>
-                    {data && "Success"}
-                    {error && error}
-                </div>
-                :
-                <Heading1>Loading</Heading1>
-            }
+            {data && <Success message="Successfully verified email" />}
+            {error && <Error error={error}/>}
         </div>
     );
 }
