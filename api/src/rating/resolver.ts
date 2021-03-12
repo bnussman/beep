@@ -18,7 +18,7 @@ export class RatingResolver {
             
         const rating = new Rating(ctx.user, user, input.stars, input.message, beep);
 
-        await BeepORM.reportRepository.persistAndFlush(rating);
+        await BeepORM.ratingRepository.persistAndFlush(rating);
 
         return true;
     }
