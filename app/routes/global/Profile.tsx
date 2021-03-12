@@ -48,6 +48,7 @@ export function ProfileScreen(props: Props) {
             last: data?.getUser.last,
             beep: props.route.params.beep
         });
+        console.log(props.route.params.beep);
     }
 
     const BackAction = () => (

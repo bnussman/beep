@@ -79,7 +79,6 @@ function LoginScreen(props: Props) {
             AsyncStorage.setItem("auth", JSON.stringify(r.data?.login));
 
             userContext.setUser(r.data?.login);
-            userContext.subscribeToUser(r.data?.login.user.id);
                 
             props.navigation.reset({
                 index: 0,

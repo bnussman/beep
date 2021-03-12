@@ -48,14 +48,18 @@ export function EditProfileScreen(props: Props) {
         if (venmo !== userContext?.user?.user.venmo) setVenmo(userContext?.user?.user.venmo);
     }, [userContext?.user]);
 
-    function handleUpdate() {
-        edit({ variables: {
-            first: first,
-            last: last,
-            email: email,
-            phone: phone,
-            venmo: venmo
-        }});
+    async function handleUpdate() {
+        const result = await edit({
+            variables: {
+                first: first,
+                last: last,
+                email: email,
+                phone: phone,
+                venmo: venmo
+            }
+        });
+        if (result) alert("Successfully updated profile");
+        if (error) alert(error.message);
     }
 
     const BackAction = () => (
@@ -68,8 +72,6 @@ export function EditProfileScreen(props: Props) {
             <Layout style={{flex: 1}}>
                 <KeyboardAwareScrollView scrollEnabled={false} extraScrollHeight={70}>
                     <Layout style={styles.container}>
-                        {data && <Text>Success</Text>}
-                        {error && <Text>{error.message}</Text>}
                         <Layout style={styles.form}>
                             <Input
                                 label="Username"

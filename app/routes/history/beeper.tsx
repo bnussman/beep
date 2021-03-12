@@ -1,13 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Layout, Text, Divider, List, ListItem, Spinner } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-import { config } from "../../utils/config";
-import { handleFetchError } from "../../utils/Errors";
-import { UserContext } from '../../utils/UserContext';
 import ProfilePicture from '../../components/ProfilePicture';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { MainNavParamList } from '../../navigators/MainTabs';
-import { User } from '../../types/Beep';
 import { gql, useQuery } from '@apollo/client';
 import { GetBeepHistoryQuery } from '../../generated/graphql';
 
@@ -48,7 +44,7 @@ export function BeeperRideLogScreen(props: Props) {
                         />
                     );
                 }}
-                onPress={() => props.navigation.push("Profile", { id: item.rider.id, beepEventId: item.id })}
+                onPress={() => props.navigation.push("Profile", { id: item.rider.id, beep: item.id })}
                 title={`You beeped ${item.rider.first} ${item.rider.last}`}
                 description={`Group size: ${item.groupSize}\nOrigin: ${item.origin}\nDestination: ${item.destination}\nDate: ${new Date(item.timeEnteredQueue)}`}
             />

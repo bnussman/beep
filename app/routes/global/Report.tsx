@@ -25,7 +25,7 @@ export function ReportScreen(props: Props) {
                 const result = await report({
                     variables: {
                         userId: props.route.params.id,
-                        beep: props.route.params.beep,
+                        beepId: props.route.params.beep,
                         reason: reason
                     }
                 });

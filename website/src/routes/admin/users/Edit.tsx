@@ -1,4 +1,3 @@
-import React from 'react'
 import { useParams } from "react-router-dom";
 import { Heading1, Heading3, Heading5 } from '../../../components/Typography';
 import { Formik, Form, Field } from 'formik';
@@ -23,6 +22,7 @@ const GetEditableUser = gql`
             queueSize
             phone
             username
+            email
         }
     }
 `;
