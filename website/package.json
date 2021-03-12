@@ -2,6 +2,11 @@
   "name": "@beep/website",
   "version": "1.0.0",
   "private": true,
+  "workspaces": {
+      "nohoist": [
+          "**"
+      ]
+  },
   "dependencies": {
     "@apollo/client": "^3.3.11",
     "@craco/craco": "^6.1.1",
