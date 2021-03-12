@@ -4,7 +4,7 @@ WORKDIR /usr/api
 
 COPY api/package*.json ./
 
-RUN npm ci
+RUN npm install
 
 COPY api/ .
 
