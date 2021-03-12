@@ -22,7 +22,7 @@ const url = `mongodb+srv://banks:${process.env.MONGODB_PASSWORD}@beep.5zzlx.mong
 
 console.log("Our Envrionment", process.env);
 
-const development = !process.env.NODE_ENV;
+const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
 export const BeepORM = {} as ORM;
 
@@ -42,7 +42,7 @@ export default class BeepAPIServer {
             debug: true,
         };
 
-        if (!development) {
+        if (prod) {
             console.log("Using Redis as cache for MongoDB");
             base.resultCache = {
                 adapter: RedisCacheAdapter,
@@ -52,6 +52,9 @@ export default class BeepAPIServer {
                     password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
                 }
             }
+        }
+        else {
+            console.log("Running locally, not using Redis");
         }
 
         BeepORM.orm = await MikroORM.init(base);
@@ -79,7 +82,7 @@ export default class BeepAPIServer {
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],
             authChecker: authChecker,
-            pubSub: development ? undefined : new RedisPubSub({
+            pubSub: !prod ? undefined : new RedisPubSub({
                 publisher: new Redis(options),
                 subscriber: new Redis(options)
             })
