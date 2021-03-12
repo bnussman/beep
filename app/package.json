@@ -8,8 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "codegen": "graphql-codegen --config codegen.yml",
-    "postinstall": "expo-yarn-workspaces postinstall"
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@apollo/client": "^3.3.11",
