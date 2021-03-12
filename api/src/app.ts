@@ -20,6 +20,8 @@ import Redis from 'ioredis';
 
 const url = `mongodb+srv://banks:${process.env.MONGODB_PASSWORD}@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
 
+console.log("Our Envrionment", process.env);
+
 const development = !process.env.NODE_ENV;
 
 export const BeepORM = {} as ORM;
