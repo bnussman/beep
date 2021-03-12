@@ -20,6 +20,8 @@ import Redis from 'ioredis';
 
 const url = `mongodb+srv://banks:${process.env.MONGODB_PASSWORD}@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
 
+const development = !process.env.NODE_ENV;
+
 export const BeepORM = {} as ORM;
 
 export default class BeepAPIServer {
@@ -29,15 +31,18 @@ export default class BeepAPIServer {
     }
 
     private async setup(): Promise<void> {
-
-        BeepORM.orm = await MikroORM.init({
+        const base: any = {
             entities: ['./build/entities/*.js'],
             entitiesTs: ['./src/entities/*.ts'],
             dbName: 'beep',
             type: 'mongo',
             clientUrl: url,
             debug: true,
-            resultCache: {
+        };
+
+        if (!development) {
+            console.log("Using Redis as cache for MongoDB");
+            base.resultCache = {
                 adapter: RedisCacheAdapter,
                 options: {
                     host: '192.168.1.135',
@@ -45,7 +50,9 @@ export default class BeepAPIServer {
                     password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
                 }
             }
-        });
+        }
+
+        BeepORM.orm = await MikroORM.init(base);
 
         BeepORM.em = BeepORM.orm.em;
         BeepORM.userRepository = BeepORM.orm.em.getRepository(User);
@@ -70,7 +77,7 @@ export default class BeepAPIServer {
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],
             authChecker: authChecker,
-            pubSub: new RedisPubSub({
+            pubSub: development ? undefined : new RedisPubSub({
                 publisher: new Redis(options),
                 subscriber: new Redis(options)
             })
