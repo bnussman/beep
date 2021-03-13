@@ -1,8 +1,8 @@
-# Beep App
+# Beep App 🚖
 
-This is the monorepo for the Beep App
+This is the monorepo for the Beep App. Ride beep app is currently a substitute for the facebook page that people use to get around Boone, NC. This app allows college students to make money by beeping and allows for an easy and cheap way to get where they want around campus and Boone. The owners are students at App State, Ian Murphy and Banks Nussman, who saw the flaws of the facebook page and wanted to improve the experience with leaving everything that was great about the original idea.
 
-## Running on Linux
+## Running
 
 ### Dependencies
 
