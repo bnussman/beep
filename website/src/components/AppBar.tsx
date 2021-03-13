@@ -3,21 +3,17 @@ import { UserContext } from '../UserContext';
 import { NavLink } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import { Nav, NavItem } from './Nav';
-import {Indicator} from './Indicator';
 import { UserRole } from '../types/User';
 import {gql, useMutation} from '@apollo/client';
 import {LogoutMutation, ResendEmailMutation} from '../generated/graphql';
 import {ThemeToggle} from './ThemeToggle';
+import {UserDropdown} from './UserDropdown';
+import {AdminDropdown} from './AdminDropdown';
 
 interface props {
     noErrors?: boolean;
 }
 
-const Logout = gql`
-    mutation Logout {
-        logout (isApp: false)
-    }
-`;
 
 const Resend = gql`
     mutation ResendEmail {
@@ -26,8 +22,7 @@ const Resend = gql`
 `;
 
 function BeepAppBar(props: props) {
-    const [logout, { error }] = useMutation<LogoutMutation>(Logout);
-    const [resend] = useMutation<ResendEmailMutation>(Resend);
+    const [resend, { error }] = useMutation<ResendEmailMutation>(Resend);
     const { user, setUser } = useContext(UserContext);
     const [toggleNav, setToggle] = useState(false);
     const [resendStatus, setResendStatus] = useState<string>();
@@ -39,18 +34,6 @@ function BeepAppBar(props: props) {
         setToggle(false);
     })
 
-    async function handleLogout() {
-        try {
-            await logout();
-
-            localStorage.clear();
-            setUser(null);
-            history.push("/");
-        }
-        catch(error) {
-            console.error(error);
-        }
-    }
 
     async function resendVarificationEmail() {
         try {
@@ -83,7 +66,7 @@ function BeepAppBar(props: props) {
 
                 {/* Menu button */}
                 <div className="block lg:hidden">
-                    <button onClick={() => setToggle(!toggleNav)} className="flex items-center px-3 py-2 text-black border rounded border-black-400 hover:text-black hover:border-white">
+                    <button onClick={() => setToggle(!toggleNav)} className="flex items-center px-3 py-2 text-black border rounded border-black-400 dark:border-white dark:hover:border-white dark:text-white focus:outline-none">
                         <svg className="w-3 h-3 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" /></svg>
                     </button>
                 </div>
@@ -96,24 +79,21 @@ function BeepAppBar(props: props) {
                         <NavItem to="/faq">FAQ</NavItem>
                         <NavItem to="/about">About Us</NavItem>
                         {(user && user.user.role === UserRole.ADMIN) &&
-                            <NavItem to="/admin/users">Admin</NavItem>
+                            <div className="mr-4">
+                                <AdminDropdown/>
+                            </div>
                         }
 
-                        {user
-                            ? <NavItem onClick={handleLogout}>Logout</NavItem>
-                            : <NavItem to="/login">Login</NavItem>
+                        {!user &&
+                            <NavItem to="/login">Login</NavItem>
                         }
 
                         {user &&
-                            <NavItem to="/profile" className="flex flex-row items-center mt-1">
-                                {user.user.photoUrl &&
-                                    <img className="block object-cover w-10 h-10 mr-4 rounded-full lg:inline-block" alt="profile" src={user.user.photoUrl} />
-                                }
-                                <span className="mb-1">{user.user.first + " " + user.user.last}</span>
-                                {user.user.isBeeping && <Indicator color="green" className="mb-1 ml-3 animate-pulse" />}
-                            </NavItem>
+                            <UserDropdown/>
                         }
-                        <ThemeToggle/>
+                        <NavItem>
+                            <ThemeToggle/>
+                        </NavItem>
                     </Nav>
                 </div>
             </nav>

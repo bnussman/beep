@@ -31,14 +31,14 @@ export function NavItem(props) {
                     to={props.to}
                     onClick={props.onClick}
                     className={`hover:text-yellow-300 ${props.className}`}
-                    activeClassName="font-semibold text-yellow-400">
+                    activeClassName="font-semibold text-yellow-300">
                     {props.children}
                 </NavLink>
                 :
                 // Button with action
                 <button
                     onClick={props.onClick}
-                    className={`hover:text-yellow-500 focus:outline-none ${props.className}`}>
+                    className={`hover:text-yellow-300 focus:outline-none ${props.className}`}>
                     {props.children}
                 </button>
             }
