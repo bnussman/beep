@@ -1,15 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet } from "react-native"
 import { Button, Spinner, Text, Layout, TopNavigation, TopNavigationAction } from "@ui-kitten/components";
 import { BackIcon, ReportIcon } from "../../utils/Icons";
-import { config } from "../../utils/config";
 import ProfilePicture from "../../components/ProfilePicture";
-import { handleFetchError } from "../../utils/Errors";
 import { UserContext } from '../../utils/UserContext';
 import { useContext } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { DrawerLayoutAndroid } from "react-native-gesture-handler";
-import { launchCameraAsync } from "expo-image-picker";
 import { GetUserQuery } from "../../generated/graphql";
 
 interface Props {
@@ -48,7 +44,15 @@ export function ProfileScreen(props: Props) {
             last: data?.getUser.last,
             beep: props.route.params.beep
         });
-        console.log(props.route.params.beep);
+    }
+
+    function handleRate() {
+        props.navigation.navigate("Rate", {
+            id: props.route.params.id,
+            first: data?.getUser.first,
+            last: data?.getUser.last,
+            beep: props.route.params.beep
+        });
     }
 
     const BackAction = () => (
@@ -128,7 +132,10 @@ export function ProfileScreen(props: Props) {
                             </Layout>
                         </Layout>
                         {(props.route.params.id != userContext?.user?.user.id) &&
-                            <Button onPress={() => handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
+                            <>
+                                <Button onPress={() => handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
+                                <Button onPress={() => handleRate()} style={styles.button}>Rate User</Button>
+                            </>
                         }
                     </Layout>
                 </>

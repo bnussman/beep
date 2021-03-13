@@ -87,6 +87,7 @@ export type User = {
   capacity: Scalars['Float'];
   masksRequired: Scalars['Boolean'];
   queueSize: Scalars['Float'];
+  rating?: Maybe<Scalars['Float']>;
   role: Scalars['String'];
   pushToken?: Maybe<Scalars['String']>;
   photoUrl?: Maybe<Scalars['String']>;
@@ -169,6 +170,12 @@ export type BeepsResponse = {
 export type LocationsResponse = {
   __typename?: 'LocationsResponse';
   items: Array<Location>;
+  count: Scalars['Int'];
+};
+
+export type RatingsResponse = {
+  __typename?: 'RatingsResponse';
+  items: Array<Rating>;
   count: Scalars['Int'];
 };
 
@@ -283,7 +290,7 @@ export type Query = {
   getBeep: Beep;
   getETA: Scalars['String'];
   getLocations: LocationsResponse;
-  getUserRating: Array<Rating>;
+  getUserRating: RatingsResponse;
   getReports: ReportsResponse;
   getReport: Report;
   findBeep: User;
@@ -323,6 +330,8 @@ export type QueryGetLocationsArgs = {
 
 export type QueryGetUserRatingArgs = {
   id: Scalars['String'];
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
 };
 
 
@@ -685,6 +694,19 @@ export type GetUserQuery = (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize'>
   ) }
+);
+
+export type RateUserMutationVariables = Exact<{
+  userId: Scalars['String'];
+  stars: Scalars['Float'];
+  message?: Maybe<Scalars['String']>;
+  beepId?: Maybe<Scalars['String']>;
+}>;
+
+
+export type RateUserMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'rateUser'>
 );
 
 export type ReportUserMutationVariables = Exact<{
@@ -1324,6 +1346,42 @@ export function useGetUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = ApolloReactCommon.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const RateUserDocument = gql`
+    mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String) {
+  rateUser(
+    input: {userId: $userId, beepId: $beepId, stars: $stars, message: $message}
+  )
+}
+    `;
+export type RateUserMutationFn = ApolloReactCommon.MutationFunction<RateUserMutation, RateUserMutationVariables>;
+
+/**
+ * __useRateUserMutation__
+ *
+ * To run a mutation, you first call `useRateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [rateUserMutation, { data, loading, error }] = useRateUserMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      stars: // value for 'stars'
+ *      message: // value for 'message'
+ *      beepId: // value for 'beepId'
+ *   },
+ * });
+ */
+export function useRateUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RateUserMutation, RateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<RateUserMutation, RateUserMutationVariables>(RateUserDocument, options);
+      }
+export type RateUserMutationHookResult = ReturnType<typeof useRateUserMutation>;
+export type RateUserMutationResult = ApolloReactCommon.MutationResult<RateUserMutation>;
+export type RateUserMutationOptions = ApolloReactCommon.BaseMutationOptions<RateUserMutation, RateUserMutationVariables>;
 export const ReportUserDocument = gql`
     mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
   reportUser(input: {userId: $userId, reason: $reason, beepId: $beepId})

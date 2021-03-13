@@ -1,6 +1,6 @@
-import { Cascade, Collection, Entity, Enum, OneToMany, PrimaryKey, Property, SerializedPrimaryKey, Unique } from "@mikro-orm/core";
+import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property, SerializedPrimaryKey, Unique } from "@mikro-orm/core";
 import { ObjectId } from "@mikro-orm/mongodb";
-import { Authorized, Field, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { QueueEntry } from './QueueEntry';
 import { Location } from './Location';
 import { Rating } from './Rating';
@@ -82,6 +82,10 @@ export class User {
     @Field()
     @Property()
     queueSize: number = 0;
+
+    @Field({ nullable: true })
+    @Property({ nullable: true })
+    rating?: number;
 
     @Field()
     @Enum()

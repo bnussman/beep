@@ -4,7 +4,7 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const ip = '192.168.1.57';
+const ip = 'beep-app-beep-staging.192.168.1.200.nip.io';
 
 const httpLink = createHttpLink({
     uri: `http://${ip}:3001`,

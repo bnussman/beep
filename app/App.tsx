@@ -9,6 +9,7 @@ import { ForgotPasswordScreen } from './routes/auth/ForgotPassword';
 import { MainTabs } from './navigators/MainTabs';
 import { ProfileScreen } from './routes/global/Profile';
 import { ReportScreen } from './routes/global/Report';
+import { RateScreen } from './routes/global/Rate';
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, IconRegistry, Layout } from '@ui-kitten/components';
 import { default as beepTheme } from './utils/theme.json';
@@ -207,6 +208,7 @@ export default class App extends Component<undefined, State> {
                                     <Stack.Screen name="Main" component={MainTabs} />
                                     <Stack.Screen name='Profile' component={ProfileScreen} />
                                     <Stack.Screen name='Report' component={ReportScreen} />
+                                    <Stack.Screen name='Rate' component={RateScreen} />
                                 </Stack.Navigator>
                             </NavigationContainer>
                         </ApplicationProvider>

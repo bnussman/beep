@@ -1,10 +1,14 @@
 import { BeepORM } from '../app';
-import { User } from '../entities/User';
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
-import { Rating } from '../entities/Rating';
 import { RatingInput } from '../validators/rating';
 import { Beep } from '../entities/Beep';
+import {Paginated} from '../utils/paginated';
+import {Rating} from '../entities/Rating';
+import PaginationArgs from '../args/Pagination';
+
+@ObjectType()
+class RatingsResponse extends Paginated(Rating) {}
 
 @Resolver(Rating)
 export class RatingResolver {
@@ -12,21 +16,36 @@ export class RatingResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async rateUser(@Ctx() ctx: Context, @Arg('input') input: RatingInput): Promise<boolean> {
-        const user = BeepORM.em.getReference(User, input.userId);
+        const user = await BeepORM.userRepository.findOneOrFail(input.userId, true);
 
         const beep = input.beepId ? BeepORM.em.getReference(Beep, input.beepId) : undefined;
-            
+        
         const rating = new Rating(ctx.user, user, input.stars, input.message, beep);
 
-        await BeepORM.ratingRepository.persistAndFlush(rating);
+        if (!user.rating) {
+            user.rating = input.stars;
+        }
+        else {
+            const numberOfRatings = await BeepORM.ratingRepository.count({ rated: input.userId });  
+            
+            user.rating = ((user.rating * numberOfRatings) + input.stars) / (numberOfRatings + 1);
+        }
+
+        user.ratings.add(rating);
+        
+        await BeepORM.userRepository.persistAndFlush(user);
 
         return true;
     }
 
-    @Query(() => [Rating])
+    @Query(() => RatingsResponse)
     @Authorized()
-    public async getUserRating(@Arg('id') id: string): Promise<Rating[]> {
-        return await BeepORM.ratingRepository.find({ rated: id }); 
-    }
+    public async getUserRating(@Args() { offset, show }: PaginationArgs, @Arg('id') id: string): Promise<RatingsResponse> {
+        const [ratings, count] = await BeepORM.em.findAndCount(Rating, { rated: id }, { limit: show, offset: offset });
 
+        return {
+            items: ratings,
+            count: count
+        };
+    }
 }

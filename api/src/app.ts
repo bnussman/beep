@@ -20,8 +20,6 @@ import Redis from 'ioredis';
 
 const url = `mongodb+srv://banks:${process.env.MONGODB_PASSWORD}@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
 
-console.log("Our Envrionment", process.env);
-
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
 export const BeepORM = {} as ORM;
