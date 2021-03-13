@@ -20,7 +20,7 @@ import { setContext } from '@apollo/client/link/context';
 import {ThemeProvider} from './ThemeContext';
 
 const httpLink = createHttpLink({
-    uri: 'http://beep-app-beep-staging.192.168.1.200.nip.io:3001',
+    uri: 'https://beep-app-beep-staging.192.168.1.200.nip.io',
 });
 
 const authLink = setContext(async (_, { headers }) => {

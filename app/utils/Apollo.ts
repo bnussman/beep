@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 const ip = 'beep-app-beep-staging.192.168.1.200.nip.io';
 
 const httpLink = createHttpLink({
-    uri: `http://${ip}:3001`,
+    uri: `https://${ip}`,
 });
 
 const wsLink = new WebSocketLink({
