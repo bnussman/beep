@@ -6,7 +6,7 @@ This is the monorepo for the Beep App
 
 ### Dependencies
 
-Make sure you are using a supported version of Node.js (14.5.4 is recommended). We recommend using [NVM](https://github.com/nvm-sh/nvm):\
+Make sure you are using a supported version of Node.js (14.5.4 is recommended). We recommend using [NVM](https://github.com/nvm-sh/nvm)
 ```
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 ## You may need to open a new terminal window
@@ -36,7 +36,12 @@ Install dependencies
 yarn
 ```
 
-To Run the development envrionment use
+To Run the whole development envrionment use
 ```
 yarn up
+```
+
+To run just one service use
+```
+yarn start:website
 ```
