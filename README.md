@@ -14,8 +14,16 @@ sudo npm install --global yarn
 
 ### Running Locally
 
-After clone or download (and unzip) the repository go to the root and type:
+Clone this repository
+```
+git clone https://gitlab.nussman.us/beep-app/beep.git
+```
+Go into the projects directory
+```
+cd beep
+```
 
+Install dependencies
 ```
 yarn
 ```
