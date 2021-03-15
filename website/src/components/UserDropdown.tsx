@@ -20,7 +20,7 @@ export function UserDropdown() {
         try {
             await logout();
 
-            localStorage.clear();
+            localStorage.removeItem('user');
             setUser(null);
             history.push("/");
         }

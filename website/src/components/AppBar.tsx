@@ -78,7 +78,7 @@ function BeepAppBar(props: props) {
                     <Nav direction={toggleNav ? 'col' : 'row'} className={toggleNav ? 'pl-0 pt-4' : ''}>
                         <NavItem to="/faq">FAQ</NavItem>
                         <NavItem to="/about">About Us</NavItem>
-                        {(user && user.user.role === UserRole.ADMIN) &&
+                        {(user && user?.user?.role === UserRole.ADMIN) &&
                             <AdminDropdown/>
                         }
 
@@ -89,14 +89,14 @@ function BeepAppBar(props: props) {
                         {user &&
                             <UserDropdown/>
                         }
-                        <NavItem>
+                        <NavItem plain>
                             <ThemeToggle/>
                         </NavItem>
                     </Nav>
                 </div>
             </nav>
 
-            {(user && !user.user.isEmailVerified && !props.noErrors) &&
+            {(user && !user.user?.isEmailVerified && !props.noErrors) &&
 
                 <div className="px-4 mx-auto mb-4 lg:container" >
                     <div role="alert">

@@ -76,7 +76,8 @@ function EditProfile(props) {
                 tempUser.user.venmo = venmo;
 
                 //if email was changed, make sure the context knows the user is no longer verified
-                if (email !== userContext.user.user.email) {
+                if (email !== userContext.user.email) {
+                    console.log("EMAIL CHANGED");
                     tempUser.user.isEmailVerified = false;
                     tempUser.user.isStudent = false;
                 }
@@ -119,7 +120,7 @@ function EditProfile(props) {
     return (
         <div className="px-4 mx-auto lg:container dark:text-white">
 
-            <div className="w-full px-5 pt-5 pb-10 mx-auto mt-8 mb-4 text-gray-800 bg-white rounded-lg shadow-lg dark:bg-gray-800 dark:text-white">
+            <div className="w-full px-5 pt-5 pb-10 mx-auto mb-4 text-gray-800 bg-white rounded-lg shadow-lg mt-14 dark:bg-gray-800 dark:text-white">
                 <div className="w-full pt-1 pb-5">
                     <div className="w-20 h-20 mx-auto -mt-16 overflow-hidden rounded-full shadow-lg">
                         <label htmlFor="photo">
