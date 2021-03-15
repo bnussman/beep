@@ -4,7 +4,6 @@ import { Card } from './Card';
 import { Table, THead, TH, TBody, TR, TDProfile, TDText } from './Table';
 import {gql, useQuery} from '@apollo/client';
 import {GetBeeperHistoryQuery} from '../generated/graphql';
-import {Heading2} from './Typography';
 
 dayjs.extend(duration);
 

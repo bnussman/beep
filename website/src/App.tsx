@@ -63,7 +63,6 @@ function getInitialTheme() {
     const storedPrefs = window.localStorage.getItem("color-theme");
 
     if (storedPrefs) {
-        console.log("totae");
         const root = window.document.documentElement
         const isDark = storedPrefs === "dark";
 
@@ -90,6 +89,7 @@ function App() {
 
     function setUser(d) {
         setInternalUser({ ...d });
+        if(!d) setInternalUser(null);
     }
 
     function setTheme(theme: string) {

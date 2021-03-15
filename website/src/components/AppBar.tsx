@@ -1,14 +1,14 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { NavLink } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import { Nav, NavItem } from './Nav';
 import { UserRole } from '../types/User';
-import {gql, useMutation} from '@apollo/client';
-import {LogoutMutation, ResendEmailMutation} from '../generated/graphql';
-import {ThemeToggle} from './ThemeToggle';
-import {UserDropdown} from './UserDropdown';
-import {AdminDropdown} from './AdminDropdown';
+import { gql, useMutation } from '@apollo/client';
+import { ResendEmailMutation } from '../generated/graphql';
+import { ThemeToggle } from './ThemeToggle';
+import { UserDropdown } from './UserDropdown';
+import { AdminDropdown } from './AdminDropdown';
 
 interface props {
     noErrors?: boolean;
@@ -23,7 +23,7 @@ const Resend = gql`
 
 function BeepAppBar(props: props) {
     const [resend, { error }] = useMutation<ResendEmailMutation>(Resend);
-    const { user, setUser } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const [toggleNav, setToggle] = useState(false);
     const [resendStatus, setResendStatus] = useState<string>();
     const [refreshStatus, setRefreshStatus] = useState<string>();
@@ -79,7 +79,9 @@ function BeepAppBar(props: props) {
                         <NavItem to="/faq">FAQ</NavItem>
                         <NavItem to="/about">About Us</NavItem>
                         {(user && user?.user?.role === UserRole.ADMIN) &&
-                            <AdminDropdown/>
+                            <NavItem plain>
+                                <AdminDropdown/>
+                            </NavItem>
                         }
 
                         {!user &&
@@ -87,7 +89,9 @@ function BeepAppBar(props: props) {
                         }
 
                         {user &&
-                            <UserDropdown/>
+                            <NavItem plain>
+                                <UserDropdown/>
+                            </NavItem>
                         }
                         <NavItem plain>
                             <ThemeToggle/>

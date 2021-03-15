@@ -33,24 +33,25 @@ const UploadPhoto = gql`
     }
 `;
 
-function EditProfile(props) {
+function EditProfile() {
     const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
-    const [upload, { data: uploadData, loading: uploadLoading, error: uploadError }] = useMutation(UploadPhoto);
+    const [upload, { loading: uploadLoading, error: uploadError }] = useMutation(UploadPhoto);
     const userContext = React.useContext(UserContext);
-    const [first, setFirst] = useState<string | undefined>(userContext.user?.user.first);
-    const [last, setLast] = useState<string | undefined>(userContext.user?.user.last);
-    const [email, setEmail] = useState<string | undefined>(userContext.user?.user.email);
-    const [phone, setPhone] = useState<string | undefined>(userContext.user?.user.phone);
-    const [venmo, setVenmo] = useState<string | undefined>(userContext.user?.user.venmo);
-    const [photoUrl, setPhotoUrl] = useState<string | undefined>(userContext.user?.user.photoUrl);
+    const [first, setFirst] = useState<string | undefined>(userContext.user?.user?.first);
+    const [last, setLast] = useState<string | undefined>(userContext.user?.user?.last);
+    const [email, setEmail] = useState<string | undefined>(userContext.user?.user?.email);
+    const [phone, setPhone] = useState<string | undefined>(userContext.user?.user?.phone);
+    const [venmo, setVenmo] = useState<string | undefined>(userContext.user?.user?.venmo);
+    const [photoUrl, setPhotoUrl] = useState<string | undefined>(userContext.user?.user?.photoUrl);
 
     useEffect(() => {
-        if (first !== userContext.user?.user.first) setFirst(userContext.user?.user.first);
-        if (last !== userContext.user?.user.last) setLast(userContext.user?.user.last);
-        if (email !== userContext.user?.user.email) setEmail(userContext.user?.user.email);
-        if (phone !== userContext.user?.user.first) setPhone(userContext.user?.user.phone);
-        if (venmo !== userContext.user?.user.venmo) setVenmo(userContext.user?.user.venmo);
-        if (photoUrl !== userContext.user?.user.photoUrl) setPhotoUrl(userContext.user?.user.photoUrl);
+        if (first !== userContext.user?.user?.first) setFirst(userContext.user?.user?.first);
+        if (last !== userContext.user?.user?.last) setLast(userContext.user?.user?.last);
+        if (email !== userContext.user?.user?.email) setEmail(userContext.user?.user?.email);
+        if (phone !== userContext.user?.user?.first) setPhone(userContext.user?.user?.phone);
+        if (venmo !== userContext.user?.user?.venmo) setVenmo(userContext.user?.user?.venmo);
+        if (photoUrl !== userContext.user?.user?.photoUrl) setPhotoUrl(userContext.user?.user?.photoUrl);
+        // eslint-disable-next-line
     }, [userContext]);
 
     async function handleEdit(e: any) {
@@ -76,7 +77,7 @@ function EditProfile(props) {
                 tempUser.user.venmo = venmo;
 
                 //if email was changed, make sure the context knows the user is no longer verified
-                if (email !== userContext.user.email) {
+                if (email !== userContext.user.user.email) {
                     console.log("EMAIL CHANGED");
                     tempUser.user.isEmailVerified = false;
                     tempUser.user.isStudent = false;
@@ -92,13 +93,13 @@ function EditProfile(props) {
         }
     }
 
-    async function uploadPhoto(photo) {
+    async function uploadPhoto(photo: any) {
        if (!photo) return;
        const data = await upload({ variables: {
            picture: photo
        }});
 
-       if (data.data?.addProfilePicture.photoUrl && userContext.user) {
+       if (data.data?.addProfilePicture.photoUrl && userContext?.user) {
            //make a copy of the current user
            const tempAuth = userContext.user;
 
@@ -135,8 +136,8 @@ function EditProfile(props) {
                     </div>
                 </div>
                 <div className="w-full">
-                    <p className="text-2xl font-bold text-center">{userContext.user.user.name}</p>
-                    <p className="text-xs text-center text-gray-500">@{userContext.user.user.username}</p>
+                    <p className="text-2xl font-bold text-center">{userContext?.user?.user?.name}</p>
+                    <p className="text-xs text-center text-gray-500">@{userContext?.user?.user?.username}</p>
                 </div>
             </div>
 
@@ -144,6 +145,7 @@ function EditProfile(props) {
             {data && <Success message="Profile Updated"/>}
 
             {uploadLoading && <p>Uploading new Photo...</p>}
+            {uploadError && <p>{uploadError.message}</p>}
 
 
             <form onSubmit={(e) => handleEdit(e)}>
@@ -151,7 +153,7 @@ function EditProfile(props) {
                     className="mb-4"
                     id="username"
                     label="Username"
-                    value={userContext.user.user.username}
+                    value={userContext?.user?.user?.username}
                     disabled
                 />
 
@@ -183,8 +185,8 @@ function EditProfile(props) {
                 />
                 <Caption className="mb-2">
                     {
-                        userContext.user.user.isEmailVerified
-                            ? userContext.user.user.isStudent
+                        userContext?.user?.user?.isEmailVerified
+                            ? userContext?.user?.user?.isStudent
                                 ? "Your email is verified and you are a student"
                                 : "Your email is verified"
                                 : "Your email is not verified"
