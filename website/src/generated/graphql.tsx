@@ -12,6 +12,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Location = {
@@ -378,6 +380,7 @@ export type Mutation = {
   verifyAccount: Scalars['Boolean'];
   resendEmailVarification: Scalars['Boolean'];
   deleteAccount: Scalars['Boolean'];
+  addProfilePicture: User;
   login: Auth;
   signup: Auth;
   logout: Scalars['Boolean'];
@@ -416,6 +419,11 @@ export type MutationUpdatePushTokenArgs = {
 
 export type MutationVerifyAccountArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationAddProfilePictureArgs = {
+  picture: Scalars['Upload'];
 };
 
 
@@ -507,6 +515,7 @@ export type MutationEditUserArgs = {
   id: Scalars['String'];
 };
 
+
 export type Subscription = {
   __typename?: 'Subscription';
   getBeeperUpdates: Array<QueueEntry>;
@@ -534,14 +543,6 @@ export type SubscriptionGetRiderUpdatesArgs = {
 export type SubscriptionGetUserUpdatesArgs = {
   topic: Scalars['String'];
 };
-
-export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type LogoutMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'logout'>
-);
 
 export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -619,6 +620,14 @@ export type GetRideHistoryQuery = (
   )> }
 );
 
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
+);
+
 export type RemoveUserMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -653,6 +662,19 @@ export type EditAccountMutation = (
   & { editAccount: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name'>
+  ) }
+);
+
+export type AddProfilePictureMutationVariables = Exact<{
+  picture: Scalars['Upload'];
+}>;
+
+
+export type AddProfilePictureMutation = (
+  { __typename?: 'Mutation' }
+  & { addProfilePicture: (
+    { __typename?: 'User' }
+    & Pick<User, 'photoUrl'>
   ) }
 );
 
@@ -930,36 +952,6 @@ export type GetUsersQuery = (
 );
 
 
-export const LogoutDocument = gql`
-    mutation Logout {
-  logout(isApp: false)
-}
-    `;
-export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
-
-/**
- * __useLogoutMutation__
- *
- * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLogoutMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
- *   variables: {
- *   },
- * });
- */
-export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
-      }
-export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
-export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
-export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const ResendEmailDocument = gql`
     mutation ResendEmail {
   resendEmailVarification
@@ -1179,6 +1171,36 @@ export function useGetRideHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetRideHistoryQueryHookResult = ReturnType<typeof useGetRideHistoryQuery>;
 export type GetRideHistoryLazyQueryHookResult = ReturnType<typeof useGetRideHistoryLazyQuery>;
 export type GetRideHistoryQueryResult = Apollo.QueryResult<GetRideHistoryQuery, GetRideHistoryQueryVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout(isApp: false)
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const RemoveUserDocument = gql`
     mutation RemoveUser($id: String!) {
   removeUser(id: $id)
@@ -1281,6 +1303,39 @@ export function useEditAccountMutation(baseOptions?: Apollo.MutationHookOptions<
 export type EditAccountMutationHookResult = ReturnType<typeof useEditAccountMutation>;
 export type EditAccountMutationResult = Apollo.MutationResult<EditAccountMutation>;
 export type EditAccountMutationOptions = Apollo.BaseMutationOptions<EditAccountMutation, EditAccountMutationVariables>;
+export const AddProfilePictureDocument = gql`
+    mutation AddProfilePicture($picture: Upload!) {
+  addProfilePicture(picture: $picture) {
+    photoUrl
+  }
+}
+    `;
+export type AddProfilePictureMutationFn = Apollo.MutationFunction<AddProfilePictureMutation, AddProfilePictureMutationVariables>;
+
+/**
+ * __useAddProfilePictureMutation__
+ *
+ * To run a mutation, you first call `useAddProfilePictureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddProfilePictureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addProfilePictureMutation, { data, loading, error }] = useAddProfilePictureMutation({
+ *   variables: {
+ *      picture: // value for 'picture'
+ *   },
+ * });
+ */
+export function useAddProfilePictureMutation(baseOptions?: Apollo.MutationHookOptions<AddProfilePictureMutation, AddProfilePictureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddProfilePictureMutation, AddProfilePictureMutationVariables>(AddProfilePictureDocument, options);
+      }
+export type AddProfilePictureMutationHookResult = ReturnType<typeof useAddProfilePictureMutation>;
+export type AddProfilePictureMutationResult = Apollo.MutationResult<AddProfilePictureMutation>;
+export type AddProfilePictureMutationOptions = Apollo.BaseMutationOptions<AddProfilePictureMutation, AddProfilePictureMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useParams } from "react-router-dom";
 import UserProfile from '../../../components/UserProfile';
 import { Heading1, Heading3 } from '../../../components/Typography';

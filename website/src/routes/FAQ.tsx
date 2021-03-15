@@ -1,11 +1,9 @@
-import React from 'react';
-import {Card} from '../components/Card';
+import { Card } from '../components/Card';
 
 function Faq() {
     return (
-        <div className="dark:bg-black">
         <div className="mx-auto lg:container">
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     What does the app do?
                 </p>
@@ -14,7 +12,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     Who owns the app?
                 </p>
@@ -23,7 +21,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     Is it associated with Appalachian State University?
                 </p>
@@ -32,7 +30,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     What is a beep?
                 </p>
@@ -41,7 +39,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     What is a beeper?
                 </p>
@@ -50,7 +48,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     How is this different from the Facebook pages?
                 </p>
@@ -59,7 +57,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     How much does it cost?
                 </p>
@@ -68,7 +66,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     How are payments made?
                 </p>
@@ -77,7 +75,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     How are riders and drivers paired?
                 </p>
@@ -86,7 +84,7 @@ function Faq() {
                 </p>
             </Card>
 
-            <Card>
+            <Card className="mb-4">
                 <p className="mb-4 font-semibold">
                     Is the Beep App regulated in any way?
                 </p>
@@ -94,7 +92,6 @@ function Faq() {
                     The beep app is not regulated in any way and nothing has been added to the app that will cost more money to anybody and still uses the fundamental principles that the facebook page was founded on.
                 </p>
             </Card>
-        </div>
         </div>
     );
 }

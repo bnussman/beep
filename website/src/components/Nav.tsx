@@ -22,8 +22,15 @@ export function Nav(props) {
 }
 
 export function NavItem(props) {
+    if (props.plain) {
+        return (
+            <li className={`${props.direction === 'col' ? 'py-2' : 'px-1'} mr-2 flex items-center`}>
+                {props.children}
+            </li>
+        );
+    }
     return (
-        <li className={`${props.direction === 'col' ? 'py-2' : 'px-2'} mr-3 flex items-center`}>
+        <li className={`${props.direction === 'col' ? 'py-2' : 'px-1'} mr-2 flex items-center`}>
             { props.to
                 ?
                 // Navigation link

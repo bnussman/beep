@@ -1,9 +1,8 @@
-import React from 'react';
 import { NavLink } from "react-router-dom";
 
 export function Table(props) {
     return (
-        <table className="min-w-full bg-white divide-y dark:bg-black">
+        <table className="min-w-full bg-white">
             {props.children}
         </table>
     );
@@ -11,7 +10,7 @@ export function Table(props) {
 
 export function THead(props) {
     return (
-        <thead className="bg-white dark:bg-black">
+        <thead className="bg-white dark:bg-gray-800">
             <tr>
                 {props.children}
             </tr>
@@ -29,7 +28,7 @@ export function TH(props) {
 
 export function TBody(props) {
     return (
-        <tbody className="bg-white dark:bg-black dark:text-white">
+        <tbody className="bg-white dark:bg-gray-800 dark:text-white">
             {props.children}
         </tbody>
     );
