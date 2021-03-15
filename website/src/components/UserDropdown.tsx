@@ -36,7 +36,7 @@ export function UserDropdown() {
                     <>
                         <span className="rounded-md shadow-sm">
                             <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 dark:border-gray-900 leading-5 transition duration-150 ease-in-out rounded-md hover:text-gray-500 focus:outline-none active:bg-gray-50 active:text-gray-800 dark:bg-gray-800 dark:text-white">
-                                <span>
+                                <span className="flex flex-row">
                                     {user.user.photoUrl &&
                                         <img className="block object-cover w-5 h-5 mr-2 rounded-full lg:inline-block" alt="profile" src={user.user.photoUrl} />
                                     }

@@ -28,6 +28,15 @@ function BeepAppBar(props: props) {
     const [resendStatus, setResendStatus] = useState<string>();
     const [refreshStatus, setRefreshStatus] = useState<string>();
 
+    const history = useHistory();
+
+    // Collapse nav on route change
+    history.listen(() => {
+        setToggle(false);
+    })
+
+
+
     async function resendVarificationEmail() {
         try {
             const result = await resend();
