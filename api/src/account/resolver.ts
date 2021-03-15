@@ -7,6 +7,16 @@ import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver } from '
 import { Context } from '../utils/context';
 import { EditAccountInput } from '../validators/account';
 import { User } from '../entities/User';
+import {GraphQLUpload} from 'graphql-upload';
+import { Stream } from "stream";
+import AWS from 'aws-sdk';
+
+export interface Upload {
+  filename: string;
+  mimetype: string;
+  encoding: string;
+  createReadStream: () => Stream;
+}
 
 @Resolver()
 export class AccountResolver {
@@ -125,5 +135,59 @@ export class AccountResolver {
     @Authorized()
     public async deleteAccount(@Ctx() ctx: Context): Promise<boolean> {
         return await deleteUser(ctx.user);
+    }
+
+    @Mutation(() => User)
+    @Authorized()
+    public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename, mimetype }: Upload): Promise<User> {
+        console.log(filename);
+        console.log(createReadStream);
+        console.log(mimetype);
+
+        const s3 = new AWS.S3({
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET
+        });
+
+        const extention = filename.substr(filename.lastIndexOf("."), filename.length);
+
+        filename = ctx.user.id + "-" + Date.now() + extention;
+
+        const uploadParams = {
+            Body: createReadStream(),
+            Key: "images/" + filename,
+            Bucket: "ridebeepapp",
+            ACL: "public-read"
+        };
+
+        const result = await s3.upload(uploadParams).promise();
+
+        if (result) {
+            if (ctx.user.photoUrl) {
+                const key: string = ctx.user.photoUrl.split("https://ridebeepapp.s3.amazonaws.com/")[1];
+
+                const params = {
+                    Bucket: "ridebeepapp",
+                    Key: key
+                };
+
+                s3.deleteObject(params, (error: Error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            ctx.user.photoUrl = result.Location;
+
+            console.log(result);
+
+            await BeepORM.userRepository.persistAndFlush(ctx.user);
+
+            return ctx.user;
+        }
+        else {
+            throw new Error("No result from AWS");
+        }
     }
 }

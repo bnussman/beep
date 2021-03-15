@@ -1,14 +1,14 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { NavLink } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import { Nav, NavItem } from './Nav';
 import { UserRole } from '../types/User';
-import {gql, useMutation} from '@apollo/client';
-import {LogoutMutation, ResendEmailMutation} from '../generated/graphql';
-import {ThemeToggle} from './ThemeToggle';
-import {UserDropdown} from './UserDropdown';
-import {AdminDropdown} from './AdminDropdown';
+import { gql, useMutation } from '@apollo/client';
+import { ResendEmailMutation } from '../generated/graphql';
+import { ThemeToggle } from './ThemeToggle';
+import { UserDropdown } from './UserDropdown';
+import { AdminDropdown } from './AdminDropdown';
 
 interface props {
     noErrors?: boolean;
@@ -23,16 +23,18 @@ const Resend = gql`
 
 function BeepAppBar(props: props) {
     const [resend, { error }] = useMutation<ResendEmailMutation>(Resend);
-    const { user, setUser } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const [toggleNav, setToggle] = useState(false);
     const [resendStatus, setResendStatus] = useState<string>();
     const [refreshStatus, setRefreshStatus] = useState<string>();
-    let history = useHistory();
+
+    const history = useHistory();
 
     // Collapse nav on route change
     history.listen(() => {
         setToggle(false);
     })
+
 
 
     async function resendVarificationEmail() {
@@ -73,15 +75,13 @@ function BeepAppBar(props: props) {
 
                 {/* Nav items */}
                 <div className={!toggleNav ? "hidden w-full lg:items-center lg:w-auto lg:block items-end" : "w-full lg:items-center lg:w-auto lg:block"}>
-
-
                     <Nav direction={toggleNav ? 'col' : 'row'} className={toggleNav ? 'pl-0 pt-4' : ''}>
                         <NavItem to="/faq">FAQ</NavItem>
                         <NavItem to="/about">About Us</NavItem>
-                        {(user && user.user.role === UserRole.ADMIN) &&
-                            <div className="mr-4">
+                        {(user && user?.user?.role === UserRole.ADMIN) &&
+                            <NavItem plain>
                                 <AdminDropdown/>
-                            </div>
+                            </NavItem>
                         }
 
                         {!user &&
@@ -89,16 +89,18 @@ function BeepAppBar(props: props) {
                         }
 
                         {user &&
-                            <UserDropdown/>
+                            <NavItem plain>
+                                <UserDropdown/>
+                            </NavItem>
                         }
-                        <NavItem>
+                        <NavItem plain>
                             <ThemeToggle/>
                         </NavItem>
                     </Nav>
                 </div>
             </nav>
 
-            {(user && !user.user.isEmailVerified && !props.noErrors) &&
+            {(user && !user.user?.isEmailVerified && !props.noErrors) &&
 
                 <div className="px-4 mx-auto mb-4 lg:container" >
                     <div role="alert">

@@ -11,12 +11,16 @@ import { Location } from "./entities/Location";
 import { GraphQLSchema } from "graphql";
 import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
-import { ApolloServer } from "apollo-server";
 import { Rating } from "./entities/Rating";
 import { ORM } from "./utils/ORM";
 import { RedisCacheAdapter } from 'mikro-orm-cache-adapter-redis';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
+import Koa from 'koa'
+import { ApolloServer } from 'apollo-server-koa'
+import { graphqlUploadKoa } from 'graphql-upload'
+import koaBody from 'koa-bodyparser';
+import cors from '@koa/cors';
 
 const url = `mongodb+srv://banks:${process.env.MONGODB_PASSWORD}@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
 
@@ -38,8 +42,16 @@ export default class BeepAPIServer {
             type: 'mongo',
             clientUrl: url,
             debug: true,
+            resultCache: {
+                adapter: RedisCacheAdapter,
+                options: {
+                    host: '192.168.1.135',
+                    port: 6379,
+                    password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
+                }
+            }
         };
-
+        /*
         if (prod) {
             console.log("Using Redis as cache for MongoDB");
             base.resultCache = {
@@ -54,6 +66,7 @@ export default class BeepAPIServer {
         else {
             console.log("Running locally, not using Redis");
         }
+        */
 
         BeepORM.orm = await MikroORM.init(base);
 
@@ -80,13 +93,26 @@ export default class BeepAPIServer {
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],
             authChecker: authChecker,
-            pubSub: !prod ? undefined : new RedisPubSub({
+            pubSub: new RedisPubSub({
                 publisher: new Redis(options),
                 subscriber: new Redis(options)
             })
         });
 
+        const app = new Koa();
+
+        app.use(koaBody());
+        app.use(cors());
+
+        app.use(
+            graphqlUploadKoa({
+                maxFileSize: 100000000, // 10 MB
+                maxFiles: 20
+            })
+        );
+
         const server = new ApolloServer({
+            uploads: false,
             schema,
             subscriptions: {
                 path: "/subscriptions",
@@ -99,12 +125,15 @@ export default class BeepAPIServer {
                     if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
                 }
             },
-            context: async ({ req, connection }) => {
-                if (!req) {
-                    return connection?.context;
+            context: async ({ ctx }) => {
+                if (!ctx) return;
+
+                const authHeader = ctx.request.header.authorization;
+                if (!authHeader) {
+                    return;
                 }
 
-                const token: string | undefined = req.get("Authorization")?.split(" ")[1];
+                const token: string | undefined = authHeader.split(" ")[1];
 
                 if (!token) return;
 
@@ -114,8 +143,11 @@ export default class BeepAPIServer {
             }
         });
 
-        await server.listen(3001);
+        server.applyMiddleware({ app });
 
-        console.log("🚕 Server ready and has started!");
+        const live = app.listen(3001, () => {
+            console.info(`🚕 Server ready and has started! ${server.graphqlPath}`);
+        });
+        server.installSubscriptionHandlers(live);
     }
 }

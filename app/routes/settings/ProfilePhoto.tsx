@@ -1,39 +1,48 @@
-import React, { Component } from 'react';
-import { Platform, Image, StyleSheet } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { Image, StyleSheet } from 'react-native';
 import { Text, Layout, Button, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { UserContext } from '../../utils/UserContext';
 import { LoadingIndicator } from "../../utils/Icons";
 import { BackIcon } from '../../utils/Icons';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import {gql, useMutation} from '@apollo/client';
+import {AddProfilePictureMutation} from '../../generated/graphql';
+import {UserContext} from '../../utils/UserContext';
+import {isMobile} from '../../utils/config';
+import { ReactNativeFile } from 'apollo-upload-client';
+import * as mime from 'react-native-mime-types';
 
 interface Props {
     navigation: any;
 }
 
-interface State {
-    isLoading: boolean;
-    photo: any;
+const UploadPhoto = gql`
+    mutation AddProfilePicture ($picture: Upload!){
+        addProfilePicture (picture: $picture) {
+            photoUrl
+        }
+    }
+`;
+
+function generateRNFile(uri: string, name: string) {
+    return uri ? new ReactNativeFile({
+        uri,
+        type: mime.lookup(uri) || 'image',
+        name,
+    }) : null;
 }
 
-export class ProfilePhotoScreen extends Component<Props, State> {
-    static contextType = UserContext;
-    
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            isLoading: false,
-            photo: null
-        };
-    }
+export function ProfilePhotoScreen(props: Props) {
+    const [upload, { data, loading: uploadLoading , error }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [photo, setPhoto] = useState<any>();
 
-   async handleUpdate() {
-       //send button into loading state
-       this.setState({ isLoading: true });
+    const userContext = useContext(UserContext);
 
-       let form = new FormData();
+    async function handleUpdate(): Promise<void> {
+       setLoading(true);
 
-       let result = await ImagePicker.launchImageLibraryAsync({
+       const result = await ImagePicker.launchImageLibraryAsync({
            mediaTypes: ImagePicker.MediaTypeOptions.Images,
            allowsMultipleSelection: false,
            allowsEditing: true,
@@ -42,96 +51,80 @@ export class ProfilePhotoScreen extends Component<Props, State> {
        });
 
        if (result.cancelled) {
-           this.setState({ isLoading: false });
+           setLoading(false);
            return;
        }
 
-       if (Platform.OS !== "ios" && Platform.OS !== "android") {
+       let real;
+
+       if (!isMobile) {
            console.log("Running as if this is a web device");
-           await fetch(result.uri)
-               .then(res => res.blob())
-               .then(blob => {
-                   const fileType = blob.type.split("/")[1];
-                   const file = new File([blob], "photo." + fileType);
-                   form.append('photo', file)
-               });
+           const res = await fetch(result.uri);
+           const blob = await res.blob();
+           const fileType = blob.type.split("/")[1];
+           const file = new File([blob], "photo." + fileType);
+           console.log(file);
+           real = file;
+           setPhoto(result);
        }
        else {
-           console.log("Runing as mobile device");
-           console.log(result);
-           const fileType = result.uri.substr(result.uri.lastIndexOf("."), result.uri.length);
-           console.log(fileType);
-           this.setState({photo: result.uri});
-
-           const photo = {
-               uri: result.uri,
-               type: 'image/jpeg',
-               name: 'photo' + fileType,
-           };
-
            if (!result.cancelled) {
-               //@ts-ignore
-               form.append("photo", photo);
+               setPhoto(result);
+               const file = generateRNFile(result.uri, "file.jpg");
+               real = file;
            }
            else {
-               this.setState({ isLoading: false });
+               setLoading(false);
            }
        }
 
-       fetch(config.apiUrl + "/files/upload", {
-           method: "POST",
-           headers: {
-               "Authorization": "Bearer " + this.context.user.tokens.token
-           },
-           body: form
-       })
-       .then(response => {
-           response.json().then(data => {
-               if (data.status === "success") {
-                   //make a copy of the current user
-                   let tempUser = this.context.user;
+       console.log(real);
 
-                   //update the tempUser with the new data
-                   tempUser.user.photoUrl = data.url;
+       const data = await upload({ variables: {
+           picture: real
+       }});
 
-                   //update the context
-                   this.context.setUser(tempUser);
+       if (data.data?.addProfilePicture.photoUrl && userContext?.user) {
+           //make a copy of the current user
+           const tempAuth = userContext.user;
 
-                   //put the tempUser back into storage
-                   AsyncStorage.setItem('auth', JSON.stringify(tempUser));
+           //update the tempUser with the new data
+           tempAuth.user.photoUrl = data.data?.addProfilePicture.photoUrl;
 
-                   //on success, go back to settings page
-                   this.props.navigation.goBack();
-               }
-               else {
-                   this.setState({ isLoading: false });
-               }
-           });
-       })
-       .catch((error) => this.setState({ isLoading: false }));
+           //update the context
+           userContext.setUser(tempAuth);
+
+           //put the tempUser back into storage
+           AsyncStorage.setItem('auth', JSON.stringify(tempAuth));
+
+           //on success, go back to settings page
+           props.navigation.goBack();
+       }
+       else {
+           setLoading(false);
+       }
+
     }
 
-    render () {
-        const BackAction = () => (
-            <TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
-        );
-        return (
-            <>
-                <TopNavigation title='Profile Photo' alignment='center' accessoryLeft={BackAction}/>
-                <Layout style={styles.container}>
-                    <Text>Upload Profile Photo</Text>
-                    {this.state.photo && <Image source={{ uri: this.state.photo }} style={{ width: 200, height: 200, borderRadius: 200/ 2, marginTop: 10, marginBottom: 10 }} />}
-                    {!this.state.isLoading ?
-                    <Button onPress={() => this.handleUpdate()}>
+    const BackAction = () => (
+        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
+    );
+    return (
+        <>
+            <TopNavigation title='Profile Photo' alignment='center' accessoryLeft={BackAction}/>
+            <Layout style={styles.container}>
+                <Text>Upload Profile Photo</Text>
+                {photo && <Image source={{ uri: photo.uri }} style={{ width: 200, height: 200, borderRadius: 200/ 2, marginTop: 10, marginBottom: 10 }} />}
+                {!loading || !uploadLoading ?
+                    <Button onPress={() => handleUpdate()}>
                         Choose Photo
                     </Button>
                     :
                     <LoadingIndicator />
-                    }
-                </Layout>
-            </>
-        );
-    }
+                }
+            </Layout>
+        </>
+    );
 }
 
 const styles = StyleSheet.create({

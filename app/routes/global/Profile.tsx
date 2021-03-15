@@ -35,7 +35,7 @@ const GetUser = gql`
 
 export function ProfileScreen(props: Props) {
     const userContext = useContext(UserContext);
-    const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: props.route.params.id } }); 
+    const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: props.route.params.id }, fetchPolicy: "no-cache" }); 
 
     function handleReport() {
         props.navigation.navigate("Report", {
