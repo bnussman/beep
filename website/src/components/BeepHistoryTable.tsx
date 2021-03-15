@@ -1,10 +1,10 @@
-import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from './Card';
 import { Table, THead, TH, TBody, TR, TDProfile, TDText } from './Table';
 import {gql, useQuery} from '@apollo/client';
 import {GetBeeperHistoryQuery} from '../generated/graphql';
+import {Heading2} from './Typography';
 
 dayjs.extend(duration);
 
@@ -34,7 +34,7 @@ const Hisory = gql`
 `;
 
 function BeepHistoryTable(props: Props) {
-    const { data } = useQuery<GetBeeperHistoryQuery>(Hisory, { variables: { id: props.userId }});
+    const { data, loading } = useQuery<GetBeeperHistoryQuery>(Hisory, { variables: { id: props.userId }});
 
     return <>
         <div className="m-4">
@@ -72,6 +72,12 @@ function BeepHistoryTable(props: Props) {
                     })}
                 </TBody>
             </Table>
+            {data?.getBeepHistory && data.getBeepHistory.length === 0 && 
+                <div className="w-full p-4 text-center">No Data</div>
+            }
+            {loading && 
+                <div className="w-full p-4 text-center">Loading</div>
+            }
         </Card>
         </div>
     </>;

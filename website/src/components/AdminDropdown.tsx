@@ -8,7 +8,7 @@ export function AdminDropdown() {
                 {({ open }) => (
                     <>
                         <span className="rounded-md shadow-sm">
-                            <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 transition duration-150 ease-in-out rounded-md hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800 dark:bg-gray-800 dark:text-white">
+                            <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 dark:border-gray-900 leading-5 transition duration-150 ease-in-out rounded-md hover:text-gray-500 focus:outline-none active:bg-gray-50 active:text-gray-800 dark:bg-gray-800 dark:text-white">
                                 <span>
                                     Admin
                                 </span>
@@ -37,7 +37,7 @@ export function AdminDropdown() {
                         >
                             <Menu.Items
                                 static
-                                className="absolute right-0 w-56 mt-2 bg-white border border-gray-200 shadow-lg outline-none origin-top-right divide-y divide-gray-100 rounded-md dark:bg-gray-900"
+                                className="absolute right-0 z-50 w-56 mt-2 bg-white border border-gray-200 shadow-lg outline-none dark:border-gray-900 origin-top-right divide-y divide-gray-100 rounded-md dark:bg-gray-800 dark:divide-gray-700"
                             >
                                     <div className="py-1">
                                     <Menu.Item>
@@ -46,9 +46,9 @@ export function AdminDropdown() {
                                                 to="/admin/users"
                                                 className={`${
                                                     active
-                                                        ? "bg-gray-100 text-gray-900"
+                                                        ? "bg-gray-100 text-gray-900 dark:bg-gray-900"
                                                         : "text-gray-700"
-                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left dark:text-white`}
                                             >
                                                 Users
                                             </Link>
@@ -60,9 +60,9 @@ export function AdminDropdown() {
                                                 to="/admin/beepers"
                                                 className={`${
                                                     active
-                                                        ? "bg-gray-100 text-gray-900"
+                                                        ? "bg-gray-100 text-gray-900 dark:bg-gray-900"
                                                         : "text-gray-700"
-                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left dark:text-white`}
                                             >
                                                 Beepers
                                             </Link>
@@ -74,9 +74,9 @@ export function AdminDropdown() {
                                                 to="/admin/beeps"
                                                 className={`${
                                                     active
-                                                        ? "bg-gray-100 text-gray-900"
+                                                        ? "bg-gray-100 text-gray-900 dark:bg-gray-900"
                                                         : "text-gray-700"
-                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left dark:text-white`}
                                             >
                                                 Beeps
                                             </Link>
@@ -88,9 +88,9 @@ export function AdminDropdown() {
                                                 to="/admin/locations"
                                                 className={`${
                                                     active
-                                                        ? "bg-gray-100 text-gray-900"
+                                                        ? "bg-gray-100 text-gray-900 dark:bg-gray-900"
                                                         : "text-gray-700"
-                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left dark:text-white`}
                                             >
                                                 Locations
                                             </Link>
@@ -102,9 +102,9 @@ export function AdminDropdown() {
                                                 to="/admin/reports"
                                                 className={`${
                                                     active
-                                                        ? "bg-gray-100 text-gray-900"
+                                                        ? "bg-gray-100 text-gray-900 dark:bg-gray-900"
                                                         : "text-gray-700"
-                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                                                } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left dark:text-white`}
                                             >
                                                 Reports
                                             </Link>

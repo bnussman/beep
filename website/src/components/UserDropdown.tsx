@@ -67,7 +67,7 @@ export function UserDropdown() {
                         >
                             <Menu.Items
                                 static
-                                className="absolute right-0 w-56 mt-2 bg-white border border-gray-200 shadow-lg outline-none dark:border-gray-900 origin-top-right divide-y divide-gray-100 rounded-md dark:bg-gray-800 dark:divide-gray-700"
+                                className="absolute right-0 z-50 w-56 mt-2 bg-white border border-gray-200 shadow-lg outline-none dark:border-gray-900 origin-top-right divide-y divide-gray-100 rounded-md dark:bg-gray-800 dark:divide-gray-700"
                             >
                                 <div className="px-4 py-3">
                                     <p className="text-sm leading-5 dark:text-gray-50">Signed in as</p>
