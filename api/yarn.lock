@@ -458,6 +458,15 @@
   dependencies:
     "@types/koa" "*"
 
+"@types/koa-websocket@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@types/koa-websocket/-/koa-websocket-5.0.5.tgz#f3611daae6ce89340316c9ced217654a57878936"
+  integrity sha512-qJYBVtda3rySYUQGFA7H15QwgxDMako9IpskW4BycR2wI3JYd+Iq4IsqZqra3PxaKSTpSmCZDx6Gjirmba0bzQ==
+  dependencies:
+    "@types/koa" "*"
+    "@types/koa-compose" "*"
+    "@types/ws" "*"
+
 "@types/koa@*", "@types/koa@^2.0.46":
   version "2.13.1"
   resolved "https://registry.yarnpkg.com/@types/koa/-/koa-2.13.1.tgz#e29877a6b5ad3744ab1024f6ec75b8cbf6ec45db"
@@ -588,7 +597,7 @@
   resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.1.3.tgz#366b394aa3fbeed2392bf0a20ded606fa4a3d35e"
   integrity sha512-DaOWN1zf7j+8nHhqXhIgNmS+ltAC53NXqGxYuBhWqWgqolRhddKzfZU814lkHQSTG0IUfQxU7Cg0gb8fFWo2mA==
 
-"@types/ws@^7.0.0":
+"@types/ws@*", "@types/ws@^7.0.0":
   version "7.4.0"
   resolved "https://registry.yarnpkg.com/@types/ws/-/ws-7.4.0.tgz#499690ea08736e05a8186113dac37769ab251a0e"
   integrity sha512-Y29uQ3Uy+58bZrFLhX36hcI3Np37nqWE7ky5tjiDoy1GDZnIwVxS0CgF+s+1bXMzjKBFy+fqaRfb708iNzdinw==
@@ -1275,7 +1284,7 @@ co-body@^6.0.0:
     raw-body "^2.3.3"
     type-is "^1.6.16"
 
-co@^4.6.0:
+co@^4.4.0, co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha1-bqa989hTrlTMuOR7+gvz+QMfsYQ=
@@ -2632,6 +2641,16 @@ koa-convert@^1.2.0:
   dependencies:
     co "^4.6.0"
     koa-compose "^3.0.0"
+
+koa-websocket@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/koa-websocket/-/koa-websocket-6.0.0.tgz#7fb7698a7004c07aac663b15e84bf4bc99901352"
+  integrity sha512-pGTaB+aXILD/q+bQNh+Ejrg8zSxf6QRpiUQoh2TFQSmUZo2hrt6KGk4qlyxfHxFH40bVtyKeo4x1u0kKgJDOWA==
+  dependencies:
+    co "^4.4.0"
+    debug "^4.0.1"
+    koa-compose "^4.1.0"
+    ws "^7.0.1"
 
 koa@2.13.1, koa@^2.13.1:
   version "2.13.1"
@@ -4113,6 +4132,11 @@ ws@^6.0.0:
   integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
+
+ws@^7.0.1:
+  version "7.4.4"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.4.tgz#383bc9742cb202292c9077ceab6f6047b17f2d59"
+  integrity sha512-Qm8k8ojNQIMx7S+Zp8u/uHOx7Qazv3Yv4q68MiWWWOJhiwG5W3x7iqmRtJo8xxrciZUY4vRxUTJCKuRnF28ZZw==
 
 xdg-basedir@^4.0.0:
   version "4.0.0"

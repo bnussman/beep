@@ -65,10 +65,11 @@ export function ProfilePhotoScreen(props: Props) {
            const file = new File([blob], "photo." + fileType);
            console.log(file);
            real = file;
-           setPhoto(file);
+           setPhoto(result);
        }
        else {
            if (!result.cancelled) {
+               setPhoto(result);
                const file = generateRNFile(result.uri, "file.jpg");
                real = file;
            }
@@ -113,7 +114,7 @@ export function ProfilePhotoScreen(props: Props) {
             <TopNavigation title='Profile Photo' alignment='center' accessoryLeft={BackAction}/>
             <Layout style={styles.container}>
                 <Text>Upload Profile Photo</Text>
-                {photo && <Image source={{ uri: photo }} style={{ width: 200, height: 200, borderRadius: 200/ 2, marginTop: 10, marginBottom: 10 }} />}
+                {photo && <Image source={{ uri: photo.uri }} style={{ width: 200, height: 200, borderRadius: 200/ 2, marginTop: 10, marginBottom: 10 }} />}
                 {!loading ?
                     <Button onPress={() => handleUpdate()}>
                         Choose Photo
