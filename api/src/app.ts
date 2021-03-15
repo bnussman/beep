@@ -92,7 +92,6 @@ export default class BeepAPIServer {
         });
 
         const app = new Koa();
-        const socket = websockify(app);
 
         app.use(koaBody());
         app.use(cors());
@@ -119,6 +118,8 @@ export default class BeepAPIServer {
                 }
             },
             context: async ({ ctx }) => {
+                if (!ctx) return;
+
                 const authHeader = ctx.request.header.authorization;
                 if (!authHeader) {
                     return;
@@ -136,8 +137,9 @@ export default class BeepAPIServer {
 
         server.applyMiddleware({ app });
 
-        app.listen(3001, () => {
+        const live = app.listen(3001, () => {
             console.info(`🚕 Server ready and has started! ${server.graphqlPath}`);
         });
+        server.installSubscriptionHandlers(live);
     }
 }
