@@ -98,7 +98,7 @@ export class BeeperResolver {
                     Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
             }
 
-            await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
+            BeepORM.queueEntryRepository.persist(queueEntry);
         }
 
         pubSub.publish("Beeper" + ctx.user.id, null);
@@ -119,9 +119,9 @@ export class BeeperResolver {
 
             if (entry.rider.id == skipId) continue;
 
-            const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
+            const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue }});
 
-            entry.ridersQueuePosition = ridersQueuePosition;
+            entry.ridersQueuePosition = ridersQueuePosition || -1;
 
             pubSub.publish("Rider" + entry.rider.id, entry);
         }
