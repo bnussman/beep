@@ -1,13 +1,14 @@
-import { ApolloClient, createHttpLink, DefaultOptions, InMemoryCache, split } from '@apollo/client';
+import { ApolloClient, ApolloLink, createHttpLink, DefaultOptions, InMemoryCache, split } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-community/async-storage';
+import { createUploadLink } from 'apollo-upload-client';
 
-const ip = 'beep-app-beep-staging.192.168.1.200.nip.io';
+const ip = '192.168.1.57';
 
 const httpLink = createHttpLink({
-    uri: `https://${ip}`,
+    uri: `http://${ip}:3001/graphql`,
 });
 
 const wsLink = new WebSocketLink({
@@ -63,11 +64,21 @@ const splitLink = split(
         );
     },
     wsLink,
-    httpLink,
 );
 
+const uploadLink = createUploadLink({
+  uri: 'http://192.168.1.57:3001/graphql', // Apollo Server is served from port 4000
+  headers: {
+    "keep-alive": "true"
+  }
+})
+
 export const client = new ApolloClient({
-    link: authLink.concat(splitLink),
+    link: ApolloLink.from([
+        authLink,
+        splitLink,
+        uploadLink
+    ]),
     cache: new InMemoryCache(),
     defaultOptions: defaultOptions
 });

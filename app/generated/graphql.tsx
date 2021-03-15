@@ -13,6 +13,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Location = {
@@ -379,6 +381,7 @@ export type Mutation = {
   verifyAccount: Scalars['Boolean'];
   resendEmailVarification: Scalars['Boolean'];
   deleteAccount: Scalars['Boolean'];
+  addProfilePicture: User;
   login: Auth;
   signup: Auth;
   logout: Scalars['Boolean'];
@@ -417,6 +420,11 @@ export type MutationUpdatePushTokenArgs = {
 
 export type MutationVerifyAccountArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationAddProfilePictureArgs = {
+  picture: Scalars['Upload'];
 };
 
 
@@ -507,6 +515,7 @@ export type MutationEditUserArgs = {
   data: EditUserValidator;
   id: Scalars['String'];
 };
+
 
 export type Subscription = {
   __typename?: 'Subscription';
@@ -856,6 +865,19 @@ export type EditAccountMutation = (
   & { editAccount: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'name'>
+  ) }
+);
+
+export type AddProfilePictureMutationVariables = Exact<{
+  picture: Scalars['Upload'];
+}>;
+
+
+export type AddProfilePictureMutation = (
+  { __typename?: 'Mutation' }
+  & { addProfilePicture: (
+    { __typename?: 'User' }
+    & Pick<User, 'photoUrl'>
   ) }
 );
 
@@ -1835,6 +1857,39 @@ export function useEditAccountMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type EditAccountMutationHookResult = ReturnType<typeof useEditAccountMutation>;
 export type EditAccountMutationResult = ApolloReactCommon.MutationResult<EditAccountMutation>;
 export type EditAccountMutationOptions = ApolloReactCommon.BaseMutationOptions<EditAccountMutation, EditAccountMutationVariables>;
+export const AddProfilePictureDocument = gql`
+    mutation AddProfilePicture($picture: Upload!) {
+  addProfilePicture(picture: $picture) {
+    photoUrl
+  }
+}
+    `;
+export type AddProfilePictureMutationFn = ApolloReactCommon.MutationFunction<AddProfilePictureMutation, AddProfilePictureMutationVariables>;
+
+/**
+ * __useAddProfilePictureMutation__
+ *
+ * To run a mutation, you first call `useAddProfilePictureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddProfilePictureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addProfilePictureMutation, { data, loading, error }] = useAddProfilePictureMutation({
+ *   variables: {
+ *      picture: // value for 'picture'
+ *   },
+ * });
+ */
+export function useAddProfilePictureMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AddProfilePictureMutation, AddProfilePictureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<AddProfilePictureMutation, AddProfilePictureMutationVariables>(AddProfilePictureDocument, options);
+      }
+export type AddProfilePictureMutationHookResult = ReturnType<typeof useAddProfilePictureMutation>;
+export type AddProfilePictureMutationResult = ApolloReactCommon.MutationResult<AddProfilePictureMutation>;
+export type AddProfilePictureMutationOptions = ApolloReactCommon.BaseMutationOptions<AddProfilePictureMutation, AddProfilePictureMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout(isApp: true)
