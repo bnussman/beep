@@ -92,7 +92,7 @@ export function StartBeepingScreen(props: Props) {
     const [groupRate, setGroupRate] = useState<string>(userContext.user.user.groupRate);
     const [capacity, setCapacity] = useState<string>(userContext.user.user.capacity);
 
-    const { subscribeToMore, loading, error, data, refetch } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
+    const { subscribeToMore, loading, error, data, refetch } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true, fetchPolicy: 'network-only' });
     //const { loading, error, data } = useSubscription<GetQueueSubscription>(GetQueue, { variables: { topic: userContext.user.user.id }});
     const [updateBeepSettings, { loading: loadingBeepSettings, error: beepSettingsError }] = useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 

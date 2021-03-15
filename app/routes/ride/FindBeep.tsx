@@ -119,7 +119,7 @@ export function MainFindBeepScreen(props: Props) {
     const [destination, setDestination] = useState<string>();
     const [isGetBeepLoading, setIsGetBeepLoading] = useState<boolean>(false);
     
-    const { subscribeToMore, loading, error, data, refetch, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus);
+    const { subscribeToMore, loading, error, data, refetch, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, { fetchPolicy: 'network-only' });
 
     async function subscribeToLocation() {
         const a = client.subscribe({ query: BeepersLocation, variables: { topic: data?.getRiderStatus?.beeper.id }});

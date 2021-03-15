@@ -97,19 +97,23 @@ export class BeeperResolver {
             BeepORM.queueEntryRepository.persist(queueEntry);
         }
 
-        pubSub.publish("Beeper" + ctx.user.id, null);
 
         const t = (input.value == 'deny' || input.value == 'complete') ? null : queueEntry;
 
         pubSub.publish("Rider" + queueEntry.rider.id, t);
 
         this.sendRiderUpdates(queueEntry.rider.id, ctx.user.id, pubSub);
+        
+        await BeepORM.em.flush();
+        await BeepORM.queueEntryRepository.flush();
 
         return true;
     }
 
     private async sendRiderUpdates(skipId: string, beeperId: string, pubSub: PubSubEngine) {
         const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId } , { populate: true });
+
+        pubSub.publish("Beeper" + beeperId, queues);
 
         for (const entry of queues) {
 
@@ -126,9 +130,7 @@ export class BeeperResolver {
     @Subscription(() => [QueueEntry], {
         topics: ({ args }) => "Beeper" + args.topic,
     })
-    public async getBeeperUpdates(@Arg("topic") topic: string, @Root() entry: QueueEntry): Promise<QueueEntry[]> {
-        console.log(topic);
-        const r = await BeepORM.queueEntryRepository.find({ beeper: topic }, { populate: true });
-        return r.filter(entry => entry.state != -1);
+    public async getBeeperUpdates(@Arg("topic") topic: string, @Root() entry: QueueEntry[]): Promise<QueueEntry[]> {
+        return entry;
     }
 }
