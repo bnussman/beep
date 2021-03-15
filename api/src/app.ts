@@ -42,8 +42,16 @@ export default class BeepAPIServer {
             type: 'mongo',
             clientUrl: url,
             debug: true,
+            resultCache: {
+                adapter: RedisCacheAdapter,
+                options: {
+                    host: '192.168.1.135',
+                    port: 6379,
+                    password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
+                }
+            }
         };
-
+        /*
         if (prod) {
             console.log("Using Redis as cache for MongoDB");
             base.resultCache = {
@@ -58,6 +66,7 @@ export default class BeepAPIServer {
         else {
             console.log("Running locally, not using Redis");
         }
+        */
 
         BeepORM.orm = await MikroORM.init(base);
 
@@ -84,7 +93,7 @@ export default class BeepAPIServer {
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],
             authChecker: authChecker,
-            pubSub: !prod ? undefined : new RedisPubSub({
+            pubSub: new RedisPubSub({
                 publisher: new Redis(options),
                 subscriber: new Redis(options)
             })

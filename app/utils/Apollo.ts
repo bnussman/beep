@@ -64,8 +64,8 @@ const splitLink = split(
 );
 
 const uploadLink = createUploadLink({
-    uri: `https://${ip}/graphql`,
-        headers: {
+    uri: 'https://'+ ip + '/graphql',
+    headers: {
         "keep-alive": "true"
     }
 })
