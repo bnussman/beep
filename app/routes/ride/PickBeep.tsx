@@ -9,7 +9,7 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {MainNavParamList} from '../../navigators/MainTabs';
 import {User} from '../../types/Beep';
 import {gql, useQuery} from '@apollo/client';
-import {GetBeepersQuery} from '../../generated/graphql';
+import {GetBeepersQuery, Rating} from '../../generated/graphql';
 
 interface Props {
     navigation: BottomTabNavigationProp<MainNavParamList>;
@@ -30,6 +30,8 @@ const GetBeepers = gql`
             photoUrl
             role
             masksRequired
+            rating
+            
         }
     }
 `;
@@ -51,9 +53,23 @@ export function PickBeepScreen(props: Props) {
         navigation.goBack();
     }
 
+    /*function printStars(item: Rating): string{
+        let stars:string = " "
+        for (let i = 0; i < item.rating; i++){
+             stars += "⭐️"
+        }
+        return stars
+    }*/
+
     function getDescription(item: any): string {
-        return `${item.queueSize} in ${item.first}'s queue\nCapacity: ${item.capacity} riders\nSingles: $${item.singlesRate}\nGroups: $${item.groupRate}`;
+        return `${item.queueSize} in ${item.first}'s queue\nCapacity: ${item.capacity} riders\nSingles: $${item.singlesRate}\nGroups: $${item.groupRate}\n
+         User Rating: ${item.rating}`;
     }
+
+    /*function getDescription(item: any): string {
+        return `${item.queueSize} in ${item.first}'s queue\nCapacity: ${item.capacity} riders\nSingles: $${item.singlesRate}\nGroups: $${item.groupRate}\n
+         User Rating: $printStars({item.rating})`;
+    }*/
 
     const BackAction = () => (
         <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
