@@ -55,8 +55,6 @@ export class BeeperResolver {
 
             BeepORM.queueEntryRepository.persist(queueEntry);
             BeepORM.userRepository.persist(ctx.user);
-
-            await BeepORM.em.flush();
         }
         else if (input.value == 'deny' || input.value == 'complete') {
             const finishedBeep = new Beep();
@@ -75,8 +73,6 @@ export class BeeperResolver {
             BeepORM.userRepository.persist(ctx.user);
 
             BeepORM.queueEntryRepository.remove(queueEntry);
-
-            await BeepORM.em.flush();
 
             if (input.value == "deny") {
                 sendNotification(queueEntry.rider, `${ctx.user.name} has denied your beep request`, "Open your app to find a diffrent beeper.");
