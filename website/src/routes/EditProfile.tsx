@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
 import { Button, TextInput } from '../components/Input';
@@ -25,23 +25,33 @@ const EditAccount = gql`
     }
 `;
 
-function EditProfile() {
-    const { user, setUser } = useContext(UserContext);
+const UploadPhoto = gql`
+    mutation AddProfilePicture ($picture: Upload!){
+        addProfilePicture (picture: $picture) {
+            photoUrl
+        }
+    }
+`;
+
+function EditProfile(props) {
     const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
-    const [first, setFirst] = useState<string | undefined>(user?.user.first);
-    const [last, setLast] = useState<string | undefined>(user?.user.last);
-    const [email, setEmail] = useState<string | undefined>(user?.user.email);
-    const [phone, setPhone] = useState<string | undefined>(user?.user.phone);
-    const [venmo, setVenmo] = useState<string | undefined>(user?.user.venmo);
+    const [upload, { data: uploadData, loading: uploadLoading, error: uploadError }] = useMutation(UploadPhoto);
+    const userContext = React.useContext(UserContext);
+    const [first, setFirst] = useState<string | undefined>(userContext.user?.user.first);
+    const [last, setLast] = useState<string | undefined>(userContext.user?.user.last);
+    const [email, setEmail] = useState<string | undefined>(userContext.user?.user.email);
+    const [phone, setPhone] = useState<string | undefined>(userContext.user?.user.phone);
+    const [venmo, setVenmo] = useState<string | undefined>(userContext.user?.user.venmo);
+    const [photoUrl, setPhotoUrl] = useState<string | undefined>(userContext.user?.user.photoUrl);
 
     useEffect(() => {
-        if (first !== user?.user.first) setFirst(user?.user.first);
-        if (last !== user?.user.last) setLast(user?.user.last);
-        if (email !== user?.user.email) setEmail(user?.user.email);
-        if (phone !== user?.user.first) setPhone(user?.user.phone);
-        if (venmo !== user?.user.venmo) setVenmo(user?.user.venmo);
-        // eslint-disable-next-line
-    }, [user]);
+        if (first !== userContext.user?.user.first) setFirst(userContext.user?.user.first);
+        if (last !== userContext.user?.user.last) setLast(userContext.user?.user.last);
+        if (email !== userContext.user?.user.email) setEmail(userContext.user?.user.email);
+        if (phone !== userContext.user?.user.first) setPhone(userContext.user?.user.phone);
+        if (venmo !== userContext.user?.user.venmo) setVenmo(userContext.user?.user.venmo);
+        if (photoUrl !== userContext.user?.user.photoUrl) setPhotoUrl(userContext.user?.user.photoUrl);
+    }, [userContext]);
 
     async function handleEdit(e: any) {
         e.preventDefault();
@@ -57,7 +67,7 @@ function EditProfile() {
 
             if (result) {
                 //make a temporary user object
-                const tempUser = user;
+                const tempUser = userContext.user;
                 //update values of user
                 tempUser.user.first = first;
                 tempUser.user.last = last;
@@ -66,12 +76,12 @@ function EditProfile() {
                 tempUser.user.venmo = venmo;
 
                 //if email was changed, make sure the context knows the user is no longer verified
-                if (email !== user.user.email) {
+                if (email !== userContext.user.user.email) {
                     tempUser.user.isEmailVerified = false;
                     tempUser.user.isStudent = false;
                 }
                 //update the context
-                setUser(tempUser);
+                userContext.setUser(tempUser);
                 //update localStorage
                 localStorage.setItem("user", JSON.stringify(tempUser));
             }
@@ -81,83 +91,128 @@ function EditProfile() {
         }
     }
 
-        if (!user) {
-            return <Redirect to={{ pathname: "/login" }} />;
-        }
+    async function uploadPhoto(photo) {
+       if (!photo) return;
+       const data = await upload({ variables: {
+           picture: photo
+       }});
 
-        return (
-            <div className="px-4 mx-auto lg:container">
-                {error && <Error error={error} />}
-                {data && <Success message="Profile Updated"/>}
+       if (data.data?.addProfilePicture.photoUrl && userContext.user) {
+           //make a copy of the current user
+           const tempAuth = userContext.user;
 
-                <form onSubmit={(e) => handleEdit(e)}>
-                    <TextInput
-                        className="mb-4"
-                        id="username"
-                        label="Username"
-                        value={user.user.username}
-                        disabled
-                    />
+           //update the tempUser with the new data
+           tempAuth.user.photoUrl = data.data?.addProfilePicture.photoUrl;
 
-                    <TextInput
-                        className="mb-4"
-                        id="first"
-                        label="First name"
-                        value={first}
-                        placeholder={first}
-                        onChange={(value: any) => setFirst(value.target.value)}
-                    />
+           //update the context
+           userContext.setUser(tempAuth);
 
-                    <TextInput
-                        className="mb-4"
-                        id="last"
-                        label="Last name"
-                        value={last}
-                        placeholder={last}
-                        onChange={(value: any) => setLast(value.target.value)}
-                    />
+           //put the tempUser back into storage
+           localStorage.setItem("user", JSON.stringify(tempAuth));
+       }
+    }
 
-                    <TextInput
-                        id="email"
-                        label="Email"
-                        type="email"
-                        value={email}
-                        placeholder={email}
-                        onChange={(value: any) => setEmail(value.target.value)}
-                    />
-                    <Caption className="mb-2">
-                        {
-                            user.user.isEmailVerified
-                            ? user.user.isStudent
+    if (!userContext.user) {
+        return <Redirect to={{ pathname: "/login" }} />;
+    }
+
+    return (
+        <div className="px-4 mx-auto lg:container dark:text-white">
+
+            <div className="w-full px-5 pt-5 pb-10 mx-auto mt-8 mb-4 text-gray-800 bg-white rounded-lg shadow-lg dark:bg-gray-800 dark:text-white">
+                <div className="w-full pt-1 pb-5">
+                    <div className="w-20 h-20 mx-auto -mt-16 overflow-hidden rounded-full shadow-lg">
+                        <label htmlFor="photo">
+                            <img src={photoUrl} alt="Profile" className="w-20 h-20 rounded-full" />
+                        </label>
+                        <input
+                            id="photo"
+                            type="file"
+                            onChange={(e) => uploadPhoto(e.target.files[0])}
+                            hidden
+                        /> 
+                    </div>
+                </div>
+                <div className="w-full">
+                    <p className="text-2xl font-bold text-center">{userContext.user.user.name}</p>
+                    <p className="text-xs text-center text-gray-500">@{userContext.user.user.username}</p>
+                </div>
+            </div>
+
+            {error && <Error error={error} />}
+            {data && <Success message="Profile Updated"/>}
+
+            {uploadLoading && <p>Uploading new Photo...</p>}
+
+
+            <form onSubmit={(e) => handleEdit(e)}>
+                <TextInput
+                    className="mb-4"
+                    id="username"
+                    label="Username"
+                    value={userContext.user.user.username}
+                    disabled
+                />
+
+                <TextInput
+                    className="mb-4"
+                    id="first"
+                    label="First name"
+                    value={first}
+                    placeholder={first}
+                    onChange={(value: any) => setFirst(value.target.value)}
+                />
+
+                <TextInput
+                    className="mb-4"
+                    id="last"
+                    label="Last name"
+                    value={last}
+                    placeholder={last}
+                    onChange={(value: any) => setLast(value.target.value)}
+                />
+
+                <TextInput
+                    id="email"
+                    label="Email"
+                    type="email"
+                    value={email}
+                    placeholder={email}
+                    onChange={(value: any) => setEmail(value.target.value)}
+                />
+                <Caption className="mb-2">
+                    {
+                        userContext.user.user.isEmailVerified
+                            ? userContext.user.user.isStudent
                                 ? "Your email is verified and you are a student"
                                 : "Your email is verified"
-                            : "Your email is not verified"
-                        }
-                    </Caption>
+                                : "Your email is not verified"
+                    }
+                </Caption>
 
-                    <TextInput
-                        className="mb-4"
-                        id="phone"
-                        label="Phone"
-                        type="tel"
-                        value={phone}
-                        placeholder={phone}
-                        onChange={(value: any) => setPhone(value.target.value)}
-                    />
+                <TextInput
+                    className="mb-4"
+                    id="phone"
+                    label="Phone"
+                    type="tel"
+                    value={phone}
+                    placeholder={phone}
+                    onChange={(value: any) => setPhone(value.target.value)}
+                />
 
-                    <TextInput
-                        className="mb-4"
-                        id="venmo"
-                        label="Venmo username"
-                        value={venmo}
-                        placeholder={venmo}
-                        onChange={(value: any) => setVenmo(value.target.value)}
-                    />
+                <TextInput
+                    className="mb-4"
+                    id="venmo"
+                    label="Venmo username"
+                    value={venmo}
+                    placeholder={venmo}
+                    onChange={(value: any) => setVenmo(value.target.value)}
+                />
 
-                    <Button raised>{loading ? "Updating profile..." : "Update profile"}</Button>
-                </form>
-            </div>
-        );
+                <Button raised>{loading ? "Updating profile..." : "Update profile"}</Button>
+            </form>
+        </div>
+    );
 }
 
 export default EditProfile;

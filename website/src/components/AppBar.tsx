@@ -27,13 +27,6 @@ function BeepAppBar(props: props) {
     const [toggleNav, setToggle] = useState(false);
     const [resendStatus, setResendStatus] = useState<string>();
     const [refreshStatus, setRefreshStatus] = useState<string>();
-    let history = useHistory();
-
-    // Collapse nav on route change
-    history.listen(() => {
-        setToggle(false);
-    })
-
 
     async function resendVarificationEmail() {
         try {
@@ -73,15 +66,11 @@ function BeepAppBar(props: props) {
 
                 {/* Nav items */}
                 <div className={!toggleNav ? "hidden w-full lg:items-center lg:w-auto lg:block items-end" : "w-full lg:items-center lg:w-auto lg:block"}>
-
-
                     <Nav direction={toggleNav ? 'col' : 'row'} className={toggleNav ? 'pl-0 pt-4' : ''}>
                         <NavItem to="/faq">FAQ</NavItem>
                         <NavItem to="/about">About Us</NavItem>
                         {(user && user.user.role === UserRole.ADMIN) &&
-                            <div className="mr-4">
-                                <AdminDropdown/>
-                            </div>
+                            <AdminDropdown/>
                         }
 
                         {!user &&

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Platform, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import { Text, Layout, Button, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { LoadingIndicator } from "../../utils/Icons";
 import { BackIcon } from '../../utils/Icons';
@@ -115,7 +115,7 @@ export function ProfilePhotoScreen(props: Props) {
             <Layout style={styles.container}>
                 <Text>Upload Profile Photo</Text>
                 {photo && <Image source={{ uri: photo.uri }} style={{ width: 200, height: 200, borderRadius: 200/ 2, marginTop: 10, marginBottom: 10 }} />}
-                {!loading ?
+                {!loading || !uploadLoading ?
                     <Button onPress={() => handleUpdate()}>
                         Choose Photo
                     </Button>

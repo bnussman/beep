@@ -15,11 +15,12 @@ import BeepAppBar from './components/AppBar';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { UserContext } from './UserContext';
 import About from './routes/About';
-import { ApolloClient, ApolloProvider, createHttpLink, DefaultOptions, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloProvider, DefaultOptions, InMemoryCache } from '@apollo/client';
+import { createUploadLink } from 'apollo-upload-client';
 import { setContext } from '@apollo/client/link/context';
-import {ThemeProvider} from './ThemeContext';
+import { ThemeContext } from './ThemeContext';
 
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
     //uri: 'https://beep-app-beep-staging.192.168.1.200.nip.io',
     uri: 'http://localhost:3001/graphql',
 });
@@ -58,15 +59,48 @@ export const client = new ApolloClient({
     defaultOptions: defaultOptions
 });
 
+function getInitialTheme() {
+  if (typeof window !== "undefined" && window.localStorage) {
+    const storedPrefs = window.localStorage.getItem("color-theme")
+    if (typeof storedPrefs === "string") {
+      return storedPrefs
+    }
+
+    const userMedia = window.matchMedia("(prefers-color-scheme: dark)")
+    if (userMedia.matches) {
+      return "dark"
+    }
+  }
+
+  // If you want to use light theme as the default, return "light" instead
+  return "dark"
+}
+
 function App() {
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+    const [user, setInternalUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+    const [theme, setInternalTheme] = useState(getInitialTheme());
+
+    function setUser(d) {
+        setInternalUser({ ...d });
+    }
+
+    function setTheme(theme: string) {
+        const root = window.document.documentElement
+        const isDark = theme === "dark";
+
+        root.classList.remove(isDark ? "light" : "dark")
+        root.classList.add(theme)
+
+        localStorage.setItem("color-theme", theme)
+        setInternalTheme(theme);
+    }
     
     useEffect(() => {
     }, []);
 
     return (
         <ApolloProvider client={client}>
-        <ThemeProvider initialTheme="dark">
+        <ThemeContext.Provider value={{ theme, setTheme }}>
         <UserContext.Provider value={{user, setUser}}>
             <Router>
                 <BeepAppBar/>
@@ -88,7 +122,7 @@ function App() {
             </Router>
             {/*<Footer/>*/}
             </UserContext.Provider>
-            </ThemeProvider>
+            </ThemeContext.Provider>
         </ApolloProvider>
     );
 }
