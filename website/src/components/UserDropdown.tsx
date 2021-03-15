@@ -37,10 +37,10 @@ export function UserDropdown() {
                         <span className="rounded-md shadow-sm">
                             <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 dark:border-gray-900 leading-5 transition duration-150 ease-in-out rounded-md hover:text-gray-500 focus:outline-none active:bg-gray-50 active:text-gray-800 dark:bg-gray-800 dark:text-white">
                                 <span className="flex flex-row">
-                                    {user.user.photoUrl &&
-                                        <img className="block object-cover w-5 h-5 mr-2 rounded-full lg:inline-block" alt="profile" src={user.user.photoUrl} />
+                                    {user?.user?.photoUrl &&
+                                        <img className="block object-cover w-5 h-5 mr-2 rounded-full lg:inline-block" alt="profile" src={user?.user?.photoUrl} />
                                     }
-                                    {user.user.name}
+                                    {user?.user?.name}
                                 </span>
                                 <svg
                                     className="w-5 h-5 ml-2 -mr-1"
@@ -72,7 +72,7 @@ export function UserDropdown() {
                                 <div className="px-4 py-3">
                                     <p className="text-sm leading-5 dark:text-gray-50">Signed in as</p>
                                     <p className="text-sm font-medium text-gray-900 truncate leading-5 dark:text-gray-100">
-                                        {user.user.email}
+                                        @{user?.user?.username}
                                     </p>
                                 </div>
 
@@ -80,7 +80,7 @@ export function UserDropdown() {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <Link
-                                                to={`/profile/edit/${user.user.id}`}
+                                                to={`/profile/edit/${user?.user?.id}`}
                                                 className={`${
                                                     active
                                                         ? "bg-gray-100 text-gray-900 dark:bg-gray-900"
