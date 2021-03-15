@@ -25,6 +25,7 @@
     },
     "resolutions": {
         "react": "^17.0.1",
-        "react-dom": "^17.0.1"
+        "react-dom": "^17.0.1",
+        "graphql-upload": "^11.0.0"
     }
 }

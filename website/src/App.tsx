@@ -20,7 +20,8 @@ import { setContext } from '@apollo/client/link/context';
 import {ThemeProvider} from './ThemeContext';
 
 const httpLink = createHttpLink({
-    uri: 'https://beep-app-beep-staging.192.168.1.200.nip.io',
+    //uri: 'https://beep-app-beep-staging.192.168.1.200.nip.io',
+    uri: 'http://localhost:3001/graphql',
 });
 
 const authLink = setContext(async (_, { headers }) => {
