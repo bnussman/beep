@@ -21,7 +21,6 @@ import { ApolloServer } from 'apollo-server-koa'
 import { graphqlUploadKoa } from 'graphql-upload'
 import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
-import websockify from 'koa-websocket';
 
 const url = `mongodb+srv://banks:${process.env.MONGODB_PASSWORD}@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
 
