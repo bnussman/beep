@@ -106,22 +106,15 @@ export class BeeperResolver {
         console.log(typeof r);
         pubSub.publish("Beeper" + ctx.user.id, r);
 
-        const t = (input.value == 'deny' || input.value == 'complete') ? null : queueEntry;
-
-        pubSub.publish("Rider" + queueEntry.rider.id, t);
-
-        this.sendRiderUpdates(queueEntry.rider.id, ctx.user.id, pubSub);
+        this.sendRiderUpdates(ctx.user.id, pubSub);
 
         return true;
     }
 
-    private async sendRiderUpdates(skipId: string, beeperId: string, pubSub: PubSubEngine) {
+    private async sendRiderUpdates(beeperId: string, pubSub: PubSubEngine) {
         const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId } , { populate: true });
 
         for (const entry of queues) {
-
-            if (entry.rider.id == skipId) continue;
-
             const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
 
             entry.ridersQueuePosition = ridersQueuePosition;
