@@ -44,6 +44,7 @@ export default class BeepAPIServer {
             debug: true,
             resultCache: {
                 adapter: RedisCacheAdapter,
+                expiration: 100000000, // 1s
                 options: {
                     host: '192.168.1.135',
                     port: 6379,
