@@ -51,7 +51,7 @@ export default class BeepAPIServer {
             debug: true,
             resultCache: {
                 adapter: RedisCacheAdapter,
-                expiration: 100000000, // 1s
+                expiration: 60000, // 1s
                 options: {
                     client: new Redis(options)
                 }
