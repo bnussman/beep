@@ -42,7 +42,7 @@ export default class BeepAPIServer {
             type: 'mongo',
             clientUrl: url,
             debug: true,
-            resultCache: {
+            cache: {
                 adapter: RedisCacheAdapter,
                 options: {
                     host: '192.168.1.135',
