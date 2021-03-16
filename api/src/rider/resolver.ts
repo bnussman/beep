@@ -47,7 +47,7 @@ export class RiderResolver {
 
         const e = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user.id }, true);
 
-        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id });
+        const r = await BeepORM.queueEntryRepository.find({ beeper: beeper.id });
         pubSub.publish("Beeper" + beeper.id, r);
         pubSub.publish("Rider" + ctx.user.id, e);
 
