@@ -55,6 +55,8 @@ export class BeeperResolver {
 
             BeepORM.queueEntryRepository.persist(queueEntry);
             BeepORM.userRepository.persist(ctx.user);
+
+            await BeepORM.em.flush();
         }
         else if (input.value == 'deny' || input.value == 'complete') {
             const finishedBeep = new Beep();
@@ -73,6 +75,8 @@ export class BeeperResolver {
             BeepORM.userRepository.persist(ctx.user);
 
             BeepORM.queueEntryRepository.remove(queueEntry);
+
+            await BeepORM.em.flush();
 
             if (input.value == "deny") {
                 sendNotification(queueEntry.rider, `${ctx.user.name} has denied your beep request`, "Open your app to find a diffrent beeper.");
@@ -94,18 +98,16 @@ export class BeeperResolver {
                     Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
             }
 
-            BeepORM.queueEntryRepository.persist(queueEntry);
+            await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
         }
 
+        pubSub.publish("Beeper" + ctx.user.id, null);
 
         const t = (input.value == 'deny' || input.value == 'complete') ? null : queueEntry;
 
         pubSub.publish("Rider" + queueEntry.rider.id, t);
 
         this.sendRiderUpdates(queueEntry.rider.id, ctx.user.id, pubSub);
-        
-        await BeepORM.em.flush();
-        await BeepORM.queueEntryRepository.flush();
 
         return true;
     }
@@ -113,15 +115,13 @@ export class BeeperResolver {
     private async sendRiderUpdates(skipId: string, beeperId: string, pubSub: PubSubEngine) {
         const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId } , { populate: true });
 
-        pubSub.publish("Beeper" + beeperId, queues);
-
         for (const entry of queues) {
 
             if (entry.rider.id == skipId) continue;
 
-            const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue }});
+            const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
 
-            entry.ridersQueuePosition = ridersQueuePosition || -1;
+            entry.ridersQueuePosition = ridersQueuePosition;
 
             pubSub.publish("Rider" + entry.rider.id, entry);
         }
@@ -130,7 +130,9 @@ export class BeeperResolver {
     @Subscription(() => [QueueEntry], {
         topics: ({ args }) => "Beeper" + args.topic,
     })
-    public async getBeeperUpdates(@Arg("topic") topic: string, @Root() entry: QueueEntry[]): Promise<QueueEntry[]> {
-        return entry;
+    public async getBeeperUpdates(@Arg("topic") topic: string, @Root() entry: QueueEntry): Promise<QueueEntry[]> {
+        console.log(topic);
+        const r = await BeepORM.queueEntryRepository.find({ beeper: topic }, { populate: true });
+        return r.filter(entry => entry.state != -1);
     }
 }
