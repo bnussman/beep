@@ -5,11 +5,11 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-community/async-storage';
 import { createUploadLink } from 'apollo-upload-client';
 
-//const ip = "beep-app-beep-staging.192.168.1.200.nip.io";
-const ip = "192.168.1.57:3001";
+const ip = "beep-app-beep-staging.192.168.1.200.nip.io";
+//const ip = "192.168.1.57:3001";
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${ip}/subscriptions`,
+  uri: `wss://${ip}/subscriptions`,
   options: {
       reconnect: true,
       connectionParams: async () => {
@@ -64,7 +64,7 @@ const splitLink = split(
 );
 
 const uploadLink = createUploadLink({
-    uri: 'http://'+ ip + '/graphql',
+    uri: 'https://'+ ip + '/graphql',
     headers: {
         "keep-alive": "true"
     }
