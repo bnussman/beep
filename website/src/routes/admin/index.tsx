@@ -13,6 +13,7 @@ import Report from './reports/Report';
 import Beeps from './beeps';
 import Beep from './beeps/Beep';
 import Locations from './locations';
+import Rates from './rates';
 
 function Admin() {
 
@@ -56,6 +57,9 @@ function Admin() {
 
                     <Route exact path={`${match.path}/locations`}>
                         <Locations />
+                    </Route>
+                    <Route exact path={`${match.path}/rates`}>
+                        <Rates />
                     </Route>
                 </Switch>
             </div>

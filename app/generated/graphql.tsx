@@ -292,7 +292,7 @@ export type Query = {
   getBeep: Beep;
   getETA: Scalars['String'];
   getLocations: LocationsResponse;
-  getUserRating: RatingsResponse;
+  getRatings: RatingsResponse;
   getReports: ReportsResponse;
   getReport: Report;
   findBeep: User;
@@ -330,8 +330,8 @@ export type QueryGetLocationsArgs = {
 };
 
 
-export type QueryGetUserRatingArgs = {
-  id: Scalars['String'];
+export type QueryGetRatingsArgs = {
+  id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
 };
@@ -673,7 +673,7 @@ export type GetQueueSubscription = (
     & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'timeEnteredQueue'>
     & { rider: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'phone' | 'photoUrl'>
+      & Pick<User, 'id' | 'first' | 'last' | 'venmo' | 'phone' | 'photoUrl'>
     ) }
   )> }
 );
@@ -701,7 +701,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize'>
+    & Pick<User, 'id' | 'name' | 'username' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'rating'>
   ) }
 );
 
@@ -837,7 +837,7 @@ export type GetBeepersQuery = (
   { __typename?: 'Query' }
   & { getBeeperList: Array<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'isStudent' | 'singlesRate' | 'groupRate' | 'capacity' | 'queueSize' | 'photoUrl' | 'role' | 'masksRequired'>
+    & Pick<User, 'id' | 'first' | 'last' | 'isStudent' | 'singlesRate' | 'groupRate' | 'capacity' | 'queueSize' | 'photoUrl' | 'role' | 'masksRequired' | 'rating'>
   )> }
 );
 
@@ -1251,7 +1251,6 @@ export const GetQueueDocument = gql`
     timeEnteredQueue
     rider {
       id
-      name
       first
       last
       venmo
@@ -1325,6 +1324,8 @@ export const GetUserDocument = gql`
     query GetUser($id: String!) {
   getUser(id: $id) {
     id
+    name
+    username
     first
     last
     isBeeping
@@ -1337,6 +1338,7 @@ export const GetUserDocument = gql`
     masksRequired
     photoUrl
     queueSize
+    rating
   }
 }
     `;
@@ -1756,6 +1758,7 @@ export const GetBeepersDocument = gql`
     photoUrl
     role
     masksRequired
+    rating
   }
 }
     `;

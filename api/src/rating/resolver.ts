@@ -40,8 +40,8 @@ export class RatingResolver {
 
     @Query(() => RatingsResponse)
     @Authorized()
-    public async getUserRating(@Args() { offset, show }: PaginationArgs, @Arg('id') id: string): Promise<RatingsResponse> {
-        const [ratings, count] = await BeepORM.em.findAndCount(Rating, { rated: id }, { limit: show, offset: offset });
+    public async getRatings(@Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<RatingsResponse> {
+        const [ratings, count] = await BeepORM.em.findAndCount(Rating, id ? { rated: id } : {}, { limit: show, offset: offset, populate: true });
 
         return {
             items: ratings,

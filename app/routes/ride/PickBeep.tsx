@@ -1,15 +1,13 @@
-import React, { Component, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Layout, Text, Divider, List, ListItem, Button, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
-import { config } from "../../utils/config";
-import { BackIcon, RefreshIcon } from '../../utils/Icons';
-import { handleFetchError } from "../../utils/Errors";
+import { BackIcon } from '../../utils/Icons';
 import ProfilePicture from '../../components/ProfilePicture';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {MainNavParamList} from '../../navigators/MainTabs';
-import {User} from '../../types/Beep';
 import {gql, useQuery} from '@apollo/client';
-import {GetBeepersQuery, Rating} from '../../generated/graphql';
+import {GetBeepersQuery} from '../../generated/graphql';
+import {printStars} from '../../components/Stars';
 
 interface Props {
     navigation: BottomTabNavigationProp<MainNavParamList>;
@@ -53,23 +51,10 @@ export function PickBeepScreen(props: Props) {
         navigation.goBack();
     }
 
-    /*function printStars(item: Rating): string{
-        let stars:string = " "
-        for (let i = 0; i < item.rating; i++){
-             stars += "⭐️"
-        }
-        return stars
-    }*/
 
     function getDescription(item: any): string {
-        return `${item.queueSize} in ${item.first}'s queue\nCapacity: ${item.capacity} riders\nSingles: $${item.singlesRate}\nGroups: $${item.groupRate}\n
-         User Rating: ${item.rating}`;
+        return `${item.queueSize} in ${item.first}'s queue\nCapacity: ${item.capacity} riders\nSingles: $${item.singlesRate}\nGroups: $${item.groupRate}\nUser Rating: ${printStars(item.rating)}`;
     }
-
-    /*function getDescription(item: any): string {
-        return `${item.queueSize} in ${item.first}'s queue\nCapacity: ${item.capacity} riders\nSingles: $${item.singlesRate}\nGroups: $${item.groupRate}\n
-         User Rating: $printStars({item.rating})`;
-    }*/
 
     const BackAction = () => (
         <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
