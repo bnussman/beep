@@ -43,11 +43,11 @@ const authLink = setContext(async (_, { headers }) => {
 
 const defaultOptions: DefaultOptions = {
     watchQuery: {
-        //fetchPolicy: 'no-cache',
+        fetchPolicy: 'no-cache',
         errorPolicy: 'ignore',
     },
     query: {
-        //fetchPolicy: 'no-cache',
+        fetchPolicy: 'no-cache',
         errorPolicy: 'all',
     },
 };
