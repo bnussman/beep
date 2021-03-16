@@ -52,7 +52,7 @@
         "@types/koa-websocket": "^5.0.5",
         "@types/multer": "^1.4.5",
         "@types/node-fetch": "^2.5.8",
-        "@types/nodemailer": "^6.4.0",
+        "@types/nodemailer": "^6.4.1",
         "@types/uuid": "^8.3.0",
         "@typescript-eslint/eslint-plugin": "^4.15.0",
         "@typescript-eslint/parser": "^4.15.0",

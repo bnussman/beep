@@ -13,7 +13,7 @@ import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { Rating } from "./entities/Rating";
 import { ORM } from "./utils/ORM";
-import { RedisCacheAdapter } from 'mikro-orm-cache-adapter-redis';
+import { RedisCacheAdapter } from './utils/CacheAdapter';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 import Koa from 'koa'
@@ -49,13 +49,12 @@ export default class BeepAPIServer {
             type: 'mongo',
             clientUrl: url,
             debug: true,
+            /*
             resultCache: {
                 adapter: RedisCacheAdapter,
-                expiration: 60000, // 1s
-                options: {
-                    client: new Redis(options)
-                }
+                options: options
             }
+            */
         });
 
         BeepORM.em = BeepORM.orm.em;
