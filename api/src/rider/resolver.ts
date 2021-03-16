@@ -47,7 +47,8 @@ export class RiderResolver {
 
         const e = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user.id }, true);
 
-        pubSub.publish("Beeper" + beeper.id, e);
+        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id });
+        pubSub.publish("Beeper" + beeper.id, r);
         pubSub.publish("Rider" + ctx.user.id, e);
 
         return q;
@@ -105,7 +106,8 @@ export class RiderResolver {
 
         BeepORM.queueEntryRepository.removeAndFlush(entry);
 
-        pubSub.publish("Beeper" + id, null);
+        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id });
+        pubSub.publish("Beeper" + id, r);
         pubSub.publish("Rider" + ctx.user.id, null);
 
         sendNotification(entry.beeper, `${ctx.user.name} left your queue`, "They decided they did not want a beep from you! :(");

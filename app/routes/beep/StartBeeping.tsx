@@ -221,6 +221,7 @@ export function StartBeepingScreen(props: Props) {
             },
             updateQuery: (prev, { subscriptionData }) => {
                 const newQueue = subscriptionData.data.getBeeperUpdates;
+                console.log(newQueue);
                 return Object.assign({}, prev, {
                     getQueue: newQueue
                 });

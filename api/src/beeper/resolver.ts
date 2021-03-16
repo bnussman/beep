@@ -101,7 +101,10 @@ export class BeeperResolver {
             await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
         }
 
-        pubSub.publish("Beeper" + ctx.user.id, null);
+        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id });
+        console.log(r);
+        console.log(typeof r);
+        pubSub.publish("Beeper" + ctx.user.id, r);
 
         const t = (input.value == 'deny' || input.value == 'complete') ? null : queueEntry;
 
@@ -130,9 +133,7 @@ export class BeeperResolver {
     @Subscription(() => [QueueEntry], {
         topics: ({ args }) => "Beeper" + args.topic,
     })
-    public async getBeeperUpdates(@Arg("topic") topic: string, @Root() entry: QueueEntry): Promise<QueueEntry[]> {
-        console.log(topic);
-        const r = await BeepORM.queueEntryRepository.find({ beeper: topic }, { populate: true });
-        return r.filter(entry => entry.state != -1);
+    public async getBeeperUpdates(@Arg("topic") topic: string, @Root() entry: QueueEntry[]): Promise<QueueEntry[]> {
+        return entry;
     }
 }
