@@ -34,7 +34,14 @@ export default class BeepAPIServer {
         this.setup();
     }
 
+
     private async setup(): Promise<void> {
+        const options = {
+            host: '192.168.1.135',
+            port: 6379,
+            password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
+        };
+
         BeepORM.orm = await MikroORM.init({
             entities: ['./build/entities/*.js'],
             entitiesTs: ['./src/entities/*.ts'],
@@ -46,9 +53,7 @@ export default class BeepAPIServer {
                 adapter: RedisCacheAdapter,
                 expiration: 100000000, // 1s
                 options: {
-                    host: '192.168.1.135',
-                    port: 6379,
-                    password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
+                    client: new Redis(options)
                 }
             }
         });
@@ -66,11 +71,6 @@ export default class BeepAPIServer {
 
         initializeSentry();
 
-        const options = {
-            host: '192.168.1.135',
-            port: 6379,
-            password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
-        };
 
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],
