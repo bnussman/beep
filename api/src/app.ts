@@ -43,6 +43,7 @@ export default class BeepAPIServer {
             clientUrl: url,
             debug: true,
             cache: {
+                enabled: false,
                 adapter: RedisCacheAdapter,
                 options: {
                     host: '192.168.1.135',
