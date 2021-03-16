@@ -101,7 +101,7 @@ export class BeeperResolver {
             await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
         }
 
-        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id });
+        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id }, { refresh: true });
         console.log(r);
         console.log(typeof r);
         pubSub.publish("Beeper" + ctx.user.id, r);
@@ -112,10 +112,10 @@ export class BeeperResolver {
     }
 
     private async sendRiderUpdates(beeperId: string, pubSub: PubSubEngine) {
-        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId } , { populate: true });
+        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId } , { populate: true, refresh: true });
 
         for (const entry of queues) {
-            const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
+            const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue } });
 
             entry.ridersQueuePosition = ridersQueuePosition;
 
