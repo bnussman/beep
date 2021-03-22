@@ -27,8 +27,8 @@ export class Rating {
     @Property()
     stars!: number;
 
-    @Field()
-    @Property()
+    @Field({ nullable: true })
+    @Property({ nullable: true })
     message?: string;
 
     @Field()

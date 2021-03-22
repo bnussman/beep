@@ -5,9 +5,8 @@ import { BackIcon } from "../../utils/Icons";
 import { LoadingIndicator, RateIcon } from "../../utils/Icons";
 import { gql, useMutation } from "@apollo/client";
 import { RateUserMutation } from "../../generated/graphql";
-import {RateBar} from "../../components/Rate";
+import { RateBar } from "../../components/Rate";
 import ProfilePicture from "../../components/ProfilePicture";
-import {GetRateData} from "../../components/RateCard";
 
 interface Props {
     route: any;
@@ -49,7 +48,7 @@ export function RateScreen(props: Props) {
     }
 
     const BackAction = () => (
-        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.navigate("Main", { update: true })}/>
+        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
     );
 
     function UserHeader(props: any) {
