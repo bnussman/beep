@@ -70,7 +70,7 @@ export class RiderResolver {
     @Query(() => QueueEntry, { nullable: true })
     @Authorized()
     public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
-        const entry = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user }, { populate: ['beeper'] });
+        const entry = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user }, { populate: ['beeper'], refresh: true });
 
         if (!entry) {
             return null;
