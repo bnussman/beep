@@ -90,7 +90,7 @@ export class UserResolver {
     @Authorized()
     public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
         const relationPaths = fieldsToRelations(info);
-        const r = await BeepORM.queueEntryRepository.find({ beeper: id || ctx.user.id }, relationPaths);
+        const r = await BeepORM.queueEntryRepository.find({ beeper: id || ctx.user.id }, { populate: relationPaths, refresh: true });
 
         return r;
     }

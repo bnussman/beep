@@ -53,10 +53,8 @@ export class BeeperResolver {
 
             sendNotification(queueEntry.rider, `${ctx.user.name} has accepted your beep request`, "You will recieve another notification when they are on their way to pick you up.");
 
-            BeepORM.queueEntryRepository.persist(queueEntry);
-            BeepORM.userRepository.persist(ctx.user);
-
-            await BeepORM.em.flush();
+            await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
+            await BeepORM.userRepository.persistAndFlush(ctx.user);
         }
         else if (input.value == 'deny' || input.value == 'complete') {
             const finishedBeep = new Beep();
@@ -72,13 +70,11 @@ export class BeeperResolver {
 
             if (queueEntry.isAccepted) ctx.user.queueSize--;
 
-            BeepORM.userRepository.persist(ctx.user);
+            await BeepORM.userRepository.persistAndFlush(ctx.user);
 
-            BeepORM.queueEntryRepository.remove(queueEntry);
+            await BeepORM.queueEntryRepository.removeAndFlush(queueEntry);
 
             pubSub.publish("Rider" + queueEntry.rider.id, null);
-
-            await BeepORM.em.flush();
 
             if (input.value == "deny") {
                 sendNotification(queueEntry.rider, `${ctx.user.name} has denied your beep request`, "Open your app to find a diffrent beeper.");
@@ -103,8 +99,6 @@ export class BeeperResolver {
             await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
         }
 
-        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id }, { refresh: true });
-        pubSub.publish("Beeper" + ctx.user.id, r);
 
         this.sendRiderUpdates(ctx.user.id, pubSub);
 
@@ -113,6 +107,8 @@ export class BeeperResolver {
 
     private async sendRiderUpdates(beeperId: string, pubSub: PubSubEngine) {
         const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId }, { refresh: true });
+
+        pubSub.publish("Beeper" + beeperId, queues);
 
         for (const entry of queues) {
             const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue } });
