@@ -4,7 +4,7 @@ import { Card, Layout, Text } from '@ui-kitten/components';
 import { GetRateDataQuery } from '../generated/graphql';
 import ProfilePicture from './ProfilePicture';
 
-const GetRateData = gql`
+export const GetRateData = gql`
 query GetRateData {
     getLastBeepToRate {
         id
@@ -26,10 +26,6 @@ export function RateCard(props: Props) {
 
     const { data, loading, error, refetch } = useQuery<GetRateDataQuery>(GetRateData, { fetchPolicy: 'no-cache' });
 
-    useEffect(() => {
-        refetch();
-    }, [props.navigation]);
-    
     if (loading || !data?.getLastBeepToRate) return null;
 
     return (

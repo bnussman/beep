@@ -73,7 +73,7 @@ export class AccountResolver {
 
     @Mutation(() => Boolean)
     public async verifyAccount(@Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-        const entry = await BeepORM.verifyEmailRepository.findOne(id, { populate: true });
+        const entry = await BeepORM.verifyEmailRepository.findOne(id, { populate: ['user'] });
 
         if (!entry) {
             throw new Error("Invalid verify email token");

@@ -29,7 +29,7 @@ export class ReportsResolver {
     @Query(() => ReportsResponse)
     @Authorized(UserRole.ADMIN)
     public async getReports(@Args() { offset, show }: PaginationArgs): Promise<ReportsResponse> {
-        const [reports, count] = await BeepORM.reportRepository.findAndCount({}, { orderBy: { timestamp: QueryOrder.DESC }, limit: show, offset: offset, populate: true });
+        const [reports, count] = await BeepORM.reportRepository.findAndCount({}, { orderBy: { timestamp: QueryOrder.DESC }, limit: show, offset: offset, populate: ['reported', 'reporter'] });
 
         return {
             items: reports,
@@ -40,7 +40,7 @@ export class ReportsResolver {
     @Mutation(() => Report)
     @Authorized(UserRole.ADMIN)
     public async updateReport(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('input') input: UpdateReportInput): Promise<Report> {
-        const report = await BeepORM.reportRepository.findOne(id, { populate: true });
+        const report = await BeepORM.reportRepository.findOne(id, { populate: ['reporter', 'reported', 'handledBy'] });
 
         if (!report) throw new Error("You are trying to update a report that does not exist");
         
@@ -61,7 +61,7 @@ export class ReportsResolver {
     @Query(() => Report)
     @Authorized(UserRole.ADMIN)
     public async getReport(@Arg('id') id: string): Promise<Report> {
-        const report = await BeepORM.reportRepository.findOne(id, { populate: true, refresh: true });
+        const report = await BeepORM.reportRepository.findOne(id, { populate: ['reporter', 'reported', 'beep', 'handledBy'], refresh: true });
 
         if (!report) {
             throw new Error("This report entry does not exist");

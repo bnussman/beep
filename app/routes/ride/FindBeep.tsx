@@ -284,9 +284,6 @@ export function MainFindBeepScreen(props: Props) {
             </Layout>
         );
     }
-    useEffect(() => {
-        console.log(props.route);
-    }, [props.route.params]);
 
     if (!data || !data?.getRiderStatus || !data?.getRiderStatus.beeper.id ) {
         return (

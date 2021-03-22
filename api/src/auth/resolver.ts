@@ -124,7 +124,7 @@ export class AuthResolver {
 
     @Mutation(() => Boolean)
     public async resetPassword(@Arg('id') id: string, @Arg('password') password: string): Promise<boolean> {
-        const entry = await BeepORM.forgotPasswordRepository.findOne(id, { populate: true });
+        const entry = await BeepORM.forgotPasswordRepository.findOne(id, { populate: ['user'] });
 
         if (!entry) {
             throw new Error("This reset password request does not exist");

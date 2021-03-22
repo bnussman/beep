@@ -4,9 +4,10 @@ import { Text, Input, Button, Layout, TopNavigation, TopNavigationAction } from 
 import { BackIcon } from "../../utils/Icons";
 import { LoadingIndicator, RateIcon } from "../../utils/Icons";
 import { gql, useMutation } from "@apollo/client";
-import { RateUserMutation, User } from "../../generated/graphql";
+import { RateUserMutation } from "../../generated/graphql";
 import {RateBar} from "../../components/Rate";
 import ProfilePicture from "../../components/ProfilePicture";
+import {GetRateData} from "../../components/RateCard";
 
 interface Props {
     route: any;
@@ -35,6 +36,7 @@ export function RateScreen(props: Props) {
         if (stars < 1) return alert("Please rate the user");
 
         const result = await rate({
+            refetchQueries: () => ["GetRateData"],
             variables: {
                 userId: props.route.params.id,
                 beepId: props.route.params.beep,
@@ -47,7 +49,7 @@ export function RateScreen(props: Props) {
     }
 
     const BackAction = () => (
-        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.navigate("Main", { rate: true })}/>
+        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.navigate("Main", { update: true })}/>
     );
 
     function UserHeader(props: any) {

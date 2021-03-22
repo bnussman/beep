@@ -5,6 +5,7 @@ import { SettingsScreen } from './Settings';
 import { StartBeepingScreen } from '../routes/beep/StartBeeping';
 import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components';
 import { CarIcon, MapIcon, SettingsIcon } from '../utils/Icons';
+import {useIsFocused} from '@react-navigation/native';
 
 
 export type MainNavParamList = {
@@ -38,14 +39,12 @@ const BottomTabBar = ({ navigation, state }: { navigation: BottomTabNavigationPr
   </BottomNavigation>
 );
 
-export class MainTabs extends Component {
-    render() {
-       return (
-            <Navigator tabBar={props => <BottomTabBar {...props} />}>
-                <Screen name='Get a Beep' component={FindBeepScreen}/>
-                <Screen name='Start Beeping' component={StartBeepingScreen} />
-                <Screen name='Settings' component={SettingsScreen}/>
-            </Navigator>
-        );
-    }
+export function MainTabs() {
+    return (
+        <Navigator tabBar={props => <BottomTabBar {...props} />}>
+            <Screen name='Get a Beep' component={FindBeepScreen}/>
+            <Screen name='Start Beeping' component={StartBeepingScreen} />
+            <Screen name='Settings' component={SettingsScreen}/>
+        </Navigator>
+    );
 }
