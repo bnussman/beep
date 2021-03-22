@@ -47,7 +47,7 @@ export function RateScreen(props: Props) {
     }
 
     const BackAction = () => (
-        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
+        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.navigate("Main", { rate: true })}/>
     );
 
     function UserHeader(props: any) {

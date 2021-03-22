@@ -297,6 +297,7 @@ export type Query = {
   findBeep: User;
   getRiderStatus?: Maybe<QueueEntry>;
   getBeeperList: Array<User>;
+  getLastBeepToRate?: Maybe<Beep>;
   getUser: User;
   getUsers: UsersResponse;
   getRideHistory: Array<Beep>;

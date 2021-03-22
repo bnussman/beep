@@ -298,6 +298,7 @@ export type Query = {
   findBeep: User;
   getRiderStatus?: Maybe<QueueEntry>;
   getBeeperList: Array<User>;
+  getLastBeepToRate?: Maybe<Beep>;
   getUser: User;
   getUsers: UsersResponse;
   getRideHistory: Array<Beep>;
@@ -581,6 +582,21 @@ export type UpdateBeeperQueueMutationVariables = Exact<{
 export type UpdateBeeperQueueMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'setBeeperQueue'>
+);
+
+export type GetRateDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetRateDataQuery = (
+  { __typename?: 'Query' }
+  & { getLastBeepToRate?: Maybe<(
+    { __typename?: 'Beep' }
+    & Pick<Beep, 'id'>
+    & { beeper: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'username' | 'photoUrl'>
+    ) }
+  )> }
 );
 
 export type ResendMutationVariables = Exact<{ [key: string]: never; }>;
@@ -1008,6 +1024,46 @@ export function useUpdateBeeperQueueMutation(baseOptions?: ApolloReactHooks.Muta
 export type UpdateBeeperQueueMutationHookResult = ReturnType<typeof useUpdateBeeperQueueMutation>;
 export type UpdateBeeperQueueMutationResult = ApolloReactCommon.MutationResult<UpdateBeeperQueueMutation>;
 export type UpdateBeeperQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateBeeperQueueMutation, UpdateBeeperQueueMutationVariables>;
+export const GetRateDataDocument = gql`
+    query GetRateData {
+  getLastBeepToRate {
+    id
+    beeper {
+      id
+      name
+      username
+      photoUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRateDataQuery__
+ *
+ * To run a query within a React component, call `useGetRateDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRateDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRateDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetRateDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetRateDataQuery, GetRateDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetRateDataQuery, GetRateDataQueryVariables>(GetRateDataDocument, options);
+      }
+export function useGetRateDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetRateDataQuery, GetRateDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetRateDataQuery, GetRateDataQueryVariables>(GetRateDataDocument, options);
+        }
+export type GetRateDataQueryHookResult = ReturnType<typeof useGetRateDataQuery>;
+export type GetRateDataLazyQueryHookResult = ReturnType<typeof useGetRateDataLazyQuery>;
+export type GetRateDataQueryResult = ApolloReactCommon.QueryResult<GetRateDataQuery, GetRateDataQueryVariables>;
 export const ResendDocument = gql`
     mutation Resend {
   resendEmailVarification

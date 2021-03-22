@@ -6,6 +6,7 @@ import { User } from '../entities/User';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import GetBeepInput from '../validators/rider';
 import { Context } from '../utils/context';
+import {Beep} from '../entities/Beep';
    
 @Resolver()
 export class RiderResolver {
@@ -119,6 +120,22 @@ export class RiderResolver {
     @Authorized()
     public async getBeeperList(): Promise<User[]> {
         return await BeepORM.userRepository.find({ isBeeping: true });
+    }
+
+    @Query(() => Beep, { nullable: true })
+    @Authorized()
+    public async getLastBeepToRate(@Ctx() ctx: Context): Promise<Beep | null> {
+        const beep = await BeepORM.beepRepository.findOne({ rider: ctx.user.id }, true, { doneTime: QueryOrder.DESC });
+
+        if (!beep) return null;
+
+        const count = await BeepORM.ratingRepository.count({ rater: ctx.user.id, rated: beep.beeper.id, timestamp: { $gte: beep.doneTime } });
+
+        if (count > 0) {
+            return null;
+        }
+
+        return beep;
     }
 
     @Subscription(() => QueueEntry, {
