@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Platform, StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native"
 import { Text, Input, Button, Layout, TopNavigation, TopNavigationAction } from "@ui-kitten/components";
 import { BackIcon } from "../../utils/Icons";
@@ -79,7 +79,7 @@ export function RateScreen(props: Props) {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!(Platform.OS == "ios" || Platform.OS == "android")} >
             <Layout style={styles.container}>            
                 <Layout style={styles.form}>
-                    <UserHeader user={props.route.params.user} />
+                    {useMemo(() => <UserHeader user={props.route.params.user} />, [])}
                     <Layout style={{marginTop:15, marginBottom:15}}>
                         <RateBar
                             hint="Stars"
