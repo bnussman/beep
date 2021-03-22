@@ -136,7 +136,7 @@ export function ProfileScreen(props: Props) {
                             {user.rating &&
                                 <Layout style={styles.group}>
                                     <Text category="h6" style={styles.groupLabel}>Rating</Text>
-                                    <Text>{printStars(user.rating)} ({user.rating})</Text>
+                                    <Text>{printStars(user.rating)} ({Math.round(user.rating * 10) / 10})</Text>
                                 </Layout>
                             }
                         </Layout>

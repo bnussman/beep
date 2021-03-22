@@ -6,6 +6,7 @@ import { Beep } from '../entities/Beep';
 import {Paginated} from '../utils/paginated';
 import {Rating} from '../entities/Rating';
 import PaginationArgs from '../args/Pagination';
+import {QueryOrder} from '@mikro-orm/core';
 
 @ObjectType()
 class RatingsResponse extends Paginated(Rating) {}
@@ -40,8 +41,21 @@ export class RatingResolver {
 
     @Query(() => RatingsResponse)
     @Authorized()
-    public async getRatings(@Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<RatingsResponse> {
-        const [ratings, count] = await BeepORM.em.findAndCount(Rating, id ? { rated: id } : {}, { limit: show, offset: offset, populate: ['rater', 'rated'] });
+    public async getRatings(@Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string, @Arg('me', { nullable: true }) me?: boolean): Promise<RatingsResponse> {
+        let filter = {};
+
+        if (id && me) {
+            filter = {
+                rated: id
+            };
+        }
+        else if(id && !me) {
+            filter = {
+                rater: id
+            };
+        }
+
+        const [ratings, count] = await BeepORM.ratingRepository.findAndCount(filter, ['rater', 'rated'], { timestamp: QueryOrder.DESC }, show, offset);
 
         return {
             items: ratings,

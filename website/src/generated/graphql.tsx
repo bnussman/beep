@@ -65,7 +65,7 @@ export type Rating = {
   rater: User;
   rated: User;
   stars: Scalars['Float'];
-  message: Scalars['String'];
+  message?: Maybe<Scalars['String']>;
   timestamp: Scalars['Float'];
   beep: Beep;
 };
@@ -331,6 +331,7 @@ export type QueryGetLocationsArgs = {
 
 
 export type QueryGetRatingsArgs = {
+  me?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
