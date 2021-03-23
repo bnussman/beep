@@ -15,6 +15,7 @@ import { gqlChooseBeep } from './helpers';
 import Logger from '../../utils/Logger';
 import {client} from '../../utils/Apollo';
 import {RateCard} from '../../components/RateCard';
+import {LocationInput} from '../../components/LocationInput';
 
 const InitialRiderStatus = gql`
     query GetInitialRiderStatus {
@@ -235,37 +236,7 @@ export function MainFindBeepScreen(props: Props) {
         }
     }
 
-    async function useCurrentLocation(): Promise<void> {
-        setOrigin("Loading your location...");
-       
-        Location.setGoogleApiKey("AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI");
 
-        const { status } = await Location.requestPermissionsAsync();
-
-        if (status !== 'granted') {
-            return alert("You must enable location to use this feature.");
-        }
-
-        const position = await Location.getCurrentPositionAsync({});
-        const location = await Location.reverseGeocodeAsync({ latitude: position.coords.latitude, longitude: position.coords.longitude });
-
-        let string;
-
-        if (!location[0].name) {
-            string = position.coords.latitude + ", "+ position.coords.longitude;
-        }
-        else {
-            string = location[0].name + " " + location[0].street + " " + location[0].city + ", " + location[0].region + " " + location[0].postalCode;  
-        }
-
-        setOrigin(string);
-    }
-
-    const CurrentLocationIcon = (props: Props) => (
-        <TouchableWithoutFeedback onPress={() => useCurrentLocation()}>
-            <Icon {...props} name='pin'/>
-        </TouchableWithoutFeedback>
-    );
 
 
     const Tags = () => (
@@ -305,14 +276,7 @@ export function MainFindBeepScreen(props: Props) {
                                 value={groupSize}
                                 onChangeText={value => setGroupSize(value)}
                             />
-                            <Input
-                                label='Pick-up Location'
-                                style={styles.buttons}
-                                placeholder='Pickup Location'
-                                accessoryRight={CurrentLocationIcon}
-                                value={origin}
-                                onChangeText={value => setOrigin(value)}
-                            />
+                            <LocationInput getLocation={true}/>
                             <Input
                                 label='Destination Location'
                                 style={styles.buttons}
