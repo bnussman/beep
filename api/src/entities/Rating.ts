@@ -27,13 +27,13 @@ export class Rating {
     @Property()
     stars!: number;
 
-    @Field()
-    @Property()
+    @Field({ nullable: true })
+    @Property({ nullable: true })
     message?: string;
 
     @Field()
     @Property()
-    timestamp: number = Date.now();
+    timestamp: number;
 
     @Field()
     @ManyToOne()
@@ -45,5 +45,6 @@ export class Rating {
         this.stars = stars;
         this.message = message;
         this.beep = beep;
+        this.timestamp = Date.now();
     }
 }

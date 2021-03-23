@@ -7,6 +7,7 @@ import { UserContext } from '../../utils/UserContext';
 import { useContext } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { GetUserQuery } from "../../generated/graphql";
+import {printStars} from "../../components/Stars";
 
 interface Props {
     route: any; 
@@ -17,6 +18,8 @@ const GetUser = gql`
     query GetUser($id: String!) {
         getUser(id: $id) {
             id
+            name
+            username
             first
             last
             isBeeping
@@ -29,6 +32,7 @@ const GetUser = gql`
             masksRequired
             photoUrl
             queueSize
+            rating
         }
     }
 `;
@@ -49,8 +53,7 @@ export function ProfileScreen(props: Props) {
     function handleRate() {
         props.navigation.navigate("Rate", {
             id: props.route.params.id,
-            first: data?.getUser.first,
-            last: data?.getUser.last,
+            user: data?.getUser,
             beep: props.route.params.beep
         });
     }
@@ -130,6 +133,12 @@ export function ProfileScreen(props: Props) {
                                 <Text category="h6" style={styles.groupLabel}>Group Rate</Text>
                                 <Text>${user.groupRate}</Text>
                             </Layout>
+                            {user.rating &&
+                                <Layout style={styles.group}>
+                                    <Text category="h6" style={styles.groupLabel}>Rating</Text>
+                                    <Text>{printStars(user.rating)} ({Math.round(user.rating * 10) / 10})</Text>
+                                </Layout>
+                            }
                         </Layout>
                         {(props.route.params.id != userContext?.user?.user.id) &&
                             <>

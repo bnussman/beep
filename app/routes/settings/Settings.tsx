@@ -123,6 +123,15 @@ export function MainSettingsScreen({ navigation }: any) {
                     Ride Log
                 </Button>
                 <Button
+                    onPress={() => navigation.navigate("RatingsScreen")}
+                    accessoryLeft={LogIcon}
+                    accessoryRight={ForwardIcon}
+                    style={styles.button}
+                    appearance='ghost'
+                >
+                    Ratings
+                </Button>
+                <Button
                     onPress={() => doLogout()}
                     accessoryLeft={LogoutIcon}
                     style={styles.button}

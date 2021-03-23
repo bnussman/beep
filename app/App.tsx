@@ -164,7 +164,7 @@ export default class App extends Component<undefined, State> {
             }
 
             Sentry.setUserContext(user);
-            this.subscribeToUser(user.user.id);
+            //this.subscribeToUser(user.user.id);
         }
         else {
             initialScreen = "Login";

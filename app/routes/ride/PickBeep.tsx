@@ -1,15 +1,13 @@
-import React, { Component, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Layout, Text, Divider, List, ListItem, Button, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
-import { config } from "../../utils/config";
-import { BackIcon, RefreshIcon } from '../../utils/Icons';
-import { handleFetchError } from "../../utils/Errors";
+import { BackIcon } from '../../utils/Icons';
 import ProfilePicture from '../../components/ProfilePicture';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {MainNavParamList} from '../../navigators/MainTabs';
-import {User} from '../../types/Beep';
 import {gql, useQuery} from '@apollo/client';
 import {GetBeepersQuery} from '../../generated/graphql';
+import {printStars} from '../../components/Stars';
 
 interface Props {
     navigation: BottomTabNavigationProp<MainNavParamList>;
@@ -30,6 +28,8 @@ const GetBeepers = gql`
             photoUrl
             role
             masksRequired
+            rating
+            
         }
     }
 `;
@@ -51,8 +51,9 @@ export function PickBeepScreen(props: Props) {
         navigation.goBack();
     }
 
+
     function getDescription(item: any): string {
-        return `${item.queueSize} in ${item.first}'s queue\nCapacity: ${item.capacity} riders\nSingles: $${item.singlesRate}\nGroups: $${item.groupRate}`;
+        return `${item.queueSize} in ${item.first}'s queue\nCapacity: ${item.capacity} riders\nSingles: $${item.singlesRate}\nGroups: $${item.groupRate}\nUser Rating: ${printStars(item.rating)}`;
     }
 
     const BackAction = () => (

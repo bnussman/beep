@@ -117,6 +117,10 @@ const ReportIcon = (props: Props) => (
   <Icon {...props} name='alert-triangle-outline'/>
 );
 
+const RateIcon = (props: Props) => (
+  <Icon {...props} name='star-outline'/>
+);
+
 const AcceptIndicator = () => (
   <View style={styles.indicator}>
     <Spinner status="success" size='small'/>
@@ -176,7 +180,8 @@ export {
     CarIcon,
     MapsIcon,
     PhotoIcon,
-    StudentIcon
+    StudentIcon,
+    RateIcon
 };
 
 const styles = StyleSheet.create({

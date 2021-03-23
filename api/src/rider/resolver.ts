@@ -6,6 +6,7 @@ import { User } from '../entities/User';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import GetBeepInput from '../validators/rider';
 import { Context } from '../utils/context';
+import {Beep} from '../entities/Beep';
    
 @Resolver()
 export class RiderResolver {
@@ -47,7 +48,8 @@ export class RiderResolver {
 
         const e = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user.id }, true);
 
-        pubSub.publish("Beeper" + beeper.id, e);
+        const r = await BeepORM.queueEntryRepository.find({ beeper: beeper.id });
+        pubSub.publish("Beeper" + beeper.id, r);
         pubSub.publish("Rider" + ctx.user.id, e);
 
         return q;
@@ -68,7 +70,7 @@ export class RiderResolver {
     @Query(() => QueueEntry, { nullable: true })
     @Authorized()
     public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
-        const entry = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user }, { populate: ['beeper'] });
+        const entry = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user }, { populate: ['beeper'], refresh: true });
 
         if (!entry) {
             return null;
@@ -105,7 +107,8 @@ export class RiderResolver {
 
         BeepORM.queueEntryRepository.removeAndFlush(entry);
 
-        pubSub.publish("Beeper" + id, null);
+        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id });
+        pubSub.publish("Beeper" + id, r);
         pubSub.publish("Rider" + ctx.user.id, null);
 
         sendNotification(entry.beeper, `${ctx.user.name} left your queue`, "They decided they did not want a beep from you! :(");
@@ -117,6 +120,22 @@ export class RiderResolver {
     @Authorized()
     public async getBeeperList(): Promise<User[]> {
         return await BeepORM.userRepository.find({ isBeeping: true });
+    }
+
+    @Query(() => Beep, { nullable: true })
+    @Authorized()
+    public async getLastBeepToRate(@Ctx() ctx: Context): Promise<Beep | null> {
+        const beep = await BeepORM.beepRepository.findOne({ rider: ctx.user.id }, true, { doneTime: QueryOrder.DESC });
+
+        if (!beep) return null;
+
+        const count = await BeepORM.ratingRepository.count({ rater: ctx.user.id, rated: beep.beeper.id, timestamp: { $gte: beep.doneTime } });
+
+        if (count > 0) {
+            return null;
+        }
+
+        return beep;
     }
 
     @Subscription(() => QueueEntry, {

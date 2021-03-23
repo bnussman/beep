@@ -66,7 +66,7 @@ export type Rating = {
   rater: User;
   rated: User;
   stars: Scalars['Float'];
-  message: Scalars['String'];
+  message?: Maybe<Scalars['String']>;
   timestamp: Scalars['Float'];
   beep: Beep;
 };
@@ -292,12 +292,13 @@ export type Query = {
   getBeep: Beep;
   getETA: Scalars['String'];
   getLocations: LocationsResponse;
-  getUserRating: RatingsResponse;
+  getRatings: RatingsResponse;
   getReports: ReportsResponse;
   getReport: Report;
   findBeep: User;
   getRiderStatus?: Maybe<QueueEntry>;
   getBeeperList: Array<User>;
+  getLastBeepToRate?: Maybe<Beep>;
   getUser: User;
   getUsers: UsersResponse;
   getRideHistory: Array<Beep>;
@@ -330,8 +331,9 @@ export type QueryGetLocationsArgs = {
 };
 
 
-export type QueryGetUserRatingArgs = {
-  id: Scalars['String'];
+export type QueryGetRatingsArgs = {
+  me?: Maybe<Scalars['Boolean']>;
+  id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
 };
@@ -583,6 +585,21 @@ export type UpdateBeeperQueueMutation = (
   & Pick<Mutation, 'setBeeperQueue'>
 );
 
+export type GetRateDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetRateDataQuery = (
+  { __typename?: 'Query' }
+  & { getLastBeepToRate?: Maybe<(
+    { __typename?: 'Beep' }
+    & Pick<Beep, 'id'>
+    & { beeper: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'username' | 'photoUrl'>
+    ) }
+  )> }
+);
+
 export type ResendMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -673,7 +690,7 @@ export type GetQueueSubscription = (
     & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'timeEnteredQueue'>
     & { rider: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'phone' | 'photoUrl'>
+      & Pick<User, 'id' | 'first' | 'last' | 'venmo' | 'phone' | 'photoUrl'>
     ) }
   )> }
 );
@@ -701,7 +718,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize'>
+    & Pick<User, 'id' | 'name' | 'username' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'rating'>
   ) }
 );
 
@@ -758,6 +775,50 @@ export type GetRideHistoryQuery = (
       & Pick<User, 'id' | 'name' | 'first' | 'last' | 'photoUrl'>
     ) }
   )> }
+);
+
+export type GetRatingsIMadeQueryVariables = Exact<{
+  id?: Maybe<Scalars['String']>;
+  me?: Maybe<Scalars['Boolean']>;
+}>;
+
+
+export type GetRatingsIMadeQuery = (
+  { __typename?: 'Query' }
+  & { getRatings: (
+    { __typename?: 'RatingsResponse' }
+    & Pick<RatingsResponse, 'count'>
+    & { items: Array<(
+      { __typename?: 'Rating' }
+      & Pick<Rating, 'id' | 'stars' | 'timestamp' | 'message'>
+      & { rated: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'photoUrl'>
+      ) }
+    )> }
+  ) }
+);
+
+export type GetRatingsOnMeQueryVariables = Exact<{
+  id?: Maybe<Scalars['String']>;
+  me?: Maybe<Scalars['Boolean']>;
+}>;
+
+
+export type GetRatingsOnMeQuery = (
+  { __typename?: 'Query' }
+  & { getRatings: (
+    { __typename?: 'RatingsResponse' }
+    & Pick<RatingsResponse, 'count'>
+    & { items: Array<(
+      { __typename?: 'Rating' }
+      & Pick<Rating, 'id' | 'stars' | 'timestamp' | 'message'>
+      & { rater: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'photoUrl'>
+      ) }
+    )> }
+  ) }
 );
 
 export type GetInitialRiderStatusQueryVariables = Exact<{ [key: string]: never; }>;
@@ -837,7 +898,7 @@ export type GetBeepersQuery = (
   { __typename?: 'Query' }
   & { getBeeperList: Array<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'isStudent' | 'singlesRate' | 'groupRate' | 'capacity' | 'queueSize' | 'photoUrl' | 'role' | 'masksRequired'>
+    & Pick<User, 'id' | 'first' | 'last' | 'isStudent' | 'singlesRate' | 'groupRate' | 'capacity' | 'queueSize' | 'photoUrl' | 'role' | 'masksRequired' | 'rating'>
   )> }
 );
 
@@ -1008,6 +1069,46 @@ export function useUpdateBeeperQueueMutation(baseOptions?: ApolloReactHooks.Muta
 export type UpdateBeeperQueueMutationHookResult = ReturnType<typeof useUpdateBeeperQueueMutation>;
 export type UpdateBeeperQueueMutationResult = ApolloReactCommon.MutationResult<UpdateBeeperQueueMutation>;
 export type UpdateBeeperQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateBeeperQueueMutation, UpdateBeeperQueueMutationVariables>;
+export const GetRateDataDocument = gql`
+    query GetRateData {
+  getLastBeepToRate {
+    id
+    beeper {
+      id
+      name
+      username
+      photoUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRateDataQuery__
+ *
+ * To run a query within a React component, call `useGetRateDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRateDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRateDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetRateDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetRateDataQuery, GetRateDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetRateDataQuery, GetRateDataQueryVariables>(GetRateDataDocument, options);
+      }
+export function useGetRateDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetRateDataQuery, GetRateDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetRateDataQuery, GetRateDataQueryVariables>(GetRateDataDocument, options);
+        }
+export type GetRateDataQueryHookResult = ReturnType<typeof useGetRateDataQuery>;
+export type GetRateDataLazyQueryHookResult = ReturnType<typeof useGetRateDataLazyQuery>;
+export type GetRateDataQueryResult = ApolloReactCommon.QueryResult<GetRateDataQuery, GetRateDataQueryVariables>;
 export const ResendDocument = gql`
     mutation Resend {
   resendEmailVarification
@@ -1251,7 +1352,6 @@ export const GetQueueDocument = gql`
     timeEnteredQueue
     rider {
       id
-      name
       first
       last
       venmo
@@ -1325,6 +1425,8 @@ export const GetUserDocument = gql`
     query GetUser($id: String!) {
   getUser(id: $id) {
     id
+    name
+    username
     first
     last
     isBeeping
@@ -1337,6 +1439,7 @@ export const GetUserDocument = gql`
     masksRequired
     photoUrl
     queueSize
+    rating
   }
 }
     `;
@@ -1529,6 +1632,100 @@ export function useGetRideHistoryLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type GetRideHistoryQueryHookResult = ReturnType<typeof useGetRideHistoryQuery>;
 export type GetRideHistoryLazyQueryHookResult = ReturnType<typeof useGetRideHistoryLazyQuery>;
 export type GetRideHistoryQueryResult = ApolloReactCommon.QueryResult<GetRideHistoryQuery, GetRideHistoryQueryVariables>;
+export const GetRatingsIMadeDocument = gql`
+    query GetRatingsIMade($id: String, $me: Boolean) {
+  getRatings(id: $id, me: $me) {
+    items {
+      id
+      stars
+      timestamp
+      message
+      rated {
+        id
+        name
+        photoUrl
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetRatingsIMadeQuery__
+ *
+ * To run a query within a React component, call `useGetRatingsIMadeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRatingsIMadeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRatingsIMadeQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      me: // value for 'me'
+ *   },
+ * });
+ */
+export function useGetRatingsIMadeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetRatingsIMadeQuery, GetRatingsIMadeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetRatingsIMadeQuery, GetRatingsIMadeQueryVariables>(GetRatingsIMadeDocument, options);
+      }
+export function useGetRatingsIMadeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetRatingsIMadeQuery, GetRatingsIMadeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetRatingsIMadeQuery, GetRatingsIMadeQueryVariables>(GetRatingsIMadeDocument, options);
+        }
+export type GetRatingsIMadeQueryHookResult = ReturnType<typeof useGetRatingsIMadeQuery>;
+export type GetRatingsIMadeLazyQueryHookResult = ReturnType<typeof useGetRatingsIMadeLazyQuery>;
+export type GetRatingsIMadeQueryResult = ApolloReactCommon.QueryResult<GetRatingsIMadeQuery, GetRatingsIMadeQueryVariables>;
+export const GetRatingsOnMeDocument = gql`
+    query GetRatingsOnMe($id: String, $me: Boolean) {
+  getRatings(id: $id, me: $me) {
+    items {
+      id
+      stars
+      timestamp
+      message
+      rater {
+        id
+        name
+        photoUrl
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetRatingsOnMeQuery__
+ *
+ * To run a query within a React component, call `useGetRatingsOnMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRatingsOnMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRatingsOnMeQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      me: // value for 'me'
+ *   },
+ * });
+ */
+export function useGetRatingsOnMeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetRatingsOnMeQuery, GetRatingsOnMeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetRatingsOnMeQuery, GetRatingsOnMeQueryVariables>(GetRatingsOnMeDocument, options);
+      }
+export function useGetRatingsOnMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetRatingsOnMeQuery, GetRatingsOnMeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetRatingsOnMeQuery, GetRatingsOnMeQueryVariables>(GetRatingsOnMeDocument, options);
+        }
+export type GetRatingsOnMeQueryHookResult = ReturnType<typeof useGetRatingsOnMeQuery>;
+export type GetRatingsOnMeLazyQueryHookResult = ReturnType<typeof useGetRatingsOnMeLazyQuery>;
+export type GetRatingsOnMeQueryResult = ApolloReactCommon.QueryResult<GetRatingsOnMeQuery, GetRatingsOnMeQueryVariables>;
 export const GetInitialRiderStatusDocument = gql`
     query GetInitialRiderStatus {
   getRiderStatus {
@@ -1756,6 +1953,7 @@ export const GetBeepersDocument = gql`
     photoUrl
     role
     masksRequired
+    rating
   }
 }
     `;

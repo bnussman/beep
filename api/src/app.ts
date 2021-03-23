@@ -13,7 +13,7 @@ import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { Rating } from "./entities/Rating";
 import { ORM } from "./utils/ORM";
-import { RedisCacheAdapter } from 'mikro-orm-cache-adapter-redis';
+import { RedisCacheAdapter } from './utils/CacheAdapter';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 import Koa from 'koa'
@@ -34,41 +34,28 @@ export default class BeepAPIServer {
         this.setup();
     }
 
+
     private async setup(): Promise<void> {
-        const base: any = {
+        const options = {
+            host: '192.168.1.135',
+            port: 6379,
+            password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
+        };
+
+        BeepORM.orm = await MikroORM.init({
             entities: ['./build/entities/*.js'],
             entitiesTs: ['./src/entities/*.ts'],
             dbName: 'beep',
             type: 'mongo',
             clientUrl: url,
             debug: true,
+            /*
             resultCache: {
                 adapter: RedisCacheAdapter,
-                options: {
-                    host: '192.168.1.135',
-                    port: 6379,
-                    password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
-                }
+                options: options
             }
-        };
-        /*
-        if (prod) {
-            console.log("Using Redis as cache for MongoDB");
-            base.resultCache = {
-                adapter: RedisCacheAdapter,
-                options: {
-                    host: '192.168.1.135',
-                    port: 6379,
-                    password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
-                }
-            }
-        }
-        else {
-            console.log("Running locally, not using Redis");
-        }
-        */
-
-        BeepORM.orm = await MikroORM.init(base);
+            */
+        });
 
         BeepORM.em = BeepORM.orm.em;
         BeepORM.userRepository = BeepORM.orm.em.getRepository(User);
@@ -83,12 +70,6 @@ export default class BeepAPIServer {
 
         initializeSentry();
 
-        const options = {
-            host: '192.168.1.135',
-            port: 6379,
-            password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q',
-            db: 1
-        };
 
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],

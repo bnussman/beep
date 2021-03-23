@@ -9,11 +9,12 @@ import ProfilePicture from "../../components/ProfilePicture";
 import LeaveButton from './LeaveButton';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { MainNavParamList } from '../../navigators/MainTabs';
-import { gql, useLazyQuery, useQuery, useSubscription } from '@apollo/client';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { GetEtaQuery, GetInitialRiderStatusQuery } from '../../generated/graphql';
 import { gqlChooseBeep } from './helpers';
 import Logger from '../../utils/Logger';
 import {client} from '../../utils/Apollo';
+import {RateCard} from '../../components/RateCard';
 
 const InitialRiderStatus = gql`
     query GetInitialRiderStatus {
@@ -293,6 +294,9 @@ export function MainFindBeepScreen(props: Props) {
                 >
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!(Platform.OS == "ios" || Platform.OS == "android")} >
                         <Layout style={styles.container}>
+
+                            <RateCard {...props}/>
+
                             <Input
                                 keyboardType="number-pad"
                                 label='Group Size'
