@@ -43,21 +43,21 @@ function Rates() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageLimit = 25;
 
-    async function fetchReports(page: number) {
-        refetch({ variables: {
+    async function fetchRatings(page: number) {
+        refetch({ 
             offset: page
-        }});
+        });
     }
 
     return <>
-        <Heading3>Reports</Heading3>
+        <Heading3>Ratings</Heading3>
 
         <Pagination
             resultCount={data?.getRatings.count}
             limit={pageLimit}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            onPageChange={fetchReports}/>
+            onPageChange={fetchRatings}/>
 
         <Card>
             <Table>
@@ -99,7 +99,7 @@ function Rates() {
             limit={pageLimit}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            onPageChange={fetchReports}/>
+            onPageChange={fetchRatings}/>
     </>;
 }
 
