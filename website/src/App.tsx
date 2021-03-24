@@ -71,16 +71,7 @@ function getInitialTheme() {
         return storedPrefs;
     }
 
-    const userMedia = window.matchMedia("(prefers-color-scheme: dark)");
-
-    if (userMedia.matches) {
-        const root = window.document.documentElement;
-        root.classList.remove("light");
-        root.classList.add("dark")
-        return "dark"
-    }
-
-    return "dark";
+    return storedPrefs || "dark";
 }
 
 function App() {

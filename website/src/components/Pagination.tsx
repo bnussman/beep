@@ -2,7 +2,7 @@ import React from 'react';
 
 function PagElement(props) {
 	return (
-		<span className={`inline-flex justify-center items-center px-4 py-2 w-10 text-sm font-medium hover:bg-gray-50 \
+		<span className={`inline-flex justify-center items-center px-4 py-2 w-10 text-sm font-medium hover:bg-gray-900 \
 						  ${props.active ? 'text-yellow-400' : 'text-gray-300'}`}>
 			{props.children}
 		</span>

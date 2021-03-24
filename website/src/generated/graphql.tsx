@@ -292,6 +292,7 @@ export type Query = {
   getETA: Scalars['String'];
   getLocations: LocationsResponse;
   getRatings: RatingsResponse;
+  getRating: Rating;
   getReports: ReportsResponse;
   getReport: Report;
   findBeep: User;
@@ -335,6 +336,11 @@ export type QueryGetRatingsArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetRatingArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -394,6 +400,7 @@ export type Mutation = {
   deleteBeep: Scalars['Boolean'];
   insertLocation: Scalars['Boolean'];
   rateUser: Scalars['Boolean'];
+  deleteRating: Scalars['Boolean'];
   reportUser: Scalars['Boolean'];
   updateReport: Report;
   deleteReport: Scalars['Boolean'];
@@ -482,6 +489,11 @@ export type MutationInsertLocationArgs = {
 
 export type MutationRateUserArgs = {
   input: RatingInput;
+};
+
+
+export type MutationDeleteRatingArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -819,6 +831,39 @@ export type LocationsQuery = (
   ) }
 );
 
+export type DeleteRatingMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteRatingMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteRating'>
+);
+
+export type GetRatingQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetRatingQuery = (
+  { __typename?: 'Query' }
+  & { getRating: (
+    { __typename?: 'Rating' }
+    & Pick<Rating, 'id' | 'message' | 'stars' | 'timestamp'>
+    & { beep: (
+      { __typename?: 'Beep' }
+      & Pick<Beep, 'id'>
+    ), rater: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
+    ), rated: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
+    ) }
+  ) }
+);
+
 export type GetRatingsQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
@@ -956,7 +1001,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username'>
+    & Pick<User, 'id' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating'>
   ) }
 );
 
@@ -1750,6 +1795,90 @@ export function useLocationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type LocationsQueryHookResult = ReturnType<typeof useLocationsQuery>;
 export type LocationsLazyQueryHookResult = ReturnType<typeof useLocationsLazyQuery>;
 export type LocationsQueryResult = Apollo.QueryResult<LocationsQuery, LocationsQueryVariables>;
+export const DeleteRatingDocument = gql`
+    mutation DeleteRating($id: String!) {
+  deleteRating(id: $id)
+}
+    `;
+export type DeleteRatingMutationFn = Apollo.MutationFunction<DeleteRatingMutation, DeleteRatingMutationVariables>;
+
+/**
+ * __useDeleteRatingMutation__
+ *
+ * To run a mutation, you first call `useDeleteRatingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRatingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRatingMutation, { data, loading, error }] = useDeleteRatingMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteRatingMutation(baseOptions?: Apollo.MutationHookOptions<DeleteRatingMutation, DeleteRatingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteRatingMutation, DeleteRatingMutationVariables>(DeleteRatingDocument, options);
+      }
+export type DeleteRatingMutationHookResult = ReturnType<typeof useDeleteRatingMutation>;
+export type DeleteRatingMutationResult = Apollo.MutationResult<DeleteRatingMutation>;
+export type DeleteRatingMutationOptions = Apollo.BaseMutationOptions<DeleteRatingMutation, DeleteRatingMutationVariables>;
+export const GetRatingDocument = gql`
+    query GetRating($id: String!) {
+  getRating(id: $id) {
+    id
+    message
+    stars
+    timestamp
+    beep {
+      id
+    }
+    rater {
+      id
+      name
+      photoUrl
+      username
+    }
+    rated {
+      id
+      name
+      photoUrl
+      username
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRatingQuery__
+ *
+ * To run a query within a React component, call `useGetRatingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRatingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRatingQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetRatingQuery(baseOptions: Apollo.QueryHookOptions<GetRatingQuery, GetRatingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRatingQuery, GetRatingQueryVariables>(GetRatingDocument, options);
+      }
+export function useGetRatingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRatingQuery, GetRatingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRatingQuery, GetRatingQueryVariables>(GetRatingDocument, options);
+        }
+export type GetRatingQueryHookResult = ReturnType<typeof useGetRatingQuery>;
+export type GetRatingLazyQueryHookResult = ReturnType<typeof useGetRatingLazyQuery>;
+export type GetRatingQueryResult = Apollo.QueryResult<GetRatingQuery, GetRatingQueryVariables>;
 export const GetRatingsDocument = gql`
     query getRatings($show: Int, $offset: Int) {
   getRatings(show: $show, offset: $offset) {
@@ -2094,6 +2223,7 @@ export const GetUserDocument = gql`
     queueSize
     phone
     username
+    rating
   }
 }
     `;

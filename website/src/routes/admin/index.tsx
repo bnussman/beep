@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     Switch,
     Route,
@@ -13,7 +12,8 @@ import Report from './reports/Report';
 import Beeps from './beeps';
 import Beep from './beeps/Beep';
 import Locations from './locations';
-import Rates from './rates';
+import Ratings from './ratings';
+import Rating from './ratings/Rating';
 
 function Admin() {
 
@@ -58,9 +58,14 @@ function Admin() {
                     <Route exact path={`${match.path}/locations`}>
                         <Locations />
                     </Route>
-                    <Route exact path={`${match.path}/rates`}>
-                        <Rates />
+                    <Route exact path={`${match.path}/ratings`}>
+                        <Ratings />
                     </Route>
+
+                    <Route exact path={`${match.path}/ratings/:id`}>
+                        <Rating />
+                    </Route>
+
                 </Switch>
             </div>
         </div>

@@ -1,4 +1,3 @@
-import React from 'react'
 import { NavLink } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import { Heading4, Heading5, Subtitle, Body1, Heading6 } from './Typography';
@@ -12,6 +11,7 @@ import LocationTable from './LocationTable';
 import { UserRole } from '../types/User';
 import {gql, useMutation} from '@apollo/client';
 import {RemoveUserMutation, User} from '../generated/graphql';
+import {printStars} from '../routes/admin/ratings';
 
 const RemoveUser = gql`
     mutation RemoveUser($id: String!) {
@@ -53,7 +53,7 @@ function UserProfile(props: Props) {
                             {user.isStudent ? <Badge className="transform -translate-y-1">student</Badge> : <></>}
                         </div>
                         <Subtitle>
-                            <span>⭐⭐⭐⭐⭐</span>
+                            <span>{printStars(user.rating)} ({user.rating})</span>
                         </Subtitle>
                         <Subtitle>@{user.username}</Subtitle>
                         <Subtitle><a href={`mailto:${user.email}`}>{user.email}</a></Subtitle>

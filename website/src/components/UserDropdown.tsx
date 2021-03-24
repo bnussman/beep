@@ -30,7 +30,7 @@ export function UserDropdown() {
     }
 
     return (
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block w-full text-left">
             <Menu>
                 {({ open }) => (
                     <>

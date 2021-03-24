@@ -293,6 +293,7 @@ export type Query = {
   getETA: Scalars['String'];
   getLocations: LocationsResponse;
   getRatings: RatingsResponse;
+  getRating: Rating;
   getReports: ReportsResponse;
   getReport: Report;
   findBeep: User;
@@ -336,6 +337,11 @@ export type QueryGetRatingsArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetRatingArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -395,6 +401,7 @@ export type Mutation = {
   deleteBeep: Scalars['Boolean'];
   insertLocation: Scalars['Boolean'];
   rateUser: Scalars['Boolean'];
+  deleteRating: Scalars['Boolean'];
   reportUser: Scalars['Boolean'];
   updateReport: Report;
   deleteReport: Scalars['Boolean'];
@@ -483,6 +490,11 @@ export type MutationInsertLocationArgs = {
 
 export type MutationRateUserArgs = {
   input: RatingInput;
+};
+
+
+export type MutationDeleteRatingArgs = {
+  id: Scalars['String'];
 };
 
 

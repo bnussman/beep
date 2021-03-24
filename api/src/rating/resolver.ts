@@ -1,5 +1,5 @@
 import { BeepORM } from '../app';
-import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { RatingInput } from '../validators/rating';
 import { Beep } from '../entities/Beep';
@@ -7,6 +7,9 @@ import {Paginated} from '../utils/paginated';
 import {Rating} from '../entities/Rating';
 import PaginationArgs from '../args/Pagination';
 import {QueryOrder} from '@mikro-orm/core';
+import fieldsToRelations from 'graphql-fields-to-relations';
+import {GraphQLResolveInfo} from 'graphql';
+import {UserRole} from '../entities/User';
 
 @ObjectType()
 class RatingsResponse extends Paginated(Rating) {}
@@ -61,5 +64,21 @@ export class RatingResolver {
             items: ratings,
             count: count
         };
+    }
+
+    @Query(() => Rating)
+    @Authorized()
+    public async getRating(@Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
+        return await BeepORM.ratingRepository.findOneOrFail(id, fieldsToRelations(info));
+    }
+
+    @Mutation(() => Boolean)
+    @Authorized(UserRole.ADMIN)
+    public async deleteRating(@Arg('id') id: string): Promise<boolean> {
+        const rating = BeepORM.ratingRepository.getReference(id);
+
+        await BeepORM.ratingRepository.removeAndFlush(rating);
+
+        return true;
     }
 }

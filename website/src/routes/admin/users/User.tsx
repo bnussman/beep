@@ -22,6 +22,7 @@ const GetUser = gql`
             queueSize
             phone
             username
+            rating
         }
     }
 `;

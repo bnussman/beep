@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export function AdminDropdown() {
     return (
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block w-full text-left">
             <Menu>
                 {({ open }) => (
                     <>
@@ -113,14 +113,14 @@ export function AdminDropdown() {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <Link
-                                                to="/admin/rates"
+                                                to="/admin/ratings"
                                                 className={`${
                                                     active
                                                         ? "bg-gray-100 text-gray-900 dark:bg-gray-900"
                                                         : "text-gray-700"
                                                 } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left dark:text-white`}
                                             >
-                                                Rates
+                                                Ratings
                                             </Link>
                                         )}
                                     </Menu.Item>

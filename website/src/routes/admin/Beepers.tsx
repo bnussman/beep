@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Heading3 } from '../../components/Typography';
 import { Card } from '../../components/Card';
 import { Table, THead, TH, TBody, TR, TDProfile, TDText } from '../../components/Table';
@@ -24,7 +24,7 @@ const BeepersGraphQL = gql`
 `;
 
 function Beepers() {
-    const { data, stopPolling, startPolling } = useQuery<GetBeepersQuery>(BeepersGraphQL);
+    const { data, stopPolling, startPolling, loading } = useQuery<GetBeepersQuery>(BeepersGraphQL);
 
     useEffect(() => {
         startPolling(4000);
@@ -47,6 +47,7 @@ function Beepers() {
                     <TH>Masks required?</TH>
                 </THead>
                 <TBody>
+                    
                     {data?.getBeeperList && (data.getBeeperList).map(beeper => {
                         return (
                             <TR key={beeper.id}>
@@ -64,6 +65,7 @@ function Beepers() {
                     })}
                 </TBody>
             </Table>
+            {loading && <div>Loading</div>}
         </Card>
     </>;
 }

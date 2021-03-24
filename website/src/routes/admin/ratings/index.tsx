@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Card } from '../../../components/Card';
@@ -38,7 +38,18 @@ const RatesGraphQL = gql`
     }
 `;
 
-function Rates() {
+
+export function printStars(rating: number): string {
+    let stars = "";
+
+    for (let i = 0; i < rating; i++){
+        stars += "⭐️";
+    }
+
+    return stars;
+}
+
+function Ratings() {
     const { data, refetch } = useQuery<GetRatingsQuery>(RatesGraphQL, { variables: { offset: 0, show: 25 }});
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageLimit = 25;
@@ -67,6 +78,7 @@ function Rates() {
                     <TH>Message</TH>
                     <TH>Stars</TH>
                     <TH>Date</TH>
+                    <TH> </TH>
                 </THead>
                 <TBody>
                     {data?.getRatings && (data.getRatings.items).map(report => {
@@ -85,8 +97,9 @@ function Rates() {
                                     subtitle={`@${report.rated.username}`}>
                                 </TDProfile>
                                 <TDText>{report.message}</TDText>
-                                <TDText>{report.stars}</TDText>
+                                <TDText>{printStars(report.stars)}</TDText>
                                 <TDText>{dayjs().to(report.timestamp)}</TDText>
+                                <TDButton to={`ratings/${report.id}`}>View</TDButton>
                             </TR>
                         )
                     })}
@@ -103,4 +116,4 @@ function Rates() {
     </>;
 }
 
-export default Rates;
+export default Ratings;
