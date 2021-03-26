@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import { Autocomplete, AutocompleteItem, Icon } from '@ui-kitten/components';
+import { Autocomplete, AutocompleteItem, Icon, Layout } from '@ui-kitten/components';
 import * as Location from 'expo-location';
 import {gql, useLazyQuery} from '@apollo/client';
 import {GetSuggestionsQuery} from '../generated/graphql';
@@ -77,19 +77,21 @@ export function LocationInput(props: Props) {
     );
 
     return (
-        <Autocomplete
-            {...props}
-            label={props.label}
-            style={{width:"100%"}}
-            placeholder='Location'
-            accessoryRight={props.getLocation ? CurrentLocationIcon : undefined}
-            value={props.value}
-            onSelect={onSelect}
-            onChangeText={onChangeText}
-            textStyle={{width:"100%"}}
-        >
-            {data?.getLocationSuggestions.map(renderOption) || <AutocompleteItem key={0} title=""/>}
-        </Autocomplete>
+        <Layout style={{width:"85%"}}>
+            <Autocomplete
+                {...props}
+                label={props.label}
+                style={{width:"100%"}}
+                placeholder='Location'
+                accessoryRight={props.getLocation ? CurrentLocationIcon : undefined}
+                value={props.value}
+                onSelect={onSelect}
+                onChangeText={onChangeText}
+                textStyle={{width:"100%"}}
+            >
+                {data?.getLocationSuggestions.map(renderOption) || <AutocompleteItem key={0} title=""/>}
+            </Autocomplete>
+        </Layout>
     );
 }
 
