@@ -6,6 +6,7 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {MainNavParamList} from '../../navigators/MainTabs';
 import { gql, useQuery } from '@apollo/client';
 import {GetRatingsOnMeQuery} from '../../generated/graphql';
+import {printStars} from '../../components/Stars';
 
 interface Props {
     navigation: BottomTabNavigationProp<MainNavParamList>;
@@ -45,7 +46,7 @@ export function RatingsOnMeScreen(props: Props) {
                 }}
                 onPress={() => props.navigation.push("Profile", { id: item.rater.id })}
                 title={`${item.rater.name} rated you`}
-                description={`Message: ${item.message}\nStars: ${item.stars}\n`}
+                description={`Message: ${item.message}\nStars: ${printStars(item.stars)} ${item.stars}\n`}
             />
         );
         
