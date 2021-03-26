@@ -276,13 +276,17 @@ export function MainFindBeepScreen(props: Props) {
                                 value={groupSize}
                                 onChangeText={value => setGroupSize(value)}
                             />
-                            <LocationInput getLocation={true}/>
-                            <Input
-                                label='Destination Location'
-                                style={styles.buttons}
-                                placeholder='Destination'
+                            <LocationInput
+                                label="Pick-up Location"
+                                value={origin}
+                                setValue={(value) => setOrigin(value)}
+                                getLocation={true}
+                            />
+                            <LocationInput
+                                label="Destination Location"
                                 value={destination}
-                                onChangeText={value => setDestination(value)}
+                                setValue={(value) => setDestination(value)}
+                                getLocation={false}
                             />
                             {!isGetBeepLoading || loading ?
                                 <Button

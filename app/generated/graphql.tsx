@@ -169,6 +169,11 @@ export type BeepsResponse = {
   count: Scalars['Int'];
 };
 
+export type Suggestion = {
+  __typename?: 'Suggestion';
+  title: Scalars['String'];
+};
+
 export type LocationsResponse = {
   __typename?: 'LocationsResponse';
   items: Array<Location>;
@@ -291,6 +296,7 @@ export type Query = {
   getBeeps: BeepsResponse;
   getBeep: Beep;
   getETA: Scalars['String'];
+  getLocationSuggestions: Array<Suggestion>;
   getLocations: LocationsResponse;
   getRatings: RatingsResponse;
   getReports: ReportsResponse;
@@ -321,6 +327,11 @@ export type QueryGetBeepArgs = {
 export type QueryGetEtaArgs = {
   end: Scalars['String'];
   start: Scalars['String'];
+};
+
+
+export type QueryGetLocationSuggestionsArgs = {
+  location: Scalars['String'];
 };
 
 
@@ -583,6 +594,19 @@ export type UpdateBeeperQueueMutationVariables = Exact<{
 export type UpdateBeeperQueueMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'setBeeperQueue'>
+);
+
+export type GetSuggestionsQueryVariables = Exact<{
+  location: Scalars['String'];
+}>;
+
+
+export type GetSuggestionsQuery = (
+  { __typename?: 'Query' }
+  & { getLocationSuggestions: Array<(
+    { __typename?: 'Suggestion' }
+    & Pick<Suggestion, 'title'>
+  )> }
 );
 
 export type GetRateDataQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1069,6 +1093,41 @@ export function useUpdateBeeperQueueMutation(baseOptions?: ApolloReactHooks.Muta
 export type UpdateBeeperQueueMutationHookResult = ReturnType<typeof useUpdateBeeperQueueMutation>;
 export type UpdateBeeperQueueMutationResult = ApolloReactCommon.MutationResult<UpdateBeeperQueueMutation>;
 export type UpdateBeeperQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateBeeperQueueMutation, UpdateBeeperQueueMutationVariables>;
+export const GetSuggestionsDocument = gql`
+    query GetSuggestions($location: String!) {
+  getLocationSuggestions(location: $location) {
+    title
+  }
+}
+    `;
+
+/**
+ * __useGetSuggestionsQuery__
+ *
+ * To run a query within a React component, call `useGetSuggestionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSuggestionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSuggestionsQuery({
+ *   variables: {
+ *      location: // value for 'location'
+ *   },
+ * });
+ */
+export function useGetSuggestionsQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetSuggestionsQuery, GetSuggestionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetSuggestionsQuery, GetSuggestionsQueryVariables>(GetSuggestionsDocument, options);
+      }
+export function useGetSuggestionsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetSuggestionsQuery, GetSuggestionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetSuggestionsQuery, GetSuggestionsQueryVariables>(GetSuggestionsDocument, options);
+        }
+export type GetSuggestionsQueryHookResult = ReturnType<typeof useGetSuggestionsQuery>;
+export type GetSuggestionsLazyQueryHookResult = ReturnType<typeof useGetSuggestionsLazyQuery>;
+export type GetSuggestionsQueryResult = ApolloReactCommon.QueryResult<GetSuggestionsQuery, GetSuggestionsQueryVariables>;
 export const GetRateDataDocument = gql`
     query GetRateData {
   getLastBeepToRate {

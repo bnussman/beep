@@ -168,6 +168,11 @@ export type BeepsResponse = {
   count: Scalars['Int'];
 };
 
+export type Suggestion = {
+  __typename?: 'Suggestion';
+  title: Scalars['String'];
+};
+
 export type LocationsResponse = {
   __typename?: 'LocationsResponse';
   items: Array<Location>;
@@ -290,6 +295,7 @@ export type Query = {
   getBeeps: BeepsResponse;
   getBeep: Beep;
   getETA: Scalars['String'];
+  getLocationSuggestions: Array<Suggestion>;
   getLocations: LocationsResponse;
   getRatings: RatingsResponse;
   getReports: ReportsResponse;
@@ -320,6 +326,11 @@ export type QueryGetBeepArgs = {
 export type QueryGetEtaArgs = {
   end: Scalars['String'];
   start: Scalars['String'];
+};
+
+
+export type QueryGetLocationSuggestionsArgs = {
+  location: Scalars['String'];
 };
 
 
