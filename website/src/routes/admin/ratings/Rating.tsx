@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Heading3, Body1, Heading5, Heading1 } from '../../../components/Typography';
-import { Indicator } from '../../../components/Indicator';
 import { Button } from '../../../components/Input';
 import {Card} from '../../../components/Card';
 import {gql, useMutation, useQuery} from '@apollo/client';
@@ -47,11 +46,11 @@ const GetRating = gql`
 function RatingPage() {
     const { id } = useParams<{id: string}>();
     const { data, loading, error } = useQuery<GetRatingQuery>(GetRating, { variables: { id: id }});
-    const [deleteReport, { loading: deleteLoading }] = useMutation<DeleteRatingMutation>(DeleteRating);
+    const [deleteRating, { loading: deleteLoading }] = useMutation<DeleteRatingMutation>(DeleteRating);
     const history = useHistory();
 
-    async function doDeleteReport() {
-        await deleteReport({ variables: { id: id } });
+    async function doDeleteRating() {
+        await deleteRating({ variables: { id: id } });
         history.goBack();
     }
 
@@ -124,7 +123,7 @@ function RatingPage() {
                 </Card>
                 }
                 <div className="mt-8">
-                    <Button onClick={() => doDeleteReport()} className="text-white bg-red-500 hover:bg-red-700">{!deleteLoading ? "Delete Report" : "Deleteing..."}</Button>
+                    <Button onClick={() => doDeleteRating()} className="text-white bg-red-500 hover:bg-red-700">{!deleteLoading ? "Delete Rating" : "Deleteing..."}</Button>
                 </div>
         </>
         :
