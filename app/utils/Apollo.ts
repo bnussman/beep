@@ -4,6 +4,8 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-community/async-storage';
 import { createUploadLink } from 'apollo-upload-client';
+import { onError } from "@apollo/client/link/error";
+
 
 const ip = "beep-app-beep-staging.192.168.1.200.nip.io";
 //const ip = "7-review-7-rating-s-h2qf6o.192.168.1.200.nip.io";
@@ -70,9 +72,24 @@ const uploadLink = createUploadLink({
         "keep-alive": "true"
     }
 })
+const errorLink = onError((e) => {
+    //@ts-ignore
+    console.log(e.networkError.result.errors);
+
+    let output = "";  
+
+    //@ts-ignore
+    Object.keys(e.networkError.result.errors).forEach(function (item) {  
+        //@ts-ignore
+        output += "\n" + e.networkError.result.errors[item].message;  
+    });  
+
+    alert(output);
+});
 
 export const client = new ApolloClient({
     link: ApolloLink.from([
+        errorLink,
         authLink,
         splitLink,
         uploadLink

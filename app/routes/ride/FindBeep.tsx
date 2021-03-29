@@ -189,15 +189,15 @@ export function MainFindBeepScreen(props: Props) {
     async function chooseBeep(id: string): Promise<void> {
         setIsGetBeepLoading(true);
         try {
-            await gqlChooseBeep({
-                beeperId: id,
-                origin: origin,
-                destination: destination,
-                groupSize: Number(groupSize)
-            });
+        await gqlChooseBeep({
+            beeperId: id,
+            origin: origin,
+            destination: destination,
+            groupSize: Number(groupSize)
+        });
         }
         catch (error) {
-            Logger.error(error);
+            //...
         }
         setIsGetBeepLoading(false);
     }
