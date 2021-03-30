@@ -1,7 +1,7 @@
 import { deleteUser } from '../account/helpers';
 import { BeepORM } from '../app';
 import { wrap } from '@mikro-orm/core';
-import { PartialUser, User, UserRole } from '../entities/User';
+import { User, UserRole } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import PaginationArgs from '../args/Pagination';
 import { Beep } from '../entities/Beep';
@@ -56,8 +56,6 @@ export class UserResolver {
 
         wrap(user).assign(data);
 
-        pubSub.publish("User" + id, data);
-
         await BeepORM.userRepository.persistAndFlush(user);
 
         return user;
@@ -93,12 +91,5 @@ export class UserResolver {
         const r = await BeepORM.queueEntryRepository.find({ beeper: id || ctx.user.id }, { populate: relationPaths, refresh: true });
 
         return r;
-    }
-
-    @Subscription(() => PartialUser, {
-        topics: ({ args }) => "User" + args.topic,
-    })
-    public getUserUpdates(@Arg("topic") topic: string, @Root() user: User): Partial<User> {
-        return user;
     }
 }

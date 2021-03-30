@@ -44,8 +44,6 @@ export class AccountResolver {
             createVerifyEmailEntryAndSendEmail(ctx.user, input.email, input.first);
         }
 
-        pubSub.publish("User" + ctx.user.id, ctx.user);
-
         return ctx.user;
     }
 
@@ -111,8 +109,6 @@ export class AccountResolver {
         if (!user) throw new Error("You tried to verify an account that does not exist");
 
         wrap(user).assign(update);
-
-        pubSub.publish("User" + user.id, update);
 
         await BeepORM.userRepository.persistAndFlush(user);
 

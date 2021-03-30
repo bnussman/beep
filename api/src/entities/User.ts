@@ -52,36 +52,36 @@ export class User {
     password!: string;
 
     @Field()
-    @Property()
-    isBeeping: boolean = false;
+    @Property({ default: false })
+    isBeeping!: boolean;
 
     @Field()
-    @Property()
-    isEmailVerified: boolean = false;
+    @Property({ default: false })
+    isEmailVerified!: boolean;
 
     @Field()
-    @Property()
-    isStudent: boolean = false;
+    @Property({ default: false })
+    isStudent!: boolean;
 
     @Field()
-    @Property()
-    groupRate: number = 4.0;
+    @Property({ default: 2.0 })
+    groupRate!: number;
 
     @Field()
-    @Property()
-    singlesRate: number = 3.0;
+    @Property({ default: 3.0 })
+    singlesRate!: number;
 
     @Field()
-    @Property()
-    capacity: number = 4;
+    @Property({ default: 4 })
+    capacity!: number;
 
     @Field()
-    @Property() 
-    masksRequired: boolean = false;
+    @Property({ default: false }) 
+    masksRequired!: boolean;
 
     @Field()
-    @Property()
-    queueSize: number = 0;
+    @Property({ default: 0 })
+    queueSize!: number;
 
     @Field({ nullable: true })
     @Property({ nullable: true })
@@ -116,66 +116,4 @@ export class User {
     @Field(() => [Rating])
     @OneToMany(() => Rating, r => r.rated, { lazy: true, eager: false })
     ratings = new Collection<Rating>(this);
-}
-
-
-@ObjectType()
-export class PartialUser {
-
-    @Field({ nullable: true })
-    id?: string;
-
-    @Field({ nullable: true })
-    first?: string;
-
-    @Field({ nullable: true })
-    last?: string;
-
-    @Field({ nullable: true })
-    username?: string;
-
-    @Field({ nullable: true })
-    email?: string;
-
-    @Field({ nullable: true })
-    phone?: string;
-
-    @Field({ nullable: true })
-    venmo?: string;
-
-    @Field({ nullable: true })
-    password?: string;
-
-    @Field({ nullable: true })
-    isBeeping?: boolean;
-
-    @Field({ nullable: true })
-    isEmailVerified?: boolean;
-
-    @Field({ nullable: true })
-    isStudent?: boolean;
-
-    @Field({ nullable: true })
-    groupRate?: number;
-
-    @Field({ nullable: true })
-    singlesRate?: number;
-
-    @Field({ nullable: true })
-    capacity?: number;
-
-    @Field({ nullable: true })
-    masksRequired?: boolean;
-
-    @Field({ nullable: true })
-    queueSize?: number;
-
-    @Field({ nullable: true })
-    role?: UserRole;
-
-    @Field({ nullable: true })
-    pushToken?: string;
-
-    @Field({ nullable: true })
-    photoUrl?: string;
 }
