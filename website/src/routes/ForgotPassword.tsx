@@ -4,6 +4,8 @@ import { Redirect } from "react-router-dom";
 import { Button, TextInput } from '../components/Input';
 import {gql, useMutation} from '@apollo/client';
 import {ForgotPasswordMutation} from '../generated/graphql';
+import { Error } from '../components/Error';
+import {Success} from '../components/Success';
 
 const ForgotPasswordGraphQL = gql`
     mutation ForgotPassword($email: String!) {
@@ -34,9 +36,9 @@ function ForgotPassword() {
     
     return (
         <div className="px-4 mx-auto lg:container">
-            {error && error.message}
+            {error && <Error error={error}/>}
             {loading && <p>Loading</p>}
-            {data?.forgotPassword && <p>Successfully sent password reset email</p>}
+            {data?.forgotPassword && <Success message="Successfully sent password reset email"/>}
             <form onSubmit={handleForgotPassword}>
                 <TextInput
                     className="mb-4"

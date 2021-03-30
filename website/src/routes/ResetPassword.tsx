@@ -1,6 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { FormEvent, useState } from 'react';
+import { TextInput } from '../components/Input';
 import {ResetPasswordMutation} from '../generated/graphql';
+import { Error } from '../components/Error';
+import {Success} from '../components/Success';
 
 const Reset = gql`
     mutation ResetPassword($id: String!, $password: String!) {
@@ -19,27 +22,27 @@ function ResetPassword({ match }) {
     }
 
     return (
-        <div className="lg:container px-4 mx-auto">
+        <div className="px-4 mx-auto lg:container">
             {loading && <p>Loading</p>}
-            {error && error.message}
-            {data && <p>Success</p>}
+            {error && <Error error={error}/>}
+            {data && <Success message="Successfully changed password"/>}
             <form onSubmit={handleResetPassword}>
-                <label className="text-gray-500 font-bold" htmlFor="password">
+                <label className="font-bold text-gray-500" htmlFor="password">
                     New Password
                 </label>
-                <input
-                    className="mb-4 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500"
+                <TextInput
+                    className="mb-4"
                     id="password"
                     type="password"
                     autoComplete="password"
                     placeholder="Password"
-                    onChange={(value) => setPassword(value.target.value)}
+                    onChange={(value: any) => setPassword(value.target.value)}
                     disabled={data?.resetPassword}
                 />
                 <button 
                     type="submit"
                     disabled={data?.resetPassword}
-                    className={data?.resetPassword ? "mb-4 shadow bg-yellow-500 hover:bg-yellow-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed" : "mb-4 shadow bg-yellow-500 hover:bg-yellow-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" }
+                    className={data.resetPassword ? "px-4 py-2 mb-4 font-bold text-white bg-gray-700 rounded shadow hover:bg-gray-700 focus:shadow-outline focus:outline-none" : "px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-400 focus:shadow-outline focus:outline-none"}
                 >
                     Reset Password
                 </button>

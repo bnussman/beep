@@ -4,7 +4,7 @@ import { Autocomplete, AutocompleteItem, Icon, Layout } from '@ui-kitten/compone
 import * as Location from 'expo-location';
 import {gql, useLazyQuery} from '@apollo/client';
 import {GetSuggestionsQuery} from '../generated/graphql';
-
+import { v4 } from 'uuid';
 
 interface Props {
     getLocation: boolean;
@@ -14,12 +14,14 @@ interface Props {
 }
 
 const GetSuggestions = gql`
-query GetSuggestions($location: String!) {
-        getLocationSuggestions(location: $location) {
+    query GetSuggestions($location: String!, $sessiontoken: String!) {
+        getLocationSuggestions(location: $location, sessiontoken: $sessiontoken) {
             title
         }
     }
 `;
+
+let token: string;
 
 export function LocationInput(props: Props) {
     //const [value, setValue] = useState<string>("");
@@ -58,15 +60,25 @@ export function LocationInput(props: Props) {
     );
 
     const onSelect = (index: number) => {
-        props.setValue(data!.getLocationSuggestions[index].title);
+        if (!data || !data.getLocationSuggestions) return;
+
+        props.setValue(data.getLocationSuggestions[index].title);
+
+        token = v4(); 
     };
 
     const onChangeText = (query: string) => {
-        props.setValue(query);
-        getSuggestions({ variables: {
-            location: query
-        }});
+        if (props.value.length == 0 && query.length > 0) {
+            token = v4(); 
+            console.log("Generated new token", token);
+        }
 
+        props.setValue(query);
+
+        getSuggestions({ variables: {
+            location: query,
+            sessiontoken: token
+        }});
     };
     
     const renderOption = (item: any, index: number) => (
@@ -84,12 +96,12 @@ export function LocationInput(props: Props) {
                 style={{width:"100%"}}
                 placeholder='Location'
                 accessoryRight={props.getLocation ? CurrentLocationIcon : undefined}
-                value={props.value}
+                value={props.value || ""}
                 onSelect={onSelect}
                 onChangeText={onChangeText}
                 textStyle={{width:"100%"}}
             >
-                {data?.getLocationSuggestions.map(renderOption) || <AutocompleteItem key={0} title=""/>}
+                {data?.getLocationSuggestions?.map(renderOption) || <AutocompleteItem key={0} title=""/>}
             </Autocomplete>
         </Layout>
     );

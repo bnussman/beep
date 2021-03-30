@@ -331,6 +331,7 @@ export type QueryGetEtaArgs = {
 
 
 export type QueryGetLocationSuggestionsArgs = {
+  sessiontoken: Scalars['String'];
   location: Scalars['String'];
 };
 
@@ -742,6 +743,31 @@ export type ResetPasswordMutationVariables = Exact<{
 export type ResetPasswordMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'resetPassword'>
+);
+
+export type SignUpMutationVariables = Exact<{
+  first: Scalars['String'];
+  last: Scalars['String'];
+  email: Scalars['String'];
+  phone: Scalars['String'];
+  venmo: Scalars['String'];
+  username: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type SignUpMutation = (
+  { __typename?: 'Mutation' }
+  & { signup: (
+    { __typename?: 'Auth' }
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
+    ), tokens: (
+      { __typename?: 'TokenEntry' }
+      & Pick<TokenEntry, 'id' | 'tokenid'>
+    ) }
+  ) }
 );
 
 export type VerifyAccountMutationVariables = Exact<{
@@ -1539,6 +1565,70 @@ export function useResetPasswordMutation(baseOptions?: Apollo.MutationHookOption
 export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPasswordMutation>;
 export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
 export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
+export const SignUpDocument = gql`
+    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String!, $username: String!, $password: String!) {
+  signup(
+    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, username: $username, password: $password}
+  ) {
+    user {
+      id
+      first
+      last
+      username
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      capacity
+      masksRequired
+      queueSize
+      role
+      photoUrl
+      name
+    }
+    tokens {
+      id
+      tokenid
+    }
+  }
+}
+    `;
+export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMutationVariables>;
+
+/**
+ * __useSignUpMutation__
+ *
+ * To run a mutation, you first call `useSignUpMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignUpMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signUpMutation, { data, loading, error }] = useSignUpMutation({
+ *   variables: {
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      email: // value for 'email'
+ *      phone: // value for 'phone'
+ *      venmo: // value for 'venmo'
+ *      username: // value for 'username'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignUpMutation, SignUpMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignUpMutation, SignUpMutationVariables>(SignUpDocument, options);
+      }
+export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
+export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
+export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
 export const VerifyAccountDocument = gql`
     mutation VerifyAccount($id: String!) {
   verifyAccount(id: $id)

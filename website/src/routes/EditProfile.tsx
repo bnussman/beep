@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom";
 import { Button, TextInput } from '../components/Input';
 import { Caption } from '../components/Typography';
 import {gql, useMutation} from '@apollo/client';
-import { EditAccountMutation } from '../generated/graphql';
+import { AddProfilePictureMutation, EditAccountMutation } from '../generated/graphql';
 import {Success} from '../components/Success';
 import {Error} from '../components/Error';
 
@@ -25,7 +25,7 @@ const EditAccount = gql`
     }
 `;
 
-const UploadPhoto = gql`
+export const UploadPhoto = gql`
     mutation AddProfilePicture ($picture: Upload!){
         addProfilePicture (picture: $picture) {
             photoUrl
@@ -35,7 +35,7 @@ const UploadPhoto = gql`
 
 function EditProfile() {
     const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
-    const [upload, { loading: uploadLoading, error: uploadError }] = useMutation(UploadPhoto);
+    const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
     const userContext = React.useContext(UserContext);
     const [first, setFirst] = useState<string | undefined>(userContext.user?.user?.first);
     const [last, setLast] = useState<string | undefined>(userContext.user?.user?.last);

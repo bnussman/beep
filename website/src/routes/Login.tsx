@@ -90,8 +90,13 @@ function Login() {
                 </button>
             </form>
 
-            <Link to={"/password/forgot"} className="text-gray-500">Forgot Password</Link>
-            <Caption className="mt-4">Currently, the option to sign up is only avalible in our app (coming soon)</Caption>
+            <div className="mb-4">
+                <Link to="/password/forgot" className="text-gray-500">Forgot Password</Link>
+            </div>
+
+            <div>
+                <Link to="/signup" className="text-gray-500">Sign Up</Link>
+            </div>
         </div>
     );
 }

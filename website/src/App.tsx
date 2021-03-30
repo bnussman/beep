@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Home from './routes/Home';
 import Login from './routes/Login';
+import SignUp from './routes/SignUp';
 import Profile from './routes/Profile';
 import EditProfile from './routes/EditProfile';
 import ForgotPassword from './routes/ForgotPassword';
@@ -107,6 +108,7 @@ function App() {
                     <Route path="/password/forgot" component={ForgotPassword} />
                     <Route path="/password/reset/:id" component={ResetPassword} />
                     <Route path="/login" component={Login} />
+                    <Route path="/signup" component={SignUp} />
                     <Route exact path="/profile" component={Profile}/>
                     <Route path="/profile/edit/:id" component={EditProfile}/>
                     <Route path="/password/change" component={ChangePassword} />
