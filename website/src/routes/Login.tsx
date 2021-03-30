@@ -1,10 +1,9 @@
-import React, { FormEvent, useContext, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect, Link } from "react-router-dom";
 import { TextInput } from '../components/Input';
-import { Caption } from '../components/Typography';
-import {gql, useMutation} from '@apollo/client';
-import {LoginMutation} from '../generated/graphql';
+import { gql, useMutation } from '@apollo/client';
+import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 
 const LoginGraphQL = gql`

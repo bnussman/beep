@@ -1,11 +1,11 @@
 import { FormEvent, useContext, useState, useEffect } from 'react';
 import { UserContext } from '../UserContext';
-import { Redirect, Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { TextInput } from '../components/Input';
-import {gql, useMutation} from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import { AddProfilePictureMutation, SignUpMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
-import {UploadPhoto} from './EditProfile';
+import { UploadPhoto } from './EditProfile';
 
 const SignUpGraphQL = gql`
     mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String!, $username: String!, $password: String!) {
@@ -46,7 +46,7 @@ const SignUpGraphQL = gql`
     }
 `;
 
-let photo;
+let photo: File;
 
 function SignUp() {
     const userContext = useContext(UserContext);
@@ -58,7 +58,7 @@ function SignUp() {
     const [username, setUsername] = useState<string>();
     const [password, setPassword] = useState<string>();
     const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
-    const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
+    const [upload] = useMutation<AddProfilePictureMutation>(UploadPhoto);
 
     async function handleSignUp(e: FormEvent): Promise<void> {
 
@@ -87,6 +87,7 @@ function SignUp() {
 
     useEffect(() => {
         uploadPhoto();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userContext.user]);
 
     async function uploadPhoto() {
