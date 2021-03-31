@@ -17,6 +17,7 @@ const LoginGraphQL = gql`
                 email
                 phone
                 venmo
+                cashapp
                 isBeeping
                 isEmailVerified
                 isStudent

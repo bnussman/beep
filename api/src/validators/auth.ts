@@ -42,9 +42,13 @@ export class SignUpInput implements Partial<User> {
   @IsEmail()
   public email!: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  public venmo!: string;
+  public venmo?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  public cashapp?: string;
 
   @Field()
   @IsString()

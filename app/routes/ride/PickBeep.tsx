@@ -29,7 +29,8 @@ const GetBeepers = gql`
             role
             masksRequired
             rating
-            
+            venmo
+            cashapp
         }
     }
 `;
@@ -71,6 +72,8 @@ export function PickBeepScreen(props: Props) {
                         {item.role === "admin" && <Button size='tiny' status='danger'>Founder</Button>}
                         {item.isStudent && <Button status="basic" size='tiny' style={{marginRight: 4}}>Student</Button>}
                         {item.masksRequired && <Button status="info" size='tiny' style={{marginRight: 4}}>Masks</Button>}
+                        {item.venmo && <Button status="info" size='tiny' style={{marginRight: 4}}>Venmo</Button>}
+                        {item.cashapp && <Button status="success" size='tiny' style={{marginRight: 4}}>Cash App</Button>}
                     </View>
                 );
             }}

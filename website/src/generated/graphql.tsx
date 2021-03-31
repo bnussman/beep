@@ -78,7 +78,8 @@ export type User = {
   username: Scalars['String'];
   email: Scalars['String'];
   phone: Scalars['String'];
-  venmo: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
   password: Scalars['String'];
   isBeeping: Scalars['Boolean'];
   isEmailVerified: Scalars['Boolean'];
@@ -96,29 +97,6 @@ export type User = {
   queue: Array<QueueEntry>;
   locations: Array<Location>;
   ratings: Array<Rating>;
-};
-
-export type PartialUser = {
-  __typename?: 'PartialUser';
-  id?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  venmo?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
-  isBeeping?: Maybe<Scalars['Boolean']>;
-  isEmailVerified?: Maybe<Scalars['Boolean']>;
-  isStudent?: Maybe<Scalars['Boolean']>;
-  groupRate?: Maybe<Scalars['Float']>;
-  singlesRate?: Maybe<Scalars['Float']>;
-  capacity?: Maybe<Scalars['Float']>;
-  masksRequired?: Maybe<Scalars['Boolean']>;
-  queueSize?: Maybe<Scalars['Float']>;
-  role?: Maybe<Scalars['String']>;
-  pushToken?: Maybe<Scalars['String']>;
-  photoUrl?: Maybe<Scalars['String']>;
 };
 
 export type TokenEntry = {
@@ -198,11 +176,12 @@ export type UsersResponse = {
 };
 
 export type EditAccountInput = {
-  first?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
+  first: Scalars['String'];
+  last: Scalars['String'];
+  email: Scalars['String'];
+  phone: Scalars['String'];
   venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
 };
 
 export type LoginInput = {
@@ -217,7 +196,8 @@ export type SignUpInput = {
   last: Scalars['String'];
   phone: Scalars['String'];
   email: Scalars['String'];
-  venmo: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
   password: Scalars['String'];
   pushToken?: Maybe<Scalars['String']>;
 };
@@ -547,7 +527,6 @@ export type Subscription = {
   getBeeperUpdates: Array<QueueEntry>;
   getLocationUpdates?: Maybe<Location>;
   getRiderUpdates?: Maybe<QueueEntry>;
-  getUserUpdates: PartialUser;
 };
 
 
@@ -562,11 +541,6 @@ export type SubscriptionGetLocationUpdatesArgs = {
 
 
 export type SubscriptionGetRiderUpdatesArgs = {
-  topic: Scalars['String'];
-};
-
-
-export type SubscriptionGetUserUpdatesArgs = {
   topic: Scalars['String'];
 };
 
@@ -675,11 +649,12 @@ export type ChangePasswordMutation = (
 );
 
 export type EditAccountMutationVariables = Exact<{
-  first?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
+  first: Scalars['String'];
+  last: Scalars['String'];
+  email: Scalars['String'];
+  phone: Scalars['String'];
   venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -726,7 +701,7 @@ export type LoginMutation = (
     { __typename?: 'Auth' }
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
+      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'cashapp' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
     ), tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
@@ -750,7 +725,8 @@ export type SignUpMutationVariables = Exact<{
   last: Scalars['String'];
   email: Scalars['String'];
   phone: Scalars['String'];
-  venmo: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   password: Scalars['String'];
 }>;
@@ -762,7 +738,7 @@ export type SignUpMutation = (
     { __typename?: 'Auth' }
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
+      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'cashapp' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
     ), tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
@@ -1373,9 +1349,9 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const EditAccountDocument = gql`
-    mutation EditAccount($first: String, $last: String, $email: String, $phone: String, $venmo: String) {
+    mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
   editAccount(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo}
+    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp}
   ) {
     id
     name
@@ -1402,6 +1378,7 @@ export type EditAccountMutationFn = Apollo.MutationFunction<EditAccountMutation,
  *      email: // value for 'email'
  *      phone: // value for 'phone'
  *      venmo: // value for 'venmo'
+ *      cashapp: // value for 'cashapp'
  *   },
  * });
  */
@@ -1487,6 +1464,7 @@ export const LoginDocument = gql`
       email
       phone
       venmo
+      cashapp
       isBeeping
       isEmailVerified
       isStudent
@@ -1566,9 +1544,9 @@ export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPassword
 export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
 export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String!, $username: String!, $password: String!) {
+    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
   signup(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, username: $username, password: $password}
+    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password}
   ) {
     user {
       id
@@ -1578,6 +1556,7 @@ export const SignUpDocument = gql`
       email
       phone
       venmo
+      cashapp
       isBeeping
       isEmailVerified
       isStudent
@@ -1617,6 +1596,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      email: // value for 'email'
  *      phone: // value for 'phone'
  *      venmo: // value for 'venmo'
+ *      cashapp: // value for 'cashapp'
  *      username: // value for 'username'
  *      password: // value for 'password'
  *   },

@@ -38,6 +38,7 @@ const GetInitialQueue = gql`
                 first
                 last
                 venmo
+                cashapp
                 phone
                 photoUrl
             }
@@ -60,6 +61,7 @@ const GetQueue = gql`
                 first
                 last
                 venmo
+                cashapp
                 phone
                 photoUrl
             }
@@ -247,6 +249,15 @@ export function StartBeepingScreen(props: Props) {
         }
     }
 
+    function handleCashApp(groupSize: string | number, cashapp: string): void {
+        if (Number(groupSize) > 1) {
+            Linking.openURL(`https://cash.app/$${cashapp}/${Number(groupSize) * userContext.user.user.groupRate}`);
+        }
+        else {
+            Linking.openURL(`https://cash.app/$${cashapp}/${userContext.user.user.singlesRate}`);
+        }
+    }
+
     if(!isBeeping) {
         return (
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!(Platform.OS == "ios" || Platform.OS == "android")} >
@@ -359,15 +370,28 @@ export function StartBeepingScreen(props: Props) {
                                             </Button>
                                         </Layout>
                                     </Layout>
-                                    <Button
-                                        size="small"
-                                        style={styles.paddingUnder}
-                                        status='info'
-                                        accessoryLeft={VenmoIcon}
-                                        onPress={() => handleVenmo(item.groupSize, item.rider.venmo)}
-                                    >
-                                        Request Money from Rider with Venmo
-                                    </Button>
+                                    {item.rider?.venmo &&
+                                        <Button
+                                            size="small"
+                                            style={styles.paddingUnder}
+                                            status='info'
+                                            accessoryLeft={VenmoIcon}
+                                            onPress={() => handleVenmo(item.groupSize, item.rider.venmo)}
+                                        >
+                                            Request Money from Rider with Venmo
+                                        </Button>
+                                    }
+                                    {item.rider?.cashapp &&
+                                        <Button
+                                            size="small"
+                                            style={styles.paddingUnder}
+                                            status='success'
+                                            accessoryLeft={VenmoIcon}
+                                            onPress={() => handleCashApp(item.groupSize, item.rider.cashapp)}
+                                        >
+                                            Request Money from Rider with Cash App
+                                        </Button>
+                                    }
                                     {item.state <= 1 ?
                                         <Button
                                             size="small"

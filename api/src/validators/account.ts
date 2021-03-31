@@ -5,28 +5,29 @@ import { Field, InputType } from 'type-graphql';
 @InputType()
 export class EditAccountInput implements Partial<User> {
 
-  @Field({ nullable: true })
+  @Field()
   @IsString()
-  @IsOptional()
   public first?: string;
 
-  @Field({ nullable: true })
+  @Field()
   @IsString()
-  @IsOptional()
   public last?: string;
 
-  @Field({ nullable: true })
+  @Field()
   @IsEmail()
-  @IsOptional()
   public email?: string;
 
-  @Field({ nullable: true })
+  @Field()
   @IsMobilePhone("en-US")
-  @IsOptional()
   public phone?: string;
 
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
   public venmo?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  public cashapp?: string;
 }

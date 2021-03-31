@@ -52,11 +52,12 @@ export type BeepsResponse = {
 };
 
 export type EditAccountInput = {
-  first?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
+  first: Scalars['String'];
+  last: Scalars['String'];
+  email: Scalars['String'];
+  phone: Scalars['String'];
   venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
 };
 
 export type EditUserValidator = {
@@ -277,29 +278,6 @@ export type MutationEditUserArgs = {
   id: Scalars['String'];
 };
 
-export type PartialUser = {
-  __typename?: 'PartialUser';
-  id?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  venmo?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
-  isBeeping?: Maybe<Scalars['Boolean']>;
-  isEmailVerified?: Maybe<Scalars['Boolean']>;
-  isStudent?: Maybe<Scalars['Boolean']>;
-  groupRate?: Maybe<Scalars['Float']>;
-  singlesRate?: Maybe<Scalars['Float']>;
-  capacity?: Maybe<Scalars['Float']>;
-  masksRequired?: Maybe<Scalars['Boolean']>;
-  queueSize?: Maybe<Scalars['Float']>;
-  role?: Maybe<Scalars['String']>;
-  pushToken?: Maybe<Scalars['String']>;
-  photoUrl?: Maybe<Scalars['String']>;
-};
-
 export type Query = {
   __typename?: 'Query';
   getBeeps: BeepsResponse;
@@ -472,7 +450,8 @@ export type SignUpInput = {
   last: Scalars['String'];
   phone: Scalars['String'];
   email: Scalars['String'];
-  venmo: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
   password: Scalars['String'];
   pushToken?: Maybe<Scalars['String']>;
 };
@@ -482,7 +461,6 @@ export type Subscription = {
   getBeeperUpdates: Array<QueueEntry>;
   getLocationUpdates?: Maybe<Location>;
   getRiderUpdates?: Maybe<QueueEntry>;
-  getUserUpdates: PartialUser;
 };
 
 
@@ -497,11 +475,6 @@ export type SubscriptionGetLocationUpdatesArgs = {
 
 
 export type SubscriptionGetRiderUpdatesArgs = {
-  topic: Scalars['String'];
-};
-
-
-export type SubscriptionGetUserUpdatesArgs = {
   topic: Scalars['String'];
 };
 
@@ -537,7 +510,8 @@ export type User = {
   username: Scalars['String'];
   email: Scalars['String'];
   phone: Scalars['String'];
-  venmo: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
   password: Scalars['String'];
   isBeeping: Scalars['Boolean'];
   isEmailVerified: Scalars['Boolean'];
@@ -570,19 +544,6 @@ export type VerifyEmail = {
   time: Scalars['Float'];
   email: Scalars['String'];
 };
-
-export type UserSubscriptionSubscriptionVariables = Exact<{
-  topic: Scalars['String'];
-}>;
-
-
-export type UserSubscriptionSubscription = (
-  { __typename?: 'Subscription' }
-  & { getUserUpdates: (
-    { __typename?: 'PartialUser' }
-    & Pick<PartialUser, 'id' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate'>
-  ) }
-);
 
 export type GetUserDataQueryVariables = Exact<{
   id: Scalars['String'];
@@ -668,7 +629,7 @@ export type LoginMutation = (
     { __typename?: 'Auth' }
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
+      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'cashapp' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
     ), tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
@@ -681,7 +642,8 @@ export type SignUpMutationVariables = Exact<{
   last: Scalars['String'];
   email: Scalars['String'];
   phone: Scalars['String'];
-  venmo: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   password: Scalars['String'];
 }>;
@@ -693,7 +655,7 @@ export type SignUpMutation = (
     { __typename?: 'Auth' }
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
+      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'cashapp' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
     ), tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
@@ -711,7 +673,7 @@ export type GetInitialQueueQuery = (
     & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'timeEnteredQueue'>
     & { rider: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'phone' | 'photoUrl'>
+      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl'>
     ) }
   )> }
 );
@@ -728,7 +690,7 @@ export type GetQueueSubscription = (
     & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'timeEnteredQueue'>
     & { rider: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'venmo' | 'phone' | 'photoUrl'>
+      & Pick<User, 'id' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl'>
     ) }
   )> }
 );
@@ -756,7 +718,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'username' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'rating'>
+    & Pick<User, 'id' | 'name' | 'username' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'rating'>
   ) }
 );
 
@@ -872,7 +834,7 @@ export type GetInitialRiderStatusQuery = (
       & Pick<Location, 'id' | 'longitude' | 'latitude'>
     )>, beeper: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
+      & Pick<User, 'id' | 'first' | 'last' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
     ) }
   )> }
 );
@@ -892,7 +854,7 @@ export type RiderStatusSubscription = (
       & Pick<Location, 'id' | 'longitude' | 'latitude'>
     )>, beeper: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
+      & Pick<User, 'id' | 'first' | 'last' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
     ) }
   )> }
 );
@@ -951,11 +913,12 @@ export type ChangePasswordMutation = (
 );
 
 export type EditAccountMutationVariables = Exact<{
-  first?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
+  first: Scalars['String'];
+  last: Scalars['String'];
+  email: Scalars['String'];
+  phone: Scalars['String'];
   venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -989,46 +952,6 @@ export type LogoutMutation = (
 );
 
 
-export const UserSubscriptionDocument = gql`
-    subscription UserSubscription($topic: String!) {
-  getUserUpdates(topic: $topic) {
-    id
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-  }
-}
-    `;
-
-/**
- * __useUserSubscriptionSubscription__
- *
- * To run a query within a React component, call `useUserSubscriptionSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserSubscriptionSubscription({
- *   variables: {
- *      topic: // value for 'topic'
- *   },
- * });
- */
-export function useUserSubscriptionSubscription(baseOptions: ApolloReactHooks.SubscriptionHookOptions<UserSubscriptionSubscription, UserSubscriptionSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useSubscription<UserSubscriptionSubscription, UserSubscriptionSubscriptionVariables>(UserSubscriptionDocument, options);
-      }
-export type UserSubscriptionSubscriptionHookResult = ReturnType<typeof useUserSubscriptionSubscription>;
-export type UserSubscriptionSubscriptionResult = ApolloReactCommon.SubscriptionResult<UserSubscriptionSubscription>;
 export const GetUserDataDocument = gql`
     query GetUserData($id: String!) {
   getUser(id: $id) {
@@ -1255,6 +1178,7 @@ export const LoginDocument = gql`
       email
       phone
       venmo
+      cashapp
       isBeeping
       isEmailVerified
       isStudent
@@ -1302,9 +1226,9 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
 export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String!, $username: String!, $password: String!) {
+    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
   signup(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, username: $username, password: $password}
+    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password}
   ) {
     user {
       id
@@ -1314,6 +1238,7 @@ export const SignUpDocument = gql`
       email
       phone
       venmo
+      cashapp
       isBeeping
       isEmailVerified
       isStudent
@@ -1353,6 +1278,7 @@ export type SignUpMutationFn = ApolloReactCommon.MutationFunction<SignUpMutation
  *      email: // value for 'email'
  *      phone: // value for 'phone'
  *      venmo: // value for 'venmo'
+ *      cashapp: // value for 'cashapp'
  *      username: // value for 'username'
  *      password: // value for 'password'
  *   },
@@ -1381,6 +1307,7 @@ export const GetInitialQueueDocument = gql`
       first
       last
       venmo
+      cashapp
       phone
       photoUrl
     }
@@ -1429,6 +1356,7 @@ export const GetQueueDocument = gql`
       first
       last
       venmo
+      cashapp
       phone
       photoUrl
     }
@@ -1507,6 +1435,7 @@ export const GetUserDocument = gql`
     isStudent
     role
     venmo
+    cashapp
     singlesRate
     groupRate
     capacity
@@ -1824,6 +1753,7 @@ export const GetInitialRiderStatusDocument = gql`
       isStudent
       role
       venmo
+      cashapp
       username
       phone
       photoUrl
@@ -1885,6 +1815,7 @@ export const RiderStatusDocument = gql`
       isStudent
       role
       venmo
+      cashapp
       username
       phone
       photoUrl
@@ -2090,9 +2021,9 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = ApolloReactCommon.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const EditAccountDocument = gql`
-    mutation EditAccount($first: String, $last: String, $email: String, $phone: String, $venmo: String) {
+    mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
   editAccount(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo}
+    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp}
   ) {
     id
     name
@@ -2119,6 +2050,7 @@ export type EditAccountMutationFn = ApolloReactCommon.MutationFunction<EditAccou
  *      email: // value for 'email'
  *      phone: // value for 'phone'
  *      venmo: // value for 'venmo'
+ *      cashapp: // value for 'cashapp'
  *   },
  * });
  */

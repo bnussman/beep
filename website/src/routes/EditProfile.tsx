@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
 import { Button, TextInput } from '../components/Input';
@@ -9,14 +9,15 @@ import {Success} from '../components/Success';
 import {Error} from '../components/Error';
 
 const EditAccount = gql`
-    mutation EditAccount($first: String, $last: String, $email: String, $phone: String, $venmo: String) {
+mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
         editAccount (
             input: {
                 first : $first,
                 last: $last,
                 email: $email,
                 phone: $phone,
-                venmo: $venmo
+                venmo: $venmo,
+                cashapp: $cashapp
             }
         ) {
         id
@@ -36,12 +37,13 @@ export const UploadPhoto = gql`
 function EditProfile() {
     const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
     const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
-    const userContext = React.useContext(UserContext);
+    const userContext = useContext(UserContext);
     const [first, setFirst] = useState<string | undefined>(userContext.user?.user?.first);
     const [last, setLast] = useState<string | undefined>(userContext.user?.user?.last);
     const [email, setEmail] = useState<string | undefined>(userContext.user?.user?.email);
     const [phone, setPhone] = useState<string | undefined>(userContext.user?.user?.phone);
     const [venmo, setVenmo] = useState<string | undefined>(userContext.user?.user?.venmo);
+    const [cashapp, setCashapp] = useState<string | undefined>(userContext.user?.user?.cashapp);
     const [photoUrl, setPhotoUrl] = useState<string | undefined>(userContext.user?.user?.photoUrl);
 
     useEffect(() => {
@@ -51,6 +53,7 @@ function EditProfile() {
         if (phone !== userContext.user?.user?.first) setPhone(userContext.user?.user?.phone);
         if (venmo !== userContext.user?.user?.venmo) setVenmo(userContext.user?.user?.venmo);
         if (photoUrl !== userContext.user?.user?.photoUrl) setPhotoUrl(userContext.user?.user?.photoUrl);
+        if (cashapp !== userContext.user?.user?.cashapp) setCashapp(userContext.user?.user?.cashapp);
         // eslint-disable-next-line
     }, [userContext]);
 
@@ -63,7 +66,8 @@ function EditProfile() {
                 last: last,
                 email: email,
                 phone: phone,
-                venmo: venmo
+                venmo: venmo,
+                cashapp: cashapp
             }});
 
             if (result) {
@@ -75,6 +79,7 @@ function EditProfile() {
                 tempUser.user.email = email;
                 tempUser.user.phone = phone;
                 tempUser.user.venmo = venmo;
+                tempUser.user.cashapp = cashapp;
 
                 //if email was changed, make sure the context knows the user is no longer verified
                 if (email !== userContext.user.user.email) {
@@ -210,6 +215,15 @@ function EditProfile() {
                     value={venmo}
                     placeholder={venmo}
                     onChange={(value: any) => setVenmo(value.target.value)}
+                />
+
+                <TextInput
+                    className="mb-4"
+                    id="cashapp"
+                    label="Cash App username"
+                    value={cashapp}
+                    placeholder={cashapp}
+                    onChange={(value: any) => setCashapp(value.target.value)}
                 />
 
                 <Button raised>{loading ? "Updating profile..." : "Update profile"}</Button>

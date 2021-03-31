@@ -6,9 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { createUploadLink } from 'apollo-upload-client';
 import { onError } from "@apollo/client/link/error";
 
-
 //const ip = "beep-app-beep-staging.192.168.1.200.nip.io";
-//const ip = "7-review-7-rating-s-h2qf6o.192.168.1.200.nip.io";
 const ip = "192.168.1.57:3001";
 
 const wsLink = new WebSocketLink({
@@ -75,6 +73,12 @@ const uploadLink = createUploadLink({
 const errorLink = onError((e) => {
     //@ts-ignore
     console.log(e);
+
+    //@ts-ignore
+    if (!e.networkError?.result) {
+        alert(e.networkError?.name);
+        return;
+    }
 
     let output = "";  
 

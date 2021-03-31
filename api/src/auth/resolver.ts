@@ -51,8 +51,14 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async signup (@Arg('input') input: SignUpInput): Promise<Auth> {
-        if (input.venmo.charAt(0) == '@') {
+        if (!input.venmo && !input.cashapp) throw new Error("Please enter at least one form of payment");
+
+        if (input.venmo?.charAt(0) == '@') {
             input.venmo = input.venmo.substr(1, input.venmo.length);
+        }
+
+        if (input.cashapp?.charAt(0) == '@' || input.cashapp?.charAt(0) == '$') {
+            input.cashapp = input.cashapp.substr(1, input.cashapp.length);
         }
 
         if ((await doesUserExist(input.username))) {

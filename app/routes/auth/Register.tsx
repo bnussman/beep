@@ -18,13 +18,14 @@ interface Props {
 let result: any;
 
 const SignUp = gql`
-    mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String!, $username: String!, $password: String!) {
+mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
         signup(input: {
             first: $first,
             last: $last,
             email: $email,
             phone: $phone,
             venmo: $venmo,
+            cashapp: $cashapp,
             username: $username,
             password: $password,
         }) {
@@ -36,6 +37,7 @@ const SignUp = gql`
                 email
                 phone
                 venmo
+                cashapp
                 isBeeping
                 isEmailVerified
                 isStudent
@@ -63,6 +65,7 @@ function RegisterScreen(props: Props) {
     const [email, setEmail] = useState<string>();
     const [phone, setPhone] = useState<string>();
     const [venmo, setVenmo] = useState<string>();
+    const [cashapp, setCashapp] = useState<string>();
     const [username, setUsername] = useState<string>();
     const [password, setPassword] = useState<string>();
     const [photo, setPhoto] = useState<string>();
@@ -76,6 +79,7 @@ function RegisterScreen(props: Props) {
             email: email,
             phone: phone,
             venmo: venmo,
+            cashapp: cashapp,
             username: username, 
             password: password,
             pushToken: await getPushToken()
@@ -156,6 +160,13 @@ function RegisterScreen(props: Props) {
                             placeholder="jondoe"
                             returnKeyType="next"
                             onChangeText={(text) => setVenmo(text)}
+                        />
+                        <Input
+                            label="Cash App Username"
+                            textContentType="username"
+                            placeholder="jondoe"
+                            returnKeyType="next"
+                            onChangeText={(text) => setCashapp(text)}
                         />
                         <Input
                             label="Username"

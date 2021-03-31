@@ -43,9 +43,13 @@ export class User {
     @Property()
     phone!: string;
 
-    @Field()
-    @Property()
-    venmo!: string;
+    @Field({ nullable: true })
+    @Property({ nullable: true })
+    venmo?: string;
+
+    @Field({ nullable: true })
+    @Property({ nullable: true })
+    cashapp?: string;
 
     @Field()
     @Property()

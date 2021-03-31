@@ -13,14 +13,15 @@ interface Props {
 }
 
 const EditAccount = gql`
-    mutation EditAccount($first: String, $last: String, $email: String, $phone: String, $venmo: String) {
+mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
         editAccount (
             input: {
                 first : $first,
                 last: $last,
                 email: $email,
                 phone: $phone,
-                venmo: $venmo
+                venmo: $venmo,
+                cashapp: $cashapp
             }
         ) {
         id
@@ -39,6 +40,7 @@ export function EditProfileScreen(props: Props) {
     const [email, setEmail] = useState<string | undefined>(userContext?.user?.user.email);
     const [phone, setPhone] = useState<string | undefined>(userContext?.user?.user.phone);
     const [venmo, setVenmo] = useState<string | undefined>(userContext?.user?.user.venmo);
+    const [cashapp, setCashapp] = useState<string | undefined>(userContext?.user?.user.cashapp);
 
     useEffect(() => {
         if (first !== userContext?.user?.user.first) setFirst(userContext?.user?.user.first);
@@ -46,6 +48,7 @@ export function EditProfileScreen(props: Props) {
         if (email !== userContext?.user?.user.email) setEmail(userContext?.user?.user.email);
         if (phone !== userContext?.user?.user.first) setPhone(userContext?.user?.user.phone);
         if (venmo !== userContext?.user?.user.venmo) setVenmo(userContext?.user?.user.venmo);
+        if (venmo !== userContext?.user?.user.venmo) setVenmo(userContext?.user?.user.cashapp);
     }, [userContext?.user]);
 
     async function handleUpdate() {
@@ -55,7 +58,8 @@ export function EditProfileScreen(props: Props) {
                 last: last,
                 email: email,
                 phone: phone,
-                venmo: venmo
+                venmo: venmo,
+                cashapp: cashapp
             }
         });
         if (result) alert("Successfully updated profile");
@@ -118,8 +122,16 @@ export function EditProfileScreen(props: Props) {
                                 value={venmo}
                                 textContentType="username"
                                 placeholder="Venmo Username"
-                                returnKeyType="go"
+                                returnKeyType="next"
                                 onChangeText={(text) => setVenmo(text)}
+                            />
+                            <Input
+                                label="Cash App Username"
+                                value={cashapp}
+                                textContentType="username"
+                                placeholder="Cash App Username"
+                                returnKeyType="go"
+                                onChangeText={(text) => setCashapp(text)}
                                 onSubmitEditing={() => handleUpdate()}
                             />
                             {!loading ?

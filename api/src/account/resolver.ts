@@ -24,13 +24,21 @@ export class AccountResolver {
     @Mutation(() => User)
     @Authorized()
     public async editAccount(@Ctx() ctx: Context, @Arg('input') input: EditAccountInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
+        if (!input.venmo && !input.cashapp) throw new Error("Please enter at least one form of payment");
+
         if (input.venmo && input.venmo.charAt(0) == '@') {
             input.venmo = input.venmo.substr(1, input.venmo.length);
+        }
+
+        if (input.cashapp && (input.cashapp.charAt(0) == '@' || input.cashapp.charAt(0) == '$')) {
+            input.cashapp = input.cashapp.substr(1, input.cashapp.length);
         }
 
         const oldEmail = ctx.user.email;
 
         wrap(ctx.user).assign(input);
+
+        console.log(ctx.user);
 
         await BeepORM.userRepository.persistAndFlush(ctx.user); 
 

@@ -27,7 +27,6 @@ import ThemedStatusBar from './utils/StatusBar';
 import { client } from './utils/Apollo';
 import { ApolloProvider, gql } from '@apollo/client';
 
-export let sub;
 const Stack = createStackNavigator();
 let initialScreen: string;
 init();
@@ -36,24 +35,6 @@ interface State {
     user: AuthContext | null;
     theme: string;
 }
-
-const UserSubscription = gql`
-    subscription UserSubscription($topic: String!) {
-        getUserUpdates(topic: $topic) {
-            id
-            first
-            last
-            email
-            phone
-            venmo
-            isBeeping
-            isEmailVerified
-            isStudent
-            groupRate
-            singlesRate
-        }
-    }
-`;
 
 const GetUserData = gql`
     query GetUserData($id: String!) {
@@ -92,30 +73,6 @@ export default class App extends Component<undefined, State> {
     setUser = (user: AuthContext | null): void => {
         this.setState({ user: user });
         Sentry.setUserContext(user);
-    }
-
-    async subscribeToUser(id: string): Promise<void> {
-        const a = client.subscribe({ query: UserSubscription, variables: { topic: id }});
-
-        sub = a.subscribe(({ data }) => {
-            console.log(data);
-            const existingUser = this.state.user;
-            const updatedUser = data.getUserUpdates;
-            let changed = false;
-            console.log("WHATTT");
-            for (const key in updatedUser) {
-                console.log(key);
-                if (existingUser['user'][key] != updatedUser[key] && updatedUser[key] != null) {
-                    existingUser['user'][key] = updatedUser[key];
-                    console.log("Updating these values of user data:", key);
-                    changed = true;
-                }
-            }
-            if (changed) {
-                this.setUser(existingUser);
-                AsyncStorage.setItem('auth', JSON.stringify(existingUser));
-            }
-        });
     }
 
     handleAppStateChange = async (nextAppState: string) => {

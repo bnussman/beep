@@ -8,13 +8,14 @@ import { Error } from '../components/Error';
 import { UploadPhoto } from './EditProfile';
 
 const SignUpGraphQL = gql`
-    mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String!, $username: String!, $password: String!) {
+mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
         signup(input: {
             first: $first,
             last: $last,
             email: $email,
             phone: $phone,
             venmo: $venmo,
+            cashapp: $cashapp,
             username: $username,
             password: $password,
         }) {
@@ -26,6 +27,7 @@ const SignUpGraphQL = gql`
                 email
                 phone
                 venmo
+                cashapp
                 isBeeping
                 isEmailVerified
                 isStudent
@@ -55,6 +57,7 @@ function SignUp() {
     const [email, setEmail] = useState<string>();
     const [phone, setPhone] = useState<string>();
     const [venmo, setVenmo] = useState<string>();
+    const [cashapp, setCashapp] = useState<string>();
     const [username, setUsername] = useState<string>();
     const [password, setPassword] = useState<string>();
     const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
@@ -71,6 +74,7 @@ function SignUp() {
                 email: email,
                 phone: phone,
                 venmo: venmo,
+                cashapp: cashapp,
                 username: username, 
                 password: password,
             }});
@@ -149,6 +153,12 @@ function SignUp() {
                     id="venmo"
                     label="Venmo Username"
                     onChange={(value: any) => setVenmo(value.target.value)}
+                />
+                <TextInput
+                    className="mb-4"
+                    id="cashapp"
+                    label="Cash App Username"
+                    onChange={(value: any) => setCashapp(value.target.value)}
                 />
                 <TextInput
                     className="mb-4"

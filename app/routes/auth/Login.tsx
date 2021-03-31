@@ -25,6 +25,7 @@ const Login = gql`
                 email
                 phone
                 venmo
+                cashapp
                 isBeeping
                 isEmailVerified
                 isStudent

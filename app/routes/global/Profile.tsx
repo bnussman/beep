@@ -26,6 +26,7 @@ const GetUser = gql`
             isStudent
             role
             venmo
+            cashapp
             singlesRate
             groupRate
             capacity
@@ -117,6 +118,11 @@ export function ProfileScreen(props: Props) {
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Venmo</Text>
                                 <Text>@{user.venmo}</Text>
+                            </Layout>
+
+                            <Layout style={styles.group}>
+                                <Text category="h6" style={styles.groupLabel}>Cash App</Text>
+                                <Text>@{user.cashapp}</Text>
                             </Layout>
 
                             <Layout style={styles.group}>

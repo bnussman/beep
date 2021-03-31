@@ -40,6 +40,7 @@ const InitialRiderStatus = gql`
                 isStudent
                 role
                 venmo
+                cashapp
                 username
                 phone
                 photoUrl
@@ -75,6 +76,7 @@ const RiderStatus = gql`
                 isStudent
                 role
                 venmo
+                cashapp
                 username
                 phone
                 photoUrl
@@ -210,6 +212,13 @@ export function MainFindBeepScreen(props: Props) {
             return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus.beeper?.venmo + '&amount=' + data?.getRiderStatus.beeper?.groupRate * data?.getRiderStatus.groupSize + '&note=Beep';
         }
         return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus.beeper?.venmo + '&amount=' + data?.getRiderStatus.beeper?.singlesRate + '&note=Beep';
+    }
+
+    function getCashAppLink(): string {
+        if (Number(data?.getRiderStatus.groupSize) > 1) {
+            return `https://cash.app/$${data?.getRiderStatus?.beeper.cashapp}/${data?.getRiderStatus?.groupSize * data?.getRiderStatus?.beeper.groupRate}`;
+        }
+        return `https://cash.app/$${data?.getRiderStatus?.beeper?.cashapp}/${data?.getRiderStatus?.beeper?.singlesRate}`;
     }
 
     function shareVenmoInformation(): void {
@@ -381,14 +390,26 @@ export function MainFindBeepScreen(props: Props) {
                 >
                     Text Beeper
                 </Button>
-                <Button
-                    status='info'
-                    accessoryRight={VenmoIcon}
-                    style={styles.buttons}
-                    onPress={() => Linking.openURL(getVenmoLink())}
-                >
-                    Pay Beeper with Venmo
-                </Button> 
+                {data?.getRiderStatus?.beeper?.venmo && 
+                    <Button
+                        status='info'
+                        accessoryRight={VenmoIcon}
+                        style={styles.buttons}
+                        onPress={() => Linking.openURL(getVenmoLink())}
+                    >
+                        Pay Beeper with Venmo
+                    </Button> 
+                }
+                {data?.getRiderStatus?.beeper?.cashapp && 
+                    <Button
+                        status='success'
+                        accessoryRight={VenmoIcon}
+                        style={styles.buttons}
+                        onPress={() => Linking.openURL(getCashAppLink())}
+                    >
+                        Pay Beeper with Cash App
+                    </Button> 
+                }
                 {(Number(data?.getRiderStatus.groupSize) > 1) &&
                 <Button
                     status='basic'
