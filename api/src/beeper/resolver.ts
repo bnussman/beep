@@ -59,20 +59,22 @@ export class BeeperResolver {
         else if (input.value == 'deny' || input.value == 'complete') {
             pubSub.publish("Rider" + queueEntry.rider.id, null);
 
-            const finishedBeep = new Beep();
+            if (input.value == 'complete') {
+                const finishedBeep = new Beep();
 
-            wrap(finishedBeep).assign(queueEntry, { em: BeepORM.em });
+                wrap(finishedBeep).assign(queueEntry, { em: BeepORM.em });
 
-            finishedBeep.doneTime = Date.now();
+                finishedBeep.doneTime = Date.now();
 
-            finishedBeep._id = queueEntry._id;
-            finishedBeep.id = queueEntry.id;
+                finishedBeep._id = queueEntry._id;
+                finishedBeep.id = queueEntry.id;
 
-            try {
-                BeepORM.beepRepository.persist(finishedBeep);
-            }
-            catch (e) {
-                console.log(e);
+                try {
+                    BeepORM.beepRepository.persist(finishedBeep);
+                }
+                catch (e) {
+                    console.log(e);
+                }
             }
 
             if (queueEntry.isAccepted) ctx.user.queueSize--;

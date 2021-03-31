@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Image, Text } from "react-native";
+import { View, Image } from "react-native";
 import { LoadingIndicator } from "../utils/Icons";
 
 interface Props {

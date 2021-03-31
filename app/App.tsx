@@ -76,13 +76,13 @@ export default class App extends Component<undefined, State> {
     }
 
     handleAppStateChange = async (nextAppState: string) => {
-        if(nextAppState === "active") {
+        if(nextAppState === "active" && this.state.user) {
             const result = await client.query({
                 query: GetUserData,
                 variables: {
                     id: this.state.user?.user.id
                 },
-                fetchPolicy: "network-only"
+                fetchPolicy: "network-only",
             });
 
             const existingUser = this.state.user;

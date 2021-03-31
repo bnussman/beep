@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Layout, Text, Divider, List, ListItem, Spinner } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 import ProfilePicture from '../../components/ProfilePicture';

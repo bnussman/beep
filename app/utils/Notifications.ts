@@ -4,6 +4,7 @@ import Constants from 'expo-constants';
 import { Vibration, Platform } from 'react-native';
 import { gql } from '@apollo/client';
 import { client } from '../utils/Apollo';
+import { isMobile } from './config';
 
 /**
  * Checks for permssion for Notifications, asks expo for push token, sets up notification listeners, returns 
@@ -84,13 +85,15 @@ function setNotificationHandlers() {
  * @param token a user's auth token
  */
 export async function updatePushToken(): Promise<void> {
-    const UpdatePushToken = gql`
+    if (isMobile) {
+        const UpdatePushToken = gql`
         mutation UpdatePushToken($token: String!) {
-          updatePushToken (pushToken: $token)
+            updatePushToken (pushToken: $token)
         }
-    `;
+        `;
 
-    await client.mutate({ mutation: UpdatePushToken, variables: { token: await getPushToken() }}); 
+        await client.mutate({ mutation: UpdatePushToken, variables: { token: await getPushToken() }});
+    }
 }
 
 async function handleNotification(notification: Notification): Promise<void> {

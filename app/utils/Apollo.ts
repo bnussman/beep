@@ -42,17 +42,6 @@ const authLink = setContext(async (_, { headers }) => {
   }
 });
 
-const defaultOptions: DefaultOptions = {
-    watchQuery: {
-        //fetchPolicy: 'no-cache',
-        errorPolicy: 'ignore',
-    },
-    query: {
-        //fetchPolicy: 'no-cache',
-        errorPolicy: 'all',
-    },
-};
-
 const splitLink = split(
     ({ query }) => {
         const definition = getMainDefinition(query);
@@ -71,22 +60,20 @@ const uploadLink = createUploadLink({
     }
 })
 const errorLink = onError((e) => {
-    //@ts-ignore
     console.log(e);
 
-    //@ts-ignore
-    if (!e.networkError?.result) {
-        alert(e.networkError?.name);
-        return;
-    }
+    let output = "";
+    e.graphQLErrors?.forEach((e) => {
+        e.extensions?.exception.validationErrors?.forEach((r) => {
+            output += r.constraints.isNotEmpty + "\n";
+        });
+    });
 
-    let output = "";  
-
-    //@ts-ignore
-    Object.keys(e.networkError.result.errors).forEach(function (item) {  
-        //@ts-ignore
-        output += "\n" + e.networkError.result.errors[item].message;  
-    });  
+    if (output !== "") return alert(output);
+    
+    e.graphQLErrors?.forEach((e) => {
+        output += e.message + "\n";
+    });
 
     alert(output);
 });
@@ -99,5 +86,4 @@ export const client = new ApolloClient({
         uploadLink
     ]),
     cache: new InMemoryCache(),
-    defaultOptions: defaultOptions
 });

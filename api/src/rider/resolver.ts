@@ -13,7 +13,7 @@ export class RiderResolver {
 
     @Mutation(() => QueueEntry)
     @Authorized()
-    public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine,  @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<QueueEntry> {
+    public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<QueueEntry> {
         const beeper = await BeepORM.userRepository.findOne(beeperId);
 
         if (!beeper) {
