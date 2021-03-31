@@ -2,9 +2,11 @@ import { NavLink } from "react-router-dom";
 
 export function Table(props) {
     return (
-        <table className="min-w-full bg-white">
-            {props.children}
-        </table>
+        <div className="overflow-auto">
+            <table className="min-w-full overflow-x-scroll bg-white">
+                {props.children}
+            </table>
+        </div>
     );
 }
 
@@ -28,7 +30,7 @@ export function TH(props) {
 
 export function TBody(props) {
     return (
-        <tbody className="bg-white dark:bg-gray-800 dark:text-white">
+        <tbody className="overflow-x-scroll bg-white dark:bg-gray-800 dark:text-white">
             {props.children}
         </tbody>
     );

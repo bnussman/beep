@@ -1,5 +1,3 @@
-import React from 'react';
-
 function Home() {
     return (
         <div className="bg-white dark:bg-black dark:text-white">
@@ -7,7 +5,7 @@ function Home() {
                 <div className="container px-4 mx-auto sm:px-8 lg:px-16 xl:px-20 dark:bg-black">
                     <div className="items-center hero-wrapper grid grid-cols-1 md:grid-cols-12 gap-8">
                         <div className="hero-text col-span-6">
-                            <h1 className="max-w-xl text-4xl font-bold leading-tight text-gray-900 md:text-5xl dark:text-white">Ride Beep App</h1>
+                            <h1 className="max-w-xl text-4xl font-extrabold leading-tight text-gray-900 md:text-5xl dark:text-white">Ride Beep App</h1>
                             <p className="mt-8 text-base font-semibold leading-relaxed text-gray-800 dark:text-white">Your ultimate travel companion. A simple way to get a ride at Appalachian State University. A product by students for students.</p>
                             <div className="flex justify-center mt-10 get-app space-x-5 md:justify-start">
                                 <button className="flex items-center px-3 py-2 bg-white rounded-lg shadow-xl apple space-x-4">

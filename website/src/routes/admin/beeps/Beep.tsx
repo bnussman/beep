@@ -1,4 +1,3 @@
-import React from 'react'
 import { NavLink, useHistory, useParams } from "react-router-dom";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
