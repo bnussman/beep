@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, AppState } from 'react-native';
-import { Icon, Layout, Text, Button, Input, Card } from '@ui-kitten/components';
-import * as Location from 'expo-location';
+import { Layout, Text, Button, Input, Card } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
 import { UserContext } from '../../utils/UserContext';
 import { PhoneIcon, TextIcon, VenmoIcon, FindIcon, ShareIcon, LoadingIndicator } from '../../utils/Icons';
@@ -121,7 +120,7 @@ export function MainFindBeepScreen(props: Props) {
     const [destination, setDestination] = useState<string>("");
     const [isGetBeepLoading, setIsGetBeepLoading] = useState<boolean>(false);
     
-    const { subscribeToMore, loading, error, data, refetch, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, { fetchPolicy: 'network-only' });
+    const { subscribeToMore, loading, error, data, refetch, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus);
 
     async function subscribeToLocation() {
         const a = client.subscribe({ query: BeepersLocation, variables: { topic: data?.getRiderStatus?.beeper.id }});
@@ -150,6 +149,7 @@ export function MainFindBeepScreen(props: Props) {
                 topic: userContext.user.user.id
             },
             updateQuery: (prev, { subscriptionData }) => {
+                console.log("Sub new data ", subscriptionData);
                 const newFeedItem = subscriptionData.data.getRiderUpdates;
                 return Object.assign({}, prev, {
                     getRiderStatus: newFeedItem
@@ -157,19 +157,22 @@ export function MainFindBeepScreen(props: Props) {
             }
         });
 
-        AppState.addEventListener("change", handleAppStateChange);
+        //AppState.addEventListener("change", handleAppStateChange);
 
-
+        /*
         return () => {
             AppState.removeEventListener("change", handleAppStateChange);
         };
+         */
     }, []);
 
+    /*
     function handleAppStateChange(nextAppState: string): void {
         if(nextAppState === "active") {
             refetch();
         }
     }
+     */
 
     useEffect(() => {
        if (data?.getRiderStatus?.state == 1 && previousData?.getRiderStatus?.state == 0) {

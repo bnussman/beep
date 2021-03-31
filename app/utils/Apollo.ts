@@ -74,7 +74,7 @@ const uploadLink = createUploadLink({
 })
 const errorLink = onError((e) => {
     //@ts-ignore
-    console.log(e.networkError.result.errors);
+    console.log(e);
 
     let output = "";  
 
