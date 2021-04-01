@@ -13,7 +13,8 @@ import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { Rating } from "./entities/Rating";
 import { ORM } from "./utils/ORM";
-import { RedisCacheAdapter } from './utils/CacheAdapter';
+//@TODO Do we want to use the Redis Cache Adapter with MikroORM?
+//import { RedisCacheAdapter } from './utils/CacheAdapter';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 import Koa from 'koa'

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { Card, Layout, Text } from '@ui-kitten/components';
 import { GetRateDataQuery } from '../generated/graphql';
@@ -24,7 +24,7 @@ interface Props {
 
 export function RateCard(props: Props) {
 
-    const { data, loading, error, refetch } = useQuery<GetRateDataQuery>(GetRateData, { fetchPolicy: 'no-cache' });
+    const { data, loading } = useQuery<GetRateDataQuery>(GetRateData, { fetchPolicy: 'no-cache' });
 
     if (loading || !data?.getLastBeepToRate) return null;
 

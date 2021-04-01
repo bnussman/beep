@@ -43,7 +43,7 @@ export function RateScreen(props: Props) {
                 stars: stars
             }
         });
-        if (result) alert("Successfully Rated User");
+        if (result) props.navigation.goBack();
         else alert(error);
     }
 
