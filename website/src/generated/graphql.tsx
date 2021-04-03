@@ -175,6 +175,18 @@ export type UsersResponse = {
   count: Scalars['Int'];
 };
 
+export type RideHistoryResponse = {
+  __typename?: 'RideHistoryResponse';
+  items: Array<Beep>;
+  count: Scalars['Int'];
+};
+
+export type BeepHistoryResponse = {
+  __typename?: 'BeepHistoryResponse';
+  items: Array<Beep>;
+  count: Scalars['Int'];
+};
+
 export type EditAccountInput = {
   first: Scalars['String'];
   last: Scalars['String'];
@@ -287,8 +299,8 @@ export type Query = {
   getLastBeepToRate?: Maybe<Beep>;
   getUser: User;
   getUsers: UsersResponse;
-  getRideHistory: Array<Beep>;
-  getBeepHistory: Array<Beep>;
+  getRideHistory: RideHistoryResponse;
+  getBeepHistory: BeepHistoryResponse;
   getQueue: Array<QueueEntry>;
 };
 
@@ -360,11 +372,15 @@ export type QueryGetUsersArgs = {
 
 export type QueryGetRideHistoryArgs = {
   id?: Maybe<Scalars['String']>;
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
 };
 
 
 export type QueryGetBeepHistoryArgs = {
   id?: Maybe<Scalars['String']>;
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
 };
 
 
@@ -553,20 +569,26 @@ export type ResendEmailMutation = (
 );
 
 export type GetBeeperHistoryQueryVariables = Exact<{
+  show?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
   id: Scalars['String'];
 }>;
 
 
 export type GetBeeperHistoryQuery = (
   { __typename?: 'Query' }
-  & { getBeepHistory: Array<(
-    { __typename?: 'Beep' }
-    & Pick<Beep, 'id' | 'origin' | 'destination' | 'timeEnteredQueue' | 'doneTime' | 'groupSize'>
-    & { rider: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
-    ) }
-  )> }
+  & { getBeepHistory: (
+    { __typename?: 'BeepHistoryResponse' }
+    & Pick<BeepHistoryResponse, 'count'>
+    & { items: Array<(
+      { __typename?: 'Beep' }
+      & Pick<Beep, 'id' | 'origin' | 'destination' | 'timeEnteredQueue' | 'doneTime' | 'groupSize'>
+      & { rider: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
+      ) }
+    )> }
+  ) }
 );
 
 export type GetLocationsQueryVariables = Exact<{
@@ -605,19 +627,25 @@ export type GetQueueQuery = (
 
 export type GetRideHistoryQueryVariables = Exact<{
   id: Scalars['String'];
+  show?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
 }>;
 
 
 export type GetRideHistoryQuery = (
   { __typename?: 'Query' }
-  & { getRideHistory: Array<(
-    { __typename?: 'Beep' }
-    & Pick<Beep, 'id' | 'origin' | 'destination' | 'timeEnteredQueue' | 'doneTime' | 'groupSize'>
-    & { beeper: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
-    ) }
-  )> }
+  & { getRideHistory: (
+    { __typename?: 'RideHistoryResponse' }
+    & Pick<RideHistoryResponse, 'count'>
+    & { items: Array<(
+      { __typename?: 'Beep' }
+      & Pick<Beep, 'id' | 'origin' | 'destination' | 'timeEnteredQueue' | 'doneTime' | 'groupSize'>
+      & { beeper: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
+      ) }
+    )> }
+  ) }
 );
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
@@ -1068,22 +1096,25 @@ export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMuta
 export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
 export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
 export const GetBeeperHistoryDocument = gql`
-    query GetBeeperHistory($id: String!) {
-  getBeepHistory(id: $id) {
-    id
-    origin
-    destination
-    timeEnteredQueue
-    doneTime
-    groupSize
-    rider {
+    query GetBeeperHistory($show: Int, $offset: Int, $id: String!) {
+  getBeepHistory(show: $show, offset: $offset, id: $id) {
+    items {
       id
-      photoUrl
-      username
-      first
-      last
-      name
+      origin
+      destination
+      timeEnteredQueue
+      doneTime
+      groupSize
+      rider {
+        id
+        photoUrl
+        username
+        first
+        last
+        name
+      }
     }
+    count
   }
 }
     `;
@@ -1100,6 +1131,8 @@ export const GetBeeperHistoryDocument = gql`
  * @example
  * const { data, loading, error } = useGetBeeperHistoryQuery({
  *   variables: {
+ *      show: // value for 'show'
+ *      offset: // value for 'offset'
  *      id: // value for 'id'
  *   },
  * });
@@ -1209,22 +1242,25 @@ export type GetQueueQueryHookResult = ReturnType<typeof useGetQueueQuery>;
 export type GetQueueLazyQueryHookResult = ReturnType<typeof useGetQueueLazyQuery>;
 export type GetQueueQueryResult = Apollo.QueryResult<GetQueueQuery, GetQueueQueryVariables>;
 export const GetRideHistoryDocument = gql`
-    query GetRideHistory($id: String!) {
-  getRideHistory(id: $id) {
-    id
-    origin
-    destination
-    timeEnteredQueue
-    doneTime
-    groupSize
-    beeper {
+    query GetRideHistory($id: String!, $show: Int, $offset: Int) {
+  getRideHistory(id: $id, show: $show, offset: $offset) {
+    items {
       id
-      photoUrl
-      username
-      first
-      last
-      name
+      origin
+      destination
+      timeEnteredQueue
+      doneTime
+      groupSize
+      beeper {
+        id
+        photoUrl
+        username
+        first
+        last
+        name
+      }
     }
+    count
   }
 }
     `;
@@ -1242,6 +1278,8 @@ export const GetRideHistoryDocument = gql`
  * const { data, loading, error } = useGetRideHistoryQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      show: // value for 'show'
+ *      offset: // value for 'offset'
  *   },
  * });
  */

@@ -5,9 +5,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { Heading3, Body1, Heading5, Heading1 } from '../../../components/Typography';
 import { Indicator } from '../../../components/Indicator';
 import { Formik, Form, Field } from 'formik';
-import {Card} from '../../../components/Card';
-import {gql, useMutation, useQuery} from '@apollo/client';
-import {DeleteReportMutation, GetReportQuery, UpdateReportMutation} from '../../../generated/graphql';
+import { Card } from '../../../components/Card';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { DeleteReportMutation, GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
 
 dayjs.extend(relativeTime);
 
@@ -129,10 +129,6 @@ function ReportPage() {
                         <Body1>{data.getReport.reason}</Body1>  
                     </div>
                 </Card>
-            {/*
-            <Heading5>Admin's Notes</Heading5>
-            <Body2>{report.adminNotes || "N/A"}</Body2>  
-              */}
                 <Card className="mb-4">
                     <div className="m-4">
                         <Heading5>Created</Heading5>
@@ -199,7 +195,7 @@ function ReportPage() {
                     <Form>
                         <div>
                             <Heading5>Admin Notes</Heading5>
-                            <Field type="text" component="textarea" name="notes" className="w-full h-32 px-4 py-2 leading-tight text-gray-700 bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-yellow-500"/>
+                            <Field type="text" component="textarea" name="notes" className="w-full h-32 px-4 py-2 leading-tight text-gray-700 bg-gray-200 rounded appearance-none dark:bg-gray-800 dark:text-white"/>
                         </div>
                         <div>
                             <Heading5>Handled</Heading5>
@@ -207,13 +203,13 @@ function ReportPage() {
                         </div>
                         <button
                             type="submit"
-                            className={`inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm bg-yellow-500 hover:bg-yellow-600 focus:outline-white`}
+                            className={`inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md text-white shadow-sm bg-yellow-500 hover:bg-yellow-600 focus:outline-white`}
                             disabled={isSubmitting}>
                             {isSubmitting ? "Upading..."  : "Update Report"}
                         </button>
                         <button
                             onClick={() => doDeleteReport()}
-                            className={`mt-3 inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-white`}
+                            className={`mt-3 inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-white`}
                         >
                             {!deleteLoading ? "Delete Report" : "Deleteing..."}
                         </button>

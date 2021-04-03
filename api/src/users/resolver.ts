@@ -2,7 +2,7 @@ import { deleteUser } from '../account/helpers';
 import { BeepORM } from '../app';
 import { wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
-import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from 'type-graphql';
 import PaginationArgs from '../args/Pagination';
 import { Beep } from '../entities/Beep';
 import { QueueEntry } from '../entities/QueueEntry';
@@ -14,6 +14,12 @@ import { Paginated } from '../utils/paginated';
 
 @ObjectType()
 class UsersResponse extends Paginated(User) {}
+
+@ObjectType()
+class RideHistoryResponse extends Paginated(Beep) {}
+
+@ObjectType()
+class BeepHistoryResponse extends Paginated(Beep) {}
 
 @Resolver(User)
 export class UserResolver {
@@ -47,7 +53,7 @@ export class UserResolver {
 
     @Mutation(() => User)
     @Authorized(UserRole.ADMIN)
-    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
+    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator): Promise<User> {
         const user = await BeepORM.userRepository.findOne(id);
 
         if (!user) {
@@ -72,16 +78,27 @@ export class UserResolver {
         };
     }
 
-    @Query(() => [Beep])
+    @Query(() => RideHistoryResponse)
     @Authorized()
-    public async getRideHistory(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Beep[]> {
-        return await BeepORM.beepRepository.find({ rider: id || ctx.user}, { populate: ['beeper', 'rider'] });
+    public async getRideHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<RideHistoryResponse> {
+        console.log(offset, show, id);
+        const [rides, count] = await BeepORM.beepRepository.findAndCount({ rider: id || ctx.user }, ['beeper', 'rider'], {}, show, offset);
+
+        return {
+            items: rides,
+            count: count
+        };
     }
 
-    @Query(() => [Beep])
+    @Query(() => BeepHistoryResponse)
     @Authorized()
-    public async getBeepHistory(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Beep[]>  {
-        return await BeepORM.beepRepository.find({ beeper: id || ctx.user }, { populate: ['beeper', 'rider'] });
+    public async getBeepHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<BeepHistoryResponse>  {
+        const [beeps, count] = await BeepORM.beepRepository.findAndCount({ beeper: id || ctx.user }, ['beeper', 'rider'], {}, show, offset);
+
+        return {
+            items: beeps,
+            count: count
+        };
     }
 
     @Query(() => [QueueEntry])

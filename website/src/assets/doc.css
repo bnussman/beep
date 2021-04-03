@@ -26,14 +26,12 @@ table th {
 }
 
 .c3 {
-	background-color: #ffffff;
 	max-width: 468pt;
 }
 
 
 .title {
 	padding-top: 0pt;
-	color: #000000;
 	font-size: 26pt;
 	padding-bottom: 3pt;
 	line-height: 1.15;
@@ -45,7 +43,6 @@ table th {
 
 .subtitle {
 	padding-top: 0pt;
-	color: #666666;
 	font-size: 15pt;
 	padding-bottom: 16pt;
 	line-height: 1.15;
@@ -66,7 +63,6 @@ p {
 
 h1 {
 	padding-top: 20pt;
-	color: #000000;
 	font-size: 20pt;
 	padding-bottom: 6pt;
 	line-height: 1.15;
@@ -78,7 +74,6 @@ h1 {
 
 h2 {
 	padding-top: 18pt;
-	color: #000000;
 	font-size: 16pt;
 	padding-bottom: 6pt;
 	line-height: 1.15;
@@ -90,7 +85,6 @@ h2 {
 
 h3 {
 	padding-top: 16pt;
-	color: #434343;
 	font-size: 14pt;
 	padding-bottom: 4pt;
 	line-height: 1.15;
@@ -102,7 +96,6 @@ h3 {
 
 h4 {
 	padding-top: 14pt;
-	color: #666666;
 	font-size: 12pt;
 	padding-bottom: 4pt;
 	line-height: 1.15;
@@ -114,7 +107,6 @@ h4 {
 
 h5 {
 	padding-top: 12pt;
-	color: #666666;
 	font-size: 11pt;
 	padding-bottom: 4pt;
 	line-height: 1.15;
@@ -126,7 +118,6 @@ h5 {
 
 h6 {
 	padding-top: 12pt;
-	color: #666666;
 	font-size: 11pt;
 	padding-bottom: 4pt;
 	line-height: 1.15;

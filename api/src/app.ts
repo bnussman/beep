@@ -38,7 +38,7 @@ export default class BeepAPIServer {
 
     private async setup(): Promise<void> {
         const options = {
-            host: '192.168.1.135',
+            host: 'localhost',
             port: 6379,
             password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
         };

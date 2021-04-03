@@ -1,10 +1,11 @@
-import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from './Card';
 import { Table, THead, TH, TBody, TR, TDProfile, TDText } from './Table';
-import {gql, useQuery} from '@apollo/client';
-import {GetRideHistoryQuery} from '../generated/graphql';
+import { gql, useQuery } from '@apollo/client';
+import { GetRideHistoryQuery } from '../generated/graphql';
+import Pagination from './Pagination';
+import { useState } from 'react';
 
 dayjs.extend(duration);
 
@@ -13,31 +14,50 @@ interface Props {
 }
 
 const Hisory = gql`
-    query GetRideHistory($id: String!) {
-        getRideHistory(id: $id) {
-            id
-            origin
-            destination
-            timeEnteredQueue
-            doneTime
-            groupSize
-            beeper {
+    query GetRideHistory($id: String!, $show: Int, $offset: Int) {
+        getRideHistory(id: $id, show: $show, offset: $offset) {
+            items {
                 id
-                photoUrl
-                username
-                first
-                last
-                name
+                origin
+                destination
+                timeEnteredQueue
+                doneTime
+                groupSize
+                beeper {
+                    id
+                    photoUrl
+                    username
+                    first
+                    last
+                    name
+                }
             }
+            count
         }
     }
 `;
 
 function RideHistoryTable(props: Props) {
-    const { data, loading } = useQuery<GetRideHistoryQuery>(Hisory, { variables: { id: props.userId }});
+    const pageLimit = 10;
+    const { data, loading, refetch } = useQuery<GetRideHistoryQuery>(Hisory, { variables: { id: props.userId, offset: 0, show: pageLimit }});
+    const [currentPage, setCurrentPage] = useState<number>(1);
+
+    async function fetchHistory(page: number) {
+        refetch({
+            id: props.userId,
+            offset: page
+        })
+    }
 
     return <>
         <div className="m-4">
+        <Pagination
+            resultCount={data?.getRideHistory?.count}
+            limit={pageLimit}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onPageChange={fetchHistory}
+        />
         <Card>
             <Table>
                 <THead>
@@ -50,7 +70,7 @@ function RideHistoryTable(props: Props) {
                     <TH>Duration</TH>
                 </THead>
                 <TBody>
-                    {data?.getRideHistory && (data.getRideHistory).map(ride => {
+                    {data?.getRideHistory && (data.getRideHistory.items).map(ride => {
                         return (
 
                             <TR key={ride.id}>
@@ -72,13 +92,20 @@ function RideHistoryTable(props: Props) {
                     })}
                 </TBody>
             </Table>
-            {data?.getRideHistory && data.getRideHistory.length === 0 && 
+            {data?.getRideHistory && data.getRideHistory.items.length === 0 && 
                 <div className="w-full p-4 text-center">No Data</div>
             }
             {loading && 
                 <div className="w-full p-4 text-center">Loading</div>
             }
         </Card>
+        <Pagination
+            resultCount={data?.getRideHistory?.count}
+            limit={pageLimit}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onPageChange={fetchHistory}
+        />
         </div>
     </>;
 }

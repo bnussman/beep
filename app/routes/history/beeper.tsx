@@ -14,19 +14,22 @@ interface Props {
 const GetBeepHistory = gql`
     query GetBeepHistory {
         getBeepHistory {
-            id
-            timeEnteredQueue
-            doneTime
-            groupSize
-            origin
-            destination
-            rider {
+            items {
                 id
-                name
-                first
-                last
-                photoUrl
+                timeEnteredQueue
+                doneTime
+                groupSize
+                origin
+                destination
+                rider {
+                    id
+                    name
+                    first
+                    last
+                    photoUrl
+                }
             }
+            count
         }
     }
 `;
@@ -51,12 +54,12 @@ export function BeeperRideLogScreen(props: Props) {
         );
         
         if (!loading) {
-            if (data?.getBeepHistory && data.getBeepHistory.length > 0) {
+            if (data?.getBeepHistory && data.getBeepHistory.items.length > 0) {
                 return (
                 <Layout style={styles.container}>
                     <List
                         style={{width:"100%"}}
-                        data={data?.getBeepHistory}
+                        data={data?.getBeepHistory.items}
                         ItemSeparatorComponent={Divider}
                         renderItem={renderItem}
                     />

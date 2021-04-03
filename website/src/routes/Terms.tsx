@@ -1,11 +1,12 @@
-import React from 'react';
 import "../assets/doc.css";
 
 function Privacy() {
     return (
-        <div className="lg:container px-4 mx-auto">
-            <div className="rounded overflow-hidden shadow-md mb-4">
+        <div className="px-4 mx-auto lg:container dark:text-white">
+            <div className="mb-4 overflow-hidden rounded shadow-md">
                 <div className="p-8">
+                <p className="c17 title" id="h.nwye47m6ncih"><span className="c13">Terms of Service</span></p>
+                    <br/>
                 <p><span>Modified: January 19, 2021</span></p>
                 <p className="c12"><span className="c6">Effective: January 19, 2021</span></p>
                 <p className="c11"><span className="c6"></span></p>

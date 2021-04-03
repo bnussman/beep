@@ -2,8 +2,10 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from './Card';
 import { Table, THead, TH, TBody, TR, TDProfile, TDText } from './Table';
-import {gql, useQuery} from '@apollo/client';
-import {GetBeeperHistoryQuery} from '../generated/graphql';
+import { gql, useQuery } from '@apollo/client';
+import { GetBeeperHistoryQuery } from '../generated/graphql';
+import { useState } from 'react';
+import Pagination from './Pagination';
 
 dayjs.extend(duration);
 
@@ -12,31 +14,49 @@ interface Props {
 }
 
 const Hisory = gql`
-    query GetBeeperHistory($id: String!) {
-        getBeepHistory(id: $id) {
-            id
-            origin
-            destination
-            timeEnteredQueue
-            doneTime
-            groupSize
-            rider {
+    query GetBeeperHistory($show: Int, $offset: Int, $id: String!) {
+        getBeepHistory(show: $show, offset: $offset, id: $id) {
+            items {
                 id
-                photoUrl
-                username
-                first
-                last
-                name
+                origin
+                destination
+                timeEnteredQueue
+                doneTime
+                groupSize
+                rider {
+                    id
+                    photoUrl
+                    username
+                    first
+                    last
+                    name
+                }
             }
+            count
         }
     }
 `;
 
 function BeepHistoryTable(props: Props) {
-    const { data, loading } = useQuery<GetBeeperHistoryQuery>(Hisory, { variables: { id: props.userId }});
+    const pageLimit = 10;
+    const { data, loading, refetch } = useQuery<GetBeeperHistoryQuery>(Hisory, { variables: { id: props.userId, offset: 0, show: pageLimit }});
+    const [currentPage, setCurrentPage] = useState<number>(1);
 
-    return <>
+    async function fetchHistory(page: number) {
+        refetch({
+            id: props.userId,
+            offset: page,
+        })
+    }
+return <>
         <div className="m-4">
+        <Pagination
+            resultCount={data?.getBeepHistory?.count}
+            limit={pageLimit}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onPageChange={fetchHistory}
+        />
         <Card>
             <Table>
                 <THead>
@@ -49,7 +69,7 @@ function BeepHistoryTable(props: Props) {
                     <TH>Duration</TH>
                 </THead>
                 <TBody>
-                    {data?.getBeepHistory && (data.getBeepHistory).map(beep => {
+                    {data?.getBeepHistory && (data.getBeepHistory.items).map(beep => {
                         return (
 
                             <TR key={beep.id}>
@@ -71,13 +91,20 @@ function BeepHistoryTable(props: Props) {
                     })}
                 </TBody>
             </Table>
-            {data?.getBeepHistory && data.getBeepHistory.length === 0 && 
+            {data?.getBeepHistory && data.getBeepHistory.items.length === 0 && 
                 <div className="w-full p-4 text-center">No Data</div>
             }
             {loading && 
                 <div className="w-full p-4 text-center">Loading</div>
             }
         </Card>
+        <Pagination
+            resultCount={data?.getBeepHistory?.count}
+            limit={pageLimit}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onPageChange={fetchHistory}
+        />
         </div>
     </>;
 }

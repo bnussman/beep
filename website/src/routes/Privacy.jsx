@@ -1,14 +1,14 @@
-import React from 'react';
-
 function Privacy() {
     return (
-        <div className="lg:container px-4 mx-auto">
-            <div className="rounded overflow-hidden shadow-md mb-4">
+        <div className="px-4 mx-auto lg:container dark:text-white">
+            <div className="mb-4 overflow-hidden rounded shadow-md">
                 <div className="p-8">
-                    <p className="c4"><span className="c5">Modified: January 2, 2021</span></p>
-                    <p className="c4"><span className="c6">Effective</span><span className="c6">:</span><span className="c6">&nbsp;</span><span>January 2, 2021</span></p>
                     <br/>
                     <p className="c17 title" id="h.nwye47m6ncih"><span className="c13">Privacy Policy</span></p>
+                    <br/>
+
+                    <p className="c4"><span className="c5">Modified: January 2, 2021</span></p>
+                    <p className="c4"><span className="c6">Effective</span><span className="c6">:</span><span className="c6">&nbsp;</span><span>January 2, 2021</span></p>
                     <ol className="c12 lst-kix_7gu2p9q0wakt-0 start" start="1">
                         <li className="c1 li-bullet-0">
                             <h1 id="h.qphupxdneu4l" ><span>Introduction</span></h1>
