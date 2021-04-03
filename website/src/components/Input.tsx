@@ -1,10 +1,10 @@
-import React from 'react';
+import clsx from 'clsx';
 
 export function Button(props) {
     return (
         <button
             onClick={props.onClick}
-            className={`inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md dark:text-white bg-yellow-400 text-white`}>
+            className={clsx(props.className, `inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md dark:text-white bg-yellow-400 text-white`)}>
             {props.children}
         </button>
     )

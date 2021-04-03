@@ -55,7 +55,15 @@ function BeepPage() {
 
     return (
         <>
+            <div className="flex flex-row justify-between">
             <Heading3>Beep</Heading3>
+            <button
+                onClick={() => doDeleteBeep()}
+                className={"mt-2 mb-2 py-2 px-4 mr-1 border text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-white"}
+            >
+                {!deleteLoading ? "Delete Beep" : "Loading"}
+            </button>
+            </div>
             {data?.getBeep ?
                 <><div>
                     <iframe
@@ -134,7 +142,7 @@ function BeepPage() {
                         </Card>
                     </div>
                 </div>
-                    <Button onClick={() => doDeleteBeep()} className="text-white bg-red-500 hover:bg-red-700">{!deleteLoading ? "Delete Beep" : "Loading"}</Button></>
+                </>
             :
             <Heading1>Loading</Heading1>
             }

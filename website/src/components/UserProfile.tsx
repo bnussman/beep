@@ -79,7 +79,14 @@ function UserProfile(props: Props) {
                             <Button>Edit {props.admin ? 'user' : 'profile'}</Button>
                         </NavLink>
 
-                        {props.admin && <Button onClick={() => deleteUser(user.id)} className="text-white bg-red-500 hover:bg-red-700 dark:text-white">{!loading ? "Delete User" : "Loading"}</Button>}
+                        {props.admin &&
+                            <button
+                                onClick={() => deleteUser(user.id)}
+                                className={"inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-white"}
+                            >
+                                {!loading ? "Delete User" : "Loading"}
+                            </button>
+                        }
 
                         { !props.admin &&
                             <NavLink to={'password/change'}>

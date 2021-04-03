@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Heading3, Body1, Heading5, Heading1 } from '../../../components/Typography';
 import { Indicator } from '../../../components/Indicator';
-import { Button } from '../../../components/Input';
 import { Formik, Form, Field } from 'formik';
 import {Card} from '../../../components/Card';
 import {gql, useMutation, useQuery} from '@apollo/client';
@@ -208,11 +207,16 @@ function ReportPage() {
                         </div>
                         <button
                             type="submit"
-                            className={`mt-3 inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm bg-yellow-500 hover:bg-yellow-600 focus:outline-white`}
+                            className={`inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm bg-yellow-500 hover:bg-yellow-600 focus:outline-white`}
                             disabled={isSubmitting}>
                             {isSubmitting ? "Upading..."  : "Update Report"}
                         </button>
-                        <Button onClick={() => doDeleteReport()} className="text-white bg-red-500 hover:bg-red-700">{!deleteLoading ? "Delete Report" : "Deleteing..."}</Button>
+                        <button
+                            onClick={() => doDeleteReport()}
+                            className={`mt-3 inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-white`}
+                        >
+                            {!deleteLoading ? "Delete Report" : "Deleteing..."}
+                        </button>
                     </Form>
                 )}
             </Formik>
