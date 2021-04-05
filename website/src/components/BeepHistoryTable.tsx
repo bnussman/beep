@@ -38,7 +38,7 @@ const Hisory = gql`
 `;
 
 function BeepHistoryTable(props: Props) {
-    const pageLimit = 10;
+    const pageLimit = 5;
     const { data, loading, refetch } = useQuery<GetBeeperHistoryQuery>(Hisory, { variables: { id: props.userId, offset: 0, show: pageLimit }});
     const [currentPage, setCurrentPage] = useState<number>(1);
 

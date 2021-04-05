@@ -1,3 +1,4 @@
+import 'react-native-get-random-values';
 import React from 'react';
 import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Autocomplete, AutocompleteItem, Icon, Layout } from '@ui-kitten/components';

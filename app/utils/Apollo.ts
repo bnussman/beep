@@ -7,7 +7,7 @@ import { createUploadLink } from 'apollo-upload-client';
 import { onError } from "@apollo/client/link/error";
 
 //const ip = "beep-app-beep-staging.192.168.1.200.nip.io";
-const ip = "localhost:3001";
+const ip = "192.168.1.57:3001";
 
 const wsLink = new WebSocketLink({
   uri: `ws://${ip}/subscriptions`,

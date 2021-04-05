@@ -53,7 +53,11 @@ function UserProfile(props: Props) {
                             {user.isStudent ? <Badge className="transform -translate-y-1">student</Badge> : <></>}
                         </div>
                         <Subtitle>
-                            <span>{printStars(user.rating)} ({user.rating})</span>
+                            {user.rating ?
+                                <span>{printStars(user.rating)} ({user.rating})</span>
+                            :
+                                <span>No Rating</span>
+                            }
                         </Subtitle>
                         <Subtitle>@{user.username}</Subtitle>
                         <Subtitle><a href={`mailto:${user.email}`}>{user.email}</a></Subtitle>
@@ -82,7 +86,7 @@ function UserProfile(props: Props) {
                         {props.admin &&
                             <button
                                 onClick={() => deleteUser(user.id)}
-                                className={"inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-white"}
+                                className={"inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700"}
                             >
                                 {!loading ? "Delete User" : "Loading"}
                             </button>
@@ -103,11 +107,17 @@ function UserProfile(props: Props) {
                 <div>
                     {props.admin && <LocationTable userId={user.id}/>}
                 </div>
-
-                <Heading5>Beep history</Heading5>
-                <BeepHistoryTable userId={user.id} />
-                <Heading5>Ride history</Heading5>
-                <RideHistoryTable userId={user.id} />
+                
+                <div>
+                    <div>
+                        <Heading5>Beep history</Heading5>
+                        <BeepHistoryTable userId={user.id} />
+                    </div>
+                    <div>
+                        <Heading5>Ride history</Heading5>
+                        <RideHistoryTable userId={user.id} />
+                    </div>
+                </div>
             </>
         )}
     </>;

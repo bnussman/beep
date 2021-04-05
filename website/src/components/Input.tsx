@@ -4,7 +4,7 @@ export function Button(props) {
     return (
         <button
             onClick={props.onClick}
-            className={clsx(props.className, `inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md dark:text-white bg-yellow-400 text-white`)}>
+            className={clsx(props.className, `inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md dark:text-white bg-yellow-400 text-white hover:bg-yellow-500`)}>
             {props.children}
         </button>
     )
