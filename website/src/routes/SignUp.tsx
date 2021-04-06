@@ -19,27 +19,6 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
             username: $username,
             password: $password,
         }) {
-            user {
-                id
-                first
-                last
-                username
-                email
-                phone
-                venmo
-                cashapp
-                isBeeping
-                isEmailVerified
-                isStudent
-                groupRate
-                singlesRate
-                capacity
-                masksRequired
-                queueSize
-                role
-                photoUrl
-                name
-            }
             tokens {
                 id
                 tokenid
@@ -51,7 +30,7 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
 let photo: File;
 
 function SignUp() {
-    const userContext = useContext(UserContext);
+    const user = useContext(UserContext);
     const [first, setFirst] = useState<string>();
     const [last, setLast] = useState<string>();
     const [email, setEmail] = useState<string>();
@@ -80,7 +59,6 @@ function SignUp() {
             }});
 
             if (result) {
-                userContext.setUser(result.data.signup);
                 localStorage.setItem('user', JSON.stringify(result.data.signup));
             }
         }
@@ -92,31 +70,17 @@ function SignUp() {
     useEffect(() => {
         uploadPhoto();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [userContext.user]);
+    }, [user]);
 
     async function uploadPhoto() {
        if (!photo) return;
 
-       const data = await upload({ variables: {
+       await upload({ variables: {
            picture: photo
        }});
-
-       console.log(userContext);
-
-       //make a copy of the current user
-       const tempAuth = userContext.user;
-
-       //update the tempUser with the new data
-       tempAuth.user.photoUrl = data.data?.addProfilePicture.photoUrl;
-
-       //update the context
-       userContext.setUser(tempAuth);
-
-       //put the tempUser back into storage
-       localStorage.setItem("user", JSON.stringify(tempAuth));
     }
 
-    if (userContext.user) {
+    if (user) {
         return <Redirect to={{ pathname: "/" }} />;
     }
 

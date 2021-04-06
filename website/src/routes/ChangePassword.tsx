@@ -15,7 +15,7 @@ const ChangePasswordGraphQL = gql`
 
 function ChangePassword() {
     const [changePassword, { data, loading, error }] = useMutation<ChangePasswordMutation>(ChangePasswordGraphQL);
-    const { user } = useContext(UserContext);
+    const user = useContext(UserContext);
     const [password, setPassword] = useState("");
     // eslint-disable-next-line
     const [password2, setPassword2] = useState("");

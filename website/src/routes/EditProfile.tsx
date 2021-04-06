@@ -37,89 +37,46 @@ export const UploadPhoto = gql`
 function EditProfile() {
     const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
     const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
-    const userContext = useContext(UserContext);
-    const [first, setFirst] = useState<string | undefined>(userContext.user?.user?.first);
-    const [last, setLast] = useState<string | undefined>(userContext.user?.user?.last);
-    const [email, setEmail] = useState<string | undefined>(userContext.user?.user?.email);
-    const [phone, setPhone] = useState<string | undefined>(userContext.user?.user?.phone);
-    const [venmo, setVenmo] = useState<string | undefined>(userContext.user?.user?.venmo);
-    const [cashapp, setCashapp] = useState<string | undefined>(userContext.user?.user?.cashapp);
-    const [photoUrl, setPhotoUrl] = useState<string | undefined>(userContext.user?.user?.photoUrl);
+    const user = useContext(UserContext);
+    const [first, setFirst] = useState<string>(user.first);
+    const [last, setLast] = useState<string>(user.last);
+    const [email, setEmail] = useState<string>(user.email);
+    const [phone, setPhone] = useState<string>(user.phone);
+    const [venmo, setVenmo] = useState<string>(user.venmo);
+    const [cashapp, setCashapp] = useState<string>(user.cashapp);
+    const [photoUrl, setPhotoUrl] = useState<string>(user.photoUrl);
 
     useEffect(() => {
-        if (first !== userContext.user?.user?.first) setFirst(userContext.user?.user?.first);
-        if (last !== userContext.user?.user?.last) setLast(userContext.user?.user?.last);
-        if (email !== userContext.user?.user?.email) setEmail(userContext.user?.user?.email);
-        if (phone !== userContext.user?.user?.first) setPhone(userContext.user?.user?.phone);
-        if (venmo !== userContext.user?.user?.venmo) setVenmo(userContext.user?.user?.venmo);
-        if (photoUrl !== userContext.user?.user?.photoUrl) setPhotoUrl(userContext.user?.user?.photoUrl);
-        if (cashapp !== userContext.user?.user?.cashapp) setCashapp(userContext.user?.user?.cashapp);
-        // eslint-disable-next-line
-    }, [userContext]);
+        if (first !== user.first) setFirst(user.first);
+        if (last !== user.last) setLast(user.last);
+        if (email !== user.email) setEmail(user.email);
+        if (phone !== user.first) setPhone(user.phone);
+        if (venmo !== user.venmo) setVenmo(user.venmo);
+        if (photoUrl !== user.photoUrl) setPhotoUrl(user.photoUrl);
+        if (cashapp !== user.cashapp) setCashapp(user.cashapp);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     async function handleEdit(e: any) {
         e.preventDefault();
-
-        try {
-            const result = await edit({ variables: {
-                first: first,
-                last: last,
-                email: email,
-                phone: phone,
-                venmo: venmo,
-                cashapp: cashapp
-            }});
-
-            if (result) {
-                //make a temporary user object
-                const tempUser = userContext.user;
-                //update values of user
-                tempUser.user.first = first;
-                tempUser.user.last = last;
-                tempUser.user.email = email;
-                tempUser.user.phone = phone;
-                tempUser.user.venmo = venmo;
-                tempUser.user.cashapp = cashapp;
-
-                //if email was changed, make sure the context knows the user is no longer verified
-                if (email !== userContext.user.user.email) {
-                    console.log("EMAIL CHANGED");
-                    tempUser.user.isEmailVerified = false;
-                    tempUser.user.isStudent = false;
-                }
-                //update the context
-                userContext.setUser(tempUser);
-                //update localStorage
-                localStorage.setItem("user", JSON.stringify(tempUser));
-            }
-        }
-        catch (error) {
-            console.log(error);
-        }
+        await edit({ variables: {
+            first: first,
+            last: last,
+            email: email,
+            phone: phone,
+            venmo: venmo,
+            cashapp: cashapp
+        }});
     }
 
     async function uploadPhoto(photo: any) {
        if (!photo) return;
-       const data = await upload({ variables: {
+       await upload({ variables: {
            picture: photo
        }});
-
-       if (data.data?.addProfilePicture.photoUrl && userContext?.user) {
-           //make a copy of the current user
-           const tempAuth = userContext.user;
-
-           //update the tempUser with the new data
-           tempAuth.user.photoUrl = data.data?.addProfilePicture.photoUrl;
-
-           //update the context
-           userContext.setUser(tempAuth);
-
-           //put the tempUser back into storage
-           localStorage.setItem("user", JSON.stringify(tempAuth));
-       }
     }
 
-    if (!userContext.user) {
+    if (!user) {
         return <Redirect to={{ pathname: "/login" }} />;
     }
 
@@ -141,8 +98,8 @@ function EditProfile() {
                     </div>
                 </div>
                 <div className="w-full">
-                    <p className="text-2xl font-bold text-center">{userContext?.user?.user?.name}</p>
-                    <p className="text-xs text-center text-gray-500">@{userContext?.user?.user?.username}</p>
+                    <p className="text-2xl font-bold text-center">{user.name}</p>
+                    <p className="text-xs text-center text-gray-500">@{user?.username}</p>
                 </div>
             </div>
 
@@ -158,7 +115,7 @@ function EditProfile() {
                     className="mb-4"
                     id="username"
                     label="Username"
-                    value={userContext?.user?.user?.username}
+                    value={user?.username}
                     disabled
                 />
 
@@ -190,8 +147,8 @@ function EditProfile() {
                 />
                 <Caption className="mb-2">
                     {
-                        userContext?.user?.user?.isEmailVerified
-                            ? userContext?.user?.user?.isStudent
+                        user.isEmailVerified
+                            ? user.isStudent
                                 ? "Your email is verified and you are a student"
                                 : "Your email is verified"
                                 : "Your email is not verified"

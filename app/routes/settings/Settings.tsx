@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { StyleSheet } from 'react-native';
 import { Layout, Button, Card, Text } from '@ui-kitten/components';
 import { ThemeContext } from '../../utils/ThemeContext';
@@ -17,22 +17,15 @@ const Logout = gql`
 `;
 
 export function MainSettingsScreen({ navigation }: any) {
-    const themeContext: any = React.useContext(ThemeContext);
-    const userContext: AuthenticatedUserContextData = React.useContext(UserContext)!;
+    const themeContext = useContext(ThemeContext);
+    const user = useContext(UserContext);
     const [logout, { loading: loading, error: error }] = useMutation<LogoutMutation>(Logout);
 
     async function doLogout() {
-        try {
-            const result = await logout();
-            AsyncStorage.clear();
-            userContext.unsubscribe();
-        }
-        catch (error) {
-            AsyncStorage.setItem("token", userContext.user.tokens.tokenid);
-            AsyncStorage.removeItem("auth", (error) => {
-                console.log("Removed all except tokenid and expoPushToken from storage.", error);
-            });
-        }
+        await logout({
+            
+        });
+        AsyncStorage.clear();
 
         await navigation.reset({
             index: 0,
@@ -40,7 +33,7 @@ export function MainSettingsScreen({ navigation }: any) {
                 { name: 'Login' },
             ],
             key: null
-        }, () => userContext.setUser(null));
+        });
 
     }
 
@@ -69,22 +62,22 @@ export function MainSettingsScreen({ navigation }: any) {
     return (
         <Layout style={styles.wrapper}>
             <Layout style={styles.container}>
-                <Card style={{width: "80%", marginBottom: 20}} onPress={() => navigation.navigate("Profile", { id: userContext.user.user.id })} >
-                    <UserHeader user={userContext.user.user} />
+                <Card style={{width: "80%", marginBottom: 20}} onPress={() => navigation.navigate("Profile", { id: user.id })} >
+                    <UserHeader user={user} />
                 </Card>
-                {!userContext.user.user.isEmailVerified &&
+                {!user.isEmailVerified &&
                     <Card status="danger" style={{maxWidth: 400, marginBottom: 6}}>
                         <Text category="h6">Your email is not verified!</Text>
                     </Card>
                 }
-                {!userContext.user.user.isEmailVerified && <ResendButton />}
+                {!user.isEmailVerified && <ResendButton />}
                 <Button
-                    onPress={themeContext.toggleTheme}
+                    onPress={themeContext?.toggleTheme}
                     accessoryLeft={ThemeIcon}
                     style={styles.button}
                     appearance='ghost'
                 >
-                    {(themeContext.theme == "light") ? "Dark Mode" : "Light Mode"}
+                    {(themeContext?.theme == "light") ? "Dark Mode" : "Light Mode"}
                 </Button>
                 <Button
                     onPress={() => navigation.navigate("EditProfileScreen")}

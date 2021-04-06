@@ -40,17 +40,21 @@ export class AccountResolver {
 
         console.log(ctx.user);
 
-        await BeepORM.userRepository.persistAndFlush(ctx.user); 
+        BeepORM.userRepository.persist(ctx.user); 
 
         if (oldEmail !== input.email) {
             await BeepORM.verifyEmailRepository.nativeDelete({ user: ctx.user });
 
             wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
 
-            await BeepORM.userRepository.persistAndFlush(ctx.user); 
+            BeepORM.userRepository.persist(ctx.user); 
 
             createVerifyEmailEntryAndSendEmail(ctx.user, input.email, input.first);
         }
+        
+        pubSub.publish("User" + ctx.user.id, ctx.user);
+
+        await BeepORM.userRepository.flush();
 
         return ctx.user;
     }

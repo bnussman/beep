@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {Error} from '../components/Error';
 import {Success} from '../components/Success';
@@ -12,23 +12,15 @@ const VerifyAccountGraphQL = gql`
 `;
 
 function VerifyAccount({ match }) {
-    const { user, setUser } = useContext(UserContext);
+    const user = useContext(UserContext);
     const id = match.params.id;
     const [verify, {data, loading, error}] = useMutation<VerifyAccountMutation>(VerifyAccountGraphQL);
     
     async function handleVerify(): Promise<void> {
         try {
-            const result = await verify({ variables: {
+            await verify({ variables: {
                 id: id
             }});
-            
-            if (result.data.verifyAccount) {
-                const tempContext = user;
-                tempContext.user.isEmailVerified = true;
-                //TODO update isStudent
-                setUser(user);
-
-            }
         }
         catch(error) {
             console.error(error);

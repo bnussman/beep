@@ -42,7 +42,7 @@ export class RiderResolver {
 
         await BeepORM.userRepository.persistAndFlush(beeper);
 
-        sendNotification(beeper, `${ctx.user.name} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
+        sendNotification(beeper, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
 
         q.ridersQueuePosition = -1;
 
@@ -111,7 +111,7 @@ export class RiderResolver {
         pubSub.publish("Beeper" + id, r);
         pubSub.publish("Rider" + ctx.user.id, null);
 
-        sendNotification(entry.beeper, `${ctx.user.name} left your queue`, "They decided they did not want a beep from you! :(");
+        sendNotification(entry.beeper, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you! :(");
 
         return true;
     }

@@ -16,18 +16,71 @@ import BeepAppBar from './components/AppBar';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { UserContext } from './UserContext';
 import About from './routes/About';
-import { ApolloClient, ApolloProvider, DefaultOptions, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloLink, ApolloProvider, DefaultOptions, gql, InMemoryCache, split, useQuery } from '@apollo/client';
 import { createUploadLink } from 'apollo-upload-client';
 import { setContext } from '@apollo/client/link/context';
 import { ThemeContext } from './ThemeContext';
+import {getMainDefinition} from '@apollo/client/utilities';
+import { WebSocketLink } from '@apollo/client/link/ws';
+import { GetUserDataQuery } from './generated/graphql';
 
-const httpLink = createUploadLink({
-    //uri: 'https://beep-app-beep-staging.192.168.1.200.nip.io/graphql',
-    uri: 'http://localhost:3001/graphql',
+export const GetUserData = gql`
+    query GetUserData {
+        getUser {
+            id
+            name
+            first
+            last
+            email
+            phone
+            venmo
+            isBeeping
+            isEmailVerified
+            isStudent
+            groupRate
+            singlesRate
+            photoUrl
+            capacity
+            masksRequired
+            username
+        }
+    }
+`;
+
+const UserUpdates = gql`
+subscription UserUpdates($topic: String!) {
+    getUserUpdates(topic: $topic) {
+        id
+        first
+        last
+        email
+        phone
+        venmo
+        isBeeping
+        isEmailVerified
+        isStudent
+        groupRate
+        singlesRate
+        photoUrl
+        capacity
+        masksRequired
+    }
+}
+`;
+const ip = "192.168.1.57:3001";
+
+const uploadLink = createUploadLink({
+    uri: 'http://'+ ip + '/graphql',
+    headers: {
+        "keep-alive": "true"
+    }
 });
+
 
 const authLink = setContext(async (_, { headers }) => {
     const stored = localStorage.getItem('user');
+
+    console.log("Making request with token", stored)
 
     if (!stored) return;
 
@@ -52,8 +105,41 @@ const defaultOptions: DefaultOptions = {
     }
 };
 
+const wsLink = new WebSocketLink({
+  uri: `ws://${ip}/subscriptions`,
+  options: {
+      reconnect: true,
+      connectionParams: async () => {
+          const tit = localStorage.getItem('user');
+
+          if (!tit) return;
+
+          const auth = JSON.parse(tit);
+          return {
+              token: auth.tokens.id
+          }
+      }
+  }
+});
+
+const splitLink = split(
+    ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+            definition.kind === 'OperationDefinition' &&
+                definition.operation === 'subscription'
+        );
+    },
+    wsLink,
+);
+
 export const client = new ApolloClient({
-    link: authLink.concat(httpLink),
+    link: ApolloLink.from([
+        authLink,
+        splitLink,
+        //@ts-ignore
+        uploadLink
+    ]),
     cache: new InMemoryCache({
         addTypename: false
     }),
@@ -75,14 +161,9 @@ function getInitialTheme() {
     return storedPrefs || "dark";
 }
 
-function App() {
-    const [user, setInternalUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+function Beep() {
+    const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
     const [theme, setInternalTheme] = useState(getInitialTheme());
-
-    function setUser(d) {
-        setInternalUser({ ...d });
-        if(!d) setInternalUser(null);
-    }
 
     function setTheme(theme: string) {
         const root = window.document.documentElement
@@ -96,12 +177,32 @@ function App() {
     }
     
     useEffect(() => {
-    }, []);
+        if (data?.getUser?.id) {
+            subscribeToMore({
+                document: UserUpdates,
+                variables: {
+                    topic: data?.getUser.id
+                },
+                updateQuery: (prev, { subscriptionData }) => {
+                    //@ts-ignore
+                    const newFeedItem = subscriptionData.data.getUserUpdates;
+                    console.log("Sub new data ", newFeedItem);
+                    return Object.assign({}, prev, {
+                        getUser: newFeedItem
+                    });
+                }
+            });
+        }
+        console.log("user updated!!!!!!!!!");
+    //}, [data?.getUser?.id]);
+    }, [data?.getUser]);
+
+    console.log(data);
 
     return (
         <ApolloProvider client={client}>
         <ThemeContext.Provider value={{ theme, setTheme }}>
-        <UserContext.Provider value={{user, setUser}}>
+            <UserContext.Provider value={data?.getUser?.id ? { ...data?.getUser } : undefined}>
             <Router>
                 <BeepAppBar/>
                 <Switch>
@@ -124,6 +225,14 @@ function App() {
             {/*<Footer/>*/}
             </UserContext.Provider>
             </ThemeContext.Provider>
+        </ApolloProvider>
+    );
+}
+
+function App() {
+    return (
+        <ApolloProvider client={client}>
+            <Beep/>
         </ApolloProvider>
     );
 }

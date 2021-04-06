@@ -13,7 +13,7 @@ export class BeeperResolver {
 
     @Mutation(() => Boolean)
     @Authorized()
-    public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput): Promise<boolean> {
+    public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
         await BeepORM.userRepository.populate(ctx.user, 'queue');
 
         if (!input.isBeeping && (ctx.user.queue.length > 0)) {
@@ -21,6 +21,8 @@ export class BeeperResolver {
         }
 
         wrap(ctx.user).assign(input);
+
+        pubSub.publish("User" + ctx.user.id, ctx.user);
 
         await BeepORM.userRepository.persistAndFlush(ctx.user);
 

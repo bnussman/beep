@@ -17,27 +17,6 @@ interface Props {
 const Login = gql`
     mutation Login($username: String!, $password: String!) {
         login(input: {username: $username, password: $password}) {
-            user {
-                id
-                first
-                last
-                username
-                email
-                phone
-                venmo
-                cashapp
-                isBeeping
-                isEmailVerified
-                isStudent
-                groupRate
-                singlesRate
-                capacity
-                masksRequired
-                queueSize
-                role
-                photoUrl
-                name
-            }
             tokens {
                 id
                 tokenid
@@ -78,8 +57,6 @@ function LoginScreen(props: Props) {
         if (r) {
 
             AsyncStorage.setItem("auth", JSON.stringify(r.data?.login));
-
-            userContext.setUser(r.data?.login);
                 
             props.navigation.reset({
                 index: 0,
