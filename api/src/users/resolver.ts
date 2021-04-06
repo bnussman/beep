@@ -84,7 +84,6 @@ export class UserResolver {
     @Query(() => RideHistoryResponse)
     @Authorized()
     public async getRideHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<RideHistoryResponse> {
-        console.log(offset, show, id);
         const [rides, count] = await BeepORM.beepRepository.findAndCount({ rider: id || ctx.user }, ['beeper', 'rider'], {}, show, offset);
 
         return {
@@ -117,7 +116,6 @@ export class UserResolver {
         topics: ({ args }) => "User" + args.topic,
     })
     public getUserUpdates(@Arg("topic") topic: string, @Root() user: User): User {
-        console.log(user);
         return user;
     }
 }

@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
-import React, { Component, ReactNode, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AppState, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import RegisterScreen from './routes/auth/Register';
 import LoginScreen from './routes/auth/Login';
 import { ForgotPasswordScreen } from './routes/auth/ForgotPassword';
@@ -20,8 +20,6 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { updatePushToken } from "./utils/Notifications";
 import AsyncStorage from '@react-native-community/async-storage';
 import init from "./utils/Init";
-import Sentry from "./utils/Sentry";
-import { AuthContext } from './types/Beep';
 import { isMobile } from './utils/config';
 import ThemedStatusBar from './utils/StatusBar';
 import { client } from './utils/Apollo';
@@ -50,6 +48,7 @@ const GetUserData = gql`
             photoUrl
             capacity
             masksRequired
+            cashapp
         }
     }
 `;
@@ -73,6 +72,7 @@ subscription UserUpdates($topic: String!) {
         photoUrl
         capacity
         masksRequired
+        cashapp
     }
 }
 `;
@@ -91,6 +91,8 @@ function Beep() {
         if (data?.getUser.id) {
             if (isMobile) updatePushToken();
 
+            console.log("Calling sub to more");
+
             subscribeToMore({
                 document: UserUpdates,
                 variables: {
@@ -98,13 +100,14 @@ function Beep() {
                 },
                 updateQuery: (prev, { subscriptionData }) => {
                     const newFeedItem = subscriptionData.data.getUserUpdates;
+                    console.log("Socket Updated User");
                     return Object.assign({}, prev, {
                         getUser: newFeedItem
                     });
                 }
             });
         }
-    }, [data?.getUser]);
+    }, [data?.getUser?.id]);
 
     if (loading) return null;
 

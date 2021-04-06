@@ -144,23 +144,23 @@ export function MainFindBeepScreen(props: Props) {
 
     useEffect(() => {
         SplashScreen.hideAsync();
+        if (user?.id) {
+            console.log("USERRRR", user);
 
-        console.log("user id", user.id)
-
-        subscribeToMore({
-            document: RiderStatus,
-            variables: {
-                topic: user.id
-            },
-            updateQuery: (prev, { subscriptionData }) => {
-                console.log("Sub new data ", subscriptionData);
-                const newFeedItem = subscriptionData.data.getRiderUpdates;
-                return Object.assign({}, prev, {
-                    getRiderStatus: newFeedItem
-                });
-            }
-        });
-
+            subscribeToMore({
+                document: RiderStatus,
+                variables: {
+                    topic: user.id
+                },
+                updateQuery: (prev, { subscriptionData }) => {
+                    console.log("Sub new data ", subscriptionData);
+                    const newFeedItem = subscriptionData.data.getRiderUpdates;
+                    return Object.assign({}, prev, {
+                        getRiderStatus: newFeedItem
+                    });
+                }
+            });
+        }
         //AppState.addEventListener("change", handleAppStateChange);
 
         /*
@@ -210,10 +210,10 @@ export function MainFindBeepScreen(props: Props) {
     }
 
     function getVenmoLink(): string {
-        if (Number(data?.getRiderStatus.groupSize) > 1) {
-            return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus.beeper?.venmo + '&amount=' + data?.getRiderStatus.beeper?.groupRate * data?.getRiderStatus.groupSize + '&note=Beep';
+        if (Number(data?.getRiderStatus?.groupSize) > 1) {
+            return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus?.beeper?.venmo + '&amount=' + data?.getRiderStatus?.beeper?.groupRate * data?.getRiderStatus?.groupSize + '&note=Beep';
         }
-        return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus.beeper?.venmo + '&amount=' + data?.getRiderStatus.beeper?.singlesRate + '&note=Beep';
+        return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus?.beeper?.venmo + '&amount=' + data?.getRiderStatus?.beeper?.singlesRate + '&note=Beep';
     }
 
     function getCashAppLink(): string {
@@ -249,9 +249,6 @@ export function MainFindBeepScreen(props: Props) {
                 return "Unknown";
         }
     }
-
-
-
 
     const Tags = () => (
         <Layout style={styles.tagRow}>

@@ -1,8 +1,7 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {Error} from '../components/Error';
 import {Success} from '../components/Success';
-import {UserContext} from '../UserContext';
 import {VerifyAccountMutation} from '../generated/graphql';
 
 const VerifyAccountGraphQL = gql`
@@ -12,7 +11,6 @@ const VerifyAccountGraphQL = gql`
 `;
 
 function VerifyAccount({ match }) {
-    const user = useContext(UserContext);
     const id = match.params.id;
     const [verify, {data, loading, error}] = useMutation<VerifyAccountMutation>(VerifyAccountGraphQL);
     

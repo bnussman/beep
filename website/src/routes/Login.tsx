@@ -31,17 +31,19 @@ function Login() {
         e.preventDefault();
 
         try {
-            await client.resetStore();
             const result = await login({
                 variables: {
                     username: username,
                     password: password
-                }
+                },
             });
+
 
             if (result) {
                 localStorage.setItem('user', JSON.stringify(result.data.login));
-                await client.query({ query: GetUserData, fetchPolicy: "network-only" });
+                await client.resetStore();
+                await client.query({ query: GetUserData });
+                //await client.query({ query: GetUserData, });
                 history.push('/')
             }
 

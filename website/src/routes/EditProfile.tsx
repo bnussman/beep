@@ -38,22 +38,22 @@ function EditProfile() {
     const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
     const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
     const user = useContext(UserContext);
-    const [first, setFirst] = useState<string>(user.first);
-    const [last, setLast] = useState<string>(user.last);
-    const [email, setEmail] = useState<string>(user.email);
-    const [phone, setPhone] = useState<string>(user.phone);
-    const [venmo, setVenmo] = useState<string>(user.venmo);
-    const [cashapp, setCashapp] = useState<string>(user.cashapp);
-    const [photoUrl, setPhotoUrl] = useState<string>(user.photoUrl);
+    const [first, setFirst] = useState<string>(user?.first);
+    const [last, setLast] = useState<string>(user?.last);
+    const [email, setEmail] = useState<string>(user?.email);
+    const [phone, setPhone] = useState<string>(user?.phone);
+    const [venmo, setVenmo] = useState<string>(user?.venmo);
+    const [cashapp, setCashapp] = useState<string>(user?.cashapp);
+    const [photoUrl, setPhotoUrl] = useState<string>(user?.photoUrl);
 
     useEffect(() => {
-        if (first !== user.first) setFirst(user.first);
-        if (last !== user.last) setLast(user.last);
-        if (email !== user.email) setEmail(user.email);
-        if (phone !== user.first) setPhone(user.phone);
-        if (venmo !== user.venmo) setVenmo(user.venmo);
-        if (photoUrl !== user.photoUrl) setPhotoUrl(user.photoUrl);
-        if (cashapp !== user.cashapp) setCashapp(user.cashapp);
+        if (first !== user?.first) setFirst(user.first);
+        if (last !== user?.last) setLast(user.last);
+        if (email !== user?.email) setEmail(user.email);
+        if (phone !== user?.first) setPhone(user.phone);
+        if (venmo !== user?.venmo) setVenmo(user.venmo);
+        if (photoUrl !== user?.photoUrl) setPhotoUrl(user.photoUrl);
+        if (cashapp !== user?.cashapp) setCashapp(user.cashapp);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 

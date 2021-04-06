@@ -2,6 +2,7 @@ import {gql, useMutation} from "@apollo/client";
 import { Menu, Transition } from "@headlessui/react";
 import {useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
+import {GetUserData} from "../App";
 import {LogoutMutation} from "../generated/graphql";
 import {UserContext} from "../UserContext";
 import {client} from "../utils/Apollo";
@@ -20,11 +21,11 @@ export function UserDropdown() {
 
     async function handleLogout() {
         try {
-            await logout({
-                refetchQueries: () => ["GetUserData"]
-            });
-            await client.resetStore();
+            await logout();
+            //await logout();
             localStorage.removeItem('user');
+            await client.resetStore();
+            await client.query({ query: GetUserData, fetchPolicy: "no-cache" });
             history.push("/");
         }
         catch(error) {

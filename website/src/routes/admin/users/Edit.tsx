@@ -23,6 +23,7 @@ const GetEditableUser = gql`
             phone
             username
             email
+            cashapp
         }
     }
 `;

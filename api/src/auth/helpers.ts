@@ -161,10 +161,6 @@ export function sendVerifyEmailEmail(email: string, verifyEntry: VerifyEmail, fi
     });     
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 /**
  * Helper function for email verfication. This function will create and insert a new email verification entry and 
  * it will call the other helper function to actually send the email.
@@ -183,8 +179,6 @@ export async function createVerifyEmailEntryAndSendEmail(user: User, email: stri
     const entry = new VerifyEmail(user, email);
 
     await BeepORM.verifyEmailRepository.persistAndFlush(entry);
-
-    await sleep(1500);
 
     const e = await BeepORM.verifyEmailRepository.findOneOrFail({ user: user._id });
 

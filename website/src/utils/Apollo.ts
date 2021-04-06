@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink, DefaultOptions, InMemoryCache, split } from '@apollo/client';
+import { ApolloClient, ApolloLink, InMemoryCache, split } from '@apollo/client';
 import { createUploadLink } from 'apollo-upload-client';
 import { setContext } from '@apollo/client/link/context';
 import { getMainDefinition } from '@apollo/client/utilities';
@@ -15,8 +15,6 @@ const uploadLink = createUploadLink({
 
 const authLink = setContext(async (_, { headers }) => {
     const stored = localStorage.getItem('user');
-
-    console.log("Making request with token", stored)
 
     if (!stored) return;
 

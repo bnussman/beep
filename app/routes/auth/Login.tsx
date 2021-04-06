@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Layout, Text, Button, Input } from '@ui-kitten/components';
@@ -26,7 +26,7 @@ const Login = gql`
 `;
 
 function LoginScreen(props: Props) {
-    const userContext: any = React.useContext(UserContext);
+    const user = useContext(UserContext);
     const [login, { loading: loading, error: error }] = useMutation<LoginMutation>(Login);
     const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
     const [username, setUsername] = useState<string>();

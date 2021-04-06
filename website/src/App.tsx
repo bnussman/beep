@@ -41,6 +41,7 @@ export const GetUserData = gql`
             masksRequired
             username
             role
+            cashapp
         }
     }
 `;
@@ -65,6 +66,7 @@ const UserUpdates = gql`
             masksRequired
             username
             role
+            cashapp
         }
     }
 `;
@@ -85,7 +87,7 @@ function getInitialTheme() {
 }
 
 function Beep() {
-    const { data, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
+    const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
     const [theme, setInternalTheme] = useState(getInitialTheme());
 
     function setTheme(theme: string) {
@@ -101,12 +103,14 @@ function Beep() {
     
     useEffect(() => {
         if (data?.getUser?.id) {
+            console.log("Calling sub to more");
             subscribeToMore({
                 document: UserUpdates,
                 variables: {
                     topic: data?.getUser.id
                 },
                 updateQuery: (prev, { subscriptionData }) => {
+                    console.log("Socket Updated User");
                     //@ts-ignore
                     const newFeedItem = subscriptionData.data.getUserUpdates;
                     return Object.assign({}, prev, {
@@ -115,12 +119,11 @@ function Beep() {
                 }
             });
         }
-        console.log("user updated!!!!!!!!!");
     //}, [data?.getUser?.id]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data?.getUser]);
+    }, [data?.getUser?.id]);
 
-    console.log(data);
+    if (loading) return null;
 
     return (
         <ApolloProvider client={client}>

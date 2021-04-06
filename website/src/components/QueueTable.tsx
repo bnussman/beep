@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import {useEffect} from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from './Card';
@@ -40,9 +40,9 @@ function QueueTable(props: Props) {
     const { data, startPolling, stopPolling } = useQuery<GetQueueQuery>(Queue, { variables: { id: props.userId }});
 
     useEffect(() => {
-        //startPolling(3000); 
+        startPolling(3000); 
         return () => {
-            //stopPolling();
+            stopPolling();
         };
         // eslint-disable-next-line
     }, []);
