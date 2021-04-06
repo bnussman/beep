@@ -35,6 +35,8 @@ const GetUserData = gql`
     query GetUserData {
         getUser {
             id
+            username
+            name
             first
             last
             email
@@ -56,6 +58,8 @@ const UserUpdates = gql`
 subscription UserUpdates($topic: String!) {
     getUserUpdates(topic: $topic) {
         id
+        username
+        name
         first
         last
         email
@@ -93,7 +97,6 @@ function Beep() {
                     topic: data?.getUser.id
                 },
                 updateQuery: (prev, { subscriptionData }) => {
-                    console.log("Sub new data ", subscriptionData);
                     const newFeedItem = subscriptionData.data.getUserUpdates;
                     return Object.assign({}, prev, {
                         getUser: newFeedItem

@@ -141,7 +141,6 @@ export async function deactivateTokens(user: User): Promise<void> {
  * @returns void
  */
 export function sendVerifyEmailEmail(email: string, verifyEntry: VerifyEmail, first: string | undefined): void {
-
     const url: string = process.env.NODE_ENV === "development" ? "https://dev.ridebeep.app" : "https://ridebeep.app";
  
     const mailOptions: nodemailer.SendMailOptions = { 
@@ -149,7 +148,7 @@ export function sendVerifyEmailEmail(email: string, verifyEntry: VerifyEmail, fi
         to : email, 
         subject : 'Verify your Beep App Email!', 
         html: `Hey ${first}, <br><br>
-            Head to ${url}/account/verify/${verifyEntry.id} to verify your email. This link will expire in an hour. <br><br>
+            Head to ${url}/account/verify/${verifyEntry._id} to verify your email. This link will expire in an hour. <br><br>
             Roll Neers, <br>
             -Banks Nussman
         ` 
@@ -160,6 +159,10 @@ export function sendVerifyEmailEmail(email: string, verifyEntry: VerifyEmail, fi
             Sentry.captureException(error);
         } 
     });     
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -178,10 +181,15 @@ export async function createVerifyEmailEntryAndSendEmail(user: User, email: stri
     }
 
     const entry = new VerifyEmail(user, email);
+
     await BeepORM.verifyEmailRepository.persistAndFlush(entry);
 
+    await sleep(1500);
+
+    const e = await BeepORM.verifyEmailRepository.findOneOrFail({ user: user._id });
+
     //send the email
-    sendVerifyEmailEmail(email, entry, first);
+    sendVerifyEmailEmail(email, e, first);
 }
 
 /**

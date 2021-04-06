@@ -18,9 +18,12 @@ function VerifyAccount({ match }) {
     
     async function handleVerify(): Promise<void> {
         try {
-            await verify({ variables: {
-                id: id
-            }});
+            await verify({
+                variables: {
+                    id: id
+                },
+                refetchQueries: () => ["GetUserData"]
+            });
         }
         catch(error) {
             console.error(error);

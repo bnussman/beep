@@ -1,10 +1,10 @@
 import {gql, useMutation} from "@apollo/client";
 import { Menu, Transition } from "@headlessui/react";
-import React, {useContext} from "react";
+import {useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import { client, GetUserData } from "../App";
 import {LogoutMutation} from "../generated/graphql";
 import {UserContext} from "../UserContext";
+import {client} from "../utils/Apollo";
 import { Indicator } from "./Indicator";
 
 const Logout = gql`
@@ -45,7 +45,7 @@ export function UserDropdown() {
                                     }
                                     {user.name}
                                     {user.isBeeping && 
-                                        <Indicator/>
+                                        <Indicator className="mt-1 ml-2 animate-pulse"/>
                                     }
                                 </span>
                                 <svg

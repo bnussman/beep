@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { UserContext } from './UserContext';
+import { ThemeContext } from './ThemeContext';
+import { GetUserDataQuery } from './generated/graphql';
+import { ApolloProvider, gql, useQuery } from '@apollo/client';
+import { client } from './utils/Apollo';
 import Home from './routes/Home';
 import Login from './routes/Login';
 import SignUp from './routes/SignUp';
@@ -13,16 +19,7 @@ import Privacy from './routes/Privacy';
 import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
 import BeepAppBar from './components/AppBar';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { UserContext } from './UserContext';
 import About from './routes/About';
-import { ApolloClient, ApolloLink, ApolloProvider, DefaultOptions, gql, InMemoryCache, split, useQuery } from '@apollo/client';
-import { createUploadLink } from 'apollo-upload-client';
-import { setContext } from '@apollo/client/link/context';
-import { ThemeContext } from './ThemeContext';
-import {getMainDefinition} from '@apollo/client/utilities';
-import { WebSocketLink } from '@apollo/client/link/ws';
-import { GetUserDataQuery } from './generated/graphql';
 
 export const GetUserData = gql`
     query GetUserData {
@@ -43,108 +40,34 @@ export const GetUserData = gql`
             capacity
             masksRequired
             username
+            role
         }
     }
 `;
 
 const UserUpdates = gql`
-subscription UserUpdates($topic: String!) {
-    getUserUpdates(topic: $topic) {
-        id
-        first
-        last
-        email
-        phone
-        venmo
-        isBeeping
-        isEmailVerified
-        isStudent
-        groupRate
-        singlesRate
-        photoUrl
-        capacity
-        masksRequired
-    }
-}
-`;
-const ip = "192.168.1.57:3001";
-
-const uploadLink = createUploadLink({
-    uri: 'http://'+ ip + '/graphql',
-    headers: {
-        "keep-alive": "true"
-    }
-});
-
-
-const authLink = setContext(async (_, { headers }) => {
-    const stored = localStorage.getItem('user');
-
-    console.log("Making request with token", stored)
-
-    if (!stored) return;
-
-    const auth = JSON.parse(stored);
-
-    return {
-        headers: {
-            ...headers,
-            Authorization: auth.tokens.id ? `Bearer ${auth.tokens.id}` : undefined
+    subscription UserUpdates($topic: String!) {
+        getUserUpdates(topic: $topic) {
+            id
+            name
+            first
+            last
+            email
+            phone
+            venmo
+            isBeeping
+            isEmailVerified
+            isStudent
+            groupRate
+            singlesRate
+            photoUrl
+            capacity
+            masksRequired
+            username
+            role
         }
     }
-});
-
-const defaultOptions: DefaultOptions = {
-    watchQuery: {
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'ignore',
-    },
-    query: {
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'none',
-    }
-};
-
-const wsLink = new WebSocketLink({
-  uri: `ws://${ip}/subscriptions`,
-  options: {
-      reconnect: true,
-      connectionParams: async () => {
-          const tit = localStorage.getItem('user');
-
-          if (!tit) return;
-
-          const auth = JSON.parse(tit);
-          return {
-              token: auth.tokens.id
-          }
-      }
-  }
-});
-
-const splitLink = split(
-    ({ query }) => {
-        const definition = getMainDefinition(query);
-        return (
-            definition.kind === 'OperationDefinition' &&
-                definition.operation === 'subscription'
-        );
-    },
-    wsLink,
-);
-
-export const client = new ApolloClient({
-    link: ApolloLink.from([
-        authLink,
-        splitLink,
-        //@ts-ignore
-        uploadLink
-    ]),
-    cache: new InMemoryCache({
-        addTypename: false
-    }),
-    defaultOptions: defaultOptions
-});
+`;
 
 function getInitialTheme() {
     const storedPrefs = window.localStorage.getItem("color-theme");
@@ -162,7 +85,7 @@ function getInitialTheme() {
 }
 
 function Beep() {
-    const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
+    const { data, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
     const [theme, setInternalTheme] = useState(getInitialTheme());
 
     function setTheme(theme: string) {
@@ -186,7 +109,6 @@ function Beep() {
                 updateQuery: (prev, { subscriptionData }) => {
                     //@ts-ignore
                     const newFeedItem = subscriptionData.data.getUserUpdates;
-                    console.log("Sub new data ", newFeedItem);
                     return Object.assign({}, prev, {
                         getUser: newFeedItem
                     });
@@ -195,6 +117,7 @@ function Beep() {
         }
         console.log("user updated!!!!!!!!!");
     //}, [data?.getUser?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data?.getUser]);
 
     console.log(data);

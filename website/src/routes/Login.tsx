@@ -5,7 +5,8 @@ import { TextInput } from '../components/Input';
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
-import { client, GetUserData } from '../App';
+import { GetUserData } from '../App';
+import {client} from '../utils/Apollo';
 
 const LoginGraphQL = gql`
     mutation Login($username: String!, $password: String!) {

@@ -24,7 +24,7 @@ class BeepHistoryResponse extends Paginated(Beep) {}
 @Resolver(User)
 export class UserResolver {
 
-    @Query(() => User, { nullable: true })
+    @Query(() => User)
     @Authorized()
     public async getUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<User> {
         const user = await BeepORM.userRepository.findOne(id || ctx.user.id, false);
@@ -54,7 +54,7 @@ export class UserResolver {
 
     @Mutation(() => User)
     @Authorized(UserRole.ADMIN)
-    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator): Promise<User> {
+    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
         const user = await BeepORM.userRepository.findOne(id);
 
         if (!user) {
@@ -62,6 +62,8 @@ export class UserResolver {
         }
 
         wrap(user).assign(data);
+
+        pubSub.publish("User" + id, user);
 
         await BeepORM.userRepository.persistAndFlush(user);
 
