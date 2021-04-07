@@ -574,7 +574,7 @@ export type GetUserDataQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired'>
+    & Pick<User, 'id' | 'username' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'cashapp'>
   ) }
 );
 
@@ -587,7 +587,7 @@ export type UserUpdatesSubscription = (
   { __typename?: 'Subscription' }
   & { getUserUpdates: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired'>
+    & Pick<User, 'id' | 'username' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'cashapp'>
   ) }
 );
 
@@ -739,12 +739,12 @@ export type UpdateBeepSettingsMutation = (
   & Pick<Mutation, 'setBeeperStatus'>
 );
 
-export type GetUserQueryVariables = Exact<{
+export type GetUserProfileQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetUserQuery = (
+export type GetUserProfileQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
@@ -994,6 +994,8 @@ export const GetUserDataDocument = gql`
     query GetUserData {
   getUser {
     id
+    username
+    name
     first
     last
     email
@@ -1007,6 +1009,7 @@ export const GetUserDataDocument = gql`
     photoUrl
     capacity
     masksRequired
+    cashapp
   }
 }
     `;
@@ -1041,6 +1044,8 @@ export const UserUpdatesDocument = gql`
     subscription UserUpdates($topic: String!) {
   getUserUpdates(topic: $topic) {
     id
+    username
+    name
     first
     last
     email
@@ -1054,6 +1059,7 @@ export const UserUpdatesDocument = gql`
     photoUrl
     capacity
     masksRequired
+    cashapp
   }
 }
     `;
@@ -1485,8 +1491,8 @@ export function useUpdateBeepSettingsMutation(baseOptions?: ApolloReactHooks.Mut
 export type UpdateBeepSettingsMutationHookResult = ReturnType<typeof useUpdateBeepSettingsMutation>;
 export type UpdateBeepSettingsMutationResult = ApolloReactCommon.MutationResult<UpdateBeepSettingsMutation>;
 export type UpdateBeepSettingsMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateBeepSettingsMutation, UpdateBeepSettingsMutationVariables>;
-export const GetUserDocument = gql`
-    query GetUser($id: String!) {
+export const GetUserProfileDocument = gql`
+    query GetUserProfile($id: String!) {
   getUser(id: $id) {
     id
     name
@@ -1510,32 +1516,32 @@ export const GetUserDocument = gql`
     `;
 
 /**
- * __useGetUserQuery__
+ * __useGetUserProfileQuery__
  *
- * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetUserProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUserQuery({
+ * const { data, loading, error } = useGetUserProfileQuery({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetUserQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+export function useGetUserProfileQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetUserProfileQuery, GetUserProfileQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+        return ApolloReactHooks.useQuery<GetUserProfileQuery, GetUserProfileQueryVariables>(GetUserProfileDocument, options);
       }
-export function useGetUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+export function useGetUserProfileLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserProfileQuery, GetUserProfileQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+          return ApolloReactHooks.useLazyQuery<GetUserProfileQuery, GetUserProfileQueryVariables>(GetUserProfileDocument, options);
         }
-export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
-export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
-export type GetUserQueryResult = ApolloReactCommon.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export type GetUserProfileQueryHookResult = ReturnType<typeof useGetUserProfileQuery>;
+export type GetUserProfileLazyQueryHookResult = ReturnType<typeof useGetUserProfileLazyQuery>;
+export type GetUserProfileQueryResult = ApolloReactCommon.QueryResult<GetUserProfileQuery, GetUserProfileQueryVariables>;
 export const RateUserDocument = gql`
     mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String) {
   rateUser(

@@ -573,7 +573,7 @@ export type GetUserDataQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired'>
+    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp'>
   ) }
 );
 
@@ -586,7 +586,7 @@ export type UserUpdatesSubscription = (
   { __typename?: 'Subscription' }
   & { getUserUpdates: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired'>
+    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp'>
   ) }
 );
 
@@ -757,10 +757,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'Auth' }
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'cashapp' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
-    ), tokens: (
+    & { tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
     ) }
@@ -1042,7 +1039,7 @@ export type GetEditableUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'first' | 'last' | 'isBeeping' | 'isStudent' | 'isEmailVerified' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'email'>
+    & Pick<User, 'first' | 'last' | 'isBeeping' | 'isStudent' | 'isEmailVerified' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'email' | 'cashapp'>
   ) }
 );
 
@@ -1096,6 +1093,7 @@ export const GetUserDataDocument = gql`
     query GetUserData {
   getUser {
     id
+    name
     first
     last
     email
@@ -1109,6 +1107,9 @@ export const GetUserDataDocument = gql`
     photoUrl
     capacity
     masksRequired
+    username
+    role
+    cashapp
   }
 }
     `;
@@ -1143,6 +1144,7 @@ export const UserUpdatesDocument = gql`
     subscription UserUpdates($topic: String!) {
   getUserUpdates(topic: $topic) {
     id
+    name
     first
     last
     email
@@ -1156,6 +1158,9 @@ export const UserUpdatesDocument = gql`
     photoUrl
     capacity
     masksRequired
+    username
+    role
+    cashapp
   }
 }
     `;
@@ -1611,27 +1616,6 @@ export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPas
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(input: {username: $username, password: $password}) {
-    user {
-      id
-      first
-      last
-      username
-      email
-      phone
-      venmo
-      cashapp
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      capacity
-      masksRequired
-      queueSize
-      role
-      photoUrl
-      name
-    }
     tokens {
       id
       tokenid
@@ -2355,6 +2339,7 @@ export const GetEditableUserDocument = gql`
     phone
     username
     email
+    cashapp
   }
 }
     `;
