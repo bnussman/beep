@@ -6,7 +6,7 @@ import { EditIcon, LoadingIndicator } from "../../utils/Icons";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { BackIcon } from '../../utils/Icons';
 import { gql, useMutation } from '@apollo/client';
-import { EditAccountMutation } from '../../generated/graphql';
+import { EditAccountMutation, Maybe } from '../../generated/graphql';
 
 interface Props {
     navigation: any;
@@ -31,25 +31,25 @@ mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: S
 `;
 
 export function EditProfileScreen(props: Props) {
-    const userContext = useContext(UserContext);
+    const user = useContext(UserContext);
     const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
 
-    const [username] = useState<string | undefined>(userContext?.user?.user.username);
-    const [first, setFirst] = useState<string | undefined>(userContext?.user?.user.first);
-    const [last, setLast] = useState<string | undefined>(userContext?.user?.user.last);
-    const [email, setEmail] = useState<string | undefined>(userContext?.user?.user.email);
-    const [phone, setPhone] = useState<string | undefined>(userContext?.user?.user.phone);
-    const [venmo, setVenmo] = useState<string | undefined>(userContext?.user?.user.venmo);
-    const [cashapp, setCashapp] = useState<string | undefined>(userContext?.user?.user.cashapp);
+    const [username] = useState<string>(user.username);
+    const [first, setFirst] = useState<string>(user.first);
+    const [last, setLast] = useState<string>(user.last);
+    const [email, setEmail] = useState<string>(user.email);
+    const [phone, setPhone] = useState<string>(user.phone);
+    const [venmo, setVenmo] = useState<Maybe<string> | undefined>(user?.venmo);
+    const [cashapp, setCashapp] = useState<Maybe<string> | undefined>(user?.cashapp);
 
     useEffect(() => {
-        if (first !== userContext?.user?.user.first) setFirst(userContext?.user?.user.first);
-        if (last !== userContext?.user?.user.last) setLast(userContext?.user?.user.last);
-        if (email !== userContext?.user?.user.email) setEmail(userContext?.user?.user.email);
-        if (phone !== userContext?.user?.user.first) setPhone(userContext?.user?.user.phone);
-        if (venmo !== userContext?.user?.user.venmo) setVenmo(userContext?.user?.user.venmo);
-        if (venmo !== userContext?.user?.user.venmo) setVenmo(userContext?.user?.user.cashapp);
-    }, [userContext?.user]);
+        if (first !== user.first) setFirst(user.first);
+        if (last !== user.last) setLast(user.last);
+        if (email !== user.email) setEmail(user.email);
+        if (phone !== user.first) setPhone(user.phone);
+        if (venmo !== user.venmo) setVenmo(user?.venmo);
+        if (cashapp !== user.cashapp) setCashapp(user?.cashapp);
+    }, [user]);
 
     async function handleUpdate() {
         const result = await edit({
@@ -104,7 +104,7 @@ export function EditProfileScreen(props: Props) {
                                 value={email}
                                 textContentType="emailAddress"
                                 placeholder="Email"
-                                caption={userContext?.user?.user.isEmailVerified ? (userContext.user.user.isStudent) ? "Your email is verified and you are a student": "Your email is verified" : "Your email is not verified"}
+                                caption={user.isEmailVerified ? (user.isStudent) ? "Your email is verified and you are a student": "Your email is verified" : "Your email is not verified"}
                                 returnKeyType="next"
                                 onChangeText={(text) => setEmail(text)}
                             />

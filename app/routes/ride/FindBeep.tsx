@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, AppState } from 'react-native';
 import { Layout, Text, Button, Input, Card } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
@@ -9,7 +9,7 @@ import LeaveButton from './LeaveButton';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { MainNavParamList } from '../../navigators/MainTabs';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { GetEtaQuery, GetInitialRiderStatusQuery } from '../../generated/graphql';
+import { GetEtaQuery, GetInitialRiderStatusQuery, User } from '../../generated/graphql';
 import { gqlChooseBeep } from './helpers';
 import Logger from '../../utils/Logger';
 import {client} from '../../utils/Apollo';
@@ -114,7 +114,7 @@ interface Props {
 let sub;
 
 export function MainFindBeepScreen(props: Props) {
-    const userContext: any = React.useContext(UserContext);
+    const user = useContext(UserContext);
 
     const [getETA, { data: eta, loading: etaLoading, error: etaError}] = useLazyQuery<GetEtaQuery>(GetETA);
     const [groupSize, setGroupSize] = useState<string>("1");
@@ -144,21 +144,23 @@ export function MainFindBeepScreen(props: Props) {
 
     useEffect(() => {
         SplashScreen.hideAsync();
+        if (user?.id) {
+            console.log("USERRRR", user);
 
-        subscribeToMore({
-            document: RiderStatus,
-            variables: {
-                topic: userContext.user.user.id
-            },
-            updateQuery: (prev, { subscriptionData }) => {
-                console.log("Sub new data ", subscriptionData);
-                const newFeedItem = subscriptionData.data.getRiderUpdates;
-                return Object.assign({}, prev, {
-                    getRiderStatus: newFeedItem
-                });
-            }
-        });
-
+            subscribeToMore({
+                document: RiderStatus,
+                variables: {
+                    topic: user.id
+                },
+                updateQuery: (prev, { subscriptionData }) => {
+                    console.log("Sub new data ", subscriptionData);
+                    const newFeedItem = subscriptionData.data.getRiderUpdates;
+                    return Object.assign({}, prev, {
+                        getRiderStatus: newFeedItem
+                    });
+                }
+            });
+        }
         //AppState.addEventListener("change", handleAppStateChange);
 
         /*
@@ -166,7 +168,7 @@ export function MainFindBeepScreen(props: Props) {
             AppState.removeEventListener("change", handleAppStateChange);
         };
          */
-    }, []);
+    }, [user?.id]);
 
     /*
     function handleAppStateChange(nextAppState: string): void {
@@ -181,7 +183,7 @@ export function MainFindBeepScreen(props: Props) {
             subscribeToLocation();
        }
        if (data?.getRiderStatus?.state == 2 && previousData?.getRiderStatus?.state == 1) {
-            sub.unsubscribe();
+            sub?.unsubscribe();
        }
     }, [data]);
 
@@ -208,10 +210,10 @@ export function MainFindBeepScreen(props: Props) {
     }
 
     function getVenmoLink(): string {
-        if (Number(data?.getRiderStatus.groupSize) > 1) {
-            return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus.beeper?.venmo + '&amount=' + data?.getRiderStatus.beeper?.groupRate * data?.getRiderStatus.groupSize + '&note=Beep';
+        if (Number(data?.getRiderStatus?.groupSize) > 1) {
+            return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus?.beeper?.venmo + '&amount=' + data?.getRiderStatus?.beeper?.groupRate * data?.getRiderStatus?.groupSize + '&note=Beep';
         }
-        return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus.beeper?.venmo + '&amount=' + data?.getRiderStatus.beeper?.singlesRate + '&note=Beep';
+        return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus?.beeper?.venmo + '&amount=' + data?.getRiderStatus?.beeper?.singlesRate + '&note=Beep';
     }
 
     function getCashAppLink(): string {
@@ -248,18 +250,15 @@ export function MainFindBeepScreen(props: Props) {
         }
     }
 
-
-
-
     const Tags = () => (
         <Layout style={styles.tagRow}>
-            {data?.getRiderStatus.beeper?.isStudent && <Button status="basic" size='tiny' style={styles.tag}>Student</Button>}
-            {data?.getRiderStatus.beeper?.masksRequired && <Button status="info" size='tiny' style={styles.tag}>Masks Required</Button>}
-            {(data?.getRiderStatus.beeper && data?.getRiderStatus.beeper?.role == "ADMIN") && <Button size='tiny' status='danger' style={styles.tag}>Founder</Button>}
+            {data?.getRiderStatus?.beeper?.isStudent && <Button status="basic" size='tiny' style={styles.tag}>Student</Button>}
+            {data?.getRiderStatus?.beeper?.masksRequired && <Button status="info" size='tiny' style={styles.tag}>Masks Required</Button>}
+            {(data?.getRiderStatus?.beeper && data?.getRiderStatus.beeper?.role == "ADMIN") && <Button size='tiny' status='danger' style={styles.tag}>Founder</Button>}
         </Layout>
     );
 
-    if (userContext.user.user.isBeeping) {
+    if (user?.isBeeping) {
         return(
             <Layout style={styles.container}>
                 <Text category="h5">You are beeping!</Text>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { StyleSheet, Linking, Platform, TouchableWithoutFeedback, Keyboard, Alert, AppState } from 'react-native';
@@ -20,7 +20,7 @@ interface Props {
     navigation: any;
 }
 
-let unsubscribe = null;
+let unsubscribe: any = null;
 
 const GetInitialQueue = gql`
     query GetInitialQueue {
@@ -86,15 +86,16 @@ const UpdateBeepSettings = gql`
 const LOCATION_TRACKING = 'location-tracking';
 
 export function StartBeepingScreen(props: Props) {
-    const userContext: any = React.useContext(UserContext);
-    const [isBeeping, setIsBeeping] = useState<boolean>(userContext.user.user.isBeeping);
-    const [masksRequired, setMasksRequired] = useState<boolean>(userContext.user.user.masksRequired);
-    const [singlesRate, setSinglesRate] = useState<string>(userContext.user.user.singlesRate);
-    const [groupRate, setGroupRate] = useState<string>(userContext.user.user.groupRate);
-    const [capacity, setCapacity] = useState<string>(userContext.user.user.capacity);
+
+    const user = useContext(UserContext);
+
+    const [isBeeping, setIsBeeping] = useState<boolean>(user.isBeeping);
+    const [masksRequired, setMasksRequired] = useState<boolean>(user.masksRequired);
+    const [singlesRate, setSinglesRate] = useState<string>(String(user.singlesRate));
+    const [groupRate, setGroupRate] = useState<string>(String(user.groupRate));
+    const [capacity, setCapacity] = useState<string>(String(user.capacity));
 
     const { subscribeToMore, loading, error, data, refetch } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
-    //const { loading, error, data } = useSubscription<GetQueueSubscription>(GetQueue, { variables: { topic: userContext.user.user.id }});
     const [updateBeepSettings, { loading: loadingBeepSettings, error: beepSettingsError }] = useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
     function toggleSwitchWrapper(value: boolean): void {
@@ -147,11 +148,6 @@ export function StartBeepingScreen(props: Props) {
         }});
 
         if (result) {
-            //We sucessfuly updated beeper status in database
-            const tempUser = JSON.parse(JSON.stringify(userContext.user));
-            tempUser.user.isBeeping = value;
-            AsyncStorage.setItem('auth', JSON.stringify(tempUser));
-            userContext.setUser(tempUser);
             if (value) {
                 sub();
             }
@@ -199,7 +195,7 @@ export function StartBeepingScreen(props: Props) {
     }
 
     useEffect(() => {
-        if (userContext.user.user.isBeeping) sub();
+        if (user.isBeeping) sub();
 
         AppState.addEventListener("change", handleAppStateChange);
 
@@ -210,7 +206,7 @@ export function StartBeepingScreen(props: Props) {
     }, []);
 
     function handleAppStateChange(nextAppState: string): void {
-        if(nextAppState === "active" && userContext.user.user.isBeeping) {
+        if(nextAppState === "active" && user.isBeeping) {
             refetch();
         }
     }
@@ -219,7 +215,7 @@ export function StartBeepingScreen(props: Props) {
         unsubscribe = subscribeToMore({
             document: GetQueue,
             variables: {
-                topic: userContext.user.user.id
+                topic: user.id
             },
             updateQuery: (prev, { subscriptionData }) => {
                 const newQueue = subscriptionData.data.getBeeperUpdates;
@@ -242,19 +238,19 @@ export function StartBeepingScreen(props: Props) {
 
     function handleVenmo(groupSize: string | number, venmo: string): void {
         if (groupSize > 1) {
-            Linking.openURL('venmo://paycharge?txn=pay&recipients='+ venmo + '&amount=' + userContext.user.user.groupRate + '&note=Beep');
+            Linking.openURL('venmo://paycharge?txn=pay&recipients='+ venmo + '&amount=' + user.groupRate + '&note=Beep');
         }
         else {
-            Linking.openURL('venmo://paycharge?txn=pay&recipients='+ venmo + '&amount=' + userContext.user.user.singlesRate + '&note=Beep');
+            Linking.openURL('venmo://paycharge?txn=pay&recipients='+ venmo + '&amount=' + user.singlesRate + '&note=Beep');
         }
     }
 
     function handleCashApp(groupSize: string | number, cashapp: string): void {
         if (Number(groupSize) > 1) {
-            Linking.openURL(`https://cash.app/$${cashapp}/${Number(groupSize) * userContext.user.user.groupRate}`);
+            Linking.openURL(`https://cash.app/$${cashapp}/${Number(groupSize) * user.groupRate}`);
         }
         else {
-            Linking.openURL(`https://cash.app/$${cashapp}/${userContext.user.user.singlesRate}`);
+            Linking.openURL(`https://cash.app/$${cashapp}/${user.singlesRate}`);
         }
     }
 

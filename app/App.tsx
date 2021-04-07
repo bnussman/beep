@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
-import React, { Component, ReactNode } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AppState, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import RegisterScreen from './routes/auth/Register';
 import LoginScreen from './routes/auth/Login';
 import { ForgotPasswordScreen } from './routes/auth/ForgotPassword';
@@ -20,26 +20,21 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { updatePushToken } from "./utils/Notifications";
 import AsyncStorage from '@react-native-community/async-storage';
 import init from "./utils/Init";
-import Sentry from "./utils/Sentry";
-import { AuthContext } from './types/Beep';
 import { isMobile } from './utils/config';
 import ThemedStatusBar from './utils/StatusBar';
 import { client } from './utils/Apollo';
-import { ApolloProvider, gql } from '@apollo/client';
+import { ApolloProvider, gql, useQuery } from '@apollo/client';
+import { GetUserDataQuery, User } from './generated/graphql';
 
 const Stack = createStackNavigator();
-let initialScreen: string;
 init();
 
-interface State {
-    user: AuthContext | null;
-    theme: string;
-}
-
 const GetUserData = gql`
-    query GetUserData($id: String!) {
-        getUser(id: $id) {
+    query GetUserData {
+        getUser {
             id
+            username
+            name
             first
             last
             email
@@ -50,130 +45,95 @@ const GetUserData = gql`
             isStudent
             groupRate
             singlesRate
+            photoUrl
+            capacity
+            masksRequired
+            cashapp
         }
     }
 `;
 
-export default class App extends Component<undefined, State> {
+const UserUpdates = gql`
+subscription UserUpdates($topic: String!) {
+    getUserUpdates(topic: $topic) {
+        id
+        username
+        name
+        first
+        last
+        email
+        phone
+        venmo
+        isBeeping
+        isEmailVerified
+        isStudent
+        groupRate
+        singlesRate
+        photoUrl
+        capacity
+        masksRequired
+        cashapp
+    }
+}
+`;
 
-    constructor() {
-        super(undefined);
-        this.state = {
-            user: null,
-            theme: "light"
-        };
+function Beep() {
+    const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { errorPolicy: 'none' });
+    const [theme, setTheme] = useState<"light" | "dark">("light");
+
+    function toggleTheme() {
+        const next = theme === 'light' ? 'dark' : 'light';
+        setTheme(next);
+        AsyncStorage.setItem('theme', next);
     }
 
-    toggleTheme = (): void => {
-        const nextempTheme = this.state.theme === 'light' ? 'dark' : 'light';
-        this.setState({ theme: nextempTheme });
-        AsyncStorage.setItem('@theme', nextempTheme);
-    }
+    useEffect(() => {
+        if (data?.getUser.id) {
+            if (isMobile) updatePushToken();
 
-    setUser = (user: AuthContext | null): void => {
-        this.setState({ user: user });
-        Sentry.setUserContext(user);
-    }
+            console.log("Calling sub to more");
 
-    handleAppStateChange = async (nextAppState: string) => {
-        if(nextAppState === "active" && this.state.user) {
-            const result = await client.query({
-                query: GetUserData,
+            subscribeToMore({
+                document: UserUpdates,
                 variables: {
-                    id: this.state.user?.user.id
+                    topic: data?.getUser.id
                 },
-                fetchPolicy: "network-only",
-            });
-
-            const existingUser = this.state.user;
-            const updatedUser = result.data.getUser;
-
-            let changed = false;
-
-            for (const key in updatedUser) {
-                if (existingUser['user'][key] != updatedUser[key]) {
-                    existingUser['user'][key] = updatedUser[key];
-                    console.log("Updating these values of user data:", key);
-                    changed = true;
+                updateQuery: (prev, { subscriptionData }) => {
+                    const newFeedItem = subscriptionData.data.getUserUpdates;
+                    console.log("Socket Updated User");
+                    return Object.assign({}, prev, {
+                        getUser: newFeedItem
+                    });
                 }
-            }
-            if (changed) {
-                this.setUser(existingUser);
-                AsyncStorage.setItem('auth', JSON.stringify(existingUser));
-            }
+            });
         }
-    }
+    }, [data?.getUser?.id]);
 
-    async componentDidMount(): Promise<void> {
-        AppState.addEventListener("change", this.handleAppStateChange);
+    if (loading) return null;
 
-        let user;
-        let theme = this.state.theme;
-
-        const storageData = await AsyncStorage.multiGet(['auth', '@theme']);
-
-        if (storageData[0][1]) {
-            initialScreen = "Main";
-            user = JSON.parse(storageData[0][1]);
-
-            if (isMobile && user.tokens.id) {
-                updatePushToken();
-            }
-
-            Sentry.setUserContext(user);
-            //this.subscribeToUser(user.user.id);
-        }
-        else {
-            initialScreen = "Login";
-        }
-
-        if (storageData[1][1]) {
-            theme = storageData[1][1];
-        }
-
-        this.setState({
-            user: user,
-            theme: theme
-        });
-        this.handleAppStateChange("active");
-    }
-
-    render(): ReactNode {
-        if (!initialScreen) {
-            return null;
-        }
-
-        const user = this.state.user;
-        const setUser = this.setUser;
-        const theme = this.state.theme;
-        const toggleTheme = this.toggleTheme;
-
-        return (
-            <ApolloProvider client={client}>
-                <UserContext.Provider value={{user, setUser}}>
-                    <ThemeContext.Provider value={{theme, toggleTheme}}>
-                        <IconRegistry icons={EvaIconsPack} />
-                        <ApplicationProvider {...eva} theme={{ ...eva[this.state.theme], ...beepTheme }}>
-                            <Layout style={styles.statusbar}>
-                                <ThemedStatusBar theme={this.state.theme}/>
-                            </Layout>
-                            <NavigationContainer>
-                                <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }} >
-                                    <Stack.Screen name="Login" component={LoginScreen} />
-                                    <Stack.Screen name="Register" component={RegisterScreen} />
-                                    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-                                    <Stack.Screen name="Main" component={MainTabs} />
-                                    <Stack.Screen name='Profile' component={ProfileScreen} />
-                                    <Stack.Screen name='Report' component={ReportScreen} />
-                                    <Stack.Screen name='Rate' component={RateScreen} />
-                                </Stack.Navigator>
-                            </NavigationContainer>
-                        </ApplicationProvider>
-                    </ThemeContext.Provider>
-                </UserContext.Provider>
-            </ApolloProvider>
-        );
-    }
+    return (
+        <UserContext.Provider value={data?.getUser as User}>
+            <ThemeContext.Provider value={{theme, toggleTheme}}>
+                <IconRegistry icons={EvaIconsPack} />
+                <ApplicationProvider {...eva} theme={{ ...eva[theme], ...beepTheme }}>
+                    <Layout style={styles.statusbar}>
+                        <ThemedStatusBar theme={theme}/>
+                    </Layout>
+                    <NavigationContainer>
+                        <Stack.Navigator initialRouteName={data?.getUser.id ? "Main" : "Login"} screenOptions={{ headerShown: false }} >
+                            <Stack.Screen name="Login" component={LoginScreen} />
+                            <Stack.Screen name="Register" component={RegisterScreen} />
+                            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+                            <Stack.Screen name="Main" component={MainTabs} />
+                            <Stack.Screen name='Profile' component={ProfileScreen} />
+                            <Stack.Screen name='Report' component={ReportScreen} />
+                            <Stack.Screen name='Rate' component={RateScreen} />
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                </ApplicationProvider>
+            </ThemeContext.Provider>
+        </UserContext.Provider>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -181,3 +141,13 @@ const styles = StyleSheet.create({
         paddingTop: getStatusBarHeight()
     }
 });
+
+function App() {
+    return (
+        <ApolloProvider client={client}>
+            <Beep/>
+        </ApolloProvider>
+    );
+}
+
+export default App;

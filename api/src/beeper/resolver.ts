@@ -13,7 +13,7 @@ export class BeeperResolver {
 
     @Mutation(() => Boolean)
     @Authorized()
-    public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput): Promise<boolean> {
+    public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
         await BeepORM.userRepository.populate(ctx.user, 'queue');
 
         if (!input.isBeeping && (ctx.user.queue.length > 0)) {
@@ -21,6 +21,8 @@ export class BeeperResolver {
         }
 
         wrap(ctx.user).assign(input);
+
+        pubSub.publish("User" + ctx.user.id, ctx.user);
 
         await BeepORM.userRepository.persistAndFlush(ctx.user);
 
@@ -51,7 +53,7 @@ export class BeeperResolver {
 
             ctx.user.queueSize++;
 
-            sendNotification(queueEntry.rider, `${ctx.user.name} has accepted your beep request`, "You will recieve another notification when they are on their way to pick you up.");
+            sendNotification(queueEntry.rider, `${ctx.user.name()} has accepted your beep request`, "You will recieve another notification when they are on their way to pick you up.");
 
             await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
             await BeepORM.userRepository.persistAndFlush(ctx.user);
@@ -70,21 +72,21 @@ export class BeeperResolver {
                 finishedBeep.id = queueEntry.id;
 
                 try {
-                    BeepORM.beepRepository.persist(finishedBeep);
+                    BeepORM.beepRepository.persistAndFlush(finishedBeep);
                 }
                 catch (e) {
                     console.log(e);
                 }
             }
 
-            if (queueEntry.isAccepted) ctx.user.queueSize--;
+            if (queueEntry.isAccepted && ctx.user.queueSize > 0) ctx.user.queueSize--;
 
             await BeepORM.userRepository.persistAndFlush(ctx.user);
 
             await BeepORM.queueEntryRepository.removeAndFlush(queueEntry);
 
             if (input.value == "deny") {
-                sendNotification(queueEntry.rider, `${ctx.user.name} has denied your beep request`, "Open your app to find a diffrent beeper.");
+                sendNotification(queueEntry.rider, `${ctx.user.name()} has denied your beep request`, "Open your app to find a diffrent beeper.");
             }
         }
         else {
@@ -92,10 +94,10 @@ export class BeeperResolver {
 
             switch(queueEntry.state) {
                 case 1:
-                    sendNotification(queueEntry.rider, `${ctx.user.name} is on their way!`, "Your beeper is on their way to pick you up.");
+                    sendNotification(queueEntry.rider, `${ctx.user.name()} is on their way!`, "Your beeper is on their way to pick you up.");
                 break;
                 case 2:
-                    sendNotification(queueEntry.rider, `${ctx.user.name} is here!`, "Your beeper is here to pick you up.");
+                    sendNotification(queueEntry.rider, `${ctx.user.name()} is here!`, "Your beeper is here to pick you up.");
                 break;
                 case 3:
                     break;

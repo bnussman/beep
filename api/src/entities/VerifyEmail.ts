@@ -19,14 +19,16 @@ export class VerifyEmail {
     user!: User;
 
     @Field()
-    @Property() 
-    time: number = Date.now();
+    @Property({ default: Date.now() }) 
+    time!: number;
 
     @Field()
     @Property()
     email!: string;
     
     constructor(u: User, e: string) {
+        this._id = new ObjectId();
+        this.id = this._id.toHexString();
         this.user = u;
         this.email = e;
     }

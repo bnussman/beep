@@ -33,6 +33,11 @@ export default class EditUserValidator implements Partial<User> {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  public cashapp?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
   public password?: string;
 
   @Field({ nullable: true })

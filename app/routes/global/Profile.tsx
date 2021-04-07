@@ -7,7 +7,7 @@ import { UserContext } from '../../utils/UserContext';
 import { useContext } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { GetUserQuery } from "../../generated/graphql";
-import {printStars} from "../../components/Stars";
+import { printStars } from "../../components/Stars";
 
 interface Props {
     route: any; 
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const GetUser = gql`
-    query GetUser($id: String!) {
+    query GetUserProfile ($id: String!) {
         getUser(id: $id) {
             id
             name
@@ -39,7 +39,7 @@ const GetUser = gql`
 `;
 
 export function ProfileScreen(props: Props) {
-    const userContext = useContext(UserContext);
+    const user = useContext(UserContext);
     const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: props.route.params.id }, fetchPolicy: "no-cache" }); 
 
     function handleReport() {
@@ -85,68 +85,66 @@ export function ProfileScreen(props: Props) {
             );
         }
         else {
-            const user = data?.getUser;
-
             return (
                 <>
                     <TopNavigation title='User Profile' alignment='center' accessoryLeft={BackAction}/>
                     <Layout style={styles.container}>            
-                        {user.photoUrl &&
+                        {data.getUser.photoUrl &&
                             <ProfilePicture
                                 style={{marginHorizontal: 8}}
                                 size={150}
-                                url={user.photoUrl}
+                                url={data.getUser.photoUrl}
                             />
                         }
-                        <Text style={styles.item} category="h1">{user.first} {user.last}</Text>
+                        <Text style={styles.item} category="h1">{data.getUser.name}</Text>
 
                         <Layout style={styles.row}>
-                            {user.isBeeping && <Button size='tiny' status='primary' style={styles.tag}>Currently Beeping 🚗</Button>}
-                            {user.masksRequired && <Button status="info" size='tiny' style={styles.tag}>Masks Required</Button>}
-                            {user.role == "ADMIN" && <Button size='tiny' status='danger' style={styles.tag}>Founder</Button>}
-                            {user.isStudent && <Button status="basic" size='tiny' style={styles.tag}>Student</Button>}
+                            {data.getUser.isBeeping && <Button size='tiny' status='primary' style={styles.tag}>Currently Beeping 🚗</Button>}
+                            {data.getUser.masksRequired && <Button status="info" size='tiny' style={styles.tag}>Masks Required</Button>}
+                            {data.getUser.role == "ADMIN" && <Button size='tiny' status='danger' style={styles.tag}>Founder</Button>}
+                            {data.getUser.isStudent && <Button status="basic" size='tiny' style={styles.tag}>Student</Button>}
                         </Layout>
                         
                         <Layout style={styles.data}>
-                            {user.isBeeping && 
+                            {data.getUser.isBeeping && 
                                 <Layout style={styles.group}>
                                     <Text category="h6" style={styles.groupLabel}>Queue Size</Text>
-                                    <Text>{user.queueSize}</Text>
+                                    <Text>{data.getUser.queueSize}</Text>
                                 </Layout>
                             }
 
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Venmo</Text>
-                                <Text>@{user.venmo}</Text>
+                                <Text>@{data.getUser.venmo}</Text>
                             </Layout>
 
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Cash App</Text>
-                                <Text>@{user.cashapp}</Text>
+                                <Text>@{data.getUser.cashapp}</Text>
                             </Layout>
 
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Capacity</Text>
-                                <Text>{user.capacity}</Text>
+                                <Text>{data.getUser.capacity}</Text>
                             </Layout>
 
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Singles Rate</Text>
-                                <Text>${user.singlesRate}</Text>
+                                <Text>${data.getUser.singlesRate}</Text>
                             </Layout>
 
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Group Rate</Text>
-                                <Text>${user.groupRate}</Text>
+                                <Text>${data.getUser.groupRate}</Text>
                             </Layout>
-                            {user.rating &&
+                            {data.getUser.rating &&
                                 <Layout style={styles.group}>
                                     <Text category="h6" style={styles.groupLabel}>Rating</Text>
-                                    <Text>{printStars(user.rating)} ({Math.round(user.rating * 10) / 10})</Text>
+                                    <Text>{printStars(data.getUser.rating)} ({Math.round(data.getUser.rating * 10) / 10})</Text>
                                 </Layout>
                             }
                         </Layout>
-                        {(props.route.params.id != userContext?.user?.user.id) &&
+                        {(props.route.params.id !== user.id) &&
                             <>
                                 <Button onPress={() => handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
                                 <Button onPress={() => handleRate()} style={styles.button}>Rate User</Button>

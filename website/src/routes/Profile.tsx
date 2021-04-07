@@ -5,7 +5,7 @@ import { Heading3 } from '../components/Typography';
 import {Redirect} from 'react-router-dom';
 
 function Profile(props) {
-    const { user } = useContext(UserContext);
+    const user = useContext(UserContext);
 
     if (!user) {
         return <Redirect to={{ pathname: "/login" }} />;
@@ -14,7 +14,7 @@ function Profile(props) {
     return (
         <div className="container mx-auto">
             <Heading3>My profile</Heading3>
-            <UserProfile user={user.user} />
+            <UserProfile user={user} />
         </div>
     );
 }

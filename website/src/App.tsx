@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { UserContext } from './UserContext';
+import { ThemeContext } from './ThemeContext';
+import { GetUserDataQuery } from './generated/graphql';
+import { ApolloProvider, gql, useQuery } from '@apollo/client';
+import { client } from './utils/Apollo';
 import Home from './routes/Home';
 import Login from './routes/Login';
 import SignUp from './routes/SignUp';
@@ -13,52 +19,57 @@ import Privacy from './routes/Privacy';
 import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
 import BeepAppBar from './components/AppBar';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { UserContext } from './UserContext';
 import About from './routes/About';
-import { ApolloClient, ApolloProvider, DefaultOptions, InMemoryCache } from '@apollo/client';
-import { createUploadLink } from 'apollo-upload-client';
-import { setContext } from '@apollo/client/link/context';
-import { ThemeContext } from './ThemeContext';
 
-const httpLink = createUploadLink({
-    //uri: 'https://beep-app-beep-staging.192.168.1.200.nip.io/graphql',
-    uri: 'http://localhost:3001/graphql',
-});
-
-const authLink = setContext(async (_, { headers }) => {
-    const stored = localStorage.getItem('user');
-
-    if (!stored) return;
-
-    const auth = JSON.parse(stored);
-
-    return {
-        headers: {
-            ...headers,
-            Authorization: auth.tokens.id ? `Bearer ${auth.tokens.id}` : undefined
+export const GetUserData = gql`
+    query GetUserData {
+        getUser {
+            id
+            name
+            first
+            last
+            email
+            phone
+            venmo
+            isBeeping
+            isEmailVerified
+            isStudent
+            groupRate
+            singlesRate
+            photoUrl
+            capacity
+            masksRequired
+            username
+            role
+            cashapp
         }
     }
-});
+`;
 
-const defaultOptions: DefaultOptions = {
-    watchQuery: {
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'ignore',
-    },
-    query: {
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'none',
+const UserUpdates = gql`
+    subscription UserUpdates($topic: String!) {
+        getUserUpdates(topic: $topic) {
+            id
+            name
+            first
+            last
+            email
+            phone
+            venmo
+            isBeeping
+            isEmailVerified
+            isStudent
+            groupRate
+            singlesRate
+            photoUrl
+            capacity
+            masksRequired
+            username
+            role
+            cashapp
+        }
     }
-};
-
-export const client = new ApolloClient({
-    link: authLink.concat(httpLink),
-    cache: new InMemoryCache({
-        addTypename: false
-    }),
-    defaultOptions: defaultOptions
-});
+`;
 
 function getInitialTheme() {
     const storedPrefs = window.localStorage.getItem("color-theme");
@@ -75,14 +86,9 @@ function getInitialTheme() {
     return storedPrefs || "dark";
 }
 
-function App() {
-    const [user, setInternalUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+function Beep() {
+    const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
     const [theme, setInternalTheme] = useState(getInitialTheme());
-
-    function setUser(d) {
-        setInternalUser({ ...d });
-        if(!d) setInternalUser(null);
-    }
 
     function setTheme(theme: string) {
         const root = window.document.documentElement
@@ -96,12 +102,33 @@ function App() {
     }
     
     useEffect(() => {
-    }, []);
+        if (data?.getUser?.id) {
+            console.log("Calling sub to more");
+            subscribeToMore({
+                document: UserUpdates,
+                variables: {
+                    topic: data?.getUser.id
+                },
+                updateQuery: (prev, { subscriptionData }) => {
+                    console.log("Socket Updated User");
+                    //@ts-ignore
+                    const newFeedItem = subscriptionData.data.getUserUpdates;
+                    return Object.assign({}, prev, {
+                        getUser: newFeedItem
+                    });
+                }
+            });
+        }
+    //}, [data?.getUser?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data?.getUser?.id]);
+
+    if (loading) return null;
 
     return (
         <ApolloProvider client={client}>
         <ThemeContext.Provider value={{ theme, setTheme }}>
-        <UserContext.Provider value={{user, setUser}}>
+            <UserContext.Provider value={data?.getUser?.id ? { ...data?.getUser } : undefined}>
             <Router>
                 <BeepAppBar/>
                 <Switch>
@@ -124,6 +151,14 @@ function App() {
             {/*<Footer/>*/}
             </UserContext.Provider>
             </ThemeContext.Provider>
+        </ApolloProvider>
+    );
+}
+
+function App() {
+    return (
+        <ApolloProvider client={client}>
+            <Beep/>
         </ApolloProvider>
     );
 }

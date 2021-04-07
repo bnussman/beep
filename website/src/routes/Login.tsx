@@ -1,35 +1,16 @@
 import { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
-import { Redirect, Link } from "react-router-dom";
+import { Redirect, Link, useHistory } from "react-router-dom";
 import { TextInput } from '../components/Input';
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
+import { GetUserData } from '../App';
+import {client} from '../utils/Apollo';
 
 const LoginGraphQL = gql`
     mutation Login($username: String!, $password: String!) {
         login(input: {username: $username, password: $password}) {
-            user {
-                id
-                first
-                last
-                username
-                email
-                phone
-                venmo
-                cashapp
-                isBeeping
-                isEmailVerified
-                isStudent
-                groupRate
-                singlesRate
-                capacity
-                masksRequired
-                queueSize
-                role
-                photoUrl
-                name
-            }
             tokens {
                 id
                 tokenid
@@ -39,25 +20,33 @@ const LoginGraphQL = gql`
 `;
 
 function Login() {
-    const { user, setUser } = useContext(UserContext);
+    const history = useHistory();
+    const user = useContext(UserContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [login, { loading, error }] = useMutation<LoginMutation>(LoginGraphQL);
 
-    async function handleLogin(e: FormEvent): Promise<void> {
+    async function handleLogin(e: FormEvent) {
 
         e.preventDefault();
 
         try {
-            const result = await login({ variables: {
-                username: username,
-                password: password
-            }});
+            const result = await login({
+                variables: {
+                    username: username,
+                    password: password
+                },
+            });
+
 
             if (result) {
-                setUser(result.data.login);
                 localStorage.setItem('user', JSON.stringify(result.data.login));
+                await client.resetStore();
+                await client.query({ query: GetUserData });
+                //await client.query({ query: GetUserData, });
+                history.push('/')
             }
+
         }
         catch (error) {
 

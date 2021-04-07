@@ -5,7 +5,6 @@ import { Body1, Heading1, Heading3, Heading5 } from '../../../components/Typogra
 import {Card} from '../../../components/Card';
 import {gql, useMutation, useQuery} from '@apollo/client';
 import {DeleteBeepMutation, GetBeepQuery} from '../../../generated/graphql';
-import {Button} from '../../../components/Input';
 
 dayjs.extend(duration);
 

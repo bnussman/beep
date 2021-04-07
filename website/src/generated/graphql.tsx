@@ -360,7 +360,7 @@ export type QueryGetReportArgs = {
 
 
 export type QueryGetUserArgs = {
-  id: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
 };
 
 
@@ -543,6 +543,7 @@ export type Subscription = {
   getBeeperUpdates: Array<QueueEntry>;
   getLocationUpdates?: Maybe<Location>;
   getRiderUpdates?: Maybe<QueueEntry>;
+  getUserUpdates: User;
 };
 
 
@@ -559,6 +560,35 @@ export type SubscriptionGetLocationUpdatesArgs = {
 export type SubscriptionGetRiderUpdatesArgs = {
   topic: Scalars['String'];
 };
+
+
+export type SubscriptionGetUserUpdatesArgs = {
+  topic: Scalars['String'];
+};
+
+export type GetUserDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserDataQuery = (
+  { __typename?: 'Query' }
+  & { getUser: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp'>
+  ) }
+);
+
+export type UserUpdatesSubscriptionVariables = Exact<{
+  topic: Scalars['String'];
+}>;
+
+
+export type UserUpdatesSubscription = (
+  { __typename?: 'Subscription' }
+  & { getUserUpdates: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp'>
+  ) }
+);
 
 export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -727,10 +757,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'Auth' }
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'cashapp' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
-    ), tokens: (
+    & { tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
     ) }
@@ -764,10 +791,7 @@ export type SignUpMutation = (
   { __typename?: 'Mutation' }
   & { signup: (
     { __typename?: 'Auth' }
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'username' | 'email' | 'phone' | 'venmo' | 'cashapp' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'capacity' | 'masksRequired' | 'queueSize' | 'role' | 'photoUrl' | 'name'>
-    ), tokens: (
+    & { tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
     ) }
@@ -1015,7 +1039,7 @@ export type GetEditableUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'first' | 'last' | 'isBeeping' | 'isStudent' | 'isEmailVerified' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'email'>
+    & Pick<User, 'first' | 'last' | 'isBeeping' | 'isStudent' | 'isEmailVerified' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'email' | 'cashapp'>
   ) }
 );
 
@@ -1065,6 +1089,104 @@ export type GetUsersQuery = (
 );
 
 
+export const GetUserDataDocument = gql`
+    query GetUserData {
+  getUser {
+    id
+    name
+    first
+    last
+    email
+    phone
+    venmo
+    isBeeping
+    isEmailVerified
+    isStudent
+    groupRate
+    singlesRate
+    photoUrl
+    capacity
+    masksRequired
+    username
+    role
+    cashapp
+  }
+}
+    `;
+
+/**
+ * __useGetUserDataQuery__
+ *
+ * To run a query within a React component, call `useGetUserDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserDataQuery(baseOptions?: Apollo.QueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
+      }
+export function useGetUserDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
+        }
+export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
+export type GetUserDataLazyQueryHookResult = ReturnType<typeof useGetUserDataLazyQuery>;
+export type GetUserDataQueryResult = Apollo.QueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
+export const UserUpdatesDocument = gql`
+    subscription UserUpdates($topic: String!) {
+  getUserUpdates(topic: $topic) {
+    id
+    name
+    first
+    last
+    email
+    phone
+    venmo
+    isBeeping
+    isEmailVerified
+    isStudent
+    groupRate
+    singlesRate
+    photoUrl
+    capacity
+    masksRequired
+    username
+    role
+    cashapp
+  }
+}
+    `;
+
+/**
+ * __useUserUpdatesSubscription__
+ *
+ * To run a query within a React component, call `useUserUpdatesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useUserUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserUpdatesSubscription({
+ *   variables: {
+ *      topic: // value for 'topic'
+ *   },
+ * });
+ */
+export function useUserUpdatesSubscription(baseOptions: Apollo.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
+      }
+export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
+export type UserUpdatesSubscriptionResult = Apollo.SubscriptionResult<UserUpdatesSubscription>;
 export const ResendEmailDocument = gql`
     mutation ResendEmail {
   resendEmailVarification
@@ -1494,27 +1616,6 @@ export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPas
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(input: {username: $username, password: $password}) {
-    user {
-      id
-      first
-      last
-      username
-      email
-      phone
-      venmo
-      cashapp
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      capacity
-      masksRequired
-      queueSize
-      role
-      photoUrl
-      name
-    }
     tokens {
       id
       tokenid
@@ -1586,27 +1687,6 @@ export const SignUpDocument = gql`
   signup(
     input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password}
   ) {
-    user {
-      id
-      first
-      last
-      username
-      email
-      phone
-      venmo
-      cashapp
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      capacity
-      masksRequired
-      queueSize
-      role
-      photoUrl
-      name
-    }
     tokens {
       id
       tokenid
@@ -2259,6 +2339,7 @@ export const GetEditableUserDocument = gql`
     phone
     username
     email
+    cashapp
   }
 }
     `;

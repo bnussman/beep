@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink, DefaultOptions, InMemoryCache, split } from '@apollo/client';
+import { ApolloClient, ApolloLink, InMemoryCache, split } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
@@ -58,13 +58,14 @@ const uploadLink = createUploadLink({
     headers: {
         "keep-alive": "true"
     }
-})
+});
+
 const errorLink = onError((e) => {
     console.log(e);
 
     let output = "";
     e.graphQLErrors?.forEach((e) => {
-        e.extensions?.exception.validationErrors?.forEach((r) => {
+        e.extensions?.exception?.validationErrors?.forEach((r) => {
             output += r.constraints.isNotEmpty + "\n";
         });
     });

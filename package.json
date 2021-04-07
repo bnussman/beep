@@ -2,7 +2,7 @@
     "name": "@beep/monorepo",
     "repository": "git@gitlab.nussman.us:beep-app/Beep.git",
     "author": "Banks Nussman",
-    "workspaces": { 
+    "workspaces": {
         "packages": [
             "./*"
         ]
@@ -21,7 +21,7 @@
     "license": "SEE LICENSE IN LICENSE.MD",
     "private": true,
     "dependencies": {
-        "concurrently": "^6.0.0"
+        "concurrently": "^6.0.1"
     },
     "resolutions": {
         "react": "^17.0.1",

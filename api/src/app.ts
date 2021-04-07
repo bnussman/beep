@@ -89,7 +89,7 @@ export default class BeepAPIServer {
         app.use(
             graphqlUploadKoa({
                 maxFileSize: 100000000, // 10 MB
-                maxFiles: 20
+                maxFiles: 1
             })
         );
 
@@ -130,6 +130,7 @@ export default class BeepAPIServer {
         const live = app.listen(3001, () => {
             console.info(`🚕 Server ready and has started! ${server.graphqlPath}`);
         });
+
         server.installSubscriptionHandlers(live);
     }
 }

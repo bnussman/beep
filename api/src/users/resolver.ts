@@ -2,7 +2,7 @@ import { deleteUser } from '../account/helpers';
 import { BeepORM } from '../app';
 import { wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
-import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import PaginationArgs from '../args/Pagination';
 import { Beep } from '../entities/Beep';
 import { QueueEntry } from '../entities/QueueEntry';
@@ -25,8 +25,9 @@ class BeepHistoryResponse extends Paginated(Beep) {}
 export class UserResolver {
 
     @Query(() => User)
-    public async getUser(@Arg("id") id: string): Promise<User> {
-        const user = await BeepORM.userRepository.findOne(id, false);
+    @Authorized()
+    public async getUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<User> {
+        const user = await BeepORM.userRepository.findOne(id || ctx.user.id, false);
 
         if (!user) {
             throw new Error("User not found");
@@ -53,7 +54,7 @@ export class UserResolver {
 
     @Mutation(() => User)
     @Authorized(UserRole.ADMIN)
-    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator): Promise<User> {
+    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
         const user = await BeepORM.userRepository.findOne(id);
 
         if (!user) {
@@ -61,6 +62,8 @@ export class UserResolver {
         }
 
         wrap(user).assign(data);
+
+        pubSub.publish("User" + id, user);
 
         await BeepORM.userRepository.persistAndFlush(user);
 
@@ -81,7 +84,6 @@ export class UserResolver {
     @Query(() => RideHistoryResponse)
     @Authorized()
     public async getRideHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<RideHistoryResponse> {
-        console.log(offset, show, id);
         const [rides, count] = await BeepORM.beepRepository.findAndCount({ rider: id || ctx.user }, ['beeper', 'rider'], {}, show, offset);
 
         return {
@@ -108,5 +110,12 @@ export class UserResolver {
         const r = await BeepORM.queueEntryRepository.find({ beeper: id || ctx.user.id }, { populate: relationPaths, refresh: true });
 
         return r;
+    }
+
+    @Subscription(() => User, {
+        topics: ({ args }) => "User" + args.topic,
+    })
+    public getUserUpdates(@Arg("topic") topic: string, @Root() user: User): User {
+        return user;
     }
 }

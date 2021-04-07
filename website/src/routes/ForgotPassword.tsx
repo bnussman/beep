@@ -15,7 +15,7 @@ const ForgotPasswordGraphQL = gql`
 
 function ForgotPassword() {
     const [forgot, { data, loading, error }] = useMutation<ForgotPasswordMutation>(ForgotPasswordGraphQL);
-    const { user } = useContext(UserContext);
+    const user = useContext(UserContext);
     const [email, setEmail] = useState("");
 
     async function handleForgotPassword(e: FormEvent): Promise<void> {

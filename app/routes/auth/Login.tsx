@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Layout, Text, Button, Input } from '@ui-kitten/components';
@@ -17,27 +17,6 @@ interface Props {
 const Login = gql`
     mutation Login($username: String!, $password: String!) {
         login(input: {username: $username, password: $password}) {
-            user {
-                id
-                first
-                last
-                username
-                email
-                phone
-                venmo
-                cashapp
-                isBeeping
-                isEmailVerified
-                isStudent
-                groupRate
-                singlesRate
-                capacity
-                masksRequired
-                queueSize
-                role
-                photoUrl
-                name
-            }
             tokens {
                 id
                 tokenid
@@ -47,7 +26,7 @@ const Login = gql`
 `;
 
 function LoginScreen(props: Props) {
-    const userContext: any = React.useContext(UserContext);
+    const user = useContext(UserContext);
     const [login, { loading: loading, error: error }] = useMutation<LoginMutation>(Login);
     const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
     const [username, setUsername] = useState<string>();
@@ -78,8 +57,6 @@ function LoginScreen(props: Props) {
         if (r) {
 
             AsyncStorage.setItem("auth", JSON.stringify(r.data?.login));
-
-            userContext.setUser(r.data?.login);
                 
             props.navigation.reset({
                 index: 0,

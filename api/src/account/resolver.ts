@@ -38,19 +38,19 @@ export class AccountResolver {
 
         wrap(ctx.user).assign(input);
 
-        console.log(ctx.user);
-
-        await BeepORM.userRepository.persistAndFlush(ctx.user); 
-
         if (oldEmail !== input.email) {
             await BeepORM.verifyEmailRepository.nativeDelete({ user: ctx.user });
 
             wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
 
-            await BeepORM.userRepository.persistAndFlush(ctx.user); 
-
             createVerifyEmailEntryAndSendEmail(ctx.user, input.email, input.first);
+
+            console.log("EMAIL CHANGED!");
         }
+        
+        pubSub.publish("User" + ctx.user.id, ctx.user);
+
+        await BeepORM.userRepository.persistAndFlush(ctx.user);
 
         return ctx.user;
     }
@@ -84,7 +84,7 @@ export class AccountResolver {
         if (!entry) {
             throw new Error("Invalid verify email token");
         }
-
+        console.log(entry.time, Date.now());
         if ((entry.time + (3600 * 1000)) < Date.now()) {
             await BeepORM.verifyEmailRepository.removeAndFlush(entry);
             throw new Error("Your verification token has expired");
@@ -118,6 +118,8 @@ export class AccountResolver {
 
         wrap(user).assign(update);
 
+        pubSub.publish("User" + user.id, user);
+
         await BeepORM.userRepository.persistAndFlush(user);
 
         await BeepORM.verifyEmailRepository.removeAndFlush(entry);
@@ -143,7 +145,7 @@ export class AccountResolver {
 
     @Mutation(() => User)
     @Authorized()
-    public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename, mimetype }: Upload): Promise<User> {
+    public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename, mimetype }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
         console.log(filename);
         console.log(createReadStream);
         console.log(mimetype);
@@ -184,7 +186,7 @@ export class AccountResolver {
 
             ctx.user.photoUrl = result.Location;
 
-            console.log(result);
+            pubSub.publish("User" + ctx.user.id, ctx.user);
 
             await BeepORM.userRepository.persistAndFlush(ctx.user);
 

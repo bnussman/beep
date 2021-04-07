@@ -84,20 +84,7 @@ export function ProfilePhotoScreen(props: Props) {
            picture: real
        }});
 
-       if (data.data?.addProfilePicture.photoUrl && userContext?.user) {
-           //make a copy of the current user
-           const tempAuth = userContext.user;
-
-           //update the tempUser with the new data
-           tempAuth.user.photoUrl = data.data?.addProfilePicture.photoUrl;
-
-           //update the context
-           userContext.setUser(tempAuth);
-
-           //put the tempUser back into storage
-           AsyncStorage.setItem('auth', JSON.stringify(tempAuth));
-
-           //on success, go back to settings page
+       if (data.data?.addProfilePicture.photoUrl) {
            props.navigation.goBack();
        }
        else {

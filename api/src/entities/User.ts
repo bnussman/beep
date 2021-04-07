@@ -103,9 +103,9 @@ export class User {
     @Property({ nullable: true })
     photoUrl?: string;
 
-    @Field()
+    @Field(() => String)
     @Property({ persist: false })
-    get name(): string {
+    name(): string {
         return `${this.first} ${this.last}`;
     }
 
