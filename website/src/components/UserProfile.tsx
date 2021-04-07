@@ -29,7 +29,7 @@ function UserProfile(props: Props) {
     const [remove, { loading }] = useMutation<RemoveUserMutation>(RemoveUser);
 
     async function deleteUser(id: string) {
-        await remove({ variables: {id: id} });
+        await remove({ variables: {id: id}, refetchQueries: () => ["getUsers"] });
         history.goBack();
     }
 

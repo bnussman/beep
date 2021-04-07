@@ -55,35 +55,35 @@ export class User {
     @Property()
     password!: string;
 
-    @Field()
+    @Field({ defaultValue: false })
     @Property({ default: false })
     isBeeping!: boolean;
 
-    @Field()
+    @Field({ defaultValue: false })
     @Property({ default: false })
     isEmailVerified!: boolean;
 
-    @Field()
+    @Field({ defaultValue: false })
     @Property({ default: false })
     isStudent!: boolean;
 
-    @Field()
+    @Field({ defaultValue: 2.0 })
     @Property({ default: 2.0 })
     groupRate!: number;
 
-    @Field()
+    @Field({ defaultValue: 3.0 })
     @Property({ default: 3.0 })
     singlesRate!: number;
 
-    @Field()
+    @Field({ defaultValue: 4 })
     @Property({ default: 4 })
     capacity!: number;
 
-    @Field()
+    @Field({ defaultValue: false })
     @Property({ default: false }) 
     masksRequired!: boolean;
 
-    @Field()
+    @Field({ defaultValue: 0 })
     @Property({ default: 0 })
     queueSize!: number;
 

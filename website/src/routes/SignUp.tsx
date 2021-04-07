@@ -1,6 +1,6 @@
-import { FormEvent, useContext, useState, useEffect } from 'react';
+import React, { FormEvent, useContext, useState, useEffect } from 'react';
 import { UserContext } from '../UserContext';
-import { Redirect, useHistory } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { TextInput } from '../components/Input';
 import { gql, useMutation } from '@apollo/client';
 import { AddProfilePictureMutation, SignUpMutation } from '../generated/graphql';
@@ -102,7 +102,7 @@ function SignUp() {
     return (
         <div className="px-4 mx-auto lg:container">
             {error && <Error error={error}/>}
-            {photoError && <Error error="Please pick a profile photo"/>}
+            {photoError && <Error error={{ message: "Please pick a profile photo"}}/>}
             <form onSubmit={handleSignUp}>
                 <TextInput
                     className="mb-4"
@@ -174,10 +174,17 @@ function SignUp() {
                 </label>
                 <br/>
                 <br/>
-                <button type="submit" className="px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-400 focus:shadow-outline focus:outline-none">
+                <button type="submit" className="px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-500 focus:shadow-outline focus:outline-none">
                     {loading ? "Signing Up..." : "Sign Up"}
                 </button>
             </form>
+
+            <div className="dark:text-white">
+                By signing up, you agree to our
+                <Link to="/terms" className="ml-2 mr-2 text-gray-700 dark:text-gray-400">Terms of Service</Link>
+                and
+                <Link to="/privacy" className="ml-2 mr-2 text-gray-700 dark:text-gray-400">Privacy Policy</Link>
+            </div>
         </div>
     );
 }
