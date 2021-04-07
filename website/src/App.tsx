@@ -87,7 +87,8 @@ function getInitialTheme() {
 }
 
 function Beep() {
-    const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
+    //const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
+    const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
     const [theme, setInternalTheme] = useState(getInitialTheme());
 
     function setTheme(theme: string) {
@@ -128,7 +129,10 @@ function Beep() {
     return (
         <ApolloProvider client={client}>
         <ThemeContext.Provider value={{ theme, setTheme }}>
-            <UserContext.Provider value={data?.getUser?.id ? { ...data?.getUser } : undefined}>
+            {
+                //<UserContext.Provider value={data?.getUser?.id ? { ...data?.getUser } : undefined}>
+            }
+            <UserContext.Provider value={data?.getUser}>
             <Router>
                 <BeepAppBar/>
                 <Switch>

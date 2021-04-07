@@ -1,14 +1,16 @@
 import { FormEvent, useContext, useState, useEffect } from 'react';
 import { UserContext } from '../UserContext';
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { TextInput } from '../components/Input';
 import { gql, useMutation } from '@apollo/client';
 import { AddProfilePictureMutation, SignUpMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { UploadPhoto } from './EditProfile';
+import {client} from '../utils/Apollo';
+import {GetUserData} from '../App';
 
 const SignUpGraphQL = gql`
-mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
+    mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
         signup(input: {
             first: $first,
             last: $last,
@@ -27,9 +29,10 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
     }
 `;
 
-let photo: File;
+//let photo: File;
 
 function SignUp() {
+    const history = useHistory();
     const user = useContext(UserContext);
     const [first, setFirst] = useState<string>();
     const [last, setLast] = useState<string>();
@@ -39,12 +42,20 @@ function SignUp() {
     const [cashapp, setCashapp] = useState<string>();
     const [username, setUsername] = useState<string>();
     const [password, setPassword] = useState<string>();
+    const [photo, setPhoto] = useState();
+    const [photoError, setPhotoError] = useState<boolean>(false);
     const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
     const [upload] = useMutation<AddProfilePictureMutation>(UploadPhoto);
 
     async function handleSignUp(e: FormEvent): Promise<void> {
-
         e.preventDefault();
+
+        if (!photo) {
+            setPhotoError(true)
+            return;
+        }
+
+        setPhotoError(false);
 
         try {
             const result = await signup({ variables: {
@@ -60,6 +71,10 @@ function SignUp() {
 
             if (result) {
                 localStorage.setItem('user', JSON.stringify(result.data.signup));
+                await client.resetStore();
+                await client.query({ query: GetUserData });
+                //await client.query({ query: GetUserData, });
+                history.push('/')
             }
         }
         catch (error) {
@@ -87,6 +102,7 @@ function SignUp() {
     return (
         <div className="px-4 mx-auto lg:container">
             {error && <Error error={error}/>}
+            {photoError && <Error error="Please pick a profile photo"/>}
             <form onSubmit={handleSignUp}>
                 <TextInput
                     className="mb-4"
@@ -137,13 +153,27 @@ function SignUp() {
                     label="Password"
                     onChange={(value: any) => setPassword(value.target.value)}
                 />
+                {photo &&
+                    <img className="w-24 h-24 mb-4 rounded-full" src={URL.createObjectURL(photo)} alt="profile"/>
+                }
                 <input
+                    hidden
                     id="photo"
                     type="file"
                     onChange={(e) => {
-                        photo = e.target.files[0]
+                        //@ts-ignore
+                        setPhoto(e.target.files[0]);
+                        console.log(e.target.files[0]);
                     }}
                 /> 
+                <label
+                    htmlFor="photo"
+                    className="px-4 py-2 mt-4 mb-4 font-bold text-white bg-gray-400 rounded shadow hover:bg-gray-700 focus:shadow-outline focus:outline-none"
+                >
+                    Choose Profile Photo
+                </label>
+                <br/>
+                <br/>
                 <button type="submit" className="px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-400 focus:shadow-outline focus:outline-none">
                     {loading ? "Signing Up..." : "Sign Up"}
                 </button>
