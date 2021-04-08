@@ -3,6 +3,8 @@ import { Heading1, Heading3, Heading5 } from '../../../components/Typography';
 import { Formik, Form, Field } from 'formik';
 import {gql, useMutation, useQuery} from '@apollo/client';
 import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graphql';
+import { Error } from '../../../components/Error';
+import { Success } from '../../../components/Success';
 
 const GetEditableUser = gql`
     query GetEditableUser($id: String!) {
@@ -55,8 +57,8 @@ function EditUserPage() {
     return (
         <>
             <Heading3>Edit User</Heading3>
-            {data && <p>Success</p>}
-            {error && error.message}
+            {data && <Success message="Successfully Edited User"/>}
+            {error && <Error error={error} />}
             {editError && editError.message}
 
             <Formik

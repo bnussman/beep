@@ -29,7 +29,7 @@ import { GetUserDataQuery, User } from './generated/graphql';
 const Stack = createStackNavigator();
 init();
 
-const GetUserData = gql`
+export const GetUserData = gql`
     query GetUserData {
         getUser {
             id
@@ -120,7 +120,7 @@ function Beep() {
                         <ThemedStatusBar theme={theme}/>
                     </Layout>
                     <NavigationContainer>
-                        <Stack.Navigator initialRouteName={data?.getUser.id ? "Main" : "Login"} screenOptions={{ headerShown: false }} >
+                        <Stack.Navigator initialRouteName={data?.getUser?.id ? "Main" : "Login"} screenOptions={{ headerShown: false }} >
                             <Stack.Screen name="Login" component={LoginScreen} />
                             <Stack.Screen name="Register" component={RegisterScreen} />
                             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />

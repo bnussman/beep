@@ -9,6 +9,8 @@ import ProfilePicture from '../../components/ProfilePicture';
 import ResendButton from '../../components/ResendVarificationEmailButton';
 import {gql, useMutation} from '@apollo/client';
 import {LogoutMutation} from '../../generated/graphql';
+import {client} from '../../utils/Apollo';
+import {GetUserData} from '../../App';
 
 const Logout = gql`
     mutation Logout {
@@ -23,8 +25,11 @@ export function MainSettingsScreen({ navigation }: any) {
 
     async function doLogout() {
         await logout({
-            
+            variables: {
+                isApp: true
+            }
         });
+
         AsyncStorage.clear();
 
         await navigation.reset({
@@ -33,6 +38,13 @@ export function MainSettingsScreen({ navigation }: any) {
                 { name: 'Login' },
             ],
             key: null
+        }, () => {
+            client.writeQuery({
+                query: GetUserData,
+                data: { // Contains the data to write
+                    getUser: null
+                }
+            });
         });
 
     }

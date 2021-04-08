@@ -176,6 +176,8 @@ export async function createVerifyEmailEntryAndSendEmail(user: User, email: stri
         return;
     }
 
+    await BeepORM.verifyEmailRepository.nativeDelete({ email });
+
     const entry = new VerifyEmail(user, email);
 
     await BeepORM.verifyEmailRepository.persistAndFlush(entry);

@@ -9,6 +9,8 @@ import { LoginIcon, SignUpIcon, QuestionIcon, LoadingIndicator } from '../../uti
 import { Icon } from '@ui-kitten/components';
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../../generated/graphql';
+import {client} from '../../utils/Apollo';
+import {GetUserData} from '../../App';
 
 interface Props {
     navigation: any;
@@ -58,6 +60,8 @@ function LoginScreen(props: Props) {
 
             AsyncStorage.setItem("auth", JSON.stringify(r.data?.login));
                 
+            await client.resetStore();
+            await client.query({ query: GetUserData });
             props.navigation.reset({
                 index: 0,
                 routes: [

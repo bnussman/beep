@@ -56,36 +56,36 @@ export class User {
     password!: string;
 
     @Field()
-    @Property({ default: false })
-    isBeeping!: boolean;
+    @Property()
+    isBeeping: boolean = false;
 
     @Field()
-    @Property({ default: false })
-    isEmailVerified!: boolean;
+    @Property()
+    isEmailVerified: boolean = false;
 
     @Field()
-    @Property({ default: false })
-    isStudent!: boolean;
+    @Property()
+    isStudent: boolean = false;
 
     @Field()
-    @Property({ default: 2.0 })
-    groupRate!: number;
+    @Property()
+    groupRate: number = 4.0;
 
     @Field()
-    @Property({ default: 3.0 })
-    singlesRate!: number;
+    @Property()
+    singlesRate: number = 3.0;
 
     @Field()
-    @Property({ default: 4 })
-    capacity!: number;
+    @Property()
+    capacity: number = 4;
 
     @Field()
-    @Property({ default: false }) 
-    masksRequired!: boolean;
+    @Property() 
+    masksRequired: boolean = false;
 
     @Field()
-    @Property({ default: 0 })
-    queueSize!: number;
+    @Property()
+    queueSize: number = 0;
 
     @Field({ nullable: true })
     @Property({ nullable: true })

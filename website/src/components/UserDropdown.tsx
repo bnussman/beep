@@ -24,8 +24,13 @@ export function UserDropdown() {
             await logout();
             //await logout();
             localStorage.removeItem('user');
-            await client.resetStore();
-            await client.query({ query: GetUserData, fetchPolicy: "no-cache" });
+
+            client.writeQuery({
+                query: GetUserData,
+                data: { // Contains the data to write
+                    getUser: null
+                }
+            });
             history.push("/");
         }
         catch(error) {
