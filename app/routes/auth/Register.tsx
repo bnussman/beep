@@ -59,7 +59,7 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
 `;
 
 function RegisterScreen(props: Props) {
-    const userContext = useContext(UserContext);
+    const user = useContext(UserContext);
     const [first, setFirst] = useState<string>();
     const [last, setLast] = useState<string>();
     const [email, setEmail] = useState<string>();
@@ -86,11 +86,7 @@ function RegisterScreen(props: Props) {
         }});
 
         if (result) {
-        
             AsyncStorage.setItem("auth", JSON.stringify(result.data?.signup));
-
-            userContext?.setUser(result.data.signup);
-            userContext?.subscribeToUser(result.data?.signup.user.id);
 
             props.navigation.reset({
                 index: 0,

@@ -55,37 +55,37 @@ export class User {
     @Property()
     password!: string;
 
-    @Field({ defaultValue: false })
-    @Property({ default: false })
-    isBeeping!: boolean;
+    @Field()
+    @Property()
+    isBeeping: boolean = false;
 
-    @Field({ defaultValue: false })
-    @Property({ default: false })
-    isEmailVerified!: boolean;
+    @Field()
+    @Property()
+    isEmailVerified: boolean = false;
 
-    @Field({ defaultValue: false })
-    @Property({ default: false })
-    isStudent!: boolean;
+    @Field()
+    @Property()
+    isStudent: boolean = false;
 
-    @Field({ defaultValue: 2.0 })
-    @Property({ default: 2.0 })
-    groupRate!: number;
+    @Field()
+    @Property()
+    groupRate: number = 4.0;
 
-    @Field({ defaultValue: 3.0 })
-    @Property({ default: 3.0 })
-    singlesRate!: number;
+    @Field()
+    @Property()
+    singlesRate: number = 3.0;
 
-    @Field({ defaultValue: 4 })
-    @Property({ default: 4 })
-    capacity!: number;
+    @Field()
+    @Property()
+    capacity: number = 4;
 
-    @Field({ defaultValue: false })
-    @Property({ default: false }) 
-    masksRequired!: boolean;
+    @Field()
+    @Property() 
+    masksRequired: boolean = false;
 
-    @Field({ defaultValue: 0 })
-    @Property({ default: 0 })
-    queueSize!: number;
+    @Field()
+    @Property()
+    queueSize: number = 0;
 
     @Field({ nullable: true })
     @Property({ nullable: true })

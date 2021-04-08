@@ -23,7 +23,7 @@ import { graphqlUploadKoa } from 'graphql-upload'
 import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
 
-const url = `mongodb+srv://banks:${process.env.MONGODB_PASSWORD}@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
+const url = `mongodb+srv://banks:OTAxMThlNzY4MDRmMjE2YTM4YmY0MmI5@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -35,10 +35,9 @@ export default class BeepAPIServer {
         this.setup();
     }
 
-
     private async setup(): Promise<void> {
         const options = {
-            host: 'localhost',
+            host: 'redis-0.nussman.us',
             port: 6379,
             password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
         };
@@ -75,7 +74,7 @@ export default class BeepAPIServer {
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],
             authChecker: authChecker,
-            pubSub: new RedisPubSub({
+            pubSub: !prod ? undefined : new RedisPubSub({
                 publisher: new Redis(options),
                 subscriber: new Redis(options)
             })

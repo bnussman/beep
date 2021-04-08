@@ -29,7 +29,7 @@ function UserProfile(props: Props) {
     const [remove, { loading }] = useMutation<RemoveUserMutation>(RemoveUser);
 
     async function deleteUser(id: string) {
-        await remove({ variables: {id: id}, refetchQueries: () => ["getUsers"] });
+        await remove({ variables: {id: id}, refetchQueries: () => ["getUsers"], awaitRefetchQueries: true });
         history.goBack();
     }
 
@@ -41,7 +41,7 @@ function UserProfile(props: Props) {
                 <div className="flex flex-col items-center mb-8 lg:flex-row">
                     {user.photoUrl && (
                         <div className="flex mr-3">
-                            <img className="w-40 h-40 rounded-full shadow-lg" src={user.photoUrl} alt={`${user.first} ${user.last}`}></img>
+                            <img className="w-40 h-40 rounded-full shadow-lg" src={user.photoUrl} alt={user.name}></img>
                         </div>
                     )}
                     <div className="flex flex-col items-center mx-3 lg:items-start">
