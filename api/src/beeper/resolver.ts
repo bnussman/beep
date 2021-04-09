@@ -122,7 +122,11 @@ export class BeeperResolver {
             if (ridersQueuePosition == 0 && entry.state == 1) {
                 const location = await BeepORM.locationRepository.findOne({ user: beeperId }, {}, { orderBy: { timestamp: QueryOrder.DESC } });
                 if (location) {
+                    console.log("Found location", location);
                     entry.location = location;
+                }
+                else {
+                    console.log("Could not find location");
                 }
             }
 

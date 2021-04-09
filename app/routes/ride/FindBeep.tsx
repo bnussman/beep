@@ -63,7 +63,6 @@ const RiderStatus = gql`
             state
             groupSize
             location {
-                id
                 longitude
                 latitude
             }

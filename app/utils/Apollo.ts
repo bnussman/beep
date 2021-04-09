@@ -7,7 +7,7 @@ import { createUploadLink } from 'apollo-upload-client';
 import { onError } from "@apollo/client/link/error";
 
 //const wsUrl = __DEV__ ? "ws://localhost:3001/subscriptions" : "wss://staging.ridebeep.app/subscriptions";
-//const url = __DEV__? "http://localhost:3001/graphql" : "https://staging.ridebeep.app/graphql";
+//const url = __DEV__ ? "http://localhost:3001/graphql" : "https://staging.ridebeep.app/graphql";
 const wsUrl = "wss://staging.ridebeep.app/subscriptions";
 const url = "https://staging.ridebeep.app/graphql";
 
