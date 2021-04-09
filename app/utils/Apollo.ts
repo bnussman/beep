@@ -6,8 +6,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { createUploadLink } from 'apollo-upload-client';
 import { onError } from "@apollo/client/link/error";
 
-const wsUrl = __DEV__ ? "ws://localhost:3001/subscriptions" : "wss://beep-app-beep-staging.192.168.1.200.nip.io/subscriptions";
-const url = __DEV__? "http://localhost:3001/graphql" : "https://beep-app-beep-staging.192.168.1.200.nip.io/graphql";
+const wsUrl = __DEV__ ? "ws://localhost:3001/subscriptions" : "wss://staging.ridebeep.app/subscriptions";
+const url = __DEV__? "http://localhost:3001/graphql" : "https://staging.ridebeep.app/graphql";
 
 const wsLink = new WebSocketLink({
   uri: wsUrl,
