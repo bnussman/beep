@@ -6,6 +6,7 @@ import {BeepORM} from '../app';
 import { Location } from '../entities/Location';
 import { Context } from '../utils/context';
 import { LocationInput } from '../validators/location';
+import {QueryOrder} from '@mikro-orm/core';
 
 @ObjectType()
 class LocationsResponse extends Paginated(Location) {}
@@ -16,7 +17,7 @@ export class LocationResolver {
     @Query(() => LocationsResponse)
     @Authorized(UserRole.ADMIN)
     public async getLocations(@Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<LocationsResponse> {
-        const [locations, count] = await BeepORM.locationRepository.findAndCount(id ? { user: id } : {}, { limit: show, offset: offset });
+        const [locations, count] = await BeepORM.locationRepository.findAndCount(id ? { user: id } : {}, ["user"], { orderBy: { timestamp: QueryOrder.DESC } }, show, offset);
 
         return {
             items: locations,

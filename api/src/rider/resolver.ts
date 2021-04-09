@@ -81,7 +81,7 @@ export class RiderResolver {
         entry.ridersQueuePosition = ridersQueuePosition;
 
         if (entry.state == 1) {
-            const location = await BeepORM.locationRepository.findOne({ user: entry.beeper }, {}, { timestamp: QueryOrder.DESC });
+            const location = await BeepORM.locationRepository.findOne({ user: entry.beeper }, {}, { orderBy: { timestamp: QueryOrder.DESC } });
             if (location) {
                 entry.location = location;
             }
