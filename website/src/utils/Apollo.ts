@@ -4,7 +4,7 @@ import { setContext } from '@apollo/client/link/context';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
 
-const ip = "192.168.1.57:3001";
+const ip = "localhost:3001";
 
 const uploadLink = createUploadLink({
     uri: 'http://'+ ip + '/graphql',
