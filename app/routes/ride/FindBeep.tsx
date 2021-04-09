@@ -134,12 +134,10 @@ export function MainFindBeepScreen(props: Props) {
 
     async function updateETA(lat: number, long: number): Promise<void> {
         const position = `${lat},${long}`;
-        getETA({
-            variables: {
-                start: position,
-                end: origin
-            }
-        });
+        getETA({ variables: {
+            start: position,
+            end: data?.getRiderStatus?.origin
+        }});
     }
 
     useEffect(() => {
@@ -179,11 +177,14 @@ export function MainFindBeepScreen(props: Props) {
      */
 
     useEffect(() => {
-       if (data?.getRiderStatus?.state == 1 && previousData?.getRiderStatus?.state == 0) {
+       if ((data?.getRiderStatus?.state == 1 && previousData?.getRiderStatus?.state == 0) || (data?.getRiderStatus?.state == 1 && previousData == undefined)) {
             subscribeToLocation();
        }
        if (data?.getRiderStatus?.state == 2 && previousData?.getRiderStatus?.state == 1) {
             sub?.unsubscribe();
+       }
+       if (data?.getRiderStatus?.location) {
+            updateETA(data.getRiderStatus.location.latitude, data.getRiderStatus.location.longitude);
        }
     }, [data]);
 
@@ -355,14 +356,14 @@ export function MainFindBeepScreen(props: Props) {
                     </Card>
                     {(data?.getRiderStatus.state == 1) &&
                         <Layout>
-                        {etaError && <Text>etaError.message</Text>}
-                        {etaLoading && <Text>Loading ETA</Text>}
-                        {eta &&
                             <Card style={{marginTop: 10}}>
                                 <Text category='h6'>Arrival ETA</Text>
-                                <Text appearance='hint'>Your beeper is {eta} away</Text>
+                                {etaError && <Text appearance='hint'>etaError.message</Text>}
+                                {etaLoading && <Text appearance='hint'>Loading ETA</Text>}
+                                {eta?.getETA &&
+                                    <Text appearance='hint'>Your beeper is {eta.getETA} away</Text>
+                                }
                             </Card>
-                        }
                         </Layout>
                     }
                 </Layout>

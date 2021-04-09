@@ -510,10 +510,10 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
                 variables: locations[0].coords
             });
             if (result)
-                alert(result);
+                alert("Success" + result);
         }
         catch(e) {
-            alert(e);
+            alert("Error" + e.message);
         }
 
     }
