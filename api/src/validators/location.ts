@@ -17,12 +17,12 @@ export class LocationInput implements Partial<Location> {
   @IsNumber()
   public altitude!: number;
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
   @IsOptional()
   public accuracy?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
   @IsOptional()
   public altitideAccuracy?: number;
