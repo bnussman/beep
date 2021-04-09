@@ -71,12 +71,7 @@ export class BeeperResolver {
                 finishedBeep._id = queueEntry._id;
                 finishedBeep.id = queueEntry.id;
 
-                try {
-                    BeepORM.beepRepository.persistAndFlush(finishedBeep);
-                }
-                catch (e) {
-                    console.log(e);
-                }
+                await BeepORM.beepRepository.persistAndFlush(finishedBeep);
             }
 
             if (queueEntry.isAccepted && ctx.user.queueSize > 0) ctx.user.queueSize--;
