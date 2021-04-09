@@ -6,6 +6,8 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 
 const wsUrl = "wss://staging.ridebeep.app/subscriptions";
 const url = "https://staging.ridebeep.app/graphql";
+//const url = "http://localhost:3001/graphql";
+//const wsUrl = "ws://localhost:3001/subscriptions";
 
 const uploadLink = createUploadLink({
     uri: url,
