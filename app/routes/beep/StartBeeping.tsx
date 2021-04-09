@@ -28,8 +28,8 @@ const LocationUpdate = gql`
       $latitude: Float!,
       $longitude: Float!,
       $altitude: Float!,
-      $accuracy: Float!,
-      $altitideAccuracy: Float!,
+      $accuracy: Float,
+      $altitideAccuracy: Float,
       $heading: Float!,
       $speed: Float!
     ) {

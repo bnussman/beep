@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsOptional } from 'class-validator';
 import { Location } from '../entities/Location';
 import { Field, InputType } from 'type-graphql';
 
@@ -19,11 +19,13 @@ export class LocationInput implements Partial<Location> {
 
   @Field()
   @IsNumber()
-  public accuracy!: number;
+  @IsOptional()
+  public accuracy?: number;
 
   @Field()
   @IsNumber()
-  public altitideAccuracy!: number;
+  @IsOptional()
+  public altitideAccuracy?: number;
 
   @Field()
   @IsNumber()
