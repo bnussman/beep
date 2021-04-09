@@ -23,6 +23,10 @@ export class LocationInput implements Partial<Location> {
 
   @Field()
   @IsNumber()
+  public altitideAccuracy!: number;
+
+  @Field()
+  @IsNumber()
   public heading!: number;
 
   @Field()

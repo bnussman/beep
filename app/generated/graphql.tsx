@@ -234,6 +234,7 @@ export type LocationInput = {
   longitude: Scalars['Float'];
   altitude: Scalars['Float'];
   accuracy: Scalars['Float'];
+  altitideAccuracy: Scalars['Float'];
   heading: Scalars['Float'];
   speed: Scalars['Float'];
 };
@@ -268,6 +269,7 @@ export type EditUserValidator = {
   email?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
   password?: Maybe<Scalars['String']>;
   isBeeping?: Maybe<Scalars['Boolean']>;
   isEmailVerified?: Maybe<Scalars['Boolean']>;
@@ -691,6 +693,22 @@ export type SignUpMutation = (
       & Pick<TokenEntry, 'id' | 'tokenid'>
     ) }
   ) }
+);
+
+export type LocationUpdateMutationVariables = Exact<{
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  altitude: Scalars['Float'];
+  accuracy: Scalars['Float'];
+  altitideAccuracy: Scalars['Float'];
+  heading: Scalars['Float'];
+  speed: Scalars['Float'];
+}>;
+
+
+export type LocationUpdateMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'insertLocation'>
 );
 
 export type GetInitialQueueQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1359,6 +1377,45 @@ export function useSignUpMutation(baseOptions?: ApolloReactHooks.MutationHookOpt
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = ApolloReactCommon.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = ApolloReactCommon.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const LocationUpdateDocument = gql`
+    mutation LocationUpdate($latitude: Float!, $longitude: Float!, $altitude: Float!, $accuracy: Float!, $altitideAccuracy: Float!, $heading: Float!, $speed: Float!) {
+  insertLocation(
+    location: {latitude: $latitude, longitude: $longitude, altitude: $altitude, accuracy: $accuracy, altitideAccuracy: $altitideAccuracy, heading: $heading, speed: $speed}
+  )
+}
+    `;
+export type LocationUpdateMutationFn = ApolloReactCommon.MutationFunction<LocationUpdateMutation, LocationUpdateMutationVariables>;
+
+/**
+ * __useLocationUpdateMutation__
+ *
+ * To run a mutation, you first call `useLocationUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLocationUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [locationUpdateMutation, { data, loading, error }] = useLocationUpdateMutation({
+ *   variables: {
+ *      latitude: // value for 'latitude'
+ *      longitude: // value for 'longitude'
+ *      altitude: // value for 'altitude'
+ *      accuracy: // value for 'accuracy'
+ *      altitideAccuracy: // value for 'altitideAccuracy'
+ *      heading: // value for 'heading'
+ *      speed: // value for 'speed'
+ *   },
+ * });
+ */
+export function useLocationUpdateMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LocationUpdateMutation, LocationUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<LocationUpdateMutation, LocationUpdateMutationVariables>(LocationUpdateDocument, options);
+      }
+export type LocationUpdateMutationHookResult = ReturnType<typeof useLocationUpdateMutation>;
+export type LocationUpdateMutationResult = ApolloReactCommon.MutationResult<LocationUpdateMutation>;
+export type LocationUpdateMutationOptions = ApolloReactCommon.BaseMutationOptions<LocationUpdateMutation, LocationUpdateMutationVariables>;
 export const GetInitialQueueDocument = gql`
     query GetInitialQueue {
   getQueue {

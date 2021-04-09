@@ -233,6 +233,7 @@ export type LocationInput = {
   longitude: Scalars['Float'];
   altitude: Scalars['Float'];
   accuracy: Scalars['Float'];
+  altitideAccuracy: Scalars['Float'];
   heading: Scalars['Float'];
   speed: Scalars['Float'];
 };
@@ -267,6 +268,7 @@ export type EditUserValidator = {
   email?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
   password?: Maybe<Scalars['String']>;
   isBeeping?: Maybe<Scalars['Boolean']>;
   isEmailVerified?: Maybe<Scalars['Boolean']>;

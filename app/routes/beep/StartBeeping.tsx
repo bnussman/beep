@@ -15,12 +15,35 @@ import * as Permissions from 'expo-permissions';
 import Logger from '../../utils/Logger';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetInitialQueueQuery, UpdateBeepSettingsMutation } from '../../generated/graphql';
+import {client} from '../../utils/Apollo';
 
 interface Props {
     navigation: any;
 }
 
 let unsubscribe: any = null;
+
+const LocationUpdate = gql`
+    mutation LocationUpdate(
+      $latitude: Float!,
+      $longitude: Float!,
+      $altitude: Float!,
+      $accuracy: Float!,
+      $altitideAccuracy: Float!,
+      $heading: Float!,
+      $speed: Float!
+    ) {
+      insertLocation(location: {
+        latitude: $latitude,
+        longitude: $longitude,
+        altitude: $altitude,
+        accuracy: $accuracy
+        altitideAccuracy: $altitideAccuracy,
+        heading: $heading,
+        speed: $speed
+      })
+    }
+`;
 
 const GetInitialQueue = gql`
     query GetInitialQueue {
@@ -471,6 +494,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
 
     if (data) {
         const { locations } = data;
+        /*
         const lat = locations[0].coords.latitude;
         const long = locations[0].coords.longitude;
         const altitude = locations[0].coords.altitude;
@@ -478,12 +502,20 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
         const altitudeAccuracy = locations[0].coords.altitudeAccuracy;
         const heading = locations[0].coords.heading;
         const speed = locations[0].coords.speed;
+    
+         */
+        try {
+            const result = await client.mutate({
+                mutation: LocationUpdate,
+                variables: locations[0].coords
+            });
+            if (result)
+                alert(result);
+        }
+        catch(e) {
+            alert(e);
+        }
 
-        const auth = await AsyncStorage.getItem('auth')
-
-        if (!auth) return;
-
-        const authToken = JSON.parse(auth).tokens.id;
     }
 });
 

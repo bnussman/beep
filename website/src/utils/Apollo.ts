@@ -4,10 +4,11 @@ import { setContext } from '@apollo/client/link/context';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
 
-const ip = "localhost:3001";
+const wsUrl = "wss://staging.ridebeep.app/subscriptions";
+const url = "https://staging.ridebeep.app/graphql";
 
 const uploadLink = createUploadLink({
-    uri: 'http://'+ ip + '/graphql',
+    uri: url,
     headers: {
         "keep-alive": "true"
     }
@@ -29,7 +30,7 @@ const authLink = setContext(async (_, { headers }) => {
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${ip}/subscriptions`,
+  uri: wsUrl,
   options: {
       reconnect: true,
       connectionParams: async () => {
