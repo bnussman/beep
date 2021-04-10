@@ -3,13 +3,13 @@ import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver
 import { Context } from '../utils/context';
 import { RatingInput } from '../validators/rating';
 import { Beep } from '../entities/Beep';
-import {Paginated} from '../utils/paginated';
-import {Rating} from '../entities/Rating';
+import { Paginated } from '../utils/paginated';
+import { Rating } from '../entities/Rating';
 import PaginationArgs from '../args/Pagination';
-import {QueryOrder} from '@mikro-orm/core';
+import { QueryOrder } from '@mikro-orm/core';
 import fieldsToRelations from 'graphql-fields-to-relations';
-import {GraphQLResolveInfo} from 'graphql';
-import {UserRole} from '../entities/User';
+import { GraphQLResolveInfo } from 'graphql';
+import { UserRole } from '../entities/User';
 
 @ObjectType()
 class RatingsResponse extends Paginated(Rating) {}
@@ -58,7 +58,13 @@ export class RatingResolver {
             };
         }
 
-        const [ratings, count] = await BeepORM.ratingRepository.findAndCount(filter, ['rater', 'rated'], { timestamp: QueryOrder.DESC }, show, offset);
+        //const [ratings, count] = await BeepORM.ratingRepository.findAndCount(filter, ['rater', 'rated'], { timestamp: QueryOrder.DESC }, show, offset);
+        const [ratings, count] = await BeepORM.ratingRepository.findAndCount(filter, {
+            orderBy: { timestamp: QueryOrder.DESC },
+            populate: ['rater', 'rated'],
+            offset: offset,
+            limit: show
+        });
 
         return {
             items: ratings,
