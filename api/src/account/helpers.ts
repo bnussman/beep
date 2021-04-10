@@ -26,6 +26,9 @@ export async function deleteUser(user: User): Promise<boolean> {
 
     await BeepORM.reportRepository.nativeDelete({ reporter: user });
     await BeepORM.reportRepository.nativeDelete({ reported: user });
+    
+    await BeepORM.ratingRepository.nativeDelete({ rater: user });
+    await BeepORM.ratingRepository.nativeDelete({ rated: user });
 
     await BeepORM.userRepository.nativeDelete(user);
 
