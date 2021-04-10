@@ -48,7 +48,7 @@
     "@graphql-codegen/cli": "^1.21.1",
     "@graphql-codegen/typescript": "1.21.1",
     "@graphql-codegen/typescript-operations": "1.17.15",
-    "@graphql-codegen/typescript-react-apollo": "2.2.2",
+    "@graphql-codegen/typescript-react-apollo": "2.2.3",
     "@tailwindcss/postcss7-compat": "^2.0.3",
     "@types/apollo-upload-client": "^14.1.0",
     "@types/node": "^14.14.7",
@@ -59,6 +59,6 @@
     "autoprefixer": "^9",
     "postcss": "^7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
-    "typescript": "^4.0.5"
+    "typescript": "^4.2.4"
   }
 }
