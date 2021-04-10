@@ -15,7 +15,7 @@ export class Location {
     id!: string;
 
     @Field(() => User)
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { lazy: true, eager: false })
     user!: User;
 
     @Field()
