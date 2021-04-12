@@ -13,8 +13,6 @@ import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { Rating } from "./entities/Rating";
 import { ORM } from "./utils/ORM";
-//@TODO Do we want to use the Redis Cache Adapter with MikroORM?
-//import { RedisCacheAdapter } from './utils/CacheAdapter';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 import Koa from 'koa'
@@ -36,11 +34,6 @@ export default class BeepAPIServer {
     }
 
     private async setup(): Promise<void> {
-        const options = {
-            host: 'redis-0.nussman.us',
-            port: 6379,
-            password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
-        };
 
         BeepORM.orm = await MikroORM.init({
             entities: ['./build/entities/*.js'],
@@ -49,12 +42,6 @@ export default class BeepAPIServer {
             type: 'mongo',
             clientUrl: url,
             debug: true,
-            /*
-            resultCache: {
-                adapter: RedisCacheAdapter,
-                options: options
-            }
-            */
         });
 
         BeepORM.em = BeepORM.orm.em;
@@ -70,6 +57,11 @@ export default class BeepAPIServer {
 
         initializeSentry();
 
+        const options = {
+            host: 'redis-0.nussman.us',
+            port: 6379,
+            password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
+        };
 
         const schema: GraphQLSchema = await buildSchema({
             resolvers: [__dirname + '/**/resolver.{ts,js}'],
@@ -87,7 +79,7 @@ export default class BeepAPIServer {
 
         app.use(
             graphqlUploadKoa({
-                maxFileSize: 100000000, // 10 MB
+                maxFileSize: 100000000,
                 maxFiles: 1
             })
         );

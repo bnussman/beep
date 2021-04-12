@@ -3,8 +3,9 @@ import { Context } from "../utils/context";
 
 export const authChecker: AuthChecker<Context> = ({ context }, roles) => {
     const user = context.user;
+
     if (!user) return false;
-    console.log("Checking auth");
+
     if (roles.length === 0) {
       // if `@Authorized()`, check only if user exists
       return user != null;

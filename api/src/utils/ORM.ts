@@ -21,4 +21,4 @@ export interface ORM {
     reportRepository: EntityRepository<Report>,
     locationRepository: EntityRepository<Location>,
     ratingRepository: EntityRepository<Rating>,
-};
+}
