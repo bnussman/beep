@@ -118,7 +118,7 @@ export class BeeperResolver {
             const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue } });
     
             entry.ridersQueuePosition = ridersQueuePosition;
-
+            /*
             const D = ridersQueuePosition + 8;
 
             if ( 8==D && entry.state == 1) {
@@ -129,6 +129,7 @@ export class BeeperResolver {
             }
             
             console.log("Sending Rider:", entry);
+            */
             pubSub.publish("Rider" + entry.rider.id, entry);
         }
     }
