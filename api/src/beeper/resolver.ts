@@ -119,17 +119,16 @@ export class BeeperResolver {
     
             entry.ridersQueuePosition = ridersQueuePosition;
 
-            if (ridersQueuePosition == 0 && entry.state == 1) {
+            const D = ridersQueuePosition + 8;
+
+            if ( 8==D && entry.state == 1) {
                 const location = await BeepORM.locationRepository.findOne({ user: beeperId }, {}, { orderBy: { timestamp: QueryOrder.DESC } });
                 if (location) {
-                    console.log("Found location", location);
                     entry.location = location;
                 }
-                else {
-                    console.log("Could not find location");
-                }
             }
-
+            
+            console.log("Sending Rider:", entry);
             pubSub.publish("Rider" + entry.rider.id, entry);
         }
     }
