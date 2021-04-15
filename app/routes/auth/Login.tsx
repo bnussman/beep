@@ -11,14 +11,15 @@ import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../../generated/graphql';
 import {client} from '../../utils/Apollo';
 import {GetUserData} from '../../App';
+import {getPushToken} from '../../utils/Notifications';
 
 interface Props {
     navigation: any;
 }
 
 const Login = gql`
-    mutation Login($username: String!, $password: String!) {
-        login(input: {username: $username, password: $password}) {
+    mutation Login($username: String!, $password: String!, $pushToken: String) {
+        login(input: {username: $username, password: $password, pushToken: $pushToken}) {
             tokens {
                 id
                 tokenid
@@ -53,7 +54,8 @@ function LoginScreen(props: Props) {
 
         const r = await login({ variables: {
             username: username,
-            password: password
+            password: password,
+            pushToken: await getPushToken()
         }});
 
         if (r) {

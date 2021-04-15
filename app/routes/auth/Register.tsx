@@ -18,7 +18,7 @@ interface Props {
 let result: any;
 
 const SignUp = gql`
-mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
+mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $pushToken: String) {
         signup(input: {
             first: $first,
             last: $last,
@@ -28,28 +28,8 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
             cashapp: $cashapp,
             username: $username,
             password: $password,
+            pushToken: $pushToken
         }) {
-            user {
-                id
-                first
-                last
-                username
-                email
-                phone
-                venmo
-                cashapp
-                isBeeping
-                isEmailVerified
-                isStudent
-                groupRate
-                singlesRate
-                capacity
-                masksRequired
-                queueSize
-                role
-                photoUrl
-                name
-            }
             tokens {
                 id
                 tokenid

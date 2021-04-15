@@ -26,6 +26,7 @@ const GetEditableUser = gql`
             username
             email
             cashapp
+            pushToken
         }
     }
 `;
