@@ -43,7 +43,7 @@ export class AccountResolver {
 
             wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
 
-            createVerifyEmailEntryAndSendEmail(ctx.user, input.email, input.first);
+            await createVerifyEmailEntryAndSendEmail(ctx.user, input.email, input.first);
 
             console.log("EMAIL CHANGED!");
         }
@@ -84,8 +84,8 @@ export class AccountResolver {
         if (!entry) {
             throw new Error("Invalid verify email token");
         }
-        console.log(entry.time, Date.now());
-        if ((entry.time + (3600 * 1000)) < Date.now()) {
+
+        if ((entry.time.getTime() + (3600 * 1000)) < Date.now()) {
             await BeepORM.verifyEmailRepository.removeAndFlush(entry);
             throw new Error("Your verification token has expired");
         }

@@ -1,19 +1,16 @@
-import { Entity, ManyToOne, PrimaryKey, Property, SerializedPrimaryKey } from "@mikro-orm/core";
-import { ObjectId } from "@mikro-orm/mongodb";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { Location } from "./Location";
+import { v4 } from "uuid";
 
 @ObjectType()
 @Entity()
 export class QueueEntry {
 
     @PrimaryKey()
-    _id!: ObjectId;
-
     @Field()
-    @SerializedPrimaryKey()
-    id!: string;
+    id: string = v4();
     
     @Field()
     @Property()
@@ -36,8 +33,8 @@ export class QueueEntry {
     groupSize!: number;
 
     @Field()
-    @Property()
-    timeEnteredQueue!: number;
+    @Property({ defaultRaw: 'now()' }) 
+    timeEnteredQueue!: Date;
 
     @Field(() => User)
     @ManyToOne(() => User)

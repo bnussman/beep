@@ -20,8 +20,7 @@ import { ApolloServer } from 'apollo-server-koa'
 import { graphqlUploadKoa } from 'graphql-upload'
 import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
-
-const url = `mongodb+srv://banks:OTAxMThlNzY4MDRmMjE2YTM4YmY0MmI5@beep.5zzlx.mongodb.net/test?retryWrites=true&w=majority`;
+import config from './mikro-orm.config';
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -35,14 +34,8 @@ export default class BeepAPIServer {
 
     private async setup(): Promise<void> {
 
-        BeepORM.orm = await MikroORM.init({
-            entities: ['./build/entities/*.js'],
-            entitiesTs: ['./src/entities/*.ts'],
-            dbName: 'beep',
-            type: 'mongo',
-            clientUrl: url,
-            debug: true,
-        });
+        //@ts-ignore
+        BeepORM.orm = await MikroORM.init(config);
 
         BeepORM.em = BeepORM.orm.em;
         BeepORM.userRepository = BeepORM.orm.em.getRepository(User);

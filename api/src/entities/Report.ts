@@ -1,6 +1,6 @@
-import { Entity, ManyToOne, PrimaryKey, Property, SerializedPrimaryKey } from "@mikro-orm/core";
-import { ObjectId } from "@mikro-orm/mongodb";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
+import { v4 } from "uuid";
 import { Beep } from "./Beep";
 import { User } from "./User";
 
@@ -9,11 +9,8 @@ import { User } from "./User";
 export class Report {
 
     @PrimaryKey()
-    _id!: ObjectId;
-
     @Field()
-    @SerializedPrimaryKey()
-    id!: string;
+    id: string = v4();
 
     @Field()
     @ManyToOne()
@@ -36,8 +33,8 @@ export class Report {
     notes?: string;
 
     @Field()
-    @Property()
-    timestamp: number = Date.now();
+    @Property({ defaultRaw: 'now()' }) 
+    timestamp!: Date;
 
     @Field()
     @Property({ default: false })
@@ -52,7 +49,7 @@ export class Report {
         this.reported = reported;
         this.reason = reason;
         if (beep) {
-            this.beep = new ObjectId(beep) as unknown as Beep;
+            this.beep = beep as unknown as Beep;
         }
     }
 }

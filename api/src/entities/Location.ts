@@ -1,6 +1,6 @@
-import { Entity, ManyToOne, PrimaryKey, Property, SerializedPrimaryKey } from "@mikro-orm/core";
-import { ObjectId } from "@mikro-orm/mongodb";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
+import { v4 } from "uuid";
 import { User } from "./User";
 
 @ObjectType()
@@ -8,11 +8,8 @@ import { User } from "./User";
 export class Location {
 
     @PrimaryKey()
-    _id!: ObjectId;
-
     @Field()
-    @SerializedPrimaryKey()
-    id!: string;
+    id: string = v4();
 
     @Field(() => User)
     @ManyToOne(() => User, { lazy: true, eager: false })
@@ -47,8 +44,8 @@ export class Location {
     speed!: number;
 
     @Field()
-    @Property()
-    timestamp: number = Date.now();
+    @Property({ defaultRaw: 'now()' }) 
+    timestamp!: Date;
 
     constructor(data: Partial<Location>) {
         Object.assign(this, data);

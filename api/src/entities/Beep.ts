@@ -1,18 +1,15 @@
-import { Entity, ManyToOne, PrimaryKey, Property, SerializedPrimaryKey } from "@mikro-orm/core";
-import { ObjectId } from "@mikro-orm/mongodb";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
+import { v4 } from 'uuid';
 
 @ObjectType()
 @Entity()
 export class Beep {
 
     @PrimaryKey()
-    _id!: ObjectId;
-
     @Field()
-    @SerializedPrimaryKey()
-    id!: string;
+    id: string = v4();
 
     @Field(() => User)
     @ManyToOne(() => User)
@@ -43,10 +40,10 @@ export class Beep {
     groupSize!: number;
 
     @Field()
-    @Property()
-    timeEnteredQueue: number = Date.now();
+    @Property({ defaultRaw: 'now()' }) 
+    timeEnteredQueue!: Date;
 
     @Field()
     @Property()
-    doneTime!: number;
+    doneTime!: Date;
 }

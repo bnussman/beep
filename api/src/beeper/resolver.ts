@@ -1,12 +1,12 @@
 import { sendNotification } from '../utils/notifications';
-import { QueryOrder, wrap } from '@mikro-orm/core';
+import { wrap } from '@mikro-orm/core';
 import { BeepORM } from '../app';
 import { Beep } from '../entities/Beep';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from '../validators/beeper';
 import * as Sentry from '@sentry/node';
-import {QueueEntry} from '../entities/QueueEntry';
+import { QueueEntry } from '../entities/QueueEntry';
 
 @Resolver(Beep)
 export class BeeperResolver {
@@ -66,9 +66,8 @@ export class BeeperResolver {
 
                 wrap(finishedBeep).assign(queueEntry, { em: BeepORM.em });
 
-                finishedBeep.doneTime = Date.now();
+                finishedBeep.doneTime = new Date();
 
-                finishedBeep._id = queueEntry._id;
                 finishedBeep.id = queueEntry.id;
 
                 await BeepORM.beepRepository.persistAndFlush(finishedBeep);

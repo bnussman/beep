@@ -1,9 +1,9 @@
-import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property, SerializedPrimaryKey, Unique } from "@mikro-orm/core";
-import { ObjectId } from "@mikro-orm/mongodb";
+import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { QueueEntry } from './QueueEntry';
 import { Location } from './Location';
 import { Rating } from './Rating';
+import {v4} from "uuid";
 
 export enum UserRole {
     ADMIN = 'admin',
@@ -15,11 +15,8 @@ export enum UserRole {
 export class User {
 
     @PrimaryKey()
-    _id!: ObjectId;
-
     @Field()
-    @SerializedPrimaryKey()
-    id!: string;
+    id: string = v4();
 
     @Field()
     @Property()
@@ -92,7 +89,7 @@ export class User {
     rating?: number;
 
     @Field()
-    @Enum()
+    @Property({ type: "string" })
     role: UserRole = UserRole.USER;
 
     @Field({ nullable: true })

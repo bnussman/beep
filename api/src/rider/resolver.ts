@@ -25,7 +25,7 @@ export class RiderResolver {
         }
 
         const entry = {
-            timeEnteredQueue: Date.now(),
+            timeEnteredQueue: new Date(),
             isAccepted: false,
             groupSize: input.groupSize,
             origin: input.origin,

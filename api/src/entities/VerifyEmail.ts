@@ -1,6 +1,6 @@
-import { Entity, ManyToOne, PrimaryKey, Property, SerializedPrimaryKey } from "@mikro-orm/core";
-import { ObjectId } from "@mikro-orm/mongodb";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
+import { v4 } from "uuid";
 import { User } from "./User";
 
 @ObjectType()
@@ -8,27 +8,22 @@ import { User } from "./User";
 export class VerifyEmail {
 
     @PrimaryKey()
-    _id!: ObjectId;
-
     @Field()
-    @SerializedPrimaryKey()
-    id!: string;
+    id: string = v4();
 
     @Field()
     @ManyToOne()
     user!: User;
 
     @Field()
-    @Property({ default: Date.now() }) 
-    time!: number;
+    @Property({ defaultRaw: 'now()' }) 
+    time!: Date;
 
     @Field()
     @Property()
     email!: string;
     
     constructor(u: User, e: string) {
-        this._id = new ObjectId();
-        this.id = this._id.toHexString();
         this.user = u;
         this.email = e;
     }
