@@ -13,9 +13,6 @@
         "url": "https://gitlab.nussman.us/beep-app/Beep.git"
     },
     "mikro-orm": {
-        "migrations": {
-            "path": "./build/migrations"
-        },
         "configPaths": [
             "./src/mikro-orm.config.ts",
             "./build/mikro-orm.config.js"
@@ -67,6 +64,7 @@
         "concurrently": "^6.0.1",
         "eslint": "^7.24.0",
         "nodemon": "^2.0.7",
+        "ts-node": "^9.1.1",
         "typescript": "^4.2.4"
     }
 }
