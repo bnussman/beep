@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Text, Layout, Button, Input, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { UserContext } from '../../utils/UserContext';
@@ -8,8 +8,9 @@ import { getPushToken } from "../../utils/Notifications";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as Linking from 'expo-linking';
 import * as ImagePicker from 'expo-image-picker';
-import {gql, useMutation} from '@apollo/client';
-import {SignUpMutation} from '../../generated/graphql';
+import { gql, useMutation } from '@apollo/client';
+import { SignUpMutation } from '../../generated/graphql';
+import { isMobile } from '../../utils/config';
 
 interface Props {
     navigation: any;
@@ -62,7 +63,7 @@ function RegisterScreen(props: Props) {
             cashapp: cashapp,
             username: username, 
             password: password,
-            pushToken: await getPushToken()
+            pushToken: isMobile ? await getPushToken() : undefined
         }});
 
         if (result) {
