@@ -32,7 +32,7 @@ const GetRatingsOnMe = gql`
 `;
 
 export function RatingsOnMeScreen(props: Props) {
-    const { data, loading, error, refetch } = useQuery<GetRatingsOnMeQuery>(GetRatingsOnMe);
+    const { data, loading, error, refetch } = useQuery<GetRatingsOnMeQuery>(GetRatingsOnMe, { variables: { me: true } });
 
         const renderItem = ({ item }) => (
             <ListItem

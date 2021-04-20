@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, AppState } from 'react-native';
+import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Layout, Text, Button, Input, Card } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
 import { UserContext } from '../../utils/UserContext';
@@ -9,12 +9,12 @@ import LeaveButton from './LeaveButton';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { MainNavParamList } from '../../navigators/MainTabs';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { GetEtaQuery, GetInitialRiderStatusQuery, User } from '../../generated/graphql';
+import { GetEtaQuery, GetInitialRiderStatusQuery } from '../../generated/graphql';
 import { gqlChooseBeep } from './helpers';
 import Logger from '../../utils/Logger';
-import {client} from '../../utils/Apollo';
-import {RateCard} from '../../components/RateCard';
-import {LocationInput} from '../../components/LocationInput';
+import { client } from '../../utils/Apollo';
+import { RateCard } from '../../components/RateCard';
+import { LocationInput } from '../../components/LocationInput';
 
 const InitialRiderStatus = gql`
     query GetInitialRiderStatus {
@@ -87,9 +87,6 @@ const RiderStatus = gql`
     }
 `;
 
-//TODO: no need to sub to beepers location than make a query to our server agin for the ETA, lets just calculate the
-//ETA server side and send it, so we can skip the client side query for ETA
-
 const BeepersLocation = gql`
     subscription BeepersLocation($topic: String!) {
         getLocationUpdates(topic: $topic) {
@@ -100,29 +97,27 @@ const BeepersLocation = gql`
 `;
 
 const GetETA = gql`
-    query GetETA ($start: String!, $end: String!)	{
+    query GetETA ($start: String!, $end: String!) {
         getETA(start: $start, end: $end)
     }
 `;
-
 
 interface Props {
     navigation: BottomTabNavigationProp<MainNavParamList>;
 }
 
-let sub;
+let sub: any;
 
 export function MainFindBeepScreen(props: Props) {
     const user = useContext(UserContext);
-
+    const { subscribeToMore, loading, data, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus);
     const [getETA, { data: eta, loading: etaLoading, error: etaError}] = useLazyQuery<GetEtaQuery>(GetETA);
+
     const [groupSize, setGroupSize] = useState<string>("1");
     const [origin, setOrigin] = useState<string>("");
     const [destination, setDestination] = useState<string>("");
     const [isGetBeepLoading, setIsGetBeepLoading] = useState<boolean>(false);
     
-    const { subscribeToMore, loading, error, data, refetch, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus);
-
     async function subscribeToLocation() {
         const a = client.subscribe({ query: BeepersLocation, variables: { topic: data?.getRiderStatus?.beeper.id }});
 
@@ -142,8 +137,6 @@ export function MainFindBeepScreen(props: Props) {
     useEffect(() => {
         SplashScreen.hideAsync();
         if (user?.id) {
-            console.log("USERRRR", user);
-
             subscribeToMore({
                 document: RiderStatus,
                 variables: {
@@ -151,6 +144,7 @@ export function MainFindBeepScreen(props: Props) {
                 },
                 updateQuery: (prev, { subscriptionData }) => {
                     console.log("Sub new data ", subscriptionData);
+                    //@ts-ignore This works so shut up TS
                     const newFeedItem = subscriptionData.data.getRiderUpdates;
                     return Object.assign({}, prev, {
                         getRiderStatus: newFeedItem
@@ -158,22 +152,7 @@ export function MainFindBeepScreen(props: Props) {
                 }
             });
         }
-        //AppState.addEventListener("change", handleAppStateChange);
-
-        /*
-        return () => {
-            AppState.removeEventListener("change", handleAppStateChange);
-        };
-         */
     }, [user?.id]);
-
-    /*
-    function handleAppStateChange(nextAppState: string): void {
-        if(nextAppState === "active") {
-            refetch();
-        }
-    }
-     */
 
     useEffect(() => {
        if ((data?.getRiderStatus?.state == 1 && previousData?.getRiderStatus?.state == 0) || (data?.getRiderStatus?.state == 1 && previousData == undefined)) {
@@ -217,7 +196,7 @@ export function MainFindBeepScreen(props: Props) {
     }
 
     function getCashAppLink(): string {
-        if (Number(data?.getRiderStatus.groupSize) > 1) {
+        if (Number(data?.getRiderStatus?.groupSize) > 1) {
             return `https://cash.app/$${data?.getRiderStatus?.beeper.cashapp}/${data?.getRiderStatus?.groupSize * data?.getRiderStatus?.beeper.groupRate}`;
         }
         return `https://cash.app/$${data?.getRiderStatus?.beeper?.cashapp}/${data?.getRiderStatus?.beeper?.singlesRate}`;
@@ -226,7 +205,7 @@ export function MainFindBeepScreen(props: Props) {
     function shareVenmoInformation(): void {
         try {
             Share.share({
-                message: `Please Venmo ${data?.getRiderStatus.beeper?.venmo} $${data?.getRiderStatus.beeper?.groupRate} for the beep!`,
+                message: `Please Venmo ${data?.getRiderStatus?.beeper?.venmo} $${data?.getRiderStatus?.beeper?.groupRate} for the beep!`,
                 url: getVenmoLink()
             });
         }
@@ -236,7 +215,7 @@ export function MainFindBeepScreen(props: Props) {
     }            
 
     function getCurrentStatusMessage(): string {
-        switch(data?.getRiderStatus.state) {
+        switch(data?.getRiderStatus?.state) {
             case 0:
                 return "Beeper is getting ready to come get you.";
             case 1:
@@ -324,12 +303,11 @@ export function MainFindBeepScreen(props: Props) {
             </Layout>
         );
     }
-
     
     if (data?.getRiderStatus.isAccepted) {
         return (
             <Layout style={styles.container}>
-                <TouchableWithoutFeedback onPress={() => props.navigation.navigate("Profile", { id: data?.getRiderStatus.beeper?.id, beep: data?.getRiderStatus.id })} >
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate("Profile", { id: data?.getRiderStatus?.beeper?.id, beep: data?.getRiderStatus?.id })} >
                     <Layout style={{alignItems: "center", justifyContent: 'center'}}>
                         {data?.getRiderStatus.beeper?.photoUrl &&
                         <ProfilePicture
@@ -377,7 +355,7 @@ export function MainFindBeepScreen(props: Props) {
                     status='basic'
                     accessoryRight={PhoneIcon}
                     style={styles.buttons}
-                    onPress={() =>{ Linking.openURL('tel:' + data?.getRiderStatus.beeper?.phone); } }
+                    onPress={() =>{ Linking.openURL('tel:' + data?.getRiderStatus?.beeper?.phone); } }
                 >
                     Call Beeper
                 </Button>
@@ -385,7 +363,7 @@ export function MainFindBeepScreen(props: Props) {
                     status='basic'
                     accessoryRight={TextIcon}
                     style={styles.buttons}
-                    onPress={() =>{ Linking.openURL('sms:' + data?.getRiderStatus.beeper?.phone); } }
+                    onPress={() =>{ Linking.openURL('sms:' + data?.getRiderStatus?.beeper?.phone); } }
                 >
                     Text Beeper
                 </Button>
@@ -428,7 +406,7 @@ export function MainFindBeepScreen(props: Props) {
     else {
         return (
             <Layout style={styles.container}>
-                <TouchableWithoutFeedback onPress={() => props.navigation.navigate("Profile", { id: data?.getRiderStatus.beeper.id, beep: data?.getRiderStatus.id })} >
+                <TouchableWithoutFeedback onPress={() => props.navigation.navigate("Profile", { id: data?.getRiderStatus?.beeper.id, beep: data?.getRiderStatus?.id })} >
                     <Layout style={{alignItems: "center", justifyContent: 'center'}}>
                         {data?.getRiderStatus.beeper.photoUrl &&
                         <ProfilePicture

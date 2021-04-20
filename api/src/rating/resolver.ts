@@ -44,21 +44,20 @@ export class RatingResolver {
 
     @Query(() => RatingsResponse)
     @Authorized()
-    public async getRatings(@Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string, @Arg('me', { nullable: true }) me?: boolean): Promise<RatingsResponse> {
+    public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string, @Arg('me', { nullable: true }) me?: boolean): Promise<RatingsResponse> {
         let filter = {};
 
-        if (id && me) {
+        if (me) {
             filter = {
-                rated: id
+                rated: id || ctx.user.id
             };
         }
-        else if(id && !me) {
+        else if(!me) {
             filter = {
-                rater: id
+                rater: id || ctx.user.id
             };
         }
 
-        //const [ratings, count] = await BeepORM.ratingRepository.findAndCount(filter, ['rater', 'rated'], { timestamp: QueryOrder.DESC }, show, offset);
         const [ratings, count] = await BeepORM.ratingRepository.findAndCount(filter, {
             orderBy: { timestamp: QueryOrder.DESC },
             populate: ['rater', 'rated'],
