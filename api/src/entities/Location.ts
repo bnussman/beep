@@ -27,12 +27,12 @@ export class Location {
     @Property()
     altitude!: number;
 
-    @Field()
-    @Property()
+    @Field({ nullable: true })
+    @Property({ nullable: true })
     accuracy!: number;
 
-    @Field()
-    @Property()
+    @Field({ nullable: true })
+    @Property({ nullable: true })
     altitudeAccuracy!: number;
 
     @Field()

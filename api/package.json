@@ -13,6 +13,7 @@
         "url": "https://gitlab.nussman.us/beep-app/Beep.git"
     },
     "mikro-orm": {
+        "useTsNode": true,
         "configPaths": [
             "./src/mikro-orm.config.ts",
             "./build/mikro-orm.config.js"
