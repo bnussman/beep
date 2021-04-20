@@ -1,6 +1,6 @@
-import { Entity, ManyToOne, PrimaryKey, Property, SerializedPrimaryKey } from "@mikro-orm/core";
-import { ObjectId } from "@mikro-orm/mongodb";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
+import { v4 } from "uuid";
 import { Beep } from "./Beep";
 import { User } from "./User";
 
@@ -9,11 +9,8 @@ import { User } from "./User";
 export class Rating {
 
     @PrimaryKey()
-    _id!: ObjectId;
-
     @Field()
-    @SerializedPrimaryKey()
-    id!: string;
+    id: string = v4();
 
     @Field(() => User)
     @ManyToOne(() => User)
@@ -32,11 +29,11 @@ export class Rating {
     message?: string;
 
     @Field()
-    @Property()
-    timestamp: number;
+    @Property({ defaultRaw: 'now()' }) 
+    timestamp!: Date;
 
-    @Field()
-    @ManyToOne()
+    @Field(() => Beep)
+    @ManyToOne(() => Beep)
     beep?: Beep;
 
     constructor(rater: User, rated: User, stars: number, message?: string, beep?: Beep) {
@@ -45,6 +42,5 @@ export class Rating {
         this.stars = stars;
         this.message = message;
         this.beep = beep;
-        this.timestamp = Date.now();
     }
 }

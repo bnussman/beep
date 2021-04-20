@@ -148,7 +148,7 @@ export function sendVerifyEmailEmail(email: string, verifyEntry: VerifyEmail, fi
         to : email, 
         subject : 'Verify your Beep App Email!', 
         html: `Hey ${first}, <br><br>
-            Head to ${url}/account/verify/${verifyEntry._id} to verify your email. This link will expire in an hour. <br><br>
+            Head to ${url}/account/verify/${verifyEntry.id} to verify your email. This link will expire in an hour. <br><br>
             Roll Neers, <br>
             -Banks Nussman
         ` 
@@ -182,7 +182,7 @@ export async function createVerifyEmailEntryAndSendEmail(user: User, email: stri
 
     await BeepORM.verifyEmailRepository.persistAndFlush(entry);
 
-    const e = await BeepORM.verifyEmailRepository.findOneOrFail({ user: user._id });
+    const e = await BeepORM.verifyEmailRepository.findOneOrFail({ user: user.id });
 
     //send the email
     sendVerifyEmailEmail(email, e, first);

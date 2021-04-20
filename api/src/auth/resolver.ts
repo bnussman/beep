@@ -136,7 +136,7 @@ export class AuthResolver {
             throw new Error("This reset password request does not exist");
         }
 
-        if ((entry.time + (3600 * 1000)) < Date.now()) {
+        if ((entry.time.getMilliseconds() + (3600 * 1000)) < Date.now()) {
             throw new Error("Your verification token has expired. You must re-request to reset your password.");
         }
 

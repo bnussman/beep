@@ -1,6 +1,6 @@
-import { Entity, ManyToOne, PrimaryKey, Property, SerializedPrimaryKey } from "@mikro-orm/core";
-import { ObjectId } from "@mikro-orm/mongodb";
-import {Field, ObjectType} from "type-graphql";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Field, ObjectType } from "type-graphql";
+import { v4 } from "uuid";
 import { User } from "./User";
 
 @ObjectType()
@@ -8,15 +8,12 @@ import { User } from "./User";
 export class TokenEntry {
 
     @PrimaryKey()
-    _id!: ObjectId;
+    @Field()
+    id: string = v4();
 
     @Field()
-    @SerializedPrimaryKey()
-    id!: string;
-
-    @Field(() => String)
     @Property() 
-    tokenid = new ObjectId();
+    tokenid: string = v4();
 
     @Field(() => User)
     @ManyToOne()
