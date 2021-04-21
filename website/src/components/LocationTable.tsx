@@ -15,8 +15,8 @@ interface Props {
 }
 
 const Location = gql`
-    query GetLocations($id: String!) {
-        getLocations(id: $id) {
+    query GetLocations($id: String!, $show: Int, $offset: Int) {
+        getLocations(id: $id, show: $show, offset: $offset) {
             items {
                 id
                 longitude
@@ -33,12 +33,12 @@ const Location = gql`
 
 function LocationTable(props: Props) {
     const pageLimit = 5;
-    const { data, refetch } = useQuery<GetLocationsQuery>(Location, { variables: { id: props.userId, show: pageLimit, offset: 0}});
+    const { data, refetch } = useQuery<GetLocationsQuery>(Location, { variables: { offset: 0, show: pageLimit, id: props.userId }});
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     async function fetchLocation(page: number) {
         refetch({
-            variables: { id: props.userId, offset: page }
+            offset: page
         });
     }
 
