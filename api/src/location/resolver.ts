@@ -17,7 +17,6 @@ export class LocationResolver {
     @Query(() => LocationsResponse)
     @Authorized(UserRole.ADMIN)
     public async getLocations(@Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<LocationsResponse> {
-        //const [locations, count] = await BeepORM.locationRepository.findAndCount(id ? { user: id } : {}, ["user"], { orderBy: { timestamp: QueryOrder.DESC } }, show, offset);
         const [locations, count] = await BeepORM.locationRepository.findAndCount(id ? { user: id } : {}, { orderBy: { timestamp: QueryOrder.DESC }, offset: offset, limit: show, populate: ["user"] });
 
         return {
