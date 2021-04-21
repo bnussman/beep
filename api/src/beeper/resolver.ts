@@ -1,5 +1,5 @@
 import { sendNotification } from '../utils/notifications';
-import { wrap } from '@mikro-orm/core';
+import { QueryOrder, wrap } from '@mikro-orm/core';
 import { BeepORM } from '../app';
 import { Beep } from '../entities/Beep';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
@@ -117,7 +117,7 @@ export class BeeperResolver {
             const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue } });
     
             entry.ridersQueuePosition = ridersQueuePosition;
-            /*
+
             const D = ridersQueuePosition + 8;
 
             if ( 8==D && entry.state == 1) {
@@ -128,7 +128,7 @@ export class BeeperResolver {
             }
             
             console.log("Sending Rider:", entry);
-            */
+
             pubSub.publish("Rider" + entry.rider.id, entry);
         }
     }
