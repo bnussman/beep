@@ -28,7 +28,6 @@
     },
     "compileOnSave": true,
     "include": [
-        "src",
-        "migrations"
+        "src"
     ]
 }
