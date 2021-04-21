@@ -58,7 +58,7 @@ function BeepPage() {
             <Heading3>Beep</Heading3>
             <button
                 onClick={() => doDeleteBeep()}
-                className={"mt-2 mb-2 py-2 px-4 mr-1 border text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-white"}
+                className={"mt-2 mb-2 py-2 px-4 mr-1 text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700"}
             >
                 {!deleteLoading ? "Delete Beep" : "Loading"}
             </button>
