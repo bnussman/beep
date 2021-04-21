@@ -71,7 +71,7 @@ const UserUpdates = gql`
     }
 `;
 
-function getInitialTheme() {
+function getInitialTheme(): string {
     const storedPrefs = window.localStorage.getItem("color-theme");
 
     if (storedPrefs) {
@@ -83,13 +83,13 @@ function getInitialTheme() {
         return storedPrefs;
     }
 
-    return storedPrefs || "dark";
+    return storedPrefs || "light";
 }
 
 function Beep() {
     //const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
     const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
-    const [theme, setInternalTheme] = useState(getInitialTheme());
+    const [theme, setInternalTheme] = useState<string>(getInitialTheme());
 
     function setTheme(theme: string) {
         const root = window.document.documentElement
