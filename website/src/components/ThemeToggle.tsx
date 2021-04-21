@@ -30,17 +30,4 @@ export const ThemeToggle = () => {
             </Switch>
         </Switch.Group>
     );
-
-  /*
-  return (
-    <label>
-      <input
-        type="checkbox"
-        checked={isDark()}
-        onChange={e => setTheme(e.target.checked ? "dark" : "light")}
-      ></input>
-      Dark Mode
-    </label>
-  )
-   */
 }
