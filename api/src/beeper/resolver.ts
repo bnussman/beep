@@ -30,6 +30,7 @@ export class BeeperResolver {
     }
     
     @Mutation(() => Boolean)
+    @Authorized()
     public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
         const queueEntry = await BeepORM.queueEntryRepository.findOneOrFail(input.queueId, { populate: ["rider", "beeper"], refresh: true });
 
@@ -126,8 +127,6 @@ export class BeeperResolver {
                     entry.location = location;
                 }
             }
-            
-            console.log("Sending Rider:", entry);
 
             pubSub.publish("Rider" + entry.rider.id, entry);
         }

@@ -6,7 +6,7 @@ import { User } from '../entities/User';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import GetBeepInput from '../validators/rider';
 import { Context } from '../utils/context';
-import {Beep} from '../entities/Beep';
+import { Beep } from '../entities/Beep';
    
 @Resolver()
 export class RiderResolver {
@@ -14,7 +14,7 @@ export class RiderResolver {
     @Mutation(() => QueueEntry)
     @Authorized()
     public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<QueueEntry> {
-        const beeper = await BeepORM.userRepository.findOne(beeperId);
+        const beeper = await BeepORM.userRepository.findOne(beeperId, ['queue']);
 
         if (!beeper) {
             throw new Error("Beeper not found");
@@ -48,9 +48,7 @@ export class RiderResolver {
 
         const e = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user.id }, true);
 
-        const r = await BeepORM.queueEntryRepository.find({ beeper: beeper.id });
-
-        pubSub.publish("Beeper" + beeper.id, r);
+        pubSub.publish("Beeper" + beeper.id, beeper.queue.get());
         pubSub.publish("Rider" + ctx.user.id, e);
 
         return q;
@@ -126,7 +124,7 @@ export class RiderResolver {
     @Query(() => Beep, { nullable: true })
     @Authorized()
     public async getLastBeepToRate(@Ctx() ctx: Context): Promise<Beep | null> {
-        const beep = await BeepORM.beepRepository.findOne({ rider: ctx.user.id }, true, { doneTime: QueryOrder.DESC });
+        const beep = await BeepORM.beepRepository.findOne({ rider: ctx.user.id }, ['beeper'], { doneTime: QueryOrder.DESC });
 
         if (!beep) return null;
 
