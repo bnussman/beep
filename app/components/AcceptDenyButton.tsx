@@ -1,11 +1,7 @@
-import React, { Component, ReactNode, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button } from "@ui-kitten/components";
-import { UserContext } from '../utils/UserContext';
-import { config } from "../utils/config";
 import { AcceptIcon, DenyIcon, AcceptIndicator, DenyIndicator } from "../utils/Icons";
-import { handleFetchError } from "../utils/Errors";
-import { useContext } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { UpdateBeeperQueueMutation } from "../generated/graphql";
 
@@ -26,18 +22,25 @@ mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!
 
 function AcceptDenyButton(props: Props) {
     const [loading, setLoading] = useState<boolean>(false);
-    const [update, { data, error }] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
+    const [update] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
 
     async function updateStatus(queueId: string, riderId: string, value: string | boolean): Promise<void> {
         setLoading(true);
-        
-        const result = await update({
-            variables: {
-                queueId: queueId,
-                riderId: riderId,
-                value: value
-            }
-        });
+       
+        try {
+            await update({
+                variables: {
+                    queueId: queueId,
+                    riderId: riderId,
+                    value: value
+                }
+            });
+        }
+        catch (error) {
+            //...
+        }
+
+        setLoading(false);
     }
 
     if (loading) {

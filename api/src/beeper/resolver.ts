@@ -110,7 +110,7 @@ export class BeeperResolver {
     }
 
     private async sendRiderUpdates(beeperId: string, pubSub: PubSubEngine) {
-        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId }, { refresh: true });
+        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId }, { orderBy: { timeEnteredQueue: QueryOrder.ASC }, refresh: true });
 
         pubSub.publish("Beeper" + beeperId, queues);
 

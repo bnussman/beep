@@ -63,8 +63,6 @@ const uploadLink = createUploadLink({
 });
 
 const errorLink = onError((e) => {
-    console.log(e);
-
     let output = "";
     e.graphQLErrors?.forEach((e) => {
         e.extensions?.exception?.validationErrors?.forEach((r) => {
@@ -73,7 +71,7 @@ const errorLink = onError((e) => {
     });
 
     if (output !== "") return alert(output);
-    
+
     e.graphQLErrors?.forEach((e) => {
         output += e.message + "\n";
     });

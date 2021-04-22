@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native"
 import { Button, Spinner, Text, Layout, TopNavigation, TopNavigationAction } from "@ui-kitten/components";
-import { BackIcon, ReportIcon } from "../../utils/Icons";
+import { BackIcon, RateIcon, ReportIcon } from "../../utils/Icons";
 import ProfilePicture from "../../components/ProfilePicture";
 import { UserContext } from '../../utils/UserContext';
 import { useContext } from "react";
@@ -113,15 +113,19 @@ export function ProfileScreen(props: Props) {
                                 </Layout>
                             }
 
+                            {data.getUser.venmo &&
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Venmo</Text>
                                 <Text>@{data.getUser.venmo}</Text>
                             </Layout>
+                            }
 
+                            {data.getUser.cashapp &&
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Cash App</Text>
                                 <Text>@{data.getUser.cashapp}</Text>
                             </Layout>
+                            }
 
                             <Layout style={styles.group}>
                                 <Text category="h6" style={styles.groupLabel}>Capacity</Text>
@@ -146,8 +150,8 @@ export function ProfileScreen(props: Props) {
                         </Layout>
                         {(props.route.params.id !== user.id) &&
                             <>
-                                <Button onPress={() => handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
-                                <Button onPress={() => handleRate()} style={styles.button}>Rate User</Button>
+                                <Button appearance='outline' onPress={() => handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
+                                <Button appearance='outline' onPress={() => handleRate()} accessoryRight={RateIcon} style={styles.button}>Rate User</Button>
                             </>
                         }
                     </Layout>
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
     },
     button: {
         width: "80%",
-        marginTop: 20
+        marginTop: 10
     },
     row: {
         flexDirection: "row",

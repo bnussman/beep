@@ -18,7 +18,7 @@ export default class GetBeepInput implements Partial<QueueEntry> {
   @Field()
   @IsNumber()
   @Min(0)
-  @Max(20)
+  @Max(30, { message: "Your group is too big" })
   public groupSize?: number;
 
 }

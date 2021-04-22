@@ -7,7 +7,6 @@ import { UserContext } from '../../utils/UserContext';
 import { isAndroid } from "../../utils/config";
 import ActionButton from "../../components/ActionButton";
 import AcceptDenyButton from "../../components/AcceptDenyButton";
-import AsyncStorage from '@react-native-community/async-storage';
 import { PhoneIcon, TextIcon, VenmoIcon, MapsIcon, DollarIcon } from '../../utils/Icons';
 import ProfilePicture from '../../components/ProfilePicture';
 import Toggle from "./components/Toggle";
@@ -162,34 +161,40 @@ export function StartBeepingScreen(props: Props) {
             stopLocationTracking();
         }
         
-        const result = await updateBeepSettings({ variables: {
-            isBeeping: !isBeeping,
-            singlesRate: Number(singlesRate),
-            groupRate: Number(groupRate),
-            masksRequired: masksRequired,
-            capacity: Number(capacity)
-        }});
+        try {
+            const result = await updateBeepSettings({ variables: {
+                isBeeping: !isBeeping,
+                singlesRate: Number(singlesRate),
+                groupRate: Number(groupRate),
+                masksRequired: masksRequired,
+                capacity: Number(capacity)
+            }});
 
-        if (result) {
-            if (value) {
-                sub();
+            if (result) {
+                if (value) {
+                    sub();
+                }
+                else {
+                    if (unsubscribe) unsubscribe();
+                }
             }
             else {
-                if (unsubscribe) unsubscribe();
+                //Use native popup to tell user why they could not change their status
+                //Unupdate the toggle switch because something failed
+                //We redo our actions so the client does not have to wait on server to update the switch
+                setIsBeeping(!isBeeping);
+                //we also need to resubscribe to the socket
+                if (isBeeping) {
+                    startLocationTracking();
+                }
+                else {
+                    stopLocationTracking();
+                }
             }
-        }
-        else {
-            //Use native popup to tell user why they could not change their status
-            //Unupdate the toggle switch because something failed
-            //We redo our actions so the client does not have to wait on server to update the switch
-            setIsBeeping(!isBeeping);
-            //we also need to resubscribe to the socket
-            if (isBeeping) {
-                startLocationTracking();
-            }
-            else {
-                stopLocationTracking();
-            }
+        } 
+        catch(error) {
+            //I dont know why this works
+            setIsBeeping(isBeeping); 
         }
     }
 

@@ -92,7 +92,7 @@ export class RiderResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async riderLeaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-        const entry = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user });
+        const entry = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user }, ['beeper']);
 
         if (!entry) {
             throw new Error("Unable to leave queue");
@@ -102,11 +102,12 @@ export class RiderResolver {
         
         const id = entry.beeper.id;
 
-        BeepORM.userRepository.persistAndFlush(entry.beeper);
+        await BeepORM.userRepository.persistAndFlush(entry.beeper);
 
-        BeepORM.queueEntryRepository.removeAndFlush(entry);
+        await BeepORM.queueEntryRepository.removeAndFlush(entry);
 
-        const r = await BeepORM.queueEntryRepository.find({ beeper: ctx.user.id });
+        const r = await BeepORM.queueEntryRepository.find({ beeper: id });
+        console.log(r);
         pubSub.publish("Beeper" + id, r);
         pubSub.publish("Rider" + ctx.user.id, null);
 
