@@ -54,27 +54,32 @@ function RegisterScreen(props: Props) {
     const [signup, { loading, data }] = useMutation<SignUpMutation>(SignUp);
 
     async function handleSignUp() {
-        const result = await signup({ variables: {
-            first: first,
-            last: last,
-            email: email,
-            phone: phone,
-            venmo: venmo,
-            cashapp: cashapp,
-            username: username, 
-            password: password,
-            pushToken: isMobile ? await getPushToken() : undefined
-        }});
+        try {
+            const result = await signup({ variables: {
+                first: first,
+                last: last,
+                email: email,
+                phone: phone,
+                venmo: venmo,
+                cashapp: cashapp,
+                username: username, 
+                password: password,
+                pushToken: isMobile ? await getPushToken() : undefined
+            }});
 
-        if (result) {
-            AsyncStorage.setItem("auth", JSON.stringify(result.data?.signup));
+            if (result) {
+                AsyncStorage.setItem("auth", JSON.stringify(result.data?.signup));
 
-            props.navigation.reset({
-                index: 0,
-                routes: [
-                    { name: 'Main' },
-                ],
-            });
+                props.navigation.reset({
+                    index: 0,
+                    routes: [
+                        { name: 'Main' },
+                    ],
+                });
+            }
+        }
+        catch (error) {
+            alert(error);
         }
     }
 

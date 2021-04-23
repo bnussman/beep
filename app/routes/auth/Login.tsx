@@ -51,25 +51,29 @@ function LoginScreen(props: Props) {
     }, []);
 
     async function doLogin() {
+        try {
+            const r = await login({ variables: {
+                username: username,
+                password: password,
+                pushToken: isMobile ? await getPushToken() : undefined
+            }});
 
-        const r = await login({ variables: {
-            username: username,
-            password: password,
-            pushToken: isMobile ? await getPushToken() : undefined
-        }});
+            if (r) {
 
-        if (r) {
-
-            AsyncStorage.setItem("auth", JSON.stringify(r.data?.login));
-                
-            await client.resetStore();
-            await client.query({ query: GetUserData });
-            props.navigation.reset({
-                index: 0,
-                routes: [
-                    { name: 'Main' },
-                ],
-            });
+                AsyncStorage.setItem("auth", JSON.stringify(r.data?.login));
+                    
+                await client.resetStore();
+                await client.query({ query: GetUserData });
+                props.navigation.reset({
+                    index: 0,
+                    routes: [
+                        { name: 'Main' },
+                    ],
+                });
+            }
+        }
+        catch (error) {
+            alert(error.message);
         }
     }
 
