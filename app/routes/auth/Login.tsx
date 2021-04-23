@@ -111,8 +111,6 @@ function LoginScreen(props: Props) {
                         </Button>
                     }
                 </Layout>
-                {loading && <Text>Loading</Text>}
-                {error && <Text>{error.message}</Text>}
                 <Text style={{marginTop: 30, marginBottom: 10 }}> Don't have an account? </Text>
                 <Button
                     size="small"

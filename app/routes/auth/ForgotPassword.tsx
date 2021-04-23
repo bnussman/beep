@@ -1,9 +1,7 @@
-import React, { Component, ReactNode, useState } from 'react';
-import { config } from "../../utils/config";
+import React, { useState } from 'react';
 import { Layout, Button, Input, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { StyleSheet, Platform, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { BackIcon, EmailIcon } from "../../utils/Icons";
-import { handleFetchError } from "../../utils/Errors";
 import { gql, useMutation } from '@apollo/client';
 import { ForgotPasswordMutation } from '../../generated/graphql';
 
@@ -19,18 +17,20 @@ const ForgotPassword = gql`
 
 export function ForgotPasswordScreen(props: Props) {
     const [forgot, { data, loading, error }] = useMutation<ForgotPasswordMutation>(ForgotPassword);
-    const [email, setEmail] = useState<string>();
+    const [email, setEmail] = useState<string>("");
 
     async function handleForgotPassword() {
-        const result = await forgot({
-            variables: { email: email }
-        });
-        
-        if (result) {
-            alert("Check your email for a link to reset your password");
+        try {
+            const result = await forgot({
+                variables: { email: email }
+            });
+            
+            if (result) {
+                alert("Check your email for a link to reset your password");
+            }
         }
-        else {
-            alert(error);
+        catch (error) {
+            alert(error.message);
         }
     }
 
