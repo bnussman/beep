@@ -1,4 +1,4 @@
-import { LoadStrategy } from "@mikro-orm/core";
+import { Configuration, Connection, IDatabaseDriver, LoadStrategy } from "@mikro-orm/core";
 
 export default {
     entities: ['./build/entities/*.js'],
@@ -9,4 +9,4 @@ export default {
     clientUrl: 'postgresql://postgresql.nussman.us:5432/beep',
     loadStrategy: LoadStrategy.JOINED,
     debug: true,
-}
+} as unknown as Configuration<IDatabaseDriver<Connection>>

@@ -43,9 +43,7 @@ export class AccountResolver {
 
             wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
 
-            await createVerifyEmailEntryAndSendEmail(ctx.user, input.email, input.first);
-
-            console.log("EMAIL CHANGED!");
+            await createVerifyEmailEntryAndSendEmail(ctx.user);
         }
         
         pubSub.publish("User" + ctx.user.id, ctx.user);
@@ -58,9 +56,7 @@ export class AccountResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async changePassword(@Ctx() ctx: Context, @Arg('password') password: string): Promise<boolean> {
-        const encryptedPassword = sha256(password);
-        
-        wrap(ctx.user).assign({ password: encryptedPassword });
+        wrap(ctx.user).assign({ password: sha256(password) });
 
         await BeepORM.userRepository.persistAndFlush(ctx.user);
 
@@ -132,7 +128,7 @@ export class AccountResolver {
     public async resendEmailVarification(@Ctx() ctx: Context): Promise<boolean> {
         await BeepORM.verifyEmailRepository.nativeDelete({ user: ctx.user });
 
-        createVerifyEmailEntryAndSendEmail(ctx.user, ctx.user.email, ctx.user.first);
+        createVerifyEmailEntryAndSendEmail(ctx.user);
 
         return true;
     }
@@ -146,10 +142,6 @@ export class AccountResolver {
     @Mutation(() => User)
     @Authorized()
     public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename, mimetype }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
-        console.log(filename);
-        console.log(createReadStream);
-        console.log(mimetype);
-
         const s3 = new AWS.S3({
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET

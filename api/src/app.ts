@@ -34,7 +34,6 @@ export default class BeepAPIServer {
 
     private async setup(): Promise<void> {
 
-        //@ts-ignore
         BeepORM.orm = await MikroORM.init(config);
 
         BeepORM.em = BeepORM.orm.em;

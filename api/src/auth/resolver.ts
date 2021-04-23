@@ -61,10 +61,6 @@ export class AuthResolver {
             input.cashapp = input.cashapp.substr(1, input.cashapp.length);
         }
 
-        if ((await doesUserExist(input.username))) {
-            throw new Error("That username is already in use");
-        }
-
         const user = new User();
     
         input.password = sha256(input.password);
@@ -75,7 +71,7 @@ export class AuthResolver {
     
         const tokenData = await getToken(user);
 
-        createVerifyEmailEntryAndSendEmail(user, input.email, input.first);
+        createVerifyEmailEntryAndSendEmail(user);
 
         return {
             user: user,

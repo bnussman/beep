@@ -32,8 +32,8 @@ function LoginScreen(props: Props) {
     const user = useContext(UserContext);
     const [login, { loading: loading, error: error }] = useMutation<LoginMutation>(Login);
     const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
-    const [username, setUsername] = useState<string>();
-    const [password, setPassword] = useState<string>();
+    const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
 
     const renderIcon = (props: unknown) => (
         <TouchableWithoutFeedback onPress={() => setSecureTextEntry(!secureTextEntry)}>

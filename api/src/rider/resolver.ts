@@ -40,9 +40,9 @@ export class RiderResolver {
 
         beeper.queue.add(q);
 
-        await BeepORM.userRepository.persistAndFlush(beeper);
+        sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
 
-        sendNotification(beeper, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
+        await BeepORM.userRepository.persistAndFlush(beeper);
 
         q.ridersQueuePosition = -1;
 
@@ -102,18 +102,22 @@ export class RiderResolver {
         
         const id = entry.beeper.id;
 
-        await BeepORM.userRepository.persistAndFlush(entry.beeper);
-
         await BeepORM.queueEntryRepository.removeAndFlush(entry);
-
-        const r = await BeepORM.queueEntryRepository.find({ beeper: id });
-        console.log(r);
-        pubSub.publish("Beeper" + id, r);
+        
+        this.sendBeeperUpdate(id, pubSub);
         pubSub.publish("Rider" + ctx.user.id, null);
 
-        sendNotification(entry.beeper, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you! :(");
+        sendNotification(entry.beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you! :(");
+
+        await BeepORM.userRepository.persistAndFlush(entry.beeper);
 
         return true;
+    }
+
+    private async sendBeeperUpdate(id: string, pubSub: PubSubEngine) {
+        const queue = await BeepORM.queueEntryRepository.find({ beeper: id });
+
+        pubSub.publish("Beeper" + id, queue);
     }
     
     @Query(() => [User])

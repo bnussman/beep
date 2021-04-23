@@ -140,14 +140,14 @@ export async function deactivateTokens(user: User): Promise<void> {
  * @param first string is the user's first name to make the email more personalized
  * @returns void
  */
-export function sendVerifyEmailEmail(email: string, verifyEntry: VerifyEmail, first: string | undefined): void {
+export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void {
     const url: string = process.env.NODE_ENV === "development" ? "https://dev.ridebeep.app" : "https://ridebeep.app";
  
     const mailOptions: nodemailer.SendMailOptions = { 
-        from : 'Beep App <banks@ridebeep.app>', 
-        to : email, 
-        subject : 'Verify your Beep App Email!', 
-        html: `Hey ${first}, <br><br>
+        from: 'Beep App <banks@ridebeep.app>', 
+        to: user.email, 
+        subject: 'Verify your Beep App Email!', 
+        html: `Hey ${user.first}, <br><br>
             Head to ${url}/account/verify/${verifyEntry.id} to verify your email. This link will expire in an hour. <br><br>
             Roll Neers, <br>
             -Banks Nussman
@@ -170,22 +170,15 @@ export function sendVerifyEmailEmail(email: string, verifyEntry: VerifyEmail, fi
  * @param first is the user's first name so we can make the email more personal
  * @returns void
  */
-export async function createVerifyEmailEntryAndSendEmail(user: User, email: string | undefined, first: string | undefined): Promise<void> {
-    if (!email || !first) {
-        Sentry.captureException(new Error("Did not create verify email entry or send email due to no email or first name"));
-        return;
-    }
+export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<void> {
+    await BeepORM.verifyEmailRepository.nativeDelete({ email: user.email });
 
-    await BeepORM.verifyEmailRepository.nativeDelete({ email });
-
-    const entry = new VerifyEmail(user, email);
-
-    await BeepORM.verifyEmailRepository.persistAndFlush(entry);
-
-    const e = await BeepORM.verifyEmailRepository.findOneOrFail({ user: user.id });
+    const entry = new VerifyEmail(user, user.email);
 
     //send the email
-    sendVerifyEmailEmail(email, e, first);
+    sendVerifyEmailEmail(user, entry);
+
+    await BeepORM.verifyEmailRepository.persistAndFlush(entry);
 }
 
 /**

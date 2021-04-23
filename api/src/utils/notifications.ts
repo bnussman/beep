@@ -1,5 +1,4 @@
 import { request } from "https";
-import { User } from '../entities/User';
 
 /**
  * Use Expo's API to send a push notification
@@ -7,11 +6,12 @@ import { User } from '../entities/User';
  * @param title for the notification
  * @param message is the body of the push notification
  */
-export async function sendNotification(user: User, title: string, message: string, categoryIdentifier?: string): Promise<void> {
+export async function sendNotification(token: string | undefined, title: string, message: string, categoryIdentifier?: string): Promise<void> {
 
-    if (!user.pushToken) return;
-
-    console.log("Sending push notification to", user.name, message);
+    if (!token) {
+        console.warn("[Notification] No Token");
+        return;
+    }
 
     const req = request({
         host: "exp.host",
@@ -23,7 +23,7 @@ export async function sendNotification(user: User, title: string, message: strin
     });
 
     req.write(JSON.stringify({
-        "to": user.pushToken,
+        "to": token,
         "title": title,
         "body": message,
         "_category": categoryIdentifier

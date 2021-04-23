@@ -54,7 +54,7 @@ export class BeeperResolver {
 
             ctx.user.queueSize++;
 
-            sendNotification(queueEntry.rider, `${ctx.user.name()} has accepted your beep request`, "You will recieve another notification when they are on their way to pick you up.");
+            sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request`, "You will recieve another notification when they are on their way to pick you up.");
 
             await BeepORM.queueEntryRepository.persistAndFlush(queueEntry);
             await BeepORM.userRepository.persistAndFlush(ctx.user);
@@ -81,7 +81,7 @@ export class BeeperResolver {
             await BeepORM.queueEntryRepository.removeAndFlush(queueEntry);
 
             if (input.value == "deny") {
-                sendNotification(queueEntry.rider, `${ctx.user.name()} has denied your beep request`, "Open your app to find a diffrent beeper.");
+                sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request`, "Open your app to find a diffrent beeper.");
             }
         }
         else {
@@ -89,10 +89,10 @@ export class BeeperResolver {
 
             switch(queueEntry.state) {
                 case 1:
-                    sendNotification(queueEntry.rider, `${ctx.user.name()} is on their way!`, "Your beeper is on their way to pick you up.");
+                    sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way!`, "Your beeper is on their way to pick you up.");
                 break;
                 case 2:
-                    sendNotification(queueEntry.rider, `${ctx.user.name()} is here!`, "Your beeper is here to pick you up.");
+                    sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here!`, "Your beeper is here to pick you up.");
                 break;
                 case 3:
                     break;
