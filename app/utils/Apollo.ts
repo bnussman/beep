@@ -63,6 +63,7 @@ const uploadLink = createUploadLink({
 });
 
 const errorLink = onError((e) => {
+    /*
     let output = "";
     e.graphQLErrors?.forEach((e) => {
         e.extensions?.exception?.validationErrors?.forEach((r) => {
@@ -77,6 +78,7 @@ const errorLink = onError((e) => {
     });
 
     alert(output);
+    */
 });
 
 export const client = new ApolloClient({
