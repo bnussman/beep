@@ -17,8 +17,8 @@ const ChangePassword = gql`
 
 export function ChangePasswordScreen(props: Props) {
     
-    const [password, setPassword] = useState<string>();
-    const [confirmPassword, setConfirmPassword] = useState<string>();
+    const [password, setPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [changePassword, { data, loading, error }] = useMutation<ChangePasswordMutation>(ChangePassword);
 
     async function handleChangePassword() {

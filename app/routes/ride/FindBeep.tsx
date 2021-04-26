@@ -143,8 +143,6 @@ export function MainFindBeepScreen(props: Props) {
                     topic: user.id
                 },
                 updateQuery: (prev, { subscriptionData }) => {
-                    console.log("Sub new data ", subscriptionData);
-                    //@ts-ignore This works so shut up TS
                     const newFeedItem = subscriptionData.data.getRiderUpdates;
                     return Object.assign({}, prev, {
                         getRiderStatus: newFeedItem

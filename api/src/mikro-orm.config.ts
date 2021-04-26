@@ -3,10 +3,10 @@ import { Configuration, Connection, IDatabaseDriver, LoadStrategy } from "@mikro
 export default {
     entities: ['./build/entities/*.js'],
     entitiesTs: ['./src/entities/*.ts'],
-    user: 'banks',
+    user: process.env.POSTGRESQL_USER,
     password: process.env.POSTGRESQL_PASSWORD,
     type: 'postgresql',
-    clientUrl: 'postgresql://postgresql.nussman.us:5432/beep',
+    clientUrl: `${process.env.POSTGRESQL_URL}/${process.env.POSTGRESQL_DATABASE}`,
     loadStrategy: LoadStrategy.JOINED,
     debug: true,
 } as unknown as Configuration<IDatabaseDriver<Connection>>
