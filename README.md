@@ -55,7 +55,7 @@ AWS_ACCESS_KEY_SECRET
 
 Here is an example of my .zshenv
 
-```
+```shell
 export MAIL_HOST=smtp.gmail.com
 export MAIL_PORT=465
 export MAIL_USER=banks@nussman.us
