@@ -6,18 +6,12 @@ This is the monorepo for the Beep App. Ride beep app is currently a substitute f
 
 ### Dependencies
 
-Make sure you have the latest version of NodeJS installed. We recommend using [NVM](https://github.com/nvm-sh/nvm)
 ```
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-## You may need to open a new terminal window so nvm is in your path
-nvm install node
-nvm use node
-node --version
-```
-
-```
+sudo apt-get install nodejs
 sudo apt-get install npm
+```
 
+```
 sudo npm install --global yarn
 sudo npm install --global expo-cli
 ```
@@ -38,12 +32,40 @@ Install dependencies
 yarn
 ```
 
-To Run the whole development envrionment use
+To run the development envrionment use
 ```
 yarn up
 ```
 
-To run just one service use
+### Provide envrionment data
+
+To develop locally please provide the following envrionment varibles
 ```
-yarn start:website
+POSTGRESQL_USER
+POSTGRESQL_PASSWORD
+POSTGRESQL_URL
+POSTGRESQL_DATABASE
+MAIL_HOST
+MAIL_PORT
+MAIL_USER
+MAIL_PASSWORD
+AWS_ACCESS_KEY_ID
+AWS_ACCESS_KEY_SECRET
+```
+
+Here is an example of my .zshenv
+
+```
+export MAIL_HOST=smtp.gmail.com
+export MAIL_PORT=465
+export MAIL_USER=banks@nussman.us
+export MAIL_PASSWORD=<a real password here>
+
+export AWS_ACCESS_KEY_ID=<from AWS>
+export AWS_ACCESS_KEY_SECRET=<from AWS>
+
+export POSTGRESQL_USER=banks
+export POSTGRESQL_PASSWORD=<a real password here>
+export POSTGRESQL_URL=postgresql://postgresql.nussman.us:5432
+export POSTGRESQL_DATABASE=beep
 ```
