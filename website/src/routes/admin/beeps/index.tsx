@@ -79,7 +79,6 @@ function Beeps() {
                 <TBody>
                     {data?.getBeeps && (data.getBeeps.items).map(beepEntry => {
                         return (
-
                             <TR key={beepEntry.id}>
                                 <TDProfile
                                     to={`users/${beepEntry.beeper.id}`}
@@ -98,7 +97,7 @@ function Beeps() {
                                 <TDText>{beepEntry.groupSize}</TDText>
                                 <TDText>{dayjs().to(beepEntry.timeEnteredQueue)}</TDText>
                                 <TDText>{dayjs().to(beepEntry.doneTime)}</TDText>
-                                <TDText>{dayjs.duration(beepEntry.doneTime - beepEntry.timeEnteredQueue).humanize()}</TDText>
+                                <TDText>{dayjs.duration(new Date(beepEntry.doneTime).getTime() - new Date(beepEntry.timeEnteredQueue).getTime()).humanize()}</TDText>
                                 <TDButton to={`beeps/${beepEntry.id}`}>View</TDButton>
                             </TR>
                         )

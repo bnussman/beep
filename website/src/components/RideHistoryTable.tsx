@@ -86,7 +86,7 @@ function RideHistoryTable(props: Props) {
                                 <TDText>{ride.groupSize}</TDText>
                                 <TDText>{dayjs().to(ride.timeEnteredQueue)}</TDText>
                                 <TDText>{dayjs().to(ride.doneTime)}</TDText>
-                                <TDText>{dayjs.duration(ride.doneTime - ride.timeEnteredQueue).humanize()}</TDText>
+                                <TDText>{dayjs.duration(new Date(ride.doneTime).getTime() - new Date(ride.timeEnteredQueue).getTime()).humanize()}</TDText>
                             </TR>
                         )
                     })}

@@ -85,7 +85,7 @@ return <>
                                 <TDText>{beep.groupSize}</TDText>
                                 <TDText>{dayjs().to(beep.timeEnteredQueue)}</TDText>
                                 <TDText>{dayjs().to(beep.doneTime)}</TDText>
-                                <TDText>{dayjs.duration(beep.doneTime - beep.timeEnteredQueue).humanize()}</TDText>
+                                <TDText>{dayjs.duration(new Date(beep.doneTime).getTime() - new Date(beep.timeEnteredQueue).getTime()).humanize()}</TDText>
                             </TR>
                         )
                     })}
