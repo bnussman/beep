@@ -65,7 +65,7 @@ export function MainSettingsScreen({ navigation }: any) {
                 <Text
                     appearance='hint'
                     category='s1'>
-                    {props.user.venmo}
+                    @{props.user.username}
                 </Text>
             </Layout>
         </Layout>

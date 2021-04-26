@@ -75,15 +75,10 @@ export class RiderResolver {
             return null;
         }
 
-        const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: entry.beeper, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
-
-        entry.ridersQueuePosition = ridersQueuePosition;
+        entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: entry.beeper, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
 
         if (entry.state == 1) {
-            const location = await BeepORM.locationRepository.findOne({ user: entry.beeper }, {}, { orderBy: { timestamp: QueryOrder.DESC } });
-            if (location) {
-                entry.location = location;
-            }
+            await BeepORM.userRepository.populate(entry.beeper, ['location']);
         }
 
         return entry;

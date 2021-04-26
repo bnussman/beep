@@ -12,37 +12,16 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
 
-export type Location = {
-  __typename?: 'Location';
-  id: Scalars['String'];
+export type Auth = {
+  __typename?: 'Auth';
   user: User;
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-  altitude: Scalars['Float'];
-  accuracy: Scalars['Float'];
-  altitudeAccuracy: Scalars['Float'];
-  heading: Scalars['Float'];
-  speed: Scalars['Float'];
-  timestamp: Scalars['Float'];
-};
-
-export type QueueEntry = {
-  __typename?: 'QueueEntry';
-  id: Scalars['String'];
-  origin: Scalars['String'];
-  destination: Scalars['String'];
-  state: Scalars['Float'];
-  isAccepted: Scalars['Boolean'];
-  groupSize: Scalars['Float'];
-  timeEnteredQueue: Scalars['Float'];
-  beeper: User;
-  rider: User;
-  ridersQueuePosition: Scalars['Float'];
-  location?: Maybe<Location>;
+  tokens: TokenEntry;
 };
 
 export type Beep = {
@@ -55,163 +34,14 @@ export type Beep = {
   state: Scalars['Float'];
   isAccepted: Scalars['Boolean'];
   groupSize: Scalars['Float'];
-  timeEnteredQueue: Scalars['Float'];
-  doneTime: Scalars['Float'];
-};
-
-export type Rating = {
-  __typename?: 'Rating';
-  id: Scalars['String'];
-  rater: User;
-  rated: User;
-  stars: Scalars['Float'];
-  message?: Maybe<Scalars['String']>;
-  timestamp: Scalars['Float'];
-  beep: Beep;
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['String'];
-  first: Scalars['String'];
-  last: Scalars['String'];
-  username: Scalars['String'];
-  email: Scalars['String'];
-  phone: Scalars['String'];
-  venmo?: Maybe<Scalars['String']>;
-  cashapp?: Maybe<Scalars['String']>;
-  password: Scalars['String'];
-  isBeeping: Scalars['Boolean'];
-  isEmailVerified: Scalars['Boolean'];
-  isStudent: Scalars['Boolean'];
-  groupRate: Scalars['Float'];
-  singlesRate: Scalars['Float'];
-  capacity: Scalars['Float'];
-  masksRequired: Scalars['Boolean'];
-  queueSize: Scalars['Float'];
-  rating?: Maybe<Scalars['Float']>;
-  role: Scalars['String'];
-  pushToken?: Maybe<Scalars['String']>;
-  photoUrl?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  queue: Array<QueueEntry>;
-  locations: Array<Location>;
-  ratings: Array<Rating>;
-};
-
-export type TokenEntry = {
-  __typename?: 'TokenEntry';
-  id: Scalars['String'];
-  tokenid: Scalars['String'];
-  user: User;
-};
-
-export type VerifyEmail = {
-  __typename?: 'VerifyEmail';
-  id: Scalars['String'];
-  user: User;
-  time: Scalars['Float'];
-  email: Scalars['String'];
-};
-
-export type ForgotPassword = {
-  __typename?: 'ForgotPassword';
-  id: Scalars['String'];
-  user: User;
-  time: Scalars['Float'];
-};
-
-export type Report = {
-  __typename?: 'Report';
-  id: Scalars['String'];
-  reporter: User;
-  reported: User;
-  handledBy?: Maybe<User>;
-  reason: Scalars['String'];
-  notes?: Maybe<Scalars['String']>;
-  timestamp: Scalars['Float'];
-  handled: Scalars['Boolean'];
-  beep?: Maybe<Beep>;
-};
-
-export type Auth = {
-  __typename?: 'Auth';
-  user: User;
-  tokens: TokenEntry;
-};
-
-export type BeepsResponse = {
-  __typename?: 'BeepsResponse';
-  items: Array<Beep>;
-  count: Scalars['Int'];
-};
-
-export type Suggestion = {
-  __typename?: 'Suggestion';
-  title: Scalars['String'];
-};
-
-export type LocationsResponse = {
-  __typename?: 'LocationsResponse';
-  items: Array<Location>;
-  count: Scalars['Int'];
-};
-
-export type RatingsResponse = {
-  __typename?: 'RatingsResponse';
-  items: Array<Rating>;
-  count: Scalars['Int'];
-};
-
-export type ReportsResponse = {
-  __typename?: 'ReportsResponse';
-  items: Array<Report>;
-  count: Scalars['Int'];
-};
-
-export type UsersResponse = {
-  __typename?: 'UsersResponse';
-  items: Array<User>;
-  count: Scalars['Int'];
-};
-
-export type RideHistoryResponse = {
-  __typename?: 'RideHistoryResponse';
-  items: Array<Beep>;
-  count: Scalars['Int'];
+  timeEnteredQueue: Scalars['DateTime'];
+  doneTime: Scalars['DateTime'];
 };
 
 export type BeepHistoryResponse = {
   __typename?: 'BeepHistoryResponse';
   items: Array<Beep>;
   count: Scalars['Int'];
-};
-
-export type EditAccountInput = {
-  first: Scalars['String'];
-  last: Scalars['String'];
-  email: Scalars['String'];
-  phone: Scalars['String'];
-  venmo?: Maybe<Scalars['String']>;
-  cashapp?: Maybe<Scalars['String']>;
-};
-
-export type LoginInput = {
-  username: Scalars['String'];
-  password: Scalars['String'];
-  pushToken?: Maybe<Scalars['String']>;
-};
-
-export type SignUpInput = {
-  username: Scalars['String'];
-  first: Scalars['String'];
-  last: Scalars['String'];
-  phone: Scalars['String'];
-  email: Scalars['String'];
-  venmo?: Maybe<Scalars['String']>;
-  cashapp?: Maybe<Scalars['String']>;
-  password: Scalars['String'];
-  pushToken?: Maybe<Scalars['String']>;
 };
 
 export type BeeperSettingsInput = {
@@ -222,44 +52,20 @@ export type BeeperSettingsInput = {
   masksRequired?: Maybe<Scalars['Boolean']>;
 };
 
-export type UpdateQueueEntryInput = {
-  value: Scalars['String'];
-  riderId: Scalars['String'];
-  queueId: Scalars['String'];
+export type BeepsResponse = {
+  __typename?: 'BeepsResponse';
+  items: Array<Beep>;
+  count: Scalars['Int'];
 };
 
-export type LocationInput = {
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-  altitude: Scalars['Float'];
-  accuracy: Scalars['Float'];
-  altitideAccuracy: Scalars['Float'];
-  heading: Scalars['Float'];
-  speed: Scalars['Float'];
-};
 
-export type RatingInput = {
-  userId: Scalars['String'];
-  stars: Scalars['Float'];
-  message?: Maybe<Scalars['String']>;
-  beepId?: Maybe<Scalars['String']>;
-};
-
-export type ReportInput = {
-  userId: Scalars['String'];
-  reason: Scalars['String'];
-  beepId?: Maybe<Scalars['String']>;
-};
-
-export type UpdateReportInput = {
-  handled?: Maybe<Scalars['Boolean']>;
-  notes?: Maybe<Scalars['String']>;
-};
-
-export type GetBeepInput = {
-  origin: Scalars['String'];
-  destination: Scalars['String'];
-  groupSize: Scalars['Float'];
+export type EditAccountInput = {
+  first: Scalars['String'];
+  last: Scalars['String'];
+  email: Scalars['String'];
+  phone: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
 };
 
 export type EditUserValidator = {
@@ -284,110 +90,47 @@ export type EditUserValidator = {
   username?: Maybe<Scalars['String']>;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  getBeeps: BeepsResponse;
-  getBeep: Beep;
-  getETA: Scalars['String'];
-  getLocationSuggestions: Array<Suggestion>;
-  getLocations: LocationsResponse;
-  getRatings: RatingsResponse;
-  getRating: Rating;
-  getReports: ReportsResponse;
-  getReport: Report;
-  findBeep: User;
-  getRiderStatus?: Maybe<QueueEntry>;
-  getBeeperList: Array<User>;
-  getLastBeepToRate?: Maybe<Beep>;
-  getUser: User;
-  getUsers: UsersResponse;
-  getRideHistory: RideHistoryResponse;
-  getBeepHistory: BeepHistoryResponse;
-  getQueue: Array<QueueEntry>;
-};
-
-
-export type QueryGetBeepsArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  show?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryGetBeepArgs = {
+export type ForgotPassword = {
+  __typename?: 'ForgotPassword';
   id: Scalars['String'];
+  user: User;
+  time: Scalars['DateTime'];
 };
 
-
-export type QueryGetEtaArgs = {
-  end: Scalars['String'];
-  start: Scalars['String'];
+export type GetBeepInput = {
+  origin: Scalars['String'];
+  destination: Scalars['String'];
+  groupSize: Scalars['Float'];
 };
 
-
-export type QueryGetLocationSuggestionsArgs = {
-  sessiontoken: Scalars['String'];
-  location: Scalars['String'];
-};
-
-
-export type QueryGetLocationsArgs = {
-  id?: Maybe<Scalars['String']>;
-  offset?: Maybe<Scalars['Int']>;
-  show?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryGetRatingsArgs = {
-  me?: Maybe<Scalars['Boolean']>;
-  id?: Maybe<Scalars['String']>;
-  offset?: Maybe<Scalars['Int']>;
-  show?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryGetRatingArgs = {
+export type Location = {
+  __typename?: 'Location';
   id: Scalars['String'];
+  user: User;
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  altitude: Scalars['Float'];
+  accuracy?: Maybe<Scalars['Float']>;
+  altitudeAccuracy?: Maybe<Scalars['Float']>;
+  heading: Scalars['Float'];
+  speed: Scalars['Float'];
+  timestamp: Scalars['DateTime'];
 };
 
-
-export type QueryGetReportsArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  show?: Maybe<Scalars['Int']>;
+export type LocationInput = {
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  altitude: Scalars['Float'];
+  accuracy?: Maybe<Scalars['Float']>;
+  altitideAccuracy?: Maybe<Scalars['Float']>;
+  heading: Scalars['Float'];
+  speed: Scalars['Float'];
 };
 
-
-export type QueryGetReportArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetUserArgs = {
-  id?: Maybe<Scalars['String']>;
-};
-
-
-export type QueryGetUsersArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  show?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryGetRideHistoryArgs = {
-  id?: Maybe<Scalars['String']>;
-  offset?: Maybe<Scalars['Int']>;
-  show?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryGetBeepHistoryArgs = {
-  id?: Maybe<Scalars['String']>;
-  offset?: Maybe<Scalars['Int']>;
-  show?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryGetQueueArgs = {
-  id?: Maybe<Scalars['String']>;
+export type LoginInput = {
+  username: Scalars['String'];
+  password: Scalars['String'];
+  pushToken?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -539,6 +282,185 @@ export type MutationEditUserArgs = {
   id: Scalars['String'];
 };
 
+export type Query = {
+  __typename?: 'Query';
+  getBeeps: BeepsResponse;
+  getBeep: Beep;
+  getETA: Scalars['String'];
+  getLocationSuggestions: Array<Suggestion>;
+  getRatings: RatingsResponse;
+  getRating: Rating;
+  getReports: ReportsResponse;
+  getReport: Report;
+  findBeep: User;
+  getRiderStatus?: Maybe<QueueEntry>;
+  getBeeperList: Array<User>;
+  getLastBeepToRate?: Maybe<Beep>;
+  getUser: User;
+  getUsers: UsersResponse;
+  getRideHistory: RideHistoryResponse;
+  getBeepHistory: BeepHistoryResponse;
+  getQueue: Array<QueueEntry>;
+};
+
+
+export type QueryGetBeepsArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetBeepArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetEtaArgs = {
+  end: Scalars['String'];
+  start: Scalars['String'];
+};
+
+
+export type QueryGetLocationSuggestionsArgs = {
+  sessiontoken: Scalars['String'];
+  location: Scalars['String'];
+};
+
+
+export type QueryGetRatingsArgs = {
+  me?: Maybe<Scalars['Boolean']>;
+  id?: Maybe<Scalars['String']>;
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetRatingArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetReportsArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetReportArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetUserArgs = {
+  id?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryGetUsersArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetRideHistoryArgs = {
+  id?: Maybe<Scalars['String']>;
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetBeepHistoryArgs = {
+  id?: Maybe<Scalars['String']>;
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryGetQueueArgs = {
+  id?: Maybe<Scalars['String']>;
+};
+
+export type QueueEntry = {
+  __typename?: 'QueueEntry';
+  id: Scalars['String'];
+  origin: Scalars['String'];
+  destination: Scalars['String'];
+  state: Scalars['Float'];
+  isAccepted: Scalars['Boolean'];
+  groupSize: Scalars['Float'];
+  timeEnteredQueue: Scalars['DateTime'];
+  beeper: User;
+  rider: User;
+  ridersQueuePosition: Scalars['Float'];
+  location?: Maybe<Location>;
+};
+
+export type Rating = {
+  __typename?: 'Rating';
+  id: Scalars['String'];
+  rater: User;
+  rated: User;
+  stars: Scalars['Float'];
+  message?: Maybe<Scalars['String']>;
+  timestamp: Scalars['DateTime'];
+  beep: Beep;
+};
+
+export type RatingInput = {
+  userId: Scalars['String'];
+  stars: Scalars['Float'];
+  message?: Maybe<Scalars['String']>;
+  beepId?: Maybe<Scalars['String']>;
+};
+
+export type RatingsResponse = {
+  __typename?: 'RatingsResponse';
+  items: Array<Rating>;
+  count: Scalars['Int'];
+};
+
+export type Report = {
+  __typename?: 'Report';
+  id: Scalars['String'];
+  reporter: User;
+  reported: User;
+  handledBy?: Maybe<User>;
+  reason: Scalars['String'];
+  notes?: Maybe<Scalars['String']>;
+  timestamp: Scalars['DateTime'];
+  handled: Scalars['Boolean'];
+  beep?: Maybe<Beep>;
+};
+
+export type ReportInput = {
+  userId: Scalars['String'];
+  reason: Scalars['String'];
+  beepId?: Maybe<Scalars['String']>;
+};
+
+export type ReportsResponse = {
+  __typename?: 'ReportsResponse';
+  items: Array<Report>;
+  count: Scalars['Int'];
+};
+
+export type RideHistoryResponse = {
+  __typename?: 'RideHistoryResponse';
+  items: Array<Beep>;
+  count: Scalars['Int'];
+};
+
+export type SignUpInput = {
+  username: Scalars['String'];
+  first: Scalars['String'];
+  last: Scalars['String'];
+  phone: Scalars['String'];
+  email: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
+  password: Scalars['String'];
+  pushToken?: Maybe<Scalars['String']>;
+};
 
 export type Subscription = {
   __typename?: 'Subscription';
@@ -566,6 +488,73 @@ export type SubscriptionGetRiderUpdatesArgs = {
 
 export type SubscriptionGetUserUpdatesArgs = {
   topic: Scalars['String'];
+};
+
+export type Suggestion = {
+  __typename?: 'Suggestion';
+  title: Scalars['String'];
+};
+
+export type TokenEntry = {
+  __typename?: 'TokenEntry';
+  id: Scalars['String'];
+  tokenid: Scalars['String'];
+  user: User;
+};
+
+export type UpdateQueueEntryInput = {
+  value: Scalars['String'];
+  riderId: Scalars['String'];
+  queueId: Scalars['String'];
+};
+
+export type UpdateReportInput = {
+  handled?: Maybe<Scalars['Boolean']>;
+  notes?: Maybe<Scalars['String']>;
+};
+
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['String'];
+  first: Scalars['String'];
+  last: Scalars['String'];
+  username: Scalars['String'];
+  email: Scalars['String'];
+  phone: Scalars['String'];
+  venmo?: Maybe<Scalars['String']>;
+  cashapp?: Maybe<Scalars['String']>;
+  password: Scalars['String'];
+  isBeeping: Scalars['Boolean'];
+  isEmailVerified: Scalars['Boolean'];
+  isStudent: Scalars['Boolean'];
+  groupRate: Scalars['Float'];
+  singlesRate: Scalars['Float'];
+  capacity: Scalars['Float'];
+  masksRequired: Scalars['Boolean'];
+  queueSize: Scalars['Float'];
+  rating?: Maybe<Scalars['Float']>;
+  role: Scalars['String'];
+  pushToken?: Maybe<Scalars['String']>;
+  photoUrl?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  location?: Maybe<Location>;
+  queue: Array<QueueEntry>;
+  ratings: Array<Rating>;
+};
+
+export type UsersResponse = {
+  __typename?: 'UsersResponse';
+  items: Array<User>;
+  count: Scalars['Int'];
+};
+
+export type VerifyEmail = {
+  __typename?: 'VerifyEmail';
+  id: Scalars['String'];
+  user: User;
+  time: Scalars['DateTime'];
+  email: Scalars['String'];
 };
 
 export type GetUserDataQueryVariables = Exact<{ [key: string]: never; }>;
@@ -619,23 +608,6 @@ export type GetBeeperHistoryQuery = (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
       ) }
-    )> }
-  ) }
-);
-
-export type GetLocationsQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type GetLocationsQuery = (
-  { __typename?: 'Query' }
-  & { getLocations: (
-    { __typename?: 'LocationsResponse' }
-    & Pick<LocationsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Location' }
-      & Pick<Location, 'id' | 'longitude' | 'latitude' | 'speed' | 'timestamp' | 'accuracy' | 'heading'>
     )> }
   ) }
 );
@@ -876,28 +848,6 @@ export type GetBeepsQuery = (
   ) }
 );
 
-export type LocationsQueryVariables = Exact<{
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-}>;
-
-
-export type LocationsQuery = (
-  { __typename?: 'Query' }
-  & { getLocations: (
-    { __typename?: 'LocationsResponse' }
-    & Pick<LocationsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Location' }
-      & Pick<Location, 'id' | 'latitude' | 'longitude' | 'speed' | 'timestamp'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ) }
-    )> }
-  ) }
-);
-
 export type DeleteRatingMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -1041,7 +991,7 @@ export type GetEditableUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'first' | 'last' | 'isBeeping' | 'isStudent' | 'isEmailVerified' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'email' | 'cashapp'>
+    & Pick<User, 'first' | 'last' | 'isBeeping' | 'isStudent' | 'isEmailVerified' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'email' | 'cashapp' | 'pushToken'>
   ) }
 );
 
@@ -1272,50 +1222,6 @@ export function useGetBeeperHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetBeeperHistoryQueryHookResult = ReturnType<typeof useGetBeeperHistoryQuery>;
 export type GetBeeperHistoryLazyQueryHookResult = ReturnType<typeof useGetBeeperHistoryLazyQuery>;
 export type GetBeeperHistoryQueryResult = Apollo.QueryResult<GetBeeperHistoryQuery, GetBeeperHistoryQueryVariables>;
-export const GetLocationsDocument = gql`
-    query GetLocations($id: String!) {
-  getLocations(id: $id) {
-    items {
-      id
-      longitude
-      latitude
-      speed
-      timestamp
-      accuracy
-      heading
-    }
-    count
-  }
-}
-    `;
-
-/**
- * __useGetLocationsQuery__
- *
- * To run a query within a React component, call `useGetLocationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLocationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLocationsQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetLocationsQuery(baseOptions: Apollo.QueryHookOptions<GetLocationsQuery, GetLocationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetLocationsQuery, GetLocationsQueryVariables>(GetLocationsDocument, options);
-      }
-export function useGetLocationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLocationsQuery, GetLocationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetLocationsQuery, GetLocationsQueryVariables>(GetLocationsDocument, options);
-        }
-export type GetLocationsQueryHookResult = ReturnType<typeof useGetLocationsQuery>;
-export type GetLocationsLazyQueryHookResult = ReturnType<typeof useGetLocationsLazyQuery>;
-export type GetLocationsQueryResult = Apollo.QueryResult<GetLocationsQuery, GetLocationsQueryVariables>;
 export const GetQueueDocument = gql`
     query GetQueue($id: String!) {
   getQueue(id: $id) {
@@ -1947,55 +1853,6 @@ export function useGetBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
 export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
 export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
-export const LocationsDocument = gql`
-    query Locations($show: Int, $offset: Int) {
-  getLocations(show: $show, offset: $offset) {
-    items {
-      id
-      latitude
-      longitude
-      speed
-      timestamp
-      user {
-        id
-        name
-        photoUrl
-        username
-      }
-    }
-    count
-  }
-}
-    `;
-
-/**
- * __useLocationsQuery__
- *
- * To run a query within a React component, call `useLocationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useLocationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLocationsQuery({
- *   variables: {
- *      show: // value for 'show'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useLocationsQuery(baseOptions?: Apollo.QueryHookOptions<LocationsQuery, LocationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<LocationsQuery, LocationsQueryVariables>(LocationsDocument, options);
-      }
-export function useLocationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LocationsQuery, LocationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<LocationsQuery, LocationsQueryVariables>(LocationsDocument, options);
-        }
-export type LocationsQueryHookResult = ReturnType<typeof useLocationsQuery>;
-export type LocationsLazyQueryHookResult = ReturnType<typeof useLocationsLazyQuery>;
-export type LocationsQueryResult = Apollo.QueryResult<LocationsQuery, LocationsQueryVariables>;
 export const DeleteRatingDocument = gql`
     mutation DeleteRating($id: String!) {
   deleteRating(id: $id)
@@ -2342,6 +2199,7 @@ export const GetEditableUserDocument = gql`
     username
     email
     cashapp
+    pushToken
   }
 }
     `;

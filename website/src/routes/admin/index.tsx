@@ -11,7 +11,6 @@ import Reports from './reports';
 import Report from './reports/Report';
 import Beeps from './beeps';
 import Beep from './beeps/Beep';
-import Locations from './locations';
 import Ratings from './ratings';
 import Rating from './ratings/Rating';
 
@@ -55,9 +54,6 @@ function Admin() {
                         <Report />
                     </Route>
 
-                    <Route exact path={`${match.path}/locations`}>
-                        <Locations />
-                    </Route>
                     <Route exact path={`${match.path}/ratings`}>
                         <Ratings />
                     </Route>

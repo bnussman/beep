@@ -26,11 +26,6 @@ const InitialRiderStatus = gql`
             destination
             state
             groupSize
-            location {
-                id
-                longitude
-                latitude
-            }
             beeper {
                 id
                 first
@@ -47,6 +42,10 @@ const InitialRiderStatus = gql`
                 masksRequired
                 capacity
                 queueSize
+                location {
+                    longitude
+                    latitude
+                }
             }
         }
     }
@@ -62,10 +61,6 @@ const RiderStatus = gql`
             destination
             state
             groupSize
-            location {
-                longitude
-                latitude
-            }
             beeper {
                 id
                 first
@@ -82,6 +77,10 @@ const RiderStatus = gql`
                 masksRequired
                 capacity
                 queueSize
+                location {
+                    longitude
+                    latitude
+                }
             }
         }
     }
@@ -159,8 +158,8 @@ export function MainFindBeepScreen(props: Props) {
        if (data?.getRiderStatus?.state == 2 && previousData?.getRiderStatus?.state == 1) {
             sub?.unsubscribe();
        }
-       if (data?.getRiderStatus?.location) {
-            updateETA(data.getRiderStatus.location.latitude, data.getRiderStatus.location.longitude);
+       if (data?.getRiderStatus?.beeper.location) {
+            updateETA(data.getRiderStatus.beeper.location.latitude, data.getRiderStatus.beeper.location.longitude);
        }
     }, [data]);
 

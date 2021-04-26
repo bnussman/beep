@@ -7,7 +7,6 @@ import { formatPhone } from '../utils/formatters';
 import RideHistoryTable from './RideHistoryTable';
 import BeepHistoryTable from './BeepHistoryTable';
 import QueueTable from './QueueTable';
-import LocationTable from './LocationTable';
 import { UserRole } from '../types/User';
 import {gql, useMutation} from '@apollo/client';
 import {RemoveUserMutation, User} from '../generated/graphql';
@@ -104,10 +103,6 @@ function UserProfile(props: Props) {
                     <QueueTable userId={user.id}/>
                 </div>
 
-                <div>
-                    {props.admin && <LocationTable userId={user.id}/>}
-                </div>
-                
                 <div>
                     <div>
                         <Heading5>Beep history</Heading5>

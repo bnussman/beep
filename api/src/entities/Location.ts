@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { v4 } from "uuid";
 import { User } from "./User";
@@ -12,7 +12,7 @@ export class Location {
     id: string = v4();
 
     @Field(() => User)
-    @ManyToOne(() => User, { lazy: true, eager: false })
+    @OneToOne(() => User)
     user!: User;
 
     @Field()
