@@ -9,7 +9,7 @@ function Privacy() {
 
                     <p className="c4"><span className="c5">Modified: January 2, 2021</span></p>
                     <p className="c4"><span className="c6">Effective</span><span className="c6">:</span><span className="c6">&nbsp;</span><span>January 2, 2021</span></p>
-                    <ol className="c12 lst-kix_7gu2p9q0wakt-0 start" start="1">
+                    <ol className="c12 lst-kix_7gu2p9q0wakt-0 start">
                         <li className="c1 li-bullet-0">
                             <h1 id="h.qphupxdneu4l" ><span>Introduction</span></h1>
                         </li>
@@ -17,7 +17,7 @@ function Privacy() {
                     <p className="c4"><span className="c0">When using Beep you intrust us with all of your personal information and we will uphold that trust and that begins with the understanding of our privacy policy.</span></p>
                     <p className="c4 c8"><span className="c0"></span></p>
                     <p className="c4"><span className="c6">This entails the personal data we collect, how it is shared and used, and what you can do regarding your data. Reading this is the best way to fully grasp what we do with your data.</span></p>
-                    <ol className="c12 lst-kix_7gu2p9q0wakt-0" start="2">
+                    <ol className="c12 lst-kix_7gu2p9q0wakt-0">
                         <li className="c1 li-bullet-0">
                             <h1 id="h.n44x2mlf3lm6" ><span className="c16">Overview</span></h1>
                         </li>
@@ -37,7 +37,7 @@ function Privacy() {
                     <p className="c4 c8"><span className="c0"></span></p>
                     <p className="c4"><span className="c6">Beep operates and processes all of our data in the United States and does not send anything overseas or to another country. This fulfills our agreements made in the Terms of Service Agreement and agreements made with the Account Holders. Any questions can be sent to ian@ridebeep.app.</span></p>
                     <p className="c4 c8"><span className="c0"></span></p>
-                    <ol className="c12 lst-kix_7gu2p9q0wakt-0" start="3">
+                    <ol className="c12 lst-kix_7gu2p9q0wakt-0">
                         <li className="c1 li-bullet-0">
                             <h1 id="h.xpkxb8edrdhl" ><span className="c16">Data collections and uses</span></h1>
                         </li>
@@ -122,7 +122,7 @@ function Privacy() {
                     <p className="c4 c8"><span className="c2"></span></p>
                     <p className="c4"><span className="c6">We collect personal data only when we have the lawful grounds for it. This includes processing Account Holders&rsquo; personal data to provide the services to make a successful experience for all the Account Holders involved. This is for all of the reasons that we have already stated above and in our Terms of Service Agreement.</span></p>
                     <p className="c4 c8"><span className="c0"></span></p>
-                    <ol className="c12 lst-kix_7gu2p9q0wakt-0" start="4">
+                    <ol className="c12 lst-kix_7gu2p9q0wakt-0">
                         <li className="c1 li-bullet-0">
                             <h1 id="h.1s2epfoal3vi"><span className="c16">Choice and transparency</span></h1>
                         </li>
