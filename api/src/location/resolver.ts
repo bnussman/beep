@@ -22,7 +22,7 @@ export class LocationResolver {
 
         pubSub.publish("Location" + ctx.user.id, ctx.user.location);
 
-        BeepORM.locationRepository.persistAndFlush(ctx.user);
+        BeepORM.userRepository.persistAndFlush(ctx.user);
 
         return true;
     }
