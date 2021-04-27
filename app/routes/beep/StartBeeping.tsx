@@ -342,7 +342,6 @@ export function StartBeepingScreen(props: Props) {
                         keyExtractor={item => item.id.toString()}
                         renderItem={({item, index}) =>
                             item.isAccepted ?
-
                                 <Card
                                     style={styles.cards}
                                     status={(0 == index) ? "primary" : "basic"} 
@@ -357,7 +356,7 @@ export function StartBeepingScreen(props: Props) {
                                             url={item.rider.photoUrl}
                                         />
                                         }
-                                        <Text category="h6" style={styles.rowText}>{item.rider.first} {item.rider.last}</Text>
+                                        <Text category="h6" style={styles.rowText}>{item.rider.name}</Text>
                                         {item.rider.isStudent && <Text>🎓</Text>}
                                     </Layout>
                                     <Layout style={styles.row}>

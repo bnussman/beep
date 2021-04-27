@@ -42,14 +42,17 @@ export class RiderResolver {
 
         sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
 
-        await BeepORM.userRepository.persistAndFlush(beeper);
-
         q.ridersQueuePosition = -1;
 
-        const e = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user.id }, true);
-
         pubSub.publish("Beeper" + beeper.id, beeper.queue.get());
-        pubSub.publish("Rider" + ctx.user.id, e);
+
+        q.beeper.location = undefined;
+        
+        pubSub.publish("Rider" + ctx.user.id, q);
+
+        console.log(q);
+
+        await BeepORM.userRepository.persistAndFlush(beeper);
 
         return q;
     }
@@ -69,7 +72,7 @@ export class RiderResolver {
     @Query(() => QueueEntry, { nullable: true })
     @Authorized()
     public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
-        const entry = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user }, { populate: ['beeper'], refresh: true });
+        const entry = await BeepORM.queueEntryRepository.findOne({ rider: ctx.user }, { populate: ['beeper', 'beeper.location'], refresh: true });
 
         if (!entry) {
             return null;
@@ -77,8 +80,8 @@ export class RiderResolver {
 
         entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: entry.beeper, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
 
-        if (entry.state == 1) {
-            await BeepORM.userRepository.populate(entry.beeper, ['location']);
+        if (entry.state != 1) {
+            entry.location = undefined;
         }
 
         return entry;

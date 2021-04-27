@@ -33,6 +33,8 @@ export class BeeperResolver {
     @Authorized()
     public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
         const queueEntry = await BeepORM.queueEntryRepository.findOneOrFail(input.queueId, { populate: ["rider", "beeper"], refresh: true });
+        //const result = await ctx.user.queue.matching({ where: { id: input.queueId }});
+        //const queueEntry = result[0];
 
         if (input.value == 'accept' || input.value == 'deny') {
             const numRidersBefore = await BeepORM.queueEntryRepository.count({ timeEnteredQueue: { $lt: queueEntry.timeEnteredQueue }, isAccepted: false });
@@ -110,22 +112,15 @@ export class BeeperResolver {
     }
 
     private async sendRiderUpdates(beeperId: string, pubSub: PubSubEngine) {
-        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId }, { orderBy: { timeEnteredQueue: QueryOrder.ASC }, refresh: true });
+        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId }, { orderBy: { timeEnteredQueue: QueryOrder.ASC }, refresh: true, populate: ['beeper.location'] });
 
         pubSub.publish("Beeper" + beeperId, queues);
 
         for (const entry of queues) {
-            const ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue } });
-    
-            entry.ridersQueuePosition = ridersQueuePosition;
+            entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue } });
 
-            const D = ridersQueuePosition + 8;
-
-            if ( 8==D && entry.state == 1) {
-                const location = await BeepORM.locationRepository.findOne({ user: beeperId }, {}, { orderBy: { timestamp: QueryOrder.DESC } });
-                if (location) {
-                    entry.location = location;
-                }
+            if (entry.state != 1) {
+                entry.location = undefined;
             }
 
             pubSub.publish("Rider" + entry.rider.id, entry);
