@@ -32,11 +32,9 @@ export type Beep = {
   rider: User;
   origin: Scalars['String'];
   destination: Scalars['String'];
-  state: Scalars['Float'];
-  isAccepted: Scalars['Boolean'];
   groupSize: Scalars['Float'];
-  timeEnteredQueue: Scalars['DateTime'];
-  doneTime: Scalars['DateTime'];
+  start: Scalars['DateTime'];
+  end: Scalars['DateTime'];
 };
 
 export type BeepHistoryResponse = {
@@ -389,7 +387,7 @@ export type QueueEntry = {
   state: Scalars['Float'];
   isAccepted: Scalars['Boolean'];
   groupSize: Scalars['Float'];
-  timeEnteredQueue: Scalars['DateTime'];
+  start: Scalars['Float'];
   beeper: User;
   rider: User;
   ridersQueuePosition: Scalars['Float'];
@@ -706,7 +704,7 @@ export type GetInitialQueueQuery = (
   { __typename?: 'Query' }
   & { getQueue: Array<(
     { __typename?: 'QueueEntry' }
-    & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'timeEnteredQueue'>
+    & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'start'>
     & { rider: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl'>
@@ -723,7 +721,7 @@ export type GetQueueSubscription = (
   { __typename?: 'Subscription' }
   & { getBeeperUpdates: Array<(
     { __typename?: 'QueueEntry' }
-    & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'timeEnteredQueue'>
+    & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'start'>
     & { rider: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl'>
@@ -793,7 +791,7 @@ export type GetBeepHistoryQuery = (
     & Pick<BeepHistoryResponse, 'count'>
     & { items: Array<(
       { __typename?: 'Beep' }
-      & Pick<Beep, 'id' | 'timeEnteredQueue' | 'doneTime' | 'groupSize' | 'origin' | 'destination'>
+      & Pick<Beep, 'id' | 'start' | 'end' | 'groupSize' | 'origin' | 'destination'>
       & { rider: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name' | 'first' | 'last' | 'photoUrl'>
@@ -812,7 +810,7 @@ export type GetRideHistoryQuery = (
     & Pick<RideHistoryResponse, 'count'>
     & { items: Array<(
       { __typename?: 'Beep' }
-      & Pick<Beep, 'id' | 'timeEnteredQueue' | 'doneTime' | 'groupSize' | 'origin' | 'destination'>
+      & Pick<Beep, 'id' | 'start' | 'end' | 'groupSize' | 'origin' | 'destination'>
       & { beeper: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name' | 'first' | 'last' | 'photoUrl'>
@@ -1396,7 +1394,7 @@ export const GetInitialQueueDocument = gql`
     origin
     destination
     state
-    timeEnteredQueue
+    start
     rider {
       id
       name
@@ -1446,7 +1444,7 @@ export const GetQueueDocument = gql`
     origin
     destination
     state
-    timeEnteredQueue
+    start
     rider {
       id
       first
@@ -1644,8 +1642,8 @@ export const GetBeepHistoryDocument = gql`
   getBeepHistory {
     items {
       id
-      timeEnteredQueue
-      doneTime
+      start
+      end
       groupSize
       origin
       destination
@@ -1693,8 +1691,8 @@ export const GetRideHistoryDocument = gql`
   getRideHistory {
     items {
       id
-      timeEnteredQueue
-      doneTime
+      start
+      end
       groupSize
       origin
       destination

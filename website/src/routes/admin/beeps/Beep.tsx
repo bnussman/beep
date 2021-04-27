@@ -20,8 +20,8 @@ const GetBeep = gql`
             id
             origin
             destination
-            timeEnteredQueue
-            doneTime
+            start
+            end
             groupSize
             beeper {
                 id
@@ -130,13 +130,13 @@ function BeepPage() {
                         <Card className="flex-grow mb-4 sm:mr-2">
                             <div className="p-4">
                                 <Heading5>Beep Started</Heading5>
-                                <Body1>{new Date(data.getBeep.timeEnteredQueue).toLocaleString()} - {dayjs().to(data.getBeep.timeEnteredQueue)}</Body1>
+                                <Body1>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Body1>
                             </div>
                         </Card>
                         <Card className="flex-grow mb-4">
                             <div className="p-4">
                                 <Heading5>Beep Ended</Heading5>
-                                <Body1>{new Date(data.getBeep.doneTime).toLocaleString()} - {dayjs().to(data.getBeep.doneTime)}</Body1>
+                                <Body1>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Body1>
                             </div>
                         </Card>
                     </div>

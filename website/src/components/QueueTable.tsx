@@ -20,7 +20,7 @@ const Queue = gql`
             id
             origin
             destination
-            timeEnteredQueue
+            start
             groupSize
             isAccepted
             state
@@ -96,7 +96,7 @@ function QueueTable(props: Props) {
                                 <TDText>{entry.origin}</TDText>
                                 <TDText>{entry.destination}</TDText>
                                 <TDText>{entry.groupSize}</TDText>
-                                <TDText>{dayjs().to(entry.timeEnteredQueue)}</TDText>
+                                <TDText>{dayjs().to(entry.start)}</TDText>
                                 <TDText>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</TDText>
                                 <TDText>{getStatus(entry.state)}</TDText>
                             </TR>

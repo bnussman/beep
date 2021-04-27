@@ -20,8 +20,8 @@ const Hisory = gql`
                 id
                 origin
                 destination
-                timeEnteredQueue
-                doneTime
+                start
+                end
                 groupSize
                 beeper {
                     id
@@ -84,9 +84,9 @@ function RideHistoryTable(props: Props) {
                                 <TDText>{ride.origin}</TDText>
                                 <TDText>{ride.destination}</TDText>
                                 <TDText>{ride.groupSize}</TDText>
-                                <TDText>{dayjs().to(ride.timeEnteredQueue)}</TDText>
-                                <TDText>{dayjs().to(ride.doneTime)}</TDText>
-                                <TDText>{dayjs.duration(new Date(ride.doneTime).getTime() - new Date(ride.timeEnteredQueue).getTime()).humanize()}</TDText>
+                                <TDText>{dayjs().to(ride.start)}</TDText>
+                                <TDText>{dayjs().to(ride.end)}</TDText>
+                                <TDText>{dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize()}</TDText>
                             </TR>
                         )
                     })}

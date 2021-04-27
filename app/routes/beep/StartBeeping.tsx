@@ -53,7 +53,7 @@ const GetInitialQueue = gql`
             origin
             destination
             state
-            timeEnteredQueue
+            start
             rider {
                 id
                 name
@@ -77,7 +77,7 @@ const GetQueue = gql`
             origin
             destination
             state
-            timeEnteredQueue
+            start
             rider {
                 id
                 first
@@ -458,7 +458,7 @@ export function StartBeepingScreen(props: Props) {
                                     </Layout>
                                     <Layout style={styles.row}>
                                         <Text category='h6'>Entered Queue</Text>
-                                        <Text style={styles.rowText}>{new Date(item.timeEnteredQueue).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</Text>
+                                        <Text style={styles.rowText}>{new Date(item.start).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</Text>
                                     </Layout>
                                     <Layout style={styles.row}>
                                         <Text category='h6'>Group Size</Text>

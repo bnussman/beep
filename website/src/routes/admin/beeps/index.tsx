@@ -17,8 +17,8 @@ const BeepsGraphQL = gql`
                 id
                 origin
                 destination
-                timeEnteredQueue
-                doneTime
+                start
+                end
                 groupSize
                 beeper {
                     id
@@ -95,9 +95,9 @@ function Beeps() {
                                 <TDText>{beepEntry.origin}</TDText>
                                 <TDText>{beepEntry.destination}</TDText>
                                 <TDText>{beepEntry.groupSize}</TDText>
-                                <TDText>{dayjs().to(beepEntry.timeEnteredQueue)}</TDText>
-                                <TDText>{dayjs().to(beepEntry.doneTime)}</TDText>
-                                <TDText>{dayjs.duration(new Date(beepEntry.doneTime).getTime() - new Date(beepEntry.timeEnteredQueue).getTime()).humanize()}</TDText>
+                                <TDText>{dayjs().to(beepEntry.start)}</TDText>
+                                <TDText>{dayjs().to(beepEntry.end)}</TDText>
+                                <TDText>{dayjs.duration(new Date(beepEntry.end).getTime() - new Date(beepEntry.start).getTime()).humanize()}</TDText>
                                 <TDButton to={`beeps/${beepEntry.id}`}>View</TDButton>
                             </TR>
                         )

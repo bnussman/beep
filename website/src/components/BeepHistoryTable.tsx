@@ -20,8 +20,8 @@ const Hisory = gql`
                 id
                 origin
                 destination
-                timeEnteredQueue
-                doneTime
+                start
+                end
                 groupSize
                 rider {
                     id
@@ -83,9 +83,9 @@ return <>
                                 <TDText>{beep.origin}</TDText>
                                 <TDText>{beep.destination}</TDText>
                                 <TDText>{beep.groupSize}</TDText>
-                                <TDText>{dayjs().to(beep.timeEnteredQueue)}</TDText>
-                                <TDText>{dayjs().to(beep.doneTime)}</TDText>
-                                <TDText>{dayjs.duration(new Date(beep.doneTime).getTime() - new Date(beep.timeEnteredQueue).getTime()).humanize()}</TDText>
+                                <TDText>{dayjs().to(beep.start)}</TDText>
+                                <TDText>{dayjs().to(beep.end)}</TDText>
+                                <TDText>{dayjs.duration(new Date(beep.end).getTime() - new Date(beep.start).getTime()).humanize()}</TDText>
                             </TR>
                         )
                     })}

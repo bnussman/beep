@@ -16,8 +16,8 @@ const GetBeepHistory = gql`
         getBeepHistory {
             items {
                 id
-                timeEnteredQueue
-                doneTime
+                start
+                end
                 groupSize
                 origin
                 destination
@@ -49,7 +49,7 @@ export function BeeperRideLogScreen(props: Props) {
                 }}
                 onPress={() => props.navigation.push("Profile", { id: item.rider.id, beep: item.id })}
                 title={`You beeped ${item.rider.first} ${item.rider.last}`}
-                description={`Group size: ${item.groupSize}\nOrigin: ${item.origin}\nDestination: ${item.destination}\nDate: ${new Date(item.timeEnteredQueue)}`}
+                description={`Group size: ${item.groupSize}\nOrigin: ${item.origin}\nDestination: ${item.destination}\nDate: ${new Date(item.start)}`}
             />
         );
         
