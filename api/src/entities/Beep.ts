@@ -2,6 +2,7 @@ import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { v4 } from 'uuid';
+import {QueueEntry} from "./QueueEntry";
 
 @ObjectType()
 @Entity()
@@ -28,22 +29,24 @@ export class Beep {
     destination!: string;
 
     @Field()
-    @Property({ default: 0 })
-    state!: number;
-
-    @Field()
-    @Property({ default: false })
-    isAccepted!: boolean;
-
-    @Field()
     @Property()
     groupSize!: number;
 
     @Field()
-    @Property({ defaultRaw: 'now()' }) 
-    timeEnteredQueue!: Date;
+    @Property() 
+    start!: Date;
 
     @Field()
-    @Property()
-    doneTime!: Date;
+    @Property({ defaultRaw: 'now()' }) 
+    end!: Date;
+
+    constructor(entry: QueueEntry) {
+        this.id = entry.id;
+        this.beeper = entry.beeper;
+        this.rider = entry.rider;
+        this.origin = entry.origin;
+        this.destination = entry.destination;
+        this.groupSize = entry.groupSize;
+        this.start = new Date(entry.start * 1000);
+    }
 }

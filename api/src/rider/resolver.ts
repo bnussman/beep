@@ -21,7 +21,7 @@ export class RiderResolver {
         }
 
         const entry = {
-            timeEnteredQueue: new Date(),
+            start: Math.floor(Date.now() / 1000),
             isAccepted: false,
             groupSize: input.groupSize,
             origin: input.origin,
@@ -74,7 +74,7 @@ export class RiderResolver {
             return null;
         }
 
-        entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: entry.beeper, timeEnteredQueue: { $lt: entry.timeEnteredQueue }, state: { $ne: -1 } });
+        entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: entry.beeper, start: { $lt: entry.start } });
 
         if (entry.state != 1) {
             entry.location = undefined;
@@ -123,11 +123,11 @@ export class RiderResolver {
     @Query(() => Beep, { nullable: true })
     @Authorized()
     public async getLastBeepToRate(@Ctx() ctx: Context): Promise<Beep | null> {
-        const beep = await BeepORM.beepRepository.findOne({ rider: ctx.user.id }, ['beeper'], { doneTime: QueryOrder.DESC });
+        const beep = await BeepORM.beepRepository.findOne({ rider: ctx.user.id }, ['beeper'], { end: QueryOrder.DESC });
 
         if (!beep) return null;
 
-        const count = await BeepORM.ratingRepository.count({ rater: ctx.user.id, rated: beep.beeper.id, timestamp: { $gte: beep.doneTime } });
+        const count = await BeepORM.ratingRepository.count({ rater: ctx.user.id, rated: beep.beeper.id, timestamp: { $gte: beep.end} });
 
         if (count > 0) {
             return null;

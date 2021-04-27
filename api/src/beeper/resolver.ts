@@ -37,14 +37,14 @@ export class BeeperResolver {
         //const queueEntry = result[0];
 
         if (input.value == 'accept' || input.value == 'deny') {
-            const numRidersBefore = await BeepORM.queueEntryRepository.count({ timeEnteredQueue: { $lt: queueEntry.timeEnteredQueue }, isAccepted: false });
+            const numRidersBefore = await BeepORM.queueEntryRepository.count({ start: { $lt: queueEntry.start }, isAccepted: false });
 
             if (numRidersBefore != 0) {
                 throw new Error("You must respond to the rider who first joined your queue.");
             }
         }
         else {
-            const numRidersBefore = await BeepORM.queueEntryRepository.count({ timeEnteredQueue: { $lt: queueEntry.timeEnteredQueue }, isAccepted: true });
+            const numRidersBefore = await BeepORM.queueEntryRepository.count({ start: { $lt: queueEntry.start }, isAccepted: true });
 
             if (numRidersBefore != 0) {
                 throw new Error("You must respond to the rider who first joined your queue.");
@@ -65,15 +65,9 @@ export class BeeperResolver {
             pubSub.publish("Rider" + queueEntry.rider.id, null);
 
             if (input.value == 'complete') {
-                const finishedBeep = new Beep();
+                const beep = new Beep(queueEntry);
 
-                wrap(finishedBeep).assign(queueEntry, { em: BeepORM.em });
-
-                finishedBeep.doneTime = new Date();
-
-                finishedBeep.id = queueEntry.id;
-
-                await BeepORM.beepRepository.persistAndFlush(finishedBeep);
+                await BeepORM.beepRepository.persistAndFlush(beep);
             }
 
             if (queueEntry.isAccepted && ctx.user.queueSize > 0) ctx.user.queueSize--;
@@ -112,12 +106,12 @@ export class BeeperResolver {
     }
 
     private async sendRiderUpdates(beeperId: string, pubSub: PubSubEngine) {
-        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId }, { orderBy: { timeEnteredQueue: QueryOrder.ASC }, refresh: true, populate: ['beeper.location'] });
+        const queues = await BeepORM.queueEntryRepository.find({ beeper: beeperId }, { orderBy: { start: QueryOrder.ASC }, refresh: true, populate: ['beeper.location'] });
 
         pubSub.publish("Beeper" + beeperId, queues);
 
         for (const entry of queues) {
-            entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, timeEnteredQueue: { $lt: entry.timeEnteredQueue } });
+            entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, start: { $lt: entry.start } });
 
             if (entry.state != 1) {
                 entry.location = undefined;

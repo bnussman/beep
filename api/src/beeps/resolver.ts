@@ -15,7 +15,7 @@ export class BeepResolver {
     @Query(() => BeepsResponse)
     @Authorized(UserRole.ADMIN)
     public async getBeeps(@Args() { offset, show }: PaginationArgs): Promise<BeepsResponse> {
-        const [beeps, count] = await BeepORM.beepRepository.findAndCount({}, { orderBy: { doneTime: QueryOrder.DESC }, limit: show, offset: offset, populate: ['beeper', 'rider'] });
+        const [beeps, count] = await BeepORM.beepRepository.findAndCount({}, { orderBy: { end: QueryOrder.DESC }, limit: show, offset: offset, populate: ['beeper', 'rider'] });
 
         return {
             items: beeps,

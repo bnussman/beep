@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { BigIntType, Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { Location } from "./Location";
@@ -33,8 +33,8 @@ export class QueueEntry {
     groupSize!: number;
 
     @Field()
-    @Property({ defaultRaw: 'now()' }) 
-    timeEnteredQueue!: Date;
+    @Property({ type: BigIntType }) 
+    start!: number;
 
     @Field(() => User)
     @ManyToOne(() => User)

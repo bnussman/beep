@@ -84,7 +84,7 @@ export class UserResolver {
     @Query(() => RideHistoryResponse)
     @Authorized()
     public async getRideHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<RideHistoryResponse> {
-        const [rides, count] = await BeepORM.beepRepository.findAndCount({ rider: id || ctx.user }, { orderBy: { doneTime: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
+        const [rides, count] = await BeepORM.beepRepository.findAndCount({ rider: id || ctx.user }, { orderBy: { end: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
 
         return {
             items: rides,
@@ -95,7 +95,7 @@ export class UserResolver {
     @Query(() => BeepHistoryResponse)
     @Authorized()
     public async getBeepHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<BeepHistoryResponse>  {
-        const [beeps, count] = await BeepORM.beepRepository.findAndCount({ beeper: id || ctx.user }, { orderBy: { doneTime: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
+        const [beeps, count] = await BeepORM.beepRepository.findAndCount({ beeper: id || ctx.user }, { orderBy: { end: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
 
         return {
             items: beeps,
@@ -107,7 +107,7 @@ export class UserResolver {
     @Authorized()
     public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
         const relationPaths = fieldsToRelations(info);
-        const r = await BeepORM.queueEntryRepository.find({ beeper: id || ctx.user.id }, { orderBy: { timeEnteredQueue: QueryOrder.ASC }, populate: relationPaths, refresh: true });
+        const r = await BeepORM.queueEntryRepository.find({ beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate: relationPaths, refresh: true });
 
         return r;
     }
