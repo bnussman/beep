@@ -13,13 +13,18 @@ export class LocationResolver {
     public async insertLocation(@Ctx() ctx: Context, @Arg('location') location: LocationInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
         await BeepORM.userRepository.populate(ctx.user, 'location');
 
+        console.log("User in insertLocation", ctx.user);
+
         if (!ctx.user.location) {
+            console.log("Creating new location entry");
             ctx.user.location = new Location(location);
         }
         else {
+            console.log("Updating exisiting location tentry");
             wrap(ctx.user.location).assign(location);
         }
 
+        console.log("Sending", ctx.user.location, "over the websocket");
         pubSub.publish("Location" + ctx.user.id, ctx.user.location);
 
         BeepORM.userRepository.persistAndFlush(ctx.user);
