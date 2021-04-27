@@ -12,7 +12,7 @@ export class Location {
     id: string = v4();
 
     @Field(() => User)
-    @OneToOne(() => User)
+    @OneToOne(() => User, undefined, { lazy: true, eager: false })
     user!: User;
 
     @Field()
