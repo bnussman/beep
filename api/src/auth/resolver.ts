@@ -1,5 +1,5 @@
 import { sha256 } from 'js-sha256';
-import { getToken, setPushToken, getUserFromEmail, sendResetEmail, deactivateTokens, createVerifyEmailEntryAndSendEmail, doesUserExist } from './helpers';
+import { getToken, setPushToken, getUserFromEmail, sendResetEmail, deactivateTokens, createVerifyEmailEntryAndSendEmail } from './helpers';
 import { wrap } from '@mikro-orm/core';
 import { BeepORM } from '../app';
 import { User } from '../entities/User';
@@ -8,8 +8,6 @@ import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'typ
 import { LoginInput, SignUpInput } from '../validators/auth';
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
-import {GraphQLUpload} from 'graphql-upload';
-import { Upload } from '../account/resolver';
 import AWS from 'aws-sdk';
 
 @ObjectType()
@@ -26,7 +24,7 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async login(@Arg('input') input: LoginInput): Promise<Auth> {
-        const user = await BeepORM.userRepository.findOne({ username: input.username });
+        const user = await BeepORM.userRepository.findOne({ username: input.username }, { refresh: true });
 
         if (!user) {
             throw new Error("User not found");
