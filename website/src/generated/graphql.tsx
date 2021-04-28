@@ -115,6 +115,12 @@ export type Location = {
   timestamp: Scalars['DateTime'];
 };
 
+export type LocationData = {
+  __typename?: 'LocationData';
+  longitude: Scalars['Float'];
+  latitude: Scalars['Float'];
+};
+
 export type LocationInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
@@ -463,7 +469,7 @@ export type SignUpInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   getBeeperUpdates: Array<QueueEntry>;
-  getLocationUpdates?: Maybe<Location>;
+  getLocationUpdates?: Maybe<LocationData>;
   getRiderUpdates?: Maybe<QueueEntry>;
   getUserUpdates: User;
 };

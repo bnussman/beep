@@ -12,35 +12,35 @@ export class Location {
     id: string = v4();
 
     @Field(() => User)
-    @OneToOne(() => User, undefined, { lazy: true, eager: false })
+    @OneToOne(() => User)
     user!: User;
 
     @Field()
-    @Property()
+    @Property({ columnType: 'numeric' })
     latitude!: number;
 
     @Field()
-    @Property()
+    @Property({ columnType: 'numeric' })
     longitude!: number;
 
     @Field()
-    @Property()
+    @Property({ columnType: 'numeric' })
     altitude!: number;
 
     @Field({ nullable: true })
-    @Property({ nullable: true })
+    @Property({ columnType: 'numeric', nullable: true })
     accuracy!: number;
 
     @Field({ nullable: true })
-    @Property({ nullable: true })
+    @Property({ columnType: 'numeric', nullable: true })
     altitudeAccuracy!: number;
 
     @Field()
-    @Property()
+    @Property({ columnType: 'numeric' })
     heading!: number;
 
     @Field()
-    @Property()
+    @Property({ columnType: 'numeric' })
     speed!: number;
 
     @Field()
