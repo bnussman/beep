@@ -15,7 +15,7 @@ export class LocationResolver {
         const entry = await BeepORM.locationRepository.findOne({ user: ctx.user.id }, { refresh: true });
 
         if (!entry) {
-            const e = new Location(location);
+            const e = new Location({ ...location, user: ctx.user });
 
             pubSub.publish("Location" + ctx.user.id, e);
 
