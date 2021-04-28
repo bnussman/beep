@@ -11,23 +11,24 @@ export class LocationResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async insertLocation(@Ctx() ctx: Context, @Arg('location') location: LocationInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-        await BeepORM.userRepository.populate(ctx.user, 'location');
+        const entry = await BeepORM.locationRepository.findOne({ user: ctx.user });
 
-        console.log("User in insertLocation", ctx.user);
+        if (!entry) {
+            const e = new Location(location);
 
-        if (!ctx.user.location) {
-            console.log("Creating new location entry");
-            ctx.user.location = new Location(location);
+            pubSub.publish("Location" + ctx.user.id, e);
+
+            BeepORM.locationRepository.persist(e);
         }
         else {
-            console.log("Updating exisiting location tentry");
-            wrap(ctx.user.location).assign(location);
+            wrap(entry).assign(location);
+
+            pubSub.publish("Location" + ctx.user.id, entry);
+
+            BeepORM.locationRepository.persist(entry);
         }
 
-        console.log("Sending", ctx.user.location, "over the websocket");
-        pubSub.publish("Location" + ctx.user.id, ctx.user.location);
-
-        BeepORM.userRepository.persistAndFlush(ctx.user);
+        await BeepORM.locationRepository.flush();
 
         return true;
     }
