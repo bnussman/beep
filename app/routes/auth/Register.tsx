@@ -30,8 +30,8 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
             cashapp: $cashapp,
             username: $username,
             password: $password,
+            picture: $picture,
             pushToken: $pushToken
-            picture: $picture
         }) {
             tokens {
                 id
@@ -82,6 +82,7 @@ function RegisterScreen(props: Props) {
             }
         }
         catch (error) {
+            console.log(error);
             alert(error);
         }
     }
@@ -190,7 +191,7 @@ function RegisterScreen(props: Props) {
                             onSubmitEditing={() => handleSignUp()}
                         />
                         <Layout style={{flex: 1, flexDirection: "row", justifyContent: "center", marginTop: 5, marginBottom: 5}}>
-                            {photo && <Image source={{ uri: photo.uri }} style={{ width: 200, height: 200, borderRadius: 200/ 2, marginTop: 10, marginBottom: 10 }} />}
+                            {photo && <Image source={{ uri: photo.uri }} style={{ width: 20, height: 20, borderRadius: 20/ 2, marginTop: 10, marginBottom: 10 }} />}
                             <Button
                                 onPress={() => handlePhoto()}
                                 accessoryRight={PhotoIcon}
