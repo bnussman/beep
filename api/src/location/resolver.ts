@@ -11,7 +11,7 @@ export class LocationResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async insertLocation(@Ctx() ctx: Context, @Arg('location') location: LocationInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-        const entry = await BeepORM.locationRepository.findOne({ user: ctx.user });
+        const entry = await BeepORM.locationRepository.findOne({ user: ctx.user }, { refresh: true });
 
         if (!entry) {
             const e = new Location(location);
