@@ -85,7 +85,7 @@ export class User {
     queueSize: number = 0;
 
     @Field({ nullable: true })
-    @Property({ nullable: true })
+    @Property({ columnType: 'numeric', nullable: true })
     rating?: number;
 
     @Field()
