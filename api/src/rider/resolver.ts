@@ -121,7 +121,7 @@ export class RiderResolver {
     @Query(() => [User])
     @Authorized()
     public async getBeeperList(): Promise<User[]> {
-        return await BeepORM.userRepository.find({ isBeeping: true });
+        return await BeepORM.userRepository.find({ isBeeping: true }, { refresh: true });
     }
 
     @Query(() => Beep, { nullable: true })
