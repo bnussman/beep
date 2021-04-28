@@ -11,30 +11,29 @@ export class LocationResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async insertLocation(@Ctx() ctx: Context, @Arg('location') location: LocationInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-        /*
         try {
-        const entry = await BeepORM.locationRepository.findOne({ user: ctx.user.id }, { populate: false, refresh: true });
+            const entry = await BeepORM.locationRepository.findOne({ user: ctx.user.id }, { populate: false, refresh: true });
 
-        if (!entry) {
-            const e = new Location({ ...location, user: ctx.user });
+            if (!entry) {
+                const e = new Location({ ...location, user: ctx.user });
 
-            pubSub.publish("Location" + ctx.user.id, e);
+                BeepORM.locationRepository.persist(e);
+            }
+            else {
+                wrap(entry).assign(location);
 
-            BeepORM.locationRepository.persist(e);
+                BeepORM.locationRepository.persist(entry);
+            }
+
+            pubSub.publish("Location" + ctx.user.id, new Location({ ...location, user: ctx.user }));
+
+            await BeepORM.locationRepository.flush();
+
         }
-        else {
-            wrap(entry).assign(location);
-
-            pubSub.publish("Location" + ctx.user.id, entry);
-
-            BeepORM.locationRepository.persist(entry);
-        }
-
-        await BeepORM.locationRepository.flush();
-        } catch (error) {
+        catch (error) {
             console.log(error);
         }
-         */
+        /*
         try {
             await BeepORM.userRepository.populate(ctx.user, ['location']);
 
@@ -52,6 +51,7 @@ export class LocationResolver {
         catch (error) {
             console.log(error);
         }
+         */
 
         return true;
     }
