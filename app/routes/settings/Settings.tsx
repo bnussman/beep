@@ -24,7 +24,7 @@ export function MainSettingsScreen({ navigation }: any) {
     const [logout, { loading: loading, error: error }] = useMutation<LogoutMutation>(Logout);
 
     async function doLogout() {
-        await logout({
+        logout({
             variables: {
                 isApp: true
             }

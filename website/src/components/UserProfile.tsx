@@ -45,7 +45,7 @@ function UserProfile(props: Props) {
                     )}
                     <div className="flex flex-col items-center mx-3 lg:items-start">
                         <Heading4>
-                            <span className="mr-2">{user.first} {user.last}</span>
+                            <span className="mr-2">{user.name}</span>
                         </Heading4>
                         <div>
                             {user.role === UserRole.ADMIN ? <Badge className="transform -translate-y-1">admin</Badge> : <></>}
@@ -73,7 +73,8 @@ function UserProfile(props: Props) {
                         <p>Queue size: {user.queueSize}</p>
                         <p>Capacity: {user.capacity}</p>
                         <p>Rate: ${user.singlesRate} / ${user.groupRate}</p>
-                        <p>Venmo usename: {user.venmo}</p>
+                        <p>Venmo usename: {user.venmo || "N/A"}</p>
+                        <p>CashApp usename: {user.cashapp || "N/A"}</p>
                         <p>{user.masksRequired ? 'Masks required' : 'Masks not required'}</p>
                     </div>
                     <div className="flex-grow"></div>
@@ -97,6 +98,23 @@ function UserProfile(props: Props) {
                             </NavLink>
                         }
                     </div>
+                </div>
+
+                <div>
+                    <Heading5>Location</Heading5>
+                    {user.location ?
+                        <>
+                            <div>{user.location.latitude}, {user.location.longitude}</div>
+                            <iframe
+                                title="Map"
+                                width="100%"
+                                height="250"
+                                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&q=${user.location.latitude},${user.location.longitude}`}>
+                            </iframe>
+                        </>
+                    :
+                    <div>User has no location</div>
+                    }
                 </div>
 
                 <div>

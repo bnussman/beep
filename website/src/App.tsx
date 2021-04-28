@@ -88,7 +88,7 @@ function getInitialTheme(): string {
 
 function Beep() {
     //const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
-    const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
+    const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: 'network-only', nextFetchPolicy: 'cache-and-network' });
     const [theme, setInternalTheme] = useState<string>(getInitialTheme());
 
     function setTheme(theme: string) {

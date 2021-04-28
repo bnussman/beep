@@ -8,12 +8,12 @@ const GetUser = gql`
     query GetUser($id: String!) {
         getUser(id: $id) {
             id
-            first
-            last
+            name
             isBeeping
             isStudent
             role
             venmo
+            cashapp
             singlesRate
             groupRate
             capacity
@@ -23,6 +23,10 @@ const GetUser = gql`
             phone
             username
             rating
+            location {
+                latitude
+                longitude
+            }
         }
     }
 `;

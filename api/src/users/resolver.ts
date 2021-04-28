@@ -26,8 +26,9 @@ export class UserResolver {
 
     @Query(() => User)
     @Authorized()
-    public async getUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<User> {
-        const user = await BeepORM.userRepository.findOne(id || ctx.user.id, false);
+    public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
+        const relationPaths = fieldsToRelations(info);
+        const user = await BeepORM.userRepository.findOne(id || ctx.user.id, { populate: relationPaths, refresh: true });
 
         if (!user) {
             throw new Error("User not found");

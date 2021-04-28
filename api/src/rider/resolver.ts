@@ -99,12 +99,13 @@ export class RiderResolver {
         
         const id = entry.beeper.id;
 
+        sendNotification(entry.beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you! :(");
+
         await BeepORM.queueEntryRepository.removeAndFlush(entry);
         
         this.sendBeeperUpdate(id, pubSub);
-        pubSub.publish("Rider" + ctx.user.id, null);
 
-        sendNotification(entry.beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you! :(");
+        pubSub.publish("Rider" + ctx.user.id, null);
 
         await BeepORM.userRepository.persistAndFlush(entry.beeper);
 
