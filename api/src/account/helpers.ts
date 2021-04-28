@@ -18,6 +18,12 @@ export function isEduEmail(email: string): boolean {
  */
 export async function deleteUser(user: User): Promise<boolean> {
 
+    await BeepORM.verifyEmailRepository.nativeDelete({ user: user });
+
+    await BeepORM.forgotPasswordRepository.nativeDelete({ user: user });
+
+    await BeepORM.locationRepository.nativeDelete({ user: user });
+
     await BeepORM.queueEntryRepository.nativeDelete({ beeper: user });
     await BeepORM.queueEntryRepository.nativeDelete({ rider: user });
     
@@ -30,9 +36,9 @@ export async function deleteUser(user: User): Promise<boolean> {
     await BeepORM.ratingRepository.nativeDelete({ rater: user });
     await BeepORM.ratingRepository.nativeDelete({ rated: user });
 
-    await BeepORM.userRepository.nativeDelete(user);
+    await deactivateTokens(user);
 
-    deactivateTokens(user);
+    await BeepORM.userRepository.nativeDelete(user);
 
     return true;
 }
