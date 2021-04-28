@@ -27,7 +27,8 @@ export class RiderResolver {
             origin: input.origin,
             destination: input.destination,
             state: 0,
-            rider: ctx.user
+            rider: ctx.user,
+            beeper: beeper
         };
 
         const q = new QueueEntry();
