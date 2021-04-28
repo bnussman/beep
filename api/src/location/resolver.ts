@@ -34,7 +34,7 @@ export class LocationResolver {
                 BeepORM.locationRepository.persist(entry);
             }
 
-            pubSub.publish("Location" + ctx.user.id, ctx.user.location);
+            pubSub.publish("Location" + ctx.user.id, location);
 
             await BeepORM.locationRepository.flush();
 
