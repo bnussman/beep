@@ -464,6 +464,7 @@ export type SignUpInput = {
   venmo?: Maybe<Scalars['String']>;
   cashapp?: Maybe<Scalars['String']>;
   password: Scalars['String'];
+  picture: Scalars['Upload'];
   pushToken?: Maybe<Scalars['String']>;
 };
 
@@ -672,6 +673,7 @@ export type SignUpMutationVariables = Exact<{
   cashapp?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   password: Scalars['String'];
+  picture: Scalars['Upload'];
   pushToken?: Maybe<Scalars['String']>;
 }>;
 
@@ -1307,9 +1309,9 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
 export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $pushToken: String) {
+    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!, $pushToken: String) {
   signup(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password, pushToken: $pushToken}
+    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password, pushToken: $pushToken, picture: $picture}
   ) {
     tokens {
       id
@@ -1341,6 +1343,7 @@ export type SignUpMutationFn = ApolloReactCommon.MutationFunction<SignUpMutation
  *      cashapp: // value for 'cashapp'
  *      username: // value for 'username'
  *      password: // value for 'password'
+ *      picture: // value for 'picture'
  *      pushToken: // value for 'pushToken'
  *   },
  * });

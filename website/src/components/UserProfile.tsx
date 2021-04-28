@@ -9,7 +9,7 @@ import BeepHistoryTable from './BeepHistoryTable';
 import QueueTable from './QueueTable';
 import { UserRole } from '../types/User';
 import {gql, useMutation} from '@apollo/client';
-import {RemoveUserMutation, User} from '../generated/graphql';
+import {RemoveUserMutation, User, Location, Maybe} from '../generated/graphql';
 import {printStars} from '../routes/admin/ratings';
 
 const RemoveUser = gql`
@@ -19,7 +19,7 @@ const RemoveUser = gql`
 `;
 
 interface Props {
-    user: Partial<User>;
+    user: any;
     admin?: boolean;
 }
 

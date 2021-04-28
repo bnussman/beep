@@ -1,16 +1,15 @@
-import React, { FormEvent, useContext, useState, useEffect } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Link, Redirect, useHistory } from "react-router-dom";
 import { TextInput } from '../components/Input';
 import { gql, useMutation } from '@apollo/client';
-import { AddProfilePictureMutation, SignUpMutation } from '../generated/graphql';
+import { SignUpMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
-import { UploadPhoto } from './EditProfile';
 import {client} from '../utils/Apollo';
 import {GetUserData} from '../App';
 
 const SignUpGraphQL = gql`
-    mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
+mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!) {
         signup(input: {
             first: $first,
             last: $last,
@@ -20,6 +19,7 @@ const SignUpGraphQL = gql`
             cashapp: $cashapp,
             username: $username,
             password: $password,
+            picture: $picture
         }) {
             tokens {
                 id
@@ -45,7 +45,6 @@ function SignUp() {
     const [photo, setPhoto] = useState();
     const [photoError, setPhotoError] = useState<boolean>(false);
     const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
-    const [upload] = useMutation<AddProfilePictureMutation>(UploadPhoto);
 
     async function handleSignUp(e: FormEvent): Promise<void> {
         e.preventDefault();
@@ -67,6 +66,7 @@ function SignUp() {
                 cashapp: cashapp,
                 username: username, 
                 password: password,
+                picture: photo
             }});
 
             if (result) {
@@ -80,19 +80,6 @@ function SignUp() {
         catch (error) {
 
         }
-    }
-
-    useEffect(() => {
-        uploadPhoto();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
-
-    async function uploadPhoto() {
-       if (!photo) return;
-
-       await upload({ variables: {
-           picture: photo
-       }});
     }
 
     if (user) {

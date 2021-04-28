@@ -3,7 +3,6 @@ import { Image, StyleSheet } from 'react-native';
 import { Text, Layout, Button, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { LoadingIndicator } from "../../utils/Icons";
 import { BackIcon } from '../../utils/Icons';
-import AsyncStorage from '@react-native-community/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import {gql, useMutation} from '@apollo/client';
 import {AddProfilePictureMutation} from '../../generated/graphql';
@@ -16,7 +15,7 @@ interface Props {
     navigation: any;
 }
 
-const UploadPhoto = gql`
+export const UploadPhoto = gql`
     mutation AddProfilePicture ($picture: Upload!){
         addProfilePicture (picture: $picture) {
             photoUrl
@@ -24,7 +23,7 @@ const UploadPhoto = gql`
     }
 `;
 
-function generateRNFile(uri: string, name: string) {
+export function generateRNFile(uri: string, name: string) {
     return uri ? new ReactNativeFile({
         uri,
         type: mime.lookup(uri) || 'image',

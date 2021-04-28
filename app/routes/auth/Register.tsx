@@ -11,15 +11,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../../generated/graphql';
 import { isMobile } from '../../utils/config';
+import { generateRNFile } from '../settings/ProfilePhoto';
 
 interface Props {
     navigation: any;
 }
 
-let result: any;
+let real: any;
 
 const SignUp = gql`
-mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $pushToken: String) {
+mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!, $pushToken: String) {
         signup(input: {
             first: $first,
             last: $last,
@@ -30,6 +31,7 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
             username: $username,
             password: $password,
             pushToken: $pushToken
+            picture: $picture
         }) {
             tokens {
                 id
@@ -49,7 +51,7 @@ function RegisterScreen(props: Props) {
     const [cashapp, setCashapp] = useState<string>();
     const [username, setUsername] = useState<string>();
     const [password, setPassword] = useState<string>();
-    const [photo, setPhoto] = useState<string>();
+    const [photo, setPhoto] = useState<any>();
 
     const [signup, { loading, data }] = useMutation<SignUpMutation>(SignUp);
 
@@ -64,6 +66,7 @@ function RegisterScreen(props: Props) {
                 cashapp: cashapp,
                 username: username, 
                 password: password,
+                picture: real,
                 pushToken: isMobile ? await getPushToken() : undefined
             }});
 
@@ -84,15 +87,35 @@ function RegisterScreen(props: Props) {
     }
 
     async function handlePhoto() {
-        result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsMultipleSelection: false,
-            allowsEditing: true,
-            aspect: [4, 3],
-            base64: false
-        });
-        setPhoto(result.uri);
-        console.log(photo);
+       const result = await ImagePicker.launchImageLibraryAsync({
+           mediaTypes: ImagePicker.MediaTypeOptions.Images,
+           allowsMultipleSelection: false,
+           allowsEditing: true,
+           aspect: [4, 3],
+           base64: false
+       });
+
+       if (result.cancelled) {
+           return;
+       }
+
+       if (!isMobile) {
+           console.log("Running as if this is a web device");
+           const res = await fetch(result.uri);
+           const blob = await res.blob();
+           const fileType = blob.type.split("/")[1];
+           const file = new File([blob], "photo." + fileType);
+           console.log(file);
+           real = file;
+           setPhoto(result);
+       }
+       else {
+           if (!result.cancelled) {
+               setPhoto(result);
+               const file = generateRNFile(result.uri, "file.jpg");
+               real = file;
+           }
+       }
     }
 
     const BackAction = () => (
@@ -167,7 +190,7 @@ function RegisterScreen(props: Props) {
                             onSubmitEditing={() => handleSignUp()}
                         />
                         <Layout style={{flex: 1, flexDirection: "row", justifyContent: "center", marginTop: 5, marginBottom: 5}}>
-                            {photo && <Image source={{ uri: photo }} style={{ width: 50, height: 50, borderRadius: 50/ 2, marginTop: 10, marginBottom: 10, marginRight: 10 }} />}
+                            {photo && <Image source={{ uri: photo.uri }} style={{ width: 200, height: 200, borderRadius: 200/ 2, marginTop: 10, marginBottom: 10 }} />}
                             <Button
                                 onPress={() => handlePhoto()}
                                 accessoryRight={PhotoIcon}

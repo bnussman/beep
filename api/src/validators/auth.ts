@@ -1,6 +1,8 @@
 import { IsEmail, IsMobilePhone, IsOptional, IsString } from 'class-validator';
+import {Upload} from '../account/resolver';
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
+import {GraphQLUpload} from 'graphql-upload';
 
 @InputType()
 export class LoginInput implements Partial<User> {
@@ -53,6 +55,9 @@ export class SignUpInput implements Partial<User> {
   @Field()
   @IsString()
   public password!: string;
+
+  @Field(() => GraphQLUpload)
+  public picture!: Upload;
 
   @Field({ nullable: true })
   @IsString()

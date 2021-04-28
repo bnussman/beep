@@ -8,6 +8,9 @@ import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'typ
 import { LoginInput, SignUpInput } from '../validators/auth';
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
+import {GraphQLUpload} from 'graphql-upload';
+import { Upload } from '../account/resolver';
+import AWS from 'aws-sdk';
 
 @ObjectType()
 class Auth {
@@ -51,6 +54,7 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async signup(@Arg('input') input: SignUpInput): Promise<Auth> {
+        console.log(input);
         if (!input.venmo && !input.cashapp) throw new Error("Please enter at least one form of payment");
 
         if (input.venmo?.charAt(0) == '@') {
@@ -60,12 +64,36 @@ export class AuthResolver {
         if (input.cashapp?.charAt(0) == '@' || input.cashapp?.charAt(0) == '$') {
             input.cashapp = input.cashapp.substr(1, input.cashapp.length);
         }
+        
+        let { createReadStream, filename, mimetype } = await input.picture;
 
         const user = new User();
+
+        const s3 = new AWS.S3({
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET
+        });
+
+        const extention = filename.substr(filename.lastIndexOf("."), filename.length);
+
+        filename = user.id + "-" + Date.now() + extention;
+
+        const uploadParams = {
+            Body: createReadStream(),
+            Key: "images/" + filename,
+            Bucket: "ridebeepapp",
+            ACL: "public-read"
+        };
+
+        const result = await s3.upload(uploadParams).promise();
+
+        if (!result) {
+            throw new Error("No result from AWS");
+        }
     
         input.password = sha256(input.password);
 
-        wrap(user).assign(input);
+        wrap(user).assign({ ...input, photoUrl: result.Location });
 
         await BeepORM.userRepository.persistAndFlush(user);
     

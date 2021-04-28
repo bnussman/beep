@@ -463,6 +463,7 @@ export type SignUpInput = {
   venmo?: Maybe<Scalars['String']>;
   cashapp?: Maybe<Scalars['String']>;
   password: Scalars['String'];
+  picture: Scalars['Upload'];
   pushToken?: Maybe<Scalars['String']>;
 };
 
@@ -762,6 +763,7 @@ export type SignUpMutationVariables = Exact<{
   cashapp?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   password: Scalars['String'];
+  picture: Scalars['Upload'];
 }>;
 
 
@@ -1022,7 +1024,11 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating'>
+    & Pick<User, 'id' | 'name' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating'>
+    & { location?: Maybe<(
+      { __typename?: 'Location' }
+      & Pick<Location, 'latitude' | 'longitude'>
+    )> }
   ) }
 );
 
@@ -1595,9 +1601,9 @@ export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPassword
 export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
 export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!) {
+    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!) {
   signup(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password}
+    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password, picture: $picture}
   ) {
     tokens {
       id
@@ -1629,6 +1635,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      cashapp: // value for 'cashapp'
  *      username: // value for 'username'
  *      password: // value for 'password'
+ *      picture: // value for 'picture'
  *   },
  * });
  */
@@ -2273,12 +2280,12 @@ export const GetUserDocument = gql`
     query GetUser($id: String!) {
   getUser(id: $id) {
     id
-    first
-    last
+    name
     isBeeping
     isStudent
     role
     venmo
+    cashapp
     singlesRate
     groupRate
     capacity
@@ -2288,6 +2295,10 @@ export const GetUserDocument = gql`
     phone
     username
     rating
+    location {
+      latitude
+      longitude
+    }
   }
 }
     `;
