@@ -18,7 +18,12 @@ function ResetPassword({ match }) {
     
     async function handleResetPassword(e: FormEvent): Promise<void> {
         e.preventDefault();
-        await reset({ variables: { id: id, password: password }});
+        try {
+            await reset({ variables: { id: id, password: password }});
+        }
+        catch (error) {
+            //...
+        }
     }
 
     return (
@@ -42,7 +47,7 @@ function ResetPassword({ match }) {
                 <button 
                     type="submit"
                     disabled={data?.resetPassword}
-                    className={data.resetPassword ? "px-4 py-2 mb-4 font-bold text-white bg-gray-700 rounded shadow hover:bg-gray-700 focus:shadow-outline focus:outline-none" : "px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-400 focus:shadow-outline focus:outline-none"}
+                    className={data?.resetPassword ? "px-4 py-2 mb-4 font-bold text-white bg-gray-700 rounded shadow hover:bg-gray-700 focus:shadow-outline focus:outline-none" : "px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-400 focus:shadow-outline focus:outline-none"}
                 >
                     Reset Password
                 </button>

@@ -160,13 +160,15 @@ export class AuthResolver {
             throw new Error("This reset password request does not exist");
         }
 
-        if ((entry.time.getMilliseconds() + (3600 * 1000)) < Date.now()) {
+        if ((entry.time.getTime() + (3600 * 1000)) < Date.now()) {
             throw new Error("Your verification token has expired. You must re-request to reset your password.");
         }
 
         entry.user.password = sha256(password);
 
         deactivateTokens(entry.user);
+
+        await BeepORM.forgotPasswordRepository.removeAndFlush(entry);
 
         await BeepORM.userRepository.persistAndFlush(entry.user);
 
