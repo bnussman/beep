@@ -46,7 +46,7 @@ export function RatingsIMadeScreen(props: Props) {
                 }}
                 onPress={() => props.navigation.push("Profile", { id: item.rated.id })}
                 title={`You rated ${item.rated.name}`}
-                description={`Message: ${item.message}\nStars: ${printStars(item.stars)} ${item.stars}\n`}
+                description={`Message: ${item.message || "N/A"}\nStars: ${printStars(item.stars)} ${item.stars}\n`}
             />
         );
         
