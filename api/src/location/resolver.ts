@@ -1,9 +1,18 @@
 import { wrap } from '@mikro-orm/core';
-import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import {BeepORM} from '../app';
 import { Location } from '../entities/Location';
 import { Context } from '../utils/context';
 import { LocationInput } from '../validators/location';
+
+@ObjectType()
+class LocationData {
+    @Field()
+    public longitude!: number;
+
+    @Field()
+    public latitude!: number;
+}
 
 @Resolver(Location)
 export class LocationResolver {
@@ -25,7 +34,7 @@ export class LocationResolver {
                 BeepORM.locationRepository.persist(entry);
             }
 
-            pubSub.publish("Location" + ctx.user.id, new Location({ ...location, user: ctx.user }));
+            pubSub.publish("Location" + ctx.user.id, ctx.user.location);
 
             await BeepORM.locationRepository.flush();
 
@@ -56,15 +65,11 @@ export class LocationResolver {
         return true;
     }
 
-    @Subscription(() => Location, {
+    @Subscription(() => LocationData, {
         nullable: true,
         topics: ({ args }) => "Location" + args.topic,
     })
-    public getLocationUpdates(@Arg("topic") topic: string, @Root() entry: Location): Location {
+    public getLocationUpdates(@Arg("topic") topic: string, @Root() entry: Location): LocationData {
         return entry;
     }
-}
-
-function warp(location: Location | undefined) {
-    throw new Error('Function not implemented.');
 }
