@@ -36,7 +36,7 @@ export class LocationResolver {
         }
          */
         try {
-            await BeepORM.userRepository.populate(ctx.user, ['location', 'location.user']);
+            await BeepORM.userRepository.populate(ctx.user, ['location']);
 
             if (ctx.user.location) {
                 wrap(ctx.user.location).assign(location);
@@ -45,7 +45,7 @@ export class LocationResolver {
                 ctx.user.location = new Location({ ...location, user: ctx.user });
             }
 
-            pubSub.publish("Location" + ctx.user.id, ctx.user.location);
+            pubSub.publish("Location" + ctx.user.id, new Location({ ...location, user: ctx.user }));
 
             await BeepORM.userRepository.persistAndFlush(ctx.user);
         }
