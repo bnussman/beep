@@ -81,6 +81,8 @@ export class RiderResolver {
             entry.location = undefined;
         }
 
+        console.log(entry.beeper.location);
+
         return entry;
     }
     
