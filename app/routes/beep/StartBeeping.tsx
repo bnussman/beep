@@ -334,7 +334,6 @@ export function StartBeepingScreen(props: Props) {
         if (data?.getQueue && data.getQueue.length > 0) {
             return (
                 <Layout style={styles.container}>
-                    {loading && <Text>Loading</Text>}
                     <Toggle isBeepingState={isBeeping} onToggle={async (value) => toggleSwitchWrapper(value)}/>
                     <List
                         style={styles.list}
@@ -463,6 +462,14 @@ export function StartBeepingScreen(props: Props) {
                                     <Layout style={styles.row}>
                                         <Text category='h6'>Group Size</Text>
                                         <Text style={styles.rowText}>{item.groupSize}</Text>
+                                    </Layout>
+                                    <Layout style={styles.row}>
+                                        <Text category='h6'>Origin</Text>
+                                        <Text style={styles.rowText}>{item.origin}</Text>
+                                    </Layout>
+                                    <Layout style={styles.row}>
+                                        <Text category='h6'>Destination</Text>
+                                        <Text style={styles.rowText}>{item.destination}</Text>
                                     </Layout>
                                     <Layout style={styles.row}>
                                         <Layout style={styles.layout}>
