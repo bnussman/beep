@@ -43,7 +43,6 @@ function Login() {
                 localStorage.setItem('user', JSON.stringify(result.data.login));
                 await client.resetStore();
                 await client.query({ query: GetUserData });
-                //await client.query({ query: GetUserData, });
                 history.push('/')
             }
 
@@ -72,6 +71,7 @@ function Login() {
                         rounded={'lg'}
                         boxShadow={'lg'}
                         p={8}>
+                        <form onSubmit={handleLogin}>
                         <Stack spacing={4}>
                             {error && <Error error={error}/>}
                             <FormControl id="email">
@@ -97,6 +97,7 @@ function Login() {
                                     <Link to='password/forgot' color={'blue.400'}>Forgot password?</Link>
                                 </Stack>
                                 <Button
+                                    type="submit"
                                     onClick={handleLogin}
                                     isLoading={loading}
                                     bg={'yellow.400'}
@@ -108,6 +109,7 @@ function Login() {
                                 </Button>
                             </Stack>
                         </Stack>
+                        </form>
                     </Box>
                 </Stack>
             </Flex>

@@ -37,18 +37,16 @@ const BeepsGraphQL = gql`
     }
 `;
 function Beeps() {
-    const { loading, error, data, refetch } = useQuery<GetBeepsQuery>(BeepsGraphQL, { variables: { offset: 0, show: 25 }});
-    const [currentPage, setCurrentPage] = useState<number>(1);
     const pageLimit = 5;
+    const { loading, error, data, refetch } = useQuery<GetBeepsQuery>(BeepsGraphQL, { variables: { offset: 0, show: pageLimit }});
+    const [currentPage, setCurrentPage] = useState<number>(1);
 
     async function fetchBeeps(page: number) {
         refetch({
-            offset: page 
+            offset: page,
+            show: pageLimit
         })
     }
-
-    if (loading) return <p>Loading</p>;
-    if (error) console.log(error);
 
     return <>
         <Heading>Beeps</Heading>

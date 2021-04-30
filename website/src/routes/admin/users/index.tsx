@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { formatPhone } from '../../../utils/formatters';
 import { Card } from '../../../components/Card';
 import { Indicator } from '../../../components/Indicator';
 import Pagination from '../../../components/Pagination';
 import {gql, useQuery} from '@apollo/client';
 import { GetUsersQuery } from '../../../generated/graphql';
+import { Link } from 'react-router-dom';
 import {
   Table,
   Thead,
@@ -13,6 +14,11 @@ import {
   Th,
   Td,
   Heading,
+  Image,
+  Flex,
+  Box,
+  Text,
+  Stack
 } from "@chakra-ui/react"
 
 const UsersGraphQL = gql`
@@ -73,7 +79,15 @@ function Users() {
                         return (
                             <Tr key={user.id}>
                                 <Td>
-                                    {user.name}
+                                    <Box as={Link} to={`users/${user.id}`}>
+                                        <Flex align="center">
+                                            <Image boxSize="50px" mr={2} src={user.photoUrl} borderRadius="full"/>
+                                            <Stack>
+                                                <Text>{user.name}</Text>
+                                                {/*<Text fontSize="xs" color="gray.500">@{user.username}</Text>*/}
+                                            </Stack>
+                                        </Flex>
+                                    </Box>
                                 </Td>
                                 <Td><a href={`mailto:${user.email}`} rel="noreferrer" target="_blank">{user.email}</a></Td>
                                 <Td>{formatPhone(user.phone)}</Td>

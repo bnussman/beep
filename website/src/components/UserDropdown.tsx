@@ -27,9 +27,6 @@ export function UserDropdown() {
 
     async function handleLogout() {
         try {
-            await logout();
-            localStorage.removeItem('user');
-
             client.writeQuery({
                 query: GetUserData,
                 data: {
@@ -37,6 +34,10 @@ export function UserDropdown() {
                 }
             });
             history.push("/");
+
+            await logout();
+            localStorage.removeItem('user');
+
         }
         catch(error) {
             console.error(error);
