@@ -132,6 +132,7 @@ export class BeeperResolver {
 
         for (const entry of ctx.user.queue) {
             if (entry.id == id) {
+                sendNotification(entry.rider.pushToken, "Beep Canceled", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
                 pubSub.publish("Rider" + entry.rider.id, null);
             }
             else {
