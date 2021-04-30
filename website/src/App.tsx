@@ -18,8 +18,9 @@ import Admin from './routes/admin';
 import Privacy from './routes/Privacy';
 import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
-import BeepAppBar from './components/AppBar';
+import NavBar from './components/NavBar';
 import About from './routes/About';
+import { ChakraProvider, extendTheme } from "@chakra-ui/react"
 
 export const GetUserData = gql`
     query GetUserData {
@@ -129,12 +130,9 @@ function Beep() {
     return (
         <ApolloProvider client={client}>
         <ThemeContext.Provider value={{ theme, setTheme }}>
-            {
-                //<UserContext.Provider value={data?.getUser?.id ? { ...data?.getUser } : undefined}>
-            }
             <UserContext.Provider value={data?.getUser}>
             <Router>
-                <BeepAppBar/>
+                <NavBar/>
                 <Switch>
                     <Route path="/password/forgot" component={ForgotPassword} />
                     <Route path="/password/reset/:id" component={ResetPassword} />
@@ -158,12 +156,21 @@ function Beep() {
         </ApolloProvider>
     );
 }
+const theme = extendTheme({
+    fonts: {
+        heading: "Poppins",
+        body: "Poppins",
+    },
+})
+
 
 function App() {
     return (
-        <ApolloProvider client={client}>
-            <Beep/>
-        </ApolloProvider>
+        <ChakraProvider theme={theme}>
+            <ApolloProvider client={client}>
+                <Beep/>
+            </ApolloProvider>
+        </ChakraProvider>
     );
 }
 

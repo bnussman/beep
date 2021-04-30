@@ -1,12 +1,12 @@
 import { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect, Link, useHistory } from "react-router-dom";
-import { TextInput } from '../components/Input';
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { GetUserData } from '../App';
 import {client} from '../utils/Apollo';
+import { Box, Button, Input } from "@chakra-ui/react"
 
 const LoginGraphQL = gql`
     mutation Login($username: String!, $password: String!) {
@@ -58,25 +58,24 @@ function Login() {
     }
 
     return (
-        <div className="px-4 mx-auto lg:container">
+        <Box>
             {error && <Error error={error}/>}
             <form onSubmit={handleLogin}>
-                <TextInput
-                    className="mb-4"
-                    id="username"
-                    label="Username"
+                <Input
+                    placeholder="Username"
                     onChange={(value: any) => setUsername(value.target.value)}
                 />
-                <TextInput
-                    className="mb-4"
-                    id="password"
-                    type="password"
-                    label="Password"
+                <Input
+                    placeholder="Password"
                     onChange={(value: any) => setPassword(value.target.value)}
                 />
-                <button type="submit" className="px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-400 focus:shadow-outline focus:outline-none">
-                    {loading ? "Logging in..." : "Login"}
-                </button>
+                <Button
+                    mt={4}
+                    isLoading={loading}
+                    type="submit"
+                >
+                    Login
+                </Button>
             </form>
 
             <div className="mb-4">
@@ -86,7 +85,7 @@ function Login() {
             <div>
                 <Link to="/signup" className="text-gray-500">Sign Up</Link>
             </div>
-        </div>
+        </Box>
     );
 }
 
