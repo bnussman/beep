@@ -8,7 +8,6 @@ import { Context } from '../utils/context';
 import { EditAccountInput } from '../validators/account';
 import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
-import { Stream } from "stream";
 import AWS from 'aws-sdk';
 
 @Resolver()

@@ -1,8 +1,8 @@
 import { IsEmail, IsMobilePhone, IsOptional, IsString } from 'class-validator';
-import {Upload} from '../account/resolver';
+import { Upload } from '../account/helpers';
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
-import {GraphQLUpload} from 'graphql-upload';
+import { GraphQLUpload } from 'graphql-upload';
 
 @InputType()
 export class LoginInput implements Partial<User> {
