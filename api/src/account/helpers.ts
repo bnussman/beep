@@ -1,6 +1,17 @@
 import { deactivateTokens } from "../auth/helpers";
 import { BeepORM } from "../app";
 import { User } from '../entities/User';
+import { Stream } from "stream";
+
+/**
+ * Used for handling GraphQL Uploads
+ */
+export interface Upload {
+    filename: string;
+    mimetype: string;
+    encoding: string;
+    createReadStream: () => Stream;
+}
 
 /**
  * checks last 4 characters of an email address

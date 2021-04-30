@@ -1,22 +1,15 @@
 import { sha256 } from 'js-sha256';
 import { createVerifyEmailEntryAndSendEmail } from "../auth/helpers";
-import { isEduEmail, deleteUser } from './helpers';
+import { isEduEmail, deleteUser, Upload } from './helpers';
 import { BeepORM } from '../app';
 import { wrap } from '@mikro-orm/core';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { EditAccountInput } from '../validators/account';
 import { User } from '../entities/User';
-import {GraphQLUpload} from 'graphql-upload';
+import { GraphQLUpload } from 'graphql-upload';
 import { Stream } from "stream";
 import AWS from 'aws-sdk';
-
-export interface Upload {
-  filename: string;
-  mimetype: string;
-  encoding: string;
-  createReadStream: () => Stream;
-}
 
 @Resolver()
 export class AccountResolver {
@@ -93,7 +86,6 @@ export class AccountResolver {
             throw new Error("Please ensure you have a valid email set in your profile. Visit your app or our website to re-send a varification email.");
         }
 
-        //if the user's current email is not the same as the email they are trying to verify dont prcede with the request
         if (entry.email !== usersEmail) {
             await BeepORM.verifyEmailRepository.removeAndFlush(entry);
             throw new Error("You tried to verify an email address that is not the same as your current email.");

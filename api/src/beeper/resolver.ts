@@ -33,8 +33,6 @@ export class BeeperResolver {
     @Authorized()
     public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
         const queueEntry = await BeepORM.queueEntryRepository.findOneOrFail(input.queueId, { populate: ["rider", "beeper"], refresh: true });
-        //const result = await ctx.user.queue.matching({ where: { id: input.queueId }});
-        //const queueEntry = result[0];
 
         if (input.value == 'accept' || input.value == 'deny') {
             const numRidersBefore = await BeepORM.queueEntryRepository.count({ start: { $lt: queueEntry.start }, isAccepted: false });
