@@ -39,7 +39,7 @@ const BeepsGraphQL = gql`
 function Beeps() {
     const { loading, error, data, refetch } = useQuery<GetBeepsQuery>(BeepsGraphQL, { variables: { offset: 0, show: 25 }});
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageLimit = 25;
+    const pageLimit = 5;
 
     async function fetchBeeps(page: number) {
         refetch({

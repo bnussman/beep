@@ -1,11 +1,12 @@
-import {Box, Button, Flex, Spacer, Text} from "@chakra-ui/react";
+import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
+import {Box, Button, ButtonGroup, Flex, Spacer, Text} from "@chakra-ui/react";
 import React from "react";
 
 function PagElement(props) {
 	return (
-        <span>
+        <Text color={props.active ? "yellow.400" : undefined}>
 			{props.children}
-		</span>
+		</Text>
 	);
 }
 
@@ -23,7 +24,7 @@ function PagLeft(props) {
 			disabled={props.disabled}
 			onClick={props.onClick}
         >
-            Left
+            <ChevronLeftIcon/>
 		</Button>
 	)
 }
@@ -34,7 +35,7 @@ function PagRight(props) {
 			disabled={props.disabled}
 			onClick={props.onClick}
         >
-            Right 
+            <ChevronRightIcon/>
 		</Button>
 	)
 }
@@ -115,17 +116,19 @@ export default function Pagination({
 			}
                 <Spacer />
                 <Box>
-                    <PagLeft disabled={currentPage === 1} onClick={decrement} />
-                    {
-                        pages.map((page, index) => {
-                            return page
-                                ? <PagButton key={index} active={currentPage === page} onClick={() => navigateTo(page)}>
-                                    {page}
-                                </PagButton>
-                                : <PagElement key={index}>...</PagElement>
-                        })
-                    }
-                    <PagRight disabled={currentPage === pageCount} onClick={increment} />
+                    <ButtonGroup isAttached>
+                        <PagLeft disabled={currentPage === 1} onClick={decrement} />
+                        {
+                            pages.map((page, index) => {
+                                return page
+                                    ? <PagButton key={index} active={currentPage === page} onClick={() => navigateTo(page)}>
+                                        {page}
+                                    </PagButton>
+                                    : <PagElement key={index}>...</PagElement>
+                            })
+                        }
+                        <PagRight disabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
+                    </ButtonGroup>
                 </Box>
             </Flex>
         </Box>

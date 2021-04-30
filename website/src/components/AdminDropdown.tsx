@@ -1,3 +1,4 @@
+import {SettingsIcon} from "@chakra-ui/icons";
 import {
   Menu,
   MenuButton,
@@ -12,10 +13,11 @@ export function AdminDropdown() {
         <Menu>
             <Button
                 as={MenuButton}
+                leftIcon={<SettingsIcon />}
                 variant={'solid'}
                 colorScheme="brand"
                 color="white"
-                size={'sm'}
+                //size={'sm'}
                 mr={4}
                 Action
             >
