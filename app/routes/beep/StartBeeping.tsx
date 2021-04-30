@@ -436,7 +436,7 @@ export function StartBeepingScreen(props: Props) {
                                             Get Directions for Beep
                                         </Button>
                                     }
-                                    {index == 0 && <ActionButton item={item}/>}
+                                    <ActionButton item={item} index={index} />
                                 </Card>
 
                                 :

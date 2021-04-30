@@ -114,11 +114,45 @@ export class BeeperResolver {
             entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, start: { $lt: entry.start } });
 
             if (entry.state != 1) {
-                entry.location = undefined;
+                entry.beeper.location = undefined;
             }
 
             pubSub.publish("Rider" + entry.rider.id, entry);
         }
+    }
+
+    @Mutation(() => Boolean)
+    @Authorized()
+    public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
+        const entry = BeepORM.queueEntryRepository.getReference(id);
+
+        await ctx.user.queue.init({ orderBy: { start: QueryOrder.ASC }, populate: ['rider', 'beeper', 'beeper.location'] });
+
+        pubSub.publish("Beeper" + ctx.user.id, ctx.user.queue.getItems().filter(entry => entry.id != id));
+
+        for (const entry of ctx.user.queue) {
+            if (entry.id == id) {
+                sendNotification(entry.rider.pushToken, "Beep Canceled", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
+                pubSub.publish("Rider" + entry.rider.id, null);
+            }
+            else {
+                entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: ctx.user, start: { $lt: entry.start } });
+
+                if (entry.state != 1) {
+                    entry.beeper.location = undefined;
+                }
+
+                pubSub.publish("Rider" + entry.rider.id, entry);
+            }
+        }
+
+        BeepORM.queueEntryRepository.removeAndFlush(entry);
+
+        ctx.user.queueSize--;
+
+        BeepORM.userRepository.persistAndFlush(ctx.user);
+
+        return true;
     }
 
     @Subscription(() => [QueueEntry], {
