@@ -10,6 +10,7 @@ import { QueryOrder } from '@mikro-orm/core';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { GraphQLResolveInfo } from 'graphql';
 import { UserRole } from '../entities/User';
+import {sendNotification} from '../utils/notifications';
 
 @ObjectType()
 class RatingsResponse extends Paginated(Rating) {}
@@ -20,7 +21,7 @@ export class RatingResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async rateUser(@Ctx() ctx: Context, @Arg('input') input: RatingInput): Promise<boolean> {
-        const user = await BeepORM.userRepository.findOneOrFail(input.userId, true);
+        const user = await BeepORM.userRepository.findOneOrFail(input.userId);
 
         const beep = input.beepId ? BeepORM.em.getReference(Beep, input.beepId) : undefined;
         
@@ -36,8 +37,15 @@ export class RatingResolver {
         }
 
         user.ratings.add(rating);
-        
-        await BeepORM.userRepository.persistAndFlush(user);
+
+        try { 
+            await BeepORM.userRepository.persistAndFlush(user);
+        }
+        catch (e) {
+            console.log(e)
+        }
+
+        sendNotification(user.pushToken, "You got rated!", `${ctx.user.name()} rated you ${input.stars} stars!`);
 
         return true;
     }

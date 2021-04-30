@@ -47,7 +47,13 @@ function LeaveButton(props: Props) {
 
     async function leaveQueue(): Promise<void> {
         setIsLoading(true);
-        await leave();
+        try {
+            await leave();
+        }
+        catch (error) {
+            alert(error);
+            setIsLoading(false);
+        }
         props.refetch();
     }
 

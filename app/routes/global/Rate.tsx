@@ -29,22 +29,25 @@ const RateUser = gql`
 export function RateScreen(props: Props) {
     const [stars, setStars] = useState<number>(0);
     const [message, setMessage] = useState<string>();
-    const [rate, { data, loading, error }] = useMutation<RateUserMutation>(RateUser, { errorPolicy: 'all' });
+    const [rate, { loading }] = useMutation<RateUserMutation>(RateUser, { errorPolicy: 'all' });
 
     async function rateUser() {
         if (stars < 1) return alert("Please rate the user");
-
-        const result = await rate({
-            refetchQueries: () => ["GetRateData"],
-            variables: {
-                userId: props.route.params.id,
-                beepId: props.route.params.beep,
-                message: message,
-                stars: stars
-            }
-        });
-        if (result) props.navigation.goBack();
-        else alert(error);
+        try {
+            const result = await rate({
+                refetchQueries: () => ["GetRateData"],
+                variables: {
+                    userId: props.route.params.id,
+                    beepId: props.route.params.beep,
+                    message: message,
+                    stars: stars
+                }
+            });
+            if (result) props.navigation.goBack();
+        }
+        catch (error) {
+            alert(error);
+        }
     }
 
     const BackAction = () => (

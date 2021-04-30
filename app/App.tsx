@@ -88,6 +88,16 @@ function Beep() {
     }
 
     useEffect(() => {
+        const init = async () => {
+            const storedTheme = await AsyncStorage.getItem('theme') as unknown as "light" | "dark" | undefined;
+
+            if (storedTheme && (theme !== storedTheme)) setTheme(storedTheme);
+        }
+
+        init();
+    }, []);
+
+    useEffect(() => {
         if (data?.getUser.id) {
             if (isMobile) updatePushToken();
 

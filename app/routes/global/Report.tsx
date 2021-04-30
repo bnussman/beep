@@ -21,17 +21,21 @@ export function ReportScreen(props: Props) {
     const [reason, setReason] = useState<string>();
     const [report, { data, loading, error }] = useMutation<ReportUserMutation>(ReportUser, { errorPolicy: 'all' });
 
-        async function reportUser() {
-                const result = await report({
-                    variables: {
-                        userId: props.route.params.id,
-                        beepId: props.route.params.beep,
-                        reason: reason
-                    }
-                });
-                if (result) alert("Successfully Reported User");
-                else alert(error);
+    async function reportUser() {
+        try {
+            const result = await report({
+                variables: {
+                    userId: props.route.params.id,
+                    beepId: props.route.params.beep,
+                    reason: reason
+                }
+            });
+            if (result) alert("Successfully Reported User");
         }
+        catch (error) {
+            alert(error);
+        }
+    }
 
         const BackAction = () => (
             <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>

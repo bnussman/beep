@@ -109,6 +109,7 @@ let sub: any;
 
 export function MainFindBeepScreen(props: Props) {
     const user = useContext(UserContext);
+
     const { subscribeToMore, loading, data, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus);
     const [getETA, { data: eta, loading: etaLoading, error: etaError}] = useLazyQuery<GetEtaQuery>(GetETA);
 
@@ -126,11 +127,12 @@ export function MainFindBeepScreen(props: Props) {
     }
 
     async function updateETA(lat: number, long: number): Promise<void> {
-        const position = `${lat},${long}`;
-        getETA({ variables: {
-            start: position,
-            end: data?.getRiderStatus?.origin
-        }});
+        getETA({
+            variables: {
+                start: `${lat},${long}`,
+                end: data?.getRiderStatus?.origin
+            }
+        });
     }
 
     useEffect(() => {
@@ -328,7 +330,7 @@ export function MainFindBeepScreen(props: Props) {
                             {getCurrentStatusMessage()}
                         </Text>
                     </Card>
-                    {(data?.getRiderStatus.state == 1) &&
+                    {((data?.getRiderStatus.state == 1) && eta?.getETA) &&
                         <Layout>
                             <Card style={{marginTop: 10}}>
                                 <Text category='h6'>Arrival ETA</Text>

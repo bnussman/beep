@@ -117,8 +117,8 @@ export function StartBeepingScreen(props: Props) {
     const [groupRate, setGroupRate] = useState<string>(String(user.groupRate));
     const [capacity, setCapacity] = useState<string>(String(user.capacity));
 
-    const { subscribeToMore, loading, error, data, refetch } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
-    const [updateBeepSettings, { loading: loadingBeepSettings, error: beepSettingsError }] = useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
+    const { subscribeToMore, data, refetch } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
+    const [updateBeepSettings] = useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
     function toggleSwitchWrapper(value: boolean): void {
         if (isAndroid && value) {
@@ -141,23 +141,26 @@ export function StartBeepingScreen(props: Props) {
         }
     }
 
+    async function getBeepingLocationPermissions(): Promise<boolean> {
+        const { status } = await Permissions.askAsync(Permissions.LOCATION);
+
+        if (status !== 'granted') {
+            setIsBeeping(false);
+            alert("You must allow location to beep!");
+            return false;
+        }
+
+        return true;
+    }
+
     async function toggleSwitch(value: boolean): Promise<void> {
         setIsBeeping(value);
 
         if (value) {
-            //if we are turning on isBeeping, ensure we have location permission
-            const { status } = await Permissions.askAsync(Permissions.LOCATION);
-
-
-            if (status !== 'granted') {
-                setIsBeeping(false);
-                return alert("You must allow location to beep!");
-            }
-            //if user turns 'isBeeping' on (to true), subscribe to rethinkdb changes
+            if (!(await getBeepingLocationPermissions())) return;
             startLocationTracking();
         }
         else {
-            //if user turns 'isBeeping' off (to false), unsubscribe to rethinkdb changes
             stopLocationTracking();
         }
         
@@ -179,11 +182,7 @@ export function StartBeepingScreen(props: Props) {
                 }
             }
             else {
-                //Use native popup to tell user why they could not change their status
-                //Unupdate the toggle switch because something failed
-                //We redo our actions so the client does not have to wait on server to update the switch
                 setIsBeeping(!isBeeping);
-                //we also need to resubscribe to the socket
                 if (isBeeping) {
                     startLocationTracking();
                 }
@@ -193,7 +192,6 @@ export function StartBeepingScreen(props: Props) {
             }
         } 
         catch(error) {
-            //I dont know why this works
             setIsBeeping(isBeeping); 
             alert(error.message);
         }
@@ -224,23 +222,19 @@ export function StartBeepingScreen(props: Props) {
     }
 
     useEffect(() => {
-        if (user.isBeeping) sub();
 
-        AppState.addEventListener("change", handleAppStateChange);
+        const init = async () => {
+            if (user.isBeeping) {
+                if (!(await getBeepingLocationPermissions())) return;
+                startLocationTracking();
+                sub();
+            }
+        }
 
-
-        return () => {
-            AppState.removeEventListener("change", handleAppStateChange);
-        };
+        init();
     }, []);
 
-    function handleAppStateChange(nextAppState: string): void {
-        if(nextAppState === "active" && user.isBeeping) {
-            refetch();
-        }
-    }
-
-    function sub() {
+    function sub(): void {
         unsubscribe = subscribeToMore({
             document: GetQueue,
             variables: {
@@ -266,8 +260,8 @@ export function StartBeepingScreen(props: Props) {
     }
 
     function handleVenmo(groupSize: string | number, venmo: string): void {
-        if (groupSize > 1) {
-            Linking.openURL('venmo://paycharge?txn=pay&recipients='+ venmo + '&amount=' + user.groupRate + '&note=Beep');
+        if (Number(groupSize) > 1) {
+            Linking.openURL('venmo://paycharge?txn=pay&recipients='+ venmo + '&amount=' + user.groupRate * Number(groupSize) + '&note=Beep');
         }
         else {
             Linking.openURL('venmo://paycharge?txn=pay&recipients='+ venmo + '&amount=' + user.singlesRate + '&note=Beep');
@@ -513,7 +507,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
             });
         }
         catch(e) {
-            //...
+            Logger.error(e);
         }
 
     }

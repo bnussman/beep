@@ -111,7 +111,7 @@ export default class BeepAPIServer {
         server.applyMiddleware({ app });
 
         const live = app.listen(3001, () => {
-            console.info(`🚕 Server ready and has started! ${server.graphqlPath}`);
+            console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
         });
 
         server.installSubscriptionHandlers(live);
