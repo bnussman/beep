@@ -1,12 +1,11 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Card } from '../../../components/Card';
-import { Table, THead, TH, TBody, TR, TDText, TDButton, TDProfile } from '../../../components/Table';
-import { Heading3 } from '../../../components/Typography';
 import Pagination from '../../../components/Pagination';
 import {gql, useQuery} from '@apollo/client';
 import {GetRatingsQuery} from '../../../generated/graphql';
+import {Heading, Table, Tbody, Td, Th, Thead, Tr} from '@chakra-ui/react';
 
 dayjs.extend(relativeTime);
 
@@ -20,15 +19,13 @@ const RatesGraphQL = gql`
                 stars
                 rater {
                     id
-                    first
-                    last
+                    name
                     photoUrl
                     username
                 }
                 rated {
                     id
-                    first
-                    last
+                    name
                     photoUrl
                     username
                 }
@@ -61,7 +58,7 @@ function Ratings() {
     }
 
     return <>
-        <Heading3>Ratings</Heading3>
+        <Heading>Ratings</Heading>
 
         <Pagination
             resultCount={data?.getRatings.count}
@@ -72,38 +69,30 @@ function Ratings() {
 
         <Card>
             <Table>
-                <THead>
-                    <TH>Rater</TH>
-                    <TH>Rated</TH>
-                    <TH>Message</TH>
-                    <TH>Stars</TH>
-                    <TH>Date</TH>
-                    <TH> </TH>
-                </THead>
-                <TBody>
-                    {data?.getRatings && (data.getRatings.items).map(report => {
+                <Thead>
+                    <Th>Rater</Th>
+                    <Th>Rated</Th>
+                    <Th>Message</Th>
+                    <Th>Stars</Th>
+                    <Th>Date</Th>
+                </Thead>
+                <Tbody>
+                    {data?.getRatings && (data.getRatings.items).map(rate => {
                         return (
-                            <TR key={report.id}>
-                                <TDProfile
-                                    to={`users/${report.rater.id}`}
-                                    photoUrl={report.rater.photoUrl}
-                                    title={`${report.rater.first} ${report.rater.last}`}
-                                    subtitle={`@${report.rater.username}`}>
-                                </TDProfile>
-                                <TDProfile
-                                    to={`users/${report.rated.id}`}
-                                    photoUrl={report.rated.photoUrl}
-                                    title={`${report.rated.first} ${report.rated.last}`}
-                                    subtitle={`@${report.rated.username}`}>
-                                </TDProfile>
-                                <TDText>{report.message}</TDText>
-                                <TDText>{printStars(report.stars)}</TDText>
-                                <TDText>{dayjs().to(report.timestamp)}</TDText>
-                                <TDButton to={`ratings/${report.id}`}>View</TDButton>
-                            </TR>
+                            <Tr key={rate.id}>
+                                <Td>
+                                    {rate.rater.name}
+                                </Td>
+                                <Td>
+                                    {rate.rated.name}
+                                </Td>
+                                <Td>{rate.message}</Td>
+                                <Td>{printStars(rate.stars)}</Td>
+                                <Td>{dayjs().to(rate.timestamp)}</Td>
+                            </Tr>
                         )
                     })}
-                </TBody>
+                </Tbody>
             </Table>
         </Card>
 

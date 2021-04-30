@@ -92,7 +92,7 @@ function ReportPage() {
         {data?.getReport ?
             <>
                 <div className="flex flex-wrap">
-                    <Card className="flex-grow mb-4 sm:mr-2">
+                    <Card>
                         <div className="m-4">
                             <Heading5>Reporter</Heading5>
                             <div className="flex flex-row items-center">
@@ -107,7 +107,7 @@ function ReportPage() {
                             </div>
                         </div>
                     </Card>
-                    <Card className="flex-grow mb-4">
+                    <Card>
                         <div className="m-4">
                             <Heading5>Reported</Heading5>
                             <div className="flex flex-row items-center">
@@ -123,20 +123,20 @@ function ReportPage() {
                         </div>
                     </Card>
                 </div>
-                <Card className="mb-4">
+                <Card>
                     <div className="m-4">
                         <Heading5>Reason</Heading5>
                         <Body1>{data.getReport.reason}</Body1>  
                     </div>
                 </Card>
-                <Card className="mb-4">
+                <Card>
                     <div className="m-4">
                         <Heading5>Created</Heading5>
                         <Body1>{dayjs().to(data.getReport.timestamp)}</Body1>  
                     </div>
                 </Card>
                 {data.getReport.beep &&
-                <Card className="mb-4">
+                <Card>
                     <div className="m-4">
                         <Heading5>Associated Beep Event</Heading5>
                         <NavLink to={`/admin/beeps/${data.getReport.beep.id}`}>
@@ -145,7 +145,7 @@ function ReportPage() {
                     </div>
                 </Card>
                 }
-                <Card className="mb-4">
+                <Card>
                     <div className="m-4">
                         {data.getReport.handled ?
                             <div>

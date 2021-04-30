@@ -63,7 +63,7 @@ function RatingPage() {
         {data?.getRating ?
             <>
                 <div className="flex flex-wrap">
-                    <Card className="flex-grow mb-4 sm:mr-2">
+                    <Card>
                         <div className="m-4">
                             <Heading5>Rater</Heading5>
                             <div className="flex flex-row items-center">
@@ -78,7 +78,7 @@ function RatingPage() {
                             </div>
                         </div>
                     </Card>
-                    <Card className="flex-grow mb-4">
+                    <Card>
                         <div className="m-4">
                             <Heading5>Rated</Heading5>
                             <div className="flex flex-row items-center">
@@ -94,26 +94,26 @@ function RatingPage() {
                         </div>
                     </Card>
                 </div>
-                <Card className="mb-4">
+                <Card>
                     <div className="m-4">
                         <Heading5>Stars</Heading5>
                         <Body1>{printStars(data.getRating.stars)} {data.getRating.stars}</Body1>  
                     </div>
                 </Card>
-                <Card className="mb-4">
+                <Card>
                     <div className="m-4">
                         <Heading5>Message</Heading5>
                         <Body1>{data.getRating.message}</Body1>  
                     </div>
                 </Card>
-                <Card className="mb-4">
+                <Card>
                     <div className="m-4">
                         <Heading5>Created</Heading5>
                         <Body1>{dayjs().to(data.getRating.timestamp)}</Body1>  
                     </div>
                 </Card>
                 {data.getRating.beep &&
-                <Card className="mb-4">
+                <Card>
                     <div className="m-4">
                         <Heading5>Associated Beep Event</Heading5>
                         <NavLink to={`/admin/beeps/${data.getRating.beep.id}`}>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
 import { Button, TextInput } from '../components/Input';
@@ -7,6 +7,7 @@ import {gql, useMutation} from '@apollo/client';
 import { AddProfilePictureMutation, EditAccountMutation } from '../generated/graphql';
 import {Success} from '../components/Success';
 import {Error} from '../components/Error';
+import { Box, Image } from '@chakra-ui/react';
 
 const EditAccount = gql`
 mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
@@ -81,13 +82,12 @@ function EditProfile() {
     }
 
     return (
-        <div className="px-4 mx-auto lg:container dark:text-white">
-
-            <div className="w-full px-5 pt-5 pb-10 mx-auto mb-4 text-gray-800 bg-white rounded-lg shadow-lg mt-14 dark:bg-gray-800 dark:text-white">
+        <Box>
+            <Box>
                 <div className="w-full pt-1 pb-5">
                     <div className="w-20 h-20 mx-auto -mt-16 overflow-hidden rounded-full shadow-lg">
                         <label htmlFor="photo">
-                            <img src={photoUrl} alt="Profile" className="w-20 h-20 rounded-full" />
+                            <Image src={photoUrl} w={20} h={20} />
                         </label>
                         <input
                             id="photo"
@@ -101,7 +101,7 @@ function EditProfile() {
                     <p className="text-2xl font-bold text-center">{user.name}</p>
                     <p className="text-xs text-center text-gray-500">@{user?.username}</p>
                 </div>
-            </div>
+            </Box>
 
             {error && <Error error={error} />}
             {data && <Success message="Profile Updated"/>}
@@ -185,7 +185,7 @@ function EditProfile() {
 
                 <Button raised>{loading ? "Updating profile..." : "Update profile"}</Button>
             </form>
-        </div>
+        </Box>
     );
 }
 

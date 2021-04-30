@@ -1,22 +1,20 @@
 import { useEffect } from 'react'
-import { Heading3 } from '../../components/Typography';
 import { Card } from '../../components/Card';
-import { Table, THead, TH, TBody, TR, TDProfile, TDText } from '../../components/Table';
 import {gql, useQuery} from '@apollo/client';
 import {GetBeepersQuery} from '../../generated/graphql';
+import {Heading, Table, Tbody, Td, Th, Thead, Tr} from '@chakra-ui/react';
 
 const BeepersGraphQL = gql`
     query GetBeepers {
         getBeeperList {
             id
             username
+            name
             photoUrl
             singlesRate
             groupRate
             capacity
             isStudent
-            first
-            last
             queueSize
             masksRequired
         }
@@ -35,35 +33,33 @@ function Beepers() {
     }, []);
 
     return <>
-        <Heading3>Active Beepers</Heading3>
+        <Heading>Active Beepers</Heading>
 
         <Card>
             <Table>
-                <THead>
-                    <TH>Beeper</TH>
-                    <TH>Queue size</TH>
-                    <TH>Ride capacity</TH>
-                    <TH>Rate</TH>
-                    <TH>Masks required?</TH>
-                </THead>
-                <TBody>
+                <Thead>
+                    <Th>Beeper</Th>
+                    <Th>Queue size</Th>
+                    <Th>Ride capacity</Th>
+                    <Th>Rate</Th>
+                    <Th>Masks required?</Th>
+                </Thead>
+                <Tbody>
                     
                     {data?.getBeeperList && (data.getBeeperList).map(beeper => {
                         return (
-                            <TR key={beeper.id}>
-                                <TDProfile
-                                    to={`users/${beeper.id}`}
-                                    photoUrl={beeper?.photoUrl}
-                                    title={`${beeper.first} ${beeper.last} ${beeper.isStudent ? '🎓' : ''}`}>
-                                </TDProfile>
-                                <TDText>{beeper.queueSize} riders</TDText>
-                                <TDText>{beeper.capacity} riders</TDText>
-                                <TDText>${beeper.singlesRate} / ${beeper.groupRate}</TDText>
-                                <TDText>{beeper.masksRequired ? 'Yes' : 'No'}</TDText>
-                            </TR>
+                            <Tr key={beeper.id}>
+                                <Td>
+                                    {beeper.name}
+                                </Td>
+                                <Td>{beeper.queueSize} riders</Td>
+                                <Td>{beeper.capacity} riders</Td>
+                                <Td>${beeper.singlesRate} / ${beeper.groupRate}</Td>
+                                <Td>{beeper.masksRequired ? 'Yes' : 'No'}</Td>
+                            </Tr>
                         )
                     })}
-                </TBody>
+                </Tbody>
             </Table>
             {loading && <div>Loading</div>}
         </Card>

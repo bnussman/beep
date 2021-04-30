@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from '../../../components/Card';
-import { Table, THead, TH, TBody, TR, TDText, TDButton, TDProfile } from '../../../components/Table';
-import { Heading3 } from '../../../components/Typography';
 import Pagination from '../../../components/Pagination';
 import {gql, useQuery} from '@apollo/client';
 import {GetBeepsQuery} from '../../../generated/graphql';
+import {Heading, Table, Tbody, Td, Th, Thead, Tr} from '@chakra-ui/react';
 
 dayjs.extend(duration);
 
@@ -22,15 +21,13 @@ const BeepsGraphQL = gql`
                 groupSize
                 beeper {
                     id
-                    first
-                    last
+                    name
                     photoUrl
                     username
                 }
                 rider {
                     id
-                    first
-                    last
+                    name
                     photoUrl
                     username
                 }
@@ -54,7 +51,7 @@ function Beeps() {
     if (error) console.log(error);
 
     return <>
-        <Heading3>Beeps</Heading3>
+        <Heading>Beeps</Heading>
 
         <Pagination
             resultCount={data?.getBeeps.count}
@@ -65,44 +62,36 @@ function Beeps() {
         />
         <Card>
             <Table>
-                <THead>
-                    <TH>Beeper</TH>
-                    <TH>Rider</TH>
-                    <TH>Origin</TH>
-                    <TH>Destination</TH>
-                    <TH>Group Size</TH>
-                    <TH>Start Time</TH>
-                    <TH>End Time</TH>
-                    <TH>Duration</TH>
-                    <TH></TH>
-                </THead>
-                <TBody>
+                <Thead>
+                    <Th>Beeper</Th>
+                    <Th>Rider</Th>
+                    <Th>Origin</Th>
+                    <Th>Destination</Th>
+                    <Th>Group Size</Th>
+                    <Th>Start Time</Th>
+                    <Th>End Time</Th>
+                    <Th>Duration</Th>
+                </Thead>
+                <Tbody>
                     {data?.getBeeps && (data.getBeeps.items).map(beepEntry => {
                         return (
-                            <TR key={beepEntry.id}>
-                                <TDProfile
-                                    to={`users/${beepEntry.beeper.id}`}
-                                    photoUrl={beepEntry.beeper.photoUrl}
-                                    title={`${beepEntry.beeper.first} ${beepEntry.beeper.last}`}
-                                    subtitle={`@${beepEntry.beeper.username}`}>
-                                </TDProfile>
-                                <TDProfile
-                                    to={`users/${beepEntry.rider.id}`}
-                                    photoUrl={beepEntry.rider.photoUrl}
-                                    title={`${beepEntry.rider.first} ${beepEntry.rider.last}`}
-                                    subtitle={`@${beepEntry.rider.username}`}>
-                                </TDProfile>
-                                <TDText>{beepEntry.origin}</TDText>
-                                <TDText>{beepEntry.destination}</TDText>
-                                <TDText>{beepEntry.groupSize}</TDText>
-                                <TDText>{dayjs().to(beepEntry.start)}</TDText>
-                                <TDText>{dayjs().to(beepEntry.end)}</TDText>
-                                <TDText>{dayjs.duration(new Date(beepEntry.end).getTime() - new Date(beepEntry.start).getTime()).humanize()}</TDText>
-                                <TDButton to={`beeps/${beepEntry.id}`}>View</TDButton>
-                            </TR>
+                            <Tr key={beepEntry.id}>
+                                <Td>
+                                    {beepEntry.beeper.name}
+                                </Td>
+                                <Td>
+                                    {beepEntry.rider.name}
+                                </Td>
+                                <Td>{beepEntry.origin}</Td>
+                                <Td>{beepEntry.destination}</Td>
+                                <Td>{beepEntry.groupSize}</Td>
+                                <Td>{dayjs().to(beepEntry.start)}</Td>
+                                <Td>{dayjs().to(beepEntry.end)}</Td>
+                                <Td>{dayjs.duration(new Date(beepEntry.end).getTime() - new Date(beepEntry.start).getTime()).humanize()}</Td>
+                            </Tr>
                         )
                     })}
-                </TBody>
+                </Tbody>
             </Table>
         </Card>
         <Pagination

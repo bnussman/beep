@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useState } from 'react';
+import React, { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect, Link, useHistory } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
@@ -6,7 +6,7 @@ import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { GetUserData } from '../App';
 import {client} from '../utils/Apollo';
-import { Box, Button, Input } from "@chakra-ui/react"
+import { Box, Button, Input, Text, Container, Stack, useColorModeValue, FormControl, FormLabel, Heading, Flex, Checkbox } from "@chakra-ui/react"
 
 const LoginGraphQL = gql`
     mutation Login($username: String!, $password: String!) {
@@ -58,34 +58,60 @@ function Login() {
     }
 
     return (
-        <Box>
-            {error && <Error error={error}/>}
-            <form onSubmit={handleLogin}>
-                <Input
-                    placeholder="Username"
-                    onChange={(value: any) => setUsername(value.target.value)}
-                />
-                <Input
-                    placeholder="Password"
-                    onChange={(value: any) => setPassword(value.target.value)}
-                />
-                <Button
-                    mt={4}
-                    isLoading={loading}
-                    type="submit"
-                >
-                    Login
-                </Button>
-            </form>
-
-            <div className="mb-4">
-                <Link to="/password/forgot" className="text-gray-500">Forgot Password</Link>
-            </div>
-
-            <div>
-                <Link to="/signup" className="text-gray-500">Sign Up</Link>
-            </div>
-        </Box>
+        <Container maxW="container.lg">
+            <Flex
+                minH={'80vh'}
+                align={'center'}
+                justify={'center'}
+            >
+                <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+                    <Stack align={'center'}>
+                        <Heading fontSize={'4xl'}>Sign in</Heading>
+                    </Stack>
+                    <Box
+                        rounded={'lg'}
+                        boxShadow={'lg'}
+                        p={8}>
+                        <Stack spacing={4}>
+                            {error && <Error error={error}/>}
+                            <FormControl id="email">
+                                <FormLabel>Username</FormLabel>
+                                <Input
+                                    type="email"
+                                    onChange={(value: any) => setUsername(value.target.value)}
+                                />
+                            </FormControl>
+                            <FormControl id="password">
+                                <FormLabel>Password</FormLabel>
+                                <Input
+                                    type="password"
+                                    onChange={(value: any) => setPassword(value.target.value)}
+                                />
+                            </FormControl>
+                            <Stack spacing={10}>
+                                <Stack
+                                    direction={{ base: 'column', sm: 'row' }}
+                                    align={'start'}
+                                    justify={'space-between'}>
+                                    <Checkbox>Remember me</Checkbox>
+                                    <Link to='password/forgot' color={'blue.400'}>Forgot password?</Link>
+                                </Stack>
+                                <Button
+                                    onClick={handleLogin}
+                                    isLoading={loading}
+                                    bg={'yellow.400'}
+                                    color={'white'}
+                                    _hover={{
+                                        bg: 'yellow.500',
+                                    }}>
+                                    Sign in
+                                </Button>
+                            </Stack>
+                        </Stack>
+                    </Box>
+                </Stack>
+            </Flex>
+        </Container>
     );
 }
 

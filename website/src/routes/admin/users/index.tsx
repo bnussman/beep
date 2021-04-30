@@ -1,12 +1,19 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { formatPhone } from '../../../utils/formatters';
-import { Heading3 } from '../../../components/Typography';
 import { Card } from '../../../components/Card';
-import { Table, THead, TH, TBody, TR, TDProfile, TDText } from '../../../components/Table';
 import { Indicator } from '../../../components/Indicator';
 import Pagination from '../../../components/Pagination';
 import {gql, useQuery} from '@apollo/client';
 import { GetUsersQuery } from '../../../generated/graphql';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Heading,
+} from "@chakra-ui/react"
 
 const UsersGraphQL = gql`
     query getUsers($show: Int, $offset: Int) {
@@ -14,8 +21,7 @@ const UsersGraphQL = gql`
             items {
                 id
                 photoUrl
-                first
-                last
+                name
                 email
                 isStudent
                 isEmailVerified
@@ -27,6 +33,7 @@ const UsersGraphQL = gql`
         }
     }
 `;
+
 function Users() {
     const { loading, error, data, refetch } = useQuery<GetUsersQuery>(UsersGraphQL, { variables: { offset: 0, show: 25 }});
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -42,7 +49,7 @@ function Users() {
     if (error) console.log(error);
 
     return <>
-        <Heading3>Users</Heading3>
+        <Heading>Users</Heading>
 
         <Pagination
             resultCount={data?.getUsers?.count}
@@ -53,48 +60,45 @@ function Users() {
         />
         <Card>
             <Table>
-                <THead>
-                    <TH>User</TH>
-                    <TH>Email</TH>
-                    <TH>Phone</TH>
-                    <TH>Is Student?</TH>
-                    <TH>Is Email Verified?</TH>
-                    <TH>Is beeping?</TH>
-                </THead>
-                <TBody>
+                <Thead>
+                    <Th>User</Th>
+                    <Th>Email</Th>
+                    <Th>Phone</Th>
+                    <Th>Is Student?</Th>
+                    <Th>Is Email Verified?</Th>
+                    <Th>Is beeping?</Th>
+                </Thead>
+                <Tbody>
                     {data?.getUsers && (data?.getUsers.items).map(user => {
                         return (
-                            <TR key={user.id}>
-                                <TDProfile
-                                    to={`users/${user.id}`}
-                                    photoUrl={user.photoUrl}
-                                    title={`${user.first} ${user.last}`}
-                                    subtitle={`@${user.username}`}>
-                                </TDProfile>
-                                <TDText><a href={`mailto:${user.email}`} rel="noreferrer" target="_blank">{user.email}</a></TDText>
-                                <TDText>{formatPhone(user.phone)}</TDText>
-                                <TDText>
+                            <Tr key={user.id}>
+                                <Td>
+                                    {user.name}
+                                </Td>
+                                <Td><a href={`mailto:${user.email}`} rel="noreferrer" target="_blank">{user.email}</a></Td>
+                                <Td>{formatPhone(user.phone)}</Td>
+                                <Td>
                                     {user.isStudent
                                         ? <Indicator color="green" />
                                         : <Indicator color="red" />
                                     }
-                                </TDText>
-                                <TDText>
+                                </Td>
+                                <Td>
                                     {user.isEmailVerified
                                         ? <Indicator color="green" />
                                         : <Indicator color="red" />
                                     }
-                                </TDText>
-                                <TDText>
+                                </Td>
+                                <Td>
                                     {user.isBeeping
                                         ? <Indicator color="green" className="animate-pulse" />
                                         : <Indicator color="red" />
                                     }
-                                </TDText>
-                            </TR>
+                                </Td>
+                            </Tr>
                         )
                     })}
-                </TBody>
+                </Tbody>
             </Table>
         </Card>
 

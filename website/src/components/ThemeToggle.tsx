@@ -7,6 +7,9 @@ export const ThemeToggle = () => {
         <Switch
             isChecked={colorMode === "dark"}
             onChange={toggleColorMode}
+            colorScheme="brand"
+            size="md"
+            ml={2}
         />
     );
 }

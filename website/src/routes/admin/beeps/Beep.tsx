@@ -74,7 +74,7 @@ function BeepPage() {
                     </iframe>
 
                     <div className="flex flex-wrap">
-                        <Card className="flex-grow mb-4 sm:mr-2">
+                        <Card>
                             <div className="m-4">
                                 <Heading5>Beeper</Heading5>
                                 <div className="flex flex-row items-center">
@@ -89,7 +89,7 @@ function BeepPage() {
                                 </div>
                             </div>
                         </Card>
-                        <Card className="flex-grow mb-4">
+                        <Card>
                             <div className="m-4">
                                 <Heading5>Rider</Heading5>
                                 <div className="flex flex-row items-center">
@@ -107,33 +107,33 @@ function BeepPage() {
                     </div>
 
                     <div className="flex flex-wrap">
-                        <Card className="flex-grow mb-4 sm:mr-2">
+                        <Card>
                             <div className="p-4">
                                 <Heading5>Origin</Heading5>
                                 <Body1>{data.getBeep.origin}</Body1>
                             </div>
                         </Card>
-                        <Card className="flex-grow mb-4">
+                        <Card>
                             <div className="p-4">
                                 <Heading5>Destination</Heading5>
                                 <Body1>{data.getBeep.destination}</Body1>
                             </div>
                         </Card>
                     </div>
-                    <Card className="mb-4">
+                    <Card>
                         <div className="p-4">
                             <Heading5>Group Size</Heading5>
                             <Body1>{data.getBeep.groupSize}</Body1>
                         </div>
                     </Card>
                     <div className="flex flex-wrap">
-                        <Card className="flex-grow mb-4 sm:mr-2">
+                        <Card>
                             <div className="p-4">
                                 <Heading5>Beep Started</Heading5>
                                 <Body1>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Body1>
                             </div>
                         </Card>
-                        <Card className="flex-grow mb-4">
+                        <Card>
                             <div className="p-4">
                                 <Heading5>Beep Ended</Heading5>
                                 <Body1>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Body1>

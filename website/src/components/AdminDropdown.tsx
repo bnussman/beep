@@ -3,21 +3,24 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Button,
 } from "@chakra-ui/react"
 import { Link } from 'react-router-dom';
 
 export function AdminDropdown() {
     return (
         <Menu>
-            <MenuButton
+            <Button
+                as={MenuButton}
                 variant={'solid'}
-                colorScheme={'teal'}
+                colorScheme="brand"
+                color="white"
                 size={'sm'}
                 mr={4}
                 Action
             >
                 Admin
-            </MenuButton>
+            </Button>
             <MenuList>
                 <MenuItem as={Link} to="/admin/users">
                     Users

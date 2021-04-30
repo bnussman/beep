@@ -1,4 +1,13 @@
-import { ReactNode, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
+import { Link } from "react-router-dom";
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import {UserDropdown} from './UserDropdown';
+import {AdminDropdown} from './AdminDropdown';
+import {gql, useMutation} from '@apollo/client';
+import {ResendEmailMutation} from '../generated/graphql';
+import {UserContext} from '../UserContext';
+import {UserRole} from '../types/User';
+import { ThemeToggle } from './ThemeToggle';
 import {
     Box,
     Flex,
@@ -11,24 +20,6 @@ import {
     Button,
     Image
 } from '@chakra-ui/react';
-import { Link } from "react-router-dom";
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
-import {UserDropdown} from './UserDropdown';
-import {AdminDropdown} from './AdminDropdown';
-import {gql, useMutation} from '@apollo/client';
-import {ResendEmailMutation} from '../generated/graphql';
-import {UserContext} from '../UserContext';
-import {UserRole} from '../types/User';
-import { ThemeToggle } from './ThemeToggle';
-
-const Links = ['Dashboard', 'Projects', 'Team'];
-
-const NavLink = ({ children }: { children: ReactNode }) => (
-    <Link
-        to={'#'}>
-        {children}
-    </Link>
-);
 
 const Resend = gql`
     mutation ResendEmail {
@@ -106,12 +97,12 @@ export default function NavBar() {
                                     Sign In
                                 </Button>
                                 <Button
-                                    display={{ base: 'none', md: 'inline-flex' }}
+                                    as={Link}
                                     fontSize={'sm'}
                                     fontWeight={600}
                                     color={'white'}
                                     bg={'yellow.400'}
-                                    href={'/signup'}
+                                    to='/signup'
                                     _hover={{
                                         bg: 'yellow.300',
                                     }}>
@@ -126,9 +117,8 @@ export default function NavBar() {
                 {isOpen ? (
                     <Box pb={4}>
                         <Stack as={'nav'} spacing={4}>
-                            {Links.map((link) => (
-                                <NavLink key={link}>{link}</NavLink>
-                            ))}
+                            <Link to='/faq'>FAQ</Link>
+                            <Link to='/about'>About</Link>
                         </Stack>
                     </Box>
                 ) : null}
