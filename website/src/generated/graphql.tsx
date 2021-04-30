@@ -154,6 +154,7 @@ export type Mutation = {
   resetPassword: Scalars['Boolean'];
   setBeeperStatus: Scalars['Boolean'];
   setBeeperQueue: Scalars['Boolean'];
+  cancelBeep: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
   insertLocation: Scalars['Boolean'];
   rateUser: Scalars['Boolean'];
@@ -231,6 +232,11 @@ export type MutationSetBeeperStatusArgs = {
 
 export type MutationSetBeeperQueueArgs = {
   input: UpdateQueueEntryInput;
+};
+
+
+export type MutationCancelBeepArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -396,7 +402,6 @@ export type QueueEntry = {
   beeper: User;
   rider: User;
   ridersQueuePosition: Scalars['Float'];
-  location?: Maybe<Location>;
 };
 
 export type Rating = {

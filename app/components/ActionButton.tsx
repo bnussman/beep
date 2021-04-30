@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Spinner } from "@ui-kitten/components";
 import { gql, useMutation } from "@apollo/client";
-import { UpdateBeeperQueueMutation } from "../generated/graphql";
+import { CancelBeepMutation, UpdateBeeperQueueMutation } from "../generated/graphql";
 
 interface Props {
     item: any;
+    index: number;
 }
 
 const LoadingIndicator = () => (
@@ -17,29 +18,41 @@ const LoadingIndicator = () => (
 const UpdateBeeperQueue = gql`
     mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
         setBeeperQueue(input: {
-        queueId: $queueId,
-        riderId: $riderId,
-        value: $value
-    })
+            queueId: $queueId,
+            riderId: $riderId,
+            value: $value
+        })
+    }
+`;
+
+const CancelBeep = gql`
+    mutation CancelBeep($id: String!) {
+        cancelBeep(id: $id)
     }
 `;
 
 function ActionButton(props: Props) {
     const [loading, setLoading] = useState<boolean>(false);
-    const [update, { data, error }] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
+    const [update] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
+    const [cancelBeep] = useMutation<CancelBeepMutation>(CancelBeep);
 
     useEffect( () => { setLoading(false) }, [ props.item.state ] );
 
     async function updateStatus(queueId: string, riderId: string, value: string | boolean): Promise<void> {
         setLoading(true);
-        
-        const result = await update({
-            variables: {
-                queueId: queueId,
-                riderId: riderId,
-                value: value
-            }
-        });
+       
+        try {
+            await update({
+                variables: {
+                    queueId: queueId,
+                    riderId: riderId,
+                    value: value
+                }
+            });
+        }
+        catch (error) {
+            alert(error);
+        }
     }
 
     function getMessage(): string {
@@ -61,6 +74,18 @@ function ActionButton(props: Props) {
             return (
                 <Button size="giant" appearance='outline' accessoryLeft={LoadingIndicator}>
                     Loading
+                </Button>
+            );
+        }
+
+        if (props.index != 0) {
+            return (
+                <Button
+                    size="medium"
+                    status="danger"
+                    onPress={() => cancelBeep({ variables: { id: props.item.id } })}
+                >
+                    Cancel Beep
                 </Button>
             );
         }

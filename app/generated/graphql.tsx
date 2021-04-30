@@ -155,6 +155,7 @@ export type Mutation = {
   resetPassword: Scalars['Boolean'];
   setBeeperStatus: Scalars['Boolean'];
   setBeeperQueue: Scalars['Boolean'];
+  cancelBeep: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
   insertLocation: Scalars['Boolean'];
   rateUser: Scalars['Boolean'];
@@ -232,6 +233,11 @@ export type MutationSetBeeperStatusArgs = {
 
 export type MutationSetBeeperQueueArgs = {
   input: UpdateQueueEntryInput;
+};
+
+
+export type MutationCancelBeepArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -397,7 +403,6 @@ export type QueueEntry = {
   beeper: User;
   rider: User;
   ridersQueuePosition: Scalars['Float'];
-  location?: Maybe<Location>;
 };
 
 export type Rating = {
@@ -597,6 +602,16 @@ export type UpdateBeeperQueueMutationVariables = Exact<{
 export type UpdateBeeperQueueMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'setBeeperQueue'>
+);
+
+export type CancelBeepMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type CancelBeepMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'cancelBeep'>
 );
 
 export type GetSuggestionsQueryVariables = Exact<{
@@ -1133,6 +1148,37 @@ export function useUpdateBeeperQueueMutation(baseOptions?: ApolloReactHooks.Muta
 export type UpdateBeeperQueueMutationHookResult = ReturnType<typeof useUpdateBeeperQueueMutation>;
 export type UpdateBeeperQueueMutationResult = ApolloReactCommon.MutationResult<UpdateBeeperQueueMutation>;
 export type UpdateBeeperQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateBeeperQueueMutation, UpdateBeeperQueueMutationVariables>;
+export const CancelBeepDocument = gql`
+    mutation CancelBeep($id: String!) {
+  cancelBeep(id: $id)
+}
+    `;
+export type CancelBeepMutationFn = ApolloReactCommon.MutationFunction<CancelBeepMutation, CancelBeepMutationVariables>;
+
+/**
+ * __useCancelBeepMutation__
+ *
+ * To run a mutation, you first call `useCancelBeepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelBeepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelBeepMutation, { data, loading, error }] = useCancelBeepMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCancelBeepMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CancelBeepMutation, CancelBeepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<CancelBeepMutation, CancelBeepMutationVariables>(CancelBeepDocument, options);
+      }
+export type CancelBeepMutationHookResult = ReturnType<typeof useCancelBeepMutation>;
+export type CancelBeepMutationResult = ApolloReactCommon.MutationResult<CancelBeepMutation>;
+export type CancelBeepMutationOptions = ApolloReactCommon.BaseMutationOptions<CancelBeepMutation, CancelBeepMutationVariables>;
 export const GetSuggestionsDocument = gql`
     query GetSuggestions($location: String!, $sessiontoken: String!) {
   getLocationSuggestions(location: $location, sessiontoken: $sessiontoken) {
@@ -1311,7 +1357,7 @@ export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMu
 export const SignUpDocument = gql`
     mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!, $pushToken: String) {
   signup(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password, pushToken: $pushToken, picture: $picture}
+    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password, picture: $picture, pushToken: $pushToken}
   ) {
     tokens {
       id

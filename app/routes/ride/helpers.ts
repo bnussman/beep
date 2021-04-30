@@ -14,10 +14,6 @@ const ChooseBeep = gql`
             destination
             state
             groupSize
-            location {
-                longitude
-                latitude
-            }
             beeper {
                 id
                 first
@@ -33,6 +29,10 @@ const ChooseBeep = gql`
                 masksRequired
                 capacity
                 queueSize
+                location {
+                    longitude
+                    latitude
+                }
             }
         }
     }
@@ -54,41 +54,6 @@ const FindBeep = gql`
         }
     }
 `;
-
-const RiderStatus = gql`
-    query GetRiderStatus {
-        getRiderStatus {
-            id
-            ridersQueuePosition
-            isAccepted
-            origin
-            destination
-            state
-            groupSize
-            location {
-                longitude
-                latitude
-            }
-            beeper {
-                id
-                first
-                last
-                singlesRate
-                groupRate
-                isStudent
-                role
-                venmo
-                username
-                phone
-                photoUrl
-                masksRequired
-                capacity
-                queueSize
-            }
-        }
-    }
-`;
-
 
 export async function gqlFindBeep() {
     return await client.query({ query: FindBeep });

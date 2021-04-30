@@ -47,8 +47,4 @@ export class QueueEntry {
     @Field()
     @Property({ persist: false })
     ridersQueuePosition?: number;
-
-    @Field(() => Location, { nullable: true })
-    @Property({ persist: false, nullable: true })
-    location?: Location;
 }
