@@ -10,11 +10,3 @@ export function Indicator(props) {
         </Icon>
     );
 }
-
-export function Badge(props) {
-    return (
-        <p className={`px-2 mx-1 inline-flex text-xs font-semibold rounded-full shadow bg-gray-300 ${props.className}`}>
-            {props.children}
-        </p>
-    )
-}

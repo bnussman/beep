@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom";
-import { Heading1, Heading3, Heading5 } from '../../../components/Typography';
 import { Formik, Form, Field } from 'formik';
 import {gql, useMutation, useQuery} from '@apollo/client';
 import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graphql';
 import { Error } from '../../../components/Error';
 import { Success } from '../../../components/Success';
+import React from "react";
+import { Button, Heading } from "@chakra-ui/react";
 
 const GetEditableUser = gql`
     query GetEditableUser($id: String!) {
@@ -52,12 +53,12 @@ function EditUserPage() {
     }
 
     if (loading) {
-        return <Heading1>Loading</Heading1>;
+        return <Heading>Loading</Heading>;
     }
 
     return (
         <>
-            <Heading3>Edit User</Heading3>
+            <Heading>Edit User</Heading>
             {data && <Success message="Successfully Edited User"/>}
             {error && <Error error={error} />}
             {editError && editError.message}
@@ -77,30 +78,29 @@ function EditUserPage() {
 
                                 return (
                                     <div key={key}>
-                                        <Heading5>{key}</Heading5>
-                                        <Field type="number" name={key} className="w-full px-4 py-2 leading-tight text-gray-700 bg-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-yellow-500 dark:bg-gray-800 dark:text-white"/>
+                                        <Heading>{key}</Heading>
+                                        <Field type="number" name={key}/>
                                     </div>
                                 );
                             }
                             else {
                                 return (
                                     <div key={key}>
-                                        <Heading5>{key}</Heading5>
+                                        <Heading>{key}</Heading>
                                         {type === "boolean" ?
                                         <Field type="checkbox" name={key}/>
                                         :
-                                        <Field type="text" name={key} className="w-full px-4 py-2 leading-tight text-gray-700 bg-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-yellow-500 dark:bg-gray-800 dark:text-white"/>
+                                        <Field type="text" name={key}/>
                                         }
                                     </div>
                                 );
                             }
                         })}
-                        <button
+                        <Button
                             type="submit"
-                            className={`mt-3 inline-flex justify-center py-2 px-4 mr-1 border  text-sm font-medium rounded-md text-white shadow-sm bg-yellow-500 hover:bg-yellow-600 focus:outline-white`}
                             disabled={isSubmitting}>
                             {isSubmitting ? "Loading..." : "Update User"}
-                        </button>
+                        </Button>
                     </Form>
                 )}
             </Formik>

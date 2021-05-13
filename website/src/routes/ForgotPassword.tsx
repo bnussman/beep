@@ -1,11 +1,11 @@
 import React, { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
-import { Button, TextInput } from '../components/Input';
 import {gql, useMutation} from '@apollo/client';
 import {ForgotPasswordMutation} from '../generated/graphql';
 import { Error } from '../components/Error';
 import {Success} from '../components/Success';
+import { Button, Input } from '@chakra-ui/react';
 
 const ForgotPasswordGraphQL = gql`
     mutation ForgotPassword($email: String!) {
@@ -35,13 +35,12 @@ function ForgotPassword() {
     }
     
     return (
-        <div className="px-4 mx-auto lg:container">
+        <div>
             {error && <Error error={error}/>}
             {loading && <p>Loading</p>}
             {data?.forgotPassword && <Success message="Successfully sent password reset email"/>}
             <form onSubmit={handleForgotPassword}>
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="email"
                     type="email"
                     label="Email"
@@ -49,7 +48,7 @@ function ForgotPassword() {
                     onChange={(value: any) => setEmail(value.target.value)}
                     disabled={data?.forgotPassword}
                 />
-                <Button raised className={data?.forgotPassword ? 'opacity-50 cursor-not-allowed' : ''}>
+                <Button raised>
                     Send Reset Password Email
                 </Button>
             </form>

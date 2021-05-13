@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { formatPhone } from '../../../utils/formatters';
 import { Card } from '../../../components/Card';
 import { Indicator } from '../../../components/Indicator';
 import Pagination from '../../../components/Pagination';
 import {gql, useQuery} from '@apollo/client';
 import { GetUsersQuery } from '../../../generated/graphql';
-import { Link } from 'react-router-dom';
 import {
   Table,
   Thead,
@@ -13,13 +12,8 @@ import {
   Tr,
   Th,
   Td,
-  Heading,
-  Image,
-  Flex,
-  Box,
-  Text,
-  Stack
-} from "@chakra-ui/react"
+  Heading} from "@chakra-ui/react"
+import TdUser from '../../../components/TdUser';
 
 const UsersGraphQL = gql`
     query getUsers($show: Int, $offset: Int) {
@@ -78,17 +72,7 @@ function Users() {
                     {data?.getUsers && (data?.getUsers.items).map(user => {
                         return (
                             <Tr key={user.id}>
-                                <Td>
-                                    <Box as={Link} to={`users/${user.id}`}>
-                                        <Flex align="center">
-                                            <Image boxSize="50px" mr={2} src={user.photoUrl} borderRadius="full"/>
-                                            <Stack>
-                                                <Text>{user.name}</Text>
-                                                {/*<Text fontSize="xs" color="gray.500">@{user.username}</Text>*/}
-                                            </Stack>
-                                        </Flex>
-                                    </Box>
-                                </Td>
+                                <TdUser user={user} />
                                 <Td><a href={`mailto:${user.email}`} rel="noreferrer" target="_blank">{user.email}</a></Td>
                                 <Td>{formatPhone(user.phone)}</Td>
                                 <Td>
@@ -105,7 +89,7 @@ function Users() {
                                 </Td>
                                 <Td>
                                     {user.isBeeping
-                                        ? <Indicator color="green" className="animate-pulse" />
+                                        ? <Indicator color="green" />
                                         : <Indicator color="red" />
                                     }
                                 </Td>

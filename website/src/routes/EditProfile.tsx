@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
-import { Button, TextInput } from '../components/Input';
-import { Caption } from '../components/Typography';
 import {gql, useMutation} from '@apollo/client';
 import { AddProfilePictureMutation, EditAccountMutation } from '../generated/graphql';
 import {Success} from '../components/Success';
 import {Error} from '../components/Error';
-import { Box, Image } from '@chakra-ui/react';
+import { Avatar, Box, Button, Input, Text } from '@chakra-ui/react';
 
 const EditAccount = gql`
 mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
@@ -60,21 +58,25 @@ function EditProfile() {
 
     async function handleEdit(e: any) {
         e.preventDefault();
-        await edit({ variables: {
-            first: first,
-            last: last,
-            email: email,
-            phone: phone,
-            venmo: venmo,
-            cashapp: cashapp
-        }});
+        await edit({
+            variables: {
+                first: first,
+                last: last,
+                email: email,
+                phone: phone,
+                venmo: venmo,
+                cashapp: cashapp
+            }
+        });
     }
 
     async function uploadPhoto(photo: any) {
-       if (!photo) return;
-       await upload({ variables: {
-           picture: photo
-       }});
+        if (!photo) return;
+        await upload({
+            variables: {
+                picture: photo
+            }
+        });
     }
 
     if (!user) {
@@ -83,61 +85,55 @@ function EditProfile() {
 
     return (
         <Box>
+            {error && <Error error={error} />}
+            {data && <Success message="Profile Updated" />}
+
+            {uploadLoading && <p>Uploading new Photo...</p>}
+            {uploadError && <p>{uploadError.message}</p>}
+
             <Box>
-                <div className="w-full pt-1 pb-5">
-                    <div className="w-20 h-20 mx-auto -mt-16 overflow-hidden rounded-full shadow-lg">
+                <div>
+                    <div>
                         <label htmlFor="photo">
-                            <Image src={photoUrl} w={20} h={20} />
+                            <Avatar src={photoUrl} name={user.name} />
                         </label>
                         <input
                             id="photo"
                             type="file"
                             onChange={(e) => uploadPhoto(e.target.files[0])}
                             hidden
-                        /> 
+                        />
                     </div>
                 </div>
-                <div className="w-full">
-                    <p className="text-2xl font-bold text-center">{user.name}</p>
-                    <p className="text-xs text-center text-gray-500">@{user?.username}</p>
+                <div>
+                    <p>{user.name}</p>
+                    <p>@{user?.username}</p>
                 </div>
             </Box>
 
-            {error && <Error error={error} />}
-            {data && <Success message="Profile Updated"/>}
-
-            {uploadLoading && <p>Uploading new Photo...</p>}
-            {uploadError && <p>{uploadError.message}</p>}
-
 
             <form onSubmit={(e) => handleEdit(e)}>
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="username"
                     label="Username"
                     value={user?.username}
                     disabled
                 />
-
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="first"
                     label="First name"
                     value={first}
                     placeholder={first}
                     onChange={(value: any) => setFirst(value.target.value)}
                 />
-
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="last"
                     label="Last name"
                     value={last}
                     placeholder={last}
                     onChange={(value: any) => setLast(value.target.value)}
                 />
-
-                <TextInput
+                <Input
                     id="email"
                     label="Email"
                     type="email"
@@ -145,18 +141,16 @@ function EditProfile() {
                     placeholder={email}
                     onChange={(value: any) => setEmail(value.target.value)}
                 />
-                <Caption className="mb-2">
+                <Text>
                     {
                         user.isEmailVerified
                             ? user.isStudent
                                 ? "Your email is verified and you are a student"
                                 : "Your email is verified"
-                                : "Your email is not verified"
+                            : "Your email is not verified"
                     }
-                </Caption>
-
-                <TextInput
-                    className="mb-4"
+                </Text>
+                <Input
                     id="phone"
                     label="Phone"
                     type="tel"
@@ -164,9 +158,7 @@ function EditProfile() {
                     placeholder={phone}
                     onChange={(value: any) => setPhone(value.target.value)}
                 />
-
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="venmo"
                     label="Venmo username"
                     value={venmo}
@@ -174,8 +166,7 @@ function EditProfile() {
                     onChange={(value: any) => setVenmo(value.target.value)}
                 />
 
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="cashapp"
                     label="Cash App username"
                     value={cashapp}
@@ -183,7 +174,7 @@ function EditProfile() {
                     onChange={(value: any) => setCashapp(value.target.value)}
                 />
 
-                <Button raised>{loading ? "Updating profile..." : "Update profile"}</Button>
+                <Button type="submit" raised>{loading ? "Updating profile..." : "Update profile"}</Button>
             </form>
         </Box>
     );

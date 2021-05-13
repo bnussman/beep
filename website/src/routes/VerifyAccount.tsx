@@ -34,7 +34,7 @@ function VerifyAccount({ match }) {
     }, []);
 
     return (
-        <div className="px-4 mx-auto lg:container">
+        <div>
             {loading && "Loading"}
             {data && <Success message="Successfully verified email" />}
             {error && <Error error={error}/>}

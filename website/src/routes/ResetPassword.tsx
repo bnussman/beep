@@ -1,9 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { FormEvent, useState } from 'react';
-import { TextInput } from '../components/Input';
 import {ResetPasswordMutation} from '../generated/graphql';
 import { Error } from '../components/Error';
 import {Success} from '../components/Success';
+import { Button, Input } from '@chakra-ui/react';
 
 const Reset = gql`
     mutation ResetPassword($id: String!, $password: String!) {
@@ -27,16 +27,15 @@ function ResetPassword({ match }) {
     }
 
     return (
-        <div className="px-4 mx-auto lg:container">
+        <div>
             {loading && <p>Loading</p>}
             {error && <Error error={error}/>}
             {data && <Success message="Successfully changed password"/>}
             <form onSubmit={handleResetPassword}>
-                <label className="font-bold text-gray-500" htmlFor="password">
+                <label htmlFor="password">
                     New Password
                 </label>
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="password"
                     type="password"
                     autoComplete="password"
@@ -44,13 +43,12 @@ function ResetPassword({ match }) {
                     onChange={(value: any) => setPassword(value.target.value)}
                     disabled={data?.resetPassword}
                 />
-                <button 
+                <Button 
                     type="submit"
                     disabled={data?.resetPassword}
-                    className={data?.resetPassword ? "px-4 py-2 mb-4 font-bold text-white bg-gray-700 rounded shadow hover:bg-gray-700 focus:shadow-outline focus:outline-none" : "px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-400 focus:shadow-outline focus:outline-none"}
                 >
                     Reset Password
-                </button>
+                </Button>
             </form>
         </div>
     );

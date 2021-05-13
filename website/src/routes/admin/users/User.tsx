@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
 import UserProfile from '../../../components/UserProfile';
-import { Heading1, Heading3 } from '../../../components/Typography';
 import { gql, useQuery } from '@apollo/client';
 import {GetUserQuery} from '../../../generated/graphql';
+import React from "react";
+import { Heading } from "@chakra-ui/react";
 
 const GetUser = gql`
     query GetUser($id: String!) {
@@ -37,9 +38,9 @@ function UserPage() {
 
     return (
         <>
-            <Heading3>User</Heading3>
+            <Heading>User</Heading>
             {error && error}
-            {loading ? <Heading1>Loading</Heading1> : <UserProfile user={data?.getUser} admin />}
+            {loading ? <Heading>Loading</Heading> : <UserProfile user={data?.getUser} admin />}
         </>
     );
 }

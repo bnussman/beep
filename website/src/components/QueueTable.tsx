@@ -1,12 +1,12 @@
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from './Card';
-import { Table, THead, TH, TBody, TR, TDProfile, TDText } from './Table';
-import {Indicator} from './Indicator';
-import {Heading5} from './Typography';
-import {gql, useQuery} from '@apollo/client';
-import {GetQueueQuery} from '../generated/graphql';
+import { Indicator } from './Indicator';
+import { gql, useQuery } from '@apollo/client';
+import { GetQueueQuery } from '../generated/graphql';
+import TdUser from './TdUser';
+import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 
 dayjs.extend(duration);
 
@@ -37,12 +37,12 @@ const Queue = gql`
 `;
 
 function QueueTable(props: Props) {
-    const { data, startPolling, stopPolling } = useQuery<GetQueueQuery>(Queue, { variables: { id: props.userId }});
+    const { data, startPolling, stopPolling } = useQuery<GetQueueQuery>(Queue, { variables: { id: props.userId } });
 
     useEffect(() => {
-        //startPolling(3000); 
+        startPolling(3000); 
         return () => {
-            //stopPolling();
+            stopPolling();
         };
         // eslint-disable-next-line
     }, []);
@@ -57,7 +57,7 @@ function QueueTable(props: Props) {
                 return "Beeper is here";
             case 3:
                 return "Getting Beeped";
-            default: 
+            default:
                 return "yikes";
         }
     }
@@ -66,47 +66,41 @@ function QueueTable(props: Props) {
         return null;
     }
 
-    return <>
-        <div className="m-4">
-        <Heading5>
-            User's Queue
-        </Heading5>
-        <Card>
-            <Table>
-                <THead>
-                    <TH>Rider</TH>
-                    <TH>Origin</TH>
-                    <TH>Destination</TH>
-                    <TH>Group Size</TH>
-                    <TH>Start Time</TH>
-                    <TH>Is Accepted?</TH>
-                    <TH>Status</TH>
-                </THead>
-                <TBody>
-                    {data.getQueue && (data.getQueue).map(entry => {
-                        return (
-
-                            <TR key={entry.id}>
-                                <TDProfile
-                                    photoUrl={entry.rider.photoUrl}
-                                    title={`${entry.rider.first} ${entry.rider.last}`}
-                                    to={`/admin/users/${entry.rider.id}`}
-                                >
-                                </TDProfile>
-                                <TDText>{entry.origin}</TDText>
-                                <TDText>{entry.destination}</TDText>
-                                <TDText>{entry.groupSize}</TDText>
-                                <TDText>{dayjs().to(entry.start)}</TDText>
-                                <TDText>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</TDText>
-                                <TDText>{getStatus(entry.state)}</TDText>
-                            </TR>
-                        )
-                    })}
-                </TBody>
-            </Table>
-        </Card>
-        </div>
-    </>;
+    return (
+        <Box>
+            <Heading>
+                User's Queue
+        </Heading>
+            <Card>
+                <Table>
+                    <Thead>
+                        <Th>Rider</Th>
+                        <Th>Origin</Th>
+                        <Th>Destination</Th>
+                        <Th>Group Size</Th>
+                        <Th>Start Time</Th>
+                        <Th>Is Accepted?</Th>
+                        <Th>Status</Th>
+                    </Thead>
+                    <Tbody>
+                        {data.getQueue && (data.getQueue).map(entry => {
+                            return (
+                                <Tr key={entry.id}>
+                                    <TdUser user={entry.rider} />
+                                    <Td>{entry.origin}</Td>
+                                    <Td>{entry.destination}</Td>
+                                    <Td>{entry.groupSize}</Td>
+                                    <Td>{dayjs().to(entry.start)}</Td>
+                                    <Td>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
+                                    <Td>{getStatus(entry.state)}</Td>
+                                </Tr>
+                            )
+                        })}
+                    </Tbody>
+                </Table>
+            </Card>
+        </Box>
+    );
 }
 
 export default QueueTable;

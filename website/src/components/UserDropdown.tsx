@@ -54,13 +54,14 @@ export function UserDropdown() {
                 <Avatar
                     size={'sm'}
                     src={user.photoUrl}
+                    name={user.name}
                 />
             </MenuButton>
             <MenuList>
                 <MenuItem>
                     @{user.username}
                 </MenuItem>
-                <MenuItem as={Link} to={`/profile/edit/${user.id}`}>
+                <MenuItem as={Link} to={`/profile/edit`}>
                     Edit Account
                 </MenuItem>
                 <MenuItem as={Link} to="/password/change">

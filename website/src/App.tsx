@@ -88,7 +88,6 @@ function getInitialTheme(): string {
 }
 
 function Beep() {
-    //const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
     const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
     const [theme, setInternalTheme] = useState<string>(getInitialTheme());
 
@@ -102,7 +101,7 @@ function Beep() {
         localStorage.setItem("color-theme", theme)
         setInternalTheme(theme);
     }
-    
+
     useEffect(() => {
         if (data?.getUser?.id) {
             console.log("Calling sub to more");
@@ -121,37 +120,37 @@ function Beep() {
                 }
             });
         }
-    //}, [data?.getUser?.id]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        //}, [data?.getUser?.id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data?.getUser?.id]);
 
     if (loading) return null;
 
     return (
         <ApolloProvider client={client}>
-        <ThemeContext.Provider value={{ theme, setTheme }}>
-            <UserContext.Provider value={data?.getUser}>
-            <Router>
-                <NavBar/>
-                <Switch>
-                    <Route path="/password/forgot" component={ForgotPassword} />
-                    <Route path="/password/reset/:id" component={ResetPassword} />
-                    <Route path="/login" component={Login} />
-                    <Route path="/signup" component={SignUp} />
-                    <Route exact path="/profile" component={Profile}/>
-                    <Route path="/profile/edit/:id" component={EditProfile}/>
-                    <Route path="/password/change" component={ChangePassword} />
-                    <Route path="/account/verify/:id" component={VerifyAccount} />
-                    <Route path="/privacy" component={Privacy} />
-                    <Route path="/terms" component={Terms} />
-                    <Route path="/admin" component={Admin} />
-                    <Route path="/faq" component={Faq} />
-                    <Route path="/about" component={About} />
-                    <Route path="/" component={Home} />
-                </Switch>
-            </Router>
-            {/*<Footer/>*/}
-            </UserContext.Provider>
+            <ThemeContext.Provider value={{ theme, setTheme }}>
+                <UserContext.Provider value={data?.getUser}>
+                    <Router>
+                        <NavBar />
+                        <Switch>
+                            <Route path="/password/forgot" component={ForgotPassword} />
+                            <Route path="/password/reset/:id" component={ResetPassword} />
+                            <Route path="/login" component={Login} />
+                            <Route path="/signup" component={SignUp} />
+                            <Route exact path="/profile" component={Profile} />
+                            <Route path="/profile/edit" component={EditProfile} />
+                            <Route path="/password/change" component={ChangePassword} />
+                            <Route path="/account/verify/:id" component={VerifyAccount} />
+                            <Route path="/privacy" component={Privacy} />
+                            <Route path="/terms" component={Terms} />
+                            <Route path="/admin" component={Admin} />
+                            <Route path="/faq" component={Faq} />
+                            <Route path="/about" component={About} />
+                            <Route path="/" component={Home} />
+                        </Switch>
+                    </Router>
+                    {/*<Footer/>*/}
+                </UserContext.Provider>
             </ThemeContext.Provider>
         </ApolloProvider>
     );
@@ -181,7 +180,7 @@ function App() {
     return (
         <ChakraProvider theme={theme}>
             <ApolloProvider client={client}>
-                <Beep/>
+                <Beep />
             </ApolloProvider>
         </ChakraProvider>
     );

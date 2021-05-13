@@ -1,4 +1,4 @@
-import React, { FormEvent, useContext, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect, Link, useHistory } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
@@ -6,7 +6,7 @@ import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { GetUserData } from '../App';
 import {client} from '../utils/Apollo';
-import { Box, Button, Input, Text, Container, Stack, useColorModeValue, FormControl, FormLabel, Heading, Flex, Checkbox } from "@chakra-ui/react"
+import { Box, Button, Input, Container, Stack, FormControl, FormLabel, Heading, Flex, Checkbox } from "@chakra-ui/react"
 
 const LoginGraphQL = gql`
     mutation Login($username: String!, $password: String!) {

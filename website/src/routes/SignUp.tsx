@@ -1,12 +1,12 @@
-import { FormEvent, useContext, useState } from 'react';
+import React, { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Link, Redirect, useHistory } from "react-router-dom";
-import { TextInput } from '../components/Input';
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import {client} from '../utils/Apollo';
 import {GetUserData} from '../App';
+import { Avatar, Button, Input } from '@chakra-ui/react';
 
 const SignUpGraphQL = gql`
 mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!) {
@@ -87,61 +87,53 @@ function SignUp() {
     }
 
     return (
-        <div className="px-4 mx-auto lg:container">
+        <div>
             {error && <Error error={error}/>}
             {photoError && <Error error={{ message: "Please pick a profile photo"}}/>}
             <form onSubmit={handleSignUp}>
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="first"
                     label="First Name"
                     onChange={(value: any) => setFirst(value.target.value)}
                 />
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="last"
                     label="Last Name"
                     onChange={(value: any) => setLast(value.target.value)}
                 />
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="email"
                     label="Email"
                     onChange={(value: any) => setEmail(value.target.value)}
                 />
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="phone"
                     label="Phone Number"
                     onChange={(value: any) => setPhone(value.target.value)}
                 />
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="venmo"
                     label="Venmo Username"
                     onChange={(value: any) => setVenmo(value.target.value)}
                 />
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="cashapp"
                     label="Cash App Username"
                     onChange={(value: any) => setCashapp(value.target.value)}
                 />
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="username"
                     label="Username"
                     onChange={(value: any) => setUsername(value.target.value)}
                 />
-                <TextInput
-                    className="mb-4"
+                <Input
                     id="password"
                     type="password"
                     label="Password"
                     onChange={(value: any) => setPassword(value.target.value)}
                 />
                 {photo &&
-                    <img className="w-24 h-24 mb-4 rounded-full" src={URL.createObjectURL(photo)} alt="profile"/>
+                    <Avatar src={URL.createObjectURL(photo)} name={first} />
                 }
                 <input
                     hidden
@@ -155,22 +147,19 @@ function SignUp() {
                 /> 
                 <label
                     htmlFor="photo"
-                    className="px-4 py-2 mt-4 mb-4 font-bold text-white bg-gray-400 rounded shadow hover:bg-gray-700 focus:shadow-outline focus:outline-none"
                 >
                     Choose Profile Photo
                 </label>
-                <br/>
-                <br/>
-                <button type="submit" className="px-4 py-2 mb-4 font-bold text-white bg-yellow-400 rounded shadow hover:bg-yellow-500 focus:shadow-outline focus:outline-none">
+                <Button type="submit">
                     {loading ? "Signing Up..." : "Sign Up"}
-                </button>
+                </Button>
             </form>
 
-            <div className="dark:text-white">
+            <div>
                 By signing up, you agree to our
-                <Link to="/terms" className="ml-2 mr-2 text-gray-700 dark:text-gray-400">Terms of Service</Link>
+                <Link to="/terms">Terms of Service</Link>
                 and
-                <Link to="/privacy" className="ml-2 mr-2 text-gray-700 dark:text-gray-400">Privacy Policy</Link>
+                <Link to="/privacy">Privacy Policy</Link>
             </div>
         </div>
     );

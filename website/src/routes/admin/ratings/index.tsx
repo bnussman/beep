@@ -6,6 +6,7 @@ import Pagination from '../../../components/Pagination';
 import {gql, useQuery} from '@apollo/client';
 import {GetRatingsQuery} from '../../../generated/graphql';
 import {Heading, Table, Tbody, Td, Th, Thead, Tr} from '@chakra-ui/react';
+import TdUser from '../../../components/TdUser';
 
 dayjs.extend(relativeTime);
 
@@ -77,18 +78,14 @@ function Ratings() {
                     <Th>Date</Th>
                 </Thead>
                 <Tbody>
-                    {data?.getRatings && (data.getRatings.items).map(rate => {
+                    {data?.getRatings && (data.getRatings.items).map(rating => {
                         return (
-                            <Tr key={rate.id}>
-                                <Td>
-                                    {rate.rater.name}
-                                </Td>
-                                <Td>
-                                    {rate.rated.name}
-                                </Td>
-                                <Td>{rate.message}</Td>
-                                <Td>{printStars(rate.stars)}</Td>
-                                <Td>{dayjs().to(rate.timestamp)}</Td>
+                            <Tr key={rating.id}>
+                                <TdUser user={rating.rater}/>
+                                <TdUser user={rating.rated}/>
+                                <Td>{rating.message}</Td>
+                                <Td>{printStars(rating.stars)}</Td>
+                                <Td>{dayjs().to(rating.timestamp)}</Td>
                             </Tr>
                         )
                     })}

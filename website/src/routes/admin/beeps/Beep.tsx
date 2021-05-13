@@ -1,10 +1,12 @@
 import { NavLink, useHistory, useParams } from "react-router-dom";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Body1, Heading1, Heading3, Heading5 } from '../../../components/Typography';
 import {Card} from '../../../components/Card';
 import {gql, useMutation, useQuery} from '@apollo/client';
 import {DeleteBeepMutation, GetBeepQuery} from '../../../generated/graphql';
+import { Avatar } from "@chakra-ui/avatar";
+import { Heading, Text, Box, Button } from "@chakra-ui/react";
+import React from "react";
 
 dayjs.extend(duration);
 
@@ -25,15 +27,13 @@ const GetBeep = gql`
             groupSize
             beeper {
                 id
-                first
-                last
+                name
                 photoUrl
                 username
             }
             rider {
                 id
-                first
-                last
+                name
                 photoUrl
                 username
             }
@@ -53,100 +53,80 @@ function BeepPage() {
     }
 
     return (
-        <>
-            <div className="flex flex-row justify-between">
-            <Heading3>Beep</Heading3>
-            <button
-                onClick={() => doDeleteBeep()}
-                className={"mt-2 mb-2 py-2 px-4 mr-1 text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700"}
-            >
-                {!deleteLoading ? "Delete Beep" : "Loading"}
-            </button>
+        <Box>
+            <div>
+                <Heading>Beep</Heading>
+                <Button
+                    onClick={() => doDeleteBeep()}
+                >
+                    {!deleteLoading ? "Delete Beep" : "Loading"}
+                </Button>
             </div>
             {data?.getBeep ?
-                <><div>
+                <Box>
+                <div>
                     <iframe
-                        className="mb-4"
                         title="Map"
                         width="100%"
                         height="300"
                         src={`https://www.google.com/maps/embed/v1/directions?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&origin=${data.getBeep.origin}&destination=${data.getBeep.destination}`}>
                     </iframe>
 
-                    <div className="flex flex-wrap">
+                    <div>
                         <Card>
-                            <div className="m-4">
-                                <Heading5>Beeper</Heading5>
-                                <div className="flex flex-row items-center">
-                                    {data.getBeep.beeper.photoUrl && (
-                                        <div className="flex mr-3">
-                                            <img className="w-10 h-10 rounded-full shadow-lg" src={data.getBeep.beeper.photoUrl} alt={`${data.getBeep.beeper.first} ${data.getBeep.beeper.last}`}></img>
-                                        </div>
-                                    )}
+                            <div>
+                                <Heading>Beeper</Heading>
+                                <div>
+                                    <Avatar src={data.getBeep.beeper.photoUrl} name={data.getBeep.beeper.name} />
                                     <NavLink to={`/admin/users/${data.getBeep.beeper.id}`}>
-                                        {data.getBeep.beeper.first} {data.getBeep.beeper.last}
+                                        {data.getBeep.beeper.name}
                                     </NavLink>
                                 </div>
                             </div>
                         </Card>
                         <Card>
-                            <div className="m-4">
-                                <Heading5>Rider</Heading5>
-                                <div className="flex flex-row items-center">
-                                    {data.getBeep.rider.photoUrl && (
-                                        <div className="flex mr-3">
-                                            <img className="w-10 h-10 rounded-full shadow-lg" src={data.getBeep.rider.photoUrl} alt={`${data.getBeep.rider.first} ${data.getBeep.rider.last}`}></img>
-                                        </div>
-                                    )}
+                            <div>
+                                <Heading>Rider</Heading>
+                                <div>
+                                    <Avatar src={data.getBeep.rider.photoUrl} name={data.getBeep.rider.name}/>
                                     <NavLink to={`/admin/users/${data.getBeep.rider.id}`}>
-                                        {data.getBeep.rider.first} {data.getBeep.rider.last}
+                                        {data.getBeep.rider.name}
                                     </NavLink>
                                 </div>
                             </div>
                         </Card>
                     </div>
-
-                    <div className="flex flex-wrap">
+                    <div>
                         <Card>
-                            <div className="p-4">
-                                <Heading5>Origin</Heading5>
-                                <Body1>{data.getBeep.origin}</Body1>
-                            </div>
+                            <Heading>Origin</Heading>
+                            <Text>{data.getBeep.origin}</Text>
                         </Card>
                         <Card>
-                            <div className="p-4">
-                                <Heading5>Destination</Heading5>
-                                <Body1>{data.getBeep.destination}</Body1>
-                            </div>
+                            <Heading>Destination</Heading>
+                            <Text>{data.getBeep.destination}</Text>
                         </Card>
                     </div>
                     <Card>
-                        <div className="p-4">
-                            <Heading5>Group Size</Heading5>
-                            <Body1>{data.getBeep.groupSize}</Body1>
-                        </div>
+                            <Heading>Group Size</Heading>
+                            <Text>{data.getBeep.groupSize}</Text>
                     </Card>
-                    <div className="flex flex-wrap">
+                    <div>
                         <Card>
-                            <div className="p-4">
-                                <Heading5>Beep Started</Heading5>
-                                <Body1>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Body1>
-                            </div>
+                            <Heading>Beep Started</Heading>
+                            <Text>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Text>
                         </Card>
                         <Card>
-                            <div className="p-4">
-                                <Heading5>Beep Ended</Heading5>
-                                <Body1>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Body1>
-                            </div>
+                            <Heading>Beep Ended</Heading>
+                            <Text>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Text>
                         </Card>
                     </div>
                 </div>
-                </>
+                </Box>
             :
-            <Heading1>Loading</Heading1>
+            <Heading>Loading</Heading>
             }
-        </>
-    )
+        </Box>
+    );
 }
 
 export default BeepPage;

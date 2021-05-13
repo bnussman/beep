@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Card } from '../../components/Card';
 import {gql, useQuery} from '@apollo/client';
 import {GetBeepersQuery} from '../../generated/graphql';
 import {Heading, Table, Tbody, Td, Th, Thead, Tr} from '@chakra-ui/react';
+import TdUser from '../../components/TdUser';
 
 const BeepersGraphQL = gql`
     query GetBeepers {
@@ -49,9 +50,7 @@ function Beepers() {
                     {data?.getBeeperList && (data.getBeeperList).map(beeper => {
                         return (
                             <Tr key={beeper.id}>
-                                <Td>
-                                    {beeper.name}
-                                </Td>
+                                <TdUser user={beeper}/>
                                 <Td>{beeper.queueSize} riders</Td>
                                 <Td>{beeper.capacity} riders</Td>
                                 <Td>${beeper.singlesRate} / ${beeper.groupRate}</Td>

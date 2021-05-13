@@ -2,12 +2,13 @@ import { NavLink, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Heading3, Body1, Heading5, Heading1 } from '../../../components/Typography';
 import { Indicator } from '../../../components/Indicator';
 import { Formik, Form, Field } from 'formik';
 import { Card } from '../../../components/Card';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteReportMutation, GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
+import { Avatar, Box, Button, Heading, Text } from '@chakra-ui/react';
+import React from "react";
 
 dayjs.extend(relativeTime);
 
@@ -41,22 +42,19 @@ const GetReport = gql`
             }
             reporter {
                 id
-                first
-                last
+                name
                 photoUrl
                 username
             }
             reported {
                 id
-                first
-                last
+                name
                 photoUrl
                 username
             }
             handledBy {
                 id
-                first
-                last
+                name
                 photoUrl
                 username
             }
@@ -84,85 +82,67 @@ function ReportPage() {
     }
 
     return (
-        <>
-        <Heading3>Report</Heading3>
+        <Box>
+        <Heading>Report</Heading>
         {loading && <p>Loading</p>}
         {error && error.message}
 
         {data?.getReport ?
             <>
-                <div className="flex flex-wrap">
+                <div>
                     <Card>
-                        <div className="m-4">
-                            <Heading5>Reporter</Heading5>
-                            <div className="flex flex-row items-center">
-                                {data.getReport.reporter.photoUrl && (
-                                    <div className="flex mr-3">
-                                        <img className="w-10 h-10 rounded-full shadow-lg" src={data.getReport.reporter.photoUrl} alt={`${data.getReport.reporter.first} ${data.getReport.reporter.last}`}></img>
-                                    </div>
-                                )}
+                        <div>
+                            <Heading>Reporter</Heading>
+                            <div>
+                                <Avatar src={data.getReport.reporter.photoUrl} name={data.getReport.reporter.name}/>
                                 <NavLink to={`/admin/users/${data.getReport.reporter.id}`}>
-                                    {data.getReport.reporter.first} {data.getReport.reporter.last}
+                                    {data.getReport.reporter.name}
                                 </NavLink>
                             </div>
                         </div>
                     </Card>
                     <Card>
-                        <div className="m-4">
-                            <Heading5>Reported</Heading5>
-                            <div className="flex flex-row items-center">
-                                {data.getReport.reported.photoUrl && (
-                                    <div className="flex mr-3">
-                                        <img className="w-10 h-10 rounded-full shadow-lg" src={data.getReport.reported.photoUrl} alt={`${data.getReport.reported.first} ${data.getReport.reported.last}`}></img>
-                                    </div>
-                                )}
+                        <div>
+                            <Heading>Reported</Heading>
+                            <div>
+                                <Avatar src={data.getReport.reported.photoUrl} name={data.getReport.reported.name} />
                                 <NavLink to={`/admin/users/${data.getReport.reported.id}`}>
-                                    {data.getReport.reported.first} {data.getReport.reported.last}
+                                    {data.getReport.reported.name}
                                 </NavLink>
                             </div>
                         </div>
                     </Card>
                 </div>
                 <Card>
-                    <div className="m-4">
-                        <Heading5>Reason</Heading5>
-                        <Body1>{data.getReport.reason}</Body1>  
-                    </div>
+                    <Heading>Reason</Heading>
+                    <Text>{data.getReport.reason}</Text>
                 </Card>
                 <Card>
-                    <div className="m-4">
-                        <Heading5>Created</Heading5>
-                        <Body1>{dayjs().to(data.getReport.timestamp)}</Body1>  
-                    </div>
+                    <Heading>Created</Heading>
+                    <Text>{dayjs().to(data.getReport.timestamp)}</Text>  
                 </Card>
                 {data.getReport.beep &&
-                <Card>
-                    <div className="m-4">
-                        <Heading5>Associated Beep Event</Heading5>
+                    <Card>
+                        <Heading>Associated Beep Event</Heading>
                         <NavLink to={`/admin/beeps/${data.getReport.beep.id}`}>
                             {data.getReport.beep.id}  
                         </NavLink>
-                    </div>
-                </Card>
+                    </Card>
                 }
                 <Card>
-                    <div className="m-4">
+                    <div>
                         {data.getReport.handled ?
                             <div>
                                 <div>
-                                    <Heading5>Status</Heading5>
+                                    <Heading>Status</Heading>
                                 </div>
-                                <div className="flex flex-row items-center">
-                                    <Indicator color='green' className="mr-2"/>
-                                    <span className="mr-2">Handled by</span>
-                                    <div className="flex flex-row items-center">
-                                        {data.getReport.handledBy.photoUrl && (
-                                            <div className="flex mr-3">
-                                                <img className="w-10 h-10 rounded-full shadow-lg" src={data.getReport.handledBy.photoUrl} alt={`${data.getReport.handledBy.first} ${data.getReport.handledBy.last}`}></img>
-                                            </div>
-                                        )}
+                                <div>
+                                    <Indicator color='green'/>
+                                    <span>Handled by</span>
+                                    <div>
+                                        <Avatar src={data.getReport.handledBy.photoUrl} name={data.getReport.handledBy.name}/>
                                         <NavLink to={`/admin/users/${data.getReport.handledBy.id}`}>
-                                            {data.getReport.handledBy.first} {data.getReport.handledBy.last}
+                                            {data.getReport.handledBy.name}
                                         </NavLink>
                                     </div>
                                 </div>
@@ -170,16 +150,16 @@ function ReportPage() {
                             :
                             <>
                                 <div>
-                                    <Heading5>Status</Heading5>
+                                    <Heading>Status</Heading>
                                 </div>
-                                <Indicator color='red' className="mr-2"/>
+                                <Indicator color='red'/>
                                 <span>Not handled</span>
                             </>
                         }
                     </div>
                 </Card>
-            <div className="mt-8">
-            <Heading3>Update Report Info</Heading3>
+            <div>
+            <Heading>Update Report Info</Heading>
                 {updateError && <p>updateError.message</p>}
             <Formik
                 initialValues={{
@@ -194,34 +174,33 @@ function ReportPage() {
                 {({ isSubmitting }) => (
                     <Form>
                         <div>
-                            <Heading5>Admin Notes</Heading5>
-                            <Field type="text" component="textarea" name="notes" className="w-full h-32 px-4 py-2 leading-tight text-gray-700 bg-gray-200 rounded appearance-none dark:bg-gray-800 dark:text-white"/>
+                            <Heading>Admin Notes</Heading>
+                            <Field type="text" component="textarea" name="notes" />
                         </div>
                         <div>
-                            <Heading5>Handled</Heading5>
+                            <Heading>Handled</Heading>
                             <Field type="checkbox" name="handled"/>
                         </div>
-                        <button
+                        <Button
                             type="submit"
-                            className={`inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md text-white shadow-sm bg-yellow-500 hover:bg-yellow-600 focus:outline-white`}
-                            disabled={isSubmitting}>
+                            disabled={isSubmitting}
+                        >
                             {isSubmitting ? "Upading..."  : "Update Report"}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => doDeleteReport()}
-                            className={`mt-3 inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-white`}
                         >
                             {!deleteLoading ? "Delete Report" : "Deleteing..."}
-                        </button>
+                        </Button>
                     </Form>
                 )}
             </Formik>
             </div>
         </>
         :
-        <Heading1>Loading</Heading1>
+        <Heading>Loading</Heading>
         }
-    </>
+    </Box>
 )}
 
 export default ReportPage;
