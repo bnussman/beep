@@ -25,6 +25,7 @@ import ThemedStatusBar from './utils/StatusBar';
 import { client } from './utils/Apollo';
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
 import { GetUserDataQuery, User } from './generated/graphql';
+import Sentry from './utils/Sentry';
 
 const Stack = createStackNavigator();
 init();
@@ -101,7 +102,7 @@ function Beep() {
         if (data?.getUser.id) {
             if (isMobile) updatePushToken();
 
-            console.log("Calling sub to more");
+            Sentry.setUserContext(data.getUser);
 
             subscribeToMore({
                 document: UserUpdates,
@@ -111,6 +112,7 @@ function Beep() {
                 updateQuery: (prev, { subscriptionData }) => {
                     const newFeedItem = subscriptionData.data.getUserUpdates;
                     console.log("Socket Updated User");
+                    Sentry.setUserContext(newFeedItem);
                     return Object.assign({}, prev, {
                         getUser: newFeedItem
                     });
