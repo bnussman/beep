@@ -5,7 +5,7 @@
     "name": "Beep",
     "slug": "Beep",
     "owner": "bnussman",
-    "version": "1.0.3",
+    "version": "2.0.0",
     "githubUrl": "https://github.com/bnussman/Beep",
     "primaryColor": "#ecc94b",
     "icon": "./assets/icon.png",
@@ -37,21 +37,23 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.ridebeep.App",
-      "buildNumber": "7",
+      "buildNumber": "10",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "The Beep App uses your location to pick origins, destinations, and predict ride times",
         "NSLocationAlwaysUsageDescription": "The Beep App will use your location to provide ETA's to yourself and others",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "The Beep App will use your location to provide ETA's to yourself and others",
         "UIBackgroundModes": [
-          "location"
+          "location",
+          "fetch"
         ]
       }
     },
     "android": {
       "package": "app.ridebeep.App",
-      "versionCode": 21,
+      "versionCode": 27,
       "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION", "VIBRATE"]
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION", "FOREGROUND_SERVICE", "VIBRATE"]
     },
     "splash": {
       "image": "./assets/splash.png",
