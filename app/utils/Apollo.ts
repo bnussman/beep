@@ -2,7 +2,7 @@ import { ApolloClient, ApolloLink, InMemoryCache, split } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUploadLink } from 'apollo-upload-client';
 import { onError } from "@apollo/client/link/error";
 

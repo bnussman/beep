@@ -18,7 +18,7 @@ import { ThemeContext } from './utils/ThemeContext';
 import { UserContext } from './utils/UserContext';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { updatePushToken } from "./utils/Notifications";
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import init from "./utils/Init";
 import { isMobile } from './utils/config';
 import ThemedStatusBar from './utils/StatusBar';

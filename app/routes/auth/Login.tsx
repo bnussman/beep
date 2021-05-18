@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Layout, Text, Button, Input } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
 import { UserContext } from '../../utils/UserContext';

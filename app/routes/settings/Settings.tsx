@@ -4,7 +4,7 @@ import { Layout, Button, Card, Text } from '@ui-kitten/components';
 import { ThemeContext } from '../../utils/ThemeContext';
 import { AuthenticatedUserContextData, UserContext } from '../../utils/UserContext';
 import { PhotoIcon, LogIcon, ThemeIcon, LogoutIcon, ProfileIcon, PasswordIcon, ForwardIcon } from '../../utils/Icons';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ProfilePicture from '../../components/ProfilePicture';
 import ResendButton from '../../components/ResendVarificationEmailButton';
 import {gql, useMutation} from '@apollo/client';

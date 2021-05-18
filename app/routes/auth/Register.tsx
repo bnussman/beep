@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, Layout, Button, Input, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { UserContext } from '../../utils/UserContext';
 import { PhotoIcon, BackIcon, SignUpIcon, LoadingIndicator } from "../../utils/Icons";
