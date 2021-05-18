@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 import { Rating } from '../entities/Rating';
 
@@ -20,9 +20,7 @@ export class RatingInput implements Partial<Rating> {
   @IsOptional()
   public message?: string;
 
-  @Field({ nullable: true })
+  @Field()
   @IsString()
-  @IsOptional()
-  public beepId?: string;
-
+  public beepId!: string;
 }

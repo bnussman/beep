@@ -419,7 +419,7 @@ export type RatingInput = {
   userId: Scalars['String'];
   stars: Scalars['Float'];
   message?: Maybe<Scalars['String']>;
-  beepId?: Maybe<Scalars['String']>;
+  beepId: Scalars['String'];
 };
 
 export type RatingsResponse = {

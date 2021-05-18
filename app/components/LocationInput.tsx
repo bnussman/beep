@@ -33,7 +33,7 @@ export function LocationInput(props: Props) {
        
         Location.setGoogleApiKey("AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI");
 
-        const { status } = await Location.requestPermissionsAsync();
+        const { status } = await Location.requestForegroundPermissionsAsync();
 
         if (status !== 'granted') {
             return alert("You must enable location to use this feature.");

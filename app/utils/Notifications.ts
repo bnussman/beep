@@ -1,5 +1,4 @@
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { Vibration, Platform } from 'react-native';
 import { gql } from '@apollo/client';
@@ -28,7 +27,7 @@ export async function getPushToken(): Promise<string | null> {
  * function to get existing or prompt for notification permission
  * @returns boolean true if client has location permissions
  */
-async function getNotificationPermission() {
+async function getNotificationPermission(): Promise<boolean> {
     if (!Constants.isDevice) {
         return false;
     }
@@ -38,20 +37,18 @@ async function getNotificationPermission() {
         return true;
     }
 
-    const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+    const settings = await Notifications.requestPermissionsAsync({
+        ios: {
+            allowAlert: true,
+            allowBadge: true,
+            allowSound: true,
+            allowAnnouncements: true,
+        },
+    });
 
-    let finalStatus = status;
-
-    if (status !== 'granted') {
-        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        finalStatus = status;
-    }
-
-    if (finalStatus !== 'granted') {
-        console.log('[App.js] [Push Notifications] Failed to get push token for push notification!');
-        return false;
-    }
-    return true;
+    return (
+        settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+    );
 }
 
 /**

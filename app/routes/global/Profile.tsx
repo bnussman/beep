@@ -52,11 +52,16 @@ export function ProfileScreen(props: Props) {
     }
 
     function handleRate() {
-        props.navigation.navigate("Rate", {
-            id: props.route.params.id,
-            user: data?.getUser,
-            beep: props.route.params.beep
-        });
+        if (props.route.params.beep) {
+            props.navigation.navigate("Rate", {
+                id: props.route.params.id,
+                user: data?.getUser,
+                beep: props.route.params.beep
+            });
+        }
+        else {
+            alert("You can only leave a rating when you've interacted with this user.");
+        }
     }
 
     const BackAction = () => (

@@ -14,7 +14,7 @@ interface Props {
 }
 
 const RateUser = gql`
-    mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String) {
+    mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String!) {
       rateUser(
         input: {
           userId: $userId,

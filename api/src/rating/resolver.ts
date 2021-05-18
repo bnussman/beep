@@ -24,8 +24,10 @@ export class RatingResolver {
         const user = await BeepORM.userRepository.findOneOrFail(input.userId);
 
         const beep = input.beepId ? BeepORM.em.getReference(Beep, input.beepId) : undefined;
+
+        if (!beep) throw new Error("You can only leave a rating when a beep is associated.");
         
-        const rating = new Rating(ctx.user, user, input.stars, input.message, beep);
+        const rating = new Rating(ctx.user, user, input.stars, beep, input.message);
 
         if (!user.rating) {
             user.rating = input.stars;
@@ -38,12 +40,7 @@ export class RatingResolver {
 
         user.ratings.add(rating);
 
-        try { 
-            await BeepORM.userRepository.persistAndFlush(user);
-        }
-        catch (e) {
-            console.log(e)
-        }
+        await BeepORM.userRepository.persistAndFlush(user);
 
         sendNotification(user.pushToken, "You got rated!", `${ctx.user.name()} rated you ${input.stars} stars!`);
 

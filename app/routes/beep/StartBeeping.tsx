@@ -10,7 +10,6 @@ import AcceptDenyButton from "../../components/AcceptDenyButton";
 import { PhoneIcon, TextIcon, VenmoIcon, MapsIcon, DollarIcon } from '../../utils/Icons';
 import ProfilePicture from '../../components/ProfilePicture';
 import Toggle from "./components/Toggle";
-import * as Permissions from 'expo-permissions';
 import Logger from '../../utils/Logger';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetInitialQueueQuery, UpdateBeepSettingsMutation } from '../../generated/graphql';
@@ -142,11 +141,14 @@ export function StartBeepingScreen(props: Props) {
     }
 
     async function getBeepingLocationPermissions(): Promise<boolean> {
-        const { status } = await Permissions.askAsync(Permissions.LOCATION);
+        //Temporary fix for being able to toggle beeping in dev
+        if (__DEV__) return true;
 
-        if (status !== 'granted') {
-            setIsBeeping(false);
-            alert("You must allow location to beep!");
+        const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
+        const { status: bgStatus } = await Location.requestBackgroundPermissionsAsync();
+
+
+        if (fgStatus !== 'granted' || bgStatus !== 'granted') {
             return false;
         }
 
@@ -157,7 +159,11 @@ export function StartBeepingScreen(props: Props) {
         setIsBeeping(value);
 
         if (value) {
-            if (!(await getBeepingLocationPermissions())) return;
+            if (!(await getBeepingLocationPermissions())) {
+                setIsBeeping(!value);
+                alert("You must allow background location to start beeping!");
+                return;
+            }
             startLocationTracking();
         }
         else {
@@ -222,10 +228,12 @@ export function StartBeepingScreen(props: Props) {
     }
 
     useEffect(() => {
-
         const init = async () => {
             if (user.isBeeping) {
-                if (!(await getBeepingLocationPermissions())) return;
+                if (!(await getBeepingLocationPermissions())) {
+                    alert("You must allow background location to start beeping!");
+                    return;
+                }
                 startLocationTracking();
                 sub();
             }
