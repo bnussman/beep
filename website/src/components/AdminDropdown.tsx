@@ -17,7 +17,6 @@ export function AdminDropdown() {
                 color="white"
                 size='md'
                 mr={4}
-                Action
             >
                 Admin
             </Button>

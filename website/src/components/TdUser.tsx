@@ -11,7 +11,7 @@ function TdUser(props: Props) {
         <Td>
             <Box as={Link} to={`users/${props.user.id}`}>
                 <Flex align="center">
-                    <Avatar mr={2} src={props.user.photoUrl} name={props.user.name}/>
+                    <Avatar mr={2} src={props.user.photoUrl}/>
                     <Text>{props.user.name}</Text>
                 </Flex>
             </Box>

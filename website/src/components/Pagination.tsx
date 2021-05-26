@@ -106,31 +106,31 @@ export default function Pagination({
 		pages.push(pageCount);
 	}
 
-	return (
-        <Box m={4}>
-            <Flex align="center">
-			{!!resultCount &&
-                <Text>
-                    {`Showing ${(currentPage - 1) * limit + 1} to ${currentPage * limit <= resultCount ? currentPage * limit : resultCount}	of ${resultCount} results`}
-				</Text>
-			}
-                <Spacer />
-                <Box>
-                    <ButtonGroup isAttached>
-                        <PagLeft disabled={currentPage === 1} onClick={decrement} />
-                        {
-                            pages.map((page, index) => {
-                                return page
-                                    ? <PagButton key={index} active={currentPage === page} onClick={() => navigateTo(page)}>
-                                        {page}
-                                    </PagButton>
-                                    : <PagElement key={index}>...</PagElement>
-                            })
-                        }
-                        <PagRight disabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
-                    </ButtonGroup>
-                </Box>
-            </Flex>
+  return (
+    <Box m={2}>
+      <Flex align="center">
+        {!!resultCount &&
+          <Text>
+            {`Showing ${(currentPage - 1) * limit + 1} to ${currentPage * limit <= resultCount ? currentPage * limit : resultCount}	of ${resultCount} results`}
+          </Text>
+        }
+        <Spacer />
+        <Box>
+          <ButtonGroup isAttached>
+            <PagLeft disabled={currentPage === 1} onClick={decrement} />
+            {
+              pages.map((page, index) => {
+                return page
+                  ? <PagButton key={index} active={currentPage === page} onClick={() => navigateTo(page)}>
+                    {page}
+                  </PagButton>
+                  : <PagElement key={index}>...</PagElement>
+              })
+            }
+            <PagRight disabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
+          </ButtonGroup>
         </Box>
-	);
+      </Flex>
+    </Box>
+  );
 }

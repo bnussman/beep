@@ -41,7 +41,6 @@ function ChangePassword() {
         <div>
             {data?.changePassword && <Success message="Successfully changed your password"/>}
             {error && <Error error={error} />}
-            {loading && <p>Loading</p>}
             <form onSubmit={handleEdit}>
                 <Input
                     id="password"
@@ -55,7 +54,7 @@ function ChangePassword() {
                     type="password"
                     onChange={(value: any) => setPassword2(value.target.value)}
                 />
-                <Button raised type="submit">Update password</Button>
+                <Button isLoading={loading} type="submit">Update password</Button>
             </form>
         </div>
     );

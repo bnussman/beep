@@ -77,7 +77,7 @@ function BeepPage() {
                             <div>
                                 <Heading>Beeper</Heading>
                                 <div>
-                                    <Avatar src={data.getBeep.beeper.photoUrl} name={data.getBeep.beeper.name} />
+                                    <Avatar src={data.getBeep.beeper.photoUrl} />
                                     <NavLink to={`/admin/users/${data.getBeep.beeper.id}`}>
                                         {data.getBeep.beeper.name}
                                     </NavLink>
