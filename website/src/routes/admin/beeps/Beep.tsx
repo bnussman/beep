@@ -1,130 +1,135 @@
-import { NavLink, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import {Card} from '../../../components/Card';
-import {gql, useMutation, useQuery} from '@apollo/client';
-import {DeleteBeepMutation, GetBeepQuery} from '../../../generated/graphql';
-import { Avatar } from "@chakra-ui/avatar";
-import { Heading, Text, Box, Button } from "@chakra-ui/react";
+import { Card } from '../../../components/Card';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { DeleteBeepMutation, GetBeepQuery } from '../../../generated/graphql';
+import { Heading, Text, Box, Button, Flex, Spacer, Center, Spinner } from "@chakra-ui/react";
 import React from "react";
+import { DeleteIcon } from "@chakra-ui/icons";
+import BasicUser from "../../../components/BasicUser";
+import { Error } from "../../../components/Error";
+import DeleteDialog from "../../../components/DeleteDialog";
 
 dayjs.extend(duration);
 
 const DeleteBeep = gql`
-    mutation DeleteBeep($id: String!) {
-        deleteBeep(id: $id)
-    }
+mutation DeleteBeep($id: String!) {
+    deleteBeep(id: $id)
+}
 `;
 
 const GetBeep = gql`
-    query GetBeep($id: String!) {
-        getBeep(id: $id) {
+query GetBeep($id: String!) {
+    getBeep(id: $id) {
+        id
+        origin
+        destination
+        start
+        end
+        groupSize
+        beeper {
             id
-            origin
-            destination
-            start
-            end
-            groupSize
-            beeper {
-                id
-                name
-                photoUrl
-                username
-            }
-            rider {
-                id
-                name
-                photoUrl
-                username
-            }
+            name
+            photoUrl
+            username
+        }
+        rider {
+            id
+            name
+            photoUrl
+            username
         }
     }
+}
 `;
 
 function BeepPage() {
     const { beepId } = useParams<{ beepId: string }>();
-    const { data } = useQuery<GetBeepQuery>(GetBeep, { variables: { id: beepId}});
-    const [deleteBeep, { loading: deleteLoading }] = useMutation<DeleteBeepMutation>(DeleteBeep);
+    const { data, loading } = useQuery<GetBeepQuery>(GetBeep, { variables: { id: beepId }});
+    const [deleteBeep, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteBeepMutation>(DeleteBeep);
     const history = useHistory();
 
-    async function doDeleteBeep() {
-        await deleteBeep({ variables: { id: beepId }});
-        history.goBack();
+    const [isOpen, setIsOpen] = React.useState(false);
+    const onClose = () => setIsOpen(false);
+    const cancelRef = React.useRef();
+
+    async function doDelete() {
+        try {
+            await deleteBeep({ variables: { id: beepId }});
+            setIsOpen(false);
+            history.goBack();
+        }
+        catch (e) {
+            setIsOpen(false);
+        }
     }
 
     return (
         <Box>
-            <div>
+            {deleteError && <Error error={deleteError} />}
+            <Flex align="center">
                 <Heading>Beep</Heading>
+                <Spacer />
                 <Button
-                    onClick={() => doDeleteBeep()}
+                    colorScheme="red"
+                    leftIcon={<DeleteIcon />}
+                    isLoading={loading || deleteLoading}
+                    onClick={() => setIsOpen(true)}
                 >
-                    {!deleteLoading ? "Delete Beep" : "Loading"}
+                    Delete
                 </Button>
-            </div>
-            {data?.getBeep ?
+            </Flex>
+            {loading ? 
+                <Center h="100px">
+                    <Spinner size="xl" />
+                </Center>
+                :
                 <Box>
-                <div>
                     <iframe
                         title="Map"
                         width="100%"
                         height="300"
                         src={`https://www.google.com/maps/embed/v1/directions?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&origin=${data.getBeep.origin}&destination=${data.getBeep.destination}`}>
                     </iframe>
-
-                    <div>
-                        <Card>
-                            <div>
-                                <Heading>Beeper</Heading>
-                                <div>
-                                    <Avatar src={data.getBeep.beeper.photoUrl} />
-                                    <NavLink to={`/admin/users/${data.getBeep.beeper.id}`}>
-                                        {data.getBeep.beeper.name}
-                                    </NavLink>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card>
-                            <div>
-                                <Heading>Rider</Heading>
-                                <div>
-                                    <Avatar src={data.getBeep.rider.photoUrl} name={data.getBeep.rider.name}/>
-                                    <NavLink to={`/admin/users/${data.getBeep.rider.id}`}>
-                                        {data.getBeep.rider.name}
-                                    </NavLink>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                    <div>
-                        <Card>
-                            <Heading>Origin</Heading>
-                            <Text>{data.getBeep.origin}</Text>
-                        </Card>
-                        <Card>
-                            <Heading>Destination</Heading>
-                            <Text>{data.getBeep.destination}</Text>
-                        </Card>
-                    </div>
                     <Card>
-                            <Heading>Group Size</Heading>
-                            <Text>{data.getBeep.groupSize}</Text>
+                        <Heading>Beeper</Heading>
+                        <BasicUser user={data.getBeep.beeper} />
                     </Card>
-                    <div>
-                        <Card>
-                            <Heading>Beep Started</Heading>
-                            <Text>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Text>
-                        </Card>
-                        <Card>
-                            <Heading>Beep Ended</Heading>
-                            <Text>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Text>
-                        </Card>
-                    </div>
-                </div>
+                    <Card>
+                        <Heading>Rider</Heading>
+                        <BasicUser user={data.getBeep.rider} />
+                    </Card>
+                    <Card>
+                        <Heading>Origin</Heading>
+                        <Text>{data.getBeep.origin}</Text>
+                    </Card>
+                    <Card>
+                        <Heading>Destination</Heading>
+                        <Text>{data.getBeep.destination}</Text>
+                    </Card>
+                    <Card>
+                        <Heading>Group Size</Heading>
+                        <Text>{data.getBeep.groupSize}</Text>
+                    </Card>
+                    <Card>
+                        <Heading>Beep Started</Heading>
+                        <Text>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Text>
+                    </Card>
+                    <Card>
+                        <Heading>Beep Ended</Heading>
+                        <Text>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Text>
+                    </Card>
                 </Box>
-            :
-            <Heading>Loading</Heading>
             }
+            <DeleteDialog
+                title="Rating"
+                isOpen={isOpen}
+                onClose={onClose}
+                doDelete={doDelete}
+                deleteLoading={deleteLoading}
+                cancelRef={cancelRef}
+            />
         </Box>
     );
 }

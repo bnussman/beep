@@ -5,7 +5,7 @@ import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graph
 import { Error } from '../../../components/Error';
 import { Success } from '../../../components/Success';
 import React from "react";
-import { Box, Button, Center, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Button, Center, FormControl, FormLabel, Heading, Spinner } from "@chakra-ui/react";
 
 const GetEditableUser = gql`
     query GetEditableUser($id: String!) {
@@ -82,22 +82,22 @@ function EditUserPage() {
               if (type === "number") {
 
                 return (
-                  <div key={key}>
-                    <Heading>{key}</Heading>
-                    <Field type="number" name={key} />
-                  </div>
+                    <FormControl>
+                        <FormLabel>{key}</FormLabel>
+                        <Field type="number" name={key} />
+                    </FormControl>
                 );
               }
               else {
                 return (
-                  <div key={key}>
-                    <Heading>{key}</Heading>
-                    {type === "boolean" ?
-                      <Field type="checkbox" name={key} />
-                      :
-                      <Field type="text" name={key} />
-                    }
-                  </div>
+                    <FormControl>
+                        <FormLabel>{key}</FormLabel>
+                        {type === "boolean" ?
+                            <Field type="checkbox" name={key} />
+                            :
+                            <Field type="text" name={key} />
+                        }
+                    </FormControl>
                 );
               }
             })}

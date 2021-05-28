@@ -6,7 +6,7 @@ import { Card } from '../../../components/Card';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteRatingMutation, GetRatingQuery } from '../../../generated/graphql';
 import React from "react";
-import { Avatar, Heading, Text, Box, Button, Flex, Spacer, Center, Spinner } from "@chakra-ui/react";
+import { Heading, Text, Box, Button, Flex, Spacer, Center, Spinner } from "@chakra-ui/react";
 import { printStars } from ".";
 import { Error } from '../../../components/Error';
 import BasicUser from "../../../components/BasicUser";

@@ -1,6 +1,4 @@
-import React from "react";
 import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button } from "@chakra-ui/react";
-import { BooleanValueNode } from "graphql";
 
 interface Props {
   isOpen: boolean;
@@ -28,7 +26,7 @@ function DeleteDialog(props: Props) {
 
           <AlertDialogBody>
             Are you sure? You can't undo this action afterwards.
-            </AlertDialogBody>
+          </AlertDialogBody>
 
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose}>
