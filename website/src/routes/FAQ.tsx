@@ -3,7 +3,6 @@ import { Card } from '../components/Card';
 
 function Faq() {
     return (
-        <Container maxW="container.lg">
         <Box>
             <Card>
                 <Heading>
@@ -75,7 +74,6 @@ function Faq() {
                 The beep app is not regulated in any way and nothing has been added to the app that will cost more money to anybody and still uses the fundamental principles that the facebook page was founded on.
             </Card>
         </Box>
-        </Container>
     );
 }
 

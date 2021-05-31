@@ -6,7 +6,7 @@ interface Props {
 
 export function Error(props: Props) {
     return (
-        <Alert status="error">
+        <Alert status="error" mb={4}>
             <AlertIcon />
                 {props.error.message}
         </Alert>

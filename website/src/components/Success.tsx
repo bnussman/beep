@@ -6,7 +6,7 @@ interface Props {
 
 export function Success(props: Props) {
     return (
-        <Alert status="success">
+        <Alert status="success" mb={4}>
             <AlertIcon />
             {props.message}
         </Alert>

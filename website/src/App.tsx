@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { UserContext } from './UserContext';
 import { ThemeContext } from './ThemeContext';
@@ -20,7 +20,7 @@ import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
 import NavBar from './components/NavBar';
 import About from './routes/About';
-import { ChakraProvider, extendTheme } from "@chakra-ui/react"
+import { ChakraProvider, extendTheme, Container } from "@chakra-ui/react"
 
 export const GetUserData = gql`
     query GetUserData {
@@ -132,6 +132,7 @@ function Beep() {
                 <UserContext.Provider value={data?.getUser}>
                     <Router>
                         <NavBar />
+                        <Container maxW="container.xl">
                         <Switch>
                             <Route path="/password/forgot" component={ForgotPassword} />
                             <Route path="/password/reset/:id" component={ResetPassword} />
@@ -148,6 +149,7 @@ function Beep() {
                             <Route path="/about" component={About} />
                             <Route path="/" component={Home} />
                         </Switch>
+                        </Container>
                     </Router>
                     {/*<Footer/>*/}
                 </UserContext.Provider>

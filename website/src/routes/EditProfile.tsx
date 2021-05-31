@@ -89,9 +89,9 @@ function EditProfile() {
       {data && <Success message="Profile Updated" />}
 
       {uploadLoading && <p>Uploading new Photo...</p>}
-      {uploadError && <p>{uploadError.message}</p>}
+      {uploadError && <Error error={uploadError.message}/>}
 
-      <Box>
+      <Box mb={6}>
           <Flex align="center">
               <Box>
                   <label htmlFor="photo">
@@ -183,7 +183,7 @@ function EditProfile() {
                   onChange={(value: any) => setCashapp(value.target.value)}
               />
           </FormControl>
-        <Button type="submit" isLoading={loading}>Update profile</Button>
+        <Button mt={4} type="submit" isLoading={loading}>Update profile</Button>
       </form>
     </Box>
   );
