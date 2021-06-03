@@ -7,6 +7,8 @@ import { gql, useQuery } from '@apollo/client';
 import { GetBeepsQuery } from '../../../generated/graphql';
 import { Box, Center, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import TdUser from '../../../components/TdUser';
+import { Link } from 'react-router-dom';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 dayjs.extend(duration);
 
@@ -72,6 +74,7 @@ function Beeps() {
             <Th>Start Time</Th>
             <Th>End Time</Th>
             <Th>Duration</Th>
+            <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -86,6 +89,11 @@ function Beeps() {
                   <Td>{dayjs().to(entry.start)}</Td>
                   <Td>{dayjs().to(entry.end)}</Td>
                   <Td>{dayjs.duration(new Date(entry.end).getTime() - new Date(entry.start).getTime()).humanize()}</Td>
+                  <Td>
+                    <Link to={`beeps/${entry.id}`}>
+                      <ExternalLinkIcon />
+                    </Link>
+                  </Td>
                 </Tr>
               )
             })}

@@ -5,7 +5,7 @@ import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graph
 import { Error } from '../../../components/Error';
 import { Success } from '../../../components/Success';
 import React from "react";
-import { Box, Button, Center, FormControl, FormLabel, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Button, Center, Checkbox, FormControl, FormLabel, Heading, Input, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Spinner } from "@chakra-ui/react";
 
 const GetEditableUser = gql`
     query GetEditableUser($id: String!) {
@@ -59,57 +59,66 @@ function EditUserPage() {
       <Heading>Edit User</Heading>
       {data && <Success message="Successfully Edited User" />}
       {error && <Error error={error} />}
-      {editError && <Error error={editError.message}/>}
+      {editError && <Error error={editError.message} />}
 
-      {loading && 
+      {loading &&
         <Center h="100px">
           <Spinner size="xl" />
         </Center>
       }
 
       {user?.getUser && !loading &&
-      <Formik
-        initialValues={user?.getUser}
-        onSubmit={async (values, { setSubmitting }) => {
-          await updateUser(values);
-          setSubmitting(false);
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            {Object.keys(user?.getUser).map((key) => {
-              const type = typeof user.getUser[key];
-              if (type === "number") {
-
+        <Formik
+          initialValues={user?.getUser}
+          onSubmit={async (values, { setSubmitting }) => {
+            await updateUser(values);
+            setSubmitting(false);
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              {Object.keys(user?.getUser).map((key) => {
+                const type = typeof user.getUser[key];
                 return (
-                    <FormControl>
-                        <FormLabel>{key}</FormLabel>
-                        <Field type="number" name={key} />
-                    </FormControl>
-                );
-              }
-              else {
-                return (
-                    <FormControl>
-                        <FormLabel>{key}</FormLabel>
+                  <Field name={key}>
+                    {({ field, form }) => (
+                      <FormControl name={key} mt={2}>
                         {type === "boolean" ?
-                            <Field type="checkbox" name={key} />
-                            :
-                            <Field type="text" name={key} />
+                          <>
+                            <Checkbox {...field} isChecked={field.value} name={key}>
+                              {key}
+                            </Checkbox>
+                          </>
+                          :
+                          (
+                            (type === "number") ?
+                              <>
+                                <FormLabel htmlFor={key}>{key}</FormLabel>
+                                <Input {...field} type="number" id={key} />
+                              </>
+                              :
+                              <>
+                                <FormLabel htmlFor={key}>{key}</FormLabel>
+                                <Input {...field} id={key} />
+                              </>
+                          )
                         }
-                    </FormControl>
+                      </FormControl>
+                    )}
+                  </Field>
                 );
               }
-            })}
-            <Button
-              type="submit"
-              isLoading={isSubmitting}
-            >
-              Update User
+              )}
+              <Button
+                mt={2}
+                type="submit"
+                isLoading={isSubmitting}
+              >
+                Update User
             </Button>
-          </Form>
-        )}
-      </Formik>
+            </Form>
+          )}
+        </Formik>
       }
     </Box>
   );

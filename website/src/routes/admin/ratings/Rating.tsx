@@ -11,6 +11,7 @@ import { printStars } from ".";
 import { Error } from '../../../components/Error';
 import BasicUser from "../../../components/BasicUser";
 import DeleteDialog from "../../../components/DeleteDialog";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 dayjs.extend(relativeTime);
 
@@ -67,8 +68,11 @@ function RatingPage() {
         <Heading>Rating</Heading>
         <Spacer />
         <Button
-          colorScheme='red'
-          onClick={() => setIsOpen(true)}>{!deleteLoading ? "Delete Rating" : "Deleteing..."}
+            colorScheme="red"
+            leftIcon={<DeleteIcon />}
+            onClick={() => setIsOpen(true)}
+        >
+            Delete
         </Button>
       </Flex>
 

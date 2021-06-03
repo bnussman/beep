@@ -20,7 +20,7 @@ function Admin() {
     let match = useRouteMatch();
 
     return (
-        <Container maxW="container.lg">
+        <Container maxW="container.xl">
         <Switch>
             <Route exact path={`${match.path}/users`}>
                 <Users />

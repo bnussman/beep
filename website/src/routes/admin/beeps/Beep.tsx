@@ -74,7 +74,6 @@ function BeepPage() {
                 <Button
                     colorScheme="red"
                     leftIcon={<DeleteIcon />}
-                    isLoading={loading || deleteLoading}
                     onClick={() => setIsOpen(true)}
                 >
                     Delete
@@ -123,7 +122,7 @@ function BeepPage() {
                 </Box>
             }
             <DeleteDialog
-                title="Rating"
+                title="Beep"
                 isOpen={isOpen}
                 onClose={onClose}
                 doDelete={doDelete}

@@ -5,7 +5,8 @@ import { gql, useMutation } from '@apollo/client';
 import { AddProfilePictureMutation, EditAccountMutation } from '../generated/graphql';
 import { Success } from '../components/Success';
 import { Error } from '../components/Error';
-import { Avatar, Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Text } from '@chakra-ui/react';
+import { Alert, Avatar, Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Spinner, Text } from '@chakra-ui/react';
+import { SpinnerIcon } from '@chakra-ui/icons';
 
 const EditAccount = gql`
 mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
@@ -88,7 +89,12 @@ function EditProfile() {
       {error && <Error error={error} />}
       {data && <Success message="Profile Updated" />}
 
-      {uploadLoading && <p>Uploading new Photo...</p>}
+      {uploadLoading &&
+        <Alert status="info" mb={2}>
+          <Spinner size="xs" mr={2} />
+          Uploading Profile Photo
+        </Alert>
+      }
       {uploadError && <Error error={uploadError.message}/>}
 
       <Box mb={6}>
@@ -121,7 +127,7 @@ function EditProfile() {
                   disabled
               />
           </FormControl>
-          <FormControl id="first">
+          <FormControl mt={2}>
               <FormLabel>First Name</FormLabel>
               <Input
                   id="first"
@@ -131,7 +137,7 @@ function EditProfile() {
                   onChange={(value: any) => setFirst(value.target.value)}
               />
           </FormControl>
-          <FormControl id="last">
+          <FormControl mt={2}>
               <FormLabel>Last Name</FormLabel>
               <Input
                   value={last}
@@ -139,7 +145,7 @@ function EditProfile() {
                   onChange={(value: any) => setLast(value.target.value)}
               />
           </FormControl>
-          <FormControl id="email">
+          <FormControl mt={2}>
               <FormLabel>Email</FormLabel>
               <Input
                   type="email"
@@ -157,7 +163,7 @@ function EditProfile() {
                   }
               </FormHelperText>
           </FormControl>
-          <FormControl id="phone">
+          <FormControl mt={2}>
               <FormLabel>Phone</FormLabel>
               <Input
                   type="tel"
@@ -166,7 +172,7 @@ function EditProfile() {
                   onChange={(value: any) => setPhone(value.target.value)}
               />
           </FormControl>
-          <FormControl id="venmo">
+          <FormControl mt={2}>
               <FormLabel>Venmo</FormLabel>
               <Input
                   value={venmo || ''}
@@ -174,8 +180,7 @@ function EditProfile() {
                   onChange={(value: any) => setVenmo(value.target.value)}
               />
           </FormControl>
-
-          <FormControl id="cashapp">
+          <FormControl mt={2}>
               <FormLabel>Cash App</FormLabel>
               <Input
                   value={cashapp || ''}

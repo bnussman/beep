@@ -4,12 +4,13 @@ import { Link, Redirect, useHistory } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
-import {client} from '../utils/Apollo';
-import {GetUserData} from '../App';
-import { Avatar, Button, Input } from '@chakra-ui/react';
+import { client } from '../utils/Apollo';
+import { GetUserData } from '../App';
+import { Text, Avatar, Box, Button, Input, FormControl, FormLabel, FormHelperText, Code, Alert, AlertIcon, Flex } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 
 const SignUpGraphQL = gql`
-mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!) {
+  mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!) {
         signup(input: {
             first: $first,
             last: $last,
@@ -29,140 +30,177 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
     }
 `;
 
-//let photo: File;
-
 function SignUp() {
-    const history = useHistory();
-    const user = useContext(UserContext);
-    const [first, setFirst] = useState<string>();
-    const [last, setLast] = useState<string>();
-    const [email, setEmail] = useState<string>();
-    const [phone, setPhone] = useState<string>();
-    const [venmo, setVenmo] = useState<string>();
-    const [cashapp, setCashapp] = useState<string>();
-    const [username, setUsername] = useState<string>();
-    const [password, setPassword] = useState<string>();
-    const [photo, setPhoto] = useState();
-    const [photoError, setPhotoError] = useState<boolean>(false);
-    const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
+  const history = useHistory();
+  const user = useContext(UserContext);
+  const [first, setFirst] = useState<string>();
+  const [last, setLast] = useState<string>();
+  const [email, setEmail] = useState<string>();
+  const [phone, setPhone] = useState<string>();
+  const [venmo, setVenmo] = useState<string>();
+  const [cashapp, setCashapp] = useState<string>();
+  const [username, setUsername] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [photo, setPhoto] = useState();
+  const [photoError, setPhotoError] = useState<boolean>(false);
+  const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
 
-    async function handleSignUp(e: FormEvent): Promise<void> {
-        e.preventDefault();
+  async function handleSignUp(e: FormEvent): Promise<void> {
+    e.preventDefault();
 
-        if (!photo) {
-            setPhotoError(true)
-            return;
+    if (!photo) {
+      setPhotoError(true)
+      return;
+    }
+
+    setPhotoError(false);
+
+    try {
+      const result = await signup({
+        variables: {
+          first: first,
+          last: last,
+          email: email,
+          phone: phone,
+          venmo: venmo,
+          cashapp: cashapp,
+          username: username,
+          password: password,
+          picture: photo
         }
+      });
 
-        setPhotoError(false);
+      if (result) {
+        localStorage.setItem('user', JSON.stringify(result.data.signup));
+        await client.resetStore();
+        await client.query({ query: GetUserData });
+        //await client.query({ query: GetUserData, });
+        history.push('/')
+      }
+    }
+    catch (error) {
 
-        try {
-            const result = await signup({ variables: {
-                first: first,
-                last: last,
-                email: email,
-                phone: phone,
-                venmo: venmo,
-                cashapp: cashapp,
-                username: username, 
-                password: password,
-                picture: photo
-            }});
+    }
+  }
 
-            if (result) {
-                localStorage.setItem('user', JSON.stringify(result.data.signup));
-                await client.resetStore();
-                await client.query({ query: GetUserData });
-                //await client.query({ query: GetUserData, });
-                history.push('/')
+  if (user) {
+    return <Redirect to={{ pathname: "/" }} />;
+  }
+
+  return (
+    <Box>
+      {error && <Error error={error} />}
+      {photoError && <Error error={{ message: "Please pick a profile photo" }} />}
+      <Alert mb={4} status="info">
+        <AlertIcon />
+        <Text>
+          By signing up, you agree to our{' '}
+          <Link to="/terms">Terms of Service</Link>
+          {' '}and{' '}
+          <Link to="/privacy">Privacy Policy</Link>
+        </Text>
+      </Alert>
+      <form onSubmit={handleSignUp}>
+        <FormControl>
+          <FormLabel>First Name</FormLabel>
+          <Input
+            type="text"
+            value={first}
+            onChange={(value: any) => setFirst(value.target.value)}
+          />
+        </FormControl>
+        <FormControl mt={2}>
+          <FormLabel>Last Name</FormLabel>
+          <Input
+            type="text"
+            value={last}
+            onChange={(value: any) => setLast(value.target.value)}
+          />
+        </FormControl>
+        <FormControl mt={2}>
+          <FormLabel>Email</FormLabel>
+          <Input
+            type="email"
+            value={email}
+            onChange={(value: any) => setEmail(value.target.value)}
+          />
+          <FormHelperText>Use your <Code>.edu</Code> email to be verified as a student.</FormHelperText>
+        </FormControl>
+        <FormControl mt={2}>
+          <FormLabel>Phone Number</FormLabel>
+          <Input
+            type="phone"
+            value={phone}
+            onChange={(value: any) => setPhone(value.target.value)}
+          />
+        </FormControl>
+        <FormControl mt={2}>
+          <FormLabel>Venmo Username</FormLabel>
+          <Input
+            type="text"
+            value={venmo}
+            onChange={(value: any) => setVenmo(value.target.value)}
+          />
+        </FormControl>
+        <FormControl mt={2}>
+          <FormLabel>CashApp Username</FormLabel>
+          <Input
+            type="text"
+            value={cashapp}
+            onChange={(value: any) => setCashapp(value.target.value)}
+          />
+        </FormControl>
+        <FormControl mt={2}>
+          <FormLabel>Username</FormLabel>
+          <Input
+            type="text"
+            value={username}
+            onChange={(value: any) => setUsername(value.target.value)}
+          />
+        </FormControl>
+        <FormControl mt={2}>
+          <FormLabel>Password</FormLabel>
+          <Input
+            type="password"
+            value={password}
+            onChange={(value: any) => setPassword(value.target.value)}
+          />
+        </FormControl>
+        <Box mt={2} mb={2}>
+          <Flex align="center">
+            {photo &&
+              <Avatar mr={4} src={URL.createObjectURL(photo)} />
             }
-        }
-        catch (error) {
-
-        }
-    }
-
-    if (user) {
-        return <Redirect to={{ pathname: "/" }} />;
-    }
-
-    return (
-        <div>
-            {error && <Error error={error}/>}
-            {photoError && <Error error={{ message: "Please pick a profile photo"}}/>}
-            <form onSubmit={handleSignUp}>
-                <Input
-                    id="first"
-                    label="First Name"
-                    onChange={(value: any) => setFirst(value.target.value)}
-                />
-                <Input
-                    id="last"
-                    label="Last Name"
-                    onChange={(value: any) => setLast(value.target.value)}
-                />
-                <Input
-                    id="email"
-                    label="Email"
-                    onChange={(value: any) => setEmail(value.target.value)}
-                />
-                <Input
-                    id="phone"
-                    label="Phone Number"
-                    onChange={(value: any) => setPhone(value.target.value)}
-                />
-                <Input
-                    id="venmo"
-                    label="Venmo Username"
-                    onChange={(value: any) => setVenmo(value.target.value)}
-                />
-                <Input
-                    id="cashapp"
-                    label="Cash App Username"
-                    onChange={(value: any) => setCashapp(value.target.value)}
-                />
-                <Input
-                    id="username"
-                    label="Username"
-                    onChange={(value: any) => setUsername(value.target.value)}
-                />
-                <Input
-                    id="password"
-                    type="password"
-                    label="Password"
-                    onChange={(value: any) => setPassword(value.target.value)}
-                />
-                {photo &&
-                    <Avatar src={URL.createObjectURL(photo)} name={first} />
-                }
-                <input
-                    hidden
-                    id="photo"
-                    type="file"
-                    onChange={(e) => {
-                        //@ts-ignore
-                        setPhoto(e.target.files[0]);
-                        console.log(e.target.files[0]);
-                    }}
-                /> 
+            <input
+              hidden
+              id="photo"
+              type="file"
+              onChange={(e) => {
+                //@ts-ignore
+                setPhoto(e.target.files[0]);
+                console.log(e.target.files[0]);
+              }}
+            />
+            <Box>
+              <Button leftIcon={<AddIcon />}>
                 <label
-                    htmlFor="photo"
+                  htmlFor="photo"
                 >
-                    Choose Profile Photo
+                  Choose Profile Photo
                 </label>
-                <Button type="submit">
-                    {loading ? "Signing Up..." : "Sign Up"}
-                </Button>
-            </form>
-
-            <div>
-                By signing up, you agree to our
-                <Link to="/terms">Terms of Service</Link>
-                and
-                <Link to="/privacy">Privacy Policy</Link>
-            </div>
-        </div>
-    );
+              </Button>
+            </Box>
+          </Flex>
+        </Box>
+        <Button
+          type="submit"
+          isLoading={loading}
+        >
+          Sign Up
+        </Button>
+      </form>
+    </Box>
+  );
 }
 
 export default SignUp;

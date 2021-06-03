@@ -11,6 +11,7 @@ import { printStars } from '../routes/admin/ratings';
 import { Center, Tooltip, Stack, AvatarBadge, Heading, Badge, Box, Text, Avatar, Button, Flex, Spacer, Tabs, Tab, TabList, TabPanel, TabPanels } from '@chakra-ui/react';
 import React from 'react';
 import DeleteDialog from './DeleteDialog';
+import { DeleteIcon } from '@chakra-ui/icons';
 
 const RemoveUser = gql`
     mutation RemoveUser($id: String!) {
@@ -65,8 +66,13 @@ function UserProfile(props: Props) {
             </NavLink>
           </Button>
           {admin &&
-            <Button m='1' colorScheme="red" onClick={() => setIsOpen(true)}>
-              Delete User
+            <Button
+                m={1}
+                colorScheme="red"
+                leftIcon={<DeleteIcon />}
+                onClick={() => setIsOpen(true)}
+            >
+                Delete
             </Button>
           }
           {!admin &&
