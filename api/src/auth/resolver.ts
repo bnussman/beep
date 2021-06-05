@@ -52,7 +52,6 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async signup(@Arg('input') input: SignUpInput): Promise<Auth> {
-        console.log(input);
         if (!input.venmo && !input.cashapp) throw new Error("Please enter at least one form of payment");
 
         if (input.venmo?.charAt(0) == '@') {
@@ -68,8 +67,9 @@ export class AuthResolver {
         const user = new User();
 
         const s3 = new AWS.S3({
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET
+          accessKeyId: process.env.S3_ACCESS_KEY_ID,
+          secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
+          endpoint: process.env.S3_ENDPOINT_URL
         });
 
         const extention = filename.substr(filename.lastIndexOf("."), filename.length);
@@ -79,7 +79,7 @@ export class AuthResolver {
         const uploadParams = {
             Body: createReadStream(),
             Key: "images/" + filename,
-            Bucket: "ridebeepapp",
+            Bucket: "beep",
             ACL: "public-read"
         };
 

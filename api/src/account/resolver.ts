@@ -134,8 +134,9 @@ export class AccountResolver {
     @Authorized()
     public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename, mimetype }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
         const s3 = new AWS.S3({
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET
+          accessKeyId: process.env.S3_ACCESS_KEY_ID,
+          secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
+          endpoint: process.env.S3_ENDPOINT_URL
         });
 
         const extention = filename.substr(filename.lastIndexOf("."), filename.length);
@@ -145,7 +146,7 @@ export class AccountResolver {
         const uploadParams = {
             Body: createReadStream(),
             Key: "images/" + filename,
-            Bucket: "ridebeepapp",
+            Bucket: "beep",
             ACL: "public-read"
         };
 
@@ -153,10 +154,10 @@ export class AccountResolver {
 
         if (result) {
             if (ctx.user.photoUrl) {
-                const key: string = ctx.user.photoUrl.split("https://ridebeepapp.s3.amazonaws.com/")[1];
+                const key: string = ctx.user.photoUrl.split("https://beep.us-east-1.linodeobjects.com/")[1];
 
                 const params = {
-                    Bucket: "ridebeepapp",
+                    Bucket: "beep",
                     Key: key
                 };
 
