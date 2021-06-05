@@ -12,7 +12,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 dayjs.extend(relativeTime);
 
-const RatesGraphQL = gql`
+export const RatesGraphQL = gql`
     query getRatings($show: Int, $offset: Int) {
         getRatings(show: $show, offset: $offset) {
             items {

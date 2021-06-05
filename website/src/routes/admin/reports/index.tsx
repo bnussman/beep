@@ -8,6 +8,8 @@ import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../../../generated/graphql';
 import { Box, Center, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import TdUser from '../../../components/TdUser';
+import { NavLink } from 'react-router-dom';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 dayjs.extend(relativeTime);
 
@@ -70,6 +72,7 @@ function Reports() {
               <Th>Reason</Th>
               <Th>Date</Th>
               <Th>Handled?</Th>
+              <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -85,6 +88,11 @@ function Reports() {
                       ? <Indicator color='green' />
                       : <Indicator color='red' />
                     }
+                  </Td>
+                  <Td>
+                    <NavLink to={`/admin/reports/${report.id}`}>
+                      <ExternalLinkIcon />
+                    </NavLink>
                   </Td>
                 </Tr>
               )

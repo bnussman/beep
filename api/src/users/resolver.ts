@@ -61,7 +61,7 @@ export class UserResolver {
         if (!user) {
             throw new Error("User not found");
         }
-
+        console.log(data, user);
         wrap(user).assign(data);
 
         pubSub.publish("User" + id, user);

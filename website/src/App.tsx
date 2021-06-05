@@ -20,7 +20,7 @@ import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
 import NavBar from './components/NavBar';
 import About from './routes/About';
-import { ChakraProvider, extendTheme, Container } from "@chakra-ui/react"
+import { ChakraProvider, extendTheme, Container, Box } from "@chakra-ui/react"
 import { createStandaloneToast } from "@chakra-ui/react"
 
 const toast = createStandaloneToast()
@@ -140,6 +140,8 @@ function Beep() {
             <ThemeContext.Provider value={{ theme, setTheme }}>
                 <UserContext.Provider value={data?.getUser}>
                     <Router>
+                      {/* love life :D */}
+                      <Box maxW="99.9%">
                         <NavBar />
                         <Container maxW="container.xl">
                         <Switch>
@@ -159,6 +161,7 @@ function Beep() {
                             <Route path="/" component={Home} />
                         </Switch>
                         </Container>
+                      </Box>
                     </Router>
                     {/*<Footer/>*/}
                 </UserContext.Provider>

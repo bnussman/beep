@@ -7,8 +7,12 @@ import { Formik, Form, Field } from 'formik';
 import { Card } from '../../../components/Card';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteReportMutation, GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
-import { Avatar, Box, Button, Heading, Text } from '@chakra-ui/react';
+import { Avatar, Box, Button, Center, Flex, Heading, Spacer, Spinner, Text, Textarea } from '@chakra-ui/react';
 import React from "react";
+import { DeleteIcon } from "@chakra-ui/icons";
+import DeleteDialog from "../../../components/DeleteDialog";
+import { Error } from '../../../components/Error';
+import BasicUser from "../../../components/BasicUser";
 
 dayjs.extend(relativeTime);
 
@@ -69,7 +73,11 @@ function ReportPage() {
   const [deleteReport, { loading: deleteLoading }] = useMutation<DeleteReportMutation>(DeleteReport);
   const history = useHistory();
 
-  async function doDeleteReport() {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const onClose = () => setIsOpen(false);
+  const cancelRef = React.useRef();
+
+  async function doDelete() {
     await deleteReport({ variables: { id: reportId } });
     history.goBack();
   }
@@ -83,36 +91,36 @@ function ReportPage() {
 
   return (
     <Box>
-      <Heading>Report</Heading>
-      {loading && <p>Loading</p>}
-      {error && error.message}
+      <Flex align='center'>
+        <Heading>Report</Heading>
+        <Spacer />
+        <Button
+            colorScheme="red"
+            leftIcon={<DeleteIcon />}
+            onClick={() => setIsOpen(true)}
+        >
+            Delete
+        </Button>
+      </Flex>
 
-      {data?.getReport ?
+      {error && <Error error={error.message} />}
+
+      {loading &&
+        <Center h="100px">
+          <Spinner size="xl" />
+        </Center>
+      }
+
+      {data?.getReport &&
         <>
-          <div>
-            <Card>
-              <div>
-                <Heading>Reporter</Heading>
-                <div>
-                  <Avatar src={data.getReport.reporter.photoUrl} />
-                  <NavLink to={`/admin/users/${data.getReport.reporter.id}`}>
-                    {data.getReport.reporter.name}
-                  </NavLink>
-                </div>
-              </div>
-            </Card>
-            <Card>
-              <div>
-                <Heading>Reported</Heading>
-                <div>
-                  <Avatar src={data.getReport.reported.photoUrl} />
-                  <NavLink to={`/admin/users/${data.getReport.reported.id}`}>
-                    {data.getReport.reported.name}
-                  </NavLink>
-                </div>
-              </div>
-            </Card>
-          </div>
+          <Card>
+            <Heading>Reporter</Heading>
+            <BasicUser user={data.getReport.reporter} />
+          </Card>
+          <Card>
+            <Heading>Reported</Heading>
+            <BasicUser user={data.getReport.reported} />
+          </Card>
           <Card>
             <Heading>Reason</Heading>
             <Text>{data.getReport.reason}</Text>
@@ -130,76 +138,63 @@ function ReportPage() {
             </Card>
           }
           <Card>
-            <div>
-              {data.getReport.handled ?
-                <div>
-                  <div>
-                    <Heading>Status</Heading>
-                  </div>
-                  <div>
-                    <Indicator color='green' />
-                    <span>Handled by</span>
-                    <div>
-                      <Avatar src={data.getReport.handledBy.photoUrl} />
-                      <NavLink to={`/admin/users/${data.getReport.handledBy.id}`}>
-                        {data.getReport.handledBy.name}
-                      </NavLink>
-                    </div>
-                  </div>
-                </div>
-                :
-                <>
-                  <div>
-                    <Heading>Status</Heading>
-                  </div>
-                  <Indicator color='red' />
-                  <span>Not handled</span>
-                </>
-              }
-            </div>
+            {data.getReport.handled ?
+              <>
+                <Heading>Status</Heading>
+                <Flex align="center">
+                <Indicator color='green' />
+                <Text mr={2}>Handled by</Text>
+                <BasicUser user={data.getReport.handledBy}/>
+                </Flex>
+              </>
+              :
+              <>
+                <Heading>Status</Heading>
+                <Indicator color='red' />
+                <span>Not handled</span>
+              </>
+            }
           </Card>
-          <div>
-            <Heading>Update Report Info</Heading>
-            {updateError && <p>updateError.message</p>}
-            <Formik
-              initialValues={{
-                notes: data.getReport.notes,
-                handled: data.getReport.handled
-              }}
-              onSubmit={async (values, { setSubmitting }) => {
-                await updateReport(values);
-                setSubmitting(false);
-              }}
-            >
-              {({ isSubmitting }) => (
-                <Form>
-                  <div>
-                    <Heading>Admin Notes</Heading>
-                    <Field type="text" component="textarea" name="notes" />
-                  </div>
-                  <div>
-                    <Heading>Handled</Heading>
-                    <Field type="checkbox" name="handled" />
-                  </div>
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Upading..." : "Update Report"}
-                  </Button>
-                  <Button
-                    onClick={() => doDeleteReport()}
-                  >
-                    {!deleteLoading ? "Delete Report" : "Deleteing..."}
-                  </Button>
-                </Form>
-              )}
-            </Formik>
-          </div>
+          <Heading>Update Report Info</Heading>
+          {updateError && <p>updateError.message</p>}
+          <Formik
+            initialValues={{
+              notes: data.getReport.notes,
+              handled: data.getReport.handled
+            }}
+            onSubmit={async (values, { setSubmitting }) => {
+              await updateReport(values);
+              setSubmitting(false);
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <Heading>Admin Notes</Heading>
+                <Textarea name="notes" as={Field} placeholder="Type any important notes here related to this report" />
+                <Heading>Handled</Heading>
+                <Field type="checkbox" name="handled" />
+                <br />
+                <br />
+                <Button
+                  type="submit"
+                  loading={isSubmitting}
+                >
+                  {isSubmitting ? "Upading..." : "Update Report"}
+                </Button>
+              </Form>
+            )}
+          </Formik>
         </>
-        :
-        <Heading>Loading</Heading>
       }
+
+      <DeleteDialog
+        title="Report"
+        isOpen={isOpen}
+        onClose={onClose}
+        doDelete={doDelete}
+        deleteLoading={deleteLoading}
+        cancelRef={cancelRef}
+      />
     </Box>
   )
 }

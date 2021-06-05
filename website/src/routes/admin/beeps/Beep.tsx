@@ -10,6 +10,7 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import BasicUser from "../../../components/BasicUser";
 import { Error } from "../../../components/Error";
 import DeleteDialog from "../../../components/DeleteDialog";
+import { BeepsGraphQL } from ".";
 
 dayjs.extend(duration);
 
@@ -47,7 +48,7 @@ query GetBeep($id: String!) {
 function BeepPage() {
     const { beepId } = useParams<{ beepId: string }>();
     const { data, loading } = useQuery<GetBeepQuery>(GetBeep, { variables: { id: beepId }});
-    const [deleteBeep, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteBeepMutation>(DeleteBeep);
+    const [deleteBeep, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteBeepMutation>(DeleteBeep, { refetchQueries: () => ["getUsers"], awaitRefetchQueries: true });
     const history = useHistory();
 
     const [isOpen, setIsOpen] = React.useState(false);
@@ -56,7 +57,7 @@ function BeepPage() {
 
     async function doDelete() {
         try {
-            await deleteBeep({ variables: { id: beepId }});
+            await deleteBeep({ variables: { id: beepId }, refetchQueries: [{ query: BeepsGraphQL }], awaitRefetchQueries: true });
             setIsOpen(false);
             history.goBack();
         }

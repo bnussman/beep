@@ -7,7 +7,7 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteRatingMutation, GetRatingQuery } from '../../../generated/graphql';
 import React from "react";
 import { Heading, Text, Box, Button, Flex, Spacer, Center, Spinner } from "@chakra-ui/react";
-import { printStars } from ".";
+import { printStars, RatesGraphQL } from ".";
 import { Error } from '../../../components/Error';
 import BasicUser from "../../../components/BasicUser";
 import DeleteDialog from "../../../components/DeleteDialog";

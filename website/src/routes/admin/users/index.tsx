@@ -20,7 +20,7 @@ import {
 import TdUser from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 
-const UsersGraphQL = gql`
+export const UsersGraphQL = gql`
     query getUsers($show: Int, $offset: Int) {
         getUsers(show: $show, offset: $offset) {
             items {

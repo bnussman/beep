@@ -12,7 +12,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 dayjs.extend(duration);
 
-const BeepsGraphQL = gql`
+export const BeepsGraphQL = gql`
     query getBeeps($show: Int, $offset: Int) {
         getBeeps(show: $show, offset: $offset) {
             items {
