@@ -30,8 +30,8 @@ export class Rating {
     message?: string;
 
     @Field()
-    @Property({ defaultRaw: 'now()' }) 
-    timestamp!: Date;
+    @Property() 
+    timestamp: Date;
 
     @Field(() => Beep)
     @ManyToOne(() => Beep)
@@ -43,5 +43,6 @@ export class Rating {
         this.stars = stars;
         this.message = message;
         this.beep = beep;
+        this.timestamp = new Date();
     }
 }

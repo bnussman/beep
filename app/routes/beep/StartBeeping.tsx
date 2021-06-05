@@ -79,6 +79,7 @@ const GetQueue = gql`
             start
             rider {
                 id
+                name
                 first
                 last
                 venmo
