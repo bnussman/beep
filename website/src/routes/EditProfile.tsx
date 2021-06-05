@@ -6,7 +6,6 @@ import { AddProfilePictureMutation, EditAccountMutation } from '../generated/gra
 import { Success } from '../components/Success';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Spinner, Text } from '@chakra-ui/react';
-import { SpinnerIcon } from '@chakra-ui/icons';
 
 const EditAccount = gql`
 mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {

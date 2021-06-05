@@ -5,7 +5,7 @@ import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graph
 import { Error } from '../../../components/Error';
 import { Success } from '../../../components/Success';
 import React from "react";
-import { Box, Button, Center, Checkbox, FormControl, FormLabel, Heading, Input, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Spinner } from "@chakra-ui/react";
+import { Box, Button, Center, Checkbox, FormControl, FormLabel, Heading, Input, Spinner } from "@chakra-ui/react";
 
 const GetEditableUser = gql`
     query GetEditableUser($id: String!) {

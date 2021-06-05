@@ -1,4 +1,4 @@
-import { Box, Heading, Container } from '@chakra-ui/react';
+import { Box, Heading } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 
 function Faq() {
