@@ -49,8 +49,9 @@ MAIL_HOST
 MAIL_PORT
 MAIL_USER
 MAIL_PASSWORD
-AWS_ACCESS_KEY_ID
-AWS_ACCESS_KEY_SECRET
+S3_ACCESS_KEY_ID
+S3_ACCESS_KEY_SECRET
+S3_ENDPOINT_URL
 ```
 
 Here is an example of my .zshenv
@@ -61,8 +62,9 @@ export MAIL_PORT=465
 export MAIL_USER=banks@nussman.us
 export MAIL_PASSWORD=<a real password here>
 
-export AWS_ACCESS_KEY_ID=<from AWS>
-export AWS_ACCESS_KEY_SECRET=<from AWS>
+export S3_ACCESS_KEY_ID=<from Linode>
+export S3_ACCESS_KEY_SECRET=<from Linode>
+export S3_ENDPOINT_URL=https://us-east-1.linodeobjects.com
 
 export POSTGRESQL_USER=banks
 export POSTGRESQL_PASSWORD=<a real password here>
