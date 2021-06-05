@@ -33,8 +33,8 @@ export class Report {
     notes?: string;
 
     @Field()
-    @Property({ defaultRaw: 'now()' }) 
-    timestamp!: Date;
+    @Property() 
+    timestamp: Date;
 
     @Field()
     @Property({ default: false })
@@ -48,6 +48,7 @@ export class Report {
         this.reporter = reporter;
         this.reported = reported;
         this.reason = reason;
+        this.timestamp = new Date();
         if (beep) {
             this.beep = beep as unknown as Beep;
         }
