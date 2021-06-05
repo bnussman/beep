@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
-import { Button, TextInput } from '../components/Input';
 import { Error } from '../components/Error';
 import {gql, useMutation} from '@apollo/client';
 import {ChangePasswordMutation} from '../generated/graphql';
 import {Success} from '../components/Success';
+import { Input, Button, FormControl, FormLabel } from '@chakra-ui/react';
 
 const ChangePasswordGraphQL = gql`
     mutation ChangePassword($password: String!) {
@@ -38,26 +38,25 @@ function ChangePassword() {
     }
 
     return (
-        <div className="px-4 mx-auto lg:container">
+        <div>
             {data?.changePassword && <Success message="Successfully changed your password"/>}
             {error && <Error error={error} />}
-            {loading && <p>Loading</p>}
             <form onSubmit={handleEdit}>
-                <TextInput
-                    className="mb-4"
-                    id="password"
-                    label="Password"
-                    type="password"
-                    onChange={(value: any) => setPassword(value.target.value)}
-                />
-                <TextInput
-                    className="mb-4"
-                    id="password2"
-                    label="Repeat password"
-                    type="password"
-                    onChange={(value: any) => setPassword2(value.target.value)}
-                />
-                <Button raised type="submit">Update password</Button>
+                <FormControl id="password">
+                    <FormLabel>Password</FormLabel>
+                    <Input
+                        type="password"
+                        onChange={(value: any) => setPassword(value.target.value)}
+                    />
+                </FormControl>
+                <FormControl id="password2" mb={4}>
+                    <FormLabel>Repreat Password</FormLabel>
+                    <Input
+                        type="password"
+                        onChange={(value: any) => setPassword2(value.target.value)}
+                    />
+                </FormControl>
+                <Button isLoading={loading} type="submit">Update password</Button>
             </form>
         </div>
     );

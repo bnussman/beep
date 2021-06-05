@@ -8,24 +8,26 @@
     ]
   },
   "dependencies": {
-    "@apollo/client": "^3.3.18",
-    "@craco/craco": "^6.1.1",
-    "@headlessui/react": "^1.0.0",
-    "apollo-upload-client": "^15.0.0",
+    "@apollo/client": "^3.3.15",
+    "@chakra-ui/icons": "^1.0.12",
+    "@chakra-ui/react": "^1.6.0",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "apollo-upload-client": "^14.1.3",
     "clsx": "^1.1.1",
     "dayjs": "^1.9.7",
     "formik": "^2.2.6",
+    "framer-motion": "^4",
     "graphql": "^15.5.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.0",
-    "styled-components": "^5.2.3"
+    "react-scripts": "^4.0.0"
   },
   "scripts": {
-    "start": "PORT=3002 craco start",
-    "build": "craco build",
-    "test": "craco test",
+    "start": "PORT=3002 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "codegen": "graphql-codegen --config codegen.yml"
   },
@@ -49,16 +51,11 @@
     "@graphql-codegen/typescript": "1.22.0",
     "@graphql-codegen/typescript-operations": "1.17.16",
     "@graphql-codegen/typescript-react-apollo": "2.2.4",
-    "@tailwindcss/postcss7-compat": "^2.0.3",
     "@types/apollo-upload-client": "^14.1.0",
-    "@types/node": "^15.3.0",
-    "@types/react": "^17.0.5",
-    "@types/react-dom": "^17.0.5",
-    "@types/react-redux": "^7.1.12",
+    "@types/node": "^14.14.41",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
     "@types/react-router-dom": "^5.1.6",
-    "autoprefixer": "^9",
-    "postcss": "^7",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "^4.2.4"
   }
 }

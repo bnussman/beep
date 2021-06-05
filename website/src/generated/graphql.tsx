@@ -591,14 +591,6 @@ export type UserUpdatesSubscription = (
   ) }
 );
 
-export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ResendEmailMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'resendEmailVarification'>
-);
-
 export type GetBeeperHistoryQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
@@ -620,6 +612,14 @@ export type GetBeeperHistoryQuery = (
       ) }
     )> }
   ) }
+);
+
+export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ResendEmailMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'resendEmailVarification'>
 );
 
 export type GetQueueQueryVariables = Exact<{
@@ -800,7 +800,7 @@ export type GetBeepersQuery = (
   { __typename?: 'Query' }
   & { getBeeperList: Array<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'photoUrl' | 'singlesRate' | 'groupRate' | 'capacity' | 'isStudent' | 'first' | 'last' | 'queueSize' | 'masksRequired'>
+    & Pick<User, 'id' | 'username' | 'name' | 'photoUrl' | 'singlesRate' | 'groupRate' | 'capacity' | 'isStudent' | 'queueSize' | 'masksRequired'>
   )> }
 );
 
@@ -826,10 +826,10 @@ export type GetBeepQuery = (
     & Pick<Beep, 'id' | 'origin' | 'destination' | 'start' | 'end' | 'groupSize'>
     & { beeper: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
     ), rider: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
     ) }
   ) }
 );
@@ -850,10 +850,10 @@ export type GetBeepsQuery = (
       & Pick<Beep, 'id' | 'origin' | 'destination' | 'start' | 'end' | 'groupSize'>
       & { beeper: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
       ), rider: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
       ) }
     )> }
   ) }
@@ -908,10 +908,10 @@ export type GetRatingsQuery = (
       & Pick<Rating, 'id' | 'timestamp' | 'message' | 'stars'>
       & { rater: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
       ), rated: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
       ) }
     )> }
   ) }
@@ -957,13 +957,13 @@ export type GetReportQuery = (
       & Pick<Beep, 'id'>
     )>, reporter: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
     ), reported: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
     ), handledBy?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
     )> }
   ) }
 );
@@ -984,10 +984,10 @@ export type GetReportsQuery = (
       & Pick<Report, 'id' | 'timestamp' | 'reason' | 'notes' | 'handled'>
       & { reporter: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
       ), reported: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'first' | 'last' | 'photoUrl' | 'username'>
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
       ) }
     )> }
   ) }
@@ -1050,7 +1050,7 @@ export type GetUsersQuery = (
     & Pick<UsersResponse, 'count'>
     & { items: Array<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'photoUrl' | 'first' | 'last' | 'email' | 'isStudent' | 'isEmailVerified' | 'username' | 'phone' | 'isBeeping'>
+      & Pick<User, 'id' | 'photoUrl' | 'name' | 'email' | 'isStudent' | 'isEmailVerified' | 'username' | 'phone' | 'isBeeping'>
     )> }
   ) }
 );
@@ -1154,36 +1154,6 @@ export function useUserUpdatesSubscription(baseOptions: Apollo.SubscriptionHookO
       }
 export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
 export type UserUpdatesSubscriptionResult = Apollo.SubscriptionResult<UserUpdatesSubscription>;
-export const ResendEmailDocument = gql`
-    mutation ResendEmail {
-  resendEmailVarification
-}
-    `;
-export type ResendEmailMutationFn = Apollo.MutationFunction<ResendEmailMutation, ResendEmailMutationVariables>;
-
-/**
- * __useResendEmailMutation__
- *
- * To run a mutation, you first call `useResendEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useResendEmailMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [resendEmailMutation, { data, loading, error }] = useResendEmailMutation({
- *   variables: {
- *   },
- * });
- */
-export function useResendEmailMutation(baseOptions?: Apollo.MutationHookOptions<ResendEmailMutation, ResendEmailMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ResendEmailMutation, ResendEmailMutationVariables>(ResendEmailDocument, options);
-      }
-export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMutation>;
-export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
-export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
 export const GetBeeperHistoryDocument = gql`
     query GetBeeperHistory($show: Int, $offset: Int, $id: String!) {
   getBeepHistory(show: $show, offset: $offset, id: $id) {
@@ -1237,6 +1207,36 @@ export function useGetBeeperHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetBeeperHistoryQueryHookResult = ReturnType<typeof useGetBeeperHistoryQuery>;
 export type GetBeeperHistoryLazyQueryHookResult = ReturnType<typeof useGetBeeperHistoryLazyQuery>;
 export type GetBeeperHistoryQueryResult = Apollo.QueryResult<GetBeeperHistoryQuery, GetBeeperHistoryQueryVariables>;
+export const ResendEmailDocument = gql`
+    mutation ResendEmail {
+  resendEmailVarification
+}
+    `;
+export type ResendEmailMutationFn = Apollo.MutationFunction<ResendEmailMutation, ResendEmailMutationVariables>;
+
+/**
+ * __useResendEmailMutation__
+ *
+ * To run a mutation, you first call `useResendEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendEmailMutation, { data, loading, error }] = useResendEmailMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useResendEmailMutation(baseOptions?: Apollo.MutationHookOptions<ResendEmailMutation, ResendEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResendEmailMutation, ResendEmailMutationVariables>(ResendEmailDocument, options);
+      }
+export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMutation>;
+export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
+export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
 export const GetQueueDocument = gql`
     query GetQueue($id: String!) {
   getQueue(id: $id) {
@@ -1687,13 +1687,12 @@ export const GetBeepersDocument = gql`
   getBeeperList {
     id
     username
+    name
     photoUrl
     singlesRate
     groupRate
     capacity
     isStudent
-    first
-    last
     queueSize
     masksRequired
   }
@@ -1768,15 +1767,13 @@ export const GetBeepDocument = gql`
     groupSize
     beeper {
       id
-      first
-      last
+      name
       photoUrl
       username
     }
     rider {
       id
-      first
-      last
+      name
       photoUrl
       username
     }
@@ -1823,15 +1820,13 @@ export const GetBeepsDocument = gql`
       groupSize
       beeper {
         id
-        first
-        last
+        name
         photoUrl
         username
       }
       rider {
         id
-        first
-        last
+        name
         photoUrl
         username
       }
@@ -1963,15 +1958,13 @@ export const GetRatingsDocument = gql`
       stars
       rater {
         id
-        first
-        last
+        name
         photoUrl
         username
       }
       rated {
         id
-        first
-        last
+        name
         photoUrl
         username
       }
@@ -2088,22 +2081,19 @@ export const GetReportDocument = gql`
     }
     reporter {
       id
-      first
-      last
+      name
       photoUrl
       username
     }
     reported {
       id
-      first
-      last
+      name
       photoUrl
       username
     }
     handledBy {
       id
-      first
-      last
+      name
       photoUrl
       username
     }
@@ -2149,15 +2139,13 @@ export const GetReportsDocument = gql`
       handled
       reporter {
         id
-        first
-        last
+        name
         photoUrl
         username
       }
       reported {
         id
-        first
-        last
+        name
         photoUrl
         username
       }
@@ -2341,8 +2329,7 @@ export const GetUsersDocument = gql`
     items {
       id
       photoUrl
-      first
-      last
+      name
       email
       isStudent
       isEmailVerified

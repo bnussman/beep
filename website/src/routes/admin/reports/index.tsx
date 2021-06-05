@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Card } from '../../../components/Card';
-import { Table, THead, TH, TBody, TR, TDText, TDButton, TDProfile } from '../../../components/Table';
-import { Heading3 } from '../../../components/Typography';
 import { Indicator } from '../../../components/Indicator';
 import Pagination from '../../../components/Pagination';
-import {gql, useQuery} from '@apollo/client';
-import {GetReportsQuery} from '../../../generated/graphql';
+import { gql, useQuery } from '@apollo/client';
+import { GetReportsQuery } from '../../../generated/graphql';
+import { Box, Center, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import TdUser from '../../../components/TdUser';
 
 dayjs.extend(relativeTime);
 
@@ -22,15 +22,13 @@ const ReportsGraphQL = gql`
                 handled
                 reporter {
                     id
-                    first
-                    last
+                    name
                     photoUrl
                     username
                 }
                 reported {
                     id
-                    first
-                    last
+                    name
                     photoUrl
                     username
                 }
@@ -41,76 +39,73 @@ const ReportsGraphQL = gql`
 `;
 
 function Reports() {
+  const { data, loading, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, { variables: { offset: 0, show: 25 } });
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageLimit = 25;
 
-    const { data, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, { variables: { offset: 0, show: 25 }});
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageLimit = 25;
+  async function fetchReports(page: number) {
+    refetch({
+      variables: {
+        offset: page
+      }
+    });
+  }
 
-    async function fetchReports(page: number) {
-        refetch({ variables: {
-            offset: page
-        }});
-    }
-
-    return <>
-        <Heading3>Reports</Heading3>
-
-        <Pagination
-            resultCount={data?.getReports.count}
-            limit={pageLimit}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            onPageChange={fetchReports}/>
-
-        <Card>
-            <Table>
-                <THead>
-                    <TH>Reporter</TH>
-                    <TH>Reported User</TH>
-                    <TH>Reason</TH>
-                    <TH>Date</TH>
-                    <TH>Handled?</TH>
-                    <TH></TH>
-                </THead>
-                <TBody>
-                    {data?.getReports && (data.getReports.items).map(report => {
-                        return (
-                            <TR key={report.id}>
-                                <TDProfile
-                                    to={`users/${report.reporter.id}`}
-                                    photoUrl={report.reporter.photoUrl}
-                                    title={`${report.reporter.first} ${report.reporter.last}`}
-                                    subtitle={`@${report.reporter.username}`}>
-                                </TDProfile>
-                                <TDProfile
-                                    to={`users/${report.reported.id}`}
-                                    photoUrl={report.reported.photoUrl}
-                                    title={`${report.reported.first} ${report.reported.last}`}
-                                    subtitle={`@${report.reported.username}`}>
-                                </TDProfile>
-                                <TDText>{report.reason}</TDText>
-                                <TDText>{dayjs().to(report.timestamp)}</TDText>
-                                <TDText>
-                                    {report.handled
-                                        ? <Indicator color='green' />
-                                        : <Indicator color='red' />
-                                    }
-                                </TDText>
-                                <TDButton to={`reports/${report.id}`}>View</TDButton>
-                            </TR>
-                        )
-                    })}
-                </TBody>
-            </Table>
-        </Card>
-
-        <Pagination
-            resultCount={data?.getReports.count}
-            limit={pageLimit}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            onPageChange={fetchReports}/>
-    </>;
+  return (
+    <Box>
+      <Heading>Reports</Heading>
+      <Pagination
+        resultCount={data?.getReports.count}
+        limit={pageLimit}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        onPageChange={fetchReports}
+      />
+      <Card>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Reporter</Th>
+              <Th>Reported User</Th>
+              <Th>Reason</Th>
+              <Th>Date</Th>
+              <Th>Handled?</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data?.getReports && (data.getReports.items).map(report => {
+              return (
+                <Tr key={report.id}>
+                  <TdUser user={report.reporter} />
+                  <TdUser user={report.reported} />
+                  <Td>{report.reason}</Td>
+                  <Td>{dayjs().to(report.timestamp)}</Td>
+                  <Td>
+                    {report.handled
+                      ? <Indicator color='green' />
+                      : <Indicator color='red' />
+                    }
+                  </Td>
+                </Tr>
+              )
+            })}
+          </Tbody>
+        </Table>
+        {loading &&
+          <Center h="100px">
+            <Spinner size="xl" />
+          </Center>
+        }
+      </Card>
+      <Pagination
+        resultCount={data?.getReports.count}
+        limit={pageLimit}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        onPageChange={fetchReports}
+      />
+    </Box>
+  );
 }
 
 export default Reports;

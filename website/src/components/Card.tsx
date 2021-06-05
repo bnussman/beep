@@ -1,9 +1,13 @@
-import clsx from "clsx";
+import { Box } from "@chakra-ui/react";
 
-export function Card(props: { className?: string, children: any }) {
+export function Card(props: { children: any }) {
     return (
-        <div className={clsx("p-4 overflow-hidden border border-gray-200 rounded-lg dark:bg-gray-800 dark:text-white dark:border-black", props.className)}>
+        <Box
+            boxShadow={'md'}
+            rounded={'lg'}
+            p={6}
+        >
             {props.children}
-        </div>
+        </Box>
     )
 };

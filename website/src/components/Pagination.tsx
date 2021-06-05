@@ -1,50 +1,42 @@
+import {ChevronLeftIcon, ChevronRightIcon} from "@chakra-ui/icons";
+import {Box, Button, ButtonGroup, Flex, Spacer, Text} from "@chakra-ui/react";
+import React from "react";
+
 function PagElement(props) {
 	return (
-        <span className={`inline-flex justify-center items-center px-4 py-2 w-10 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-900 \
-						  ${props.active ? 'text-yellow-400' : 'text-gray-300'}`}>
+        <Text color={props.active ? "yellow.400" : undefined}>
 			{props.children}
-		</span>
+		</Text>
 	);
 }
 
 function PagButton(props) {
 	return (
-		<button onClick={props.onClick} className="focus:outline-none justify-self-stretch">
+		<Button onClick={props.onClick}>
 			<PagElement active={props.active}>{props.children}</PagElement>
-		</button>
+		</Button>
 	);
 }
 
 function PagLeft(props) {
 	return (
-		<button
+		<Button
 			disabled={props.disabled}
 			onClick={props.onClick}
-			className={`relative inline-flex items-center px-2 py-2 focus:outline-none \
-						rounded-l-md text-sm font-medium text-gray-500 \
-						${props.className}`}>
-
-			<svg className={`h-5 w-5 ${props.disabled ? 'opacity-50' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-				<path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-			</svg>
-		</button>
+        >
+            <ChevronLeftIcon/>
+		</Button>
 	)
 }
 
 function PagRight(props) {
 	return (
-		<button
+		<Button
 			disabled={props.disabled}
 			onClick={props.onClick}
-			className={`relative inline-flex items-center px-2 py-2 focus:outline-none \
-						rounded-r-md text-sm font-medium text-gray-500 \
-						${props.className}`}>
-
-			{/* Heroicon name: chevron-right */}
-			<svg className={`h-5 w-5 ${props.disabled ? 'opacity-50' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-				<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-			</svg>
-		</button>
+        >
+            <ChevronRightIcon/>
+		</Button>
 	)
 }
 
@@ -114,32 +106,31 @@ export default function Pagination({
 		pages.push(pageCount);
 	}
 
-	return (
-		<div className="flex-1 py-3 sm:flex sm:items-center sm:justify-between">
-			{ !!resultCount &&
-                <p className="text-sm text-gray-700 dark:text-white">
-					Showing
-					<span className="mx-1 font-medium">{(currentPage - 1) * limit + 1}</span>
-					to
-					<span className="mx-1 font-medium">{currentPage * limit <= resultCount ? currentPage * limit : resultCount}</span>
-					of
-					<span className="mx-1 font-medium">{resultCount}</span>
-					results
-				</p>
-			}
-			<nav className="relative z-0 inline-flex -space-x-px" aria-label="Pagination">
-				<PagLeft disabled={currentPage === 1} onClick={decrement} />
-				{
-					pages.map((page, index) => {
-						return page
-							? <PagButton key={index} active={currentPage === page} onClick={() => navigateTo(page)}>
-								{page}
-							</PagButton>
-							: <PagElement key={index}>...</PagElement>
-					})
-				}
-				<PagRight disabled={currentPage === pageCount} onClick={increment} />
-			</nav>
-		</div>
-	);
+  return (
+    <Box m={2}>
+      <Flex align="center">
+        {!!resultCount &&
+          <Text>
+            {`Showing ${(currentPage - 1) * limit + 1} to ${currentPage * limit <= resultCount ? currentPage * limit : resultCount}	of ${resultCount} results`}
+          </Text>
+        }
+        <Spacer />
+        <Box>
+          <ButtonGroup isAttached>
+            <PagLeft disabled={currentPage === 1} onClick={decrement} />
+            {
+              pages.map((page, index) => {
+                return page
+                  ? <PagButton key={index} active={currentPage === page} onClick={() => navigateTo(page)}>
+                    {page}
+                  </PagButton>
+                  : <PagElement key={index}>...</PagElement>
+              })
+            }
+            <PagRight disabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
+          </ButtonGroup>
+        </Box>
+      </Flex>
+    </Box>
+  );
 }

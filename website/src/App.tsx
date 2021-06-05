@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { UserContext } from './UserContext';
 import { ThemeContext } from './ThemeContext';
@@ -18,8 +18,9 @@ import Admin from './routes/admin';
 import Privacy from './routes/Privacy';
 import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
-import BeepAppBar from './components/AppBar';
+import NavBar from './components/NavBar';
 import About from './routes/About';
+import { ChakraProvider, extendTheme, Container } from "@chakra-ui/react"
 
 export const GetUserData = gql`
     query GetUserData {
@@ -87,7 +88,6 @@ function getInitialTheme(): string {
 }
 
 function Beep() {
-    //const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData, { fetchPolicy: "network-only" });
     const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
     const [theme, setInternalTheme] = useState<string>(getInitialTheme());
 
@@ -101,7 +101,7 @@ function Beep() {
         localStorage.setItem("color-theme", theme)
         setInternalTheme(theme);
     }
-    
+
     useEffect(() => {
         if (data?.getUser?.id) {
             console.log("Calling sub to more");
@@ -120,50 +120,71 @@ function Beep() {
                 }
             });
         }
-    //}, [data?.getUser?.id]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        //}, [data?.getUser?.id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data?.getUser?.id]);
 
     if (loading) return null;
 
     return (
         <ApolloProvider client={client}>
-        <ThemeContext.Provider value={{ theme, setTheme }}>
-            {
-                //<UserContext.Provider value={data?.getUser?.id ? { ...data?.getUser } : undefined}>
-            }
-            <UserContext.Provider value={data?.getUser}>
-            <Router>
-                <BeepAppBar/>
-                <Switch>
-                    <Route path="/password/forgot" component={ForgotPassword} />
-                    <Route path="/password/reset/:id" component={ResetPassword} />
-                    <Route path="/login" component={Login} />
-                    <Route path="/signup" component={SignUp} />
-                    <Route exact path="/profile" component={Profile}/>
-                    <Route path="/profile/edit/:id" component={EditProfile}/>
-                    <Route path="/password/change" component={ChangePassword} />
-                    <Route path="/account/verify/:id" component={VerifyAccount} />
-                    <Route path="/privacy" component={Privacy} />
-                    <Route path="/terms" component={Terms} />
-                    <Route path="/admin" component={Admin} />
-                    <Route path="/faq" component={Faq} />
-                    <Route path="/about" component={About} />
-                    <Route path="/" component={Home} />
-                </Switch>
-            </Router>
-            {/*<Footer/>*/}
-            </UserContext.Provider>
+            <ThemeContext.Provider value={{ theme, setTheme }}>
+                <UserContext.Provider value={data?.getUser}>
+                    <Router>
+                        <NavBar />
+                        <Container maxW="container.xl">
+                        <Switch>
+                            <Route path="/password/forgot" component={ForgotPassword} />
+                            <Route path="/password/reset/:id" component={ResetPassword} />
+                            <Route path="/login" component={Login} />
+                            <Route path="/signup" component={SignUp} />
+                            <Route exact path="/profile" component={Profile} />
+                            <Route path="/profile/edit" component={EditProfile} />
+                            <Route path="/password/change" component={ChangePassword} />
+                            <Route path="/account/verify/:id" component={VerifyAccount} />
+                            <Route path="/privacy" component={Privacy} />
+                            <Route path="/terms" component={Terms} />
+                            <Route path="/admin" component={Admin} />
+                            <Route path="/faq" component={Faq} />
+                            <Route path="/about" component={About} />
+                            <Route path="/" component={Home} />
+                        </Switch>
+                        </Container>
+                    </Router>
+                    {/*<Footer/>*/}
+                </UserContext.Provider>
             </ThemeContext.Provider>
         </ApolloProvider>
     );
 }
+const theme = extendTheme({
+    fonts: {
+        heading: "Poppins",
+        body: "Poppins",
+    },
+    colors: {
+        brand: {
+            100: "#FFF9CC",
+            200: "#FFE041",
+            300: "#FFE967",
+            400: "#FFE041",
+            500: "#FFD203",
+            600: "#DBB002",
+            700: "#B79001",
+            800: "#937100",
+            900: "#7A5B00",
+        },
+    },
+})
+
 
 function App() {
     return (
-        <ApolloProvider client={client}>
-            <Beep/>
-        </ApolloProvider>
+        <ChakraProvider theme={theme}>
+            <ApolloProvider client={client}>
+                <Beep />
+            </ApolloProvider>
+        </ChakraProvider>
     );
 }
 

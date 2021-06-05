@@ -1,16 +1,17 @@
 import { NavLink } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
-import { Heading4, Heading5, Subtitle, Body1, Heading6 } from './Typography';
-import { Badge, Indicator } from './Indicator';
-import { Button } from './Input';
 import { formatPhone } from '../utils/formatters';
 import RideHistoryTable from './RideHistoryTable';
 import BeepHistoryTable from './BeepHistoryTable';
 import QueueTable from './QueueTable';
 import { UserRole } from '../types/User';
-import {gql, useMutation} from '@apollo/client';
-import {RemoveUserMutation, User, Location, Maybe} from '../generated/graphql';
-import {printStars} from '../routes/admin/ratings';
+import { gql, useMutation } from '@apollo/client';
+import { RemoveUserMutation } from '../generated/graphql';
+import { printStars } from '../routes/admin/ratings';
+import { Center, Tooltip, Stack, AvatarBadge, Heading, Badge, Box, Text, Avatar, Button, Flex, Spacer, Tabs, Tab, TabList, TabPanel, TabPanels } from '@chakra-ui/react';
+import React from 'react';
+import DeleteDialog from './DeleteDialog';
+import { DeleteIcon } from '@chakra-ui/icons';
 
 const RemoveUser = gql`
     mutation RemoveUser($id: String!) {
@@ -19,121 +20,171 @@ const RemoveUser = gql`
 `;
 
 interface Props {
-    user: any;
-    admin?: boolean;
+  user: any;
+  admin?: boolean;
 }
 
 function UserProfile(props: Props) {
-    const history = useHistory();
-    const [remove, { loading }] = useMutation<RemoveUserMutation>(RemoveUser);
+  const { user, admin } = props;
+  const history = useHistory();
+  const [remove, { loading }] = useMutation<RemoveUserMutation>(RemoveUser);
 
-    async function deleteUser(id: string) {
-        await remove({ variables: {id: id}, refetchQueries: () => ["getUsers"], awaitRefetchQueries: true });
-        history.goBack();
-    }
+  const [isOpen, setIsOpen] = React.useState(false);
+  const onClose = () => setIsOpen(false);
+  const cancelRef = React.useRef();
 
-    const { user } = props;
+  async function doDelete() {
+    await remove({ variables: { id: user.id }, refetchQueries: () => ["getUsers"], awaitRefetchQueries: true });
+    history.goBack();
+  }
 
-    return <>
-        {user && (
-            <>
-                <div className="flex flex-col items-center mb-8 lg:flex-row">
-                    {user.photoUrl && (
-                        <div className="flex mr-3">
-                            <img className="w-40 h-40 rounded-full shadow-lg" src={user.photoUrl} alt={user.name}></img>
-                        </div>
-                    )}
-                    <div className="flex flex-col items-center mx-3 lg:items-start">
-                        <Heading4>
-                            <span className="mr-2">{user.name}</span>
-                        </Heading4>
-                        <div>
-                            {user.role === UserRole.ADMIN ? <Badge className="transform -translate-y-1">admin</Badge> : <></>}
-                            {user.isStudent ? <Badge className="transform -translate-y-1">student</Badge> : <></>}
-                        </div>
-                        <Subtitle>
-                            {user.rating ?
-                                <span>{printStars(user.rating)} ({user.rating})</span>
-                            :
-                                <span>No Rating</span>
-                            }
-                        </Subtitle>
-                        <Subtitle>@{user.username}</Subtitle>
-                        <Subtitle><a href={`mailto:${user.email}`}>{user.email}</a></Subtitle>
-                        <Subtitle>{formatPhone(user.phone || '')}</Subtitle>
-                        <Body1>{user.id}</Body1>
-                    </div>
-                    <div className="flex flex-col m-6 dark:text-white">
-                        <Heading6>
-                            {user.isBeeping
-                                ? <><Indicator className="mr-2 animate-pulse" />Beeping now</>
-                                : <><Indicator className="mr-2" color="red" />Not beeping</>
-                            }
-                        </Heading6>
-                        <p>Queue size: {user.queueSize}</p>
-                        <p>Capacity: {user.capacity}</p>
-                        <p>Rate: ${user.singlesRate} / ${user.groupRate}</p>
-                        <p>Venmo usename: {user.venmo || "N/A"}</p>
-                        <p>CashApp usename: {user.cashapp || "N/A"}</p>
-                        <p>{user.masksRequired ? 'Masks required' : 'Masks not required'}</p>
-                    </div>
-                    <div className="flex-grow"></div>
-                    <div>
-                        <NavLink to={props.admin ? `/admin/users/${user.id}/edit` : `/profile/edit/${user.id}`}>
-                            <Button>Edit {props.admin ? 'user' : 'profile'}</Button>
-                        </NavLink>
+  return (
+    <Box>
+      <Flex align="center">
+        <Box>
+          <Avatar
+            src={user.photoUrl}
+            size="2xl"
+          >
+            {user.isBeeping && <AvatarBadge boxSize="1.0em" bg="green.500" />}
+          </Avatar>
+        </Box>
+        <Box ml="4">
+          <Heading size="md">{user.name}</Heading>
+          <Text>@{user.username}</Text>
+          <Text fontSize="xs">{user.id}</Text>
+          <Stack direction="row" mt="2" mb="2">
+            {user.role === UserRole.ADMIN && <Badge variant="solid" colorScheme="red">admin</Badge>}
+            {user.isStudent && <Badge variant="solid" colorScheme="blue">student</Badge>}
+          </Stack>
+        </Box>
+        <Spacer />
+        <Box>
+          <Button m='1'>
+            <NavLink to={admin ? `/admin/users/${user.id}/edit` : `/profile/edit`}>
+              Edit {admin ? 'user' : 'profile'}
+            </NavLink>
+          </Button>
+          {admin &&
+            <Button
+                m={1}
+                colorScheme="red"
+                leftIcon={<DeleteIcon />}
+                onClick={() => setIsOpen(true)}
+            >
+                Delete
+            </Button>
+          }
+          {!admin &&
+            <Button>
+              <NavLink to='password/change'>
+                Change password
+              </NavLink>
+            </Button>
+          }
+        </Box>
+      </Flex>
 
-                        {props.admin &&
-                            <button
-                                onClick={() => deleteUser(user.id)}
-                                className={"inline-flex justify-center py-2 px-4 mr-1 text-sm font-medium rounded-md text-white shadow-sm text-white bg-red-500 hover:bg-red-700"}
-                            >
-                                {!loading ? "Delete User" : "Loading"}
-                            </button>
-                        }
+      <Tabs isLazy colorScheme="brand" mt="4" lazyBehavior='keepMounted'>
+        <TabList>
+          <Tab>Details</Tab>
+          <Tab>Location</Tab>
+          <Tab>Queue</Tab>
+          <Tab>Beep History</Tab>
+          <Tab>Ride History</Tab>
+        </TabList>
 
-                        { !props.admin &&
-                            <NavLink to={'password/change'}>
-                                <Button>Change password</Button>
-                            </NavLink>
-                        }
-                    </div>
-                </div>
-
-                <div>
-                    <Heading5>Location</Heading5>
-                    {user.location ?
-                        <>
-                            <div>{user.location.latitude}, {user.location.longitude}</div>
-                            <iframe
-                                title="Map"
-                                width="100%"
-                                height="250"
-                                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&q=${user.location.latitude},${user.location.longitude}`}>
-                            </iframe>
-                        </>
-                    :
-                    <div>User has no location</div>
-                    }
-                </div>
-
-                <div>
-                    <QueueTable userId={user.id}/>
-                </div>
-
-                <div>
-                    <div>
-                        <Heading5>Beep history</Heading5>
-                        <BeepHistoryTable userId={user.id} />
-                    </div>
-                    <div>
-                        <Heading5>Ride history</Heading5>
-                        <RideHistoryTable userId={user.id} />
-                    </div>
-                </div>
-            </>
-        )}
-    </>;
+        <TabPanels>
+          <TabPanel>
+            <Stack spacing={2}>
+              <Box>
+                <strong>Rating:</strong>
+                {user.rating ?
+                  <Text>
+                    <Tooltip label={user.rating} aria-label="A tooltip">
+                      {printStars(user.rating)}
+                    </Tooltip>
+                  </Text>
+                  :
+                  <Text>
+                    No Rating
+                </Text>
+                }
+              </Box>
+              <Box>
+                <strong>Email:</strong>
+                <Text>{user.email}</Text>
+              </Box>
+              <Box>
+                <strong>Phone:</strong>
+                <Text> {formatPhone(user.phone || '')}</Text>
+              </Box>
+              <Box>
+                <strong>Queue Size</strong>
+                <Text>{user.queueSize}</Text>
+              </Box>
+              <Box>
+                <strong>Capacity:</strong>
+                <Text>{user.capacity}</Text>
+              </Box>
+              <Box>
+                <strong>Rate:</strong>
+                <Text>${user.singlesRate} / ${user.groupRate}</Text>
+              </Box>
+              <Box>
+                <strong>Venmo usename:</strong>
+                <Text>{user.venmo || "N/A"}</Text>
+              </Box>
+              <Box>
+                <strong>CashApp usename:</strong>
+                <Text>{user.cashapp || "N/A"}</Text>
+              </Box>
+              <Box>
+                <strong>Masks:</strong>
+                <Text>
+                  {user.masksRequired ? 'Masks required' : 'Masks not required'}
+                </Text>
+              </Box>
+            </Stack>
+          </TabPanel>
+          <TabPanel>
+            {user.location ?
+              <Box>
+                <Text>{user.location.latitude}, {user.location.longitude}</Text>
+                <iframe
+                  title="Map"
+                  width="100%"
+                  height="350"
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&q=${user.location.latitude},${user.location.longitude}`}>
+                </iframe>
+              </Box>
+              :
+              <Center h="100px">
+                This user has no Location data.
+              </Center>
+            }
+          </TabPanel>
+          <TabPanel>
+            <QueueTable queue={user.queue} />
+          </TabPanel>
+          <TabPanel>
+            <BeepHistoryTable userId={user.id} />
+          </TabPanel>
+          <TabPanel>
+            <RideHistoryTable userId={user.id} />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+      <DeleteDialog
+        title="User"
+        isOpen={isOpen}
+        onClose={onClose}
+        doDelete={doDelete}
+        deleteLoading={loading}
+        cancelRef={cancelRef}
+      />
+    </Box>
+  );
 }
 
 export default UserProfile;

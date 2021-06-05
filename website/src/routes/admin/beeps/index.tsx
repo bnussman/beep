@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Card } from '../../../components/Card';
-import { Table, THead, TH, TBody, TR, TDText, TDButton, TDProfile } from '../../../components/Table';
-import { Heading3 } from '../../../components/Typography';
 import Pagination from '../../../components/Pagination';
-import {gql, useQuery} from '@apollo/client';
-import {GetBeepsQuery} from '../../../generated/graphql';
+import { gql, useQuery } from '@apollo/client';
+import { GetBeepsQuery } from '../../../generated/graphql';
+import { Box, Center, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import TdUser from '../../../components/TdUser';
+import { Link } from 'react-router-dom';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 dayjs.extend(duration);
 
@@ -22,15 +24,13 @@ const BeepsGraphQL = gql`
                 groupSize
                 beeper {
                     id
-                    first
-                    last
+                    name
                     photoUrl
                     username
                 }
                 rider {
                     id
-                    first
-                    last
+                    name
                     photoUrl
                     username
                 }
@@ -40,79 +40,80 @@ const BeepsGraphQL = gql`
     }
 `;
 function Beeps() {
-    const { loading, error, data, refetch } = useQuery<GetBeepsQuery>(BeepsGraphQL, { variables: { offset: 0, show: 25 }});
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageLimit = 25;
+  const pageLimit = 5;
+  const { data, loading, refetch } = useQuery<GetBeepsQuery>(BeepsGraphQL, { variables: { offset: 0, show: pageLimit } });
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-    async function fetchBeeps(page: number) {
-        refetch({
-            offset: page 
-        })
-    }
+  async function fetchBeeps(page: number) {
+    refetch({
+      offset: page,
+      show: pageLimit
+    })
+  }
 
-    if (loading) return <p>Loading</p>;
-    if (error) console.log(error);
+  return (
+    <Box>
+      <Heading>Beeps</Heading>
 
-    return <>
-        <Heading3>Beeps</Heading3>
-
-        <Pagination
-            resultCount={data?.getBeeps.count}
-            limit={pageLimit}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            onPageChange={fetchBeeps}
-        />
-        <Card>
-            <Table>
-                <THead>
-                    <TH>Beeper</TH>
-                    <TH>Rider</TH>
-                    <TH>Origin</TH>
-                    <TH>Destination</TH>
-                    <TH>Group Size</TH>
-                    <TH>Start Time</TH>
-                    <TH>End Time</TH>
-                    <TH>Duration</TH>
-                    <TH></TH>
-                </THead>
-                <TBody>
-                    {data?.getBeeps && (data.getBeeps.items).map(beepEntry => {
-                        return (
-                            <TR key={beepEntry.id}>
-                                <TDProfile
-                                    to={`users/${beepEntry.beeper.id}`}
-                                    photoUrl={beepEntry.beeper.photoUrl}
-                                    title={`${beepEntry.beeper.first} ${beepEntry.beeper.last}`}
-                                    subtitle={`@${beepEntry.beeper.username}`}>
-                                </TDProfile>
-                                <TDProfile
-                                    to={`users/${beepEntry.rider.id}`}
-                                    photoUrl={beepEntry.rider.photoUrl}
-                                    title={`${beepEntry.rider.first} ${beepEntry.rider.last}`}
-                                    subtitle={`@${beepEntry.rider.username}`}>
-                                </TDProfile>
-                                <TDText>{beepEntry.origin}</TDText>
-                                <TDText>{beepEntry.destination}</TDText>
-                                <TDText>{beepEntry.groupSize}</TDText>
-                                <TDText>{dayjs().to(beepEntry.start)}</TDText>
-                                <TDText>{dayjs().to(beepEntry.end)}</TDText>
-                                <TDText>{dayjs.duration(new Date(beepEntry.end).getTime() - new Date(beepEntry.start).getTime()).humanize()}</TDText>
-                                <TDButton to={`beeps/${beepEntry.id}`}>View</TDButton>
-                            </TR>
-                        )
-                    })}
-                </TBody>
-            </Table>
-        </Card>
-        <Pagination
-            resultCount={data?.getBeeps.count}
-            limit={pageLimit}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            onPageChange={fetchBeeps}
-        />
-    </>;
+      <Pagination
+        resultCount={data?.getBeeps.count}
+        limit={pageLimit}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        onPageChange={fetchBeeps}
+      />
+      <Card>
+        <Table>
+          <Thead>
+            <Tr>
+            <Th>Beeper</Th>
+            <Th>Rider</Th>
+            <Th>Origin</Th>
+            <Th>Destination</Th>
+            <Th>Group Size</Th>
+            <Th>Start Time</Th>
+            <Th>End Time</Th>
+            <Th>Duration</Th>
+            <Th></Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data?.getBeeps && (data.getBeeps.items).map(entry => {
+              return (
+                <Tr key={entry.id}>
+                  <TdUser user={entry.beeper} />
+                  <TdUser user={entry.rider} />
+                  <Td>{entry.origin}</Td>
+                  <Td>{entry.destination}</Td>
+                  <Td>{entry.groupSize}</Td>
+                  <Td>{dayjs().to(entry.start)}</Td>
+                  <Td>{dayjs().to(entry.end)}</Td>
+                  <Td>{dayjs.duration(new Date(entry.end).getTime() - new Date(entry.start).getTime()).humanize()}</Td>
+                  <Td>
+                    <Link to={`beeps/${entry.id}`}>
+                      <ExternalLinkIcon />
+                    </Link>
+                  </Td>
+                </Tr>
+              )
+            })}
+          </Tbody>
+        </Table>
+        {loading &&
+          <Center h="100px">
+            <Spinner size="xl" />
+          </Center>
+        }
+      </Card>
+      <Pagination
+        resultCount={data?.getBeeps.count}
+        limit={pageLimit}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        onPageChange={fetchBeeps}
+      />
+    </Box>
+  );
 }
 
 export default Beeps;

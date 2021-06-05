@@ -1,16 +1,14 @@
+import {Alert, AlertIcon} from "@chakra-ui/react";
+
 interface Props {
     error: any;
 }
 
 export function Error(props: Props) {
     return (
-        <div role="alert" className="mb-4">
-            <div className="px-4 py-2 font-bold text-white bg-red-500 rounded-t">
-                Error
-            </div>
-            <div className="px-4 py-3 text-red-700 bg-red-100 border border-t-0 border-red-400 rounded-b">
+        <Alert status="error" mb={4}>
+            <AlertIcon />
                 {props.error.message}
-            </div>
-        </div>
+        </Alert>
     );
 }
