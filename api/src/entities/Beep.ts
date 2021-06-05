@@ -2,7 +2,7 @@ import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { v4 } from 'uuid';
-import {QueueEntry} from "./QueueEntry";
+import { QueueEntry } from "./QueueEntry";
 
 @ObjectType()
 @Entity()
@@ -37,7 +37,7 @@ export class Beep {
     start!: Date;
 
     @Field()
-    @Property({ defaultRaw: 'now()' }) 
+    @Property() 
     end!: Date;
 
     constructor(entry: QueueEntry) {
@@ -48,5 +48,6 @@ export class Beep {
         this.destination = entry.destination;
         this.groupSize = entry.groupSize;
         this.start = new Date(entry.start * 1000);
+        this.end = new Date();
     }
 }

@@ -57,7 +57,7 @@ export class RatingResolver {
                 rated: id || ctx.user.id
             };
         }
-        else if(!me) {
+        else if(me == false) {
             filter = {
                 rater: id || ctx.user.id
             };

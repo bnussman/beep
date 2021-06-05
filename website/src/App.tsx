@@ -21,6 +21,9 @@ import Faq from './routes/FAQ';
 import NavBar from './components/NavBar';
 import About from './routes/About';
 import { ChakraProvider, extendTheme, Container } from "@chakra-ui/react"
+import { createStandaloneToast } from "@chakra-ui/react"
+
+const toast = createStandaloneToast()
 
 export const GetUserData = gql`
     query GetUserData {
@@ -111,7 +114,13 @@ function Beep() {
                     topic: data?.getUser.id
                 },
                 updateQuery: (prev, { subscriptionData }) => {
-                    console.log("Socket Updated User");
+                    toast({
+                      title: "Profile Updated",
+                      description: "Your account has been updated",
+                      status: "success",
+                      duration: 5000,
+                      isClosable: true,
+                    })
                     //@ts-ignore
                     const newFeedItem = subscriptionData.data.getUserUpdates;
                     return Object.assign({}, prev, {

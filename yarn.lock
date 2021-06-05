@@ -21,6 +21,25 @@
     tslib "^1.10.0"
     zen-observable "^0.8.14"
 
+"@apollo/client@^3.2.5", "@apollo/client@^3.3.15":
+  version "3.3.19"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.3.19.tgz#f1172dc9b9d7eae04c8940b047fd3b452ef92d2c"
+  integrity sha512-vzljWLPP0GwocfBhUopzDCUwsiaNTtii1eu8qDybAXqwj4/ZhnIM46c6dNQmnVcJpAIFRIsNCOxM4OlMDySJug==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.0.0"
+    "@types/zen-observable" "^0.8.0"
+    "@wry/context" "^0.6.0"
+    "@wry/equality" "^0.4.0"
+    fast-json-stable-stringify "^2.0.0"
+    graphql-tag "^2.12.0"
+    hoist-non-react-statics "^3.3.2"
+    optimism "^0.16.0"
+    prop-types "^15.7.2"
+    symbol-observable "^2.0.0"
+    ts-invariant "^0.7.0"
+    tslib "^1.10.0"
+    zen-observable "^0.8.14"
+
 "@apollo/client@^3.3.18":
   version "3.3.18"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.3.18.tgz#dc722576a88fddb5c3ae0bb03d5675e0bb7ec07e"
@@ -1425,11 +1444,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-<<<<<<< HEAD
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
-=======
 "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4":
->>>>>>> 42-consider-chakra-ui-as-an-alternative-to-tailwindcss
   version "7.13.17"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.13.17.tgz#8966d1fc9593bf848602f0662d6b4d0069e3a7ec"
   integrity sha512-NCdgJEelPTSh+FEFylhnP1ylq848l1z9t9N0j1Lfbcw0+KXGjsTvUmkxy+voLLXB5SOKMbLLx4jxYliGrYQseA==
@@ -2495,26 +2510,6 @@
     webpackbar "^4.0.0"
     workbox-webpack-plugin "^3.6.3"
     worker-loader "^2.0.0"
-
-<<<<<<< HEAD
-"@fullhuman/postcss-purgecss@^3.1.3":
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/@fullhuman/postcss-purgecss/-/postcss-purgecss-3.1.3.tgz#47af7b87c9bfb3de4bc94a38f875b928fffdf339"
-  integrity sha512-kwOXw8fZ0Lt1QmeOOrd+o4Ibvp4UTEBFQbzvWldjlKv5n+G9sXfIPn1hh63IQIL8K8vbvv1oYMJiIUbuy9bGaA==
-  dependencies:
-    purgecss "^3.1.3"
-=======
-"@expo/websql@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@expo/websql/-/websql-1.0.1.tgz#fff0cf9c1baa1f70f9e1d658b7c39a420d9b10a9"
-  integrity sha1-//DPnBuqH3D54dZYt8OaQg2bEKk=
-  dependencies:
-    argsarray "^0.0.1"
-    immediate "^3.2.2"
-    noop-fn "^1.0.0"
-    pouchdb-collections "^1.0.1"
-    tiny-queue "^0.2.1"
->>>>>>> 42-consider-chakra-ui-as-an-alternative-to-tailwindcss
 
 "@graphql-codegen/cli@^1.21.4":
   version "1.21.4"
@@ -3628,12 +3623,6 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-<<<<<<< HEAD
-"@react-native-async-storage/async-storage@^1.13.0":
-  version "1.15.4"
-  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.4.tgz#cdba464ca3bb9f10ec538342cbf2520c06f453ab"
-  integrity sha512-pC0MS6UBuv/YiVAxtzi7CgUed8oCQNYMtGt0yb/I9fI/BWTiJK5cj4YtW2XtL95K5IuvPX/6uGWaouZ8KqXwdg==
-=======
 "@reach/alert@0.13.2":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/@reach/alert/-/alert-0.13.2.tgz#71c4a848d51341f1d6d9eaae060975391c224870"
@@ -3661,11 +3650,10 @@
     prop-types "^15.7.2"
     tslib "^2.1.0"
 
-"@react-native-community/async-storage@~1.12.0":
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.12.1.tgz#25f821b4f6b13abe005ad67e47c6f1cee9f27b24"
-  integrity sha512-70WGaH3PKYASi4BThuEEKMkyAgE9k7VytBqmgPRx3MzJx9/MkspwqJGmn3QLCgHLIFUgF1pit2mWICbRJ3T3lg==
->>>>>>> 42-consider-chakra-ui-as-an-alternative-to-tailwindcss
+"@react-native-async-storage/async-storage@^1.13.0":
+  version "1.15.4"
+  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.15.4.tgz#cdba464ca3bb9f10ec538342cbf2520c06f453ab"
+  integrity sha512-pC0MS6UBuv/YiVAxtzi7CgUed8oCQNYMtGt0yb/I9fI/BWTiJK5cj4YtW2XtL95K5IuvPX/6uGWaouZ8KqXwdg==
   dependencies:
     deep-assign "^3.0.0"
 
@@ -4671,10 +4659,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.42.tgz#20271ce899f35eb6cd525f500bfa8f4c9e27ecd6"
   integrity sha512-88QoObqn9WYIUMRzOx92GmSHmU3JCyukC2ulEv8tFjUG9VeV2FQ/cA7VQ1gi+rB/+gBMVvzVFcTnz8RdMDVIWw==
 
-"@types/node@^15.3.0":
-  version "15.3.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.3.0.tgz#d6fed7d6bc6854306da3dea1af9f874b00783e26"
-  integrity sha512-8/bnjSZD86ZfpBsDlCIkNXIvm+h6wi9g7IqL+kmFkQ+Wvu3JrasgLElfiPgoo8V8vVfnEi0QVS12gbl94h9YsQ==
+"@types/node@^14.14.41":
+  version "14.17.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.2.tgz#1e94476db57ec93a372c7f7d29aa5707cfb92339"
+  integrity sha512-sld7b/xmFum66AAKuz/rp/CUO8+98fMpyQ3SBfzzBNGMd/1iHBTAg9oyAvcYlAj46bpc74r91jSw2iFdnx29nw==
 
 "@types/nodemailer@^6.4.1":
   version "6.4.1"
@@ -4718,10 +4706,10 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
-"@types/react-dom@^17.0.5":
-  version "17.0.5"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.5.tgz#df44eed5b8d9e0b13bb0cd38e0ea6572a1231227"
-  integrity sha512-ikqukEhH4H9gr4iJCmQVNzTB307kROe3XFfHAOTxOXPOw7lAoEXnM5KWTkzeANGL5Ce6ABfiMl/zJBYNi7ObmQ==
+"@types/react-dom@^17.0.3":
+  version "17.0.6"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.6.tgz#c158325cf91b196270bc0f4af73463f149e7eafe"
+  integrity sha512-MGTI+TudxAnGTj8aco8mogaPSJGK2Whje7OZh1CxNLRyhJpTZg/pGQpIbCT0eCVFQyH7UFpdvCqQEThHIp/gsA==
   dependencies:
     "@types/react" "*"
 
@@ -4774,14 +4762,19 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-<<<<<<< HEAD
-"@types/react@^17.0.5":
-=======
 "@types/react@^17.0.0":
->>>>>>> 42-consider-chakra-ui-as-an-alternative-to-tailwindcss
   version "17.0.5"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.5.tgz#3d887570c4489011f75a3fc8f965bf87d09a1bea"
   integrity sha512-bj4biDB9ZJmGAYTWSKJly6bMr4BLUiBrx9ujiJEoP9XIDY9CTaPGxE5QWN/1WjpPLzYF7/jRNnV2nNxNe970sw==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^17.0.3":
+  version "17.0.9"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.9.tgz#1147fb520024a62c9b3841f5cb4db89b73ddb87f"
+  integrity sha512-2Cw7FvevpJxQrCb+k5t6GH1KIvmadj5uBbjPaLlJB/nZWUj56e1ZqcD6zsoMFB47MsJUTFl9RJ132A7hb3QFJA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -5798,6 +5791,15 @@ apollo-tracing@^0.14.0:
     apollo-server-env "^3.1.0"
     apollo-server-plugin-base "^0.12.0"
 
+apollo-upload-client@^14.1.3:
+  version "14.1.3"
+  resolved "https://registry.yarnpkg.com/apollo-upload-client/-/apollo-upload-client-14.1.3.tgz#91f39011897bd08e99c0de0164e77ad2f3402247"
+  integrity sha512-X2T+7pHk5lcaaWnvP9h2tuAAMCzOW6/9juedQ0ZuGp3Ufl81BpDISlCs0o6u29wBV0RRT/QpMU2gbP+3FCfVpQ==
+  dependencies:
+    "@apollo/client" "^3.2.5"
+    "@babel/runtime" "^7.12.5"
+    extract-files "^9.0.0"
+
 apollo-upload-client@^15.0.0:
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/apollo-upload-client/-/apollo-upload-client-15.0.0.tgz#02ad5a156c146c13f3a93b9658196e5d73a73fca"
@@ -5845,13 +5847,6 @@ argparse@^2.0.1:
   resolved "https://registry.yarnpkg.com/argparse/-/argparse-2.0.1.tgz#246f50f3ca78a3240f6c997e8a9bd1eac49e4b38"
   integrity sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==
 
-<<<<<<< HEAD
-=======
-argsarray@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/argsarray/-/argsarray-0.0.1.tgz#6e7207b4ecdb39b0af88303fa5ae22bda8df61cb"
-  integrity sha1-bnIHtOzbObCviDA/pa4ivajfYcs=
-
 aria-hidden@^1.1.1:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/aria-hidden/-/aria-hidden-1.1.3.tgz#bb48de18dc84787a3c6eee113709c473c64ec254"
@@ -5859,7 +5854,6 @@ aria-hidden@^1.1.1:
   dependencies:
     tslib "^1.0.0"
 
->>>>>>> 42-consider-chakra-ui-as-an-alternative-to-tailwindcss
 aria-query@^4.2.2:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/aria-query/-/aria-query-4.2.2.tgz#0d2ca6c9aceb56b8977e9fed6aed7e15bbd2f83b"
@@ -9500,6 +9494,16 @@ expo-keep-awake@~9.1.2:
   version "9.1.2"
   resolved "https://registry.yarnpkg.com/expo-keep-awake/-/expo-keep-awake-9.1.2.tgz#b3e52c7bef0ade975ae88637a2bf980f6b573368"
   integrity sha512-CCuEOQUNLYtMA0rt0sQ9u5LlIMH7lDJG7dImoorfKMsP95yHXy8dl3oCdtaz2zbsPgggVYeom9gE+gQu+Ki4rQ==
+
+expo-linking@~2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/expo-linking/-/expo-linking-2.2.3.tgz#925584a0ed7a617065fe92a39ba4509f70972664"
+  integrity sha512-1NqL8sY4EzwRPVnBxbvNKBCfsG/tNZm72tVwzjoLxhO0XA6VTtZcb72Jaku4IlqEyH0lejxV2YAU0rbLv1pAVA==
+  dependencies:
+    expo-constants "~10.1.3"
+    invariant "^2.2.4"
+    qs "^6.5.0"
+    url-parse "^1.4.4"
 
 expo-location@~12.0.4:
   version "12.0.4"
@@ -14104,26 +14108,6 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-<<<<<<< HEAD
-modern-normalize@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/modern-normalize/-/modern-normalize-1.0.0.tgz#539d84a1e141338b01b346f3e27396d0ed17601e"
-  integrity sha512-1lM+BMLGuDfsdwf3rsgBSrxJwAZHFIrQ8YR61xIqdHo0uNKI9M52wNpHSrliZATJp51On6JD0AfRxd4YGSU0lw==
-=======
-mongodb@3.6.6:
-  version "3.6.6"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.6.6.tgz#92e3658f45424c34add3003e3046c1535c534449"
-  integrity sha512-WlirMiuV1UPbej5JeCMqE93JRfZ/ZzqE7nJTwP85XzjAF4rRSeq2bGCb1cjfoHLOF06+HxADaPGqT0g3SbVT1w==
-  dependencies:
-    bl "^2.2.1"
-    bson "^1.1.4"
-    denque "^1.4.1"
-    optional-require "^1.0.2"
-    safe-buffer "^5.1.2"
-  optionalDependencies:
-    saslprep "^1.0.0"
->>>>>>> 42-consider-chakra-ui-as-an-alternative-to-tailwindcss
-
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -14251,18 +14235,7 @@ nocache@^2.1.0:
   resolved "https://registry.yarnpkg.com/nocache/-/nocache-2.1.0.tgz#120c9ffec43b5729b1d5de88cd71aa75a0ba491f"
   integrity sha512-0L9FvHG3nfnnmaEQPjT9xhfN4ISk0A8/2j4M37Np4mcDesJjHgEUfgPhdCyZuFI954tjokaIj/A3NdpFNdEh4Q==
 
-<<<<<<< HEAD
-node-emoji@^1.8.1:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/node-emoji/-/node-emoji-1.10.0.tgz#8886abd25d9c7bb61802a658523d1f8d2a89b2da"
-  integrity sha512-Yt3384If5H6BYGVHiHwTL+99OzJKHhgp82S8/dktEK73T26BazdgZ4JZh92xSVtGNJvz9UbXdNAc5hcrXV42vw==
-  dependencies:
-    lodash.toarray "^4.4.0"
-
 node-fetch@2.6.1, node-fetch@^2.0.0-alpha.8, node-fetch@^2.2.0, node-fetch@^2.6.0, node-fetch@^2.6.1:
-=======
-node-fetch@2.6.1, node-fetch@^2.0.0-alpha.8, node-fetch@^2.1.2, node-fetch@^2.2.0, node-fetch@^2.6.0, node-fetch@^2.6.1:
->>>>>>> 42-consider-chakra-ui-as-an-alternative-to-tailwindcss
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
@@ -16271,7 +16244,7 @@ qs@6.7.0:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
   integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
 
-qs@^6.5.2:
+qs@^6.5.0, qs@^6.5.2:
   version "6.10.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.10.1.tgz#4931482fa8d647a5aab799c5271d2133b981fb6a"
   integrity sha512-M528Hph6wsSVOBiYUnGf+K/7w0hNshs/duGsNXPUCLH5XAqjEtiPGwNONLV0tBH8NoGb0mvD5JubnUTrujKDTg==
