@@ -9,7 +9,7 @@ interface Props {
 function TdUser(props: Props) {
     return (
         <Td>
-            <Box as={Link} to={`users/${props.user.id}`}>
+            <Box as={Link} to={`/admin/users/${props.user.id}`}>
                 <Flex align="center">
                     <Avatar mr={2} src={props.user.photoUrl}/>
                     <Text>{props.user.name}</Text>

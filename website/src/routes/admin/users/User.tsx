@@ -53,7 +53,6 @@ const GetUser = gql`
 function UserPage() {
   const { userId } = useParams<{ userId: string }>();
   const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
-
   if (error) {
     return <Error error={error} />;
   }

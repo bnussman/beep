@@ -95,17 +95,17 @@ export class RiderResolver {
 
         if (entry.isAccepted) entry.beeper.queueSize--;
         
-        const id = entry.beeper.id;
-
         sendNotification(entry.beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you! :(");
 
-        await BeepORM.queueEntryRepository.removeAndFlush(entry);
+        const id = entry.beeper.id;
         
-        this.sendBeeperUpdate(id, pubSub);
+        await BeepORM.userRepository.persistAndFlush(entry.beeper);
 
         pubSub.publish("Rider" + ctx.user.id, null);
 
-        await BeepORM.userRepository.persistAndFlush(entry.beeper);
+        await BeepORM.queueEntryRepository.removeAndFlush(entry);
+
+        this.sendBeeperUpdate(id, pubSub);
 
         return true;
     }
