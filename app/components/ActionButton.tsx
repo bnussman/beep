@@ -37,7 +37,10 @@ function ActionButton(props: Props) {
     const [update] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
     const [cancelBeep] = useMutation<CancelBeepMutation>(CancelBeep);
 
-    useEffect( () => { setLoading(false) }, [ props.item.state ] );
+    useEffect( () => { 
+      console.log(props);
+      //setLoading(false);
+    }, [ props ] );
 
     async function updateStatus(queueId: string, riderId: string, value: string | boolean): Promise<void> {
         setLoading(true);
@@ -50,11 +53,14 @@ function ActionButton(props: Props) {
                     value: value
                 }
             });
+            setLoading(false);
         }
         catch (error) {
             alert(error);
         }
     }
+
+    console.log("rendered action button");
 
     function cancelBeepWrapper() {
         if (isMobile) {
@@ -154,4 +160,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ActionButton;
+export default React.memo(ActionButton);

@@ -117,7 +117,7 @@ export function StartBeepingScreen(props: Props) {
     const [groupRate, setGroupRate] = useState<string>(String(user.groupRate));
     const [capacity, setCapacity] = useState<string>(String(user.capacity));
 
-    const { subscribeToMore, data, refetch } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
+    const { subscribeToMore, data } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
     const [updateBeepSettings] = useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
     function toggleSwitchWrapper(value: boolean): void {
@@ -251,7 +251,6 @@ export function StartBeepingScreen(props: Props) {
             },
             updateQuery: (prev, { subscriptionData }) => {
                 const newQueue = subscriptionData.data.getBeeperUpdates;
-                console.log(newQueue);
                 return Object.assign({}, prev, {
                     getQueue: newQueue
                 });
@@ -334,6 +333,7 @@ export function StartBeepingScreen(props: Props) {
         );
     }
     else {
+      console.log("rendering queue list");
         if (data?.getQueue && data.getQueue.length > 0) {
             return (
                 <Layout style={styles.container}>
@@ -341,7 +341,7 @@ export function StartBeepingScreen(props: Props) {
                     <List
                         style={styles.list}
                         data={data?.getQueue}
-                        keyExtractor={item => item.id.toString()}
+                        keyExtractor={item => item.id}
                         renderItem={({item, index}) =>
                             item.isAccepted ?
                                 <Card
