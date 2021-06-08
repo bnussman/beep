@@ -1,4 +1,5 @@
 import { Switch, useColorMode } from "@chakra-ui/react"
+import React from 'react';
 
 export const ThemeToggle = () => {
     const { colorMode, toggleColorMode } = useColorMode();

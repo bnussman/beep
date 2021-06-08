@@ -20,6 +20,8 @@ import {
     Button,
     Image
 } from '@chakra-ui/react';
+import React from 'react';
+import Logo from '../assets/favicon.png';
 
 const Resend = gql`
     mutation ResendEmail {
@@ -63,7 +65,7 @@ export default function NavBar() {
           <HStack spacing={8} alignItems={'center'}>
             <Box>
               <Flex alignItems={'center'}>
-                <Image h={8} src="/favicon.png" />
+                <Image h={8} src={Logo} />
                 <Box ml={4} as={Link} to='/'>Beep App</Box>
               </Flex>
             </Box>

@@ -12,9 +12,9 @@
         "build:api": "yarn workspace @beep/api build",
         "build": "yarn build:api",
         "up": "yarn build:api && yarn start:all",
-        "start:all": "concurrently \"yarn workspace @beep/app start\" \"yarn workspace @beep/api dev\" \"yarn workspace @beep/website start\"",
+        "start:all": "concurrently \"yarn workspace @beep/app start\" \"yarn workspace @beep/api dev\" \"yarn workspace @beep/website dev\"",
         "start:app": "yarn workspace @beep/app start",
-        "start:website": "yarn workspace @beep/website start",
+        "start:website": "yarn workspace @beep/website dev",
         "start:api": "yarn workspace @beep/api start",
         "codegen": "concurrently \"yarn workspace @beep/app codegen\" \"yarn workspace @beep/website codegen\""
     },

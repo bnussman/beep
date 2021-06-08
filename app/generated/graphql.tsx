@@ -74,7 +74,6 @@ export type EditUserValidator = {
   phone?: Maybe<Scalars['String']>;
   venmo?: Maybe<Scalars['String']>;
   cashapp?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
   isBeeping?: Maybe<Scalars['Boolean']>;
   isEmailVerified?: Maybe<Scalars['Boolean']>;
   isStudent?: Maybe<Scalars['Boolean']>;
@@ -420,7 +419,7 @@ export type RatingInput = {
   userId: Scalars['String'];
   stars: Scalars['Float'];
   message?: Maybe<Scalars['String']>;
-  beepId?: Maybe<Scalars['String']>;
+  beepId: Scalars['String'];
 };
 
 export type RatingsResponse = {
@@ -747,7 +746,7 @@ export type GetQueueSubscription = (
     & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'start'>
     & { rider: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl'>
+      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl'>
     ) }
   )> }
 );
@@ -783,7 +782,7 @@ export type RateUserMutationVariables = Exact<{
   userId: Scalars['String'];
   stars: Scalars['Float'];
   message?: Maybe<Scalars['String']>;
-  beepId?: Maybe<Scalars['String']>;
+  beepId: Scalars['String'];
 }>;
 
 
@@ -1502,6 +1501,7 @@ export const GetQueueDocument = gql`
     start
     rider {
       id
+      name
       first
       last
       venmo
@@ -1624,7 +1624,7 @@ export type GetUserProfileQueryHookResult = ReturnType<typeof useGetUserProfileQ
 export type GetUserProfileLazyQueryHookResult = ReturnType<typeof useGetUserProfileLazyQuery>;
 export type GetUserProfileQueryResult = ApolloReactCommon.QueryResult<GetUserProfileQuery, GetUserProfileQueryVariables>;
 export const RateUserDocument = gql`
-    mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String) {
+    mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String!) {
   rateUser(
     input: {userId: $userId, beepId: $beepId, stars: $stars, message: $message}
   )

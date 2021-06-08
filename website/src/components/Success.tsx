@@ -1,3 +1,4 @@
+import React from 'react';
 import { Alert, AlertIcon } from '@chakra-ui/react';
 
 interface Props {

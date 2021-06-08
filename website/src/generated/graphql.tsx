@@ -73,7 +73,6 @@ export type EditUserValidator = {
   phone?: Maybe<Scalars['String']>;
   venmo?: Maybe<Scalars['String']>;
   cashapp?: Maybe<Scalars['String']>;
-  password?: Maybe<Scalars['String']>;
   isBeeping?: Maybe<Scalars['Boolean']>;
   isEmailVerified?: Maybe<Scalars['Boolean']>;
   isStudent?: Maybe<Scalars['Boolean']>;
@@ -622,23 +621,6 @@ export type ResendEmailMutation = (
   & Pick<Mutation, 'resendEmailVarification'>
 );
 
-export type GetQueueQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type GetQueueQuery = (
-  { __typename?: 'Query' }
-  & { getQueue: Array<(
-    { __typename?: 'QueueEntry' }
-    & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize' | 'isAccepted' | 'state'>
-    & { rider: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
-    ) }
-  )> }
-);
-
 export type GetRideHistoryQueryVariables = Exact<{
   id: Scalars['String'];
   show?: Maybe<Scalars['Int']>;
@@ -1029,10 +1011,17 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating'>
+    & Pick<User, 'id' | 'name' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating' | 'email'>
     & { location?: Maybe<(
       { __typename?: 'Location' }
       & Pick<Location, 'latitude' | 'longitude'>
+    )>, queue: Array<(
+      { __typename?: 'QueueEntry' }
+      & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize' | 'isAccepted' | 'state'>
+      & { rider: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
+      ) }
     )> }
   ) }
 );
@@ -1237,55 +1226,6 @@ export function useResendEmailMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMutation>;
 export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
 export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
-export const GetQueueDocument = gql`
-    query GetQueue($id: String!) {
-  getQueue(id: $id) {
-    id
-    origin
-    destination
-    start
-    groupSize
-    isAccepted
-    state
-    rider {
-      id
-      photoUrl
-      username
-      first
-      last
-      name
-    }
-  }
-}
-    `;
-
-/**
- * __useGetQueueQuery__
- *
- * To run a query within a React component, call `useGetQueueQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetQueueQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetQueueQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetQueueQuery(baseOptions: Apollo.QueryHookOptions<GetQueueQuery, GetQueueQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetQueueQuery, GetQueueQueryVariables>(GetQueueDocument, options);
-      }
-export function useGetQueueLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQueueQuery, GetQueueQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetQueueQuery, GetQueueQueryVariables>(GetQueueDocument, options);
-        }
-export type GetQueueQueryHookResult = ReturnType<typeof useGetQueueQuery>;
-export type GetQueueLazyQueryHookResult = ReturnType<typeof useGetQueueLazyQuery>;
-export type GetQueueQueryResult = Apollo.QueryResult<GetQueueQuery, GetQueueQueryVariables>;
 export const GetRideHistoryDocument = gql`
     query GetRideHistory($id: String!, $show: Int, $offset: Int) {
   getRideHistory(id: $id, show: $show, offset: $offset) {
@@ -2288,9 +2228,27 @@ export const GetUserDocument = gql`
     phone
     username
     rating
+    email
     location {
       latitude
       longitude
+    }
+    queue {
+      id
+      origin
+      destination
+      start
+      groupSize
+      isAccepted
+      state
+      rider {
+        id
+        photoUrl
+        username
+        first
+        last
+        name
+      }
     }
   }
 }

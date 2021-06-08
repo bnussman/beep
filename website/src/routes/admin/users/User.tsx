@@ -1,3 +1,4 @@
+import React from 'react';
 import { useParams } from "react-router-dom";
 import UserProfile from '../../../components/UserProfile';
 import { gql, useQuery } from '@apollo/client';
@@ -53,6 +54,7 @@ const GetUser = gql`
 function UserPage() {
   const { userId } = useParams<{ userId: string }>();
   const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+
   if (error) {
     return <Error error={error} />;
   }

@@ -1,3 +1,5 @@
+import React from 'react';
+
 function Privacy() {
     return (
         <div className="px-4 mx-auto lg:container dark:text-white">

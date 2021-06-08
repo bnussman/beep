@@ -1,4 +1,4 @@
-import "../assets/doc.css";
+import React from 'react';
 
 function Privacy() {
     return (

@@ -22,6 +22,8 @@ import NavBar from './components/NavBar';
 import About from './routes/About';
 import { ChakraProvider, extendTheme, Container, Box } from "@chakra-ui/react"
 import { createStandaloneToast } from "@chakra-ui/react"
+import "@fontsource/poppins/400.css"
+import "@fontsource/poppins/700.css"
 
 const toast = createStandaloneToast()
 
@@ -141,7 +143,7 @@ function Beep() {
                 <UserContext.Provider value={data?.getUser}>
                     <Router>
                       {/* love life :D */}
-                      <Box maxW="99.9%">
+                      <Box maxW="98.9%">
                         <NavBar />
                         <Container maxW="container.xl">
                         <Switch>
@@ -171,8 +173,8 @@ function Beep() {
 }
 const theme = extendTheme({
     fonts: {
-        heading: "Poppins",
-        body: "Poppins",
+        heading: "poppins",
+        body: "poppins",
     },
     colors: {
         brand: {

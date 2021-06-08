@@ -1,5 +1,7 @@
-import {Container} from "@chakra-ui/react";
+import { Container } from "@chakra-ui/react";
 import Hero from "../components/Hero";
+import React from 'react';
+import iPhoneImage from '../assets/white.png';
 
 function Home() {
     return (
@@ -7,7 +9,7 @@ function Home() {
             <Hero
                 title="Ride Beep App"
                 subtitle="Your ultimate travel companion. A simple way to get a ride at Appalachian State University. A product by students for students."
-                image="/white.png"
+                image={iPhoneImage}
                 ctaLink=""
                 ctaText=""
             />
