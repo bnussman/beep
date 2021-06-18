@@ -20,47 +20,22 @@ export class LocationResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async insertLocation(@Ctx() ctx: Context, @Arg('location') location: LocationInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-        try {
-            const entry = await BeepORM.locationRepository.findOne({ user: ctx.user.id }, { populate: false, refresh: true });
+        const entry = await BeepORM.locationRepository.findOne({ user: ctx.user.id }, { populate: false, refresh: true });
 
-            if (!entry) {
-                const e = new Location({ ...location, user: ctx.user });
+        if (!entry) {
+            const e = new Location({ ...location, user: ctx.user });
 
-                BeepORM.locationRepository.persist(e);
-            }
-            else {
-                wrap(entry).assign(location);
-
-                BeepORM.locationRepository.persist(entry);
-            }
-
-            pubSub.publish("Location" + ctx.user.id, location);
-
-            await BeepORM.locationRepository.flush();
-
+            BeepORM.locationRepository.persist(e);
         }
-        catch (error) {
-            console.log(error);
-        }
-        /*
-        try {
-            await BeepORM.userRepository.populate(ctx.user, ['location']);
+        else {
+            wrap(entry).assign(location);
 
-            if (ctx.user.location) {
-                wrap(ctx.user.location).assign(location);
-            }
-            else {
-                ctx.user.location = new Location({ ...location, user: ctx.user });
-            }
-
-            pubSub.publish("Location" + ctx.user.id, new Location({ ...location, user: ctx.user }));
-
-            await BeepORM.userRepository.persistAndFlush(ctx.user);
+            BeepORM.locationRepository.persist(entry);
         }
-        catch (error) {
-            console.log(error);
-        }
-         */
+
+        pubSub.publish("Location" + ctx.user.id, location);
+
+        await BeepORM.locationRepository.flush();
 
         return true;
     }

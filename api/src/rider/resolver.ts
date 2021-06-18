@@ -42,12 +42,7 @@ export class RiderResolver {
         q.ridersQueuePosition = -1;
 
         pubSub.publish("Beeper" + beeper.id, beeper.queue.get());
-
-        q.beeper.location = undefined;
-        
         pubSub.publish("Rider" + ctx.user.id, q);
-
-        console.log(q);
 
         await BeepORM.userRepository.persistAndFlush(beeper);
 
