@@ -19,18 +19,16 @@ export class LocationResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async insertLocation(@Ctx() ctx: Context, @Arg('location') location: LocationInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-        const entry = await ctx.em.findOne(Location, { user: ctx.user.id }, { populate: false, refresh: true });
+        ctx.em.populate(ctx.user, "location");
 
-        if (!entry) {
-            const e = new Location({ ...location, user: ctx.user });
-
-            ctx.em.persist(e);
+        if (!ctx.user.location) {
+            ctx.user.location = new Location({ ...location, user: ctx.user });
         }
         else {
-            wrap(entry).assign(location);
-
-            ctx.em.persist(entry);
+            wrap(ctx.user.location).assign(location);
         }
+
+        ctx.em.persist(ctx.user);
 
         pubSub.publish("Location" + ctx.user.id, location);
 

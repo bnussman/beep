@@ -44,8 +44,8 @@ export class Location {
     speed!: number;
 
     @Field()
-    @Property({ defaultRaw: 'now()' }) 
-    timestamp!: Date;
+    @Property() 
+    timestamp: Date = new Date();
 
     constructor(data: Partial<Location>) {
         Object.assign(this, data);
