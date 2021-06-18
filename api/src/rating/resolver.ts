@@ -1,4 +1,3 @@
-import { BeepORM } from '../app';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { RatingInput } from '../validators/rating';
@@ -9,7 +8,7 @@ import PaginationArgs from '../args/Pagination';
 import { QueryOrder } from '@mikro-orm/core';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { GraphQLResolveInfo } from 'graphql';
-import { UserRole } from '../entities/User';
+import { User, UserRole } from '../entities/User';
 import {sendNotification} from '../utils/notifications';
 
 @ObjectType()
@@ -21,9 +20,9 @@ export class RatingResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async rateUser(@Ctx() ctx: Context, @Arg('input') input: RatingInput): Promise<boolean> {
-        const user = await BeepORM.userRepository.findOneOrFail(input.userId);
+        const user = await ctx.em.findOneOrFail(User, input.userId);
 
-        const beep = input.beepId ? BeepORM.em.getReference(Beep, input.beepId) : undefined;
+        const beep = input.beepId ? ctx.em.getReference(Beep, input.beepId) : undefined;
 
         if (!beep) throw new Error("You can only leave a rating when a beep is associated.");
         
@@ -33,14 +32,14 @@ export class RatingResolver {
             user.rating = input.stars;
         }
         else {
-            const numberOfRatings = await BeepORM.ratingRepository.count({ rated: input.userId });  
+            const numberOfRatings = await ctx.em.count(Rating, { rated: input.userId });  
             
             user.rating = ((user.rating * numberOfRatings) + input.stars) / (numberOfRatings + 1);
         }
 
         user.ratings.add(rating);
 
-        await BeepORM.userRepository.persistAndFlush(user);
+        await ctx.em.persistAndFlush(user);
 
         sendNotification(user.pushToken, "You got rated!", `${ctx.user.name()} rated you ${input.stars} stars!`);
 
@@ -63,7 +62,7 @@ export class RatingResolver {
             };
         }
 
-        const [ratings, count] = await BeepORM.ratingRepository.findAndCount(filter, {
+        const [ratings, count] = await ctx.em.findAndCount(Rating, filter, {
             orderBy: { timestamp: QueryOrder.DESC },
             populate: ['rater', 'rated'],
             offset: offset,
@@ -71,6 +70,7 @@ export class RatingResolver {
         });
 
         return {
+            // @ts-ignore what
             items: ratings,
             count: count
         };
@@ -78,16 +78,16 @@ export class RatingResolver {
 
     @Query(() => Rating)
     @Authorized()
-    public async getRating(@Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
-        return await BeepORM.ratingRepository.findOneOrFail(id, fieldsToRelations(info));
+    public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
+        return await ctx.em.findOneOrFail(Rating, id, fieldsToRelations(info));
     }
 
     @Mutation(() => Boolean)
     @Authorized(UserRole.ADMIN)
-    public async deleteRating(@Arg('id') id: string): Promise<boolean> {
-        const rating = BeepORM.ratingRepository.getReference(id);
+    public async deleteRating(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
+        const rating = ctx.em.getReference(Rating, id);
 
-        await BeepORM.ratingRepository.removeAndFlush(rating);
+        await ctx.em.removeAndFlush(rating);
 
         return true;
     }

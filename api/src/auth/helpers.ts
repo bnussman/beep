@@ -17,7 +17,7 @@ import { wrap } from '@mikro-orm/core';
 export async function getToken(user: User): Promise<TokenEntry> {
     const t = new TokenEntry(user);
 
-    await BeepORM.tokenRepository.persistAndFlush(t);
+    await BeepORM.em.persistAndFlush(t);
 
     return t;
 }
@@ -34,7 +34,7 @@ export async function setPushToken(user: User, token: string | null): Promise<vo
         pushToken: token
     });
 
-    await BeepORM.userRepository.persistAndFlush(user);
+    await BeepORM.em.persistAndFlush(user);
 }
 
 /**
@@ -65,7 +65,7 @@ export async function isAdmin(token: string): Promise<string | null> {
  * @returns Promise<UserPluckResult>
  */
 export async function getUserFromEmail(email: string): Promise<User | null> {
-    const user = await BeepORM.userRepository.findOne({ email: email });
+    const user = await BeepORM.em.findOne(User, { email: email });
 
     if (user) {
         return user;
@@ -82,7 +82,7 @@ export async function getUserFromEmail(email: string): Promise<User | null> {
  * @returns Promise<UserPluckResult>
  */
 export async function getUserFromId(id: string, ...pluckItems: string[]): Promise<Partial<User> | null> {
-    const user = await BeepORM.userRepository.findOne(id, { fields: pluckItems });
+    const user = await BeepORM.em.findOne(User, id, { fields: pluckItems });
 
     if (user) {
         return user;
@@ -115,7 +115,7 @@ export function sendResetEmail(email: string, id: string, first: string | undefi
         ` 
     }; 
 
-    transporter.sendMail(mailOptions, (error: Error | null, info: nodemailer.SentMessageInfo) => { 
+    transporter.sendMail(mailOptions, (error: Error | null) => { 
         if (error) { 
             Sentry.captureException(error);
         } 
@@ -129,7 +129,7 @@ export function sendResetEmail(email: string, id: string, first: string | undefi
  * @returns void
  */
 export async function deactivateTokens(user: User): Promise<void> {
-    await BeepORM.tokenRepository.nativeDelete({ user: user });
+    await BeepORM.em.nativeDelete(TokenEntry, { user: user });
 }
 
 /**
@@ -171,14 +171,14 @@ export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void
  * @returns void
  */
 export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<void> {
-    await BeepORM.verifyEmailRepository.nativeDelete({ email: user.email });
+    await BeepORM.em.nativeDelete(VerifyEmail, { email: user.email });
 
     const entry = new VerifyEmail(user, user.email);
 
     //send the email
     sendVerifyEmailEmail(user, entry);
 
-    await BeepORM.verifyEmailRepository.persistAndFlush(entry);
+    await BeepORM.em.persistAndFlush(entry);
 }
 
 /**
@@ -189,7 +189,7 @@ export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<vo
  */
 export async function doesUserExist(username: string): Promise<boolean> {
     try {
-        const c = await BeepORM.userRepository.count({username: username});
+        const c = await BeepORM.em.count(User, { username: username });
         
         if (c >= 1) {
             return true;        

@@ -1,7 +1,6 @@
 import { sha256 } from 'js-sha256';
 import { getToken, setPushToken, getUserFromEmail, sendResetEmail, deactivateTokens, createVerifyEmailEntryAndSendEmail } from './helpers';
 import { wrap } from '@mikro-orm/core';
-import { BeepORM } from '../app';
 import { User } from '../entities/User';
 import { ForgotPassword } from '../entities/ForgotPassword';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
@@ -23,15 +22,15 @@ class Auth {
 export class AuthResolver {
 
     @Mutation(() => Auth)
-    public async login(@Arg('input') input: LoginInput): Promise<Auth> {
-        const user = await BeepORM.userRepository.findOne({ username: input.username }, { refresh: true });
+    public async login(@Ctx() ctx: Context, @Arg('input') input: LoginInput): Promise<Auth> {
+        const user = await ctx.em.findOne(User, { username: input.username }, { refresh: true });
 
         if (!user) {
             throw new Error("User not found");
         }
 
         if (!user.password) {
-            await BeepORM.userRepository.populate(user, 'password');
+            await ctx.em.populate(user, 'password');
         }
 
         if (user.password != sha256(input.password)) {
@@ -51,7 +50,7 @@ export class AuthResolver {
     }
 
     @Mutation(() => Auth)
-    public async signup(@Arg('input') input: SignUpInput): Promise<Auth> {
+    public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
         if (!input.venmo && !input.cashapp) throw new Error("Please enter at least one form of payment");
 
         if (input.venmo?.charAt(0) == '@') {
@@ -93,7 +92,7 @@ export class AuthResolver {
 
         wrap(user).assign({ ...input, photoUrl: result.Location });
 
-        await BeepORM.userRepository.persistAndFlush(user);
+        await ctx.em.persistAndFlush(user);
     
         const tokenData = await getToken(user);
 
@@ -108,7 +107,7 @@ export class AuthResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
-        await BeepORM.tokenRepository.removeAndFlush(ctx.token);
+        await ctx.em.removeAndFlush(ctx.token);
 
         if (isApp) {
             setPushToken(ctx.user, null);
@@ -118,14 +117,14 @@ export class AuthResolver {
     }
 
     @Mutation(() => Boolean)
-    public async removeToken(@Arg('token') tokenid: string): Promise<boolean> {
-        await BeepORM.tokenRepository.removeAndFlush({ tokenid: tokenid });
+    public async removeToken(@Ctx() ctx: Context, @Arg('token') tokenid: string): Promise<boolean> {
+        await ctx.em.removeAndFlush({ tokenid: tokenid });
 
         return true;
     }
 
     @Mutation(() => Boolean)
-    public async forgotPassword(@Arg('email') email: string): Promise<boolean> {
+    public async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string): Promise<boolean> {
 
         const user: User | null = await getUserFromEmail(email);
 
@@ -133,7 +132,7 @@ export class AuthResolver {
             throw new Error("User does not exist");
         }
 
-        const existing = await BeepORM.forgotPasswordRepository.findOne({ user: user });
+        const existing = await ctx.em.findOne(ForgotPassword, { user: user });
 
         if (existing) {
             sendResetEmail(email, existing.id, user.first);
@@ -143,7 +142,7 @@ export class AuthResolver {
 
         const entry = new ForgotPassword(user);
 
-        await BeepORM.forgotPasswordRepository.persistAndFlush(entry);
+        await ctx.em.persistAndFlush(entry);
 
         sendResetEmail(email, entry.id, user.first);
 
@@ -151,8 +150,8 @@ export class AuthResolver {
     }
 
     @Mutation(() => Boolean)
-    public async resetPassword(@Arg('id') id: string, @Arg('password') password: string): Promise<boolean> {
-        const entry = await BeepORM.forgotPasswordRepository.findOne(id, { populate: ['user'] });
+    public async resetPassword(@Ctx() ctx: Context, @Arg('id') id: string, @Arg('password') password: string): Promise<boolean> {
+        const entry = await ctx.em.findOne(ForgotPassword, id, { populate: ['user'] });
 
         if (!entry) {
             throw new Error("This reset password request does not exist");
@@ -166,9 +165,9 @@ export class AuthResolver {
 
         deactivateTokens(entry.user);
 
-        await BeepORM.forgotPasswordRepository.removeAndFlush(entry);
+        await ctx.em.removeAndFlush(entry);
 
-        await BeepORM.userRepository.persistAndFlush(entry.user);
+        await ctx.em.persistAndFlush(entry.user);
 
         return true;
     }

@@ -1,10 +1,10 @@
-import { BeepORM } from '../app';
 import { Beep } from '../entities/Beep';
 import { QueryOrder } from '@mikro-orm/core';
-import { Arg, Args, Authorized, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
-import PaginationArgs from '../args/Pagination';
+import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Paginated } from '../utils/paginated';
 import { UserRole } from '../entities/User';
+import { Context } from '../utils/context';
+import PaginationArgs from '../args/Pagination';
 
 @ObjectType()
 class BeepsResponse extends Paginated(Beep) {}
@@ -14,8 +14,8 @@ export class BeepResolver {
    
     @Query(() => BeepsResponse)
     @Authorized(UserRole.ADMIN)
-    public async getBeeps(@Args() { offset, show }: PaginationArgs): Promise<BeepsResponse> {
-        const [beeps, count] = await BeepORM.beepRepository.findAndCount({}, { orderBy: { end: QueryOrder.DESC }, limit: show, offset: offset, populate: ['beeper', 'rider'] });
+    public async getBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<BeepsResponse> {
+        const [beeps, count] = await ctx.em.findAndCount(Beep, {}, { orderBy: { end: QueryOrder.DESC }, limit: show, offset: offset, populate: ['beeper', 'rider'] });
 
         return {
             items: beeps,
@@ -25,8 +25,8 @@ export class BeepResolver {
 
     @Query(() => Beep)
     @Authorized(UserRole.ADMIN)
-    public async getBeep(@Arg('id') id: string): Promise<Beep> {
-        const beep = await BeepORM.beepRepository.findOne(id);
+    public async getBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<Beep> {
+        const beep = await ctx.em.findOne(Beep, id);
 
         if (!beep) {
             throw new Error("This beep entry does not exist");
@@ -37,10 +37,10 @@ export class BeepResolver {
 
     @Mutation(() => Boolean)
     @Authorized(UserRole.ADMIN)
-    public async deleteBeep(@Arg('id') id: string): Promise<boolean> {
-        const beep = BeepORM.beepRepository.getReference(id);
+    public async deleteBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
+        const beep = ctx.em.getReference(Beep, id);
 
-        await BeepORM.beepRepository.removeAndFlush(beep);
+        await ctx.em.removeAndFlush(beep);
 
         return true;
     }

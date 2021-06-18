@@ -2,6 +2,13 @@ import { deactivateTokens } from "../auth/helpers";
 import { BeepORM } from "../app";
 import { User } from '../entities/User';
 import { Stream } from "stream";
+import { Rating } from "../entities/Rating";
+import { Report } from "../entities/Report";
+import { Beep } from "../entities/Beep";
+import { QueueEntry } from "../entities/QueueEntry";
+import { ForgotPassword } from "../entities/ForgotPassword";
+import { VerifyEmail } from "../entities/VerifyEmail";
+import { Location } from "../entities/Location";
 
 /**
  * Used for handling GraphQL Uploads
@@ -29,27 +36,27 @@ export function isEduEmail(email: string): boolean {
  */
 export async function deleteUser(user: User): Promise<boolean> {
 
-    await BeepORM.verifyEmailRepository.nativeDelete({ user: user });
+    await BeepORM.em.nativeDelete(Location, { user: user });
 
-    await BeepORM.forgotPasswordRepository.nativeDelete({ user: user });
+    await BeepORM.em.nativeDelete(ForgotPassword, { user: user });
 
-    await BeepORM.locationRepository.nativeDelete({ user: user });
+    await BeepORM.em.nativeDelete(VerifyEmail, { user: user });
 
-    await BeepORM.queueEntryRepository.nativeDelete({ beeper: user });
-    await BeepORM.queueEntryRepository.nativeDelete({ rider: user });
+    await BeepORM.em.nativeDelete(QueueEntry, { beeper: user });
+    await BeepORM.em.nativeDelete(QueueEntry, { rider: user });
     
-    await BeepORM.beepRepository.nativeDelete({ beeper: user });
-    await BeepORM.beepRepository.nativeDelete({ rider: user });
+    await BeepORM.em.nativeDelete(Beep, { beeper: user });
+    await BeepORM.em.nativeDelete(Beep, { rider: user });
 
-    await BeepORM.reportRepository.nativeDelete({ reporter: user });
-    await BeepORM.reportRepository.nativeDelete({ reported: user });
+    await BeepORM.em.nativeDelete(Report, { reporter: user });
+    await BeepORM.em.nativeDelete(Report, { reported: user });
     
-    await BeepORM.ratingRepository.nativeDelete({ rater: user });
-    await BeepORM.ratingRepository.nativeDelete({ rated: user });
+    await BeepORM.em.nativeDelete(Rating, { rater: user });
+    await BeepORM.em.nativeDelete(Rating, { rated: user });
 
     await deactivateTokens(user);
 
-    await BeepORM.userRepository.nativeDelete(user);
+    await BeepORM.em.nativeDelete(User, user);
 
     return true;
 }

@@ -1,8 +1,7 @@
+import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser } from '../account/helpers';
-import { BeepORM } from '../app';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
-import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import PaginationArgs from '../args/Pagination';
 import { Beep } from '../entities/Beep';
 import { QueueEntry } from '../entities/QueueEntry';
@@ -28,7 +27,7 @@ export class UserResolver {
     @Authorized()
     public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
         const relationPaths = fieldsToRelations(info);
-        const user = await BeepORM.userRepository.findOne(id || ctx.user.id, { populate: relationPaths, refresh: true });
+        const user = await ctx.em.findOne(User, id || ctx.user.id, { populate: relationPaths, refresh: true });
 
         if (!user) {
             throw new Error("User not found");
@@ -39,8 +38,8 @@ export class UserResolver {
 
     @Mutation(() => Boolean)
     @Authorized(UserRole.ADMIN)
-    public async removeUser(@Arg("id") id: string): Promise<boolean> {
-        const user = BeepORM.em.getReference(User, id);
+    public async removeUser(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
+        const user = ctx.em.getReference(User, id);
 
         if (!user) {
             throw new Error("User not found");
@@ -55,26 +54,26 @@ export class UserResolver {
 
     @Mutation(() => User)
     @Authorized(UserRole.ADMIN)
-    public async editUser(@Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
-        const user = await BeepORM.userRepository.findOne(id);
+    public async editUser(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
+        const user = await ctx.em.findOne(User, id);
 
         if (!user) {
             throw new Error("User not found");
         }
-        console.log(data, user);
+
         wrap(user).assign(data);
 
         pubSub.publish("User" + id, user);
 
-        await BeepORM.userRepository.persistAndFlush(user);
+        await ctx.em.persistAndFlush(user);
 
         return user;
     }
 
     @Query(() => UsersResponse)
     @Authorized(UserRole.ADMIN)
-    public async getUsers(@Args() { offset, show }: PaginationArgs): Promise<UsersResponse> {
-        const [users, count] = await BeepORM.em.findAndCount(User, {}, { limit: show, offset: offset });
+    public async getUsers(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<UsersResponse> {
+        const [users, count] = await ctx.em.findAndCount(User, {}, { limit: show, offset: offset });
 
         return {
             items: users,
@@ -85,7 +84,7 @@ export class UserResolver {
     @Query(() => RideHistoryResponse)
     @Authorized()
     public async getRideHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<RideHistoryResponse> {
-        const [rides, count] = await BeepORM.beepRepository.findAndCount({ rider: id || ctx.user }, { orderBy: { end: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
+        const [rides, count] = await ctx.em.findAndCount(Beep, { rider: id || ctx.user }, { orderBy: { end: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
 
         return {
             items: rides,
@@ -96,7 +95,7 @@ export class UserResolver {
     @Query(() => BeepHistoryResponse)
     @Authorized()
     public async getBeepHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<BeepHistoryResponse>  {
-        const [beeps, count] = await BeepORM.beepRepository.findAndCount({ beeper: id || ctx.user }, { orderBy: { end: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
+        const [beeps, count] = await ctx.em.findAndCount(Beep, { beeper: id || ctx.user }, { orderBy: { end: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
 
         return {
             items: beeps,
@@ -108,9 +107,10 @@ export class UserResolver {
     @Authorized()
     public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
         const relationPaths = fieldsToRelations(info);
-        const r = await BeepORM.queueEntryRepository.find({ beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate: relationPaths, refresh: true });
 
-        return r;
+        const queue = await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate: relationPaths, refresh: true });
+
+        return queue;
     }
 
     @Subscription(() => User, {

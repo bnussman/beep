@@ -1,17 +1,9 @@
 import { initializeSentry } from "./utils/sentry";
 import { MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
-import { User } from "./entities/User";
-import { VerifyEmail } from "./entities/VerifyEmail";
-import { QueueEntry } from "./entities/QueueEntry";
-import { Beep } from "./entities/Beep";
-import { ForgotPassword } from "./entities/ForgotPassword";
-import { Report } from "./entities/Report";
-import { Location } from "./entities/Location";
 import { GraphQLSchema } from "graphql";
 import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
-import { Rating } from "./entities/Rating";
 import { ORM } from "./utils/ORM";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
@@ -37,17 +29,7 @@ export default class BeepAPIServer {
     private async setup(): Promise<void> {
 
         BeepORM.orm = await MikroORM.init(config);
-
         BeepORM.em = BeepORM.orm.em;
-        BeepORM.userRepository = BeepORM.orm.em.getRepository(User);
-        BeepORM.tokenRepository = BeepORM.orm.em.getRepository(TokenEntry);
-        BeepORM.verifyEmailRepository = BeepORM.orm.em.getRepository(VerifyEmail);
-        BeepORM.queueEntryRepository = BeepORM.orm.em.getRepository(QueueEntry);
-        BeepORM.beepRepository = BeepORM.orm.em.getRepository(Beep);
-        BeepORM.forgotPasswordRepository = BeepORM.orm.em.getRepository(ForgotPassword);
-        BeepORM.reportRepository = BeepORM.orm.em.getRepository(Report);
-        BeepORM.locationRepository = BeepORM.orm.em.getRepository(Location);
-        BeepORM.ratingRepository = BeepORM.orm.em.getRepository(Rating);
 
         initializeSentry();
 
@@ -93,26 +75,23 @@ export default class BeepAPIServer {
                 }
             },
             context: async ({ ctx }) => {
-                if (!ctx) return;
+                const em = BeepORM.em.fork();
+
+                if (!ctx) return { em };
 
                 const authHeader = ctx.request.header.authorization;
+
                 if (!authHeader) {
-                    return;
+                    return { em };
                 }
 
                 const token: string | undefined = authHeader.split(" ")[1];
 
-                if (!token) return;
+                if (!token) return { em };
 
                 const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, token, { populate: ['user'] });
 
-                if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
-            },
-            formatError: (error: GraphQLError) => {
-              const graphQLFormattedError: GraphQLFormattedError = {
-                message: error.extensions?.exception?.response?.message || error.message,
-              };
-              return graphQLFormattedError;
+                if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult, em };
             }
         });
 

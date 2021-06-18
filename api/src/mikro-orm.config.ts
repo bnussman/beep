@@ -10,5 +10,5 @@ export default {
     loadStrategy: LoadStrategy.JOINED,
     debug: true,
     populateAfterFlush: true,
-    implicitTransactions: true,
+    implicitTransactions: false,
 } as unknown as Configuration<IDatabaseDriver<Connection>>
