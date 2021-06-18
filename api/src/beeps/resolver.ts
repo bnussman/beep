@@ -26,7 +26,9 @@ export class BeepResolver {
     @Query(() => Beep)
     @Authorized(UserRole.ADMIN)
     public async getBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<Beep> {
-        const beep = await ctx.em.findOne(Beep, id);
+        const beep = await ctx.em.findOne(Beep, id, { populate: ['beeper', 'rider'] });
+
+        console.log(beep);
 
         if (!beep) {
             throw new Error("This beep entry does not exist");

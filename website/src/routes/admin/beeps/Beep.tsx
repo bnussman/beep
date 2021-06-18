@@ -80,7 +80,7 @@ function BeepPage() {
                     Delete
                 </Button>
             </Flex>
-            {loading ? 
+            {loading || !data?.getBeep ? 
                 <Center h="100px">
                     <Spinner size="xl" />
                 </Center>

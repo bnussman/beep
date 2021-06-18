@@ -88,7 +88,7 @@ function Ratings() {
                 <Tr key={rating.id}>
                   <TdUser user={rating.rater} />
                   <TdUser user={rating.rated} />
-                  <Td>{rating.message}</Td>
+                  <Td>{rating.message || "N/A"}</Td>
                   <Td>{printStars(rating.stars)}</Td>
                   <Td>{dayjs().to(rating.timestamp)}</Td>
                   <Td>

@@ -9,7 +9,7 @@ import { QueryOrder } from '@mikro-orm/core';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { GraphQLResolveInfo } from 'graphql';
 import { User, UserRole } from '../entities/User';
-import {sendNotification} from '../utils/notifications';
+import { sendNotification } from '../utils/notifications';
 
 @ObjectType()
 class RatingsResponse extends Paginated(Rating) {}
@@ -61,6 +61,8 @@ export class RatingResolver {
                 rater: id || ctx.user.id
             };
         }
+
+        console.log(me, filter);
 
         const [ratings, count] = await ctx.em.findAndCount(Rating, filter, {
             orderBy: { timestamp: QueryOrder.DESC },
