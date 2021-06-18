@@ -155,8 +155,8 @@ export function ProfileScreen(props: Props) {
                         </Layout>
                         {(props.route.params.id !== user.id) &&
                             <>
-                                <Button appearance='outline' onPress={() => handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
-                                <Button appearance='outline' onPress={() => handleRate()} accessoryRight={RateIcon} style={styles.button}>Rate User</Button>
+                                <Button onPress={() => handleReport()} accessoryRight={ReportIcon} style={styles.button}>Report User</Button>
+                                <Button onPress={() => handleRate()} accessoryRight={RateIcon} style={styles.button}>Rate User</Button>
                             </>
                         }
                     </Layout>

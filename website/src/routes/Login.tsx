@@ -42,8 +42,15 @@ function Login() {
 
       if (result) {
         localStorage.setItem('user', JSON.stringify(result.data.login));
+
         await client.resetStore();
-        await client.query({ query: GetUserData });
+
+        const data = await client.query({ query: GetUserData });
+
+        client.writeQuery({
+            query: GetUserData,
+            data
+        });
         history.push('/')
       }
 

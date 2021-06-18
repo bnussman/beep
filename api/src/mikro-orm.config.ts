@@ -9,4 +9,6 @@ export default {
     clientUrl: `${process.env.POSTGRESQL_URL}/${process.env.POSTGRESQL_DATABASE}`,
     loadStrategy: LoadStrategy.JOINED,
     debug: true,
+    populateAfterFlush: true,
+    implicitTransactions: true,
 } as unknown as Configuration<IDatabaseDriver<Connection>>
