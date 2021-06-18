@@ -8,10 +8,7 @@ import { request } from "https";
  */
 export async function sendNotification(token: string | undefined, title: string, message: string, categoryIdentifier?: string): Promise<void> {
 
-    if (!token) {
-        console.warn("[Notification] No Token");
-        return;
-    }
+    if (!token) return;
 
     const req = request({
         host: "exp.host",
