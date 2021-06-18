@@ -4,7 +4,7 @@ import * as TaskManager from 'expo-task-manager';
 import { StyleSheet, Linking, Platform, TouchableWithoutFeedback, Keyboard, Alert, AppState } from 'react-native';
 import { Card, Layout, Text, Button, Input, List, CheckBox } from '@ui-kitten/components';
 import { UserContext } from '../../utils/UserContext';
-import { isAndroid } from "../../utils/config";
+import { isAndroid, isMobile } from "../../utils/config";
 import ActionButton from "../../components/ActionButton";
 import AcceptDenyButton from "../../components/AcceptDenyButton";
 import { PhoneIcon, TextIcon, VenmoIcon, MapsIcon, DollarIcon } from '../../utils/Icons';
@@ -12,7 +12,7 @@ import ProfilePicture from '../../components/ProfilePicture';
 import Toggle from "./components/Toggle";
 import Logger from '../../utils/Logger';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { GetInitialQueueQuery, UpdateBeepSettingsMutation } from '../../generated/graphql';
+import { CancelBeepMutation, GetInitialQueueQuery, UpdateBeeperQueueMutation, UpdateBeepSettingsMutation } from '../../generated/graphql';
 import {client} from '../../utils/Apollo';
 
 interface Props {
@@ -105,10 +105,10 @@ const UpdateBeepSettings = gql`
     }
 `;
 
+
 const LOCATION_TRACKING = 'location-tracking';
 
 export function StartBeepingScreen(props: Props) {
-
     const user = useContext(UserContext);
 
     const [isBeeping, setIsBeeping] = useState<boolean>(user.isBeeping);
@@ -439,7 +439,10 @@ export function StartBeepingScreen(props: Props) {
                                             Get Directions for Beep
                                         </Button>
                                     }
-                                    <ActionButton item={item} index={index} />
+                                    <ActionButton
+                                        item={item}
+                                        index={index}
+                                    />
                                 </Card>
 
                                 :

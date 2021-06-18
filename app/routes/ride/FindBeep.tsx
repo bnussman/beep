@@ -330,7 +330,7 @@ export function MainFindBeepScreen(props: Props) {
                             {getCurrentStatusMessage()}
                         </Text>
                     </Card>
-                    {((data?.getRiderStatus.state == 1) && eta?.getETA) &&
+                    {data?.getRiderStatus.state == 1 &&
                         <Layout>
                             <Card style={{marginTop: 10}}>
                                 <Text category='h6'>Arrival ETA</Text>

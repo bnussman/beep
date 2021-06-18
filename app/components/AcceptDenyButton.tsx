@@ -38,9 +38,8 @@ function AcceptDenyButton(props: Props) {
         }
         catch (error) {
             alert(error.message);
+            setLoading(false);
         }
-
-        setLoading(false);
     }
 
     if (loading) {

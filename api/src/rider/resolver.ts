@@ -72,10 +72,6 @@ export class RiderResolver {
 
         entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: entry.beeper, start: { $lt: entry.start } });
 
-        if (entry.state != 1) {
-            entry.beeper.location = undefined;
-        }
-
         return entry;
     }
     

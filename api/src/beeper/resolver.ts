@@ -111,10 +111,6 @@ export class BeeperResolver {
         for (const entry of queues) {
             entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: beeperId, start: { $lt: entry.start } });
 
-            if (entry.state != 1) {
-                entry.beeper.location = undefined;
-            }
-
             pubSub.publish("Rider" + entry.rider.id, entry);
         }
     }
@@ -135,10 +131,6 @@ export class BeeperResolver {
             }
             else {
                 entry.ridersQueuePosition = await BeepORM.queueEntryRepository.count({ beeper: ctx.user, start: { $lt: entry.start } });
-
-                if (entry.state != 1) {
-                    entry.beeper.location = undefined;
-                }
 
                 pubSub.publish("Rider" + entry.rider.id, entry);
             }
