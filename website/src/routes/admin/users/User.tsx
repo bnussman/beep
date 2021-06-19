@@ -29,6 +29,7 @@ const GetUser = gql`
       location {
         latitude
         longitude
+        timestamp
       }
       queue {
         id

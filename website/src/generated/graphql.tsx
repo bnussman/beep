@@ -1014,7 +1014,7 @@ export type GetUserQuery = (
     & Pick<User, 'id' | 'name' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating' | 'email'>
     & { location?: Maybe<(
       { __typename?: 'Location' }
-      & Pick<Location, 'latitude' | 'longitude'>
+      & Pick<Location, 'latitude' | 'longitude' | 'timestamp'>
     )>, queue: Array<(
       { __typename?: 'QueueEntry' }
       & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize' | 'isAccepted' | 'state'>
@@ -2232,6 +2232,7 @@ export const GetUserDocument = gql`
     location {
       latitude
       longitude
+      timestamp
     }
     queue {
       id

@@ -27,7 +27,7 @@ export class LocationResolver {
             ctx.em.persist(e);
         }
         else {
-            wrap(entry).assign(location);
+            wrap(entry).assign({ ...location, timestamp: new Date() });
 
             ctx.em.persist(entry);
         }

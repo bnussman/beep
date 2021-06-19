@@ -12,6 +12,10 @@ import { Center, Tooltip, Stack, AvatarBadge, Heading, Badge, Box, Text, Avatar,
 import React from 'react';
 import DeleteDialog from './DeleteDialog';
 import { DeleteIcon } from '@chakra-ui/icons';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const RemoveUser = gql`
     mutation RemoveUser($id: String!) {
@@ -151,6 +155,7 @@ function UserProfile(props: Props) {
             {user.location ?
               <Box>
                 <Text>{user.location.latitude}, {user.location.longitude}</Text>
+                  <Text>{dayjs().to(user.location.timestamp)}</Text>
                 <iframe
                   title="Map"
                   width="100%"
