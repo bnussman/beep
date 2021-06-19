@@ -1,4 +1,4 @@
-import { Collection, Entity, Enum, OneToMany, OneToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
+import { Collection, Entity, OneToMany, OneToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { QueueEntry } from './QueueEntry';
 import { Location } from './Location';
@@ -107,8 +107,8 @@ export class User {
     }
 
     @Field(() => Location, { nullable: true })
-    @OneToOne(() => Location, l => l.user, { nullable: true, lazy: true, eager: false })
-    location?: Location;
+    @OneToOne(() => Location, l => l.user, { nullable: true, owner: true, inversedBy: 'user' })
+    location: Location | null = null;
 
     @Field(() => [QueueEntry])
     @OneToMany(() => QueueEntry, q => q.beeper, { lazy: true, eager: false })

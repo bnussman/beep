@@ -1,8 +1,8 @@
-import { wrap } from '@mikro-orm/core';
-import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Location } from '../entities/Location';
+import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { LocationInput } from '../validators/location';
+import {wrap} from '@mikro-orm/core';
 
 @ObjectType()
 class LocationData {
@@ -19,16 +19,18 @@ export class LocationResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async insertLocation(@Ctx() ctx: Context, @Arg('location') location: LocationInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-        ctx.em.populate(ctx.user, "location");
+        const entry = await ctx.em.findOne(Location, { user: ctx.user.id }, { populate: false, refresh: true });
 
-        if (!ctx.user.location) {
-            ctx.user.location = new Location({ ...location, user: ctx.user });
+        if (!entry) {
+            const e = new Location({ ...location, user: ctx.user });
+
+            ctx.em.persist(e);
         }
         else {
-            wrap(ctx.user.location).assign(location);
-        }
+            wrap(entry).assign(location);
 
-        ctx.em.persist(ctx.user);
+            ctx.em.persist(entry);
+        }
 
         pubSub.publish("Location" + ctx.user.id, location);
 

@@ -13,8 +13,6 @@ import { graphqlUploadKoa } from 'graphql-upload'
 import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
 import config from './mikro-orm.config';
-import { GraphQLError } from "graphql";
-import { GraphQLFormattedError } from "graphql";
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -89,7 +87,7 @@ export default class BeepAPIServer {
 
                 if (!token) return { em };
 
-                const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, token, { populate: ['user'] });
+                const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
 
                 if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult, em };
             }
