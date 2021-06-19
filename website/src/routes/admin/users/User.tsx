@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import UserProfile from '../../../components/UserProfile';
 import { gql, useQuery } from '@apollo/client';
 import { GetUserQuery } from '../../../generated/graphql';
-import { Heading } from "@chakra-ui/react";
+import { Center, Heading, Spinner } from "@chakra-ui/react";
 import { Error } from '../../../components/Error';
 
 const GetUser = gql`
@@ -52,14 +52,22 @@ const GetUser = gql`
 `;
 
 function UserPage() {
-  const { userId } = useParams<{ userId: string }>();
-  const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+    const { userId } = useParams<{ userId: string }>();
+    const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
 
-  if (error) {
-    return <Error error={error} />;
-  }
+    if (error) {
+        return <Error error={error} />;
+    }
 
-  return loading ? <Heading>Loading</Heading> : <UserProfile user={data?.getUser} admin />;
+    if (loading) {
+        return (
+            <Center h="100px">
+                <Spinner size="xl" />
+            </Center>
+        );
+    }
+
+    return <UserProfile user={data?.getUser} admin />;
 }
 
 export default UserPage;
