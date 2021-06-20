@@ -102,7 +102,7 @@ export class BeeperResolver {
     }
 
     private async sendRiderUpdates(beeperId: string, pubSub: PubSubEngine, em: EntityManager) {
-        const queues = await em.find(QueueEntry, { beeper: beeperId }, { orderBy: { start: QueryOrder.ASC }, refresh: true, populate: ['beeper.location'] });
+        const queues = await em.find(QueueEntry, { beeper: beeperId }, { orderBy: { start: QueryOrder.ASC }, refresh: true, populate: ['beeper.location', 'rider'] });
 
         pubSub.publish("Beeper" + beeperId, queues);
 
