@@ -317,6 +317,7 @@ export type Query = {
 export type QueryGetBeepsArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -342,6 +343,7 @@ export type QueryGetRatingsArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -353,6 +355,7 @@ export type QueryGetRatingArgs = {
 export type QueryGetReportsArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -369,6 +372,7 @@ export type QueryGetUserArgs = {
 export type QueryGetUsersArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -376,6 +380,7 @@ export type QueryGetRideHistoryArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -383,6 +388,7 @@ export type QueryGetBeepHistoryArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 

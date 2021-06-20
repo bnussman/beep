@@ -12,4 +12,7 @@ export default class PaginationArgs {
   @Min(1)
   @Max(50)
   show?: number;
+
+  @Field(type => String, { nullable: true })
+  search?: string;
 }

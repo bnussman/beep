@@ -316,6 +316,7 @@ export type Query = {
 export type QueryGetBeepsArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -341,6 +342,7 @@ export type QueryGetRatingsArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -352,6 +354,7 @@ export type QueryGetRatingArgs = {
 export type QueryGetReportsArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -368,6 +371,7 @@ export type QueryGetUserArgs = {
 export type QueryGetUsersArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -375,6 +379,7 @@ export type QueryGetRideHistoryArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -382,6 +387,7 @@ export type QueryGetBeepHistoryArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 };
 
 
@@ -1000,6 +1006,19 @@ export type EditUserMutation = (
     { __typename?: 'User' }
     & Pick<User, 'username'>
   ) }
+);
+
+export type BeepersLocationSubscriptionVariables = Exact<{
+  topic: Scalars['String'];
+}>;
+
+
+export type BeepersLocationSubscription = (
+  { __typename?: 'Subscription' }
+  & { getLocationUpdates?: Maybe<(
+    { __typename?: 'LocationData' }
+    & Pick<LocationData, 'latitude' | 'longitude'>
+  )> }
 );
 
 export type GetUserQueryVariables = Exact<{
@@ -2209,6 +2228,37 @@ export function useEditUserMutation(baseOptions?: Apollo.MutationHookOptions<Edi
 export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = Apollo.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = Apollo.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
+export const BeepersLocationDocument = gql`
+    subscription BeepersLocation($topic: String!) {
+  getLocationUpdates(topic: $topic) {
+    latitude
+    longitude
+  }
+}
+    `;
+
+/**
+ * __useBeepersLocationSubscription__
+ *
+ * To run a query within a React component, call `useBeepersLocationSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useBeepersLocationSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBeepersLocationSubscription({
+ *   variables: {
+ *      topic: // value for 'topic'
+ *   },
+ * });
+ */
+export function useBeepersLocationSubscription(baseOptions: Apollo.SubscriptionHookOptions<BeepersLocationSubscription, BeepersLocationSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<BeepersLocationSubscription, BeepersLocationSubscriptionVariables>(BeepersLocationDocument, options);
+      }
+export type BeepersLocationSubscriptionHookResult = ReturnType<typeof useBeepersLocationSubscription>;
+export type BeepersLocationSubscriptionResult = Apollo.SubscriptionResult<BeepersLocationSubscription>;
 export const GetUserDocument = gql`
     query GetUser($id: String!) {
   getUser(id: $id) {
