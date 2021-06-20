@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import UserProfile from '../../../components/UserProfile';
 import { gql, useQuery } from '@apollo/client';
 import { GetUserQuery } from '../../../generated/graphql';
-import { Center, Heading, Spinner } from "@chakra-ui/react";
+import { Center, Spinner } from "@chakra-ui/react";
 import { Error } from '../../../components/Error';
 
-const GetUser = gql`
+export const GetUser = gql`
   query GetUser($id: String!) {
     getUser(id: $id) {
       id

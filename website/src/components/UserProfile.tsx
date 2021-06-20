@@ -8,12 +8,13 @@ import { UserRole } from '../types/User';
 import { gql, useMutation } from '@apollo/client';
 import { RemoveUserMutation } from '../generated/graphql';
 import { printStars } from '../routes/admin/ratings';
-import { Center, Tooltip, Stack, AvatarBadge, Heading, Badge, Box, Text, Avatar, Button, Flex, Spacer, Tabs, Tab, TabList, TabPanel, TabPanels } from '@chakra-ui/react';
+import { Tooltip, Stack, AvatarBadge, Heading, Badge, Box, Text, Avatar, Button, Flex, Spacer, Tabs, Tab, TabList, TabPanel, TabPanels } from '@chakra-ui/react';
 import React from 'react';
 import DeleteDialog from './DeleteDialog';
 import { DeleteIcon } from '@chakra-ui/icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import LocationView from '../routes/admin/users/Location';
 
 dayjs.extend(relativeTime);
 
@@ -152,22 +153,7 @@ function UserProfile(props: Props) {
             </Stack>
           </TabPanel>
           <TabPanel>
-            {user.location ?
-              <Box>
-                <Text>{user.location.latitude}, {user.location.longitude}</Text>
-                  <Text>{dayjs().to(user.location.timestamp)}</Text>
-                <iframe
-                  title="Map"
-                  width="100%"
-                  height="350"
-                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&q=${user.location.latitude},${user.location.longitude}`}>
-                </iframe>
-              </Box>
-              :
-              <Center h="100px">
-                This user has no Location data.
-              </Center>
-            }
+              <LocationView user={user} location={user.location} />
           </TabPanel>
           <TabPanel>
             <QueueTable queue={user.queue} />
