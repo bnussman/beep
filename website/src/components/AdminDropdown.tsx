@@ -15,9 +15,8 @@ export function AdminDropdown() {
       <Button
         leftIcon={<SettingsIcon />}
         as={MenuButton}
-        variant='solid'
+        variant='outline'
         colorScheme="brand"
-        color="white"
         size='md'
         mr={4}
       >
