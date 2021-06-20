@@ -80,7 +80,10 @@ function ReportPage() {
     console.log(reportId);
 
     async function doDelete() {
-        await deleteReport({ variables: { id: reportId } });
+        await deleteReport({
+            variables: { id: reportId },
+            refetchQueries: () => ['getReports']
+        });
         history.goBack();
     }
 

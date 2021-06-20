@@ -36,7 +36,10 @@ function ReportDrawer(props: Props) {
     console.log(isHandled);
 
     async function doDelete() {
-        await deleteReport({ variables: { id } });
+        await deleteReport({
+            variables: { id },
+            refetchQueries: () => ['getReports']
+        });
         onClose();
     }
 
