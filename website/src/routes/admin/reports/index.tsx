@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Card } from '../../../components/Card';
 import { Indicator } from '../../../components/Indicator';
 import Pagination from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../../../generated/graphql';
 import { Box, Button, Center, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import TdUser from '../../../components/TdUser';
-import { NavLink } from 'react-router-dom';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 import ReportDrawer from './Drawer';
 
 dayjs.extend(relativeTime);
@@ -58,6 +55,11 @@ function Reports() {
         });
     }
 
+    function openReport(id: string) {
+        setId(id);
+        onOpen();
+    }
+
     return (
         <Box>
             <Heading>Reports</Heading>
@@ -68,54 +70,46 @@ function Reports() {
                 setCurrentPage={setCurrentPage}
                 onPageChange={fetchReports}
             />
-            <Card>
-                <Table>
-                    <Thead>
-                        <Tr>
-                            <Th>Reporter</Th>
-                            <Th>Reported User</Th>
-                            <Th>Reason</Th>
-                            <Th>Date</Th>
-                            <Th>Handled?</Th>
-                            <Th></Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {data?.getReports && (data.getReports.items).map(report => {
-                            return (
-                                <Tr key={report.id} onClick={onOpen}>
-                                    <TdUser user={report.reporter} />
-                                    <TdUser user={report.reported} />
-                                    <Td>{report.reason}</Td>
-                                    <Td>{dayjs().to(report.timestamp)}</Td>
-                                    <Td>
-                                        {report.handled
-                                            ? <Indicator color='green' />
-                                            : <Indicator color='red' />
-                                        }
-                                    </Td>
-                                    <Td>
-                                        <NavLink to={`/admin/reports/${report.id}`}>
-                                            <ExternalLinkIcon />
-                                        </NavLink>
-                                        <Button ref={btnRef} colorScheme="brand" onClick={() => {
-                                            setId(report.id);
-                                            onOpen();
-                                        }}>
-                                            Open
-                                        </Button>
-                                    </Td>
-                                </Tr>
-                            )
-                        })}
-                    </Tbody>
-                </Table>
-                {loading &&
-                <Center h="100px">
-                    <Spinner size="xl" />
-                </Center>
-                }
-            </Card>
+            <Table>
+                <Thead>
+                    <Tr>
+                        <Th>Reporter</Th>
+                        <Th>Reported User</Th>
+                        <Th>Reason</Th>
+                        <Th>Date</Th>
+                        <Th>Done</Th>
+                        <Th></Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {data?.getReports && (data.getReports.items).map(report => {
+                        return (
+                            <Tr key={report.id} onClick={() => openReport(report.id)}>
+                                <TdUser user={report.reporter} />
+                                <TdUser user={report.reported} />
+                                <Td>{report.reason}</Td>
+                                <Td>{dayjs().to(report.timestamp)}</Td>
+                                <Td>
+                                    {report.handled
+                                        ? <Indicator color='green' />
+                                        : <Indicator color='red' />
+                                    }
+                                </Td>
+                                <Td>
+                                    <Button ref={btnRef} colorScheme="brand" onClick={() => openReport(report.id)}>
+                                        Open
+                                    </Button>
+                                </Td>
+                            </Tr>
+                        )
+                    })}
+                </Tbody>
+            </Table>
+            {loading &&
+            <Center h="100px">
+                <Spinner size="xl" />
+            </Center>
+            }
             <Pagination
                 resultCount={data?.getReports.count}
                 limit={pageLimit}

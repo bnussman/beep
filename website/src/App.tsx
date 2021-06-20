@@ -142,8 +142,7 @@ function Beep() {
             <ThemeContext.Provider value={{ theme, setTheme }}>
                 <UserContext.Provider value={data?.getUser}>
                     <Router>
-                      {/* love life :D */}
-                      <Box maxW="98.9%">
+                      <Box>
                         <NavBar />
                         <Container maxW="container.xl">
                         <Switch>
