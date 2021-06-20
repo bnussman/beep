@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heading, Text, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Flex, Textarea, Box, Checkbox } from '@chakra-ui/react';
 import {DeleteReport, GetReport, UpdateReport} from './Report';
 import {useQuery, useMutation} from '@apollo/client';
@@ -30,8 +30,8 @@ function ReportDrawer(props: Props) {
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
     const deleteRef = React.useRef();
 
-    const [notes, setNotes] = useState(data?.getReport.notes);
-    const [isHandled, setIsHandled] = useState(data?.getReport.handled);
+    const [notes, setNotes] = useState();
+    const [isHandled, setIsHandled] = useState();
 
     console.log(isHandled);
 
@@ -53,6 +53,11 @@ function ReportDrawer(props: Props) {
             refetch();
         }
     }
+
+    useEffect(() => {
+        setIsHandled(data?.getReport.handled);
+        setNotes(data?.getReport.notes)
+    }, [data?.getReport]);
 
   return (
       <Drawer
