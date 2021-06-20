@@ -30,8 +30,8 @@ function ReportDrawer(props: Props) {
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
     const deleteRef = React.useRef();
 
-    const [notes, setNotes] = useState();
-    const [isHandled, setIsHandled] = useState();
+    const [notes, setNotes] = useState(data?.getReport.notes);
+    const [isHandled, setIsHandled] = useState(data?.getReport.handled);
 
     console.log(isHandled);
 
@@ -109,11 +109,11 @@ function ReportDrawer(props: Props) {
                         </Box>
                     }
                     <Textarea
-                        value={notes || data.getReport.notes}
+                        value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                     />
                     <Checkbox
-                        isChecked={isHandled || data.getReport.handled}
+                        isChecked={isHandled}
                         onChange={(e) => setIsHandled(e.target.checked)}
                     >
                         Handled
