@@ -3,6 +3,7 @@ import {gql, useMutation} from '@apollo/client';
 import {Error} from '../components/Error';
 import {Success} from '../components/Success';
 import {VerifyAccountMutation} from '../generated/graphql';
+import React from 'react';
 
 const VerifyAccountGraphQL = gql`
     mutation VerifyAccount($id: String!) {
