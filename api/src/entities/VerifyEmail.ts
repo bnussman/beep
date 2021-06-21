@@ -16,8 +16,8 @@ export class VerifyEmail {
     user!: User;
 
     @Field()
-    @Property({ defaultRaw: 'now()' }) 
-    time!: Date;
+    @Property() 
+    time: Date = new Date();
 
     @Field()
     @Property()
