@@ -12,6 +12,8 @@ import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../../generated/graphql';
 import { isMobile } from '../../utils/config';
 import { generateRNFile } from '../settings/ProfilePhoto';
+import {client} from '../../utils/Apollo';
+import {GetUserData} from '../../App';
 
 interface Props {
     navigation: any;
@@ -72,6 +74,15 @@ function RegisterScreen(props: Props) {
 
             if (result) {
                 AsyncStorage.setItem("auth", JSON.stringify(result.data?.signup));
+
+                await client.resetStore();
+
+                const data = await client.query({ query: GetUserData });
+
+                client.writeQuery({
+                    query: GetUserData,
+                    data
+                });
 
                 props.navigation.reset({
                     index: 0,

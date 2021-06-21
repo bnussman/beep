@@ -41,7 +41,7 @@ function Login() {
 
 
       if (result) {
-        localStorage.setItem('user', JSON.stringify(result.data.login));
+        localStorage.setItem('user', JSON.stringify(result.data?.login));
 
         await client.resetStore();
 
@@ -51,6 +51,7 @@ function Login() {
             query: GetUserData,
             data
         });
+
         history.push('/')
       }
 

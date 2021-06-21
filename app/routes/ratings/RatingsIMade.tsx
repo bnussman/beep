@@ -67,7 +67,7 @@ export function RatingsIMadeScreen(props: Props) {
                 return (
                     <Layout style={styles.container}>
                         <Text category='h5'>Nothing to display!</Text>
-                        <Text appearance='hint'>You have no previous rides to display</Text>
+                        <Text appearance='hint'>You have no ratings to display</Text>
                     </Layout>
                 );
             }
@@ -75,7 +75,7 @@ export function RatingsIMadeScreen(props: Props) {
         else {
             return (
                 <Layout style={styles.container}>
-                    <Text category='h5'>Loading your history</Text>
+                    <Text category='h5'>Loading your ratings</Text>
                     <Spinner />
                 </Layout>
             );
