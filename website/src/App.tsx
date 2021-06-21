@@ -24,6 +24,7 @@ import { ChakraProvider, extendTheme, Container, Box } from "@chakra-ui/react"
 import { createStandaloneToast } from "@chakra-ui/react"
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
+import Banners from './components/Banners';
 
 const toast = createStandaloneToast()
 
@@ -145,6 +146,7 @@ function Beep() {
                       <Box>
                         <NavBar />
                         <Container maxW="container.xl">
+                        <Banners />
                         <Switch>
                             <Route path="/password/forgot" component={ForgotPassword} />
                             <Route path="/password/reset/:id" component={ResetPassword} />
@@ -164,7 +166,6 @@ function Beep() {
                         </Container>
                       </Box>
                     </Router>
-                    {/*<Footer/>*/}
                 </UserContext.Provider>
             </ThemeContext.Provider>
         </ApolloProvider>

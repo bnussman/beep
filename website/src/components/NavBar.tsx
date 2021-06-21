@@ -1,10 +1,8 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Link } from "react-router-dom";
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import {UserDropdown} from './UserDropdown';
 import {AdminDropdown} from './AdminDropdown';
-import {gql, useMutation} from '@apollo/client';
-import {ResendEmailMutation} from '../generated/graphql';
 import {UserContext} from '../UserContext';
 import {UserRole} from '../types/User';
 import { ThemeToggle } from './ThemeToggle';
@@ -15,41 +13,15 @@ import {
     IconButton,
     useDisclosure,
     Stack,
-    AlertIcon,
-    Alert,
     Button,
     Image
 } from '@chakra-ui/react';
 import React from 'react';
 import Logo from '../assets/favicon.png';
 
-const Resend = gql`
-    mutation ResendEmail {
-        resendEmailVarification
-    }
-`;
-
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [resend, { error }] = useMutation<ResendEmailMutation>(Resend);
   const user = useContext(UserContext);
-  const [resendStatus, setResendStatus] = useState<string>();
-  const [refreshStatus, setRefreshStatus] = useState<string>();
-
-  async function resendVarificationEmail() {
-    try {
-      const result = await resend();
-      if (result) {
-        setResendStatus("Successfully resent email");
-      }
-      else {
-        setResendStatus(error.message);
-      }
-    }
-    catch (error) {
-      console.error('Error:', error);
-    }
-  }
 
   return (
     <>
@@ -125,29 +97,6 @@ export default function NavBar() {
           </Box>
         ) : null}
       </Box>
-      {(user && !user.isEmailVerified) &&
-        <Box>
-          <Alert status="error">
-            <AlertIcon />
-                    You need to verify your email!
-                    <Button onClick={resendVarificationEmail}>
-              Resend my verification email
-                    </Button>
-          </Alert>
-          {refreshStatus &&
-            <Alert status="info" onClick={() => { setRefreshStatus(null) }}>
-              <AlertIcon />
-              {refreshStatus}
-            </Alert>
-          }
-          {resendStatus &&
-            <Alert status="info" onClick={() => { setResendStatus(null) }}>
-              <AlertIcon />
-              {resendStatus}
-            </Alert>
-          }
-        </Box>
-      }
     </>
   );
 }

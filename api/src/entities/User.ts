@@ -1,5 +1,5 @@
 import { Collection, Entity, OneToMany, OneToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
-import { Field, ObjectType } from "type-graphql";
+import { Authorized, Field, ObjectType } from "type-graphql";
 import { QueueEntry } from './QueueEntry';
 import { Location } from './Location';
 import { Rating } from './Rating';
@@ -50,6 +50,7 @@ export class User {
 
     @Field()
     @Property()
+    @Authorized("admin")
     password!: string;
 
     @Field()
