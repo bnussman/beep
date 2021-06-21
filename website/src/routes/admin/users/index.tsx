@@ -44,10 +44,10 @@ export const UsersGraphQL = gql`
 `;
 
 function Users() {
-    const { loading, error, data, refetch } = useQuery<GetUsersQuery>(UsersGraphQL, { variables: { offset: 0, show: 25 } });
+    const pageLimit = 20;
+    const { loading, error, data, refetch } = useQuery<GetUsersQuery>(UsersGraphQL, { variables: { offset: 0, show: pageLimit } });
     const [search, setSearch] = useState<string>();
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageLimit = 25;
 
     async function fetchUsers(page: number) {
         refetch({
@@ -56,7 +56,9 @@ function Users() {
     }
 
     useEffect(() => {
+        setCurrentPage(1);
         refetch({
+            offset: 0,
             search
         });
     }, [search]);

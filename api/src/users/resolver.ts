@@ -73,18 +73,17 @@ export class UserResolver {
     @Query(() => UsersResponse)
     @Authorized(UserRole.ADMIN)
     public async getUsers(@Ctx() ctx: Context, @Args() { offset, show, search }: PaginationArgs): Promise<UsersResponse> {
-        console.log(search);
-
         if (search) {
             const connection = ctx.em.getConnection();
 
-            const raw: any[] = await connection.execute(`select * from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last) @@ to_tsquery('${search}');`);
+            const raw: any[] = await connection.execute(`select * from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last) @@ to_tsquery('${search}') limit ${show} offset ${offset};`);
+            const count = await connection.execute(`select count(*) from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last) @@ to_tsquery('${search}')`);
 
             const users = raw.map(user => ctx.em.map(User, user));
 
             return {
                 items: users,
-                count: users.length
+                count: count[0].count
             };
         }
         
