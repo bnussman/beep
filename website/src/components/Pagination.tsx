@@ -110,7 +110,7 @@ export default function Pagination({
     <Box m={2}>
       <Flex align="center">
         {!!resultCount &&
-          <Text>
+          <Text isTruncated>
             {`Showing ${(currentPage - 1) * limit + 1} to ${currentPage * limit <= resultCount ? currentPage * limit : resultCount}	of ${resultCount} results`}
           </Text>
         }
