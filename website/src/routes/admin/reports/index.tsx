@@ -96,7 +96,7 @@ function Reports() {
                                     }
                                 </Td>
                                 <Td>
-                                    <Button ref={btnRef} colorScheme="brand" onClick={() => openReport(report.id)}>
+                                    <Button colorScheme="brand" onClick={() => openReport(report.id)}>
                                         Open
                                     </Button>
                                 </Td>
@@ -121,7 +121,6 @@ function Reports() {
                 isOpen={isOpen}
                 onOpen={onOpen}
                 onClose={onClose}
-                btnRef={btnRef}
                 id={id}
             />
         </Box>

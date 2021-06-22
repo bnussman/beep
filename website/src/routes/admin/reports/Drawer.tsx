@@ -15,14 +15,13 @@ interface Props {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
-    btnRef: any;
     id: string | null;
 }
 
 function ReportDrawer(props: Props) {
     if (!props.id) return null;
 
-    const { isOpen, onClose, btnRef, id } = props;
+    const { isOpen, onClose, id } = props;
     const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
     const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
     const [deleteReport, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteReportMutation>(DeleteReport);
@@ -67,7 +66,6 @@ function ReportDrawer(props: Props) {
           isOpen={isOpen}
           placement="right"
           onClose={onClose}
-          finalFocusRef={btnRef}
       >
         <DrawerOverlay />
         <DrawerContent>
