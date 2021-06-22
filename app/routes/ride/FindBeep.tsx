@@ -283,6 +283,7 @@ export function MainFindBeepScreen(props: Props) {
                                     onPress={() => findBeep()}
                                     size='large'
                                     style={{marginTop:15}}
+                                    disabled={origin === 'Loading your location...'}
                                 >
                                     Find a Beep
                                 </Button>

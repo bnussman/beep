@@ -53,7 +53,7 @@ function BeepHistoryTable(props: Props) {
   if (data?.getBeepHistory && data.getBeepHistory.items.length === 0) {
     return (
       <Center h="100px">
-        This user's queue is empty.
+        This user has no beep history.
       </Center>
     );
   }

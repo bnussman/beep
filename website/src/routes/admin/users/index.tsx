@@ -1,28 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import { formatPhone } from '../../../utils/formatters';
 import { Card } from '../../../components/Card';
 import { Indicator } from '../../../components/Indicator';
 import Pagination from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetUsersQuery } from '../../../generated/graphql';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Heading,
-  Box,
-  Center,
-  Spinner,
-  InputGroup,
-  InputLeftElement,
-  Input
-} from "@chakra-ui/react"
 import TdUser from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
-import {SearchIcon} from '@chakra-ui/icons';
+import { SearchIcon } from '@chakra-ui/icons';
+import Loading from '../../../components/Loading';
+import {
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    Heading,
+    Box,
+    InputGroup,
+    InputLeftElement,
+    Input
+} from "@chakra-ui/react"
 
 export const UsersGraphQL = gql`
     query getUsers($show: Int, $offset: Int, $search: String) {
@@ -45,7 +43,7 @@ export const UsersGraphQL = gql`
 
 function Users() {
     const pageLimit = 20;
-    const { loading, error, data, refetch } = useQuery<GetUsersQuery>(UsersGraphQL, { variables: { offset: 0, show: pageLimit } });
+    const { loading, error, data, refetch } = useQuery<GetUsersQuery>( UsersGraphQL, { variables: { offset: 0, show: pageLimit } });
     const [search, setSearch] = useState<string>();
     const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -68,7 +66,6 @@ function Users() {
     return (
         <Box>
             <Heading>Users</Heading>
-
             <Pagination
                 resultCount={data?.getUsers?.count}
                 limit={pageLimit}
@@ -76,7 +73,7 @@ function Users() {
                 setCurrentPage={setCurrentPage}
                 onPageChange={fetchUsers}
             />
-            <InputGroup mb={2}>
+            <InputGroup mb={4}>
                 <InputLeftElement
                     pointerEvents="none"
                     children={<SearchIcon color="gray.300" />}
@@ -88,16 +85,15 @@ function Users() {
                     onChange={(e) => setSearch(e.target.value)}
                 />
             </InputGroup>
-            <Card>
+            <Card p={2}>
                 <Table>
                     <Thead>
                         <Tr>
                             <Th>User</Th>
                             <Th>Email</Th>
-                            <Th>Phone</Th>
-                            <Th>Is Student?</Th>
-                            <Th>Is Email Verified?</Th>
-                            <Th>Is beeping?</Th>
+                            <Th>Student</Th>
+                            <Th>Email Verified</Th>
+                            <Th>Beeping</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -105,38 +101,17 @@ function Users() {
                             return (
                                 <Tr key={user.id}>
                                     <TdUser user={user} />
-                                    <Td><a href={`mailto:${user.email}`} rel="noreferrer" target="_blank">{user.email}</a></Td>
-                                    <Td>{formatPhone(user.phone)}</Td>
-                                    <Td>
-                                        {user.isStudent
-                                            ? <Indicator color="green" />
-                                            : <Indicator color="red" />
-                                        }
-                                    </Td>
-                                    <Td>
-                                        {user.isEmailVerified
-                                            ? <Indicator color="green" />
-                                            : <Indicator color="red" />
-                                        }
-                                    </Td>
-                                    <Td>
-                                        {user.isBeeping
-                                            ? <Indicator color="green" />
-                                            : <Indicator color="red" />
-                                        }
-                                    </Td>
+                                    <Td>{user.email}</Td>
+                                    <Td><Indicator color={user.isStudent ? 'green' : 'red'} /></Td>
+                                    <Td><Indicator color={user.isEmailVerified ? "green" : 'red'} /></Td>
+                                    <Td><Indicator color={user.isBeeping ? 'green' : 'red'} /></Td>
                                 </Tr>
                             )
                         })}
                     </Tbody>
                 </Table>
-                {loading &&
-                <Center h="100px">
-                    <Spinner size="xl" />
-                </Center>
-                }
+                {loading && <Loading />}
             </Card>
-
             <Pagination
                 resultCount={data?.getUsers.count}
                 limit={pageLimit}

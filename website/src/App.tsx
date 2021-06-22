@@ -110,7 +110,6 @@ function Beep() {
 
     useEffect(() => {
         if (data?.getUser?.id) {
-            console.log("Calling sub to more");
             subscribeToMore({
                 document: UserUpdates,
                 variables: {

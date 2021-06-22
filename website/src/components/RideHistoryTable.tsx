@@ -53,7 +53,7 @@ function RideHistoryTable(props: Props) {
   if (data?.getRideHistory && data.getRideHistory.items.length === 0) {
     return (
       <Center h="100px">
-        This user's queue is empty.
+        This user has no ride history.
       </Center>
     );
   }

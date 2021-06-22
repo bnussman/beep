@@ -77,8 +77,6 @@ function ReportPage() {
     const onClose = () => setIsOpen(false);
     const cancelRef = React.useRef();
 
-    console.log(reportId);
-
     async function doDelete() {
         await deleteReport({
             variables: { id: reportId },
@@ -101,7 +99,7 @@ function ReportPage() {
 
     return (
         <Box>
-            <Flex align='center'>
+            <Flex align='center' mb={2}>
                 <Heading>Report</Heading>
                 <Spacer />
                 <Button
@@ -113,7 +111,7 @@ function ReportPage() {
                 </Button>
             </Flex>
 
-            {error && <Error error={error.message} />}
+            {error && <Error error={error} />}
 
             {loading &&
                 <Center h="100px">

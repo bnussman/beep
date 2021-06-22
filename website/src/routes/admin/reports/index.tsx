@@ -5,47 +5,46 @@ import { Indicator } from '../../../components/Indicator';
 import Pagination from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../../../generated/graphql';
-import { Box, Button, Center, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import TdUser from '../../../components/TdUser';
 import ReportDrawer from './Drawer';
+import Loading from '../../../components/Loading';
 
 dayjs.extend(relativeTime);
 
 export const ReportsGraphQL = gql`
-query getReports($show: Int, $offset: Int) {
-    getReports(show: $show, offset: $offset) {
-        items {
-            id
-            timestamp
-            reason
-            notes
-            handled
-            reporter {
+    query getReports($show: Int, $offset: Int) {
+        getReports(show: $show, offset: $offset) {
+            items {
                 id
-                name
-                photoUrl
-                username
+                timestamp
+                reason
+                notes
+                handled
+                reporter {
+                    id
+                    name
+                    photoUrl
+                    username
+                }
+                reported {
+                    id
+                    name
+                    photoUrl
+                    username
+                }
             }
-            reported {
-                id
-                name
-                photoUrl
-                username
-            }
+            count
         }
-        count
     }
-}
 `;
 
 function Reports() {
-    const { data, loading, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, { variables: { offset: 0, show: 25 } });
+    const pageLimit = 25;
+    const { data, loading, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, { variables: { offset: 0, show: pageLimit } });
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [id, setId] = useState<string | null>(null);
-    const pageLimit = 25;
-
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const btnRef = React.useRef();
 
     async function fetchReports(page: number) {
         refetch({
@@ -89,12 +88,7 @@ function Reports() {
                                 <TdUser user={report.reported} />
                                 <Td>{report.reason}</Td>
                                 <Td>{dayjs().to(report.timestamp)}</Td>
-                                <Td>
-                                    {report.handled
-                                        ? <Indicator color='green' />
-                                        : <Indicator color='red' />
-                                    }
-                                </Td>
+                                <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
                                 <Td>
                                     <Button colorScheme="brand" onClick={() => openReport(report.id)}>
                                         Open
@@ -105,11 +99,7 @@ function Reports() {
                     })}
                 </Tbody>
             </Table>
-            {loading &&
-            <Center h="100px">
-                <Spinner size="xl" />
-            </Center>
-            }
+            {loading && <Loading />}
             <Pagination
                 resultCount={data?.getReports.count}
                 limit={pageLimit}

@@ -107,7 +107,7 @@ export default function Pagination({
 	}
 
   return (
-    <Box m={2}>
+    <Box mb={3} mt={3}>
       <Flex align="center">
         {!!resultCount &&
           <Text isTruncated>
