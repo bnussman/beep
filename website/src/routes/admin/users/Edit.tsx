@@ -59,7 +59,7 @@ function EditUserPage() {
       <Heading>Edit User</Heading>
       {data && <Success message="Successfully Edited User" />}
       {error && <Error error={error} />}
-      {editError && <Error error={editError.message} />}
+      {editError && <Error error={editError} />}
 
       {loading &&
         <Center h="100px">

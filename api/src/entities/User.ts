@@ -112,7 +112,7 @@ export class User {
     location?: Location;
 
     @Field(() => [QueueEntry])
-    @OneToMany(() => QueueEntry, q => q.beeper, { lazy: true, eager: false })
+    @OneToMany(() => QueueEntry, q => q.beeper, { orphanRemoval: true, lazy: true, eager: false })
     queue = new Collection<QueueEntry>(this);
 
     @Field(() => [Rating])

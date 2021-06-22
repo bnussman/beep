@@ -6,6 +6,7 @@ import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from '../validators/beeper';
 import * as Sentry from '@sentry/node';
 import { QueueEntry } from '../entities/QueueEntry';
+import { User } from '../entities/User';
 
 @Resolver(Beep)
 export class BeeperResolver {
@@ -31,17 +32,21 @@ export class BeeperResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
-        const queueEntry = await ctx.em.findOneOrFail(QueueEntry, input.queueId, { populate: ["rider", "beeper"], refresh: true });
+        await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], {}, { orderBy: { start: QueryOrder.ASC }});
+
+        const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id == input.queueId);
+
+        if (!queueEntry) throw new Error("Can't find queue entry");
 
         if (input.value == 'accept' || input.value == 'deny') {
-            const numRidersBefore = await ctx.em.count(QueueEntry, { start: { $lt: queueEntry.start }, isAccepted: false });
+            const numRidersBefore = ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && !entry.isAccepted).length;
 
             if (numRidersBefore != 0) {
                 throw new Error("You must respond to the rider who first joined your queue.");
             }
         }
         else {
-            const numRidersBefore = await ctx.em.count(QueueEntry, { start: { $lt: queueEntry.start }, isAccepted: true });
+            const numRidersBefore = ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && entry.isAccepted).length;
 
             if (numRidersBefore != 0) {
                 throw new Error("You must respond to the rider who first joined your queue.");
@@ -55,8 +60,8 @@ export class BeeperResolver {
 
             sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request`, "You will recieve another notification when they are on their way to pick you up.");
 
-            await ctx.em.persistAndFlush(queueEntry);
-            await ctx.em.persistAndFlush(ctx.user);
+            ctx.em.persist(queueEntry);
+            ctx.em.persist(ctx.user);
         }
         else if (input.value == 'deny' || input.value == 'complete') {
             pubSub.publish("Rider" + queueEntry.rider.id, null);
@@ -64,14 +69,16 @@ export class BeeperResolver {
             if (input.value == 'complete') {
                 const beep = new Beep(queueEntry);
 
-                await ctx.em.persistAndFlush(beep);
+                ctx.em.persist(beep);
             }
 
             if (queueEntry.isAccepted && ctx.user.queueSize > 0) ctx.user.queueSize--;
+            
+            ctx.em.persist(ctx.user);
 
-            await ctx.em.persistAndFlush(ctx.user);
-
-            await ctx.em.removeAndFlush(queueEntry);
+            ctx.user.queue.remove(queueEntry);
+            
+            console.log("Size after removal", ctx.user.queue.count());
 
             if (input.value == "deny") {
                 sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request`, "Open your app to find a diffrent beeper.");
@@ -93,21 +100,21 @@ export class BeeperResolver {
                     Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
             }
 
-            await ctx.em.persistAndFlush(queueEntry);
+            ctx.em.persist(queueEntry);
         }
 
-        this.sendRiderUpdates(ctx.user.id, pubSub, ctx.em);
+        this.sendRiderUpdates(ctx.user, ctx.user.queue.getItems(), pubSub);
+
+        await ctx.em.flush();
 
         return true;
     }
 
-    private async sendRiderUpdates(beeperId: string, pubSub: PubSubEngine, em: EntityManager) {
-        const queues = await em.find(QueueEntry, { beeper: beeperId }, { orderBy: { start: QueryOrder.ASC }, refresh: true, populate: ['beeper.location', 'rider'] });
+    private async sendRiderUpdates(beeper: User, queue: QueueEntry[], pubSub: PubSubEngine) {
+        pubSub.publish("Beeper" + beeper.id, queue);
 
-        pubSub.publish("Beeper" + beeperId, queues);
-
-        for (const entry of queues) {
-            entry.ridersQueuePosition = await em.count(QueueEntry, { beeper: beeperId, start: { $lt: entry.start } });
+        for (const entry of queue) {
+            entry.ridersQueuePosition = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
 
             pubSub.publish("Rider" + entry.rider.id, entry);
         }
