@@ -29,10 +29,6 @@ const ChooseBeep = gql`
                 masksRequired
                 capacity
                 queueSize
-                location {
-                    longitude
-                    latitude
-                }
             }
         }
     }

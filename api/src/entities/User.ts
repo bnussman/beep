@@ -109,7 +109,7 @@ export class User {
 
     @Field(() => Location, { nullable: true })
     @OneToOne(() => Location, l => l.user, { nullable: true, lazy: true, eager: false })
-    location?: Location;
+    location?: Location | null;
 
     @Field(() => [QueueEntry])
     @OneToMany(() => QueueEntry, q => q.beeper, { orphanRemoval: true, lazy: true, eager: false })
