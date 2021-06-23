@@ -14,7 +14,7 @@ export class RiderResolver {
     @Mutation(() => QueueEntry)
     @Authorized()
     public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<QueueEntry> {
-        const beeper = await ctx.em.findOneOrFail(User, beeperId, { populate: ['queue', 'location', 'queue.rider'], refresh: true });
+        const beeper = await ctx.em.findOneOrFail(User, beeperId, { populate: ['queue', 'location', 'queue.rider', 'queue.beeper'], refresh: true });
 
         if (!beeper.isBeeping) {
             throw new Error("The user you have chosen is no longer beeping at this time.");
@@ -32,6 +32,8 @@ export class RiderResolver {
             ridersQueuePosition: -1,
         });
 
+        pubSub.publish("Rider" + ctx.user.id, q);
+
         beeper.queue.add(q);
 
         sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
@@ -39,7 +41,6 @@ export class RiderResolver {
         console.log(q);
 
         pubSub.publish("Beeper" + beeper.id, beeper.queue.get());
-        pubSub.publish("Rider" + ctx.user.id, q);
 
         await ctx.em.persistAndFlush(beeper);
 
