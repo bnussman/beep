@@ -31,6 +31,7 @@ export class RiderResolver {
             beeper: beeper
         };
 
+
         const q = new QueueEntry();
 
         wrap(q).assign(entry, { em: ctx.em });
@@ -40,6 +41,8 @@ export class RiderResolver {
         sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
 
         q.ridersQueuePosition = -1;
+
+        console.log(q);
 
         pubSub.publish("Beeper" + beeper.id, beeper.queue.get());
         pubSub.publish("Rider" + ctx.user.id, q);
