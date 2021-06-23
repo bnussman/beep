@@ -45,7 +45,7 @@ export class RiderResolver {
         console.log(q);
 
         pubSub.publish("Beeper" + beeper.id, beeper.queue.get());
-        pubSub.publish("Rider" + ctx.user.id, q);
+        pubSub.publish("Rider" + ctx.user.id, beeper.queue.get().find((entry: QueueEntry) => entry.rider.id == ctx.user.id));q
 
         await ctx.em.persistAndFlush(beeper);
 
