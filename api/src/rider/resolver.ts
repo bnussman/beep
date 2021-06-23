@@ -7,6 +7,7 @@ import GetBeepInput from '../validators/rider';
 import { Context } from '../utils/context';
 import { Beep } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
+import { Location } from '../entities/Location';
    
 @Resolver()
 export class RiderResolver {
@@ -41,8 +42,6 @@ export class RiderResolver {
 
         sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
 
-        console.log(q);
-
         pubSub.publish("Beeper" + beeper.id, beeper.queue.getItems());
 
         await ctx.em.persistAndFlush(beeper);
@@ -66,7 +65,7 @@ export class RiderResolver {
     @Authorized()
     public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
         // @TODO this is causing too many queries to the DB :(
-        const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue', 'beeper.location'], refresh: true });
+        const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue'] });
 
         if (!entry) {
             return null;
@@ -74,7 +73,10 @@ export class RiderResolver {
 
         entry.ridersQueuePosition = entry.beeper.queue.getItems().filter((entry: QueueEntry) => entry.start < entry.start).length;
 
-        if (entry.state != 1) entry.beeper.location = null;
+        if (entry.state == 1) {
+            const location = await ctx.em.findOne(Location, { user: entry.beeper.id });
+            entry.beeper.location = location;
+        }
 
         return entry;
     }
