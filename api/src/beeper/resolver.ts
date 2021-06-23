@@ -1,5 +1,5 @@
 import { sendNotification } from '../utils/notifications';
-import { QueryOrder, wrap } from '@mikro-orm/core';
+import { EntityManager, QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep } from '../entities/Beep';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
@@ -7,6 +7,7 @@ import { BeeperSettingsInput, UpdateQueueEntryInput } from '../validators/beeper
 import * as Sentry from '@sentry/node';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
+import { Location } from '../entities/Location';
 
 @Resolver(Beep)
 export class BeeperResolver {
@@ -77,8 +78,6 @@ export class BeeperResolver {
             ctx.em.persist(ctx.user);
 
             ctx.user.queue.remove(queueEntry);
-            
-            console.log("Size after removal", ctx.user.queue.count());
 
             if (input.value == "deny") {
                 sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request`, "Open your app to find a diffrent beeper.");
@@ -103,18 +102,20 @@ export class BeeperResolver {
             ctx.em.persist(queueEntry);
         }
 
-        this.sendRiderUpdates(ctx.user, ctx.user.queue.getItems(), pubSub);
+        this.sendRiderUpdates(ctx.user, ctx.user.queue.getItems(), pubSub, ctx.em);
 
         await ctx.em.flush();
 
         return true;
     }
 
-    private async sendRiderUpdates(beeper: User, queue: QueueEntry[], pubSub: PubSubEngine) {
+    private async sendRiderUpdates(beeper: User, queue: QueueEntry[], pubSub: PubSubEngine, em: EntityManager) {
         pubSub.publish("Beeper" + beeper.id, queue);
 
         for (const entry of queue) {
             entry.ridersQueuePosition = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
+
+            if (entry.state == 1) entry.beeper.location = await em.findOne(Location, { user: beeper.id });
 
             pubSub.publish("Rider" + entry.rider.id, entry);
         }

@@ -28,7 +28,8 @@ export class RiderResolver {
             destination: input.destination,
             state: 0,
             rider: ctx.user,
-            beeper: Object.assign({}, { ...beeper, location: null } as User),
+            // @ts-expect-error fine 
+            beeper: Object.assign({}, { ...beeper, location: undefined }),
             ridersQueuePosition: -1,
         });
 
@@ -72,6 +73,8 @@ export class RiderResolver {
         }
 
         entry.ridersQueuePosition = entry.beeper.queue.getItems().filter((entry: QueueEntry) => entry.start < entry.start).length;
+
+        if (entry.state != 1) entry.beeper.location = null;
 
         return entry;
     }
