@@ -20,7 +20,7 @@ export class RiderResolver {
             throw new Error("The user you have chosen is no longer beeping at this time.");
         }
 
-        const entry = {
+        const q = new QueueEntry({
             start: Math.floor(Date.now() / 1000),
             isAccepted: false,
             groupSize: input.groupSize,
@@ -28,24 +28,18 @@ export class RiderResolver {
             destination: input.destination,
             state: 0,
             rider: ctx.user,
-            beeper: beeper
-        };
-
-
-        const q = new QueueEntry();
-
-        wrap(q).assign(entry, { em: ctx.em });
+            beeper: beeper,
+            ridersQueuePosition: -1,
+        });
 
         beeper.queue.add(q);
 
         sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
 
-        q.ridersQueuePosition = -1;
-
         console.log(q);
 
         pubSub.publish("Beeper" + beeper.id, beeper.queue.get());
-        pubSub.publish("Rider" + ctx.user.id, beeper.queue.get().find((entry: QueueEntry) => entry.rider.id == ctx.user.id));q
+        pubSub.publish("Rider" + ctx.user.id, q);
 
         await ctx.em.persistAndFlush(beeper);
 

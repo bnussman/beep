@@ -1,7 +1,6 @@
 import { BigIntType, Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
-import { Location } from "./Location";
 import { v4 } from "uuid";
 
 @ObjectType()
@@ -47,4 +46,8 @@ export class QueueEntry {
     @Field()
     @Property({ persist: false })
     ridersQueuePosition?: number;
+
+    constructor(values: Partial<QueueEntry>) {
+        Object.assign(this, values);
+    }
 }
