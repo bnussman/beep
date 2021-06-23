@@ -115,9 +115,22 @@ export class BeeperResolver {
         for (const entry of queue) {
             entry.ridersQueuePosition = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
 
-            if (entry.state == 1) entry.beeper.location = await em.findOne(Location, { user: beeper.id });
-
-            pubSub.publish("Rider" + entry.rider.id, entry);
+            if (entry.state == 1) {
+                const location = await em.findOne(Location, { user: beeper.id });
+                pubSub.publish("Rider" + entry.rider.id, {
+                    ...entry,
+                    beeper: {
+                        ...entry.beeper,
+                        location: location ? {
+                            longitude: location.longitude,
+                            latitude: location.latitude
+                        } : undefined
+                    }
+                });
+            }
+            else {
+                pubSub.publish("Rider" + entry.rider.id, entry);
+            }
         }
     }
 
