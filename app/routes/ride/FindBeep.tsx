@@ -337,7 +337,7 @@ export function MainFindBeepScreen(props: Props) {
                                 <Text category='h6'>Arrival ETA</Text>
                                 {etaError && <Text appearance='hint'>{etaError.message}</Text>}
                                 {etaLoading ? <Text appearance='hint'>Loading ETA</Text> :
-                                 eta?.getETA ?
+                                 eta?.getETA && data.getRiderStatus.beeper.location ?
                                     <Text appearance='hint'>Your beeper is {eta.getETA} away</Text>
                                     :
                                     <Text appearance='hint'>Beeper has no location data</Text>
