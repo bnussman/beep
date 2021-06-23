@@ -64,13 +64,14 @@ export class RiderResolver {
     @Query(() => QueueEntry, { nullable: true })
     @Authorized()
     public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
-        const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.location'], refresh: true });
+        // @TODO this is causing too many queries to the DB :(
+        const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue', 'beeper.location'], refresh: true });
 
         if (!entry) {
             return null;
         }
 
-        entry.ridersQueuePosition = await ctx.em.count(QueueEntry, { beeper: entry.beeper, start: { $lt: entry.start } });
+        entry.ridersQueuePosition = entry.beeper.queue.getItems().filter((entry: QueueEntry) => entry.start < entry.start).length;
 
         return entry;
     }
@@ -90,7 +91,7 @@ export class RiderResolver {
 
         const id = entry.beeper.id;
         
-        await ctx.em.persistAndFlush(entry.beeper);
+        ctx.em.persist(entry.beeper);
 
         pubSub.publish("Rider" + ctx.user.id, null);
 

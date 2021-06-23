@@ -2,10 +2,11 @@ import React, { useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
 import { Redirect } from "react-router-dom";
 import { Error } from '../components/Error';
-import {gql, useMutation} from '@apollo/client';
-import {ChangePasswordMutation} from '../generated/graphql';
-import {Success} from '../components/Success';
+import { gql, useMutation } from '@apollo/client';
+import { ChangePasswordMutation } from '../generated/graphql';
+import { Success } from '../components/Success';
 import { Input, Button, FormControl, FormLabel } from '@chakra-ui/react';
+import { LockIcon } from '@chakra-ui/icons';
 
 const ChangePasswordGraphQL = gql`
     mutation ChangePassword($password: String!) {
@@ -49,14 +50,14 @@ function ChangePassword() {
                         onChange={(value: any) => setPassword(value.target.value)}
                     />
                 </FormControl>
-                <FormControl id="password2" mb={4}>
+                <FormControl id="password2" mt={2} mb={2}>
                     <FormLabel>Repreat Password</FormLabel>
                     <Input
                         type="password"
                         onChange={(value: any) => setPassword2(value.target.value)}
                     />
                 </FormControl>
-                <Button isLoading={loading} type="submit">Update password</Button>
+                <Button isLoading={loading} type="submit" rightIcon={<LockIcon />}>Update password</Button>
             </form>
         </div>
     );

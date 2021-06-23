@@ -3,12 +3,11 @@ import { useHistory } from "react-router-dom";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Indicator } from '../../../components/Indicator';
-import { Formik, Form, Field } from 'formik';
 import { Card } from '../../../components/Card';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteReportMutation, GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
-import { Box, Button, Center, Flex, Heading, Spacer, Spinner, Text, Textarea } from '@chakra-ui/react';
-import React from "react";
+import { Box, Button, Center, Checkbox, Flex, Heading, Spacer, Spinner, Text, Textarea } from '@chakra-ui/react';
+import React, {useEffect, useState} from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import DeleteDialog from "../../../components/DeleteDialog";
 import { Error } from '../../../components/Error';
@@ -69,13 +68,36 @@ export const GetReport = gql`
 function ReportPage() {
     const { reportId } = useParams<{ reportId: string }>();
     const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id: reportId } });
-    const [update, { error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
+    const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
     const [deleteReport, { loading: deleteLoading }] = useMutation<DeleteReportMutation>(DeleteReport);
     const history = useHistory();
 
+    const [notes, setNotes] = useState<string>();
+    const [isHandled, setIsHandled] = useState<boolean>();
     const [isOpen, setIsOpen] = React.useState(false);
     const onClose = () => setIsOpen(false);
     const cancelRef = React.useRef();
+
+    async function updateReport() {
+        const result = await update({
+            variables: {
+                id: reportId,
+                handled: isHandled,
+                notes
+            },
+            refetchQueries: () => ['getReports'],
+                awaitRefetchQueries: true
+        });
+        if (result) {
+            await refetch();
+        }
+        onClose();
+    }
+
+    useEffect(() => {
+        setIsHandled(data?.getReport.handled);
+        setNotes(data?.getReport.notes)
+    }, [data?.getReport]);
 
     async function doDelete() {
         await deleteReport({
@@ -83,18 +105,6 @@ function ReportPage() {
             refetchQueries: () => ['getReports']
         });
         history.goBack();
-    }
-
-    async function updateReport(values: any) {
-        const result = await update({
-            variables: {
-                id: reportId, ...values
-            },
-            refetchQueries: () => ['getReports']
-        });
-        if (result) {
-            refetch();
-        }
     }
 
     return (
@@ -121,80 +131,59 @@ function ReportPage() {
 
             {data?.getReport &&
                 <>
-                    <Card>
-                        <Heading>Reporter</Heading>
-                        <BasicUser user={data.getReport.reporter} />
-                    </Card>
-                    <Card>
-                        <Heading>Reported</Heading>
-                        <BasicUser user={data.getReport.reported} />
-                    </Card>
-                    <Card>
-                        <Heading>Reason</Heading>
-                        <Text>{data.getReport.reason}</Text>
-                    </Card>
-                    <Card>
-                        <Heading>Created</Heading>
-                        <Text>{dayjs().to(data.getReport.timestamp)}</Text>
-                    </Card>
+                    <Heading size="md">Reporter</Heading>
+                    <BasicUser user={data.getReport.reporter} />
+                    <Heading size="md">Reported</Heading>
+                    <BasicUser user={data.getReport.reported} />
+                    <Heading size="md">Reason</Heading>
+                    <Text>{data.getReport.reason}</Text>
+                    <Heading size="md">Created</Heading>
+                    <Text>{dayjs().to(data.getReport.timestamp)}</Text>
                     {data.getReport.beep &&
-                    <Card>
-                        <Heading>Associated Beep Event</Heading>
-                        <NavLink to={`/admin/beeps/${data.getReport.beep.id}`}>
-                            {data.getReport.beep.id}
-                        </NavLink>
-                    </Card>
+                        <>
+                            <Heading size="md">Associated Beep Event</Heading>
+                            <NavLink to={`/admin/beeps/${data.getReport.beep.id}`}>
+                                {data.getReport.beep.id}
+                            </NavLink>
+                        </>
                     }
-                    <Card>
-                        {data.getReport.handled ?
-                            <>
-                                <Heading>Status</Heading>
-                                <Flex align="center">
-                                    <Indicator color='green' />
-                                    <Text mr={2}>Handled by</Text>
-                                    <BasicUser user={data.getReport.handledBy}/>
-                                </Flex>
-                            </>
-                            :
-                            <>
-                                <Heading>Status</Heading>
-                                <Indicator color='red' />
-                                <span>Not handled</span>
-                            </>
-                        }
-                    </Card>
-                    <Heading>Update Report Info</Heading>
-                    {updateError && <p>updateError.message</p>}
-                    <Formik
-                        initialValues={{
-                            notes: data.getReport.notes,
-                            handled: data.getReport.handled
-                        }}
-                        onSubmit={async (values, { setSubmitting }) => {
-                            await updateReport(values);
-                            setSubmitting(false);
-                        }}
+                    <Heading size="md">Status</Heading>
+                    {data.getReport.handled ?
+                        <>
+                            <Flex align="center">
+                                <Indicator color='green' />
+                                <Text mr={2}>Handled by</Text>
+                                <BasicUser user={data.getReport.handledBy}/>
+                            </Flex>
+                        </>
+                        :
+                        <>
+                            <Indicator color='red' />
+                            <span>Not handled</span>
+                        </>
+                    }
+                    <Heading size="lg">Update Report Info</Heading>
+                    {updateError && <Error error={updateError} />}
+                    <Textarea
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                    />
+                    <Checkbox
+                        isChecked={isHandled}
+                        onChange={(e) => setIsHandled(e.target.checked)}
                     >
-                        {({ isSubmitting }) => (
-                            <Form>
-                                <Heading>Admin Notes</Heading>
-                                <Textarea name="notes" as={Field} placeholder="Type any important notes here related to this report" />
-                                <Heading>Handled</Heading>
-                                <Field type="checkbox" name="handled" />
-                                <br />
-                                <br />
-                                <Button
-                                    type="submit"
-                                    isLoading={isSubmitting}
-                                >
-                                    {isSubmitting ? "Upading..." : "Update Report"}
-                                </Button>
-                            </Form>
-                        )}
-                    </Formik>
+                        Handled
+                    </Checkbox>
+                    <br />
+                    <Button
+                        type="submit"
+                        isLoading={updateLoading}
+                        onClick={() => updateReport()}
+                    >
+                        Update Report
+                    </Button>
                 </>
             }
-
             <DeleteDialog
                 title="Report"
                 isOpen={isOpen}
