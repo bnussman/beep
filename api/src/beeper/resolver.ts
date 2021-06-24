@@ -133,7 +133,13 @@ export class BeeperResolver {
                 });
             }
             else {
-                pubSub.publish("Rider" + entry.rider.id, entry);
+                pubSub.publish("Rider" + entry.rider.id, {
+                    ...entry,
+                    beeper: {
+                        ...entry.beeper,
+                        location: undefined
+                    }
+                });
             }
         }
     }
