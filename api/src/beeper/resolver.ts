@@ -102,11 +102,15 @@ export class BeeperResolver {
             ctx.em.persist(queueEntry);
         }
 
-        this.sendRiderUpdates(ctx.user, ctx.user.queue.getItems(), pubSub, ctx.em);
+        this.sendRiderUpdates(ctx.user, ctx.user.queue.getItems().sort(this.inOrder), pubSub, ctx.em);
 
         await ctx.em.flush();
 
         return true;
+    }
+
+    private inOrder(a: QueueEntry, b :QueueEntry): number {
+        return a.start - b.start;
     }
 
     private async sendRiderUpdates(beeper: User, queue: QueueEntry[], pubSub: PubSubEngine, em: EntityManager) {

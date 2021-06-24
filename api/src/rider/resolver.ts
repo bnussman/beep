@@ -29,14 +29,19 @@ export class RiderResolver {
             destination: input.destination,
             state: 0,
             rider: ctx.user,
-            // @ts-expect-error fine 
-            beeper: Object.assign({}, { ...beeper, location: undefined }),
+            beeper: beeper,
             ridersQueuePosition: -1,
         });
 
-        pubSub.publish("Rider" + ctx.user.id, q);
+        pubSub.publish("Rider" + ctx.user.id, {
+            ...q,
+            beeper: {
+                ...q.beeper, 
+                location: undefined
+            }
+        });
 
-        await ctx.em.populate(beeper, 'queue');
+        await ctx.em.populate(beeper, ['queue', 'queue.rider']);
 
         beeper.queue.add(q);
 
@@ -64,14 +69,13 @@ export class RiderResolver {
     @Query(() => QueueEntry, { nullable: true })
     @Authorized()
     public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
-        // @TODO this is causing too many queries to the DB :(
         const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue'] });
 
         if (!entry) {
             return null;
         }
 
-        entry.ridersQueuePosition = entry.beeper.queue.getItems().filter((entry: QueueEntry) => entry.start < entry.start).length;
+        entry.ridersQueuePosition = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start).length;
 
         if (entry.state == 1) {
             const location = await ctx.em.findOne(Location, { user: entry.beeper.id });
