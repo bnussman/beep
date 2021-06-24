@@ -4,7 +4,7 @@ import { wrap } from '@mikro-orm/core';
 import { User } from '../entities/User';
 import { ForgotPassword } from '../entities/ForgotPassword';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
-import { LoginInput, SignUpInput } from '../validators/auth';
+import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth';
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import AWS from 'aws-sdk';
@@ -150,8 +150,8 @@ export class AuthResolver {
     }
 
     @Mutation(() => Boolean)
-    public async resetPassword(@Ctx() ctx: Context, @Arg('id') id: string, @Arg('password') password: string): Promise<boolean> {
-        const entry = await ctx.em.findOne(ForgotPassword, id, { populate: ['user'] });
+    public async resetPassword(@Ctx() ctx: Context, @Arg('input') input: ResetPasswordInput): Promise<boolean> {
+        const entry = await ctx.em.findOne(ForgotPassword, input.id, { populate: ['user'] });
 
         if (!entry) {
             throw new Error("This reset password request does not exist");
@@ -161,7 +161,7 @@ export class AuthResolver {
             throw new Error("Your verification token has expired. You must re-request to reset your password.");
         }
 
-        entry.user.password = sha256(password);
+        entry.user.password = sha256(input.password);
 
         deactivateTokens(entry.user);
 

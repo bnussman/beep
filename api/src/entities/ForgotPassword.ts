@@ -16,8 +16,8 @@ export class ForgotPassword {
     user!: User;
 
     @Field()
-    @Property({ defaultRaw: 'now()' }) 
-    time!: Date;
+    @Property() 
+    time: Date = new Date();
 
     constructor(u: User) {
         this.user = u;

@@ -25,18 +25,17 @@ export function ChangePasswordScreen(props: Props) {
         if (password !== confirmPassword) {
             return alert("Your passwords do not match");
         }
-        
-        const result = await changePassword({
-            variables: {
-                password: password
-            }
-        });
-        
-        if (result) {
+       
+        try {
+            const result = await changePassword({
+                variables: {
+                    password: password
+                }
+            });
             props.navigation.goBack();
         }
-        else {
-            alert("Error");
+        catch (error) {
+            alert(error);
         }
     }
 

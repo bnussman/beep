@@ -1,4 +1,4 @@
-import { IsEmail, IsMobilePhone, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsMobilePhone, IsOptional, IsString, Length } from 'class-validator';
 import { Upload } from '../account/helpers';
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
@@ -54,6 +54,7 @@ export class SignUpInput implements Partial<User> {
 
   @Field()
   @IsString()
+  @Length(5, 255)
   public password!: string;
 
   @Field(() => GraphQLUpload)
@@ -63,4 +64,17 @@ export class SignUpInput implements Partial<User> {
   @IsString()
   public pushToken?: string;
 
+}
+
+@InputType()
+export class ResetPasswordInput {
+    @Field()
+    @IsString()
+    @Length(5, 255)
+    id!: string;
+
+    @Field()
+    @IsString()
+    @Length(5, 255)
+    password!: string;
 }

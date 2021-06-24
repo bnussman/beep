@@ -7,7 +7,10 @@ import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 
 const Reset = gql`
     mutation ResetPassword($id: String!, $password: String!) {
-        resetPassword(id: $id, password: $password)
+        resetPassword(input: {
+            id: $id,
+            password: $password
+        })
     }
 `;
 

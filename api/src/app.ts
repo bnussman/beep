@@ -87,7 +87,7 @@ export default class BeepAPIServer {
 
                 if (!token) return { em };
 
-                const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
+                const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, token, { populate: ['user'] });
 
                 if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult, em };
             }
