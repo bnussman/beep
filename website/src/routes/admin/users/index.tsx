@@ -23,8 +23,8 @@ import {
 } from "@chakra-ui/react"
 
 export const UsersGraphQL = gql`
-    query getUsers($show: Int, $offset: Int, $search: String) {
-        getUsers(show: $show, offset: $offset, search: $search) {
+    query getUsers($show: Int, $offset: Int, $query: String) {
+        getUsers(show: $show, offset: $offset, query: $query) {
             items {
                 id
                 photoUrl
@@ -44,7 +44,7 @@ export const UsersGraphQL = gql`
 function Users() {
     const pageLimit = 20;
     const { loading, error, data, refetch } = useQuery<GetUsersQuery>( UsersGraphQL, { variables: { offset: 0, show: pageLimit } });
-    const [search, setSearch] = useState<string>();
+    const [query, setQuery] = useState<string>();
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     async function fetchUsers(page: number) {
@@ -57,9 +57,9 @@ function Users() {
         setCurrentPage(1);
         refetch({
             offset: 0,
-            search
+            query
         });
-    }, [search]);
+    }, [query]);
 
     if (error) return <Error error={error} />;
 
@@ -81,8 +81,8 @@ function Users() {
                 <Input
                     type="text"
                     placeholder="Search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
                 />
             </InputGroup>
             <Card p={2}>

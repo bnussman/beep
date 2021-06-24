@@ -56,6 +56,10 @@ export type BeepsResponse = {
   count: Scalars['Int'];
 };
 
+export type ChangePasswordInput = {
+  password: Scalars['String'];
+};
+
 
 export type EditAccountInput = {
   first: Scalars['String'];
@@ -174,7 +178,7 @@ export type MutationEditAccountArgs = {
 
 
 export type MutationChangePasswordArgs = {
-  password: Scalars['String'];
+  input: ChangePasswordInput;
 };
 
 
@@ -219,8 +223,7 @@ export type MutationForgotPasswordArgs = {
 
 
 export type MutationResetPasswordArgs = {
-  password: Scalars['String'];
-  id: Scalars['String'];
+  input: ResetPasswordInput;
 };
 
 
@@ -316,7 +319,7 @@ export type Query = {
 export type QueryGetBeepsArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
-  search?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 };
 
 
@@ -342,7 +345,7 @@ export type QueryGetRatingsArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
-  search?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 };
 
 
@@ -354,7 +357,7 @@ export type QueryGetRatingArgs = {
 export type QueryGetReportsArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
-  search?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 };
 
 
@@ -371,7 +374,7 @@ export type QueryGetUserArgs = {
 export type QueryGetUsersArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
-  search?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 };
 
 
@@ -379,7 +382,7 @@ export type QueryGetRideHistoryArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
-  search?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 };
 
 
@@ -387,7 +390,7 @@ export type QueryGetBeepHistoryArgs = {
   id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
-  search?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 };
 
 
@@ -456,6 +459,11 @@ export type ReportsResponse = {
   __typename?: 'ReportsResponse';
   items: Array<Report>;
   count: Scalars['Int'];
+};
+
+export type ResetPasswordInput = {
+  id: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type RideHistoryResponse = {
@@ -1048,7 +1056,7 @@ export type GetUserQuery = (
 export type GetUsersQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  search?: Maybe<Scalars['String']>;
+  query?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1362,7 +1370,7 @@ export type RemoveUserMutationResult = Apollo.MutationResult<RemoveUserMutation>
 export type RemoveUserMutationOptions = Apollo.BaseMutationOptions<RemoveUserMutation, RemoveUserMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($password: String!) {
-  changePassword(password: $password)
+  changePassword(input: {password: $password})
 }
     `;
 export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMutation, ChangePasswordMutationVariables>;
@@ -1535,7 +1543,7 @@ export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const ResetPasswordDocument = gql`
     mutation ResetPassword($id: String!, $password: String!) {
-  resetPassword(id: $id, password: $password)
+  resetPassword(input: {id: $id, password: $password})
 }
     `;
 export type ResetPasswordMutationFn = Apollo.MutationFunction<ResetPasswordMutation, ResetPasswordMutationVariables>;
@@ -2334,8 +2342,8 @@ export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
 export const GetUsersDocument = gql`
-    query getUsers($show: Int, $offset: Int, $search: String) {
-  getUsers(show: $show, offset: $offset, search: $search) {
+    query getUsers($show: Int, $offset: Int, $query: String) {
+  getUsers(show: $show, offset: $offset, query: $query) {
     items {
       id
       photoUrl
@@ -2366,7 +2374,7 @@ export const GetUsersDocument = gql`
  *   variables: {
  *      show: // value for 'show'
  *      offset: // value for 'offset'
- *      search: // value for 'search'
+ *      query: // value for 'query'
  *   },
  * });
  */

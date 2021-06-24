@@ -10,9 +10,10 @@ import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Paginated } from '../utils/paginated';
+import { search } from './helpers';
 
 @ObjectType()
-class UsersResponse extends Paginated(User) {}
+export class UsersResponse extends Paginated(User) {}
 
 @ObjectType()
 class RideHistoryResponse extends Paginated(Beep) {}
@@ -72,19 +73,9 @@ export class UserResolver {
 
     @Query(() => UsersResponse)
     @Authorized(UserRole.ADMIN)
-    public async getUsers(@Ctx() ctx: Context, @Args() { offset, show, search }: PaginationArgs): Promise<UsersResponse> {
-        if (search) {
-            const connection = ctx.em.getConnection();
-
-            const raw: any[] = await connection.execute(`select * from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last) @@ to_tsquery('${search}') limit ${show} offset ${offset};`);
-            const count = await connection.execute(`select count(*) from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last) @@ to_tsquery('${search}')`);
-
-            const users = raw.map(user => ctx.em.map(User, user));
-
-            return {
-                items: users,
-                count: count[0].count
-            };
+    public async getUsers(@Ctx() ctx: Context, @Args() { offset, show, query }: PaginationArgs): Promise<UsersResponse> {
+        if (query) {
+            return await search(ctx.em, offset, show, query);
         }
         
         const [users, count] = await ctx.em.findAndCount(User, {}, { limit: show, offset: offset });

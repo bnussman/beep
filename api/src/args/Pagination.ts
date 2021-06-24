@@ -14,5 +14,5 @@ export default class PaginationArgs {
   show?: number;
 
   @Field(type => String, { nullable: true })
-  search?: string;
+  query?: string;
 }
