@@ -117,7 +117,7 @@ export class BeeperResolver {
         pubSub.publish("Beeper" + beeper.id, queue);
 
         for (const entry of queue) {
-            entry.ridersQueuePosition = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
+            entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
 
             if (entry.state == 1) {
                 const location = await em.findOne(Location, { user: beeper.id });
@@ -159,7 +159,7 @@ export class BeeperResolver {
                 pubSub.publish("Rider" + entry.rider.id, null);
             }
             else {
-                entry.ridersQueuePosition = await ctx.em.count(QueueEntry, { beeper: ctx.user, start: { $lt: entry.start } });
+                entry.position = await ctx.em.count(QueueEntry, { beeper: ctx.user, start: { $lt: entry.start } });
 
                 pubSub.publish("Rider" + entry.rider.id, entry);
             }

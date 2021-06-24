@@ -407,7 +407,7 @@ export type QueueEntry = {
   start: Scalars['Float'];
   beeper: User;
   rider: User;
-  ridersQueuePosition: Scalars['Float'];
+  position: Scalars['Float'];
 };
 
 export type Rating = {
@@ -898,7 +898,7 @@ export type GetInitialRiderStatusQuery = (
   { __typename?: 'Query' }
   & { getRiderStatus?: Maybe<(
     { __typename?: 'QueueEntry' }
-    & Pick<QueueEntry, 'id' | 'ridersQueuePosition' | 'isAccepted' | 'origin' | 'destination' | 'state' | 'groupSize'>
+    & Pick<QueueEntry, 'id' | 'position' | 'isAccepted' | 'origin' | 'destination' | 'state' | 'groupSize'>
     & { beeper: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'first' | 'last' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
@@ -919,7 +919,7 @@ export type RiderStatusSubscription = (
   { __typename?: 'Subscription' }
   & { getRiderUpdates?: Maybe<(
     { __typename?: 'QueueEntry' }
-    & Pick<QueueEntry, 'id' | 'ridersQueuePosition' | 'isAccepted' | 'origin' | 'destination' | 'state' | 'groupSize'>
+    & Pick<QueueEntry, 'id' | 'position' | 'isAccepted' | 'origin' | 'destination' | 'state' | 'groupSize'>
     & { beeper: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'first' | 'last' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
@@ -1894,7 +1894,7 @@ export const GetInitialRiderStatusDocument = gql`
     query GetInitialRiderStatus {
   getRiderStatus {
     id
-    ridersQueuePosition
+    position
     isAccepted
     origin
     destination
@@ -1955,7 +1955,7 @@ export const RiderStatusDocument = gql`
     subscription RiderStatus($topic: String!) {
   getRiderUpdates(topic: $topic) {
     id
-    ridersQueuePosition
+    position
     isAccepted
     origin
     destination

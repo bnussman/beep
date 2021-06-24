@@ -406,7 +406,7 @@ export type QueueEntry = {
   start: Scalars['Float'];
   beeper: User;
   rider: User;
-  ridersQueuePosition: Scalars['Float'];
+  position: Scalars['Float'];
 };
 
 export type Rating = {
@@ -596,6 +596,14 @@ export type UserUpdatesSubscription = (
   ) }
 );
 
+export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ResendEmailMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'resendEmailVarification'>
+);
+
 export type GetBeeperHistoryQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
@@ -617,14 +625,6 @@ export type GetBeeperHistoryQuery = (
       ) }
     )> }
   ) }
-);
-
-export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ResendEmailMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'resendEmailVarification'>
 );
 
 export type GetRideHistoryQueryVariables = Exact<{
@@ -1048,6 +1048,7 @@ export type GetUserQuery = (
 export type GetUsersQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
+  search?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1162,6 +1163,36 @@ export function useUserUpdatesSubscription(baseOptions: Apollo.SubscriptionHookO
       }
 export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
 export type UserUpdatesSubscriptionResult = Apollo.SubscriptionResult<UserUpdatesSubscription>;
+export const ResendEmailDocument = gql`
+    mutation ResendEmail {
+  resendEmailVarification
+}
+    `;
+export type ResendEmailMutationFn = Apollo.MutationFunction<ResendEmailMutation, ResendEmailMutationVariables>;
+
+/**
+ * __useResendEmailMutation__
+ *
+ * To run a mutation, you first call `useResendEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendEmailMutation, { data, loading, error }] = useResendEmailMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useResendEmailMutation(baseOptions?: Apollo.MutationHookOptions<ResendEmailMutation, ResendEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResendEmailMutation, ResendEmailMutationVariables>(ResendEmailDocument, options);
+      }
+export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMutation>;
+export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
+export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
 export const GetBeeperHistoryDocument = gql`
     query GetBeeperHistory($show: Int, $offset: Int, $id: String!) {
   getBeepHistory(show: $show, offset: $offset, id: $id) {
@@ -1215,36 +1246,6 @@ export function useGetBeeperHistoryLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetBeeperHistoryQueryHookResult = ReturnType<typeof useGetBeeperHistoryQuery>;
 export type GetBeeperHistoryLazyQueryHookResult = ReturnType<typeof useGetBeeperHistoryLazyQuery>;
 export type GetBeeperHistoryQueryResult = Apollo.QueryResult<GetBeeperHistoryQuery, GetBeeperHistoryQueryVariables>;
-export const ResendEmailDocument = gql`
-    mutation ResendEmail {
-  resendEmailVarification
-}
-    `;
-export type ResendEmailMutationFn = Apollo.MutationFunction<ResendEmailMutation, ResendEmailMutationVariables>;
-
-/**
- * __useResendEmailMutation__
- *
- * To run a mutation, you first call `useResendEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useResendEmailMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [resendEmailMutation, { data, loading, error }] = useResendEmailMutation({
- *   variables: {
- *   },
- * });
- */
-export function useResendEmailMutation(baseOptions?: Apollo.MutationHookOptions<ResendEmailMutation, ResendEmailMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ResendEmailMutation, ResendEmailMutationVariables>(ResendEmailDocument, options);
-      }
-export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMutation>;
-export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
-export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
 export const GetRideHistoryDocument = gql`
     query GetRideHistory($id: String!, $show: Int, $offset: Int) {
   getRideHistory(id: $id, show: $show, offset: $offset) {
@@ -2333,8 +2334,8 @@ export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
 export const GetUsersDocument = gql`
-    query getUsers($show: Int, $offset: Int) {
-  getUsers(show: $show, offset: $offset) {
+    query getUsers($show: Int, $offset: Int, $search: String) {
+  getUsers(show: $show, offset: $offset, search: $search) {
     items {
       id
       photoUrl
@@ -2365,6 +2366,7 @@ export const GetUsersDocument = gql`
  *   variables: {
  *      show: // value for 'show'
  *      offset: // value for 'offset'
+ *      search: // value for 'search'
  *   },
  * });
  */

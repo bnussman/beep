@@ -8,7 +8,7 @@ const ChooseBeep = gql`
         input: { origin: $origin, destination: $destination, groupSize: $groupSize }
         ) {
             id
-            ridersQueuePosition
+            position
             isAccepted
             origin
             destination

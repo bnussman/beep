@@ -1,5 +1,5 @@
 import { sendNotification } from '../utils/notifications';
-import { EntityManager, QueryOrder, wrap } from '@mikro-orm/core';
+import { EntityManager, QueryOrder } from '@mikro-orm/core';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
@@ -30,7 +30,7 @@ export class RiderResolver {
             state: 0,
             rider: ctx.user,
             beeper: beeper,
-            ridersQueuePosition: -1,
+            position: -1,
         });
 
         pubSub.publish("Rider" + ctx.user.id, {
@@ -75,7 +75,7 @@ export class RiderResolver {
             return null;
         }
 
-        entry.ridersQueuePosition = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start).length;
+        entry.position = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start).length;
 
         if (entry.state == 1) {
             const location = await ctx.em.findOne(Location, { user: entry.beeper.id });
@@ -96,25 +96,23 @@ export class RiderResolver {
 
         if (entry.isAccepted) entry.beeper.queueSize--;
         
-        sendNotification(entry.beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you! :(");
+        sendNotification(entry.beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you!");
 
-        const id = entry.beeper.id;
-        
         ctx.em.persist(entry.beeper);
 
         pubSub.publish("Rider" + ctx.user.id, null);
 
-        await ctx.em.removeAndFlush(entry);
+        this.sendBeeperUpdate(entry.id, entry.beeper.id, pubSub, ctx.em);
 
-        this.sendBeeperUpdate(id, pubSub, ctx.em);
+        await ctx.em.removeAndFlush(entry);
 
         return true;
     }
 
-    private async sendBeeperUpdate(id: string, pubSub: PubSubEngine, em: EntityManager) {
-        const queue = await em.find(QueueEntry, { beeper: id }, { orderBy: { start: QueryOrder.ASC }, populate: ['rider'] });
+    private async sendBeeperUpdate(entryId: string, beeperId: string, pubSub: PubSubEngine, em: EntityManager) {
+        const queue = await em.find(QueueEntry, { beeper: beeperId }, { orderBy: { start: QueryOrder.ASC }, populate: ['rider'] });
 
-        pubSub.publish("Beeper" + id, queue);
+        pubSub.publish("Beeper" + beeperId, queue.filter((entry: QueueEntry) => entry.id != entryId));
     }
     
     @Query(() => [User])

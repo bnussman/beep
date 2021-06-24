@@ -20,7 +20,7 @@ const InitialRiderStatus = gql`
     query GetInitialRiderStatus {
         getRiderStatus {
             id
-            ridersQueuePosition
+            position
             isAccepted
             origin
             destination
@@ -55,7 +55,7 @@ const RiderStatus = gql`
     subscription RiderStatus($topic: String!) {
         getRiderUpdates(topic: $topic) {
             id
-            ridersQueuePosition
+            position
             isAccepted
             origin
             destination
@@ -323,7 +323,7 @@ export function MainFindBeepScreen(props: Props) {
                     </Layout>
                 </TouchableWithoutFeedback>
                 <Tags/>
-                {(data?.getRiderStatus.ridersQueuePosition <= 0) &&
+                {(data?.getRiderStatus.position <= 0) &&
                 <Layout style={styles.group}>
                     <Card>
                         <Text category='h6'>Current Status</Text>
@@ -347,10 +347,10 @@ export function MainFindBeepScreen(props: Props) {
                     }
                 </Layout>
                 }
-                {(data?.getRiderStatus.ridersQueuePosition > 0) && 
+                {(data?.getRiderStatus.position > 0) && 
                     <Layout style={styles.group}>
-                        <Text category='h6'>{data?.getRiderStatus.ridersQueuePosition}</Text>
-                        <Text appearance='hint'>{(data?.getRiderStatus.ridersQueuePosition == 1) ? "person is" : "people are"} ahead of you in {data?.getRiderStatus.beeper?.first || "User"}{"'"}s queue.</Text>
+                        <Text category='h6'>{data?.getRiderStatus.position}</Text>
+                        <Text appearance='hint'>{(data?.getRiderStatus.position == 1) ? "person is" : "people are"} ahead of you in {data?.getRiderStatus.beeper?.first || "User"}{"'"}s queue.</Text>
                     </Layout>
                 }
                 <Button
@@ -399,7 +399,7 @@ export function MainFindBeepScreen(props: Props) {
                     Share Venmo Info with Your Friends
                 </Button>
                 }
-                {(data?.getRiderStatus.ridersQueuePosition >= 1 && data?.getRiderStatus.beeper) && 
+                {(data?.getRiderStatus.position >= 1 && data?.getRiderStatus.beeper) && 
                     <LeaveButton beepersId={data?.getRiderStatus.beeper.id} refetch={() => {}} />
                 }
             </Layout>

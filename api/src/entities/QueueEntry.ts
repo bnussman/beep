@@ -45,7 +45,7 @@ export class QueueEntry {
 
     @Field()
     @Property({ persist: false })
-    ridersQueuePosition?: number;
+    position?: number;
 
     constructor(values: Partial<QueueEntry>) {
         Object.assign(this, values);
