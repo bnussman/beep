@@ -11,7 +11,7 @@ interface Props {
 
 const ChangePassword = gql`
     mutation ChangePassword($password: String!) {
-        changePassword (password: $password)
+        changePassword (input: {password: $password})
     }
   `;
 

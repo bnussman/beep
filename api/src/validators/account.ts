@@ -1,5 +1,5 @@
 import { User } from '../entities/User';
-import { IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 
 @InputType()
@@ -34,4 +34,12 @@ export class EditAccountInput implements Partial<User> {
   @IsString()
   @IsOptional()
   public cashapp?: string;
+}
+
+@InputType()
+export class ChangePasswordInput implements Partial<User> {
+    @Field()
+    @IsString()
+    @Length(6, 512)
+    password!: string;
 }

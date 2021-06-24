@@ -4,7 +4,7 @@ import { isEduEmail, deleteUser, Upload } from './helpers';
 import { wrap } from '@mikro-orm/core';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
-import { EditAccountInput } from '../validators/account';
+import { EditAccountInput, ChangePasswordInput } from '../validators/account';
 import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import AWS from 'aws-sdk';
@@ -47,8 +47,8 @@ export class AccountResolver {
 
     @Mutation(() => Boolean)
     @Authorized()
-    public async changePassword(@Ctx() ctx: Context, @Arg('password') password: string): Promise<boolean> {
-        wrap(ctx.user).assign({ password: sha256(password) });
+    public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
+        wrap(ctx.user).assign({ password: sha256(input.password) });
 
         await ctx.em.persistAndFlush(ctx.user);
 

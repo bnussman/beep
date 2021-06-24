@@ -10,7 +10,7 @@ import { LockIcon } from '@chakra-ui/icons';
 
 const ChangePasswordGraphQL = gql`
     mutation ChangePassword($password: String!) {
-        changePassword (password: $password)
+        changePassword (input: {password: $password})
     }
 `;
 
