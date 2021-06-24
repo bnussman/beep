@@ -32,6 +32,8 @@ function ChangePassword() {
             await changePassword({ variables: {
                 password: password
             }});
+            setPassword('');
+            setPassword2('');
         }
         catch(error) {
             console.error(error);
@@ -47,6 +49,7 @@ function ChangePassword() {
                     <FormLabel>Password</FormLabel>
                     <Input
                         type="password"
+                        value={password}
                         onChange={(value: any) => setPassword(value.target.value)}
                     />
                 </FormControl>
@@ -54,6 +57,7 @@ function ChangePassword() {
                     <FormLabel>Repreat Password</FormLabel>
                     <Input
                         type="password"
+                        value={password2}
                         onChange={(value: any) => setPassword2(value.target.value)}
                     />
                 </FormControl>
