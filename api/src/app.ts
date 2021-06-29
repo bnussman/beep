@@ -92,6 +92,8 @@ export default class BeepAPIServer {
                 const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
 
                 if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult, em };
+
+                return { em };
             },
             formatError: (error) => {
                 Sentry.captureException(error);
