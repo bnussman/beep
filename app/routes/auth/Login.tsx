@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Layout, Text, Button, Input } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
-import { UserContext } from '../../utils/UserContext';
 import { isMobile } from '../../utils/config';
 import { LoginIcon, SignUpIcon, QuestionIcon, LoadingIndicator } from '../../utils/Icons';
 import { Icon } from '@ui-kitten/components';
@@ -29,11 +28,11 @@ const Login = gql`
 `;
 
 function LoginScreen(props: Props) {
-    const user = useContext(UserContext);
-    const [login, { loading, error }] = useMutation<LoginMutation>(Login);
+    const [login, { loading }] = useMutation<LoginMutation>(Login);
     const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const passwordRef = useRef<any>();
 
     const renderIcon = (props: unknown) => (
         <TouchableWithoutFeedback onPress={() => setSecureTextEntry(!secureTextEntry)}>
@@ -95,6 +94,7 @@ function LoginScreen(props: Props) {
                         returnKeyType="next"
                         onChangeText={(text) => setUsername(text)}
                         blurOnSubmit={true}
+                        onSubmitEditing={() => passwordRef.current.focus()}
                     />
                     <Input
                         textContentType="password"
@@ -104,16 +104,22 @@ function LoginScreen(props: Props) {
                         secureTextEntry={secureTextEntry}
                         onChangeText={(text) => setPassword(text)}
                         blurOnSubmit={true}
+                        ref={passwordRef}
                     />
                     {!loading ?
                         <Button
                             accessoryRight={LoginIcon}
                             onPress={() => doLogin()}
+                            style={{ marginTop: 8 }}
                         >
                             Login
                         </Button>
                         :
-                        <Button appearance='outline' accessoryRight={LoadingIndicator}>
+                        <Button
+                            appearance='outline'
+                            accessoryRight={LoadingIndicator}
+                            style={{ marginTop: 8 }}
+                        >
                             Loading
                         </Button>
                     }

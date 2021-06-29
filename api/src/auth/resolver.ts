@@ -23,6 +23,7 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async login(@Ctx() ctx: Context, @Arg('input') input: LoginInput): Promise<Auth> {
+        console.log("EM:", ctx.em);
         const user = await ctx.em.findOne(User, { username: input.username }, { refresh: true });
 
         if (!user) {
@@ -33,7 +34,7 @@ export class AuthResolver {
             await ctx.em.populate(user, 'password');
         }
 
-        if (user.password != sha256(input.password)) {
+        if (user.password !== sha256(input.password)) {
             throw new Error("Password is incorrect");
         }
 

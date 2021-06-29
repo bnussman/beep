@@ -13,6 +13,7 @@ import { graphqlUploadKoa } from 'graphql-upload'
 import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
 import config from './mikro-orm.config';
+import Sentry from '@sentry/node';
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -90,6 +91,10 @@ export default class BeepAPIServer {
                 const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
 
                 if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult, em };
+            },
+            formatError: (error) => {
+                Sentry.captureException(error);
+                return error;
             }
         });
 

@@ -28,6 +28,7 @@ export async function getToken(user: User): Promise<TokenEntry> {
  * @param token the expo push token for the user
  */
 export async function setPushToken(user: User, token: string | null): Promise<void> {
+    console.log("Push token em:", BeepORM.em);
     if (!user) return;
     //run query to get user and update their pushToken
     wrap(user).assign({
