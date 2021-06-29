@@ -72,6 +72,7 @@ export function ChangePasswordScreen(props: Props) {
                             <Button
                                 onPress={() => handleChangePassword()}
                                 accessoryRight={EditIcon}
+                                style={styles.button}
                             >
                                 Change Password
                             </Button>
@@ -79,6 +80,7 @@ export function ChangePasswordScreen(props: Props) {
                             <Button
                                 appearance="outline"
                                 accessoryRight={LoadingIndicator}
+                                style={styles.button}
                             >
                                 Loading
                             </Button>
@@ -99,5 +101,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         width: "83%",
         marginTop: 20,
+    },
+    button: {
+        marginTop: 8
     }
 });

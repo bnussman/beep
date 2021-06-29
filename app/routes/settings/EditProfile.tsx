@@ -155,6 +155,7 @@ export function EditProfileScreen(props: Props) {
                                 <Button
                                     onPress={() => handleUpdate()}
                                     accessoryRight={EditIcon}
+                                    style={styles.button}
                                 >
                                     Update Profile
                                 </Button>
@@ -162,6 +163,7 @@ export function EditProfileScreen(props: Props) {
                                 <Button
                                     appearance="outline"
                                     accessoryRight={LoadingIndicator}
+                                    style={styles.button}
                                 >
                                     Loading
                                 </Button>
@@ -183,5 +185,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         width: "83%",
         marginTop: 20,
+    },
+    button: {
+        marginTop: 8
     }
 });
