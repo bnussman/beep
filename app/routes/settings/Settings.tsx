@@ -1,4 +1,5 @@
 import React, {useContext} from 'react';
+import * as Location from 'expo-location';
 import { StyleSheet } from 'react-native';
 import { Layout, Button, Card, Text } from '@ui-kitten/components';
 import { ThemeContext } from '../../utils/ThemeContext';
@@ -11,6 +12,7 @@ import {gql, useMutation} from '@apollo/client';
 import {LogoutMutation} from '../../generated/graphql';
 import {client} from '../../utils/Apollo';
 import {GetUserData} from '../../App';
+import { LOCATION_TRACKING } from '../beep/StartBeeping';
 
 const Logout = gql`
     mutation Logout {
@@ -31,6 +33,10 @@ export function MainSettingsScreen({ navigation }: any) {
         });
 
         AsyncStorage.clear();
+
+        if (!__DEV__) {
+            Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+        }
 
         await navigation.reset({
             index: 0,

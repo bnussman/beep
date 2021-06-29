@@ -106,7 +106,7 @@ const UpdateBeepSettings = gql`
 `;
 
 
-const LOCATION_TRACKING = 'location-tracking';
+export const LOCATION_TRACKING = 'location-tracking';
 
 export function StartBeepingScreen(props: Props) {
     const user = useContext(UserContext);

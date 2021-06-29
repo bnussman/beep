@@ -77,6 +77,7 @@ function LocationView(props: Props) {
                 bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
                 defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}
                 defaultZoom={15}
+                center={{ lat: user.location.latitude, lng: user.location.longitude }}
             >
                 <Marker
                     lat={user.location.latitude}
