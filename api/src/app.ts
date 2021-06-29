@@ -7,13 +7,13 @@ import { authChecker } from "./utils/authentication";
 import { ORM } from "./utils/ORM";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
-import Koa from 'koa'
-import { ApolloServer } from 'apollo-server-koa'
-import { graphqlUploadKoa } from 'graphql-upload'
+import Koa from 'koa';
+import { ApolloServer } from 'apollo-server-koa';
+import { graphqlUploadKoa } from 'graphql-upload';
 import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
 import config from './mikro-orm.config';
-import Sentry from '@sentry/node';
+import * as Sentry from '@sentry/node';
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
