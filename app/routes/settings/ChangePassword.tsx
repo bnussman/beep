@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { Layout, Button, Input, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { EditIcon, LoadingIndicator, BackIcon } from "../../utils/Icons";
@@ -20,6 +20,7 @@ export function ChangePasswordScreen(props: Props) {
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [changePassword, { data, loading, error }] = useMutation<ChangePasswordMutation>(ChangePassword);
+    const confirmPasswordRef = useRef<any>();
 
     async function handleChangePassword() {
         if (password !== confirmPassword) {
@@ -55,8 +56,11 @@ export function ChangePasswordScreen(props: Props) {
                             textContentType="password"
                             placeholder="New Password"
                             onChangeText={(text) => setPassword(text)}
+                            onSubmitEditing={() => confirmPasswordRef.current.focus()}
+                            returnKeyType='next'
                          />
                         <Input
+                            ref={confirmPasswordRef}
                             secureTextEntry={true}
                             label="Repeat New Password"
                             textContentType="password"

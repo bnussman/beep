@@ -49,6 +49,7 @@ export function BeepsScreen(props: Props) {
         GetBeepHistory,
         { variables: { id: user.id } }
     );
+    if (error) alert(error);
 
     const BackAction = () => (
         <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>

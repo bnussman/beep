@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, Layout, Button, Input, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
@@ -12,8 +12,8 @@ import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../../generated/graphql';
 import { isMobile } from '../../utils/config';
 import { generateRNFile } from '../settings/ProfilePhoto';
-import {client} from '../../utils/Apollo';
-import {GetUserData} from '../../App';
+import { client } from '../../utils/Apollo';
+import { GetUserData } from '../../App';
 
 interface Props {
     navigation: any;
@@ -44,7 +44,6 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
 `;
 
 function RegisterScreen(props: Props) {
-    const user = useContext(UserContext);
     const [first, setFirst] = useState<string>();
     const [last, setLast] = useState<string>();
     const [email, setEmail] = useState<string>();
@@ -55,22 +54,32 @@ function RegisterScreen(props: Props) {
     const [password, setPassword] = useState<string>();
     const [photo, setPhoto] = useState<any>();
 
-    const [signup, { loading, data }] = useMutation<SignUpMutation>(SignUp);
+    const lastRef = useRef<any>();
+    const emailRef = useRef<any>();
+    const phoneRef = useRef<any>();
+    const venmoRef = useRef<any>();
+    const cashappRef = useRef<any>();
+    const usernameRef = useRef<any>();
+    const passwordRef = useRef<any>();
+
+    const [signup, { loading }] = useMutation<SignUpMutation>(SignUp);
 
     async function handleSignUp() {
         try {
-            const result = await signup({ variables: {
-                first: first,
-                last: last,
-                email: email,
-                phone: phone,
-                venmo: venmo,
-                cashapp: cashapp,
-                username: username, 
-                password: password,
-                picture: real,
-                pushToken: isMobile ? await getPushToken() : undefined
-            }});
+            const result = await signup({
+                variables: {
+                    first: first,
+                    last: last,
+                    email: email,
+                    phone: phone,
+                    venmo: venmo,
+                    cashapp: cashapp,
+                    username: username, 
+                    password: password,
+                    picture: real,
+                    pushToken: isMobile ? await getPushToken() : undefined
+                }
+            });
 
             if (result) {
                 AsyncStorage.setItem("auth", JSON.stringify(result.data?.signup));
@@ -147,52 +156,66 @@ function RegisterScreen(props: Props) {
                             placeholder="Jon"
                             returnKeyType="next"
                             onChangeText={(text) => setFirst(text)}
+                            onSubmitEditing={() => lastRef.current.focus()}
                         />
                         <Input
+                            ref={lastRef}
                             label="Last Name"
                             textContentType="familyName"
                             placeholder="Doe"
                             returnKeyType="next"
                             onChangeText={(text) => setLast(text)}
+                            onSubmitEditing={() => emailRef.current.focus()}
                         />
                         <Input
+                            ref={emailRef}
                             label="Email"
                             textContentType="emailAddress"
                             placeholder="example@ridebeep.app"
                             caption="Use your .edu email to be verified as a student"
                             returnKeyType="next"
                             onChangeText={(text) => setEmail(text)}
+                            onSubmitEditing={() => phoneRef.current.focus()}
                         />
                         <Input
+                            ref={phoneRef}
                             label="Phone Number"
                             textContentType="telephoneNumber"
                             placeholder="7048414949"
                             returnKeyType="next"
                             style={{marginTop: 5}}
                             onChangeText={(text) => setPhone(text)}
+                            onSubmitEditing={() => venmoRef.current.focus()}
                         />
                         <Input
+                            ref={venmoRef}
                             label="Venmo Username"
                             textContentType="username"
                             placeholder="jondoe"
                             returnKeyType="next"
                             onChangeText={(text) => setVenmo(text)}
+                            onSubmitEditing={() => cashappRef.current.focus()}
                         />
                         <Input
+                            ref={cashappRef}
                             label="Cash App Username"
                             textContentType="username"
                             placeholder="jondoe"
                             returnKeyType="next"
                             onChangeText={(text) => setCashapp(text)}
+                            onSubmitEditing={() => usernameRef.current.focus()}
                         />
                         <Input
+                            ref={usernameRef}
                             label="Username"
                             textContentType="username"
                             placeholder="jondoe"
                             returnKeyType="next"
                             onChangeText={(text) => setUsername(text)}
+                            onSubmitEditing={() => passwordRef.current.focus()}
                         />
                         <Input
+                            ref={passwordRef}
                             label="Password"
                             textContentType="password"
                             placeholder="Password"

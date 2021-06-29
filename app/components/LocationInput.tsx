@@ -1,7 +1,7 @@
 import 'react-native-get-random-values';
-import React from 'react';
+import React, {Ref} from 'react';
 import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import { Autocomplete, AutocompleteItem, Icon, Layout } from '@ui-kitten/components';
+import { Autocomplete, AutocompleteItem, Icon, Layout, InputProps } from '@ui-kitten/components';
 import * as Location from 'expo-location';
 import {gql, useLazyQuery} from '@apollo/client';
 import {GetSuggestionsQuery} from '../generated/graphql';
@@ -10,8 +10,10 @@ import { v4 } from 'uuid';
 interface Props {
     getLocation: boolean;
     value: string;
-    setValue: any;
+    setValue: (id: string) => void;
     label: string;
+    ref?: Ref<any>;
+    returnKeyType: string;
 }
 
 const GetSuggestions = gql`
@@ -24,8 +26,8 @@ const GetSuggestions = gql`
 
 let token: string;
 
-export function LocationInput(props: Props) {
-    //const [value, setValue] = useState<string>("");
+function LocationInput(props: Props & InputProps, ref: Ref<any>) {
+    const { getLocation, value, setValue, label, ...rest } = props;
     const [getSuggestions, { data, loading, error }] = useLazyQuery<GetSuggestionsQuery>(GetSuggestions);
 
     async function useCurrentLocation(): Promise<void> {
@@ -51,7 +53,7 @@ export function LocationInput(props: Props) {
             string = location[0].name + " " + location[0].street + " " + location[0].city + ", " + location[0].region + " " + location[0].postalCode;  
         }
 
-        props.setValue(string);
+        setValue(string);
     }
 
     const CurrentLocationIcon = (props: Props) => (
@@ -63,7 +65,7 @@ export function LocationInput(props: Props) {
     const onSelect = (index: number) => {
         if (!data || !data.getLocationSuggestions) return;
 
-        props.setValue(data.getLocationSuggestions[index].title);
+        setValue(data.getLocationSuggestions[index].title);
 
         token = v4(); 
     };
@@ -74,7 +76,7 @@ export function LocationInput(props: Props) {
             console.log("Generated new token", token);
         }
 
-        props.setValue(query);
+        setValue(query);
 
         getSuggestions({ variables: {
             location: query,
@@ -92,15 +94,17 @@ export function LocationInput(props: Props) {
     return (
         <Layout style={{width:"85%"}}>
             <Autocomplete
-                {...props}
-                label={props.label}
+                label={label}
                 style={{width:"100%"}}
                 placeholder='Location'
-                accessoryRight={props.getLocation ? CurrentLocationIcon : undefined}
-                value={props.value || ""}
+                accessoryRight={getLocation ? CurrentLocationIcon : undefined}
+                value={value || ""}
                 onSelect={onSelect}
                 onChangeText={onChangeText}
                 textStyle={{width:"100%"}}
+                ref={ref}
+                blurOnSubmit={false}
+                {...rest}
             >
                 {data?.getLocationSuggestions?.map(renderOption) || <AutocompleteItem key={0} title=""/>}
             </Autocomplete>
@@ -108,9 +112,4 @@ export function LocationInput(props: Props) {
     );
 }
 
-const styles = StyleSheet.create({
-    input: {
-        marginBottom: 5,
-        width: "100%"
-    },
-});
+export default React.forwardRef(LocationInput);

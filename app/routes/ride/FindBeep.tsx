@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native';
 import { Layout, Text, Button, Input, Card } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
@@ -14,7 +14,7 @@ import { gqlChooseBeep } from './helpers';
 import Logger from '../../utils/Logger';
 import { client } from '../../utils/Apollo';
 import { RateCard } from '../../components/RateCard';
-import { LocationInput } from '../../components/LocationInput';
+import LocationInput from '../../components/LocationInput';
 
 const InitialRiderStatus = gql`
     query GetInitialRiderStatus {
@@ -117,6 +117,8 @@ export function MainFindBeepScreen(props: Props) {
     const [origin, setOrigin] = useState<string>("");
     const [destination, setDestination] = useState<string>("");
     const [isGetBeepLoading, setIsGetBeepLoading] = useState<boolean>(false);
+
+    const destinationRef = useRef<any>();
     
     async function subscribeToLocation() {
         const a = client.subscribe({ query: BeepersLocation, variables: { topic: data?.getRiderStatus?.beeper.id }});
@@ -270,12 +272,16 @@ export function MainFindBeepScreen(props: Props) {
                                 value={origin}
                                 setValue={(value) => setOrigin(value)}
                                 getLocation={true}
+                                onSubmitEditing={() => destinationRef.current.focus()}
+                                returnKeyType="next"
                             />
                             <LocationInput
+                                ref={destinationRef}
                                 label="Destination Location"
                                 value={destination}
                                 setValue={(value) => setDestination(value)}
                                 getLocation={false}
+                                returnKeyType="go"
                             />
                             {!isGetBeepLoading || loading ?
                                 <Button
