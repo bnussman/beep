@@ -1,12 +1,12 @@
 import React, { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Link as RouterLink, Redirect, useHistory } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { client } from '../utils/Apollo';
 import { GetUserData } from '../App';
-import { Text, Avatar, Box, Button, Input, FormControl, FormLabel, FormHelperText, Code, Alert, AlertIcon, Flex } from '@chakra-ui/react';
+import { Link, Text, Avatar, Box, Button, Input, FormControl, FormLabel, FormHelperText, Code, Alert, AlertIcon, Flex } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 
 const SignUpGraphQL = gql`
@@ -95,9 +95,9 @@ function SignUp() {
         <AlertIcon />
         <Text>
           By signing up, you agree to our{' '}
-          <Link to="/terms">Terms of Service</Link>
+          <Link as={RouterLink} to="/terms">Terms of Service</Link>
           {' '}and{' '}
-          <Link to="/privacy">Privacy Policy</Link>
+          <Link as={RouterLink} to="/privacy">Privacy Policy</Link>
         </Text>
       </Alert>
       <form onSubmit={handleSignUp}>
