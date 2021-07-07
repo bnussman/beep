@@ -72,9 +72,19 @@ export class RatingResolver {
     @Mutation(() => Boolean)
     @Authorized(UserRole.ADMIN)
     public async deleteRating(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
-        const rating = ctx.em.getReference(Rating, id);
+        const rating = await ctx.em.findOneOrFail(Rating, id, { populate: ['rated'] });
 
-        await ctx.em.removeAndFlush(rating);
+        if (!rating.rated.rating) throw new Error("You are trying to delete a rating for a user who's rating value is undefined");
+
+        const numberOfRatings = await ctx.em.count(Rating, { rated: rating.rated.id });
+
+        rating.rated.rating = numberOfRatings <= 1 ? undefined : rating.rated.rating = (rating.rated.rating * numberOfRatings - rating.stars) / (numberOfRatings - 1);
+
+        ctx.em.persist(rating.rated);
+
+        ctx.em.remove(rating);
+
+        await ctx.em.flush();
 
         return true;
     }

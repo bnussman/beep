@@ -94,7 +94,7 @@ function EditProfile() {
           Uploading Profile Photo
         </Alert>
       }
-      {uploadError && <Error error={uploadError.message}/>}
+      {uploadError && <Error error={uploadError}/>}
 
       <Box mb={6}>
           <Flex align="center">

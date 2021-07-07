@@ -75,7 +75,6 @@ export default class BeepAPIServer {
             },
             context: async ({ ctx }) => {
                 const em = BeepORM.em.fork();
-                console.log("r em:", em);
 
                 if (!ctx) return { em };
 

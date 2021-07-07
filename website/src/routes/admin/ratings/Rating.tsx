@@ -76,7 +76,7 @@ function RatingPage() {
         </Button>
       </Flex>
 
-      {error && <Error error={error.message} />}
+      {error && <Error error={error} />}
 
       {loading &&
         <Center h="100px">

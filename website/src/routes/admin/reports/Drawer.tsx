@@ -73,9 +73,9 @@ function ReportDrawer(props: Props) {
           <DrawerHeader>Report</DrawerHeader>
 
           <DrawerBody>
-            {error && <Error error={error.message} />}
-            {updateError && <Error error={updateError.message} />}
-            {deleteError && <Error error={deleteError.message} />}
+            {error && <Error error={error} />}
+            {updateError && <Error error={updateError} />}
+            {deleteError && <Error error={deleteError} />}
             {loading &&
                 <Center h="100px">
                     <Spinner size="xl" />
