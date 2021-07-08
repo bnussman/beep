@@ -1,18 +1,10 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Alert } from 'react-native';
-import { config } from '../../utils/config';
-import { handleFetchError } from '../../utils/Errors';
 import { DenyIndicator, LeaveIcon } from '../../utils/Icons';
 import { Button } from '@ui-kitten/components';
-import { UserContext } from '../../utils/UserContext';
 import { isMobile } from '../../utils/config';
-import {gql, useMutation} from '@apollo/client';
-import {LeaveQueueMutation} from '../../generated/graphql';
-
-interface Props {
-    beepersId: string; 
-    refetch: any;
-}
+import { gql, useMutation } from '@apollo/client';
+import { LeaveQueueMutation } from '../../generated/graphql';
 
 const LeaveQueue = gql`
     mutation LeaveQueue {
@@ -20,8 +12,8 @@ const LeaveQueue = gql`
     }
 `;
 
-function LeaveButton(props: Props) {
-    const [leave, { loading, error, data }] = useMutation<LeaveQueueMutation>(LeaveQueue);
+function LeaveButton(): JSX.Element {
+    const [leave] = useMutation<LeaveQueueMutation>(LeaveQueue);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     function leaveQueueWrapper(): void {
@@ -54,7 +46,6 @@ function LeaveButton(props: Props) {
             alert(error);
             setIsLoading(false);
         }
-        props.refetch();
     }
 
     if (isLoading) {
