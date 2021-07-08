@@ -103,12 +103,14 @@ export default class BeepAPIServer {
 
                     let output: string[] = [];
 
-                    for (const error1 of errors) {
-                        const items = Object.values<string>(error1.constraints);
+                    for (const error of errors) {
+                        if (!error.constraints) continue;
+
+                        const items = Object.values<string>(error.constraints);
 
                         output = [...output, ...items];
                     }
-                    return new Error(output);
+                    return new Error(output.toString());
                 }
 
                 return error;
