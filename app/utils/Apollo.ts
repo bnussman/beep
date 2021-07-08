@@ -4,12 +4,11 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUploadLink } from 'apollo-upload-client';
-import { onError } from "@apollo/client/link/error";
 
-// const wsUrl = __DEV__ ? "ws://localhost:3001/subscriptions" : "wss://staging.ridebeep.app/subscriptions";
-// const url = __DEV__ ? "http://localhost:3001/graphql" : "https://staging.ridebeep.app/graphql";
-const wsUrl = "wss://staging.ridebeep.app/subscriptions";
-const url = "https://staging.ridebeep.app/graphql";
+const wsUrl = __DEV__ ? "ws://localhost:3001/subscriptions" : "wss://staging.ridebeep.app/subscriptions";
+const url = __DEV__ ? "http://localhost:3001/graphql" : "https://staging.ridebeep.app/graphql";
+//const wsUrl = "wss://staging.ridebeep.app/subscriptions";
+//const url = "https://staging.ridebeep.app/graphql";
 
 const wsLink = new WebSocketLink({
   uri: wsUrl,
@@ -62,28 +61,8 @@ const uploadLink = createUploadLink({
     }
 });
 
-const errorLink = onError((e) => {
-    /*
-    let output = "";
-    e.graphQLErrors?.forEach((e) => {
-        e.extensions?.exception?.validationErrors?.forEach((r) => {
-            output += r.constraints.isNotEmpty + "\n";
-        });
-    });
-
-    if (output !== "") return alert(output);
-
-    e.graphQLErrors?.forEach((e) => {
-        output += e.message + "\n";
-    });
-
-    alert(output);
-    */
-});
-
 export const client = new ApolloClient({
     link: ApolloLink.from([
-        errorLink,
         authLink,
         splitLink,
         uploadLink

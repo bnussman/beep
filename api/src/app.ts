@@ -14,6 +14,7 @@ import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
 import config from './mikro-orm.config';
 import * as Sentry from '@sentry/node';
+import { ValidationError } from 'class-validator';
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -96,6 +97,20 @@ export default class BeepAPIServer {
             },
             formatError: (error) => {
                 Sentry.captureException(error);
+
+                if (error?.message === "Argument Validation Error") {
+                    const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
+
+                    let output: string[] = [];
+
+                    for (const error1 of errors) {
+                        const items = Object.values<string>(error1.constraints);
+
+                        output = [...output, ...items];
+                    }
+                    return new Error(output);
+                }
+
                 return error;
             }
         });

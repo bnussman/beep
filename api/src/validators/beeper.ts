@@ -1,16 +1,20 @@
 import { User } from '../entities/User';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 
 @InputType()
 export class BeeperSettingsInput implements Partial<User> {
 
   @Field({ nullable: true })
+  @Max(200)
+  @Min(0)
   @IsNumber()
   @IsOptional()
   public singlesRate?: number;
 
   @Field({ nullable: true })
+  @Max(200)
+  @Min(0)
   @IsNumber()
   @IsOptional()
   public groupRate?: number;

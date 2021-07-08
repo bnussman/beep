@@ -201,6 +201,7 @@ export function StartBeepingScreen(props: Props) {
         catch(error) {
             setIsBeeping(isBeeping); 
             alert(error.message);
+            console.log(error);
         }
     }
 

@@ -58,18 +58,22 @@ export function EditProfileScreen(props: Props) {
     }, [user]);
 
     async function handleUpdate() {
-        const result = await edit({
-            variables: {
-                first: first,
-                last: last,
-                email: email,
-                phone: phone,
-                venmo: venmo,
-                cashapp: cashapp
-            }
-        });
-        if (result) alert("Successfully updated profile");
-        if (error) alert(error.message);
+        try {
+            await edit({
+                variables: {
+                    first: first,
+                    last: last,
+                    email: email,
+                    phone: phone,
+                    venmo: venmo,
+                    cashapp: cashapp
+                }
+            });
+            alert("Successfully updated profile");
+        }
+        catch (error) {
+            alert(error.message);
+        }
     }
 
     const BackAction = () => (
