@@ -15,6 +15,7 @@ import Logger from '../../utils/Logger';
 import { client } from '../../utils/Apollo';
 import { RateCard } from '../../components/RateCard';
 import LocationInput from '../../components/LocationInput';
+import * as Location from 'expo-location';
 
 const InitialRiderStatus = gql`
     query GetInitialRiderStatus {
@@ -113,11 +114,12 @@ export function MainFindBeepScreen(props: Props) {
     const { subscribeToMore, loading, data, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus);
     const [getETA, { data: eta, loading: etaLoading, error: etaError}] = useLazyQuery<GetEtaQuery>(GetETA);
 
-    const [groupSize, setGroupSize] = useState<string>("1");
+    const [groupSize, setGroupSize] = useState<string>("");
     const [origin, setOrigin] = useState<string>("");
     const [destination, setDestination] = useState<string>("");
     const [isGetBeepLoading, setIsGetBeepLoading] = useState<boolean>(false);
 
+    const originRef = useRef<any>();
     const destinationRef = useRef<any>();
     
     async function subscribeToLocation() {
@@ -168,8 +170,25 @@ export function MainFindBeepScreen(props: Props) {
     }, [data]);
 
     async function findBeep(): Promise<void> {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+
+        if (status !== 'granted') {
+            return alert("You must enable location to find a ride.");
+        }
+
+        let lastKnowLocation = await Location.getLastKnownPositionAsync({
+            maxAge: 180000,
+            requiredAccuracy: 800
+        });
+
+        if (!lastKnowLocation) {
+            lastKnowLocation = await Location.getCurrentPositionAsync();
+        }
+
         return props.navigation.navigate('PickBeepScreen', {
-            handlePick: (id: string) => chooseBeep(id)
+            latitude: lastKnowLocation.coords.latitude,
+            longitude: lastKnowLocation.coords.longitude,
+            handlePick: (id: string) => chooseBeep(id),
         });
     }
 
@@ -266,8 +285,11 @@ export function MainFindBeepScreen(props: Props) {
                                 placeholder='Group Size'
                                 value={groupSize}
                                 onChangeText={value => setGroupSize(value)}
+                                onSubmitEditing={() => originRef.current.focus()}
+                                returnKeyType="next"
                             />
                             <LocationInput
+                                ref={originRef}
                                 label="Pick-up Location"
                                 value={origin}
                                 setValue={(value) => setOrigin(value)}
