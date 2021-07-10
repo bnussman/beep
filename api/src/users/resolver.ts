@@ -3,7 +3,6 @@ import { deleteUser } from '../account/helpers';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
 import PaginationArgs from '../args/Pagination';
-import { Beep } from '../entities/Beep';
 import { QueueEntry } from '../entities/QueueEntry';
 import EditUserValidator from '../validators/user/EditUser';
 import { Context } from '../utils/context';
@@ -15,19 +14,14 @@ import { search } from './helpers';
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
 
-@ObjectType()
-class RideHistoryResponse extends Paginated(Beep) {}
-
-@ObjectType()
-class BeepHistoryResponse extends Paginated(Beep) {}
-
 @Resolver(User)
 export class UserResolver {
 
     @Query(() => User)
     @Authorized()
     public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
-        const relationPaths = fieldsToRelations(info);
+        const relationPaths = fieldsToRelations(info).filter((key: string) => key !== 'location');
+
         const user = await ctx.em.findOne(User, id || ctx.user.id, { populate: relationPaths, refresh: true });
 
         if (!user) {
@@ -85,30 +79,6 @@ export class UserResolver {
             count: count
         };
     }
-
-    /*
-    @Query(() => RideHistoryResponse)
-    @Authorized()
-    public async getRideHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<RideHistoryResponse> {
-        const [rides, count] = await ctx.em.findAndCount(Beep, { rider: id || ctx.user }, { orderBy: { end: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
-
-        return {
-            items: rides,
-            count: count
-        };
-    }
-
-    @Query(() => BeepHistoryResponse)
-    @Authorized()
-    public async getBeepHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg("id", { nullable: true }) id?: string): Promise<BeepHistoryResponse>  {
-        const [beeps, count] = await ctx.em.findAndCount(Beep, { beeper: id || ctx.user }, { orderBy: { end: QueryOrder.DESC }, populate: ['beeper', 'rider'], offset: offset, limit: show });
-
-        return {
-            items: beeps,
-            count: count
-        };
-    }
-    */
 
     @Query(() => [QueueEntry])
     @Authorized()
