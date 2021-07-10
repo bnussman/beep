@@ -31,8 +31,6 @@ export class DirectionsResolver {
             output.push({ title: prediction.description });
         }
 
-        console.log("Made Request with token", sessiontoken);
-
         return output;
     }
 }

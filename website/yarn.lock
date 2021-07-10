@@ -1635,6 +1635,13 @@
   resolved "https://registry.yarnpkg.com/@types/extract-files/-/extract-files-8.1.0.tgz#4728440e1d92a6d1d11ac47f5a10e3f9ce47f044"
   integrity sha512-ulxvlFU71yLVV3JxdBgryASAIp+aZQuQOpkhU1SznJlcWz0qsJCWHqdJqP6Lprs3blqGS5FH5GbBkU0977+Wew==
 
+"@types/google-map-react@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@types/google-map-react/-/google-map-react-2.1.2.tgz#5ef0eb5fd4c530846acc4fa82c90b67c3f69799f"
+  integrity sha512-m3TmOW2GuTxTx+7DZ8gi2mYS1vDZLehqS+hY3/PWtW2lwZFIGwmsovMZjH+P7SyrFTekoKGWp5KkWF8nnwEA7w==
+  dependencies:
+    "@types/react" "*"
+
 "@types/history@*":
   version "4.7.8"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.8.tgz#49348387983075705fe8f4e02fb67f7daaec4934"

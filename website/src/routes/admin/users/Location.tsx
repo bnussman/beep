@@ -1,10 +1,11 @@
-import {gql} from '@apollo/client';
-import { Avatar, Box, Center, Text } from '@chakra-ui/react';
-import React, {useEffect} from 'react';
+import { gql } from '@apollo/client';
+import { Box, Center, Text } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
 import { User } from '../../../generated/graphql';
-import {client} from '../../../utils/Apollo';
-import {GetUser} from './User';
+import { client } from '../../../utils/Apollo';
+import { GetUser } from './User';
 import GoogleMapReact from 'google-map-react';
+import { Marker } from '../../../components/Marker';
 
 interface Props {
     user: Partial<User>;
@@ -39,7 +40,6 @@ function LocationView(props: Props) {
                         location: {
                             latitude: data.getLocationUpdates.latitude,
                             longitude: data.getLocationUpdates.longitude,
-                            timestamp: new Date()
                         }
                     }
                 },
@@ -49,8 +49,6 @@ function LocationView(props: Props) {
             });
         });
     }
-
-    const Marker = ({ text }) => <Avatar src={user.photoUrl} size="xs" />;
 
     useEffect(() => {
         subscribe();
@@ -67,31 +65,25 @@ function LocationView(props: Props) {
             </Center>
         );
     }
+
     return (
         <Box>
             <Text>{user.location?.latitude}, {user.location?.longitude}</Text>
             <div style={{ height: 350, width: '100%' }}>
-            <GoogleMapReact
-                bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
-                defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}
-                defaultZoom={15}
-                center={{ lat: user.location.latitude, lng: user.location.longitude }}
-            >
-                <Marker
-                    lat={user.location.latitude}
-                    lng={user.location.longitude}
-                    text={user.name}
-                />
-            </GoogleMapReact>
+              <GoogleMapReact
+                  bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
+                  defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}
+                  defaultZoom={15}
+                  center={{ lat: user.location.latitude, lng: user.location.longitude }}
+              >
+                  <Marker
+                      lat={user.location.latitude}
+                      lng={user.location.longitude}
+                      text={user.name}
+                      photoUrl={user.photoUrl}
+                  />
+              </GoogleMapReact>
             </div>
-            {/*
-            <iframe
-                title="Map"
-                width="100%"
-                height="350"
-                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&q=${user.location?.latitude},${user.location?.longitude}`}>
-            </iframe>
-              */}
         </Box>
 
     );

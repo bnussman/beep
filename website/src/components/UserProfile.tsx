@@ -48,7 +48,7 @@ function UserProfile(props: Props) {
             <Flex align="center">
                 <Box>
                     <Avatar
-                        src={user.photoUrl}
+                        src={user.photoUrl || ''}
                         size="2xl"
                     >
                         {user.isBeeping && <AvatarBadge boxSize="1.0em" bg="green.500" />}
@@ -153,16 +153,16 @@ function UserProfile(props: Props) {
                         </Stack>
                     </TabPanel>
                     <TabPanel>
-                        <LocationView user={user} location={user.location} />
+                        <LocationView user={user} />
                     </TabPanel>
                     <TabPanel>
-                        <QueueTable queue={user.queue} />
+                        <QueueTable queue={user.queue!} />
                     </TabPanel>
                     <TabPanel>
-                        <RideHistoryTable userId={user.id} />
+                        <RideHistoryTable userId={user.id!} />
                     </TabPanel>
                     <TabPanel>
-                        <RatingsTable userId={user.id} />
+                        <RatingsTable userId={user.id!} />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
