@@ -1,3 +1,4 @@
+import { IsLatitude, IsLongitude } from 'class-validator';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { LocationInput } from '../validators/location';
@@ -10,9 +11,11 @@ export class Point {
     }
 
     @Field()
+    @IsLongitude()
     public longitude: number;
 
     @Field()
+    @IsLatitude()
     public latitude: number;
 }
 

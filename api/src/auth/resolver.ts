@@ -23,7 +23,6 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async login(@Ctx() ctx: Context, @Arg('input') input: LoginInput): Promise<Auth> {
-        console.log("EM:", ctx.em);
         const user = await ctx.em.findOne(User, { username: input.username }, { refresh: true });
 
         if (!user) {
@@ -52,16 +51,6 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
-        if (!input.venmo && !input.cashapp) throw new Error("Please enter at least one form of payment");
-
-        if (input.venmo?.charAt(0) == '@') {
-            input.venmo = input.venmo.substr(1, input.venmo.length);
-        }
-
-        if (input.cashapp?.charAt(0) == '@' || input.cashapp?.charAt(0) == '$') {
-            input.cashapp = input.cashapp.substr(1, input.cashapp.length);
-        }
-        
         let { createReadStream, filename, mimetype } = await input.picture;
 
         const user = new User();
@@ -126,7 +115,6 @@ export class AuthResolver {
 
     @Mutation(() => Boolean)
     public async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string): Promise<boolean> {
-
         const user: User | null = await getUserFromEmail(email);
 
         if (!user) {

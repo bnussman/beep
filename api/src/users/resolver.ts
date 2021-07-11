@@ -60,7 +60,7 @@ export class UserResolver {
 
         pubSub.publish("User" + id, user);
 
-        await ctx.em.persistAndFlush(user);
+        await ctx.em.flush();
 
         return user;
     }

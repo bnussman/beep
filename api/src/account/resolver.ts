@@ -16,16 +16,6 @@ export class AccountResolver {
     @Mutation(() => User)
     @Authorized()
     public async editAccount(@Ctx() ctx: Context, @Arg('input') input: EditAccountInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
-        if (!input.venmo && !input.cashapp) throw new Error("Please enter at least one form of payment");
-
-        if (input.venmo && input.venmo.charAt(0) == '@') {
-            input.venmo = input.venmo.substr(1, input.venmo.length);
-        }
-
-        if (input.cashapp && (input.cashapp.charAt(0) == '@' || input.cashapp.charAt(0) == '$')) {
-            input.cashapp = input.cashapp.substr(1, input.cashapp.length);
-        }
-
         const oldEmail = ctx.user.email;
 
         wrap(ctx.user).assign(input);
@@ -40,7 +30,7 @@ export class AccountResolver {
         
         pubSub.publish("User" + ctx.user.id, ctx.user);
 
-        await ctx.em.persistAndFlush(ctx.user);
+        await ctx.em.flush();
 
         return ctx.user;
     }
@@ -48,9 +38,9 @@ export class AccountResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
-        wrap(ctx.user).assign({ password: sha256(input.password) });
+        ctx.user.password = sha256(input.password);
 
-        await ctx.em.persistAndFlush(ctx.user);
+        await ctx.em.flush();
 
         return true;
     }
@@ -58,9 +48,9 @@ export class AccountResolver {
     @Mutation(() => Boolean)
     @Authorized()
     public async updatePushToken(@Ctx() ctx: Context, @Arg('pushToken') pushToken: string): Promise<boolean> {
-        wrap(ctx.user).assign({ pushToken: pushToken });
+        ctx.user.pushToken = pushToken;
 
-        await ctx.em.persistAndFlush(ctx.user);
+        await ctx.em.flush();
 
         return true;
     }
@@ -73,6 +63,7 @@ export class AccountResolver {
             throw new Error("Invalid verify email token");
         }
 
+        // @TODO clean up this if condition
         if ((entry.time.getTime() + (3600 * 1000)) < Date.now()) {
             await ctx.em.removeAndFlush(entry);
             throw new Error("Your verification token has expired");
@@ -90,14 +81,7 @@ export class AccountResolver {
             throw new Error("You tried to verify an email address that is not the same as your current email.");
         }
 
-        let update;
-
-        if (isEduEmail(entry.email)) {
-            update = { isEmailVerified: true, isStudent: true };
-        }
-        else {
-            update = { isEmailVerified: true };
-        }
+        const update = isEduEmail(entry.email) ? { isEmailVerified: true, isStudent: true } : { isEmailVerified: true };
 
         const user = await ctx.em.findOne(User, entry.user);
 
@@ -106,8 +90,6 @@ export class AccountResolver {
         wrap(user).assign(update);
 
         pubSub.publish("User" + user.id, user);
-
-        await ctx.em.persistAndFlush(user);
 
         await ctx.em.removeAndFlush(entry);
 
@@ -132,7 +114,7 @@ export class AccountResolver {
 
     @Mutation(() => User)
     @Authorized()
-    public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename, mimetype }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
+    public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
         const s3 = new AWS.S3({
           accessKeyId: process.env.S3_ACCESS_KEY_ID,
           secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
@@ -172,12 +154,12 @@ export class AccountResolver {
 
             pubSub.publish("User" + ctx.user.id, ctx.user);
 
-            await ctx.em.persistAndFlush(ctx.user);
+            await ctx.em.flush();
 
             return ctx.user;
         }
         else {
-            throw new Error("No result from AWS");
+            throw new Error("No result from S3");
         }
     }
 }
