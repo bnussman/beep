@@ -28,7 +28,7 @@ let token: string;
 
 function LocationInput(props: Props & InputProps, ref: Ref<any>) {
     const { getLocation, value, setValue, label, ...rest } = props;
-    const [getSuggestions, { data, loading, error }] = useLazyQuery<GetSuggestionsQuery>(GetSuggestions);
+    const [getSuggestions, { data }] = useLazyQuery<GetSuggestionsQuery>(GetSuggestions);
 
     async function useCurrentLocation(): Promise<void> {
         props.setValue("Loading your location...");
@@ -38,7 +38,8 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
         const { status } = await Location.requestForegroundPermissionsAsync();
 
         if (status !== 'granted') {
-            return alert("You must enable location to use this feature.");
+          props.setValue("");
+          return alert("You must enable location to use this feature.");
         }
 
         const position = await Location.getCurrentPositionAsync({});
@@ -56,7 +57,7 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
         setValue(string);
     }
 
-    const CurrentLocationIcon = (props: Props) => (
+    const CurrentLocationIcon = (props) => (
         <TouchableWithoutFeedback onPress={() => useCurrentLocation()}>
             <Icon {...props} name='pin'/>
         </TouchableWithoutFeedback>

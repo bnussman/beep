@@ -2,122 +2,118 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text, Spinner } from '@ui-kitten/components';
 
-interface Props {
-
-}
-
-const ThemeIcon = (props: Props) => (
+const ThemeIcon = (props) => (
   <Icon {...props} name='color-palette'/>
 );
 
-const LogoutIcon = (props: Props) => (
+const LogoutIcon = (props) => (
   <Icon {...props} name='log-out'/>
 );
 
-const ProfileIcon = (props: Props) => (
+const ProfileIcon = (props) => (
   <Icon {...props} name='person'/>
 );
 
-const PasswordIcon = (props: Props) => (
+const PasswordIcon = (props) => (
   <Icon {...props} name='lock'/>
 );
 
-const ForwardIcon = (props: Props) => (
+const ForwardIcon = (props) => (
   <Icon {...props} name='arrow-ios-forward'/>
 );
 
-const PhoneIcon = (props: Props) => (
+const PhoneIcon = (props) => (
   <Icon {...props} name='phone-call-outline'/>
 );
 
-const TextIcon = (props: Props) => (
+const TextIcon = (props) => (
   <Icon {...props} name='message-square-outline'/>
 );
 
-const VenmoIcon = (props: Props) => (
+const VenmoIcon = (props) => (
   <Icon {...props} name='credit-card-outline'/>
 );
 
-const LeaveIcon = (props: Props) => (
+const LeaveIcon = (props) => (
   <Icon {...props} name='person-remove-outline'/>
 );
 
-const BackIcon = (props: Props) => (
+const BackIcon = (props) => (
   <Icon {...props} name='arrow-back-outline'/>
 );
 
-const GetIcon = (props: Props) => (
+const GetIcon = (props) => (
   <Icon {...props} name='person-done-outline'/>
 );
 
-const FindIcon = (props: Props) => (
+const FindIcon = (props) => (
   <Icon {...props} name='search'/>
 );
 
-const AcceptIcon = (props: Props) => (
+const AcceptIcon = (props) => (
   <Icon {...props} name='checkmark-circle-outline'/>
 );
 
-const DenyIcon = (props: Props) => (
+const DenyIcon = (props) => (
   <Icon {...props} name='close-circle-outline'/>
 );
 
-const MapIcon = (props: Props) => (
+const MapIcon = (props) => (
   <Icon {...props} name='map'/>
 );
 
-const MapsIcon = (props: Props) => (
+const MapsIcon = (props) => (
   <Icon {...props} name='map-outline'/>
 );
 
-const CarIcon = (props: Props) => (
+const CarIcon = (props) => (
   <Icon {...props} name='car-outline'/>
 );
 
-const SettingsIcon = (props: Props) => (
+const SettingsIcon = (props) => (
   <Icon {...props} name='settings'/>
 );
 
-const DollarIcon = () => (
+const DollarIcon = (props) => (
   <Text>$</Text>
 );
 
-const ShareIcon = (props: Props) => (
+const ShareIcon = (props) => (
   <Icon {...props} name='share-outline'/>
 );
 
-const EditIcon = (props: Props) => (
+const EditIcon = (props) => (
   <Icon {...props} name='edit-outline'/>
 );
 
-const RefreshIcon = (props: Props) => (
+const RefreshIcon = (props) => (
   <Icon {...props} name='refresh-outline'/>
 );
-const LoginIcon = (props: Props) => (
+const LoginIcon = (props) => (
   <Icon {...props} name='log-in-outline'/>
 );
 
-const SignUpIcon = (props: Props) => (
+const SignUpIcon = (props) => (
   <Icon {...props} name='person-add-outline'/>
 );
 
-const QuestionIcon = (props: Props) => (
+const QuestionIcon = (props) => (
   <Icon {...props} name='question-mark-outline'/>
 );
 
-const EmailIcon = (props: Props) => (
+const EmailIcon = (props) => (
   <Icon {...props} name='email-outline'/>
 );
 
-const LogIcon = (props: Props) => (
+const LogIcon = (props) => (
   <Icon {...props} name='file-text-outline'/>
 );
 
-const ReportIcon = (props: Props) => (
+const ReportIcon = (props) => (
   <Icon {...props} name='alert-triangle-outline'/>
 );
 
-const RateIcon = (props: Props) => (
+const RateIcon = (props) => (
   <Icon {...props} name='star-outline'/>
 );
 
@@ -139,7 +135,7 @@ const LoadingIndicator = () => (
   </View>
 );
 
-const PhotoIcon = (props: Props) => (
+const PhotoIcon = (props) => (
     <Icon {...props} name='camera-outline'/>
 );
 

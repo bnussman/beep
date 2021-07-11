@@ -108,7 +108,7 @@ interface Props {
 
 let sub: any;
 
-export function MainFindBeepScreen(props: Props) {
+export function MainFindBeepScreen(props: Props): JSX.Element {
     const user = useContext(UserContext);
 
     const { subscribeToMore, loading, data, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus);
@@ -148,6 +148,7 @@ export function MainFindBeepScreen(props: Props) {
                     topic: user.id
                 },
                 updateQuery: (prev, { subscriptionData }) => {
+                    // @ts-expect-error This works, so I'm not changing it
                     const newFeedItem = subscriptionData.data.getRiderUpdates;
                     return Object.assign({}, prev, {
                         getRiderStatus: newFeedItem
@@ -209,17 +210,21 @@ export function MainFindBeepScreen(props: Props) {
     }
 
     function getVenmoLink(): string {
-        if (Number(data?.getRiderStatus?.groupSize) > 1) {
-            return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus?.beeper?.venmo + '&amount=' + data?.getRiderStatus?.beeper?.groupRate * data?.getRiderStatus?.groupSize + '&note=Beep';
-        }
-        return 'venmo://paycharge?txn=pay&recipients=' + data?.getRiderStatus?.beeper?.venmo + '&amount=' + data?.getRiderStatus?.beeper?.singlesRate + '&note=Beep';
+      if (!data?.getRiderStatus?.beeper.venmo) return '';
+
+      if (Number(data?.getRiderStatus?.groupSize) > 1) {
+        return `venmo://paycharge?txn=pay&recipients=${data?.getRiderStatus?.beeper?.venmo}&amount=${data?.getRiderStatus?.beeper?.groupRate * data?.getRiderStatus?.groupSize}&note=Beep`;
+      }
+      return `venmo://paycharge?txn=pay&recipients=${data?.getRiderStatus?.beeper?.venmo}&amount=${data?.getRiderStatus?.beeper?.singlesRate}&note=Beep`;
     }
 
     function getCashAppLink(): string {
-        if (Number(data?.getRiderStatus?.groupSize) > 1) {
-            return `https://cash.app/$${data?.getRiderStatus?.beeper.cashapp}/${data?.getRiderStatus?.groupSize * data?.getRiderStatus?.beeper.groupRate}`;
-        }
-        return `https://cash.app/$${data?.getRiderStatus?.beeper?.cashapp}/${data?.getRiderStatus?.beeper?.singlesRate}`;
+      if (!data?.getRiderStatus?.beeper.cashapp) return '';
+
+      if (Number(data?.getRiderStatus?.groupSize) > 1) {
+        return `https://cash.app/$${data?.getRiderStatus?.beeper.cashapp}/${data?.getRiderStatus?.groupSize * data?.getRiderStatus?.beeper.groupRate}`;
+      }
+      return `https://cash.app/$${data?.getRiderStatus?.beeper?.cashapp}/${data?.getRiderStatus?.beeper?.singlesRate}`;
     }
 
     function shareVenmoInformation(): void {
@@ -275,9 +280,7 @@ export function MainFindBeepScreen(props: Props) {
                 >
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!(Platform.OS == "ios" || Platform.OS == "android")} >
                         <Layout style={styles.container}>
-
                             {/*<RateCard {...props}/>*/}
-
                             <Input
                                 keyboardType="number-pad"
                                 label='Group Size'
@@ -428,7 +431,7 @@ export function MainFindBeepScreen(props: Props) {
                 </Button>
                 }
                 {(data?.getRiderStatus.position >= 1 && data?.getRiderStatus.beeper) && 
-                    <LeaveButton beepersId={data?.getRiderStatus.beeper.id} refetch={() => {}} />
+                    <LeaveButton />
                 }
             </Layout>
         );
@@ -454,7 +457,7 @@ export function MainFindBeepScreen(props: Props) {
                 </TouchableWithoutFeedback>
                 <Tags/>
                 <Layout style={styles.group}>
-                    <Text category='h6'>{data?.getRiderStatus.beeper?.first}{"'"}{(data?.getRiderStatus.beeper?.first.charAt(data?.getRiderStatus.beeper.first.length - 1) != 's') && "s"} Rates</Text>
+                    <Text category='h6'>{data?.getRiderStatus.beeper?.first}{"'"}{(data?.getRiderStatus.beeper?.first.charAt(data?.getRiderStatus.beeper.first.length - 1) != 's') ? "s" : ''} Rates</Text>
                     <Text appearance='hint' style={{marginBottom: 6}}>per person</Text>
                     <Layout style={styles.rateGroup}>
                         <Layout style={styles.rateLayout}>
@@ -472,7 +475,7 @@ export function MainFindBeepScreen(props: Props) {
                     <Text category='h6'>{data?.getRiderStatus.beeper?.queueSize}</Text>
                     <Text appearance='hint'>{(data?.getRiderStatus.beeper?.queueSize == 1) ? "person is" : "people are"} ahead of you in {data?.getRiderStatus.beeper?.first}{"'"}s queue</Text>
                 </Layout>
-                <LeaveButton beepersId={data?.getRiderStatus.beeper.id} refetch={() => {}} />
+                <LeaveButton />
             </Layout>
         );
     }
