@@ -4,16 +4,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Layout, Text, Button, Input } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
 import { isMobile } from '../../utils/config';
-import { LoginIcon, SignUpIcon, QuestionIcon, LoadingIndicator } from '../../utils/Icons';
+import { LoginIcon, SignUpIcon, QuestionIcon, LoadingIndicator, UserIcon } from '../../utils/Icons';
 import { Icon } from '@ui-kitten/components';
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../../generated/graphql';
 import { client } from '../../utils/Apollo';
 import { GetUserData } from '../../App';
 import { getPushToken } from '../../utils/Notifications';
+import { Navigation } from '../../utils/Navigation';
 
 interface Props {
-    navigation: any;
+    navigation: Navigation;
 }
 
 const Login = gql`
@@ -27,7 +28,7 @@ const Login = gql`
     }
 `;
 
-function LoginScreen(props: Props) {
+function LoginScreen(props: Props): JSX.Element {
     const [login, { loading }] = useMutation<LoginMutation>(Login);
     const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
     const [username, setUsername] = useState<string>("");
@@ -36,7 +37,7 @@ function LoginScreen(props: Props) {
 
     const renderIcon = (props: unknown) => (
         <TouchableWithoutFeedback onPress={() => setSecureTextEntry(!secureTextEntry)}>
-            <Icon {...props} name={secureTextEntry ? 'eye-off' :'eye'}/>
+            <Icon {...props} name={secureTextEntry ? 'eye-off' : 'eye'}/>
         </TouchableWithoutFeedback>
     );
     
@@ -95,8 +96,10 @@ function LoginScreen(props: Props) {
                         onChangeText={(text) => setUsername(text)}
                         blurOnSubmit={true}
                         onSubmitEditing={() => passwordRef.current.focus()}
+                        accessoryRight={UserIcon}
                     />
                     <Input
+                        style={{ marginTop: 8 }}
                         textContentType="password"
                         placeholder="Password"
                         returnKeyType="go"
@@ -125,7 +128,7 @@ function LoginScreen(props: Props) {
                         </Button>
                     }
                 </Layout>
-                <Text style={{marginTop: 30, marginBottom: 10 }}> Don't have an account? </Text>
+                <Text style={{ marginTop: 30, marginBottom: 10 }}> Don't have an account? </Text>
                 <Button
                     size="small"
                     onPress={() => props.navigation.navigate('Register')}

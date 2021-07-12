@@ -16,6 +16,7 @@ import { client } from '../../utils/Apollo';
 import { RateCard } from '../../components/RateCard';
 import LocationInput from '../../components/LocationInput';
 import * as Location from 'expo-location';
+import { isMobile } from '../../utils/config';
 
 const InitialRiderStatus = gql`
     query GetInitialRiderStatus {
@@ -273,12 +274,12 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
     if (!data || !data?.getRiderStatus || !data?.getRiderStatus.beeper.id ) {
         return (
-            <Layout style={{height:"100%"}}>
+            <Layout style={{ height:"100%" }}>
                 <KeyboardAvoidingView
                     behavior={Platform.OS == "ios" ? "padding" : "height"}
                     style={styles.container}
                 >
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!(Platform.OS == "ios" || Platform.OS == "android")} >
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile} >
                         <Layout style={styles.container}>
                             {/*<RateCard {...props}/>*/}
                             <Input
@@ -313,8 +314,8 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
                                     accessoryRight={FindIcon}
                                     onPress={() => findBeep()}
                                     size='large'
-                                    style={{marginTop:15}}
-                                    disabled={origin === 'Loading your location...'}
+                                    style={{ marginTop: 15 }}
+                                    disabled={origin === 'Loading your location...' || !origin || !groupSize || !destination}
                                 >
                                     Find a Beep
                                 </Button>

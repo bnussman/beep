@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BottomTabNavigationProp, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FindBeepScreen } from './FindBeep';
 import { SettingsScreen } from './Settings';
 import { StartBeepingScreen } from '../routes/beep/StartBeeping';
 import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components';
 import { CarIcon, MapIcon, SettingsIcon } from '../utils/Icons';
-import {useIsFocused} from '@react-navigation/native';
-
+import { User } from '../generated/graphql';
 
 export type MainNavParamList = {
     Ride: undefined;
@@ -17,6 +16,15 @@ export type MainNavParamList = {
         handlePick: (id: string) => Promise<void>,
         latitude: number,
         longitude: number,
+    } | undefined;
+    Report: {
+      id: string,
+      name: string,
+      beep: string
+    } | undefined;
+    Rate: {
+      user: User,
+      beep: string
     } | undefined;
     Profile: { id: string | undefined, beep?: string } | undefined;
     EditProfileScreen: undefined;

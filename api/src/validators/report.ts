@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Report } from '../entities/Report';
 import { Field, InputType } from 'type-graphql';
 
@@ -11,6 +11,7 @@ export class ReportInput implements Partial<Report> {
 
   @Field()
   @IsString()
+  @IsNotEmpty()
   public reason!: string;
 
   @Field({ nullable: true })

@@ -58,7 +58,7 @@ function ForgotPassword() {
           mt={4}
           rightIcon={<EmailIcon />}
           isLoading={loading}
-          disabled={data?.forgotPassword}
+          disabled={data?.forgotPassword || !email}
         >
           Send Reset Password Email
         </Button>

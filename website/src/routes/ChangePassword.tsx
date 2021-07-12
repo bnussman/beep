@@ -18,7 +18,7 @@ function ChangePassword() {
     const [changePassword, { data, loading, error }] = useMutation<ChangePasswordMutation>(ChangePasswordGraphQL);
     const user = useContext(UserContext);
     const [password, setPassword] = useState("");
-    const [password2, setPassword2] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     if (!user) {
         return <Redirect to={{ pathname: "/login" }} />;
@@ -32,7 +32,7 @@ function ChangePassword() {
                 password: password
             }});
             setPassword('');
-            setPassword2('');
+            setConfirmPassword('');
         }
         catch(error) {
             console.error(error);
@@ -56,11 +56,18 @@ function ChangePassword() {
                     <FormLabel>Repreat Password</FormLabel>
                     <Input
                         type="password"
-                        value={password2}
-                        onChange={(value: any) => setPassword2(value.target.value)}
+                        value={confirmPassword}
+                        onChange={(value: any) => setConfirmPassword(value.target.value)}
                     />
                 </FormControl>
-                <Button isLoading={loading} type="submit" rightIcon={<LockIcon />}>Update password</Button>
+                <Button
+                  isLoading={loading}
+                  type="submit"
+                  rightIcon={<LockIcon />}
+                  disabled={!password || password !== confirmPassword}
+                >
+                    Update password
+                </Button>
             </form>
         </div>
     );

@@ -17,20 +17,20 @@ const ReportUser = gql`
     }
 `;
 
-export function ReportScreen(props: Props) {
+export function ReportScreen(props: Props): JSX.Element {
     const [reason, setReason] = useState<string>();
-    const [report, { data, loading, error }] = useMutation<ReportUserMutation>(ReportUser, { errorPolicy: 'all' });
+    const [report, { loading }] = useMutation<ReportUserMutation>(ReportUser);
 
     async function reportUser() {
         try {
-            const result = await report({
+            await report({
                 variables: {
                     userId: props.route.params.id,
                     beepId: props.route.params.beep,
                     reason: reason
                 }
             });
-            if (result) alert("Successfully Reported User");
+            props.navigation.goBack();
         }
         catch (error) {
             alert(error);
@@ -50,7 +50,7 @@ export function ReportScreen(props: Props) {
                         <Input
                             placeholder="User"
                             label="User"
-                            value={props.route.params.first + " " + props.route.params.last}
+                            value={props.route.params.name}
                             disabled={true}
                         />
                         <Input
@@ -64,11 +64,20 @@ export function ReportScreen(props: Props) {
                             blurOnSubmit={true}
                         />
                         {!loading ?
-                            <Button accessoryRight={ReportIcon} onPress={() => reportUser()}>
+                            <Button
+                              accessoryRight={ReportIcon}
+                              onPress={() => reportUser()}
+                              disabled={!reason}
+                              style={{ marginTop: 8 }}
+                            >
                                 Report User
                             </Button>
                             :
-                            <Button appearance='outline' accessoryRight={LoadingIndicator}>
+                            <Button
+                              appearance='outline'
+                              accessoryRight={LoadingIndicator}
+                              style={{ marginTop: 8 }}
+                            >
                                 Loading
                             </Button>
                         }

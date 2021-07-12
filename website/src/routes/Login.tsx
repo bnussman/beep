@@ -88,6 +88,7 @@ function Login() {
             type="submit"
             onClick={handleLogin}
             isLoading={loading}
+            disabled={!username || !password}
           >
             Sign in
         </Button>

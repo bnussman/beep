@@ -1,16 +1,18 @@
 import React, { useMemo, useState } from "react";
-import { Platform, StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native"
-import { Text, Input, Button, Layout, TopNavigation, TopNavigationAction } from "@ui-kitten/components";
+import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native"
+import { Input, Button, Layout, TopNavigation, TopNavigationAction } from "@ui-kitten/components";
 import { BackIcon } from "../../utils/Icons";
 import { LoadingIndicator, RateIcon } from "../../utils/Icons";
 import { gql, useMutation } from "@apollo/client";
 import { RateUserMutation } from "../../generated/graphql";
 import { RateBar } from "../../components/Rate";
-import ProfilePicture from "../../components/ProfilePicture";
+import { isMobile } from "../../utils/config";
+import { UserHeader } from "../../components/UserHeader";
+import { Navigation } from "../../utils/Navigation";
 
 interface Props {
     route: any;
-    navigation: any;
+    navigation: Navigation;
 }
 
 const RateUser = gql`
@@ -26,24 +28,23 @@ const RateUser = gql`
     }
 `;
 
-export function RateScreen(props: Props) {
+export function RateScreen(props: Props): JSX.Element {
     const [stars, setStars] = useState<number>(0);
     const [message, setMessage] = useState<string>();
-    const [rate, { loading }] = useMutation<RateUserMutation>(RateUser, { errorPolicy: 'all' });
+    const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
 
     async function rateUser() {
-        if (stars < 1) return alert("Please rate the user");
         try {
-            const result = await rate({
+            await rate({
                 refetchQueries: () => ["GetRateData"],
                 variables: {
-                    userId: props.route.params.id,
+                    userId: props.route.params.user.id,
                     beepId: props.route.params.beep,
                     message: message,
                     stars: stars
                 }
             });
-            if (result) props.navigation.goBack();
+            props.navigation.goBack();
         }
         catch (error) {
             alert(error);
@@ -54,36 +55,14 @@ export function RateScreen(props: Props) {
         <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
     );
 
-    function UserHeader(props: any) {
-        return <Layout style={{flexDirection: 'row', marginHorizontal: -16}}>
-            {props.user.photoUrl &&
-            <ProfilePicture
-                style={{marginHorizontal: 8}}
-                size={50}
-                url={props.user.photoUrl}
-            />
-            }
-            <Layout>
-                <Text category='h4'>
-                    {props.user.name}
-                </Text>
-                <Text
-                    appearance='hint'
-                    category='s1'>
-                    {props.user.username}
-                </Text>
-            </Layout>
-        </Layout>
-    }
-
     return (
         <>
         <TopNavigation title='Rate User' alignment='center' accessoryLeft={BackAction}/>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!(Platform.OS == "ios" || Platform.OS == "android")} >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile} >
             <Layout style={styles.container}>            
                 <Layout style={styles.form}>
                     {useMemo(() => <UserHeader user={props.route.params.user} />, [])}
-                    <Layout style={{marginTop:15, marginBottom:15}}>
+                    <Layout style={{ marginTop: 15, marginBottom: 15 }}>
                         <RateBar
                             hint="Stars"
                             value={stars}
@@ -101,11 +80,20 @@ export function RateScreen(props: Props) {
                         blurOnSubmit={true}
                     />
                     {!loading ?
-                        <Button accessoryRight={RateIcon} onPress={() => rateUser()}>
+                        <Button
+                          accessoryRight={RateIcon}
+                          onPress={() => rateUser()}
+                          disabled={stars < 1}
+                          style={{ marginTop: 8 }}
+                        >
                             Rate User
                         </Button>
                         :
-                        <Button appearance='outline' accessoryRight={LoadingIndicator}>
+                        <Button
+                          appearance='outline'
+                          accessoryRight={LoadingIndicator}
+                          style={{ marginTop: 8 }}
+                        >
                             Loading
                         </Button>
                     }
