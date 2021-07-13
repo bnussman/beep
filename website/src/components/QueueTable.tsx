@@ -1,7 +1,6 @@
 import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Card } from './Card';
 import { Indicator } from './Indicator';
 import { QueueEntry } from '../generated/graphql';
 import TdUser from './TdUser';
@@ -40,36 +39,34 @@ function QueueTable(props: Props) {
   }
 
   return (
-    <Card>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Rider</Th>
-            <Th>Origin</Th>
-            <Th>Destination</Th>
-            <Th>Group Size</Th>
-            <Th>Start Time</Th>
-            <Th>Is Accepted?</Th>
-            <Th>Status</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {queue && queue.map(entry => {
-            return (
-              <Tr key={entry.id}>
-                <TdUser user={entry.rider} />
-                <Td>{entry.origin}</Td>
-                <Td>{entry.destination}</Td>
-                <Td>{entry.groupSize}</Td>
-                <Td>{dayjs().to(entry.start)}</Td>
-                <Td>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
-                <Td>{getStatus(entry.state)}</Td>
-              </Tr>
-            )
-          })}
-        </Tbody>
-      </Table>
-    </Card>
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Rider</Th>
+          <Th>Origin</Th>
+          <Th>Destination</Th>
+          <Th>Group Size</Th>
+          <Th>Start Time</Th>
+          <Th>Is Accepted?</Th>
+          <Th>Status</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {queue && queue.map(entry => {
+          return (
+            <Tr key={entry.id}>
+              <TdUser user={entry.rider} />
+              <Td>{entry.origin}</Td>
+              <Td>{entry.destination}</Td>
+              <Td>{entry.groupSize}</Td>
+              <Td>{dayjs().to(entry.start * 1000)}</Td>
+              <Td>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
+              <Td>{getStatus(entry.state)}</Td>
+            </Tr>
+          )
+        })}
+      </Tbody>
+    </Table>
   );
 }
 

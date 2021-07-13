@@ -105,6 +105,20 @@ export type GetBeepInput = {
   groupSize: Scalars['Float'];
 };
 
+export type Location = {
+  __typename?: 'Location';
+  id: Scalars['String'];
+  user: User;
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  altitude: Scalars['Float'];
+  accuracy?: Maybe<Scalars['Float']>;
+  altitudeAccuracy?: Maybe<Scalars['Float']>;
+  heading: Scalars['Float'];
+  speed: Scalars['Float'];
+  timestamp: Scalars['DateTime'];
+};
+
 export type LocationInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
@@ -803,7 +817,7 @@ export type GetUserProfileQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'username' | 'first' | 'last' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'rating'>
+    & Pick<User, 'id' | 'name' | 'username' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'rating'>
   ) }
 );
 
@@ -1636,8 +1650,7 @@ export const GetUserProfileDocument = gql`
     id
     name
     username
-    first
-    last
+    name
     isBeeping
     isStudent
     role

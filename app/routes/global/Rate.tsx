@@ -11,8 +11,8 @@ import { UserHeader } from "../../components/UserHeader";
 import { Navigation } from "../../utils/Navigation";
 
 interface Props {
-    route: any;
-    navigation: Navigation;
+  route: any;
+  navigation: Navigation;
 }
 
 const RateUser = gql`
@@ -29,88 +29,88 @@ const RateUser = gql`
 `;
 
 export function RateScreen(props: Props): JSX.Element {
-    const [stars, setStars] = useState<number>(0);
-    const [message, setMessage] = useState<string>();
-    const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
+  const [stars, setStars] = useState<number>(0);
+  const [message, setMessage] = useState<string>();
+  const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
 
-    async function rateUser() {
-        try {
-            await rate({
-                refetchQueries: () => ["GetRateData"],
-                variables: {
-                    userId: props.route.params.user.id,
-                    beepId: props.route.params.beep,
-                    message: message,
-                    stars: stars
-                }
-            });
-            props.navigation.goBack();
+  async function rateUser() {
+    try {
+      await rate({
+        refetchQueries: () => ["GetRateData"],
+        variables: {
+          userId: props.route.params.user.id,
+          beepId: props.route.params.beep,
+          message: message,
+          stars: stars
         }
-        catch (error) {
-            alert(error);
-        }
+      });
+      props.navigation.goBack();
     }
+    catch (error) {
+      alert(error);
+    }
+  }
 
-    const BackAction = () => (
-        <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()}/>
-    );
+  const BackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()} />
+  );
 
-    return (
-        <>
-        <TopNavigation title='Rate User' alignment='center' accessoryLeft={BackAction}/>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile} >
-            <Layout style={styles.container}>            
-                <Layout style={styles.form}>
-                    {useMemo(() => <UserHeader user={props.route.params.user} />, [])}
-                    <Layout style={{ marginTop: 15, marginBottom: 15 }}>
-                        <RateBar
-                            hint="Stars"
-                            value={stars}
-                            onValueChange={setStars}
-                        />
-                    </Layout>
-                    <Input
-                        label="Message"
-                        multiline={true}
-                        placeholder="Your rating message goes here"
-                        returnKeyType="go"
-                        textStyle={{ minHeight: 64 }}
-                        onChangeText={(text) => setMessage(text)}
-                        onSubmitEditing={() => rateUser()}
-                        blurOnSubmit={true}
-                    />
-                    {!loading ?
-                        <Button
-                          accessoryRight={RateIcon}
-                          onPress={() => rateUser()}
-                          disabled={stars < 1}
-                          style={{ marginTop: 8 }}
-                        >
-                            Rate User
-                        </Button>
-                        :
-                        <Button
-                          appearance='outline'
-                          accessoryRight={LoadingIndicator}
-                          style={{ marginTop: 8 }}
-                        >
-                            Loading
-                        </Button>
-                    }
-                </Layout>
+  return (
+    <>
+      <TopNavigation title='Rate User' alignment='center' accessoryLeft={BackAction} />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile} >
+        <Layout style={styles.container}>
+          <Layout style={styles.form}>
+            {useMemo(() => <UserHeader user={props.route.params.user} />, [])}
+            <Layout style={{ marginTop: 15, marginBottom: 15 }}>
+              <RateBar
+                hint="Stars"
+                value={stars}
+                onValueChange={setStars}
+              />
             </Layout>
-        </TouchableWithoutFeedback>
-        </>
-    );
+            <Input
+              label="Message"
+              multiline={true}
+              placeholder="Your rating message goes here"
+              returnKeyType="go"
+              textStyle={{ minHeight: 64 }}
+              onChangeText={(text) => setMessage(text)}
+              onSubmitEditing={() => rateUser()}
+              blurOnSubmit={true}
+            />
+            {!loading ?
+              <Button
+                accessoryRight={RateIcon}
+                onPress={() => rateUser()}
+                disabled={stars < 1}
+                style={{ marginTop: 8 }}
+              >
+                Rate User
+              </Button>
+              :
+              <Button
+                appearance='outline'
+                accessoryRight={LoadingIndicator}
+                style={{ marginTop: 8 }}
+              >
+                Loading
+              </Button>
+            }
+          </Layout>
+        </Layout>
+      </TouchableWithoutFeedback>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1 ,
-        alignItems: "center"
-    },
-    form: {
-        marginTop: 20,
-        width: "90%"
-    }
+  container: {
+    flex: 1,
+    alignItems: "center"
+  },
+  form: {
+    marginTop: 20,
+    width: "90%"
+  }
 });

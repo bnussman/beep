@@ -1,15 +1,14 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Card } from './Card';
 import { gql, useQuery } from '@apollo/client';
-import { GetBeepsQuery, GetRatingsQuery } from '../generated/graphql';
+import { GetRatingsQuery } from '../generated/graphql';
 import Pagination from './Pagination';
 import React, { useState } from 'react';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import TdUser from './TdUser';
-import {printStars} from '../routes/admin/ratings';
-import {NavLink} from 'react-router-dom';
-import {ExternalLinkIcon} from '@chakra-ui/icons';
+import { printStars } from '../routes/admin/ratings';
+import { NavLink } from 'react-router-dom';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 dayjs.extend(duration);
 
@@ -80,38 +79,36 @@ function RatingsTable(props: Props) {
         setCurrentPage={setCurrentPage}
         onPageChange={fetchRatings}
       />
-      <Card>
-        <Table>
-          <Thead>
-            <Tr>
-                <Th>Rater</Th>
-                <Th>Rated</Th>
-                <Th>Message</Th>
-                <Th>Stars</Th>
-                <Th>Date</Th>
-                <Th> </Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data?.getRatings && (data.getRatings.items).map(rating => {
-              return (
-                  <Tr key={rating.id}>
-                      <TdUser user={rating.rater} />
-                      <TdUser user={rating.rated} />
-                      <Td>{rating.message || "N/A"}</Td>
-                      <Td>{printStars(rating.stars)}</Td>
-                      <Td>{dayjs().to(rating.timestamp)}</Td>
-                      <Td>
-                          <NavLink to={`/admin/ratings/${rating.id}`}>
-                              <ExternalLinkIcon />
-                          </NavLink>
-                      </Td>
-                  </Tr>
-              )
-            })}
-          </Tbody>
-        </Table>
-      </Card>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Rater</Th>
+            <Th>Rated</Th>
+            <Th>Message</Th>
+            <Th>Stars</Th>
+            <Th>Date</Th>
+            <Th> </Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {data?.getRatings && (data.getRatings.items).map(rating => {
+            return (
+              <Tr key={rating.id}>
+                <TdUser user={rating.rater} />
+                <TdUser user={rating.rated} />
+                <Td>{rating.message || "N/A"}</Td>
+                <Td>{printStars(rating.stars)}</Td>
+                <Td>{dayjs().to(rating.timestamp)}</Td>
+                <Td>
+                  <NavLink to={`/admin/ratings/${rating.id}`}>
+                    <ExternalLinkIcon />
+                  </NavLink>
+                </Td>
+              </Tr>
+            )
+          })}
+        </Tbody>
+      </Table>
       <Pagination
         resultCount={data?.getRatings?.count}
         limit={pageLimit}

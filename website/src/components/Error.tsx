@@ -13,3 +13,5 @@ export function Error(props: Props) {
     </Alert>
   );
 }
+
+export default Error;

@@ -8,7 +8,7 @@ import GoogleMapReact from 'google-map-react';
 import { Marker } from '../../../components/Marker';
 
 interface Props {
-    user: Partial<User>;
+  user: Partial<User>;
 }
 
 const BeepersLocation = gql`
@@ -23,70 +23,69 @@ const BeepersLocation = gql`
 let sub: any;
 
 function LocationView(props: Props) {
+  const { user } = props;
 
-    const { user } = props;
+  async function subscribe() {
+    const a = client.subscribe({ query: BeepersLocation, variables: { topic: user.id } });
 
-    async function subscribe() {
-        const a = client.subscribe({ query: BeepersLocation, variables: { topic: user.id }});
+    sub = a.subscribe(({ data }) => {
+      console.log("Location Update", data.getLocationUpdates);
 
-        sub = a.subscribe(({ data }) => {
-            console.log("Location Update", data.getLocationUpdates);
+      client.writeQuery({
+        query: GetUser,
+        data: {
+          getUser: {
+            ...user,
+            location: {
+              latitude: data.getLocationUpdates.latitude,
+              longitude: data.getLocationUpdates.longitude,
+            }
+          }
+        },
+        variables: {
+          id: user.id
+        }
+      });
+    });
+  }
 
-            client.writeQuery({
-                query: GetUser,
-                data: {
-                    getUser: {
-                        ...user,
-                        location: {
-                            latitude: data.getLocationUpdates.latitude,
-                            longitude: data.getLocationUpdates.longitude,
-                        }
-                    }
-                },
-                variables: {
-                    id: user.id
-                }
-            });
-        });
-    }
+  useEffect(() => {
+    subscribe();
 
-    useEffect(() => {
-        subscribe();
+    return () => {
+      sub?.unsubscribe();
+    };
+  }, []);
 
-        return () => {
-            sub?.unsubscribe();
-        };
-    }, []);
-
-    if (!user.location) {
-        return (
-            <Center h="100px">
-                This user has no Location data.
-            </Center>
-        );
-    }
-
+  if (!user.location) {
     return (
-        <Box>
-            <Text>{user.location?.latitude}, {user.location?.longitude}</Text>
-            <div style={{ height: 350, width: '100%' }}>
-              <GoogleMapReact
-                  bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
-                  defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}
-                  defaultZoom={15}
-                  center={{ lat: user.location.latitude, lng: user.location.longitude }}
-              >
-                  <Marker
-                      lat={user.location.latitude}
-                      lng={user.location.longitude}
-                      text={user.name}
-                      photoUrl={user.photoUrl}
-                  />
-              </GoogleMapReact>
-            </div>
-        </Box>
-
+      <Center h="100px">
+        This user has no Location data.
+      </Center>
     );
+  }
+
+  return (
+    <Box>
+      <Text>{user.location?.latitude}, {user.location?.longitude}</Text>
+      <div style={{ height: 350, width: '100%' }}>
+        <GoogleMapReact
+          bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
+          defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}
+          defaultZoom={15}
+          center={{ lat: user.location.latitude, lng: user.location.longitude }}
+        >
+          <Marker
+            lat={user.location.latitude}
+            lng={user.location.longitude}
+            text={user.name}
+            photoUrl={user.photoUrl}
+          />
+        </GoogleMapReact>
+      </div>
+    </Box>
+
+  );
 }
 
 export default LocationView;

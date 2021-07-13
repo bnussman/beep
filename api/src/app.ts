@@ -31,6 +31,10 @@ export default class BeepAPIServer {
         BeepORM.orm = await MikroORM.init(config);
         BeepORM.em = BeepORM.orm.em;
 
+        // const migrator = BeepORM.orm.getMigrator();
+        // await migrator.createMigration();
+        // await migrator.up();
+
         initializeSentry();
 
         const options = {

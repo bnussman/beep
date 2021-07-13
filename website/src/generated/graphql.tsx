@@ -104,6 +104,20 @@ export type GetBeepInput = {
   groupSize: Scalars['Float'];
 };
 
+export type Location = {
+  __typename?: 'Location';
+  id: Scalars['String'];
+  user: User;
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  altitude: Scalars['Float'];
+  accuracy?: Maybe<Scalars['Float']>;
+  altitudeAccuracy?: Maybe<Scalars['Float']>;
+  heading: Scalars['Float'];
+  speed: Scalars['Float'];
+  timestamp: Scalars['DateTime'];
+};
+
 export type LocationInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
@@ -554,7 +568,7 @@ export type GetUserDataQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp'>
+    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp' | 'queueSize'>
   ) }
 );
 
@@ -567,7 +581,7 @@ export type UserUpdatesSubscription = (
   { __typename?: 'Subscription' }
   & { getUserUpdates: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp'>
+    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp' | 'queueSize'>
   ) }
 );
 
@@ -1071,6 +1085,7 @@ export const GetUserDataDocument = gql`
     username
     role
     cashapp
+    queueSize
   }
 }
     `;
@@ -1122,6 +1137,7 @@ export const UserUpdatesDocument = gql`
     username
     role
     cashapp
+    queueSize
   }
 }
     `;
