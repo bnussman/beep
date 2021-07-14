@@ -113,7 +113,7 @@ function UserProfile(props: Props) {
           onChange={(index: number) => history.replace(`/admin/users/${user.id}/${tabs[index].toLocaleLowerCase()}`)}
         >
           <TabList>
-            {tabs.map((tab: string) => <Tab style={{ textTransform: 'capitalize' }}>{tab}</Tab>)}
+            {tabs.map((tab: string, idx) => <Tab key={idx} style={{ textTransform: 'capitalize' }}>{tab}</Tab>)}
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -172,7 +172,7 @@ function UserProfile(props: Props) {
               <LocationView user={user} />
             </TabPanel>
             <TabPanel>
-              <QueueTable queue={user.queue!} />
+              <QueueTable user={user} />
             </TabPanel>
             <TabPanel>
               <RideHistoryTable userId={user.id!} />

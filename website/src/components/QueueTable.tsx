@@ -1,19 +1,74 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Indicator } from './Indicator';
-import { QueueEntry } from '../generated/graphql';
+import { User } from '../generated/graphql';
 import TdUser from './TdUser';
 import { Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { client } from '../utils/Apollo';
+import { gql } from '@apollo/client';
+import { GetUser } from '../routes/admin/users/User';
 
 dayjs.extend(duration);
 
+const GetQueue = gql`
+    subscription GetQueue($topic: String!) {
+        getBeeperUpdates(topic: $topic) {
+          id
+          origin
+          destination
+          start
+          groupSize
+          isAccepted
+          state
+          rider {
+            id
+            photoUrl
+            username
+            first
+            last
+            name
+          }
+        }
+    }
+`;
+
 interface Props {
-  queue: QueueEntry[];
+  user: Partial<User>;
 }
 
+let sub: any;
+
 function QueueTable(props: Props) {
-  const { queue } = props;
+  const { user } = props;
+
+  async function subscribe() {
+    const a = client.subscribe({ query: GetQueue, variables: { topic: user.id } });
+
+    sub = a.subscribe(({ data }) => {
+      client.writeQuery({
+        query: GetUser,
+        data: {
+          getUser: {
+            ...user,
+            queue: data.getBeeperUpdates
+          }
+        },
+        variables: {
+          id: user.id
+        }
+      });
+    });
+  }
+
+  useEffect(() => {
+    subscribe();
+
+    return () => {
+      sub?.unsubscribe();
+    };
+  }, []);
+
 
   function getStatus(value: number): string {
     switch (value) {
@@ -30,7 +85,7 @@ function QueueTable(props: Props) {
     }
   }
 
-  if (!queue || queue.length === 0) {
+  if (!user.queue || user.queue.length === 0) {
     return (
       <Center h="100px">
         This user's queue is empty.
@@ -52,7 +107,7 @@ function QueueTable(props: Props) {
         </Tr>
       </Thead>
       <Tbody>
-        {queue && queue.map(entry => {
+        {user.queue && user.queue.map(entry => {
           return (
             <Tr key={entry.id}>
               <TdUser user={entry.rider} />

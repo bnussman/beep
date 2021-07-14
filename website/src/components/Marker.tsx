@@ -25,7 +25,7 @@ export function Marker(props: Props) {
         <Center>
           <Avatar src={photoUrl || ''} size="xs" />
         </Center>
-        <Text>{text}</Text>
+        <Text style={{ color: 'black' }}>{text}</Text>
         </Box>
       </Tooltip>
     </Box>
