@@ -1,4 +1,4 @@
 import { createContext } from 'react';
-import {User} from './generated/graphql';
+import { User } from './generated/graphql';
 
-export const UserContext = createContext<Partial<User>>(null);
+export const UserContext = createContext<User | undefined>(undefined);

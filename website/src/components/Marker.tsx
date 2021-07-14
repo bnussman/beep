@@ -1,4 +1,4 @@
-import { Avatar } from "@chakra-ui/react";
+import { Avatar, Box, Tooltip, Text, Center, useClipboard, useToast } from "@chakra-ui/react";
 import React from "react";
 
 interface Props {
@@ -9,9 +9,25 @@ interface Props {
 }
 
 export function Marker(props: Props) {
-  const { photoUrl } = props;
+  const { lat, lng, photoUrl, text } = props;
+  const { onCopy } = useClipboard(`${lat},${lng}`);
+  const toast = useToast();
+
+  const copy = () => {
+    onCopy();
+    toast({ title: "Copied coordinates to clipboard", status: "info" });
+  };
 
   return (
-    <Avatar src={photoUrl || ''} size="xs" />
+    <Box width="max-content" onClick={copy}>
+      <Tooltip label={`${lat}, ${lng}`} aria-label={`${lat}, ${lng}`}>
+        <Box>
+        <Center>
+          <Avatar src={photoUrl || ''} size="xs" />
+        </Center>
+        <Text>{text}</Text>
+        </Box>
+      </Tooltip>
+    </Box>
   );
 };

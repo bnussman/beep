@@ -29,8 +29,6 @@ function LocationView(props: Props) {
     const a = client.subscribe({ query: BeepersLocation, variables: { topic: user.id } });
 
     sub = a.subscribe(({ data }) => {
-      console.log("Location Update", data.getLocationUpdates);
-
       client.writeQuery({
         query: GetUser,
         data: {
@@ -67,8 +65,7 @@ function LocationView(props: Props) {
 
   return (
     <Box>
-      <Text>{user.location?.latitude}, {user.location?.longitude}</Text>
-      <div style={{ height: 350, width: '100%' }}>
+      <div style={{ height: 450, width: '100%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
           defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}

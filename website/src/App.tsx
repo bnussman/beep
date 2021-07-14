@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { UserContext } from './UserContext';
 import { ThemeContext } from './ThemeContext';
-import { GetUserDataQuery } from './generated/graphql';
+import { GetUserDataQuery, User } from './generated/graphql';
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
 import { client } from './utils/Apollo';
 import Home from './routes/Home';
@@ -26,7 +26,7 @@ import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
 import Banners from './components/Banners';
 
-const toast = createStandaloneToast()
+const toast = createStandaloneToast();
 
 export const GetUserData = gql`
     query GetUserData {
@@ -162,7 +162,7 @@ function Beep() {
   return (
     <ApolloProvider client={client}>
       <ThemeContext.Provider value={{ theme, setTheme }}>
-        <UserContext.Provider value={data?.getUser}>
+        <UserContext.Provider value={data?.getUser as User}>
           <Router>
             <Box>
               <NavBar />
