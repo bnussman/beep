@@ -81,7 +81,6 @@ function LocationView(props: Props) {
         </GoogleMapReact>
       </div>
     </Box>
-
   );
 }
 

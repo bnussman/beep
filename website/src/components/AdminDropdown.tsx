@@ -16,7 +16,6 @@ export function AdminDropdown() {
         variant='outline'
         colorScheme="brand"
         size='md'
-        mr={4}
       >
         Admin
       </Button>

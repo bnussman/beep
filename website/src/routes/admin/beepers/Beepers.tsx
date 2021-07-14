@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client';
-import { GetBeeperListQuery } from '../../generated/graphql';
+import { GetBeeperListQuery, User } from '../../../generated/graphql';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import TdUser from '../../components/TdUser';
-import Loading from '../../components/Loading';
-import { Error } from '../../components/Error';
+import TdUser from '../../../components/TdUser';
+import Loading from '../../../components/Loading';
+import { Error } from '../../../components/Error';
+import BeepersMap from './BeepersMap';
 
 const BeepersGraphQL = gql`
     query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -23,6 +24,10 @@ const BeepersGraphQL = gql`
             isStudent
             queueSize
             masksRequired
+            location {
+              longitude
+              latitude
+            }
         }
     }
 `;
@@ -43,6 +48,7 @@ function Beepers() {
   return (
     <Box>
       <Heading>Beepers</Heading>
+      <BeepersMap beepers={data?.getBeeperList as User[]} />
       <Table>
         <Thead>
           <Tr>

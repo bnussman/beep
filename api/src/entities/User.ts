@@ -35,6 +35,7 @@ export class User {
     @Field()
     @Property()
     @Unique()
+    @Authorized('admin')
     email!: string;
 
     @Field()
@@ -51,7 +52,7 @@ export class User {
 
     @Field()
     @Property()
-    @Authorized("admin")
+    @Authorized('admin')
     password!: string;
 
     @Field()
@@ -96,6 +97,7 @@ export class User {
 
     @Field({ nullable: true })
     @Property({ nullable: true })
+    @Authorized('admin')
     pushToken?: string;
 
     @Field({ nullable: true })

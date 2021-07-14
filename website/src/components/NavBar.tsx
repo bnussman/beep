@@ -50,53 +50,58 @@ export default function NavBar() {
             </HStack>
           </HStack>
           <Flex alignItems={'center'}>
-            {(user && user.role === UserRole.ADMIN) &&
-              <AdminDropdown />
-            }
-            {user &&
-              <UserDropdown />
-            }
-            {!user &&
-              <Stack
-                flex={{ base: 1, md: 0 }}
-                justify={'flex-end'}
-                direction={'row'}
-                spacing={6}>
-                <Button
-                  as={Link}
-                  fontSize={'sm'}
-                  fontWeight={400}
-                  variant={'link'}
-                  to={'/login'}>
-                  Sign In
-                </Button>
-                <Button
-                  as={Link}
-                  fontSize={'sm'}
-                  fontWeight={600}
-                  color={'white'}
-                  bg={'yellow.400'}
-                  to='/signup'
-                  _hover={{
-                    bg: 'yellow.300',
-                  }}>
-                  Sign Up
-                </Button>
-              </Stack>
-            }
-            <ThemeToggle />
+            <Stack
+              flex={{ base: 1, md: 0 }}
+              justify={'flex-end'}
+              direction={'row'}
+              spacing={4}
+              alignItems='center'
+            >
+              <>
+                {(user && user.role === UserRole.ADMIN) &&
+                  <AdminDropdown />
+                }
+                {user &&
+                  <UserDropdown />
+                }
+                {!user &&
+                  <>
+                    <Button
+                      as={Link}
+                      fontSize={'sm'}
+                      fontWeight={400}
+                      variant={'link'}
+                      to={'/login'}>
+                      Sign In
+                    </Button>
+                    <Button
+                      as={Link}
+                      fontSize={'sm'}
+                      fontWeight={600}
+                      color={'white'}
+                      bg={'yellow.400'}
+                      to='/signup'
+                      _hover={{
+                        bg: 'yellow.300',
+                      }}>
+                      Sign Up
+                    </Button>
+                  </>
+                }
+                <ThemeToggle />
+              </>
+            </Stack>
           </Flex>
         </Flex>
-
-        {isOpen ? (
-          <Box pb={4}>
-            <Stack as={'nav'} spacing={4}>
-              <Link to='/faq'>FAQ</Link>
-              <Link to='/about'>About</Link>
-            </Stack>
-          </Box>
-        ) : null}
       </Box>
+      {isOpen ? (
+        <Box pb={4}>
+          <Stack as={'nav'} spacing={4}>
+            <Link to='/faq'>FAQ</Link>
+            <Link to='/about'>About</Link>
+          </Stack>
+        </Box>
+      ) : null}
     </>
   );
 }

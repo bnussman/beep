@@ -27,8 +27,14 @@ export class ReportsResolver {
     
     @Query(() => ReportsResponse)
     @Authorized(UserRole.ADMIN)
-    public async getReports(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<ReportsResponse> {
-        const [reports, count] = await ctx.em.findAndCount(Report, {}, { orderBy: { timestamp: QueryOrder.DESC }, limit: show, offset: offset, populate: ['reported', 'reporter'] });
+    public async getReports(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<ReportsResponse> {
+        const [reports, count] = await ctx.em.findAndCount(Report, {}, {
+          orderBy: { timestamp: QueryOrder.DESC },
+          limit: show,
+          offset: offset,
+          populate: ['reported', 'reporter'],
+          filters: id ? { in: { id } } : undefined
+        });
 
         return {
             items: reports,

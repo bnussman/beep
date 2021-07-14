@@ -3,7 +3,7 @@ import {
     Route,
     useRouteMatch
 } from "react-router-dom";
-import Beepers from './Beepers';
+import Beepers from './beepers/Beepers';
 import Users from './users';
 import User from './users/User';
 import EditUserPage from './users/Edit';
@@ -14,7 +14,7 @@ import Beeps from './beeps';
 import Beep from './beeps/Beep';
 import Ratings from './ratings';
 import Rating from './ratings/Rating';
-import {Container} from "@chakra-ui/react";
+import { Container } from "@chakra-ui/react";
 
 function Admin() {
   const match = useRouteMatch();
@@ -38,12 +38,16 @@ function Admin() {
           <Beep />
         </Route>
 
-        <Route exact path={`${match.path}/users/:userId`}>
+        <Route exact path={`${match.path}/users/:userId/edit`}>
+          <EditUserPage />
+        </Route>
+
+        <Route exact path={`${match.path}/users/:userId/:tab`}>
           <User />
         </Route>
 
-        <Route exact path={`${match.path}/users/:userId/edit`}>
-          <EditUserPage />
+        <Route exact path={`${match.path}/users/:userId`}>
+          <User />
         </Route>
 
         <Route exact path={`${match.path}/reports`}>

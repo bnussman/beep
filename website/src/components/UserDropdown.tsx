@@ -23,58 +23,58 @@ const Logout = gql`
 `;
 
 export function UserDropdown() {
-    const user = useContext(UserContext);
-    const [logout] = useMutation<LogoutMutation>(Logout);
-    const history = useHistory();
+  const user = useContext(UserContext);
+  const [logout] = useMutation<LogoutMutation>(Logout);
+  const history = useHistory();
 
-    async function handleLogout() {
-        try {
-            client.writeQuery({
-                query: GetUserData,
-                data: {
-                    getUser: null
-                }
-            });
-            history.push("/");
-
-            await logout();
-            localStorage.removeItem('user');
-
+  async function handleLogout() {
+    try {
+      client.writeQuery({
+        query: GetUserData,
+        data: {
+          getUser: null
         }
-        catch (error) {
-            console.error(error);
-        }
+      });
+      history.push("/");
+
+      await logout();
+      localStorage.removeItem('user');
+
     }
+    catch (error) {
+      console.error(error);
+    }
+  }
 
-    return (
-        <Menu>
-            <MenuButton
-                as={Button}
-                rounded={'full'}
-                variant={'link'}
-                cursor={'pointer'}>
-                <Avatar
-                    size={'sm'}
-                    src={user.photoUrl}
-                >
-                    {user.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
-                </Avatar>
-            </MenuButton>
-            <MenuList>
-                <MenuItem isDisabled>
-                    @{user.username}
-                </MenuItem>
-                <MenuItem as={Link} to={`/profile/edit`}>
-                    Edit Account
-                </MenuItem>
-                <MenuItem as={Link} to="/password/change">
-                    Change Password
-                </MenuItem>
-                <MenuDivider />
-                <MenuItem onClick={() => handleLogout()}>
-                    Sign out
-                </MenuItem>
-            </MenuList>
-        </Menu>
-    );
+  return (
+    <Menu>
+      <MenuButton
+        as={Button}
+        rounded={'full'}
+        variant={'link'}
+        cursor={'pointer'}>
+        <Avatar
+          size={'sm'}
+          src={user.photoUrl}
+        >
+          {user.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
+        </Avatar>
+      </MenuButton>
+      <MenuList>
+        <MenuItem isDisabled>
+          @{user.username}
+        </MenuItem>
+        <MenuItem as={Link} to={`/profile/edit`}>
+          Edit Account
+        </MenuItem>
+        <MenuItem as={Link} to="/password/change">
+          Change Password
+        </MenuItem>
+        <MenuDivider />
+        <MenuItem onClick={() => handleLogout()}>
+          Sign out
+        </MenuItem>
+      </MenuList>
+    </Menu>
+  );
 }

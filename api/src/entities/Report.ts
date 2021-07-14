@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, Filter, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { v4 } from "uuid";
 import { Beep } from "./Beep";
@@ -6,6 +6,7 @@ import { User } from "./User";
 
 @ObjectType()
 @Entity()
+@Filter({ name: 'in', cond: args => ({ $or: [{ reporter: args.id } , { reported: args.id }] })})
 export class Report {
 
     @PrimaryKey()
