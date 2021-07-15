@@ -54,8 +54,8 @@ export const GetUserData = gql`
 `;
 
 const UserUpdates = gql`
-  subscription UserUpdates($topic: String!) {
-    getUserUpdates(topic: $topic) {
+  subscription UserUpdates($id: String!) {
+    getUserUpdates(id: $id) {
       id
       name
       first
@@ -116,7 +116,7 @@ function Beep() {
       subscribeToMore({
         document: UserUpdates,
         variables: {
-          topic: data?.getUser.id
+          id: data?.getUser.id
         },
         updateQuery: (prev, { subscriptionData }) => {
           toast({

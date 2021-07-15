@@ -354,6 +354,7 @@ export type QueryGetRatingArgs = {
 
 
 export type QueryGetReportsArgs = {
+  id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
   query?: Maybe<Scalars['String']>;
@@ -477,22 +478,22 @@ export type Subscription = {
 
 
 export type SubscriptionGetLocationUpdatesArgs = {
-  topic: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
 export type SubscriptionGetBeeperUpdatesArgs = {
-  topic: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
 export type SubscriptionGetRiderUpdatesArgs = {
-  topic: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
 export type SubscriptionGetUserUpdatesArgs = {
-  topic: Scalars['String'];
+  id: Scalars['String'];
 };
 
 export type Suggestion = {
@@ -574,7 +575,7 @@ export type GetUserDataQuery = (
 );
 
 export type UserUpdatesSubscriptionVariables = Exact<{
-  topic: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -778,7 +779,7 @@ export type GetInitialQueueQuery = (
 );
 
 export type GetQueueSubscriptionVariables = Exact<{
-  topic: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -866,7 +867,7 @@ export type GetInitialRiderStatusQuery = (
 );
 
 export type RiderStatusSubscriptionVariables = Exact<{
-  topic: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -887,7 +888,7 @@ export type RiderStatusSubscription = (
 );
 
 export type BeepersLocationSubscriptionVariables = Exact<{
-  topic: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -1033,8 +1034,8 @@ export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
 export type GetUserDataLazyQueryHookResult = ReturnType<typeof useGetUserDataLazyQuery>;
 export type GetUserDataQueryResult = ApolloReactCommon.QueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
 export const UserUpdatesDocument = gql`
-    subscription UserUpdates($topic: String!) {
-  getUserUpdates(topic: $topic) {
+    subscription UserUpdates($id: String!) {
+  getUserUpdates(id: $id) {
     id
     username
     name
@@ -1068,7 +1069,7 @@ export const UserUpdatesDocument = gql`
  * @example
  * const { data, loading, error } = useUserUpdatesSubscription({
  *   variables: {
- *      topic: // value for 'topic'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1562,8 +1563,8 @@ export type GetInitialQueueQueryHookResult = ReturnType<typeof useGetInitialQueu
 export type GetInitialQueueLazyQueryHookResult = ReturnType<typeof useGetInitialQueueLazyQuery>;
 export type GetInitialQueueQueryResult = ApolloReactCommon.QueryResult<GetInitialQueueQuery, GetInitialQueueQueryVariables>;
 export const GetQueueDocument = gql`
-    subscription GetQueue($topic: String!) {
-  getBeeperUpdates(topic: $topic) {
+    subscription GetQueue($id: String!) {
+  getBeeperUpdates(id: $id) {
     id
     isAccepted
     groupSize
@@ -1597,7 +1598,7 @@ export const GetQueueDocument = gql`
  * @example
  * const { data, loading, error } = useGetQueueSubscription({
  *   variables: {
- *      topic: // value for 'topic'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1825,8 +1826,8 @@ export type GetInitialRiderStatusQueryHookResult = ReturnType<typeof useGetIniti
 export type GetInitialRiderStatusLazyQueryHookResult = ReturnType<typeof useGetInitialRiderStatusLazyQuery>;
 export type GetInitialRiderStatusQueryResult = ApolloReactCommon.QueryResult<GetInitialRiderStatusQuery, GetInitialRiderStatusQueryVariables>;
 export const RiderStatusDocument = gql`
-    subscription RiderStatus($topic: String!) {
-  getRiderUpdates(topic: $topic) {
+    subscription RiderStatus($id: String!) {
+  getRiderUpdates(id: $id) {
     id
     position
     isAccepted
@@ -1871,7 +1872,7 @@ export const RiderStatusDocument = gql`
  * @example
  * const { data, loading, error } = useRiderStatusSubscription({
  *   variables: {
- *      topic: // value for 'topic'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1882,8 +1883,8 @@ export function useRiderStatusSubscription(baseOptions: ApolloReactHooks.Subscri
 export type RiderStatusSubscriptionHookResult = ReturnType<typeof useRiderStatusSubscription>;
 export type RiderStatusSubscriptionResult = ApolloReactCommon.SubscriptionResult<RiderStatusSubscription>;
 export const BeepersLocationDocument = gql`
-    subscription BeepersLocation($topic: String!) {
-  getLocationUpdates(topic: $topic) {
+    subscription BeepersLocation($id: String!) {
+  getLocationUpdates(id: $id) {
     latitude
     longitude
   }
@@ -1902,7 +1903,7 @@ export const BeepersLocationDocument = gql`
  * @example
  * const { data, loading, error } = useBeepersLocationSubscription({
  *   variables: {
- *      topic: // value for 'topic'
+ *      id: // value for 'id'
  *   },
  * });
  */

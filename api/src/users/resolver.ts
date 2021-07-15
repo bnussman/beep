@@ -22,13 +22,7 @@ export class UserResolver {
     public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
         const relationPaths = fieldsToRelations(info).filter((key: string) => key !== 'location');
 
-        const user = await ctx.em.findOne(User, id || ctx.user.id, { populate: relationPaths, refresh: true });
-
-        if (!user) {
-            throw new Error("User not found");
-        }
-
-        return user;
+        return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate: relationPaths, refresh: true });
     }
 
     @Mutation(() => Boolean)
@@ -81,7 +75,7 @@ export class UserResolver {
     }
 
     @Query(() => [QueueEntry])
-    @Authorized()
+    @Authorized('self')
     public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
         const relationPaths = fieldsToRelations(info);
 
@@ -91,9 +85,10 @@ export class UserResolver {
     }
 
     @Subscription(() => User, {
-        topics: ({ args }) => "User" + args.topic,
+        topics: ({ args }) => "User" + args.id,
     })
-    public getUserUpdates(@Arg("topic") topic: string, @Root() user: User): User {
+    @Authorized('self')
+    public getUserUpdates(@Arg("id") id: string, @Root() user: User): User {
         return user;
     }
 }

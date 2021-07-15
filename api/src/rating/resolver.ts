@@ -47,7 +47,7 @@ export class RatingResolver {
     }
 
     @Query(() => RatingsResponse)
-    @Authorized()
+    @Authorized('self')
     public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<RatingsResponse> {
         const [ratings, count] = await ctx.em.findAndCount(Rating, {}, {
             orderBy: { timestamp: QueryOrder.DESC },
@@ -64,7 +64,7 @@ export class RatingResolver {
     }
 
     @Query(() => Rating)
-    @Authorized()
+    @Authorized(UserRole.ADMIN)
     public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
         return await ctx.em.findOneOrFail(Rating, id, fieldsToRelations(info));
     }

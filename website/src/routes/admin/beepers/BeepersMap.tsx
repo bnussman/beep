@@ -25,6 +25,7 @@ function BeepersMap(props: Props) {
       >
         {beepers?.map((beeper: User) => (
           <Marker
+            key={beeper.id}
             lat={beeper.location!.latitude}
             lng={beeper.location!.longitude}
             text={beeper.name}

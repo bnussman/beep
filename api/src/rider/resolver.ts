@@ -141,9 +141,10 @@ export class RiderResolver {
 
     @Subscription(() => QueueEntry, {
         nullable: true,
-        topics: ({ args }) => "Rider" + args.topic,
+        topics: ({ args }) => "Rider" + args.id,
     })
-    public getRiderUpdates(@Arg("topic") topic: string, @Root() entry: QueueEntry): QueueEntry | null {
+    @Authorized('self')
+    public getRiderUpdates(@Arg("id") id: string, @Root() entry: QueueEntry): QueueEntry | null {
         return entry;
     }
 }

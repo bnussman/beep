@@ -12,8 +12,8 @@ interface Props {
 }
 
 const BeepersLocation = gql`
-    subscription BeepersLocation($topic: String!) {
-        getLocationUpdates(topic: $topic) {
+    subscription BeepersLocation($id: String!) {
+        getLocationUpdates(id: $id) {
             latitude
             longitude
         }
@@ -26,7 +26,7 @@ function LocationView(props: Props) {
   const { user } = props;
 
   async function subscribe() {
-    const a = client.subscribe({ query: BeepersLocation, variables: { topic: user.id } });
+    const a = client.subscribe({ query: BeepersLocation, variables: { id: user.id } });
 
     sub = a.subscribe(({ data }) => {
       client.writeQuery({

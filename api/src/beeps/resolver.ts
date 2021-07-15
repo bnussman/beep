@@ -13,7 +13,7 @@ class BeepsResponse extends Paginated(Beep) {}
 export class BeepResolver {
    
     @Query(() => BeepsResponse)
-    @Authorized()
+    @Authorized('self')
     public async getBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<BeepsResponse> {
         const [beeps, count] = await ctx.em.findAndCount(
             Beep,

@@ -36,9 +36,9 @@ export class LocationResolver {
 
     @Subscription(() => Point, {
         nullable: true,
-        topics: ({ args }) => "Location" + args.topic,
+        topics: ({ args }) => "Location" + args.id,
     })
-    public getLocationUpdates(@Arg("topic") topic: string, @Root() entry: LocationInput): Point {
+    public getLocationUpdates(@Arg("id") id: string, @Root() entry: LocationInput): Point {
         return {
             latitude: entry.latitude,
             longitude: entry.longitude,

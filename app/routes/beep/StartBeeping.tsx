@@ -69,8 +69,8 @@ const GetInitialQueue = gql`
 `;
 
 const GetQueue = gql`
-    subscription GetQueue($topic: String!) {
-        getBeeperUpdates(topic: $topic) {
+    subscription GetQueue($id: String!) {
+        getBeeperUpdates(id: $id) {
             id
             isAccepted
             groupSize
@@ -253,7 +253,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     unsubscribe = subscribeToMore({
       document: GetQueue,
       variables: {
-        topic: user.id
+        id: user.id
       },
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-expect-error This works so I'm leaving it as is

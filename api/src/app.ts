@@ -69,29 +69,32 @@ export default class BeepAPIServer {
             schema,
             subscriptions: {
                 path: "/subscriptions",
-                //@ts-ignore
-                onConnect: async (params: { token: string }) => {
-                    if (!params || !params.token) throw new Error("No auth token");
+                // @ts-expect-error Apollo >:(
+              onConnect: async (params: { token: string }) => {
+                if (!params || !params.token) throw new Error("No auth token");
 
-                    const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, params.token, { populate: ['user'] });
-                    
-                    if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
-                }
+                const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, params.token, { populate: ['user'] });
+
+                if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
+              }
             },
-            context: async ({ ctx }) => {
+            context: async (data) => {
+                // Connection contains data passed from subscriptions onConnect return value
+                const { ctx, connection } = data;
+
                 const em = BeepORM.em.fork();
 
-                if (!ctx) return { em };
+                if (!ctx) return { em, user: connection?.context?.user };
 
                 const authHeader = ctx.request.header.authorization;
 
                 if (!authHeader) {
-                    return { em };
+                    return { em, user: connection?.context?.user };
                 }
 
                 const token: string | undefined = authHeader.split(" ")[1];
 
-                if (!token) return { em };
+                if (!token) return { em, user: connection?.context?.user };
 
                 const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
 

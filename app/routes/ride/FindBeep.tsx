@@ -54,8 +54,8 @@ const InitialRiderStatus = gql`
 `;
 
 const RiderStatus = gql`
-    subscription RiderStatus($topic: String!) {
-        getRiderUpdates(topic: $topic) {
+    subscription RiderStatus($id: String!) {
+        getRiderUpdates(id: $id) {
             id
             position
             isAccepted
@@ -89,8 +89,8 @@ const RiderStatus = gql`
 `;
 
 const BeepersLocation = gql`
-    subscription BeepersLocation($topic: String!) {
-        getLocationUpdates(topic: $topic) {
+    subscription BeepersLocation($id: String!) {
+        getLocationUpdates(id: $id) {
             latitude
             longitude
         }
@@ -124,7 +124,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     const destinationRef = useRef<any>();
     
     async function subscribeToLocation() {
-        const a = client.subscribe({ query: BeepersLocation, variables: { topic: data?.getRiderStatus?.beeper.id }});
+        const a = client.subscribe({ query: BeepersLocation, variables: { id: data?.getRiderStatus?.beeper.id }});
 
         sub = a.subscribe(({ data }) => {
             updateETA(data.getLocationUpdates.latitude, data.getLocationUpdates.longitude);
@@ -146,7 +146,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             subscribeToMore({
                 document: RiderStatus,
                 variables: {
-                    topic: user.id
+                    id: user.id
                 },
                 updateQuery: (prev, { subscriptionData }) => {
                     // @ts-expect-error This works, so I'm not changing it

@@ -353,6 +353,7 @@ export type QueryGetRatingArgs = {
 
 
 export type QueryGetReportsArgs = {
+  id?: Maybe<Scalars['String']>;
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
   query?: Maybe<Scalars['String']>;
@@ -476,22 +477,22 @@ export type Subscription = {
 
 
 export type SubscriptionGetLocationUpdatesArgs = {
-  topic: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
 export type SubscriptionGetBeeperUpdatesArgs = {
-  topic: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
 export type SubscriptionGetRiderUpdatesArgs = {
-  topic: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
 export type SubscriptionGetUserUpdatesArgs = {
-  topic: Scalars['String'];
+  id: Scalars['String'];
 };
 
 export type Suggestion = {
@@ -573,7 +574,7 @@ export type GetUserDataQuery = (
 );
 
 export type UserUpdatesSubscriptionVariables = Exact<{
-  topic: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -591,6 +592,23 @@ export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
 export type ResendEmailMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'resendEmailVarification'>
+);
+
+export type GetQueueSubscriptionVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetQueueSubscription = (
+  { __typename?: 'Subscription' }
+  & { getBeeperUpdates: Array<(
+    { __typename?: 'QueueEntry' }
+    & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize' | 'isAccepted' | 'state'>
+    & { rider: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
+    ) }
+  )> }
 );
 
 export type GetRatingsQueryVariables = Exact<{
@@ -612,6 +630,35 @@ export type GetRatingsQuery = (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
       ), rated: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
+      ) }
+    )> }
+  ) }
+);
+
+export type GetReportsQueryVariables = Exact<{
+  id?: Maybe<Scalars['String']>;
+  show?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetReportsQuery = (
+  { __typename?: 'Query' }
+  & { getReports: (
+    { __typename?: 'ReportsResponse' }
+    & Pick<ReportsResponse, 'count'>
+    & { items: Array<(
+      { __typename?: 'Report' }
+      & Pick<Report, 'id' | 'timestamp' | 'reason' | 'handled'>
+      & { handledBy?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
+      )>, reporter: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
+      ), reported: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
       ) }
@@ -788,6 +835,10 @@ export type GetBeeperListQuery = (
   & { getBeeperList: Array<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username' | 'name' | 'photoUrl' | 'singlesRate' | 'groupRate' | 'capacity' | 'isStudent' | 'queueSize' | 'masksRequired'>
+    & { location?: Maybe<(
+      { __typename?: 'Point' }
+      & Pick<Point, 'longitude' | 'latitude'>
+    )> }
   )> }
 );
 
@@ -1008,7 +1059,7 @@ export type EditUserMutation = (
 );
 
 export type BeepersLocationSubscriptionVariables = Exact<{
-  topic: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
@@ -1117,8 +1168,8 @@ export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
 export type GetUserDataLazyQueryHookResult = ReturnType<typeof useGetUserDataLazyQuery>;
 export type GetUserDataQueryResult = Apollo.QueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
 export const UserUpdatesDocument = gql`
-    subscription UserUpdates($topic: String!) {
-  getUserUpdates(topic: $topic) {
+    subscription UserUpdates($id: String!) {
+  getUserUpdates(id: $id) {
     id
     name
     first
@@ -1154,7 +1205,7 @@ export const UserUpdatesDocument = gql`
  * @example
  * const { data, loading, error } = useUserUpdatesSubscription({
  *   variables: {
- *      topic: // value for 'topic'
+ *      id: // value for 'id'
  *   },
  * });
  */
@@ -1194,6 +1245,50 @@ export function useResendEmailMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMutation>;
 export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
 export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
+export const GetQueueDocument = gql`
+    subscription GetQueue($id: String!) {
+  getBeeperUpdates(id: $id) {
+    id
+    origin
+    destination
+    start
+    groupSize
+    isAccepted
+    state
+    rider {
+      id
+      photoUrl
+      username
+      first
+      last
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetQueueSubscription__
+ *
+ * To run a query within a React component, call `useGetQueueSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useGetQueueSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQueueSubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetQueueSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetQueueSubscription, GetQueueSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<GetQueueSubscription, GetQueueSubscriptionVariables>(GetQueueDocument, options);
+      }
+export type GetQueueSubscriptionHookResult = ReturnType<typeof useGetQueueSubscription>;
+export type GetQueueSubscriptionResult = Apollo.SubscriptionResult<GetQueueSubscription>;
 export const GetRatingsDocument = gql`
     query GetRatings($id: String, $show: Int, $offset: Int) {
   getRatings(id: $id, show: $show, offset: $offset) {
@@ -1249,6 +1344,67 @@ export function useGetRatingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetRatingsQueryHookResult = ReturnType<typeof useGetRatingsQuery>;
 export type GetRatingsLazyQueryHookResult = ReturnType<typeof useGetRatingsLazyQuery>;
 export type GetRatingsQueryResult = Apollo.QueryResult<GetRatingsQuery, GetRatingsQueryVariables>;
+export const GetReportsDocument = gql`
+    query GetReports($id: String, $show: Int, $offset: Int) {
+  getReports(id: $id, show: $show, offset: $offset) {
+    items {
+      id
+      timestamp
+      reason
+      handled
+      handledBy {
+        id
+        name
+        photoUrl
+        username
+      }
+      reporter {
+        id
+        name
+        photoUrl
+        username
+      }
+      reported {
+        id
+        name
+        photoUrl
+        username
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetReportsQuery__
+ *
+ * To run a query within a React component, call `useGetReportsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReportsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetReportsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      show: // value for 'show'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetReportsQuery(baseOptions?: Apollo.QueryHookOptions<GetReportsQuery, GetReportsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetReportsQuery, GetReportsQueryVariables>(GetReportsDocument, options);
+      }
+export function useGetReportsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReportsQuery, GetReportsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetReportsQuery, GetReportsQueryVariables>(GetReportsDocument, options);
+        }
+export type GetReportsQueryHookResult = ReturnType<typeof useGetReportsQuery>;
+export type GetReportsLazyQueryHookResult = ReturnType<typeof useGetReportsLazyQuery>;
+export type GetReportsQueryResult = Apollo.QueryResult<GetReportsQuery, GetReportsQueryVariables>;
 export const GetBeepsDocument = gql`
     query GetBeeps($id: String, $show: Int, $offset: Int) {
   getBeeps(id: $id, show: $show, offset: $offset) {
@@ -1668,6 +1824,10 @@ export const GetBeeperListDocument = gql`
     isStudent
     queueSize
     masksRequired
+    location {
+      longitude
+      latitude
+    }
   }
 }
     `;
@@ -2246,8 +2406,8 @@ export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = Apollo.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = Apollo.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
 export const BeepersLocationDocument = gql`
-    subscription BeepersLocation($topic: String!) {
-  getLocationUpdates(topic: $topic) {
+    subscription BeepersLocation($id: String!) {
+  getLocationUpdates(id: $id) {
     latitude
     longitude
   }
@@ -2266,7 +2426,7 @@ export const BeepersLocationDocument = gql`
  * @example
  * const { data, loading, error } = useBeepersLocationSubscription({
  *   variables: {
- *      topic: // value for 'topic'
+ *      id: // value for 'id'
  *   },
  * });
  */
