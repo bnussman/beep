@@ -5,50 +5,51 @@ import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graph
 import { Error } from '../../../components/Error';
 import { Success } from '../../../components/Success';
 import React from "react";
-import { Box, Button, Center, Checkbox, FormControl, FormLabel, Heading, Input, Spinner } from "@chakra-ui/react";
+import { Box, Button, Checkbox, FormControl, FormLabel, Heading, Input } from "@chakra-ui/react";
+import Loading from "../../../components/Loading";
 
 const GetEditableUser = gql`
-    query GetEditableUser($id: String!) {
-        getUser(id: $id) {
-            first
-            last
-            isBeeping
-            isStudent
-            isEmailVerified
-            role
-            venmo
-            singlesRate
-            groupRate
-            capacity
-            masksRequired
-            photoUrl
-            queueSize
-            phone
-            username
-            email
-            cashapp
-            pushToken
-        }
+  query GetEditableUser($id: String!) {
+    getUser(id: $id) {
+      first
+      last
+      isBeeping
+      isStudent
+      isEmailVerified
+      role
+      venmo
+      singlesRate
+      groupRate
+      capacity
+      masksRequired
+      photoUrl
+      queueSize
+      phone
+      username
+      email
+      cashapp
+      pushToken
     }
+  }
 `;
 
 const EditUser = gql`
-    mutation EditUser($id: String!, $data: EditUserValidator!) {
-        editUser(id: $id, data: $data) {
-            username
-        }
+  mutation EditUser($id: String!, $data: EditUserValidator!) {
+    editUser(id: $id, data: $data) {
+      username
     }
+  }
 `;
 
 function EditUserPage() {
-  const { userId } = useParams<{ userId: string }>();
-  const { data: user, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, { variables: { id: userId } });
+  const { id } = useParams<{ id: string }>();
+  const { data: user, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, { variables: { id } });
   const [edit, { data, error: editError }] = useMutation<EditUserMutation>(EditUser);
 
   async function updateUser(values: any) {
     await edit({
       variables: {
-        id: userId,
+        id,
         data: values
       }
     })
@@ -57,15 +58,12 @@ function EditUserPage() {
   return (
     <Box>
       <Heading>Edit User</Heading>
+
       {data && <Success message="Successfully Edited User" />}
       {error && <Error error={error} />}
       {editError && <Error error={editError} />}
 
-      {loading &&
-        <Center h="100px">
-          <Spinner size="xl" />
-        </Center>
-      }
+      {loading && <Loading />}
 
       {user?.getUser && !loading &&
         <Formik
@@ -115,7 +113,7 @@ function EditUserPage() {
                 isLoading={isSubmitting}
               >
                 Update User
-            </Button>
+              </Button>
             </Form>
           )}
         </Formik>

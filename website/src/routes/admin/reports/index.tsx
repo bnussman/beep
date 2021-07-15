@@ -14,35 +14,42 @@ import { Error } from '../../../components/Error';
 dayjs.extend(relativeTime);
 
 export const ReportsGraphQL = gql`
-    query getReports($show: Int, $offset: Int) {
-        getReports(show: $show, offset: $offset) {
-            items {
-                id
-                timestamp
-                reason
-                notes
-                handled
-                reporter {
-                    id
-                    name
-                    photoUrl
-                    username
-                }
-                reported {
-                    id
-                    name
-                    photoUrl
-                    username
-                }
-            }
-            count
+  query getReports($show: Int, $offset: Int) {
+    getReports(show: $show, offset: $offset) {
+      items {
+        id
+        timestamp
+        reason
+        notes
+        handled
+        reporter {
+          id
+          name
+          photoUrl
+          username
         }
+        reported {
+          id
+          name
+          photoUrl
+          username
+        }
+      }
+      count
     }
+  }
 `;
 
 function Reports() {
   const pageLimit = 25;
-  const { data, loading, error, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, { variables: { offset: 0, show: pageLimit } });
+
+  const { data, loading, error, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, {
+    variables: {
+      offset: 0,
+      show: pageLimit
+    }
+  });
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [id, setId] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -85,18 +92,18 @@ function Reports() {
         </Thead>
         <Tbody>
           {data?.getReports && (data.getReports.items).map(report => (
-              <Tr key={report.id} onClick={() => openReport(report.id)}>
-                <TdUser user={report.reporter} />
-                <TdUser user={report.reported} />
-                <Td>{report.reason}</Td>
-                <Td>{dayjs().to(report.timestamp)}</Td>
-                <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
-                <Td>
-                  <Button colorScheme="brand" onClick={() => openReport(report.id)}>
-                    Open
-                  </Button>
-                </Td>
-              </Tr>
+            <Tr key={report.id} onClick={() => openReport(report.id)}>
+              <TdUser user={report.reporter} />
+              <TdUser user={report.reported} />
+              <Td>{report.reason}</Td>
+              <Td>{dayjs().to(report.timestamp)}</Td>
+              <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
+              <Td>
+                <Button colorScheme="brand" onClick={() => openReport(report.id)}>
+                  Open
+                </Button>
+              </Td>
+            </Tr>
           ))}
         </Tbody>
       </Table>

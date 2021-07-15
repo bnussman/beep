@@ -20,93 +20,94 @@ import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
 import NavBar from './components/NavBar';
 import About from './routes/About';
-import { ChakraProvider, extendTheme, Container, Box } from "@chakra-ui/react"
+import { ChakraProvider, Container, Box } from "@chakra-ui/react"
 import { createStandaloneToast } from "@chakra-ui/react"
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
 import Banners from './components/Banners';
-
-const toast = createStandaloneToast();
+import { theme } from './utils/theme';
 
 export const GetUserData = gql`
-    query GetUserData {
-        getUser {
-            id
-            name
-            first
-            last
-            email
-            phone
-            venmo
-            isBeeping
-            isEmailVerified
-            isStudent
-            groupRate
-            singlesRate
-            photoUrl
-            capacity
-            masksRequired
-            username
-            role
-            cashapp
-            queueSize
-        }
+  query GetUserData {
+    getUser {
+      id
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      username
+      role
+      cashapp
+      queueSize
     }
+  }
 `;
 
 const UserUpdates = gql`
-    subscription UserUpdates($topic: String!) {
-        getUserUpdates(topic: $topic) {
-            id
-            name
-            first
-            last
-            email
-            phone
-            venmo
-            isBeeping
-            isEmailVerified
-            isStudent
-            groupRate
-            singlesRate
-            photoUrl
-            capacity
-            masksRequired
-            username
-            role
-            cashapp
-            queueSize
-        }
+  subscription UserUpdates($topic: String!) {
+    getUserUpdates(topic: $topic) {
+      id
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      username
+      role
+      cashapp
+      queueSize
     }
+  }
 `;
 
 function getInitialTheme(): string {
-  const storedPrefs = window.localStorage.getItem("color-theme");
+  const storedPrefs = window.localStorage.getItem("theme");
 
   if (storedPrefs) {
-    const root = window.document.documentElement
-    const isDark = storedPrefs === "dark";
+    const root = window.document.documentElement;
 
-    root.classList.remove(isDark ? "light" : "dark")
+    root.classList.remove(storedPrefs === "dark" ? "light" : "dark")
     root.classList.add(storedPrefs)
+
     return storedPrefs;
   }
 
-  return storedPrefs || "light";
+  return "light";
 }
+
+const toast = createStandaloneToast({ theme });
 
 function Beep() {
   const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
   const [theme, setInternalTheme] = useState<string>(getInitialTheme());
 
   function setTheme(theme: string) {
-    const root = window.document.documentElement
-    const isDark = theme === "dark";
+    const root = window.document.documentElement;
 
-    root.classList.remove(isDark ? "light" : "dark")
-    root.classList.add(theme)
+    root.classList.remove(theme === "dark" ? "light" : "dark");
+    root.classList.add(theme);
 
-    localStorage.setItem("color-theme", theme)
+    localStorage.setItem("color-theme", theme);
+
     setInternalTheme(theme);
   }
 
@@ -118,33 +119,13 @@ function Beep() {
           topic: data?.getUser.id
         },
         updateQuery: (prev, { subscriptionData }) => {
-          if (prev.getUser.queueSize < subscriptionData.data.getUser.queueSize) {
-            toast({
-              title: "A user was accepted into your queue!",
-              description: "Use your Beep App to manage your riders!",
-              status: "info",
-              duration: 5000,
-              isClosable: true,
-            })
-          }
-          else if (prev.getUser.queueSize > subscriptionData.data.getUser.queueSize) {
-            toast({
-              title: "A rider left your queue!",
-              description: "Use your Beep App to manage your riders!",
-              status: "info",
-              duration: 5000,
-              isClosable: true,
-            })
-          }
-          else {
-            toast({
-              title: "Profile Updated",
-              description: "Your account has been updated",
-              status: "success",
-              duration: 5000,
-              isClosable: true,
-            })
-          }
+          toast({
+            title: "Profile Updated",
+            description: "Your account has been updated",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          })
           //@ts-ignore
           const newFeedItem = subscriptionData.data.getUserUpdates;
           return Object.assign({}, prev, {
@@ -153,8 +134,6 @@ function Beep() {
         }
       });
     }
-    //}, [data?.getUser?.id]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.getUser?.id]);
 
   if (loading) return null;
@@ -192,26 +171,6 @@ function Beep() {
     </ApolloProvider>
   );
 }
-const theme = extendTheme({
-  fonts: {
-    heading: "poppins",
-    body: "poppins",
-  },
-  colors: {
-    brand: {
-      100: "#FFF9CC",
-      200: "#FFE041",
-      300: "#FFE967",
-      400: "#FFE041",
-      500: "#FFD203",
-      600: "#DBB002",
-      700: "#B79001",
-      800: "#937100",
-      900: "#7A5B00",
-    },
-  },
-})
-
 
 function App() {
   return (

@@ -14,29 +14,29 @@ import { Error } from '../../../components/Error';
 dayjs.extend(relativeTime);
 
 export const RatesGraphQL = gql`
-    query getRatings($show: Int, $offset: Int) {
-        getRatings(show: $show, offset: $offset) {
-            items {
-                id
-                timestamp
-                message
-                stars
-                rater {
-                    id
-                    name
-                    photoUrl
-                    username
-                }
-                rated {
-                    id
-                    name
-                    photoUrl
-                    username
-                }
-            }
-            count
+  query getRatings($show: Int, $offset: Int) {
+    getRatings(show: $show, offset: $offset) {
+      items {
+        id
+        timestamp
+        message
+        stars
+        rater {
+          id
+          name
+          photoUrl
+          username
         }
+        rated {
+          id
+          name
+          photoUrl
+          username
+        }
+      }
+      count
     }
+  }
 `;
 
 export function printStars(rating: number): string {
@@ -51,8 +51,13 @@ export function printStars(rating: number): string {
 
 function Ratings() {
   const pageLimit = 25;
-  const { data, loading, error, refetch } = useQuery<GetRatingsQuery>(RatesGraphQL, { variables: { offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const { data, loading, error, refetch } = useQuery<GetRatingsQuery>(RatesGraphQL, {
+    variables: {
+      offset: 0,
+      show: pageLimit
+    }
+  });
 
   async function fetchRatings(page: number) {
     refetch({

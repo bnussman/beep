@@ -9,9 +9,9 @@ import { Box, Button, FormControl, FormHelperText, FormLabel, Input } from '@cha
 import { EmailIcon } from '@chakra-ui/icons';
 
 const ForgotPasswordGraphQL = gql`
-    mutation ForgotPassword($email: String!) {
-        forgotPassword(email: $email)
-    }
+  mutation ForgotPassword($email: String!) {
+    forgotPassword(email: $email)
+  }
 `;
 
 function ForgotPassword() {
@@ -29,7 +29,6 @@ function ForgotPassword() {
       });
     }
     catch (error) {
-      console.error('Error:', error);
     }
   }
 

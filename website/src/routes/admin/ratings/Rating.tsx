@@ -7,44 +7,45 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteRatingMutation, GetRatingQuery } from '../../../generated/graphql';
 import React from "react";
 import { Heading, Text, Box, Button, Flex, Spacer, Center, Spinner } from "@chakra-ui/react";
-import { printStars, RatesGraphQL } from ".";
+import { printStars } from ".";
 import { Error } from '../../../components/Error';
 import BasicUser from "../../../components/BasicUser";
 import DeleteDialog from "../../../components/DeleteDialog";
 import { DeleteIcon } from "@chakra-ui/icons";
+import Loading from "../../../components/Loading";
 
 dayjs.extend(relativeTime);
 
 const DeleteRating = gql`
-    mutation DeleteRating($id: String!) {
-        deleteRating(id: $id)
-    }
+  mutation DeleteRating($id: String!) {
+    deleteRating(id: $id)
+  }
 `;
 
 const GetRating = gql`
-    query GetRating($id: String!) {
-        getRating(id: $id) {
-            id
-            message
-            stars
-            timestamp
-            beep {
-                id
-            }
-            rater {
-                id
-                name
-                photoUrl
-                username
-            }
-            rated {
-                id
-                name
-                photoUrl
-                username
-            }
-        }
+  query GetRating($id: String!) {
+    getRating(id: $id) {
+      id
+      message
+      stars
+      timestamp
+      beep {
+        id
+      }
+      rater {
+        id
+        name
+        photoUrl
+        username
+      }
+      rated {
+        id
+        name
+        photoUrl
+        username
+      }
     }
+  }
 `;
 
 function RatingPage() {
@@ -68,21 +69,16 @@ function RatingPage() {
         <Heading>Rating</Heading>
         <Spacer />
         <Button
-            colorScheme="red"
-            leftIcon={<DeleteIcon />}
-            onClick={() => setIsOpen(true)}
+          colorScheme="red"
+          leftIcon={<DeleteIcon />}
+          onClick={() => setIsOpen(true)}
         >
-            Delete
+          Delete
         </Button>
       </Flex>
 
       {error && <Error error={error} />}
-
-      {loading &&
-        <Center h="100px">
-          <Spinner size="xl" />
-        </Center>
-      }
+      {loading && <Loading />}
 
       {data?.getRating &&
         <Box>

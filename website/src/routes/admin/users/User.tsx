@@ -2,9 +2,9 @@ import React from 'react';
 import { useParams } from "react-router-dom";
 import UserProfile from '../../../components/UserProfile';
 import { gql, useQuery } from '@apollo/client';
-import { GetUserQuery } from '../../../generated/graphql';
-import { Center, Spinner } from "@chakra-ui/react";
+import { GetUserQuery, User } from '../../../generated/graphql';
 import { Error } from '../../../components/Error';
+import Loading from '../../../components/Loading';
 
 export const GetUser = gql`
   query GetUser($id: String!) {
@@ -52,22 +52,13 @@ export const GetUser = gql`
 `;
 
 function UserPage() {
-    const { userId } = useParams<{ userId: string }>();
-    const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+    const { id } = useParams<{ id: string }>();
+    const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
 
-    if (error) {
-        return <Error error={error} />;
-    }
+    if (error) return <Error error={error} />;
+    if (loading) return <Loading />;
 
-    if (loading) {
-        return (
-            <Center h="100px">
-                <Spinner size="xl" />
-            </Center>
-        );
-    }
-
-    return <UserProfile user={data?.getUser} admin />;
+    return <UserProfile user={data!.getUser as User} admin />;
 }
 
 export default UserPage;

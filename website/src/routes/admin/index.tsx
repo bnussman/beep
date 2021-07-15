@@ -22,49 +22,17 @@ function Admin() {
   return (
     <Container maxW="container.xl">
       <Switch>
-        <Route exact path={`${match.path}/users`}>
-          <Users />
-        </Route>
-
-        <Route exact path={`${match.path}/beepers`}>
-          <Beepers />
-        </Route>
-
-        <Route exact path={`${match.path}/beeps`}>
-          <Beeps />
-        </Route>
-
-        <Route exact path={`${match.path}/beeps/:beepId`}>
-          <Beep />
-        </Route>
-
-        <Route exact path={`${match.path}/users/:userId/edit`}>
-          <EditUserPage />
-        </Route>
-
-        <Route exact path={`${match.path}/users/:userId/:tab`}>
-          <User />
-        </Route>
-
-        <Route exact path={`${match.path}/users/:userId`}>
-          <User />
-        </Route>
-
-        <Route exact path={`${match.path}/reports`}>
-          <Reports />
-        </Route>
-
-        <Route exact path={`${match.path}/reports/:reportId`}>
-          <Report />
-        </Route>
-
-        <Route exact path={`${match.path}/ratings`}>
-          <Ratings />
-        </Route>
-
-        <Route exact path={`${match.path}/ratings/:id`}>
-          <Rating />
-        </Route>
+        <Route exact path={`${match.path}/users`} component={Users} />
+        <Route exact path={`${match.path}/beepers`} component={Beepers} />
+        <Route exact path={`${match.path}/beeps`} component={Beeps} />
+        <Route exact path={`${match.path}/beeps/:id`} component={Beep} />
+        <Route exact path={`${match.path}/users/:id/edit`} component={EditUserPage} />
+        <Route exact path={`${match.path}/users/:id/:tab`} component={User} />
+        <Route exact path={`${match.path}/users/:id`} component={User} />
+        <Route exact path={`${match.path}/reports`} component={Reports} />
+        <Route exact path={`${match.path}/reports/:id`} component={Report} />
+        <Route exact path={`${match.path}/ratings`} component={Ratings} />
+        <Route exact path={`${match.path}/ratings/:id`} component={Rating} />
       </Switch>
     </Container>
   );

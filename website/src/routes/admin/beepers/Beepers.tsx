@@ -8,39 +8,50 @@ import { Error } from '../../../components/Error';
 import BeepersMap from './BeepersMap';
 
 const BeepersGraphQL = gql`
-    query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
-        getBeeperList(input: {
-            latitude: $latitude,
-            longitude: $longitude,
-            radius: $radius
-        })  {
-            id
-            username
-            name
-            photoUrl
-            singlesRate
-            groupRate
-            capacity
-            isStudent
-            queueSize
-            masksRequired
-            location {
-              longitude
-              latitude
-            }
-        }
+  query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
+    getBeeperList(input: {
+        latitude: $latitude,
+        longitude: $longitude,
+        radius: $radius
+    }) {
+      id
+      username
+      name
+      photoUrl
+      singlesRate
+      groupRate
+      capacity
+      isStudent
+      queueSize
+      masksRequired
+      location {
+        longitude
+        latitude
+      }
     }
+  }
 `;
 
 function Beepers() {
-  const { data, stopPolling, startPolling, loading, error } = useQuery<GetBeeperListQuery>(BeepersGraphQL, { variables: { latitude: 0, longitude: 0, radius: 0 } });
+  const {
+    data,
+    loading,
+    error,
+    startPolling,
+    stopPolling
+  } = useQuery<GetBeeperListQuery>(BeepersGraphQL, {
+    variables: {
+      latitude: 0,
+      longitude: 0,
+      radius: 0
+    }
+  });
 
   useEffect(() => {
     startPolling(4000);
     return () => {
       stopPolling();
     };
-    // eslint-disable-next-line
   }, []);
 
   if (error) return <Error error={error} />;

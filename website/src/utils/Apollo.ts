@@ -11,63 +11,60 @@ const url = dev ? "http://localhost:3001/graphql" : "https://staging.ridebeep.ap
 //const url = "https://staging.ridebeep.app/graphql";
 
 const uploadLink = createUploadLink({
-    uri: url,
-    headers: {
-        "keep-alive": "true"
-    }
+  uri: url,
+  headers: {
+    "keep-alive": "true"
+  }
 });
 
 const authLink = setContext(async (_, { headers }) => {
-    const stored = localStorage.getItem('user');
-
-    if (!stored) return;
-
+  const stored = localStorage.getItem('user');
+  if (stored) {
     const auth = JSON.parse(stored);
-
     return {
-        headers: {
-            ...headers,
-            Authorization: auth.tokens.id ? `Bearer ${auth.tokens.id}` : undefined
-        }
+      headers: {
+        ...headers,
+        Authorization: auth.tokens.id ? `Bearer ${auth.tokens.id}` : undefined
+      }
     }
+  }
 });
 
 const wsLink = new WebSocketLink({
   uri: wsUrl,
   options: {
-      reconnect: true,
-      connectionParams: async () => {
-          const tit = localStorage.getItem('user');
-
-          if (!tit) return;
-
-          const auth = JSON.parse(tit);
-          return {
-              token: auth.tokens.id
-          }
+    reconnect: true,
+    connectionParams: () => {
+      const tokens = localStorage.getItem('user');
+      if (tokens) {
+        const auth = JSON.parse(tokens);
+        return {
+          token: auth.tokens.id
+        }
       }
+    }
   }
 });
 
 const splitLink = split(
-    ({ query }) => {
-        const definition = getMainDefinition(query);
-        return (
-            definition.kind === 'OperationDefinition' &&
-                definition.operation === 'subscription'
-        );
-    },
-    wsLink,
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
 );
 
 export const client = new ApolloClient({
-    link: ApolloLink.from([
-        authLink,
-        splitLink,
-        //@ts-ignore
-        uploadLink
-    ]),
-    cache: new InMemoryCache({
-        addTypename: false
-    }),
+  link: ApolloLink.from([
+    authLink,
+    splitLink,
+    //@ts-ignore
+    uploadLink
+  ]),
+  cache: new InMemoryCache({
+    addTypename: false
+  }),
 });

@@ -4,18 +4,19 @@ import { ResetPasswordMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { useParams } from 'react-router-dom';
 
 const Reset = gql`
-    mutation ResetPassword($id: String!, $password: String!) {
-        resetPassword(input: {
-            id: $id,
-            password: $password
-        })
-    }
+  mutation ResetPassword($id: String!, $password: String!) {
+    resetPassword(input: {
+      id: $id,
+      password: $password
+    })
+  }
 `;
 
-function ResetPassword({ match }) {
-  const id = match.params.id;
+function ResetPassword() {
+  const { id } = useParams<{ id: string }>();
   const [password, setPassword] = useState<string>("");
   const [reset, { data, loading, error }] = useMutation<ResetPasswordMutation>(Reset);
 

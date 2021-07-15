@@ -10,14 +10,14 @@ import { client } from '../utils/Apollo';
 import { Box, Button, Input, FormControl, FormLabel } from "@chakra-ui/react"
 
 const LoginGraphQL = gql`
-    mutation Login($username: String!, $password: String!) {
-        login(input: {username: $username, password: $password}) {
-            tokens {
-                id
-                tokenid
-            }
-        }
+  mutation Login($username: String!, $password: String!) {
+    login(input: {username: $username, password: $password}) {
+      tokens {
+        id
+        tokenid
+      }
     }
+  }
 `;
 
 function Login() {
@@ -28,9 +28,7 @@ function Login() {
   const [login, { loading, error }] = useMutation<LoginMutation>(LoginGraphQL);
 
   async function handleLogin(e: FormEvent) {
-
     e.preventDefault();
-
     try {
       const result = await login({
         variables: {
@@ -38,7 +36,6 @@ function Login() {
           password: password
         },
       });
-
 
       if (result) {
         localStorage.setItem('user', JSON.stringify(result.data?.login));

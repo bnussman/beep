@@ -22,52 +22,53 @@ export const DeleteReport = gql`
 `;
 
 export const UpdateReport = gql`
-    mutation UpdateReport($id: String!, $notes: String, $handled: Boolean) {
-        updateReport(id: $id, input: {
-            notes: $notes,
-            handled: $handled
-        }) {
-            id
-        }
+  mutation UpdateReport($id: String!, $notes: String, $handled: Boolean) {
+    updateReport(id: $id,
+      input: {
+        notes: $notes,
+        handled: $handled
+      }) {
+        id
     }
+  }
 `;
 
 export const GetReport = gql`
-    query GetReport($id: String!) {
-        getReport(id: $id) {
-            id
-            reason
-            timestamp
-            handled
-            notes
-            beep {
-                id
-            }
-            reporter {
-                id
-                name
-                photoUrl
-                username
-            }
-            reported {
-                id
-                name
-                photoUrl
-                username
-            }
-            handledBy {
-                id
-                name
-                photoUrl
-                username
-            }
-        }
+  query GetReport($id: String!) {
+    getReport(id: $id) {
+      id
+      reason
+      timestamp
+      handled
+      notes
+      beep {
+        id
+      }
+      reporter {
+        id
+        name
+        photoUrl
+        username
+      }
+      reported {
+        id
+        name
+        photoUrl
+        username
+      }
+      handledBy {
+        id
+        name
+        photoUrl
+        username
+      }
     }
+  }
 `;
 
 function ReportPage() {
-  const { reportId } = useParams<{ reportId: string }>();
-  const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id: reportId } });
+  const { id } = useParams<{ id: string }>();
+  const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
   const [deleteReport, { loading: deleteLoading }] = useMutation<DeleteReportMutation>(DeleteReport);
   const history = useHistory();
@@ -81,7 +82,7 @@ function ReportPage() {
   async function updateReport() {
     const result = await update({
       variables: {
-        id: reportId,
+        id,
         handled: isHandled,
         notes
       },
@@ -101,7 +102,7 @@ function ReportPage() {
 
   async function doDelete() {
     await deleteReport({
-      variables: { id: reportId },
+      variables: { id },
       refetchQueries: () => ['getReports']
     });
     history.goBack();
