@@ -37,6 +37,14 @@ To run the development envrionment use
 yarn up
 ```
 
+## Services
+| Service    | URL                           |
+|------------|-------------------------------|
+| Website    | http://localhost:3000         |
+| API        | http://localhost:3001/graphql |
+| Expo       | http://localhost:19002        |
+| Expo (Web) | http://localhost:19006        |
+
 ### Provide envrionment data
 
 To develop locally please provide the following envrionment varibles
