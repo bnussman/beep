@@ -74,7 +74,7 @@ export S3_ACCESS_KEY_ID=<from Linode>
 export S3_ACCESS_KEY_SECRET=<from Linode>
 export S3_ENDPOINT_URL=https://us-east-1.linodeobjects.com
 
-export POSTGRESQL_USER=banks
+export POSTGRESQL_USER=beep
 export POSTGRESQL_PASSWORD=<a real password here>
 export POSTGRESQL_URL=postgresql://postgresql.nussman.us:5432
 export POSTGRESQL_DATABASE=beep
