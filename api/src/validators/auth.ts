@@ -1,4 +1,4 @@
-import { IsEmail, IsMobilePhone, IsOptional, IsString, Length } from 'class-validator';
+import { IsAlpha, IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 import { Upload } from '../account/helpers';
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
@@ -26,14 +26,17 @@ export class SignUpInput implements Partial<User> {
 
   @Field()
   @IsString()
+  @IsNotEmpty()
   public username!: string;
 
   @Field()
-  @IsString()
+  @IsAlpha()
+  @IsNotEmpty()
   public first!: string;
 
   @Field()
-  @IsString()
+  @IsAlpha()
+  @IsNotEmpty()
   public last!: string;
 
   @Field()

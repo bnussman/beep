@@ -22,114 +22,114 @@ export const BeepORM = {} as ORM;
 
 export default class BeepAPIServer {
 
-    constructor() {
-        this.setup();
-    }
+  constructor() {
+    this.setup();
+  }
 
-    private async setup(): Promise<void> {
+  private async setup(): Promise<void> {
 
-        BeepORM.orm = await MikroORM.init(config);
-        BeepORM.em = BeepORM.orm.em;
+    BeepORM.orm = await MikroORM.init(config);
+    BeepORM.em = BeepORM.orm.em;
 
-        // const migrator = BeepORM.orm.getMigrator();
-        // await migrator.createMigration();
-        // await migrator.up();
+    // const migrator = BeepORM.orm.getMigrator();
+    // await migrator.createMigration();
+    // await migrator.up();
 
-        initializeSentry();
+    initializeSentry();
 
-        const options = {
-            host: 'redis-0.nussman.us',
-            port: 6379,
-            password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
-        };
+    const options = {
+      host: 'redis-0.nussman.us',
+      port: 6379,
+      password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
+    };
 
-        const schema: GraphQLSchema = await buildSchema({
-            resolvers: [__dirname + '/**/resolver.{ts,js}'],
-            authChecker: authChecker,
-            pubSub: !prod ? undefined : new RedisPubSub({
-                publisher: new Redis(options),
-                subscriber: new Redis(options)
-            })
-        });
+    const schema: GraphQLSchema = await buildSchema({
+      resolvers: [__dirname + '/**/resolver.{ts,js}'],
+      authChecker: authChecker,
+      pubSub: !prod ? undefined : new RedisPubSub({
+        publisher: new Redis(options),
+        subscriber: new Redis(options)
+      })
+    });
 
-        const app = new Koa();
+    const app = new Koa();
 
-        app.use(koaBody());
-        app.use(cors());
+    app.use(koaBody());
+    app.use(cors());
 
-        app.use(
-            graphqlUploadKoa({
-                maxFileSize: 100000000,
-                maxFiles: 1
-            })
-        );
+    app.use(
+      graphqlUploadKoa({
+        maxFileSize: 100000000,
+        maxFiles: 1
+      })
+    );
 
-        const server = new ApolloServer({
-            uploads: false,
-            schema,
-            subscriptions: {
-                path: "/subscriptions",
-                // @ts-expect-error Apollo >:(
-              onConnect: async (params: { token: string }) => {
-                if (!params || !params.token) throw new Error("No auth token");
+    const server = new ApolloServer({
+      uploads: false,
+      schema,
+      subscriptions: {
+        path: "/subscriptions",
+        // @ts-expect-error Apollo >:(
+        onConnect: async (params: { token: string }) => {
+          if (!params || !params.token) throw new Error("No auth token");
 
-                const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, params.token, { populate: ['user'] });
+          const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, params.token, { populate: ['user'] });
 
-                if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
-              }
-            },
-            context: async (data) => {
-                // Connection contains data passed from subscriptions onConnect return value
-                const { ctx, connection } = data;
+          if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
+        }
+      },
+      context: async (data) => {
+        // Connection contains data passed from subscriptions onConnect return value
+        const { ctx, connection } = data;
 
-                const em = BeepORM.em.fork();
+        const em = BeepORM.em.fork();
 
-                if (!ctx) return { em, user: connection?.context?.user };
+        if (!ctx) return { em, user: connection?.context?.user };
 
-                const authHeader = ctx.request.header.authorization;
+        const authHeader = ctx.request.header.authorization;
 
-                if (!authHeader) {
-                    return { em, user: connection?.context?.user };
-                }
+        if (!authHeader) {
+          return { em, user: connection?.context?.user };
+        }
 
-                const token: string | undefined = authHeader.split(" ")[1];
+        const token: string | undefined = authHeader.split(" ")[1];
 
-                if (!token) return { em, user: connection?.context?.user };
+        if (!token) return { em, user: connection?.context?.user };
 
-                const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
+        const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
 
-                if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult, em };
+        if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult, em };
 
-                return { em };
-            },
-            formatError: (error) => {
-                Sentry.captureException(error);
+        return { em };
+      },
+      formatError: (error) => {
+        Sentry.captureException(error);
 
-                if (error?.message === "Argument Validation Error") {
-                    const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
+        if (error?.message === "Argument Validation Error") {
+          const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
 
-                    let output: string[] = [];
+          let output: string[] = [];
 
-                    for (const error of errors) {
-                        if (!error.constraints) continue;
+          for (const error of errors) {
+            if (!error.constraints) continue;
 
-                        const items = Object.values<string>(error.constraints);
+            const items = Object.values<string>(error.constraints);
 
-                        output = [...output, ...items];
-                    }
-                    return new Error(output.toString());
-                }
+            output = [...output, ...items];
+          }
+          return new Error(output.toString());
+        }
 
-                return error;
-            }
-        });
+        return error;
+      }
+    });
 
-        server.applyMiddleware({ app });
+    server.applyMiddleware({ app });
 
-        const live = app.listen(3001, () => {
-            console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
-        });
+    const live = app.listen(3001, () => {
+      console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
+    });
 
-        server.installSubscriptionHandlers(live);
-    }
+    server.installSubscriptionHandlers(live);
+  }
 }

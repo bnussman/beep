@@ -1,6 +1,5 @@
 import { NavLink, useParams } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
-import { formatPhone } from '../utils/formatters';
 import RideHistoryTable from './RideHistoryTable';
 import QueueTable from './QueueTable';
 import { UserRole } from '../types/User';
@@ -138,7 +137,7 @@ function UserProfile(props: Props) {
                 </Box>
                 <Box>
                   <strong>Phone:</strong>
-                  <Text> {formatPhone(user.phone || '')}</Text>
+                  <Text>{user.phone || ''}</Text>
                 </Box>
                 <Box>
                   <strong>Queue Size</strong>

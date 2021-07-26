@@ -11,36 +11,37 @@ import { AddIcon } from '@chakra-ui/icons';
 
 const SignUpGraphQL = gql`
   mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!) {
-        signup(input: {
-            first: $first,
-            last: $last,
-            email: $email,
-            phone: $phone,
-            venmo: $venmo,
-            cashapp: $cashapp,
-            username: $username,
-            password: $password,
-            picture: $picture
-        }) {
-            tokens {
-                id
-                tokenid
-            }
-        }
+    signup(
+      input: {
+        first: $first,
+        last: $last,
+        email: $email,
+        phone: $phone,
+        venmo: $venmo,
+        cashapp: $cashapp,
+        username: $username,
+        password: $password,
+        picture: $picture
+    }) {
+      tokens {
+        id
+        tokenid
+      }
     }
+  }
 `;
 
 function SignUp() {
   const history = useHistory();
   const user = useContext(UserContext);
-  const [first, setFirst] = useState<string>();
-  const [last, setLast] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [phone, setPhone] = useState<string>();
-  const [venmo, setVenmo] = useState<string>();
-  const [cashapp, setCashapp] = useState<string>();
-  const [username, setUsername] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const [first, setFirst] = useState<string>('');
+  const [last, setLast] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
+  const [venmo, setVenmo] = useState<string>('');
+  const [cashapp, setCashapp] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [photo, setPhoto] = useState();
   const [photoError, setPhotoError] = useState<boolean>(false);
   const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
