@@ -6,20 +6,19 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class ForgotPassword {
+  @PrimaryKey()
+  @Field()
+  id: string = v4();
 
-    @PrimaryKey()
-    @Field()
-    id: string = v4();
+  @Field()
+  @ManyToOne()
+  user!: User;
 
-    @Field()
-    @ManyToOne()
-    user!: User;
+  @Field()
+  @Property()
+  time: Date = new Date();
 
-    @Field()
-    @Property() 
-    time: Date = new Date();
-
-    constructor(u: User) {
-        this.user = u;
-    }
+  constructor(u: User) {
+    this.user = u;
+  }
 }

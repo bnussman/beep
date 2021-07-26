@@ -17,9 +17,9 @@ import {
 } from "@chakra-ui/react"
 
 const Logout = gql`
-    mutation Logout {
-        logout (isApp: false)
-    }
+  mutation Logout {
+    logout (isApp: false)
+  }
 `;
 
 export function UserDropdown() {
@@ -55,14 +55,14 @@ export function UserDropdown() {
         cursor={'pointer'}>
         <Avatar
           size={'sm'}
-          src={user.photoUrl}
+          src={user?.photoUrl || ''}
         >
-          {user.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
+          {user?.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
         </Avatar>
       </MenuButton>
       <MenuList>
         <MenuItem isDisabled>
-          @{user.username}
+          @{user?.username}
         </MenuItem>
         <MenuItem as={Link} to={`/profile/edit`}>
           Edit Account

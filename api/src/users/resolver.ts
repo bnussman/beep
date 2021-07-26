@@ -17,78 +17,72 @@ export class UsersResponse extends Paginated(User) {}
 @Resolver(User)
 export class UserResolver {
 
-    @Query(() => User)
-    @Authorized()
-    public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
-        const relationPaths = fieldsToRelations(info).filter((key: string) => key !== 'location');
+  @Query(() => User)
+  @Authorized()
+  public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
+    const populate = fieldsToRelations(info).filter((key: string) => key !== 'location');
 
-        return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate: relationPaths, refresh: true });
+    return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate });
+  }
+
+  @Mutation(() => Boolean)
+  @Authorized(UserRole.ADMIN)
+  public async removeUser(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
+    const user = ctx.em.getReference(User, id);
+
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    @Mutation(() => Boolean)
-    @Authorized(UserRole.ADMIN)
-    public async removeUser(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
-        const user = ctx.em.getReference(User, id);
-
-        if (!user) {
-            throw new Error("User not found");
-        }
-
-        if (await deleteUser(user)) {
-            return true;
-        }
-
-        return false;
+    if (await deleteUser(user)) {
+      return true;
     }
 
-    @Mutation(() => User)
-    @Authorized(UserRole.ADMIN)
-    public async editUser(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
-        const user = await ctx.em.findOne(User, id);
+    return false;
+  }
 
-        if (!user) {
-            throw new Error("User not found");
-        }
+  @Mutation(() => User)
+  @Authorized(UserRole.ADMIN)
+  public async editUser(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
+    const user = await ctx.em.findOneOrFail(User, id);
 
-        wrap(user).assign(data);
+    wrap(user).assign(data);
 
-        pubSub.publish("User" + id, user);
+    pubSub.publish("User" + id, user);
 
-        await ctx.em.flush();
+    await ctx.em.flush();
 
-        return user;
+    return user;
+  }
+
+  @Query(() => UsersResponse)
+  @Authorized(UserRole.ADMIN)
+  public async getUsers(@Ctx() ctx: Context, @Args() { offset, show, query }: PaginationArgs): Promise<UsersResponse> {
+    if (query) {
+      return await search(ctx.em, offset, show, query);
     }
 
-    @Query(() => UsersResponse)
-    @Authorized(UserRole.ADMIN)
-    public async getUsers(@Ctx() ctx: Context, @Args() { offset, show, query }: PaginationArgs): Promise<UsersResponse> {
-        if (query) {
-            return await search(ctx.em, offset, show, query);
-        }
-        
-        const [users, count] = await ctx.em.findAndCount(User, {}, { limit: show, offset: offset });
+    const [users, count] = await ctx.em.findAndCount(User, {}, { limit: show, offset: offset });
 
-        return {
-            items: users,
-            count: count
-        };
-    }
+    return {
+      items: users,
+      count: count
+    };
+  }
 
-    @Query(() => [QueueEntry])
-    @Authorized('self')
-    public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
-        const relationPaths = fieldsToRelations(info);
+  @Query(() => [QueueEntry])
+  @Authorized('self')
+  public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
+    const populate = fieldsToRelations(info);
 
-        const queue = await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate: relationPaths, refresh: true });
+    return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate });
+  }
 
-        return queue;
-    }
-
-    @Subscription(() => User, {
-        topics: ({ args }) => "User" + args.id,
-    })
-    @Authorized('self')
-    public getUserUpdates(@Arg("id") id: string, @Root() user: User): User {
-        return user;
-    }
+  @Subscription(() => User, {
+    topics: ({ args }) => "User" + args.id,
+  })
+  @Authorized('self')
+  public getUserUpdates(@Arg("id") id: string, @Root() user: User): User {
+    return user;
+  }
 }

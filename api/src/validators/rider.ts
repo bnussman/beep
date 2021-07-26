@@ -8,12 +8,12 @@ export class GetBeepInput implements Partial<QueueEntry> {
 
   @Field()
   @IsString()
-  @IsNotEmpty({ message: "Please specify an origin location"})
+  @IsNotEmpty({ message: "Please specify an origin location" })
   public origin?: string;
 
   @Field()
   @IsString()
-  @IsNotEmpty({ message: "Please specify a destination location"})
+  @IsNotEmpty({ message: "Please specify a destination location" })
   public destination?: string;
 
   @Field()
@@ -25,18 +25,17 @@ export class GetBeepInput implements Partial<QueueEntry> {
 
 @InputType()
 export class FindBeepInput implements Point {
+  @Field()
+  @IsNumber()
+  longitude!: number;
 
-    @Field()
-    @IsNumber()
-    longitude!: number;
+  @Field()
+  @IsNumber()
+  latitude!: number;
 
-    @Field()
-    @IsNumber()
-    latitude!: number;
-    
-    @Field({ nullable: true })
-    @IsNumber()
-    @Min(0)
-    @Max(30)
-    radius: number = 10;
+  @Field({ nullable: true })
+  @IsNumber()
+  @Min(0)
+  @Max(30)
+  radius: number = 10;
 }

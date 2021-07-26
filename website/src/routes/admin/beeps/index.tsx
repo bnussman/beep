@@ -14,31 +14,31 @@ import { Error } from '../../../components/Error';
 dayjs.extend(duration);
 
 export const BeepsGraphQL = gql`
-    query getBeeps($show: Int, $offset: Int) {
-        getBeeps(show: $show, offset: $offset) {
-            items {
-                id
-                origin
-                destination
-                start
-                end
-                groupSize
-                beeper {
-                    id
-                    name
-                    photoUrl
-                    username
-                }
-                rider {
-                    id
-                    name
-                    photoUrl
-                    username
-                }
-            }
-            count
+  query getBeeps($show: Int, $offset: Int) {
+    getBeeps(show: $show, offset: $offset) {
+      items {
+        id
+        origin
+        destination
+        start
+        end
+        groupSize
+        beeper {
+          id
+          name
+          photoUrl
+          username
         }
+        rider {
+          id
+          name
+          photoUrl
+          username
+        }
+      }
+      count
     }
+  }
 `;
 
 function Beeps() {

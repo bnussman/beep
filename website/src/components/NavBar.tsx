@@ -37,7 +37,20 @@ export default function NavBar() {
           <HStack spacing={8} alignItems={'center'}>
             <Box>
               <Flex alignItems={'center'}>
-                <Image h={8} src={Logo} />
+                <Flex
+                  backgroundColor='white'
+                  alignItems='center'
+                  justifyContent='center'
+                  borderRadius='lg'
+                  boxShadow="dark-lg"
+                  width={9}
+                  height={9}
+                >
+                  <Image
+                    h={6}
+                    src={Logo}
+                  />
+                </Flex>
                 <Box ml={4} as={Link} to='/'>Beep App</Box>
               </Flex>
             </Box>

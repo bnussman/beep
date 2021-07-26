@@ -66,7 +66,8 @@ export class ReportsResolver {
     @Query(() => Report)
     @Authorized(UserRole.ADMIN)
     public async getReport(@Ctx() ctx: Context, @Arg('id') id: string): Promise<Report> {
-        const report = await ctx.em.findOne(Report, id, { populate: ['reporter', 'reported', 'beep', 'handledBy'], refresh: true });
+        // @TODO refresh = true or not?
+        const report = await ctx.em.findOne(Report, id, { populate: ['reporter', 'reported', 'beep', 'handledBy'] });
 
         if (!report) {
             throw new Error("This report entry does not exist");

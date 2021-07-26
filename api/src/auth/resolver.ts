@@ -23,7 +23,9 @@ export class AuthResolver {
 
     @Mutation(() => Auth)
     public async login(@Ctx() ctx: Context, @Arg('input') input: LoginInput): Promise<Auth> {
-        const user = await ctx.em.findOne(User, { username: input.username }, { refresh: true });
+
+        // @TODO refresh = true or not?
+        const user = await ctx.em.findOne(User, { username: input.username });
 
         if (!user) {
             throw new Error("User not found");
@@ -154,9 +156,11 @@ export class AuthResolver {
 
         deactivateTokens(entry.user);
 
-        await ctx.em.removeAndFlush(entry);
+        ctx.em.remove(entry);
 
-        await ctx.em.persistAndFlush(entry.user);
+        ctx.em.persist(entry.user);
+
+        await ctx.em.flush();
 
         return true;
     }

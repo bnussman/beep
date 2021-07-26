@@ -144,11 +144,13 @@ export class BeeperResolver {
       }
     }
 
-    ctx.em.removeAndFlush(entry);
+    ctx.em.remove(entry);
 
     ctx.user.queueSize--;
 
-    ctx.em.persistAndFlush(ctx.user);
+    ctx.em.persist(ctx.user);
+
+    await ctx.em.flush();
 
     return true;
   }
