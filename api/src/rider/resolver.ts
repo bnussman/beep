@@ -78,11 +78,7 @@ export class RiderResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async riderLeaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-    const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, ['beeper']);
-
-    if (!entry) {
-      throw new Error("Unable to leave queue");
-    }
+    const entry = await ctx.em.findOneOrFail(QueueEntry, { rider: ctx.user }, ['beeper']);
 
     if (entry.isAccepted) entry.beeper.queueSize--;
 
