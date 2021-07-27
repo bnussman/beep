@@ -34,7 +34,7 @@ export class RiderResolver {
 
     beeper.queue.add(q);
 
-    sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.", "enteredBeeperQueue");
+    sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.");
 
     pubSub.publish("Beeper" + beeper.id, beeper.queue.getItems());
 
