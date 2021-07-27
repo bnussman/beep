@@ -483,6 +483,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                     <Text category='h6'>Destination</Text>
                     <Text style={styles.rowText}>{item.destination}</Text>
                   </Layout>
+                  {data.getQueue.filter(entry => entry.start < item.start && !entry.isAccepted).length === 0 ?
                   <Layout style={styles.row}>
                     <Layout style={styles.layout}>
                       <AcceptDenyButton type="accept" item={item} />
@@ -491,6 +492,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                       <AcceptDenyButton type="deny" item={item} />
                     </Layout>
                   </Layout>
+                  : null}
                 </Card>
             }
           />

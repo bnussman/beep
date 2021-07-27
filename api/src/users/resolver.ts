@@ -1,9 +1,8 @@
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser } from '../account/helpers';
-import { QueryOrder, wrap } from '@mikro-orm/core';
+import { wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
 import PaginationArgs from '../args/Pagination';
-import { QueueEntry } from '../entities/QueueEntry';
 import EditUserValidator from '../validators/user/EditUser';
 import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
@@ -68,14 +67,6 @@ export class UserResolver {
       items: users,
       count: count
     };
-  }
-
-  @Query(() => [QueueEntry])
-  @Authorized('self')
-  public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
-    const populate = fieldsToRelations(info);
-
-    return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate });
   }
 
   @Subscription(() => User, {

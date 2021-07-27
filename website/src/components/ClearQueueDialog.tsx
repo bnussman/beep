@@ -6,20 +6,30 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
-  Button
+  Button,
+  Checkbox
 } from "@chakra-ui/react";
 
 interface Props {
   isOpen: boolean;
-  deleteLoading: boolean;
+  isLoading: boolean;
   cancelRef: any;
-  title: string;
   onClose: () => void;
-  doDelete: () => void;
+  onSubmit: () => void;
+  stopBeeping: boolean;
+  setStopBeeping: (beeping: boolean) => void;
 }
 
-function DeleteDialog(props: Props) {
-  const { isOpen, onClose, cancelRef, doDelete, deleteLoading, title } = props;
+function ClearQueueDialog(props: Props) {
+  const {
+    isOpen,
+    onClose,
+    cancelRef,
+    isLoading,
+    onSubmit,
+    stopBeeping,
+    setStopBeeping
+  } = props;
 
   return (
     <AlertDialog
@@ -30,20 +40,20 @@ function DeleteDialog(props: Props) {
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete {title}
-            </AlertDialogHeader>
+            Clear user's queue?
+          </AlertDialogHeader>
 
           <AlertDialogBody>
-            Are you sure? You can't undo this action afterwards.
+            <Checkbox isChecked={stopBeeping} onChange={() => setStopBeeping(!stopBeeping)}>Turn off user's Beeping status after clear?</Checkbox>
           </AlertDialogBody>
 
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
-              </Button>
-            <Button isLoading={deleteLoading} colorScheme="red" onClick={doDelete} ml={3}>
-              Delete
-              </Button>
+            </Button>
+            <Button isLoading={isLoading} colorScheme="blue" onClick={onSubmit} ml={3}>
+              Clear Queue
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialogOverlay>
@@ -51,4 +61,4 @@ function DeleteDialog(props: Props) {
   );
 }
 
-export default DeleteDialog;
+export default ClearQueueDialog;

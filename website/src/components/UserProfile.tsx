@@ -1,13 +1,11 @@
-import { NavLink, useParams } from 'react-router-dom';
-import { useHistory } from "react-router-dom";
+import { NavLink, useParams, useHistory } from 'react-router-dom';
 import RideHistoryTable from './RideHistoryTable';
 import QueueTable from './QueueTable';
 import { UserRole } from '../types/User';
 import { gql, useMutation } from '@apollo/client';
 import { RemoveUserMutation, User } from '../generated/graphql';
 import { printStars } from '../routes/admin/ratings';
-import { Tooltip, Stack, AvatarBadge, Heading, Badge, Box, Text, Avatar, Button, Flex, Spacer, Tabs, Tab, TabList, TabPanel, TabPanels } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState } from 'react';
 import DeleteDialog from './DeleteDialog';
 import { DeleteIcon } from '@chakra-ui/icons';
 import dayjs from 'dayjs';
@@ -15,18 +13,47 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import LocationView from '../routes/admin/users/Location';
 import RatingsTable from './RatingsTable';
 import ReportsTable from './ReportsTable';
+import ClearQueueDialog from './ClearQueueDialog';
+import { Error } from '../components/Error';
+import {
+  useToast,
+  useDisclosure,
+  Tooltip,
+  Stack,
+  AvatarBadge,
+  Heading,
+  Badge,
+  Box,
+  Text,
+  Avatar,
+  Button,
+  Flex,
+  Spacer,
+  Tabs,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels
+} from '@chakra-ui/react';
 
 dayjs.extend(relativeTime);
 
 const RemoveUser = gql`
-    mutation RemoveUser($id: String!) {
-        removeUser(id: $id)
-    }
+  mutation RemoveUser($id: String!) {
+    removeUser(id: $id)
+  }
+`;
+
+const ClearQueue = gql`
+  mutation ClearQueue($id: String!, $stopBeeping: Boolean!) {
+    clearQueue(id: $id, stopBeeping: $stopBeeping)
+  }
 `;
 
 interface Props {
   user: Partial<User>;
   admin?: boolean;
+  refetch?: () => void;
 }
 
 const tabs = [
@@ -39,25 +66,64 @@ const tabs = [
 ]
 
 function UserProfile(props: Props) {
-  const { user, admin } = props;
+  const { user, admin, refetch } = props;
 
+  const toast = useToast();
   const history = useHistory();
   const params = useParams<{ tab: string }>();
 
-  const [remove, { loading }] = useMutation<RemoveUserMutation>(RemoveUser);
+  const [remove, { loading: isDeleteLoading, error: deleteError }] = useMutation<RemoveUserMutation>(RemoveUser);
+  const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const onClose = () => setIsOpen(false);
-  const cancelRef = React.useRef();
+  const [stopBeeping, setStopBeeping] = useState<boolean>(true);
+
+  const cancelRefClear = React.useRef();
+  const cancelRefDelete = React.useRef();
+
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose
+  } = useDisclosure();
+
+  const {
+    isOpen: isClearOpen,
+    onOpen: onClearOpen,
+    onClose: onClearClose
+  } = useDisclosure();
 
   async function doDelete() {
-    await remove({ variables: { id: user.id }, refetchQueries: () => ["getUsers"], awaitRefetchQueries: true });
+    await remove({
+      variables: { id: user.id },
+      refetchQueries: () => ["getUsers"],
+      awaitRefetchQueries: true
+    });
     history.goBack();
+  }
+
+  async function doClear() {
+    try {
+      await clear({
+        variables: { id: user.id, stopBeeping }
+      });
+      if (refetch) refetch();
+      onClearClose();
+      toast({
+        title: "Queue Cleared",
+        description: `${user.name}'s queue has been cleared ${stopBeeping ? ' and they have stopped beeping.' : ''}`,
+        status: "success",
+      });
+    }
+    catch (e) {
+      onClearClose();
+    }
   }
 
   return (
     <>
       <Box>
+        {deleteError && <Error error={deleteError} />}
+        {clearError && <Error error={clearError} />}
         <Flex align="center">
           <Box>
             <Avatar
@@ -80,24 +146,26 @@ function UserProfile(props: Props) {
           <Box>
             <NavLink to={admin ? `/admin/users/${user.id}/edit` : `/profile/edit`}>
               <Button m='1'>
-                Edit {admin ? 'user' : 'profile'}
+                Edit
               </Button>
             </NavLink>
+            {admin &&
+              <Button
+                m='1'
+                colorScheme='blue'
+                onClick={onClearOpen}
+              >
+                Clear Queue
+              </Button>
+            }
             {admin &&
               <Button
                 m={1}
                 colorScheme="red"
                 leftIcon={<DeleteIcon />}
-                onClick={() => setIsOpen(true)}
+                onClick={onDeleteOpen}
               >
                 Delete
-              </Button>
-            }
-            {!admin &&
-              <Button>
-                <NavLink to='password/change'>
-                  Change password
-                </NavLink>
               </Button>
             }
           </Box>
@@ -187,11 +255,20 @@ function UserProfile(props: Props) {
       </Box>
       <DeleteDialog
         title="User"
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
         doDelete={doDelete}
-        deleteLoading={loading}
-        cancelRef={cancelRef}
+        deleteLoading={isDeleteLoading}
+        cancelRef={cancelRefDelete}
+      />
+      <ClearQueueDialog
+        isOpen={isClearOpen}
+        onClose={onClearClose}
+        onSubmit={doClear}
+        isLoading={isClearLoading}
+        cancelRef={cancelRefClear}
+        stopBeeping={stopBeeping}
+        setStopBeeping={setStopBeeping}
       />
     </>
   );

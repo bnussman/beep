@@ -28,13 +28,7 @@ export class RiderResolver {
       beeper: beeper,
     });
 
-    pubSub.publish("Rider" + ctx.user.id, {
-      ...q,
-      beeper: {
-        ...q.beeper,
-        location: undefined
-      }
-    });
+    pubSub.publish("Rider" + ctx.user.id, q);
 
     await ctx.em.populate(beeper, ['queue', 'queue.rider']);
 

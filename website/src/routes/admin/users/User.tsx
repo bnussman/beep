@@ -53,12 +53,12 @@ export const GetUser = gql`
 
 function UserPage() {
     const { id } = useParams<{ id: string }>();
-    const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
+    const { data, loading, error, refetch } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
 
     if (error) return <Error error={error} />;
     if (loading) return <Loading />;
 
-    return <UserProfile user={data!.getUser as User} admin />;
+    return <UserProfile user={data!.getUser as User} refetch={refetch} admin />;
 }
 
 export default UserPage;
