@@ -144,6 +144,10 @@ export const PhotoIcon = (props) => (
     <Icon {...props} name='camera-outline'/>
 );
 
+export const StarIcon = (props) => (
+    <Icon {...props} name='star'/>
+);
+
 const styles = StyleSheet.create({
     indicator: {
         justifyContent: 'center',

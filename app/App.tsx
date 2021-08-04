@@ -31,135 +31,135 @@ const Stack = createStackNavigator();
 init();
 
 export const GetUserData = gql`
-    query GetUserData {
-        getUser {
-            id
-            username
-            name
-            first
-            last
-            email
-            phone
-            venmo
-            isBeeping
-            isEmailVerified
-            isStudent
-            groupRate
-            singlesRate
-            photoUrl
-            capacity
-            masksRequired
-            cashapp
-        }
+  query GetUserData {
+    getUser {
+      id
+      username
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      cashapp
     }
+  }
 `;
 
 const UserUpdates = gql`
-subscription UserUpdates($id: String!) {
+  subscription UserUpdates($id: String!) {
     getUserUpdates(id: $id) {
-        id
-        username
-        name
-        first
-        last
-        email
-        phone
-        venmo
-        isBeeping
-        isEmailVerified
-        isStudent
-        groupRate
-        singlesRate
-        photoUrl
-        capacity
-        masksRequired
-        cashapp
+      id
+      username
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      cashapp
     }
-}
+  }
 `;
 
 function Beep() {
-    const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { errorPolicy: 'none' });
-    const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { errorPolicy: 'none' });
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
-    function toggleTheme() {
-        const next = theme === 'light' ? 'dark' : 'light';
-        setTheme(next);
-        AsyncStorage.setItem('theme', next);
+  function toggleTheme() {
+    const next = theme === 'light' ? 'dark' : 'light';
+    setTheme(next);
+    AsyncStorage.setItem('theme', next);
+  }
+
+  useEffect(() => {
+    const init = async () => {
+      const storedTheme = await AsyncStorage.getItem('theme') as unknown as "light" | "dark" | undefined;
+
+      if (storedTheme && (theme !== storedTheme)) setTheme(storedTheme);
     }
 
-    useEffect(() => {
-        const init = async () => {
-            const storedTheme = await AsyncStorage.getItem('theme') as unknown as "light" | "dark" | undefined;
+    init();
+  }, []);
 
-            if (storedTheme && (theme !== storedTheme)) setTheme(storedTheme);
+  useEffect(() => {
+    if (data?.getUser.id) {
+      if (isMobile) updatePushToken();
+
+      Sentry.setUserContext(data.getUser);
+
+      subscribeToMore({
+        document: UserUpdates,
+        variables: {
+          id: data?.getUser.id
+        },
+        updateQuery: (prev, { subscriptionData }) => {
+          // @ts-expect-error I'm correct >:(
+          const newFeedItem = subscriptionData.data.getUserUpdates;
+          Sentry.setUserContext(newFeedItem);
+          return Object.assign({}, prev, {
+            getUser: newFeedItem
+          });
         }
+      });
+    }
+  }, [data?.getUser?.id]);
 
-        init();
-    }, []);
+  if (loading) return null;
 
-    useEffect(() => {
-        if (data?.getUser.id) {
-            if (isMobile) updatePushToken();
-
-            Sentry.setUserContext(data.getUser);
-
-            subscribeToMore({
-                document: UserUpdates,
-                variables: {
-                    id: data?.getUser.id
-                },
-                updateQuery: (prev, { subscriptionData }) => {
-                    const newFeedItem = subscriptionData.data.getUserUpdates;
-                    console.log("Socket Updated User");
-                    Sentry.setUserContext(newFeedItem);
-                    return Object.assign({}, prev, {
-                        getUser: newFeedItem
-                    });
-                }
-            });
-        }
-    }, [data?.getUser?.id]);
-
-    if (loading) return null;
-
-    return (
-        <UserContext.Provider value={data?.getUser as User}>
-            <ThemeContext.Provider value={{theme, toggleTheme}}>
-                <IconRegistry icons={EvaIconsPack} />
-                <ApplicationProvider {...eva} theme={{ ...eva[theme], ...beepTheme }}>
-                    <Layout style={styles.statusbar}>
-                        <ThemedStatusBar theme={theme}/>
-                    </Layout>
-                    <NavigationContainer>
-                        <Stack.Navigator initialRouteName={data?.getUser?.id ? "Main" : "Login"} screenOptions={{ headerShown: false }} >
-                            <Stack.Screen name="Login" component={LoginScreen} />
-                            <Stack.Screen name="Register" component={RegisterScreen} />
-                            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-                            <Stack.Screen name="Main" component={MainTabs} />
-                            <Stack.Screen name='Profile' component={ProfileScreen} />
-                            <Stack.Screen name='Report' component={ReportScreen} />
-                            <Stack.Screen name='Rate' component={RateScreen} />
-                        </Stack.Navigator>
-                    </NavigationContainer>
-                </ApplicationProvider>
-            </ThemeContext.Provider>
-        </UserContext.Provider>
-    );
+  return (
+    <UserContext.Provider value={data?.getUser as User}>
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <IconRegistry icons={EvaIconsPack} />
+        <ApplicationProvider {...eva} theme={{ ...eva[theme], ...beepTheme }}>
+          <Layout style={styles.statusbar}>
+            <ThemedStatusBar theme={theme} />
+          </Layout>
+          <NavigationContainer>
+            <Stack.Navigator initialRouteName={data?.getUser?.id ? "Main" : "Login"} screenOptions={{ headerShown: false }} >
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Register" component={RegisterScreen} />
+              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+              <Stack.Screen name="Main" component={MainTabs} />
+              <Stack.Screen name='Profile' component={ProfileScreen} />
+              <Stack.Screen name='Report' component={ReportScreen} />
+              <Stack.Screen name='Rate' component={RateScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </ApplicationProvider>
+      </ThemeContext.Provider>
+    </UserContext.Provider>
+  );
 }
 
 const styles = StyleSheet.create({
-    statusbar: {
-        paddingTop: getStatusBarHeight()
-    }
+  statusbar: {
+    paddingTop: getStatusBarHeight()
+  }
 });
 
-function App() {
-    return (
-        <ApolloProvider client={client}>
-            <Beep/>
-        </ApolloProvider>
-    );
+function App(): JSX.Element {
+  return (
+    <ApolloProvider client={client}>
+      <Beep />
+    </ApolloProvider>
+  );
 }
 
 export default App;
