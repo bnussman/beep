@@ -15,6 +15,7 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetInitialQueueQuery, UpdateBeepSettingsMutation } from '../../generated/graphql';
 import { client } from '../../utils/Apollo';
 import { Navigation } from '../../utils/Navigation';
+import { Tag } from '../ride/Tags';
 
 interface Props {
   navigation: Navigation;
@@ -23,89 +24,88 @@ interface Props {
 let unsubscribe: any = null;
 
 const LocationUpdate = gql`
-    mutation LocationUpdate(
-      $latitude: Float!,
-      $longitude: Float!,
-      $altitude: Float!,
-      $accuracy: Float,
-      $altitideAccuracy: Float,
-      $heading: Float!,
-      $speed: Float!
-    ) {
-      setLocation(location: {
-        latitude: $latitude,
-        longitude: $longitude,
-        altitude: $altitude,
-        accuracy: $accuracy
-        altitideAccuracy: $altitideAccuracy,
-        heading: $heading,
-        speed: $speed
-      })
-    }
+  mutation LocationUpdate(
+    $latitude: Float!,
+    $longitude: Float!,
+    $altitude: Float!,
+    $accuracy: Float,
+    $altitideAccuracy: Float,
+    $heading: Float!,
+    $speed: Float!
+  ) {
+    setLocation(location: {
+      latitude: $latitude,
+      longitude: $longitude,
+      altitude: $altitude,
+      accuracy: $accuracy
+      altitideAccuracy: $altitideAccuracy,
+      heading: $heading,
+      speed: $speed
+    })
+  }
 `;
 
 const GetInitialQueue = gql`
-    query GetInitialQueue {
-        getQueue {
-            id
-            isAccepted
-            groupSize
-            origin
-            destination
-            state
-            start
-            rider {
-                id
-                name
-                first
-                last
-                venmo
-                cashapp
-                phone
-                photoUrl
-            }
-        }
+  query GetInitialQueue {
+    getQueue {
+      id
+      isAccepted
+      groupSize
+      origin
+      destination
+      state
+      start
+      rider {
+        id
+        name
+        first
+        last
+        venmo
+        cashapp
+        phone
+        photoUrl
+      }
     }
+  }
 `;
 
 const GetQueue = gql`
-    subscription GetQueue($id: String!) {
-        getBeeperUpdates(id: $id) {
-            id
-            isAccepted
-            groupSize
-            origin
-            destination
-            state
-            start
-            rider {
-                id
-                name
-                first
-                last
-                venmo
-                cashapp
-                phone
-                photoUrl
-            }
-        }
+  subscription GetQueue($id: String!) {
+    getBeeperUpdates(id: $id) {
+      id
+      isAccepted
+      groupSize
+      origin
+      destination
+      state
+      start
+      rider {
+        id
+        name
+        first
+        last
+        venmo
+        cashapp
+        phone
+        photoUrl
+      }
     }
+  }
 `;
 
 const UpdateBeepSettings = gql`
-    mutation UpdateBeepSettings($singlesRate: Float!, $groupRate: Float!, $capacity: Float!, $isBeeping: Boolean!, $masksRequired: Boolean!) {
-        setBeeperStatus(
-        input : {
-            singlesRate: $singlesRate
-            groupRate: $groupRate
-            capacity: $capacity
-            isBeeping: $isBeeping
-            masksRequired: $masksRequired
-        }
-        )
-    }
+  mutation UpdateBeepSettings($singlesRate: Float!, $groupRate: Float!, $capacity: Float!, $isBeeping: Boolean!, $masksRequired: Boolean!) {
+    setBeeperStatus(
+      input : {
+        singlesRate: $singlesRate
+        groupRate: $groupRate
+        capacity: $capacity
+        isBeeping: $isBeeping
+        masksRequired: $masksRequired
+      }
+    )
+  }
 `;
-
 
 export const LOCATION_TRACKING = 'location-tracking';
 
@@ -120,6 +120,8 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   const { subscribeToMore, data } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
   const [updateBeepSettings] = useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
+
+  const queue = data?.getQueue;
 
   function toggleSwitchWrapper(value: boolean): void {
     if (isAndroid && value) {
@@ -224,7 +226,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         LOCATION_TRACKING
       );
 
-      if (!hasStarted) Logger.error("User was unable to sart location tracking");
+      if (!hasStarted) Logger.error("User was unable to start location tracking");
     }
   }
 
@@ -267,19 +269,19 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   function handleDirections(origin: string, dest: string): void {
     if (Platform.OS == 'ios') {
-      Linking.openURL('http://maps.apple.com/?saddr=' + origin + '&daddr=' + dest);
+      Linking.openURL(`http://maps.apple.com/?saddr=${origin}&daddr=${dest}`);
     }
     else {
-      Linking.openURL('https://www.google.com/maps/dir/' + origin + '/' + dest + '/');
+      Linking.openURL(`https://www.google.com/maps/dir/${origin}/${dest}/`);
     }
   }
 
   function handleVenmo(groupSize: string | number, venmo: string): void {
     if (Number(groupSize) > 1) {
-      Linking.openURL('venmo://paycharge?txn=pay&recipients=' + venmo + '&amount=' + user.groupRate * Number(groupSize) + '&note=Beep');
+      Linking.openURL(`venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user.groupRate * Number(groupSize)}&note=Beep`);
     }
     else {
-      Linking.openURL('venmo://paycharge?txn=pay&recipients=' + venmo + '&amount=' + user.singlesRate + '&note=Beep');
+      Linking.openURL(`venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user.singlesRate}&note=Beep`);
     }
   }
 
@@ -340,7 +342,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     );
   }
   else {
-    if (data?.getQueue && data.getQueue.length > 0) {
+    if (queue && queue?.length > 0) {
       return (
         <Layout style={styles.container}>
           <Toggle isBeepingState={isBeeping} onToggle={async (value) => toggleSwitchWrapper(value)} />
@@ -365,7 +367,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                       />
                     }
                     <Text category="h6" style={styles.rowText}>{item.rider.name}</Text>
-                    {item.rider.isStudent && <Text>🎓</Text>}
+                    {item.rider.isStudent && <Tag status="basic">Student</Tag>}
                   </Layout>
                   <Layout style={styles.row}>
                     <Text category='h6'>Group Size</Text>
@@ -450,9 +452,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                     index={index}
                   />
                 </Card>
-
                 :
-
                 <Card
                   style={styles.cards}
                   onPress={() => props.navigation.navigate("Profile", { id: item.rider.id, beep: item.id })}
@@ -464,8 +464,8 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                         url={item.rider.photoUrl}
                       />
                     }
-                    <Text category="h6" style={styles.rowText}>{item.rider.first} {item.rider.last}</Text>
-                    {item.rider.isStudent && <Text>🎓</Text>}
+                    <Text category="h6" style={styles.rowText}>{item.rider.name}</Text>
+                    {item.rider.isStudent && <Tag status="basic">Student</Tag>}
                   </Layout>
                   <Layout style={styles.row}>
                     <Text category='h6'>Entered Queue</Text>
@@ -483,16 +483,16 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                     <Text category='h6'>Destination</Text>
                     <Text style={styles.rowText}>{item.destination}</Text>
                   </Layout>
-                  {data.getQueue.filter(entry => entry.start < item.start && !entry.isAccepted).length === 0 ?
-                  <Layout style={styles.row}>
-                    <Layout style={styles.layout}>
-                      <AcceptDenyButton type="accept" item={item} />
+                  {queue.filter(entry => entry.start < item.start && !entry.isAccepted).length === 0 ?
+                    <Layout style={styles.row}>
+                      <Layout style={styles.layout}>
+                        <AcceptDenyButton type="accept" item={item} />
+                      </Layout>
+                      <Layout style={styles.layout}>
+                        <AcceptDenyButton type="deny" item={item} />
+                      </Layout>
                     </Layout>
-                    <Layout style={styles.layout}>
-                      <AcceptDenyButton type="deny" item={item} />
-                    </Layout>
-                  </Layout>
-                  : null}
+                    : null}
                 </Card>
             }
           />
@@ -505,7 +505,9 @@ export function StartBeepingScreen(props: Props): JSX.Element {
           <Toggle isBeepingState={isBeeping} onToggle={async (value) => toggleSwitchWrapper(value)} />
           <Layout style={styles.empty}>
             <Text category='h5'>Your queue is empty</Text>
-            <Text appearance='hint'>If someone wants you to beep them, it will appear here. If your app is closed, you will recieve a push notification.</Text>
+            <Text appearance='hint'>
+              If someone wants you to beep them, it will appear here. If your app is closed, you will recieve a push notification.
+            </Text>
           </Layout>
         </Layout>
       );

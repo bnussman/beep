@@ -154,6 +154,7 @@ export type Mutation = {
   setBeeperQueue: Scalars['Boolean'];
   cancelBeep: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
+  clearQueue: Scalars['Boolean'];
   rateUser: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   reportUser: Scalars['Boolean'];
@@ -246,6 +247,12 @@ export type MutationDeleteBeepArgs = {
 };
 
 
+export type MutationClearQueueArgs = {
+  stopBeeping: Scalars['Boolean'];
+  id: Scalars['String'];
+};
+
+
 export type MutationRateUserArgs = {
   input: RatingInput;
 };
@@ -300,6 +307,7 @@ export type Query = {
   getBeep: Beep;
   getETA: Scalars['String'];
   getLocationSuggestions: Array<Suggestion>;
+  getQueue: Array<QueueEntry>;
   getRatings: RatingsResponse;
   getRating: Rating;
   getReports: ReportsResponse;
@@ -310,7 +318,6 @@ export type Query = {
   getLastBeepToRate?: Maybe<Beep>;
   getUser: User;
   getUsers: UsersResponse;
-  getQueue: Array<QueueEntry>;
 };
 
 
@@ -336,6 +343,11 @@ export type QueryGetEtaArgs = {
 export type QueryGetLocationSuggestionsArgs = {
   sessiontoken: Scalars['String'];
   location: Scalars['String'];
+};
+
+
+export type QueryGetQueueArgs = {
+  id?: Maybe<Scalars['String']>;
 };
 
 
@@ -379,11 +391,6 @@ export type QueryGetUsersArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
   query?: Maybe<Scalars['String']>;
-};
-
-
-export type QueryGetQueueArgs = {
-  id?: Maybe<Scalars['String']>;
 };
 
 export type QueueEntry = {
@@ -708,6 +715,17 @@ export type RemoveUserMutationVariables = Exact<{
 export type RemoveUserMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'removeUser'>
+);
+
+export type ClearQueueMutationVariables = Exact<{
+  id: Scalars['String'];
+  stopBeeping: Scalars['Boolean'];
+}>;
+
+
+export type ClearQueueMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'clearQueue'>
 );
 
 export type ChangePasswordMutationVariables = Exact<{
@@ -1527,6 +1545,38 @@ export function useRemoveUserMutation(baseOptions?: Apollo.MutationHookOptions<R
 export type RemoveUserMutationHookResult = ReturnType<typeof useRemoveUserMutation>;
 export type RemoveUserMutationResult = Apollo.MutationResult<RemoveUserMutation>;
 export type RemoveUserMutationOptions = Apollo.BaseMutationOptions<RemoveUserMutation, RemoveUserMutationVariables>;
+export const ClearQueueDocument = gql`
+    mutation ClearQueue($id: String!, $stopBeeping: Boolean!) {
+  clearQueue(id: $id, stopBeeping: $stopBeeping)
+}
+    `;
+export type ClearQueueMutationFn = Apollo.MutationFunction<ClearQueueMutation, ClearQueueMutationVariables>;
+
+/**
+ * __useClearQueueMutation__
+ *
+ * To run a mutation, you first call `useClearQueueMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClearQueueMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [clearQueueMutation, { data, loading, error }] = useClearQueueMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      stopBeeping: // value for 'stopBeeping'
+ *   },
+ * });
+ */
+export function useClearQueueMutation(baseOptions?: Apollo.MutationHookOptions<ClearQueueMutation, ClearQueueMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ClearQueueMutation, ClearQueueMutationVariables>(ClearQueueDocument, options);
+      }
+export type ClearQueueMutationHookResult = ReturnType<typeof useClearQueueMutation>;
+export type ClearQueueMutationResult = Apollo.MutationResult<ClearQueueMutation>;
+export type ClearQueueMutationOptions = Apollo.BaseMutationOptions<ClearQueueMutation, ClearQueueMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($password: String!) {
   changePassword(input: {password: $password})

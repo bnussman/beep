@@ -12,8 +12,9 @@ export class LocationInput {
   @IsNumber()
   public longitude!: number;
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
+  @IsOptional()
   public altitude!: number;
 
   @Field({ nullable: true })
@@ -26,11 +27,13 @@ export class LocationInput {
   @IsOptional()
   public altitideAccuracy?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
+  @IsOptional()
   public heading!: number;
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
+  @IsOptional()
   public speed!: number;
 }

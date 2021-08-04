@@ -4,15 +4,15 @@ import { StyleSheet } from "react-native";
 
 interface Props {
     isBeepingState: boolean;
-    onToggle: (value: boolean) => {}
+    onToggle: (value: boolean) => void;
 }
 
-export default function Toggle(props: Props) {
+export default function Toggle(props: Props): JSX.Element {
     return (
         <KittenToggle
             style={styles.toggle}
-            onChange = {(value) => props.onToggle(value)}
-            checked = {props.isBeepingState}
+            onChange={(value) => props.onToggle(value)}
+            checked={props.isBeepingState}
         >
             {props.isBeepingState ? "Stop Beeping" : "Start Beeping"}
         </KittenToggle>

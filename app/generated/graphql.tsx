@@ -155,6 +155,7 @@ export type Mutation = {
   setBeeperQueue: Scalars['Boolean'];
   cancelBeep: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
+  clearQueue: Scalars['Boolean'];
   rateUser: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   reportUser: Scalars['Boolean'];
@@ -247,6 +248,12 @@ export type MutationDeleteBeepArgs = {
 };
 
 
+export type MutationClearQueueArgs = {
+  stopBeeping: Scalars['Boolean'];
+  id: Scalars['String'];
+};
+
+
 export type MutationRateUserArgs = {
   input: RatingInput;
 };
@@ -301,6 +308,7 @@ export type Query = {
   getBeep: Beep;
   getETA: Scalars['String'];
   getLocationSuggestions: Array<Suggestion>;
+  getQueue: Array<QueueEntry>;
   getRatings: RatingsResponse;
   getRating: Rating;
   getReports: ReportsResponse;
@@ -311,7 +319,6 @@ export type Query = {
   getLastBeepToRate?: Maybe<Beep>;
   getUser: User;
   getUsers: UsersResponse;
-  getQueue: Array<QueueEntry>;
 };
 
 
@@ -337,6 +344,11 @@ export type QueryGetEtaArgs = {
 export type QueryGetLocationSuggestionsArgs = {
   sessiontoken: Scalars['String'];
   location: Scalars['String'];
+};
+
+
+export type QueryGetQueueArgs = {
+  id?: Maybe<Scalars['String']>;
 };
 
 
@@ -380,11 +392,6 @@ export type QueryGetUsersArgs = {
   offset?: Maybe<Scalars['Int']>;
   show?: Maybe<Scalars['Int']>;
   query?: Maybe<Scalars['String']>;
-};
-
-
-export type QueryGetQueueArgs = {
-  id?: Maybe<Scalars['String']>;
 };
 
 export type QueueEntry = {
@@ -857,7 +864,7 @@ export type GetInitialRiderStatusQuery = (
     & Pick<QueueEntry, 'id' | 'position' | 'isAccepted' | 'origin' | 'destination' | 'state' | 'groupSize'>
     & { beeper: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
+      & Pick<User, 'id' | 'first' | 'name' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
       & { location?: Maybe<(
         { __typename?: 'Point' }
         & Pick<Point, 'longitude' | 'latitude'>
@@ -878,7 +885,7 @@ export type RiderStatusSubscription = (
     & Pick<QueueEntry, 'id' | 'position' | 'isAccepted' | 'origin' | 'destination' | 'state' | 'groupSize'>
     & { beeper: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'first' | 'last' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
+      & Pick<User, 'id' | 'first' | 'name' | 'singlesRate' | 'groupRate' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'username' | 'phone' | 'photoUrl' | 'masksRequired' | 'capacity' | 'queueSize'>
       & { location?: Maybe<(
         { __typename?: 'Point' }
         & Pick<Point, 'longitude' | 'latitude'>
@@ -1777,7 +1784,7 @@ export const GetInitialRiderStatusDocument = gql`
     beeper {
       id
       first
-      last
+      name
       singlesRate
       groupRate
       isStudent
@@ -1838,7 +1845,7 @@ export const RiderStatusDocument = gql`
     beeper {
       id
       first
-      last
+      name
       singlesRate
       groupRate
       isStudent
