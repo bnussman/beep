@@ -4,7 +4,7 @@ import duration from 'dayjs/plugin/duration';
 import { Card } from '../../../components/Card';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteBeepMutation, GetBeepQuery } from '../../../generated/graphql';
-import { Heading, Text, Box, Button, Flex, Spacer, Center, Spinner } from "@chakra-ui/react";
+import { Heading, Text, Box, Button, Flex, Spacer, Center, Spinner, Stack } from "@chakra-ui/react";
 import React from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import BasicUser from "../../../components/BasicUser";
@@ -70,7 +70,7 @@ function BeepPage(): JSX.Element {
   return (
     <Box>
       {deleteError && <Error error={deleteError} />}
-      <Flex align="center">
+      <Flex align="center" mb={2}>
         <Heading>Beep</Heading>
         <Spacer />
         <Button
@@ -83,42 +83,42 @@ function BeepPage(): JSX.Element {
       </Flex>
       {loading && <Loading />}
       {data?.getBeep &&
-        <Box>
+        <Stack spacing={4}>
           <iframe
             title="Map"
             width="100%"
             height="300"
             src={`https://www.google.com/maps/embed/v1/directions?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&origin=${data.getBeep.origin}&destination=${data.getBeep.destination}`}>
           </iframe>
-          <Card>
+          <Box>
             <Heading>Beeper</Heading>
             <BasicUser user={data.getBeep.beeper} />
-          </Card>
-          <Card>
+          </Box>
+          <Box>
             <Heading>Rider</Heading>
             <BasicUser user={data.getBeep.rider} />
-          </Card>
-          <Card>
+          </Box>
+          <Box>
             <Heading>Origin</Heading>
             <Text>{data.getBeep.origin}</Text>
-          </Card>
-          <Card>
+          </Box>
+          <Box>
             <Heading>Destination</Heading>
             <Text>{data.getBeep.destination}</Text>
-          </Card>
-          <Card>
+          </Box>
+          <Box>
             <Heading>Group Size</Heading>
             <Text>{data.getBeep.groupSize}</Text>
-          </Card>
-          <Card>
+          </Box>
+          <Box>
             <Heading>Beep Started</Heading>
             <Text>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Text>
-          </Card>
-          <Card>
+          </Box>
+          <Box>
             <Heading>Beep Ended</Heading>
             <Text>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Text>
-          </Card>
-        </Box>
+          </Box>
+        </Stack>
       }
       <DeleteDialog
         title="Beep"
