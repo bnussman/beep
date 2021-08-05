@@ -27,6 +27,27 @@ const SignUpGraphQL = gql`
         id
         tokenid
       }
+      user {
+        id
+        name
+        first
+        last
+        email
+        phone
+        venmo
+        isBeeping
+        isEmailVerified
+        isStudent
+        groupRate
+        singlesRate
+        photoUrl
+        capacity
+        masksRequired
+        username
+        role
+        cashapp
+        queueSize
+      }
     }
   }
 `;
@@ -72,10 +93,11 @@ function SignUp() {
       });
 
       if (result) {
-        localStorage.setItem('user', JSON.stringify(result.data.signup));
-        await client.resetStore();
-        await client.query({ query: GetUserData });
-        //await client.query({ query: GetUserData, });
+        localStorage.setItem('user', JSON.stringify(result?.data?.signup));
+        client.writeQuery({
+          query: GetUserData,
+          data: { getUser: { ...result.data?.signup.user } }
+        });
         history.push('/')
       }
     }

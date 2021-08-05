@@ -122,11 +122,11 @@ export type Location = {
 export type LocationInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
-  altitude: Scalars['Float'];
+  altitude?: Maybe<Scalars['Float']>;
   accuracy?: Maybe<Scalars['Float']>;
   altitideAccuracy?: Maybe<Scalars['Float']>;
-  heading: Scalars['Float'];
-  speed: Scalars['Float'];
+  heading?: Maybe<Scalars['Float']>;
+  speed?: Maybe<Scalars['Float']>;
 };
 
 export type LoginInput = {

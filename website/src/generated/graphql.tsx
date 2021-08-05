@@ -121,11 +121,11 @@ export type Location = {
 export type LocationInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
-  altitude: Scalars['Float'];
+  altitude?: Maybe<Scalars['Float']>;
   accuracy?: Maybe<Scalars['Float']>;
   altitideAccuracy?: Maybe<Scalars['Float']>;
-  heading: Scalars['Float'];
-  speed: Scalars['Float'];
+  heading?: Maybe<Scalars['Float']>;
+  speed?: Maybe<Scalars['Float']>;
 };
 
 export type LoginInput = {
@@ -792,6 +792,9 @@ export type LoginMutation = (
     & { tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
+    ), user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp' | 'queueSize'>
     ) }
   ) }
 );
@@ -827,6 +830,9 @@ export type SignUpMutation = (
     & { tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
+    ), user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp' | 'queueSize'>
     ) }
   ) }
 );
@@ -1720,6 +1726,27 @@ export const LoginDocument = gql`
       id
       tokenid
     }
+    user {
+      id
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      username
+      role
+      cashapp
+      queueSize
+    }
   }
 }
     `;
@@ -1790,6 +1817,27 @@ export const SignUpDocument = gql`
     tokens {
       id
       tokenid
+    }
+    user {
+      id
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      username
+      role
+      cashapp
+      queueSize
     }
   }
 }

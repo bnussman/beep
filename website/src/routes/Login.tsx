@@ -16,6 +16,27 @@ const LoginGraphQL = gql`
         id
         tokenid
       }
+      user {
+        id
+        name
+        first
+        last
+        email
+        phone
+        venmo
+        isBeeping
+        isEmailVerified
+        isStudent
+        groupRate
+        singlesRate
+        photoUrl
+        capacity
+        masksRequired
+        username
+        role
+        cashapp
+        queueSize
+      }
     }
   }
 `;
@@ -29,32 +50,24 @@ function Login() {
 
   async function handleLogin(e: FormEvent) {
     e.preventDefault();
-    try {
-      const result = await login({
-        variables: {
-          username: username,
-          password: password
-        },
+
+
+    const result = await login({
+      variables: {
+        username: username,
+        password: password
+      },
+    });
+
+    if (result) {
+      localStorage.setItem('user', JSON.stringify(result.data?.login));
+
+      client.writeQuery({
+        query: GetUserData,
+        data: { getUser: { ...result.data?.login.user } }
       });
 
-      if (result) {
-        localStorage.setItem('user', JSON.stringify(result.data?.login));
-
-        await client.resetStore();
-
-        const data = await client.query({ query: GetUserData });
-
-        client.writeQuery({
-            query: GetUserData,
-            data
-        });
-
-        history.push('/')
-      }
-
-    }
-    catch (error) {
-
+      history.push('/')
     }
   }
 
