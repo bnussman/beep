@@ -5,7 +5,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { Indicator } from '../../../components/Indicator';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteReportMutation, GetReportQuery, UpdateReportMutation, User } from '../../../generated/graphql';
-import { Box, Button, Center, Checkbox, Flex, Heading, Spacer, Spinner, Stack, Text, Textarea } from '@chakra-ui/react';
+import { Box, Button, Checkbox, Flex, Heading, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
 import React, { useEffect, useState } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import DeleteDialog from "../../../components/DeleteDialog";
@@ -127,33 +127,33 @@ function ReportPage() {
 
       {data?.getReport ?
         <React.Fragment>
-          <Stack spacing={4}>
+          <Stack spacing={6}>
             <Box>
-              <Heading size="md">Reporter</Heading>
+              <Heading size="lg">Reporter</Heading>
               <BasicUser user={data?.getReport.reporter} />
             </Box>
             <Box>
-              <Heading size="md">Reported</Heading>
+              <Heading size="lg">Reported</Heading>
               <BasicUser user={data?.getReport.reported} />
             </Box>
             <Box>
-              <Heading size="md">Reason</Heading>
+              <Heading size="lg">Reason</Heading>
               <Text>{data?.getReport.reason}</Text>
             </Box>
             <Box>
-              <Heading size="md">Created</Heading>
+              <Heading size="lg">Created</Heading>
               <Text>{dayjs().to(data?.getReport.timestamp)}</Text>
             </Box>
             {data?.getReport.beep &&
               <Box>
-                <Heading size="md">Associated Beep Event</Heading>
+                <Heading size="lg">Beep</Heading>
                 <NavLink to={`/admin/beeps/${data?.getReport.beep.id}`}>
                   {data?.getReport.beep.id}
                 </NavLink>
               </Box>
             }
             <Box>
-              <Heading size="md">Status</Heading>
+              <Heading size="lg">Status</Heading>
               {data?.getReport.handled ?
                 <Box>
                   <Flex align="center">
@@ -170,26 +170,28 @@ function ReportPage() {
               }
             </Box>
           </Stack>
-          <Heading size="lg">Update Report Info</Heading>
-          {updateError && <Error error={updateError} />}
-          <Textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
-          <Checkbox
-            isChecked={isHandled}
-            onChange={(e) => setIsHandled(e.target.checked)}
-          >
-            Handled
-          </Checkbox>
-          <br />
-          <Button
-            type="submit"
-            isLoading={updateLoading}
-            onClick={() => updateReport()}
-          >
-            Update Report
-          </Button>
+            <Stack spacing={2} mt={8}>
+                <Heading size="lg">Admin Notes</Heading>
+                {updateError && <Error error={updateError} />}
+                <Textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                />
+                <Checkbox
+                    isChecked={isHandled}
+                    onChange={(e) => setIsHandled(e.target.checked)}
+                >
+                    Handled
+                </Checkbox>
+            </Stack>
+            <Button
+                type="submit"
+                isLoading={updateLoading}
+                onClick={() => updateReport()}
+                mt={2}
+            >
+                Update Report
+            </Button>
           <DeleteDialog
             title="Report"
             isOpen={isOpen}

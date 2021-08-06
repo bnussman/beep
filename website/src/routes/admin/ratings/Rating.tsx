@@ -2,11 +2,10 @@ import { NavLink, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Card } from '../../../components/Card';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteRatingMutation, GetRatingQuery } from '../../../generated/graphql';
 import React from "react";
-import { Heading, Text, Box, Button, Flex, Spacer, Center, Spinner } from "@chakra-ui/react";
+import { Heading, Text, Box, Button, Flex, Spacer, Stack } from "@chakra-ui/react";
 import { printStars } from ".";
 import { Error } from '../../../components/Error';
 import BasicUser from "../../../components/BasicUser";
@@ -81,36 +80,36 @@ function RatingPage() {
       {loading && <Loading />}
 
       {data?.getRating &&
-        <Box>
-          <Card>
-            <Heading>Rater</Heading>
+        <Stack spacing={6}>
+          <Box>
+            <Heading size="lg">Rater</Heading>
             <BasicUser user={data.getRating.rater} />
-          </Card>
-          <Card>
-            <Heading>Rated</Heading>
+          </Box>
+          <Box>
+            <Heading size="lg">Rated</Heading>
             <BasicUser user={data.getRating.rated} />
-          </Card>
-          <Card>
-            <Heading>Stars</Heading>
+          </Box>
+          <Box>
+            <Heading size="lg">Stars</Heading>
             <Text>{printStars(data.getRating.stars)} {data.getRating.stars}</Text>
-          </Card>
-          <Card>
-            <Heading>Message</Heading>
+          </Box>
+          <Box>
+            <Heading size="lg">Message</Heading>
             <Text>{data.getRating.message}</Text>
-          </Card>
-          <Card>
-            <Heading>Created</Heading>
+          </Box>
+          <Box>
+            <Heading size="lg">Created</Heading>
             <Text>{dayjs().to(data.getRating.timestamp)}</Text>
-          </Card>
+          </Box>
           {data.getRating.beep &&
-            <Card>
-              <Heading>Associated Beep Event</Heading>
+            <Box>
+              <Heading size="lg">Beep</Heading>
               <NavLink to={`/admin/beeps/${data.getRating.beep.id}`}>
                 {data.getRating.beep.id}
               </NavLink>
-            </Card>
+            </Box>
           }
-        </Box>
+        </Stack>
       }
       <DeleteDialog
         title="Rating"
