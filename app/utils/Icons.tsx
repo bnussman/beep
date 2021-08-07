@@ -148,6 +148,14 @@ export const StarIcon = (props) => (
     <Icon {...props} name='star'/>
 );
 
+export const PlusIcon = (props) => (
+    <Icon {...props} name='plus-outline' />
+);
+
+export const MinusIcon = (props) => (
+    <Icon {...props} name='minus-outline' />
+);
+
 const styles = StyleSheet.create({
     indicator: {
         justifyContent: 'center',

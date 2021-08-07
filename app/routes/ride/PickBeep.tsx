@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { Layout, Text, Divider, List, ListItem, Button, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
+import React, { useEffect, useState } from 'react';
+import { Layout, Text, Divider, List, ListItem, Button, TopNavigation, TopNavigationAction, Spinner, Icon } from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
-import { BackIcon } from '../../utils/Icons';
+import { BackIcon, MapIcon, MinusIcon, PlusIcon } from '../../utils/Icons';
 import ProfilePicture from '../../components/ProfilePicture';
 import { gql, useQuery } from '@apollo/client';
 import { printStars } from '../../components/Stars';
@@ -39,19 +39,30 @@ const GetBeepers = gql`
 
 export function PickBeepScreen(props: Props): JSX.Element {
     const { navigation, route } = props;
-    const { data, loading, error, startPolling, stopPolling } = useQuery<GetBeeperListQuery>(GetBeepers, {
+    const [radius, setRadius] = useState<number>(10);
+
+    const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetBeeperListQuery>(GetBeepers, {
       variables: {
         latitude: route.params.latitude,
-        longitude: route.params.longitude
+        longitude: route.params.longitude,
+        radius
       }
     });
 
     useEffect(() => {
-        startPolling(5000);
+        startPolling(10000);
         return () => {
             stopPolling();
         };
     }, []);
+
+    useEffect(() => {
+        refetch({
+            latitude: route.params.latitude,
+            longitude: route.params.longitude,
+            radius
+        });
+    }, [radius]);
 
     function getSubtitle(): string {
       if (loading) return `0 people are beeping`;
@@ -70,6 +81,26 @@ export function PickBeepScreen(props: Props): JSX.Element {
 
     const BackAction = () => (
         <TopNavigationAction icon={BackIcon} onPress={() => navigation.goBack()}/>
+    );
+
+    const decreseRadius = () => {
+        if (radius - 5 <= 0) return;
+
+        setRadius(oldRadius => oldRadius - 5);
+    };
+
+    const increaseRadius = () => {
+        if (radius + 5 > 30) return;
+
+        setRadius(oldRadius => oldRadius + 5);
+    };
+
+    const MileAction = () => (
+        <Layout style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+            <Text>Showing {radius} miles</Text>
+            <TopNavigationAction icon={MinusIcon} onPress={decreseRadius}/>
+            <TopNavigationAction icon={PlusIcon} onPress={increaseRadius}/>
+        </Layout>
     );
 
     const renderItem = ({ item }: { item: User }) => (
@@ -105,6 +136,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
         alignment='center'
         subtitle={getSubtitle()}
         accessoryLeft={BackAction}
+          accessoryRight={MileAction}
       />
       {loading &&
         <Layout style={styles.container}>

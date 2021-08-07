@@ -97,7 +97,7 @@ export class RiderResolver {
   @Query(() => [User])
   @Authorized()
   public async getBeeperList(@Ctx() ctx: Context, @Arg('input') input: FindBeepInput): Promise<User[]> {
-    if (input.radius == 0) {
+    if (input.radius === 0 && ctx.user.role === 'admin') {
       return await ctx.em.find(User, { isBeeping: true });
     }
 
