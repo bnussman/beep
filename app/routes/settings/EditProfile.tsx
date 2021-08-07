@@ -1,13 +1,18 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Layout, Button, Input, TopNavigation, TopNavigationAction, Text } from '@ui-kitten/components';
 import { UserContext } from '../../utils/UserContext';
 import { EditIcon, LoadingIndicator } from "../../utils/Icons";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { BackIcon } from '../../utils/Icons';
 import { gql, useMutation } from '@apollo/client';
-import { EditAccountMutation, Maybe } from '../../generated/graphql';
+import { AddProfilePictureMutation, EditAccountMutation, Maybe } from '../../generated/graphql';
 import { Navigation } from '../../utils/Navigation';
+import { ReactNativeFile } from 'apollo-upload-client';
+import * as mime from 'react-native-mime-types';
+import * as ImagePicker from 'expo-image-picker';
+import ProfilePicture from '../../components/ProfilePicture';
+import {isMobile} from '../../utils/config';
 
 interface Props {
   navigation: Navigation;
@@ -31,9 +36,29 @@ mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: S
     }
 `;
 
+export const UploadPhoto = gql`
+    mutation AddProfilePicture ($picture: Upload!){
+        addProfilePicture (picture: $picture) {
+            photoUrl
+        }
+    }
+`;
+
+export function generateRNFile(uri: string, name: string) {
+    return uri ? new ReactNativeFile({
+        uri,
+        type: mime.lookup(uri) || 'image',
+        name,
+    }) : null;
+}
+
 export function EditProfileScreen(props: Props): JSX.Element {
   const user = useContext(UserContext);
   const [edit, { loading }] = useMutation<EditAccountMutation>(EditAccount);
+
+    const [upload, { data, loading: uploadLoading , error }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
+    const [photoLoading, setPhotoLoading] = useState<boolean>(false);
+    const [photo, setPhoto] = useState<any>();
 
   const [username] = useState<string>(user.username);
   const [first, setFirst] = useState<string>(user.first);
@@ -57,6 +82,58 @@ export function EditProfileScreen(props: Props): JSX.Element {
     if (venmo !== user.venmo) setVenmo(user?.venmo);
     if (cashapp !== user.cashapp) setCashapp(user?.cashapp);
   }, [user]);
+
+    async function handleUpdatePhoto(): Promise<void> {
+       setPhotoLoading(true);
+
+       const result = await ImagePicker.launchImageLibraryAsync({
+           mediaTypes: ImagePicker.MediaTypeOptions.Images,
+           allowsMultipleSelection: false,
+           allowsEditing: true,
+           aspect: [4, 3],
+           base64: false
+       });
+
+       if (result.cancelled) {
+           setPhotoLoading(false);
+           return;
+       }
+
+       let real;
+
+       if (!isMobile) {
+           const res = await fetch(result.uri);
+           const blob = await res.blob();
+           const fileType = blob.type.split("/")[1];
+           const file = new File([blob], "photo." + fileType);
+           real = file;
+           setPhoto(result);
+       }
+       else {
+           if (!result.cancelled) {
+               setPhoto(result);
+               const file = generateRNFile(result.uri, "file.jpg");
+               real = file;
+           }
+           else {
+               setPhotoLoading(false);
+           }
+       }
+
+       try {
+       await upload({
+           variables: {
+               picture: real
+           }
+       });
+       }
+       catch (error) {
+        alert(error.message); 
+       }
+
+       setPhoto(undefined);
+       setPhotoLoading(false);
+    }
 
   async function handleUpdate() {
     try {
@@ -82,38 +159,46 @@ export function EditProfileScreen(props: Props): JSX.Element {
   );
 
   return (
-    <>
-      <TopNavigation title='Edit Profile' alignment='center' accessoryLeft={BackAction} />
-      <Layout style={{ flex: 1 }}>
-        <KeyboardAwareScrollView scrollEnabled={false} extraScrollHeight={70}>
-          <Layout style={styles.container}>
-            <Layout style={styles.form}>
-              <Input
-                label="Username"
-                value={username}
-                textContentType="username"
-                placeholder="Username"
-                disabled={true}
-              />
-              <Input
-                label="First Name"
-                value={first}
-                textContentType="givenName"
-                placeholder="First Name"
-                returnKeyType="next"
-                onChangeText={(text) => setFirst(text)}
-                onSubmitEditing={() => lastRef.current.focus()}
-              />
-              <Input
-                label="Last Name"
-                ref={lastRef}
-                value={last}
-                textContentType="familyName"
-                placeholder="Last Name"
-                returnKeyType="next"
-                onChangeText={(text) => setLast(text)}
-                onSubmitEditing={() => emailRef.current.focus()}
-              />
+      <>
+          <TopNavigation title='Edit Profile' alignment='center' accessoryLeft={BackAction} />
+          <Layout style={{ flex: 1 }}>
+              <KeyboardAwareScrollView scrollEnabled={false} extraScrollHeight={70}>
+                  <Layout style={styles.container}>
+                      <Layout style={styles.form}>
+                          <Layout style={styles.nameGroup}>
+                              <Layout style={{ width: '68%' }}>
+                                  <Input
+                                      label="First Name"
+                                      value={first}
+                                      textContentType="givenName"
+                                      placeholder="First Name"
+                                      returnKeyType="next"
+                                      onChangeText={(text) => setFirst(text)}
+                                      onSubmitEditing={() => lastRef.current.focus()}
+                                  />
+                                  <Input
+                                      label="Last Name"
+                                      ref={lastRef}
+                                      value={last}
+                                      textContentType="familyName"
+                                      placeholder="Last Name"
+                                      returnKeyType="next"
+                                      onChangeText={(text) => setLast(text)}
+                                      onSubmitEditing={() => emailRef.current.focus()}
+                                  />
+                              </Layout>
+                              <TouchableOpacity style={{ marginLeft: 8 }} onPress={() => handleUpdatePhoto()}>
+                                  <ProfilePicture url={photo?.uri || user.photoUrl} size={100} />
+                                  {photoLoading || uploadLoading ? <LoadingIndicator /> : null}
+                              </TouchableOpacity>
+                          </Layout>
+                                  <Input
+                                      label="Username"
+                                      value={username}
+                                      textContentType="username"
+                                      placeholder="Username"
+                                      disabled={true}
+                                  />
               <Input
                 label="Email"
                 ref={emailRef}
@@ -193,5 +278,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 8
-  }
+  },
+  nameGroup: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: "center",
+  },
 });

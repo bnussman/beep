@@ -1,9 +1,8 @@
-import React, { useContext, useRef, useState } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, Layout, Button, Input, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { UserContext } from '../../utils/UserContext';
-import { PhotoIcon, BackIcon, SignUpIcon, LoadingIndicator } from "../../utils/Icons";
+import { BackIcon, SignUpIcon, LoadingIndicator } from "../../utils/Icons";
 import { getPushToken } from "../../utils/Notifications";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as Linking from 'expo-linking';
@@ -11,12 +10,14 @@ import * as ImagePicker from 'expo-image-picker';
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../../generated/graphql';
 import { isMobile } from '../../utils/config';
-import { generateRNFile } from '../settings/ProfilePhoto';
+import { generateRNFile } from '../settings/EditProfile';
 import { client } from '../../utils/Apollo';
-import { GetUserData } from '../../App';
+import { GetUserData } from '../../utils/UserQueries';
+import { Navigation } from '../../utils/Navigation';
+import ProfilePicture from '../../components/ProfilePicture';
 
 interface Props {
-    navigation: any;
+    navigation: Navigation;
 }
 
 let real: any;
@@ -150,23 +151,30 @@ function RegisterScreen(props: Props) {
                 <KeyboardAwareScrollView scrollEnabled={false} extraScrollHeight={90}>
                     <Layout style={styles.container}>
                         <Layout style={styles.form}>
-                        <Input
-                            label="First Name"
-                            textContentType="givenName"
-                            placeholder="Jon"
-                            returnKeyType="next"
-                            onChangeText={(text) => setFirst(text)}
-                            onSubmitEditing={() => lastRef.current.focus()}
-                        />
-                        <Input
-                            ref={lastRef}
-                            label="Last Name"
-                            textContentType="familyName"
-                            placeholder="Doe"
-                            returnKeyType="next"
-                            onChangeText={(text) => setLast(text)}
-                            onSubmitEditing={() => emailRef.current.focus()}
-                        />
+                            <Layout style={styles.nameGroup}>
+                                <Layout style={{ width: '70%' }}>
+                                    <Input
+                                        label="First Name"
+                                        textContentType="givenName"
+                                        placeholder="Banks"
+                                        returnKeyType="next"
+                                        onChangeText={(text) => setFirst(text)}
+                                        onSubmitEditing={() => lastRef.current.focus()}
+                                    />
+                                    <Input
+                                        ref={lastRef}
+                                        label="Last Name"
+                                        textContentType="familyName"
+                                        placeholder="Nussman"
+                                        returnKeyType="next"
+                                        onChangeText={(text) => setLast(text)}
+                                        onSubmitEditing={() => emailRef.current.focus()}
+                                    />
+                                </Layout>
+                                <TouchableOpacity style={{ marginLeft: 4 }} onPress={() => handlePhoto()}>
+                                    <ProfilePicture url={photo?.uri} size={90} />
+                                </TouchableOpacity>
+                        </Layout>
                         <Input
                             ref={emailRef}
                             label="Email"
@@ -181,7 +189,7 @@ function RegisterScreen(props: Props) {
                             ref={phoneRef}
                             label="Phone Number"
                             textContentType="telephoneNumber"
-                            placeholder="7048414949"
+                            placeholder="7044043044"
                             returnKeyType="next"
                             style={{marginTop: 5}}
                             onChangeText={(text) => setPhone(text)}
@@ -189,18 +197,18 @@ function RegisterScreen(props: Props) {
                         />
                         <Input
                             ref={venmoRef}
-                            label="Venmo Username"
+                            label="Venmo Username (optional)"
                             textContentType="username"
-                            placeholder="jondoe"
+                            placeholder="banks"
                             returnKeyType="next"
                             onChangeText={(text) => setVenmo(text)}
                             onSubmitEditing={() => cashappRef.current.focus()}
                         />
                         <Input
                             ref={cashappRef}
-                            label="Cash App Username"
+                            label="Cash App Username (optional)"
                             textContentType="username"
-                            placeholder="jondoe"
+                            placeholder="banks"
                             returnKeyType="next"
                             onChangeText={(text) => setCashapp(text)}
                             onSubmitEditing={() => usernameRef.current.focus()}
@@ -209,7 +217,7 @@ function RegisterScreen(props: Props) {
                             ref={usernameRef}
                             label="Username"
                             textContentType="username"
-                            placeholder="jondoe"
+                            placeholder="banksnussman"
                             returnKeyType="next"
                             onChangeText={(text) => setUsername(text)}
                             onSubmitEditing={() => passwordRef.current.focus()}
@@ -224,17 +232,6 @@ function RegisterScreen(props: Props) {
                             onChangeText={(text) => setPassword(text)}
                             onSubmitEditing={() => handleSignUp()}
                         />
-                        <Layout style={{flex: 1, flexDirection: "row", justifyContent: "center", marginTop: 5, marginBottom: 5}}>
-                            {photo && <Image source={{ uri: photo.uri }} style={{ width: 20, height: 20, borderRadius: 20/ 2, marginTop: 10, marginBottom: 10 }} />}
-                            <Button
-                                onPress={() => handlePhoto()}
-                                accessoryRight={PhotoIcon}
-                                style={{width: "60%"}}
-                                size="small"
-                            >
-                                Profile Photo
-                            </Button>
-                        </Layout>
                         {!loading ? 
                             <Button
                                 onPress={() => handleSignUp()}
@@ -266,6 +263,11 @@ function RegisterScreen(props: Props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignItems: "center",
+    },
+    nameGroup: {
+        flex: 1,
+        flexDirection: 'row',
         alignItems: "center",
     },
     form: {

@@ -9,7 +9,7 @@ import { Icon } from '@ui-kitten/components';
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../../generated/graphql';
 import { client } from '../../utils/Apollo';
-import { GetUserData } from '../../App';
+import { GetUserData } from '../../utils/UserQueries';
 import { getPushToken } from '../../utils/Notifications';
 import { Navigation } from '../../utils/Navigation';
 

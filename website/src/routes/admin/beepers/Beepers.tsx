@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client';
 import { GetBeeperListQuery, User } from '../../../generated/graphql';
-import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Center, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import TdUser from '../../../components/TdUser';
 import Loading from '../../../components/Loading';
 import { Error } from '../../../components/Error';
@@ -55,6 +55,19 @@ function Beepers() {
   }, []);
 
   if (error) return <Error error={error} />;
+
+  if (data?.getBeeperList.length === 0) {
+    return (
+        <Box>
+            <Heading>Beepers</Heading>
+            <Center>
+                <Heading size="xl" mt={4}>
+                    Nobody is beeping right now 🥺
+                </Heading>
+            </Center>
+        </Box>
+    );
+  }
 
   return (
     <Box>

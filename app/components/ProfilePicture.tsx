@@ -1,8 +1,9 @@
 import React, { PureComponent } from "react";
 import { Image } from "react-native";
+import logo from "../assets/userImage.png";
 
 interface Props {
-    url: string;
+    url?: string | null;
     size: number;
     style?: any;
 }
@@ -20,10 +21,10 @@ export default class ProfilePicture extends PureComponent<Props, State> {
 
     render() {
         return (
-                <Image
-                    style={{...this.props.style, width: this.props.size, height: this.props.size, borderRadius: this.props.size / 2 }}
-                    source={{uri: this.props.url}}
-                />
+            <Image
+                style={{...this.props.style, width: this.props.size, height: this.props.size, borderRadius: this.props.size / 2 }}
+                source={this.props.url ? { uri: this.props.url } : logo}
+            />
         );
     }
 }

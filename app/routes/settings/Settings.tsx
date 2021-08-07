@@ -4,15 +4,16 @@ import { StyleSheet } from 'react-native';
 import { Layout, Button, Card, Text } from '@ui-kitten/components';
 import { ThemeContext } from '../../utils/ThemeContext';
 import { UserContext } from '../../utils/UserContext';
-import { PhotoIcon, LogIcon, ThemeIcon, LogoutIcon, ProfileIcon, PasswordIcon, ForwardIcon } from '../../utils/Icons';
+import { LogIcon, ThemeIcon, LogoutIcon, ProfileIcon, PasswordIcon, ForwardIcon } from '../../utils/Icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ResendButton from '../../components/ResendVarificationEmailButton';
-import {gql, useMutation} from '@apollo/client';
-import {LogoutMutation} from '../../generated/graphql';
-import {client} from '../../utils/Apollo';
-import {GetUserData} from '../../App';
+import { gql, useMutation } from '@apollo/client';
+import { LogoutMutation } from '../../generated/graphql';
+import { client } from '../../utils/Apollo';
+import { GetUserData } from '../../utils/UserQueries';
 import { LOCATION_TRACKING } from '../beep/StartBeeping';
 import { UserHeader } from '../../components/UserHeader';
+import { Navigation } from '../../utils/Navigation';
 
 const Logout = gql`
     mutation Logout {
@@ -21,7 +22,7 @@ const Logout = gql`
 `;
 
 interface Props {
-  navigation: any;
+  navigation: Navigation;
 }
 
 export function MainSettingsScreen(props: Props): JSX.Element {
@@ -90,15 +91,6 @@ export function MainSettingsScreen(props: Props): JSX.Element {
           Edit Profile
         </Button>
         <Button
-          onPress={() => navigation.navigate("ProfilePhotoScreen")}
-          accessoryLeft={PhotoIcon}
-          accessoryRight={ForwardIcon}
-          style={styles.button}
-          appearance='ghost'
-        >
-          Profile Photo
-        </Button>
-        <Button
           onPress={() => navigation.navigate("ChangePasswordScreen")}
           accessoryLeft={PasswordIcon}
           accessoryRight={ForwardIcon}
@@ -158,6 +150,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    marginBottom: 10
+    marginBottom: 10,
   },
 });

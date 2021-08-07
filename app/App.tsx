@@ -23,60 +23,13 @@ import init from "./utils/Init";
 import { isMobile } from './utils/config';
 import ThemedStatusBar from './utils/StatusBar';
 import { client } from './utils/Apollo';
-import { ApolloProvider, gql, useQuery } from '@apollo/client';
+import { ApolloProvider, useQuery } from '@apollo/client';
 import { GetUserDataQuery, User } from './generated/graphql';
 import Sentry from './utils/Sentry';
+import { GetUserData, UserUpdates } from './utils/UserQueries';
 
 const Stack = createStackNavigator();
 init();
-
-export const GetUserData = gql`
-  query GetUserData {
-    getUser {
-      id
-      username
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      photoUrl
-      capacity
-      masksRequired
-      cashapp
-    }
-  }
-`;
-
-const UserUpdates = gql`
-  subscription UserUpdates($id: String!) {
-    getUserUpdates(id: $id) {
-      id
-      username
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      photoUrl
-      capacity
-      masksRequired
-      cashapp
-    }
-  }
-`;
 
 function Beep() {
   const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { errorPolicy: 'none' });
