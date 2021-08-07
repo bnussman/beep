@@ -58,9 +58,9 @@ export function PickBeepScreen(props: Props): JSX.Element {
     }, []);
 
     function getSubtitle(): string {
-      if (loading) return `0 people are beeping`;
+      if (loading) return `Loading...`;
       if (error) return `Unable to get beeper list`;
-      return (data?.getBeeperList.length == 1) ? `${data.getBeeperList.length} person is beeping` : `${data?.getBeeperList.length} people are beeping`;
+      return (data?.getBeeperList.length == 1) ? `${data.getBeeperList.length} beeper in ${radius} miles` : `${data?.getBeeperList.length} beepers in ${radius} miles`;
     }
 
     function goBack(id: string): void {
@@ -89,11 +89,10 @@ export function PickBeepScreen(props: Props): JSX.Element {
     };
 
     const MileAction = () => (
-        <Layout style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-            <Text>Showing {radius} miles</Text>
+        <>
             <TopNavigationAction icon={MinusIcon} onPress={decreseRadius}/>
             <TopNavigationAction icon={PlusIcon} onPress={increaseRadius}/>
-        </Layout>
+        </>
     );
 
     const renderItem = ({ item }: { item: User }) => (
@@ -105,8 +104,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
                 return (
                     <View style={styles.row}>
                         {item.role === "admin" && <Button size='tiny' status='danger'>Founder</Button>}
-                        {item.isStudent && <Button status="basic" size='tiny' style={{marginRight: 4}}>Student</Button>}
-                        {item.masksRequired && <Button status="info" size='tiny' style={{marginRight: 4}}>Masks</Button>}
+                        {item.masksRequired && <Button status="basic" size='tiny' style={{marginRight: 4}}>Masks</Button>}
                         {item.venmo && <Button status="info" size='tiny' style={{marginRight: 4}}>Venmo</Button>}
                         {item.cashapp && <Button status="success" size='tiny' style={{marginRight: 4}}>Cash App</Button>}
                     </View>
@@ -129,7 +127,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
         alignment='center'
         subtitle={getSubtitle()}
         accessoryLeft={BackAction}
-          accessoryRight={MileAction}
+        accessoryRight={MileAction}
       />
       {loading &&
         <Layout style={styles.container}>
@@ -145,7 +143,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
       {data?.getBeeperList && data.getBeeperList.length === 0 &&
         <Layout style={styles.container}>
           <Text category='h5'>Nobody is beeping!</Text>
-          <Text appearance='hint'>Nobody is giving rides right now. Check back later!</Text>
+            <Text appearance='hint' style={{ width: '85%' }}>Nobody is beeping right now! Use the + - buttons to change your beeper range</Text>
         </Layout>
       }
       {data?.getBeeperList && data.getBeeperList.length > 0 &&
@@ -161,7 +159,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
 
 const styles = StyleSheet.create({
     container: {
-        height: '100%',
+        height: '99%',
         alignItems: "center",
         justifyContent: 'center'
     },
