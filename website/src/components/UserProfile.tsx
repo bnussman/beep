@@ -1,5 +1,5 @@
 import { NavLink, useParams, useHistory } from 'react-router-dom';
-import RideHistoryTable from './RideHistoryTable';
+import BeepsTable from './BeepsTable';
 import QueueTable from './QueueTable';
 import { UserRole } from '../types/User';
 import { gql, useMutation } from '@apollo/client';
@@ -242,7 +242,7 @@ function UserProfile(props: Props) {
               <QueueTable user={user} />
             </TabPanel>
             <TabPanel>
-              <RideHistoryTable userId={user.id!} />
+              <BeepsTable userId={user.id!} />
             </TabPanel>
             <TabPanel>
               <RatingsTable userId={user.id!} />

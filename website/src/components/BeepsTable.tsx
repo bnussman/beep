@@ -1,14 +1,16 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Card } from './Card';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { gql, useQuery } from '@apollo/client';
 import { GetBeepsQuery } from '../generated/graphql';
 import Pagination from './Pagination';
 import React, { useState } from 'react';
-import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import TdUser from './TdUser';
+import Loading from './Loading';
 
 dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 interface Props {
   userId: string;
@@ -46,7 +48,7 @@ const Hisory = gql`
     }
 `;
 
-function RideHistoryTable(props: Props) {
+function BeepsTable(props: Props) {
   const pageLimit = 5;
   const { data, loading, refetch } = useQuery<GetBeepsQuery>(Hisory, { variables: { id: props.userId, offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -66,13 +68,7 @@ function RideHistoryTable(props: Props) {
     );
   }
 
-  if (loading) {
-    return (
-      <Center h="100px">
-        <Spinner size="xl" />
-      </Center>
-    );
-  }
+  if (loading) return <Loading />;
 
   return (
     <Box>
@@ -91,9 +87,8 @@ function RideHistoryTable(props: Props) {
             <Th>Origin</Th>
             <Th>Destination</Th>
             <Th>Group Size</Th>
-            <Th>Start Time</Th>
-            <Th>End Time</Th>
             <Th>Duration</Th>
+            <Th>When</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -105,9 +100,8 @@ function RideHistoryTable(props: Props) {
                 <Td>{ride.origin}</Td>
                 <Td>{ride.destination}</Td>
                 <Td>{ride.groupSize}</Td>
-                <Td>{dayjs().to(ride.start)}</Td>
-                <Td>{dayjs().to(ride.end)}</Td>
                 <Td>{dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize()}</Td>
+                <Td>{dayjs().to(ride.end)}</Td>
               </Tr>
             )
           })}
@@ -124,4 +118,4 @@ function RideHistoryTable(props: Props) {
   );
 }
 
-export default RideHistoryTable;
+export default BeepsTable;
