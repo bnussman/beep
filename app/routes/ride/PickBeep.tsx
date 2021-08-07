@@ -14,10 +14,11 @@ interface Props {
 }
 
 const GetBeepers = gql`
-    query GetBeeperList($latitude: Float!, $longitude: Float!) {
+query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
         getBeeperList(input: {
             latitude: $latitude,
             longitude: $longitude
+            radius: $radius
         })  {
             id
             first
@@ -41,7 +42,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
     const { navigation, route } = props;
     const [radius, setRadius] = useState<number>(10);
 
-    const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetBeeperListQuery>(GetBeepers, {
+    const { data, loading, error, startPolling, stopPolling } = useQuery<GetBeeperListQuery>(GetBeepers, {
       variables: {
         latitude: route.params.latitude,
         longitude: route.params.longitude,
@@ -50,19 +51,11 @@ export function PickBeepScreen(props: Props): JSX.Element {
     });
 
     useEffect(() => {
-        startPolling(10000);
+        startPolling(6000);
         return () => {
             stopPolling();
         };
     }, []);
-
-    useEffect(() => {
-        refetch({
-            latitude: route.params.latitude,
-            longitude: route.params.longitude,
-            radius
-        });
-    }, [radius]);
 
     function getSubtitle(): string {
       if (loading) return `0 people are beeping`;
