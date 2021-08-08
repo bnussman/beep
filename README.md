@@ -53,6 +53,8 @@ POSTGRESQL_USER
 POSTGRESQL_PASSWORD
 POSTGRESQL_URL
 POSTGRESQL_DATABASE
+REDIS_HOST
+REDIS_PASSWORD
 MAIL_HOST
 MAIL_PORT
 MAIL_USER
@@ -78,4 +80,7 @@ export POSTGRESQL_USER=beep
 export POSTGRESQL_PASSWORD=<a real password here>
 export POSTGRESQL_URL=postgresql://postgresql.nussman.us:5432
 export POSTGRESQL_DATABASE=beep
+
+export REDIS_HOST=redis.staging.nussman.us
+export REDIS_PASSWORD=<a real password here>
 ```

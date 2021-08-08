@@ -38,9 +38,9 @@ export default class BeepAPIServer {
     initializeSentry();
 
     const options = {
-      host: 'redis-0.nussman.us',
+      host: process.env.REDIS_HOST,
+      password: process.env.REDIS_PASSWORD,
       port: 6379,
-      password: 'jJHBYlvrfbcuPrJsym7ZXYKCKPpAtoiDEYduKaYlDxJFvZ+QvtHxpIQM5N/+9kPEzuDWAvHA4vgSUu0q'
     };
 
     const schema: GraphQLSchema = await buildSchema({
