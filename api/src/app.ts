@@ -1,4 +1,3 @@
-import { initializeSentry } from "./utils/sentry";
 import { MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
 import { GraphQLSchema } from "graphql";
@@ -15,6 +14,7 @@ import cors from '@koa/cors';
 import config from './mikro-orm.config';
 import * as Sentry from '@sentry/node';
 import { ValidationError } from 'class-validator';
+import { requestHandler, tracingMiddleWare } from "./utils/sentry";
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -31,11 +31,12 @@ export default class BeepAPIServer {
     BeepORM.orm = await MikroORM.init(config);
     BeepORM.em = BeepORM.orm.em;
 
-    // const migrator = BeepORM.orm.getMigrator();
-    // await migrator.createMigration();
-    // await migrator.up();
-
-    initializeSentry();
+    Sentry.init({
+        dsn: process.env.SENTRY_URL,
+        environment: process.env.GITLAB_ENVIRONMENT_NAME || "development",
+        tracesSampleRate: 1.0,
+        debug: true
+    });
 
     const options = {
       host: process.env.REDIS_HOST,
@@ -64,6 +65,9 @@ export default class BeepAPIServer {
       })
     );
 
+    app.use(requestHandler);
+    app.use(tracingMiddleWare);
+
     const server = new ApolloServer({
       uploads: false,
       schema,
@@ -81,26 +85,32 @@ export default class BeepAPIServer {
       context: async (data) => {
         // Connection contains data passed from subscriptions onConnect return value
         const { ctx, connection } = data;
-
         const em = BeepORM.em.fork();
 
-        if (!ctx) return { em, user: connection?.context?.user };
+        const context = { em, user: connection?.context?.user };
+
+        if (!ctx) return context;
 
         const authHeader = ctx.request.header.authorization;
 
-        if (!authHeader) {
-          return { em, user: connection?.context?.user };
-        }
+        if (!authHeader) return context;
 
         const token: string | undefined = authHeader.split(" ")[1];
 
-        if (!token) return { em, user: connection?.context?.user };
+        if (!token) return context;
 
-        const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
+        if (!context.user) {
+          const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
 
-        if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult, em };
+          if (tokenEntryResult) {
+            Sentry.setUser(tokenEntryResult.user);
+            return { user: tokenEntryResult.user, token: tokenEntryResult, em };
+          }
+        }
 
-        return { em };
+        Sentry.setUser(context.user);
+
+        return context;
       },
       formatError: (error) => {
         Sentry.captureException(error);
@@ -125,6 +135,17 @@ export default class BeepAPIServer {
     });
 
     server.applyMiddleware({ app });
+
+    
+    // usual error handler
+    app.on("error", (err, ctx) => {
+      Sentry.withScope(scope => {
+        scope.addEventProcessor(event => {
+          return Sentry.Handlers.parseRequest(event, ctx.request);
+        });
+        Sentry.captureException(err);
+      });
+    });
 
     const live = app.listen(3001, () => {
       console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
