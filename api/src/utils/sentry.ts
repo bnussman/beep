@@ -1,7 +1,31 @@
-import * as Sentry from "@sentry/node";
 import { extractTraceparentData, stripUrlQueryAndFragment } from "@sentry/tracing";
 import domain from "domain";
 import { Context, Next } from "koa";
+import * as Sentry from '@sentry/node';
+import packageConfig from '../../package.json';
+
+export const initSentry = () => {
+    Sentry.init({
+        release: `@beep/api@${packageConfig.version}`,
+        dsn: process.env.SENTRY_URL,
+        environment: process.env.GITLAB_ENVIRONMENT_NAME || "development",
+        tracesSampleRate: 1.0,
+        debug: true
+    });
+};
+
+export const setSentryUserContext = (user: any) => {
+    Sentry.setUser(user);
+};
+
+export const errorHandler = (err: any, ctx: any) => {
+    Sentry.withScope(scope => {
+        scope.addEventProcessor(event => {
+            return Sentry.Handlers.parseRequest(event, ctx.request);
+        });
+        Sentry.captureException(err);
+    });
+};
 
 // not mandatory, but adding domains does help a lot with breadcrumbs
 export const requestHandler = (ctx: Context, next: Next): Promise<void> => {

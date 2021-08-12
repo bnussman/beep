@@ -12,10 +12,8 @@ import { graphqlUploadKoa } from 'graphql-upload';
 import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
 import config from './mikro-orm.config';
-import * as Sentry from '@sentry/node';
 import { ValidationError } from 'class-validator';
-import { requestHandler, tracingMiddleWare } from "./utils/sentry";
-import packageConfig from '../package.json';
+import { errorHandler, initSentry, requestHandler, setSentryUserContext, tracingMiddleWare } from "./utils/sentry";
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -32,13 +30,7 @@ export default class BeepAPIServer {
     BeepORM.orm = await MikroORM.init(config);
     BeepORM.em = BeepORM.orm.em;
 
-    Sentry.init({
-        release: `@beep/api@${packageConfig.version}`,
-        dsn: process.env.SENTRY_URL,
-        environment: process.env.GITLAB_ENVIRONMENT_NAME || "development",
-        tracesSampleRate: 1.0,
-        debug: true
-    });
+    initSentry();
 
     const options = {
       host: process.env.REDIS_HOST,
@@ -105,18 +97,16 @@ export default class BeepAPIServer {
           const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
 
           if (tokenEntryResult) {
-            Sentry.setUser(tokenEntryResult.user);
+            setSentryUserContext(tokenEntryResult.user);
             return { user: tokenEntryResult.user, token: tokenEntryResult, em };
           }
         }
 
-        Sentry.setUser(context.user);
+        setSentryUserContext(context.user);
 
         return context;
       },
       formatError: (error) => {
-        Sentry.captureException(error);
-
         if (error?.message === "Argument Validation Error") {
           const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
 
@@ -140,14 +130,7 @@ export default class BeepAPIServer {
 
     
     // usual error handler
-    app.on("error", (err, ctx) => {
-      Sentry.withScope(scope => {
-        scope.addEventProcessor(event => {
-          return Sentry.Handlers.parseRequest(event, ctx.request);
-        });
-        Sentry.captureException(err);
-      });
-    });
+    app.on("error", errorHandler);
 
     const live = app.listen(3001, () => {
       console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
