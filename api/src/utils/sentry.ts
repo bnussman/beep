@@ -6,7 +6,7 @@ import packageConfig from '../../package.json';
 
 export const initSentry = () => {
     Sentry.init({
-        release: `@beep/api@${packageConfig.version}`,
+        release: packageConfig.version,
         dsn: process.env.SENTRY_URL,
         environment: process.env.GITLAB_ENVIRONMENT_NAME || "development",
         tracesSampleRate: 1.0,
