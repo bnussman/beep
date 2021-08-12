@@ -15,6 +15,7 @@ import config from './mikro-orm.config';
 import * as Sentry from '@sentry/node';
 import { ValidationError } from 'class-validator';
 import { requestHandler, tracingMiddleWare } from "./utils/sentry";
+import packageConfig from '../package.json';
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -32,6 +33,7 @@ export default class BeepAPIServer {
     BeepORM.em = BeepORM.orm.em;
 
     Sentry.init({
+        release: `@beep/api@${packageConfig.version}`,
         dsn: process.env.SENTRY_URL,
         environment: process.env.GITLAB_ENVIRONMENT_NAME || "development",
         tracesSampleRate: 1.0,
