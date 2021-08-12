@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/node";
-import { extractTraceparentData } from "@sentry/tracing";
+import { extractTraceparentData, stripUrlQueryAndFragment } from "@sentry/tracing";
 import domain from "domain";
 import { Context, Next } from "koa";
 
@@ -29,6 +29,7 @@ export const requestHandler = (ctx: Context, next: Next): Promise<void> => {
 // this tracing middleware creates a transaction per request
 export const tracingMiddleWare = async (ctx: Context, next: Next): Promise<void> => {
   const reqMethod = (ctx.method || "").toUpperCase();
+  const reqUrl = ctx.url && stripUrlQueryAndFragment(ctx.url);
 
   // connect to trace of upstream app
   let traceparentData;
@@ -36,10 +37,17 @@ export const tracingMiddleWare = async (ctx: Context, next: Next): Promise<void>
     traceparentData = extractTraceparentData(ctx.request.get("sentry-trace"));
   }
 
-  const body = JSON.parse(ctx.request.rawBody);
+  let body = undefined;
+
+  try {
+    body = JSON.parse(ctx.request.rawBody);
+  }
+  catch (e) {
+    // ...
+  }
 
   const transaction = Sentry.startTransaction({
-    name: `${reqMethod} ${body.operationName}`,
+    name: `${reqMethod} ${body?.operationName || reqUrl}`,
     op: "http.server",
     ...traceparentData,
   });
