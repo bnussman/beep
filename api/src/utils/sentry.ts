@@ -7,6 +7,7 @@ import { Context, Next } from "koa";
 export const requestHandler = (ctx: Context, next: Next): Promise<void> => {
   return new Promise<void>((resolve, _) => {
     const local = domain.create();
+    // @ts-expect-error idk
     local.add(ctx);
     local.on("error", err => {
       ctx.status = err.status || 500;
