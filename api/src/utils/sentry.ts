@@ -31,6 +31,8 @@ export const tracingMiddleWare = async (ctx: Context, next: Next): Promise<void>
   const reqMethod = (ctx.method || "").toUpperCase();
   const reqUrl = ctx.url && stripUrlQueryAndFragment(ctx.url);
 
+  if (reqUrl == "/.well-known/apollo/server-health") return;
+
   // connect to trace of upstream app
   let traceparentData;
   if (ctx.request.get("sentry-trace")) {
