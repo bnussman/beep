@@ -66,6 +66,11 @@ function RegisterScreen(props: Props) {
     const [signup, { loading }] = useMutation<SignUpMutation>(SignUp);
 
     async function handleSignUp() {
+        if (!real) {
+            alert("Please choose a profile photo!");
+            return;
+        }
+
         try {
             const result = await signup({
                 variables: {
