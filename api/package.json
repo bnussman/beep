@@ -5,8 +5,8 @@
     "main": "build/src/server.js",
     "scripts": {
         "build": "npx tsc",
-        "start": "node build/server.js",
-        "dev": "concurrently \"tsc -w\" \"nodemon build/server.js\""
+        "start": "node build/src/server.js",
+        "dev": "concurrently \"tsc -w\" \"nodemon build/src/server.js\""
     },
     "repository": {
         "type": "git",
