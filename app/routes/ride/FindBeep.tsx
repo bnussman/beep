@@ -18,6 +18,7 @@ import LocationInput from '../../components/LocationInput';
 import * as Location from 'expo-location';
 import { isMobile } from '../../utils/config';
 import { Tags } from './Tags';
+import { throttle } from 'throttle-debounce';
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -126,14 +127,6 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
   const beep = data?.getRiderStatus;
 
-  async function subscribeToLocation() {
-    const a = client.subscribe({ query: BeepersLocation, variables: { id: data?.getRiderStatus?.beeper.id } });
-
-    sub = a.subscribe(({ data }) => {
-      updateETA(data.getLocationUpdates.latitude, data.getLocationUpdates.longitude);
-    });
-  }
-
   async function updateETA(lat: number, long: number): Promise<void> {
     getETA({
       variables: {
@@ -142,6 +135,16 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
       }
     });
   }
+
+  async function subscribeToLocation() {
+    const a = client.subscribe({ query: BeepersLocation, variables: { id: data?.getRiderStatus?.beeper.id } });
+
+    sub = a.subscribe(({ data }) => {
+      throttleUpdateETA(data.getLocationUpdates.latitude, data.getLocationUpdates.longitude);
+    });
+  }
+
+  const throttleUpdateETA = throttle(20000, updateETA);
 
   useEffect(() => {
     SplashScreen.hideAsync();
