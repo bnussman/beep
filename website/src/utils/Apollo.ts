@@ -67,5 +67,7 @@ export const client = new ApolloClient({
     //@ts-ignore
     uploadLink
   ]),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    addTypename: false
+  }),
 });
