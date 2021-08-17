@@ -7,11 +7,11 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 const dev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 // const wsUrl = dev ? "ws://localhost:3001/subscriptions" : "wss://staging.ridebeep.app/subscriptions";
 // const url = dev ? "http://localhost:3001/graphql" : "https://staging.ridebeep.app/graphql";
-//const wsUrl = "wss://staging.ridebeep.app/subscriptions";
-//const url = "https://staging.ridebeep.app/graphql";
+const wsUrl = "wss://ridebeep.app/subscriptions";
+const url = "https://ridebeep.app/graphql";
 
-const wsUrl = dev ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
-const url = dev ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
+// const wsUrl = dev ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
+// const url = dev ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
 
 const uploadLink = createUploadLink({
   uri: url,
