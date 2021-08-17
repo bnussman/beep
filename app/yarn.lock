@@ -5982,6 +5982,13 @@ expo-constants@11.0.1, expo-constants@~11.0.1:
     expo-modules-core "~0.2.0"
     uuid "^3.3.2"
 
+expo-device@~3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/expo-device/-/expo-device-3.3.0.tgz#81d14d2b243a7582a279d3c95ea436642892173b"
+  integrity sha512-kZ6HZpxGp3T3GrgbpW4VSFvH6SQZVD/dwPN+I3tlRPezaZ3LUj64kSZDKLgOi1H/9VCuUQdxjItoVZZuIWTX1A==
+  dependencies:
+    ua-parser-js "^0.7.19"
+
 expo-error-recovery@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/expo-error-recovery/-/expo-error-recovery-2.2.0.tgz#89e5494d97347530dd53cd817d7ac63f07bf8de0"
@@ -12562,6 +12569,11 @@ ua-parser-js@^0.7.18:
   version "0.7.26"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.26.tgz#b3731860e241419abd5b542b1a0881070d92e0ce"
   integrity sha512-VwIvGlFNmpKbjzRt51jpbbFTrKIEgGHxIwA8Y69K1Bqc6bTIV7TaGGABOkghSFQWsLmcRB4drGvpfv9z2szqoQ==
+
+ua-parser-js@^0.7.19:
+  version "0.7.28"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.28.tgz#8ba04e653f35ce210239c64661685bf9121dec31"
+  integrity sha512-6Gurc1n//gjp9eQNXjD9O3M/sMwVtN5S8Lv9bvOYBfKfDNiIIhqiyi01vMBO45u4zkDE420w/e0se7Vs+sIg+g==
 
 uglify-es@^3.1.9:
   version "3.3.9"
