@@ -24,7 +24,7 @@ const authLink = setContext(async (_, { headers }) => {
     return {
       headers: {
         ...headers,
-        Authorization: auth.tokens.id ? `Bearer ${auth.tokens.id}` : "",
+        Authorization: auth?.tokens?.id ? `Bearer ${auth?.tokens?.id}` : "",
       }
     }
   }
@@ -39,7 +39,7 @@ const wsLink = new WebSocketLink({
       if (tokens) {
         const auth = JSON.parse(tokens);
         return {
-          token: auth.tokens.id
+          token: auth?.tokens?.id
         }
       }
     }
@@ -71,7 +71,5 @@ export const client = new ApolloClient({
     // @ts-expect-error stop :(
     uploadLink
   ]),
-  cache: new InMemoryCache({
-    addTypename: false
-  }),
+  cache: new InMemoryCache(),
 });
