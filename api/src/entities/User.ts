@@ -1,4 +1,4 @@
-import { Collection, Entity, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
+import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Authorized, Field, ObjectType } from "type-graphql";
 import { QueueEntry } from './QueueEntry';
 import { Rating } from './Rating';
@@ -90,7 +90,7 @@ export class User {
   rating?: number;
 
   @Field()
-  @Property({ type: "string" })
+  @Enum(() => UserRole)
   role: UserRole = UserRole.USER;
 
   @Field({ nullable: true })
@@ -122,4 +122,8 @@ export class User {
   @Field(() => [Rating])
   @OneToMany(() => Rating, r => r.rated, { lazy: true, eager: false })
   ratings = new Collection<Rating>(this);
+
+  @Field()
+  @Property({ onUpdate: () => new Date(), nullable: true })
+  seen: Date = new Date();
 }
