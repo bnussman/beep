@@ -18,6 +18,10 @@ export const setSentryUserContext = (user: any) => {
     Sentry.setUser(user);
 };
 
+export const captureError = (e: any) => {
+    Sentry.captureException(e);
+};
+
 export const errorHandler = (err: any, ctx: any) => {
     Sentry.withScope(scope => {
         scope.addEventProcessor(event => {

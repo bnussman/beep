@@ -13,7 +13,7 @@ import koaBody from 'koa-bodyparser';
 import cors from '@koa/cors';
 import config from './mikro-orm.config';
 import { ValidationError } from 'class-validator';
-import { errorHandler, initSentry, requestHandler, setSentryUserContext, tracingMiddleWare } from "./utils/sentry";
+import { captureError, errorHandler, initSentry, requestHandler, setSentryUserContext, tracingMiddleWare } from "./utils/sentry";
 
 const prod = process.env.GITLAB_ENVIRONMENT_NAME;
 
@@ -121,6 +121,8 @@ export default class BeepAPIServer {
           }
           return new Error(output.toString());
         }
+
+        captureError(error);
 
         return error;
       }
