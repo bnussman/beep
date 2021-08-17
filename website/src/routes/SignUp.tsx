@@ -147,7 +147,7 @@ function SignUp() {
             value={email}
             onChange={(value: any) => setEmail(value.target.value)}
           />
-          <FormHelperText>Use your <Code>.edu</Code> email to be verified as a student.</FormHelperText>
+          <FormHelperText>Use your <Code>.edu</Code> to be eligible to use the Beep App</FormHelperText>
         </FormControl>
         <FormControl mt={2}>
           <FormLabel>Phone Number</FormLabel>

@@ -183,7 +183,7 @@ function RegisterScreen(props: Props) {
                             label="Email"
                             textContentType="emailAddress"
                             placeholder="example@ridebeep.app"
-                            caption="Use your .edu email to be verified as a student"
+                            caption="Use your .edu email to be eligible to use the Beep App"
                             returnKeyType="next"
                             onChangeText={(text) => setEmail(text)}
                             onSubmitEditing={() => phoneRef.current.focus()}
