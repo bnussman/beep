@@ -16,6 +16,7 @@ import { GetInitialQueueQuery, UpdateBeepSettingsMutation } from '../../generate
 import { client } from '../../utils/Apollo';
 import { Navigation } from '../../utils/Navigation';
 import { Tag } from '../ride/Tags';
+import {LocationActivityType} from 'expo-location';
 
 interface Props {
   navigation: Navigation;
@@ -215,6 +216,8 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         accuracy: Location.Accuracy.Highest,
         timeInterval: (15 * 1000),
         distanceInterval: 6,
+        activityType: LocationActivityType.AutomotiveNavigation,
+        showsBackgroundLocationIndicator: true,
         foregroundService: {
           notificationTitle: "Ride Beep App",
           notificationBody: "You are currently beeping!",
