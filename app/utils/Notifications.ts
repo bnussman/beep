@@ -10,17 +10,17 @@ import { isMobile } from './config';
  * push token to be used
  */
 export async function getPushToken(): Promise<string | null> {
-    const hasPermission = await getNotificationPermission();
+  const hasPermission = await getNotificationPermission();
 
-    if(!hasPermission) {
-        return null;
-    }
+  if (!hasPermission) {
+    return null;
+  }
 
-    const pushToken = await Notifications.getExpoPushTokenAsync();
+  const pushToken = await Notifications.getExpoPushTokenAsync();
 
-    setNotificationHandlers();
+  setNotificationHandlers();
 
-    return pushToken.data;
+  return pushToken.data;
 }
 
 /**
@@ -28,53 +28,53 @@ export async function getPushToken(): Promise<string | null> {
  * @returns boolean true if client has location permissions
  */
 async function getNotificationPermission(): Promise<boolean> {
-    if (!Constants.isDevice) {
-        return false;
-    }
+  if (!Constants.isDevice) {
+    return false;
+  }
 
-    //TODO better fix
-    if(Platform.OS == "android") {
-        return true;
-    }
+  //TODO better fix
+  if (Platform.OS == "android") {
+    return true;
+  }
 
-    const settings = await Notifications.requestPermissionsAsync({
-        ios: {
-            allowAlert: true,
-            allowBadge: true,
-            allowSound: true,
-            allowAnnouncements: true,
-        },
-    });
+  const settings = await Notifications.requestPermissionsAsync({
+    ios: {
+      allowAlert: true,
+      allowBadge: true,
+      allowSound: true,
+      allowAnnouncements: true,
+    },
+  });
 
-    return (
-        settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
-    );
+  return (
+    settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+  );
 }
 
 /**
  * Set listiner function(s)
  */
 function setNotificationHandlers() {
-    const enteredBeeperQueueActions = [
-        {
-            actionId: "accept",
-            identifiter: "accept",
-            buttonTitle: "Accept"
-        },
-        {
-            actionId: "deny",
-            identifiter: "deny",
-            buttonTitle: "Deny",
-            options: {
-                isDestructive: true
-            }
-        }
+  const enteredBeeperQueueActions = [
+    {
+      actionId: "accept",
+      identifiter: "accept",
+      buttonTitle: "Accept"
+    },
+    {
+      actionId: "deny",
+      identifiter: "deny",
+      buttonTitle: "Deny",
+      options: {
+        isDestructive: true
+      }
+    }
 
-    ];
-    //@ts-ignore
-    Notifications.setNotificationCategoryAsync("enteredBeeperQueue", enteredBeeperQueueActions);
-    //@ts-ignore
-    Notifications.addNotificationReceivedListener(handleNotification);
+  ];
+  //@ts-ignore
+  Notifications.setNotificationCategoryAsync("enteredBeeperQueue", enteredBeeperQueueActions);
+  //@ts-ignore
+  Notifications.addNotificationReceivedListener(handleNotification);
 }
 
 /**
@@ -82,20 +82,18 @@ function setNotificationHandlers() {
  * @param token a user's auth token
  */
 export async function updatePushToken(): Promise<void> {
-    if (isMobile) {
-        const UpdatePushToken = gql`
+  if (isMobile) {
+    const UpdatePushToken = gql`
         mutation UpdatePushToken($token: String!) {
             updatePushToken (pushToken: $token)
         }
         `;
 
-        await client.mutate({ mutation: UpdatePushToken, variables: { token: await getPushToken() }});
-    }
+    await client.mutate({ mutation: UpdatePushToken, variables: { token: await getPushToken() } });
+  }
 }
 
 async function handleNotification(notification: Notification): Promise<void> {
-    //Vibrate when we recieve a notification
-    Vibration.vibrate();
-    //Log the entire notification to the console
-    //console.log("Notification:", notification);
+  // @TODO toast if we ever can
+  Vibration.vibrate();
 }

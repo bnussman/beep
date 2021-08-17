@@ -12,6 +12,7 @@ import { client } from '../../utils/Apollo';
 import { GetUserData } from '../../utils/UserQueries';
 import { getPushToken } from '../../utils/Notifications';
 import { Navigation } from '../../utils/Navigation';
+import Logger from '../../utils/Logger';
 
 interface Props {
   navigation: Navigation;
@@ -46,7 +47,7 @@ function LoginScreen(props: Props): JSX.Element {
       SplashScreen.hideAsync();
     }
     catch (error) {
-      console.log(error);
+      Logger.error(error);
     }
   }, []);
 

@@ -88,8 +88,6 @@ export async function getUserFromId(id: string, ...pluckItems: string[]): Promis
         return user;
     }
 
-    console.log("oh no, user was null in getUserFromId");
-
     return null;
 }
 

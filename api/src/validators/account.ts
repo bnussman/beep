@@ -1,6 +1,7 @@
 import { User } from '../entities/User';
 import { IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
+import { IsStudent } from './IsStudent';
 
 @InputType()
 export class EditAccountInput implements Partial<User> {
@@ -18,6 +19,7 @@ export class EditAccountInput implements Partial<User> {
   @Field()
   @IsEmail()
   @IsNotEmpty()
+  @IsStudent()
   public email?: string;
 
   @Field()

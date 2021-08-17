@@ -74,7 +74,6 @@ class ActionButton extends Component<Props, State> {
               this.setState({
                 isCancelLoading: false
               });
-              console.log("No Pressed")
             },
             style: "cancel"
           },

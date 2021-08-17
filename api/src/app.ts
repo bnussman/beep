@@ -130,7 +130,6 @@ export default class BeepAPIServer {
 
     server.applyMiddleware({ app });
 
-    
     // usual error handler
     app.on("error", errorHandler);
 

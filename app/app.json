@@ -28,8 +28,8 @@
             "url": "https://sentry.nussman.us",
             "setCommits": true,
             "organization": "beep",
-            "project": "beep-app",
-            "authToken": "d709299058674807ae8c0d730cdd89379830246b75fd405a8e1362a556f44cbf"
+            "project": "app",
+            "authToken": "9ed67c2ab12d4d54b50cd95ed81aef0ea5d796a75bd84647a48880239bdf5203"
           }
         }
       ]

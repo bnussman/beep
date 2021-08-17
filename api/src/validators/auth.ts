@@ -3,6 +3,7 @@ import { Upload } from '../account/helpers';
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
+import { IsStudent } from './IsStudent';
 
 @InputType()
 export class LoginInput implements Partial<User> {
@@ -45,6 +46,7 @@ export class SignUpInput implements Partial<User> {
 
   @Field()
   @IsEmail()
+  @IsStudent()
   public email!: string;
 
   @Field({ nullable: true })

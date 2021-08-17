@@ -132,7 +132,6 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         [
           {
             text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
             style: "cancel"
           },
           { text: "OK", onPress: () => toggleSwitch(value) }

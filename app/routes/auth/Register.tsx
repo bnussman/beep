@@ -127,12 +127,10 @@ function RegisterScreen(props: Props) {
        }
 
        if (!isMobile) {
-           console.log("Running as if this is a web device");
            const res = await fetch(result.uri);
            const blob = await res.blob();
            const fileType = blob.type.split("/")[1];
            const file = new File([blob], "photo." + fileType);
-           console.log(file);
            real = file;
            setPhoto(result);
        }
