@@ -12,8 +12,10 @@ const ip = '192.168.1.57';
 //const wsUrl = "wss://staging.ridebeep.app/subscriptions";
 //const url = "https://staging.ridebeep.app/graphql";
 
-const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
-const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
+//const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
+//const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
+const wsUrl = "wss://ridebeep.app/subscriptions";
+const url =  "https://ridebeep.app/graphql";
 
 const authLink = setContext(async (_, { headers }) => {
   const tokens = await AsyncStorage.getItem('auth');
