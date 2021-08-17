@@ -3837,13 +3837,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/ioredis@^4.19.1":
-  version "4.26.5"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.26.5.tgz#2e216efcb853eda3093a6e1f1fca489becf13b4c"
-  integrity sha512-aP/SUSFShzoVYcHHKKEq7+kQ5YaDsMRe64rcHCp+w4Unkfw2tico1vA6siPnMDe7+jIxuZRU/h8km6uZjEtswg==
-  dependencies:
-    "@types/node" "*"
-
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.3.tgz#4ba8ddb720221f432e443bd5f9117fd22cfd4762"
@@ -6182,11 +6175,6 @@ clone@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
   integrity sha1-2jCcwmPfFZlMaIypAheco8fNfH4=
-
-clsx@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
-  integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
 
 cluster-key-slot@^1.1.0:
   version "1.1.0"
@@ -11379,13 +11367,6 @@ micromatch@^4.0.2, micromatch@^4.0.4:
   dependencies:
     braces "^3.0.1"
     picomatch "^2.2.3"
-
-mikro-orm-cache-adapter-redis@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/mikro-orm-cache-adapter-redis/-/mikro-orm-cache-adapter-redis-1.1.1.tgz#045485bfc73d6e3719c9bf03309d3d79c1d97ed2"
-  integrity sha512-btMNogJDZzn/BCDXFlVHrnFbQWKvQRgVIPKbpabOpbAHZIS4chQ5EM6r98lxokUVSQYtBqRNMRaa2/Bb9ZuQ9w==
-  dependencies:
-    "@types/ioredis" "^4.19.1"
 
 miller-rabin@^4.0.0:
   version "4.0.1"

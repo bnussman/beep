@@ -21,7 +21,6 @@
     "@emotion/styled": "^11",
     "@fontsource/poppins": "^4.4.5",
     "apollo-upload-client": "^16.0.0",
-    "clsx": "^1.1.1",
     "dayjs": "^1.10.5",
     "formik": "^2.2.9",
     "framer-motion": "^4.1.17",

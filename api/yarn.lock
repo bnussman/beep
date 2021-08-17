@@ -513,10 +513,10 @@
   resolved "https://registry.yarnpkg.com/@types/http-errors/-/http-errors-1.8.0.tgz#682477dbbbd07cd032731cb3b0e7eaee3d026b69"
   integrity sha512-2aoSC4UUbHDj2uCsCxcG/vRMXey/m17bC7UwitVm5hn22nI8O8Y9iDpA76Orc+DWkQ4zZrOKEshCqR/jSuXAHA==
 
-"@types/ioredis@^4.19.1":
-  version "4.22.0"
-  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.22.0.tgz#b07cc3405d98bae50a642b20790471b4c3c390a9"
-  integrity sha512-BhgyAqt+CIFj/ejdYpWSGYUQzoQr7sFOBYLL8yEExa1tSTi2cy2D3a952zF8Tm4Q1cY3srn8xXZfb2riX6hWjw==
+"@types/ioredis@^4.26.7":
+  version "4.26.7"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.26.7.tgz#8c8174b9db38f71f0e372174c66a031a2ca7d9cf"
+  integrity sha512-TOGRR+e1to00CihjgPNygD7+G7ruVnMi62YdIvGUBRfj11k/aWq+Fv5Ea8St0Oy56NngTBfA8GvLn1uvHvhX6Q==
   dependencies:
     "@types/node" "*"
 
@@ -3570,13 +3570,6 @@ micromatch@^4.0.2:
   dependencies:
     braces "^3.0.1"
     picomatch "^2.0.5"
-
-mikro-orm-cache-adapter-redis@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/mikro-orm-cache-adapter-redis/-/mikro-orm-cache-adapter-redis-1.1.1.tgz#045485bfc73d6e3719c9bf03309d3d79c1d97ed2"
-  integrity sha512-btMNogJDZzn/BCDXFlVHrnFbQWKvQRgVIPKbpabOpbAHZIS4chQ5EM6r98lxokUVSQYtBqRNMRaa2/Bb9ZuQ9w==
-  dependencies:
-    "@types/ioredis" "^4.19.1"
 
 mime-db@1.46.0:
   version "1.46.0"
