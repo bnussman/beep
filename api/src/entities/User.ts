@@ -123,7 +123,7 @@ export class User {
   @OneToMany(() => Rating, r => r.rated, { lazy: true, eager: false })
   ratings = new Collection<Rating>(this);
 
-  @Field()
+  @Field({ nullable: true })
   @Property({ onUpdate: () => new Date(), nullable: true })
   seen: Date = new Date();
 }
