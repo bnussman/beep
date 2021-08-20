@@ -44,6 +44,12 @@ export type BeeperSettingsInput = {
   masksRequired?: Maybe<Scalars['Boolean']>;
 };
 
+export type BeepsInProgressResponse = {
+  __typename?: 'BeepsInProgressResponse';
+  items: Array<QueueEntry>;
+  count: Scalars['Int'];
+};
+
 export type BeepsResponse = {
   __typename?: 'BeepsResponse';
   items: Array<Beep>;
@@ -294,6 +300,7 @@ export type Query = {
   getETA: Scalars['String'];
   getLocationSuggestions: Array<Suggestion>;
   getQueue: Array<QueueEntry>;
+  getInProgressBeeps: BeepsInProgressResponse;
   getRatings: RatingsResponse;
   getRating: Rating;
   getReports: ReportsResponse;
@@ -334,6 +341,13 @@ export type QueryGetLocationSuggestionsArgs = {
 
 export type QueryGetQueueArgs = {
   id?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryGetInProgressBeepsArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
+  query?: Maybe<Scalars['String']>;
 };
 
 
@@ -851,6 +865,31 @@ export type GetBeeperListQuery = (
       & Pick<Point, 'longitude' | 'latitude'>
     )> }
   )> }
+);
+
+export type GetInProgressBeepsQueryVariables = Exact<{
+  show?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetInProgressBeepsQuery = (
+  { __typename?: 'Query' }
+  & { getInProgressBeeps: (
+    { __typename?: 'BeepsInProgressResponse' }
+    & Pick<BeepsInProgressResponse, 'count'>
+    & { items: Array<(
+      { __typename?: 'QueueEntry' }
+      & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize'>
+      & { beeper: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
+      ), rider: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
+      ) }
+    )> }
+  ) }
 );
 
 export type DeleteBeepMutationVariables = Exact<{
@@ -1946,6 +1985,61 @@ export function useGetBeeperListLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetBeeperListQueryHookResult = ReturnType<typeof useGetBeeperListQuery>;
 export type GetBeeperListLazyQueryHookResult = ReturnType<typeof useGetBeeperListLazyQuery>;
 export type GetBeeperListQueryResult = Apollo.QueryResult<GetBeeperListQuery, GetBeeperListQueryVariables>;
+export const GetInProgressBeepsDocument = gql`
+    query getInProgressBeeps($show: Int, $offset: Int) {
+  getInProgressBeeps(show: $show, offset: $offset) {
+    items {
+      id
+      origin
+      destination
+      start
+      groupSize
+      beeper {
+        id
+        name
+        photoUrl
+        username
+      }
+      rider {
+        id
+        name
+        photoUrl
+        username
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetInProgressBeepsQuery__
+ *
+ * To run a query within a React component, call `useGetInProgressBeepsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInProgressBeepsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInProgressBeepsQuery({
+ *   variables: {
+ *      show: // value for 'show'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetInProgressBeepsQuery(baseOptions?: Apollo.QueryHookOptions<GetInProgressBeepsQuery, GetInProgressBeepsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetInProgressBeepsQuery, GetInProgressBeepsQueryVariables>(GetInProgressBeepsDocument, options);
+      }
+export function useGetInProgressBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInProgressBeepsQuery, GetInProgressBeepsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetInProgressBeepsQuery, GetInProgressBeepsQueryVariables>(GetInProgressBeepsDocument, options);
+        }
+export type GetInProgressBeepsQueryHookResult = ReturnType<typeof useGetInProgressBeepsQuery>;
+export type GetInProgressBeepsLazyQueryHookResult = ReturnType<typeof useGetInProgressBeepsLazyQuery>;
+export type GetInProgressBeepsQueryResult = Apollo.QueryResult<GetInProgressBeepsQuery, GetInProgressBeepsQueryVariables>;
 export const DeleteBeepDocument = gql`
     mutation DeleteBeep($id: String!) {
   deleteBeep(id: $id)

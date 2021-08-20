@@ -45,6 +45,12 @@ export type BeeperSettingsInput = {
   masksRequired?: Maybe<Scalars['Boolean']>;
 };
 
+export type BeepsInProgressResponse = {
+  __typename?: 'BeepsInProgressResponse';
+  items: Array<QueueEntry>;
+  count: Scalars['Int'];
+};
+
 export type BeepsResponse = {
   __typename?: 'BeepsResponse';
   items: Array<Beep>;
@@ -295,6 +301,7 @@ export type Query = {
   getETA: Scalars['String'];
   getLocationSuggestions: Array<Suggestion>;
   getQueue: Array<QueueEntry>;
+  getInProgressBeeps: BeepsInProgressResponse;
   getRatings: RatingsResponse;
   getRating: Rating;
   getReports: ReportsResponse;
@@ -335,6 +342,13 @@ export type QueryGetLocationSuggestionsArgs = {
 
 export type QueryGetQueueArgs = {
   id?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryGetInProgressBeepsArgs = {
+  offset?: Maybe<Scalars['Int']>;
+  show?: Maybe<Scalars['Int']>;
+  query?: Maybe<Scalars['String']>;
 };
 
 

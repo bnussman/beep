@@ -2,10 +2,15 @@ import { QueueEntry } from "../entities/QueueEntry";
 import { User, UserRole } from "../entities/User";
 import { Context } from "../utils/context";
 import { PushNotification, sendNotification, sendNotifications } from "../utils/notifications";
-import { Arg, Authorized, Ctx, Info, Mutation, PubSub, PubSubEngine, Query, Resolver } from "type-graphql";
+import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from "type-graphql";
 import fieldsToRelations from "graphql-fields-to-relations";
 import { GraphQLResolveInfo } from "graphql";
 import { QueryOrder } from "@mikro-orm/core";
+import PaginationArgs from "../args/Pagination";
+import { Paginated } from "../utils/paginated";
+
+@ObjectType()
+class BeepsInProgressResponse extends Paginated(QueueEntry) {}
 
 @Resolver(QueueEntry)
 export class QueueResolver {
@@ -17,6 +22,27 @@ export class QueueResolver {
 
     return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate });
   }
+
+  @Query(() => BeepsInProgressResponse)
+  @Authorized(UserRole.ADMIN)
+  public async getInProgressBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<BeepsInProgressResponse> {
+    const [beeps, count] = await ctx.em.findAndCount(
+      QueueEntry,
+      {},
+      {
+        orderBy: { start: QueryOrder.DESC },
+        limit: show,
+        offset: offset,
+        populate: ['beeper', 'rider'],
+      }
+    );
+
+    return {
+      items: beeps,
+      count: count
+    };
+  }
+
 
   @Mutation(() => Boolean)
   @Authorized(UserRole.ADMIN)
