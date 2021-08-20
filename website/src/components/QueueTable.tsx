@@ -33,6 +33,22 @@ const GetQueue = gql`
     }
 `;
 
+export function getStatus(value: number): string {
+  switch (value) {
+    case 0:
+      return "Waiting...";
+    case 1:
+      return "Beeper is on the way";
+    case 2:
+      return "Beeper is here";
+    case 3:
+      return "Getting Beeped";
+    default:
+      return "yikes";
+  }
+}
+
+
 interface Props {
   user: Partial<User>;
 }
@@ -69,21 +85,6 @@ function QueueTable(props: Props) {
     };
   }, []);
 
-
-  function getStatus(value: number): string {
-    switch (value) {
-      case 0:
-        return "Waiting...";
-      case 1:
-        return "Beeper is on the way";
-      case 2:
-        return "Beeper is here";
-      case 3:
-        return "Getting Beeped";
-      default:
-        return "yikes";
-    }
-  }
 
   if (!user.queue || user.queue.length === 0) {
     return (

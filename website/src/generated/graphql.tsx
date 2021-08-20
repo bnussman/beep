@@ -880,7 +880,7 @@ export type GetInProgressBeepsQuery = (
     & Pick<BeepsInProgressResponse, 'count'>
     & { items: Array<(
       { __typename?: 'QueueEntry' }
-      & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize'>
+      & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize' | 'isAccepted' | 'state'>
       & { beeper: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
@@ -1994,6 +1994,8 @@ export const GetInProgressBeepsDocument = gql`
       destination
       start
       groupSize
+      isAccepted
+      state
       beeper {
         id
         name

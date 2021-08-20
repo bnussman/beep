@@ -3,11 +3,13 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import Pagination from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
-import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Badge, Box, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import TdUser from '../../../components/TdUser';
 import Loading from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { GetInProgressBeepsQuery } from '../../../generated/graphql';
+import { Indicator } from '../../../components/Indicator';
+import { getStatus } from '../../../components/QueueTable';
 
 dayjs.extend(duration);
 
@@ -20,6 +22,8 @@ export const ActiveBeepsGraphQL = gql`
         destination
         start
         groupSize
+        isAccepted
+        state
         beeper {
           id
           name
@@ -63,7 +67,12 @@ function ActiveBeeps() {
 
   return (
     <Box>
-      <Heading>Beeps</Heading>
+      <Flex align="center">
+        <Heading>Beeps</Heading>
+        <Badge ml={2} variant="solid" colorScheme="green">
+          in progress
+        </Badge>
+      </Flex>
       <Pagination
         resultCount={beeps?.count}
         limit={pageLimit}
@@ -80,6 +89,8 @@ function ActiveBeeps() {
             <Th>Destination</Th>
             <Th>Group Size</Th>
             <Th>Start Time</Th>
+            <Th>Is Accepted</Th>
+            <Th>Status</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -91,6 +102,8 @@ function ActiveBeeps() {
               <Td>{entry.destination}</Td>
               <Td>{entry.groupSize}</Td>
               <Td>{dayjs().to(entry.start)}</Td>
+              <Td>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
+              <Td>{getStatus(entry.state)}</Td>
             </Tr>
           ))}
         </Tbody>
