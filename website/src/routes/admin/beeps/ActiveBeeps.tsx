@@ -101,7 +101,7 @@ function ActiveBeeps() {
               <Td>{entry.origin}</Td>
               <Td>{entry.destination}</Td>
               <Td>{entry.groupSize}</Td>
-              <Td>{dayjs().to(entry.start)}</Td>
+              <Td>{dayjs().to(entry.start * 1000)}</Td>
               <Td>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
               <Td>{getStatus(entry.state)}</Td>
             </Tr>
