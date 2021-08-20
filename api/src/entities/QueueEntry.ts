@@ -1,10 +1,11 @@
-import { BigIntType, Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { BigIntType, Entity, ManyToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { v4 } from "uuid";
 
 @ObjectType()
 @Entity()
+@Unique({ properties: ['rider'] })
 export class QueueEntry {
 
     @PrimaryKey()

@@ -137,6 +137,7 @@ function UserProfile(props: Props) {
             <Heading size="md">{user.name}</Heading>
             <Text>@{user.username}</Text>
             <Text fontSize="xs">{user.id}</Text>
+            <Text fontSize="xs">Seen {dayjs().to(user.seen)}</Text>
             <Stack direction="row" mt="2" mb="2">
               {user.role === UserRole.ADMIN && <Badge variant="solid" colorScheme="red">admin</Badge>}
               {user.isStudent && <Badge variant="solid" colorScheme="blue">student</Badge>}

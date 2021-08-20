@@ -105,20 +105,6 @@ export type GetBeepInput = {
   groupSize: Scalars['Float'];
 };
 
-export type Location = {
-  __typename?: 'Location';
-  id: Scalars['String'];
-  user: User;
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-  altitude: Scalars['Float'];
-  accuracy?: Maybe<Scalars['Float']>;
-  altitudeAccuracy?: Maybe<Scalars['Float']>;
-  heading: Scalars['Float'];
-  speed: Scalars['Float'];
-  timestamp: Scalars['DateTime'];
-};
-
 export type LocationInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
@@ -554,6 +540,7 @@ export type User = {
   location?: Maybe<Point>;
   queue: Array<QueueEntry>;
   ratings: Array<Rating>;
+  seen: Scalars['DateTime'];
 };
 
 export type UsersResponse = {
@@ -569,30 +556,6 @@ export type VerifyEmail = {
   time: Scalars['DateTime'];
   email: Scalars['String'];
 };
-
-export type GetUserDataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetUserDataQuery = (
-  { __typename?: 'Query' }
-  & { getUser: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'cashapp'>
-  ) }
-);
-
-export type UserUpdatesSubscriptionVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type UserUpdatesSubscription = (
-  { __typename?: 'Subscription' }
-  & { getUserUpdates: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'cashapp'>
-  ) }
-);
 
 export type UpdateBeeperQueueMutationVariables = Exact<{
   queueId: Scalars['String'];
@@ -929,6 +892,7 @@ export type LeaveQueueMutation = (
 export type GetBeeperListQueryVariables = Exact<{
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
+  radius?: Maybe<Scalars['Float']>;
 }>;
 
 
@@ -990,102 +954,6 @@ export type LogoutMutation = (
 );
 
 
-export const GetUserDataDocument = gql`
-    query GetUserData {
-  getUser {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photoUrl
-    capacity
-    masksRequired
-    cashapp
-  }
-}
-    `;
-
-/**
- * __useGetUserDataQuery__
- *
- * To run a query within a React component, call `useGetUserDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserDataQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetUserDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
-      }
-export function useGetUserDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
-        }
-export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
-export type GetUserDataLazyQueryHookResult = ReturnType<typeof useGetUserDataLazyQuery>;
-export type GetUserDataQueryResult = ApolloReactCommon.QueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
-export const UserUpdatesDocument = gql`
-    subscription UserUpdates($id: String!) {
-  getUserUpdates(id: $id) {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photoUrl
-    capacity
-    masksRequired
-    cashapp
-  }
-}
-    `;
-
-/**
- * __useUserUpdatesSubscription__
- *
- * To run a query within a React component, call `useUserUpdatesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserUpdatesSubscription({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useUserUpdatesSubscription(baseOptions: ApolloReactHooks.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
-      }
-export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
-export type UserUpdatesSubscriptionResult = ApolloReactCommon.SubscriptionResult<UserUpdatesSubscription>;
 export const UpdateBeeperQueueDocument = gql`
     mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
   setBeeperQueue(input: {queueId: $queueId, riderId: $riderId, value: $value})
@@ -1985,8 +1853,10 @@ export type LeaveQueueMutationHookResult = ReturnType<typeof useLeaveQueueMutati
 export type LeaveQueueMutationResult = ApolloReactCommon.MutationResult<LeaveQueueMutation>;
 export type LeaveQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<LeaveQueueMutation, LeaveQueueMutationVariables>;
 export const GetBeeperListDocument = gql`
-    query GetBeeperList($latitude: Float!, $longitude: Float!) {
-  getBeeperList(input: {latitude: $latitude, longitude: $longitude}) {
+    query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
+  getBeeperList(
+    input: {latitude: $latitude, longitude: $longitude, radius: $radius}
+  ) {
     id
     first
     last
@@ -2019,6 +1889,7 @@ export const GetBeeperListDocument = gql`
  *   variables: {
  *      latitude: // value for 'latitude'
  *      longitude: // value for 'longitude'
+ *      radius: // value for 'radius'
  *   },
  * });
  */

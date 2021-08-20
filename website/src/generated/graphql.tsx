@@ -104,20 +104,6 @@ export type GetBeepInput = {
   groupSize: Scalars['Float'];
 };
 
-export type Location = {
-  __typename?: 'Location';
-  id: Scalars['String'];
-  user: User;
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-  altitude: Scalars['Float'];
-  accuracy?: Maybe<Scalars['Float']>;
-  altitudeAccuracy?: Maybe<Scalars['Float']>;
-  heading: Scalars['Float'];
-  speed: Scalars['Float'];
-  timestamp: Scalars['DateTime'];
-};
-
 export type LocationInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
@@ -553,6 +539,7 @@ export type User = {
   location?: Maybe<Point>;
   queue: Array<QueueEntry>;
   ratings: Array<Rating>;
+  seen: Scalars['DateTime'];
 };
 
 export type UsersResponse = {
@@ -599,6 +586,32 @@ export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
 export type ResendEmailMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'resendEmailVarification'>
+);
+
+export type GetBeepsQueryVariables = Exact<{
+  id?: Maybe<Scalars['String']>;
+  show?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type GetBeepsQuery = (
+  { __typename?: 'Query' }
+  & { getBeeps: (
+    { __typename?: 'BeepsResponse' }
+    & Pick<BeepsResponse, 'count'>
+    & { items: Array<(
+      { __typename?: 'Beep' }
+      & Pick<Beep, 'id' | 'origin' | 'destination' | 'start' | 'end' | 'groupSize'>
+      & { beeper: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
+      ), rider: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
+      ) }
+    )> }
+  ) }
 );
 
 export type GetQueueSubscriptionVariables = Exact<{
@@ -668,32 +681,6 @@ export type GetReportsQuery = (
       ), reported: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ) }
-    )> }
-  ) }
-);
-
-export type GetBeepsQueryVariables = Exact<{
-  id?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-}>;
-
-
-export type GetBeepsQuery = (
-  { __typename?: 'Query' }
-  & { getBeeps: (
-    { __typename?: 'BeepsResponse' }
-    & Pick<BeepsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Beep' }
-      & Pick<Beep, 'id' | 'origin' | 'destination' | 'start' | 'end' | 'groupSize'>
-      & { beeper: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
-      ), rider: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
       ) }
     )> }
   ) }
@@ -1104,7 +1091,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating' | 'email'>
+    & Pick<User, 'id' | 'name' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating' | 'email' | 'seen'>
     & { location?: Maybe<(
       { __typename?: 'Point' }
       & Pick<Point, 'latitude' | 'longitude'>
@@ -1269,6 +1256,67 @@ export function useResendEmailMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMutation>;
 export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
 export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
+export const GetBeepsDocument = gql`
+    query GetBeeps($id: String, $show: Int, $offset: Int) {
+  getBeeps(id: $id, show: $show, offset: $offset) {
+    items {
+      id
+      origin
+      destination
+      start
+      end
+      groupSize
+      beeper {
+        id
+        photoUrl
+        username
+        first
+        last
+        name
+      }
+      rider {
+        id
+        photoUrl
+        username
+        first
+        last
+        name
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetBeepsQuery__
+ *
+ * To run a query within a React component, call `useGetBeepsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBeepsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBeepsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      show: // value for 'show'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetBeepsQuery(baseOptions?: Apollo.QueryHookOptions<GetBeepsQuery, GetBeepsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBeepsQuery, GetBeepsQueryVariables>(GetBeepsDocument, options);
+      }
+export function useGetBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBeepsQuery, GetBeepsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBeepsQuery, GetBeepsQueryVariables>(GetBeepsDocument, options);
+        }
+export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
+export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
+export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
 export const GetQueueDocument = gql`
     subscription GetQueue($id: String!) {
   getBeeperUpdates(id: $id) {
@@ -1429,67 +1477,6 @@ export function useGetReportsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetReportsQueryHookResult = ReturnType<typeof useGetReportsQuery>;
 export type GetReportsLazyQueryHookResult = ReturnType<typeof useGetReportsLazyQuery>;
 export type GetReportsQueryResult = Apollo.QueryResult<GetReportsQuery, GetReportsQueryVariables>;
-export const GetBeepsDocument = gql`
-    query GetBeeps($id: String, $show: Int, $offset: Int) {
-  getBeeps(id: $id, show: $show, offset: $offset) {
-    items {
-      id
-      origin
-      destination
-      start
-      end
-      groupSize
-      beeper {
-        id
-        photoUrl
-        username
-        first
-        last
-        name
-      }
-      rider {
-        id
-        photoUrl
-        username
-        first
-        last
-        name
-      }
-    }
-    count
-  }
-}
-    `;
-
-/**
- * __useGetBeepsQuery__
- *
- * To run a query within a React component, call `useGetBeepsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBeepsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetBeepsQuery({
- *   variables: {
- *      id: // value for 'id'
- *      show: // value for 'show'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useGetBeepsQuery(baseOptions?: Apollo.QueryHookOptions<GetBeepsQuery, GetBeepsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBeepsQuery, GetBeepsQueryVariables>(GetBeepsDocument, options);
-      }
-export function useGetBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBeepsQuery, GetBeepsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBeepsQuery, GetBeepsQueryVariables>(GetBeepsDocument, options);
-        }
-export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
-export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
-export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout(isApp: false)
@@ -2554,6 +2541,7 @@ export const GetUserDocument = gql`
     username
     rating
     email
+    seen
     location {
       latitude
       longitude
