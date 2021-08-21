@@ -554,7 +554,7 @@ export type User = {
   location?: Maybe<Point>;
   queue: Array<QueueEntry>;
   ratings: Array<Rating>;
-  seen: Scalars['DateTime'];
+  seen?: Maybe<Scalars['DateTime']>;
 };
 
 export type UsersResponse = {
