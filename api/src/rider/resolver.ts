@@ -7,6 +7,7 @@ import { GetBeepInput, FindBeepInput } from '../validators/rider';
 import { Context } from '../utils/context';
 import { Beep } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
+import { inOrder } from '../utils/sort';
 
 @Resolver()
 export class RiderResolver {
@@ -29,13 +30,13 @@ export class RiderResolver {
 
     pubSub.publish("Rider" + ctx.user.id, { ...q, beeper });
 
-    await ctx.em.populate(beeper, ['queue', 'queue.rider']);
+    await ctx.em.populate(beeper, ['queue', 'queue.rider'], undefined, undefined, true);
 
     beeper.queue.add(q);
 
     sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.");
 
-    pubSub.publish("Beeper" + beeper.id, beeper.queue.getItems());
+    pubSub.publish("Beeper" + beeper.id, beeper.queue.getItems().sort(inOrder));
 
     await ctx.em.persistAndFlush(beeper);
 
@@ -57,7 +58,7 @@ export class RiderResolver {
   @Query(() => QueueEntry, { nullable: true })
   @Authorized()
   public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
-    const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue'] });
+    const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue'], refresh: true });
 
     if (!entry) {
       return null;
@@ -89,7 +90,7 @@ export class RiderResolver {
   }
 
   private async sendBeeperUpdate(entryId: string, beeperId: string, pubSub: PubSubEngine, em: EntityManager) {
-    const queue = await em.find(QueueEntry, { beeper: beeperId }, { orderBy: { start: QueryOrder.ASC }, populate: ['rider'] });
+    const queue = await em.find(QueueEntry, { beeper: beeperId }, { orderBy: { start: QueryOrder.ASC }, populate: ['rider'], refresh: true });
 
     pubSub.publish("Beeper" + beeperId, queue.filter((entry: QueueEntry) => entry.id != entryId));
   }

@@ -11,157 +11,166 @@ import AWS from 'aws-sdk';
 
 @ObjectType()
 class Auth {
-    @Field()
-    public user!: User;
+  @Field()
+  public user!: User;
 
-    @Field(() => TokenEntry)
-    public tokens!: TokenEntry;
+  @Field(() => TokenEntry)
+  public tokens!: TokenEntry;
 }
 
 @Resolver()
 export class AuthResolver {
 
-    @Mutation(() => Auth)
-    public async login(@Ctx() ctx: Context, @Arg('input') input: LoginInput): Promise<Auth> {
+  @Mutation(() => Auth)
+  public async login(@Ctx() ctx: Context, @Arg('input') input: LoginInput): Promise<Auth> {
 
-        // @TODO refresh = true or not?
-        const user = await ctx.em.findOne(User, { username: input.username });
+    // @TODO refresh = true or not?
+    const user = await ctx.em.findOne(User, { username: input.username });
 
-        if (!user) {
-            throw new Error("User not found");
-        }
-
-        if (!user.password) {
-            await ctx.em.populate(user, 'password');
-        }
-
-        if (user.password !== sha256(input.password)) {
-            throw new Error("Password is incorrect");
-        }
-
-        const tokenData = await getToken(user);
-
-        if (input.pushToken) {
-            setPushToken(user, input.pushToken);
-        }
-
-        return {
-            user: user,
-            tokens: tokenData
-        };
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    @Mutation(() => Auth)
-    public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
-        let { createReadStream, filename, mimetype } = await input.picture;
-
-        const user = new User();
-
-        const s3 = new AWS.S3({
-          accessKeyId: process.env.S3_ACCESS_KEY_ID,
-          secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
-          endpoint: process.env.S3_ENDPOINT_URL
-        });
-
-        const extention = filename.substr(filename.lastIndexOf("."), filename.length);
-
-        filename = user.id + "-" + Date.now() + extention;
-
-        const uploadParams = {
-            Body: createReadStream(),
-            Key: "images/" + filename,
-            Bucket: "beep",
-            ACL: "public-read"
-        };
-
-        const result = await s3.upload(uploadParams).promise();
-
-        if (!result) {
-            throw new Error("No result from AWS");
-        }
-    
-        input.password = sha256(input.password);
-
-        wrap(user).assign({ ...input, photoUrl: result.Location });
-
-        await ctx.em.persistAndFlush(user);
-    
-        const tokenData = await getToken(user);
-
-        createVerifyEmailEntryAndSendEmail(user);
-
-        return {
-            user: user,
-            tokens: tokenData
-        };
-    }
-    
-    @Mutation(() => Boolean)
-    @Authorized()
-    public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
-        await ctx.em.removeAndFlush(ctx.token);
-
-        if (isApp) {
-            setPushToken(ctx.user, null);
-        }
-
-        return true;
+    if (!user.password) {
+      await ctx.em.populate(user, 'password');
     }
 
-    @Mutation(() => Boolean)
-    public async removeToken(@Ctx() ctx: Context, @Arg('token') tokenid: string): Promise<boolean> {
-        await ctx.em.removeAndFlush({ tokenid: tokenid });
-
-        return true;
+    if (user.password !== sha256(input.password)) {
+      throw new Error("Password is incorrect");
     }
 
-    @Mutation(() => Boolean)
-    public async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string): Promise<boolean> {
-        const user: User | null = await getUserFromEmail(email);
+    const tokenData = await getToken(user);
 
-        if (!user) {
-            throw new Error("User does not exist");
-        }
-
-        const existing = await ctx.em.findOne(ForgotPassword, { user: user });
-
-        if (existing) {
-            sendResetEmail(email, existing.id, user.first);
-
-            throw new Error("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
-        }
-
-        const entry = new ForgotPassword(user);
-
-        await ctx.em.persistAndFlush(entry);
-
-        sendResetEmail(email, entry.id, user.first);
-
-        return true;
+    if (input.pushToken) {
+      setPushToken(user, input.pushToken);
     }
 
-    @Mutation(() => Boolean)
-    public async resetPassword(@Ctx() ctx: Context, @Arg('input') input: ResetPasswordInput): Promise<boolean> {
-        const entry = await ctx.em.findOne(ForgotPassword, input.id, { populate: ['user'] });
+    return {
+      user: user,
+      tokens: tokenData
+    };
+  }
 
-        if (!entry) {
-            throw new Error("This reset password request does not exist");
-        }
+  @Mutation(() => Auth)
+  public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
+    let { createReadStream, filename, mimetype } = await input.picture;
 
-        if ((entry.time.getTime() + (3600 * 1000)) < Date.now()) {
-            throw new Error("Your verification token has expired. You must re-request to reset your password.");
-        }
+    const user = new User();
 
-        entry.user.password = sha256(input.password);
+    const s3 = new AWS.S3({
+      accessKeyId: process.env.S3_ACCESS_KEY_ID,
+      secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
+      endpoint: process.env.S3_ENDPOINT_URL
+    });
 
-        deactivateTokens(entry.user);
+    const extention = filename.substr(filename.lastIndexOf("."), filename.length);
 
-        ctx.em.remove(entry);
+    filename = user.id + "-" + Date.now() + extention;
 
-        ctx.em.persist(entry.user);
+    const uploadParams = {
+      Body: createReadStream(),
+      Key: "images/" + filename,
+      Bucket: "beep",
+      ACL: "public-read"
+    };
 
-        await ctx.em.flush();
+    const result = await s3.upload(uploadParams).promise();
 
-        return true;
+    if (!result) {
+      throw new Error("No result from AWS");
     }
+
+    input.password = sha256(input.password);
+
+    wrap(user).assign({ ...input, photoUrl: result.Location });
+
+    // @TODO find a better way to handle unique key errors
+    try {
+      await ctx.em.persistAndFlush(user);
+    }
+    catch (error) {
+      if (error.detail) {
+        throw new Error(error.detail);
+      }
+      throw error;
+    }
+
+    const tokenData = await getToken(user);
+
+    createVerifyEmailEntryAndSendEmail(user);
+
+    return {
+      user: user,
+      tokens: tokenData
+    };
+  }
+
+  @Mutation(() => Boolean)
+  @Authorized()
+  public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
+    await ctx.em.removeAndFlush(ctx.token);
+
+    if (isApp) {
+      setPushToken(ctx.user, null);
+    }
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  public async removeToken(@Ctx() ctx: Context, @Arg('token') tokenid: string): Promise<boolean> {
+    await ctx.em.removeAndFlush({ tokenid: tokenid });
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  public async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string): Promise<boolean> {
+    const user: User | null = await getUserFromEmail(email);
+
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    const existing = await ctx.em.findOne(ForgotPassword, { user: user });
+
+    if (existing) {
+      sendResetEmail(email, existing.id, user.first);
+
+      throw new Error("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
+    }
+
+    const entry = new ForgotPassword(user);
+
+    await ctx.em.persistAndFlush(entry);
+
+    sendResetEmail(email, entry.id, user.first);
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  public async resetPassword(@Ctx() ctx: Context, @Arg('input') input: ResetPasswordInput): Promise<boolean> {
+    const entry = await ctx.em.findOne(ForgotPassword, input.id, { populate: ['user'] });
+
+    if (!entry) {
+      throw new Error("This reset password request does not exist");
+    }
+
+    if ((entry.time.getTime() + (3600 * 1000)) < Date.now()) {
+      throw new Error("Your verification token has expired. You must re-request to reset your password.");
+    }
+
+    entry.user.password = sha256(input.password);
+
+    deactivateTokens(entry.user);
+
+    ctx.em.remove(entry);
+
+    ctx.em.persist(entry.user);
+
+    await ctx.em.flush();
+
+    return true;
+  }
 }

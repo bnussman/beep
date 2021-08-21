@@ -41,7 +41,7 @@ export default class BeepAPIServer {
     const schema: GraphQLSchema = await buildSchema({
       resolvers: [__dirname + '/**/resolver.{ts,js}'],
       authChecker: authChecker,
-      pubSub: !prod ? undefined : new RedisPubSub({
+      pubSub: new RedisPubSub({
         publisher: new Redis(options),
         subscriber: new Redis(options)
       })

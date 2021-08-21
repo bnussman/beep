@@ -16,11 +16,11 @@ class BeepsInProgressResponse extends Paginated(QueueEntry) {}
 export class QueueResolver {
 
   @Query(() => [QueueEntry])
-  @Authorized('self')
+  @Authorized()
   public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
     const populate = fieldsToRelations(info);
 
-    return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate });
+    return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate, refresh: true });
   }
 
   @Query(() => BeepsInProgressResponse)
@@ -42,7 +42,6 @@ export class QueueResolver {
       count: count
     };
   }
-
 
   @Mutation(() => Boolean)
   @Authorized(UserRole.ADMIN)

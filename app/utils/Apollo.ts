@@ -5,17 +5,17 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUploadLink } from 'apollo-upload-client';
 
-const ip = '192.168.1.57';
+const ip = '192.168.1.20';
 
-// const wsUrl = __DEV__ ? `ws://${ip}:3001/subscriptions` : "wss://ridebeep.app/subscriptions";
-// const url = __DEV__ ? `http://${ip}:3001/graphql` : "https://ridebeep.app/graphql";
+const wsUrl = __DEV__ ? `ws://${ip}:3001/subscriptions` : "wss://ridebeep.app/subscriptions";
+const url = __DEV__ ? `http://${ip}:3001/graphql` : "https://ridebeep.app/graphql";
 //const wsUrl = "wss://staging.ridebeep.app/subscriptions";
 //const url = "https://staging.ridebeep.app/graphql";
 
-//const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
-//const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
-const wsUrl = "wss://ridebeep.app/subscriptions";
-const url =  "https://ridebeep.app/graphql";
+// const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
+// const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
+// const wsUrl = "wss://ridebeep.app/subscriptions";
+// const url =  "https://ridebeep.app/graphql";
 
 const authLink = setContext(async (_, { headers }) => {
   const tokens = await AsyncStorage.getItem('auth');
@@ -73,3 +73,8 @@ export const client = new ApolloClient({
   ]),
   cache: new InMemoryCache(),
 });
+
+export function reconnectWebsocket(): void {
+  wsLink.subscriptionClient.connectionParams = headers();
+  wsLink.subscriptionClient.tryReconnect();
+};

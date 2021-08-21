@@ -7,6 +7,7 @@ import { BeeperSettingsInput, UpdateQueueEntryInput } from '../validators/beeper
 import * as Sentry from '@sentry/node';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
+import { inOrder } from '../utils/sort';
 
 @Resolver(Beep)
 export class BeeperResolver {
@@ -32,7 +33,7 @@ export class BeeperResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
-    await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], {}, { orderBy: { start: QueryOrder.ASC } });
+    await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], undefined, { queue: { start: QueryOrder.ASC } }, true);
 
     const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id == input.queueId);
 
@@ -83,6 +84,10 @@ export class BeeperResolver {
       }
     }
     else {
+      const numRidersBefore = ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && entry.isAccepted).length;
+
+      if (numRidersBefore > 0) throw new Error("You are trying to advance a rider that should not currently be advanced.");
+
       queueEntry.state++;
 
       switch (queueEntry.state) {
@@ -101,15 +106,11 @@ export class BeeperResolver {
       ctx.em.persist(queueEntry);
     }
 
-    this.sendRiderUpdates(ctx.user, ctx.user.queue.getItems().sort(this.inOrder), pubSub);
+    this.sendRiderUpdates(ctx.user, ctx.user.queue.getItems().sort(inOrder), pubSub);
 
     await ctx.em.flush();
 
     return true;
-  }
-
-  private inOrder(a: QueueEntry, b: QueueEntry): number {
-    return a.start - b.start;
   }
 
   private async sendRiderUpdates(beeper: User, queue: QueueEntry[], pubSub: PubSubEngine) {
