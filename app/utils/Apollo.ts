@@ -73,8 +73,3 @@ export const client = new ApolloClient({
   ]),
   cache: new InMemoryCache(),
 });
-
-export function reconnectWebsocket(): void {
-  wsLink.subscriptionClient.connectionParams = headers();
-  wsLink.subscriptionClient.tryReconnect();
-};
