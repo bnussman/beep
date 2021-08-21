@@ -82,7 +82,7 @@ export class RiderResolver {
 
     pubSub.publish("Rider" + ctx.user.id, null);
 
-    this.sendBeeperUpdate(entry.id, entry.beeper.id, pubSub, ctx.em);
+    this.sendBeeperUpdate(entry.id, entry.beeper.id, pubSub, ctx.em.fork());
 
     await ctx.em.removeAndFlush(entry);
 
