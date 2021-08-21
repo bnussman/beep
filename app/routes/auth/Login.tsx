@@ -8,7 +8,7 @@ import { LoginIcon, SignUpIcon, QuestionIcon, LoadingIndicator, UserIcon } from 
 import { Icon } from '@ui-kitten/components';
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../../generated/graphql';
-import { client } from '../../utils/Apollo';
+import { changeSubscriptionToken, client } from '../../utils/Apollo';
 import { GetUserData } from '../../utils/UserQueries';
 import { getPushToken } from '../../utils/Notifications';
 import { Navigation } from '../../utils/Navigation';
@@ -73,6 +73,8 @@ function LoginScreen(props: Props): JSX.Element {
           query: GetUserData,
           data
         });
+
+        changeSubscriptionToken(r.data?.login.tokens.id);
 
         props.navigation.reset({
           index: 0,

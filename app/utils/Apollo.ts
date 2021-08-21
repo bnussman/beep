@@ -73,3 +73,20 @@ export const client = new ApolloClient({
   ]),
   cache: new InMemoryCache(),
 });
+
+export const changeSubscriptionToken = (token: string | undefined): void => {
+  if (!token || wsLink.subscriptionClient.connectionParams.token === token) {
+    return;
+  }
+
+  wsLink.subscriptionClient.connectionParams = async () => {
+    return { token };
+  }
+
+  wsLink.subscriptionClient.close(true);
+  wsLink.subscriptionClient.connect();
+};
+
+export const closeSubscriptions = (): void => {
+  wsLink.subscriptionClient.close(true);
+};
