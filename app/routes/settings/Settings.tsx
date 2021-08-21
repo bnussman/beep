@@ -32,7 +32,7 @@ export function MainSettingsScreen(props: Props): JSX.Element {
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
 
   async function doLogout() {
-    logout({
+    await logout({
       variables: {
         isApp: true
       }
