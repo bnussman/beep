@@ -65,10 +65,12 @@ function Beep() {
         updateQuery: (prev, { subscriptionData }) => {
           // @ts-expect-error I'm correct >:(
           const newFeedItem = subscriptionData.data.getUserUpdates;
-          Sentry.setUserContext(newFeedItem);
-          return Object.assign({}, prev, {
-            getUser: newFeedItem
-          });
+          if (newFeedItem) {
+            Sentry.setUserContext(newFeedItem);
+            return Object.assign({}, prev, {
+              getUser: newFeedItem
+            });
+          }
         }
       });
     }
