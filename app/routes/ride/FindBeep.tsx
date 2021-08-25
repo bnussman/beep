@@ -114,7 +114,7 @@ let sub: any;
 export function MainFindBeepScreen(props: Props): JSX.Element {
   const user = useContext(UserContext);
 
-  const { subscribeToMore, loading, data, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus);
+  const { subscribeToMore, loading, data, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, { notifyOnNetworkStatusChange: true });
   const [getETA, { data: eta, loading: etaLoading, error: etaError }] = useLazyQuery<GetEtaQuery>(GetETA);
 
   const [groupSize, setGroupSize] = useState<string>("");
