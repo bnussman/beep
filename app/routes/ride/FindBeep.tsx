@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, AppState } from 'react-native';
 import { Layout, Text, Button, Input, Card } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
 import { UserContext } from '../../utils/UserContext';
@@ -127,6 +127,21 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
   const beep = data?.getRiderStatus;
 
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextAppState => {
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      console.log("AppState", appState.current);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   async function updateETA(lat: number, long: number): Promise<void> {
     getETA({
       variables: {
@@ -147,6 +162,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   const throttleUpdateETA = throttle(20000, updateETA);
 
   useEffect(() => {
+    console.log("useEffect");
     SplashScreen.hideAsync();
     if (user?.id) {
       subscribeToMore({
@@ -163,7 +179,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
         }
       });
     }
-  }, [user?.id]);
+  }, [user?.id, appStateVisible]);
 
   useEffect(() => {
     if ((beep?.state == 1 && previousData?.getRiderStatus?.state == 0) || (beep?.state == 1 && !previousData)) {
