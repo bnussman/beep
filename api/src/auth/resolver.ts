@@ -88,7 +88,7 @@ export class AuthResolver {
     try {
       await ctx.em.persistAndFlush(user);
     }
-    catch (error) {
+    catch (error: any) {
       if (error.detail) {
         throw new Error(error.detail);
       }

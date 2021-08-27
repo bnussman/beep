@@ -159,7 +159,7 @@ export class BeeperResolver {
   @Subscription(() => [QueueEntry], {
     topics: ({ args }) => "Beeper" + args.id,
   })
-  @Authorized('self')
+  // @Authorized('self')
   public async getBeeperUpdates(@Arg("id") id: string, @Root() entry: QueueEntry[]): Promise<QueueEntry[]> {
     return entry;
   }

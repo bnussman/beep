@@ -133,7 +133,7 @@ export class RiderResolver {
     nullable: true,
     topics: ({ args }) => "Rider" + args.id,
   })
-  @Authorized('self')
+  // @Authorized('self')
   public getRiderUpdates(@Arg("id") id: string, @Root() entry: QueueEntry): QueueEntry | null {
     return entry;
   }
