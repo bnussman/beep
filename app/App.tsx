@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet } from 'react-native';
+import { AppState, StyleSheet } from 'react-native';
 import RegisterScreen from './routes/auth/Register';
 import LoginScreen from './routes/auth/Login';
 import { ForgotPasswordScreen } from './routes/auth/ForgotPassword';
@@ -34,6 +34,47 @@ init();
 function Beep() {
   const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { errorPolicy: 'none' });
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    AppState.addEventListener('change', _handleAppStateChange);
+
+    return () => {
+      AppState.removeEventListener('change', _handleAppStateChange);
+    };
+  }, []);
+
+  const _handleAppStateChange = (nextAppState) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      if (data?.getUser?.id) {
+        subscribeToMore({
+          document: UserUpdates,
+          variables: {
+            id: data?.getUser.id
+          },
+          updateQuery: (prev, { subscriptionData }) => {
+            // @ts-expect-error I'm correct >:(
+            const newFeedItem = subscriptionData.data.getUserUpdates;
+            if (newFeedItem) {
+              Sentry.setUserContext(newFeedItem);
+              return Object.assign({}, prev, {
+                getUser: newFeedItem
+              });
+            }
+          }
+        });
+      }
+    }
+
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+    console.log('AppState', appState.current);
+  };
+
 
   function toggleTheme() {
     const next = theme === 'light' ? 'dark' : 'light';

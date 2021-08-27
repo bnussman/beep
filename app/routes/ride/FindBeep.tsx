@@ -131,16 +131,18 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener("change", nextAppState => {
-      appState.current = nextAppState;
-      setAppStateVisible(appState.current);
-      console.log("AppState", appState.current);
-    });
+    AppState.addEventListener('change', _handleAppStateChange);
 
     return () => {
-      subscription.remove();
+      AppState.removeEventListener('change', _handleAppStateChange);
     };
   }, []);
+
+  const _handleAppStateChange = (nextAppState) => {
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+    console.log('AppState', appState.current);
+  };
 
   async function updateETA(lat: number, long: number): Promise<void> {
     getETA({

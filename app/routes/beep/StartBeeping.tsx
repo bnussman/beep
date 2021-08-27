@@ -128,24 +128,25 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener("change", nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        sub();
-      }
-
-      appState.current = nextAppState;
-      setAppStateVisible(appState.current);
-      console.log("AppState", appState.current);
-    });
+    AppState.addEventListener('change', _handleAppStateChange);
 
     return () => {
-      subscription.remove();
+      AppState.removeEventListener('change', _handleAppStateChange);
     };
   }, []);
 
+  const _handleAppStateChange = (nextAppState) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      sub();
+    }
+
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+    console.log('AppState', appState.current);
+  };
 
   function toggleSwitchWrapper(value: boolean): void {
     if (isAndroid && value) {
