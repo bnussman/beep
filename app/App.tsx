@@ -30,6 +30,7 @@ import { GetUserData, UserUpdates } from './utils/UserQueries';
 
 const Stack = createStackNavigator();
 init();
+Sentry.init();
 
 function Beep() {
   const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { errorPolicy: 'none' });

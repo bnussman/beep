@@ -4,18 +4,19 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUploadLink } from 'apollo-upload-client';
+import Logger from './Logger';
 
 const ip = 'localhost';
 
-const wsUrl = __DEV__ ? `ws://${ip}:3001/subscriptions` : "wss://ridebeep.app/subscriptions";
-const url = __DEV__ ? `http://${ip}:3001/graphql` : "https://ridebeep.app/graphql";
-//const wsUrl = "wss://staging.ridebeep.app/subscriptions";
-//const url = "https://staging.ridebeep.app/graphql";
+// const wsUrl = __DEV__ ? `ws://${ip}:3001/subscriptions` : "wss://ridebeep.app/subscriptions";
+// const url = __DEV__ ? `http://${ip}:3001/graphql` : "https://ridebeep.app/graphql";
+// const wsUrl = "wss://staging.ridebeep.app/subscriptions";
+// const url = "https://staging.ridebeep.app/graphql";
 
 // const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
 // const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
-// const wsUrl = "wss://ridebeep.app/subscriptions";
-// const url =  "https://ridebeep.app/graphql";
+const wsUrl = "wss://ridebeep.app/subscriptions";
+const url =  "https://ridebeep.app/graphql";
 
 const authLink = setContext(async (_, { headers }) => {
   const tokens = await AsyncStorage.getItem('auth');
@@ -34,6 +35,10 @@ const wsLink = new WebSocketLink({
   uri: wsUrl,
   options: {
     reconnect: true,
+    connectionCallback: (errors: Error[], result: any) => {
+      Logger.error(errors);
+      Logger.info(result);
+    },
     connectionParams: async () => {
       const tokens = await AsyncStorage.getItem('auth');
       if (tokens) {
