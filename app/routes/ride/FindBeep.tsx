@@ -357,12 +357,13 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
       <Layout style={styles.container}>
         <TouchableWithoutFeedback onPress={() => props.navigation.navigate("Profile", { id: beep.beeper.id, beep: beep.id })} >
           <Layout style={{ alignItems: "center", justifyContent: 'center' }}>
-            {beep.beeper.photoUrl &&
+            {beep.beeper.photoUrl ?
               <ProfilePicture
                 style={{ marginBottom: 5 }}
                 size={100}
                 url={beep.beeper.photoUrl}
               />
+              : null
             }
             <Layout style={styles.group}>
               <Text category='h6'>{beep.beeper.name}</Text>
@@ -371,7 +372,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           </Layout>
         </TouchableWithoutFeedback>
         <Tags user={beep.beeper} />
-        {beep.position <= 0 &&
+        {beep.position <= 0 ?
           <Layout style={styles.group}>
             <Card>
               <Text category='h6'>Current Status</Text>
@@ -379,11 +380,11 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
                 {getCurrentStatusMessage()}
               </Text>
             </Card>
-            {beep.state == 1 &&
+            {beep.state == 1 ?
               <Layout>
                 <Card style={{ marginTop: 10 }}>
                   <Text category='h6'>Arrival ETA</Text>
-                  {etaError && <Text appearance='hint'>{etaError.message}</Text>}
+                  {etaError ? <Text appearance='hint'>{etaError.message}</Text> : null}
                   {etaLoading ? <Text appearance='hint'>Loading ETA</Text> :
                     eta?.getETA && beep.beeper.location ?
                       <Text appearance='hint'>Your beeper is {eta.getETA} away</Text>
@@ -392,16 +393,19 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
                   }
                 </Card>
               </Layout>
+              : null
             }
           </Layout>
+          : null
         }
-        {beep.position > 0 &&
+        {beep.position > 0 ?
           <Layout style={styles.group}>
             <Text category='h6'>{beep.position}</Text>
             <Text appearance='hint'>
               {beep.position === 1 ? "person is" : "people are"} ahead of you in {beep.beeper.first || "User"}&apos;s queue.
             </Text>
           </Layout>
+          : null
         }
         <Button
           status='basic'
@@ -419,7 +423,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
         >
           Text Beeper
         </Button>
-        {beep.beeper.venmo &&
+        {beep.beeper.venmo ?
           <Button
             status='info'
             accessoryRight={VenmoIcon}
@@ -428,8 +432,9 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           >
             Pay Beeper with Venmo
           </Button>
+          : null
         }
-        {beep.beeper.cashapp &&
+        {beep.beeper.cashapp ?
           <Button
             status='success'
             accessoryRight={VenmoIcon}
@@ -438,8 +443,9 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           >
             Pay Beeper with Cash App
           </Button>
+          : null
         }
-        {Number(beep.groupSize) > 1 &&
+        {Number(beep.groupSize) > 1 ?
           <Button
             status='basic'
             accessoryRight={ShareIcon}
@@ -448,8 +454,9 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           >
             Share Venmo Info with Your Friends
           </Button>
+          : null
         }
-        {beep.position >= 1 && <LeaveButton />}
+        {beep.position >= 1 ? <LeaveButton /> : null}
       </Layout>
     );
   }
@@ -458,12 +465,13 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
       <Layout style={styles.container}>
         <TouchableWithoutFeedback onPress={() => props.navigation.navigate("Profile", { id: beep.beeper.id, beep: beep.id })} >
           <Layout style={{ alignItems: "center", justifyContent: 'center' }}>
-            {beep.beeper.photoUrl &&
+            {beep.beeper.photoUrl ?
               <ProfilePicture
                 style={{ marginBottom: 5 }}
                 size={100}
                 url={beep.beeper.photoUrl}
               />
+              : null
             }
             <Layout style={styles.group}>
               <Text appearance='hint'>Waiting on</Text>

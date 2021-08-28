@@ -757,7 +757,7 @@ export type GetInitialQueueQuery = (
     & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'start'>
     & { rider: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl'>
+      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl' | 'isStudent'>
     ) }
   )> }
 );
@@ -774,7 +774,7 @@ export type GetQueueSubscription = (
     & Pick<QueueEntry, 'id' | 'isAccepted' | 'groupSize' | 'origin' | 'destination' | 'state' | 'start'>
     & { rider: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl'>
+      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'venmo' | 'cashapp' | 'phone' | 'photoUrl' | 'isStudent'>
     ) }
   )> }
 );
@@ -1420,6 +1420,7 @@ export const GetInitialQueueDocument = gql`
       cashapp
       phone
       photoUrl
+      isStudent
     }
   }
 }
@@ -1470,6 +1471,7 @@ export const GetQueueDocument = gql`
       cashapp
       phone
       photoUrl
+      isStudent
     }
   }
 }

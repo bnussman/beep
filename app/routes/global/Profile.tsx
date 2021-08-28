@@ -92,23 +92,23 @@ export function ProfileScreen(props: Props): JSX.Element {
       <>
         <TopNavigation title='User Profile' alignment='center' accessoryLeft={BackAction} />
         <Layout style={styles.container}>
-          {data.getUser.photoUrl &&
+          {data.getUser.photoUrl ?
             <ProfilePicture
               style={{ marginHorizontal: 8 }}
               size={150}
               url={data.getUser.photoUrl}
             />
-          }
+            : null}
           <Text style={styles.item} category="h1">{data.getUser.name}</Text>
 
           <Layout style={styles.row}>
-            {data.getUser.isBeeping && <Button size='tiny' status='primary' style={styles.tag}>Currently Beeping 🚗</Button>}
-            {data.getUser.masksRequired && <Button status="info" size='tiny' style={styles.tag}>Masks Required</Button>}
-            {data.getUser.role == "ADMIN" && <Button size='tiny' status='danger' style={styles.tag}>Founder</Button>}
-            {data.getUser.isStudent && <Button status="basic" size='tiny' style={styles.tag}>Student</Button>}
+            {data.getUser.isBeeping ? <Button size='tiny' status='primary' style={styles.tag}>Currently Beeping 🚗</Button> : null}
+            {data.getUser.masksRequired ? <Button status="info" size='tiny' style={styles.tag}>Masks Required</Button> : null}
+            {data.getUser.role == "ADMIN" ? <Button size='tiny' status='danger' style={styles.tag}>Founder</Button> : null}
+            {data.getUser.isStudent ? <Button status="basic" size='tiny' style={styles.tag}>Student</Button> : null}
           </Layout>
 
-          {(props.route.params.id !== user.id) &&
+          {(props.route.params.id !== user.id) ?
             <Layout style={styles.row}>
               <Button
                 onPress={() => handleReport()}
@@ -125,28 +125,33 @@ export function ProfileScreen(props: Props): JSX.Element {
                 Rate User
               </Button>
             </Layout>
+            : null
           }
 
           <Layout style={styles.data}>
-            {data.getUser.isBeeping &&
+            {data.getUser.isBeeping ?
               <Layout style={styles.group}>
                 <Text category="h6" style={styles.groupLabel}>Queue Size</Text>
                 <Text>{data.getUser.queueSize}</Text>
               </Layout>
+              : null
             }
 
-            {data.getUser.venmo &&
+            {data.getUser.venmo ?
               <Layout style={styles.group}>
                 <Text category="h6" style={styles.groupLabel}>Venmo</Text>
                 <Text>@{data.getUser.venmo}</Text>
               </Layout>
+              :
+              null
             }
 
-            {data.getUser.cashapp &&
+            {data.getUser.cashapp ?
               <Layout style={styles.group}>
                 <Text category="h6" style={styles.groupLabel}>Cash App</Text>
                 <Text>@{data.getUser.cashapp}</Text>
               </Layout>
+              : null
             }
 
             <Layout style={styles.group}>
@@ -163,11 +168,13 @@ export function ProfileScreen(props: Props): JSX.Element {
               <Text category="h6" style={styles.groupLabel}>Group Rate</Text>
               <Text>${data.getUser.groupRate}</Text>
             </Layout>
-            {data.getUser.rating &&
+            {data.getUser.rating ?
               <Layout style={styles.group}>
                 <Text category="h6" style={styles.groupLabel}>Rating</Text>
                 <Text>{printStars(data.getUser.rating)}</Text>
               </Layout>
+              :
+              null
             }
           </Layout>
         </Layout>

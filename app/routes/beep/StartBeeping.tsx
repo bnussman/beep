@@ -65,6 +65,7 @@ const GetInitialQueue = gql`
         cashapp
         phone
         photoUrl
+        isStudent
       }
     }
   }
@@ -89,6 +90,7 @@ const GetQueue = gql`
         cashapp
         phone
         photoUrl
+        isStudent
       }
     }
   }
@@ -386,14 +388,15 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                   <Layout
                     style={{ flex: 1, flexDirection: "row", alignItems: 'center' }}
                   >
-                    {item.rider.photoUrl &&
+                    {item.rider.photoUrl ?
                       <ProfilePicture
                         size={50}
                         url={item.rider.photoUrl}
                       />
+                      : null
                     }
                     <Text category="h6" style={styles.rowText}>{item.rider.name}</Text>
-                    {item.rider.isStudent && <Tag status="basic">Student</Tag>}
+                    {item.rider.isStudent ? <Tag status="basic">Student</Tag> : null}
                   </Layout>
                   <Layout style={styles.row}>
                     <Text category='h6'>Group Size</Text>
@@ -430,7 +433,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                       </Button>
                     </Layout>
                   </Layout>
-                  {item.rider?.venmo &&
+                  {item.rider?.venmo ?
                     <Button
                       size="small"
                       style={styles.paddingUnder}
@@ -440,8 +443,9 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                     >
                       Request Money from Rider with Venmo
                     </Button>
+                    : null
                   }
-                  {item.rider?.cashapp &&
+                  {item.rider?.cashapp ?
                     <Button
                       size="small"
                       style={styles.paddingUnder}
@@ -451,6 +455,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                     >
                       Request Money from Rider with Cash App
                     </Button>
+                    : null
                   }
                   {item.state <= 1 ?
                     <Button
@@ -484,14 +489,15 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                   onPress={() => props.navigation.navigate("Profile", { id: item.rider.id, beep: item.id })}
                 >
                   <Layout style={{ flex: 1, flexDirection: "row", alignItems: 'center' }}>
-                    {item.rider.photoUrl &&
+                    {item.rider.photoUrl ?
                       <ProfilePicture
                         size={50}
                         url={item.rider.photoUrl}
                       />
+                      : null
                     }
                     <Text category="h6" style={styles.rowText}>{item.rider.name}</Text>
-                    {item.rider.isStudent && <Tag status="basic">Student</Tag>}
+                    {item.rider.isStudent ? <Tag status="basic">Student</Tag> : null}
                   </Layout>
                   <Layout style={styles.row}>
                     <Text category='h6'>Entered Queue</Text>
