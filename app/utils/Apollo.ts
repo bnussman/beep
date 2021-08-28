@@ -35,10 +35,6 @@ const wsLink = new WebSocketLink({
   uri: wsUrl,
   options: {
     reconnect: true,
-    connectionCallback: (errors: Error[], result: any) => {
-      Logger.error(errors);
-      Logger.info(result);
-    },
     connectionParams: async () => {
       const tokens = await AsyncStorage.getItem('auth');
       if (tokens) {
