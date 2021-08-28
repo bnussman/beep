@@ -6,16 +6,16 @@ import { authChecker } from "./utils/authentication";
 import { ORM } from "./utils/ORM";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
-import Koa from 'koa';
-import { ApolloServer } from 'apollo-server-koa';
-import { graphqlUploadKoa } from 'graphql-upload';
-import koaBody from 'koa-bodyparser';
-import cors from '@koa/cors';
 import config from './mikro-orm.config';
 import { ValidationError } from 'class-validator';
-import { captureError, errorHandler, initSentry, requestHandler, setSentryUserContext, tracingMiddleWare } from "./utils/sentry";
-
-const prod = process.env.GITLAB_ENVIRONMENT_NAME;
+import * as Sentry from "./utils/sentry";
+import * as RealSentry from "@sentry/node";
+import { createServer } from 'http';
+import { execute, subscribe } from 'graphql';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
+import express from "express";
+import { graphqlUploadExpress } from "graphql-upload";
+import { ApolloServer } from "apollo-server-express";
 
 export const BeepORM = {} as ORM;
 
@@ -30,7 +30,15 @@ export default class BeepAPIServer {
     BeepORM.orm = await MikroORM.init(config);
     BeepORM.em = BeepORM.orm.em;
 
-    initSentry();
+    const app = express();
+    const httpServer = createServer(app);
+
+    Sentry.init(app);
+
+    app.use(RealSentry.Handlers.requestHandler({
+      transaction: 'handler'
+    }));
+    app.use(RealSentry.Handlers.tracingHandler());
 
     const options = {
       host: process.env.REDIS_HOST,
@@ -47,28 +55,18 @@ export default class BeepAPIServer {
       })
     });
 
-    const app = new Koa();
-
-    app.use(koaBody());
-    app.use(cors());
-
     app.use(
-      graphqlUploadKoa({
+      graphqlUploadExpress({
         maxFileSize: 100000000,
         maxFiles: 1
       })
     );
 
-    app.use(requestHandler);
-    app.use(tracingMiddleWare);
-
-    const server = new ApolloServer({
-      uploads: false,
+    const subscriptionServer = SubscriptionServer.create({
       schema,
-      subscriptions: {
-        path: "/subscriptions",
-        // @ts-expect-error Apollo >:(
-        onConnect: async (params: { token: string }) => {
+      execute,
+      subscribe,
+      onConnect: async (params: { token: string }) => {
           if (!params || !params.token) throw new Error("No auth token");
 
           const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, params.token, { populate: ['user'] });
@@ -76,33 +74,29 @@ export default class BeepAPIServer {
           if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
         }
       },
+      {
+        server: httpServer,
+        path: '/subscriptions',
+      });
+
+
+    const server = new ApolloServer({
+      schema,
       context: async (data) => {
-        // Connection contains data passed from subscriptions onConnect return value
-        const { ctx, connection } = data;
         const em = BeepORM.em.fork();
 
-        const context = { em, user: connection?.context?.user };
+        const context = { em };
 
-        if (!ctx) return context;
-
-        const authHeader = ctx.request.header.authorization;
-
-        if (!authHeader) return context;
-
-        const token: string | undefined = authHeader.split(" ")[1];
+        const token = data.req.get("Authorization")?.split(" ")[1];
 
         if (!token) return context;
 
-        if (!context.user) {
-          const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
+        const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'] });
 
-          if (tokenEntryResult) {
-            setSentryUserContext(tokenEntryResult.user);
-            return { user: tokenEntryResult.user, token: tokenEntryResult, em };
-          }
+        if (tokenEntryResult) {
+          Sentry.setUserContext(tokenEntryResult.user);
+          return { user: tokenEntryResult.user, token: tokenEntryResult, em };
         }
-
-        setSentryUserContext(context.user);
 
         return context;
       },
@@ -122,21 +116,29 @@ export default class BeepAPIServer {
           return new Error(output.toString());
         }
 
-        captureError(error);
+        Sentry.captureError(error);
 
         return error;
-      }
+      },
+      plugins: [{
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              subscriptionServer.close();
+            }
+          };
+        }
+      }],
     });
+
+    await server.start();
 
     server.applyMiddleware({ app });
 
-    // usual error handler
-    app.on("error", errorHandler);
+    app.use(RealSentry.Handlers.errorHandler());
 
-    const live = app.listen(3001, () => {
+    httpServer.listen(3001, () => {
       console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
     });
-
-    server.installSubscriptionHandlers(live);
   }
 }
