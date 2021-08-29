@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AppState, StyleSheet } from 'react-native';
+import { AppState, AppStateStatus, StyleSheet } from 'react-native';
 import RegisterScreen from './routes/auth/Register';
 import LoginScreen from './routes/auth/Login';
 import { ForgotPasswordScreen } from './routes/auth/ForgotPassword';
@@ -20,11 +20,10 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { updatePushToken } from "./utils/Notifications";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import init from "./utils/Init";
-import { isMobile } from './utils/config';
 import ThemedStatusBar from './utils/StatusBar';
 import { client } from './utils/Apollo';
 import { ApolloProvider, useQuery } from '@apollo/client';
-import { GetUserDataQuery, User } from './generated/graphql';
+import { User } from './generated/graphql';
 import Sentry from './utils/Sentry';
 import { GetUserData, UserUpdates } from './utils/UserQueries';
 
@@ -33,7 +32,7 @@ init();
 Sentry.init();
 
 function Beep() {
-  const { data, loading, subscribeToMore } = useQuery<GetUserDataQuery>(GetUserData, { errorPolicy: 'none' });
+  const { data, loading, subscribeToMore } = useQuery(GetUserData, { errorPolicy: 'none' });
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
@@ -46,7 +45,7 @@ function Beep() {
     };
   }, []);
 
-  const _handleAppStateChange = (nextAppState) => {
+  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
       appState.current.match(/inactive|background/) &&
       nextAppState === 'active'
@@ -58,7 +57,6 @@ function Beep() {
             id: data?.getUser.id
           },
           updateQuery: (prev, { subscriptionData }) => {
-            // @ts-expect-error I'm correct >:(
             const newFeedItem = subscriptionData.data.getUserUpdates;
             if (newFeedItem) {
               Sentry.setUserContext(newFeedItem);
@@ -94,7 +92,7 @@ function Beep() {
 
   useEffect(() => {
     if (data?.getUser.id) {
-      if (isMobile) updatePushToken();
+      updatePushToken();
 
       Sentry.setUserContext(data.getUser);
 
@@ -104,7 +102,6 @@ function Beep() {
           id: data?.getUser.id
         },
         updateQuery: (prev, { subscriptionData }) => {
-          // @ts-expect-error I'm correct >:(
           const newFeedItem = subscriptionData.data.getUserUpdates;
           if (newFeedItem) {
             Sentry.setUserContext(newFeedItem);

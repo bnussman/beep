@@ -84,12 +84,15 @@ function setNotificationHandlers() {
 export async function updatePushToken(): Promise<void> {
   if (isMobile) {
     const UpdatePushToken = gql`
-        mutation UpdatePushToken($token: String!) {
-            updatePushToken (pushToken: $token)
-        }
-        `;
+      mutation UpdatePushToken($token: String!) {
+          updatePushToken (pushToken: $token)
+      }`;
 
-    await client.mutate({ mutation: UpdatePushToken, variables: { token: await getPushToken() } });
+    const token = await getPushToken();
+
+    if (token) {
+      await client.mutate({ mutation: UpdatePushToken, variables: { token } });
+    }
   }
 }
 
