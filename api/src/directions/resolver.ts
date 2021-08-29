@@ -21,7 +21,7 @@ export class DirectionsResolver {
 
   @Query(() => [Suggestion])
   public async getLocationSuggestions(@Arg('location') location: string, @Arg('sessiontoken') sessiontoken: string): Promise<Suggestion[]> {
-    const result = await fetch(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&sessiontoken=${sessiontoken}`);
+    const result = await fetch(encodeURI(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&sessiontoken=${sessiontoken}`));
 
     const data = await result.json();
 
