@@ -54,9 +54,9 @@ const BottomTabBar = ({ navigation, state }: { navigation: BottomTabNavigationPr
 export function MainTabs() {
     return (
         <Navigator tabBar={props => <BottomTabBar {...props} />}>
-            <Screen name='Get a Beep' component={FindBeepScreen}/>
-            <Screen name='Start Beeping' component={StartBeepingScreen} />
-            <Screen name='Settings' component={SettingsScreen}/>
+            <Screen options={{ headerShown: false }} name='Get a Beep' component={FindBeepScreen}/>
+            <Screen options={{ headerShown: false }} name='Start Beeping' component={StartBeepingScreen} />
+            <Screen options={{ headerShown: false }} name='Settings' component={SettingsScreen}/>
         </Navigator>
     );
 }

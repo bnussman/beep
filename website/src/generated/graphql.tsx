@@ -573,34 +573,19 @@ export type VerifyEmail = {
 export type GetUserDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserDataQuery = (
-  { __typename?: 'Query' }
-  & { getUser: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp' | 'queueSize'>
-  ) }
-);
+export type GetUserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, first: string, last: string, email: string, phone: string, venmo?: Maybe<string>, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: Maybe<string>, capacity: number, masksRequired: boolean, username: string, role: string, cashapp?: Maybe<string>, queueSize: number } };
 
 export type UserUpdatesSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type UserUpdatesSubscription = (
-  { __typename?: 'Subscription' }
-  & { getUserUpdates: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp' | 'queueSize'>
-  ) }
-);
+export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, name: string, first: string, last: string, email: string, phone: string, venmo?: Maybe<string>, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: Maybe<string>, capacity: number, masksRequired: boolean, username: string, role: string, cashapp?: Maybe<string>, queueSize: number } };
 
 export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ResendEmailMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'resendEmailVarification'>
-);
+export type ResendEmailMutation = { __typename?: 'Mutation', resendEmailVarification: boolean };
 
 export type GetBeepsQueryVariables = Exact<{
   id?: Maybe<Scalars['String']>;
@@ -609,41 +594,14 @@ export type GetBeepsQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepsQuery = (
-  { __typename?: 'Query' }
-  & { getBeeps: (
-    { __typename?: 'BeepsResponse' }
-    & Pick<BeepsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Beep' }
-      & Pick<Beep, 'id' | 'origin' | 'destination' | 'start' | 'end' | 'groupSize'>
-      & { beeper: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
-      ), rider: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
-      ) }
-    )> }
-  ) }
-);
+export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, photoUrl?: Maybe<string>, username: string, first: string, last: string, name: string }, rider: { __typename?: 'User', id: string, photoUrl?: Maybe<string>, username: string, first: string, last: string, name: string } }> } };
 
 export type GetQueueSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetQueueSubscription = (
-  { __typename?: 'Subscription' }
-  & { getBeeperUpdates: Array<(
-    { __typename?: 'QueueEntry' }
-    & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize' | 'isAccepted' | 'state'>
-    & { rider: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
-    ) }
-  )> }
-);
+export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: Maybe<string>, username: string, first: string, last: string, name: string } }> };
 
 export type GetRatingsQueryVariables = Exact<{
   id?: Maybe<Scalars['String']>;
@@ -652,24 +610,7 @@ export type GetRatingsQueryVariables = Exact<{
 }>;
 
 
-export type GetRatingsQuery = (
-  { __typename?: 'Query' }
-  & { getRatings: (
-    { __typename?: 'RatingsResponse' }
-    & Pick<RatingsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Rating' }
-      & Pick<Rating, 'id' | 'timestamp' | 'message' | 'stars'>
-      & { rater: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ), rated: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ) }
-    )> }
-  ) }
-);
+export type GetRatingsQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: Maybe<string>, stars: number, rater: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string } }> } };
 
 export type GetReportsQueryVariables = Exact<{
   id?: Maybe<Scalars['String']>;
@@ -678,45 +619,19 @@ export type GetReportsQueryVariables = Exact<{
 }>;
 
 
-export type GetReportsQuery = (
-  { __typename?: 'Query' }
-  & { getReports: (
-    { __typename?: 'ReportsResponse' }
-    & Pick<ReportsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Report' }
-      & Pick<Report, 'id' | 'timestamp' | 'reason' | 'handled'>
-      & { handledBy?: Maybe<(
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      )>, reporter: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ), reported: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ) }
-    )> }
-  ) }
-);
+export type GetReportsQuery = { __typename?: 'Query', getReports: { __typename?: 'ReportsResponse', count: number, items: Array<{ __typename?: 'Report', id: string, timestamp: any, reason: string, handled: boolean, handledBy?: Maybe<{ __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }>, reporter: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, reported: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string } }> } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogoutMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'logout'>
-);
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
 export type RemoveUserMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type RemoveUserMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'removeUser'>
-);
+export type RemoveUserMutation = { __typename?: 'Mutation', removeUser: boolean };
 
 export type ClearQueueMutationVariables = Exact<{
   id: Scalars['String'];
@@ -724,20 +639,14 @@ export type ClearQueueMutationVariables = Exact<{
 }>;
 
 
-export type ClearQueueMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'clearQueue'>
-);
+export type ClearQueueMutation = { __typename?: 'Mutation', clearQueue: boolean };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String'];
 }>;
 
 
-export type ChangePasswordMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'changePassword'>
-);
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: boolean };
 
 export type EditAccountMutationVariables = Exact<{
   first: Scalars['String'];
@@ -749,36 +658,21 @@ export type EditAccountMutationVariables = Exact<{
 }>;
 
 
-export type EditAccountMutation = (
-  { __typename?: 'Mutation' }
-  & { editAccount: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name'>
-  ) }
-);
+export type EditAccountMutation = { __typename?: 'Mutation', editAccount: { __typename?: 'User', id: string, name: string } };
 
 export type AddProfilePictureMutationVariables = Exact<{
   picture: Scalars['Upload'];
 }>;
 
 
-export type AddProfilePictureMutation = (
-  { __typename?: 'Mutation' }
-  & { addProfilePicture: (
-    { __typename?: 'User' }
-    & Pick<User, 'photoUrl'>
-  ) }
-);
+export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', photoUrl?: Maybe<string> } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
 
 
-export type ForgotPasswordMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'forgotPassword'>
-);
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -786,19 +680,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = (
-  { __typename?: 'Mutation' }
-  & { login: (
-    { __typename?: 'Auth' }
-    & { tokens: (
-      { __typename?: 'TokenEntry' }
-      & Pick<TokenEntry, 'id' | 'tokenid'>
-    ), user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp' | 'queueSize'>
-    ) }
-  ) }
-);
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, name: string, first: string, last: string, email: string, phone: string, venmo?: Maybe<string>, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: Maybe<string>, capacity: number, masksRequired: boolean, username: string, role: string, cashapp?: Maybe<string>, queueSize: number } } };
 
 export type ResetPasswordMutationVariables = Exact<{
   id: Scalars['String'];
@@ -806,10 +688,7 @@ export type ResetPasswordMutationVariables = Exact<{
 }>;
 
 
-export type ResetPasswordMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'resetPassword'>
-);
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: boolean };
 
 export type SignUpMutationVariables = Exact<{
   first: Scalars['String'];
@@ -824,29 +703,14 @@ export type SignUpMutationVariables = Exact<{
 }>;
 
 
-export type SignUpMutation = (
-  { __typename?: 'Mutation' }
-  & { signup: (
-    { __typename?: 'Auth' }
-    & { tokens: (
-      { __typename?: 'TokenEntry' }
-      & Pick<TokenEntry, 'id' | 'tokenid'>
-    ), user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'username' | 'role' | 'cashapp' | 'queueSize'>
-    ) }
-  ) }
-);
+export type SignUpMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, name: string, first: string, last: string, email: string, phone: string, venmo?: Maybe<string>, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: Maybe<string>, capacity: number, masksRequired: boolean, username: string, role: string, cashapp?: Maybe<string>, queueSize: number } } };
 
 export type VerifyAccountMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type VerifyAccountMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'verifyAccount'>
-);
+export type VerifyAccountMutation = { __typename?: 'Mutation', verifyAccount: boolean };
 
 export type GetBeeperListQueryVariables = Exact<{
   latitude: Scalars['Float'];
@@ -855,17 +719,7 @@ export type GetBeeperListQueryVariables = Exact<{
 }>;
 
 
-export type GetBeeperListQuery = (
-  { __typename?: 'Query' }
-  & { getBeeperList: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'name' | 'photoUrl' | 'singlesRate' | 'groupRate' | 'capacity' | 'isStudent' | 'queueSize' | 'masksRequired'>
-    & { location?: Maybe<(
-      { __typename?: 'Point' }
-      & Pick<Point, 'longitude' | 'latitude'>
-    )> }
-  )> }
-);
+export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, username: string, name: string, photoUrl?: Maybe<string>, singlesRate: number, groupRate: number, capacity: number, isStudent: boolean, queueSize: number, masksRequired: boolean, location?: Maybe<{ __typename?: 'Point', longitude: number, latitude: number }> }> };
 
 export type GetInProgressBeepsQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
@@ -873,54 +727,21 @@ export type GetInProgressBeepsQueryVariables = Exact<{
 }>;
 
 
-export type GetInProgressBeepsQuery = (
-  { __typename?: 'Query' }
-  & { getInProgressBeeps: (
-    { __typename?: 'BeepsInProgressResponse' }
-    & Pick<BeepsInProgressResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'QueueEntry' }
-      & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize' | 'isAccepted' | 'state'>
-      & { beeper: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ), rider: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ) }
-    )> }
-  ) }
-);
+export type GetInProgressBeepsQuery = { __typename?: 'Query', getInProgressBeeps: { __typename?: 'BeepsInProgressResponse', count: number, items: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, beeper: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, rider: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string } }> } };
 
 export type DeleteBeepMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DeleteBeepMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteBeep'>
-);
+export type DeleteBeepMutation = { __typename?: 'Mutation', deleteBeep: boolean };
 
 export type GetBeepQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetBeepQuery = (
-  { __typename?: 'Query' }
-  & { getBeep: (
-    { __typename?: 'Beep' }
-    & Pick<Beep, 'id' | 'origin' | 'destination' | 'start' | 'end' | 'groupSize'>
-    & { beeper: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-    ), rider: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-    ) }
-  ) }
-);
+export type GetBeepQuery = { __typename?: 'Query', getBeep: { __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, rider: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string } } };
 
 export type GetBeepsQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
@@ -928,57 +749,21 @@ export type GetBeepsQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepsQuery = (
-  { __typename?: 'Query' }
-  & { getBeeps: (
-    { __typename?: 'BeepsResponse' }
-    & Pick<BeepsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Beep' }
-      & Pick<Beep, 'id' | 'origin' | 'destination' | 'start' | 'end' | 'groupSize'>
-      & { beeper: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ), rider: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ) }
-    )> }
-  ) }
-);
+export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, rider: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string } }> } };
 
 export type DeleteRatingMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DeleteRatingMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteRating'>
-);
+export type DeleteRatingMutation = { __typename?: 'Mutation', deleteRating: boolean };
 
 export type GetRatingQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetRatingQuery = (
-  { __typename?: 'Query' }
-  & { getRating: (
-    { __typename?: 'Rating' }
-    & Pick<Rating, 'id' | 'message' | 'stars' | 'timestamp'>
-    & { beep: (
-      { __typename?: 'Beep' }
-      & Pick<Beep, 'id'>
-    ), rater: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-    ), rated: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-    ) }
-  ) }
-);
+export type GetRatingQuery = { __typename?: 'Query', getRating: { __typename?: 'Rating', id: string, message?: Maybe<string>, stars: number, timestamp: any, beep: { __typename?: 'Beep', id: string }, rater: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string } } };
 
 export type GetRatingsQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
@@ -986,34 +771,14 @@ export type GetRatingsQueryVariables = Exact<{
 }>;
 
 
-export type GetRatingsQuery = (
-  { __typename?: 'Query' }
-  & { getRatings: (
-    { __typename?: 'RatingsResponse' }
-    & Pick<RatingsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Rating' }
-      & Pick<Rating, 'id' | 'timestamp' | 'message' | 'stars'>
-      & { rater: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ), rated: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ) }
-    )> }
-  ) }
-);
+export type GetRatingsQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: Maybe<string>, stars: number, rater: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string } }> } };
 
 export type DeleteReportMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type DeleteReportMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deleteReport'>
-);
+export type DeleteReportMutation = { __typename?: 'Mutation', deleteReport: boolean };
 
 export type UpdateReportMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1022,39 +787,14 @@ export type UpdateReportMutationVariables = Exact<{
 }>;
 
 
-export type UpdateReportMutation = (
-  { __typename?: 'Mutation' }
-  & { updateReport: (
-    { __typename?: 'Report' }
-    & Pick<Report, 'id'>
-  ) }
-);
+export type UpdateReportMutation = { __typename?: 'Mutation', updateReport: { __typename?: 'Report', id: string } };
 
 export type GetReportQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetReportQuery = (
-  { __typename?: 'Query' }
-  & { getReport: (
-    { __typename?: 'Report' }
-    & Pick<Report, 'id' | 'reason' | 'timestamp' | 'handled' | 'notes'>
-    & { beep?: Maybe<(
-      { __typename?: 'Beep' }
-      & Pick<Beep, 'id'>
-    )>, reporter: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-    ), reported: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-    ), handledBy?: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-    )> }
-  ) }
-);
+export type GetReportQuery = { __typename?: 'Query', getReport: { __typename?: 'Report', id: string, reason: string, timestamp: any, handled: boolean, notes?: Maybe<string>, beep?: Maybe<{ __typename?: 'Beep', id: string }>, reporter: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, reported: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, handledBy?: Maybe<{ __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }> } };
 
 export type GetReportsQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
@@ -1062,37 +802,14 @@ export type GetReportsQueryVariables = Exact<{
 }>;
 
 
-export type GetReportsQuery = (
-  { __typename?: 'Query' }
-  & { getReports: (
-    { __typename?: 'ReportsResponse' }
-    & Pick<ReportsResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'Report' }
-      & Pick<Report, 'id' | 'timestamp' | 'reason' | 'notes' | 'handled'>
-      & { reporter: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ), reported: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'name' | 'photoUrl' | 'username'>
-      ) }
-    )> }
-  ) }
-);
+export type GetReportsQuery = { __typename?: 'Query', getReports: { __typename?: 'ReportsResponse', count: number, items: Array<{ __typename?: 'Report', id: string, timestamp: any, reason: string, notes?: Maybe<string>, handled: boolean, reporter: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string }, reported: { __typename?: 'User', id: string, name: string, photoUrl?: Maybe<string>, username: string } }> } };
 
 export type GetEditableUserQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetEditableUserQuery = (
-  { __typename?: 'Query' }
-  & { getUser: (
-    { __typename?: 'User' }
-    & Pick<User, 'first' | 'last' | 'isBeeping' | 'isStudent' | 'isEmailVerified' | 'role' | 'venmo' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'email' | 'cashapp' | 'pushToken'>
-  ) }
-);
+export type GetEditableUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: Maybe<string>, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: Maybe<string>, queueSize: number, phone: string, username: string, email: string, cashapp?: Maybe<string>, pushToken?: Maybe<string> } };
 
 export type EditUserMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1100,50 +817,21 @@ export type EditUserMutationVariables = Exact<{
 }>;
 
 
-export type EditUserMutation = (
-  { __typename?: 'Mutation' }
-  & { editUser: (
-    { __typename?: 'User' }
-    & Pick<User, 'username'>
-  ) }
-);
+export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', username: string } };
 
 export type BeepersLocationSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type BeepersLocationSubscription = (
-  { __typename?: 'Subscription' }
-  & { getLocationUpdates?: Maybe<(
-    { __typename?: 'Point' }
-    & Pick<Point, 'latitude' | 'longitude'>
-  )> }
-);
+export type BeepersLocationSubscription = { __typename?: 'Subscription', getLocationUpdates?: Maybe<{ __typename?: 'Point', latitude: number, longitude: number }> };
 
 export type GetUserQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetUserQuery = (
-  { __typename?: 'Query' }
-  & { getUser: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'isBeeping' | 'isStudent' | 'role' | 'venmo' | 'cashapp' | 'singlesRate' | 'groupRate' | 'capacity' | 'masksRequired' | 'photoUrl' | 'queueSize' | 'phone' | 'username' | 'rating' | 'email' | 'seen'>
-    & { location?: Maybe<(
-      { __typename?: 'Point' }
-      & Pick<Point, 'latitude' | 'longitude'>
-    )>, queue: Array<(
-      { __typename?: 'QueueEntry' }
-      & Pick<QueueEntry, 'id' | 'origin' | 'destination' | 'start' | 'groupSize' | 'isAccepted' | 'state'>
-      & { rider: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'photoUrl' | 'username' | 'first' | 'last' | 'name'>
-      ) }
-    )> }
-  ) }
-);
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, role: string, venmo?: Maybe<string>, cashapp?: Maybe<string>, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: Maybe<string>, queueSize: number, phone: string, username: string, rating?: Maybe<number>, email: string, seen?: Maybe<any>, location?: Maybe<{ __typename?: 'Point', latitude: number, longitude: number }>, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: Maybe<string>, username: string, first: string, last: string, name: string } }> } };
 
 export type GetUsersQueryVariables = Exact<{
   show?: Maybe<Scalars['Int']>;
@@ -1152,17 +840,7 @@ export type GetUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersQuery = (
-  { __typename?: 'Query' }
-  & { getUsers: (
-    { __typename?: 'UsersResponse' }
-    & Pick<UsersResponse, 'count'>
-    & { items: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'photoUrl' | 'name' | 'email' | 'isStudent' | 'isEmailVerified' | 'username' | 'phone' | 'isBeeping'>
-    )> }
-  ) }
-);
+export type GetUsersQuery = { __typename?: 'Query', getUsers: { __typename?: 'UsersResponse', count: number, items: Array<{ __typename?: 'User', id: string, photoUrl?: Maybe<string>, name: string, email: string, isStudent: boolean, isEmailVerified: boolean, username: string, phone: string, isBeeping: boolean }> } };
 
 
 export const GetUserDataDocument = gql`

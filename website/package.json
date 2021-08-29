@@ -14,9 +14,9 @@
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@apollo/client": "^3.3.20",
+    "@apollo/client": "^3.4.10",
     "@chakra-ui/icons": "^1.0.12",
-    "@chakra-ui/react": "^1.6.3",
+    "@chakra-ui/react": "^1.6.7",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/poppins": "^4.4.5",
@@ -28,16 +28,16 @@
     "graphql": "^15.5.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.1"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^1.21.5",
-    "@graphql-codegen/typescript": "1.22.4",
-    "@graphql-codegen/typescript-operations": "1.18.3",
-    "@graphql-codegen/typescript-react-apollo": "2.3.0",
+    "@graphql-codegen/cli": "^2.1.1",
+    "@graphql-codegen/typescript": "2.1.2",
+    "@graphql-codegen/typescript-operations": "2.1.2",
+    "@graphql-codegen/typescript-react-apollo": "3.1.2",
     "@types/apollo-upload-client": "^14.1.0",
     "@types/google-map-react": "^2.1.2",
-    "@types/node": "^16.3.1",
+    "@types/node": "^16.7.6",
     "@types/react": "^17.0.11",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.6",
