@@ -16,6 +16,12 @@ export function init(app: Router): void {
       new Sentry.Integrations.Http({ tracing: true }),
       new Tracing.Integrations.Express({ app }),
     ],
+    tracesSampler: (samplingContext) => {
+      if (samplingContext?.transactionContext?.name === 'GET /.well-known/apollo/server-health') {
+        return false;
+      }
+      return true;
+    },
   });
 }
 
