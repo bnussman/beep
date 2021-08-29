@@ -702,6 +702,9 @@ export type LoginMutation = (
     & { tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
+    ), user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'cashapp'>
     ) }
   ) }
 );
@@ -727,6 +730,9 @@ export type SignUpMutation = (
     & { tokens: (
       { __typename?: 'TokenEntry' }
       & Pick<TokenEntry, 'id' | 'tokenid'>
+    ), user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'name' | 'first' | 'last' | 'email' | 'phone' | 'venmo' | 'isBeeping' | 'isEmailVerified' | 'isStudent' | 'groupRate' | 'singlesRate' | 'photoUrl' | 'capacity' | 'masksRequired' | 'cashapp'>
     ) }
   ) }
 );
@@ -1284,6 +1290,25 @@ export const LoginDocument = gql`
       id
       tokenid
     }
+    user {
+      id
+      username
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      cashapp
+    }
   }
 }
     `;
@@ -1323,6 +1348,25 @@ export const SignUpDocument = gql`
     tokens {
       id
       tokenid
+    }
+    user {
+      id
+      username
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      cashapp
     }
   }
 }

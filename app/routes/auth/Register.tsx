@@ -40,6 +40,25 @@ mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: Strin
                 id
                 tokenid
             }
+            user {
+              id
+              username
+              name
+              first
+              last
+              email
+              phone
+              venmo
+              isBeeping
+              isEmailVerified
+              isStudent
+              groupRate
+              singlesRate
+              photoUrl
+              capacity
+              masksRequired
+              cashapp
+            }
         }
     }
 `;
@@ -72,7 +91,7 @@ function RegisterScreen(props: Props) {
     }
 
     try {
-      const result = await signup({
+      const data = await signup({
         variables: {
           first: first,
           last: last,
@@ -87,28 +106,23 @@ function RegisterScreen(props: Props) {
         }
       });
 
-      if (result) {
+      AsyncStorage.setItem("auth", JSON.stringify(data.data?.signup));
 
-        AsyncStorage.setItem("auth", JSON.stringify(result.data?.signup));
+      await client.resetStore();
 
-        await client.resetStore();
+      client.writeQuery({
+        query: GetUserData,
+        data: { getUser: data.data?.signup.user }
+      });
 
-        const data = await client.query({ query: GetUserData });
+      changeSubscriptionToken(data.data?.signup.tokens.id);
 
-        client.writeQuery({
-          query: GetUserData,
-          data
-        });
-
-        changeSubscriptionToken(result.data?.signup.tokens.id);
-
-        props.navigation.reset({
-          index: 0,
-          routes: [
-            { name: 'Main' },
-          ],
-        });
-      }
+      props.navigation.reset({
+        index: 0,
+        routes: [
+          { name: 'Main' },
+        ],
+      });
     }
     catch (error) {
       console.log(error);

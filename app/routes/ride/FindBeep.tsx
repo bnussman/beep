@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, AppState } from 'react-native';
+import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, AppState, AppStateStatus } from 'react-native';
 import { Layout, Text, Button, Input, Card } from '@ui-kitten/components';
 import * as SplashScreen from 'expo-splash-screen';
 import { UserContext } from '../../utils/UserContext';
@@ -110,6 +110,7 @@ interface Props {
 }
 
 let sub: any;
+let riderStatusSub: any;
 
 export function MainFindBeepScreen(props: Props): JSX.Element {
   const user = useContext(UserContext);
@@ -138,7 +139,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     };
   }, []);
 
-  const _handleAppStateChange = (nextAppState) => {
+  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
       appState.current.match(/inactive|background/) &&
       nextAppState === 'active'
@@ -148,7 +149,6 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
     appState.current = nextAppState;
     setAppStateVisible(appState.current);
-    console.log('AppState', appState.current);
   };
 
   async function updateETA(lat: number, long: number): Promise<void> {
@@ -171,24 +171,27 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   const throttleUpdateETA = throttle(20000, updateETA);
 
   useEffect(() => {
-    console.log("useEffect");
     SplashScreen.hideAsync();
-    if (user?.id) {
-      subscribeToMore({
-        document: RiderStatus,
-        variables: {
-          id: user.id
-        },
-        updateQuery: (prev, { subscriptionData }) => {
-          // @ts-expect-error This works, so I'm not changing it
-          const newFeedItem = subscriptionData.data.getRiderUpdates;
-          return Object.assign({}, prev, {
-            getRiderStatus: newFeedItem
-          });
-        }
-      });
+  }, []);
+
+  useEffect(() => {
+    if (user?.id && beep && !previousData) {
+      console.log("Calling sub to more");
+      subscribeToRiderStatus();
     }
-  }, [user?.id, appStateVisible]);
+  }, [user, beep]);
+
+  function subscribeToRiderStatus(): void {
+    const a = client.subscribe({ query: RiderStatus, variables: { id: user.id } });
+
+    riderStatusSub = a.subscribe(({ data }) => {
+      console.log(data);
+      client.writeQuery({
+        query: InitialRiderStatus,
+        data: { getRiderStatus: data.getRiderUpdates }
+      });
+    });
+  }
 
   useEffect(() => {
     if ((beep?.state == 1 && previousData?.getRiderStatus?.state == 0) || (beep?.state == 1 && !previousData)) {
@@ -197,8 +200,11 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     if (beep?.state == 2 && previousData?.getRiderStatus?.state == 1) {
       sub?.unsubscribe();
     }
-    if (beep?.beeper.location) {
+    if (beep?.beeper.location && beep?.state === 1) {
       updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
+    }
+    if (previousData && !beep) {
+      riderStatusSub?.unsubscribe();
     }
   }, [data]);
 
@@ -228,12 +234,19 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   async function chooseBeep(id: string): Promise<void> {
     setIsGetBeepLoading(true);
     try {
-      await gqlChooseBeep({
+      const data = await gqlChooseBeep({
         beeperId: id,
         origin: origin,
         destination: destination,
         groupSize: Number(groupSize)
       });
+
+      client.writeQuery({
+        query: InitialRiderStatus,
+        data: { getRiderStatus: { ...data.data.chooseBeep } }
+      });
+
+      subscribeToRiderStatus();
     }
     catch (error) {
       alert(error.message);

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import { StyleSheet, Linking, Platform, TouchableWithoutFeedback, Keyboard, Alert, AppState } from 'react-native';
+import { StyleSheet, Linking, Platform, TouchableWithoutFeedback, Keyboard, Alert, AppState, AppStateStatus } from 'react-native';
 import { Card, Layout, Text, Button, Input, List, CheckBox } from '@ui-kitten/components';
 import { UserContext } from '../../utils/UserContext';
 import { isAndroid, isMobile } from "../../utils/config";
@@ -137,7 +137,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     };
   }, []);
 
-  const _handleAppStateChange = (nextAppState) => {
+  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
       appState.current.match(/inactive|background/) &&
       nextAppState === 'active'
@@ -148,7 +148,6 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
     appState.current = nextAppState;
     setAppStateVisible(appState.current);
-    console.log('AppState', appState.current);
   };
 
   function toggleSwitchWrapper(value: boolean): void {

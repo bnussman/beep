@@ -19,14 +19,33 @@ interface Props {
 }
 
 const Login = gql`
-    mutation Login($username: String!, $password: String!, $pushToken: String) {
-        login(input: {username: $username, password: $password, pushToken: $pushToken}) {
-            tokens {
-                id
-                tokenid
-            }
-        }
+  mutation Login($username: String!, $password: String!, $pushToken: String) {
+    login(input: {username: $username, password: $password, pushToken: $pushToken}) {
+      tokens {
+        id
+        tokenid
+      }
+      user {
+        id
+        username
+        name
+        first
+        last
+        email
+        phone
+        venmo
+        isBeeping
+        isEmailVerified
+        isStudent
+        groupRate
+        singlesRate
+        photoUrl
+        capacity
+        masksRequired
+        cashapp
+      }
     }
+  }
 `;
 
 function LoginScreen(props: Props): JSX.Element {
@@ -53,7 +72,7 @@ function LoginScreen(props: Props): JSX.Element {
 
   async function doLogin() {
     try {
-      const r = await login({
+      const data = await login({
         variables: {
           username: username,
           password: password,
@@ -61,28 +80,23 @@ function LoginScreen(props: Props): JSX.Element {
         }
       });
 
-      if (r) {
+      AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
 
-        AsyncStorage.setItem("auth", JSON.stringify(r.data?.login));
+      await client.resetStore();
 
-        await client.resetStore();
+      client.writeQuery({
+        query: GetUserData,
+        data: { getUser: data.data?.login.user }
+      });
 
-        const data = await client.query({ query: GetUserData });
+      changeSubscriptionToken(data.data?.login.tokens.id);
 
-        client.writeQuery({
-          query: GetUserData,
-          data
-        });
-
-        changeSubscriptionToken(r.data?.login.tokens.id);
-
-        props.navigation.reset({
-          index: 0,
-          routes: [
-            { name: 'Main' },
-          ],
-        });
-      }
+      props.navigation.reset({
+        index: 0,
+        routes: [
+          { name: 'Main' },
+        ],
+      });
     }
     catch (error) {
       alert(error.message);
