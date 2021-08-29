@@ -121,7 +121,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   const [groupRate, setGroupRate] = useState<string>(String(user.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user.capacity));
 
-  const { subscribeToMore, data } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
+  const { subscribeToMore, data, refetch } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
   const [updateBeepSettings] = useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
   const queue = data?.getQueue;
@@ -142,6 +142,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       appState.current.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
+      refetch();
       sub();
     }
 

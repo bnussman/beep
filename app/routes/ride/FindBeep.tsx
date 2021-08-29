@@ -114,7 +114,7 @@ let sub: any;
 export function MainFindBeepScreen(props: Props): JSX.Element {
   const user = useContext(UserContext);
 
-  const { subscribeToMore, loading, data, previousData } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, { notifyOnNetworkStatusChange: true });
+  const { subscribeToMore, loading, data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, { notifyOnNetworkStatusChange: true });
   const [getETA, { data: eta, loading: etaLoading, error: etaError }] = useLazyQuery<GetEtaQuery>(GetETA);
 
   const [groupSize, setGroupSize] = useState<string>("");
@@ -139,6 +139,13 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   }, []);
 
   const _handleAppStateChange = (nextAppState) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      refetch();
+    }
+
     appState.current = nextAppState;
     setAppStateVisible(appState.current);
     console.log('AppState', appState.current);
