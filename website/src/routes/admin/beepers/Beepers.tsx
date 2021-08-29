@@ -55,17 +55,18 @@ function Beepers() {
   }, []);
 
   if (error) return <Error error={error} />;
+  if (loading) return <Loading />;
 
   if (data?.getBeeperList.length === 0) {
     return (
-        <Box>
-            <Heading>Beepers</Heading>
-            <Center>
-                <Heading size="xl" mt={4}>
-                    Nobody is beeping right now 🥺
-                </Heading>
-            </Center>
-        </Box>
+      <Box>
+        <Heading>Beepers</Heading>
+        <Center>
+          <Heading size="xl" mt={4}>
+            Nobody is beeping right now 🥺
+          </Heading>
+        </Center>
+      </Box>
     );
   }
 
@@ -84,16 +85,15 @@ function Beepers() {
         </Thead>
         <Tbody>
           {data?.getBeeperList && (data.getBeeperList).map(beeper => (
-              <Tr key={beeper.id}>
-                <TdUser user={beeper} />
-                <Td>{beeper.queueSize} riders</Td>
-                <Td>{beeper.capacity} riders</Td>
-                <Td>${beeper.singlesRate} / ${beeper.groupRate}</Td>
-              </Tr>
+            <Tr key={beeper.id}>
+              <TdUser user={beeper} />
+              <Td>{beeper.queueSize} riders</Td>
+              <Td>{beeper.capacity} riders</Td>
+              <Td>${beeper.singlesRate} / ${beeper.groupRate}</Td>
+            </Tr>
           ))}
         </Tbody>
       </Table>
-      {loading && <Loading />}
     </Box>
   );
 }
