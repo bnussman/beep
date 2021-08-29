@@ -15,7 +15,7 @@ import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import express from "express";
 import { graphqlUploadExpress } from "graphql-upload";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, ExpressContext } from "apollo-server-express";
 
 export const BeepORM = {} as ORM;
 
@@ -82,7 +82,9 @@ export default class BeepAPIServer {
 
     const server = new ApolloServer({
       schema,
-      context: async (data) => {
+      context: async (data: ExpressContext) => {
+        RealSentry.configureScope(scope => scope.setTransactionName(data.req.body?.operationName));
+
         const em = BeepORM.em.fork();
 
         const context = { em };
