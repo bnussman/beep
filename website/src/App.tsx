@@ -94,6 +94,30 @@ function getInitialTheme(): string {
   return "light";
 }
 
+/**
+ * Determine the mobile operating system.
+ * This function returns one of 'iOS', 'Android', 'Windows Phone', or 'unknown'.
+ *
+ * @returns {String}
+ */
+ function getMobileOperatingSystem() {
+  const userAgent = navigator?.userAgent || navigator?.vendor || window?.opera;
+
+  if (/windows phone/i.test(userAgent)) {
+      return "Windows Phone";
+  }
+
+  if (/android/i.test(userAgent)) {
+      return "Android";
+  }
+
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+      return "iOS";
+  }
+
+  return "unknown";
+}
+
 const toast = createStandaloneToast({ theme });
 
 function Beep() {
@@ -161,6 +185,14 @@ function Beep() {
                   <Route path="/admin" component={Admin} />
                   <Route path="/faq" component={Faq} />
                   <Route path="/about" component={About} />
+                  <Route path='/download' component={() => { 
+                    if (getMobileOperatingSystem() === 'Android') {
+                      window.location.href = 'https://play.google.com/store/apps/details?id=app.ridebeep.App';
+                      return null;
+                    }
+                    window.location.href = 'https://apps.apple.com/us/app/ride-beep-app/id1528601773';
+                    return null;
+                  }} />
                   <Route path="/" component={Home} />
                 </Switch>
               </Container>
