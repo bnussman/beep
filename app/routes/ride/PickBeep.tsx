@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Text, Divider, List, ListItem, Button, TopNavigation, TopNavigationAction, Spinner, Icon } from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
-import { BackIcon, MapIcon, MinusIcon, PlusIcon } from '../../utils/Icons';
+import { BackIcon, MinusIcon, PlusIcon } from '../../utils/Icons';
 import ProfilePicture from '../../components/ProfilePicture';
 import { gql, useQuery } from '@apollo/client';
 import { printStars } from '../../components/Stars';
@@ -14,112 +14,113 @@ interface Props {
 }
 
 const GetBeepers = gql`
-query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
-        getBeeperList(input: {
-            latitude: $latitude,
-            longitude: $longitude
-            radius: $radius
-        })  {
-            id
-            first
-            last
-            isStudent
-            singlesRate
-            groupRate
-            capacity
-            queueSize
-            photoUrl
-            role
-            masksRequired
-            rating
-            venmo
-            cashapp
-        }
+  query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
+    getBeeperList(
+      input: {
+        latitude: $latitude,
+        longitude: $longitude
+        radius: $radius
+    }) {
+      id
+      first
+      last
+      isStudent
+      singlesRate
+      groupRate
+      capacity
+      queueSize
+      photoUrl
+      role
+      masksRequired
+      rating
+      venmo
+      cashapp
     }
+  }
 `;
 
 export function PickBeepScreen(props: Props): JSX.Element {
-    const { navigation, route } = props;
-    const [radius, setRadius] = useState<number>(10);
+  const { navigation, route } = props;
+  const [radius, setRadius] = useState<number>(10);
 
-    const { data, loading, error, startPolling, stopPolling } = useQuery<GetBeeperListQuery>(GetBeepers, {
-      variables: {
-        latitude: route.params.latitude,
-        longitude: route.params.longitude,
-        radius
-      }
-    });
-
-    useEffect(() => {
-        startPolling(6000);
-        return () => {
-            stopPolling();
-        };
-    }, []);
-
-    function getSubtitle(): string {
-      if (loading) return `Loading...`;
-      if (error) return `Unable to get beeper list`;
-      return (data?.getBeeperList.length == 1) ? `${data.getBeeperList.length} beeper in ${radius} miles` : `${data?.getBeeperList.length} beepers in ${radius} miles`;
+  const { data, loading, error, startPolling, stopPolling } = useQuery<GetBeeperListQuery>(GetBeepers, {
+    variables: {
+      latitude: route.params.latitude,
+      longitude: route.params.longitude,
+      radius
     }
+  });
 
-    function goBack(id: string): void {
-        route.params.handlePick(id);
-        navigation.goBack();
-    }
-
-    function getDescription(user: User): string {
-        return `${user.queueSize} in ${user.first}'s queue\nCapacity: ${user.capacity} riders\nSingles: $${user.singlesRate}\nGroups: $${user.groupRate}\nUser Rating: ${printStars(user.rating)}`;
-    }
-
-    const BackAction = () => (
-        <TopNavigationAction icon={BackIcon} onPress={() => navigation.goBack()}/>
-    );
-
-    const decreseRadius = () => {
-        if (radius - 5 <= 0) return;
-
-        setRadius(oldRadius => oldRadius - 5);
+  useEffect(() => {
+    startPolling(6000);
+    return () => {
+      stopPolling();
     };
+  }, []);
 
-    const increaseRadius = () => {
-        if (radius + 5 > 30) return;
+  function getSubtitle(): string {
+    if (loading) return `Loading...`;
+    if (error) return `Unable to get beeper list`;
+    return (data?.getBeeperList.length == 1) ? `${data.getBeeperList.length} beeper in ${radius} miles` : `${data?.getBeeperList.length} beepers in ${radius} miles`;
+  }
 
-        setRadius(oldRadius => oldRadius + 5);
-    };
+  function goBack(id: string): void {
+    route.params.handlePick(id);
+    navigation.goBack();
+  }
 
-    const MileAction = () => (
-        <>
-            <TopNavigationAction icon={MinusIcon} onPress={decreseRadius}/>
-            <TopNavigationAction icon={PlusIcon} onPress={increaseRadius}/>
-        </>
-    );
+  function getDescription(user: User): string {
+    return `${user.queueSize} in ${user.first}'s queue\nCapacity: ${user.capacity} riders\nSingles: $${user.singlesRate}\nGroups: $${user.groupRate}\nUser Rating: ${printStars(user.rating)}`;
+  }
 
-    const renderItem = ({ item }: { item: User }) => (
-        <ListItem
-            onPress={() => goBack(item.id)}
-            title={`${item.first} ${item.last}`}
-            description={getDescription(item)}
-            accessoryRight={() => {
-                return (
-                    <View style={styles.row}>
-                        {item.role === "admin" && <Button size='tiny' status='danger'>Founder</Button>}
-                        {item.masksRequired && <Button status="basic" size='tiny' style={{marginRight: 4}}>Masks</Button>}
-                        {item.venmo && <Button status="info" size='tiny' style={{marginRight: 4}}>Venmo</Button>}
-                        {item.cashapp && <Button status="success" size='tiny' style={{marginRight: 4}}>Cash App</Button>}
-                    </View>
-                );
-            }}
-            accessoryLeft={() => {
-                return (
-                    <ProfilePicture
-                        size={50}
-                        url={item.photoUrl || ''}
-                    />
-                );
-            }}
-        />
-    );
+  const BackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={() => navigation.goBack()} />
+  );
+
+  const decreseRadius = () => {
+    if (radius - 5 <= 0) return;
+
+    setRadius(oldRadius => oldRadius - 5);
+  };
+
+  const increaseRadius = () => {
+    if (radius + 5 > 30) return;
+
+    setRadius(oldRadius => oldRadius + 5);
+  };
+
+  const MileAction = () => (
+    <>
+      <TopNavigationAction icon={MinusIcon} onPress={decreseRadius} />
+      <TopNavigationAction icon={PlusIcon} onPress={increaseRadius} />
+    </>
+  );
+
+  const renderItem = ({ item }: { item: User }) => (
+    <ListItem
+      onPress={() => goBack(item.id)}
+      title={`${item.first} ${item.last}`}
+      description={getDescription(item)}
+      accessoryRight={() => {
+        return (
+          <View style={styles.row}>
+            {item.role === "admin" ? <Button size='tiny' status='danger'>Founder</Button> : null}
+            {item.masksRequired ? <Button status="basic" size='tiny' style={{ marginRight: 4 }}>Masks</Button> : null}
+            {item.venmo ? <Button status="info" size='tiny' style={{ marginRight: 4 }}>Venmo</Button> : null}
+            {item.cashapp ? <Button status="success" size='tiny' style={{ marginRight: 4 }}>Cash App</Button> : null}
+          </View>
+        );
+      }}
+      accessoryLeft={() => {
+        return (
+          <ProfilePicture
+            size={50}
+            url={item.photoUrl || ''}
+          />
+        );
+      }}
+    />
+  );
 
   return (
     <>
@@ -129,42 +130,46 @@ export function PickBeepScreen(props: Props): JSX.Element {
         accessoryLeft={BackAction}
         accessoryRight={MileAction}
       />
-      {loading &&
+      {loading ?
         <Layout style={styles.container}>
           <Spinner size='large' />
         </Layout>
+        : null
       }
-      {error &&
+      {error ?
         <Layout style={styles.container}>
           <Text category='h5'>Error</Text>
           <Text appearance='hint'>{error.message}</Text>
         </Layout>
+        : null
       }
-      {data?.getBeeperList && data.getBeeperList.length === 0 &&
+      {data?.getBeeperList && data.getBeeperList.length === 0 ?
         <Layout style={styles.container}>
           <Text category='h5'>Nobody is beeping!</Text>
-            <Text appearance='hint' style={{ width: '85%' }}>Nobody is beeping right now! Use the + - buttons to change your beeper range</Text>
+          <Text appearance='hint' style={{ width: '85%' }}>Nobody is beeping right now! Use the + - buttons to change your beeper range</Text>
         </Layout>
+        : null
       }
-      {data?.getBeeperList && data.getBeeperList.length > 0 &&
+      {data?.getBeeperList && data.getBeeperList.length > 0 ?
         <List
-          data={data.getBeeperList}
+          data={data.getBeeperList as User[]}
           ItemSeparatorComponent={Divider}
           renderItem={renderItem}
         />
+        : null
       }
     </>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        height: '99%',
-        alignItems: "center",
-        justifyContent: 'center'
-    },
-    row: {
-        flex: 1,
-        flexDirection: "row-reverse",
-    }
+  container: {
+    height: '99%',
+    alignItems: "center",
+    justifyContent: 'center'
+  },
+  row: {
+    flex: 1,
+    flexDirection: "row-reverse",
+  }
 });
