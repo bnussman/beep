@@ -34,7 +34,6 @@ export class User {
   @Field()
   @Property()
   @Unique()
-  @Authorized('self')
   email!: string;
 
   @Field()
