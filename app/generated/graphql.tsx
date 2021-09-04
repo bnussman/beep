@@ -752,7 +752,7 @@ export type GetBeeperListQueryVariables = Exact<{
 }>;
 
 
-export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, first: string, last: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photoUrl?: Maybe<string>, role: string, masksRequired: boolean, rating?: Maybe<number>, venmo?: Maybe<string>, cashapp?: Maybe<string> }> };
+export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, first: string, last: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photoUrl?: Maybe<string>, role: string, masksRequired: boolean, rating?: Maybe<number>, venmo?: Maybe<string>, cashapp?: Maybe<string>, location?: Maybe<{ __typename?: 'Point', latitude: number, longitude: number }> }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String'];
@@ -1743,6 +1743,10 @@ export const GetBeeperListDocument = gql`
     rating
     venmo
     cashapp
+    location {
+      latitude
+      longitude
+    }
   }
 }
     `;
