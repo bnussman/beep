@@ -277,6 +277,11 @@ export type MutationChooseBeepArgs = {
 };
 
 
+export type MutationRiderLeaveQueueArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationRemoveUserArgs = {
   id: Scalars['String'];
 };

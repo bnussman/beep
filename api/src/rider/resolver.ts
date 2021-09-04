@@ -71,34 +71,41 @@ export class RiderResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async riderLeaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-    const entry = await ctx.em.findOneOrFail(QueueEntry, { rider: ctx.user }, ['beeper']);
+  public async riderLeaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('id') id: string): Promise<boolean> {
+    const beeper = await ctx.em.findOneOrFail(User, id, { populate: ['queue', 'queue.rider'] });
 
-    if (entry.isAccepted) entry.beeper.queueSize--;
+    const entry = beeper.queue.getItems().find((_entry: QueueEntry) => _entry.rider.id === ctx.user.id);
 
-    sendNotification(entry.beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you!");
+    if (!entry) {
+        throw new Error("You are not in that beepers queue.");
+    }
 
-    ctx.em.persist(entry.beeper);
+    if (entry.isAccepted) beeper.queueSize--;
+
+    sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you!");
+
+    beeper.queue.remove(entry);
+
+    const queue = beeper.queue.getItems();
 
     pubSub.publish("Rider" + ctx.user.id, null);
+    pubSub.publish("Beeper" + beeper.id, queue.sort(inOrder));
 
-    this.sendBeeperUpdate(entry.id, entry.beeper.id, pubSub, ctx.em.fork());
+    for (const entry of queue) {
+      entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
 
-    await ctx.em.removeAndFlush(entry);
+      pubSub.publish("Rider" + entry.rider.id, { ...entry, beeper });
+    }
+
+    await ctx.em.persistAndFlush(beeper);
 
     return true;
-  }
-
-  private async sendBeeperUpdate(entryId: string, beeperId: string, pubSub: PubSubEngine, em: EntityManager) {
-    const queue = await em.find(QueueEntry, { beeper: beeperId }, { orderBy: { start: QueryOrder.ASC }, populate: ['rider'], refresh: true });
-
-    pubSub.publish("Beeper" + beeperId, queue.filter((entry: QueueEntry) => entry.id != entryId));
   }
 
   @Query(() => [User])
   @Authorized()
   public async getBeeperList(@Ctx() ctx: Context, @Arg('input') input: FindBeepInput): Promise<User[]> {
-    if (input.radius === 0 && ctx.user.role === 'admin') {
+    if (input.radius === 0) {
       return await ctx.em.find(User, { isBeeping: true });
     }
 

@@ -22,10 +22,10 @@ class Auth {
 export class AuthResolver {
 
   @Mutation(() => Auth)
-  public async login(@Ctx() ctx: Context, @Arg('input') input: LoginInput): Promise<Auth> {
+  public async login(@Ctx() ctx: Context, @Arg('input') { username, password, pushToken }: LoginInput): Promise<Auth> {
 
     // @TODO refresh = true or not?
-    const user = await ctx.em.findOne(User, { username: input.username });
+    const user = await ctx.em.findOne(User, { username });
 
     if (!user) {
       throw new Error("User not found");
@@ -35,14 +35,14 @@ export class AuthResolver {
       await ctx.em.populate(user, 'password');
     }
 
-    if (user.password !== sha256(input.password)) {
+    if (user.password !== sha256(password)) {
       throw new Error("Password is incorrect");
     }
 
     const tokenData = await getToken(user);
 
-    if (input.pushToken) {
-      setPushToken(user, input.pushToken);
+    if (pushToken) {
+      setPushToken(user, pushToken);
     }
 
     return {
