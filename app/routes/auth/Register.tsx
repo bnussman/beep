@@ -108,7 +108,7 @@ function RegisterScreen(props: Props) {
 
       AsyncStorage.setItem("auth", JSON.stringify(data.data?.signup));
 
-      await client.resetStore();
+      // await client.resetStore();
 
       client.writeQuery({
         query: GetUserData,

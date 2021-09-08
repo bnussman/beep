@@ -476,7 +476,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           </Button>
           : null
         }
-        {beep.position >= 1 ? <LeaveButton /> : null}
+        {beep.position >= 1 ? <LeaveButton beepersId={beep.beeper.id} /> : null}
       </Layout>
     );
   }
@@ -521,7 +521,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             {beep.beeper.queueSize === 1 ? "person is" : "people are"} ahead of you in {beep.beeper.first}{"'"}s queue
           </Text>
         </Layout>
-        <LeaveButton />
+        <LeaveButton beepersId={beep.beeper.id} />
       </Layout>
     );
   }

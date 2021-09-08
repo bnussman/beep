@@ -5,13 +5,13 @@ import iPhoneImage from '../assets/white.png';
 
 function Home() {
   return (
-    <Container maxW={'container.xl'}>
+    <Container maxW="container.xl">
       <Hero
         title="Ride Beep App"
         subtitle="Your ultimate travel companion. A simple way to get a ride at Appalachian State University. A product by students for students."
         image={iPhoneImage}
-        ctaLink=""
-        ctaText=""
+        buttonLink="/download"
+        buttonText="Download"
       />
     </Container>
   );

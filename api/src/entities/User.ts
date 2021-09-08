@@ -95,6 +95,7 @@ export class User {
 
   @Field({ nullable: true })
   @Property({ nullable: true })
+  @Authorized(UserRole.ADMIN)
   pushToken?: string;
 
   @Field({ nullable: true })

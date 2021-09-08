@@ -7,14 +7,19 @@ import { gql, useMutation } from '@apollo/client';
 import { LeaveQueueMutation } from '../../generated/graphql';
 
 const LeaveQueue = gql`
-  mutation LeaveQueue {
-    riderLeaveQueue
-  }
+    mutation LeaveQueue($id: String!) {
+        riderLeaveQueue(id: $id)
+    }
 `;
 
-function LeaveButton(): JSX.Element {
-  const [leave] = useMutation<LeaveQueueMutation>(LeaveQueue);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+interface Props {
+    beepersId: string;
+}
+
+function LeaveButton(props: Props): JSX.Element {
+    const { beepersId } = props;
+    const [leave] = useMutation<LeaveQueueMutation>(LeaveQueue, { variables: { id: beepersId } });
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function leaveQueueWrapper(): void {
     if (isMobile) {
@@ -39,7 +44,7 @@ function LeaveButton(): JSX.Element {
   async function leaveQueue(): Promise<void> {
     setIsLoading(true);
     try {
-      await leave();
+        await leave();
     }
     catch (error) {
       alert(error);

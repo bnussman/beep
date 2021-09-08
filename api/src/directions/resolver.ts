@@ -12,15 +12,19 @@ export class DirectionsResolver {
 
   @Query(() => String)
   public async getETA(@Arg('start') start: string, @Arg('end') end: string): Promise<string> {
-    const result = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI`);
+    // const result = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI`);
 
-    const data = await result.json();
+    // const data = await result.json();
 
-    return data.routes[0].legs[0].duration.text;
+    // return data.routes[0].legs[0].duration.text;
+    
+    return 'ETAs will be back soon! Sorry!';
   }
 
   @Query(() => [Suggestion])
   public async getLocationSuggestions(@Arg('location') location: string, @Arg('sessiontoken') sessiontoken: string): Promise<Suggestion[]> {
+    return [];
+    /*
     const result = await fetch(encodeURI(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&sessiontoken=${sessiontoken}`));
 
     const data = await result.json();
@@ -32,5 +36,6 @@ export class DirectionsResolver {
     }
 
     return output;
+    */
   }
 }

@@ -82,7 +82,7 @@ function LoginScreen(props: Props): JSX.Element {
 
       AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
 
-      await client.resetStore();
+      // await client.resetStore();
 
       client.writeQuery({
         query: GetUserData,

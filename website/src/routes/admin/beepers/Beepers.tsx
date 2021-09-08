@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client';
 import { GetBeeperListQuery, User } from '../../../generated/graphql';
-import { Box, Center, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Badge, Box, Center, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import TdUser from '../../../components/TdUser';
 import Loading from '../../../components/Loading';
 import { Error } from '../../../components/Error';
@@ -72,7 +72,12 @@ function Beepers() {
 
   return (
     <Box>
-      <Heading>Beepers</Heading>
+      <Flex align="center">
+        <Heading>Beepers</Heading>
+        <Badge ml={2}>
+            {String(data?.getBeeperList.length || 0)}
+        </Badge>
+      </Flex>
       <BeepersMap beepers={data?.getBeeperList as User[]} />
       <Table>
         <Thead>

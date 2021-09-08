@@ -60,6 +60,7 @@ export default function NavBar() {
               display={{ base: 'none', md: 'flex' }}>
               <Link to='/faq'>FAQ</Link>
               <Link to='/about'>About</Link>
+              <Link to='/download' target="_blank">Download</Link>
             </HStack>
           </HStack>
           <Flex alignItems={'center'}>
@@ -112,6 +113,7 @@ export default function NavBar() {
           <Stack as={'nav'} spacing={4}>
             <Link to='/faq'>FAQ</Link>
             <Link to='/about'>About</Link>
+            <Link to='/download' target="_blank">Download</Link>
           </Stack>
         </Box>
       ) : null}

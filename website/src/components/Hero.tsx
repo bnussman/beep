@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from "react-router-dom"
-import PropTypes from "prop-types"
 import {
     Box,
     Button,
@@ -9,14 +8,19 @@ import {
     Heading,
     Stack,
 } from "@chakra-ui/react"
+import {DownloadIcon} from '@chakra-ui/icons';
 
-export default function Hero({
-    title,
-    subtitle,
-    image,
-    ctaLink,
-    ctaText,
-}) {
+interface Props {
+    title: string;
+    subtitle: string;
+    image: any;
+    buttonLink: string;
+    buttonText: string;
+}
+
+export default function Hero(props: Props) {
+    const { title, subtitle, image, buttonText, buttonLink } = props;
+
     return (
         <Flex
             align="center"
@@ -51,39 +55,19 @@ export default function Hero({
                 >
                     {subtitle}
                 </Heading>
-                <Link to={ctaLink}>
-                    <Button
-                        colorScheme="primary"
-                        borderRadius="8px"
-                        py="4"
-                        px="4"
-                        lineHeight="1"
-                        size="md"
-                    >
-                        {ctaText}
-                    </Button>
-                </Link>
+                <Button
+                    as={Link}
+                    to={buttonLink}
+                    target="_blank"
+                    size="lg"
+                    leftIcon={<DownloadIcon />}
+                >
+                    {buttonText}
+                </Button>
             </Stack>
             <Box w={{ base: "80%", sm: "60%", md: "50%" }} mb={{ base: 12, md: 0 }}>
                 <Image src={image} size="100%"/>
             </Box>
         </Flex>
     )
-}
-
-Hero.propTypes = {
-    title: PropTypes.string,
-    subtitle: PropTypes.string,
-    image: PropTypes.string,
-    ctaText: PropTypes.string,
-    ctaLink: PropTypes.string,
-}
-
-Hero.defaultProps = {
-    title: "React landing page with Chakra UI",
-    subtitle:
-        "This is the subheader section where you describe the basic benefits of your product",
-    image: "https://source.unsplash.com/collection/404339/800x600",
-    ctaText: "Create your account now",
-    ctaLink: "/signup",
 }

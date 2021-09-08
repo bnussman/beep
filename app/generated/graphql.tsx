@@ -278,6 +278,11 @@ export type MutationChooseBeepArgs = {
 };
 
 
+export type MutationRiderLeaveQueueArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationRemoveUserArgs = {
   id: Scalars['String'];
 };
@@ -740,11 +745,6 @@ export type GetEtaQueryVariables = Exact<{
 
 export type GetEtaQuery = { __typename?: 'Query', getETA: string };
 
-export type LeaveQueueMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type LeaveQueueMutation = { __typename?: 'Mutation', riderLeaveQueue: boolean };
-
 export type GetBeeperListQueryVariables = Exact<{
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
@@ -752,7 +752,7 @@ export type GetBeeperListQueryVariables = Exact<{
 }>;
 
 
-export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, first: string, last: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photoUrl?: Maybe<string>, role: string, masksRequired: boolean, rating?: Maybe<number>, venmo?: Maybe<string>, cashapp?: Maybe<string> }> };
+export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, first: string, last: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photoUrl?: Maybe<string>, role: string, masksRequired: boolean, rating?: Maybe<number>, venmo?: Maybe<string>, cashapp?: Maybe<string>, location?: Maybe<{ __typename?: 'Point', latitude: number, longitude: number }> }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String'];
@@ -1694,36 +1694,6 @@ export function useGetEtaLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookO
 export type GetEtaQueryHookResult = ReturnType<typeof useGetEtaQuery>;
 export type GetEtaLazyQueryHookResult = ReturnType<typeof useGetEtaLazyQuery>;
 export type GetEtaQueryResult = ApolloReactCommon.QueryResult<GetEtaQuery, GetEtaQueryVariables>;
-export const LeaveQueueDocument = gql`
-    mutation LeaveQueue {
-  riderLeaveQueue
-}
-    `;
-export type LeaveQueueMutationFn = ApolloReactCommon.MutationFunction<LeaveQueueMutation, LeaveQueueMutationVariables>;
-
-/**
- * __useLeaveQueueMutation__
- *
- * To run a mutation, you first call `useLeaveQueueMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLeaveQueueMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [leaveQueueMutation, { data, loading, error }] = useLeaveQueueMutation({
- *   variables: {
- *   },
- * });
- */
-export function useLeaveQueueMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LeaveQueueMutation, LeaveQueueMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<LeaveQueueMutation, LeaveQueueMutationVariables>(LeaveQueueDocument, options);
-      }
-export type LeaveQueueMutationHookResult = ReturnType<typeof useLeaveQueueMutation>;
-export type LeaveQueueMutationResult = ApolloReactCommon.MutationResult<LeaveQueueMutation>;
-export type LeaveQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<LeaveQueueMutation, LeaveQueueMutationVariables>;
 export const GetBeeperListDocument = gql`
     query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
   getBeeperList(
@@ -1743,6 +1713,10 @@ export const GetBeeperListDocument = gql`
     rating
     venmo
     cashapp
+    location {
+      latitude
+      longitude
+    }
   }
 }
     `;
