@@ -14,7 +14,7 @@ import { VerifyEmail } from '../entities/VerifyEmail';
 export class AccountResolver {
 
   @Mutation(() => User)
-  @Authorized()
+  @Authorized('No Verification')
   public async editAccount(@Ctx() ctx: Context, @Arg('input') input: EditAccountInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
     const oldEmail = ctx.user.email;
 
@@ -36,7 +36,7 @@ export class AccountResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized('No Verification')
   public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
     ctx.user.password = sha256(input.password);
 
@@ -46,7 +46,7 @@ export class AccountResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized('No Verification')
   public async updatePushToken(@Ctx() ctx: Context, @Arg('pushToken') pushToken: string): Promise<boolean> {
     ctx.user.pushToken = pushToken;
 
@@ -97,7 +97,7 @@ export class AccountResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized('No Verification')
   public async resendEmailVarification(@Ctx() ctx: Context): Promise<boolean> {
     await ctx.em.nativeDelete(VerifyEmail, { user: ctx.user });
 
@@ -113,7 +113,7 @@ export class AccountResolver {
   }
 
   @Mutation(() => User)
-  @Authorized()
+  @Authorized('No Verification')
   public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
     const s3 = new AWS.S3({
       accessKeyId: process.env.S3_ACCESS_KEY_ID,
