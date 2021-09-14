@@ -65,7 +65,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
   const { navigation, route } = props;
   const [radius, setRadius] = useState<number>(10);
 
-  const { data, loading, error, startPolling, stopPolling } = useQuery<GetBeeperListQuery>(GetBeepers, {
+  const { data, previousData, refetch, loading, error, startPolling, stopPolling } = useQuery<GetBeeperListQuery>(GetBeepers, {
     variables: {
       latitude: route.params.latitude,
       longitude: route.params.longitude,
@@ -74,6 +74,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
   });
 
   useEffect(() => {
+      if (previousData) refetch();
     startPolling(6000);
     return () => {
       stopPolling();

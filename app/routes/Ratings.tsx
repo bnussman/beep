@@ -85,11 +85,12 @@ export function RatingsScreen(props: Props) {
                         renderItem={renderItem}
                     />
                     :
-                        !loading &&
+                        (!loading && !error) && (
                         <>
                             <Text category='h5'>Nothing to display!</Text>
                             <Text appearance='hint'>You have no ratings</Text>
                         </>
+                    )
                 }
                 {loading && 
                     <>
@@ -98,9 +99,7 @@ export function RatingsScreen(props: Props) {
                     </>
                 }
                 {error && 
-                    <>
-                        <Text category='h5'>Unable to load your ratings</Text>
-                    </>
+                    <Text category='h5'>{error.message}</Text>
                 }
             </Layout>
         </>
