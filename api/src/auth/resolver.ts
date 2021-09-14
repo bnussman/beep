@@ -23,8 +23,6 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async login(@Ctx() ctx: Context, @Arg('input') { username, password, pushToken }: LoginInput): Promise<Auth> {
-
-    // @TODO refresh = true or not?
     const user = await ctx.em.findOne(User, { username });
 
     if (!user) {
@@ -106,7 +104,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized('No Verification')
   public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
     await ctx.em.removeAndFlush(ctx.token);
 

@@ -17,7 +17,7 @@ export class UsersResponse extends Paginated(User) {}
 export class UserResolver {
 
   @Query(() => User)
-  @Authorized()
+  @Authorized('No Verification')
   public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
     const populate = fieldsToRelations(info).filter((key: string) => key !== 'location');
 
