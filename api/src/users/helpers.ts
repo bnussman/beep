@@ -10,8 +10,8 @@ export async function search(
 ): Promise<UsersResponse> {
     const connection = em.getConnection();
 
-    const raw: User[] = await connection.execute(`select * from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last || ' ' || email) @@ to_tsquery('${query}') limit ${show} offset ${offset};`);
-    const count = await connection.execute(`select count(*) from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last || ' ' || email) @@ to_tsquery('${query}')`);
+    const raw: User[] = await connection.execute(`select * from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last || ' ' || email || ' ' || phone) @@ to_tsquery('${query}') limit ${show} offset ${offset};`);
+    const count = await connection.execute(`select count(*) from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last || ' ' || email || ' ' || phone) @@ to_tsquery('${query}')`);
 
     const users = raw.map(user => em.map(User, user));
     return {
