@@ -1,24 +1,24 @@
 import { UserRole } from "../entities/User";
 import { AuthChecker } from "type-graphql";
 import { Context } from "../utils/context";
+import { AuthenticationError } from "apollo-server-core";
 
 export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
-  if (!context.user) return false;
+    const { user } = context;
 
-  if (roles.length === 0) {
-    // if `@Authorized()`, check only if user exists
-    return context.user != null;
-  }
+    if (!user) return false;
 
-  // User can only perform Query or Mutation on themselves
-  if (roles[0] === 'self') {
-    return args.id === context.user.id || context.user.role === UserRole.ADMIN;
-  }
+    if (!user.isEmailVerified) throw new AuthenticationError("Please verify your email to use the Beep App");
 
-  if (roles[0] == context.user.role) {
-    // grant access if the role matches specified
-    return true;
-  }
+    if (roles.length === 0) return true;
 
-  return false;
+    if (roles[0] === 'self') {
+        return args.id === user.id || user.role === UserRole.ADMIN;
+    }
+
+    if (roles[0] == context.user.role) {
+        return true;
+    }
+
+    return false;
 };
