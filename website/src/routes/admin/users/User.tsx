@@ -13,6 +13,7 @@ export const GetUser = gql`
       name
       isBeeping
       isStudent
+      isEmailVerified
       role
       venmo
       cashapp

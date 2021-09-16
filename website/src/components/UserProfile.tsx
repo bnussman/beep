@@ -35,6 +35,7 @@ import {
   TabPanel,
   TabPanels
 } from '@chakra-ui/react';
+import { Indicator } from './Indicator';
 
 dayjs.extend(relativeTime);
 
@@ -202,7 +203,10 @@ function UserProfile(props: Props) {
                 </Box>
                 <Box>
                   <strong>Email:</strong>
-                  <Text>{user.email}</Text>
+                  <Flex direction="row" alignItems="center">
+                    <Text mr={2}>{user.email}</Text>
+                    <Indicator color={user.isEmailVerified ? "green" : "red"} />
+                  </Flex>
                 </Box>
                 <Box>
                   <strong>Phone:</strong>
