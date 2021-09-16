@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { ResendEmailMutation } from '../generated/graphql';
 import { UserContext } from '../UserContext';
-import { Alert, AlertIcon, Box, Button } from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Button, Spacer } from '@chakra-ui/react';
 
 const Resend = gql`
   mutation ResendEmail {
@@ -13,7 +13,6 @@ const Resend = gql`
 export default function Banners() {
   const [resend, { loading }] = useMutation<ResendEmailMutation>(Resend);
   const [resendStatus, setResendStatus] = useState<string>();;
-  const [refreshStatus, setRefreshStatus] = useState<string>();
   const user = useContext(UserContext);
 
   async function resendVarificationEmail() {
@@ -29,19 +28,20 @@ export default function Banners() {
   if (user && !user.isEmailVerified) {
     return (
       <Box mb={4}>
-        <Alert status="error" mb={2}>
+        <Alert status="error" mb={2} flexWrap="wrap">
           <AlertIcon />
           You need to verify your email!
-          <Button isLoading={loading} variant="link" onClick={resendVarificationEmail} ml={2}>
+            <Spacer />
+          <Button
+              isLoading={loading}
+              isDisabled={resendStatus?.includes("Success")}
+              onClick={resendVarificationEmail}
+              colorScheme="red"
+              ml={2}
+          >
             Resend my verification email
           </Button>
         </Alert>
-        {refreshStatus &&
-          <Alert status="info" onClick={() => { setRefreshStatus(undefined) }}>
-            <AlertIcon />
-            {refreshStatus}
-          </Alert>
-        }
         {resendStatus &&
           <Alert status="info" onClick={() => { setResendStatus(undefined) }}>
             <AlertIcon />
