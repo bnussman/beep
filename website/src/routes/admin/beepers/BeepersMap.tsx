@@ -19,7 +19,7 @@ function BeepersMap(props: Props) {
   return (
     <Box mb={4} mt={4} height={350} width='100%'>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
+        bootstrapURLKeys={{ key: (import.meta.env.VITE_GOOGLE_API_KEY as string | undefined) || '' }}
         defaultCenter={center}
         defaultZoom={13}
       >

@@ -88,7 +88,7 @@ function BeepPage(): JSX.Element {
             title="Map"
             width="100%"
             height="300"
-            src={`https://www.google.com/maps/embed/v1/directions?key=AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI&origin=${data.getBeep.origin}&destination=${data.getBeep.destination}`}>
+            src={`https://www.google.com/maps/embed/v1/directions?key=${(import.meta.env.VITE_GOOGLE_API_KEY as string | undefined) || ''}&origin=${data.getBeep.origin}&destination=${data.getBeep.destination}`}>
           </iframe>
           <Box>
             <Heading>Beeper</Heading>
