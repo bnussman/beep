@@ -16,6 +16,7 @@ import { SubscriptionServer } from 'subscriptions-transport-ws';
 import express from "express";
 import { graphqlUploadExpress } from "graphql-upload";
 import { ApolloServer, ExpressContext } from "apollo-server-express";
+import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 
 export const BeepORM = {} as ORM;
 
@@ -122,7 +123,7 @@ export default class BeepAPIServer {
 
         return error;
       },
-      plugins: [{
+      plugins: [ApolloServerPluginDrainHttpServer({ httpServer }), {
         async serverWillStart() {
           return {
             async drainServer() {
