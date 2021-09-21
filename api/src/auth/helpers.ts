@@ -15,11 +15,11 @@ import { wrap } from '@mikro-orm/core';
  * @return user's id, auth token, and auth token's token to be used by login and sign up
  */
 export async function getToken(user: User): Promise<TokenEntry> {
-    const t = new TokenEntry(user);
+  const t = new TokenEntry(user);
 
-    await BeepORM.em.persistAndFlush(t);
+  await BeepORM.em.persistAndFlush(t);
 
-    return t;
+  return t;
 }
 
 /**
@@ -28,13 +28,13 @@ export async function getToken(user: User): Promise<TokenEntry> {
  * @param token the expo push token for the user
  */
 export async function setPushToken(user: User, token: string | null): Promise<void> {
-    if (!user) return;
-    //run query to get user and update their pushToken
-    wrap(user).assign({
-        pushToken: token
-    });
+  if (!user) return;
+  //run query to get user and update their pushToken
+  wrap(user).assign({
+    pushToken: token
+  });
 
-    await BeepORM.em.persistAndFlush(user);
+  await BeepORM.em.persistAndFlush(user);
 }
 
 /**
@@ -65,13 +65,13 @@ export async function isAdmin(token: string): Promise<string | null> {
  * @returns Promise<UserPluckResult>
  */
 export async function getUserFromEmail(email: string): Promise<User | null> {
-    const user = await BeepORM.em.findOne(User, { email: email });
+  const user = await BeepORM.em.findOne(User, { email: email });
 
-    if (user) {
-        return user;
-    }
+  if (user) {
+    return user;
+  }
 
-    return null;
+  return null;
 }
 
 /**
@@ -82,13 +82,13 @@ export async function getUserFromEmail(email: string): Promise<User | null> {
  * @returns Promise<UserPluckResult>
  */
 export async function getUserFromId(id: string, ...pluckItems: string[]): Promise<Partial<User> | null> {
-    const user = await BeepORM.em.findOne(User, id, { fields: pluckItems });
+  const user = await BeepORM.em.findOne(User, id, { fields: pluckItems });
 
-    if (user) {
-        return user;
-    }
+  if (user) {
+    return user;
+  }
 
-    return null;
+  return null;
 }
 
 /**
@@ -100,24 +100,24 @@ export async function getUserFromId(id: string, ...pluckItems: string[]): Promis
  */
 export function sendResetEmail(email: string, id: string, first: string | undefined): void {
 
-    const url: string = process.env.NODE_ENV === "development" ? "https://dev.ridebeep.app" : "https://ridebeep.app";
- 
-    const mailOptions: nodemailer.SendMailOptions = { 
-        from : 'Beep App <banks@ridebeep.app>', 
-        to : email, 
-        subject : 'Change your Beep App password', 
-        html: `Hey ${first}, <br><br>
+  const url: string = process.env.NODE_ENV === "development" ? "https://staging.ridebeep.app" : "https://ridebeep.app";
+
+  const mailOptions: nodemailer.SendMailOptions = {
+    from: 'Beep App <banks@ridebeep.app>',
+    to: email,
+    subject: 'Change your Beep App password',
+    html: `Hey ${first}, <br><br>
             Head to ${url}/password/reset/${id} to reset your password. This link will expire in an hour. <br><br>
             Roll Neers, <br>
             -Banks Nussman
-        ` 
-    }; 
+        `
+  };
 
-    transporter.sendMail(mailOptions, (error: Error | null) => { 
-        if (error) { 
-            Sentry.captureException(error);
-        } 
-    });     
+  transporter.sendMail(mailOptions, (error: Error | null) => {
+    if (error) {
+      Sentry.captureException(error);
+    }
+  });
 }
 
 /**
@@ -127,7 +127,7 @@ export function sendResetEmail(email: string, id: string, first: string | undefi
  * @returns void
  */
 export async function deactivateTokens(user: User): Promise<void> {
-    await BeepORM.em.nativeDelete(TokenEntry, { user: user });
+  await BeepORM.em.nativeDelete(TokenEntry, { user: user });
 }
 
 /**
@@ -139,24 +139,24 @@ export async function deactivateTokens(user: User): Promise<void> {
  * @returns void
  */
 export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void {
-    const url: string = process.env.NODE_ENV === "development" ? "https://dev.ridebeep.app" : "https://ridebeep.app";
- 
-    const mailOptions: nodemailer.SendMailOptions = { 
-        from: 'Beep App <banks@ridebeep.app>', 
-        to: user.email, 
-        subject: 'Verify your Beep App Email!', 
-        html: `Hey ${user.first}, <br><br>
+  const url: string = process.env.NODE_ENV === "development" ? "https://staging.ridebeep.app" : "https://ridebeep.app";
+
+  const mailOptions: nodemailer.SendMailOptions = {
+    from: 'Beep App <banks@ridebeep.app>',
+    to: user.email,
+    subject: 'Verify your Beep App Email!',
+    html: `Hey ${user.first}, <br><br>
             Head to ${url}/account/verify/${verifyEntry.id} to verify your email. This link will expire in an hour. <br><br>
             Roll Neers, <br>
             -Banks Nussman
-        ` 
-    }; 
+        `
+  };
 
-    transporter.sendMail(mailOptions, (error: Error | null, info: nodemailer.SentMessageInfo) => { 
-        if (error) { 
-            Sentry.captureException(error);
-        } 
-    });     
+  transporter.sendMail(mailOptions, (error: Error | null, info: nodemailer.SentMessageInfo) => {
+    if (error) {
+      Sentry.captureException(error);
+    }
+  });
 }
 
 /**
@@ -169,14 +169,14 @@ export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void
  * @returns void
  */
 export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<void> {
-    await BeepORM.em.nativeDelete(VerifyEmail, { email: user.email });
+  await BeepORM.em.nativeDelete(VerifyEmail, { email: user.email });
 
-    const entry = new VerifyEmail(user, user.email);
+  const entry = new VerifyEmail(user, user.email);
 
-    //send the email
-    sendVerifyEmailEmail(user, entry);
+  //send the email
+  sendVerifyEmailEmail(user, entry);
 
-    await BeepORM.em.persistAndFlush(entry);
+  await BeepORM.em.persistAndFlush(entry);
 }
 
 /**
@@ -186,15 +186,15 @@ export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<vo
  * @returns Promise<boolean> true if user exists by username
  */
 export async function doesUserExist(username: string): Promise<boolean> {
-    try {
-        const c = await BeepORM.em.count(User, { username: username });
-        
-        if (c >= 1) {
-            return true;        
-        }
+  try {
+    const c = await BeepORM.em.count(User, { username: username });
+
+    if (c >= 1) {
+      return true;
     }
-    catch (error) {
-        Sentry.captureException(error);
-    }
-    return false;
+  }
+  catch (error) {
+    Sentry.captureException(error);
+  }
+  return false;
 }

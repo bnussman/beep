@@ -12,80 +12,80 @@ import { User, UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
 
 @ObjectType()
-class RatingsResponse extends Paginated(Rating) {}
+class RatingsResponse extends Paginated(Rating) { }
 
 @Resolver(Rating)
 export class RatingResolver {
 
-    @Mutation(() => Boolean)
-    @Authorized()
-    public async rateUser(@Ctx() ctx: Context, @Arg('input') input: RatingInput): Promise<boolean> {
-        const user = await ctx.em.findOneOrFail(User, input.userId);
+  @Mutation(() => Boolean)
+  @Authorized()
+  public async rateUser(@Ctx() ctx: Context, @Arg('input') input: RatingInput): Promise<boolean> {
+    const user = await ctx.em.findOneOrFail(User, input.userId);
 
-        const beep = input.beepId ? ctx.em.getReference(Beep, input.beepId) : undefined;
+    const beep = input.beepId ? ctx.em.getReference(Beep, input.beepId) : undefined;
 
-        if (!beep) throw new Error("You can only leave a rating when a beep is associated.");
-        
-        const rating = new Rating(ctx.user, user, input.stars, beep, input.message);
+    if (!beep) throw new Error("You can only leave a rating when a beep is associated.");
 
-        if (!user.rating) {
-            user.rating = input.stars;
-        }
-        else {
-            const numberOfRatings = await ctx.em.count(Rating, { rated: input.userId });  
-            
-            user.rating = ((user.rating * numberOfRatings) + input.stars) / (numberOfRatings + 1);
-        }
+    const rating = new Rating(ctx.user, user, input.stars, beep, input.message);
 
-        user.ratings.add(rating);
+    if (!user.rating) {
+      user.rating = input.stars;
+    }
+    else {
+      const numberOfRatings = await ctx.em.count(Rating, { rated: input.userId });
 
-        await ctx.em.persistAndFlush(user);
-
-        sendNotification(user.pushToken, "You got rated!", `${ctx.user.name()} rated you ${input.stars} stars!`);
-
-        return true;
+      user.rating = ((user.rating * numberOfRatings) + input.stars) / (numberOfRatings + 1);
     }
 
-    @Query(() => RatingsResponse)
-    @Authorized('self')
-    public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<RatingsResponse> {
-        const [ratings, count] = await ctx.em.findAndCount(Rating, {}, {
-            orderBy: { timestamp: QueryOrder.DESC },
-            populate: ['rater', 'rated'],
-            offset: offset,
-            limit: show,
-            filters: id ? { in: { id } } : undefined
-        });
+    user.ratings.add(rating);
 
-        return {
-            items: ratings,
-            count: count
-        };
-    }
+    await ctx.em.persistAndFlush(user);
 
-    @Query(() => Rating)
-    @Authorized(UserRole.ADMIN)
-    public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
-        return await ctx.em.findOneOrFail(Rating, id, fieldsToRelations(info));
-    }
+    sendNotification(user.pushToken, "You got rated!", `${ctx.user.name()} rated you ${input.stars} stars!`);
 
-    @Mutation(() => Boolean)
-    @Authorized(UserRole.ADMIN)
-    public async deleteRating(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
-        const rating = await ctx.em.findOneOrFail(Rating, id, { populate: ['rated'] });
+    return true;
+  }
 
-        if (!rating.rated.rating) throw new Error("You are trying to delete a rating for a user who's rating value is undefined");
+  @Query(() => RatingsResponse)
+  @Authorized('self')
+  public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<RatingsResponse> {
+    const [ratings, count] = await ctx.em.findAndCount(Rating, {}, {
+      orderBy: { timestamp: QueryOrder.DESC },
+      populate: ['rater', 'rated'],
+      offset: offset,
+      limit: show,
+      filters: id ? { in: { id } } : undefined
+    });
 
-        const numberOfRatings = await ctx.em.count(Rating, { rated: rating.rated.id });
+    return {
+      items: ratings,
+      count: count
+    };
+  }
 
-        rating.rated.rating = numberOfRatings <= 1 ? undefined : rating.rated.rating = (rating.rated.rating * numberOfRatings - rating.stars) / (numberOfRatings - 1);
+  @Query(() => Rating)
+  @Authorized(UserRole.ADMIN)
+  public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
+    return await ctx.em.findOneOrFail(Rating, id, fieldsToRelations(info));
+  }
 
-        ctx.em.persist(rating.rated);
+  @Mutation(() => Boolean)
+  @Authorized(UserRole.ADMIN)
+  public async deleteRating(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
+    const rating = await ctx.em.findOneOrFail(Rating, id, { populate: ['rated'] });
 
-        ctx.em.remove(rating);
+    if (!rating.rated.rating) throw new Error("You are trying to delete a rating for a user who's rating value is undefined");
 
-        await ctx.em.flush();
+    const numberOfRatings = await ctx.em.count(Rating, { rated: rating.rated.id });
 
-        return true;
-    }
+    rating.rated.rating = numberOfRatings <= 1 ? undefined : rating.rated.rating = (rating.rated.rating * numberOfRatings - rating.stars) / (numberOfRatings - 1);
+
+    ctx.em.persist(rating.rated);
+
+    ctx.em.remove(rating);
+
+    await ctx.em.flush();
+
+    return true;
+  }
 }

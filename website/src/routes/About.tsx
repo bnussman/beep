@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Heading, Text } from '@chakra-ui/react';
-import { Card } from '../components/Card';
 
 function About() {
   return (

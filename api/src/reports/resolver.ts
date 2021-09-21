@@ -8,81 +8,72 @@ import PaginationArgs from '../args/Pagination';
 import { Paginated } from '../utils/paginated';
 
 @ObjectType()
-class ReportsResponse extends Paginated(Report) {}
+class ReportsResponse extends Paginated(Report) { }
 
 @Resolver(Report)
 export class ReportsResolver {
 
-    @Mutation(() => Boolean)
-    @Authorized()
-    public async reportUser(@Ctx() ctx: Context, @Arg('input') input: ReportInput): Promise<boolean> {
-        const user = ctx.em.getReference(User, input.userId);
-        
-        const report = new Report(ctx.user, user, input.reason, input.beepId);
+  @Mutation(() => Boolean)
+  @Authorized()
+  public async reportUser(@Ctx() ctx: Context, @Arg('input') input: ReportInput): Promise<boolean> {
+    const user = ctx.em.getReference(User, input.userId);
 
-        await ctx.em.persistAndFlush(report);
+    const report = new Report(ctx.user, user, input.reason, input.beepId);
 
-        return true;
+    await ctx.em.persistAndFlush(report);
+
+    return true;
+  }
+
+  @Query(() => ReportsResponse)
+  @Authorized(UserRole.ADMIN)
+  public async getReports(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<ReportsResponse> {
+    const [reports, count] = await ctx.em.findAndCount(Report, {}, {
+      orderBy: { timestamp: QueryOrder.DESC },
+      limit: show,
+      offset: offset,
+      populate: ['reported', 'reporter'],
+      filters: id ? { in: { id } } : undefined
+    });
+
+    return {
+      items: reports,
+      count: count
     }
-    
-    @Query(() => ReportsResponse)
-    @Authorized(UserRole.ADMIN)
-    public async getReports(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<ReportsResponse> {
-        const [reports, count] = await ctx.em.findAndCount(Report, {}, {
-          orderBy: { timestamp: QueryOrder.DESC },
-          limit: show,
-          offset: offset,
-          populate: ['reported', 'reporter'],
-          filters: id ? { in: { id } } : undefined
-        });
+  }
 
-        return {
-            items: reports,
-            count: count
-        }
+  @Mutation(() => Report)
+  @Authorized(UserRole.ADMIN)
+  public async updateReport(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('input') input: UpdateReportInput): Promise<Report> {
+    const report = await ctx.em.findOneOrFail(Report, id, { populate: ['reporter', 'reported', 'handledBy'] });
+
+    if (input.handled) {
+      report.handledBy = ctx.user;
     }
-    
-    @Mutation(() => Report)
-    @Authorized(UserRole.ADMIN)
-    public async updateReport(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('input') input: UpdateReportInput): Promise<Report> {
-        const report = await ctx.em.findOne(Report, id, { populate: ['reporter', 'reported', 'handledBy'] });
-
-        if (!report) throw new Error("You are trying to update a report that does not exist");
-        
-        if (input.handled) {
-            report.handledBy = ctx.user;
-        }
-        else {
-            report.handledBy = null;
-        }
-
-        wrap(report).assign(input);
-
-        await ctx.em.persistAndFlush(report);
-
-        return report;
+    else {
+      report.handledBy = null;
     }
 
-    @Query(() => Report)
-    @Authorized(UserRole.ADMIN)
-    public async getReport(@Ctx() ctx: Context, @Arg('id') id: string): Promise<Report> {
-        // @TODO refresh = true or not?
-        const report = await ctx.em.findOne(Report, id, { populate: ['reporter', 'reported', 'beep', 'handledBy'] });
+    wrap(report).assign(input);
 
-        if (!report) {
-            throw new Error("This report entry does not exist");
-        }
+    await ctx.em.persistAndFlush(report);
 
-        return report;
-    }
-    
-    @Mutation(() => Boolean)
-    @Authorized(UserRole.ADMIN)
-    public async deleteReport(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
-        const report = ctx.em.getReference(Report, id);
+    return report;
+  }
 
-        await ctx.em.removeAndFlush(report);
+  @Query(() => Report)
+  @Authorized(UserRole.ADMIN)
+  public async getReport(@Ctx() ctx: Context, @Arg('id') id: string): Promise<Report> {
+    return await ctx.em.findOneOrFail(Report, id, { populate: ['reporter', 'reported', 'beep', 'handledBy'] });
+  }
 
-        return true;
-    }
+  @Mutation(() => Boolean)
+  @Authorized(UserRole.ADMIN)
+  public async deleteReport(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
+    const report = ctx.em.getReference(Report, id);
+
+    await ctx.em.removeAndFlush(report);
+
+    return true;
+  }
 }

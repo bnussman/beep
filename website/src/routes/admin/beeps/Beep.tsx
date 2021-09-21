@@ -1,17 +1,16 @@
-import { useHistory, useParams } from "react-router-dom";
+import React from "react";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Card } from '../../../components/Card';
+import BasicUser from "../../../components/BasicUser";
+import DeleteDialog from "../../../components/DeleteDialog";
+import Loading from "../../../components/Loading";
+import { useHistory, useParams } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteBeepMutation, GetBeepQuery } from '../../../generated/graphql';
-import { Heading, Text, Box, Button, Flex, Spacer, Center, Spinner, Stack } from "@chakra-ui/react";
-import React from "react";
+import { Heading, Text, Box, Button, Flex, Spacer, Stack } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import BasicUser from "../../../components/BasicUser";
 import { Error } from "../../../components/Error";
-import DeleteDialog from "../../../components/DeleteDialog";
-import { BeepsGraphQL } from ".";
-import Loading from "../../../components/Loading";
+import { BeepsGraphQL } from "./index";
 
 dayjs.extend(duration);
 

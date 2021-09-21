@@ -1,5 +1,5 @@
 import { sendNotification } from '../utils/notifications';
-import { EntityManager, QueryOrder } from '@mikro-orm/core';
+import { QueryOrder } from '@mikro-orm/core';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';

@@ -56,12 +56,7 @@ export default class BeepAPIServer {
       })
     });
 
-    app.use(
-      graphqlUploadExpress({
-        maxFileSize: 100000000,
-        maxFiles: 1
-      })
-    );
+    app.use(graphqlUploadExpress({ maxFiles: 1 }));
 
     const subscriptionServer = SubscriptionServer.create({
       schema,
