@@ -12,6 +12,9 @@ export default {
     notification: {
       iosDisplayInForeground: true
     },
+    extra: {
+      GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+    },
     platforms: [
       "ios",
       "android",
@@ -69,8 +72,5 @@ export default {
     assetBundlePatterns: [
       "**/*"
     ]
-  },
-  extra: {
-    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
   },
 }

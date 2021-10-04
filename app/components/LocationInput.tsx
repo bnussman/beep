@@ -32,14 +32,14 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
   const [getSuggestions, { data }] = useLazyQuery<GetSuggestionsQuery>(GetSuggestions);
 
   async function useCurrentLocation(): Promise<void> {
-    props.setValue("Loading your location...");
-
+    setValue("Loading your location...");
+  
     Location.setGoogleApiKey(Constants.manifest?.extra?.GOOGLE_API_KEY || '');
 
     const { status } = await Location.requestForegroundPermissionsAsync();
 
     if (status !== 'granted') {
-      props.setValue("");
+      setValue("");
       return alert("You must enable location to use this feature.");
     }
 
