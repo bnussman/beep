@@ -1,0 +1,16 @@
+include:
+  - template: Auto-DevOps.gitlab-ci.yml
+
+image: node:current-alpine
+
+pages:
+  stage: deploy
+  script:
+    - cd docs
+    - yarn install
+    - yarn build:gitlab
+  artifacts:
+      paths:
+        - public
+  only:
+    - master
