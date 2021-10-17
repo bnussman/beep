@@ -4,6 +4,24 @@
 
 This is the monorepo for the Beep App. Ride beep app is currently a substitute for the facebook page that people use to get around Boone, NC. This app allows college students to make money by beeping and allows for an easy and cheap way to get where they want around campus and Boone. The owners are students at App State, Ian Murphy and Banks Nussman, who saw the flaws of the facebook page and wanted to improve the experience with leaving everything that was great about the original idea.
 
+### Tech Stack
+- API
+  - Apollo GraphQL
+  - PostgreSQL (PostGIS)
+  - Mikro-ORM
+  - TypeGraphQL
+  - Linode S3 Object Storage
+  - Redis
+- App
+  - React Native
+  - Expo
+  - UI-Kitten (soon to become Native Base)
+  - Apollo Client
+- Website
+  - React
+  - Chakra UI
+  - Apollo Client
+
 ## Running
 
 ### Dependencies
@@ -41,7 +59,8 @@ yarn up
 
 ### Provide envrionment data
 
-To develop locally please provide the following envrionment varibles
+> ⚠️ For develpment envrionment to start successfully, you must provide these envrionment
+
 ```
 POSTGRESQL_USER
 POSTGRESQL_PASSWORD
@@ -100,6 +119,9 @@ Why is Redis used?
 
 What is in this repo?
 > A React Native (with Expo) iOS and Android app, a React website, and a GraphQL API
+
+What operating systems are supported?
+> This application has been developed on MacOS and Debian based systems. The API runs in Alpine containers. Your mileage on other operating systms may very. 
 
 ## Troubleshooting
 
