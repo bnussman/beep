@@ -131,7 +131,7 @@ Leave an [issue](https://gitlab.nussman.us/beep-app/beep/-/issues) to get suppor
 
 ## Contribute
 
-- Open an [issue](https://gitlab.nussman.us/beep-app/beep/-/issues) or create a [pull request](https://gitlab.nussman.us/beep-app/beep/-/merge_requests/new)
+Open an [issue](https://gitlab.nussman.us/beep-app/beep/-/issues) or create a [pull request](https://gitlab.nussman.us/beep-app/beep/-/merge_requests/new)
 
 ## License
 
