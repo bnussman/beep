@@ -1,5 +1,7 @@
 # Beep App 🚖
 
+## Introduction
+
 This is the monorepo for the Beep App. Ride beep app is currently a substitute for the facebook page that people use to get around Boone, NC. This app allows college students to make money by beeping and allows for an easy and cheap way to get where they want around campus and Boone. The owners are students at App State, Ian Murphy and Banks Nussman, who saw the flaws of the facebook page and wanted to improve the experience with leaving everything that was great about the original idea.
 
 ## Running
@@ -36,14 +38,6 @@ To run the development envrionment use
 ```
 yarn up
 ```
-
-## Services
-| Service    | URL                           |
-|------------|-------------------------------|
-| Website    | http://localhost:3000         |
-| API        | http://localhost:3001/graphql |
-| Expo       | http://localhost:19002        |
-| Expo (Web) | http://localhost:19006        |
 
 ### Provide envrionment data
 
@@ -84,3 +78,40 @@ export POSTGRESQL_DATABASE=beep
 export REDIS_HOST=redis.staging.nussman.us
 export REDIS_PASSWORD=<a real password here>
 ```
+
+### Services running for local development
+| Service    | URL                           |
+|------------|-------------------------------|
+| Website    | http://localhost:3000         |
+| API        | http://localhost:3001/graphql |
+| Expo       | http://localhost:19002        |
+| Expo (Web) | http://localhost:19006        |
+
+## FAQs
+
+Who owns Ride Beep App?
+> Ian & Banks LLC founded by Banks Nussman and Ian Murphy
+
+What database is used?
+> PostgreSQL
+
+Why is Redis used?
+> Redis is currently only used to enable GraphQL subscriptions accross multiple instances of the API for scaling purposes
+
+What is in this repo?
+> A React Native (with Expo) iOS and Android app, a React website, and a GraphQL API
+
+## Troubleshooting
+
+Use `yarn clean` to clear all dependencies in the project's repository
+
+Leave an [issue](https://gitlab.nussman.us/beep-app/beep/-/issues) to get support on installing, developing, and running locally.
+
+## Contribute
+
+- Open an [issue](https://gitlab.nussman.us/beep-app/beep/-/issues) or create a [pull request](https://gitlab.nussman.us/beep-app/beep/-/merge_requests/new)
+
+## License
+
+The project is licensed under the Apache 2.0 Licence 
+
