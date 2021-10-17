@@ -59,7 +59,7 @@ yarn up
 
 ### Provide envrionment data
 
-> ⚠️ For develpment envrionment to start successfully, you must provide these envrionment
+> ⚠️ For develpment envrionment to start successfully, you must provide these envrionment varibles
 
 ```
 POSTGRESQL_USER
