@@ -4,7 +4,7 @@ include:
 image: node:current-alpine
 
 pages:
-  stage: review
+  stage: staging
   script:
     - cd docs
     - yarn install
