@@ -1,10 +1,18 @@
 # Beep App 🚖
 
-## Introduction
+## 📚 Documentation
+
+<p>Learn about Ride Beep App
+  <a aria-label="beep documentation" href="https://docs.ridebeep.app">
+    in our official docs!
+  </a>
+</p>
+
+## 🗺 Introduction
 
 This is the monorepo for the Beep App. Ride beep app is currently a substitute for the facebook page that people use to get around Boone, NC. This app allows college students to make money by beeping and allows for an easy and cheap way to get where they want around campus and Boone. The owners are students at App State, Ian Murphy and Banks Nussman, who saw the flaws of the facebook page and wanted to improve the experience with leaving everything that was great about the original idea.
 
-### Tech Stack
+### 💻 Tech Stack
 - API
   - Apollo GraphQL
   - PostgreSQL (PostGIS)
@@ -22,7 +30,7 @@ This is the monorepo for the Beep App. Ride beep app is currently a substitute f
   - Chakra UI
   - Apollo Client
 
-## Running
+## ⌨️ Developing Locally
 
 ### Dependencies
 
@@ -106,7 +114,7 @@ export REDIS_PASSWORD=<a real password here>
 | Expo       | http://localhost:19002        |
 | Expo (Web) | http://localhost:19006        |
 
-## FAQs
+## ❔ FAQs
 
 Who owns Ride Beep App?
 > Ian & Banks LLC founded by Banks Nussman and Ian Murphy
@@ -123,17 +131,17 @@ What is in this repo?
 What operating systems are supported?
 > This application has been developed on MacOS and Debian based systems. The API runs in Alpine containers. Your mileage on other operating systms may very. 
 
-## Troubleshooting
+## ⚠️ Troubleshooting
 
 Use `yarn clean` to clear all dependencies in the project's repository
 
 Leave an [issue](https://gitlab.nussman.us/beep-app/beep/-/issues) to get support on installing, developing, and running locally.
 
-## Contribute
+## 👏 Contribute
 
 Open an [issue](https://gitlab.nussman.us/beep-app/beep/-/issues) or create a [pull request](https://gitlab.nussman.us/beep-app/beep/-/merge_requests/new)
 
-## License
+## 🚓 License
 
 The project is licensed under the Apache 2.0 Licence 
 
