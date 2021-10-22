@@ -1,11 +1,13 @@
 import { useContext } from 'react';
 import { Link } from "react-router-dom";
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
-import {UserDropdown} from './UserDropdown';
-import {AdminDropdown} from './AdminDropdown';
-import {UserContext} from '../UserContext';
-import {UserRole} from '../types/User';
+import { UserDropdown } from './UserDropdown';
+import { AdminDropdown } from './AdminDropdown';
+import { UserContext } from '../UserContext';
+import { UserRole } from '../types/User';
 import { ThemeToggle } from './ThemeToggle';
+import React from 'react';
+import Logo from '../assets/favicon.png';
 import {
     Box,
     Flex,
@@ -16,8 +18,6 @@ import {
     Button,
     Image
 } from '@chakra-ui/react';
-import React from 'react';
-import Logo from '../assets/favicon.png';
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -109,7 +109,7 @@ export default function NavBar() {
         </Flex>
       </Box>
       {isOpen ? (
-        <Box pb={4}>
+        <Box pb={4} pl={4}>
           <Stack as={'nav'} spacing={4}>
             <Link to='/faq'>FAQ</Link>
             <Link to='/about'>About</Link>
