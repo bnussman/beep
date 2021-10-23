@@ -4,10 +4,10 @@ import { Context } from "../utils/context";
 import { PushNotification, sendNotification, sendNotifications } from "../utils/notifications";
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from "type-graphql";
 import fieldsToRelations from "graphql-fields-to-relations";
-import { GraphQLResolveInfo } from "graphql";
 import { QueryOrder } from "@mikro-orm/core";
 import PaginationArgs from "../args/Pagination";
 import { Paginated } from "../utils/paginated";
+import { GraphQLResolveInfo } from "graphql";
 
 @ObjectType()
 class BeepsInProgressResponse extends Paginated(QueueEntry) {}
@@ -18,6 +18,7 @@ export class QueueResolver {
   @Query(() => [QueueEntry])
   @Authorized()
   public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
+    // @ts-expect-error for now
     const populate = fieldsToRelations(info);
 
     return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate, refresh: true });
