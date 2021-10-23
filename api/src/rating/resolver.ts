@@ -66,7 +66,6 @@ export class RatingResolver {
   @Query(() => Rating)
   @Authorized(UserRole.ADMIN)
   public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
-    // @ts-expect-error for now
     return await ctx.em.findOneOrFail(Rating, id, fieldsToRelations(info));
   }
 
