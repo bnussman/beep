@@ -13,7 +13,7 @@ export default {
       iosDisplayInForeground: true
     },
     extra: {
-      GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+      GOOGLE_API_KEYS: process.env.GOOGLE_API_KEYS,
     },
     platforms: [
       "ios",

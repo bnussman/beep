@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import got from 'got';
 import { Arg, Field, ObjectType, Query, Resolver } from "type-graphql";
 
 @ObjectType()
@@ -7,33 +7,32 @@ class Suggestion {
   public title!: string;
 }
 
+const keys: string[] = JSON.parse(process.env.GOOGLE_API_KEYS || '[]');
+
+function getRandom<T>(data: T[]): T {
+  return data[Math.floor(Math.random() * data.length)];
+}
+
 @Resolver()
 export class DirectionsResolver {
 
   @Query(() => String)
   public async getETA(@Arg('start') start: string, @Arg('end') end: string): Promise<string> {
-    // const result = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=${process.env.GOOGLE_API_KEY}`);
+    const result = await got(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=${getRandom(keys)}`).json<any>();
 
-    // const data = await result.json();
-
-    // return data.routes[0].legs[0].duration.text;
-    
-    return 'N/A';
+    return result?.routes[0]?.legs[0]?.duration?.text || '';
   }
 
   @Query(() => [Suggestion])
   public async getLocationSuggestions(@Arg('location') location: string, @Arg('sessiontoken') sessiontoken: string): Promise<Suggestion[]> {
-    return [];
-    // const result = await fetch(encodeURI(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=${process.env.GOOGLE_API_KEY}&sessiontoken=${sessiontoken}`));
+    const result = await got(encodeURI(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=${getRandom(keys)}&sessiontoken=${sessiontoken}`)).json<any>();
 
-    // const data = await result.json();
+    const output: Suggestion[] = [];
 
-    // const output: Suggestion[] = [];
+    for (const prediction of result.predictions) {
+      output.push({ title: prediction.description });
+    }
 
-    // for (const prediction of data.predictions) {
-    //   output.push({ title: prediction.description });
-    // }
-
-    // return output;
+    return output;
   }
 }

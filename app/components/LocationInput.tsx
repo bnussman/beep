@@ -7,6 +7,7 @@ import { gql, useLazyQuery } from '@apollo/client';
 import { GetSuggestionsQuery } from '../generated/graphql';
 import { v4 } from 'uuid';
 import Constants from 'expo-constants';
+import Logger from '../utils/Logger';
 
 interface Props {
   getLocation: boolean;
@@ -33,8 +34,13 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
 
   async function useCurrentLocation(): Promise<void> {
     setValue("Loading your location...");
-  
-    Location.setGoogleApiKey(Constants.manifest?.extra?.GOOGLE_API_KEY || '');
+ 
+    try {
+      Location.setGoogleApiKey(JSON.parse(Constants.manifest?.extra?.GOOGLE_API_KEYS)[0] || '');
+    } catch (error) {
+      Logger.error("Enable to parse Google API keys");
+    }
+
 
     const { status } = await Location.requestForegroundPermissionsAsync();
 
