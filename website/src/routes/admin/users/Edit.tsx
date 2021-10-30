@@ -62,7 +62,6 @@ function EditUserPage() {
       {data && <Success message="Successfully Edited User" />}
       {error && <Error error={error} />}
       {editError && <Error error={editError} />}
-
       {loading && <Loading />}
 
       {user?.getUser && !loading &&
@@ -76,10 +75,11 @@ function EditUserPage() {
           {({ isSubmitting }) => (
             <Form>
               {Object.keys(user?.getUser).map((key) => {
+                // @ts-expect-error i dont know what to do here, this component needs to be cleaned up
                 const type = typeof user.getUser[key];
                 return (
                   <Field name={key}>
-                    {({ field, form }) => (
+                    {({ field, form }: { field: any, form: any }) => (
                       <FormControl name={key} mt={2}>
                         {type === "boolean" ?
                           <>

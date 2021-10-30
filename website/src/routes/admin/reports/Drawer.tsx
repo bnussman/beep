@@ -59,7 +59,9 @@ function ReportDrawer(props: Props) {
 
   useEffect(() => {
     setIsHandled(data?.getReport.handled);
-    setNotes(data?.getReport.notes)
+    if (data?.getReport.notes) {
+      setNotes(data?.getReport.notes)
+    }
   }, [data?.getReport]);
 
   return (
@@ -72,7 +74,6 @@ function ReportDrawer(props: Props) {
       <DrawerContent>
         <DrawerCloseButton />
         <DrawerHeader>Report</DrawerHeader>
-
         <DrawerBody>
           {error && <Error error={error} />}
           {updateError && <Error error={updateError} />}

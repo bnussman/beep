@@ -20,7 +20,7 @@ export default function Banners() {
       await resend();
       setResendStatus("Successfully resent email");
     }
-    catch (error) {
+    catch (error: any) {
       setResendStatus(error.message);
     }
   }

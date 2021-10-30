@@ -16,9 +16,9 @@ import Loading from "../../../components/Loading";
 dayjs.extend(relativeTime);
 
 export const DeleteReport = gql`
-    mutation DeleteReport($id: String!) {
-        deleteReport(id: $id)
-    }
+  mutation DeleteReport($id: String!) {
+    deleteReport(id: $id)
+  }
 `;
 
 export const UpdateReport = gql`
@@ -97,7 +97,9 @@ function ReportPage() {
 
   useEffect(() => {
     setIsHandled(data?.getReport.handled);
-    setNotes(data?.getReport.notes)
+    if (data?.getReport.notes) {
+      setNotes(data?.getReport.notes)
+    }
   }, [data?.getReport]);
 
   async function doDelete() {

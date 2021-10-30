@@ -63,7 +63,7 @@ function SignUp() {
   const [cashapp, setCashapp] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [photo, setPhoto] = useState();
+  const [photo, setPhoto] = useState<File>();
   const [photoError, setPhotoError] = useState<boolean>(false);
   const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
 
@@ -199,9 +199,7 @@ function SignUp() {
               id="photo"
               type="file"
               onChange={(e) => {
-                //@ts-ignore
-                setPhoto(e.target.files[0]);
-                console.log(e.target.files[0]);
+                setPhoto(e.target.files?.[0]);
               }}
             />
             <Box>
