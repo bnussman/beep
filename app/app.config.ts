@@ -31,7 +31,7 @@ export default {
             url: "https://sentry.nussman.us",
             setCommits: true,
             organization: "beep",
-            project: "app",
+            project: "beep-app",
             authToken: "4b73e552aebd48a7973e39c0a322a3539623979525144fa7b7b3f9eb44907b2a"
           }
         }
