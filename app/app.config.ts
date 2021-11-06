@@ -32,7 +32,7 @@ export default {
             setCommits: true,
             organization: "beep",
             project: "app",
-            authToken: "9ed67c2ab12d4d54b50cd95ed81aef0ea5d796a75bd84647a48880239bdf5203"
+            authToken: "4b73e552aebd48a7973e39c0a322a3539623979525144fa7b7b3f9eb44907b2a"
           }
         }
       ]
