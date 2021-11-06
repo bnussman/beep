@@ -15,6 +15,7 @@ export function init(app: Router): void {
     integrations: [
       new Sentry.Integrations.Http({ tracing: true }),
       new Tracing.Integrations.Express({ app }),
+      new Tracing.Integrations.Postgres(),
     ],
     tracesSampler: (samplingContext) => {
       if (samplingContext?.transactionContext?.name === 'GET /.well-known/apollo/server-health') {
