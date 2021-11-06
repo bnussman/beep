@@ -17,7 +17,9 @@ import { wrap } from '@mikro-orm/core';
 export async function getToken(user: User): Promise<TokenEntry> {
   const t = new TokenEntry(user);
 
-  await BeepORM.em.persistAndFlush(t);
+  const em = BeepORM.em.fork();
+
+  await em.persistAndFlush(t);
 
   return t;
 }
@@ -29,12 +31,15 @@ export async function getToken(user: User): Promise<TokenEntry> {
  */
 export async function setPushToken(user: User, token: string | null): Promise<void> {
   if (!user) return;
+
+  const em = BeepORM.em.fork();
+
   //run query to get user and update their pushToken
   wrap(user).assign({
     pushToken: token
   });
 
-  await BeepORM.em.persistAndFlush(user);
+  await em.persistAndFlush(user);
 }
 
 /**
@@ -65,7 +70,9 @@ export async function isAdmin(token: string): Promise<string | null> {
  * @returns Promise<UserPluckResult>
  */
 export async function getUserFromEmail(email: string): Promise<User | null> {
-  const user = await BeepORM.em.findOne(User, { email: email });
+  const em = BeepORM.em.fork();
+
+  const user = await em.findOne(User, { email: email });
 
   if (user) {
     return user;
@@ -82,7 +89,9 @@ export async function getUserFromEmail(email: string): Promise<User | null> {
  * @returns Promise<UserPluckResult>
  */
 export async function getUserFromId(id: string, ...pluckItems: string[]): Promise<Partial<User> | null> {
-  const user = await BeepORM.em.findOne(User, id, { fields: pluckItems });
+  const em = BeepORM.em.fork();
+
+  const user = await em.findOne(User, id, { fields: pluckItems });
 
   if (user) {
     return user;
@@ -127,7 +136,9 @@ export function sendResetEmail(email: string, id: string, first: string | undefi
  * @returns void
  */
 export async function deactivateTokens(user: User): Promise<void> {
-  await BeepORM.em.nativeDelete(TokenEntry, { user: user });
+  const em = BeepORM.em.fork();
+
+  await em.nativeDelete(TokenEntry, { user: user });
 }
 
 /**
@@ -169,14 +180,16 @@ export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void
  * @returns void
  */
 export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<void> {
-  await BeepORM.em.nativeDelete(VerifyEmail, { email: user.email });
+  const em = BeepORM.em.fork();
+
+  await em.nativeDelete(VerifyEmail, { email: user.email });
 
   const entry = new VerifyEmail(user, user.email);
 
   //send the email
   sendVerifyEmailEmail(user, entry);
 
-  await BeepORM.em.persistAndFlush(entry);
+  await em.persistAndFlush(entry);
 }
 
 /**
@@ -187,7 +200,9 @@ export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<vo
  */
 export async function doesUserExist(username: string): Promise<boolean> {
   try {
-    const c = await BeepORM.em.count(User, { username: username });
+    const em = BeepORM.em.fork();
+
+    const c = await em.count(User, { username: username });
 
     if (c >= 1) {
       return true;

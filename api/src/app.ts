@@ -63,13 +63,15 @@ export default class BeepAPIServer {
       execute,
       subscribe,
       onConnect: async (params: { token: string }) => {
-          if (!params || !params.token) throw new Error("No auth token");
+        if (!params || !params.token) throw new Error("No auth token");
 
-          const tokenEntryResult = await BeepORM.em.findOne(TokenEntry, params.token, { populate: ['user'] });
+        const em = BeepORM.em.fork();
 
-          if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
-        }
-      },
+        const tokenEntryResult = await em.findOne(TokenEntry, params.token, { populate: ['user'] });
+
+        if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
+      }
+    },
       {
         server: httpServer,
         path: '/subscriptions',
