@@ -53,7 +53,7 @@ export default {
     },
     android: {
       package: "app.ridebeep.App",
-      versionCode: 28,
+      versionCode: 29,
       googleServicesFile: "./google-services.json",
       useNextNotificationsApi: true,
       permissions: [
