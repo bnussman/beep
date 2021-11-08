@@ -80,7 +80,7 @@ export class RiderResolver {
         throw new Error("You are not in that beepers queue.");
     }
 
-    if (entry.isAccepted) beeper.queueSize--;
+    if (entry.isAccepted) beeper.queue.count() - 1;
 
     sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you!");
 

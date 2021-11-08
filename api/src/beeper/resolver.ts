@@ -73,11 +73,13 @@ export class BeeperResolver {
         ctx.em.persist(beep);
       }
 
-      if (queueEntry.isAccepted && ctx.user.queueSize > 0) ctx.user.queueSize--;
+      ctx.user.queue.remove(queueEntry);
+
+      if (queueEntry.isAccepted) {
+        ctx.user.queueSize = ctx.user.queue.length;
+      }
 
       ctx.em.persist(ctx.user);
-
-      ctx.user.queue.remove(queueEntry);
 
       if (input.value == "deny") {
         sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request`, "Open your app to find a diffrent beeper.");
@@ -147,7 +149,7 @@ export class BeeperResolver {
 
     ctx.em.remove(entry);
 
-    ctx.user.queueSize--;
+    ctx.user.queueSize = newQueue.length;
 
     ctx.em.persist(ctx.user);
 
