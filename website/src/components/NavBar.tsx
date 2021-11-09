@@ -26,7 +26,7 @@ export default function NavBar() {
   return (
     <>
       <Box px={4}>
-        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+        <Flex h={16} alignItems='center' justifyContent='space-between'>
           <IconButton
             size={'md'}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -36,7 +36,7 @@ export default function NavBar() {
           />
           <HStack spacing={8} alignItems={'center'}>
             <Box>
-              <Flex alignItems={'center'}>
+              <Flex alignItems='center'>
                 <Flex
                   backgroundColor='white'
                   alignItems='center'
@@ -57,13 +57,14 @@ export default function NavBar() {
             <HStack
               as={'nav'}
               spacing={4}
-              display={{ base: 'none', md: 'flex' }}>
+              display={{ base: 'none', md: 'flex' }}
+            >
               <Link to='/faq'>FAQ</Link>
               <Link to='/about'>About</Link>
               <Link to='/download' target="_blank">Download</Link>
             </HStack>
           </HStack>
-          <Flex alignItems={'center'}>
+          <Flex alignItems='center'>
             <Stack
               flex={{ base: 1, md: 0 }}
               justify={'flex-end'}
