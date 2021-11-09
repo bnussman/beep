@@ -9,14 +9,14 @@ import { ThemeToggle } from './ThemeToggle';
 import React from 'react';
 import Logo from '../assets/favicon.png';
 import {
-    Box,
-    Flex,
-    HStack,
-    IconButton,
-    useDisclosure,
-    Stack,
-    Button,
-    Image
+  Box,
+  Flex,
+  HStack,
+  IconButton,
+  useDisclosure,
+  Stack,
+  Button,
+  Image
 } from '@chakra-ui/react';
 
 export default function NavBar() {
@@ -28,13 +28,13 @@ export default function NavBar() {
       <Box px={4}>
         <Flex h={16} alignItems='center' justifyContent='space-between'>
           <IconButton
-            size={'md'}
+            size='md'
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label={'Open Menu'}
+            aria-label='Open Menu'
             display={{ md: !isOpen ? 'none' : 'inherit' }}
             onClick={isOpen ? onClose : onOpen}
           />
-          <HStack spacing={8} alignItems={'center'}>
+          <HStack spacing={8} alignItems='center'>
             <Box>
               <Flex alignItems='center'>
                 <Flex
@@ -46,29 +46,26 @@ export default function NavBar() {
                   width={9}
                   height={9}
                 >
-                  <Image
-                    h={6}
-                    src={Logo}
-                  />
+                  <Image h={6} src={Logo} />
                 </Flex>
                 <Box ml={4} as={Link} to='/'>Beep App</Box>
               </Flex>
             </Box>
             <HStack
-              as={'nav'}
-              spacing={4}
+              as='nav'
+              spacing={2}
               display={{ base: 'none', md: 'flex' }}
             >
-              <Link to='/faq'>FAQ</Link>
-              <Link to='/about'>About</Link>
-              <Link to='/download' target="_blank">Download</Link>
+              <Button as={Link} variant="ghost" to='/faq'>FAQ</Button>
+              <Button as={Link} variant="ghost" to='/about'>About</Button>
+              <Button as={Link} variant="ghost" to='/download' target="_black">Download</Button>
             </HStack>
           </HStack>
           <Flex alignItems='center'>
             <Stack
               flex={{ base: 1, md: 0 }}
-              justify={'flex-end'}
-              direction={'row'}
+              justify='flex-end'
+              direction='row'
               spacing={4}
               alignItems='center'
             >
@@ -83,18 +80,19 @@ export default function NavBar() {
                   <>
                     <Button
                       as={Link}
-                      fontSize={'sm'}
+                      fontSize='sm'
                       fontWeight={400}
-                      variant={'link'}
-                      to={'/login'}>
+                      variant='link'
+                      to='/login'
+                    >
                       Sign In
                     </Button>
                     <Button
                       as={Link}
-                      fontSize={'sm'}
+                      fontSize='sm'
                       fontWeight={600}
-                      color={'white'}
-                      bg={'yellow.400'}
+                      color='white'
+                      bg='yellow.400'
                       to='/signup'
                       _hover={{
                         bg: 'yellow.300',
@@ -111,7 +109,7 @@ export default function NavBar() {
       </Box>
       {isOpen ? (
         <Box pb={4} pl={4}>
-          <Stack as={'nav'} spacing={4}>
+          <Stack as='nav' spacing={4}>
             <Link to='/faq'>FAQ</Link>
             <Link to='/about'>About</Link>
             <Link to='/download' target="_blank">Download</Link>

@@ -20,13 +20,14 @@ import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
 import NavBar from './components/NavBar';
 import About from './routes/About';
-import { ChakraProvider, Container, Box } from "@chakra-ui/react"
+import { ChakraProvider, Container } from "@chakra-ui/react"
 import { createStandaloneToast } from "@chakra-ui/react"
-import "@fontsource/poppins/400.css"
-import "@fontsource/poppins/700.css"
 import Banners from './components/Banners';
 import { theme } from './utils/theme';
-import { getInitialTheme, getMobileOperatingSystem } from './utils/utils';
+import { getInitialTheme } from './utils/utils';
+import { Download } from './routes/Download';
+import "@fontsource/poppins/400.css"
+import "@fontsource/poppins/700.css"
 
 export const GetUserData = gql`
   query GetUserData {
@@ -125,44 +126,33 @@ function Beep() {
   if (loading) return null;
 
   return (
-    <ApolloProvider client={client}>
-      <ThemeContext.Provider value={{ theme, setTheme }}>
-        <UserContext.Provider value={data?.getUser as User}>
-          <Router>
-            <Box>
-              <NavBar />
-              <Container maxW="container.xl">
-                <Banners />
-                <Switch>
-                  <Route path="/password/forgot" component={ForgotPassword} />
-                  <Route path="/password/reset/:id" component={ResetPassword} />
-                  <Route path="/login" component={Login} />
-                  <Route path="/signup" component={SignUp} />
-                  <Route exact path="/profile" component={Profile} />
-                  <Route path="/profile/edit" component={EditProfile} />
-                  <Route path="/password/change" component={ChangePassword} />
-                  <Route path="/account/verify/:id" component={VerifyAccount} />
-                  <Route path="/privacy" component={Privacy} />
-                  <Route path="/terms" component={Terms} />
-                  <Route path="/admin" component={Admin} />
-                  <Route path="/faq" component={Faq} />
-                  <Route path="/about" component={About} />
-                  <Route path='/download' component={() => { 
-                    if (getMobileOperatingSystem() === 'Android') {
-                      window.location.href = 'https://play.google.com/store/apps/details?id=app.ridebeep.App';
-                      return null;
-                    }
-                    window.location.href = 'https://apps.apple.com/us/app/ride-beep-app/id1528601773';
-                    return null;
-                  }} />
-                  <Route path="/" component={Home} />
-                </Switch>
-              </Container>
-            </Box>
-          </Router>
-        </UserContext.Provider>
-      </ThemeContext.Provider>
-    </ApolloProvider>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      <UserContext.Provider value={data?.getUser as User}>
+        <Router>
+          <NavBar />
+          <Container maxW="container.xl">
+            <Banners />
+            <Switch>
+              <Route path="/password/forgot" component={ForgotPassword} />
+              <Route path="/password/reset/:id" component={ResetPassword} />
+              <Route path="/login" component={Login} />
+              <Route path="/signup" component={SignUp} />
+              <Route exact path="/profile" component={Profile} />
+              <Route path="/profile/edit" component={EditProfile} />
+              <Route path="/password/change" component={ChangePassword} />
+              <Route path="/account/verify/:id" component={VerifyAccount} />
+              <Route path="/privacy" component={Privacy} />
+              <Route path="/terms" component={Terms} />
+              <Route path="/admin" component={Admin} />
+              <Route path="/faq" component={Faq} />
+              <Route path="/about" component={About} />
+              <Route path='/download' component={Download} />
+              <Route path="/" component={Home} />
+            </Switch>
+          </Container>
+        </Router>
+      </UserContext.Provider>
+    </ThemeContext.Provider>
   );
 }
 

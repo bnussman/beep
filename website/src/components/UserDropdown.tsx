@@ -50,11 +50,12 @@ export function UserDropdown() {
     <Menu>
       <MenuButton
         as={Button}
-        rounded={'full'}
-        variant={'link'}
-        cursor={'pointer'}>
+        rounded='full'
+        variant='link'
+        cursor='pointer'
+      >
         <Avatar
-          size={'sm'}
+          size='sm'
           src={user?.photoUrl || ''}
         >
           {user?.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
