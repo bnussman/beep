@@ -22,13 +22,14 @@ interface PageButtonProps {
   active?: boolean;
   children?: any;
   onClick?: () => void;
+  isDisabled?: boolean;
 }
 
 function PageButton(props: PageButtonProps) {
-  const { onClick, active, children } = props;
+  const { onClick, active, children, isDisabled } = props;
 
   return (
-    <Button onClick={onClick}>
+    <Button onClick={onClick} isDisabled={isDisabled}>
       <Text color={active ? "yellow.400" : undefined}>
         {children}
       </Text>
@@ -136,7 +137,7 @@ export default function Pagination({
                       {page}
                     </PageButton>
                   )
-                  : <PageButton key={index}>...</PageButton>
+                  : <PageButton key={index} isDisabled>...</PageButton>
               )
             }
             <DirectionButton direction='right' disabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
