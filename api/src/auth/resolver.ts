@@ -8,6 +8,7 @@ import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth'
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import AWS from 'aws-sdk';
+import { lights } from '../utils/lights';
 
 @ObjectType()
 class Auth {
@@ -51,7 +52,7 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
-    let { createReadStream, filename, mimetype } = await input.picture;
+    const { createReadStream, filename } = await input.picture;
 
     const user = new User();
 
@@ -63,11 +64,9 @@ export class AuthResolver {
 
     const extention = filename.substr(filename.lastIndexOf("."), filename.length);
 
-    filename = user.id + "-" + Date.now() + extention;
-
     const uploadParams = {
       Body: createReadStream(),
-      Key: "images/" + filename,
+      Key: "images/" + user.id + "-" + Date.now() + extention,
       Bucket: "beep",
       ACL: "public-read"
     };
@@ -96,6 +95,8 @@ export class AuthResolver {
     const tokenData = await getToken(user);
 
     createVerifyEmailEntryAndSendEmail(user);
+
+    lights();
 
     return {
       user: user,

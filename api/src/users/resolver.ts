@@ -9,6 +9,7 @@ import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Paginated } from '../utils/paginated';
 import { search } from './helpers';
+import { lights } from '../utils/lights';
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
