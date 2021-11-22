@@ -9,6 +9,7 @@ import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import AWS from 'aws-sdk';
 import { lights } from '../utils/lights';
+import * as unleash from 'unleash-client';
 
 @ObjectType()
 class Auth {
@@ -96,7 +97,9 @@ export class AuthResolver {
 
     createVerifyEmailEntryAndSendEmail(user);
 
-    lights();
+    if (unleash.isEnabled('lights')) {
+      lights();
+    }
 
     return {
       user: user,

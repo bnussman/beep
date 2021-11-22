@@ -17,6 +17,7 @@ import express from "express";
 import { graphqlUploadExpress } from "graphql-upload";
 import { ApolloServer, ExpressContext } from "apollo-server-express";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
+import * as unleash from 'unleash-client';
 
 export const BeepORM = {} as ORM;
 
@@ -27,6 +28,12 @@ export default class BeepAPIServer {
   }
 
   private async setup(): Promise<void> {
+
+    unleash.initialize({
+      url: 'https://gitlab.nussman.us/api/v4/feature_flags/unleash/7',
+      instanceId: 'twYnSbSyVvAn-MvsBaBi',
+      appName: 'production'
+    });
 
     BeepORM.orm = await MikroORM.init(config);
     BeepORM.em = BeepORM.orm.em;
