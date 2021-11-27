@@ -123,8 +123,6 @@ export default class BeepAPIServer {
           return new Error(output.toString());
         }
 
-        Sentry.captureError(error);
-
         return error;
       },
       plugins: [ApolloServerPluginDrainHttpServer({ httpServer }), {

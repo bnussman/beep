@@ -66,7 +66,7 @@ function LoginScreen(props: Props): JSX.Element {
       SplashScreen.hideAsync();
     }
     catch (error) {
-      Logger.error(error);
+      // ...
     }
   }, []);
 
