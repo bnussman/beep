@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -37,11 +38,11 @@ export type Beep = {
 };
 
 export type BeeperSettingsInput = {
-  capacity?: Maybe<Scalars['Float']>;
-  groupRate?: Maybe<Scalars['Float']>;
-  isBeeping?: Maybe<Scalars['Boolean']>;
-  masksRequired?: Maybe<Scalars['Boolean']>;
-  singlesRate?: Maybe<Scalars['Float']>;
+  capacity?: InputMaybe<Scalars['Float']>;
+  groupRate?: InputMaybe<Scalars['Float']>;
+  isBeeping?: InputMaybe<Scalars['Boolean']>;
+  masksRequired?: InputMaybe<Scalars['Boolean']>;
+  singlesRate?: InputMaybe<Scalars['Float']>;
 };
 
 export type BeepsInProgressResponse = {
@@ -61,39 +62,39 @@ export type ChangePasswordInput = {
 };
 
 export type EditAccountInput = {
-  cashapp?: Maybe<Scalars['String']>;
+  cashapp?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   first: Scalars['String'];
   last: Scalars['String'];
   phone: Scalars['String'];
-  venmo?: Maybe<Scalars['String']>;
+  venmo?: InputMaybe<Scalars['String']>;
 };
 
 export type EditUserValidator = {
-  capacity?: Maybe<Scalars['Float']>;
-  cashapp?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['String']>;
-  groupRate?: Maybe<Scalars['Float']>;
-  isBeeping?: Maybe<Scalars['Boolean']>;
-  isEmailVerified?: Maybe<Scalars['Boolean']>;
-  isStudent?: Maybe<Scalars['Boolean']>;
-  last?: Maybe<Scalars['String']>;
-  masksRequired?: Maybe<Scalars['Boolean']>;
-  phone?: Maybe<Scalars['String']>;
-  photoUrl?: Maybe<Scalars['String']>;
-  pushToken?: Maybe<Scalars['String']>;
-  queueSize?: Maybe<Scalars['Float']>;
-  role?: Maybe<Scalars['String']>;
-  singlesRate?: Maybe<Scalars['Float']>;
-  username?: Maybe<Scalars['String']>;
-  venmo?: Maybe<Scalars['String']>;
+  capacity?: InputMaybe<Scalars['Float']>;
+  cashapp?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['String']>;
+  groupRate?: InputMaybe<Scalars['Float']>;
+  isBeeping?: InputMaybe<Scalars['Boolean']>;
+  isEmailVerified?: InputMaybe<Scalars['Boolean']>;
+  isStudent?: InputMaybe<Scalars['Boolean']>;
+  last?: InputMaybe<Scalars['String']>;
+  masksRequired?: InputMaybe<Scalars['Boolean']>;
+  phone?: InputMaybe<Scalars['String']>;
+  photoUrl?: InputMaybe<Scalars['String']>;
+  pushToken?: InputMaybe<Scalars['String']>;
+  queueSize?: InputMaybe<Scalars['Float']>;
+  role?: InputMaybe<Scalars['String']>;
+  singlesRate?: InputMaybe<Scalars['Float']>;
+  username?: InputMaybe<Scalars['String']>;
+  venmo?: InputMaybe<Scalars['String']>;
 };
 
 export type FindBeepInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
-  radius?: Maybe<Scalars['Float']>;
+  radius?: InputMaybe<Scalars['Float']>;
 };
 
 export type ForgotPassword = {
@@ -110,18 +111,18 @@ export type GetBeepInput = {
 };
 
 export type LocationInput = {
-  accuracy?: Maybe<Scalars['Float']>;
-  altitideAccuracy?: Maybe<Scalars['Float']>;
-  altitude?: Maybe<Scalars['Float']>;
-  heading?: Maybe<Scalars['Float']>;
+  accuracy?: InputMaybe<Scalars['Float']>;
+  altitideAccuracy?: InputMaybe<Scalars['Float']>;
+  altitude?: InputMaybe<Scalars['Float']>;
+  heading?: InputMaybe<Scalars['Float']>;
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
-  speed?: Maybe<Scalars['Float']>;
+  speed?: InputMaybe<Scalars['Float']>;
 };
 
 export type LoginInput = {
   password: Scalars['String'];
-  pushToken?: Maybe<Scalars['String']>;
+  pushToken?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
 };
 
@@ -222,7 +223,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationLogoutArgs = {
-  isApp?: Maybe<Scalars['Boolean']>;
+  isApp?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -329,10 +330,10 @@ export type QueryGetBeeperListArgs = {
 
 
 export type QueryGetBeepsArgs = {
-  id?: Maybe<Scalars['String']>;
-  offset?: Maybe<Scalars['Int']>;
-  query?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -343,9 +344,9 @@ export type QueryGetEtaArgs = {
 
 
 export type QueryGetInProgressBeepsArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  query?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -356,7 +357,7 @@ export type QueryGetLocationSuggestionsArgs = {
 
 
 export type QueryGetQueueArgs = {
-  id?: Maybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -366,10 +367,10 @@ export type QueryGetRatingArgs = {
 
 
 export type QueryGetRatingsArgs = {
-  id?: Maybe<Scalars['String']>;
-  offset?: Maybe<Scalars['Int']>;
-  query?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -379,22 +380,22 @@ export type QueryGetReportArgs = {
 
 
 export type QueryGetReportsArgs = {
-  id?: Maybe<Scalars['String']>;
-  offset?: Maybe<Scalars['Int']>;
-  query?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryGetUserArgs = {
-  id?: Maybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryGetUsersArgs = {
-  offset?: Maybe<Scalars['Int']>;
-  query?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueueEntry = {
@@ -424,7 +425,7 @@ export type Rating = {
 
 export type RatingInput = {
   beepId: Scalars['String'];
-  message?: Maybe<Scalars['String']>;
+  message?: InputMaybe<Scalars['String']>;
   stars: Scalars['Float'];
   userId: Scalars['String'];
 };
@@ -449,7 +450,7 @@ export type Report = {
 };
 
 export type ReportInput = {
-  beepId?: Maybe<Scalars['String']>;
+  beepId?: InputMaybe<Scalars['String']>;
   reason: Scalars['String'];
   userId: Scalars['String'];
 };
@@ -466,16 +467,16 @@ export type ResetPasswordInput = {
 };
 
 export type SignUpInput = {
-  cashapp?: Maybe<Scalars['String']>;
+  cashapp?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   first: Scalars['String'];
   last: Scalars['String'];
   password: Scalars['String'];
   phone: Scalars['String'];
   picture: Scalars['Upload'];
-  pushToken?: Maybe<Scalars['String']>;
+  pushToken?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
-  venmo?: Maybe<Scalars['String']>;
+  venmo?: InputMaybe<Scalars['String']>;
 };
 
 export type Subscription = {
@@ -525,8 +526,8 @@ export type UpdateQueueEntryInput = {
 };
 
 export type UpdateReportInput = {
-  handled?: Maybe<Scalars['Boolean']>;
-  notes?: Maybe<Scalars['String']>;
+  handled?: InputMaybe<Scalars['Boolean']>;
+  notes?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
@@ -591,9 +592,9 @@ export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
 export type ResendEmailMutation = { __typename?: 'Mutation', resendEmailVarification: boolean };
 
 export type GetBeepsQueryVariables = Exact<{
-  id?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -607,18 +608,18 @@ export type GetQueueSubscriptionVariables = Exact<{
 export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> };
 
 export type GetRatingsQueryVariables = Exact<{
-  id?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
 export type GetRatingsQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: string | null | undefined, stars: number, rater: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } }> } };
 
 export type GetReportsQueryVariables = Exact<{
-  id?: Maybe<Scalars['String']>;
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -656,8 +657,8 @@ export type EditAccountMutationVariables = Exact<{
   last: Scalars['String'];
   email: Scalars['String'];
   phone: Scalars['String'];
-  venmo?: Maybe<Scalars['String']>;
-  cashapp?: Maybe<Scalars['String']>;
+  venmo?: InputMaybe<Scalars['String']>;
+  cashapp?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -698,8 +699,8 @@ export type SignUpMutationVariables = Exact<{
   last: Scalars['String'];
   email: Scalars['String'];
   phone: Scalars['String'];
-  venmo?: Maybe<Scalars['String']>;
-  cashapp?: Maybe<Scalars['String']>;
+  venmo?: InputMaybe<Scalars['String']>;
+  cashapp?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
   password: Scalars['String'];
   picture: Scalars['Upload'];
@@ -718,15 +719,15 @@ export type VerifyAccountMutation = { __typename?: 'Mutation', verifyAccount: bo
 export type GetBeeperListQueryVariables = Exact<{
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
-  radius?: Maybe<Scalars['Float']>;
+  radius?: InputMaybe<Scalars['Float']>;
 }>;
 
 
 export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, username: string, name: string, photoUrl?: string | null | undefined, singlesRate: number, groupRate: number, capacity: number, isStudent: boolean, queueSize: number, masksRequired: boolean, location?: { __typename?: 'Point', longitude: number, latitude: number } | null | undefined }> };
 
 export type GetInProgressBeepsQueryVariables = Exact<{
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -747,8 +748,8 @@ export type GetBeepQueryVariables = Exact<{
 export type GetBeepQuery = { __typename?: 'Query', getBeep: { __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, rider: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } } };
 
 export type GetBeepsQueryVariables = Exact<{
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -769,8 +770,8 @@ export type GetRatingQueryVariables = Exact<{
 export type GetRatingQuery = { __typename?: 'Query', getRating: { __typename?: 'Rating', id: string, message?: string | null | undefined, stars: number, timestamp: any, beep: { __typename?: 'Beep', id: string }, rater: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } } };
 
 export type GetRatingsQueryVariables = Exact<{
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -785,8 +786,8 @@ export type DeleteReportMutation = { __typename?: 'Mutation', deleteReport: bool
 
 export type UpdateReportMutationVariables = Exact<{
   id: Scalars['String'];
-  notes?: Maybe<Scalars['String']>;
-  handled?: Maybe<Scalars['Boolean']>;
+  notes?: InputMaybe<Scalars['String']>;
+  handled?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -800,8 +801,8 @@ export type GetReportQueryVariables = Exact<{
 export type GetReportQuery = { __typename?: 'Query', getReport: { __typename?: 'Report', id: string, reason: string, timestamp: any, handled: boolean, notes?: string | null | undefined, beep?: { __typename?: 'Beep', id: string } | null | undefined, reporter: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, reported: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, handledBy?: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } | null | undefined } };
 
 export type GetReportsQueryVariables = Exact<{
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -837,9 +838,9 @@ export type GetUserQueryVariables = Exact<{
 export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null | undefined, cashapp?: string | null | undefined, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: string | null | undefined, queueSize: number, phone: string, username: string, rating?: number | null | undefined, email: string, seen?: any | null | undefined, location?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
 
 export type GetUsersQueryVariables = Exact<{
-  show?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-  query?: Maybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
 }>;
 
 
