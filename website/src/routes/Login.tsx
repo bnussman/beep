@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
-import { Redirect, Link, useHistory } from "react-router-dom";
+import { Navigate, Link, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
@@ -42,7 +42,7 @@ const LoginGraphQL = gql`
 `;
 
 function Login() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const user = useContext(UserContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -67,12 +67,12 @@ function Login() {
         data: { getUser: { ...result.data?.login.user } }
       });
 
-      history.push('/')
+      navigate('/');
     }
   }
 
   if (user) {
-    return <Redirect to={{ pathname: "/" }} />;
+    return <Navigate to={{ pathname: "/" }} />;
   }
 
   return (

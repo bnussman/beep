@@ -1,7 +1,7 @@
 import {
-    Switch,
     Route,
-    useRouteMatch
+    useMatch,
+    Routes
 } from "react-router-dom";
 import Beepers from './beepers/Beepers';
 import Users from './users';
@@ -18,24 +18,22 @@ import { Container } from "@chakra-ui/react";
 import ActiveBeeps from "./beeps/ActiveBeeps";
 
 function Admin() {
-  const match = useRouteMatch();
-
   return (
     <Container maxW="container.xl">
-      <Switch>
-        <Route exact path={`${match.path}/users`} component={Users} />
-        <Route exact path={`${match.path}/beepers`} component={Beepers} />
-        <Route exact path={`${match.path}/beeps`} component={Beeps} />
-        <Route exact path={`${match.path}/beeps/active`} component={ActiveBeeps} />
-        <Route exact path={`${match.path}/beeps/:id`} component={Beep} />
-        <Route exact path={`${match.path}/users/:id/edit`} component={EditUserPage} />
-        <Route exact path={`${match.path}/users/:id/:tab`} component={User} />
-        <Route exact path={`${match.path}/users/:id`} component={User} />
-        <Route exact path={`${match.path}/reports`} component={Reports} />
-        <Route exact path={`${match.path}/reports/:id`} component={Report} />
-        <Route exact path={`${match.path}/ratings`} component={Ratings} />
-        <Route exact path={`${match.path}/ratings/:id`} component={Rating} />
-      </Switch>
+      <Routes>
+        <Route path={`users`} element={<Users />} />
+        <Route path={`beepers`} element={<Beepers />} />
+        <Route path={`beeps`} element={<Beeps />} />
+        <Route path={`beeps/active`} element={<ActiveBeeps />} />
+        <Route path={`beeps/:id`} element={<Beep />} />
+        <Route path={`users/:id/edit`} element={<EditUserPage />} />
+        <Route path={`users/:id/:tab`} element={<User />} />
+        <Route path={`users/:id`} element={<User />} />
+        <Route path={`reports`} element={<Reports />} />
+        <Route path={`reports/:id`} element={<Report />} />
+        <Route path={`ratings`} element={<Ratings />} />
+        <Route path={`ratings/:id`} element={<Rating />} />
+      </Routes>
     </Container>
   );
 }

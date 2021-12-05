@@ -1,6 +1,6 @@
 import React, { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
-import { Link as RouterLink, Redirect, useHistory } from "react-router-dom";
+import { Link as RouterLink, Navigate, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
@@ -53,7 +53,7 @@ const SignUpGraphQL = gql`
 `;
 
 function SignUp() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const user = useContext(UserContext);
   const [first, setFirst] = useState<string>('');
   const [last, setLast] = useState<string>('');
@@ -98,7 +98,8 @@ function SignUp() {
           query: GetUserData,
           data: { getUser: { ...result.data?.signup.user } }
         });
-        history.push('/')
+
+        navigate('/');
       }
     }
     catch (error) {
@@ -107,7 +108,7 @@ function SignUp() {
   }
 
   if (user) {
-    return <Redirect to={{ pathname: "/" }} />;
+    return <Navigate to={{ pathname: "/" }} />;
   }
 
   return (

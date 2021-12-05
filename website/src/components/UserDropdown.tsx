@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useContext } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GetUserData } from "../App";
 import { LogoutMutation } from "../generated/graphql";
 import { UserContext } from "../UserContext";
@@ -25,7 +25,7 @@ const Logout = gql`
 export function UserDropdown() {
   const user = useContext(UserContext);
   const [logout] = useMutation<LogoutMutation>(Logout);
-  const history = useHistory();
+  const history = useNavigate();
 
   async function handleLogout() {
     try {

@@ -15,7 +15,7 @@ const VerifyAccountGraphQL = gql`
 `;
 
 function VerifyAccount() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const [verify, { data, loading, error }] = useMutation<VerifyAccountMutation>(VerifyAccountGraphQL);
 
   async function handleVerify(): Promise<void> {

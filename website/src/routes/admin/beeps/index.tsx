@@ -91,7 +91,7 @@ function Beeps() {
               <Td>{dayjs().to(entry.end)}</Td>
               <Td>{dayjs.duration(new Date(entry.end).getTime() - new Date(entry.start).getTime()).humanize()}</Td>
               <Td>
-                <Link to={`beeps/${entry.id}`}>
+                <Link to={entry.id}>
                   <ExternalLinkIcon />
                 </Link>
               </Td>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Routes } from "react-router-dom";
 import { UserContext } from './UserContext';
 import { ThemeContext } from './ThemeContext';
 import { GetUserDataQuery, User } from './generated/graphql';
@@ -132,23 +132,23 @@ function Beep() {
           <NavBar />
           <Container maxW="container.xl">
             <Banners />
-            <Switch>
-              <Route path="/password/forgot" component={ForgotPassword} />
-              <Route path="/password/reset/:id" component={ResetPassword} />
-              <Route path="/login" component={Login} />
-              <Route path="/signup" component={SignUp} />
-              <Route exact path="/profile" component={Profile} />
-              <Route path="/profile/edit" component={EditProfile} />
-              <Route path="/password/change" component={ChangePassword} />
-              <Route path="/account/verify/:id" component={VerifyAccount} />
-              <Route path="/privacy" component={Privacy} />
-              <Route path="/terms" component={Terms} />
-              <Route path="/admin" component={Admin} />
-              <Route path="/faq" component={Faq} />
-              <Route path="/about" component={About} />
-              <Route path='/download' component={Download} />
-              <Route path="/" component={Home} />
-            </Switch>
+            <Routes>
+              <Route path="/password/forgot" element={<ForgotPassword />} />
+              <Route path="/password/reset/:id" element={<ResetPassword />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/edit" element={<EditProfile />} />
+              <Route path="/password/change" element={<ChangePassword />} />
+              <Route path="/account/verify/:id" element={<VerifyAccount />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/admin/*" element={<Admin />} />
+              <Route path="/faq" element={<Faq />} />
+              <Route path="/about" element={<About />} />
+              <Route path='/download' element={<Download />} />
+              <Route path="/" element={<Home />} />
+            </Routes>
           </Container>
         </Router>
       </UserContext.Provider>

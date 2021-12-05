@@ -1,6 +1,6 @@
 import React, { FormEvent, useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { ForgotPasswordMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
@@ -33,7 +33,7 @@ function ForgotPassword() {
   }
 
   if (user) {
-    return <Redirect to={{ pathname: "/" }} />;
+    return <Navigate to={{ pathname: "/" }} />;
   }
 
   return (

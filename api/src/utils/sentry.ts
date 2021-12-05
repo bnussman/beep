@@ -10,7 +10,7 @@ export function init(app: Router): void {
     dsn: process.env.SENTRY_URL,
     environment: process.env.GITLAB_ENVIRONMENT_NAME || "development",
     tracesSampleRate: 1.0,
-    debug: true,
+    debug: false,
     autoSessionTracking: true, 
     integrations: [
       new Sentry.Integrations.Http({ tracing: true }),
