@@ -1,14 +1,14 @@
 import React, { useContext } from 'react'
 import { UserContext } from '../UserContext';
 import UserProfile from '../components/UserProfile';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Box, Heading } from '@chakra-ui/react';
 
 function Profile() {
   const user = useContext(UserContext);
 
   if (!user) {
-    return <Redirect to={{ pathname: "/login" }} />;
+    return <Navigate to={{ pathname: "/login" }} />;
   }
 
   return (

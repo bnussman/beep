@@ -11,7 +11,7 @@ import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../../generated/graphql';
 import { isMobile } from '../../utils/config';
 import { generateRNFile } from '../settings/EditProfile';
-import { changeSubscriptionToken, client } from '../../utils/Apollo';
+import { client } from '../../utils/Apollo';
 import { GetUserData } from '../../utils/UserQueries';
 import { Navigation } from '../../utils/Navigation';
 import ProfilePicture from '../../components/ProfilePicture';
@@ -114,8 +114,6 @@ function RegisterScreen(props: Props) {
         query: GetUserData,
         data: { getUser: data.data?.signup.user }
       });
-
-      changeSubscriptionToken(data.data?.signup.tokens.id);
 
       props.navigation.reset({
         index: 0,

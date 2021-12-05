@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../UserContext';
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { AddProfilePictureMutation, EditAccountMutation } from '../generated/graphql';
 import { Success } from '../components/Success';
@@ -82,7 +82,7 @@ function EditProfile() {
   }
 
   if (!user) {
-    return <Redirect to={{ pathname: "/login" }} />;
+    return <Navigate to={{ pathname: "/login" }} />;
   }
 
   return (

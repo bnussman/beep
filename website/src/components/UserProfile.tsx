@@ -1,4 +1,4 @@
-import { NavLink, useParams, useHistory } from 'react-router-dom';
+import { NavLink, useParams, useNavigate } from 'react-router-dom';
 import BeepsTable from './BeepsTable';
 import QueueTable from './QueueTable';
 import { UserRole } from '../types/User';
@@ -70,8 +70,8 @@ function UserProfile(props: Props) {
   const { user, admin, refetch } = props;
 
   const toast = useToast();
-  const history = useHistory();
-  const params = useParams<{ tab: string }>();
+  const navigate = useNavigate();
+  const { tab } = useParams();
 
   const [remove, { loading: isDeleteLoading, error: deleteError }] = useMutation<RemoveUserMutation>(RemoveUser);
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
@@ -99,7 +99,7 @@ function UserProfile(props: Props) {
       refetchQueries: () => ["getUsers"],
       awaitRefetchQueries: true
     });
-    history.goBack();
+    navigate(-1);
   }
 
   async function doClear() {
@@ -178,8 +178,8 @@ function UserProfile(props: Props) {
           colorScheme="brand"
           mt="4"
           lazyBehavior='keepMounted'
-          defaultIndex={params.tab && tabs.indexOf(params.tab) !== -1 ? tabs.indexOf(params.tab) : 0}
-          onChange={(index: number) => history.replace(`/admin/users/${user.id}/${tabs[index].toLocaleLowerCase()}`)}
+          defaultIndex={tab && tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0}
+          onChange={(index: number) => navigate(`/admin/users/${user.id}/${tabs[index].toLocaleLowerCase()}`)}
         >
           <TabList>
             {tabs.map((tab: string, idx) => <Tab key={idx} style={{ textTransform: 'capitalize' }}>{tab}</Tab>)}

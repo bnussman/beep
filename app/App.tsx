@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AppState, AppStateStatus, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import RegisterScreen from './routes/auth/Register';
 import LoginScreen from './routes/auth/Login';
 import { ForgotPasswordScreen } from './routes/auth/ForgotPassword';
@@ -23,7 +23,7 @@ import init from "./utils/Init";
 import ThemedStatusBar from './utils/StatusBar';
 import { client } from './utils/Apollo';
 import { ApolloProvider, useQuery } from '@apollo/client';
-import { User } from './generated/graphql';
+import { GetUserProfileQuery, User } from './generated/graphql';
 import Sentry from './utils/Sentry';
 import { GetUserData, UserUpdates } from './utils/UserQueries';
 
@@ -32,47 +32,8 @@ init();
 Sentry.init();
 
 function Beep() {
-  const { data, loading, subscribeToMore } = useQuery(GetUserData, { errorPolicy: 'none' });
+  const { data, loading, subscribeToMore } = useQuery<GetUserProfileQuery>(GetUserData, { errorPolicy: 'none' });
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
-
-  useEffect(() => {
-    AppState.addEventListener('change', _handleAppStateChange);
-
-    return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
-    };
-  }, []);
-
-  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.current.match(/inactive|background/) &&
-      nextAppState === 'active'
-    ) {
-      if (data?.getUser?.id) {
-        subscribeToMore({
-          document: UserUpdates,
-          variables: {
-            id: data?.getUser.id
-          },
-          updateQuery: (prev, { subscriptionData }) => {
-            const newFeedItem = subscriptionData.data.getUserUpdates;
-            if (newFeedItem) {
-              Sentry.setUserContext(newFeedItem);
-              return Object.assign({}, prev, {
-                getUser: newFeedItem
-              });
-            }
-          }
-        });
-      }
-    }
-
-    appState.current = nextAppState;
-    setAppStateVisible(appState.current);
-  };
-
 
   function toggleTheme() {
     const next = theme === 'light' ? 'dark' : 'light';
@@ -84,7 +45,9 @@ function Beep() {
     const init = async () => {
       const storedTheme = await AsyncStorage.getItem('theme') as unknown as "light" | "dark" | undefined;
 
-      if (storedTheme && (theme !== storedTheme)) setTheme(storedTheme);
+      if (storedTheme && (theme !== storedTheme)) {
+        setTheme(storedTheme);
+      }
     }
 
     init();
@@ -101,13 +64,15 @@ function Beep() {
         variables: {
           id: data?.getUser.id
         },
+        // @ts-expect-error Apollo is trash
         updateQuery: (prev, { subscriptionData }) => {
+          // @ts-expect-error Apollo is trash
           const newFeedItem = subscriptionData.data.getUserUpdates;
           if (newFeedItem) {
             Sentry.setUserContext(newFeedItem);
-            return Object.assign({}, prev, {
+            return {
               getUser: newFeedItem
-            });
+            };
           }
         }
       });

@@ -1,5 +1,5 @@
 import { NavLink, useParams } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Indicator } from '../../../components/Indicator';
@@ -67,11 +67,11 @@ export const GetReport = gql`
 `;
 
 function ReportPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
   const [deleteReport, { loading: deleteLoading }] = useMutation<DeleteReportMutation>(DeleteReport);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [notes, setNotes] = useState<string>();
   const [isHandled, setIsHandled] = useState<boolean>();
@@ -107,7 +107,8 @@ function ReportPage() {
       variables: { id },
       refetchQueries: () => ['getReports']
     });
-    history.goBack();
+
+    navigate(-1);
   }
 
   return (

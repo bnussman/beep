@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ResendButton from '../../components/ResendVarificationEmailButton';
 import { gql, useMutation } from '@apollo/client';
 import { LogoutMutation } from '../../generated/graphql';
-import { client, closeSubscriptions } from '../../utils/Apollo';
+import { client } from '../../utils/Apollo';
 import { GetUserData } from '../../utils/UserQueries';
 import { LOCATION_TRACKING } from '../beep/StartBeeping';
 import { UserHeader } from '../../components/UserHeader';
@@ -51,7 +51,6 @@ export function MainSettingsScreen(props: Props): JSX.Element {
       ],
       key: null
     }, () => {
-      closeSubscriptions();
       client.writeQuery({
         query: GetUserData,
         data: {

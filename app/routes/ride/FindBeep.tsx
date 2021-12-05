@@ -115,7 +115,7 @@ let riderStatusSub: any;
 export function MainFindBeepScreen(props: Props): JSX.Element {
   const user = useContext(UserContext);
 
-  const { subscribeToMore, loading, data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, { notifyOnNetworkStatusChange: true });
+  const { loading, data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, { notifyOnNetworkStatusChange: true });
   const [getETA, { data: eta, loading: etaLoading, error: etaError }] = useLazyQuery<GetEtaQuery>(GetETA);
 
   const [groupSize, setGroupSize] = useState<string>("");
@@ -129,7 +129,6 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   const beep = data?.getRiderStatus;
 
   const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
     AppState.addEventListener('change', _handleAppStateChange);
@@ -148,7 +147,6 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     }
 
     appState.current = nextAppState;
-    setAppStateVisible(appState.current);
   };
 
   async function updateETA(lat: number, long: number): Promise<void> {
@@ -175,8 +173,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (user?.id && beep && !previousData) {
-      console.log("Calling sub to more");
+    if (user?.id && beep) {
       subscribeToRiderStatus();
     }
   }, [user, beep]);
@@ -185,7 +182,6 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     const a = client.subscribe({ query: RiderStatus, variables: { id: user.id } });
 
     riderStatusSub = a.subscribe(({ data }) => {
-      console.log(data);
       client.writeQuery({
         query: InitialRiderStatus,
         data: { getRiderStatus: data.getRiderUpdates }

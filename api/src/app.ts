@@ -1,3 +1,9 @@
+import Redis from 'ioredis';
+import express from "express";
+import config from './mikro-orm.config';
+import * as Sentry from "./utils/sentry";
+import * as RealSentry from "@sentry/node";
+import * as unleash from 'unleash-client';
 import { MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
 import { GraphQLSchema } from "graphql";
@@ -5,19 +11,14 @@ import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { ORM } from "./utils/ORM";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import Redis from 'ioredis';
-import config from './mikro-orm.config';
 import { ValidationError } from 'class-validator';
-import * as Sentry from "./utils/sentry";
-import * as RealSentry from "@sentry/node";
 import { createServer } from 'http';
-import { execute, subscribe } from 'graphql';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
-import express from "express";
 import { graphqlUploadExpress } from "graphql-upload";
 import { ApolloServer, ExpressContext } from "apollo-server-express";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
-import * as unleash from 'unleash-client';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import ws from 'ws';
+const WebSocketServer = ws.Server;
 
 export const BeepORM = {} as ORM;
 
@@ -65,26 +66,6 @@ export default class BeepAPIServer {
 
     app.use(graphqlUploadExpress({ maxFiles: 1 }));
 
-    const subscriptionServer = SubscriptionServer.create({
-      schema,
-      execute,
-      subscribe,
-      onConnect: async (params: { token: string }) => {
-        if (!params || !params.token) throw new Error("No auth token");
-
-        const em = BeepORM.em.fork();
-
-        const tokenEntryResult = await em.findOne(TokenEntry, params.token, { populate: ['user'] });
-
-        if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
-      }
-    },
-      {
-        server: httpServer,
-        path: '/subscriptions',
-      });
-
-
     const server = new ApolloServer({
       schema,
       context: async (data: ExpressContext) => {
@@ -129,7 +110,7 @@ export default class BeepAPIServer {
         async serverWillStart() {
           return {
             async drainServer() {
-              subscriptionServer.close();
+              // subscriptionServer.close();
             }
           };
         }
@@ -142,8 +123,36 @@ export default class BeepAPIServer {
 
     app.use(RealSentry.Handlers.errorHandler());
 
-    httpServer.listen(3001, () => {
+    const s = httpServer.listen(3001, () => {
       console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
+
+      const wsServer = new WebSocketServer({
+        server: s,
+        path: '/subscriptions',
+      });
+
+      useServer({
+        schema,
+        onConnect: (ctx) => {
+          console.log("Client Connected");
+        },
+        onDisconnect: (ctx) => {
+          console.log("Client Disconnected");
+        },
+        context: async (ctx) => {
+          const { connectionParams } = ctx;
+
+          if (!connectionParams || !connectionParams.token) throw new Error("No auth token");
+
+          const em = BeepORM.em.fork();
+
+          const tokenEntryResult = await em.findOne(TokenEntry, connectionParams.token as string, { populate: ['user'] });
+
+          if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
+
+
+        }
+      }, wsServer);
     });
   }
 }

@@ -42,7 +42,7 @@ const EditUser = gql`
 `;
 
 function EditUserPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { data: user, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, { variables: { id } });
   const [edit, { data, error: editError }] = useMutation<EditUserMutation>(EditUser);
 

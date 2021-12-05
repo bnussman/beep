@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { UserContext } from '../UserContext';
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Error } from '../components/Error';
 import { gql, useMutation } from '@apollo/client';
 import { ChangePasswordMutation } from '../generated/graphql';
@@ -21,7 +21,7 @@ function ChangePassword() {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     if (!user) {
-        return <Redirect to={{ pathname: "/login" }} />;
+        return <Navigate to={{ pathname: "/login" }} />;
     }
 
     async function handleEdit(e: any): Promise<void> {

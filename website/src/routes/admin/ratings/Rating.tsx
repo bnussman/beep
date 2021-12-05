@@ -1,5 +1,5 @@
 import { NavLink, useParams } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { gql, useMutation, useQuery } from '@apollo/client';
@@ -48,10 +48,10 @@ const GetRating = gql`
 `;
 
 function RatingPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { data, loading, error } = useQuery<GetRatingQuery>(GetRating, { variables: { id: id } });
   const [deleteRating, { loading: deleteLoading }] = useMutation<DeleteRatingMutation>(DeleteRating);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
@@ -59,7 +59,7 @@ function RatingPage() {
 
   async function doDelete() {
     await deleteRating({ variables: { id: id } });
-    history.goBack();
+    navigate(-1);
   }
 
   return (

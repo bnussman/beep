@@ -143,7 +143,6 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       nextAppState === 'active'
     ) {
       refetch();
-      sub();
     }
 
     appState.current = nextAppState;

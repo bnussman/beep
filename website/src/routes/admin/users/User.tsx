@@ -54,7 +54,7 @@ export const GetUser = gql`
 `;
 
 function UserPage() {
-    const { id } = useParams<{ id: string }>();
+    const { id } = useParams();
     const { data, loading, error, refetch } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
 
     if (error) return <Error error={error} />;

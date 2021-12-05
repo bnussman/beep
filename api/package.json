@@ -40,15 +40,16 @@
         "graphql-redis-subscriptions": "^2.4.2",
         "graphql-subscriptions": "^2.0.0",
         "graphql-upload": "^12.0.0",
+        "graphql-ws": "^5.5.5",
         "ioredis": "^4.28.1",
         "js-sha256": "^0.9.0",
         "nodemailer": "^6.7.2",
         "reflect-metadata": "^0.1.13",
-        "subscriptions-transport-ws": "^0.11.0",
         "type-graphql": "^1.1.1",
         "unleash-client": "^3.10.1",
         "uuid": "^8.3.2",
-        "wkx": "^0.5.0"
+        "wkx": "^0.5.0",
+        "ws": "^8.3.0"
     },
     "devDependencies": {
         "@mikro-orm/cli": "^4.5.6",
@@ -59,6 +60,7 @@
         "@types/node": "^16.11.10",
         "@types/nodemailer": "^6.4.2",
         "@types/uuid": "^8.3.3",
+        "@types/ws": "^8.2.1",
         "@typescript-eslint/eslint-plugin": "^5.4.0",
         "@typescript-eslint/parser": "^5.4.0",
         "concurrently": "^6.4.0",

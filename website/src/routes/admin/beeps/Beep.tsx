@@ -4,7 +4,7 @@ import duration from 'dayjs/plugin/duration';
 import BasicUser from "../../../components/BasicUser";
 import DeleteDialog from "../../../components/DeleteDialog";
 import Loading from "../../../components/Loading";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteBeepMutation, GetBeepQuery } from '../../../generated/graphql';
 import { Heading, Text, Box, Button, Flex, Spacer, Stack } from "@chakra-ui/react";
@@ -46,10 +46,10 @@ const GetBeep = gql`
 `;
 
 function BeepPage(): JSX.Element {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { data, loading } = useQuery<GetBeepQuery>(GetBeep, { variables: { id } });
   const [deleteBeep, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteBeepMutation>(DeleteBeep, { refetchQueries: () => ["getUsers"], awaitRefetchQueries: true });
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
@@ -59,7 +59,7 @@ function BeepPage(): JSX.Element {
     try {
       await deleteBeep({ variables: { id }, refetchQueries: [{ query: BeepsGraphQL }], awaitRefetchQueries: true });
       setIsOpen(false);
-      history.goBack();
+      navigate(-1);
     }
     catch (error) {
       setIsOpen(false);
