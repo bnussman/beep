@@ -7,7 +7,6 @@ import { Client, ClientOptions, createClient } from 'graphql-ws';
 import { print } from 'graphql';
 
 const ip = '192.168.1.18';
-// const ip = '172.30.1.87';
 
 const wsUrl = __DEV__ ? `ws://${ip}:3001/subscriptions` : "wss://ridebeep.app/subscriptions";
 const url = __DEV__ ? `http://${ip}:3001/graphql` : "https://ridebeep.app/graphql";
@@ -20,7 +19,7 @@ const url = __DEV__ ? `http://${ip}:3001/graphql` : "https://ridebeep.app/graphq
 // const url =  "https://ridebeep.app/graphql";
 
 class WebSocketLink extends ApolloLink {
-  private client: Client;
+  public client: Client;
 
   constructor(options: ClientOptions) {
     super();
@@ -63,15 +62,17 @@ const authLink = setContext(async (_, { headers }) => {
     return {
       headers: {
         ...headers,
-        Authorization: auth?.tokens?.id ? `Bearer ${auth?.tokens?.id}` : "",
+        Authorization: auth?.tokens?.id ? `Bearer ${auth?.tokens?.id}` : undefined,
       }
     }
   }
 });
 
-const wsLink = new WebSocketLink({
+export const wsLink = new WebSocketLink({
   url: wsUrl,
+  lazy: false,
   retryAttempts: Infinity,
+  isFatalConnectionProblem: () => false,
   connectionParams: async () => {
     const tokens = await AsyncStorage.getItem('auth');
     if (tokens) {
@@ -101,17 +102,13 @@ const splitLink = split(
 );
 
 const uploadLink = createUploadLink({
-  uri: url,
-  headers: {
-    "keep-alive": "true"
-  }
+  uri: url
 });
 
 export const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     splitLink,
-    // @ts-expect-error stop :(
     uploadLink
   ]),
   cache: new InMemoryCache(),

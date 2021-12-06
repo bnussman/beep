@@ -52,9 +52,6 @@ class WebSocketLink extends ApolloLink {
 
 const uploadLink = createUploadLink({
   uri: url,
-  headers: {
-    "keep-alive": "true"
-  }
 });
 
 const authLink = setContext(async (_, { headers }) => {
@@ -98,10 +95,7 @@ export const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     splitLink,
-    //@ts-ignore
     uploadLink
   ]),
-  cache: new InMemoryCache({
-    addTypename: false
-  }),
+  cache: new InMemoryCache()
 });

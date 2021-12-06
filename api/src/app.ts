@@ -55,13 +55,15 @@ export default class BeepAPIServer {
       port: 6379,
     };
 
+    const pubSub = new RedisPubSub({
+      publisher: new Redis(options),
+      subscriber: new Redis(options)
+    });
+
     const schema: GraphQLSchema = await buildSchema({
       resolvers: [__dirname + '/**/resolver.{ts,js}'],
       authChecker: authChecker,
-      pubSub: new RedisPubSub({
-        publisher: new Redis(options),
-        subscriber: new Redis(options)
-      })
+      pubSub
     });
 
     app.use(graphqlUploadExpress({ maxFiles: 1 }));
@@ -139,6 +141,9 @@ export default class BeepAPIServer {
         onDisconnect: (ctx) => {
           console.log("Client Disconnected");
         },
+        onSubscribe: async (ctx, msg) => {
+          console.log("Client subscribed for", msg.payload.operationName);
+        },
         context: async (ctx) => {
           const { connectionParams } = ctx;
 
@@ -148,9 +153,9 @@ export default class BeepAPIServer {
 
           const tokenEntryResult = await em.findOne(TokenEntry, connectionParams.token as string, { populate: ['user'] });
 
+          setTimeout(() => pubSub.publish(`User${tokenEntryResult?.user.id}`, tokenEntryResult?.user), 1000);
+
           if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
-
-
         }
       }, wsServer);
     });
