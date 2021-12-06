@@ -62,7 +62,7 @@ function Beep() {
       subscribeToMore({
         document: UserUpdates,
         variables: {
-          id: data?.getUser.id
+          id: data.getUser.id
         },
         // @ts-expect-error Apollo is trash
         updateQuery: (prev, { subscriptionData }) => {

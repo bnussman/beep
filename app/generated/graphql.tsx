@@ -575,18 +575,6 @@ export type VerifyEmail = {
   user: User;
 };
 
-export type GetUserDataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetUserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined } };
-
-export type UserUpdatesSubscriptionVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined } };
-
 export type UpdateBeeperQueueMutationVariables = Exact<{
   queueId: Scalars['String'];
   riderId: Scalars['String'];
@@ -804,102 +792,6 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
 
-export const GetUserDataDocument = gql`
-    query GetUserData {
-  getUser {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photoUrl
-    capacity
-    masksRequired
-    cashapp
-  }
-}
-    `;
-
-/**
- * __useGetUserDataQuery__
- *
- * To run a query within a React component, call `useGetUserDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserDataQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetUserDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
-      }
-export function useGetUserDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserDataQuery, GetUserDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<GetUserDataQuery, GetUserDataQueryVariables>(GetUserDataDocument, options);
-        }
-export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
-export type GetUserDataLazyQueryHookResult = ReturnType<typeof useGetUserDataLazyQuery>;
-export type GetUserDataQueryResult = ApolloReactCommon.QueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
-export const UserUpdatesDocument = gql`
-    subscription UserUpdates($id: String!) {
-  getUserUpdates(id: $id) {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photoUrl
-    capacity
-    masksRequired
-    cashapp
-  }
-}
-    `;
-
-/**
- * __useUserUpdatesSubscription__
- *
- * To run a query within a React component, call `useUserUpdatesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserUpdatesSubscription({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useUserUpdatesSubscription(baseOptions: ApolloReactHooks.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
-      }
-export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
-export type UserUpdatesSubscriptionResult = ApolloReactCommon.SubscriptionResult<UserUpdatesSubscription>;
 export const UpdateBeeperQueueDocument = gql`
     mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
   setBeeperQueue(input: {queueId: $queueId, riderId: $riderId, value: $value})

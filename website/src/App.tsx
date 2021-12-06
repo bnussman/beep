@@ -106,13 +106,13 @@ function Beep() {
           id: data?.getUser.id
         },
         updateQuery: (prev, { subscriptionData }) => {
-          toast({
-            title: "Profile Updated",
-            description: "Your account has been updated",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          })
+          // toast({
+          //   title: "Profile Updated",
+          //   description: "Your account has been updated",
+          //   status: "success",
+          //   duration: 5000,
+          //   isClosable: true,
+          // })
           //@ts-ignore
           const newFeedItem = subscriptionData.data.getUserUpdates;
           return Object.assign({}, prev, {

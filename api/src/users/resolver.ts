@@ -9,7 +9,6 @@ import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Paginated } from '../utils/paginated';
 import { search } from './helpers';
-import { lights } from '../utils/lights';
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
@@ -73,8 +72,8 @@ export class UserResolver {
   @Subscription(() => User, {
     topics: ({ args }) => "User" + args.id,
   })
-  @Authorized('self')
-  public getUserUpdates(@Arg("id") id: string, @Root() user: User): User {
+  @Authorized('No Verification Self')
+  public getUserUpdates(@Arg('id') id: string, @Root() user: User): User {
     return user;
   }
 }

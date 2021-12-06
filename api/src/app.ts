@@ -6,7 +6,7 @@ import * as RealSentry from "@sentry/node";
 import * as unleash from 'unleash-client';
 import { MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
-import { GraphQLSchema } from "graphql";
+import { GraphQLSchema, parse } from "graphql";
 import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { ORM } from "./utils/ORM";
@@ -142,10 +142,9 @@ export default class BeepAPIServer {
           console.log("Client Disconnected");
         },
         onSubscribe: async (ctx, msg) => {
-          console.log("Client subscribed for", msg.payload.operationName);
-        },
-        context: async (ctx) => {
           const { connectionParams } = ctx;
+          
+          console.log("Client subscribed for", msg.payload.operationName, connectionParams);
 
           if (!connectionParams || !connectionParams.token) throw new Error("No auth token");
 
@@ -153,10 +152,19 @@ export default class BeepAPIServer {
 
           const tokenEntryResult = await em.findOne(TokenEntry, connectionParams.token as string, { populate: ['user'] });
 
-          setTimeout(() => pubSub.publish(`User${tokenEntryResult?.user.id}`, tokenEntryResult?.user), 1000);
+          if (msg.payload.operationName === "UserUpdates") {
+            setTimeout(() => pubSub.publish(`User${tokenEntryResult?.user.id}`, tokenEntryResult?.user), 10);
+          }
 
-          if (tokenEntryResult) return { user: tokenEntryResult.user, token: tokenEntryResult };
-        }
+          if (tokenEntryResult) {
+            return {
+              contextValue: { user: tokenEntryResult.user, token: tokenEntryResult },
+              schema,
+              document: parse(msg.payload.query),
+              variableValues: msg.payload.variables
+            }
+          }
+        },
       }, wsServer);
     });
   }
