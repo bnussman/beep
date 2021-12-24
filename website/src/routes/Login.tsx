@@ -105,7 +105,7 @@ function Login() {
         </Box>
       </form>
       <Box mt={8}>
-        <Button as={Link} to="password/forgot" variant="link">
+        <Button as={Link} to="/password/forgot" variant="link">
           Forgot Password
           </Button>
       </Box>
