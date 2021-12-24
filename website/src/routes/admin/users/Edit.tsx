@@ -1,12 +1,12 @@
+import React from "react";
+import { Loading } from "../../../components/Loading";
+import { Box, Button, Checkbox, FormControl, FormLabel, Heading, Input } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { Formik, Form, Field } from 'formik';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graphql';
 import { Error } from '../../../components/Error';
 import { Success } from '../../../components/Success';
-import React from "react";
-import { Box, Button, Checkbox, FormControl, FormLabel, Heading, Input } from "@chakra-ui/react";
-import Loading from "../../../components/Loading";
 
 const GetEditableUser = gql`
   query GetEditableUser($id: String!) {
@@ -43,8 +43,10 @@ const EditUser = gql`
 
 function EditUserPage() {
   const { id } = useParams();
-  const { data: user, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, { variables: { id } });
-  const [edit, { data, error: editError }] = useMutation<EditUserMutation>(EditUser);
+  const { data, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, { variables: { id } });
+  const [edit, { data: mutateData, error: editError }] = useMutation<EditUserMutation>(EditUser);
+  
+  const user = { ...data?.getUser, __typename: undefined };
 
   async function updateUser(values: any) {
     await edit({
@@ -59,14 +61,14 @@ function EditUserPage() {
     <Box>
       <Heading>Edit User</Heading>
 
-      {data && <Success message="Successfully Edited User" />}
+      {mutateData && <Success message="Successfully Edited User" />}
       {error && <Error error={error} />}
       {editError && <Error error={editError} />}
       {loading && <Loading />}
 
-      {user?.getUser && !loading &&
+      {user && !loading &&
         <Formik
-          initialValues={user?.getUser}
+          initialValues={user}
           onSubmit={async (values, { setSubmitting }) => {
             await updateUser(values);
             setSubmitting(false);
@@ -74,9 +76,9 @@ function EditUserPage() {
         >
           {({ isSubmitting }) => (
             <Form>
-              {Object.keys(user?.getUser).map((key) => {
+              {Object.keys(user).filter((key) => key !== '__typename').map((key) => {
                 // @ts-expect-error i dont know what to do here, this component needs to be cleaned up
-                const type = typeof user.getUser[key];
+                const type = typeof user[key];
                 return (
                   <Field name={key}>
                     {({ field, form }: { field: any, form: any }) => (
