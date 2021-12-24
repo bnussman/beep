@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Indicator } from '../../../components/Indicator';
-import Pagination from '../../../components/Pagination';
-import { gql, useQuery } from '@apollo/client';
-import { GetReportsQuery } from '../../../generated/graphql';
-import { Box, Button, Heading, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import TdUser from '../../../components/TdUser';
 import ReportDrawer from './Drawer';
 import Loading from '../../../components/Loading';
+import Pagination from '../../../components/Pagination';
+import { Indicator } from '../../../components/Indicator';
+import { gql, useQuery } from '@apollo/client';
+import { GetReportsQuery } from '../../../generated/graphql';
 import { Error } from '../../../components/Error';
+import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 
 dayjs.extend(relativeTime);
 
@@ -50,6 +50,8 @@ function Reports() {
     }
   });
 
+  const reports = data?.getReports.items;
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [id, setId] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -83,26 +85,27 @@ function Reports() {
         <Thead>
           <Tr>
             <Th>Reporter</Th>
-            <Th>Reported User</Th>
+            <Th>Reported</Th>
             <Th>Reason</Th>
             <Th>Date</Th>
-            <Th>Done</Th>
-            <Th></Th>
+            <Th>Handled</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {data?.getReports && (data.getReports.items).map(report => (
-            <Tr key={report.id} onClick={() => openReport(report.id)}>
+          {reports?.map(report => (
+            <Tr
+              key={report.id}
+              onClick={() => openReport(report.id)}
+              _hover={{
+                cursor: 'pointer',
+                bg: 'gray.50'
+              }}
+            >
               <TdUser user={report.reporter} />
               <TdUser user={report.reported} />
               <Td>{report.reason}</Td>
               <Td>{dayjs().to(report.timestamp)}</Td>
               <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
-              <Td>
-                <Button colorScheme="brand" onClick={() => openReport(report.id)}>
-                  Open
-                </Button>
-              </Td>
             </Tr>
           ))}
         </Tbody>
