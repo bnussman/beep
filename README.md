@@ -128,8 +128,8 @@ Why is Redis used?
 What is in this repo?
 > A React Native (with Expo) iOS and Android app, a React website, and a GraphQL API
 
-What operating systems are supported?
-> This application has been developed on MacOS and Debian based systems. The API runs in Alpine containers. Your mileage on other operating systms may very. 
+Why is the README.md so cringe?
+> Had to make it this format for a class
 
 ## ⚠️ Troubleshooting
 
