@@ -269,6 +269,7 @@ export type MutationSetBeeperStatusArgs = {
 
 
 export type MutationSetLocationArgs = {
+  id?: InputMaybe<Scalars['String']>;
   location: LocationInput;
 };
 

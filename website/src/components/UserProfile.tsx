@@ -175,9 +175,9 @@ function UserProfile(props: Props) {
 
         <Tabs
           isLazy
-          colorScheme="brand"
           mt="4"
-          lazyBehavior='keepMounted'
+          colorScheme="brand"
+          lazyBehavior="keepMounted"
           defaultIndex={tab && tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0}
           onChange={(index: number) => navigate(`/admin/users/${user.id}/${tabs[index].toLocaleLowerCase()}`)}
         >

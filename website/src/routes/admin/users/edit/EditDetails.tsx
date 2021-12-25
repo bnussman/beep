@@ -1,12 +1,12 @@
 import React from "react";
-import { Loading } from "../../../components/Loading";
+import { Loading } from "../../../../components/Loading";
 import { Box, Button, Checkbox, FormControl, FormLabel, Heading, Input } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { Formik, Form, Field } from 'formik';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { EditUserMutation, GetEditableUserQuery } from '../../../generated/graphql';
-import { Error } from '../../../components/Error';
-import { Success } from '../../../components/Success';
+import { EditUserMutation, GetEditableUserQuery } from '../../../../generated/graphql';
+import { Error } from '../../../../components/Error';
+import { Success } from '../../../../components/Success';
 
 const GetEditableUser = gql`
   query GetEditableUser($id: String!) {
@@ -41,7 +41,7 @@ const EditUser = gql`
   }
 `;
 
-function EditUserPage() {
+export function EditDetails() {
   const { id } = useParams();
   const { data, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, { variables: { id } });
   const [edit, { data: mutateData, error: editError }] = useMutation<EditUserMutation>(EditUser);
@@ -59,13 +59,10 @@ function EditUserPage() {
 
   return (
     <Box>
-      <Heading>Edit User</Heading>
-
       {mutateData && <Success message="Successfully Edited User" />}
       {error && <Error error={error} />}
       {editError && <Error error={editError} />}
       {loading && <Loading />}
-
       {user && !loading &&
         <Formik
           initialValues={user}
@@ -123,5 +120,3 @@ function EditUserPage() {
     </Box>
   );
 }
-
-export default EditUserPage;

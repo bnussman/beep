@@ -150,10 +150,19 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   };
 
   async function updateETA(lat: number, long: number): Promise<void> {
+    let lastKnowLocation = await Location.getLastKnownPositionAsync({
+      maxAge: 180000,
+      requiredAccuracy: 800
+    });
+
+    if (!lastKnowLocation) {
+      lastKnowLocation = await Location.getCurrentPositionAsync();
+    }
+
     getETA({
       variables: {
         start: `${lat},${long}`,
-        end: data?.getRiderStatus?.origin
+        end: `${lastKnowLocation.coords.latitude},${lastKnowLocation.coords.longitude}`
       }
     });
   }

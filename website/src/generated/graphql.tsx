@@ -268,6 +268,7 @@ export type MutationSetBeeperStatusArgs = {
 
 
 export type MutationSetLocationArgs = {
+  id?: InputMaybe<Scalars['String']>;
   location: LocationInput;
 };
 
@@ -808,6 +809,20 @@ export type GetReportsQueryVariables = Exact<{
 
 export type GetReportsQuery = { __typename?: 'Query', getReports: { __typename?: 'ReportsResponse', count: number, items: Array<{ __typename?: 'Report', id: string, timestamp: any, reason: string, notes?: string | null | undefined, handled: boolean, reporter: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, reported: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } }> } };
 
+export type BeepersLocationSubscriptionVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type BeepersLocationSubscription = { __typename?: 'Subscription', getLocationUpdates?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined };
+
+export type GetUserQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null | undefined, cashapp?: string | null | undefined, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: string | null | undefined, queueSize: number, phone: string, username: string, rating?: number | null | undefined, email: string, seen?: any | null | undefined, location?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
+
 export type GetEditableUserQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -823,19 +838,21 @@ export type EditUserMutationVariables = Exact<{
 
 export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', username: string } };
 
-export type BeepersLocationSubscriptionVariables = Exact<{
+export type UserLocationQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type BeepersLocationSubscription = { __typename?: 'Subscription', getLocationUpdates?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined };
+export type UserLocationQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, location?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined } };
 
-export type GetUserQueryVariables = Exact<{
+export type LocationUpdateMutationVariables = Exact<{
   id: Scalars['String'];
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null | undefined, cashapp?: string | null | undefined, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: string | null | undefined, queueSize: number, phone: string, username: string, rating?: number | null | undefined, email: string, seen?: any | null | undefined, location?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
+export type LocationUpdateMutation = { __typename?: 'Mutation', setLocation: boolean };
 
 export type GetUsersQueryVariables = Exact<{
   show?: InputMaybe<Scalars['Int']>;
@@ -2182,92 +2199,6 @@ export function useGetReportsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetReportsQueryHookResult = ReturnType<typeof useGetReportsQuery>;
 export type GetReportsLazyQueryHookResult = ReturnType<typeof useGetReportsLazyQuery>;
 export type GetReportsQueryResult = Apollo.QueryResult<GetReportsQuery, GetReportsQueryVariables>;
-export const GetEditableUserDocument = gql`
-    query GetEditableUser($id: String!) {
-  getUser(id: $id) {
-    first
-    last
-    isBeeping
-    isStudent
-    isEmailVerified
-    role
-    venmo
-    singlesRate
-    groupRate
-    capacity
-    masksRequired
-    photoUrl
-    queueSize
-    phone
-    username
-    email
-    cashapp
-    pushToken
-  }
-}
-    `;
-
-/**
- * __useGetEditableUserQuery__
- *
- * To run a query within a React component, call `useGetEditableUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEditableUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetEditableUserQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetEditableUserQuery(baseOptions: Apollo.QueryHookOptions<GetEditableUserQuery, GetEditableUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetEditableUserQuery, GetEditableUserQueryVariables>(GetEditableUserDocument, options);
-      }
-export function useGetEditableUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEditableUserQuery, GetEditableUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetEditableUserQuery, GetEditableUserQueryVariables>(GetEditableUserDocument, options);
-        }
-export type GetEditableUserQueryHookResult = ReturnType<typeof useGetEditableUserQuery>;
-export type GetEditableUserLazyQueryHookResult = ReturnType<typeof useGetEditableUserLazyQuery>;
-export type GetEditableUserQueryResult = Apollo.QueryResult<GetEditableUserQuery, GetEditableUserQueryVariables>;
-export const EditUserDocument = gql`
-    mutation EditUser($id: String!, $data: EditUserValidator!) {
-  editUser(id: $id, data: $data) {
-    username
-  }
-}
-    `;
-export type EditUserMutationFn = Apollo.MutationFunction<EditUserMutation, EditUserMutationVariables>;
-
-/**
- * __useEditUserMutation__
- *
- * To run a mutation, you first call `useEditUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editUserMutation, { data, loading, error }] = useEditUserMutation({
- *   variables: {
- *      id: // value for 'id'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useEditUserMutation(baseOptions?: Apollo.MutationHookOptions<EditUserMutation, EditUserMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EditUserMutation, EditUserMutationVariables>(EditUserDocument, options);
-      }
-export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
-export type EditUserMutationResult = Apollo.MutationResult<EditUserMutation>;
-export type EditUserMutationOptions = Apollo.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
 export const BeepersLocationDocument = gql`
     subscription BeepersLocation($id: String!) {
   getLocationUpdates(id: $id) {
@@ -2373,6 +2304,166 @@ export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const GetEditableUserDocument = gql`
+    query GetEditableUser($id: String!) {
+  getUser(id: $id) {
+    first
+    last
+    isBeeping
+    isStudent
+    isEmailVerified
+    role
+    venmo
+    singlesRate
+    groupRate
+    capacity
+    masksRequired
+    photoUrl
+    queueSize
+    phone
+    username
+    email
+    cashapp
+    pushToken
+  }
+}
+    `;
+
+/**
+ * __useGetEditableUserQuery__
+ *
+ * To run a query within a React component, call `useGetEditableUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEditableUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEditableUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetEditableUserQuery(baseOptions: Apollo.QueryHookOptions<GetEditableUserQuery, GetEditableUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEditableUserQuery, GetEditableUserQueryVariables>(GetEditableUserDocument, options);
+      }
+export function useGetEditableUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEditableUserQuery, GetEditableUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEditableUserQuery, GetEditableUserQueryVariables>(GetEditableUserDocument, options);
+        }
+export type GetEditableUserQueryHookResult = ReturnType<typeof useGetEditableUserQuery>;
+export type GetEditableUserLazyQueryHookResult = ReturnType<typeof useGetEditableUserLazyQuery>;
+export type GetEditableUserQueryResult = Apollo.QueryResult<GetEditableUserQuery, GetEditableUserQueryVariables>;
+export const EditUserDocument = gql`
+    mutation EditUser($id: String!, $data: EditUserValidator!) {
+  editUser(id: $id, data: $data) {
+    username
+  }
+}
+    `;
+export type EditUserMutationFn = Apollo.MutationFunction<EditUserMutation, EditUserMutationVariables>;
+
+/**
+ * __useEditUserMutation__
+ *
+ * To run a mutation, you first call `useEditUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editUserMutation, { data, loading, error }] = useEditUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useEditUserMutation(baseOptions?: Apollo.MutationHookOptions<EditUserMutation, EditUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditUserMutation, EditUserMutationVariables>(EditUserDocument, options);
+      }
+export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
+export type EditUserMutationResult = Apollo.MutationResult<EditUserMutation>;
+export type EditUserMutationOptions = Apollo.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
+export const UserLocationDocument = gql`
+    query UserLocation($id: String!) {
+  getUser(id: $id) {
+    id
+    name
+    photoUrl
+    location {
+      latitude
+      longitude
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserLocationQuery__
+ *
+ * To run a query within a React component, call `useUserLocationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserLocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserLocationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUserLocationQuery(baseOptions: Apollo.QueryHookOptions<UserLocationQuery, UserLocationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserLocationQuery, UserLocationQueryVariables>(UserLocationDocument, options);
+      }
+export function useUserLocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserLocationQuery, UserLocationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserLocationQuery, UserLocationQueryVariables>(UserLocationDocument, options);
+        }
+export type UserLocationQueryHookResult = ReturnType<typeof useUserLocationQuery>;
+export type UserLocationLazyQueryHookResult = ReturnType<typeof useUserLocationLazyQuery>;
+export type UserLocationQueryResult = Apollo.QueryResult<UserLocationQuery, UserLocationQueryVariables>;
+export const LocationUpdateDocument = gql`
+    mutation LocationUpdate($id: String!, $latitude: Float!, $longitude: Float!) {
+  setLocation(location: {latitude: $latitude, longitude: $longitude}, id: $id)
+}
+    `;
+export type LocationUpdateMutationFn = Apollo.MutationFunction<LocationUpdateMutation, LocationUpdateMutationVariables>;
+
+/**
+ * __useLocationUpdateMutation__
+ *
+ * To run a mutation, you first call `useLocationUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLocationUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [locationUpdateMutation, { data, loading, error }] = useLocationUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      latitude: // value for 'latitude'
+ *      longitude: // value for 'longitude'
+ *   },
+ * });
+ */
+export function useLocationUpdateMutation(baseOptions?: Apollo.MutationHookOptions<LocationUpdateMutation, LocationUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LocationUpdateMutation, LocationUpdateMutationVariables>(LocationUpdateDocument, options);
+      }
+export type LocationUpdateMutationHookResult = ReturnType<typeof useLocationUpdateMutation>;
+export type LocationUpdateMutationResult = Apollo.MutationResult<LocationUpdateMutation>;
+export type LocationUpdateMutationOptions = Apollo.BaseMutationOptions<LocationUpdateMutation, LocationUpdateMutationVariables>;
 export const GetUsersDocument = gql`
     query getUsers($show: Int, $offset: Int, $query: String) {
   getUsers(show: $show, offset: $offset, query: $query) {

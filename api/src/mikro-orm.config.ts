@@ -9,5 +9,5 @@ export default {
     clientUrl: `${process.env.POSTGRESQL_URL}/${process.env.POSTGRESQL_DATABASE}`,
     // clientUrl: `postgresql://db.production.ridebeep.app:5432/${process.env.POSTGRESQL_DATABASE}`,
     loadStrategy: LoadStrategy.JOINED,
-    debug: false,
+    debug: true,
 } as unknown as Configuration<IDatabaseDriver<Connection>>
