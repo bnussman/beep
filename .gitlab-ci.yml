@@ -6,11 +6,11 @@ image: node:current-alpine
 pages:
   stage: staging
   script:
-    - cd docs
+    - cd website
     - yarn install
-    - yarn build:gitlab
+    - yarn notscbuild
   artifacts:
       paths:
-        - public
+        - website/dist
   only:
     - master
