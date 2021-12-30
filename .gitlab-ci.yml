@@ -8,9 +8,9 @@ pages:
   script:
     - cd website
     - yarn install
-    - yarn notscbuild
+    - yarn build:ci
   artifacts:
       paths:
-        - website/dist
+        - public
   only:
     - master
