@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
-import { StyleSheet, Alert } from 'react-native';
-import { DenyIndicator, LeaveIcon } from '../../utils/Icons';
-import { Button } from '@ui-kitten/components';
-import { isMobile } from '../../utils/config';
-import { gql, useMutation } from '@apollo/client';
-import { LeaveQueueMutation } from '../../generated/graphql';
+import React, { useState } from "react";
+import { Alert } from "react-native";
+import { isMobile } from "../../utils/config";
+import { gql, useMutation } from "@apollo/client";
+import { LeaveQueueMutation } from "../../generated/graphql";
+import { Button } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const LeaveQueue = gql`
-    mutation LeaveQueue($id: String!) {
-        riderLeaveQueue(id: $id)
-    }
+  mutation LeaveQueue($id: String!) {
+    riderLeaveQueue(id: $id)
+  }
 `;
 
 interface Props {
-    beepersId: string;
+  beepersId: string;
 }
 
 function LeaveButton(props: Props): JSX.Element {
-    const { beepersId } = props;
-    const [leave] = useMutation<LeaveQueueMutation>(LeaveQueue, { variables: { id: beepersId } });
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { beepersId } = props;
+  const [leave] = useMutation<LeaveQueueMutation>(LeaveQueue, {
+    variables: { id: beepersId },
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function leaveQueueWrapper(): void {
     if (isMobile) {
@@ -29,14 +31,13 @@ function LeaveButton(props: Props): JSX.Element {
         [
           {
             text: "No",
-            style: "cancel"
+            style: "cancel",
           },
-          { text: "Yes", onPress: () => leaveQueue() }
+          { text: "Yes", onPress: () => leaveQueue() },
         ],
         { cancelable: true }
       );
-    }
-    else {
+    } else {
       leaveQueue();
     }
   }
@@ -44,43 +45,26 @@ function LeaveButton(props: Props): JSX.Element {
   async function leaveQueue(): Promise<void> {
     setIsLoading(true);
     try {
-        await leave();
-    }
-    catch (error) {
+      await leave();
+    } catch (error) {
       alert(error);
       setIsLoading(false);
     }
   }
 
-  if (isLoading) {
-    return (
-      <Button
-        appearance='outline'
-        status='danger'
-        style={styles.button}
-        accessoryRight={DenyIndicator}
-      >
-        Loading
-      </Button>
-    );
-  }
-
   return (
     <Button
-      status='danger'
-      style={styles.button}
-      accessoryRight={LeaveIcon}
+      isLoading={isLoading}
       onPress={() => leaveQueueWrapper()}
+      colorScheme="red"
+      _text={{ color: "#fff" }}
+      endIcon={
+        <MaterialCommunityIcons name="exit-to-app" size={22} color="white" />
+      }
     >
       Leave Queue
     </Button>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    width: "85%"
-  }
-});
 
 export default LeaveButton;

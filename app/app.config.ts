@@ -10,18 +10,14 @@ export default {
     primaryColor: "#ecc94b",
     icon: "./assets/icon.png",
     notification: {
-      iosDisplayInForeground: true
+      iosDisplayInForeground: true,
     },
     extra: {
       GOOGLE_API_KEYS: process.env.GOOGLE_API_KEYS,
     },
-    platforms: [
-      "ios",
-      "android",
-      "web"
-    ],
+    platforms: ["ios", "android", "web"],
     web: {
-      favicon: "./assets/favicon.png"
+      favicon: "./assets/favicon.png",
     },
     hooks: {
       postPublish: [
@@ -32,24 +28,25 @@ export default {
             setCommits: true,
             organization: "beep",
             project: "beep-app",
-            authToken: "cdabcfba119d4918bce8aa562e046ba3967a307c526647b985e81079f73d7d88"
-          }
-        }
-      ]
+            authToken:
+              "cdabcfba119d4918bce8aa562e046ba3967a307c526647b985e81079f73d7d88",
+          },
+        },
+      ],
     },
     ios: {
       supportsTablet: true,
       bundleIdentifier: "app.ridebeep.App",
       buildNumber: "11",
       infoPlist: {
-        NSLocationWhenInUseUsageDescription: "The Beep App uses your location to pick origins, destinations, and predict ride times",
-        NSLocationAlwaysUsageDescription: "The Beep App will use your location to provide ETA's to yourself and others",
-        NSLocationAlwaysAndWhenInUseUsageDescription: "The Beep App will use your location to provide ETA's to yourself and others",
-        UIBackgroundModes: [
-          "location",
-          "fetch"
-        ]
-      }
+        NSLocationWhenInUseUsageDescription:
+          "The Beep App uses your location to pick origins, destinations, and predict ride times",
+        NSLocationAlwaysUsageDescription:
+          "The Beep App will use your location to provide ETA's to yourself and others",
+        NSLocationAlwaysAndWhenInUseUsageDescription:
+          "The Beep App will use your location to provide ETA's to yourself and others",
+        UIBackgroundModes: ["location", "fetch"],
+      },
     },
     android: {
       package: "app.ridebeep.App",
@@ -61,16 +58,14 @@ export default {
         "ACCESS_FINE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
         "FOREGROUND_SERVICE",
-        "VIBRATE"
-      ]
+        "VIBRATE",
+      ],
     },
     splash: {
       image: "./assets/splash.png",
       resizeMode: "cover",
-      backgroundColor: "#ffffff"
+      backgroundColor: "#ffffff",
     },
-    assetBundlePatterns: [
-      "**/*"
-    ]
+    assetBundlePatterns: ["**/*"],
   },
-}
+};

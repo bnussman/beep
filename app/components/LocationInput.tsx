@@ -1,13 +1,19 @@
-import 'react-native-get-random-values';
-import React, { Ref } from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
-import { Autocomplete, AutocompleteItem, Icon, Layout, InputProps } from '@ui-kitten/components';
-import * as Location from 'expo-location';
-import { gql, useLazyQuery } from '@apollo/client';
-import { GetSuggestionsQuery } from '../generated/graphql';
-import { v4 } from 'uuid';
-import Constants from 'expo-constants';
-import Logger from '../utils/Logger';
+import "react-native-get-random-values";
+import React, { Ref } from "react";
+import { TouchableWithoutFeedback } from "react-native";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Icon,
+  Layout,
+  InputProps,
+} from "@ui-kitten/components";
+import * as Location from "expo-location";
+import { gql, useLazyQuery } from "@apollo/client";
+import { GetSuggestionsQuery } from "../generated/graphql";
+import { v4 } from "uuid";
+import Constants from "expo-constants";
+import Logger from "../utils/Logger";
 
 interface Props {
   getLocation: boolean;
@@ -30,35 +36,48 @@ let token: string;
 
 function LocationInput(props: Props & InputProps, ref: Ref<any>) {
   const { getLocation, value, setValue, label, ...rest } = props;
-  const [getSuggestions, { data }] = useLazyQuery<GetSuggestionsQuery>(GetSuggestions);
+  const [getSuggestions, { data }] =
+    useLazyQuery<GetSuggestionsQuery>(GetSuggestions);
 
   async function useCurrentLocation(): Promise<void> {
     setValue("Loading your location...");
- 
+
     try {
-      Location.setGoogleApiKey(JSON.parse(Constants.manifest?.extra?.GOOGLE_API_KEYS)[0] || '');
+      Location.setGoogleApiKey(
+        JSON.parse(Constants.manifest?.extra?.GOOGLE_API_KEYS)[0] || ""
+      );
     } catch (error) {
       Logger.error("Enable to parse Google API keys");
     }
 
-
     const { status } = await Location.requestForegroundPermissionsAsync();
 
-    if (status !== 'granted') {
+    if (status !== "granted") {
       setValue("");
       return alert("You must enable location to use this feature.");
     }
 
     const position = await Location.getCurrentPositionAsync({});
-    const location = await Location.reverseGeocodeAsync({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+    const location = await Location.reverseGeocodeAsync({
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    });
 
     let string;
 
     if (!location[0].name) {
       string = position.coords.latitude + ", " + position.coords.longitude;
-    }
-    else {
-      string = location[0].name + " " + location[0].street + " " + location[0].city + ", " + location[0].region + " " + location[0].postalCode;
+    } else {
+      string =
+        location[0].name +
+        " " +
+        location[0].street +
+        " " +
+        location[0].city +
+        ", " +
+        location[0].region +
+        " " +
+        location[0].postalCode;
     }
 
     setValue(string);
@@ -66,7 +85,7 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
 
   const CurrentLocationIcon = (props) => (
     <TouchableWithoutFeedback onPress={() => useCurrentLocation()}>
-      <Icon {...props} name='pin' />
+      <Icon {...props} name="pin" />
     </TouchableWithoutFeedback>
   );
 
@@ -88,16 +107,13 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
     getSuggestions({
       variables: {
         location: query,
-        sessiontoken: token
-      }
+        sessiontoken: token,
+      },
     });
   };
 
   const renderOption = (item: any, index: number) => (
-    <AutocompleteItem
-      key={index}
-      title={item.title}
-    />
+    <AutocompleteItem key={index} title={item.title} />
   );
 
   return (
@@ -105,7 +121,7 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
       <Autocomplete
         label={label}
         style={{ width: "100%" }}
-        placeholder='Location'
+        placeholder="Location"
         accessoryRight={getLocation ? CurrentLocationIcon : undefined}
         value={value || ""}
         onSelect={onSelect}
@@ -115,7 +131,9 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
         blurOnSubmit={false}
         {...rest}
       >
-        {data?.getLocationSuggestions?.map(renderOption) || <AutocompleteItem key={0} title="" />}
+        {data?.getLocationSuggestions?.map(renderOption) || (
+          <AutocompleteItem key={0} title="" />
+        )}
       </Autocomplete>
     </Layout>
   );

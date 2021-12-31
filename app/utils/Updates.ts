@@ -1,4 +1,4 @@
-import * as Updates from 'expo-updates';
+import * as Updates from "expo-updates";
 
 export async function handleUpdateCheck(): Promise<void> {
   if (!__DEV__) {

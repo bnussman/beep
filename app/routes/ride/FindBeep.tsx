@@ -1,24 +1,38 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import { Share, Platform, StyleSheet, Linking, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, AppState, AppStateStatus } from 'react-native';
-import { Layout, Text, Button, Input, Card } from '@ui-kitten/components';
-import * as SplashScreen from 'expo-splash-screen';
-import { UserContext } from '../../utils/UserContext';
-import { PhoneIcon, TextIcon, VenmoIcon, FindIcon, ShareIcon, LoadingIndicator } from '../../utils/Icons';
-import ProfilePicture from "../../components/ProfilePicture";
-import LeaveButton from './LeaveButton';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { MainNavParamList } from '../../navigators/MainTabs';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { GetEtaQuery, GetInitialRiderStatusQuery } from '../../generated/graphql';
-import { gqlChooseBeep } from './helpers';
-import Logger from '../../utils/Logger';
-import { client } from '../../utils/Apollo';
-import { RateCard } from '../../components/RateCard';
-import LocationInput from '../../components/LocationInput';
-import * as Location from 'expo-location';
-import { isMobile } from '../../utils/config';
-import { Tags } from './Tags';
-import { throttle } from 'throttle-debounce';
+import React, { useContext, useEffect, useState, useRef } from "react";
+import { Share, Linking, AppState, AppStateStatus } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
+import { UserContext } from "../../utils/UserContext";
+import LeaveButton from "./LeaveButton";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { MainNavParamList } from "../../navigators/MainTabs";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
+import {
+  GetEtaQuery,
+  GetInitialRiderStatusQuery,
+} from "../../generated/graphql";
+import { gqlChooseBeep } from "./helpers";
+import Logger from "../../utils/Logger";
+import { client } from "../../utils/Apollo";
+import { RateCard } from "../../components/RateCard";
+// import LocationInput from '../../components/LocationInput';
+import * as Location from "expo-location";
+import { Tags } from "./Tags";
+import { throttle } from "throttle-debounce";
+import {
+  Button,
+  Text,
+  Input,
+  Box,
+  Container,
+  Heading,
+  Center,
+  Stack,
+  FormControl,
+  Avatar,
+  Flex,
+  HStack,
+} from "native-base";
+import { LocalWrapper } from "../../components/Container";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -100,7 +114,7 @@ const BeepersLocation = gql`
 `;
 
 const GetETA = gql`
-  query GetETA ($start: String!, $end: String!) {
+  query GetETA($start: String!, $end: String!) {
     getETA(start: $start, end: $end)
   }
 `;
@@ -115,8 +129,12 @@ let riderStatusSub: any;
 export function MainFindBeepScreen(props: Props): JSX.Element {
   const user = useContext(UserContext);
 
-  const { loading, data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, { notifyOnNetworkStatusChange: true });
-  const [getETA, { data: eta, loading: etaLoading, error: etaError }] = useLazyQuery<GetEtaQuery>(GetETA);
+  const { loading, data, previousData, refetch } =
+    useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, {
+      notifyOnNetworkStatusChange: true,
+    });
+  const [getETA, { data: eta, loading: etaLoading, error: etaError }] =
+    useLazyQuery<GetEtaQuery>(GetETA);
 
   const [groupSize, setGroupSize] = useState<string>("");
   const [origin, setOrigin] = useState<string>("");
@@ -131,17 +149,17 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    AppState.addEventListener('change', _handleAppStateChange);
+    AppState.addEventListener("change", _handleAppStateChange);
 
     return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
+      AppState.removeEventListener("change", _handleAppStateChange);
     };
   }, []);
 
   const _handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
       appState.current.match(/inactive|background/) &&
-      nextAppState === 'active'
+      nextAppState === "active"
     ) {
       refetch();
     }
@@ -152,7 +170,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   async function updateETA(lat: number, long: number): Promise<void> {
     let lastKnowLocation = await Location.getLastKnownPositionAsync({
       maxAge: 180000,
-      requiredAccuracy: 800
+      requiredAccuracy: 800,
     });
 
     if (!lastKnowLocation) {
@@ -162,16 +180,22 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     getETA({
       variables: {
         start: `${lat},${long}`,
-        end: `${lastKnowLocation.coords.latitude},${lastKnowLocation.coords.longitude}`
-      }
+        end: `${lastKnowLocation.coords.latitude},${lastKnowLocation.coords.longitude}`,
+      },
     });
   }
 
   async function subscribeToLocation() {
-    const a = client.subscribe({ query: BeepersLocation, variables: { id: data?.getRiderStatus?.beeper.id } });
+    const a = client.subscribe({
+      query: BeepersLocation,
+      variables: { id: data?.getRiderStatus?.beeper.id },
+    });
 
     sub = a.subscribe(({ data }) => {
-      throttleUpdateETA(data.getLocationUpdates.latitude, data.getLocationUpdates.longitude);
+      throttleUpdateETA(
+        data.getLocationUpdates.latitude,
+        data.getLocationUpdates.longitude
+      );
     });
   }
 
@@ -188,18 +212,24 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   }, [user, beep]);
 
   function subscribeToRiderStatus(): void {
-    const a = client.subscribe({ query: RiderStatus, variables: { id: user.id } });
+    const a = client.subscribe({
+      query: RiderStatus,
+      variables: { id: user.id },
+    });
 
     riderStatusSub = a.subscribe(({ data }) => {
       client.writeQuery({
         query: InitialRiderStatus,
-        data: { getRiderStatus: data.getRiderUpdates }
+        data: { getRiderStatus: data.getRiderUpdates },
       });
     });
   }
 
   useEffect(() => {
-    if ((beep?.state == 1 && previousData?.getRiderStatus?.state == 0) || (beep?.state == 1 && !previousData)) {
+    if (
+      (beep?.state == 1 && previousData?.getRiderStatus?.state == 0) ||
+      (beep?.state == 1 && !previousData)
+    ) {
       subscribeToLocation();
     }
     if (beep?.state == 2 && previousData?.getRiderStatus?.state == 1) {
@@ -216,20 +246,20 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   async function findBeep(): Promise<void> {
     const { status } = await Location.requestForegroundPermissionsAsync();
 
-    if (status !== 'granted') {
+    if (status !== "granted") {
       return alert("You must enable location to find a ride.");
     }
 
     let lastKnowLocation = await Location.getLastKnownPositionAsync({
       maxAge: 180000,
-      requiredAccuracy: 800
+      requiredAccuracy: 800,
     });
 
     if (!lastKnowLocation) {
       lastKnowLocation = await Location.getCurrentPositionAsync();
     }
 
-    return props.navigation.navigate('PickBeepScreen', {
+    return props.navigation.navigate("Pick Beeper", {
       latitude: lastKnowLocation.coords.latitude,
       longitude: lastKnowLocation.coords.longitude,
       handlePick: (id: string) => chooseBeep(id),
@@ -243,36 +273,39 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
         beeperId: id,
         origin: origin,
         destination: destination,
-        groupSize: Number(groupSize)
+        groupSize: Number(groupSize),
       });
 
       client.writeQuery({
         query: InitialRiderStatus,
-        data: { getRiderStatus: { ...data.data.chooseBeep } }
+        data: { getRiderStatus: { ...data.data.chooseBeep } },
       });
 
       subscribeToRiderStatus();
-    }
-    catch (error) {
+    } catch (error) {
       alert(error.message);
     }
     setIsGetBeepLoading(false);
   }
 
   function getVenmoLink(): string {
-    if (!beep?.beeper.venmo) return '';
+    if (!beep?.beeper.venmo) return "";
 
     if (Number(beep.groupSize) > 1) {
-      return `venmo://paycharge?txn=pay&recipients=${beep.beeper.venmo}&amount=${beep.beeper.groupRate * beep.groupSize}&note=Beep`;
+      return `venmo://paycharge?txn=pay&recipients=${
+        beep.beeper.venmo
+      }&amount=${beep.beeper.groupRate * beep.groupSize}&note=Beep`;
     }
     return `venmo://paycharge?txn=pay&recipients=${beep.beeper.venmo}&amount=${beep.beeper?.singlesRate}&note=Beep`;
   }
 
   function getCashAppLink(): string {
-    if (!beep?.beeper.cashapp) return '';
+    if (!beep?.beeper.cashapp) return "";
 
     if (Number(beep.groupSize) > 1) {
-      return `https://cash.app/$${beep.beeper.cashapp}/${beep.groupSize * beep.beeper.groupRate}`;
+      return `https://cash.app/$${beep.beeper.cashapp}/${
+        beep.groupSize * beep.beeper.groupRate
+      }`;
     }
     return `https://cash.app/$${beep.beeper.cashapp}/${beep.beeper.singlesRate}`;
   }
@@ -281,10 +314,9 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     try {
       Share.share({
         message: `Please Venmo ${beep?.beeper.venmo} $${beep?.beeper.groupRate} for the beep!`,
-        url: getVenmoLink()
+        url: getVenmoLink(),
       });
-    }
-    catch (error) {
+    } catch (error) {
       Logger.error(error);
     }
   }
@@ -306,268 +338,180 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
   if (user?.isBeeping) {
     return (
-      <Layout style={styles.container}>
-        <Text category="h5">You are beeping!</Text>
-        <Text appearance="hint">You can&apos;t find a ride when you are beeping</Text>
-      </Layout>
+      <LocalWrapper justifyContent="center" alignItems="center">
+        <Heading>You are beeping!</Heading>
+        <Text>You can&apos;t find a ride when you are beeping</Text>
+      </LocalWrapper>
     );
   }
 
   if (!beep) {
     return (
-      <Layout style={{ height: "100%" }}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS == "ios" ? "padding" : "height"}
-          style={styles.container}
-        >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile} >
-            <Layout style={styles.container}>
-              <RateCard {...props}/>
-              <Input
-                keyboardType="number-pad"
-                label='Group Size'
-                style={styles.buttons}
-                placeholder='Group Size'
-                value={groupSize}
-                onChangeText={value => setGroupSize(value)}
-                onSubmitEditing={() => originRef.current.focus()}
-                returnKeyType="next"
-              />
-              <LocationInput
-                ref={originRef}
-                label="Pick-up Location"
-                value={origin}
-                setValue={(value) => setOrigin(value)}
-                getLocation={true}
-                onSubmitEditing={() => destinationRef.current.focus()}
-                returnKeyType="next"
-              />
-              <LocationInput
-                ref={destinationRef}
-                label="Destination Location"
-                value={destination}
-                setValue={(value) => setDestination(value)}
-                getLocation={false}
-                returnKeyType="go"
-              />
-              {!isGetBeepLoading || loading ?
-                <Button
-                  accessoryRight={FindIcon}
-                  onPress={() => findBeep()}
-                  size='large'
-                  style={{ marginTop: 15 }}
-                  disabled={origin === 'Loading your location...' || !origin || !groupSize || !destination}
-                >
-                  Find a Beep
-                </Button>
-                :
-                <Button
-                  size='large'
-                  style={{ marginTop: 15 }}
-                  appearance='outline'
-                  accessoryRight={LoadingIndicator}
-                >
-                  Loading
-                </Button>
-              }
-            </Layout>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-      </Layout>
+      <LocalWrapper alignItems="center">
+        <Stack space={4} w="90%">
+          <RateCard {...props} />
+          <FormControl>
+            <FormControl.Label>Group Size</FormControl.Label>
+            <Input
+              w="100%"
+              keyboardType="number-pad"
+              placeholder="Group Size"
+              value={groupSize}
+              onChangeText={(value) => setGroupSize(value)}
+              onSubmitEditing={() => originRef.current.focus()}
+              returnKeyType="next"
+            />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Pick Up Location</FormControl.Label>
+            <Input
+              ref={originRef}
+              value={origin}
+              onChangeText={(value) => setOrigin(value)}
+              onSubmitEditing={() => destinationRef.current.focus()}
+              returnKeyType="next"
+            />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Destination Location</FormControl.Label>
+            <Input
+              ref={destinationRef}
+              value={destination}
+              onChangeText={(value) => setDestination(value)}
+              returnKeyType="go"
+            />
+          </FormControl>
+          <Button
+            onPress={() => findBeep()}
+            disabled={
+              origin === "Loading your location..." ||
+              !origin ||
+              !groupSize ||
+              !destination
+            }
+            isLoading={isGetBeepLoading || loading}
+          >
+            Find a Beep
+          </Button>
+        </Stack>
+      </LocalWrapper>
     );
   }
 
   if (beep.isAccepted) {
     return (
-      <Layout style={styles.container}>
-        <TouchableWithoutFeedback onPress={() => props.navigation.navigate("Profile", { id: beep.beeper.id, beep: beep.id })} >
-          <Layout style={{ alignItems: "center", justifyContent: 'center' }}>
-            {beep.beeper.photoUrl ?
-              <ProfilePicture
-                style={{ marginBottom: 5 }}
-                size={100}
-                url={beep.beeper.photoUrl}
-              />
-              : null
-            }
-            <Layout style={styles.group}>
-              <Text category='h6'>{beep.beeper.name}</Text>
-              <Text appearance='hint'>is your beeper!</Text>
-            </Layout>
-          </Layout>
-        </TouchableWithoutFeedback>
+      <LocalWrapper>
+        <Box>
+          <Avatar
+            size={100}
+            source={{
+              uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
+            }}
+          />
+          <Text>{beep.beeper.name}</Text>
+          <Text>is your beeper!</Text>
+        </Box>
         <Tags user={beep.beeper} />
-        {beep.position <= 0 ?
-          <Layout style={styles.group}>
-            <Card>
-              <Text category='h6'>Current Status</Text>
-              <Text appearance='hint'>
-                {getCurrentStatusMessage()}
-              </Text>
-            </Card>
-            {beep.state == 1 ?
-              <Layout>
-                <Card style={{ marginTop: 10 }}>
-                  <Text category='h6'>Arrival ETA</Text>
-                  {etaError ? <Text appearance='hint'>{etaError.message}</Text> : null}
-                  {etaLoading ? <Text appearance='hint'>Loading ETA</Text> :
-                    eta?.getETA && beep.beeper.location ?
-                      <Text appearance='hint'>Your beeper is {eta.getETA} away</Text>
-                      :
-                      <Text appearance='hint'>Beeper has no location data</Text>
-                  }
-                </Card>
-              </Layout>
-              : null
-            }
-          </Layout>
-          : null
-        }
-        {beep.position > 0 ?
-          <Layout style={styles.group}>
-            <Text category='h6'>{beep.position}</Text>
-            <Text appearance='hint'>
-              {beep.position === 1 ? "person is" : "people are"} ahead of you in {beep.beeper.first || "User"}&apos;s queue.
+        {beep.position <= 0 && (
+          <>
+            <Text>Current Status</Text>
+            <Text>{getCurrentStatusMessage()}</Text>
+            {beep.state == 1 ? (
+              <>
+                <Text>Arrival ETA</Text>
+                {etaError ? <Text>{etaError.message}</Text> : null}
+                {etaLoading ? (
+                  <Text>Loading ETA</Text>
+                ) : eta?.getETA && beep.beeper.location ? (
+                  <Text>Your beeper is {eta.getETA} away</Text>
+                ) : (
+                  <Text>Beeper has no location data</Text>
+                )}
+              </>
+            ) : null}
+          </>
+        )}
+        {beep.position > 0 ? (
+          <>
+            <Text>{beep.position}</Text>
+            <Text>
+              {beep.position === 1 ? "person is" : "people are"} ahead of you in{" "}
+              {beep.beeper.first || "User"}&apos;s queue.
             </Text>
-          </Layout>
-          : null
-        }
-        <Button
-          status='basic'
-          accessoryRight={PhoneIcon}
-          style={styles.buttons}
-          onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
-        >
+          </>
+        ) : null}
+        <Button onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}>
           Call Beeper
         </Button>
-        <Button
-          status='basic'
-          accessoryRight={TextIcon}
-          style={styles.buttons}
-          onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
-        >
+        <Button onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}>
           Text Beeper
         </Button>
-        {beep.beeper.venmo ?
-          <Button
-            status='info'
-            accessoryRight={VenmoIcon}
-            style={styles.buttons}
-            onPress={() => Linking.openURL(getVenmoLink())}
-          >
+        {beep.beeper.venmo ? (
+          <Button onPress={() => Linking.openURL(getVenmoLink())}>
             Pay Beeper with Venmo
           </Button>
-          : null
-        }
-        {beep.beeper.cashapp ?
-          <Button
-            status='success'
-            accessoryRight={VenmoIcon}
-            style={styles.buttons}
-            onPress={() => Linking.openURL(getCashAppLink())}
-          >
+        ) : null}
+        {beep.beeper.cashapp ? (
+          <Button onPress={() => Linking.openURL(getCashAppLink())}>
             Pay Beeper with Cash App
           </Button>
-          : null
-        }
-        {Number(beep.groupSize) > 1 ?
-          <Button
-            status='basic'
-            accessoryRight={ShareIcon}
-            style={styles.buttons}
-            onPress={() => shareVenmoInformation()}
-          >
+        ) : null}
+        {Number(beep.groupSize) > 1 ? (
+          <Button onPress={() => shareVenmoInformation()}>
             Share Venmo Info with Your Friends
           </Button>
-          : null
-        }
+        ) : null}
         {beep.position >= 1 ? <LeaveButton beepersId={beep.beeper.id} /> : null}
-      </Layout>
+      </LocalWrapper>
     );
-  }
-  else {
+  } else {
     return (
-      <Layout style={styles.container}>
-        <TouchableWithoutFeedback onPress={() => props.navigation.navigate("Profile", { id: beep.beeper.id, beep: beep.id })} >
-          <Layout style={{ alignItems: "center", justifyContent: 'center' }}>
-            {beep.beeper.photoUrl ?
-              <ProfilePicture
-                style={{ marginBottom: 5 }}
-                size={100}
-                url={beep.beeper.photoUrl}
-              />
-              : null
-            }
-            <Layout style={styles.group}>
-              <Text appearance='hint'>Waiting on</Text>
-              <Text category='h6'>{beep.beeper.name}</Text>
-              <Text appearance='hint'>to accept your request.</Text>
-            </Layout>
-          </Layout>
-        </TouchableWithoutFeedback>
-        <Tags user={beep.beeper} />
-        <Layout style={styles.group}>
-          <Text category='h6'>{beep.beeper.first}{"'"}{(beep.beeper.first.charAt(beep.beeper.first.length - 1) != 's') ? "s" : ''} Rates</Text>
-          <Text appearance='hint' style={{ marginBottom: 6 }}>per person</Text>
-          <Layout style={styles.rateGroup}>
-            <Layout style={styles.rateLayout}>
-              <Text appearance='hint'>Single</Text>
+      <LocalWrapper alignItems="center">
+        <Stack space={4} w="90%" alignItems="center">
+          <Avatar
+            size={100}
+            source={{
+              uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
+            }}
+          />
+          <Box alignItems="center">
+            <Text>Waiting on</Text>
+            <Heading>{beep.beeper.name}</Heading>
+            <Text>to accept your request.</Text>
+          </Box>
+          <Tags user={beep.beeper} />
+          <Box alignItems="center">
+            <Text>
+              {beep.beeper.first}
+              {"'"}
+              {beep.beeper.first.charAt(beep.beeper.first.length - 1) != "s"
+                ? "s"
+                : ""}{" "}
+              Rates
+            </Text>
+            <Text>per person</Text>
+          </Box>
+          <HStack space={4}>
+            <Box alignItems="center">
+              <Text>Single</Text>
               <Text>${beep.beeper.singlesRate}</Text>
-            </Layout>
-            <Layout style={styles.rateLayout} >
-              <Text appearance='hint'>Group</Text>
+            </Box>
+            <Box alignItems="center">
+              <Text>Group</Text>
               <Text>${beep.beeper.groupRate}</Text>
-            </Layout>
-          </Layout>
-        </Layout>
-        <Layout style={styles.group}>
-          <Text category='h6'>{beep.beeper.queueSize}</Text>
-          <Text appearance='hint'>
-            {beep.beeper.queueSize === 1 ? "person is" : "people are"} ahead of you in {beep.beeper.first}{"'"}s queue
-          </Text>
-        </Layout>
-        <LeaveButton beepersId={beep.beeper.id} />
-      </Layout>
+            </Box>
+          </HStack>
+          <Box alignItems="center">
+            <Heading>{beep.beeper.queueSize}</Heading>
+            <Text>
+              {beep.beeper.queueSize === 1 ? "person is" : "people are"} ahead
+              of you in {beep.beeper.first}
+              {"'"}s queue
+            </Text>
+          </Box>
+          <LeaveButton beepersId={beep.beeper.id} />
+        </Stack>
+      </LocalWrapper>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: 'center',
-    width: "100%"
-  },
-  buttons: {
-    marginBottom: 5,
-    width: "85%"
-  },
-  rowItem: {
-    marginBottom: 5,
-    width: "95%"
-  },
-  group: {
-    alignItems: "center",
-    marginBottom: 12,
-    width: '100%'
-  },
-  groupConatiner: {
-    flexDirection: 'row',
-    width: "80%",
-    alignItems: "center",
-    justifyContent: 'center',
-  },
-  rateGroup: {
-    flexDirection: 'row',
-    width: 120
-  },
-  layout: {
-    flex: 1,
-  },
-  rateLayout: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: 'center',
-  },
-});

@@ -1,6 +1,6 @@
-import { gql } from '@apollo/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { client } from './Apollo';
+import { gql } from "@apollo/client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { client } from "./Apollo";
 
 const RemoveToken = gql`
   mutation RemoveToken($token: String!) {
@@ -9,10 +9,13 @@ const RemoveToken = gql`
 `;
 
 export async function removeOldToken(): Promise<void> {
-  const tokenid = await AsyncStorage.getItem('token');
+  const tokenid = await AsyncStorage.getItem("token");
 
   if (tokenid !== null) {
-    const result = await client.mutate({ mutation: RemoveToken, variables: { token: tokenid } });
+    const result = await client.mutate({
+      mutation: RemoveToken,
+      variables: { token: tokenid },
+    });
 
     if (result) {
       AsyncStorage.removeItem("token");

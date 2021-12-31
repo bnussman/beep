@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, View, ViewProps } from 'react-native';
-import { Button, ButtonElement } from '@ui-kitten/components';
-import { StarIcon } from '../utils/Icons';
+import React from "react";
+import { ViewProps } from "react-native";
+import { Flex, IconButton } from "native-base";
+import { AntDesign } from "@expo/vector-icons";
 
 export interface RateBarProps extends ViewProps {
   hint: string;
@@ -10,18 +10,13 @@ export interface RateBarProps extends ViewProps {
 }
 
 export const RateBar = (props: RateBarProps): React.ReactElement<ViewProps> => {
-
-  const renderRateButtonElement = (value: number): ButtonElement => {
-    const status: string = value <= props.value ? 'warning' : 'basic';
+  const renderRateButtonElement = (value: number) => {
+    const color: string = value <= props.value ? "gold" : "gray";
 
     return (
-      <Button
+      <IconButton
+        icon={<AntDesign name="star" size={24} color={color} />}
         key={value}
-        style={styles.iconButton}
-        appearance='ghost'
-        size='giant'
-        status={status}
-        accessoryLeft={StarIcon}
         onPress={() => props.onValueChange(value)}
       />
     );
@@ -30,23 +25,8 @@ export const RateBar = (props: RateBarProps): React.ReactElement<ViewProps> => {
   const { ...restProps } = props;
 
   return (
-    <View
-      {...restProps}
-      style={[styles.container, restProps.style]}>
+    <Flex {...restProps} direction="row">
       {[1, 2, 3, 4, 5].map(renderRateButtonElement)}
-    </View>
+    </Flex>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  hint: {
-    marginRight: 8,
-  },
-  iconButton: {
-    paddingHorizontal: -4,
-  },
-});

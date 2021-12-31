@@ -1,57 +1,100 @@
-import 'react-native-gesture-handler';
-import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet } from 'react-native';
-import RegisterScreen from './routes/auth/Register';
-import LoginScreen from './routes/auth/Login';
-import { ForgotPasswordScreen } from './routes/auth/ForgotPassword';
-import { MainTabs } from './navigators/MainTabs';
-import { ProfileScreen } from './routes/global/Profile';
-import { ReportScreen } from './routes/global/Report';
-import { RateScreen } from './routes/global/Rate';
-import * as eva from '@eva-design/eva';
-import { ApplicationProvider, IconRegistry, Layout } from '@ui-kitten/components';
-import { default as beepTheme } from './utils/theme.json';
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { ThemeContext } from './utils/ThemeContext';
-import { UserContext } from './utils/UserContext';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import "react-native-gesture-handler";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar, AppState, AppStateStatus } from "react-native";
+import RegisterScreen from "./routes/auth/Register";
+import LoginScreen from "./routes/auth/Login";
+import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
+import { ProfileScreen } from "./routes/global/Profile";
+import { ReportScreen } from "./routes/global/Report";
+import { RateScreen } from "./routes/global/Rate";
+import { UserContext } from "./utils/UserContext";
 import { updatePushToken } from "./utils/Notifications";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import init from "./utils/Init";
-import ThemedStatusBar from './utils/StatusBar';
-import { client } from './utils/Apollo';
-import { ApolloProvider, useQuery } from '@apollo/client';
-import { GetUserProfileQuery, User } from './generated/graphql';
-import Sentry from './utils/Sentry';
-import { GetUserData, UserUpdates } from './utils/UserQueries';
+import { client } from "./utils/Apollo";
+import { ApolloProvider, useQuery } from "@apollo/client";
+import { User } from "./generated/graphql";
+import Sentry from "./utils/Sentry";
+import { GetUserData, UserUpdates } from "./utils/UserQueries";
+import { extendTheme, NativeBaseProvider, useColorMode } from "native-base";
+import { BeepDrawer } from "./navigators/Drawer";
+import { colorModeManager } from "./utils/theme";
+import { PickBeepScreen } from "./routes/ride/PickBeep";
 
 const Stack = createStackNavigator();
 init();
 Sentry.init();
 
-function Beep() {
-  const { data, loading, subscribeToMore } = useQuery<GetUserProfileQuery>(GetUserData, { errorPolicy: 'none' });
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+const newColorTheme = {
+  primary: {
+    100: "#FFF9CC",
+    200: "#FFE041",
+    300: "#FFE967",
+    400: "#FFE041",
+    500: "#FFD203",
+    600: "#DBB002",
+    700: "#B79001",
+    800: "#937100",
+    900: "#7A5B00",
+  },
+};
 
-  function toggleTheme() {
-    const next = theme === 'light' ? 'dark' : 'light';
-    setTheme(next);
-    AsyncStorage.setItem('theme', next);
-  }
+const beepTheme = extendTheme({
+  colors: newColorTheme,
+  config: {
+    // useSystemColorMode: true,
+    // initialColorMode: 'dark',
+  },
+});
+
+function Beep() {
+  const { colorMode, toggleColorMode } = useColorMode();
+  const { data, loading, subscribeToMore } = useQuery(GetUserData, {
+    errorPolicy: "none",
+  });
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
-    const init = async () => {
-      const storedTheme = await AsyncStorage.getItem('theme') as unknown as "light" | "dark" | undefined;
+    AppState.addEventListener("change", _handleAppStateChange);
 
-      if (storedTheme && (theme !== storedTheme)) {
-        setTheme(storedTheme);
+    return () => {
+      AppState.removeEventListener("change", _handleAppStateChange);
+    };
+  }, []);
+
+  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      if (data?.getUser?.id) {
+        subscribeToMore({
+          document: UserUpdates,
+          variables: {
+            id: data?.getUser.id,
+          },
+          updateQuery: (prev, { subscriptionData }) => {
+            const newFeedItem = subscriptionData.data.getUserUpdates;
+            if (newFeedItem) {
+              Sentry.setUserContext(newFeedItem);
+              return Object.assign({}, prev, {
+                getUser: newFeedItem,
+              });
+            }
+          },
+        });
       }
     }
 
-    init();
-  }, []);
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+  };
 
   useEffect(() => {
     if (data?.getUser.id) {
@@ -62,60 +105,71 @@ function Beep() {
       subscribeToMore({
         document: UserUpdates,
         variables: {
-          id: data.getUser.id
+          id: data.getUser.id,
         },
-        // @ts-expect-error Apollo is trash
         updateQuery: (prev, { subscriptionData }) => {
-          // @ts-expect-error Apollo is trash
           const newFeedItem = subscriptionData.data.getUserUpdates;
           if (newFeedItem) {
             Sentry.setUserContext(newFeedItem);
             return {
-              getUser: newFeedItem
+              getUser: newFeedItem,
             };
           }
-        }
+        },
       });
     }
   }, [data?.getUser?.id]);
 
   if (loading) return null;
-
+  console.log(colorMode);
   return (
     <UserContext.Provider value={data?.getUser as User}>
-      <ThemeContext.Provider value={{ theme, toggleTheme }}>
-        <IconRegistry icons={EvaIconsPack} />
-        <ApplicationProvider {...eva} theme={{ ...eva[theme], ...beepTheme }}>
-          <Layout style={styles.statusbar}>
-            <ThemedStatusBar theme={theme} />
-          </Layout>
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName={data?.getUser?.id ? "Main" : "Login"} screenOptions={{ headerShown: false }} >
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
-              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-              <Stack.Screen name="Main" component={MainTabs} />
-              <Stack.Screen name='Profile' component={ProfileScreen} />
-              <Stack.Screen name='Report' component={ReportScreen} />
-              <Stack.Screen name='Rate' component={RateScreen} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </ApplicationProvider>
-      </ThemeContext.Provider>
+      <StatusBar
+        barStyle={colorMode === "dark" ? "light-content" : "dark-content"}
+      />
+      <NavigationContainer
+        theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
+      >
+        <Stack.Navigator
+          initialRouteName={data?.getUser?.id ? "Main" : "Login"}
+        >
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Login"
+            component={LoginScreen}
+          />
+          <Stack.Screen name="Sign Up" component={RegisterScreen} />
+          <Stack.Screen
+            name="Forgot Password"
+            component={ForgotPasswordScreen}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Main"
+            component={BeepDrawer}
+          />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Report" component={ReportScreen} />
+          <Stack.Screen name="Rate" component={RateScreen} />
+          <Stack.Screen name="Pick Beeper" component={PickBeepScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </UserContext.Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  statusbar: {
-    paddingTop: getStatusBarHeight()
-  }
-});
+function App2() {
+  return (
+    <NativeBaseProvider theme={beepTheme} colorModeManager={colorModeManager}>
+      <Beep />
+    </NativeBaseProvider>
+  );
+}
 
 function App(): JSX.Element {
   return (
     <ApolloProvider client={client}>
-      <Beep />
+      <App2 />
     </ApolloProvider>
   );
 }
