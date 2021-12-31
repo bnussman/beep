@@ -86,7 +86,7 @@ function Beep() {
   if (loading) return null;
 
   return (
-    <UserContext.Provider value={data?.getUserUpdates as User}>
+    <UserContext.Provider value={{ ...data?.getUserUpdates } as User}>
       <StatusBar
         barStyle={colorMode === "dark" ? "light-content" : "dark-content"}
       />
