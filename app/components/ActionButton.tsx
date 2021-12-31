@@ -133,7 +133,11 @@ class ActionButton extends Component<Props, State> {
   render() {
     const CancelButton = (props: { isLoading: boolean }) => {
       return (
-        <Button isLoading={props.isLoading} onPress={() => this.cancel()}>
+        <Button
+          isLoading={props.isLoading}
+          colorScheme="red"
+          onPress={() => this.cancel()}
+        >
           Cancel Beep
         </Button>
       );
@@ -141,7 +145,11 @@ class ActionButton extends Component<Props, State> {
 
     const ActionButton = (props: { isLoading: boolean }) => {
       return (
-        <Button isLoading={props.isLoading} onPress={() => this.update()}>
+        <Button
+          isLoading={props.isLoading}
+          colorScheme="blue"
+          onPress={() => this.update()}
+        >
           {this.getMessage()}
         </Button>
       );

@@ -24,6 +24,8 @@ import {
   FormControl,
   Avatar,
   HStack,
+  Center,
+  VStack,
 } from "native-base";
 import {
   GetEtaQuery,
@@ -378,13 +380,13 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           </FormControl>
           <Button
             onPress={() => findBeep()}
-            disabled={
+            isDisabled={
               origin === "Loading your location..." ||
               !origin ||
               !groupSize ||
               !destination
             }
-            isLoading={isGetBeepLoading || loading}
+            isLoading={isGetBeepLoading}
           >
             Find a Beep
           </Button>
@@ -396,7 +398,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   if (beep.isAccepted) {
     return (
       <LocalWrapper>
-        <Box>
+        <Center>
           <Avatar
             size={100}
             source={{
@@ -405,58 +407,62 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           />
           <Text>{beep.beeper.name}</Text>
           <Text>is your beeper!</Text>
-        </Box>
-        <Tags user={beep.beeper} />
-        {beep.position <= 0 && (
-          <>
-            <Text>Current Status</Text>
-            <Text>{getCurrentStatusMessage()}</Text>
-            {beep.state == 1 ? (
-              <>
-                <Text>Arrival ETA</Text>
-                {etaError ? <Text>{etaError.message}</Text> : null}
-                {etaLoading ? (
-                  <Text>Loading ETA</Text>
-                ) : eta?.getETA && beep.beeper.location ? (
-                  <Text>Your beeper is {eta.getETA} away</Text>
-                ) : (
-                  <Text>Beeper has no location data</Text>
-                )}
-              </>
+          <Tags user={beep.beeper} />
+          {beep.position <= 0 && (
+            <Box>
+              <Text>Current Status</Text>
+              <Text>{getCurrentStatusMessage()}</Text>
+              {beep.state == 1 ? (
+                <>
+                  <Text>Arrival ETA</Text>
+                  {etaError ? <Text>{etaError.message}</Text> : null}
+                  {etaLoading ? (
+                    <Text>Loading ETA</Text>
+                  ) : eta?.getETA && beep.beeper.location ? (
+                    <Text>Your beeper is {eta.getETA} away</Text>
+                  ) : (
+                    <Text>Beeper has no location data</Text>
+                  )}
+                </>
+              ) : null}
+            </Box>
+          )}
+          {beep.position > 0 ? (
+            <>
+              <Text>{beep.position}</Text>
+              <Text>
+                {beep.position === 1 ? "person is" : "people are"} ahead of you
+                in {beep.beeper.first || "User"}&apos;s queue.
+              </Text>
+            </>
+          ) : null}
+          <VStack space={2} w="90%">
+            <Button onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}>
+              Call Beeper
+            </Button>
+            <Button onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}>
+              Text Beeper
+            </Button>
+            {beep.beeper.venmo ? (
+              <Button onPress={() => Linking.openURL(getVenmoLink())}>
+                Pay Beeper with Venmo
+              </Button>
             ) : null}
-          </>
-        )}
-        {beep.position > 0 ? (
-          <>
-            <Text>{beep.position}</Text>
-            <Text>
-              {beep.position === 1 ? "person is" : "people are"} ahead of you in{" "}
-              {beep.beeper.first || "User"}&apos;s queue.
-            </Text>
-          </>
-        ) : null}
-        <Button onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}>
-          Call Beeper
-        </Button>
-        <Button onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}>
-          Text Beeper
-        </Button>
-        {beep.beeper.venmo ? (
-          <Button onPress={() => Linking.openURL(getVenmoLink())}>
-            Pay Beeper with Venmo
-          </Button>
-        ) : null}
-        {beep.beeper.cashapp ? (
-          <Button onPress={() => Linking.openURL(getCashAppLink())}>
-            Pay Beeper with Cash App
-          </Button>
-        ) : null}
-        {Number(beep.groupSize) > 1 ? (
-          <Button onPress={() => shareVenmoInformation()}>
-            Share Venmo Info with Your Friends
-          </Button>
-        ) : null}
-        {beep.position >= 1 ? <LeaveButton beepersId={beep.beeper.id} /> : null}
+            {beep.beeper.cashapp ? (
+              <Button onPress={() => Linking.openURL(getCashAppLink())}>
+                Pay Beeper with Cash App
+              </Button>
+            ) : null}
+            {Number(beep.groupSize) > 1 ? (
+              <Button onPress={() => shareVenmoInformation()}>
+                Share Venmo Info with Your Friends
+              </Button>
+            ) : null}
+            {beep.position >= 1 ? (
+              <LeaveButton beepersId={beep.beeper.id} />
+            ) : null}
+          </VStack>
+        </Center>
       </LocalWrapper>
     );
   } else {

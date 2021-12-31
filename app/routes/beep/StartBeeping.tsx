@@ -24,6 +24,7 @@ import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
 import { Tag } from "../ride/Tags";
 import { LocationActivityType } from "expo-location";
+import { LocalWrapper } from "../../components/Container";
 import {
   Avatar,
   Input,
@@ -34,8 +35,9 @@ import {
   Heading,
   FormControl,
   Stack,
+  Flex,
+  VStack,
 } from "native-base";
-import { LocalWrapper } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -421,80 +423,94 @@ export function StartBeepingScreen(props: Props): JSX.Element {
             keyExtractor={(item) => item.id}
             renderItem={({ item, index }) =>
               item.isAccepted ? (
-                <Pressable
-                  onPress={() =>
-                    props.navigation.navigate("Profile", {
-                      id: item.rider.id,
-                      beep: item.id,
-                    })
-                  }
-                >
-                  <Avatar
-                    size={50}
-                    source={{
-                      uri: item.rider.photoUrl
-                        ? item.rider.photoUrl
-                        : undefined,
-                    }}
-                  />
-                  <Text>{item.rider.name}</Text>
-                  <Text>Group Size</Text>
-                  <Text>{item.groupSize}</Text>
-                  <Text>Pick Up </Text>
-                  <Text>{item.origin}</Text>
-                  <Text>Drop Off </Text>
-                  <Text>{item.destination}</Text>
-                  <Button
-                    onPress={() => {
-                      Linking.openURL("tel:" + item.rider.phone);
-                    }}
+                <>
+                  <Pressable
+                    onPress={() =>
+                      props.navigation.navigate("Profile", {
+                        id: item.rider.id,
+                        beep: item.id,
+                      })
+                    }
                   >
-                    Call Rider
-                  </Button>
-                  <Button
-                    onPress={() => {
-                      Linking.openURL("sms:" + item.rider.phone);
-                    }}
-                  >
-                    Text Rider
-                  </Button>
-                  {item.rider?.venmo ? (
+                    <Flex direction="row" alignItems="center">
+                      <Avatar
+                        size={50}
+                        source={{
+                          uri: item.rider.photoUrl
+                            ? item.rider.photoUrl
+                            : undefined,
+                        }}
+                      />
+                      <Text bold fontSize="xl">
+                        {item.rider.name}
+                      </Text>
+                    </Flex>
+                  </Pressable>
+                  <Flex direction="row" alignItems="center">
+                    <Text bold>Group Size</Text>
+                    <Text>{item.groupSize}</Text>
+                  </Flex>
+                  <Flex direction="row" alignItems="center">
+                    <Text bold>Pick Up</Text>
+                    <Text>{item.origin}</Text>
+                  </Flex>
+                  <Flex direction="row" alignItems="center">
+                    <Text bold>Drop Off</Text>
+                    <Text>{item.destination}</Text>
+                  </Flex>
+                  <VStack space={2}>
                     <Button
-                      onPress={() =>
-                        handleVenmo(item.groupSize, item.rider.venmo)
-                      }
+                      onPress={() => {
+                        Linking.openURL("tel:" + item.rider.phone);
+                      }}
                     >
-                      Request Money from Rider with Venmo
+                      Call Rider
                     </Button>
-                  ) : null}
-                  {item.rider?.cashapp ? (
                     <Button
-                      onPress={() =>
-                        handleCashApp(item.groupSize, item.rider.cashapp)
-                      }
+                      onPress={() => {
+                        Linking.openURL("sms:" + item.rider.phone);
+                      }}
                     >
-                      Request Money from Rider with Cash App
+                      Text Rider
                     </Button>
-                  ) : null}
-                  {item.state <= 1 ? (
-                    <Button
-                      onPress={() =>
-                        handleDirections("Current+Location", item.origin)
-                      }
-                    >
-                      Get Directions to Rider
-                    </Button>
-                  ) : (
-                    <Button
-                      onPress={() =>
-                        handleDirections(item.origin, item.destination)
-                      }
-                    >
-                      Get Directions for Beep
-                    </Button>
-                  )}
-                  <ActionButton item={item} index={index} />
-                </Pressable>
+                    {item.rider?.venmo ? (
+                      <Button
+                        onPress={() =>
+                          handleVenmo(item.groupSize, item.rider.venmo!)
+                        }
+                      >
+                        Request Money from Rider with Venmo
+                      </Button>
+                    ) : null}
+                    {item.rider?.cashapp ? (
+                      <Button
+                        onPress={() =>
+                          handleCashApp(item.groupSize, item.rider.cashapp!)
+                        }
+                      >
+                        Request Money from Rider with Cash App
+                      </Button>
+                    ) : null}
+                    {item.state <= 1 ? (
+                      <Button
+                        onPress={() =>
+                          handleDirections("Current+Location", item.origin)
+                        }
+                      >
+                        Get Directions to Rider
+                      </Button>
+                    ) : (
+                      <Button
+                        onPress={() =>
+                          handleDirections(item.origin, item.destination)
+                        }
+                      >
+                        Get Directions for Beep
+                      </Button>
+                    )}
+                    <ActionButton item={item} index={index} />
+                  </VStack>
+                </>
               ) : (
                 <Pressable
                   onPress={() =>
