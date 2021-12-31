@@ -1,38 +1,34 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { Share, Linking, AppState, AppStateStatus } from "react-native";
-import * as SplashScreen from "expo-splash-screen";
-import { UserContext } from "../../utils/UserContext";
+import Logger from "../../utils/Logger";
 import LeaveButton from "./LeaveButton";
+import * as SplashScreen from "expo-splash-screen";
+import * as Location from "expo-location";
+import { Share, Linking, AppState, AppStateStatus } from "react-native";
+import { UserContext } from "../../utils/UserContext";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { MainNavParamList } from "../../navigators/MainTabs";
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
-import {
-  GetEtaQuery,
-  GetInitialRiderStatusQuery,
-} from "../../generated/graphql";
 import { gqlChooseBeep } from "./helpers";
-import Logger from "../../utils/Logger";
 import { client } from "../../utils/Apollo";
 import { RateCard } from "../../components/RateCard";
-// import LocationInput from '../../components/LocationInput';
-import * as Location from "expo-location";
 import { Tags } from "./Tags";
 import { throttle } from "throttle-debounce";
+import { LocalWrapper } from "../../components/Container";
 import {
   Button,
   Text,
   Input,
   Box,
-  Container,
   Heading,
-  Center,
   Stack,
   FormControl,
   Avatar,
-  Flex,
   HStack,
 } from "native-base";
-import { LocalWrapper } from "../../components/Container";
+import {
+  GetEtaQuery,
+  GetInitialRiderStatusQuery,
+} from "../../generated/graphql";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -355,7 +351,6 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             <Input
               w="100%"
               keyboardType="number-pad"
-              placeholder="Group Size"
               value={groupSize}
               onChangeText={(value) => setGroupSize(value)}
               onSubmitEditing={() => originRef.current.focus()}

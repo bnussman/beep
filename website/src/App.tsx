@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { UserContext } from './UserContext';
 import { ThemeContext } from './ThemeContext';
 import { GetUserDataQuery, User } from './generated/graphql';
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
 import { client } from './utils/Apollo';
+import { ChakraProvider, Container } from "@chakra-ui/react"
+import { theme } from './utils/theme';
+import { getInitialTheme } from './utils/utils';
+import { Download } from './routes/Download';
 import Home from './routes/Home';
 import Login from './routes/Login';
 import SignUp from './routes/SignUp';
@@ -20,12 +24,7 @@ import Terms from './routes/Terms';
 import Faq from './routes/FAQ';
 import NavBar from './components/NavBar';
 import About from './routes/About';
-import { ChakraProvider, Container } from "@chakra-ui/react"
-import { createStandaloneToast } from "@chakra-ui/react"
 import Banners from './components/Banners';
-import { theme } from './utils/theme';
-import { getInitialTheme } from './utils/utils';
-import { Download } from './routes/Download';
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
 
@@ -56,8 +55,8 @@ export const GetUserData = gql`
 `;
 
 const UserUpdates = gql`
-  subscription UserUpdates($id: String!) {
-    getUserUpdates(id: $id) {
+  subscription UserUpdates {
+    getUserUpdates {
       id
       name
       first
@@ -81,8 +80,6 @@ const UserUpdates = gql`
   }
 `;
 
-const toast = createStandaloneToast({ theme });
-
 function Beep() {
   const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
   const [theme, setInternalTheme] = useState<string>(getInitialTheme());
@@ -102,17 +99,7 @@ function Beep() {
     if (data?.getUser?.id) {
       subscribeToMore({
         document: UserUpdates,
-        variables: {
-          id: data?.getUser.id
-        },
         updateQuery: (prev, { subscriptionData }) => {
-          // toast({
-          //   title: "Profile Updated",
-          //   description: "Your account has been updated",
-          //   status: "success",
-          //   duration: 5000,
-          //   isClosable: true,
-          // })
           //@ts-ignore
           const newFeedItem = subscriptionData.data.getUserUpdates;
           return Object.assign({}, prev, {

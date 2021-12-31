@@ -1,30 +1,28 @@
 import "react-native-gesture-handler";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  DarkTheme,
-  DefaultTheme,
-  NavigationContainer,
-} from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar, AppState, AppStateStatus } from "react-native";
+import React from "react";
+import Sentry from "./utils/Sentry";
 import RegisterScreen from "./routes/auth/Register";
 import LoginScreen from "./routes/auth/Login";
+import init from "./utils/Init";
+import { createStackNavigator } from "@react-navigation/stack";
+import { StatusBar } from "react-native";
 import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
 import { ProfileScreen } from "./routes/global/Profile";
 import { ReportScreen } from "./routes/global/Report";
 import { RateScreen } from "./routes/global/Rate";
 import { UserContext } from "./utils/UserContext";
-import { updatePushToken } from "./utils/Notifications";
-import init from "./utils/Init";
 import { client } from "./utils/Apollo";
-import { ApolloProvider, useQuery } from "@apollo/client";
-import { User } from "./generated/graphql";
-import Sentry from "./utils/Sentry";
-import { GetUserData, UserUpdates } from "./utils/UserQueries";
+import { ApolloProvider, gql, useSubscription } from "@apollo/client";
+import { User, UserUpdatesSubscription } from "./generated/graphql";
 import { extendTheme, NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 init();
@@ -47,83 +45,48 @@ const newColorTheme = {
 const beepTheme = extendTheme({
   colors: newColorTheme,
   config: {
-    // useSystemColorMode: true,
-    // initialColorMode: 'dark',
+    useSystemColorMode: true,
+    initialColorMode: "dark",
   },
 });
 
+export const UserSubscription = gql`
+  subscription UserUpdates {
+    getUserUpdates {
+      id
+      username
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      cashapp
+    }
+  }
+`;
+
 function Beep() {
-  const { colorMode, toggleColorMode } = useColorMode();
-  const { data, loading, subscribeToMore } = useQuery(GetUserData, {
-    errorPolicy: "none",
-  });
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const { colorMode } = useColorMode();
+  // const { data, loading } = useQuery(GetUserData, {
+  //   errorPolicy: "none",
+  // });
 
-  useEffect(() => {
-    AppState.addEventListener("change", _handleAppStateChange);
-
-    return () => {
-      AppState.removeEventListener("change", _handleAppStateChange);
-    };
-  }, []);
-
-  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.current.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
-      if (data?.getUser?.id) {
-        subscribeToMore({
-          document: UserUpdates,
-          variables: {
-            id: data?.getUser.id,
-          },
-          updateQuery: (prev, { subscriptionData }) => {
-            const newFeedItem = subscriptionData.data.getUserUpdates;
-            if (newFeedItem) {
-              Sentry.setUserContext(newFeedItem);
-              return Object.assign({}, prev, {
-                getUser: newFeedItem,
-              });
-            }
-          },
-        });
-      }
-    }
-
-    appState.current = nextAppState;
-    setAppStateVisible(appState.current);
-  };
-
-  useEffect(() => {
-    if (data?.getUser.id) {
-      updatePushToken();
-
-      Sentry.setUserContext(data.getUser);
-
-      subscribeToMore({
-        document: UserUpdates,
-        variables: {
-          id: data.getUser.id,
-        },
-        updateQuery: (prev, { subscriptionData }) => {
-          const newFeedItem = subscriptionData.data.getUserUpdates;
-          if (newFeedItem) {
-            Sentry.setUserContext(newFeedItem);
-            return {
-              getUser: newFeedItem,
-            };
-          }
-        },
-      });
-    }
-  }, [data?.getUser?.id]);
+  const { data, loading } =
+    useSubscription<UserUpdatesSubscription>(UserSubscription);
 
   if (loading) return null;
-  console.log(colorMode);
+
   return (
-    <UserContext.Provider value={data?.getUser as User}>
+    <UserContext.Provider value={data?.getUserUpdates as User}>
       <StatusBar
         barStyle={colorMode === "dark" ? "light-content" : "dark-content"}
       />
@@ -131,7 +94,7 @@ function Beep() {
         theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
       >
         <Stack.Navigator
-          initialRouteName={data?.getUser?.id ? "Main" : "Login"}
+          initialRouteName={data?.getUserUpdates?.id ? "Main" : "Login"}
         >
           <Stack.Screen
             options={{ headerShown: false }}

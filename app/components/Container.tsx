@@ -2,7 +2,7 @@ import React from "react";
 import { Box, useColorModeValue, IBoxProps } from "native-base";
 
 interface Props {
-  children: JSX.Element | JSX.Element[] | null;
+  children: any;
 }
 
 export const LocalWrapper = (props: Props & IBoxProps): JSX.Element => {

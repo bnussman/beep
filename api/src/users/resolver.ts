@@ -70,10 +70,10 @@ export class UserResolver {
   }
 
   @Subscription(() => User, {
-    topics: ({ args }) => "User" + args.id,
+    topics: ({ context }) => "User" + context.user.id,
   })
-  @Authorized('No Verification Self')
-  public getUserUpdates(@Arg('id') id: string, @Root() user: User): User {
+  @Authorized('No Verification')
+  public getUserUpdates(@Ctx() ctx: Context, @Root() user: User): User {
     return user;
   }
 }
