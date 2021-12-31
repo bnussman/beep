@@ -1,17 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Layout, Text, Button, Input } from '@ui-kitten/components';
-import * as SplashScreen from 'expo-splash-screen';
-import { isMobile } from '../../utils/config';
-import { LoginIcon, SignUpIcon, QuestionIcon, LoadingIndicator, UserIcon } from '../../utils/Icons';
-import { Icon } from '@ui-kitten/components';
-import { gql, useMutation } from '@apollo/client';
-import { LoginMutation } from '../../generated/graphql';
-import { client } from '../../utils/Apollo';
-import { GetUserData } from '../../utils/UserQueries';
-import { getPushToken } from '../../utils/Notifications';
-import { Navigation } from '../../utils/Navigation';
+import React, { useEffect, useRef, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SplashScreen from "expo-splash-screen";
+import { isMobile } from "../../utils/config";
+import { gql, useMutation } from "@apollo/client";
+import { LoginMutation } from "../../generated/graphql";
+import { client } from "../../utils/Apollo";
+import { GetUserData } from "../../utils/UserQueries";
+import { getPushToken } from "../../utils/Notifications";
+import { Navigation } from "../../utils/Navigation";
+import Logger from "../../utils/Logger";
+import {
+  Stack,
+  Image,
+  Box,
+  Text,
+  Button,
+  Input,
+  Center,
+  Container,
+  Heading,
+  Flex,
+  Spacer,
+} from "native-base";
+import Logo from "../../assets/icon.png";
+import { LocalWrapper } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -19,7 +31,9 @@ interface Props {
 
 const Login = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
-    login(input: {username: $username, password: $password, pushToken: $pushToken}) {
+    login(
+      input: { username: $username, password: $password, pushToken: $pushToken }
+    ) {
       tokens {
         id
         tokenid
@@ -49,22 +63,14 @@ const Login = gql`
 
 function LoginScreen(props: Props): JSX.Element {
   const [login, { loading }] = useMutation<LoginMutation>(Login);
-  const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const passwordRef = useRef<any>();
 
-  const renderIcon = (props: unknown) => (
-    <TouchableWithoutFeedback onPress={() => setSecureTextEntry(!secureTextEntry)}>
-      <Icon {...props} name={secureTextEntry ? 'eye-off' : 'eye'} />
-    </TouchableWithoutFeedback>
-  );
-
   useEffect(() => {
     try {
       SplashScreen.hideAsync();
-    }
-    catch (error) {
+    } catch (error) {
       // ...
     }
   }, []);
@@ -75,116 +81,76 @@ function LoginScreen(props: Props): JSX.Element {
         variables: {
           username: username,
           password: password,
-          pushToken: isMobile ? await getPushToken() : undefined
-        }
+          pushToken: isMobile ? await getPushToken() : undefined,
+        },
       });
 
       AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
 
-      // await client.resetStore();
-
       client.writeQuery({
         query: GetUserData,
-        data: { getUser: data.data?.login.user }
+        data: { getUser: data.data?.login.user },
       });
 
       props.navigation.reset({
         index: 0,
-        routes: [
-          { name: 'Main' },
-        ],
+        routes: [{ name: "Main" }],
       });
-    }
-    catch (error) {
+    } catch (error) {
       alert(error.message);
     }
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile} >
-      <Layout style={styles.container}>
-        <Text style={styles.title} category='h6'>Login</Text>
-        <Layout style={styles.form}>
-          <Input
-            textContentType="username"
-            placeholder="Username"
-            returnKeyType="next"
-            onChangeText={(text) => setUsername(text)}
-            blurOnSubmit={true}
-            onSubmitEditing={() => passwordRef.current.focus()}
-            accessoryRight={UserIcon}
-          />
-          <Input
-            style={{ marginTop: 8 }}
-            textContentType="password"
-            placeholder="Password"
-            returnKeyType="go"
-            accessoryRight={renderIcon}
-            secureTextEntry={secureTextEntry}
-            onChangeText={(text) => setPassword(text)}
-            blurOnSubmit={true}
-            ref={passwordRef}
-            onSubmitEditing={() => doLogin()}
-          />
-          {!loading ?
+    <LocalWrapper>
+      <Center mt="40%">
+        <Stack space={4} w="90%">
+          <Flex direction="row" alignItems="center" justifyContent="center">
+            <Heading mr={4}>Login</Heading>
+            <Box shadow={7} borderRadius={10}>
+              <Image size={50} borderRadius={10} source={Logo} alt="Logo" />
+            </Box>
+          </Flex>
+          <Stack space={2}>
+            <Input
+              textContentType="username"
+              placeholder="Username"
+              returnKeyType="next"
+              onChangeText={(text) => setUsername(text)}
+              onSubmitEditing={() => passwordRef.current.focus()}
+            />
+            <Input
+              textContentType="password"
+              placeholder="Password"
+              returnKeyType="go"
+              onChangeText={(text) => setPassword(text)}
+              ref={passwordRef}
+              onSubmitEditing={() => doLogin()}
+              secureTextEntry
+            />
             <Button
-              accessoryRight={LoginIcon}
+              isLoading={loading}
+              disabled={!username || !password}
               onPress={() => doLogin()}
-              style={{ marginTop: 8 }}
             >
               Login
             </Button>
-            :
-            <Button
-              appearance='outline'
-              accessoryRight={LoadingIndicator}
-              style={{ marginTop: 8 }}
-            >
-              Loading
+          </Stack>
+          <Flex direction="row">
+            <Button onPress={() => props.navigation.navigate("Sign Up")}>
+              Sign Up
             </Button>
-          }
-        </Layout>
-        <Text style={{ marginTop: 30, marginBottom: 10 }}> Don't have an account? </Text>
-        <Button
-          size="small"
-          onPress={() => props.navigation.navigate('Register')}
-          appearance="outline"
-          accessoryRight={SignUpIcon}
-        >
-          Sign Up
-        </Button>
-        <Text style={{ marginTop: 20, marginBottom: 10 }}> Forgot your password? </Text>
-        <Button
-          size="small"
-          onPress={() => props.navigation.navigate('ForgotPassword')}
-          appearance="outline"
-          accessoryRight={QuestionIcon}
-        >
-          Forgot Password
-        </Button>
-      </Layout>
-    </TouchableWithoutFeedback>
+            <Spacer />
+            <Button
+              onPress={() => props.navigation.navigate("Forgot Password")}
+            >
+              Forgot Password
+            </Button>
+          </Flex>
+        </Stack>
+      </Center>
+    </LocalWrapper>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    paddingTop: 100
-  },
-  form: {
-    justifyContent: "center",
-    width: "83%",
-    marginTop: 20,
-  },
-  title: {
-    fontSize: 40,
-    padding: 15,
-  },
-  input: {
-    width: "90%"
-  }
-});
 
 export default LoginScreen;

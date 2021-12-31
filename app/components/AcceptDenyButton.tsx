@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
-import { Button } from "@ui-kitten/components";
-import { AcceptIcon, DenyIcon, AcceptIndicator, DenyIndicator } from "../utils/Icons";
+import { Button } from "native-base";
 import { gql, useMutation } from "@apollo/client";
 import { UpdateBeeperQueueMutation } from "../generated/graphql";
 
@@ -11,12 +9,14 @@ interface Props {
 }
 
 const UpdateBeeperQueue = gql`
-  mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
-    setBeeperQueue(input: {
-      queueId: $queueId,
-      riderId: $riderId,
-      value: $value
-    })
+  mutation UpdateBeeperQueue(
+    $queueId: String!
+    $riderId: String!
+    $value: String!
+  ) {
+    setBeeperQueue(
+      input: { queueId: $queueId, riderId: $riderId, value: $value }
+    )
   }
 `;
 
@@ -24,7 +24,13 @@ function AcceptDenyButton(props: Props): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const [update] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
 
-  async function updateStatus(queueId: string, riderId: string, value: string | boolean): Promise<void> {
+  const isAccept = props.type === "accept";
+
+  async function updateStatus(
+    queueId: string,
+    riderId: string,
+    value: string | boolean
+  ): Promise<void> {
     setLoading(true);
 
     try {
@@ -32,39 +38,27 @@ function AcceptDenyButton(props: Props): JSX.Element {
         variables: {
           queueId: queueId,
           riderId: riderId,
-          value: value
-        }
+          value: value,
+        },
       });
-    }
-    catch (error) {
+    } catch (error) {
       alert(error.message);
       setLoading(false);
     }
   }
 
-  if (loading) {
-    return (
-      <Button style={styles.button} appearance="outline" status={(props.type == "accept") ? "success" : "danger"} accessoryLeft={(props.type == "accept") ? AcceptIndicator : DenyIndicator}>
-        Loading
-      </Button>
-    );
-  }
-
   return (
-    <Button style={styles.button} status={(props.type == "accept") ? "success" : "danger"} accessoryLeft={(props.type == "accept") ? AcceptIcon : DenyIcon} onPress={() => updateStatus(props.item.id, props.item.rider.id, props.type)}>
-      {(props.type == "accept") ? "Accept" : "Deny"}
+    <Button
+      colorScheme={isAccept ? "green" : "red"}
+      _text={{ color: "white" }}
+      isLoading={loading}
+      onPress={() =>
+        updateStatus(props.item.id, props.item.rider.id, props.type)
+      }
+    >
+      {isAccept ? "Accept" : "Deny"}
     </Button>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  button: {
-    margin: 2,
-  },
-});
 
 export default AcceptDenyButton;

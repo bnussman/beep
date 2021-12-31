@@ -1,13 +1,21 @@
-import React, { useContext } from 'react';
-import { Layout, Text, Divider, List, ListItem, Spinner, TopNavigationAction, TopNavigation } from '@ui-kitten/components';
-import { StyleSheet } from 'react-native';
-import ProfilePicture from '../components/ProfilePicture';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { MainNavParamList } from '../navigators/MainTabs';
-import { gql, useQuery } from '@apollo/client';
-import { GetBeepHistoryQuery, Beep } from '../generated/graphql';
-import { UserContext } from '../utils/UserContext';
-import { BackIcon } from '../utils/Icons';
+import React, { useContext } from "react";
+import { Pressable } from "react-native";
+import ProfilePicture from "../components/ProfilePicture";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { MainNavParamList } from "../navigators/MainTabs";
+import { gql, useQuery } from "@apollo/client";
+import { GetBeepHistoryQuery, Beep } from "../generated/graphql";
+import { UserContext } from "../utils/UserContext";
+import {
+  Spinner,
+  Divider,
+  Text,
+  FlatList,
+  Avatar,
+  Flex,
+  Box,
+} from "native-base";
+import { LocalWrapper } from "../components/Container";
 
 interface Props {
   navigation: BottomTabNavigationProp<MainNavParamList>;
@@ -45,80 +53,75 @@ const GetBeepHistory = gql`
 
 export function BeepsScreen(props: Props): JSX.Element {
   const user = useContext(UserContext);
-  const { data, loading, error } = useQuery<GetBeepHistoryQuery>(GetBeepHistory, { variables: { id: user.id } });
+  const { data, loading, error } = useQuery<GetBeepHistoryQuery>(
+    GetBeepHistory,
+    { variables: { id: user.id } }
+  );
 
   const beeps = data?.getBeeps;
-
-  const BackAction = () => (
-    <TopNavigationAction icon={BackIcon} onPress={() => props.navigation.goBack()} />
-  );
 
   const renderItem = ({ item }: { item: Beep }) => {
     const otherUser = user.id === item.rider.id ? item.beeper : item.rider;
     return (
-      <ListItem
-        accessoryLeft={() => (
-          <ProfilePicture
-            size={50}
-            url={otherUser.photoUrl || ''}
-          />
-        )}
-        onPress={() => props.navigation.push("Profile", { id: otherUser.id, beep: item.id })}
-        title={user.id === item.rider.id ?
-          `${otherUser.name} beeped you` : `You beeped ${otherUser.name}`
+      <Pressable
+        onPress={() =>
+          props.navigation.push("Profile", { id: otherUser.id, beep: item.id })
         }
-        description={`Group size: ${item.groupSize}\nOrigin: ${item.origin}\nDestination: ${item.destination}\nDate: ${new Date(item.start)}`}
-      />
+      >
+        <Flex direction="row" alignItems="center" p={2}>
+          <Avatar
+            size={50}
+            mr={2}
+            source={{
+              uri: otherUser.photoUrl ? otherUser.photoUrl : undefined,
+            }}
+          />
+          <Box>
+            <Text>
+              {user.id === item.rider.id
+                ? `${otherUser.name} beeped you`
+                : `You beeped ${otherUser.name}`}
+            </Text>
+            <Text>{`Group size: ${item.groupSize}\nOrigin: ${
+              item.origin
+            }\nDestination: ${item.destination}\nDate: ${new Date(
+              item.start
+            ).toLocaleString()}`}</Text>
+          </Box>
+        </Flex>
+      </Pressable>
     );
   };
 
   const renderBody = () => {
-    if (error) return <Text category='h5'>{error.message}</Text>;
+    if (error) return <Text>{error.message}</Text>;
     if (loading) {
       return (
-        <>
-          <Text category='h5'>Loading your history</Text>
+        <LocalWrapper alignItems="center" justifyContent="center">
+          <Text>Loading your history</Text>
           <Spinner />
-        </>
+        </LocalWrapper>
       );
     }
     if (beeps && beeps.items.length > 0) {
       return (
-        <List
-          style={{ width: "100%" }}
-          data={beeps.items}
-          ItemSeparatorComponent={Divider}
-          renderItem={renderItem}
-        />
+        <LocalWrapper alignItems="center" justifyContent="center">
+          <FlatList
+            w="100%"
+            data={beeps.items}
+            ItemSeparatorComponent={Divider}
+            renderItem={renderItem}
+          />
+        </LocalWrapper>
       );
     }
     return (
-      <>
-        <Text category='h5'>Nothing to display!</Text>
-        <Text appearance='hint'>You have no previous beeps to display</Text>
-      </>
+      <LocalWrapper alignItems="center" justifyContent="center">
+        <Text>Nothing to display!</Text>
+        <Text>You have no previous beeps to display</Text>
+      </LocalWrapper>
     );
   };
 
-  return (
-    <>
-      <TopNavigation
-        title='Your Beeps'
-        subtitle={`${beeps?.count || 'N/A'} beeps`}
-        alignment='center'
-        accessoryLeft={BackAction}
-      />
-      <Layout style={styles.container}>
-        {renderBody()}
-      </Layout>
-    </>
-  );
+  return renderBody();
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-    alignItems: "center",
-    justifyContent: 'center'
-  }
-});

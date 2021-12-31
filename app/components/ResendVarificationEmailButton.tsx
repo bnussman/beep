@@ -1,43 +1,26 @@
-import React from 'react';
-import { Button } from '@ui-kitten/components';
-import { EmailIcon, LoadingIndicator } from '../utils/Icons';
-import { gql, useMutation } from '@apollo/client';
-import { ResendMutation } from '../generated/graphql';
+import React from "react";
+import { Button } from "native-base";
+import { gql, useMutation } from "@apollo/client";
+import { ResendMutation } from "../generated/graphql";
 
 const Resend = gql`
-    mutation Resend {
-      resendEmailVarification
-    }
+  mutation Resend {
+    resendEmailVarification
+  }
 `;
 
-function ResendButton(): JSX.Element {
-  const [resend, { loading }] = useMutation<ResendMutation>(Resend);
+function ResendButton() {
+  const [resend, { data, loading, error }] =
+    useMutation<ResendMutation>(Resend);
 
   async function resendEmailVarification() {
-    try {
-      await resend();
-      alert("Successfuly resent varification email");
-    }
-    catch(error) {
-      alert(error.message);
-    }
-  }
-
-  if (loading) {
-    return (
-      <Button appearance='ghost' accessoryLeft={LoadingIndicator} style={{ marginBottom: 10 }}>
-        Loading
-      </Button>
-    );
+    const result = await resend();
+    if (result) alert("Successfuly resent varification email");
+    else alert(error?.message);
   }
 
   return (
-    <Button
-      onPress={() => resendEmailVarification()}
-      accessoryLeft={EmailIcon}
-      style={{ marginBottom: 10 }}
-      appearance='ghost'
-    >
+    <Button isLoading={loading} onPress={() => resendEmailVarification()}>
       Resend Varification Email
     </Button>
   );

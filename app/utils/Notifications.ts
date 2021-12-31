@@ -1,12 +1,12 @@
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
-import { Vibration, Platform } from 'react-native';
-import { gql } from '@apollo/client';
-import { client } from '../utils/Apollo';
-import { isMobile } from './config';
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import { Vibration, Platform } from "react-native";
+import { gql } from "@apollo/client";
+import { client } from "../utils/Apollo";
+import { isMobile } from "./config";
 
 /**
- * Checks for permssion for Notifications, asks expo for push token, sets up notification listeners, returns 
+ * Checks for permssion for Notifications, asks expo for push token, sets up notification listeners, returns
  * push token to be used
  */
 export async function getPushToken(): Promise<string | null> {
@@ -47,7 +47,8 @@ async function getNotificationPermission(): Promise<boolean> {
   });
 
   return (
-    settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+    settings.granted ||
+    settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
   );
 }
 
@@ -59,20 +60,22 @@ function setNotificationHandlers() {
     {
       actionId: "accept",
       identifiter: "accept",
-      buttonTitle: "Accept"
+      buttonTitle: "Accept",
     },
     {
       actionId: "deny",
       identifiter: "deny",
       buttonTitle: "Deny",
       options: {
-        isDestructive: true
-      }
-    }
-
+        isDestructive: true,
+      },
+    },
   ];
   //@ts-ignore
-  Notifications.setNotificationCategoryAsync("enteredBeeperQueue", enteredBeeperQueueActions);
+  Notifications.setNotificationCategoryAsync(
+    "enteredBeeperQueue",
+    enteredBeeperQueueActions
+  );
   //@ts-ignore
   Notifications.addNotificationReceivedListener(handleNotification);
 }
@@ -85,8 +88,9 @@ export async function updatePushToken(): Promise<void> {
   if (isMobile) {
     const UpdatePushToken = gql`
       mutation UpdatePushToken($token: String!) {
-          updatePushToken (pushToken: $token)
-      }`;
+        updatePushToken(pushToken: $token)
+      }
+    `;
 
     const token = await getPushToken();
 

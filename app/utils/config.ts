@@ -1,6 +1,7 @@
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
-export const isMobile: boolean = (Platform.OS == "ios") || (Platform.OS == "android");
+export const isMobile: boolean =
+  Platform.OS == "ios" || Platform.OS == "android";
 
 export const isAndroid: boolean = Platform.OS == "android";
 

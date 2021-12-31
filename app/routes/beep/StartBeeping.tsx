@@ -1,22 +1,41 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import * as Location from 'expo-location';
-import * as TaskManager from 'expo-task-manager';
-import { StyleSheet, Linking, Platform, TouchableWithoutFeedback, Keyboard, Alert, AppState, AppStateStatus } from 'react-native';
-import { Card, Layout, Text, Button, Input, List, CheckBox } from '@ui-kitten/components';
-import { UserContext } from '../../utils/UserContext';
-import { isAndroid, isMobile } from "../../utils/config";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import * as Location from "expo-location";
+import * as TaskManager from "expo-task-manager";
+import {
+  Linking,
+  Platform,
+  Alert,
+  AppState,
+  AppStateStatus,
+  FlatList,
+  Pressable,
+} from "react-native";
+import { UserContext } from "../../utils/UserContext";
+import { isAndroid } from "../../utils/config";
 import ActionButton from "../../components/ActionButton";
 import AcceptDenyButton from "../../components/AcceptDenyButton";
-import { PhoneIcon, TextIcon, VenmoIcon, MapsIcon, DollarIcon } from '../../utils/Icons';
-import ProfilePicture from '../../components/ProfilePicture';
-import Toggle from "./components/Toggle";
-import Logger from '../../utils/Logger';
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { GetInitialQueueQuery, UpdateBeepSettingsMutation } from '../../generated/graphql';
-import { client } from '../../utils/Apollo';
-import { Navigation } from '../../utils/Navigation';
-import { Tag } from '../ride/Tags';
-import {LocationActivityType} from 'expo-location';
+import Logger from "../../utils/Logger";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import {
+  GetInitialQueueQuery,
+  UpdateBeepSettingsMutation,
+} from "../../generated/graphql";
+import { client } from "../../utils/Apollo";
+import { Navigation } from "../../utils/Navigation";
+import { Tag } from "../ride/Tags";
+import { LocationActivityType } from "expo-location";
+import {
+  Avatar,
+  Input,
+  Switch,
+  Text,
+  Checkbox,
+  Button,
+  Heading,
+  FormControl,
+  Stack,
+} from "native-base";
+import { LocalWrapper } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -26,23 +45,25 @@ let unsubscribe: any = null;
 
 const LocationUpdate = gql`
   mutation LocationUpdate(
-    $latitude: Float!,
-    $longitude: Float!,
-    $altitude: Float!,
-    $accuracy: Float,
-    $altitideAccuracy: Float,
-    $heading: Float!,
+    $latitude: Float!
+    $longitude: Float!
+    $altitude: Float!
+    $accuracy: Float
+    $altitideAccuracy: Float
+    $heading: Float!
     $speed: Float!
   ) {
-    setLocation(location: {
-      latitude: $latitude,
-      longitude: $longitude,
-      altitude: $altitude,
-      accuracy: $accuracy
-      altitideAccuracy: $altitideAccuracy,
-      heading: $heading,
-      speed: $speed
-    })
+    setLocation(
+      location: {
+        latitude: $latitude
+        longitude: $longitude
+        altitude: $altitude
+        accuracy: $accuracy
+        altitideAccuracy: $altitideAccuracy
+        heading: $heading
+        speed: $speed
+      }
+    )
   }
 `;
 
@@ -97,9 +118,15 @@ const GetQueue = gql`
 `;
 
 const UpdateBeepSettings = gql`
-  mutation UpdateBeepSettings($singlesRate: Float!, $groupRate: Float!, $capacity: Float!, $isBeeping: Boolean!, $masksRequired: Boolean!) {
+  mutation UpdateBeepSettings(
+    $singlesRate: Float!
+    $groupRate: Float!
+    $capacity: Float!
+    $isBeeping: Boolean!
+    $masksRequired: Boolean!
+  ) {
     setBeeperStatus(
-      input : {
+      input: {
         singlesRate: $singlesRate
         groupRate: $groupRate
         capacity: $capacity
@@ -110,19 +137,27 @@ const UpdateBeepSettings = gql`
   }
 `;
 
-export const LOCATION_TRACKING = 'location-tracking';
+export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen(props: Props): JSX.Element {
   const user = useContext(UserContext);
 
   const [isBeeping, setIsBeeping] = useState<boolean>(user.isBeeping);
-  const [masksRequired, setMasksRequired] = useState<boolean>(user.masksRequired);
-  const [singlesRate, setSinglesRate] = useState<string>(String(user.singlesRate));
+  const [masksRequired, setMasksRequired] = useState<boolean>(
+    user.masksRequired
+  );
+  const [singlesRate, setSinglesRate] = useState<string>(
+    String(user.singlesRate)
+  );
   const [groupRate, setGroupRate] = useState<string>(String(user.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user.capacity));
 
-  const { subscribeToMore, data, refetch } = useQuery<GetInitialQueueQuery>(GetInitialQueue, { notifyOnNetworkStatusChange: true });
-  const [updateBeepSettings] = useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
+  const { subscribeToMore, data, refetch } = useQuery<GetInitialQueueQuery>(
+    GetInitialQueue,
+    { notifyOnNetworkStatusChange: true }
+  );
+  const [updateBeepSettings] =
+    useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
   const queue = data?.getQueue;
 
@@ -130,17 +165,17 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
-    AppState.addEventListener('change', _handleAppStateChange);
+    AppState.addEventListener("change", _handleAppStateChange);
 
     return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
+      AppState.removeEventListener("change", _handleAppStateChange);
     };
   }, []);
 
   const _handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
       appState.current.match(/inactive|background/) &&
-      nextAppState === 'active'
+      nextAppState === "active"
     ) {
       refetch();
     }
@@ -157,26 +192,40 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         [
           {
             text: "Cancel",
-            style: "cancel"
+            style: "cancel",
           },
-          { text: "OK", onPress: () => toggleSwitch(value) }
+          { text: "OK", onPress: () => toggleSwitch(value) },
         ],
         { cancelable: true }
       );
-    }
-    else {
+    } else {
       toggleSwitch(value);
     }
   }
+
+  React.useLayoutEffect(() => {
+    props.navigation.setOptions({
+      // eslint-disable-next-line react/display-name
+      headerRight: () => (
+        <Switch
+          mr={3}
+          isChecked={isBeeping}
+          onToggle={(value: boolean) => toggleSwitchWrapper(value)}
+        />
+      ),
+    });
+  }, [props.navigation, isBeeping]);
 
   async function getBeepingLocationPermissions(): Promise<boolean> {
     //Temporary fix for being able to toggle beeping in dev
     if (__DEV__) return true;
 
-    const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
-    const { status: bgStatus } = await Location.requestBackgroundPermissionsAsync();
+    const { status: fgStatus } =
+      await Location.requestForegroundPermissionsAsync();
+    const { status: bgStatus } =
+      await Location.requestBackgroundPermissionsAsync();
 
-    if (fgStatus !== 'granted' || bgStatus !== 'granted') {
+    if (fgStatus !== "granted" || bgStatus !== "granted") {
       return false;
     }
 
@@ -193,8 +242,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         return;
       }
       startLocationTracking();
-    }
-    else {
+    } else {
       stopLocationTracking();
     }
 
@@ -205,29 +253,25 @@ export function StartBeepingScreen(props: Props): JSX.Element {
           singlesRate: Number(singlesRate),
           groupRate: Number(groupRate),
           masksRequired: masksRequired,
-          capacity: Number(capacity)
-        }
+          capacity: Number(capacity),
+        },
       });
 
       if (result) {
         if (value) {
           sub();
-        }
-        else {
+        } else {
           if (unsubscribe) unsubscribe();
         }
-      }
-      else {
+      } else {
         setIsBeeping(!isBeeping);
         if (isBeeping) {
           startLocationTracking();
-        }
-        else {
+        } else {
           stopLocationTracking();
         }
       }
-    }
-    catch (error) {
+    } catch (error) {
       setIsBeeping(isBeeping);
       alert(error.message);
       console.log(error);
@@ -238,22 +282,23 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     if (!__DEV__) {
       await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
         accuracy: Location.Accuracy.Highest,
-        timeInterval: (15 * 1000),
+        timeInterval: 15 * 1000,
         distanceInterval: 6,
         activityType: LocationActivityType.AutomotiveNavigation,
         showsBackgroundLocationIndicator: true,
         foregroundService: {
           notificationTitle: "Ride Beep App",
           notificationBody: "You are currently beeping!",
-          notificationColor: "#e8c848"
-        }
+          notificationColor: "#e8c848",
+        },
       });
 
       const hasStarted = await Location.hasStartedLocationUpdatesAsync(
         LOCATION_TRACKING
       );
 
-      if (!hasStarted) Logger.error("User was unable to start location tracking");
+      if (!hasStarted)
+        Logger.error("User was unable to start location tracking");
     }
   }
 
@@ -273,7 +318,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         startLocationTracking();
         sub();
       }
-    }
+    };
 
     init();
   }, []);
@@ -282,265 +327,234 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     unsubscribe = subscribeToMore({
       document: GetQueue,
       variables: {
-        id: user.id
+        id: user.id,
       },
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-expect-error This works so I'm leaving it as is
         const newQueue = subscriptionData.data.getBeeperUpdates;
         return Object.assign({}, prev, {
-          getQueue: newQueue
+          getQueue: newQueue,
         });
-      }
+      },
     });
   }
 
   function handleDirections(origin: string, dest: string): void {
-    if (Platform.OS == 'ios') {
+    if (Platform.OS == "ios") {
       Linking.openURL(`http://maps.apple.com/?saddr=${origin}&daddr=${dest}`);
-    }
-    else {
+    } else {
       Linking.openURL(`https://www.google.com/maps/dir/${origin}/${dest}/`);
     }
   }
 
   function handleVenmo(groupSize: string | number, venmo: string): void {
     if (Number(groupSize) > 1) {
-      Linking.openURL(`venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user.groupRate * Number(groupSize)}&note=Beep`);
-    }
-    else {
-      Linking.openURL(`venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user.singlesRate}&note=Beep`);
+      Linking.openURL(
+        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${
+          user.groupRate * Number(groupSize)
+        }&note=Beep`
+      );
+    } else {
+      Linking.openURL(
+        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user.singlesRate}&note=Beep`
+      );
     }
   }
 
   function handleCashApp(groupSize: string | number, cashapp: string): void {
     if (Number(groupSize) > 1) {
-      Linking.openURL(`https://cash.app/$${cashapp}/${Number(groupSize) * user.groupRate}`);
-    }
-    else {
+      Linking.openURL(
+        `https://cash.app/$${cashapp}/${Number(groupSize) * user.groupRate}`
+      );
+    } else {
       Linking.openURL(`https://cash.app/$${cashapp}/${user.singlesRate}`);
     }
   }
 
   if (!isBeeping) {
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile} >
-        <Layout style={styles.container}>
-          <Toggle isBeepingState={isBeeping} onToggle={async (value) => toggleSwitchWrapper(value)} />
-          <Layout style={{ marginTop: 6, width: "85%" }}>
+      <LocalWrapper alignItems="center">
+        <Stack space={4} w="90%" mt={4}>
+          <FormControl>
+            <FormControl.Label>Max Rider Capacity</FormControl.Label>
             <Input
-              label='Max Capacity'
-              caption='The maximum number of people you can fit in your vehicle not including yourself.'
-              placeholder='Max Capcity'
-              keyboardType='numeric'
-              style={styles.inputs}
+              placeholder="Max Capcity"
+              keyboardType="numeric"
               value={String(capacity)}
               onChangeText={(value) => setCapacity(value)}
             />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Singles Rate</FormControl.Label>
             <Input
-              label='Singles Rate'
-              caption='Riders who need a ride alone will pay this price.'
-              placeholder='Singles Rate'
-              keyboardType='numeric'
-              style={styles.inputs}
-              accessoryLeft={DollarIcon}
+              placeholder="Singles Rate"
+              keyboardType="numeric"
               value={String(singlesRate)}
               onChangeText={(value) => setSinglesRate(value)}
             />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Group Rate</FormControl.Label>
             <Input
-              label='Group Rate'
-              caption='Riders who ride in a group will each pay this price.'
-              placeholder='Group Rate'
-              keyboardType='numeric'
-              style={styles.inputs}
-              accessoryLeft={DollarIcon}
+              placeholder="Group Rate"
+              keyboardType="numeric"
               value={String(groupRate)}
               onChangeText={(value) => setGroupRate(value)}
             />
-            <CheckBox
-              checked={masksRequired}
-              onChange={(value) => setMasksRequired(value)}
-              style={{ marginTop: 15 }}
-            >
-              Require riders to have a mask
-            </CheckBox>
-          </Layout>
-        </Layout>
-      </TouchableWithoutFeedback>
+          </FormControl>
+          <Checkbox
+            isChecked={masksRequired}
+            onChange={(value: boolean) => setMasksRequired(value)}
+            value="Masks?"
+          >
+            Require riders to have a mask
+          </Checkbox>
+        </Stack>
+      </LocalWrapper>
     );
-  }
-  else {
+  } else {
     if (queue && queue?.length > 0) {
       return (
-        <Layout style={styles.container}>
-          <Toggle isBeepingState={isBeeping} onToggle={async (value) => toggleSwitchWrapper(value)} />
-          <List
-            style={styles.list}
+        <LocalWrapper>
+          <FlatList
             data={data?.getQueue}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             renderItem={({ item, index }) =>
-              item.isAccepted ?
-                <Card
-                  style={styles.cards}
-                  status={(0 == index) ? "primary" : "basic"}
-                  onPress={() => props.navigation.navigate("Profile", { id: item.rider.id, beep: item.id })}
+              item.isAccepted ? (
+                <Pressable
+                  onPress={() =>
+                    props.navigation.navigate("Profile", {
+                      id: item.rider.id,
+                      beep: item.id,
+                    })
+                  }
                 >
-                  <Layout
-                    style={{ flex: 1, flexDirection: "row", alignItems: 'center' }}
+                  <Avatar
+                    size={50}
+                    source={{
+                      uri: item.rider.photoUrl
+                        ? item.rider.photoUrl
+                        : undefined,
+                    }}
+                  />
+                  <Text>{item.rider.name}</Text>
+                  <Text>Group Size</Text>
+                  <Text>{item.groupSize}</Text>
+                  <Text>Pick Up </Text>
+                  <Text>{item.origin}</Text>
+                  <Text>Drop Off </Text>
+                  <Text>{item.destination}</Text>
+                  <Button
+                    onPress={() => {
+                      Linking.openURL("tel:" + item.rider.phone);
+                    }}
                   >
-                    {item.rider.photoUrl ?
-                      <ProfilePicture
-                        size={50}
-                        url={item.rider.photoUrl}
-                      />
-                      : null
-                    }
-                    <Text category="h6" style={styles.rowText}>{item.rider.name}</Text>
-                    {item.rider.isStudent ? <Tag status="basic">Student</Tag> : null}
-                  </Layout>
-                  <Layout style={styles.row}>
-                    <Text category='h6'>Group Size</Text>
-                    <Text style={styles.rowText}>{item.groupSize}</Text>
-                  </Layout>
-                  <Layout style={styles.row}>
-                    <Text category='h6'>Pick Up </Text>
-                    <Text style={{ width: '80%' }}>{item.origin}</Text>
-                  </Layout>
-                  <Layout style={styles.row}>
-                    <Text category='h6'>Drop Off </Text>
-                    <Text style={styles.rowText}>{item.destination}</Text>
-                  </Layout>
-                  <Layout style={styles.row}>
-                    <Layout style={styles.layout}>
-                      <Button
-                        size="small"
-                        style={styles.rowButton}
-                        status='basic'
-                        accessoryLeft={PhoneIcon}
-                        onPress={() => { Linking.openURL('tel:' + item.rider.phone); }}
-                      >
-                        Call Rider
-                      </Button>
-                    </Layout>
-                    <Layout style={styles.layout}>
-                      <Button
-                        size="small"
-                        status='basic'
-                        accessoryLeft={TextIcon}
-                        onPress={() => { Linking.openURL('sms:' + item.rider.phone); }}
-                      >
-                        Text Rider
-                      </Button>
-                    </Layout>
-                  </Layout>
-                  {item.rider?.venmo ?
+                    Call Rider
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      Linking.openURL("sms:" + item.rider.phone);
+                    }}
+                  >
+                    Text Rider
+                  </Button>
+                  {item.rider?.venmo ? (
                     <Button
-                      size="small"
-                      style={styles.paddingUnder}
-                      status='info'
-                      accessoryLeft={VenmoIcon}
-                      onPress={() => handleVenmo(item.groupSize, item.rider.venmo)}
+                      onPress={() =>
+                        handleVenmo(item.groupSize, item.rider.venmo)
+                      }
                     >
                       Request Money from Rider with Venmo
                     </Button>
-                    : null
-                  }
-                  {item.rider?.cashapp ?
+                  ) : null}
+                  {item.rider?.cashapp ? (
                     <Button
-                      size="small"
-                      style={styles.paddingUnder}
-                      status='success'
-                      accessoryLeft={VenmoIcon}
-                      onPress={() => handleCashApp(item.groupSize, item.rider.cashapp)}
+                      onPress={() =>
+                        handleCashApp(item.groupSize, item.rider.cashapp)
+                      }
                     >
                       Request Money from Rider with Cash App
                     </Button>
-                    : null
-                  }
-                  {item.state <= 1 ?
+                  ) : null}
+                  {item.state <= 1 ? (
                     <Button
-                      size="small"
-                      style={styles.paddingUnder}
-                      status='success'
-                      accessoryLeft={MapsIcon}
-                      onPress={() => handleDirections("Current+Location", item.origin)}
+                      onPress={() =>
+                        handleDirections("Current+Location", item.origin)
+                      }
                     >
                       Get Directions to Rider
                     </Button>
-                    :
+                  ) : (
                     <Button
-                      size="small"
-                      style={styles.paddingUnder}
-                      status='success'
-                      accessoryLeft={MapsIcon}
-                      onPress={() => handleDirections(item.origin, item.destination)}
+                      onPress={() =>
+                        handleDirections(item.origin, item.destination)
+                      }
                     >
                       Get Directions for Beep
                     </Button>
+                  )}
+                  <ActionButton item={item} index={index} />
+                </Pressable>
+              ) : (
+                <Pressable
+                  onPress={() =>
+                    props.navigation.navigate("Profile", {
+                      id: item.rider.id,
+                      beep: item.id,
+                    })
                   }
-                  <ActionButton
-                    item={item}
-                    index={index}
-                  />
-                </Card>
-                :
-                <Card
-                  style={styles.cards}
-                  onPress={() => props.navigation.navigate("Profile", { id: item.rider.id, beep: item.id })}
                 >
-                  <Layout style={{ flex: 1, flexDirection: "row", alignItems: 'center' }}>
-                    {item.rider.photoUrl ?
-                      <ProfilePicture
-                        size={50}
-                        url={item.rider.photoUrl}
-                      />
-                      : null
-                    }
-                    <Text category="h6" style={styles.rowText}>{item.rider.name}</Text>
-                    {item.rider.isStudent ? <Tag status="basic">Student</Tag> : null}
-                  </Layout>
-                  <Layout style={styles.row}>
-                    <Text category='h6'>Entered Queue</Text>
-                    <Text style={styles.rowText}>{new Date(item.start * 1000).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</Text>
-                  </Layout>
-                  <Layout style={styles.row}>
-                    <Text category='h6'>Group Size</Text>
-                    <Text style={styles.rowText}>{item.groupSize}</Text>
-                  </Layout>
-                  <Layout style={styles.row}>
-                    <Text category='h6'>Origin</Text>
-                    <Text style={styles.rowText}>{item.origin}</Text>
-                  </Layout>
-                  <Layout style={styles.row}>
-                    <Text category='h6'>Destination</Text>
-                    <Text style={styles.rowText}>{item.destination}</Text>
-                  </Layout>
-                  {queue.filter(entry => entry.start < item.start && !entry.isAccepted).length === 0 ?
-                    <Layout style={styles.row}>
-                      <Layout style={styles.layout}>
-                        <AcceptDenyButton type="accept" item={item} />
-                      </Layout>
-                      <Layout style={styles.layout}>
-                        <AcceptDenyButton type="deny" item={item} />
-                      </Layout>
-                    </Layout>
-                    : null}
-                </Card>
+                  <Avatar
+                    size={50}
+                    source={{
+                      uri: item.rider.photoUrl
+                        ? item.rider.photoUrl
+                        : undefined,
+                    }}
+                  />
+                  <Text>{item.rider.name}</Text>
+                  {item.rider.isStudent ? (
+                    <Tag status="basic">Student</Tag>
+                  ) : null}
+                  <Text>Entered Queue</Text>
+                  <Text>
+                    {new Date(item.start * 1000).toLocaleString("en-US", {
+                      hour: "numeric",
+                      minute: "numeric",
+                      hour12: true,
+                    })}
+                  </Text>
+                  <Text>Group Size</Text>
+                  <Text>{item.groupSize}</Text>
+                  <Text>Origin</Text>
+                  <Text>{item.origin}</Text>
+                  <Text>Destination</Text>
+                  <Text>{item.destination}</Text>
+                  {queue.filter(
+                    (entry) => entry.start < item.start && !entry.isAccepted
+                  ).length === 0 ? (
+                    <>
+                      <AcceptDenyButton type="accept" item={item} />
+                      <AcceptDenyButton type="deny" item={item} />
+                    </>
+                  ) : null}
+                </Pressable>
+              )
             }
           />
-        </Layout>
+        </LocalWrapper>
       );
-    }
-    else {
+    } else {
       return (
-        <Layout style={styles.container}>
-          <Toggle isBeepingState={isBeeping} onToggle={async (value) => toggleSwitchWrapper(value)} />
-          <Layout style={styles.empty}>
-            <Text category='h5'>Your queue is empty</Text>
-            <Text appearance='hint'>
-              If someone wants you to beep them, it will appear here. If your app is closed, you will recieve a push notification.
+        <LocalWrapper alignItems="center" justifyContent="center">
+          <Stack space={2} w="90%" alignItems="center">
+            <Heading>Your queue is empty</Heading>
+            <Text>
+              If someone wants you to beep them, it will appear here. If your
+              app is closed, you will recieve a push notification.
             </Text>
-          </Layout>
-        </Layout>
+          </Stack>
+        </LocalWrapper>
       );
     }
   }
@@ -556,61 +570,10 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
     try {
       await client.mutate({
         mutation: LocationUpdate,
-        variables: locations[0].coords
+        variables: locations[0].coords,
       });
-    }
-    catch (e) {
+    } catch (e) {
       Logger.error(e);
     }
-
-  }
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    paddingTop: 15,
-  },
-  paddingUnder: {
-    marginBottom: 5,
-  },
-  list: {
-    width: "90%",
-    backgroundColor: 'transparent'
-  },
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-    marginBottom: 5,
-  },
-  layout: {
-    flex: 1,
-    backgroundColor: 'transparent'
-  },
-  toggle: {
-    marginBottom: 7
-  },
-  inputs: {
-    marginBottom: 6
-  },
-  empty: {
-    height: '80%',
-    width: '80%',
-    alignItems: "center",
-    justifyContent: 'center',
-  },
-  emptyConatiner: {
-    width: '85%'
-  },
-  cards: {
-    marginBottom: 10
-  },
-  rowText: {
-    marginTop: 2,
-    marginLeft: 5
-  },
-  rowButton: {
-    width: "98%"
   }
 });
