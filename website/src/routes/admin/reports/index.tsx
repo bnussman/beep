@@ -9,7 +9,7 @@ import { Indicator } from '../../../components/Indicator';
 import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../../../generated/graphql';
 import { Error } from '../../../components/Error';
-import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
+import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 
 dayjs.extend(relativeTime);
 
@@ -42,6 +42,8 @@ export const ReportsGraphQL = gql`
 
 function Reports() {
   const pageLimit = 25;
+
+  const bg = useColorModeValue('gray.50', 'gray.700');
 
   const { data, loading, error, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, {
     variables: {
@@ -98,7 +100,7 @@ function Reports() {
               onClick={() => openReport(report.id)}
               _hover={{
                 cursor: 'pointer',
-                bg: 'gray.50'
+                bg 
               }}
             >
               <TdUser user={report.reporter} />
