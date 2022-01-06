@@ -125,6 +125,6 @@ export class User {
   ratings = new Collection<Rating>(this);
 
   @Field({ nullable: true })
-  @Property({ onUpdate: () => new Date(), nullable: true })
-  seen: Date = new Date();
+  @Property({ nullable: true })
+  created: Date = new Date();
 }

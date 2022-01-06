@@ -503,11 +503,6 @@ export type SubscriptionGetRiderUpdatesArgs = {
   id: Scalars['String'];
 };
 
-
-export type SubscriptionGetUserUpdatesArgs = {
-  id: Scalars['String'];
-};
-
 export type Suggestion = {
   __typename?: 'Suggestion';
   title: Scalars['String'];
@@ -535,6 +530,7 @@ export type User = {
   __typename?: 'User';
   capacity: Scalars['Float'];
   cashapp?: Maybe<Scalars['String']>;
+  created?: Maybe<Scalars['DateTime']>;
   email: Scalars['String'];
   first: Scalars['String'];
   groupRate: Scalars['Float'];
@@ -555,7 +551,6 @@ export type User = {
   rating?: Maybe<Scalars['Float']>;
   ratings: Array<Rating>;
   role: Scalars['String'];
-  seen?: Maybe<Scalars['DateTime']>;
   singlesRate: Scalars['Float'];
   username: Scalars['String'];
   venmo?: Maybe<Scalars['String']>;
@@ -580,9 +575,7 @@ export type GetUserDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, username: string, role: string, cashapp?: string | null | undefined, queueSize: number } };
 
-export type UserUpdatesSubscriptionVariables = Exact<{
-  id: Scalars['String'];
-}>;
+export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
 export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, username: string, role: string, cashapp?: string | null | undefined, queueSize: number } };
@@ -821,7 +814,7 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null | undefined, cashapp?: string | null | undefined, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: string | null | undefined, queueSize: number, phone: string, username: string, rating?: number | null | undefined, email: string, seen?: any | null | undefined, location?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null | undefined, cashapp?: string | null | undefined, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: string | null | undefined, queueSize: number, phone: string, username: string, rating?: number | null | undefined, email: string, created?: any | null | undefined, location?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
 
 export type GetEditableUserQueryVariables = Exact<{
   id: Scalars['String'];
@@ -917,8 +910,8 @@ export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
 export type GetUserDataLazyQueryHookResult = ReturnType<typeof useGetUserDataLazyQuery>;
 export type GetUserDataQueryResult = Apollo.QueryResult<GetUserDataQuery, GetUserDataQueryVariables>;
 export const UserUpdatesDocument = gql`
-    subscription UserUpdates($id: String!) {
-  getUserUpdates(id: $id) {
+    subscription UserUpdates {
+  getUserUpdates {
     id
     name
     first
@@ -954,11 +947,10 @@ export const UserUpdatesDocument = gql`
  * @example
  * const { data, loading, error } = useUserUpdatesSubscription({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useUserUpdatesSubscription(baseOptions: Apollo.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
+export function useUserUpdatesSubscription(baseOptions?: Apollo.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
       }
@@ -2251,7 +2243,7 @@ export const GetUserDocument = gql`
     username
     rating
     email
-    seen
+    created
     location {
       latitude
       longitude

@@ -504,11 +504,6 @@ export type SubscriptionGetRiderUpdatesArgs = {
   id: Scalars['String'];
 };
 
-
-export type SubscriptionGetUserUpdatesArgs = {
-  id: Scalars['String'];
-};
-
 export type Suggestion = {
   __typename?: 'Suggestion';
   title: Scalars['String'];
@@ -536,6 +531,7 @@ export type User = {
   __typename?: 'User';
   capacity: Scalars['Float'];
   cashapp?: Maybe<Scalars['String']>;
+  created?: Maybe<Scalars['DateTime']>;
   email: Scalars['String'];
   first: Scalars['String'];
   groupRate: Scalars['Float'];
@@ -556,7 +552,6 @@ export type User = {
   rating?: Maybe<Scalars['Float']>;
   ratings: Array<Rating>;
   role: Scalars['String'];
-  seen?: Maybe<Scalars['DateTime']>;
   singlesRate: Scalars['Float'];
   username: Scalars['String'];
   venmo?: Maybe<Scalars['String']>;
@@ -576,9 +571,7 @@ export type VerifyEmail = {
   user: User;
 };
 
-export type UserUpdatesSubscriptionVariables = Exact<{
-  id: Scalars['String'];
-}>;
+export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
 export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined } };
@@ -801,8 +794,8 @@ export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePic
 
 
 export const UserUpdatesDocument = gql`
-    subscription UserUpdates($id: String!) {
-  getUserUpdates(id: $id) {
+    subscription UserUpdates {
+  getUserUpdates {
     id
     username
     name
@@ -836,11 +829,10 @@ export const UserUpdatesDocument = gql`
  * @example
  * const { data, loading, error } = useUserUpdatesSubscription({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useUserUpdatesSubscription(baseOptions: ApolloReactHooks.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
+export function useUserUpdatesSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return ApolloReactHooks.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
       }

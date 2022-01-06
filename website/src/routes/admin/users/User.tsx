@@ -27,7 +27,7 @@ export const GetUser = gql`
       username
       rating
       email
-      seen
+      created
       location {
         latitude
         longitude
