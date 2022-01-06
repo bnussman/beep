@@ -61,7 +61,7 @@ export class UserResolver {
       return await search(ctx.em, offset, show, query);
     }
 
-    const [users, count] = await ctx.em.findAndCount(User, {}, { limit: show, offset: offset });
+    const [users, count] = await ctx.em.findAndCount(User, {}, { limit: show, offset: offset, orderBy: { 'created': 'desc' } });
 
     return {
       items: users,
