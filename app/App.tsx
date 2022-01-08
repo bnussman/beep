@@ -111,6 +111,8 @@ function Beep() {
         updateQuery: (prev, { subscriptionData }) => {
           // @ts-expect-error we are correct
           const newFeedItem = subscriptionData.data.getUserUpdates;
+          // console.log("old", prev.getUser.photoUrl);
+          // console.log("new", subscriptionData.data.getUserUpdates.photoUrl);
           return Object.assign({}, prev, {
             getUser: newFeedItem,
           });
@@ -124,7 +126,7 @@ function Beep() {
   }
 
   return (
-    <UserContext.Provider value={{ ...data?.getUser } as User}>
+    <UserContext.Provider value={data?.getUser}>
       <StatusBar
         barStyle={colorMode === "dark" ? "light-content" : "dark-content"}
       />

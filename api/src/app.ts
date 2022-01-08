@@ -152,9 +152,9 @@ export default class BeepAPIServer {
 
           const tokenEntryResult = await em.findOne(TokenEntry, connectionParams.token as string, { populate: ['user'] });
 
-          if (msg.payload.operationName === "UserUpdates") {
-            setTimeout(() => pubSub.publish(`User${tokenEntryResult?.user.id}`, tokenEntryResult?.user), 10);
-          }
+          // if (msg.payload.operationName === "UserUpdates") {
+          //   setTimeout(() => pubSub.publish(`User${tokenEntryResult?.user.id}`, tokenEntryResult?.user), 10);
+          // }
 
           if (tokenEntryResult) {
             return {

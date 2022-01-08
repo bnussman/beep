@@ -102,6 +102,7 @@ function CustomDrawerContent(props) {
       <VStack space={6} my={2} mx={1}>
         <Flex ml={2} direction="row" alignItems="center">
           <Avatar
+            key={user.photoUrl}
             mr={4}
             source={{ uri: !user?.photoUrl ? undefined : user.photoUrl }}
           >
