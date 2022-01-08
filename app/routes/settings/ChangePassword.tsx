@@ -3,7 +3,7 @@ import { gql, useMutation } from "@apollo/client";
 import { ChangePasswordMutation } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Input, Button, Stack } from "native-base";
-import { LocalWrapper } from "../../components/Container";
+import { Container } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -36,7 +36,7 @@ export function ChangePasswordScreen(props: Props): JSX.Element {
   }
 
   return (
-    <LocalWrapper alignItems="center">
+    <Container alignItems="center">
       <Stack alignSelf="center" space={4} mt={4} w="90%">
         <Input
           secureTextEntry={true}
@@ -63,6 +63,6 @@ export function ChangePasswordScreen(props: Props): JSX.Element {
           Change Password
         </Button>
       </Stack>
-    </LocalWrapper>
+    </Container>
   );
 }

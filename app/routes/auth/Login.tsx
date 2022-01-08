@@ -8,22 +8,18 @@ import { client } from "../../utils/Apollo";
 import { GetUserData } from "../../utils/UserQueries";
 import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
-import Logger from "../../utils/Logger";
+import { Container } from "../../components/Container";
 import {
   Stack,
   Image,
   Box,
-  Text,
   Button,
   Input,
   Center,
-  Container,
   Heading,
   Flex,
   Spacer,
 } from "native-base";
-import Logo from "../../assets/icon.png";
-import { LocalWrapper } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -102,14 +98,11 @@ function LoginScreen(props: Props): JSX.Element {
   }
 
   return (
-    <LocalWrapper>
+    <Container>
       <Center mt="40%">
         <Stack space={4} w="90%">
           <Flex direction="row" alignItems="center" justifyContent="center">
             <Heading mr={4}>Login</Heading>
-            <Box shadow={7} borderRadius={10}>
-              <Image size={50} borderRadius={10} source={Logo} alt="Logo" />
-            </Box>
           </Flex>
           <Stack space={2}>
             <Input
@@ -130,7 +123,7 @@ function LoginScreen(props: Props): JSX.Element {
             />
             <Button
               isLoading={loading}
-              disabled={!username || !password}
+              isDisabled={!username || !password}
               onPress={() => doLogin()}
             >
               Login
@@ -149,7 +142,7 @@ function LoginScreen(props: Props): JSX.Element {
           </Flex>
         </Stack>
       </Center>
-    </LocalWrapper>
+    </Container>
   );
 }
 

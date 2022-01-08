@@ -5,7 +5,7 @@ interface Props {
   children: any;
 }
 
-export const LocalWrapper = (props: Props & IBoxProps): JSX.Element => {
+export const Container = (props: Props & IBoxProps): JSX.Element => {
   const { children, ...rest } = props;
   const bg = useColorModeValue("white", "black");
 

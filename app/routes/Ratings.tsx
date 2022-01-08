@@ -3,6 +3,9 @@ import { Pressable } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { GetRatingsQuery, Rating } from "../generated/graphql";
 import { printStars } from "../components/Stars";
+import { Navigation } from "../utils/Navigation";
+import { UserContext } from "../utils/UserContext";
+import { Container } from "../components/Container";
 import {
   Text,
   FlatList,
@@ -12,9 +15,6 @@ import {
   Flex,
   Box,
 } from "native-base";
-import { Navigation } from "../utils/Navigation";
-import { UserContext } from "../utils/UserContext";
-import { LocalWrapper } from "../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -80,7 +80,7 @@ export function RatingsScreen(props: Props): JSX.Element {
   };
 
   return (
-    <LocalWrapper>
+    <Container>
       <>
         {data?.getRatings?.items && data.getRatings.count > 0 ? (
           <FlatList
@@ -92,8 +92,8 @@ export function RatingsScreen(props: Props): JSX.Element {
           <Text>Nothing to display!</Text>
         )}
         {loading && <Spinner />}
-        {error && <Text>Unable to load your ratings</Text>}
+        {error && <Text>{error.message}</Text>}
       </>
-    </LocalWrapper>
+    </Container>
   );
 }

@@ -1,33 +1,22 @@
 import React, { useRef, useState } from "react";
-import { TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getPushToken } from "../../utils/Notifications";
 import * as Linking from "expo-linking";
 import * as ImagePicker from "expo-image-picker";
+import { TouchableOpacity } from "react-native";
+import { getPushToken } from "../../utils/Notifications";
 import { gql, useMutation } from "@apollo/client";
-import { SignUpMutation } from "../../generated/graphql";
+import { Scalars, SignUpMutation } from "../../generated/graphql";
 import { isMobile } from "../../utils/config";
 import { generateRNFile } from "../settings/EditProfile";
 import { client } from "../../utils/Apollo";
-import { GetUserData } from "../../utils/UserQueries";
 import { Navigation } from "../../utils/Navigation";
-import {
-  Avatar,
-  Button,
-  Stack,
-  Input,
-  Text,
-  Box,
-  HStack,
-  Center,
-} from "native-base";
-import { LocalWrapper } from "../../components/Container";
+import { Avatar, Button, Input, Text, Flex, Box, VStack } from "native-base";
+import { Container } from "../../components/Container";
+import { UserSubscription } from "../../App";
 
 interface Props {
   navigation: Navigation;
 }
-
-let real: any;
 
 const SignUp = gql`
   mutation SignUp(
@@ -83,6 +72,8 @@ const SignUp = gql`
   }
 `;
 
+let picture: Scalars["Upload"];
+
 function RegisterScreen(props: Props): JSX.Element {
   const [first, setFirst] = useState<string>("");
   const [last, setLast] = useState<string>("");
@@ -104,45 +95,44 @@ function RegisterScreen(props: Props): JSX.Element {
 
   const [signup, { loading }] = useMutation<SignUpMutation>(SignUp);
 
-  async function handleSignUp() {
-    if (!real) {
-      alert("Please choose a profile photo!");
-      return;
+  const handleSignUp = async () => {
+    if (!picture) {
+      return alert("Please choose a profile photo!");
     }
 
-    try {
-      const data = await signup({
-        variables: {
-          first: first,
-          last: last,
-          email: email,
-          phone: phone,
-          venmo: venmo,
-          cashapp: cashapp,
-          username: username,
-          password: password,
-          picture: real,
-          pushToken: isMobile ? await getPushToken() : undefined,
-        },
-      });
+    const pushToken = isMobile ? await getPushToken() : undefined;
 
-      AsyncStorage.setItem("auth", JSON.stringify(data.data?.signup));
+    signup({
+      variables: {
+        first,
+        last,
+        email,
+        phone,
+        venmo,
+        cashapp,
+        username,
+        password,
+        picture,
+        pushToken,
+      },
+    })
+      .then((data) => {
+        AsyncStorage.setItem("auth", JSON.stringify(data.data?.signup));
 
-      client.writeQuery({
-        query: GetUserData,
-        data: { getUser: data.data?.signup.user },
-      });
+        client.writeQuery({
+          query: UserSubscription,
+          data: { getUserUpdates: data.data?.signup.user },
+        });
 
-      props.navigation.reset({
-        index: 0,
-        routes: [{ name: "Main" }],
-      });
-    } catch (error) {
-      alert(error.message);
-    }
-  }
+        props.navigation.reset({
+          index: 0,
+          routes: [{ name: "Main" }],
+        });
+      })
+      .catch((error) => alert(error.message));
+  };
 
-  async function handlePhoto() {
+  const chooseProfilePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,
@@ -160,101 +150,117 @@ function RegisterScreen(props: Props): JSX.Element {
       const blob = await res.blob();
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
-      real = file;
+      picture = file;
       setPhoto(result);
     } else {
       if (!result.cancelled) {
         setPhoto(result);
         const file = generateRNFile(result.uri, "file.jpg");
-        real = file;
+        picture = file;
       }
     }
-  }
+  };
 
   return (
-    <LocalWrapper>
-      <Input
-        textContentType="givenName"
-        placeholder="Banks"
-        returnKeyType="next"
-        onChangeText={(text) => setFirst(text)}
-        onSubmitEditing={() => lastRef.current.focus()}
-      />
-      <Input
-        ref={lastRef}
-        textContentType="familyName"
-        placeholder="Nussman"
-        returnKeyType="next"
-        onChangeText={(text) => setLast(text)}
-        onSubmitEditing={() => emailRef.current.focus()}
-      />
-      <TouchableOpacity onPress={() => handlePhoto()}>
-        <Avatar
-          source={{ uri: photo?.uri ? photo?.uri : undefined }}
-          size={90}
+    <Container alignItems="center">
+      <VStack space={2} w="90%">
+        <Flex
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Box width="80%">
+            <Input
+              textContentType="givenName"
+              placeholder="First Name"
+              returnKeyType="next"
+              onChangeText={(text) => setFirst(text)}
+              onSubmitEditing={() => lastRef.current.focus()}
+              mb={2}
+            />
+            <Input
+              ref={lastRef}
+              textContentType="familyName"
+              placeholder="Last Name"
+              returnKeyType="next"
+              onChangeText={(text) => setLast(text)}
+              onSubmitEditing={() => emailRef.current.focus()}
+            />
+          </Box>
+          <TouchableOpacity onPress={chooseProfilePhoto}>
+            <Avatar source={photo} size={90} />
+          </TouchableOpacity>
+        </Flex>
+        <Input
+          ref={emailRef}
+          textContentType="emailAddress"
+          placeholder="Email"
+          returnKeyType="next"
+          onChangeText={(text) => setEmail(text)}
+          onSubmitEditing={() => phoneRef.current.focus()}
         />
-      </TouchableOpacity>
-      <Input
-        ref={emailRef}
-        textContentType="emailAddress"
-        placeholder="example@ridebeep.app"
-        returnKeyType="next"
-        onChangeText={(text) => setEmail(text)}
-        onSubmitEditing={() => phoneRef.current.focus()}
-      />
-      <Input
-        ref={phoneRef}
-        textContentType="telephoneNumber"
-        placeholder="7044043044"
-        returnKeyType="next"
-        onChangeText={(text) => setPhone(text)}
-        onSubmitEditing={() => venmoRef.current.focus()}
-      />
-      <Input
-        ref={venmoRef}
-        textContentType="username"
-        placeholder="banks"
-        returnKeyType="next"
-        onChangeText={(text) => setVenmo(text)}
-        onSubmitEditing={() => cashappRef.current.focus()}
-      />
-      <Input
-        ref={cashappRef}
-        textContentType="username"
-        placeholder="banks"
-        returnKeyType="next"
-        onChangeText={(text) => setCashapp(text)}
-        onSubmitEditing={() => usernameRef.current.focus()}
-      />
-      <Input
-        ref={usernameRef}
-        textContentType="username"
-        placeholder="banksnussman"
-        returnKeyType="next"
-        onChangeText={(text) => setUsername(text)}
-        onSubmitEditing={() => passwordRef.current.focus()}
-      />
-      <Input
-        ref={passwordRef}
-        textContentType="password"
-        placeholder="Password"
-        returnKeyType="go"
-        secureTextEntry={true}
-        onChangeText={(text) => setPassword(text)}
-        onSubmitEditing={() => handleSignUp()}
-      />
-      <Button isLoading={loading} onPress={() => handleSignUp()}>
-        Sign Up
-      </Button>
-      <Text>By signing up, you agree to our </Text>
-      <Text onPress={() => Linking.openURL("https://ridebeep.app/privacy")}>
-        Privacy Policy
-      </Text>
-      <Text> and </Text>
-      <Text onPress={() => Linking.openURL("https://ridebeep.app/terms")}>
-        Terms of Service
-      </Text>
-    </LocalWrapper>
+        <Input
+          ref={phoneRef}
+          textContentType="telephoneNumber"
+          placeholder="Phone Number"
+          returnKeyType="next"
+          onChangeText={(text) => setPhone(text)}
+          onSubmitEditing={() => venmoRef.current.focus()}
+        />
+        <Input
+          ref={venmoRef}
+          textContentType="username"
+          placeholder="Venmo"
+          returnKeyType="next"
+          onChangeText={(text) => setVenmo(text)}
+          onSubmitEditing={() => cashappRef.current.focus()}
+        />
+        <Input
+          ref={cashappRef}
+          textContentType="username"
+          placeholder="Cash App"
+          returnKeyType="next"
+          onChangeText={(text) => setCashapp(text)}
+          onSubmitEditing={() => usernameRef.current.focus()}
+        />
+        <Input
+          ref={usernameRef}
+          textContentType="username"
+          placeholder="Username"
+          returnKeyType="next"
+          onChangeText={(text) => setUsername(text)}
+          onSubmitEditing={() => passwordRef.current.focus()}
+        />
+        <Input
+          ref={passwordRef}
+          textContentType="password"
+          placeholder="Password"
+          returnKeyType="go"
+          secureTextEntry={true}
+          onChangeText={(text) => setPassword(text)}
+          onSubmitEditing={handleSignUp}
+        />
+        <Button isLoading={loading} onPress={handleSignUp}>
+          Sign Up
+        </Button>
+        <Flex direction="row">
+          <Text>By signing up, you agree to our </Text>
+          <Text
+            bold
+            onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
+          >
+            Privacy Policy
+          </Text>
+          <Text> and </Text>
+          <Text
+            bold
+            onPress={() => Linking.openURL("https://ridebeep.app/terms")}
+          >
+            Terms of Service
+          </Text>
+        </Flex>
+      </VStack>
+    </Container>
   );
 }
 

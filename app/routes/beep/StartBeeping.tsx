@@ -24,7 +24,7 @@ import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
 import { Tag } from "../ride/Tags";
 import { LocationActivityType } from "expo-location";
-import { LocalWrapper } from "../../components/Container";
+import { Container } from "../../components/Container";
 import {
   Avatar,
   Input,
@@ -375,7 +375,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   if (!isBeeping) {
     return (
-      <LocalWrapper alignItems="center">
+      <Container alignItems="center">
         <Stack space={4} w="90%" mt={4}>
           <FormControl>
             <FormControl.Label>Max Rider Capacity</FormControl.Label>
@@ -412,12 +412,12 @@ export function StartBeepingScreen(props: Props): JSX.Element {
             Require riders to have a mask
           </Checkbox>
         </Stack>
-      </LocalWrapper>
+      </Container>
     );
   } else {
     if (queue && queue?.length > 0) {
       return (
-        <LocalWrapper>
+        <Container>
           <FlatList
             data={data?.getQueue}
             keyExtractor={(item) => item.id}
@@ -558,11 +558,11 @@ export function StartBeepingScreen(props: Props): JSX.Element {
               )
             }
           />
-        </LocalWrapper>
+        </Container>
       );
     } else {
       return (
-        <LocalWrapper alignItems="center" justifyContent="center">
+        <Container alignItems="center" justifyContent="center">
           <Stack space={2} w="90%" alignItems="center">
             <Heading>Your queue is empty</Heading>
             <Text>
@@ -570,7 +570,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
               app is closed, you will recieve a push notification.
             </Text>
           </Stack>
-        </LocalWrapper>
+        </Container>
       );
     }
   }

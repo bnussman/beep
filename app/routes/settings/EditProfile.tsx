@@ -11,8 +11,8 @@ import { Navigation } from "../../utils/Navigation";
 import { ReactNativeFile } from "apollo-upload-client";
 import * as mime from "react-native-mime-types";
 import * as ImagePicker from "expo-image-picker";
-import ProfilePicture from "../../components/ProfilePicture";
 import { isMobile } from "../../utils/config";
+import { Container } from "../../components/Container";
 import {
   Spinner,
   Input,
@@ -20,10 +20,8 @@ import {
   Stack,
   Avatar,
   Flex,
-  Box,
   Spacer,
 } from "native-base";
-import { LocalWrapper } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -179,7 +177,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
   }
 
   return (
-    <LocalWrapper alignItems="center">
+    <Container alignItems="center">
       <Stack space={4} mt={4} w="90%">
         <Flex direction="row">
           <Stack space={4}>
@@ -254,6 +252,6 @@ export function EditProfileScreen(props: Props): JSX.Element {
           Update Profile
         </Button>
       </Stack>
-    </LocalWrapper>
+    </Container>
   );
 }

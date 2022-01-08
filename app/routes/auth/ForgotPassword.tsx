@@ -5,7 +5,7 @@ import { ForgotPasswordMutation } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { isMobile } from "../../utils/config";
 import { Input, Button } from "native-base";
-import { LocalWrapper } from "../../components/Container";
+import { Container } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -35,7 +35,7 @@ export function ForgotPasswordScreen(props: Props): JSX.Element {
   }
 
   return (
-    <LocalWrapper>
+    <Container>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile}>
         <>
           <Input
@@ -54,6 +54,6 @@ export function ForgotPasswordScreen(props: Props): JSX.Element {
           </Button>
         </>
       </TouchableWithoutFeedback>
-    </LocalWrapper>
+    </Container>
   );
 }

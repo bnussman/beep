@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import { Pressable } from "react-native";
-import ProfilePicture from "../components/ProfilePicture";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { MainNavParamList } from "../navigators/MainTabs";
 import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery, Beep } from "../generated/graphql";
 import { UserContext } from "../utils/UserContext";
+import { Container } from "../components/Container";
 import {
   Spinner,
   Divider,
@@ -15,7 +15,6 @@ import {
   Flex,
   Box,
 } from "native-base";
-import { LocalWrapper } from "../components/Container";
 
 interface Props {
   navigation: BottomTabNavigationProp<MainNavParamList>;
@@ -97,29 +96,29 @@ export function BeepsScreen(props: Props): JSX.Element {
     if (error) return <Text>{error.message}</Text>;
     if (loading) {
       return (
-        <LocalWrapper alignItems="center" justifyContent="center">
+        <Container alignItems="center" justifyContent="center">
           <Text>Loading your history</Text>
           <Spinner />
-        </LocalWrapper>
+        </Container>
       );
     }
     if (beeps && beeps.items.length > 0) {
       return (
-        <LocalWrapper alignItems="center" justifyContent="center">
+        <Container alignItems="center" justifyContent="center">
           <FlatList
             w="100%"
             data={beeps.items}
             ItemSeparatorComponent={Divider}
             renderItem={renderItem}
           />
-        </LocalWrapper>
+        </Container>
       );
     }
     return (
-      <LocalWrapper alignItems="center" justifyContent="center">
+      <Container alignItems="center" justifyContent="center">
         <Text>Nothing to display!</Text>
         <Text>You have no previous beeps to display</Text>
-      </LocalWrapper>
+      </Container>
     );
   };
 

@@ -24,7 +24,7 @@ import {
   useDisclose,
   Slider,
 } from "native-base";
-import { LocalWrapper } from "../../components/Container";
+import { Container } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;
@@ -187,7 +187,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
   );
 
   return (
-    <LocalWrapper>
+    <Container>
       {loading ? <Spinner size="large" /> : null}
       {error ? (
         <>
@@ -230,6 +230,6 @@ export function PickBeepScreen(props: Props): JSX.Element {
           </Slider>
         </Actionsheet.Content>
       </Actionsheet>
-    </LocalWrapper>
+    </Container>
   );
 }

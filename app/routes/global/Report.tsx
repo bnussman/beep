@@ -3,7 +3,7 @@ import { gql, useMutation } from "@apollo/client";
 import { ReportUserMutation } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Input, Button, Stack } from "native-base";
-import { LocalWrapper } from "../../components/Container";
+import { Container } from "../../components/Container";
 
 interface Props {
   route: any;
@@ -36,7 +36,7 @@ export function ReportScreen(props: Props): JSX.Element {
   }
 
   return (
-    <LocalWrapper alignItems="center">
+    <Container alignItems="center">
       <Stack space={4} w="90%" mt={4}>
         <Input
           placeholder="User"
@@ -60,6 +60,6 @@ export function ReportScreen(props: Props): JSX.Element {
           Report User
         </Button>
       </Stack>
-    </LocalWrapper>
+    </Container>
   );
 }

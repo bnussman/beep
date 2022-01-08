@@ -7,7 +7,7 @@ import { printStars } from "../../components/Stars";
 import { GetUserProfileQuery, User } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Spinner, Text, Button, Avatar } from "native-base";
-import { LocalWrapper } from "../../components/Container";
+import { Container } from "../../components/Container";
 
 interface Props {
   route: any;
@@ -74,7 +74,7 @@ export function ProfileScreen(props: Props): JSX.Element {
   }
 
   return (
-    <LocalWrapper>
+    <Container>
       <Avatar
         size={150}
         source={{
@@ -118,6 +118,6 @@ export function ProfileScreen(props: Props): JSX.Element {
           <Text>{printStars(data.getUser.rating)}</Text>
         </>
       ) : null}
-    </LocalWrapper>
+    </Container>
   );
 }

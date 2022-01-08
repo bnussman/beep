@@ -13,7 +13,7 @@ import { client } from "../../utils/Apollo";
 import { RateCard } from "../../components/RateCard";
 import { Tags } from "./Tags";
 import { throttle } from "throttle-debounce";
-import { LocalWrapper } from "../../components/Container";
+import { Container } from "../../components/Container";
 import {
   Button,
   Text,
@@ -336,16 +336,16 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
   if (user?.isBeeping) {
     return (
-      <LocalWrapper justifyContent="center" alignItems="center">
+      <Container justifyContent="center" alignItems="center">
         <Heading>You are beeping!</Heading>
         <Text>You can&apos;t find a ride when you are beeping</Text>
-      </LocalWrapper>
+      </Container>
     );
   }
 
   if (!beep) {
     return (
-      <LocalWrapper alignItems="center">
+      <Container alignItems="center">
         <Stack space={4} w="90%">
           <RateCard {...props} />
           <FormControl>
@@ -391,13 +391,13 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             Find a Beep
           </Button>
         </Stack>
-      </LocalWrapper>
+      </Container>
     );
   }
 
   if (beep.isAccepted) {
     return (
-      <LocalWrapper>
+      <Container>
         <Center>
           <Avatar
             size={100}
@@ -463,11 +463,11 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             ) : null}
           </VStack>
         </Center>
-      </LocalWrapper>
+      </Container>
     );
   } else {
     return (
-      <LocalWrapper alignItems="center">
+      <Container alignItems="center">
         <Stack space={4} w="90%" alignItems="center">
           <Avatar
             size={100}
@@ -512,7 +512,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           </Box>
           <LeaveButton beepersId={beep.beeper.id} />
         </Stack>
-      </LocalWrapper>
+      </Container>
     );
   }
 }

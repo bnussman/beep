@@ -5,7 +5,7 @@ import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
 import { Navigation } from "../../utils/Navigation";
 import { Button, Input, Stack } from "native-base";
-import { LocalWrapper } from "../../components/Container";
+import { Container } from "../../components/Container";
 
 interface Props {
   route: any;
@@ -53,7 +53,7 @@ export function RateScreen(props: Props): JSX.Element {
   }
 
   return (
-    <LocalWrapper alignItems="center">
+    <Container alignItems="center">
       <Stack space={4} w="90%" mt={4}>
         {useMemo(
           () => (
@@ -79,6 +79,6 @@ export function RateScreen(props: Props): JSX.Element {
           Rate User
         </Button>
       </Stack>
-    </LocalWrapper>
+    </Container>
   );
 }
