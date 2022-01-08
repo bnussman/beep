@@ -5,14 +5,12 @@ import { isMobile } from "../../utils/config";
 import { gql, useMutation } from "@apollo/client";
 import { LoginMutation } from "../../generated/graphql";
 import { client } from "../../utils/Apollo";
-import { GetUserData } from "../../utils/UserQueries";
 import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
+import { UserSubscription } from "../../App";
 import {
   Stack,
-  Image,
-  Box,
   Button,
   Input,
   Center,
@@ -84,8 +82,8 @@ function LoginScreen(props: Props): JSX.Element {
       AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
 
       client.writeQuery({
-        query: GetUserData,
-        data: { getUser: data.data?.login.user },
+        query: UserSubscription,
+        data: { getUserUpdates: data.data?.login.user },
       });
 
       props.navigation.reset({
