@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
 import { Pressable } from "react-native";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { MainNavParamList } from "../navigators/MainTabs";
 import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery, Beep } from "../generated/graphql";
 import { UserContext } from "../utils/UserContext";
 import { Container } from "../components/Container";
+import { Navigation } from "../utils/Navigation";
 import {
   Spinner,
   Divider,
@@ -17,7 +16,7 @@ import {
 } from "native-base";
 
 interface Props {
-  navigation: BottomTabNavigationProp<MainNavParamList>;
+  navigation: Navigation;
 }
 
 const GetBeepHistory = gql`

@@ -50,6 +50,8 @@ export function RatingsScreen(props: Props): JSX.Element {
     variables: { id: user.id },
   });
 
+  const ratings = data?.getRatings;
+
   const renderItem = ({ item }: { item: Rating }) => {
     const otherUser = user.id === item.rater.id ? item.rated : item.rater;
     return (
@@ -79,21 +81,37 @@ export function RatingsScreen(props: Props): JSX.Element {
     );
   };
 
-  return (
-    <Container>
-      <>
-        {data?.getRatings?.items && data.getRatings.count > 0 ? (
+  const renderBody = () => {
+    if (error) {
+      return <Text>{error.message}</Text>;
+    }
+    if (loading) {
+      return (
+        <Container alignItems="center" justifyContent="center">
+          <Text>Loading your ratings</Text>
+          <Spinner />
+        </Container>
+      );
+    }
+    if (ratings && ratings.items.length > 0) {
+      return (
+        <Container alignItems="center" justifyContent="center">
           <FlatList
-            data={data?.getRatings.items}
+            w="100%"
+            data={ratings.items}
             ItemSeparatorComponent={Divider}
             renderItem={renderItem}
           />
-        ) : (
-          <Text>Nothing to display!</Text>
-        )}
-        {loading && <Spinner />}
-        {error && <Text>{error.message}</Text>}
-      </>
-    </Container>
-  );
+        </Container>
+      );
+    }
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Text>Nothing to display!</Text>
+        <Text>You have no ratings to display</Text>
+      </Container>
+    );
+  };
+
+  return renderBody();
 }
