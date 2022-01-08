@@ -571,6 +571,11 @@ export type VerifyEmail = {
   user: User;
 };
 
+export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined } };
+
 export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -793,6 +798,56 @@ export type AddProfilePictureMutationVariables = Exact<{
 export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', photoUrl?: string | null | undefined } };
 
 
+export const UserDataDocument = gql`
+    query UserData {
+  getUser {
+    id
+    username
+    name
+    first
+    last
+    email
+    phone
+    venmo
+    isBeeping
+    isEmailVerified
+    isStudent
+    groupRate
+    singlesRate
+    photoUrl
+    capacity
+    masksRequired
+    cashapp
+  }
+}
+    `;
+
+/**
+ * __useUserDataQuery__
+ *
+ * To run a query within a React component, call `useUserDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
+      }
+export function useUserDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
+        }
+export type UserDataQueryHookResult = ReturnType<typeof useUserDataQuery>;
+export type UserDataLazyQueryHookResult = ReturnType<typeof useUserDataLazyQuery>;
+export type UserDataQueryResult = ApolloReactCommon.QueryResult<UserDataQuery, UserDataQueryVariables>;
 export const UserUpdatesDocument = gql`
     subscription UserUpdates {
   getUserUpdates {

@@ -17,10 +17,10 @@ import ResendButton from "../../components/ResendVarificationEmailButton";
 import { gql, useMutation } from "@apollo/client";
 import { LogoutMutation } from "../../generated/graphql";
 import { client } from "../../utils/Apollo";
-import { GetUserData } from "../../utils/UserQueries";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { UserHeader } from "../../components/UserHeader";
 import { Navigation } from "../../utils/Navigation";
+import { UserData } from "../../App";
 
 const Logout = gql`
   mutation Logout {
@@ -59,7 +59,7 @@ export function MainSettingsScreen(props: Props): JSX.Element {
       },
       () => {
         client.writeQuery({
-          query: GetUserData,
+          query: UserData,
           data: {
             getUser: null,
           },

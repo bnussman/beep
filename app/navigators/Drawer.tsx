@@ -33,7 +33,7 @@ import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { LogoutMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
-import { GetUserData } from "../utils/UserQueries";
+import { UserData } from "../App";
 
 const Logout = gql`
   mutation Logout {
@@ -88,7 +88,7 @@ function CustomDrawerContent(props) {
       },
       () => {
         client.writeQuery({
-          query: GetUserData,
+          query: UserData,
           data: {
             getUser: null,
           },

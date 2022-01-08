@@ -29,7 +29,9 @@ export function ChangePasswordScreen(props: Props): JSX.Element {
           password: password,
         },
       });
-      props.navigation.goBack();
+      alert("Successfully changed your password.");
+      setPassword("");
+      setConfirmPassword("");
     } catch (error) {
       alert(error);
     }

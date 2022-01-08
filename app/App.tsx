@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import React from "react";
+import React, { useEffect } from "react";
 import Sentry from "./utils/Sentry";
 import RegisterScreen from "./routes/auth/Register";
 import LoginScreen from "./routes/auth/Login";
@@ -12,8 +12,8 @@ import { ReportScreen } from "./routes/global/Report";
 import { RateScreen } from "./routes/global/Rate";
 import { UserContext } from "./utils/UserContext";
 import { client } from "./utils/Apollo";
-import { ApolloProvider, gql, useSubscription } from "@apollo/client";
-import { User, UserUpdatesSubscription } from "./generated/graphql";
+import { ApolloProvider, gql, useQuery } from "@apollo/client";
+import { User, UserDataQuery } from "./generated/graphql";
 import { extendTheme, NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
@@ -50,6 +50,30 @@ const beepTheme = extendTheme({
   },
 });
 
+export const UserData = gql`
+  query UserData {
+    getUser {
+      id
+      username
+      name
+      first
+      last
+      email
+      phone
+      venmo
+      isBeeping
+      isEmailVerified
+      isStudent
+      groupRate
+      singlesRate
+      photoUrl
+      capacity
+      masksRequired
+      cashapp
+    }
+  }
+`;
+
 export const UserSubscription = gql`
   subscription UserUpdates {
     getUserUpdates {
@@ -76,23 +100,38 @@ export const UserSubscription = gql`
 
 function Beep() {
   const { colorMode } = useColorMode();
-  // const { data, loading } = useQuery(GetUserData, {
-  //   errorPolicy: "none",
-  // });
+  const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
+    errorPolicy: "none",
+  });
 
-  const { data } = useSubscription<UserUpdatesSubscription>(UserSubscription);
+  useEffect(() => {
+    if (data?.getUser?.id) {
+      subscribeToMore({
+        document: UserSubscription,
+        updateQuery: (prev, { subscriptionData }) => {
+          // @ts-expect-error we are correct
+          const newFeedItem = subscriptionData.data.getUserUpdates;
+          return Object.assign({}, prev, {
+            getUser: newFeedItem,
+          });
+        },
+      });
+    }
+  }, [data?.getUser?.id]);
+
+  if (loading) {
+    return null;
+  }
 
   return (
-    <UserContext.Provider value={{ ...data?.getUserUpdates } as User}>
+    <UserContext.Provider value={{ ...data?.getUser } as User}>
       <StatusBar
         barStyle={colorMode === "dark" ? "light-content" : "dark-content"}
       />
       <NavigationContainer
         theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
       >
-        <Stack.Navigator
-          initialRouteName={data?.getUserUpdates?.id ? "Main" : "Login"}
-        >
+        <Stack.Navigator initialRouteName={data?.getUser.id ? "Main" : "Login"}>
           <Stack.Screen
             options={{ headerShown: false }}
             name="Login"

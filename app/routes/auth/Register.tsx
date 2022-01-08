@@ -21,7 +21,7 @@ import {
   Center,
 } from "native-base";
 import { Container } from "../../components/Container";
-import { UserSubscription } from "../../App";
+import { UserData, UserSubscription } from "../../App";
 
 interface Props {
   navigation: Navigation;
@@ -129,7 +129,7 @@ function RegisterScreen(props: Props): JSX.Element {
         AsyncStorage.setItem("auth", JSON.stringify(data.data?.signup));
 
         client.writeQuery({
-          query: UserSubscription,
+          query: UserData,
           data: { getUserUpdates: data.data?.signup.user },
         });
 

@@ -8,7 +8,7 @@ import { client } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
-import { UserSubscription } from "../../App";
+import { UserData, UserSubscription } from "../../App";
 import {
   Stack,
   Button,
@@ -82,7 +82,7 @@ function LoginScreen(props: Props): JSX.Element {
       AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
 
       client.writeQuery({
-        query: UserSubscription,
+        query: UserData,
         data: { getUserUpdates: data.data?.login.user },
       });
 
