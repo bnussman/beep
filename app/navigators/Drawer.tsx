@@ -31,7 +31,7 @@ import { BeepsScreen } from "../routes/Beeps";
 import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
-import { LogoutMutation } from "../generated/graphql";
+import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import { UserData } from "../App";
 
@@ -62,12 +62,20 @@ const getIcon = (screenName: string) => {
   }
 };
 
-function CustomDrawerContent(props) {
+const Resend = gql`
+  mutation Resend {
+    resendEmailVarification
+  }
+`;
+
+function CustomDrawerContent(props: any) {
   const user = React.useContext(UserContext);
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
+  const [resend, { loading: resendLoading }] =
+    useMutation<ResendMutation>(Resend);
 
-  async function doLogout() {
+  const handleLogout = async () => {
     await logout({
       variables: {
         isApp: true,
@@ -95,7 +103,17 @@ function CustomDrawerContent(props) {
         });
       }
     );
-  }
+  };
+
+  const handleResendVerification = () => {
+    resend()
+      .then(() =>
+        alert(
+          "Successfully resent verification email. Please check your email for further instructions."
+        )
+      )
+      .catch((error) => alert(error.message));
+  };
 
   return (
     <DrawerContentScrollView {...props} safeArea>
@@ -117,7 +135,7 @@ function CustomDrawerContent(props) {
         </Flex>
         <VStack divider={<Divider />} space={4}>
           <VStack space={3}>
-            {props.state.routeNames.map((name, index) => (
+            {props.state.routeNames.map((name: string, index: number) => (
               <Pressable
                 key={index}
                 px={5}
@@ -128,7 +146,7 @@ function CustomDrawerContent(props) {
                     ? "rgba(6, 182, 212, 0.1)"
                     : "transparent"
                 }
-                onPress={(event) => {
+                onPress={() => {
                   props.navigation.navigate(name);
                 }}
               >
@@ -144,10 +162,10 @@ function CustomDrawerContent(props) {
                 </HStack>
               </Pressable>
             ))}
-            <Pressable onPress={() => doLogout()}>
+            <Pressable onPress={handleLogout}>
               <HStack px={5} py={3} space={7} alignItems="center">
                 {loading ? (
-                  <Spinner size={10} />
+                  <Spinner size="sm" />
                 ) : (
                   <Icon
                     color="gray.500"
@@ -160,6 +178,26 @@ function CustomDrawerContent(props) {
                 </Text>
               </HStack>
             </Pressable>
+            {!user.isEmailVerified ? (
+              <Pressable onPress={handleResendVerification}>
+                <HStack px={5} py={3} space={7} alignItems="center">
+                  {resendLoading ? (
+                    <Spinner size="sm" />
+                  ) : (
+                    <Icon
+                      color="red.400"
+                      size={6}
+                      as={
+                        <MaterialCommunityIcons name="alert-circle-outline" />
+                      }
+                    />
+                  )}
+                  <Text mr={4} fontWeight={500}>
+                    Resend Verification Email
+                  </Text>
+                </HStack>
+              </Pressable>
+            ) : null}
             <Flex px={5} py={3} direction="row" alignItems="center">
               <Text mr={4}>Dark Mode</Text>
               <Switch
