@@ -10,7 +10,16 @@ import { isMobile } from "../../utils/config";
 import { generateRNFile } from "../settings/EditProfile";
 import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
-import { Avatar, Button, Input, Text, Flex, Box, VStack } from "native-base";
+import {
+  Avatar,
+  Button,
+  Input,
+  Text,
+  Flex,
+  Box,
+  VStack,
+  Center,
+} from "native-base";
 import { Container } from "../../components/Container";
 import { UserSubscription } from "../../App";
 
@@ -133,6 +142,9 @@ function RegisterScreen(props: Props): JSX.Element {
   };
 
   const chooseProfilePhoto = async () => {
+    setPhoto(null);
+    picture = null;
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,
@@ -161,6 +173,9 @@ function RegisterScreen(props: Props): JSX.Element {
     }
   };
 
+  const isDisabled =
+    !first || !last || !email || !phone || !username || !password || !picture;
+
   return (
     <Container alignItems="center">
       <VStack space={2} w="90%">
@@ -169,7 +184,7 @@ function RegisterScreen(props: Props): JSX.Element {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Box width="80%">
+          <Box width="70%">
             <Input
               textContentType="givenName"
               placeholder="First Name"
@@ -188,7 +203,7 @@ function RegisterScreen(props: Props): JSX.Element {
             />
           </Box>
           <TouchableOpacity onPress={chooseProfilePhoto}>
-            <Avatar source={photo} size={90} />
+            <Avatar source={photo} size="xl" />
           </TouchableOpacity>
         </Flex>
         <Input
@@ -240,25 +255,31 @@ function RegisterScreen(props: Props): JSX.Element {
           onChangeText={(text) => setPassword(text)}
           onSubmitEditing={handleSignUp}
         />
-        <Button isLoading={loading} onPress={handleSignUp}>
+        <Button
+          isLoading={loading}
+          isDisabled={isDisabled}
+          onPress={handleSignUp}
+        >
           Sign Up
         </Button>
-        <Flex direction="row">
+        <Center>
           <Text>By signing up, you agree to our </Text>
-          <Text
-            bold
-            onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
-          >
-            Privacy Policy
-          </Text>
-          <Text> and </Text>
-          <Text
-            bold
-            onPress={() => Linking.openURL("https://ridebeep.app/terms")}
-          >
-            Terms of Service
-          </Text>
-        </Flex>
+          <Flex direction="row">
+            <Text
+              bold
+              onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
+            >
+              Privacy Policy
+            </Text>
+            <Text> and </Text>
+            <Text
+              bold
+              onPress={() => Linking.openURL("https://ridebeep.app/terms")}
+            >
+              Terms of Service
+            </Text>
+          </Flex>
+        </Center>
       </VStack>
     </Container>
   );

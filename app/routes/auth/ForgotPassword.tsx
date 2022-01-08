@@ -2,14 +2,9 @@ import React, { useState } from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { gql, useMutation } from "@apollo/client";
 import { ForgotPasswordMutation } from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
 import { isMobile } from "../../utils/config";
 import { Input, Button } from "native-base";
 import { Container } from "../../components/Container";
-
-interface Props {
-  navigation: Navigation;
-}
 
 const ForgotPassword = gql`
   mutation ForgotPassword($email: String!) {
@@ -17,22 +12,18 @@ const ForgotPassword = gql`
   }
 `;
 
-export function ForgotPasswordScreen(props: Props): JSX.Element {
+export function ForgotPasswordScreen(): JSX.Element {
   const [forgot, { loading }] =
     useMutation<ForgotPasswordMutation>(ForgotPassword);
   const [email, setEmail] = useState<string>("");
 
-  async function handleForgotPassword() {
-    try {
-      await forgot({
-        variables: { email },
-      });
-
-      alert("Check your email for a link to reset your password");
-    } catch (error) {
-      alert(error.message);
-    }
-  }
+  const handleForgotPassword = () => {
+    forgot({
+      variables: { email },
+    })
+      .then(() => alert("Check your email for a link to reset your password!"))
+      .catch((error) => alert(error.message));
+  };
 
   return (
     <Container>
