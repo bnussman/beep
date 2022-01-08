@@ -1,6 +1,6 @@
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser } from '../account/helpers';
-import { wrap } from '@mikro-orm/core';
+import { QueryOrder, wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
 import PaginationArgs from '../args/Pagination';
 import EditUserValidator from '../validators/user/EditUser';
@@ -61,7 +61,15 @@ export class UserResolver {
       return await search(ctx.em, offset, show, query);
     }
 
-    const [users, count] = await ctx.em.findAndCount(User, {}, { limit: show, offset: offset, orderBy: { 'created': 'desc' } });
+    const [users, count] = await ctx.em.findAndCount(
+      User,
+      {},
+      {
+        limit: show,
+        offset: offset,
+        orderBy: { created: QueryOrder.DESC_NULLS_LAST }
+      }
+    );
 
     return {
       items: users,
