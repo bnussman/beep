@@ -88,21 +88,18 @@ function CustomDrawerContent(props: any) {
       Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
 
-    props.navigation.reset(
-      {
-        index: 0,
-        routes: [{ name: "Login" }],
-        key: null,
+    props.navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+      key: null,
+    });
+
+    client.writeQuery({
+      query: UserData,
+      data: {
+        getUser: null,
       },
-      () => {
-        client.writeQuery({
-          query: UserData,
-          data: {
-            getUser: null,
-          },
-        });
-      }
-    );
+    });
   };
 
   const handleResendVerification = () => {
@@ -120,7 +117,7 @@ function CustomDrawerContent(props: any) {
       <VStack space={6} my={2} mx={1}>
         <Flex ml={2} direction="row" alignItems="center">
           <Avatar
-            key={user.photoUrl}
+            key={user?.photoUrl}
             mr={4}
             source={{ uri: !user?.photoUrl ? undefined : user.photoUrl }}
           >
@@ -178,7 +175,7 @@ function CustomDrawerContent(props: any) {
                 </Text>
               </HStack>
             </Pressable>
-            {!user.isEmailVerified ? (
+            {!user?.isEmailVerified ? (
               <Pressable onPress={handleResendVerification}>
                 <HStack px={5} py={3} space={7} alignItems="center">
                   {resendLoading ? (

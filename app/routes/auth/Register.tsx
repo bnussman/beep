@@ -130,7 +130,7 @@ function RegisterScreen(props: Props): JSX.Element {
 
         client.writeQuery({
           query: UserData,
-          data: { getUserUpdates: data.data?.signup.user },
+          data: { getUser: data.data?.signup.user },
         });
 
         props.navigation.reset({

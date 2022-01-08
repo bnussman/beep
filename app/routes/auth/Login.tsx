@@ -83,7 +83,7 @@ function LoginScreen(props: Props): JSX.Element {
 
       client.writeQuery({
         query: UserData,
-        data: { getUserUpdates: data.data?.login.user },
+        data: { getUser: data.data?.login.user },
       });
 
       props.navigation.reset({

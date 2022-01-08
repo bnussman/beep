@@ -175,7 +175,6 @@ export function EditProfileScreen(props: Props): JSX.Element {
       alert(error.message);
     }
   }
-  console.log("Photo", user.photoUrl);
 
   return (
     <Container alignItems="center">
@@ -204,7 +203,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
           <Spacer />
           <Pressable onPress={() => handleUpdatePhoto()}>
             <Avatar
-              key={user.photoUrl}
+              key={user?.photoUrl}
               source={{ uri: photo?.uri || user.photoUrl }}
               size={100}
             />

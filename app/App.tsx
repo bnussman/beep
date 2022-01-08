@@ -133,7 +133,9 @@ function Beep() {
       <NavigationContainer
         theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
       >
-        <Stack.Navigator initialRouteName={data?.getUser.id ? "Main" : "Login"}>
+        <Stack.Navigator
+          initialRouteName={data?.getUser?.id ? "Main" : "Login"}
+        >
           <Stack.Screen
             options={{ headerShown: false }}
             name="Login"
