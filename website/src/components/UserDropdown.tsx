@@ -25,7 +25,7 @@ const Logout = gql`
 export function UserDropdown() {
   const user = useContext(UserContext);
   const [logout] = useMutation<LogoutMutation>(Logout);
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   async function handleLogout() {
     try {
@@ -37,7 +37,8 @@ export function UserDropdown() {
           getUser: null
         }
       });
-      history.push("/");
+
+      navigate("/");
 
       localStorage.removeItem('user');
 

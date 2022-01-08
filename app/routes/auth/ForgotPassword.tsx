@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { gql, useMutation } from "@apollo/client";
 import { ForgotPasswordMutation } from "../../generated/graphql";
-import { isMobile } from "../../utils/config";
 import { Input, Button } from "native-base";
 import { Container } from "../../components/Container";
 
@@ -27,24 +25,20 @@ export function ForgotPasswordScreen(): JSX.Element {
 
   return (
     <Container>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} disabled={!isMobile}>
-        <>
-          <Input
-            textContentType="emailAddress"
-            placeholder="example@ridebeep.app"
-            returnKeyType="go"
-            onChangeText={(text) => setEmail(text)}
-            onSubmitEditing={() => handleForgotPassword()}
-          />
-          <Button
-            isLoading={loading}
-            onPress={() => handleForgotPassword()}
-            disabled={!email}
-          >
-            Send Password Reset Email
-          </Button>
-        </>
-      </TouchableWithoutFeedback>
+      <Input
+        textContentType="emailAddress"
+        placeholder="example@ridebeep.app"
+        returnKeyType="go"
+        onChangeText={(text) => setEmail(text)}
+        onSubmitEditing={handleForgotPassword}
+      />
+      <Button
+        isLoading={loading}
+        isDisabled={!email}
+        onPress={handleForgotPassword}
+      >
+        Send Password Reset Email
+      </Button>
     </Container>
   );
 }
