@@ -83,7 +83,11 @@ export function RatingsScreen(props: Props): JSX.Element {
 
   const renderBody = () => {
     if (error) {
-      return <Text>{error.message}</Text>;
+      return (
+        <Container alignItems="center" justifyContent="center">
+          <Text>{error.message}</Text>
+        </Container>
+      );
     }
     if (loading) {
       return (

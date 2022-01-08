@@ -92,7 +92,13 @@ export function BeepsScreen(props: Props): JSX.Element {
   };
 
   const renderBody = () => {
-    if (error) return <Text>{error.message}</Text>;
+    if (error) {
+      return (
+        <Container alignItems="center" justifyContent="center">
+          <Text>{error.message}</Text>
+        </Container>
+      );
+    }
     if (loading) {
       return (
         <Container alignItems="center" justifyContent="center">
