@@ -80,10 +80,7 @@ function Beep() {
   //   errorPolicy: "none",
   // });
 
-  const { data, loading } =
-    useSubscription<UserUpdatesSubscription>(UserSubscription);
-
-  if (loading) return null;
+  const { data } = useSubscription<UserUpdatesSubscription>(UserSubscription);
 
   return (
     <UserContext.Provider value={{ ...data?.getUserUpdates } as User}>
