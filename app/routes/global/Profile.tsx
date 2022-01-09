@@ -1,13 +1,15 @@
 import React from "react";
-import ProfilePicture from "../../components/ProfilePicture";
-import { UserContext } from "../../utils/UserContext";
-import { useContext } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
-import { GetUserProfileQuery, User } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Spinner, Text, Button, Avatar } from "native-base";
 import { Container } from "../../components/Container";
+import { UserData } from "../../App";
+import {
+  GetUserProfileQuery,
+  User,
+  UserDataQuery,
+} from "../../generated/graphql";
 
 interface Props {
   route: any;
@@ -38,7 +40,10 @@ const GetUser = gql`
 `;
 
 export function ProfileScreen(props: Props): JSX.Element {
-  const user = useContext(UserContext);
+  const { data: userData } = useQuery<UserDataQuery>(UserData);
+
+  const user = userData?.getUser;
+
   const { data, loading, error } = useQuery<GetUserProfileQuery>(GetUser, {
     variables: { id: props.route.params.id },
     fetchPolicy: "no-cache",
@@ -66,7 +71,7 @@ export function ProfileScreen(props: Props): JSX.Element {
   }
 
   if (loading) {
-    return <Spinner size="large" />;
+    return <Spinner size="lg" />;
   }
 
   if (error || !data?.getUser) {
@@ -82,7 +87,7 @@ export function ProfileScreen(props: Props): JSX.Element {
         }}
       />
       <Text>{data.getUser.name}</Text>
-      {props.route.params.id !== user.id ? (
+      {props.route.params.id !== user?.id ? (
         <>
           <Button onPress={() => handleReport()}>Report User</Button>
           <Button onPress={() => handleRate()}>Rate User</Button>

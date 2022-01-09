@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Pressable } from "react-native";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsQuery, Rating } from "../generated/graphql";
+import { GetRatingsQuery, Rating, UserDataQuery } from "../generated/graphql";
 import { printStars } from "../components/Stars";
 import { Navigation } from "../utils/Navigation";
-import { UserContext } from "../utils/UserContext";
 import { Container } from "../components/Container";
+import { UserData } from "../App";
 import {
   Text,
   FlatList,
@@ -45,15 +45,19 @@ const Ratings = gql`
 `;
 
 export function RatingsScreen(props: Props): JSX.Element {
-  const user = useContext(UserContext);
+  const { data: userData } = useQuery<UserDataQuery>(UserData);
+
+  const user = userData?.getUser;
+
   const { data, loading, error } = useQuery<GetRatingsQuery>(Ratings, {
-    variables: { id: user.id },
+    variables: { id: user?.id },
   });
 
   const ratings = data?.getRatings;
 
   const renderItem = ({ item }: { item: Rating }) => {
-    const otherUser = user.id === item.rater.id ? item.rated : item.rater;
+    const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
+
     return (
       <Pressable
         onPress={() => props.navigation.push("Profile", { id: otherUser.id })}
@@ -68,7 +72,7 @@ export function RatingsScreen(props: Props): JSX.Element {
           />
           <Box>
             <Text>
-              {user.id === item.rater.id
+              {user?.id === item.rater.id
                 ? `You rated ${otherUser.name}`
                 : `${otherUser.name} rated you`}
             </Text>

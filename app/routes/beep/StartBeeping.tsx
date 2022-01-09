@@ -1,6 +1,21 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
+import ActionButton from "../../components/ActionButton";
+import AcceptDenyButton from "../../components/AcceptDenyButton";
+import Logger from "../../utils/Logger";
+import { isAndroid } from "../../utils/config";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { client } from "../../utils/Apollo";
+import { Navigation } from "../../utils/Navigation";
+import { Tag } from "../ride/Tags";
+import { LocationActivityType } from "expo-location";
+import { Container } from "../../components/Container";
+import {
+  GetInitialQueueQuery,
+  UpdateBeepSettingsMutation,
+  UserDataQuery,
+} from "../../generated/graphql";
 import {
   Linking,
   Platform,
@@ -10,21 +25,6 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import { UserContext } from "../../utils/UserContext";
-import { isAndroid } from "../../utils/config";
-import ActionButton from "../../components/ActionButton";
-import AcceptDenyButton from "../../components/AcceptDenyButton";
-import Logger from "../../utils/Logger";
-import { gql, useMutation, useQuery } from "@apollo/client";
-import {
-  GetInitialQueueQuery,
-  UpdateBeepSettingsMutation,
-} from "../../generated/graphql";
-import { client } from "../../utils/Apollo";
-import { Navigation } from "../../utils/Navigation";
-import { Tag } from "../ride/Tags";
-import { LocationActivityType } from "expo-location";
-import { Container } from "../../components/Container";
 import {
   Avatar,
   Input,
@@ -38,6 +38,7 @@ import {
   Flex,
   VStack,
 } from "native-base";
+import { UserData } from "../../App";
 
 interface Props {
   navigation: Navigation;
@@ -142,22 +143,23 @@ const UpdateBeepSettings = gql`
 export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen(props: Props): JSX.Element {
-  const user = useContext(UserContext);
+  const { data: userData } = useQuery<UserDataQuery>(UserData);
 
-  const [isBeeping, setIsBeeping] = useState<boolean>(user.isBeeping);
-  const [masksRequired, setMasksRequired] = useState<boolean>(
-    user.masksRequired
-  );
+  const user = userData?.getUser;
+
+  const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
+  const [masksRequired, setMasksRequired] = useState(user?.masksRequired);
   const [singlesRate, setSinglesRate] = useState<string>(
-    String(user.singlesRate)
+    String(user?.singlesRate)
   );
-  const [groupRate, setGroupRate] = useState<string>(String(user.groupRate));
-  const [capacity, setCapacity] = useState<string>(String(user.capacity));
+  const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
+  const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
   const { subscribeToMore, data, refetch } = useQuery<GetInitialQueueQuery>(
     GetInitialQueue,
     { notifyOnNetworkStatusChange: true }
   );
+
   const [updateBeepSettings] =
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
@@ -186,8 +188,8 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     setAppStateVisible(appState.current);
   };
 
-  function toggleSwitchWrapper(value: boolean): void {
-    if (isAndroid && value) {
+  function toggleSwitchWrapper(): void {
+    if (isAndroid && !isBeeping) {
       Alert.alert(
         "Background Location Notice",
         "Ride Beep App collects location data to enable ETAs for riders when your are beeping and the app is closed or not in use",
@@ -196,12 +198,12 @@ export function StartBeepingScreen(props: Props): JSX.Element {
             text: "Cancel",
             style: "cancel",
           },
-          { text: "OK", onPress: () => toggleSwitch(value) },
+          { text: "OK", onPress: () => toggleSwitch() },
         ],
         { cancelable: true }
       );
     } else {
-      toggleSwitch(value);
+      toggleSwitch();
     }
   }
 
@@ -212,7 +214,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         <Switch
           mr={3}
           isChecked={isBeeping}
-          onToggle={(value: boolean) => toggleSwitchWrapper(value)}
+          onToggle={() => toggleSwitchWrapper()}
         />
       ),
     });
@@ -234,12 +236,12 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     return true;
   }
 
-  async function toggleSwitch(value: boolean): Promise<void> {
-    setIsBeeping(value);
+  async function toggleSwitch(): Promise<void> {
+    setIsBeeping((value) => !value);
 
-    if (value) {
+    if (isBeeping) {
       if (!(await getBeepingLocationPermissions())) {
-        setIsBeeping(!value);
+        setIsBeeping((value) => !value);
         alert("You must allow background location to start beeping!");
         return;
       }
@@ -260,7 +262,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       });
 
       if (result) {
-        if (value) {
+        if (isBeeping) {
           sub();
         } else {
           if (unsubscribe) unsubscribe();
@@ -274,7 +276,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         }
       }
     } catch (error) {
-      setIsBeeping(isBeeping);
+      setIsBeeping((value) => !value);
       alert(error.message);
       console.log(error);
     }
@@ -312,7 +314,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   useEffect(() => {
     const init = async () => {
-      if (user.isBeeping) {
+      if (user?.isBeeping) {
         if (!(await getBeepingLocationPermissions())) {
           alert("You must allow background location to start beeping!");
           return;
@@ -329,7 +331,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     unsubscribe = subscribeToMore({
       document: GetQueue,
       variables: {
-        id: user.id,
+        id: user?.id,
       },
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-expect-error This works so I'm leaving it as is
@@ -353,12 +355,12 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     if (Number(groupSize) > 1) {
       Linking.openURL(
         `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${
-          user.groupRate * Number(groupSize)
+          (user?.groupRate || 0) * Number(groupSize)
         }&note=Beep`
       );
     } else {
       Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user.singlesRate}&note=Beep`
+        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user?.singlesRate}&note=Beep`
       );
     }
   }
@@ -366,10 +368,12 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   function handleCashApp(groupSize: string | number, cashapp: string): void {
     if (Number(groupSize) > 1) {
       Linking.openURL(
-        `https://cash.app/$${cashapp}/${Number(groupSize) * user.groupRate}`
+        `https://cash.app/$${cashapp}/${
+          Number(groupSize) * (user?.groupRate || 0)
+        }`
       );
     } else {
-      Linking.openURL(`https://cash.app/$${cashapp}/${user.singlesRate}`);
+      Linking.openURL(`https://cash.app/$${cashapp}/${user?.singlesRate || 0}`);
     }
   }
 

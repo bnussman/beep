@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Pressable } from "react-native";
-import { UserContext } from "../../utils/UserContext";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   AddProfilePictureMutation,
   EditAccountMutation,
   Maybe,
+  UserDataQuery,
 } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { ReactNativeFile } from "apollo-upload-client";
@@ -22,6 +22,7 @@ import {
   Flex,
   Spacer,
 } from "native-base";
+import { UserData } from "../../App";
 
 interface Props {
   navigation: Navigation;
@@ -71,19 +72,22 @@ export function generateRNFile(uri: string, name: string) {
 }
 
 export function EditProfileScreen(props: Props): JSX.Element {
-  const user = useContext(UserContext);
+  const { data: userData } = useQuery<UserDataQuery>(UserData);
+
+  const user = userData?.getUser;
+
   const [edit, { loading }] = useMutation<EditAccountMutation>(EditAccount);
 
   const [upload, { data, loading: uploadLoading, error }] =
     useMutation<AddProfilePictureMutation>(UploadPhoto);
+
   const [photoLoading, setPhotoLoading] = useState<boolean>(false);
   const [photo, setPhoto] = useState<any>();
-
-  const [username] = useState<string>(user.username);
-  const [first, setFirst] = useState<string>(user.first);
-  const [last, setLast] = useState<string>(user.last);
-  const [email, setEmail] = useState<string>(user.email);
-  const [phone, setPhone] = useState<string>(user.phone);
+  const [username] = useState(user?.username);
+  const [first, setFirst] = useState(user?.first);
+  const [last, setLast] = useState(user?.last);
+  const [email, setEmail] = useState(user?.email);
+  const [phone, setPhone] = useState(user?.phone);
   const [venmo, setVenmo] = useState<Maybe<string> | undefined>(user?.venmo);
   const [cashapp, setCashapp] = useState<Maybe<string> | undefined>(
     user?.cashapp
@@ -96,12 +100,12 @@ export function EditProfileScreen(props: Props): JSX.Element {
   const cashappRef = useRef<any>();
 
   useEffect(() => {
-    if (first !== user.first) setFirst(user.first);
-    if (last !== user.last) setLast(user.last);
-    if (email !== user.email) setEmail(user.email);
-    if (phone !== user.first) setPhone(user.phone);
-    if (venmo !== user.venmo) setVenmo(user?.venmo);
-    if (cashapp !== user.cashapp) setCashapp(user?.cashapp);
+    if (first !== user?.first) setFirst(user?.first);
+    if (last !== user?.last) setLast(user?.last);
+    if (email !== user?.email) setEmail(user?.email);
+    if (phone !== user?.first) setPhone(user?.phone);
+    if (venmo !== user?.venmo) setVenmo(user?.venmo);
+    if (cashapp !== user?.cashapp) setCashapp(user?.cashapp);
   }, [user]);
 
   async function handleUpdatePhoto(): Promise<void> {
@@ -204,7 +208,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
           <Pressable onPress={() => handleUpdatePhoto()}>
             <Avatar
               key={user?.photoUrl}
-              source={{ uri: photo?.uri || user.photoUrl }}
+              source={{ uri: photo?.uri || user?.photoUrl }}
               size={100}
             />
             {photoLoading || uploadLoading ? <Spinner /> : null}

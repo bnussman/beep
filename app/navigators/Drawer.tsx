@@ -1,11 +1,28 @@
 import * as React from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MainFindBeepScreen } from "../routes/ride/FindBeep";
+import { RatingsScreen } from "../routes/Ratings";
+import { BeepsScreen } from "../routes/Beeps";
+import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
+import { EditProfileScreen } from "../routes/settings/EditProfile";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import {
+  LogoutMutation,
+  ResendMutation,
+  UserDataQuery,
+} from "../generated/graphql";
+import { client } from "../utils/Apollo";
+import { UserData } from "../App";
+import {
+  LOCATION_TRACKING,
+  StartBeepingScreen,
+} from "../routes/beep/StartBeeping";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   Box,
   Pressable,
@@ -20,20 +37,6 @@ import {
   useColorMode,
   Spinner,
 } from "native-base";
-import { MainFindBeepScreen } from "../routes/ride/FindBeep";
-import { UserContext } from "../utils/UserContext";
-import {
-  LOCATION_TRACKING,
-  StartBeepingScreen,
-} from "../routes/beep/StartBeeping";
-import { RatingsScreen } from "../routes/Ratings";
-import { BeepsScreen } from "../routes/Beeps";
-import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
-import { EditProfileScreen } from "../routes/settings/EditProfile";
-import { gql, useMutation } from "@apollo/client";
-import { LogoutMutation, ResendMutation } from "../generated/graphql";
-import { client } from "../utils/Apollo";
-import { UserData } from "../App";
 
 const Logout = gql`
   mutation Logout {
@@ -69,7 +72,10 @@ const Resend = gql`
 `;
 
 function CustomDrawerContent(props: any) {
-  const user = React.useContext(UserContext);
+  const { data: userData } = useQuery<UserDataQuery>(UserData);
+
+  const user = userData?.getUser;
+
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =

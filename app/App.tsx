@@ -10,10 +10,9 @@ import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
 import { ProfileScreen } from "./routes/global/Profile";
 import { ReportScreen } from "./routes/global/Report";
 import { RateScreen } from "./routes/global/Rate";
-import { UserContext } from "./utils/UserContext";
 import { client } from "./utils/Apollo";
 import { ApolloProvider, gql, useQuery } from "@apollo/client";
-import { User, UserDataQuery } from "./generated/graphql";
+import { UserDataQuery } from "./generated/graphql";
 import { extendTheme, NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
@@ -126,7 +125,7 @@ function Beep() {
   }
 
   return (
-    <UserContext.Provider value={data?.getUser}>
+    <>
       <StatusBar
         barStyle={colorMode === "dark" ? "light-content" : "dark-content"}
       />
@@ -157,7 +156,7 @@ function Beep() {
           <Stack.Screen name="Pick Beeper" component={PickBeepScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-    </UserContext.Provider>
+    </>
   );
 }
 

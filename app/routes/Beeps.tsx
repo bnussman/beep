@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Pressable } from "react-native";
 import { gql, useQuery } from "@apollo/client";
-import { GetBeepHistoryQuery, Beep } from "../generated/graphql";
-import { UserContext } from "../utils/UserContext";
+import { GetBeepHistoryQuery, Beep, UserDataQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Navigation } from "../utils/Navigation";
 import {
@@ -14,6 +13,7 @@ import {
   Flex,
   Box,
 } from "native-base";
+import { UserData } from "../App";
 
 interface Props {
   navigation: Navigation;
@@ -50,16 +50,19 @@ const GetBeepHistory = gql`
 `;
 
 export function BeepsScreen(props: Props): JSX.Element {
-  const user = useContext(UserContext);
+  const { data: userData } = useQuery<UserDataQuery>(UserData);
+
+  const user = userData?.getUser;
+
   const { data, loading, error } = useQuery<GetBeepHistoryQuery>(
     GetBeepHistory,
-    { variables: { id: user.id } }
+    { variables: { id: user?.id } }
   );
 
   const beeps = data?.getBeeps;
 
   const renderItem = ({ item }: { item: Beep }) => {
-    const otherUser = user.id === item.rider.id ? item.beeper : item.rider;
+    const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
     return (
       <Pressable
         onPress={() =>
@@ -76,7 +79,7 @@ export function BeepsScreen(props: Props): JSX.Element {
           />
           <Box>
             <Text>
-              {user.id === item.rider.id
+              {user?.id === item.rider.id
                 ? `${otherUser.name} beeped you`
                 : `You beeped ${otherUser.name}`}
             </Text>

@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Logger from "../../utils/Logger";
 import LeaveButton from "./LeaveButton";
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";
 import { Share, Linking, AppState, AppStateStatus } from "react-native";
-import { UserContext } from "../../utils/UserContext";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { MainNavParamList } from "../../navigators/MainTabs";
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
@@ -30,7 +29,9 @@ import {
 import {
   GetEtaQuery,
   GetInitialRiderStatusQuery,
+  UserDataQuery,
 } from "../../generated/graphql";
+import { UserData } from "../../App";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -125,7 +126,9 @@ let sub: any;
 let riderStatusSub: any;
 
 export function MainFindBeepScreen(props: Props): JSX.Element {
-  const user = useContext(UserContext);
+  const { data: userData } = useQuery<UserDataQuery>(UserData);
+
+  const user = userData?.getUser;
 
   const { loading, data, previousData, refetch } =
     useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, {
@@ -212,7 +215,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   function subscribeToRiderStatus(): void {
     const a = client.subscribe({
       query: RiderStatus,
-      variables: { id: user.id },
+      variables: { id: user?.id },
     });
 
     riderStatusSub = a.subscribe(({ data }) => {
