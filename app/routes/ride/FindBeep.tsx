@@ -348,7 +348,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
   if (!beep) {
     return (
-      <Container alignItems="center">
+      <Container keyboard alignItems="center">
         <Stack space={4} w="90%">
           <RateCard {...props} />
           <FormControl>

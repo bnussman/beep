@@ -38,7 +38,7 @@ export function ChangePasswordScreen(props: Props): JSX.Element {
   }
 
   return (
-    <Container alignItems="center">
+    <Container keyboard alignItems="center">
       <Stack alignSelf="center" space={4} mt={4} w="90%">
         <Input
           secureTextEntry={true}

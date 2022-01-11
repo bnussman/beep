@@ -10,6 +10,8 @@ import { isMobile } from "../../utils/config";
 import { generateRNFile } from "../settings/EditProfile";
 import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
+import { Container } from "../../components/Container";
+import { UserData } from "../../App";
 import {
   Avatar,
   Button,
@@ -20,8 +22,6 @@ import {
   VStack,
   Center,
 } from "native-base";
-import { Container } from "../../components/Container";
-import { UserData, UserSubscription } from "../../App";
 
 interface Props {
   navigation: Navigation;
@@ -177,8 +177,8 @@ function RegisterScreen(props: Props): JSX.Element {
     !first || !last || !email || !phone || !username || !password || !picture;
 
   return (
-    <Container alignItems="center">
-      <VStack space={2} w="90%">
+    <Container keyboard alignItems="center">
+      <VStack space={4} w="90%">
         <Flex
           direction="row"
           justifyContent="space-between"

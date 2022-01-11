@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { ForgotPasswordMutation } from "../../generated/graphql";
-import { Input, Button } from "native-base";
+import { Input, Button, Stack } from "native-base";
 import { Container } from "../../components/Container";
 
 const ForgotPassword = gql`
@@ -24,21 +24,23 @@ export function ForgotPasswordScreen(): JSX.Element {
   };
 
   return (
-    <Container>
-      <Input
-        textContentType="emailAddress"
-        placeholder="example@ridebeep.app"
-        returnKeyType="go"
-        onChangeText={(text) => setEmail(text)}
-        onSubmitEditing={handleForgotPassword}
-      />
-      <Button
-        isLoading={loading}
-        isDisabled={!email}
-        onPress={handleForgotPassword}
-      >
-        Send Password Reset Email
-      </Button>
+    <Container alignItems="center" keyboard>
+      <Stack mt={4} space={4} w="90%">
+        <Input
+          textContentType="emailAddress"
+          placeholder="example@ridebeep.app"
+          returnKeyType="go"
+          onChangeText={(text) => setEmail(text)}
+          onSubmitEditing={handleForgotPassword}
+        />
+        <Button
+          isLoading={loading}
+          isDisabled={!email}
+          onPress={handleForgotPassword}
+        >
+          Send Password Reset Email
+        </Button>
+      </Stack>
     </Container>
   );
 }

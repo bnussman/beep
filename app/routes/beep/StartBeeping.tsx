@@ -370,7 +370,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   if (!isBeeping) {
     return (
-      <Container alignItems="center">
+      <Container keyboard alignItems="center">
         <Stack space={4} w="90%" mt={4}>
           <FormControl>
             <FormControl.Label>Max Rider Capacity</FormControl.Label>

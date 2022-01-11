@@ -8,7 +8,7 @@ import { client } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
-import { UserData, UserSubscription } from "../../App";
+import { UserData } from "../../App";
 import {
   Stack,
   Button,
@@ -96,7 +96,7 @@ function LoginScreen(props: Props): JSX.Element {
   }
 
   return (
-    <Container>
+    <Container keyboard>
       <Center mt="40%">
         <Stack space={4} w="90%">
           <Flex direction="row" alignItems="center" justifyContent="center">

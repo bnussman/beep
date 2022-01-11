@@ -1,18 +1,19 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import {
-  AddProfilePictureMutation,
-  EditAccountMutation,
-  Maybe,
-  UserDataQuery,
-} from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { ReactNativeFile } from "apollo-upload-client";
 import * as mime from "react-native-mime-types";
 import * as ImagePicker from "expo-image-picker";
 import { isMobile } from "../../utils/config";
 import { Container } from "../../components/Container";
+import { UserData } from "../../App";
+import {
+  AddProfilePictureMutation,
+  EditAccountMutation,
+  Maybe,
+  UserDataQuery,
+} from "../../generated/graphql";
 import {
   Spinner,
   Input,
@@ -22,7 +23,6 @@ import {
   Flex,
   Spacer,
 } from "native-base";
-import { UserData } from "../../App";
 
 interface Props {
   navigation: Navigation;
@@ -181,7 +181,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
   }
 
   return (
-    <Container alignItems="center">
+    <Container keyboard alignItems="center">
       <Stack space={4} mt={4} w="90%">
         <Flex direction="row">
           <Stack space={4}>
