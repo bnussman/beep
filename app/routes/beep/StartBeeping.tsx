@@ -11,6 +11,7 @@ import { Navigation } from "../../utils/Navigation";
 import { Tag } from "../ride/Tags";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
+import { UserData } from "../../App";
 import {
   GetInitialQueueQuery,
   UpdateBeepSettingsMutation,
@@ -38,7 +39,6 @@ import {
   Flex,
   VStack,
 } from "native-base";
-import { UserData } from "../../App";
 
 interface Props {
   navigation: Navigation;
@@ -237,9 +237,10 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   }
 
   async function toggleSwitch(): Promise<void> {
+    const willBeBeeping = !isBeeping;
     setIsBeeping((value) => !value);
 
-    if (isBeeping) {
+    if (willBeBeeping) {
       if (!(await getBeepingLocationPermissions())) {
         setIsBeeping((value) => !value);
         alert("You must allow background location to start beeping!");
@@ -251,9 +252,9 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     }
 
     try {
-      const result = await updateBeepSettings({
+      await updateBeepSettings({
         variables: {
-          isBeeping: !isBeeping,
+          isBeeping: willBeBeeping,
           singlesRate: Number(singlesRate),
           groupRate: Number(groupRate),
           masksRequired: masksRequired,
@@ -261,24 +262,14 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         },
       });
 
-      if (result) {
-        if (isBeeping) {
-          sub();
-        } else {
-          if (unsubscribe) unsubscribe();
-        }
+      if (willBeBeeping) {
+        sub();
       } else {
-        setIsBeeping(!isBeeping);
-        if (isBeeping) {
-          startLocationTracking();
-        } else {
-          stopLocationTracking();
-        }
+        if (unsubscribe) unsubscribe();
       }
     } catch (error) {
       setIsBeeping((value) => !value);
       alert(error.message);
-      console.log(error);
     }
   }
 
