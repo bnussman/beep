@@ -9,6 +9,7 @@ variables:
 pages:
   stage: staging
   script:
+    - export
     - cd website
     - yarn install
     - yarn build:ci
