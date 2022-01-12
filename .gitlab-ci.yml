@@ -3,6 +3,9 @@ include:
 
 image: node:current-alpine
 
+variables:
+  ENV: $ENV
+
 pages:
   stage: staging
   script:
