@@ -14,8 +14,7 @@ pages:
     - yarn install
     - yarn build:ci
   variables:
-    ENV: $ENV
-    VITE_GOOGLE_API_KEY: $VITE_GOOGLE_API_KEY
+    VITE_GOOGLE_API_KEY: 'echo $VITE_GOOGLE_API_KEY'
   artifacts:
       paths:
         - public
