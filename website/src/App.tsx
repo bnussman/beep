@@ -110,6 +110,8 @@ function Beep() {
     }
   }, [data?.getUser?.id]);
 
+  console.log(import.meta.env.VITE_GOOGLE_API_KEY);
+
   if (loading) return null;
 
   return (
