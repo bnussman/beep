@@ -1,3 +1,4 @@
+import got from "got";
 import { request } from "https";
 
 export interface PushNotification {
@@ -16,40 +17,18 @@ export async function sendNotification(token: string | undefined, title: string,
 
   if (!token) return;
 
-  const req = request({
-    host: "api.expo.dev",
-    path: "/v2/push/send",
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  req.write(
-    JSON.stringify({
+  await got.post('https://api.expo.dev/v2/push/send', {
+    json: {
       to: token,
       title: title,
       body: message,
-    })
-  );
-
-  req.end();
+    }
+  });
 }
 
 /**
  * Use Expo's API to send many push notifications
  */
 export async function sendNotifications(notifications: PushNotification[]): Promise<void> {
-  const req = request({
-    host: "exp.host",
-    path: "/--/api/v2/push/send",
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  req.write(JSON.stringify(notifications));
-
-  req.end();
+  await got.post('https://api.expo.dev/v2/push/send', { json: notifications });
 }

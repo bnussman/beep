@@ -46,15 +46,15 @@ export class UserResolver {
   public async editUser(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
     const user = await ctx.em.findOneOrFail(User, id);
 
+    if (user.isEmailVerified === false && data.isEmailVerified === true) {
+      sendNotification(user.pushToken, "Account Verified", "An admin has approved your account.");
+    }
+
     wrap(user).assign(data);
 
     pubSub.publish("User" + id, user);
 
     await ctx.em.flush();
-
-    if (user.isEmailVerified !== data.isEmailVerified) {
-      sendNotification(user.pushToken, "Account Verified", "An admin has approved your account.");
-    }
 
     return user;
   }
