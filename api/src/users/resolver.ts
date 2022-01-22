@@ -9,6 +9,7 @@ import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Paginated } from '../utils/paginated';
 import { search } from './helpers';
+import { sendNotification } from 'src/utils/notifications';
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
@@ -50,6 +51,10 @@ export class UserResolver {
     pubSub.publish("User" + id, user);
 
     await ctx.em.flush();
+
+    if (user.isEmailVerified !== data.isEmailVerified) {
+      sendNotification(user.pushToken, "Account Verified", "An admin has approved your account.");
+    }
 
     return user;
   }
