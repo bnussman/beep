@@ -8,6 +8,9 @@ export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
 
   if (!user) return false;
 
+  // Let admins do anything
+  if (user.role === UserRole.ADMIN) return true;
+
   if (roles[0] === 'No Verification') return true;
 
   if (roles[0] === 'No Verification Self') return args.id === user.id;
@@ -17,7 +20,7 @@ export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
   if (roles.length === 0) return true;
 
   if (roles[0] === 'self') {
-    return args.id === user.id || user.role === UserRole.ADMIN;
+    return args.id === user.id;
   }
 
   if (roles[0] == context.user.role) {
