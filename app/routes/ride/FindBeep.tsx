@@ -356,6 +356,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             <Input
               w="100%"
               keyboardType="number-pad"
+              type="number"
               value={groupSize}
               onChangeText={(value) => setGroupSize(value)}
               onSubmitEditing={() => originRef.current.focus()}

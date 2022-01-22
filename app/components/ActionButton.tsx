@@ -134,6 +134,8 @@ class ActionButton extends Component<Props, State> {
     const CancelButton = (props: { isLoading: boolean }) => {
       return (
         <Button
+          mb={2}
+          size="xs"
           isLoading={props.isLoading}
           colorScheme="red"
           onPress={() => this.cancel()}
@@ -146,6 +148,7 @@ class ActionButton extends Component<Props, State> {
     const ActionButton = (props: { isLoading: boolean }) => {
       return (
         <Button
+          size="lg"
           isLoading={props.isLoading}
           colorScheme="blue"
           onPress={() => this.update()}
@@ -161,8 +164,8 @@ class ActionButton extends Component<Props, State> {
 
     return (
       <>
-        <ActionButton isLoading={this.state.isActionLoading} />
         <CancelButton isLoading={this.state.isCancelLoading} />
+        <ActionButton isLoading={this.state.isActionLoading} />
       </>
     );
   }

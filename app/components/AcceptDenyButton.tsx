@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "native-base";
 import { gql, useMutation } from "@apollo/client";
 import { UpdateBeeperQueueMutation } from "../generated/graphql";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
   type: string;
@@ -54,6 +55,13 @@ function AcceptDenyButton(props: Props): JSX.Element {
       isLoading={loading}
       onPress={() =>
         updateStatus(props.item.id, props.item.rider.id, props.type)
+      }
+      endIcon={
+        <MaterialCommunityIcons
+          name={isAccept ? "check" : "close"}
+          size={22}
+          color="white"
+        />
       }
     >
       {isAccept ? "Accept" : "Deny"}

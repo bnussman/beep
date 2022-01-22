@@ -2,7 +2,17 @@ import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Navigation } from "../../utils/Navigation";
-import { Spinner, Text, Button, Avatar } from "native-base";
+import {
+  Spinner,
+  Text,
+  Button,
+  Avatar,
+  Stack,
+  Flex,
+  HStack,
+  Center,
+  Heading,
+} from "native-base";
 import { Container } from "../../components/Container";
 import { UserData } from "../../App";
 import {
@@ -71,58 +81,86 @@ export function ProfileScreen(props: Props): JSX.Element {
   }
 
   if (loading) {
-    return <Spinner size="lg" />;
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Spinner size="lg" />;
+      </Container>
+    );
   }
 
-  if (error || !data?.getUser) {
-    return <Text>User not found</Text>;
+  if (error) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Text>{error.message}</Text>
+      </Container>
+    );
+  }
+
+  if (!data?.getUser) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Text>User does not exist</Text>
+      </Container>
+    );
   }
 
   return (
     <Container>
-      <Avatar
-        size={150}
-        source={{
-          uri: data.getUser.photoUrl ? data.getUser.photoUrl : undefined,
-        }}
-      />
-      <Text>{data.getUser.name}</Text>
-      {props.route.params.id !== user?.id ? (
-        <>
-          <Button onPress={() => handleReport()}>Report User</Button>
-          <Button onPress={() => handleRate()}>Rate User</Button>
-        </>
-      ) : null}
-      {data.getUser.isBeeping ? (
-        <>
-          <Text>Queue Size</Text>
-          <Text>{data.getUser.queueSize}</Text>
-        </>
-      ) : null}
-      {data?.getUser.venmo ? (
-        <>
-          <Text>Venmo</Text>
-          <Text>@{data.getUser.venmo}</Text>
-        </>
-      ) : null}
-      {data?.getUser.cashapp ? (
-        <>
-          <Text>Cash App</Text>
-          <Text>@{data.getUser.cashapp}</Text>
-        </>
-      ) : null}
-      <Text>Capacity</Text>
-      <Text>{data.getUser.capacity}</Text>
-      <Text>Singles Rate</Text>
-      <Text>${data.getUser.singlesRate}</Text>
-      <Text>Group Rate</Text>
-      <Text>${data.getUser.groupRate}</Text>
-      {data.getUser.rating ? (
-        <>
-          <Text>Rating</Text>
-          <Text>{printStars(data.getUser.rating)}</Text>
-        </>
-      ) : null}
+      <Center>
+        <Stack space={2} alignItems="center">
+          <Avatar
+            size={130}
+            source={{
+              uri: data.getUser.photoUrl ? data.getUser.photoUrl : undefined,
+            }}
+          />
+          <Heading>{data.getUser.name}</Heading>
+          {props.route.params.id !== user?.id ? (
+            <HStack space={4}>
+              <Button
+                colorScheme="red"
+                variant="subtle"
+                onPress={() => handleReport()}
+              >
+                Report User
+              </Button>
+              <Button variant="subtle" onPress={() => handleRate()}>
+                Rate User
+              </Button>
+            </HStack>
+          ) : null}
+          {data.getUser.isBeeping ? (
+            <>
+              <Text>Queue Size</Text>
+              <Text>{data.getUser.queueSize}</Text>
+            </>
+          ) : null}
+          {data?.getUser.venmo ? (
+            <>
+              <Text>Venmo</Text>
+              <Text>@{data.getUser.venmo}</Text>
+            </>
+          ) : null}
+          {data?.getUser.cashapp ? (
+            <>
+              <Text>Cash App</Text>
+              <Text>@{data.getUser.cashapp}</Text>
+            </>
+          ) : null}
+          <Text>Capacity</Text>
+          <Text>{data.getUser.capacity}</Text>
+          <Text>Singles Rate</Text>
+          <Text>${data.getUser.singlesRate}</Text>
+          <Text>Group Rate</Text>
+          <Text>${data.getUser.groupRate}</Text>
+          {data.getUser.rating ? (
+            <>
+              <Text>Rating</Text>
+              <Text>{printStars(data.getUser.rating)}</Text>
+            </>
+          ) : null}
+        </Stack>
+      </Center>
     </Container>
   );
 }

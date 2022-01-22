@@ -23,7 +23,6 @@ import {
   Alert,
   AppState,
   AppStateStatus,
-  FlatList,
   Pressable,
 } from "react-native";
 import {
@@ -38,7 +37,12 @@ import {
   Stack,
   Flex,
   VStack,
+  HStack,
+  Box,
+  FlatList,
+  Divider,
 } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
   navigation: Navigation;
@@ -412,64 +416,95 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   } else {
     if (queue && queue?.length > 0) {
       return (
-        <Container>
+        <Container alignItems="center">
           <FlatList
+            w="96%"
             data={data?.getQueue}
             keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={Divider}
             renderItem={({ item, index }) =>
               item.isAccepted ? (
                 <>
-                  <Pressable
-                    onPress={() =>
-                      props.navigation.navigate("Profile", {
-                        id: item.rider.id,
-                        beep: item.id,
-                      })
-                    }
+                  <Flex
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
                   >
-                    <Flex direction="row" alignItems="center">
-                      <Avatar
-                        size={50}
-                        source={{
-                          uri: item.rider.photoUrl
-                            ? item.rider.photoUrl
-                            : undefined,
+                    <Box>
+                      <Pressable
+                        onPress={() =>
+                          props.navigation.navigate("Profile", {
+                            id: item.rider.id,
+                            beep: item.id,
+                          })
+                        }
+                      >
+                        <Flex direction="row" alignItems="center">
+                          <Avatar
+                            size={50}
+                            mr={2}
+                            source={{
+                              uri: item.rider.photoUrl
+                                ? item.rider.photoUrl
+                                : undefined,
+                            }}
+                          />
+                          <Text bold fontSize="xl">
+                            {item.rider.name}
+                          </Text>
+                        </Flex>
+                      </Pressable>
+                      <Flex direction="row" alignItems="center">
+                        <Text bold mr={2}>
+                          Group Size
+                        </Text>
+                        <Text>{item.groupSize}</Text>
+                      </Flex>
+                      <Flex direction="row" alignItems="center">
+                        <Text bold mr={2}>
+                          Pick Up
+                        </Text>
+                        <Text>{item.origin}</Text>
+                      </Flex>
+                      <Flex direction="row" alignItems="center">
+                        <Text bold mr={2}>
+                          Drop Off
+                        </Text>
+                        <Text>{item.destination}</Text>
+                      </Flex>
+                    </Box>
+                    <HStack space={2}>
+                      <Button
+                        onPress={() => {
+                          Linking.openURL("tel:" + item.rider.phone);
                         }}
+                        endIcon={
+                          <MaterialCommunityIcons
+                            name="phone"
+                            color="white"
+                            size={22}
+                          />
+                        }
                       />
-                      <Text bold fontSize="xl">
-                        {item.rider.name}
-                      </Text>
-                    </Flex>
-                  </Pressable>
-                  <Flex direction="row" alignItems="center">
-                    <Text bold>Group Size</Text>
-                    <Text>{item.groupSize}</Text>
-                  </Flex>
-                  <Flex direction="row" alignItems="center">
-                    <Text bold>Pick Up</Text>
-                    <Text>{item.origin}</Text>
-                  </Flex>
-                  <Flex direction="row" alignItems="center">
-                    <Text bold>Drop Off</Text>
-                    <Text>{item.destination}</Text>
+                      <Button
+                        onPress={() => {
+                          Linking.openURL("sms:" + item.rider.phone);
+                        }}
+                        endIcon={
+                          <MaterialCommunityIcons
+                            name="message-text"
+                            color="white"
+                            size={22}
+                          />
+                        }
+                      />
+                    </HStack>
                   </Flex>
                   <VStack space={2}>
-                    <Button
-                      onPress={() => {
-                        Linking.openURL("tel:" + item.rider.phone);
-                      }}
-                    >
-                      Call Rider
-                    </Button>
-                    <Button
-                      onPress={() => {
-                        Linking.openURL("sms:" + item.rider.phone);
-                      }}
-                    >
-                      Text Rider
-                    </Button>
                     {item.rider?.venmo ? (
                       <Button
+                        colorScheme="blue"
+                        variant="subtle"
                         onPress={() =>
                           handleVenmo(item.groupSize, item.rider.venmo!)
                         }
@@ -479,6 +514,8 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                     ) : null}
                     {item.rider?.cashapp ? (
                       <Button
+                        colorScheme="green"
+                        variant="subtle"
                         onPress={() =>
                           handleCashApp(item.groupSize, item.rider.cashapp!)
                         }
@@ -488,8 +525,16 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                     ) : null}
                     {item.state <= 1 ? (
                       <Button
+                        colorScheme="tertiary"
                         onPress={() =>
                           handleDirections("Current+Location", item.origin)
+                        }
+                        endIcon={
+                          <MaterialCommunityIcons
+                            name="map-legend"
+                            color="white"
+                            size={22}
+                          />
                         }
                       >
                         Get Directions to Rider
@@ -499,6 +544,13 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                         onPress={() =>
                           handleDirections(item.origin, item.destination)
                         }
+                        endIcon={
+                          <MaterialCommunityIcons
+                            name="map-legend"
+                            color="white"
+                            size={22}
+                          />
+                        }
                       >
                         Get Directions for Beep
                       </Button>
@@ -507,49 +559,75 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                   </VStack>
                 </>
               ) : (
-                <Pressable
-                  onPress={() =>
-                    props.navigation.navigate("Profile", {
-                      id: item.rider.id,
-                      beep: item.id,
-                    })
-                  }
+                <Flex
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
                 >
-                  <Avatar
-                    size={50}
-                    source={{
-                      uri: item.rider.photoUrl
-                        ? item.rider.photoUrl
-                        : undefined,
-                    }}
-                  />
-                  <Text>{item.rider.name}</Text>
-                  {item.rider.isStudent ? (
-                    <Tag status="basic">Student</Tag>
-                  ) : null}
-                  <Text>Entered Queue</Text>
-                  <Text>
-                    {new Date(item.start * 1000).toLocaleString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}
-                  </Text>
-                  <Text>Group Size</Text>
-                  <Text>{item.groupSize}</Text>
-                  <Text>Origin</Text>
-                  <Text>{item.origin}</Text>
-                  <Text>Destination</Text>
-                  <Text>{item.destination}</Text>
+                  <Box>
+                    <Pressable
+                      onPress={() =>
+                        props.navigation.navigate("Profile", {
+                          id: item.rider.id,
+                          beep: item.id,
+                        })
+                      }
+                    >
+                      <Flex direction="row" alignItems="center">
+                        <Avatar
+                          size={50}
+                          source={{
+                            uri: item.rider.photoUrl
+                              ? item.rider.photoUrl
+                              : undefined,
+                          }}
+                        />
+                        <Heading size="md">{item.rider.name}</Heading>
+                        {item.rider.isStudent && (
+                          <Tag status="basic">Student</Tag>
+                        )}
+                      </Flex>
+                    </Pressable>
+                    <Flex direction="row" alignItems="center">
+                      <Text bold mr={2}>
+                        Entered Queue
+                      </Text>
+                      <Text>
+                        {new Date(item.start * 1000).toLocaleString("en-US", {
+                          hour: "numeric",
+                          minute: "numeric",
+                          hour12: true,
+                        })}
+                      </Text>
+                    </Flex>
+                    <Flex direction="row" alignItems="center">
+                      <Text bold mr={2}>
+                        Group Size
+                      </Text>
+                      <Text>{item.groupSize}</Text>
+                    </Flex>
+                    <Flex direction="row" alignItems="center">
+                      <Text bold mr={2}>
+                        Origin
+                      </Text>
+                      <Text>{item.origin}</Text>
+                    </Flex>
+                    <Flex direction="row" alignItems="center">
+                      <Text bold mr={2}>
+                        Destination
+                      </Text>
+                      <Text>{item.destination}</Text>
+                    </Flex>
+                  </Box>
                   {queue.filter(
                     (entry) => entry.start < item.start && !entry.isAccepted
                   ).length === 0 ? (
-                    <>
-                      <AcceptDenyButton type="accept" item={item} />
+                    <HStack space={2}>
                       <AcceptDenyButton type="deny" item={item} />
-                    </>
+                      <AcceptDenyButton type="accept" item={item} />
+                    </HStack>
                   ) : null}
-                </Pressable>
+                </Flex>
               )
             }
           />
