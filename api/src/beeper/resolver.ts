@@ -121,7 +121,7 @@ export class BeeperResolver {
     for (const entry of queue) {
       entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
 
-      sendNotification(entry.rider.pushToken, "Beep Update", `There are ${entry.position} people ahead of you in ${beeper.name}'s queue.`);
+      sendNotification(entry.rider.pushToken, "Beep Update", `There are ${entry.position} people ahead of you in ${beeper.name()}'s queue.`);
 
       pubSub.publish("Rider" + entry.rider.id, entry);
     }
