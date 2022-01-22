@@ -17,8 +17,8 @@ export async function sendNotification(token: string | undefined, title: string,
   if (!token) return;
 
   const req = request({
-    host: "exp.host",
-    path: "/--/api/v2/push/send",
+    host: "api.expo.dev",
+    path: "/v2/push/send",
     method: "POST",
     headers: {
       'Content-Type': 'application/json'
