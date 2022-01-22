@@ -80,7 +80,7 @@ function Login() {
       {error && <Error error={error} />}
       <form onSubmit={handleLogin}>
         <FormControl>
-          <FormLabel>Username</FormLabel>
+          <FormLabel>Username or Email</FormLabel>
           <Input
             type="email"
             onChange={(value: any) => setUsername(value.target.value)}

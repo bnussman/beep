@@ -25,18 +25,10 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async login(@Ctx() ctx: Context, @Arg('input') { username, password, pushToken }: LoginInput): Promise<Auth> {
-    const user = await ctx.em.findOne(User, { username });
+    const user = await ctx.em.findOne(User, { $or: [ { username, password: sha256(password) }, { email: username, password: sha256(password) } ] });
 
     if (!user) {
       throw new Error("User not found");
-    }
-
-    if (!user.password) {
-      await ctx.em.populate(user, 'password');
-    }
-
-    if (user.password !== sha256(password)) {
-      throw new Error("Password is incorrect");
     }
 
     const tokenData = await getToken(user);

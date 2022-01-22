@@ -6,7 +6,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions =  {}
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -610,15 +610,15 @@ export type GetRateDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetRateDataQuery = { __typename?: 'Query', getLastBeepToRate?: { __typename?: 'Beep', id: string, beeper: { __typename?: 'User', id: string, name: string, username: string, photoUrl?: string | null | undefined } } | null | undefined };
 
-export type ResendMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ResendMutation = { __typename?: 'Mutation', resendEmailVarification: boolean };
-
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
+export type ResendMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ResendMutation = { __typename?: 'Mutation', resendEmailVarification: boolean };
 
 export type GetBeepHistoryQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1033,36 +1033,6 @@ export function useGetRateDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQuery
 export type GetRateDataQueryHookResult = ReturnType<typeof useGetRateDataQuery>;
 export type GetRateDataLazyQueryHookResult = ReturnType<typeof useGetRateDataLazyQuery>;
 export type GetRateDataQueryResult = ApolloReactCommon.QueryResult<GetRateDataQuery, GetRateDataQueryVariables>;
-export const ResendDocument = gql`
-    mutation Resend {
-  resendEmailVarification
-}
-    `;
-export type ResendMutationFn = ApolloReactCommon.MutationFunction<ResendMutation, ResendMutationVariables>;
-
-/**
- * __useResendMutation__
- *
- * To run a mutation, you first call `useResendMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useResendMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [resendMutation, { data, loading, error }] = useResendMutation({
- *   variables: {
- *   },
- * });
- */
-export function useResendMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ResendMutation, ResendMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<ResendMutation, ResendMutationVariables>(ResendDocument, options);
-      }
-export type ResendMutationHookResult = ReturnType<typeof useResendMutation>;
-export type ResendMutationResult = ApolloReactCommon.MutationResult<ResendMutation>;
-export type ResendMutationOptions = ApolloReactCommon.BaseMutationOptions<ResendMutation, ResendMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout(isApp: true)
@@ -1093,6 +1063,36 @@ export function useLogoutMutation(baseOptions?: ApolloReactHooks.MutationHookOpt
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = ApolloReactCommon.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = ApolloReactCommon.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const ResendDocument = gql`
+    mutation Resend {
+  resendEmailVarification
+}
+    `;
+export type ResendMutationFn = ApolloReactCommon.MutationFunction<ResendMutation, ResendMutationVariables>;
+
+/**
+ * __useResendMutation__
+ *
+ * To run a mutation, you first call `useResendMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendMutation, { data, loading, error }] = useResendMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useResendMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ResendMutation, ResendMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<ResendMutation, ResendMutationVariables>(ResendDocument, options);
+      }
+export type ResendMutationHookResult = ReturnType<typeof useResendMutation>;
+export type ResendMutationResult = ApolloReactCommon.MutationResult<ResendMutation>;
+export type ResendMutationOptions = ApolloReactCommon.BaseMutationOptions<ResendMutation, ResendMutationVariables>;
 export const GetBeepHistoryDocument = gql`
     query GetBeepHistory($id: String) {
   getBeeps(id: $id) {

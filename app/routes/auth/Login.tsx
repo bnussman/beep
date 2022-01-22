@@ -105,7 +105,7 @@ function LoginScreen(props: Props): JSX.Element {
           <Stack space={2}>
             <Input
               textContentType="username"
-              placeholder="Username"
+              placeholder="Username or Email"
               returnKeyType="next"
               onChangeText={(text) => setUsername(text)}
               onSubmitEditing={() => passwordRef.current.focus()}
