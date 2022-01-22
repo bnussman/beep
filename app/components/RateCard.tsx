@@ -1,6 +1,6 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Avatar, Box, Flex, Pressable, Text } from "native-base";
+import { Avatar, Box, Flex, Heading, Pressable, Text } from "native-base";
 import { GetRateDataQuery, User } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 
@@ -50,10 +50,7 @@ export function RateCard(props: Props): JSX.Element | null {
               : undefined,
           }}
         />
-        <Box>
-          <Text>{data?.getLastBeepToRate?.beeper.name}</Text>
-          <Text>{data?.getLastBeepToRate?.beeper.username}</Text>
-        </Box>
+        <Heading size="md">{data?.getLastBeepToRate?.beeper.name}</Heading>
       </Flex>
     </Pressable>
   );

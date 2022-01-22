@@ -4,8 +4,6 @@ import LeaveButton from "./LeaveButton";
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";
 import { Share, Linking, AppState, AppStateStatus } from "react-native";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { MainNavParamList } from "../../navigators/MainTabs";
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
 import { client } from "../../utils/Apollo";
@@ -13,6 +11,13 @@ import { RateCard } from "../../components/RateCard";
 import { Tags } from "./Tags";
 import { throttle } from "throttle-debounce";
 import { Container } from "../../components/Container";
+import { UserData } from "../../App";
+import { Navigation } from "../../utils/Navigation";
+import {
+  GetEtaQuery,
+  GetInitialRiderStatusQuery,
+  UserDataQuery,
+} from "../../generated/graphql";
 import {
   Button,
   Text,
@@ -26,12 +31,6 @@ import {
   Center,
   VStack,
 } from "native-base";
-import {
-  GetEtaQuery,
-  GetInitialRiderStatusQuery,
-  UserDataQuery,
-} from "../../generated/graphql";
-import { UserData } from "../../App";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -119,7 +118,7 @@ const GetETA = gql`
 `;
 
 interface Props {
-  navigation: BottomTabNavigationProp<MainNavParamList>;
+  navigation: Navigation;
 }
 
 let sub: any;
@@ -130,10 +129,12 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
   const user = userData?.getUser;
 
-  const { loading, data, previousData, refetch } =
-    useQuery<GetInitialRiderStatusQuery>(InitialRiderStatus, {
+  const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
+    InitialRiderStatus,
+    {
       notifyOnNetworkStatusChange: true,
-    });
+    }
+  );
   const [getETA, { data: eta, loading: etaLoading, error: etaError }] =
     useLazyQuery<GetEtaQuery>(GetETA);
 
@@ -350,7 +351,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     return (
       <Container keyboard alignItems="center">
         <Stack space={4} w="90%">
-          <RateCard {...props} />
+          <RateCard navigation={props.navigation} />
           <FormControl>
             <FormControl.Label>Group Size</FormControl.Label>
             <Input
