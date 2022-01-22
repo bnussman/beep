@@ -64,7 +64,7 @@ export class AccountResolver {
     }
 
     // @TODO clean up this if condition
-    if ((entry.time.getTime() + (3600 * 1000)) < Date.now()) {
+    if ((entry.time.getTime() + (18000 * 1000)) < Date.now()) {
       await ctx.em.removeAndFlush(entry);
       throw new Error("Your verification token has expired");
     }
