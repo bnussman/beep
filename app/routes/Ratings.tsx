@@ -85,41 +85,40 @@ export function RatingsScreen(props: Props): JSX.Element {
     );
   };
 
-  const renderBody = () => {
-    if (error) {
-      return (
-        <Container alignItems="center" justifyContent="center">
-          <Text>{error.message}</Text>
-        </Container>
-      );
-    }
-    if (loading) {
-      return (
-        <Container alignItems="center" justifyContent="center">
-          <Text>Loading your ratings</Text>
-          <Spinner />
-        </Container>
-      );
-    }
-    if (ratings && ratings.items.length > 0) {
-      return (
-        <Container alignItems="center" justifyContent="center">
-          <FlatList
-            w="100%"
-            data={ratings.items}
-            ItemSeparatorComponent={Divider}
-            renderItem={renderItem}
-          />
-        </Container>
-      );
-    }
+  if (loading) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Text>Nothing to display!</Text>
-        <Text>You have no ratings to display</Text>
+        <Text>Loading your ratings</Text>
+        <Spinner />
       </Container>
     );
-  };
+  }
 
-  return renderBody();
+  if (error) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Text>{error.message}</Text>
+      </Container>
+    );
+  }
+
+  if (ratings && ratings.items.length > 0) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <FlatList
+          w="100%"
+          data={ratings.items}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        />
+      </Container>
+    );
+  }
+
+  return (
+    <Container alignItems="center" justifyContent="center">
+      <Text>Nothing to display!</Text>
+      <Text>You have no ratings to display</Text>
+    </Container>
+  );
 }

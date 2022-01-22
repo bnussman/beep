@@ -3,6 +3,7 @@ import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { GetBeeperListQuery, User } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
+import { Container } from "../../components/Container";
 import {
   Text,
   Spinner,
@@ -10,9 +11,6 @@ import {
   Divider,
   Flex,
   Badge,
-  IconButton,
-  AddIcon,
-  MinusIcon,
   Pressable,
   Avatar,
   Box,
@@ -24,7 +22,6 @@ import {
   useDisclose,
   Slider,
 } from "native-base";
-import { Container } from "../../components/Container";
 
 interface Props {
   navigation: Navigation;

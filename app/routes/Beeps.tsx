@@ -94,41 +94,40 @@ export function BeepsScreen(props: Props): JSX.Element {
     );
   };
 
-  const renderBody = () => {
-    if (error) {
-      return (
-        <Container alignItems="center" justifyContent="center">
-          <Text>{error.message}</Text>
-        </Container>
-      );
-    }
-    if (loading) {
-      return (
-        <Container alignItems="center" justifyContent="center">
-          <Text>Loading your history</Text>
-          <Spinner />
-        </Container>
-      );
-    }
-    if (beeps && beeps.items.length > 0) {
-      return (
-        <Container alignItems="center" justifyContent="center">
-          <FlatList
-            w="100%"
-            data={beeps.items}
-            ItemSeparatorComponent={Divider}
-            renderItem={renderItem}
-          />
-        </Container>
-      );
-    }
+  if (loading) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Text>Nothing to display!</Text>
-        <Text>You have no previous beeps to display</Text>
+        <Text>Loading your history</Text>
+        <Spinner />
       </Container>
     );
-  };
+  }
 
-  return renderBody();
+  if (error) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Text>{error.message}</Text>
+      </Container>
+    );
+  }
+
+  if (beeps && beeps.items.length > 0) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <FlatList
+          w="100%"
+          data={beeps.items}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        />
+      </Container>
+    );
+  }
+
+  return (
+    <Container alignItems="center" justifyContent="center">
+      <Text>Nothing to display!</Text>
+      <Text>You have no previous beeps to display</Text>
+    </Container>
+  );
 }
