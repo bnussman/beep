@@ -22,6 +22,7 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
+import { updatePushToken } from "./utils/Notifications";
 
 const Stack = createStackNavigator();
 init();
@@ -117,6 +118,8 @@ function Beep() {
           });
         },
       });
+
+      updatePushToken();
     }
   }, [data?.getUser?.id]);
 
