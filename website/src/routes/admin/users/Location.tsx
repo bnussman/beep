@@ -65,7 +65,7 @@ function LocationView(props: Props) {
 
   return (
     <Box>
-      <div style={{ height: 450, width: '100%' }}>
+      <div style={{ height: 650, width: '100%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
           defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}

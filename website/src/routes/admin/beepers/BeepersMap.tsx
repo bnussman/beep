@@ -17,7 +17,7 @@ function BeepersMap(props: Props) {
   const { beepers } = props;
 
   return (
-    <Box mb={4} mt={4} height={350} width='100%'>
+    <Box mb={4} mt={4} height={450} width='100%'>
       <GoogleMapReact
         bootstrapURLKeys={{ key: import.meta.env.VITE_GOOGLE_API_KEY || '' }}
         defaultCenter={center}
