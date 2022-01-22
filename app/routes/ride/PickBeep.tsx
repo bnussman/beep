@@ -186,24 +186,37 @@ export function PickBeepScreen(props: Props): JSX.Element {
     </Pressable>
   );
 
+  if (loading) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Spinner size="lg" />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Text>Error</Text>
+        <Text>{error.message}</Text>
+      </Container>
+    );
+  }
+
+  if (data?.getBeeperList && data.getBeeperList.length === 0) {
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Text>Nobody is beeping!</Text>
+        <Text>
+          Nobody is beeping right now! Use the + - buttons to change your beeper
+          range
+        </Text>
+      </Container>
+    );
+  }
+
   return (
     <Container>
-      {loading ? <Spinner size="large" /> : null}
-      {error ? (
-        <>
-          <Text>Error</Text>
-          <Text>{error.message}</Text>
-        </>
-      ) : null}
-      {data?.getBeeperList && data.getBeeperList.length === 0 ? (
-        <>
-          <Text>Nobody is beeping!</Text>
-          <Text>
-            Nobody is beeping right now! Use the + - buttons to change your
-            beeper range
-          </Text>
-        </>
-      ) : null}
       {data?.getBeeperList && data.getBeeperList.length > 0 ? (
         <FlatList
           data={data.getBeeperList as User[]}
