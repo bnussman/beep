@@ -1,8 +1,9 @@
 import { IsLatitude, IsLongitude } from 'class-validator';
-import { User } from '../entities/User';
+import { User, UserRole } from '../entities/User';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { LocationInput } from '../validators/location';
+import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 export class Point {
@@ -24,7 +25,7 @@ export class Point {
 export class LocationResolver {
 
   @Mutation(() => Boolean)
-  @Authorized('self')
+  @Authorized()
   public async setLocation(
     @Ctx() ctx: Context,
     @Arg('location') location: LocationInput,
@@ -32,10 +33,17 @@ export class LocationResolver {
     @Arg('id', { nullable: true }) id?: string
   ): Promise<boolean> {
     if (id) {
+      // If an id is passed, that probably means someone is change another user's location.
+      // We should make sure only admins do this.
+
+      if (ctx.user.role !== UserRole.ADMIN) {
+        throw new AuthenticationError("You can't update another user's location without being an admin.");
+      }
+
       const user = await ctx.em.findOneOrFail(User, id);
 
       user.location = new Point(location.latitude, location.longitude);
-      console.log(user, location);
+
       await ctx.em.persistAndFlush(user);
 
       return true;
