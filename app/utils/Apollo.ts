@@ -29,12 +29,55 @@ const url = __DEV__
 // const wsUrl = "wss://ridebeep.app/subscriptions";
 // const url =  "https://ridebeep.app/graphql";
 
+interface RestartableClient extends Client {
+  restart(): void;
+}
+
+function createRestartableClient(options: ClientOptions): RestartableClient {
+  let restartRequested = false;
+  let restart = () => {
+    restartRequested = true;
+  };
+
+  const client = createClient({
+    ...options,
+    on: {
+      ...options.on,
+      opened: (socket) => {
+        options.on?.opened?.(socket);
+
+        restart = () => {
+          if (socket.readyState === WebSocket.OPEN) {
+            // if the socket is still open for the restart, do the restart
+            socket.close(4205, "Client Restart");
+          } else {
+            // otherwise the socket might've closed, indicate that you want
+            // a restart on the next opened event
+            restartRequested = true;
+          }
+        };
+
+        // just in case you were eager to restart
+        if (restartRequested) {
+          restartRequested = false;
+          restart();
+        }
+      },
+    },
+  });
+
+  return {
+    ...client,
+    restart: () => restart(),
+  };
+}
+
 class WebSocketLink extends ApolloLink {
-  public client: Client;
+  public client: RestartableClient;
 
   constructor(options: ClientOptions) {
     super();
-    this.client = createClient(options);
+    this.client = createRestartableClient(options);
   }
 
   public request(operation: Operation): Observable<FetchResult> {
@@ -102,6 +145,7 @@ export const wsLink = new WebSocketLink({
     closed: () => console.log("[Websocket] Closed"),
   },
 });
+
 
 const splitLink = split(({ query }) => {
   const definition = getMainDefinition(query);

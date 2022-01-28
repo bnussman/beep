@@ -1,6 +1,5 @@
 import "react-native-gesture-handler";
-import { useEffect } from "react";
-import Sentry from "./utils/Sentry";
+import React, { useEffect } from "react";
 import RegisterScreen from "./routes/auth/Register";
 import LoginScreen from "./routes/auth/Login";
 import init from "./utils/Init";
@@ -17,17 +16,16 @@ import { extendTheme, NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
+import { updatePushToken } from "./utils/Notifications";
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
-import { updatePushToken } from "./utils/Notifications";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createStackNavigator();
 init();
-Sentry.init();
+// Sentry.init();
 
 const newColorTheme = {
   primary: {
@@ -166,11 +164,9 @@ function Beep() {
 
 function App2() {
   return (
-    <GestureHandlerRootView>
-      <NativeBaseProvider theme={beepTheme} colorModeManager={colorModeManager}>
-        <Beep />
-      </NativeBaseProvider>
-    </GestureHandlerRootView>
+    <NativeBaseProvider theme={beepTheme} colorModeManager={colorModeManager}>
+      <Beep />
+    </NativeBaseProvider>
   );
 }
 

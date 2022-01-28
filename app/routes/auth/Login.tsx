@@ -4,7 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { isMobile } from "../../utils/config";
 import { gql, useMutation } from "@apollo/client";
 import { LoginMutation } from "../../generated/graphql";
-import { client } from "../../utils/Apollo";
+import { client, wsLink } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
@@ -79,17 +79,20 @@ function LoginScreen(props: Props): JSX.Element {
         },
       });
 
-      AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
+      await AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
 
       client.writeQuery({
         query: UserData,
         data: { getUser: data.data?.login.user },
       });
 
+      wsLink.client.restart();
+
       props.navigation.reset({
         index: 0,
         routes: [{ name: "Main" }],
       });
+
     } catch (error) {
       alert(error.message);
     }

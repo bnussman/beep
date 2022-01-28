@@ -8,7 +8,7 @@ import { gql, useMutation } from "@apollo/client";
 import { Scalars, SignUpMutation } from "../../generated/graphql";
 import { isMobile } from "../../utils/config";
 import { generateRNFile } from "../settings/EditProfile";
-import { client } from "../../utils/Apollo";
+import { client, wsLink } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { UserData } from "../../App";
@@ -125,13 +125,15 @@ function RegisterScreen(props: Props): JSX.Element {
         pushToken,
       },
     })
-      .then((data) => {
-        AsyncStorage.setItem("auth", JSON.stringify(data.data?.signup));
+      .then(async (data) => {
+        await AsyncStorage.setItem("auth", JSON.stringify(data.data?.signup));
 
         client.writeQuery({
           query: UserData,
           data: { getUser: data.data?.signup.user },
         });
+
+        wsLink.client.restart();
 
         props.navigation.reset({
           index: 0,
