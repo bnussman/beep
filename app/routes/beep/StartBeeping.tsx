@@ -583,9 +583,6 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                           }}
                         />
                         <Heading size="md">{item.rider.name}</Heading>
-                        {item.rider.isStudent && (
-                          <Tag status="basic">Student</Tag>
-                        )}
                       </Flex>
                     </Pressable>
                     <Flex direction="row" alignItems="center">

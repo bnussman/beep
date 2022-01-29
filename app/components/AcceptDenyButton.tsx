@@ -64,7 +64,7 @@ function AcceptDenyButton(props: Props): JSX.Element {
         />
       }
     >
-      {isAccept ? "Accept" : "Deny"}
+      {isAccept ? "Accept" : ""}
     </Button>
   );
 }

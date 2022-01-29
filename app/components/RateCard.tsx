@@ -30,28 +30,38 @@ export function RateCard(props: Props): JSX.Element | null {
   if (loading || !data?.getLastBeepToRate) return null;
 
   return (
-    <Pressable
-      onPress={() => {
-        props.navigation.navigate("Rate", {
-          id: data?.getLastBeepToRate?.beeper.id,
-          user: data?.getLastBeepToRate?.beeper as User,
-          beep: data?.getLastBeepToRate?.id,
-        });
-      }}
+    <Box
+      mt={2}
+      px={4}
+      py={2}
+      _light={{ bg: "coolGray.50" }}
+      _dark={{ bg: "gray.700" }}
+      shadow="2"
+      rounded="lg"
     >
-      <Text>Rate Your Last Beeper:</Text>
-      <Flex direction="row">
-        <Avatar
-          size={35}
-          mr={2}
-          source={{
-            uri: data.getLastBeepToRate.beeper.photoUrl
-              ? data.getLastBeepToRate.beeper.photoUrl
-              : undefined,
-          }}
-        />
-        <Heading size="md">{data?.getLastBeepToRate?.beeper.name}</Heading>
-      </Flex>
-    </Pressable>
+      <Pressable
+        onPress={() => {
+          props.navigation.navigate("Rate", {
+            id: data?.getLastBeepToRate?.beeper.id,
+            user: data?.getLastBeepToRate?.beeper as User,
+            beep: data?.getLastBeepToRate?.id,
+          });
+        }}
+      >
+        <Text>Rate Your Last Beeper:</Text>
+        <Flex direction="row" alignItems="center">
+          <Avatar
+            size={35}
+            mr={2}
+            source={{
+              uri: data.getLastBeepToRate.beeper.photoUrl
+                ? data.getLastBeepToRate.beeper.photoUrl
+                : undefined,
+            }}
+          />
+          <Heading size="md">{data?.getLastBeepToRate?.beeper.name}</Heading>
+        </Flex>
+      </Pressable>
+    </Box>
   );
 }

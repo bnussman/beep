@@ -31,6 +31,7 @@ import {
   Center,
   VStack,
 } from "native-base";
+import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -201,7 +202,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     });
   }
 
-  const throttleUpdateETA = throttle(20000, updateETA);
+  const throttleUpdateETA = throttle(10000, updateETA);
 
   useEffect(() => {
     SplashScreen.hideAsync();
@@ -409,24 +410,29 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
             }}
           />
-          <Text>{beep.beeper.name}</Text>
+          <Heading>{beep.beeper.name}</Heading>
           <Text>is your beeper!</Text>
           <Tags user={beep.beeper} />
           {beep.position <= 0 && (
-            <Box>
-              <Text>Current Status</Text>
+            <Box
+              _light={{ bg: "coolGray.50" }}
+              _dark={{ bg: "gray.700" }}
+              shadow="2"
+              rounded="lg"
+              p={4}
+              mt={2}
+              mb={4}
+            >
+              <Heading size="sm">Current Status</Heading>
               <Text>{getCurrentStatusMessage()}</Text>
-              {beep.state == 1 ? (
+              {beep.state === 1 ? (
                 <>
-                  <Text>Arrival ETA</Text>
                   {etaError ? <Text>{etaError.message}</Text> : null}
                   {etaLoading ? (
                     <Text>Loading ETA</Text>
                   ) : eta?.getETA && beep.beeper.location ? (
-                    <Text>Your beeper is {eta.getETA} away</Text>
-                  ) : (
-                    <Text>Beeper has no location data</Text>
-                  )}
+                    <Text bold>Your beeper is {eta.getETA} away.</Text>
+                  ) : null}
                 </>
               ) : null}
             </Box>
@@ -441,14 +447,34 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             </>
           ) : null}
           <VStack space={2} w="90%">
-            <Button onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}>
+            <Button
+              colorScheme="green"
+              onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
+              endIcon={
+                <MaterialCommunityIcons name="phone" color="white" size={22} />
+              }
+            >
               Call Beeper
             </Button>
-            <Button onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}>
+            <Button
+              colorScheme="green"
+              onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
+              endIcon={
+                <MaterialCommunityIcons
+                  name="message-text"
+                  color="white"
+                  size={22}
+                />
+              }
+            >
               Text Beeper
             </Button>
             {beep.beeper.venmo ? (
-              <Button onPress={() => Linking.openURL(getVenmoLink())}>
+              <Button
+                colorScheme="blue"
+                variant="subtle"
+                onPress={() => Linking.openURL(getVenmoLink())}
+              >
                 Pay Beeper with Venmo
               </Button>
             ) : null}
@@ -458,7 +484,10 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               </Button>
             ) : null}
             {Number(beep.groupSize) > 1 ? (
-              <Button onPress={() => shareVenmoInformation()}>
+              <Button
+                colorScheme="blue"
+                onPress={() => shareVenmoInformation()}
+              >
                 Share Venmo Info with Your Friends
               </Button>
             ) : null}

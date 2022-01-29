@@ -1,30 +1,19 @@
-import { User } from "../../generated/graphql";
 import React from "react";
-import { Badge } from "native-base";
-
-interface TagProps {
-  status: string;
-  children: any;
-}
+import { User } from "../../generated/graphql";
+import { Badge, Box } from "native-base";
 
 interface Props {
   user: Partial<User>;
-}
-
-export function Tag(props: TagProps): JSX.Element {
-  const { status, children } = props;
-
-  return <Badge>{children}</Badge>;
 }
 
 export function Tags(props: Props): JSX.Element {
   const { user } = props;
 
   return (
-    <>
-      {user.isStudent && <Tag status="basic">Student</Tag>}
-      {user.masksRequired && <Tag status="info">Masks Required</Tag>}
-      {user.role == "ADMIN" && <Tag status="danger">Founder</Tag>}
-    </>
+    <Box mt={2} mb={2}>
+      {user.isStudent && <Badge colorScheme="green">Student</Badge>}
+      {user.masksRequired && <Badge colorScheme="blue">Masks Required</Badge>}
+      {user.role == "admin" && <Badge colorScheme="red">Founder</Badge>}
+    </Box>
   );
 }
