@@ -41,6 +41,7 @@ export function ChangePasswordScreen(props: Props): JSX.Element {
     <Container keyboard alignItems="center">
       <Stack alignSelf="center" space={4} mt={4} w="90%">
         <Input
+          size="lg"
           secureTextEntry={true}
           textContentType="password"
           placeholder="New Password"
@@ -49,6 +50,7 @@ export function ChangePasswordScreen(props: Props): JSX.Element {
           returnKeyType="next"
         />
         <Input
+          size="lg"
           ref={confirmPasswordRef}
           secureTextEntry={true}
           textContentType="password"

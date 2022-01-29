@@ -209,7 +209,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
             <Avatar
               key={user?.photoUrl}
               source={{ uri: photo?.uri || user?.photoUrl }}
-              size={100}
+              size={90}
             />
             {photoLoading || uploadLoading ? <Spinner /> : null}
           </Pressable>

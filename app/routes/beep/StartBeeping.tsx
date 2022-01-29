@@ -379,6 +379,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
           <FormControl>
             <FormControl.Label>Max Rider Capacity</FormControl.Label>
             <Input
+              size="lg"
               placeholder="Max Capcity"
               keyboardType="numeric"
               value={String(capacity)}
@@ -388,6 +389,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
           <FormControl>
             <FormControl.Label>Singles Rate</FormControl.Label>
             <Input
+              size="lg"
               placeholder="Singles Rate"
               keyboardType="numeric"
               value={String(singlesRate)}
@@ -397,6 +399,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
           <FormControl>
             <FormControl.Label>Group Rate</FormControl.Label>
             <Input
+              size="lg"
               placeholder="Group Rate"
               keyboardType="numeric"
               value={String(groupRate)}

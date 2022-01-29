@@ -356,6 +356,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           <FormControl>
             <FormControl.Label>Group Size</FormControl.Label>
             <Input
+              size="lg"
               w="100%"
               keyboardType="number-pad"
               value={groupSize}
@@ -367,6 +368,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           <FormControl>
             <FormControl.Label>Pick Up Location</FormControl.Label>
             <Input
+              size="lg"
               ref={originRef}
               value={origin}
               onChangeText={(value) => setOrigin(value)}
@@ -377,6 +379,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           <FormControl>
             <FormControl.Label>Destination Location</FormControl.Label>
             <Input
+              size="lg"
               ref={destinationRef}
               value={destination}
               onChangeText={(value) => setDestination(value)}

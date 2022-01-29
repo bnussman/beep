@@ -36,7 +36,7 @@ export function ReportScreen(props: Props): JSX.Element {
   }
 
   return (
-    <Container alignItems="center">
+    <Container alignItems="center" keyboard>
       <Stack space={4} w="90%" mt={4}>
         <Input
           placeholder="User"
