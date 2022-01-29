@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { GetBeeperListQuery, User } from "../../generated/graphql";
@@ -17,10 +17,6 @@ import {
   HStack,
   Spacer,
   Heading,
-  Button,
-  Actionsheet,
-  useDisclose,
-  Slider,
 } from "native-base";
 
 interface Props {
@@ -81,8 +77,6 @@ function deg2rad(deg: number): number {
 
 export function PickBeepScreen(props: Props): JSX.Element {
   const { navigation, route } = props;
-  const [radius, setRadius] = useState<number>(10);
-  const { isOpen, onOpen, onClose } = useDisclose();
 
   const {
     data,
@@ -96,7 +90,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
     variables: {
       latitude: route.params.latitude,
       longitude: route.params.longitude,
-      radius,
+      radius: 20,
     },
   });
 
@@ -107,14 +101,6 @@ export function PickBeepScreen(props: Props): JSX.Element {
       stopPolling();
     };
   }, []);
-
-  function getSubtitle(): string {
-    if (loading) return `Loading...`;
-    if (error) return `Unable to get beeper list`;
-    return data?.getBeeperList.length == 1
-      ? `${data.getBeeperList.length} beeper in ${radius} miles`
-      : `${data?.getBeeperList.length} beepers in ${radius} miles`;
-  }
 
   function goBack(id: string): void {
     route.params.handlePick(id);
@@ -137,29 +123,6 @@ export function PickBeepScreen(props: Props): JSX.Element {
       user.groupRate
     }\nDistance from you: ${distance.toFixed(2)} mi`;
   }
-
-  React.useLayoutEffect(() => {
-    props.navigation.setOptions({
-      // eslint-disable-next-line react/display-name
-      headerRight: () => (
-        <Button size="xs" mr={2} onPress={onOpen}>
-          Change Range
-        </Button>
-      ),
-    });
-  }, [props.navigation]);
-
-  const decreseRadius = () => {
-    if (radius - 5 <= 0) return;
-
-    setRadius((oldRadius) => oldRadius - 5);
-  };
-
-  const increaseRadius = () => {
-    if (radius + 5 > 30) return;
-
-    setRadius((oldRadius) => oldRadius + 5);
-  };
 
   const renderItem = ({ item }: { item: User }) => (
     <Pressable onPress={() => goBack(item.id)}>
@@ -221,25 +184,6 @@ export function PickBeepScreen(props: Props): JSX.Element {
           renderItem={renderItem}
         />
       ) : null}
-      <Actionsheet isOpen={isOpen} onClose={onClose}>
-        <Actionsheet.Content>
-          <Slider
-            marginY={6}
-            minValue={5}
-            maxValue={30}
-            defaultValue={10}
-            colorScheme="cyan"
-            onChangeEnd={(v) => {
-              v && setRadius(Math.floor(v));
-            }}
-          >
-            <Slider.Track>
-              <Slider.FilledTrack />
-            </Slider.Track>
-            <Slider.Thumb />
-          </Slider>
-        </Actionsheet.Content>
-      </Actionsheet>
     </Container>
   );
 }
