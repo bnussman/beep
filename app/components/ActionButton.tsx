@@ -52,9 +52,18 @@ class ActionButton extends Component<Props, State> {
       case 2:
         return "I'm now beeping this rider";
       case 3:
-        return "I'm done beeping this rider";
+        return "Done beeping this rider";
       default:
         return "Yikes";
+    }
+  }
+
+  getColor(): string | undefined {
+    switch (this.props.item.state) {
+      case 3:
+        return "green";
+      default:
+        return "blue";
     }
   }
 
@@ -149,8 +158,9 @@ class ActionButton extends Component<Props, State> {
       return (
         <Button
           size="lg"
+          h={50}
           isLoading={props.isLoading}
-          colorScheme="blue"
+          colorScheme={this.getColor()}
           onPress={() => this.update()}
         >
           {this.getMessage()}
