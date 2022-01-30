@@ -17,6 +17,7 @@ import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { updatePushToken } from "./utils/Notifications";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   DarkTheme,
   DefaultTheme,
@@ -26,6 +27,12 @@ import {
 const Stack = createStackNavigator();
 init();
 // Sentry.init();
+
+const config = {
+  dependencies: {
+    "linear-gradient": LinearGradient,
+  },
+};
 
 const newColorTheme = {
   primary: {
@@ -110,8 +117,6 @@ function Beep() {
         updateQuery: (prev, { subscriptionData }) => {
           // @ts-expect-error we are correct
           const newFeedItem = subscriptionData.data.getUserUpdates;
-          // console.log("old", prev.getUser.photoUrl);
-          // console.log("new", subscriptionData.data.getUserUpdates.photoUrl);
           return Object.assign({}, prev, {
             getUser: newFeedItem,
           });
@@ -164,7 +169,11 @@ function Beep() {
 
 function App2() {
   return (
-    <NativeBaseProvider theme={beepTheme} colorModeManager={colorModeManager}>
+    <NativeBaseProvider
+      theme={beepTheme}
+      colorModeManager={colorModeManager}
+      config={config}
+    >
       <Beep />
     </NativeBaseProvider>
   );

@@ -48,7 +48,7 @@ export function RateCard(props: Props): JSX.Element | null {
           });
         }}
       >
-        <Text>Rate Your Last Beeper:</Text>
+        <Heading size="sm">Rate Your Last Beeper</Heading>
         <Flex direction="row" alignItems="center">
           <Avatar
             size={35}
@@ -59,7 +59,7 @@ export function RateCard(props: Props): JSX.Element | null {
                 : undefined,
             }}
           />
-          <Heading size="md">{data?.getLastBeepToRate?.beeper.name}</Heading>
+          <Text>{data?.getLastBeepToRate?.beeper.name}</Text>
         </Flex>
       </Pressable>
     </Box>

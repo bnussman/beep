@@ -39,12 +39,14 @@ export function ReportScreen(props: Props): JSX.Element {
     <Container alignItems="center" keyboard>
       <Stack space={4} w="90%" mt={4}>
         <Input
+          size="lg"
           placeholder="User"
           value={props.route.params.name}
           isDisabled={true}
         />
         <Input
-          h={180}
+          size="lg"
+          h={100}
           multiline={true}
           placeholder="Your reason for reporting here"
           returnKeyType="go"

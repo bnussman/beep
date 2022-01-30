@@ -107,6 +107,7 @@ function LoginScreen(props: Props): JSX.Element {
           </Flex>
           <Stack space={2}>
             <Input
+              size="lg"
               textContentType="username"
               placeholder="Username or Email"
               returnKeyType="next"
@@ -114,6 +115,7 @@ function LoginScreen(props: Props): JSX.Element {
               onSubmitEditing={() => passwordRef.current.focus()}
             />
             <Input
+              size="lg"
               textContentType="password"
               placeholder="Password"
               returnKeyType="go"

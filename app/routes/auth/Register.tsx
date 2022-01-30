@@ -180,7 +180,7 @@ function RegisterScreen(props: Props): JSX.Element {
 
   return (
     <Container keyboard alignItems="center">
-      <VStack space={4} w="90%">
+      <VStack space={4} w="90%" mt={4}>
         <Flex
           direction="row"
           justifyContent="space-between"
@@ -188,14 +188,16 @@ function RegisterScreen(props: Props): JSX.Element {
         >
           <Box width="70%">
             <Input
+              size="lg"
               textContentType="givenName"
               placeholder="First Name"
               returnKeyType="next"
               onChangeText={(text) => setFirst(text)}
               onSubmitEditing={() => lastRef.current.focus()}
-              mb={2}
+              mb={4}
             />
             <Input
+              size="lg"
               ref={lastRef}
               textContentType="familyName"
               placeholder="Last Name"
@@ -209,6 +211,7 @@ function RegisterScreen(props: Props): JSX.Element {
           </TouchableOpacity>
         </Flex>
         <Input
+          size="lg"
           ref={emailRef}
           textContentType="emailAddress"
           placeholder="Email"
@@ -217,6 +220,7 @@ function RegisterScreen(props: Props): JSX.Element {
           onSubmitEditing={() => phoneRef.current.focus()}
         />
         <Input
+          size="lg"
           ref={phoneRef}
           textContentType="telephoneNumber"
           placeholder="Phone Number"
@@ -225,6 +229,7 @@ function RegisterScreen(props: Props): JSX.Element {
           onSubmitEditing={() => venmoRef.current.focus()}
         />
         <Input
+          size="lg"
           ref={venmoRef}
           textContentType="username"
           placeholder="Venmo"
@@ -233,6 +238,7 @@ function RegisterScreen(props: Props): JSX.Element {
           onSubmitEditing={() => cashappRef.current.focus()}
         />
         <Input
+          size="lg"
           ref={cashappRef}
           textContentType="username"
           placeholder="Cash App"
@@ -241,6 +247,7 @@ function RegisterScreen(props: Props): JSX.Element {
           onSubmitEditing={() => usernameRef.current.focus()}
         />
         <Input
+          size="lg"
           ref={usernameRef}
           textContentType="username"
           placeholder="Username"
@@ -249,6 +256,7 @@ function RegisterScreen(props: Props): JSX.Element {
           onSubmitEditing={() => passwordRef.current.focus()}
         />
         <Input
+          size="lg"
           ref={passwordRef}
           textContentType="password"
           placeholder="Password"

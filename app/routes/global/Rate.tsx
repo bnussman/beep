@@ -53,7 +53,7 @@ export function RateScreen(props: Props): JSX.Element {
   }
 
   return (
-    <Container alignItems="center">
+    <Container alignItems="center" keyboard>
       <Stack space={4} w="90%" mt={4}>
         {useMemo(
           () => (
@@ -63,7 +63,8 @@ export function RateScreen(props: Props): JSX.Element {
         )}
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Input
-          h={150}
+          size="lg"
+          h={100}
           multiline={true}
           placeholder="Your rating message goes here"
           returnKeyType="go"

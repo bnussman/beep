@@ -186,6 +186,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
         <Flex direction="row">
           <Stack space={4}>
             <Input
+              size="lg"
               minW={220}
               value={first}
               textContentType="givenName"
@@ -195,6 +196,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
               onSubmitEditing={() => lastRef.current.focus()}
             />
             <Input
+              size="lg"
               ref={lastRef}
               value={last}
               textContentType="familyName"
@@ -215,12 +217,14 @@ export function EditProfileScreen(props: Props): JSX.Element {
           </Pressable>
         </Flex>
         <Input
+          size="lg"
           value={username}
           textContentType="username"
           placeholder="Username"
           isDisabled
         />
         <Input
+          size="lg"
           ref={emailRef}
           value={email}
           textContentType="emailAddress"
@@ -230,6 +234,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
           onSubmitEditing={() => phoneRef.current.focus()}
         />
         <Input
+          size="lg"
           ref={phoneRef}
           value={phone}
           textContentType="telephoneNumber"
@@ -239,6 +244,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
           onSubmitEditing={() => venmoRef.current.focus()}
         />
         <Input
+          size="lg"
           ref={venmoRef}
           value={!venmo ? undefined : venmo}
           textContentType="username"
@@ -248,6 +254,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
           onSubmitEditing={() => cashappRef.current.focus()}
         />
         <Input
+          size="lg"
           ref={cashappRef}
           value={!cashapp ? undefined : cashapp}
           textContentType="username"

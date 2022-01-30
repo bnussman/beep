@@ -35,4 +35,6 @@ export type MainNavParamList = {
   Main: undefined;
   ForgotPassword: undefined;
   "Pick Beeper": any;
+  "Forgot Password": any;
+  "Sign Up": any;
 };
