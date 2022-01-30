@@ -4,6 +4,7 @@ import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery, Beep, UserDataQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Navigation } from "../utils/Navigation";
+import { UserData } from "../App";
 import {
   Spinner,
   Divider,
@@ -13,7 +14,6 @@ import {
   Flex,
   Box,
 } from "native-base";
-import { UserData } from "../App";
 
 interface Props {
   navigation: Navigation;
