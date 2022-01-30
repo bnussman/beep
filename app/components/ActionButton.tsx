@@ -174,7 +174,9 @@ class ActionButton extends Component<Props, State> {
 
     return (
       <>
-        <CancelButton isLoading={this.state.isCancelLoading} />
+        {this.props.item.state < 2 ? (
+          <CancelButton isLoading={this.state.isCancelLoading} />
+        ) : null}
         <ActionButton isLoading={this.state.isActionLoading} />
       </>
     );
