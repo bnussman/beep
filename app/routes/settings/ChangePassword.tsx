@@ -54,7 +54,7 @@ export function ChangePasswordScreen(props: Props): JSX.Element {
           ref={confirmPasswordRef}
           secureTextEntry={true}
           textContentType="password"
-          placeholder="New Password"
+          placeholder="Confirm Password"
           returnKeyType="go"
           onChangeText={(text) => setConfirmPassword(text)}
           onSubmitEditing={() => handleChangePassword()}

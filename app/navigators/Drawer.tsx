@@ -51,7 +51,7 @@ const getIcon = (screenName: string) => {
     case "Ride":
       return "car";
     case "Beep":
-      return "taxi";
+      return "steering";
     case "Edit Profile":
       return "account-edit";
     case "Change Password":

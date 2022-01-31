@@ -387,14 +387,19 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             />
           </FormControl>
           <Button
+            h={50}
+            size="lg"
             onPress={() => findBeep()}
+            isLoading={isGetBeepLoading}
             isDisabled={
               origin === "Loading your location..." ||
               !origin ||
               !groupSize ||
               !destination
             }
-            isLoading={isGetBeepLoading}
+            endIcon={
+              <MaterialCommunityIcons name="magnify" color="white" size={24} />
+            }
           >
             Find a Beep
           </Button>
