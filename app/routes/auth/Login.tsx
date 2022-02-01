@@ -17,7 +17,6 @@ import {
   Heading,
   Flex,
   Spacer,
-  Box,
 } from "native-base";
 
 interface Props {
