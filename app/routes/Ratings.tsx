@@ -14,7 +14,10 @@ import {
   Avatar,
   Flex,
   Box,
+  VStack,
+  Spacer,
 } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
   navigation: Navigation;
@@ -62,25 +65,47 @@ export function RatingsScreen(props: Props): JSX.Element {
       <Pressable
         onPress={() => props.navigation.push("Profile", { id: otherUser.id })}
       >
-        <Flex direction="row" alignItems="center" p={2}>
-          <Avatar
-            size={50}
-            mr={2}
-            source={{
-              uri: otherUser.photoUrl ? otherUser.photoUrl : undefined,
-            }}
-          />
-          <Box>
-            <Text>
-              {user?.id === item.rater.id
-                ? `You rated ${otherUser.name}`
-                : `${otherUser.name} rated you`}
-            </Text>
-            <Text>{`Message: ${item.message || "N/A"}\nStars: ${printStars(
-              item.stars
-            )} ${item.stars}\n`}</Text>
-          </Box>
-        </Flex>
+        <Box
+          mx={4}
+          my={2}
+          px={4}
+          py={4}
+          _light={{ bg: "coolGray.100" }}
+          _dark={{ bg: "gray.900" }}
+          rounded="lg"
+        >
+          <Flex direction="row" alignItems="center" p={2}>
+            <Avatar
+              size={50}
+              mr={4}
+              source={{
+                uri: otherUser.photoUrl ? otherUser.photoUrl : undefined,
+              }}
+            />
+            <VStack space={4}>
+              <Text>
+                {user?.id === item.rater.id ? (
+                  <Flex direction="row" alignItems="center">
+                    <Text fontSize="md">You rated</Text>{" "}
+                    <Text bold fontSize="md">
+                      {otherUser.name}
+                    </Text>
+                  </Flex>
+                ) : (
+                  <Flex direction="row" alignItems="center">
+                    <Text bold fontSize="md">
+                      {otherUser.name}
+                    </Text>{" "}
+                    <Text fontSize="md">rated you</Text>
+                  </Flex>
+                )}
+              </Text>
+              {item.message && <Text>{item.message}</Text>}
+            </VStack>
+            <Spacer />
+            <Text>{printStars(item.stars)}</Text>
+          </Flex>
+        </Box>
       </Pressable>
     );
   };
@@ -107,8 +132,7 @@ export function RatingsScreen(props: Props): JSX.Element {
       <Container alignItems="center" justifyContent="center">
         <FlatList
           w="100%"
-          data={ratings.items}
-          ItemSeparatorComponent={Divider}
+          data={ratings.items as unknown as Rating[]}
           renderItem={renderItem}
         />
       </Container>
