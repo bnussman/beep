@@ -17,6 +17,7 @@ import {
   Heading,
   Flex,
   Spacer,
+  Box,
 } from "native-base";
 
 interface Props {
@@ -92,7 +93,6 @@ function LoginScreen(props: Props): JSX.Element {
         index: 0,
         routes: [{ name: "Main" }],
       });
-
     } catch (error) {
       alert(error.message);
     }
