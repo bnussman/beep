@@ -9,7 +9,6 @@ import { UserData } from "../App";
 import {
   Text,
   FlatList,
-  Divider,
   Spinner,
   Avatar,
   Flex,
@@ -17,7 +16,6 @@ import {
   VStack,
   Spacer,
 } from "native-base";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface Props {
   navigation: Navigation;
@@ -86,17 +84,21 @@ export function RatingsScreen(props: Props): JSX.Element {
               <Text>
                 {user?.id === item.rater.id ? (
                   <Flex direction="row" alignItems="center">
-                    <Text fontSize="md">You rated</Text>{" "}
-                    <Text bold fontSize="md">
+                    <Text _dark={{ color: "white" }} fontSize="md">
+                      You rated
+                    </Text>{" "}
+                    <Text bold fontSize="md" _dark={{ color: "white" }}>
                       {otherUser.name}
                     </Text>
                   </Flex>
                 ) : (
                   <Flex direction="row" alignItems="center">
-                    <Text bold fontSize="md">
+                    <Text bold fontSize="md" _dark={{ color: "white" }}>
                       {otherUser.name}
                     </Text>{" "}
-                    <Text fontSize="md">rated you</Text>
+                    <Text fontSize="md" _dark={{ color: "white" }}>
+                      rated you
+                    </Text>
                   </Flex>
                 )}
               </Text>

@@ -83,7 +83,7 @@ export function ProfileScreen(props: Props): JSX.Element {
   if (loading) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Spinner size="lg" />;
+        <Spinner size="lg" />
       </Container>
     );
   }
