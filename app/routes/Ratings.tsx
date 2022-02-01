@@ -100,10 +100,10 @@ export function RatingsScreen(props: Props): JSX.Element {
                   </Flex>
                 )}
               </Text>
+              <Text>{printStars(item.stars)}</Text>
               {item.message && <Text>{item.message}</Text>}
             </VStack>
             <Spacer />
-            <Text>{printStars(item.stars)}</Text>
           </Flex>
         </Box>
       </Pressable>
