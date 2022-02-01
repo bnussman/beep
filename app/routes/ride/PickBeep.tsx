@@ -78,24 +78,16 @@ function deg2rad(deg: number): number {
 export function PickBeepScreen(props: Props): JSX.Element {
   const { navigation, route } = props;
 
-  const {
-    data,
-    previousData,
-    refetch,
-    loading,
-    error,
-    startPolling,
-    stopPolling,
-  } = useQuery<GetBeeperListQuery>(GetBeepers, {
-    variables: {
-      latitude: route.params.latitude,
-      longitude: route.params.longitude,
-      radius: 20,
-    },
-  });
+  const { data, loading, error, startPolling, stopPolling } =
+    useQuery<GetBeeperListQuery>(GetBeepers, {
+      variables: {
+        latitude: route.params.latitude,
+        longitude: route.params.longitude,
+        radius: 20,
+      },
+    });
 
   useEffect(() => {
-    if (previousData) refetch();
     startPolling(6000);
     return () => {
       stopPolling();
@@ -157,7 +149,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
   if (error) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Text>Error</Text>
+        <Heading>Error</Heading>
         <Text>{error.message}</Text>
       </Container>
     );
@@ -166,11 +158,8 @@ export function PickBeepScreen(props: Props): JSX.Element {
   if (data?.getBeeperList && data.getBeeperList.length === 0) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Text>Nobody is beeping!</Text>
-        <Text>
-          Nobody is beeping right now! Use the + - buttons to change your beeper
-          range
-        </Text>
+        <Heading>Nobody is beeping 🥺</Heading>
+        <Text>There are no drivers within 20 miles of you</Text>
       </Container>
     );
   }
