@@ -1,6 +1,5 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import RegisterScreen from "./routes/auth/Register";
 import LoginScreen from "./routes/auth/Login";
 import init from "./utils/Init";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -17,6 +16,7 @@ import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { updatePushToken } from "./utils/Notifications";
+import { SignUpScreen } from "./routes/auth/SignUp";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   DarkTheme,
@@ -147,7 +147,7 @@ function Beep() {
             name="Login"
             component={LoginScreen}
           />
-          <Stack.Screen name="Sign Up" component={RegisterScreen} />
+          <Stack.Screen name="Sign Up" component={SignUpScreen} />
           <Stack.Screen
             name="Forgot Password"
             component={ForgotPasswordScreen}

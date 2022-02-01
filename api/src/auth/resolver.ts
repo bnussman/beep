@@ -28,7 +28,7 @@ export class AuthResolver {
     const user = await ctx.em.findOne(User, { $or: [ { username, password: sha256(password) }, { email: username, password: sha256(password) } ] });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Username, email, or password is incorrect.");
     }
 
     const tokenData = await getToken(user);

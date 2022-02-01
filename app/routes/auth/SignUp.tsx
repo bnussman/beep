@@ -83,7 +83,7 @@ const SignUp = gql`
 
 let picture: Scalars["Upload"];
 
-function RegisterScreen(props: Props): JSX.Element {
+export function SignUpScreen(props: Props): JSX.Element {
   const [first, setFirst] = useState<string>("");
   const [last, setLast] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -294,5 +294,3 @@ function RegisterScreen(props: Props): JSX.Element {
     </Container>
   );
 }
-
-export default RegisterScreen;

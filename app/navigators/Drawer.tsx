@@ -21,6 +21,7 @@ import {
 } from "../routes/beep/StartBeeping";
 import {
   createDrawerNavigator,
+  DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import {
@@ -71,7 +72,7 @@ const Resend = gql`
   }
 `;
 
-function CustomDrawerContent(props: any) {
+function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { data: userData } = useQuery<UserDataQuery>(UserData);
 
   const user = userData?.getUser;
@@ -97,7 +98,6 @@ function CustomDrawerContent(props: any) {
     props.navigation.reset({
       index: 0,
       routes: [{ name: "Login" }],
-      key: null,
     });
 
     client.writeQuery({
@@ -119,7 +119,7 @@ function CustomDrawerContent(props: any) {
   };
 
   return (
-    <DrawerContentScrollView {...props} safeArea>
+    <DrawerContentScrollView {...props}>
       <VStack space={6} my={2} mx={1}>
         <Flex ml={2} direction="row" alignItems="center">
           <Avatar
@@ -146,7 +146,7 @@ function CustomDrawerContent(props: any) {
                 rounded="md"
                 bg={
                   index === props.state.index
-                    ? "rgba(6, 182, 212, 0.1)"
+                    ? "rgba(237, 221, 97, 0.1)"
                     : "transparent"
                 }
                 onPress={() => {
