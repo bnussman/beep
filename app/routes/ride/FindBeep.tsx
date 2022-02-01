@@ -397,9 +397,6 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               !groupSize ||
               !destination
             }
-            endIcon={
-              <MaterialCommunityIcons name="magnify" color="white" size={24} />
-            }
           >
             Find a Beep
           </Button>
