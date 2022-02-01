@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Logger from "../../utils/Logger";
 import LeaveButton from "./LeaveButton";
+import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";
 import { Share, Linking, AppState, AppStateStatus } from "react-native";
@@ -13,6 +14,7 @@ import { throttle } from "throttle-debounce";
 import { Container } from "../../components/Container";
 import { UserData } from "../../App";
 import { Navigation } from "../../utils/Navigation";
+import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
 import {
   GetEtaQuery,
   GetInitialRiderStatusQuery,
@@ -31,7 +33,6 @@ import {
   Center,
   VStack,
 } from "native-base";
-import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -353,6 +354,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
       <Container keyboard alignItems="center">
         <Stack space={4} w="90%">
           <RateCard navigation={props.navigation} />
+          {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
           <FormControl>
             <FormControl.Label>Group Size</FormControl.Label>
             <Input
@@ -422,7 +424,6 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             <Box
               _light={{ bg: "coolGray.50" }}
               _dark={{ bg: "gray.700" }}
-              shadow="2"
               rounded="lg"
               p={4}
               mt={2}
@@ -432,11 +433,11 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               <Text>{getCurrentStatusMessage()}</Text>
               {beep.state === 1 ? (
                 <>
-                  {etaError ? <Text>{etaError.message}</Text> : null}
-                  {etaLoading ? (
-                    <Text>Loading ETA</Text>
-                  ) : eta?.getETA && beep.beeper.location ? (
-                    <Text bold>Your beeper is {eta.getETA} away.</Text>
+                  {etaError ? <Text mt={2}>{etaError.message}</Text> : null}
+                  {eta?.getETA && beep.beeper.location ? (
+                    <Text bold mt={2}>
+                      Your beeper is {eta.getETA} away
+                    </Text>
                   ) : null}
                 </>
               ) : null}

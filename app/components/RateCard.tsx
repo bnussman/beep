@@ -36,7 +36,6 @@ export function RateCard(props: Props): JSX.Element | null {
       py={2}
       _light={{ bg: "coolGray.50" }}
       _dark={{ bg: "gray.700" }}
-      shadow="2"
       rounded="lg"
     >
       <Pressable
