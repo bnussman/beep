@@ -38,6 +38,7 @@ import {
   useColorMode,
   Spinner,
 } from "native-base";
+import { WebsocketStatus } from "../components/WebsocketStatus";
 
 const Logout = gql`
   mutation Logout {
@@ -208,6 +209,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 onToggle={toggleColorMode}
               />
             </Flex>
+            <WebsocketStatus />
           </VStack>
         </VStack>
       </VStack>
