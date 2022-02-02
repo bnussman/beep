@@ -8,6 +8,7 @@ import TdUser from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { SearchIcon } from '@chakra-ui/icons';
 import Loading from '../../../components/Loading';
+import { useSearchParams } from "react-router-dom";
 
 export const UsersGraphQL = gql`
   query getUsers($show: Int, $offset: Int, $query: String) {
@@ -30,30 +31,40 @@ export const UsersGraphQL = gql`
 
 function Users() {
   const pageLimit = 20;
+
+  const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState<string>();
-  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+
   const { loading, error, data, refetch } = useQuery<GetUsersQuery>(UsersGraphQL, {
       variables: {
-        offset: 0,
+        offset: (page - 1) * pageLimit,
         show: pageLimit
       }
     }
   );
 
+  const setCurrentPage = (page: number) => {
+    setSearchParams({ page: String(page) });
+  };
+
   const users = data?.getUsers;
 
-  async function fetchUsers(page: number) {
+  const fetchUsers = (page: number) => {
     refetch({
       offset: page
     })
-  }
+  };
 
   useEffect(() => {
-    setCurrentPage(1);
-    refetch({
-      offset: 0,
-      query
-    });
+    if (query !== undefined) {
+      setCurrentPage(1);
+      refetch({
+        offset: 0,
+        query
+      });
+    }
   }, [query]);
 
   if (error) return <Error error={error} />;
@@ -64,7 +75,7 @@ function Users() {
       <Pagination
         resultCount={users?.count}
         limit={pageLimit}
-        currentPage={currentPage}
+        currentPage={page}
         setCurrentPage={setCurrentPage}
         onPageChange={fetchUsers}
       />
@@ -106,7 +117,7 @@ function Users() {
       <Pagination
         resultCount={users?.count}
         limit={pageLimit}
-        currentPage={currentPage}
+        currentPage={page}
         setCurrentPage={setCurrentPage}
         onPageChange={fetchUsers}
       />

@@ -211,7 +211,7 @@ function UserProfile(props: Props) {
           mt="4"
           colorScheme="brand"
           lazyBehavior="keepMounted"
-          defaultIndex={tab && tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0}
+          index={tab && tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0}
           onChange={(index: number) => navigate(`/admin/users/${user.id}/${tabs[index].toLocaleLowerCase()}`)}
         >
           <TabList>
