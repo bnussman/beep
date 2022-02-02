@@ -50,6 +50,14 @@ export class UserResolver {
       sendNotification(user.pushToken, "Account Verified", "An admin has approved your account.");
     }
 
+    Object.keys(data).forEach(key => {
+      // @ts-expect-error dumb
+      if (data[key] === undefined) {
+        // @ts-expect-error dumb
+        delete data[key];
+      }
+    });
+
     wrap(user).assign(data);
 
     pubSub.publish("User" + id, user);

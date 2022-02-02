@@ -1,20 +1,21 @@
-import { NavLink, useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import BeepsTable from './BeepsTable';
 import QueueTable from './QueueTable';
-import { UserRole } from '../types/User';
-import { gql, useMutation } from '@apollo/client';
-import { RemoveUserMutation, User } from '../generated/graphql';
-import { printStars } from '../routes/admin/ratings';
-import React, { useState } from 'react';
 import DeleteDialog from './DeleteDialog';
-import { DeleteIcon } from '@chakra-ui/icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import LocationView from '../routes/admin/users/Location';
 import RatingsTable from './RatingsTable';
 import ReportsTable from './ReportsTable';
 import ClearQueueDialog from './ClearQueueDialog';
+import { NavLink, useParams, useNavigate } from 'react-router-dom';
+import { UserRole } from '../types/User';
+import { gql, useMutation } from '@apollo/client';
+import { RemoveUserMutation, User, VerifyUserMutation } from '../generated/graphql';
+import { printStars } from '../routes/admin/ratings';
+import { DeleteIcon, CheckIcon } from '@chakra-ui/icons';
 import { Error } from '../components/Error';
+import { Indicator } from './Indicator';
 import {
   useToast,
   useDisclosure,
@@ -35,13 +36,22 @@ import {
   TabPanel,
   TabPanels
 } from '@chakra-ui/react';
-import { Indicator } from './Indicator';
+import { GetUser } from '../routes/admin/users/User';
+import { UsersGraphQL } from '../routes/admin/users';
 
 dayjs.extend(relativeTime);
 
 const RemoveUser = gql`
   mutation RemoveUser($id: String!) {
     removeUser(id: $id)
+  }
+`;
+
+const VerifyUser = gql`
+  mutation VerifyUser($id: String!, $data: EditUserValidator!) {
+    editUser(id: $id, data: $data) {
+      username
+    }
   }
 `;
 
@@ -75,6 +85,7 @@ function UserProfile(props: Props) {
 
   const [remove, { loading: isDeleteLoading, error: deleteError }] = useMutation<RemoveUserMutation>(RemoveUser);
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
+  const [verify, { loading: isVerifyLoading, error: verifyError }] = useMutation<VerifyUserMutation>(VerifyUser);
 
   const [stopBeeping, setStopBeeping] = useState<boolean>(true);
 
@@ -120,11 +131,22 @@ function UserProfile(props: Props) {
     }
   }
 
+  const onVerify = () => {
+    verify({
+      variables: { id: user.id, data: { isEmailVerified: true, isStudent: true } },
+      refetchQueries: [UsersGraphQL, GetUser],
+      awaitRefetchQueries: false
+    }).then(() => {
+      toast({ title: "User verified", status: "success" });
+    });
+  };
+
   return (
     <>
       <Box>
         {deleteError && <Error error={deleteError} />}
         {clearError && <Error error={clearError} />}
+        {verifyError && <Error error={verifyError} />}
         <Flex align="center">
           <Box>
             <Avatar
@@ -151,6 +173,17 @@ function UserProfile(props: Props) {
                 Edit
               </Button>
             </NavLink>
+            {admin && !user.isEmailVerified &&
+              <Button
+                m={1}
+                colorScheme="green"
+                leftIcon={<CheckIcon />}
+                onClick={onVerify}
+                isLoading={isVerifyLoading}
+              >
+                Verify
+              </Button>
+            }
             {admin &&
               <Button
                 m='1'
@@ -188,6 +221,20 @@ function UserProfile(props: Props) {
             <TabPanel>
               <Stack spacing={2}>
                 <Box>
+                  <strong>Email:</strong>
+                  <Flex direction="row" alignItems="center">
+                    <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
+                    <Text>{user.email}</Text>
+                  </Flex>
+                </Box>
+                <Box>
+                  <strong>Push Notification Token:</strong>
+                  <Flex direction="row" alignItems="center">
+                    <Indicator mr={2} color={user.pushToken ? "green" : "red"} />
+                    <Text>{user.pushToken || "N/A"}</Text>
+                  </Flex>
+                </Box>
+                <Box>
                   <strong>Rating:</strong>
                   {user.rating ?
                     <Text>
@@ -202,18 +249,11 @@ function UserProfile(props: Props) {
                   }
                 </Box>
                 <Box>
-                  <strong>Email:</strong>
-                  <Flex direction="row" alignItems="center">
-                    <Text mr={2}>{user.email}</Text>
-                    <Indicator color={user.isEmailVerified ? "green" : "red"} />
-                  </Flex>
-                </Box>
-                <Box>
                   <strong>Phone:</strong>
                   <Text>{user.phone || ''}</Text>
                 </Box>
                 <Box>
-                  <strong>Queue Size</strong>
+                  <strong>Queue Size:</strong>
                   <Text>{user.queueSize}</Text>
                 </Box>
                 <Box>

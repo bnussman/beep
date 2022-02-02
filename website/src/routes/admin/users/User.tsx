@@ -28,6 +28,7 @@ export const GetUser = gql`
       rating
       email
       created
+      pushToken
       location {
         latitude
         longitude
