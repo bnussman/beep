@@ -9,6 +9,7 @@ import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import AWS from 'aws-sdk';
 import { VerifyEmail } from '../entities/VerifyEmail';
+import * as Sentry from '@sentry/node';
 
 @Resolver()
 export class AccountResolver {
@@ -145,7 +146,7 @@ export class AccountResolver {
 
         s3.deleteObject(params, (error: Error) => {
           if (error) {
-            console.log(error);
+            Sentry.captureException(error);
           }
         });
       }
