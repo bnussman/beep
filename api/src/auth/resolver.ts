@@ -129,7 +129,7 @@ export class AuthResolver {
     const existing = await ctx.em.findOne(ForgotPassword, { user: user });
 
     if (existing) {
-      sendResetEmail(email, existing.id, user.first);
+      sendResetEmail(email, existing.id, user.username);
 
       throw new Error("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
     }
@@ -138,7 +138,7 @@ export class AuthResolver {
 
     await ctx.em.persistAndFlush(entry);
 
-    sendResetEmail(email, entry.id, user.first);
+    sendResetEmail(email, entry.id, user.username);
 
     return true;
   }

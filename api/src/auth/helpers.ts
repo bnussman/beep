@@ -1,18 +1,20 @@
 import * as nodemailer from "nodemailer";
-import { transporter } from "../utils/mailer";
 import * as Sentry from "@sentry/node";
+import { transporter } from "../utils/mailer";
 import { TokenEntry } from '../entities/TokenEntry';
 import { BeepORM } from '../app';
 import { User } from '../entities/User';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { wrap } from '@mikro-orm/core';
 
+const url: string = process.env.NODE_ENV === "development" ? "https://staging.ridebeep.app" : "https://ridebeep.app";
+
 /**
  * Generates an authentication token and a token for that token (for offline logouts), stores
  * the entry in the tokens table, and returns that same data.
  *
- * @param userid a user's ID which is used to associate a token with a userid in our tokens table
- * @return user's id, auth token, and auth token's token to be used by login and sign up
+ * @param {User} user a user that must be manaeged by the ORM
+ * @return {Promise<TokenEntry>} user's id, auth token, and auth token's token to be used by login and sign up
  */
 export async function getToken(user: User): Promise<TokenEntry> {
   const t = new TokenEntry(user);
@@ -26,15 +28,15 @@ export async function getToken(user: User): Promise<TokenEntry> {
 
 /**
  * Updates a user's pushToken in the database
- * @param id a user's id in which we want to update their push tokens
- * @param token the expo push token for the user
+ * 
+ * @param {User} user a user that must be managed by the ORM
+ * @param {string | nul} token the expo push token for the user
  */
 export async function setPushToken(user: User, token: string | null): Promise<void> {
   if (!user) return;
 
   const em = BeepORM.em.fork();
 
-  //run query to get user and update their pushToken
   wrap(user).assign({
     pushToken: token
   });
@@ -43,79 +45,33 @@ export async function setPushToken(user: User, token: string | null): Promise<vo
 }
 
 /**
- * works exactly like isTokenValid, but only returns a userid if user has userLevel == 1 (meaning they are an admin)
+ * Gets User entity form their email
  *
- * @param token a user's auth token
- * @returns promice that resolves to null or a user's id
- */
-/*
-export async function isAdmin(token: string): Promise<string | null> {
-    const id: string | null = await isTokenValid(token);
-
-    if (id) {
-        const hasCorrectLevel = await hasUserLevel(id, 1);
-        
-        if(hasCorrectLevel) {
-            return id;
-        }
-    }
-    return null;
-}
-*/
-
-/**
- * get user data given an email
- *
- * @param email string of user's email
- * @returns Promise<UserPluckResult>
+ * @param {string} email string of user's email
+ * @returns {Promise<User | null>}
  */
 export async function getUserFromEmail(email: string): Promise<User | null> {
   const em = BeepORM.em.fork();
 
   const user = await em.findOne(User, { email: email });
 
-  if (user) {
-    return user;
-  }
-
-  return null;
-}
-
-/**
- * get user data given an email
- *
- * @param email string of user's email
- * @param pluckItems are items we want to pluck in the db query 
- * @returns Promise<UserPluckResult>
- */
-export async function getUserFromId(id: string, ...pluckItems: string[]): Promise<Partial<User> | null> {
-  const em = BeepORM.em.fork();
-
-  const user = await em.findOne(User, id, { fields: pluckItems });
-
-  if (user) {
-    return user;
-  }
-
-  return null;
+  return user;
 }
 
 /**
  * Helper function to send password reset email to user
  *
- * @param email who to send the email to
- * @param id is the passowrdReset entry (NOT the user's id)
- * @param first is the first name of the recipiant so email is more personal
+ * @param {string} email who to send the email to
+ * @param {string} id id of the reset token
+ * @param {string} username the username of the user
  */
-export function sendResetEmail(email: string, id: string, first: string | undefined): void {
-
-  const url: string = process.env.NODE_ENV === "development" ? "https://staging.ridebeep.app" : "https://ridebeep.app";
+export function sendResetEmail(email: string, id: string, username: string): void {
 
   const mailOptions: nodemailer.SendMailOptions = {
     from: 'Beep App <banks@ridebeep.app>',
     to: email,
     subject: 'Change your Beep App password',
-    html: `Hey ${first}, <br><br>
+    html: `Hey ${username}, <br><br>
             Head to ${url}/password/reset/${id} to reset your password. This link will expire in 5 hours. <br><br>
             Roll Neers, <br>
             -Banks Nussman
@@ -132,38 +88,35 @@ export function sendResetEmail(email: string, id: string, first: string | undefi
 /**
  * Helper function that deactives all auth tokens for user by their userid
  *
- * @param userid string of their user id
+ * @param {User} user user from the entity manager
  * @returns void
  */
 export async function deactivateTokens(user: User): Promise<void> {
   const em = BeepORM.em.fork();
 
-  await em.nativeDelete(TokenEntry, { user: user });
+  await em.nativeDelete(TokenEntry, { user });
 }
 
 /**
  * Send Very Email Email to user
  *
- * @param email string user's email
- * @param id string is the eventid in the verifyEmail database
- * @param first string is the user's first name to make the email more personalized
+ * @param {User} User the user from the ORM
+ * @param {VerifyEmail} verifyEntry the VerifyEmail entry
  * @returns void
  */
 export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void {
-  const url: string = process.env.NODE_ENV === "development" ? "https://staging.ridebeep.app" : "https://ridebeep.app";
-
   const mailOptions: nodemailer.SendMailOptions = {
     from: 'Beep App <banks@ridebeep.app>',
     to: user.email,
     subject: 'Verify your Beep App Email!',
-    html: `Hey ${user.first}, <br><br>
+    html: `Hey ${user.username}, <br><br>
             Head to ${url}/account/verify/${verifyEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
             Roll Neers, <br>
             -Banks Nussman
         `
   };
 
-  transporter.sendMail(mailOptions, (error: Error | null, info: nodemailer.SentMessageInfo) => {
+  transporter.sendMail(mailOptions, (error: Error | null) => {
     if (error) {
       Sentry.captureException(error);
     }
@@ -174,9 +127,7 @@ export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void
  * Helper function for email verfication. This function will create and insert a new email verification entry and 
  * it will call the other helper function to actually send the email.
  *
- * @param id is the user's is
- * @param email is the user's email
- * @param first is the user's first name so we can make the email more personal
+ * @param {User} user is the user entity
  * @returns void
  */
 export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<void> {
@@ -186,30 +137,7 @@ export async function createVerifyEmailEntryAndSendEmail(user: User): Promise<vo
 
   const entry = new VerifyEmail(user, user.email);
 
-  //send the email
   sendVerifyEmailEmail(user, entry);
 
   await em.persistAndFlush(entry);
-}
-
-/**
- * function to tell you if a user exists by a username
- *
- * @param username string 
- * @returns Promise<boolean> true if user exists by username
- */
-export async function doesUserExist(username: string): Promise<boolean> {
-  try {
-    const em = BeepORM.em.fork();
-
-    const c = await em.count(User, { username: username });
-
-    if (c >= 1) {
-      return true;
-    }
-  }
-  catch (error) {
-    Sentry.captureException(error);
-  }
-  return false;
 }
