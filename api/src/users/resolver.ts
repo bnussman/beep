@@ -9,7 +9,7 @@ import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Paginated } from '../utils/paginated';
 import { search } from './helpers';
-import { sendNotification } from '../utils/notifications';
+import { sendNotification, sendNotificationsNew } from '../utils/notifications';
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
@@ -88,6 +88,18 @@ export class UserResolver {
       items: users,
       count: count
     };
+  }
+
+  @Mutation(() => Number)
+  @Authorized(UserRole.ADMIN)
+  public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string): Promise<number> {
+    const users = await ctx.em.find(User, {});
+
+    const tokens = users.map(user => user.pushToken).filter(token => token) as string[];
+
+    sendNotificationsNew(tokens, title, body);
+
+    return tokens.length;
   }
 
   @Subscription(() => User, {

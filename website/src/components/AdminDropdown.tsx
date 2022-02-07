@@ -1,3 +1,5 @@
+import React from "react";
+import { Link } from 'react-router-dom';
 import {
   Menu,
   MenuButton,
@@ -5,8 +7,6 @@ import {
   MenuItem,
   Button,
 } from "@chakra-ui/react"
-import React from "react";
-import { Link } from 'react-router-dom';
 
 export function AdminDropdown() {
   return (
@@ -37,6 +37,9 @@ export function AdminDropdown() {
         </MenuItem>
         <MenuItem as={Link} to="/admin/beeps/active">
           Beeps in progress
+        </MenuItem>
+        <MenuItem as={Link} to="/admin/notifications">
+          Notifications
         </MenuItem>
       </MenuList>
     </Menu>

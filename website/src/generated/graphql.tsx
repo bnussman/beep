@@ -149,6 +149,7 @@ export type Mutation = {
   resendEmailVarification: Scalars['Boolean'];
   resetPassword: Scalars['Boolean'];
   riderLeaveQueue: Scalars['Boolean'];
+  sendNotification: Scalars['Float'];
   setBeeperQueue: Scalars['Boolean'];
   setBeeperStatus: Scalars['Boolean'];
   setLocation: Scalars['Boolean'];
@@ -254,6 +255,12 @@ export type MutationResetPasswordArgs = {
 
 export type MutationRiderLeaveQueueArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationSendNotificationArgs = {
+  body: Scalars['String'];
+  title: Scalars['String'];
 };
 
 
@@ -756,6 +763,14 @@ export type GetBeepsQueryVariables = Exact<{
 
 
 export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, rider: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } }> } };
+
+export type SendNotificationMutationVariables = Exact<{
+  title: Scalars['String'];
+  body: Scalars['String'];
+}>;
+
+
+export type SendNotificationMutation = { __typename?: 'Mutation', sendNotification: number };
 
 export type DeleteRatingMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1914,6 +1929,38 @@ export function useGetBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
 export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
 export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
+export const SendNotificationDocument = gql`
+    mutation SendNotification($title: String!, $body: String!) {
+  sendNotification(title: $title, body: $body)
+}
+    `;
+export type SendNotificationMutationFn = Apollo.MutationFunction<SendNotificationMutation, SendNotificationMutationVariables>;
+
+/**
+ * __useSendNotificationMutation__
+ *
+ * To run a mutation, you first call `useSendNotificationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendNotificationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendNotificationMutation, { data, loading, error }] = useSendNotificationMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      body: // value for 'body'
+ *   },
+ * });
+ */
+export function useSendNotificationMutation(baseOptions?: Apollo.MutationHookOptions<SendNotificationMutation, SendNotificationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendNotificationMutation, SendNotificationMutationVariables>(SendNotificationDocument, options);
+      }
+export type SendNotificationMutationHookResult = ReturnType<typeof useSendNotificationMutation>;
+export type SendNotificationMutationResult = Apollo.MutationResult<SendNotificationMutation>;
+export type SendNotificationMutationOptions = Apollo.BaseMutationOptions<SendNotificationMutation, SendNotificationMutationVariables>;
 export const DeleteRatingDocument = gql`
     mutation DeleteRating($id: String!) {
   deleteRating(id: $id)
