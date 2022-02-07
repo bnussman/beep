@@ -1,8 +1,7 @@
 import got from "got";
-import { request } from "https";
 
 export interface PushNotification {
-  to: string | undefined;
+  to: string;
   title: string;
   body: string;
 }

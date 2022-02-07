@@ -57,21 +57,28 @@ export class QueueResolver {
 
     const entries: QueueEntry[] = user.queue.getItems();
 
-    const toSend: PushNotification[] = entries.map((entry: QueueEntry) => {
+    const toSend: PushNotification[] = [];
+
+    for (const entry of entries) {
       pubSub.publish("Rider" + entry.rider.id, null);
-      return {
-        to: entry.rider.pushToken,
-        title: 'You are no longer getting a ride!',
-        body: "An admin cleared your beeper's queue probably because they were inactive."
-      };
-    });
+      if (entry.rider.pushToken) {
+        toSend.push({
+          to: entry.rider.pushToken,
+          title: 'You are no longer getting a ride!',
+          body: "An admin cleared your beeper's queue probably because they were inactive."
+        });
+      }
+    }
+
+    if (user.pushToken) {
+      toSend.push({
+        to: user.pushToken,
+        title: 'Your queue has been cleared',
+        body: 'An admin has cleared your queue probably because you were inactive!'
+      });
+    }
 
     sendNotifications(toSend);
-    sendNotification(
-      user.pushToken,
-      'Your queue has been cleared',
-      'An admin has cleared your queue probably because you were inactive!'
-    );
 
     if (stopBeeping) {
       user.isBeeping = false;
