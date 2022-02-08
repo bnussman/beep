@@ -578,6 +578,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
                     >
                       <Flex direction="row" alignItems="center">
                         <Avatar
+                          mr={2}
                           size={50}
                           source={{
                             uri: item.rider.photoUrl

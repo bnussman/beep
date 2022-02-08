@@ -261,6 +261,7 @@ export type MutationRiderLeaveQueueArgs = {
 
 export type MutationSendNotificationArgs = {
   body: Scalars['String'];
+  match?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
 };
 

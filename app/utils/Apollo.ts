@@ -15,19 +15,19 @@ import { print } from "graphql";
 
 const ip = "192.168.1.18";
 
-// const wsUrl = __DEV__
-//   ? `ws://${ip}:3001/subscriptions`
-//   : "wss://ridebeep.app/subscriptions";
-// const url = __DEV__
-//   ? `http://${ip}:3001/graphql`
-//   : "https://ridebeep.app/graphql";
+const wsUrl = __DEV__
+  ? `ws://${ip}:3001/subscriptions`
+  : "wss://ridebeep.app/subscriptions";
+const url = __DEV__
+  ? `http://${ip}:3001/graphql`
+  : "https://ridebeep.app/graphql";
 // const wsUrl = "wss://staging.ridebeep.app/subscriptions";
 // const url = "https://staging.ridebeep.app/graphql";
 
 // const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
 // const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
-const wsUrl = "wss://ridebeep.app/subscriptions";
-const url = "https://ridebeep.app/graphql";
+// const wsUrl = "wss://ridebeep.app/subscriptions";
+// const url = "https://ridebeep.app/graphql";
 
 interface RestartableClient extends Client {
   restart(): void;

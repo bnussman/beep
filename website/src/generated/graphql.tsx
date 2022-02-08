@@ -260,6 +260,7 @@ export type MutationRiderLeaveQueueArgs = {
 
 export type MutationSendNotificationArgs = {
   body: Scalars['String'];
+  match?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
@@ -767,6 +768,7 @@ export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'Be
 export type SendNotificationMutationVariables = Exact<{
   title: Scalars['String'];
   body: Scalars['String'];
+  match?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1930,8 +1932,8 @@ export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
 export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
 export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
 export const SendNotificationDocument = gql`
-    mutation SendNotification($title: String!, $body: String!) {
-  sendNotification(title: $title, body: $body)
+    mutation SendNotification($title: String!, $body: String!, $match: String) {
+  sendNotification(title: $title, body: $body, match: $match)
 }
     `;
 export type SendNotificationMutationFn = Apollo.MutationFunction<SendNotificationMutation, SendNotificationMutationVariables>;
@@ -1951,6 +1953,7 @@ export type SendNotificationMutationFn = Apollo.MutationFunction<SendNotificatio
  *   variables: {
  *      title: // value for 'title'
  *      body: // value for 'body'
+ *      match: // value for 'match'
  *   },
  * });
  */

@@ -10,6 +10,7 @@ import fieldsToRelations from 'graphql-fields-to-relations';
 import { Paginated } from '../utils/paginated';
 import { search } from './helpers';
 import { sendNotification, sendNotificationsNew } from '../utils/notifications';
+import { match } from 'assert';
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
@@ -92,8 +93,10 @@ export class UserResolver {
 
   @Mutation(() => Number)
   @Authorized(UserRole.ADMIN)
-  public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string): Promise<number> {
-    const users = await ctx.em.find(User, {});
+  public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string, @Arg('match', { nullable: true }) match?: string): Promise<number> {
+    const users = await ctx.em.find(User, match ? {
+      email: { $like: match }
+    } : {});
 
     const tokens = users.map(user => user.pushToken).filter(token => token) as string[];
 

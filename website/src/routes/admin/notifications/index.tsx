@@ -12,7 +12,9 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  Code,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
   Input,
@@ -24,8 +26,8 @@ import {
 } from "@chakra-ui/react";
 
 const SendNotification = gql`
-    mutation SendNotification($title: String!, $body: String!) {
-      sendNotification(title: $title, body: $body)
+    mutation SendNotification($title: String!, $body: String!, $match: String) {
+      sendNotification(title: $title, body: $body, match: $match)
     }
 `;
 
@@ -36,8 +38,14 @@ function Notifications() {
 
   const [send, { error }] = useMutation<SendNotificationMutation>(SendNotification);
 
-  const onSubmit = (values: { title: string; body: string; }) => {
-    send({ variables: values }).then(data => {
+  const onSubmit = ({ title, body, match }: { title: string; body: string; match: string; }) => {
+    send({
+      variables: {
+        title,
+        body,
+        match: match ? match : undefined
+      }
+    }).then(data => {
       toast({ title: `Sent notification to ${data.data?.sendNotification} users.`})
       onClose();
     });
@@ -47,6 +55,7 @@ function Notifications() {
     initialValues: {
       title: '',
       body: '',
+      match: '',
     },
     onSubmit
   });
@@ -61,14 +70,26 @@ function Notifications() {
           <Input
             name="title"
             value={formik.values.title}
-            onChange={formik.handleChange} />
+            onChange={formik.handleChange}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Match</FormLabel>
+          <Input
+            name="match"
+            value={formik.values.match}
+            onChange={formik.handleChange}
+            placeholder="%@appstate.edu"
+          />
+          <FormHelperText>Leave this empty to send to all Beep App users.</FormHelperText>
         </FormControl>
         <FormControl>
           <FormLabel>Body</FormLabel>
           <Textarea
             name="body"
             value={formik.values.body}
-            onChange={formik.handleChange} />
+            onChange={formik.handleChange}
+          />
         </FormControl>
         <Button onClick={onOpen} rightIcon={<EmailIcon />}>Send</Button>
       </Stack>
@@ -83,7 +104,7 @@ function Notifications() {
               Send Notification
             </AlertDialogHeader>
             <AlertDialogBody>
-              Are you sure? This will be sent to all Beep App users.
+              Are you sure? {formik.values.match ? <>This will be sent to all user having an email that matches <Code>{formik.values.match}</Code></> : 'This will be sent to all Beep App users.'}
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
