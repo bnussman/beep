@@ -54,7 +54,7 @@ yarn
 
 To run the development envrionment use
 ```
-yarn up
+yarn dev
 ```
 
 ### Provide envrionment data
