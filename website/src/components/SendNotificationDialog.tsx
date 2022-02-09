@@ -13,7 +13,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Textarea
+  Textarea,
+  useToast
 } from "@chakra-ui/react";
 import { SendNotificationMutation } from '../generated/graphql';
 
@@ -32,6 +33,7 @@ interface Props {
 
 function SendNotificationDialog(props: Props) {
   const { isOpen, onClose, id } = props;
+  const toast = useToast();
 
   const [title, setTitle] = useState<string>();
   const [body, setBody] = useState<string>();
@@ -40,6 +42,7 @@ function SendNotificationDialog(props: Props) {
 
   const onClick = async () => {
     await send({ variables: { title, body, id } });
+    toast({ title: "Successfully sent notification!", status: "success" });
     onClose();
   };
 
