@@ -178,7 +178,7 @@ function UserProfile(props: Props) {
             </Stack>
           </Box>
           <Spacer />
-          <Box>
+          <Box textAlign="right">
             <NavLink to={admin ? `/admin/users/${user.id}/edit` : `/profile/edit`}>
               <Button m='1'>
                 Edit
