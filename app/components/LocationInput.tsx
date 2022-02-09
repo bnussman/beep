@@ -1,59 +1,31 @@
-import "react-native-get-random-values";
-import React, { Ref } from "react";
-import { TouchableWithoutFeedback } from "react-native";
-import {
-  Autocomplete,
-  AutocompleteItem,
-  Icon,
-  Layout,
-  InputProps,
-} from "@ui-kitten/components";
+import React, { useState } from "react";
 import * as Location from "expo-location";
-import { gql, useLazyQuery } from "@apollo/client";
-import { GetSuggestionsQuery } from "../generated/graphql";
-import { v4 } from "uuid";
 import Constants from "expo-constants";
 import Logger from "../utils/Logger";
+import { TouchableWithoutFeedback } from "react-native";
+import { Box, Icon, IInputProps, Input, Spinner } from "native-base";
+import { MaterialIcons } from "@expo/vector-icons";
 
-interface Props {
-  getLocation: boolean;
-  value: string;
-  setValue: (id: string) => void;
-  label: string;
-  ref?: Ref<any>;
-  returnKeyType: string;
-}
-
-const GetSuggestions = gql`
-  query GetSuggestions($location: String!, $sessiontoken: String!) {
-    getLocationSuggestions(location: $location, sessiontoken: $sessiontoken) {
-      title
-    }
-  }
-`;
-
-let token: string;
-
-function LocationInput(props: Props & InputProps, ref: Ref<any>) {
-  const { getLocation, value, setValue, label, ...rest } = props;
-  const [getSuggestions, { data }] =
-    useLazyQuery<GetSuggestionsQuery>(GetSuggestions);
+function LocationInput(props: IInputProps) {
+  const [isLoading, setIsLoading] = useState(false);
 
   async function useCurrentLocation(): Promise<void> {
-    setValue("Loading your location...");
+    setIsLoading(true);
+    props.onChangeText?.("");
 
     try {
       Location.setGoogleApiKey(
         JSON.parse(Constants.manifest?.extra?.GOOGLE_API_KEYS)[0] || ""
       );
     } catch (error) {
-      Logger.error("Enable to parse Google API keys");
+      Logger.error(error);
     }
 
     const { status } = await Location.requestForegroundPermissionsAsync();
 
     if (status !== "granted") {
-      setValue("");
+      props.onChangeText?.("");
+      setIsLoading(false);
       return alert("You must enable location to use this feature.");
     }
 
@@ -80,62 +52,33 @@ function LocationInput(props: Props & InputProps, ref: Ref<any>) {
         location[0].postalCode;
     }
 
-    setValue(string);
+    props.onChangeText?.(string);
+    setIsLoading(false);
   }
 
-  const CurrentLocationIcon = (props) => (
+  const CurrentLocationIcon = (
     <TouchableWithoutFeedback onPress={() => useCurrentLocation()}>
-      <Icon {...props} name="pin" />
+      <Icon
+        mr={3}
+        size="sm"
+        as={<MaterialIcons name="my-location" />}
+        _dark={{ color: "white" }}
+      />
     </TouchableWithoutFeedback>
   );
 
-  const onSelect = (index: number) => {
-    if (!data || !data.getLocationSuggestions) return;
-
-    setValue(data.getLocationSuggestions[index].title);
-
-    token = v4();
-  };
-
-  const onChangeText = (query: string) => {
-    if (props.value.length == 0 && query.length > 0) {
-      token = v4();
-    }
-
-    setValue(query);
-
-    getSuggestions({
-      variables: {
-        location: query,
-        sessiontoken: token,
-      },
-    });
-  };
-
-  const renderOption = (item: any, index: number) => (
-    <AutocompleteItem key={index} title={item.title} />
+  const SpinnerIcon = (
+    <Box mr={3}>
+      <Spinner size="sm" />
+    </Box>
   );
 
   return (
-    <Layout style={{ width: "85%" }}>
-      <Autocomplete
-        label={label}
-        style={{ width: "100%" }}
-        placeholder="Location"
-        accessoryRight={getLocation ? CurrentLocationIcon : undefined}
-        value={value || ""}
-        onSelect={onSelect}
-        onChangeText={onChangeText}
-        textStyle={{ width: "100%" }}
-        ref={ref}
-        blurOnSubmit={false}
-        {...rest}
-      >
-        {data?.getLocationSuggestions?.map(renderOption) || (
-          <AutocompleteItem key={0} title="" />
-        )}
-      </Autocomplete>
-    </Layout>
+    <Input
+      {...props}
+      placeholder={isLoading ? "Loading" : undefined}
+      InputRightElement={isLoading ? SpinnerIcon : CurrentLocationIcon}
+    />
   );
 }
 

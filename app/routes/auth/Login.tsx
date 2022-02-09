@@ -19,6 +19,7 @@ import {
   Spacer,
   Box,
 } from "native-base";
+import PasswordInput from "../../components/PasswordInput";
 
 interface Props {
   navigation: Navigation;
@@ -119,15 +120,14 @@ function LoginScreen(props: Props): JSX.Element {
               onChangeText={(text) => setUsername(text)}
               onSubmitEditing={() => passwordRef.current.focus()}
             />
-            <Input
+            <PasswordInput
               size="lg"
-              textContentType="password"
               placeholder="Password"
               returnKeyType="go"
               onChangeText={(text) => setPassword(text)}
               ref={passwordRef}
               onSubmitEditing={() => doLogin()}
-              secureTextEntry
+              textContentType="password"
             />
             <Button
               isLoading={loading}

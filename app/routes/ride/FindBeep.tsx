@@ -33,6 +33,7 @@ import {
   Center,
   VStack,
 } from "native-base";
+import LocationInput from "../../components/LocationInput";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -287,6 +288,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
       subscribeToRiderStatus();
     } catch (error) {
+      // @ts-expect-error sad
       alert(error.message);
     }
     setIsGetBeepLoading(false);
@@ -369,7 +371,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
           </FormControl>
           <FormControl>
             <FormControl.Label>Pick Up Location</FormControl.Label>
-            <Input
+            <LocationInput
               size="lg"
               ref={originRef}
               value={origin}
