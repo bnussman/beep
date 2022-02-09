@@ -38,6 +38,7 @@ import {
 } from '@chakra-ui/react';
 import { GetUser } from '../routes/admin/users/User';
 import { UsersGraphQL } from '../routes/admin/users';
+import SendNotificationDialog from './SendNotificationDialog';
 
 dayjs.extend(relativeTime);
 
@@ -104,6 +105,12 @@ function UserProfile(props: Props) {
     onClose: onClearClose
   } = useDisclosure();
 
+  const {
+    isOpen: isSendNotificationOpen,
+    onOpen: onSendNotificationOpen,
+    onClose: onSendNotificationClose
+  } = useDisclosure();
+
   async function doDelete() {
     await remove({
       variables: { id: user.id },
@@ -140,6 +147,10 @@ function UserProfile(props: Props) {
       toast({ title: "User verified", status: "success" });
     });
   };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <>
@@ -182,6 +193,16 @@ function UserProfile(props: Props) {
                 isLoading={isVerifyLoading}
               >
                 Verify
+              </Button>
+            }
+            {admin &&
+              <Button
+                m={1}
+                colorScheme="purple"
+                onClick={onSendNotificationOpen}
+                isDisabled={!user?.pushToken}
+              >
+                Send Notification
               </Button>
             }
             {admin &&
@@ -314,6 +335,11 @@ function UserProfile(props: Props) {
         cancelRef={cancelRefClear}
         stopBeeping={stopBeeping}
         setStopBeeping={setStopBeeping}
+      />
+      <SendNotificationDialog
+        id={user.id}
+        isOpen={isSendNotificationOpen}
+        onClose={onSendNotificationClose}
       />
     </>
   );

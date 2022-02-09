@@ -150,7 +150,8 @@ export type Mutation = {
   resendEmailVarification: Scalars['Boolean'];
   resetPassword: Scalars['Boolean'];
   riderLeaveQueue: Scalars['Boolean'];
-  sendNotification: Scalars['Float'];
+  sendNotification: Scalars['Boolean'];
+  sendNotifications: Scalars['Float'];
   setBeeperQueue: Scalars['Boolean'];
   setBeeperStatus: Scalars['Boolean'];
   setLocation: Scalars['Boolean'];
@@ -260,6 +261,13 @@ export type MutationRiderLeaveQueueArgs = {
 
 
 export type MutationSendNotificationArgs = {
+  body: Scalars['String'];
+  id: Scalars['String'];
+  title: Scalars['String'];
+};
+
+
+export type MutationSendNotificationsArgs = {
   body: Scalars['String'];
   match?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];

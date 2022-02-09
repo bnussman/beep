@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useFormik } from "formik";
 import { EmailIcon } from "@chakra-ui/icons";
 import { gql, useMutation } from "@apollo/client";
-import { SendNotificationMutation } from "../../../generated/graphql";
+import { SendNotificationsMutation } from "../../../generated/graphql";
 import { Error } from '../../../components/Error';
 import {
   AlertDialog,
@@ -25,9 +25,9 @@ import {
   useToast
 } from "@chakra-ui/react";
 
-const SendNotification = gql`
-    mutation SendNotification($title: String!, $body: String!, $match: String) {
-      sendNotification(title: $title, body: $body, match: $match)
+const SendNotifications = gql`
+    mutation SendNotifications($title: String!, $body: String!, $match: String) {
+      sendNotifications(title: $title, body: $body, match: $match)
     }
 `;
 
@@ -36,7 +36,7 @@ function Notifications() {
   const cancelRef = useRef<any>();
   const toast = useToast();
 
-  const [send, { error }] = useMutation<SendNotificationMutation>(SendNotification);
+  const [send, { error }] = useMutation<SendNotificationsMutation>(SendNotifications);
 
   const onSubmit = ({ title, body, match }: { title: string; body: string; match: string; }) => {
     send({
@@ -46,7 +46,7 @@ function Notifications() {
         match: match ? match : undefined
       }
     }).then(data => {
-      toast({ title: `Sent notification to ${data.data?.sendNotification} users.`})
+      toast({ title: `Sent notification to ${data.data?.sendNotifications} users.`})
       onClose();
     });
   };
