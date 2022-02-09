@@ -17,6 +17,7 @@ import {
   Heading,
   Flex,
   Spacer,
+  Box,
 } from "native-base";
 
 interface Props {
@@ -101,9 +102,14 @@ function LoginScreen(props: Props): JSX.Element {
     <Container keyboard>
       <Center mt="40%">
         <Stack space={4} w="90%">
-          <Flex direction="row" alignItems="center" justifyContent="center">
-            <Heading mr={4}>Login</Heading>
-          </Flex>
+          <Box>
+            <Heading mr={4} fontWeight="extrabold">
+              Welcome
+            </Heading>
+            <Heading mr={4} fontWeight="extrabold">
+              to Ride Beep App
+            </Heading>
+          </Box>
           <Stack space={2}>
             <Input
               size="lg"

@@ -394,6 +394,11 @@ export function StartBeepingScreen(props: Props): JSX.Element {
               keyboardType="numeric"
               value={String(singlesRate)}
               onChangeText={(value) => setSinglesRate(value)}
+              InputLeftElement={
+                <Text pl={3} pr={1}>
+                  $
+                </Text>
+              }
             />
           </FormControl>
           <FormControl>
@@ -404,6 +409,11 @@ export function StartBeepingScreen(props: Props): JSX.Element {
               keyboardType="numeric"
               value={String(groupRate)}
               onChangeText={(value) => setGroupRate(value)}
+              InputLeftElement={
+                <Text pl={3} pr={1}>
+                  $
+                </Text>
+              }
             />
           </FormControl>
           <Checkbox

@@ -351,7 +351,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
   if (!beep) {
     return (
-      <Container keyboard alignItems="center">
+      <Container keyboard alignItems="center" pt={2}>
         <Stack space={4} w="90%">
           <RateCard navigation={props.navigation} />
           {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
@@ -409,7 +409,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
   if (beep.isAccepted) {
     return (
-      <Container>
+      <Container pt={2}>
         <Center>
           <Avatar
             size={100}
@@ -429,7 +429,9 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               mt={2}
               mb={4}
             >
-              <Heading size="sm">Current Status</Heading>
+              <Heading size="md" fontWeight="extrabold">
+                Current Status
+              </Heading>
               <Text>{getCurrentStatusMessage()}</Text>
               {beep.state === 1 ? (
                 <>
@@ -506,7 +508,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     );
   } else {
     return (
-      <Container alignItems="center">
+      <Container alignItems="center" pt={2}>
         <Stack space={4} w="90%" alignItems="center">
           <Avatar
             size={100}
@@ -529,20 +531,20 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
                 : ""}{" "}
               Rates
             </Text>
-            <Text>per person</Text>
+            <Text fontWeight="thin">per person</Text>
           </Box>
           <HStack space={4}>
             <Box alignItems="center">
-              <Text>Single</Text>
+              <Text fontWeight="extrabold">Single</Text>
               <Text>${beep.beeper.singlesRate}</Text>
             </Box>
             <Box alignItems="center">
-              <Text>Group</Text>
+              <Text fontWeight="extrabold">Group</Text>
               <Text>${beep.beeper.groupRate}</Text>
             </Box>
           </HStack>
           <Box alignItems="center">
-            <Heading>{beep.beeper.queueSize}</Heading>
+            <Heading fontWeight="extrabold">{beep.beeper.queueSize}</Heading>
             <Text>
               {beep.beeper.queueSize === 1 ? "person is" : "people are"} ahead
               of you in {beep.beeper.first}
