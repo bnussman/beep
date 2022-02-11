@@ -12,7 +12,6 @@ import { Download } from './routes/Download';
 import Home from './routes/Home';
 import Login from './routes/Login';
 import SignUp from './routes/SignUp';
-import Profile from './routes/Profile';
 import EditProfile from './routes/EditProfile';
 import ForgotPassword from './routes/ForgotPassword';
 import ResetPassword from './routes/ResetPassword';
@@ -124,7 +123,6 @@ function Beep() {
               <Route path="/password/reset/:id" element={<ResetPassword />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
-              <Route path="/profile" element={<Profile />} />
               <Route path="/profile/edit" element={<EditProfile />} />
               <Route path="/password/change" element={<ChangePassword />} />
               <Route path="/account/verify/:id" element={<VerifyAccount />} />

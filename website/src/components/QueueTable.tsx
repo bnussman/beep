@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Indicator } from './Indicator';
-import { User } from '../generated/graphql';
 import TdUser from './TdUser';
+import { Indicator } from './Indicator';
+import { GetUserQuery } from '../generated/graphql';
 import { Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { client } from '../utils/Apollo';
 import { gql } from '@apollo/client';
@@ -12,25 +12,25 @@ import { GetUser } from '../routes/admin/users/User';
 dayjs.extend(duration);
 
 const GetQueue = gql`
-    subscription GetQueue($id: String!) {
-        getBeeperUpdates(id: $id) {
-          id
-          origin
-          destination
-          start
-          groupSize
-          isAccepted
-          state
-          rider {
-            id
-            photoUrl
-            username
-            first
-            last
-            name
-          }
-        }
+  subscription GetQueue($id: String!) {
+    getBeeperUpdates(id: $id) {
+      id
+      origin
+      destination
+      start
+      groupSize
+      isAccepted
+      state
+      rider {
+        id
+        photoUrl
+        username
+        first
+        last
+        name
+      }
     }
+  }
 `;
 
 export function getStatus(value: number): string {
@@ -50,7 +50,7 @@ export function getStatus(value: number): string {
 
 
 interface Props {
-  user: Partial<User>;
+  user: GetUserQuery['getUser'];
 }
 
 let sub: any;

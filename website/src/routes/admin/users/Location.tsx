@@ -1,23 +1,23 @@
-import { gql } from '@apollo/client';
-import { Box, Center, Text } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
-import { User } from '../../../generated/graphql';
+import GoogleMapReact from 'google-map-react';
+import { gql } from '@apollo/client';
+import { Box, Center } from '@chakra-ui/react';
+import { GetUserQuery } from '../../../generated/graphql';
 import { client } from '../../../utils/Apollo';
 import { GetUser } from './User';
-import GoogleMapReact from 'google-map-react';
 import { Marker } from '../../../components/Marker';
 
 interface Props {
-  user: Partial<User>;
+  user: GetUserQuery['getUser'];
 }
 
 const BeepersLocation = gql`
-    subscription BeepersLocation($id: String!) {
-        getLocationUpdates(id: $id) {
-            latitude
-            longitude
-        }
+  subscription BeepersLocation($id: String!) {
+    getLocationUpdates(id: $id) {
+      latitude
+      longitude
     }
+  }
 `;
 
 let sub: any;

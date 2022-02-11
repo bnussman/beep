@@ -31,19 +31,17 @@ function DeleteDialog(props: Props) {
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             Delete {title}
-            </AlertDialogHeader>
-
+          </AlertDialogHeader>
           <AlertDialogBody>
             Are you sure? You can't undo this action afterwards.
           </AlertDialogBody>
-
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
-              </Button>
+            </Button>
             <Button isLoading={deleteLoading} colorScheme="red" onClick={doDelete} ml={3}>
               Delete
-              </Button>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialogOverlay>
