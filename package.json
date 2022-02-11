@@ -13,7 +13,7 @@
         "build:website": "yarn workspace @beep/website notscbuild",
         "build": "yarn build:api",
         "dev": "yarn build:api && yarn start:all",
-        "start:all": "concurrently \"yarn workspace @beep/app start\" \"yarn workspace @beep/api dev\" \"yarn workspace @beep/website dev\"",
+        "start:all": "concurrently -n app,api,website -c blue,magenta,green \"yarn workspace @beep/app start\" \"yarn workspace @beep/api dev\" \"yarn workspace @beep/website dev\"",
         "start:app": "yarn workspace @beep/app start",
         "start:website": "yarn workspace @beep/website dev",
         "start:api": "yarn workspace @beep/api start",

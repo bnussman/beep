@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node build/src/server.js",
-    "dev": "concurrently \"tsc -w\" \"nodemon build/src/server.js\""
+    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"nodemon build/src/server.js\""
   },
   "repository": {
     "type": "git",
