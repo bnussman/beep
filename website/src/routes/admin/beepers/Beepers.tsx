@@ -9,11 +9,13 @@ import BeepersMap from './BeepersMap';
 
 const BeepersGraphQL = gql`
   query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
-    getBeeperList(input: {
+    getBeeperList(
+      input: {
         latitude: $latitude,
         longitude: $longitude,
         radius: $radius
-    }) {
+      }
+    ) {
       id
       username
       name
@@ -48,7 +50,7 @@ function Beepers() {
   });
 
   useEffect(() => {
-    startPolling(4000);
+    startPolling(1500);
     return () => {
       stopPolling();
     };
