@@ -17,7 +17,8 @@ import { createServer } from 'http';
 import { graphqlUploadExpress } from "graphql-upload";
 import { ApolloServer, ExpressContext } from "apollo-server-express";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
-import { useServer } from 'graphql-ws/lib/use/ws';
+import { Extra, useServer } from 'graphql-ws/lib/use/ws';
+import { Context, SubscribeMessage } from "graphql-ws";
 const WebSocketServer = ws.Server;
 
 function formatError(error: GraphQLError) {
@@ -58,6 +59,36 @@ async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Co
   }
 
   return context;
+}
+
+async function onSubscribe(
+  ctx: Context<Extra & Partial<Record<PropertyKey, never>>>,
+  msg: SubscribeMessage,
+  schema: GraphQLSchema,
+  orm: MikroORM<IDatabaseDriver<Connection>>
+) {
+  const { connectionParams } = ctx;
+
+  // console.log("Client subscribed for", msg.payload.operationName, connectionParams);
+
+  if (!connectionParams || !connectionParams.token) throw new Error("No auth token");
+
+  const em = orm.em.fork();
+
+  const tokenEntryResult = await em.findOne(TokenEntry, connectionParams.token as string, { populate: ['user'], cache: true });
+
+  // if (msg.payload.operationName === "UserUpdates") {
+  //   setTimeout(() => pubSub.publish(`User${tokenEntryResult?.user.id}`, tokenEntryResult?.user), 10);
+  // }
+
+  if (tokenEntryResult) {
+    return {
+      contextValue: { user: tokenEntryResult.user, token: tokenEntryResult },
+      schema,
+      document: parse(msg.payload.query),
+      variableValues: msg.payload.variables
+    }
+  }
 }
 
 async function start() {
@@ -122,36 +153,7 @@ async function start() {
 
     useServer({
       schema,
-      onConnect: (ctx) => {
-        // console.log("Client Connected");
-      },
-      onDisconnect: (ctx) => {
-        // console.log("Client Disconnected");
-      },
-      onSubscribe: async (ctx, msg) => {
-        const { connectionParams } = ctx;
-
-        // console.log("Client subscribed for", msg.payload.operationName, connectionParams);
-
-        if (!connectionParams || !connectionParams.token) throw new Error("No auth token");
-
-        const em = orm.em.fork();
-
-        const tokenEntryResult = await em.findOne(TokenEntry, connectionParams.token as string, { populate: ['user'], cache: true });
-
-        // if (msg.payload.operationName === "UserUpdates") {
-        //   setTimeout(() => pubSub.publish(`User${tokenEntryResult?.user.id}`, tokenEntryResult?.user), 10);
-        // }
-
-        if (tokenEntryResult) {
-          return {
-            contextValue: { user: tokenEntryResult.user, token: tokenEntryResult },
-            schema,
-            document: parse(msg.payload.query),
-            variableValues: msg.payload.variables
-          }
-        }
-      },
+      onSubscribe: (ctx, msg) => onSubscribe(ctx, msg, schema, orm),
     }, wsServer);
   });
 }
