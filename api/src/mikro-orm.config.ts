@@ -1,4 +1,5 @@
 import { Configuration, Connection, IDatabaseDriver, LoadStrategy } from "@mikro-orm/core";
+import { isProduction } from "./utils/constants";
 
 export default {
     entities: ['./build/src/entities/*.js'],
@@ -9,5 +10,5 @@ export default {
     clientUrl: `${process.env.POSTGRESQL_URL}/${process.env.POSTGRESQL_DATABASE}`,
     // clientUrl: `postgresql://db.production.ridebeep.app:5432/${process.env.POSTGRESQL_DATABASE}`,
     loadStrategy: LoadStrategy.JOINED,
-    debug: true,
+    debug: !isProduction,
 } as unknown as Configuration<IDatabaseDriver<Connection>>

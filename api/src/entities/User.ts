@@ -14,6 +14,13 @@ export enum UserRole {
 @ObjectType()
 @Entity()
 export class User {
+
+  constructor(values?: Partial<User>) {
+    if (values) {
+      Object.assign(this, values);
+    }
+  }
+
   @PrimaryKey()
   @Field()
   id: string = v4();

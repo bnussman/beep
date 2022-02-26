@@ -1,5 +1,3 @@
-import { deactivateTokens } from "../auth/helpers";
-import { BeepORM } from "../app";
 import { User } from '../entities/User';
 import { Stream } from "stream";
 import { Rating } from "../entities/Rating";
@@ -8,6 +6,8 @@ import { Beep } from "../entities/Beep";
 import { QueueEntry } from "../entities/QueueEntry";
 import { ForgotPassword } from "../entities/ForgotPassword";
 import { VerifyEmail } from "../entities/VerifyEmail";
+import { EntityManager } from "@mikro-orm/core";
+import { TokenEntry } from "../entities/TokenEntry";
 
 /**
  * Used for handling GraphQL Uploads
@@ -33,9 +33,7 @@ export function isEduEmail(email: string): boolean {
  * @param id string the user's id
  * @returns boolean true if delete was successful
  */
-export async function deleteUser(user: User): Promise<boolean> {
-  const em = BeepORM.em.fork();
-
+export async function deleteUser(user: User, em: EntityManager): Promise<boolean> {
   await em.nativeDelete(ForgotPassword, { user: user });
 
   await em.nativeDelete(VerifyEmail, { user: user });
@@ -52,7 +50,7 @@ export async function deleteUser(user: User): Promise<boolean> {
   await em.nativeDelete(Rating, { rater: user });
   await em.nativeDelete(Rating, { rated: user });
 
-  await deactivateTokens(user);
+  await em.nativeDelete(TokenEntry, { user });
 
   await em.nativeDelete(User, user);
 

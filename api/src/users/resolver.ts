@@ -34,7 +34,7 @@ export class UserResolver {
       throw new Error("User not found");
     }
 
-    if (await deleteUser(user)) {
+    if (await deleteUser(user, ctx.em)) {
       return true;
     }
 

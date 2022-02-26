@@ -1,5 +1,5 @@
 import { sha256 } from 'js-sha256';
-import { getToken, setPushToken, getUserFromEmail, sendResetEmail, deactivateTokens, createVerifyEmailEntryAndSendEmail } from './helpers';
+import { sendResetEmail, createVerifyEmailEntryAndSendEmail } from './helpers';
 import { wrap } from '@mikro-orm/core';
 import { User } from '../entities/User';
 import { ForgotPassword } from '../entities/ForgotPassword';
@@ -7,8 +7,8 @@ import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'typ
 import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth';
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
-import AWS from 'aws-sdk';
 import { lights } from '../utils/lights';
+import AWS from 'aws-sdk';
 import * as unleash from 'unleash-client';
 
 @ObjectType()
@@ -31,16 +31,15 @@ export class AuthResolver {
       throw new Error("Username, email, or password is incorrect.");
     }
 
-    const tokenData = await getToken(user);
+    const tokens = new TokenEntry(user);
 
     if (pushToken) {
-      setPushToken(user, pushToken);
+      user.pushToken = pushToken;
     }
 
-    return {
-      user: user,
-      tokens: tokenData
-    };
+    ctx.em.persistAndFlush([user, tokens]);
+
+    return { user, tokens };
   }
 
   @Mutation(() => Auth)
@@ -70,33 +69,23 @@ export class AuthResolver {
       throw new Error("No result from AWS");
     }
 
-    input.password = sha256(input.password);
+    wrap(user).assign({
+      ...input,
+      photoUrl: result.Location,
+      password: sha256(input.password)
+    });
 
-    wrap(user).assign({ ...input, photoUrl: result.Location });
+    const tokens = new TokenEntry(user);
 
-    // @TODO find a better way to handle unique key errors
-    try {
-      await ctx.em.persistAndFlush(user);
-    }
-    catch (error: any) {
-      if (error.detail) {
-        throw new Error(error.detail);
-      }
-      throw error;
-    }
+    await ctx.em.persistAndFlush([user, tokens]);
 
-    const tokenData = await getToken(user);
-
-    createVerifyEmailEntryAndSendEmail(user);
+    createVerifyEmailEntryAndSendEmail(user, ctx.em);
 
     if (unleash.isEnabled('lights')) {
       lights();
     }
 
-    return {
-      user: user,
-      tokens: tokenData
-    };
+    return { user, tokens };
   }
 
   @Mutation(() => Boolean)
@@ -105,7 +94,10 @@ export class AuthResolver {
     await ctx.em.removeAndFlush(ctx.token);
 
     if (isApp) {
-      setPushToken(ctx.user, null);
+      wrap(ctx.user).assign({
+        pushToken: null
+      });
+      await ctx.em.persistAndFlush(ctx.user);
     }
 
     return true;
@@ -120,7 +112,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   public async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string): Promise<boolean> {
-    const user: User | null = await getUserFromEmail(email);
+    const user = await ctx.em.findOne(User, { email }); 
 
     if (!user) {
       throw new Error("User does not exist");
@@ -157,7 +149,7 @@ export class AuthResolver {
 
     entry.user.password = sha256(input.password);
 
-    deactivateTokens(entry.user);
+    await ctx.em.nativeDelete(TokenEntry, { user: entry.user });
 
     ctx.em.remove(entry);
 

@@ -26,7 +26,7 @@ export class AccountResolver {
 
       wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
 
-      await createVerifyEmailEntryAndSendEmail(ctx.user);
+      await createVerifyEmailEntryAndSendEmail(ctx.user, ctx.em);
     }
 
     pubSub.publish("User" + ctx.user.id, ctx.user);
@@ -102,7 +102,7 @@ export class AccountResolver {
   public async resendEmailVarification(@Ctx() ctx: Context): Promise<boolean> {
     await ctx.em.nativeDelete(VerifyEmail, { user: ctx.user });
 
-    createVerifyEmailEntryAndSendEmail(ctx.user);
+    createVerifyEmailEntryAndSendEmail(ctx.user, ctx.em);
 
     return true;
   }
@@ -110,7 +110,7 @@ export class AccountResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async deleteAccount(@Ctx() ctx: Context): Promise<boolean> {
-    return await deleteUser(ctx.user);
+    return await deleteUser(ctx.user, ctx.em);
   }
 
   @Mutation(() => User)

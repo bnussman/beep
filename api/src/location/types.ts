@@ -14,27 +14,31 @@ export class PointType extends Type<Point | undefined, string | undefined> {
   }
 
   convertToJSValue(value: string | undefined): Point | undefined {
-      if (!value) {
-          return undefined;
-      }
+    if (!value) {
+      return undefined;
+    }
 
-      // @ts-expect-error YOUR TYPES ARE SO BAD WHAT ARE YOU DOING??
-      const { coordinates } = value.charAt(0) == 'P' ?
-          wkx.Geometry.parse(value).toGeoJSON() : 
-          wkx.Geometry.parse(Buffer.from(value, 'hex')).toGeoJSON();
+    if (typeof value === 'object') {
+      return value as Point;
+    }
 
-      return new Point(coordinates[0], coordinates[1]);
+    // @ts-expect-error YOUR TYPES ARE SO BAD WHAT ARE YOU DOING??
+    const { coordinates } = value.charAt(0) == 'P' ?
+      wkx.Geometry.parse(value).toGeoJSON() :
+      wkx.Geometry.parse(Buffer.from(value, 'hex')).toGeoJSON();
+
+    return new Point(coordinates[0], coordinates[1]);
   }
 
   convertToJSValueSQL(key: string): string {
-      return `ST_AsText(${key})`;
+    return `ST_AsText(${key})`;
   }
 
   convertToDatabaseValueSQL(key: string): string {
-      return `ST_PointFromText(${key})`;
+    return `ST_PointFromText(${key})`;
   }
 
   getColumnType(): string {
-      return 'geometry';
+    return 'geometry';
   }
 }
