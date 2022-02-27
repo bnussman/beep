@@ -19,7 +19,6 @@ import { ApolloServer, ExpressContext } from "apollo-server-express";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { Extra, useServer } from 'graphql-ws/lib/use/ws';
 import { Context, SubscribeMessage } from "graphql-ws";
-const WebSocketServer = ws.Server;
 
 function formatError(error: GraphQLError) {
   if (error?.message === "Argument Validation Error") {
@@ -62,24 +61,16 @@ async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Co
 }
 
 async function onSubscribe(
-  ctx: Context<Extra & Partial<Record<PropertyKey, never>>>,
+  { connectionParams }: Context<Extra & Partial<Record<PropertyKey, never>>>,
   msg: SubscribeMessage,
   schema: GraphQLSchema,
   orm: MikroORM<IDatabaseDriver<Connection>>
 ) {
-  const { connectionParams } = ctx;
-
-  // console.log("Client subscribed for", msg.payload.operationName, connectionParams);
-
   if (!connectionParams || !connectionParams.token) throw new Error("No auth token");
 
   const em = orm.em.fork();
 
   const tokenEntryResult = await em.findOne(TokenEntry, connectionParams.token as string, { populate: ['user'], cache: true });
-
-  // if (msg.payload.operationName === "UserUpdates") {
-  //   setTimeout(() => pubSub.publish(`User${tokenEntryResult?.user.id}`, tokenEntryResult?.user), 10);
-  // }
 
   if (tokenEntryResult) {
     return {
@@ -146,7 +137,7 @@ async function start() {
   const s = httpServer.listen(3001, () => {
     console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
 
-    const wsServer = new WebSocketServer({
+    const wsServer = new ws.Server({
       server: s,
       path: '/subscriptions',
     });
