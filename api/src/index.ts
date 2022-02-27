@@ -61,7 +61,7 @@ async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Co
 }
 
 async function onSubscribe(
-  { connectionParams }: Context<Extra>,
+  { connectionParams }: Context<Extra & Partial<Record<PropertyKey, unknown>>>,
   msg: SubscribeMessage,
   schema: GraphQLSchema,
   orm: MikroORM<IDatabaseDriver<Connection>>
