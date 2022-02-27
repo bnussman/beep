@@ -1,32 +1,32 @@
 {
-    "name": "@beep/monorepo",
-    "repository": "git@gitlab.nussman.us:beep-app/Beep.git",
-    "author": "Banks Nussman",
-    "workspaces": {
-        "packages": [
-            "./*"
-        ]
-    },
-    "scripts": {
-        "clean": "rm -rf node-modules/ && rm -rf app/node_modules/ && rm -rf website/node_modules && rm yarn.lock",
-        "build:api": "yarn workspace @beep/api build",
-        "build:website": "yarn workspace @beep/website notscbuild",
-        "build": "yarn build:api",
-        "dev": "yarn build:api && yarn start:all",
-        "start:all": "concurrently -n app,api,website -c blue,magenta,green \"yarn workspace @beep/app start\" \"yarn workspace @beep/api dev\" \"yarn workspace @beep/website dev\"",
-        "start:app": "yarn workspace @beep/app start",
-        "start:website": "yarn workspace @beep/website dev",
-        "start:api": "yarn workspace @beep/api start",
-        "codegen": "concurrently \"yarn workspace @beep/app codegen\" \"yarn workspace @beep/website codegen\""
-    },
-    "license": "SEE LICENSE IN LICENSE.MD",
-    "private": true,
-    "dependencies": {
-        "concurrently": "^6.5.1"
-    },
-    "resolutions": {
-        "react": "^17.0.1",
-        "react-dom": "^17.0.1",
-        "graphql-upload": "^12.0.0"
-    }
+  "name": "@beep/monorepo",
+  "repository": "git@gitlab.nussman.us:beep-app/Beep.git",
+  "author": "Banks Nussman",
+  "workspaces": {
+    "packages": [
+      "./*"
+    ]
+  },
+  "scripts": {
+    "clean": "rm -rf node-modules/ && rm -rf app/node_modules/ && rm -rf website/node_modules && rm yarn.lock",
+    "build:api": "yarn workspace @beep/api build",
+    "build:website": "yarn workspace @beep/website notscbuild",
+    "build": "yarn build:api",
+    "dev": "yarn build:api && yarn start:all",
+    "start:all": "concurrently -n app,api,website -c blue,magenta,green \"yarn workspace @beep/app start\" \"yarn workspace @beep/api dev\" \"yarn workspace @beep/website dev\"",
+    "start:app": "yarn workspace @beep/app start",
+    "start:website": "yarn workspace @beep/website dev",
+    "start:api": "yarn workspace @beep/api start",
+    "codegen": "concurrently \"yarn workspace @beep/app codegen\" \"yarn workspace @beep/website codegen\""
+  },
+  "license": "SEE LICENSE IN LICENSE.MD",
+  "private": true,
+  "dependencies": {
+    "concurrently": "^6.5.1"
+  },
+  "resolutions": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "graphql-upload": "^12.0.0"
+  }
 }
