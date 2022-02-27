@@ -42,22 +42,28 @@ function formatError(error: GraphQLError) {
 async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Connection>>) {
   RealSentry.configureScope(scope => scope.setTransactionName(data.req.body?.operationName));
 
-  const em = orm.em.fork();
+  const context = { em: orm.em.fork() };
 
-  const context = { em };
+  const bearer = data.req.get("Authorization")?.split(" ")[1];
 
-  const token = data.req.get("Authorization")?.split(" ")[1];
-
-  if (!token) return context;
-
-  const tokenEntryResult = await em.findOne(TokenEntry, token, { populate: ['user'], cache: true });
-
-  if (tokenEntryResult) {
-    Sentry.setUserContext(tokenEntryResult.user);
-    return { user: tokenEntryResult.user, token: tokenEntryResult, em };
+  if (!bearer) {
+    return context;
   }
 
-  return context;
+  const token = await orm.em.fork().findOne(
+    TokenEntry,
+    bearer,
+    {
+      populate: ['user'],
+      cache: true
+    }
+  );
+
+  if (token?.user) {
+    Sentry.setUserContext(token.user);
+  }
+
+  return { user: token?.user, token, ...context };
 }
 
 async function onSubscribe(
@@ -66,15 +72,24 @@ async function onSubscribe(
   schema: GraphQLSchema,
   orm: MikroORM<IDatabaseDriver<Connection>>
 ) {
-  if (!connectionParams || !connectionParams.token) throw new Error("No auth token");
+  const bearer = connectionParams?.token as string | undefined;
 
-  const em = orm.em.fork();
+  if (!bearer) {
+    throw new Error("No Authentication Token Provided");
+  }
 
-  const tokenEntryResult = await em.findOne(TokenEntry, connectionParams.token as string, { populate: ['user'], cache: true });
+  const token = await orm.em.fork().findOne(
+    TokenEntry,
+    bearer,
+    {
+      populate: ['user'],
+      cache: true
+    }
+  );
 
-  if (tokenEntryResult) {
+  if (token) {
     return {
-      contextValue: { user: tokenEntryResult.user, token: tokenEntryResult },
+      contextValue: { user: token.user, token },
       schema,
       document: parse(msg.payload.query),
       variableValues: msg.payload.variables
