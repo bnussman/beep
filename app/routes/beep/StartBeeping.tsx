@@ -249,17 +249,15 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   async function toggleSwitch(): Promise<void> {
     const willBeBeeping = !isBeeping;
+
     setIsBeeping((value) => !value);
 
-    if (willBeBeeping) {
-      if (!(await getBeepingLocationPermissions())) {
-        setIsBeeping((value) => !value);
-        alert("You must allow background location to start beeping!");
-        return;
-      }
-      startLocationTracking();
-    } else {
-      stopLocationTracking();
+    const hasLoactionPermission = await getBeepingLocationPermissions();
+
+    if (willBeBeeping && !hasLoactionPermission) {
+      setIsBeeping((value) => !value);
+      alert("You must allow background location to start beeping!");
+      return;
     }
 
     updateBeepSettings({
@@ -274,8 +272,10 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       .then(() => {
         if (willBeBeeping) {
           sub();
+          startLocationTracking();
         } else {
           if (unsubscribe) unsubscribe();
+          stopLocationTracking();
         }
       })
       .catch((error: ApolloError) => {
