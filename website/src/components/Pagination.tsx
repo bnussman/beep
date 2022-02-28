@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Box, Button, ButtonGroup, Flex, Spacer, Text } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Flex, Spacer, Text, useMediaQuery } from "@chakra-ui/react";
 
 interface PaginationProps {
   resultCount?: number;
@@ -27,9 +27,10 @@ interface PageButtonProps {
 
 function PageButton(props: PageButtonProps) {
   const { onClick, active, children, isDisabled } = props;
+  const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   return (
-    <Button onClick={onClick} _hover={isDisabled ? { cursor: 'default' } : undefined}>
+    <Button onClick={onClick} _hover={isDisabled ? { cursor: 'default' } : undefined} size={!isDesktop ? "sm": undefined}>
       <Text color={active ? "yellow.400" : undefined}>
         {children}
       </Text>
@@ -39,11 +40,13 @@ function PageButton(props: PageButtonProps) {
 
 function DirectionButton(props: DirectionButtonProps) {
   const { disabled, onClick, direction } = props;
+  const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   return (
     <Button
       disabled={disabled}
       onClick={onClick}
+      size={!isDesktop ? "sm": undefined}
     >
       {direction === 'right' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
     </Button>

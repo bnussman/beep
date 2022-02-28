@@ -13,17 +13,17 @@ export function Details({ user }: Props) {
     <Stack spacing={2}>
       <Box>
         <strong>Email:</strong>
-        <Flex direction="row" alignItems="center">
-          <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
-          <Text>{user.email}</Text>
-        </Flex>
+          <Text>
+            <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
+            {user.email}
+          </Text>
       </Box>
       <Box>
         <strong>Push Notification Token:</strong>
-        <Flex direction="row" alignItems="center">
+        <Text>
           <Indicator mr={2} color={user.pushToken ? "green" : "red"} />
-          <Text>{user.pushToken || "N/A"}</Text>
-        </Flex>
+          {user.pushToken || "N/A"}
+        </Text>
       </Box>
       <Box>
         <strong>Rating:</strong>

@@ -121,15 +121,13 @@ const tabs = [
 function User() {
   const { id } = useParams();
   const { data, loading, error, refetch } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
-  const [shouldBeLarge] = useMediaQuery('(min-width: 800px)')
+  const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   const user = data?.getUser;
 
   const toast = useToast();
   const navigate = useNavigate();
   const { tab } = useParams();
-
-  const buttonProps =  shouldBeLarge ? {} : { size: "sm" };
 
   const [remove, { loading: isDeleteLoading, error: deleteError }] = useMutation<RemoveUserMutation>(RemoveUser);
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
@@ -209,29 +207,31 @@ function User() {
         {deleteError && <Error error={deleteError} />}
         {clearError && <Error error={clearError} />}
         {verifyError && <Error error={verifyError} />}
-        <Flex align="center">
-          <Box>
-            <Avatar
-              src={user.photoUrl || ''}
-              size="2xl"
-            >
-              {user.isBeeping && <AvatarBadge boxSize="1.0em" bg="green.500" />}
-            </Avatar>
-          </Box>
-          <Box ml="4">
-            <Heading size="md">{user.name}</Heading>
-            <Text>@{user.username}</Text>
-            <Text fontSize="xs">{user.id}</Text>
-            {user.created && (<Text fontSize="xs">Joined {dayjs().to(user.created)}</Text>)}
-            <Stack direction="row" mt="2" mb="2">
-              {user.role === UserRole.ADMIN && <Badge variant="solid" colorScheme="red">admin</Badge>}
-              {user.isStudent && <Badge variant="solid" colorScheme="blue">student</Badge>}
-            </Stack>
-          </Box>
+        <Flex alignItems="center" flexWrap="wrap">
+          <Flex alignItems="center">
+            <Box mr={4}>
+              <Avatar
+                src={user.photoUrl || ''}
+                size={isDesktop ? "2xl" : "xl"}
+              >
+                {user.isBeeping && <AvatarBadge boxSize="1.0em" bg="green.500" />}
+              </Avatar>
+            </Box>
+            <Box>
+              <Heading size="md">{user.name}</Heading>
+              <Text>@{user.username}</Text>
+              <Text fontSize="xs" textOverflow="ellipsis">{user.id}</Text>
+              {user.created && (<Text fontSize="xs">Joined {dayjs().to(user.created)}</Text>)}
+              <Stack direction="row" mt="2" mb="2">
+                {user.role === UserRole.ADMIN && <Badge variant="solid" colorScheme="red">admin</Badge>}
+                {user.isStudent && <Badge variant="solid" colorScheme="blue">student</Badge>}
+              </Stack>
+            </Box>
+          </Flex>
           <Spacer />
-          <Box textAlign="right">
+          <Box py={4}>
             <NavLink to={`/admin/users/${user.id}/edit`}>
-              <Button m='1' {...buttonProps}>
+              <Button m='1'>
                 Edit
               </Button>
             </NavLink>
@@ -242,7 +242,6 @@ function User() {
                 leftIcon={<CheckIcon />}
                 onClick={onVerify}
                 isLoading={isVerifyLoading}
-                {...buttonProps}
               >
                 Verify
               </Button>
@@ -252,7 +251,6 @@ function User() {
               colorScheme="purple"
               onClick={onSendNotificationOpen}
               isDisabled={!user?.pushToken}
-              {...buttonProps}
             >
               Send Notification
             </Button>
@@ -260,7 +258,6 @@ function User() {
               m='1'
               colorScheme='blue'
               onClick={onClearOpen}
-              {...buttonProps}
             >
               Clear Queue
             </Button>
@@ -269,7 +266,6 @@ function User() {
               colorScheme="red"
               leftIcon={<DeleteIcon />}
               onClick={onDeleteOpen}
-              {...buttonProps}
             >
               Delete
             </Button>

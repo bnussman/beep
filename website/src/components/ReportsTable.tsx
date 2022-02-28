@@ -17,35 +17,35 @@ interface Props {
 }
 
 const Reports = gql`
-    query GetReports($id: String, $show: Int, $offset: Int) {
-        getReports(id: $id, show: $show, offset: $offset) {
-            items {
-                id
-                timestamp
-                reason
-                handled
-                handledBy {
-                  id
-                  name
-                  photoUrl
-                  username
-                }
-                reporter {
-                    id
-                    name
-                    photoUrl
-                    username
-                }
-                reported {
-                    id
-                    name
-                    photoUrl
-                    username
-                }
-            }
-            count
+query GetReports($id: String, $show: Int, $offset: Int) {
+  getReports(id: $id, show: $show, offset: $offset) {
+    items {
+        id
+        timestamp
+        reason
+        handled
+        handledBy {
+          id
+          name
+          photoUrl
+          username
         }
+        reporter {
+          id
+          name
+          photoUrl
+          username
+        }
+        reported {
+          id
+          name
+          photoUrl
+          username
+        }
+      }
+      count
     }
+  }
 `;
 
 function ReportsTable(props: Props) {
@@ -85,19 +85,20 @@ function ReportsTable(props: Props) {
         setCurrentPage={setCurrentPage}
         onPageChange={fetchReports}
       />
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Reporter</Th>
-            <Th>Reported User</Th>
-            <Th>Reason</Th>
-            <Th>Date</Th>
-            <Th>Done</Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data?.getReports && (data.getReports.items).map(report => (
+      <Box overflowX="auto">
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Reporter</Th>
+              <Th>Reported User</Th>
+              <Th>Reason</Th>
+              <Th>Date</Th>
+              <Th>Done</Th>
+              <Th></Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data?.getReports && (data.getReports.items).map(report => (
               <Tr key={report.id}>
                 <TdUser user={report.reporter} />
                 <TdUser user={report.reported} />
@@ -110,9 +111,10 @@ function ReportsTable(props: Props) {
                   </NavLink>
                 </Td>
               </Tr>
-          ))}
-        </Tbody>
-      </Table>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
       <Pagination
         resultCount={data?.getReports?.count}
         limit={pageLimit}
