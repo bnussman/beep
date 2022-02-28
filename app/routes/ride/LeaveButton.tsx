@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Alert } from "react-native";
+import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/config";
 import { gql, useMutation } from "@apollo/client";
 import { LeaveQueueMutation } from "../../generated/graphql";
 import { Button } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Alert } from "../../utils/Alert";
 
 const LeaveQueue = gql`
   mutation LeaveQueue($id: String!) {
@@ -25,7 +26,7 @@ function LeaveButton(props: Props): JSX.Element {
 
   function leaveQueueWrapper(): void {
     if (isMobile) {
-      Alert.alert(
+      NativeAlert.alert(
         "Leave Queue?",
         "Are you sure you want to leave this queue?",
         [
@@ -44,12 +45,10 @@ function LeaveButton(props: Props): JSX.Element {
 
   async function leaveQueue(): Promise<void> {
     setIsLoading(true);
-    try {
-      await leave();
-    } catch (error) {
-      alert(error);
+    leave().catch((error) => {
+      Alert(error);
       setIsLoading(false);
-    }
+    });
   }
 
   return (

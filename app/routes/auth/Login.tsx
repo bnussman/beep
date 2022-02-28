@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SplashScreen from "expo-splash-screen";
 import { isMobile } from "../../utils/config";
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation } from "../../generated/graphql";
 import { client, wsLink } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
@@ -20,6 +20,7 @@ import {
   Box,
 } from "native-base";
 import PasswordInput from "../../components/PasswordInput";
+import { Alert } from "../../utils/Alert";
 
 interface Props {
   navigation: Navigation;
@@ -72,31 +73,31 @@ function LoginScreen(props: Props): JSX.Element {
   }, []);
 
   async function doLogin() {
-    try {
-      const data = await login({
-        variables: {
-          username: username,
-          password: password,
-          pushToken: isMobile ? await getPushToken() : undefined,
-        },
+    login({
+      variables: {
+        username: username,
+        password: password,
+        pushToken: isMobile ? await getPushToken() : undefined,
+      },
+    })
+      .then(async (data) => {
+        await AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
+
+        client.writeQuery({
+          query: UserData,
+          data: { getUser: data.data?.login.user },
+        });
+
+        wsLink.client.restart();
+
+        props.navigation.reset({
+          index: 0,
+          routes: [{ name: "Main" }],
+        });
+      })
+      .catch((error: ApolloError) => {
+        Alert(error);
       });
-
-      await AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
-
-      client.writeQuery({
-        query: UserData,
-        data: { getUser: data.data?.login.user },
-      });
-
-      wsLink.client.restart();
-
-      props.navigation.reset({
-        index: 0,
-        routes: [{ name: "Main" }],
-      });
-    } catch (error) {
-      alert(error.message);
-    }
   }
 
   return (

@@ -5,10 +5,9 @@ import ActionButton from "../../components/ActionButton";
 import AcceptDenyButton from "../../components/AcceptDenyButton";
 import Logger from "../../utils/Logger";
 import { isAndroid } from "../../utils/config";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
-import { Tag } from "../ride/Tags";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { UserData } from "../../App";
@@ -20,7 +19,7 @@ import {
 import {
   Linking,
   Platform,
-  Alert,
+  Alert as NativeAlert,
   AppState,
   AppStateStatus,
   Pressable,
@@ -43,6 +42,7 @@ import {
   Divider,
 } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Alert } from "../../utils/Alert";
 
 interface Props {
   navigation: Navigation;
@@ -194,7 +194,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   function toggleSwitchWrapper(): void {
     if (isAndroid && !isBeeping) {
-      Alert.alert(
+      NativeAlert.alert(
         "Background Location Notice",
         "Ride Beep App collects location data to enable ETAs for riders when your are beeping and the app is closed or not in use",
         [
@@ -262,26 +262,26 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       stopLocationTracking();
     }
 
-    try {
-      await updateBeepSettings({
-        variables: {
-          isBeeping: willBeBeeping,
-          singlesRate: Number(singlesRate),
-          groupRate: Number(groupRate),
-          masksRequired: masksRequired,
-          capacity: Number(capacity),
-        },
+    updateBeepSettings({
+      variables: {
+        isBeeping: willBeBeeping,
+        singlesRate: Number(singlesRate),
+        groupRate: Number(groupRate),
+        masksRequired: masksRequired,
+        capacity: Number(capacity),
+      },
+    })
+      .then(() => {
+        if (willBeBeeping) {
+          sub();
+        } else {
+          if (unsubscribe) unsubscribe();
+        }
+      })
+      .catch((error: ApolloError) => {
+        setIsBeeping((value) => !value);
+        Alert(error);
       });
-
-      if (willBeBeeping) {
-        sub();
-      } else {
-        if (unsubscribe) unsubscribe();
-      }
-    } catch (error) {
-      setIsBeeping((value) => !value);
-      alert(error.message);
-    }
   }
 
   async function startLocationTracking(): Promise<void> {
@@ -673,6 +673,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
   }
 
   if (data) {
+    // @ts-expect-error dumb
     const { locations } = data;
     try {
       await client.mutate({

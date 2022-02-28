@@ -1,13 +1,9 @@
 import React, { useRef, useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import { ChangePasswordMutation } from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
 import { Input, Button, Stack } from "native-base";
 import { Container } from "../../components/Container";
-
-interface Props {
-  navigation: Navigation;
-}
+import { Alert } from "../../utils/Alert";
 
 const ChangePassword = gql`
   mutation ChangePassword($password: String!) {
@@ -15,7 +11,7 @@ const ChangePassword = gql`
   }
 `;
 
-export function ChangePasswordScreen(props: Props): JSX.Element {
+export function ChangePasswordScreen(): JSX.Element {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [changePassword, { loading }] =
@@ -23,18 +19,19 @@ export function ChangePasswordScreen(props: Props): JSX.Element {
   const confirmPasswordRef = useRef<any>();
 
   async function handleChangePassword() {
-    try {
-      await changePassword({
-        variables: {
-          password: password,
-        },
+    changePassword({
+      variables: {
+        password: password,
+      },
+    })
+      .then(() => {
+        alert("Successfully changed your password.");
+        setPassword("");
+        setConfirmPassword("");
+      })
+      .catch((error: ApolloError) => {
+        Alert(error);
       });
-      alert("Successfully changed your password.");
-      setPassword("");
-      setConfirmPassword("");
-    } catch (error) {
-      alert(error);
-    }
   }
 
   return (

@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 import { QueueEntry } from "../generated/graphql";
 import { isMobile } from "../utils/config";
 import { client } from "../utils/Apollo";
-import { gql } from "@apollo/client";
+import { ApolloError, gql } from "@apollo/client";
 import { Button } from "native-base";
 
 interface Props {
@@ -100,18 +100,16 @@ class ActionButton extends Component<Props, State> {
     riderId: string,
     value: string | boolean
   ): Promise<void> {
-    try {
-      await client.mutate({
+    client
+      .mutate({
         mutation: UpdateBeeperQueue,
         variables: {
           queueId: id,
           riderId: riderId,
           value: value,
         },
-      });
-    } catch (error) {
-      alert(error);
-    }
+      })
+      .catch((error: ApolloError) => alert(error.message));
   }
 
   cancel(): void {

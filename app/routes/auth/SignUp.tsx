@@ -141,7 +141,7 @@ export function SignUpScreen(props: Props): JSX.Element {
           routes: [{ name: "Main" }],
         });
       })
-      .catch((error) => Alert("Error", error));
+      .catch((error) => Alert(error));
   };
 
   const chooseProfilePhoto = async () => {

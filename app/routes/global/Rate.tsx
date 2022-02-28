@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import { RateUserMutation } from "../../generated/graphql";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
 import { Navigation } from "../../utils/Navigation";
 import { Button, Input, Stack } from "native-base";
 import { Container } from "../../components/Container";
+import { Alert } from "../../utils/Alert";
 
 interface Props {
   route: any;
@@ -36,20 +37,21 @@ export function RateScreen(props: Props): JSX.Element {
   const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
 
   async function rateUser() {
-    try {
-      await rate({
-        refetchQueries: () => ["GetRateData"],
-        variables: {
-          userId: props.route.params.user.id,
-          beepId: props.route.params.beep,
-          message: message,
-          stars: stars,
-        },
+    rate({
+      refetchQueries: () => ["GetRateData"],
+      variables: {
+        userId: props.route.params.user.id,
+        beepId: props.route.params.beep,
+        message: message,
+        stars: stars,
+      },
+    })
+      .then(() => {
+        props.navigation.goBack();
+      })
+      .catch((error: ApolloError) => {
+        Alert(error);
       });
-      props.navigation.goBack();
-    } catch (error) {
-      alert(error);
-    }
   }
 
   return (

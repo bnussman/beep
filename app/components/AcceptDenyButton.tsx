@@ -3,6 +3,7 @@ import { Button } from "native-base";
 import { gql, useMutation } from "@apollo/client";
 import { UpdateBeeperQueueMutation } from "../generated/graphql";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Alert } from "../utils/Alert";
 
 interface Props {
   type: string;
@@ -34,18 +35,16 @@ function AcceptDenyButton(props: Props): JSX.Element {
   ): Promise<void> {
     setLoading(true);
 
-    try {
-      await update({
-        variables: {
-          queueId: queueId,
-          riderId: riderId,
-          value: value,
-        },
-      });
-    } catch (error) {
-      alert(error.message);
+    update({
+      variables: {
+        queueId: queueId,
+        riderId: riderId,
+        value: value,
+      },
+    }).catch((error) => {
+      Alert(error);
       setLoading(false);
-    }
+    });
   }
 
   return (

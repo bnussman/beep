@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable } from "react-native";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { Navigation } from "../../utils/Navigation";
 import { ReactNativeFile } from "apollo-upload-client";
 import * as mime from "react-native-mime-types";
@@ -23,6 +23,7 @@ import {
   Flex,
   Spacer,
 } from "native-base";
+import { Alert } from "../../utils/Alert";
 
 interface Props {
   navigation: Navigation;
@@ -154,8 +155,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
         },
       });
     } catch (error) {
-      console.log(error);
-      alert(error.message);
+      Alert(error as ApolloError);
     }
 
     setPhoto(undefined);
@@ -163,21 +163,15 @@ export function EditProfileScreen(props: Props): JSX.Element {
   }
 
   async function handleUpdate() {
-    try {
-      await edit({
-        variables: {
-          first: first,
-          last: last,
-          email: email,
-          phone: phone,
-          venmo: venmo,
-          cashapp: cashapp,
-        },
+    edit({
+      variables: { first, last, email, phone, venmo, cashapp },
+    })
+      .then(() => {
+        alert("Successfully updated profile");
+      })
+      .catch((error: ApolloError) => {
+        Alert(error);
       });
-      alert("Successfully updated profile");
-    } catch (error) {
-      alert(error.message);
-    }
   }
 
   return (

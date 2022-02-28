@@ -5,7 +5,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIc
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";
 import { Share, Linking, AppState, AppStateStatus } from "react-native";
-import { gql, useLazyQuery, useQuery } from "@apollo/client";
+import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
 import { client } from "../../utils/Apollo";
 import { RateCard } from "../../components/RateCard";
@@ -34,6 +34,7 @@ import {
   VStack,
 } from "native-base";
 import LocationInput from "../../components/LocationInput";
+import { Alert } from "../../utils/Alert";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -288,8 +289,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
 
       subscribeToRiderStatus();
     } catch (error) {
-      // @ts-expect-error sad
-      alert(error.message);
+      Alert(error as ApolloError);
     }
     setIsGetBeepLoading(false);
   }

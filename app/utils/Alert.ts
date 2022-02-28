@@ -6,17 +6,17 @@ const doAlert = isMobile
   ? NativeAlert.alert
   : (title: string, body: string) => alert(body);
 
-export function Alert(title: string, error: ApolloError) {
+export function Alert(error: ApolloError, title = "Error") {
   if (error?.message === "Validation Error") {
     const errors = error?.graphQLErrors[0]?.extensions;
 
-    let output = "";
+    const keys = Object.keys(errors);
 
-    for (const key of Object.keys(errors)) {
-      output += errors[key][0] + "\n";
-    }
+    const output = keys.map((key) => {
+      return errors[key][0] as string;
+    });
 
-    doAlert(title, output);
+    doAlert(title, output.join("\n"));
     return;
   }
 
