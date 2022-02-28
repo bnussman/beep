@@ -49,6 +49,7 @@ function AcceptDenyButton(props: Props): JSX.Element {
 
   return (
     <Button
+      flex={isAccept ? 1 : undefined}
       colorScheme={isAccept ? "green" : "red"}
       _text={{ color: "white" }}
       isLoading={loading}
@@ -63,7 +64,7 @@ function AcceptDenyButton(props: Props): JSX.Element {
         />
       }
     >
-      {isAccept ? "Accept" : ""}
+      {isAccept ? "Accept" : "Deny"}
     </Button>
   );
 }

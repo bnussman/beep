@@ -6,3 +6,5 @@ export const isMobile: boolean =
 export const isAndroid: boolean = Platform.OS == "android";
 
 export const isIOS: boolean = Platform.OS == "ios";
+
+export type Unpacked<T> = T extends (infer U)[] ? U : T;

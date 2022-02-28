@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { Alert } from "react-native";
-import { QueueEntry } from "../generated/graphql";
-import { isMobile } from "../utils/config";
+import { GetInitialQueueQuery } from "../generated/graphql";
+import { isMobile, Unpacked } from "../utils/config";
 import { client } from "../utils/Apollo";
 import { ApolloError, gql } from "@apollo/client";
 import { Button } from "native-base";
 
 interface Props {
-  item: QueueEntry;
+  item: Unpacked<GetInitialQueueQuery["getQueue"]>;
   index: number;
 }
 

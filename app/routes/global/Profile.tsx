@@ -124,7 +124,7 @@ export function ProfileScreen(props: Props): JSX.Element {
               >
                 Report User
               </Button>
-              <Button variant="subtle" onPress={() => handleRate()}>
+              <Button colorScheme="blue" onPress={() => handleRate()}>
                 Rate User
               </Button>
             </HStack>

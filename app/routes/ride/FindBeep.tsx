@@ -448,13 +448,13 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             </Box>
           )}
           {beep.position > 0 ? (
-            <>
-              <Text>{beep.position}</Text>
+            <Center mb={4}>
+              <Heading>{beep.position}</Heading>
               <Text>
                 {beep.position === 1 ? "person is" : "people are"} ahead of you
                 in {beep.beeper.first || "User"}&apos;s queue.
               </Text>
-            </>
+            </Center>
           ) : null}
           <VStack space={2} w="90%">
             <Button

@@ -13,6 +13,8 @@ import {
   Avatar,
   Flex,
   Box,
+  Heading,
+  HStack,
 } from "native-base";
 
 interface Props {
@@ -69,27 +71,43 @@ export function BeepsScreen(props: Props): JSX.Element {
           props.navigation.push("Profile", { id: otherUser.id, beep: item.id })
         }
       >
-        <Flex direction="row" alignItems="center" p={2}>
-          <Avatar
-            size={50}
-            mr={2}
-            source={{
-              uri: otherUser.photoUrl ? otherUser.photoUrl : undefined,
-            }}
-          />
-          <Box>
-            <Text>
+        <Box
+          mx={4}
+          my={2}
+          px={4}
+          py={4}
+          _light={{ bg: "coolGray.100" }}
+          _dark={{ bg: "gray.900" }}
+          rounded="lg"
+        >
+          <HStack alignItems="center">
+            <Avatar
+              size={35}
+              mr={2}
+              source={{
+                uri: otherUser.photoUrl ? otherUser.photoUrl : undefined,
+              }}
+            />
+            <Heading size="md">
               {user?.id === item.rider.id
                 ? `${otherUser.name} beeped you`
                 : `You beeped ${otherUser.name}`}
-            </Text>
-            <Text>{`Group size: ${item.groupSize}\nOrigin: ${
-              item.origin
-            }\nDestination: ${item.destination}\nDate: ${new Date(
-              item.start
-            ).toLocaleString()}`}</Text>
-          </Box>
-        </Flex>
+            </Heading>
+          </HStack>
+          <Text>
+            <Text bold>Group size:</Text> <Text>{item.groupSize}</Text>
+          </Text>
+          <Text>
+            <Text bold>Pick Up:</Text> <Text>{item.origin}</Text>
+          </Text>
+          <Text>
+            <Text bold>Drop Off:</Text> <Text>{item.destination}</Text>
+          </Text>
+          <Text>
+            <Text bold>Date:</Text>{" "}
+            <Text>{new Date(item.start).toLocaleString()}</Text>
+          </Text>
+        </Box>
       </Pressable>
     );
   };
@@ -114,12 +132,7 @@ export function BeepsScreen(props: Props): JSX.Element {
   if (beeps && beeps.items.length > 0) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <FlatList
-          w="100%"
-          data={beeps.items}
-          ItemSeparatorComponent={Divider}
-          renderItem={renderItem}
-        />
+        <FlatList w="100%" data={beeps.items} renderItem={renderItem} />
       </Container>
     );
   }

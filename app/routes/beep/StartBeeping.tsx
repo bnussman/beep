@@ -1,48 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import ActionButton from "../../components/ActionButton";
-import AcceptDenyButton from "../../components/AcceptDenyButton";
 import Logger from "../../utils/Logger";
-import { isAndroid } from "../../utils/config";
+import { isAndroid, Unpacked } from "../../utils/config";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { UserData } from "../../App";
+import { Alert } from "../../utils/Alert";
+import { QueueItem } from "./QueueItem";
+import { Alert as NativeAlert, AppState, AppStateStatus } from "react-native";
 import {
   GetInitialQueueQuery,
   UpdateBeepSettingsMutation,
   UserDataQuery,
 } from "../../generated/graphql";
 import {
-  Linking,
-  Platform,
-  Alert as NativeAlert,
-  AppState,
-  AppStateStatus,
-  Pressable,
-} from "react-native";
-import {
-  Avatar,
   Input,
   Switch,
   Text,
   Checkbox,
-  Button,
   Heading,
   FormControl,
   Stack,
-  Flex,
-  VStack,
-  HStack,
-  Box,
   FlatList,
   Divider,
 } from "native-base";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Alert } from "../../utils/Alert";
 
 interface Props {
   navigation: Navigation;
@@ -169,9 +154,6 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   const queue = data?.getQueue;
 
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
-
   useEffect(() => {
     AppState.addEventListener("change", _handleAppStateChange);
 
@@ -181,15 +163,9 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   }, []);
 
   const _handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.current.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
+    if (nextAppState === "active") {
       refetch();
     }
-
-    appState.current = nextAppState;
-    setAppStateVisible(appState.current);
   };
 
   function toggleSwitchWrapper(): void {
@@ -344,41 +320,6 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       },
     });
   }
-
-  function handleDirections(origin: string, dest: string): void {
-    if (Platform.OS == "ios") {
-      Linking.openURL(`http://maps.apple.com/?saddr=${origin}&daddr=${dest}`);
-    } else {
-      Linking.openURL(`https://www.google.com/maps/dir/${origin}/${dest}/`);
-    }
-  }
-
-  function handleVenmo(groupSize: string | number, venmo: string): void {
-    if (Number(groupSize) > 1) {
-      Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${
-          (user?.groupRate || 0) * Number(groupSize)
-        }&note=Beep`
-      );
-    } else {
-      Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user?.singlesRate}&note=Beep`
-      );
-    }
-  }
-
-  function handleCashApp(groupSize: string | number, cashapp: string): void {
-    if (Number(groupSize) > 1) {
-      Linking.openURL(
-        `https://cash.app/$${cashapp}/${
-          Number(groupSize) * (user?.groupRate || 0)
-        }`
-      );
-    } else {
-      Linking.openURL(`https://cash.app/$${cashapp}/${user?.singlesRate || 0}`);
-    }
-  }
-
   if (!isBeeping) {
     return (
       <Container keyboard alignItems="center">
@@ -438,216 +379,22 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       return (
         <Container alignItems="center">
           <FlatList
-            w="96%"
+            w="100%"
             data={data?.getQueue}
             keyExtractor={(item) => item.id}
-            ItemSeparatorComponent={Divider}
-            renderItem={({ item, index }) =>
-              item.isAccepted ? (
-                <>
-                  <Flex
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                  >
-                    <Box>
-                      <Pressable
-                        onPress={() =>
-                          props.navigation.navigate("Profile", {
-                            id: item.rider.id,
-                            beep: item.id,
-                          })
-                        }
-                      >
-                        <Flex direction="row" alignItems="center">
-                          <Avatar
-                            size={50}
-                            mr={2}
-                            source={{
-                              uri: item.rider.photoUrl
-                                ? item.rider.photoUrl
-                                : undefined,
-                            }}
-                          />
-                          <Text bold fontSize="xl">
-                            {item.rider.name}
-                          </Text>
-                        </Flex>
-                      </Pressable>
-                      <Flex direction="row" alignItems="center">
-                        <Text bold mr={2}>
-                          Group Size
-                        </Text>
-                        <Text>{item.groupSize}</Text>
-                      </Flex>
-                      <Flex direction="row" alignItems="center">
-                        <Text bold mr={2}>
-                          Pick Up
-                        </Text>
-                        <Text>{item.origin}</Text>
-                      </Flex>
-                      <Flex direction="row" alignItems="center">
-                        <Text bold mr={2}>
-                          Drop Off
-                        </Text>
-                        <Text>{item.destination}</Text>
-                      </Flex>
-                    </Box>
-                    <HStack space={2}>
-                      <Button
-                        onPress={() => {
-                          Linking.openURL("tel:" + item.rider.phone);
-                        }}
-                        endIcon={
-                          <MaterialCommunityIcons
-                            name="phone"
-                            color="white"
-                            size={22}
-                          />
-                        }
-                      />
-                      <Button
-                        onPress={() => {
-                          Linking.openURL("sms:" + item.rider.phone);
-                        }}
-                        endIcon={
-                          <MaterialCommunityIcons
-                            name="message-text"
-                            color="white"
-                            size={22}
-                          />
-                        }
-                      />
-                    </HStack>
-                  </Flex>
-                  <VStack space={2}>
-                    {item.rider?.venmo ? (
-                      <Button
-                        colorScheme="blue"
-                        variant="subtle"
-                        onPress={() =>
-                          handleVenmo(item.groupSize, item.rider.venmo!)
-                        }
-                      >
-                        Request Money from Rider with Venmo
-                      </Button>
-                    ) : null}
-                    {item.rider?.cashapp ? (
-                      <Button
-                        colorScheme="green"
-                        variant="subtle"
-                        onPress={() =>
-                          handleCashApp(item.groupSize, item.rider.cashapp!)
-                        }
-                      >
-                        Request Money from Rider with Cash App
-                      </Button>
-                    ) : null}
-                    {item.state <= 1 ? (
-                      <Button
-                        colorScheme="tertiary"
-                        onPress={() =>
-                          handleDirections("Current+Location", item.origin)
-                        }
-                        endIcon={
-                          <MaterialCommunityIcons
-                            name="map-legend"
-                            color="white"
-                            size={22}
-                          />
-                        }
-                      >
-                        Get Directions to Rider
-                      </Button>
-                    ) : (
-                      <Button
-                        onPress={() =>
-                          handleDirections(item.origin, item.destination)
-                        }
-                        endIcon={
-                          <MaterialCommunityIcons
-                            name="map-legend"
-                            color="white"
-                            size={22}
-                          />
-                        }
-                      >
-                        Get Directions for Beep
-                      </Button>
-                    )}
-                    <ActionButton item={item} index={index} />
-                  </VStack>
-                </>
-              ) : (
-                <Flex
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Box>
-                    <Pressable
-                      onPress={() =>
-                        props.navigation.navigate("Profile", {
-                          id: item.rider.id,
-                          beep: item.id,
-                        })
-                      }
-                    >
-                      <Flex direction="row" alignItems="center">
-                        <Avatar
-                          mr={2}
-                          size={50}
-                          source={{
-                            uri: item.rider.photoUrl
-                              ? item.rider.photoUrl
-                              : undefined,
-                          }}
-                        />
-                        <Heading size="md">{item.rider.name}</Heading>
-                      </Flex>
-                    </Pressable>
-                    <Flex direction="row" alignItems="center">
-                      <Text bold mr={2}>
-                        Entered Queue
-                      </Text>
-                      <Text>
-                        {new Date(item.start * 1000).toLocaleString("en-US", {
-                          hour: "numeric",
-                          minute: "numeric",
-                          hour12: true,
-                        })}
-                      </Text>
-                    </Flex>
-                    <Flex direction="row" alignItems="center">
-                      <Text bold mr={2}>
-                        Group Size
-                      </Text>
-                      <Text>{item.groupSize}</Text>
-                    </Flex>
-                    <Flex direction="row" alignItems="center">
-                      <Text bold mr={2}>
-                        Origin
-                      </Text>
-                      <Text>{item.origin}</Text>
-                    </Flex>
-                    <Flex direction="row" alignItems="center">
-                      <Text bold mr={2}>
-                        Destination
-                      </Text>
-                      <Text>{item.destination}</Text>
-                    </Flex>
-                  </Box>
-                  {queue.filter(
-                    (entry) => entry.start < item.start && !entry.isAccepted
-                  ).length === 0 ? (
-                    <HStack space={2}>
-                      <AcceptDenyButton type="deny" item={item} />
-                      <AcceptDenyButton type="accept" item={item} />
-                    </HStack>
-                  ) : null}
-                </Flex>
-              )
-            }
+            renderItem={({
+              item,
+              index,
+            }: {
+              item: Unpacked<GetInitialQueueQuery["getQueue"]>;
+              index: number;
+            }) => (
+              <QueueItem
+                item={item}
+                index={index}
+                navigation={props.navigation}
+              />
+            )}
           />
         </Container>
       );
