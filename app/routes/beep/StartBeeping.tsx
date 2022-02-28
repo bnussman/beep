@@ -222,7 +222,14 @@ export function StartBeepingScreen(props: Props): JSX.Element {
         />
       ),
     });
-  }, [props.navigation, isBeeping]);
+  }, [
+    props.navigation,
+    isBeeping,
+    capacity,
+    singlesRate,
+    groupRate,
+    masksRequired,
+  ]);
 
   async function getBeepingLocationPermissions(): Promise<boolean> {
     //Temporary fix for being able to toggle beeping in dev

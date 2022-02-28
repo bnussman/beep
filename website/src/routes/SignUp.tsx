@@ -114,7 +114,7 @@ function SignUp() {
   return (
     <Box>
       {error && <Error error={error} />}
-      {photoError && <Error error={{ message: "Please pick a profile photo" }} />}
+      {photoError && <Error>Please pick a profile photo</Error>}
       <Alert mb={4} status="info">
         <AlertIcon />
         <Text>

@@ -20,6 +20,8 @@ export class BeeperSettingsInput implements Partial<User> {
   public groupRate?: number;
 
   @Field({ nullable: true })
+  @Max(100)
+  @Min(0)
   @IsNumber()
   @IsOptional()
   public capacity?: number;

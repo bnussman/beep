@@ -23,9 +23,7 @@ interface Props {
 }
 
 export function RateCard(props: Props): JSX.Element | null {
-  const { data, loading } = useQuery<GetRateDataQuery>(GetRateData, {
-    fetchPolicy: "no-cache",
-  });
+  const { data, loading } = useQuery<GetRateDataQuery>(GetRateData);
 
   if (loading || !data?.getLastBeepToRate) return null;
 

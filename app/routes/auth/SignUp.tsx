@@ -22,6 +22,7 @@ import {
   VStack,
   Center,
 } from "native-base";
+import { Alert } from "../../utils/Alert";
 
 interface Props {
   navigation: Navigation;
@@ -140,7 +141,7 @@ export function SignUpScreen(props: Props): JSX.Element {
           routes: [{ name: "Main" }],
         });
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => Alert("Error", error));
   };
 
   const chooseProfilePhoto = async () => {

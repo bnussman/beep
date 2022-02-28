@@ -16,7 +16,7 @@ import { ValidationError } from 'class-validator';
 import { createServer } from 'http';
 import { graphqlUploadExpress } from "graphql-upload";
 import { ApolloServer, ExpressContext } from "apollo-server-express";
-import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
+import { ApolloError, ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { Context, SubscribeMessage } from "graphql-ws";
 
@@ -24,16 +24,17 @@ function formatError(error: GraphQLError) {
   if (error?.message === "Argument Validation Error") {
     const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
 
-    let output: string[] = [];
+    const output: { [key: string]: string[] } = {};
 
     for (const error of errors) {
       if (!error.constraints) continue;
 
       const items = Object.values<string>(error.constraints);
 
-      output = [...output, ...items];
+      output[error.property] = items;
     }
-    return new Error(output.toString());
+
+    return new ApolloError("Validation Error", undefined, output);
   }
 
   return error;

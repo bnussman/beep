@@ -118,7 +118,7 @@ function LoginScreen(props: Props): JSX.Element {
               placeholder="Username or Email"
               returnKeyType="next"
               onChangeText={(text) => setUsername(text)}
-              onSubmitEditing={() => passwordRef.current.focus()}
+              onSubmitEditing={() => passwordRef?.current?.focus()}
             />
             <PasswordInput
               size="lg"
