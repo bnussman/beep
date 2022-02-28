@@ -43,7 +43,9 @@ function formatError(error: GraphQLError) {
 async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Connection>>) {
   RealSentry.configureScope(scope => scope.setTransactionName(data.req.body?.operationName));
 
-  const context = { em: orm.em.fork() };
+  const em = orm.em.fork();
+
+  const context = { em };
 
   const bearer = data.req.get("Authorization")?.split(" ")[1];
 
@@ -51,7 +53,7 @@ async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Co
     return context;
   }
 
-  const token = await orm.em.fork().findOne(
+  const token = await em.findOne(
     TokenEntry,
     bearer,
     {
@@ -62,9 +64,11 @@ async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Co
 
   if (token?.user) {
     Sentry.setUserContext(token.user);
+
+    return { user: token.user, token, em };
   }
 
-  return { user: token?.user, token, ...context };
+  return context;
 }
 
 async function onSubscribe(
