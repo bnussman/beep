@@ -77,19 +77,20 @@ function Ratings() {
         setCurrentPage={setCurrentPage}
         onPageChange={fetchRatings}
       />
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Rater</Th>
-            <Th>Rated</Th>
-            <Th>Message</Th>
-            <Th>Stars</Th>
-            <Th>Date</Th>
-            <Th> </Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data?.getRatings && (data.getRatings.items).map(rating => (
+      <Box overflowX="auto">
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Rater</Th>
+              <Th>Rated</Th>
+              <Th>Message</Th>
+              <Th>Stars</Th>
+              <Th>Date</Th>
+              <Th> </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data?.getRatings && (data.getRatings.items).map(rating => (
               <Tr key={rating.id}>
                 <TdUser user={rating.rater} />
                 <TdUser user={rating.rated} />
@@ -102,9 +103,10 @@ function Ratings() {
                   </NavLink>
                 </Td>
               </Tr>
-          ))}
-        </Tbody>
-      </Table>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
       {loading && <Loading />}
       <Pagination
         resultCount={data?.getRatings.count}

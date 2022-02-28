@@ -65,40 +65,42 @@ function Beeps() {
         setCurrentPage={setCurrentPage}
         onPageChange={fetchBeeps}
       />
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Beeper</Th>
-            <Th>Rider</Th>
-            <Th>Origin</Th>
-            <Th>Destination</Th>
-            <Th>Group Size</Th>
-            <Th>Start Time</Th>
-            <Th>End Time</Th>
-            <Th>Duration</Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data?.getBeeps && (data.getBeeps.items).map(entry => (
-            <Tr key={entry.id}>
-              <TdUser user={entry.beeper} />
-              <TdUser user={entry.rider} />
-              <Td>{entry.origin}</Td>
-              <Td>{entry.destination}</Td>
-              <Td>{entry.groupSize}</Td>
-              <Td>{dayjs().to(entry.start)}</Td>
-              <Td>{dayjs().to(entry.end)}</Td>
-              <Td>{dayjs.duration(new Date(entry.end).getTime() - new Date(entry.start).getTime()).humanize()}</Td>
-              <Td>
-                <Link to={entry.id}>
-                  <ExternalLinkIcon />
-                </Link>
-              </Td>
+      <Box overflowX="auto">
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Beeper</Th>
+              <Th>Rider</Th>
+              <Th>Origin</Th>
+              <Th>Destination</Th>
+              <Th>Group Size</Th>
+              <Th>Start Time</Th>
+              <Th>End Time</Th>
+              <Th>Duration</Th>
+              <Th></Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {data?.getBeeps && (data.getBeeps.items).map(entry => (
+              <Tr key={entry.id}>
+                <TdUser user={entry.beeper} />
+                <TdUser user={entry.rider} />
+                <Td>{entry.origin}</Td>
+                <Td>{entry.destination}</Td>
+                <Td>{entry.groupSize}</Td>
+                <Td>{dayjs().to(entry.start)}</Td>
+                <Td>{dayjs().to(entry.end)}</Td>
+                <Td>{dayjs.duration(new Date(entry.end).getTime() - new Date(entry.start).getTime()).humanize()}</Td>
+                <Td>
+                  <Link to={entry.id}>
+                    <ExternalLinkIcon />
+                  </Link>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
       {loading && <Loading />}
       <Pagination
         resultCount={data?.getBeeps.count}

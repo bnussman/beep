@@ -77,30 +77,32 @@ function Beepers() {
       <Flex align="center">
         <Heading>Beepers</Heading>
         <Badge ml={2}>
-            {String(data?.getBeeperList.length || 0)}
+          {String(data?.getBeeperList.length || 0)}
         </Badge>
       </Flex>
       <BeepersMap beepers={data?.getBeeperList as User[]} />
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Beeper</Th>
-            <Th>Queue size</Th>
-            <Th>Ride capacity</Th>
-            <Th>Rate</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data?.getBeeperList && (data.getBeeperList).map(beeper => (
-            <Tr key={beeper.id}>
-              <TdUser user={beeper} />
-              <Td>{beeper.queueSize} riders</Td>
-              <Td>{beeper.capacity} riders</Td>
-              <Td>${beeper.singlesRate} / ${beeper.groupRate}</Td>
+      <Box overflowX="auto">
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Beeper</Th>
+              <Th>Queue size</Th>
+              <Th>Ride capacity</Th>
+              <Th>Rate</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {data?.getBeeperList && (data.getBeeperList).map(beeper => (
+              <Tr key={beeper.id}>
+                <TdUser user={beeper} />
+                <Td>{beeper.queueSize} riders</Td>
+                <Td>{beeper.capacity} riders</Td>
+                <Td>${beeper.singlesRate} / ${beeper.groupRate}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
     </Box>
   );
 }

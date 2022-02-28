@@ -91,8 +91,8 @@ function Notifications() {
             onChange={formik.handleChange}
           />
         </FormControl>
-        <Button onClick={onOpen} rightIcon={<EmailIcon />}>Send</Button>
       </Stack>
+      <Button colorScheme="purple" onClick={onOpen} rightIcon={<EmailIcon />} mt={4}>Send</Button>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}

@@ -83,35 +83,37 @@ function Reports() {
         setCurrentPage={setCurrentPage}
         onPageChange={fetchReports}
       />
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Reporter</Th>
-            <Th>Reported</Th>
-            <Th>Reason</Th>
-            <Th>Date</Th>
-            <Th>Handled</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {reports?.map(report => (
-            <Tr
-              key={report.id}
-              onClick={() => openReport(report.id)}
-              _hover={{
-                cursor: 'pointer',
-                bg 
-              }}
-            >
-              <TdUser user={report.reporter} />
-              <TdUser user={report.reported} />
-              <Td>{report.reason}</Td>
-              <Td>{dayjs().to(report.timestamp)}</Td>
-              <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
+      <Box overflowX="auto">
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Reporter</Th>
+              <Th>Reported</Th>
+              <Th>Reason</Th>
+              <Th>Date</Th>
+              <Th>Handled</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {reports?.map(report => (
+              <Tr
+                key={report.id}
+                onClick={() => openReport(report.id)}
+                _hover={{
+                  cursor: 'pointer',
+                  bg
+                }}
+              >
+                <TdUser user={report.reporter} />
+                <TdUser user={report.reported} />
+                <Td>{report.reason}</Td>
+                <Td>{dayjs().to(report.timestamp)}</Td>
+                <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
       {loading && <Loading />}
       <Pagination
         resultCount={data?.getReports.count}

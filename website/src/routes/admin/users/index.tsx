@@ -91,28 +91,30 @@ function Users() {
           onChange={(e) => setQuery(e.target.value)}
         />
       </InputGroup>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>User</Th>
-            <Th>Email</Th>
-            <Th>Student</Th>
-            <Th>Email Verified</Th>
-            <Th>Beeping</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {users && (users?.items).map(user => (
-            <Tr key={user.id}>
-              <TdUser user={user} />
-              <Td>{user.email}</Td>
-              <Td><Indicator color={user.isStudent ? 'green' : 'red'} /></Td>
-              <Td><Indicator color={user.isEmailVerified ? "green" : 'red'} /></Td>
-              <Td><Indicator color={user.isBeeping ? 'green' : 'red'} /></Td>
+      <Box overflowX="auto">
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>User</Th>
+              <Th>Email</Th>
+              <Th>Student</Th>
+              <Th>Email Verified</Th>
+              <Th>Beeping</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {users && (users?.items).map(user => (
+              <Tr key={user.id}>
+                <TdUser user={user} />
+                <Td>{user.email}</Td>
+                <Td><Indicator color={user.isStudent ? 'green' : 'red'} /></Td>
+                <Td><Indicator color={user.isEmailVerified ? "green" : 'red'} /></Td>
+                <Td><Indicator color={user.isBeeping ? 'green' : 'red'} /></Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
       {loading && <Loading />}
       <Pagination
         resultCount={users?.count}

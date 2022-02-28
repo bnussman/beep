@@ -35,7 +35,8 @@ import {
   Tab,
   TabList,
   TabPanel,
-  TabPanels
+  TabPanels,
+  useMediaQuery
 } from '@chakra-ui/react';
 
 dayjs.extend(relativeTime);
@@ -120,12 +121,15 @@ const tabs = [
 function User() {
   const { id } = useParams();
   const { data, loading, error, refetch } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
+  const [shouldBeLarge] = useMediaQuery('(min-width: 800px)')
 
   const user = data?.getUser;
 
   const toast = useToast();
   const navigate = useNavigate();
   const { tab } = useParams();
+
+  const buttonProps =  shouldBeLarge ? {} : { size: "sm" };
 
   const [remove, { loading: isDeleteLoading, error: deleteError }] = useMutation<RemoveUserMutation>(RemoveUser);
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
@@ -227,7 +231,7 @@ function User() {
           <Spacer />
           <Box textAlign="right">
             <NavLink to={`/admin/users/${user.id}/edit`}>
-              <Button m='1'>
+              <Button m='1' {...buttonProps}>
                 Edit
               </Button>
             </NavLink>
@@ -238,6 +242,7 @@ function User() {
                 leftIcon={<CheckIcon />}
                 onClick={onVerify}
                 isLoading={isVerifyLoading}
+                {...buttonProps}
               >
                 Verify
               </Button>
@@ -247,6 +252,7 @@ function User() {
               colorScheme="purple"
               onClick={onSendNotificationOpen}
               isDisabled={!user?.pushToken}
+              {...buttonProps}
             >
               Send Notification
             </Button>
@@ -254,6 +260,7 @@ function User() {
               m='1'
               colorScheme='blue'
               onClick={onClearOpen}
+              {...buttonProps}
             >
               Clear Queue
             </Button>
@@ -262,6 +269,7 @@ function User() {
               colorScheme="red"
               leftIcon={<DeleteIcon />}
               onClick={onDeleteOpen}
+              {...buttonProps}
             >
               Delete
             </Button>
@@ -275,9 +283,11 @@ function User() {
           index={tab && tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0}
           onChange={(index: number) => navigate(`/admin/users/${user.id}/${tabs[index].toLocaleLowerCase()}`)}
         >
-          <TabList>
-            {tabs.map((tab: string, idx) => <Tab key={idx} style={{ textTransform: 'capitalize' }}>{tab}</Tab>)}
-          </TabList>
+          <Box overflowX="auto">
+            <TabList>
+              {tabs.map((tab: string, idx) => <Tab key={idx} style={{ textTransform: 'capitalize' }}>{tab}</Tab>)}
+            </TabList>
+          </Box>
           <TabPanels>
             <TabPanel>
               <Details user={user} />

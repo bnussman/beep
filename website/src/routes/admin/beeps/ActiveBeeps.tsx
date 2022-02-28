@@ -80,34 +80,36 @@ function ActiveBeeps() {
         setCurrentPage={setCurrentPage}
         onPageChange={fetchBeeps}
       />
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Beeper</Th>
-            <Th>Rider</Th>
-            <Th>Origin</Th>
-            <Th>Destination</Th>
-            <Th>Group Size</Th>
-            <Th>Start Time</Th>
-            <Th>Is Accepted</Th>
-            <Th>Status</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {beeps && (beeps?.items).map(entry => (
-            <Tr key={entry.id}>
-              <TdUser user={entry.beeper} />
-              <TdUser user={entry.rider} />
-              <Td>{entry.origin}</Td>
-              <Td>{entry.destination}</Td>
-              <Td>{entry.groupSize}</Td>
-              <Td>{dayjs().to(entry.start * 1000)}</Td>
-              <Td>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
-              <Td>{getStatus(entry.state)}</Td>
+      <Box overflowX="auto">
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Beeper</Th>
+              <Th>Rider</Th>
+              <Th>Origin</Th>
+              <Th>Destination</Th>
+              <Th>Group Size</Th>
+              <Th>Start Time</Th>
+              <Th>Is Accepted</Th>
+              <Th>Status</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {beeps && (beeps?.items).map(entry => (
+              <Tr key={entry.id}>
+                <TdUser user={entry.beeper} />
+                <TdUser user={entry.rider} />
+                <Td>{entry.origin}</Td>
+                <Td>{entry.destination}</Td>
+                <Td>{entry.groupSize}</Td>
+                <Td>{dayjs().to(entry.start * 1000)}</Td>
+                <Td>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
+                <Td>{getStatus(entry.state)}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
       {loading && <Loading />}
       <Pagination
         resultCount={beeps?.count}
