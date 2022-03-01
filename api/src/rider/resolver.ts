@@ -28,8 +28,6 @@ export class RiderResolver {
       beeper: beeper,
     });
 
-    pubSub.publish("Rider" + ctx.user.id, { ...q, beeper });
-
     await ctx.em.populate(beeper, ['queue', 'queue.rider'], undefined, undefined, true);
 
     beeper.queue.add(q);
@@ -37,6 +35,8 @@ export class RiderResolver {
     sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.");
 
     pubSub.publish("Beeper" + beeper.id, beeper.queue.getItems().sort(inOrder));
+
+    q.position = beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < q.start && _entry.isAccepted).length;
 
     await ctx.em.persistAndFlush(beeper);
 
@@ -64,7 +64,7 @@ export class RiderResolver {
       return null;
     }
 
-    entry.position = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start).length;
+    entry.position = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.isAccepted).length;
 
     return entry;
   }
@@ -77,10 +77,8 @@ export class RiderResolver {
     const entry = beeper.queue.getItems().find((_entry: QueueEntry) => _entry.rider.id === ctx.user.id);
 
     if (!entry) {
-        throw new Error("You are not in that beepers queue.");
+      throw new Error("You are not in that beepers queue.");
     }
-
-    if (entry.isAccepted) beeper.queue.count() - 1;
 
     sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you!");
 
@@ -92,10 +90,12 @@ export class RiderResolver {
     pubSub.publish("Beeper" + beeper.id, queue.sort(inOrder));
 
     for (const entry of queue) {
-      entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
+      entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.isAccepted).length;
 
       pubSub.publish("Rider" + entry.rider.id, { ...entry, beeper });
     }
+
+    beeper.queueSize = beeper.queue.getItems().filter(entry => entry.isAccepted).length;
 
     await ctx.em.persistAndFlush(beeper);
 

@@ -74,9 +74,7 @@ export class BeeperResolver {
 
       ctx.user.queue.remove(queueEntry);
 
-      if (queueEntry.isAccepted) {
-        ctx.user.queueSize = ctx.user.queue.length;
-      }
+      ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.isAccepted).length;
 
       ctx.em.persist(ctx.user);
 
@@ -142,13 +140,14 @@ export class BeeperResolver {
       }
       else {
         entry.position = newQueue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
+        console.log(entry.position);
         pubSub.publish("Rider" + entry.rider.id, entry);
       }
     }
 
-    ctx.em.remove(entry);
+    ctx.user.queue.remove(entry);
 
-    ctx.user.queueSize = newQueue.length;
+    ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.isAccepted).length;
 
     await ctx.em.persistAndFlush(ctx.user);
 

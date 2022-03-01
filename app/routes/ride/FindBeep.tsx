@@ -212,7 +212,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (user?.id && beep) {
+    if (user?.id && beep && !riderStatusSub) {
       subscribeToRiderStatus();
     }
   }, [user, beep]);
@@ -546,10 +546,10 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
             </Box>
           </HStack>
           <Box alignItems="center">
-            <Heading fontWeight="extrabold">{beep.beeper.queueSize}</Heading>
+            <Heading fontWeight="extrabold">{beep.position}</Heading>
             <Text>
-              {beep.beeper.queueSize === 1 ? "person is" : "people are"} ahead
-              of you in {beep.beeper.first}
+              {beep.position === 1 ? "person is" : "people are"} ahead of you in{" "}
+              {beep.beeper.first}
               {"'"}s queue
             </Text>
           </Box>
