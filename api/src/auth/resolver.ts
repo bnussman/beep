@@ -1,6 +1,6 @@
 import { sha256 } from 'js-sha256';
 import { sendResetEmail, createVerifyEmailEntryAndSendEmail } from './helpers';
-import { wrap } from '@mikro-orm/core';
+import { Entity, wrap } from '@mikro-orm/core';
 import { User } from '../entities/User';
 import { ForgotPassword } from '../entities/ForgotPassword';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
@@ -153,9 +153,7 @@ export class AuthResolver {
 
     ctx.em.remove(entry);
 
-    ctx.em.persist(entry.user);
-
-    await ctx.em.flush();
+    await ctx.em.persistAndFlush(entry.user);
 
     return true;
   }

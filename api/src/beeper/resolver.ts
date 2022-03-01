@@ -35,11 +35,11 @@ export class BeeperResolver {
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], undefined, { queue: { start: QueryOrder.ASC } }, true);
 
-    const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id == input.queueId);
+    const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id === input.queueId);
 
     if (!queueEntry) throw new Error("Can't find queue entry");
 
-    if (input.value == 'accept' || input.value == 'deny') {
+    if (input.value === 'accept' || input.value === 'deny') {
       const numRidersBefore = ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && !entry.isAccepted).length;
 
       if (numRidersBefore != 0) {
@@ -54,20 +54,19 @@ export class BeeperResolver {
       }
     }
 
-    if (input.value == 'accept') {
+    if (input.value === 'accept') {
       queueEntry.isAccepted = true;
 
-      ctx.user.queueSize++;
+      ctx.user.queueSize = ctx.user.queue.getItems().filter((entry) => entry.isAccepted).length;
 
       sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request`, "You will recieve another notification when they are on their way to pick you up.");
 
-      ctx.em.persist(queueEntry);
-      ctx.em.persist(ctx.user);
+      ctx.em.persist([queueEntry, ctx.user]);
     }
-    else if (input.value == 'deny' || input.value == 'complete') {
+    else if (input.value === 'deny' || input.value === 'complete') {
       pubSub.publish("Rider" + queueEntry.rider.id, null);
 
-      if (input.value == 'complete') {
+      if (input.value === 'complete') {
         const beep = new Beep(queueEntry);
 
         ctx.em.persist(beep);
@@ -81,7 +80,7 @@ export class BeeperResolver {
 
       ctx.em.persist(ctx.user);
 
-      if (input.value == "deny") {
+      if (input.value === "deny") {
         sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request`, "Open your app to find a diffrent beeper.");
       }
     }
@@ -121,10 +120,6 @@ export class BeeperResolver {
     for (const entry of queue) {
       entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
 
-      if (entry.position !== 0) {
-        sendNotification(entry.rider.pushToken, "Beep Update", `There are ${entry.position} people ahead of you in ${beeper.name()}'s queue.`);
-      }
-
       pubSub.publish("Rider" + entry.rider.id, entry);
     }
   }
@@ -136,12 +131,12 @@ export class BeeperResolver {
 
     await ctx.user.queue.init({ orderBy: { start: QueryOrder.ASC }, populate: ['rider', 'beeper'] });
 
-    const newQueue = ctx.user.queue.getItems().filter(entry => entry.id != id);
+    const newQueue = ctx.user.queue.getItems().filter(entry => entry.id !== id);
 
     pubSub.publish("Beeper" + ctx.user.id, newQueue);
 
     for (const entry of ctx.user.queue) {
-      if (entry.id == id) {
+      if (entry.id === id) {
         sendNotification(entry.rider.pushToken, "Beep Canceled", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
         pubSub.publish("Rider" + entry.rider.id, null);
       }
@@ -155,9 +150,7 @@ export class BeeperResolver {
 
     ctx.user.queueSize = newQueue.length;
 
-    ctx.em.persist(ctx.user);
-
-    await ctx.em.flush();
+    await ctx.em.persistAndFlush(ctx.user);
 
     return true;
   }
