@@ -10,7 +10,6 @@ import { DeleteBeepMutation, GetBeepQuery } from '../../../generated/graphql';
 import { Heading, Text, Box, Button, Flex, Spacer, Stack } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Error } from "../../../components/Error";
-import { BeepsGraphQL } from "./index";
 
 dayjs.extend(duration);
 
@@ -48,7 +47,7 @@ const GetBeep = gql`
 function BeepPage(): JSX.Element {
   const { id } = useParams();
   const { data, loading } = useQuery<GetBeepQuery>(GetBeep, { variables: { id } });
-  const [deleteBeep, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteBeepMutation>(DeleteBeep, { refetchQueries: () => ["getUsers"], awaitRefetchQueries: true });
+  const [deleteBeep, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteBeepMutation>(DeleteBeep);
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -57,7 +56,7 @@ function BeepPage(): JSX.Element {
 
   async function doDelete() {
     try {
-      await deleteBeep({ variables: { id }, refetchQueries: [{ query: BeepsGraphQL }], awaitRefetchQueries: true });
+      await deleteBeep({ variables: { id }, refetchQueries: ["getBeeps"], awaitRefetchQueries: true });
       setIsOpen(false);
       navigate(-1);
     }
