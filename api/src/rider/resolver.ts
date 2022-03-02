@@ -14,33 +14,27 @@ export class RiderResolver {
   @Mutation(() => QueueEntry)
   @Authorized()
   public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<QueueEntry> {
-    const beeper = await ctx.em.findOneOrFail(User, beeperId);
+    const beeper = await ctx.em.findOneOrFail(User, beeperId, { populate: ['queue', 'queue.rider'] });
 
     if (!beeper.isBeeping) {
       throw new Error("The user you have chosen is no longer beeping at this time.");
     }
 
-    const q = new QueueEntry({
-      groupSize: input.groupSize,
-      origin: input.origin,
-      destination: input.destination,
-      rider: ctx.user,
-      beeper: beeper,
-    });
+    const { groupSize, origin, destination } = input;
 
-    await ctx.em.populate(beeper, ['queue', 'queue.rider'], undefined, undefined, true);
+    const entry = new QueueEntry({ groupSize, origin, destination, rider: ctx.user, beeper });
 
-    beeper.queue.add(q);
+    beeper.queue.add(entry);
 
     sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.");
 
     pubSub.publish("Beeper" + beeper.id, beeper.queue.getItems().sort(inOrder));
 
-    q.position = beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < q.start && _entry.isAccepted).length;
+    entry.position = beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.isAccepted).length;
 
     await ctx.em.persistAndFlush(beeper);
 
-    return q;
+    return entry;
   }
 
   @Query(() => User)
