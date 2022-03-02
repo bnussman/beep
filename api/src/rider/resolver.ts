@@ -52,7 +52,7 @@ export class RiderResolver {
   @Query(() => QueueEntry, { nullable: true })
   @Authorized()
   public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
-    const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue'], refresh: true });
+    const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue'] });
 
     if (!entry) {
       return null;
