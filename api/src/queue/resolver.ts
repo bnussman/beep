@@ -20,7 +20,7 @@ export class QueueResolver {
   public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
     const populate = fieldsToRelations(info);
 
-    return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate, refresh: true });
+    return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate });
   }
 
   @Query(() => BeepsInProgressResponse)
