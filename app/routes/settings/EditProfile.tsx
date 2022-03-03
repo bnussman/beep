@@ -240,7 +240,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
         <Input
           size="lg"
           ref={venmoRef}
-          value={!venmo ? undefined : venmo}
+          value={venmo || ""}
           textContentType="username"
           placeholder="Venmo Username"
           returnKeyType="next"
@@ -250,7 +250,7 @@ export function EditProfileScreen(props: Props): JSX.Element {
         <Input
           size="lg"
           ref={cashappRef}
-          value={!cashapp ? undefined : cashapp}
+          value={cashapp || ""}
           textContentType="username"
           placeholder="Cash App Username"
           returnKeyType="go"

@@ -76,6 +76,7 @@ export const UserData = gql`
       capacity
       masksRequired
       cashapp
+      pushToken
     }
   }
 `;
@@ -100,6 +101,7 @@ export const UserSubscription = gql`
       capacity
       masksRequired
       cashapp
+      pushToken
     }
   }
 `;
@@ -123,7 +125,7 @@ function Beep() {
         },
       });
 
-      updatePushToken();
+      updatePushToken(data?.getUser?.pushToken);
     }
   }, [data?.getUser?.id]);
 

@@ -649,29 +649,6 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
-export type RemoveUserMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type RemoveUserMutation = { __typename?: 'Mutation', removeUser: boolean };
-
-export type VerifyUserMutationVariables = Exact<{
-  id: Scalars['String'];
-  data: EditUserValidator;
-}>;
-
-
-export type VerifyUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', username: string } };
-
-export type ClearQueueMutationVariables = Exact<{
-  id: Scalars['String'];
-  stopBeeping: Scalars['Boolean'];
-}>;
-
-
-export type ClearQueueMutation = { __typename?: 'Mutation', clearQueue: boolean };
-
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String'];
 }>;
@@ -857,6 +834,29 @@ export type GetUserQueryVariables = Exact<{
 
 
 export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null | undefined, cashapp?: string | null | undefined, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: string | null | undefined, queueSize: number, phone: string, username: string, rating?: number | null | undefined, email: string, created?: any | null | undefined, pushToken?: string | null | undefined, location?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
+
+export type RemoveUserMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type RemoveUserMutation = { __typename?: 'Mutation', removeUser: boolean };
+
+export type VerifyUserMutationVariables = Exact<{
+  id: Scalars['String'];
+  data: EditUserValidator;
+}>;
+
+
+export type VerifyUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', username: string } };
+
+export type ClearQueueMutationVariables = Exact<{
+  id: Scalars['String'];
+  stopBeeping: Scalars['Boolean'];
+}>;
+
+
+export type ClearQueueMutation = { __typename?: 'Mutation', clearQueue: boolean };
 
 export type GetEditableUserQueryVariables = Exact<{
   id: Scalars['String'];
@@ -1312,103 +1312,6 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
-export const RemoveUserDocument = gql`
-    mutation RemoveUser($id: String!) {
-  removeUser(id: $id)
-}
-    `;
-export type RemoveUserMutationFn = Apollo.MutationFunction<RemoveUserMutation, RemoveUserMutationVariables>;
-
-/**
- * __useRemoveUserMutation__
- *
- * To run a mutation, you first call `useRemoveUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeUserMutation, { data, loading, error }] = useRemoveUserMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useRemoveUserMutation(baseOptions?: Apollo.MutationHookOptions<RemoveUserMutation, RemoveUserMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveUserMutation, RemoveUserMutationVariables>(RemoveUserDocument, options);
-      }
-export type RemoveUserMutationHookResult = ReturnType<typeof useRemoveUserMutation>;
-export type RemoveUserMutationResult = Apollo.MutationResult<RemoveUserMutation>;
-export type RemoveUserMutationOptions = Apollo.BaseMutationOptions<RemoveUserMutation, RemoveUserMutationVariables>;
-export const VerifyUserDocument = gql`
-    mutation VerifyUser($id: String!, $data: EditUserValidator!) {
-  editUser(id: $id, data: $data) {
-    username
-  }
-}
-    `;
-export type VerifyUserMutationFn = Apollo.MutationFunction<VerifyUserMutation, VerifyUserMutationVariables>;
-
-/**
- * __useVerifyUserMutation__
- *
- * To run a mutation, you first call `useVerifyUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useVerifyUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [verifyUserMutation, { data, loading, error }] = useVerifyUserMutation({
- *   variables: {
- *      id: // value for 'id'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useVerifyUserMutation(baseOptions?: Apollo.MutationHookOptions<VerifyUserMutation, VerifyUserMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<VerifyUserMutation, VerifyUserMutationVariables>(VerifyUserDocument, options);
-      }
-export type VerifyUserMutationHookResult = ReturnType<typeof useVerifyUserMutation>;
-export type VerifyUserMutationResult = Apollo.MutationResult<VerifyUserMutation>;
-export type VerifyUserMutationOptions = Apollo.BaseMutationOptions<VerifyUserMutation, VerifyUserMutationVariables>;
-export const ClearQueueDocument = gql`
-    mutation ClearQueue($id: String!, $stopBeeping: Boolean!) {
-  clearQueue(id: $id, stopBeeping: $stopBeeping)
-}
-    `;
-export type ClearQueueMutationFn = Apollo.MutationFunction<ClearQueueMutation, ClearQueueMutationVariables>;
-
-/**
- * __useClearQueueMutation__
- *
- * To run a mutation, you first call `useClearQueueMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useClearQueueMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [clearQueueMutation, { data, loading, error }] = useClearQueueMutation({
- *   variables: {
- *      id: // value for 'id'
- *      stopBeeping: // value for 'stopBeeping'
- *   },
- * });
- */
-export function useClearQueueMutation(baseOptions?: Apollo.MutationHookOptions<ClearQueueMutation, ClearQueueMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ClearQueueMutation, ClearQueueMutationVariables>(ClearQueueDocument, options);
-      }
-export type ClearQueueMutationHookResult = ReturnType<typeof useClearQueueMutation>;
-export type ClearQueueMutationResult = Apollo.MutationResult<ClearQueueMutation>;
-export type ClearQueueMutationOptions = Apollo.BaseMutationOptions<ClearQueueMutation, ClearQueueMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($password: String!) {
   changePassword(input: {password: $password})
@@ -2439,6 +2342,103 @@ export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const RemoveUserDocument = gql`
+    mutation RemoveUser($id: String!) {
+  removeUser(id: $id)
+}
+    `;
+export type RemoveUserMutationFn = Apollo.MutationFunction<RemoveUserMutation, RemoveUserMutationVariables>;
+
+/**
+ * __useRemoveUserMutation__
+ *
+ * To run a mutation, you first call `useRemoveUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeUserMutation, { data, loading, error }] = useRemoveUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveUserMutation(baseOptions?: Apollo.MutationHookOptions<RemoveUserMutation, RemoveUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveUserMutation, RemoveUserMutationVariables>(RemoveUserDocument, options);
+      }
+export type RemoveUserMutationHookResult = ReturnType<typeof useRemoveUserMutation>;
+export type RemoveUserMutationResult = Apollo.MutationResult<RemoveUserMutation>;
+export type RemoveUserMutationOptions = Apollo.BaseMutationOptions<RemoveUserMutation, RemoveUserMutationVariables>;
+export const VerifyUserDocument = gql`
+    mutation VerifyUser($id: String!, $data: EditUserValidator!) {
+  editUser(id: $id, data: $data) {
+    username
+  }
+}
+    `;
+export type VerifyUserMutationFn = Apollo.MutationFunction<VerifyUserMutation, VerifyUserMutationVariables>;
+
+/**
+ * __useVerifyUserMutation__
+ *
+ * To run a mutation, you first call `useVerifyUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyUserMutation, { data, loading, error }] = useVerifyUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useVerifyUserMutation(baseOptions?: Apollo.MutationHookOptions<VerifyUserMutation, VerifyUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyUserMutation, VerifyUserMutationVariables>(VerifyUserDocument, options);
+      }
+export type VerifyUserMutationHookResult = ReturnType<typeof useVerifyUserMutation>;
+export type VerifyUserMutationResult = Apollo.MutationResult<VerifyUserMutation>;
+export type VerifyUserMutationOptions = Apollo.BaseMutationOptions<VerifyUserMutation, VerifyUserMutationVariables>;
+export const ClearQueueDocument = gql`
+    mutation ClearQueue($id: String!, $stopBeeping: Boolean!) {
+  clearQueue(id: $id, stopBeeping: $stopBeeping)
+}
+    `;
+export type ClearQueueMutationFn = Apollo.MutationFunction<ClearQueueMutation, ClearQueueMutationVariables>;
+
+/**
+ * __useClearQueueMutation__
+ *
+ * To run a mutation, you first call `useClearQueueMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClearQueueMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [clearQueueMutation, { data, loading, error }] = useClearQueueMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      stopBeeping: // value for 'stopBeeping'
+ *   },
+ * });
+ */
+export function useClearQueueMutation(baseOptions?: Apollo.MutationHookOptions<ClearQueueMutation, ClearQueueMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ClearQueueMutation, ClearQueueMutationVariables>(ClearQueueDocument, options);
+      }
+export type ClearQueueMutationHookResult = ReturnType<typeof useClearQueueMutation>;
+export type ClearQueueMutationResult = Apollo.MutationResult<ClearQueueMutation>;
+export type ClearQueueMutationOptions = Apollo.BaseMutationOptions<ClearQueueMutation, ClearQueueMutationVariables>;
 export const GetEditableUserDocument = gql`
     query GetEditableUser($id: String!) {
   getUser(id: $id) {

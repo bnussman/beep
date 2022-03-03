@@ -71,12 +71,12 @@ function setNotificationHandlers() {
       },
     },
   ];
-  //@ts-ignore
   Notifications.setNotificationCategoryAsync(
     "enteredBeeperQueue",
+    // @ts-expect-error idk
     enteredBeeperQueueActions
   );
-  //@ts-ignore
+  // @ts-expect-error idk
   Notifications.addNotificationReceivedListener(handleNotification);
 }
 
@@ -84,7 +84,9 @@ function setNotificationHandlers() {
  * call getPushToken and send to backend
  * @param token a user's auth token
  */
-export async function updatePushToken(): Promise<void> {
+export async function updatePushToken(
+  previousPushToken?: string | null
+): Promise<void> {
   if (isMobile) {
     const UpdatePushToken = gql`
       mutation UpdatePushToken($token: String!) {
@@ -93,6 +95,10 @@ export async function updatePushToken(): Promise<void> {
     `;
 
     const token = await getPushToken();
+
+    if (previousPushToken && token === previousPushToken) {
+      return;
+    }
 
     if (token) {
       await client.mutate({ mutation: UpdatePushToken, variables: { token } });
