@@ -664,7 +664,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined, pushToken?: string | null | undefined } } };
 
 export type SignUpMutationVariables = Exact<{
   first: Scalars['String'];
@@ -680,7 +680,7 @@ export type SignUpMutationVariables = Exact<{
 }>;
 
 
-export type SignUpMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined } } };
+export type SignUpMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined, pushToken?: string | null | undefined } } };
 
 export type LocationUpdateMutationVariables = Exact<{
   latitude: Scalars['Float'];
@@ -1275,6 +1275,7 @@ export const LoginDocument = gql`
       capacity
       masksRequired
       cashapp
+      pushToken
     }
   }
 }
@@ -1334,6 +1335,7 @@ export const SignUpDocument = gql`
       capacity
       masksRequired
       cashapp
+      pushToken
     }
   }
 }

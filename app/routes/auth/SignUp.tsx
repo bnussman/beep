@@ -77,6 +77,7 @@ const SignUp = gql`
         capacity
         masksRequired
         cashapp
+        pushToken
       }
     }
   }

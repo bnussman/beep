@@ -53,6 +53,7 @@ const Login = gql`
         capacity
         masksRequired
         cashapp
+        pushToken
       }
     }
   }
