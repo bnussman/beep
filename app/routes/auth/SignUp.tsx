@@ -77,7 +77,6 @@ const SignUp = gql`
         capacity
         masksRequired
         cashapp
-        pushToken
       }
     }
   }
@@ -111,7 +110,7 @@ export function SignUpScreen(props: Props): JSX.Element {
       return alert("Please choose a profile photo!");
     }
 
-    const pushToken = isMobile ? await getPushToken() : undefined;
+    const pushToken = isMobile ? await getPushToken() : null;
 
     signup({
       variables: {
@@ -132,7 +131,7 @@ export function SignUpScreen(props: Props): JSX.Element {
 
         client.writeQuery({
           query: UserData,
-          data: { getUser: data.data?.signup.user },
+          data: { getUser: { ...data.data?.signup.user, pushToken } },
         });
 
         wsLink.client.restart();

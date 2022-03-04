@@ -53,7 +53,6 @@ const Login = gql`
         capacity
         masksRequired
         cashapp
-        pushToken
       }
     }
   }
@@ -74,11 +73,13 @@ function LoginScreen(props: Props): JSX.Element {
   }, []);
 
   async function doLogin() {
+    const pushToken = isMobile ? await getPushToken() : null;
+
     login({
       variables: {
         username: username,
         password: password,
-        pushToken: isMobile ? await getPushToken() : undefined,
+        pushToken,
       },
     })
       .then(async (data) => {
@@ -86,7 +87,7 @@ function LoginScreen(props: Props): JSX.Element {
 
         client.writeQuery({
           query: UserData,
-          data: { getUser: data.data?.login.user },
+          data: { getUser: { ...data.data?.login.user, pushToken } },
         });
 
         wsLink.client.restart();
