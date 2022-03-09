@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Error } from './Error';
 import { gql, useMutation } from '@apollo/client';
+import { SendNotificationMutation } from '../generated/graphql';
 import {
   Button,
   FormControl,
@@ -16,14 +17,12 @@ import {
   Textarea,
   useToast
 } from "@chakra-ui/react";
-import { SendNotificationMutation } from '../generated/graphql';
 
 const SendNotification = gql`
-    mutation SendNotification($title: String!, $body: String!, $id: String!) {
-      sendNotification(title: $title, body: $body, id: $id)
-    }
+  mutation SendNotification($title: String!, $body: String!, $id: String!) {
+    sendNotification(title: $title, body: $body, id: $id)
+  }
 `;
-
 
 interface Props {
   isOpen: boolean;

@@ -1,17 +1,15 @@
 import React from "react";
-import { Box, useColorModeValue, IBoxProps } from "native-base";
+import { Box, IBoxProps } from "native-base";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { isMobile } from "../utils/config";
 
 interface Props {
   keyboard?: boolean;
-  children: any;
 }
 
 export const Container = (props: Props & IBoxProps): JSX.Element => {
   const { children, keyboard, ...rest } = props;
-  const bg = useColorModeValue("white", "black");
 
   const onPress = () => {
     if (isMobile) {
@@ -21,10 +19,10 @@ export const Container = (props: Props & IBoxProps): JSX.Element => {
 
   if (keyboard) {
     return (
-      <Box h="100%" bg={bg}>
+      <Box h="100%">
         <TouchableWithoutFeedback onPress={onPress}>
           <KeyboardAwareScrollView scrollEnabled={false} extraScrollHeight={70}>
-            <Box flex={1} bg={bg} {...rest}>
+            <Box flex={1} bg="white" _dark={{ bg: "black" }} {...rest}>
               {children}
             </Box>
           </KeyboardAwareScrollView>
@@ -34,7 +32,7 @@ export const Container = (props: Props & IBoxProps): JSX.Element => {
   }
 
   return (
-    <Box flex={1} bg={bg} {...rest}>
+    <Box flex={1} bg="white" _dark={{ bg: "black" }} {...rest}>
       {children}
     </Box>
   );
