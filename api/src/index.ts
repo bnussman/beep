@@ -19,6 +19,7 @@ import { ApolloServer, ExpressContext } from "apollo-server-express";
 import { ApolloError, ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { Context, SubscribeMessage } from "graphql-ws";
+import { REDIS_HOST, REDIS_PASSWROD } from "./utils/constants";
 
 function formatError(error: GraphQLError) {
   if (error?.message === "Argument Validation Error") {
@@ -58,7 +59,7 @@ async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Co
     bearer,
     {
       populate: ['user'],
-      cache: true
+      // cache: true
     }
   );
 
@@ -88,7 +89,7 @@ async function onSubscribe(
     bearer,
     {
       populate: ['user'],
-      cache: true
+      // cache: true
     }
   );
 
@@ -123,8 +124,8 @@ async function start() {
   app.use(RealSentry.Handlers.tracingHandler());
 
   const options = {
-    host: process.env.REDIS_HOST,
-    password: process.env.REDIS_PASSWORD,
+    host: REDIS_HOST,
+    password: REDIS_PASSWROD,
     port: 6379,
   };
 
@@ -148,25 +149,25 @@ async function start() {
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
+  const wsServer = new ws.Server({
+    server: httpServer,
+    path: '/subscriptions',
+  });
+
+  useServer({
+    schema,
+    onSubscribe: (ctx, msg) => onSubscribe(ctx, msg, schema, orm),
+  }, wsServer);
+
   await server.start();
 
   server.applyMiddleware({ app });
 
   app.use(RealSentry.Handlers.errorHandler());
 
-  const s = httpServer.listen(3001, () => {
-    console.info(`🚕 API Server ready and has started! ${server.graphqlPath}`);
+  await new Promise<void>(resolve => httpServer.listen({ port: 3001 }, resolve));
 
-    const wsServer = new ws.Server({
-      server: s,
-      path: '/subscriptions',
-    });
-
-    useServer({
-      schema,
-      onSubscribe: (ctx, msg) => onSubscribe(ctx, msg, schema, orm),
-    }, wsServer);
-  });
+  console.info(`🚕 Beep GraphQL Server Started at \x1b[36mhttp://0.0.0.0:3001${server.graphqlPath}\x1b[0m`);
 }
 
 start();

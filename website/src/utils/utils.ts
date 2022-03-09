@@ -21,18 +21,3 @@ export function getMobileOperatingSystem() {
 
   return "unknown";
 }
-
-export function getInitialTheme(): string {
-  const storedPrefs = window.localStorage.getItem("theme");
-
-  if (storedPrefs) {
-    const root = window.document.documentElement;
-
-    root.classList.remove(storedPrefs === "dark" ? "light" : "dark")
-    root.classList.add(storedPrefs)
-
-    return storedPrefs;
-  }
-
-  return "light";
-}

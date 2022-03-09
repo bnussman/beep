@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { UserContext } from './UserContext';
-import { ThemeContext } from './ThemeContext';
 import { GetUserDataQuery, User } from './generated/graphql';
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
 import { client } from './utils/Apollo';
 import { ChakraProvider, Container } from "@chakra-ui/react"
 import { theme } from './utils/theme';
-import { getInitialTheme } from './utils/utils';
 import { Download } from './routes/Download';
 import Home from './routes/Home';
 import Login from './routes/Login';
@@ -81,18 +79,6 @@ const UserUpdates = gql`
 
 function Beep() {
   const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
-  const [theme, setInternalTheme] = useState<string>(getInitialTheme());
-
-  function setTheme(theme: string) {
-    const root = window.document.documentElement;
-
-    root.classList.remove(theme === "dark" ? "light" : "dark");
-    root.classList.add(theme);
-
-    localStorage.setItem("color-theme", theme);
-
-    setInternalTheme(theme);
-  }
 
   useEffect(() => {
     if (data?.getUser?.id) {
@@ -112,32 +98,30 @@ function Beep() {
   if (loading) return null;
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
-      <UserContext.Provider value={data?.getUser as User}>
-        <Router>
-          <NavBar />
-          <Container maxW="container.xl">
-            <Banners />
-            <Routes>
-              <Route path="/password/forgot" element={<ForgotPassword />} />
-              <Route path="/password/reset/:id" element={<ResetPassword />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/profile/edit" element={<EditProfile />} />
-              <Route path="/password/change" element={<ChangePassword />} />
-              <Route path="/account/verify/:id" element={<VerifyAccount />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/admin/*" element={<Admin />} />
-              <Route path="/faq" element={<Faq />} />
-              <Route path="/about" element={<About />} />
-              <Route path='/download' element={<Download />} />
-              <Route path="/" element={<Home />} />
-            </Routes>
-          </Container>
-        </Router>
-      </UserContext.Provider>
-    </ThemeContext.Provider>
+    <UserContext.Provider value={data?.getUser as User}>
+      <Router>
+        <NavBar />
+        <Container maxW="container.xl">
+          <Banners />
+          <Routes>
+            <Route path="/password/forgot" element={<ForgotPassword />} />
+            <Route path="/password/reset/:id" element={<ResetPassword />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/password/change" element={<ChangePassword />} />
+            <Route path="/account/verify/:id" element={<VerifyAccount />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/admin/*" element={<Admin />} />
+            <Route path="/faq" element={<Faq />} />
+            <Route path="/about" element={<About />} />
+            <Route path='/download' element={<Download />} />
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </Container>
+      </Router>
+    </UserContext.Provider>
   );
 }
 

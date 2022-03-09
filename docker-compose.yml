@@ -1,0 +1,21 @@
+version: '3.5'
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+  db:
+    image: postgis/postgis
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/mysql
+    environment:
+      POSTGRES_USER: beep
+      POSTGRES_PASSWORD: beep
+      TZ: America/New_York
+
+
+volumes:
+  data:
