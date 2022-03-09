@@ -33,25 +33,25 @@ export default function Banners() {
     }
   }
 
-  if (user && user.isEmailVerified) {
-    return null;
+  if (user && !user.isEmailVerified) {
+    return (
+      <Box mb={4}>
+        <Alert status="error" mb={2} flexWrap="wrap">
+          <AlertIcon />
+          You need to verify your email!
+          <Spacer />
+          <Button
+            isLoading={loading}
+            onClick={resendVarificationEmail}
+            colorScheme="red"
+            ml={2}
+          >
+            Resend my verification email
+          </Button>
+        </Alert>
+      </Box>
+    );
   }
 
-  return (
-    <Box mb={4}>
-      <Alert status="error" mb={2} flexWrap="wrap">
-        <AlertIcon />
-        You need to verify your email!
-        <Spacer />
-        <Button
-          isLoading={loading}
-          onClick={resendVarificationEmail}
-          colorScheme="red"
-          ml={2}
-        >
-          Resend my verification email
-        </Button>
-      </Alert>
-    </Box>
-  );
+  return null;
 }
