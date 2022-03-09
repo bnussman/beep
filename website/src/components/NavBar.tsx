@@ -1,13 +1,14 @@
-import { useContext } from 'react';
+import React from 'react';
+import Logo from '../assets/favicon.png';
 import { Link } from "react-router-dom";
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { UserDropdown } from './UserDropdown';
 import { AdminDropdown } from './AdminDropdown';
-import { UserContext } from '../UserContext';
 import { UserRole } from '../types/User';
 import { ThemeToggle } from './ThemeToggle';
-import React from 'react';
-import Logo from '../assets/favicon.png';
+import { useQuery } from '@apollo/client';
+import { GetUserDataQuery } from '../generated/graphql';
+import { GetUserData } from '../App';
 import {
   Box,
   Flex,
@@ -21,7 +22,9 @@ import {
 
 export default function NavBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const user = useContext(UserContext);
+  const { data } = useQuery<GetUserDataQuery>(GetUserData);
+
+  const user = data?.getUser;
 
   return (
     <>

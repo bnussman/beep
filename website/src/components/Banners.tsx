@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { ResendEmailMutation } from '../generated/graphql';
-import { UserContext } from '../UserContext';
+import React from 'react';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { GetUserDataQuery, ResendEmailMutation } from '../generated/graphql';
 import { Alert, AlertIcon, Box, Button, Spacer, useToast } from '@chakra-ui/react';
+import { GetUserData } from '../App';
 
 const Resend = gql`
   mutation ResendEmail {
@@ -11,9 +11,11 @@ const Resend = gql`
 `;
 
 export default function Banners() {
+  const { data } = useQuery<GetUserDataQuery>(GetUserData);
   const [resend, { loading }] = useMutation<ResendEmailMutation>(Resend);
-  const user = useContext(UserContext);
   const toast = useToast();
+
+  const user = data?.getUser;
 
   async function resendVarificationEmail() {
     try {

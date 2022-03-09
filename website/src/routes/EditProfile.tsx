@@ -1,28 +1,18 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { UserContext } from '../UserContext';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from "react-router-dom";
-import { gql, useMutation } from '@apollo/client';
-import { AddProfilePictureMutation, EditAccountMutation } from '../generated/graphql';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { AddProfilePictureMutation, EditAccountMutation, GetUserDataQuery } from '../generated/graphql';
 import { Success } from '../components/Success';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Spinner, Text } from '@chakra-ui/react';
+import { GetUserData } from '../App';
 
 const EditAccount = gql`
-mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
-  editAccount (
-    input: {
-      first : $first,
-      last: $last,
-      email: $email,
-      phone: $phone,
-      venmo: $venmo,
-      cashapp: $cashapp
+  mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
+    editAccount (input: { first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp }) {
+      id
     }
-  ) {
-  id
-  name
   }
-}
 `;
 
 export const UploadPhoto = gql`
@@ -36,7 +26,10 @@ export const UploadPhoto = gql`
 function EditProfile() {
   const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
   const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
-  const user = useContext(UserContext);
+  const { data: userData } = useQuery<GetUserDataQuery>(GetUserData);
+
+  const user = userData?.getUser;
+  
   const [first, setFirst] = useState<string | undefined>(user?.first);
   const [last, setLast] = useState<string | undefined>(user?.last);
   const [email, setEmail] = useState<string | undefined>(user?.email);

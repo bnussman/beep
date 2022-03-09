@@ -1,7 +1,5 @@
-import React from 'react';
-import { FormEvent, useContext, useState } from 'react';
-import { UserContext } from '../UserContext';
-import { Navigate, Link, useNavigate } from "react-router-dom";
+import React, { FormEvent, useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
@@ -43,7 +41,6 @@ const LoginGraphQL = gql`
 
 function Login() {
   const navigate = useNavigate();
-  const user = useContext(UserContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [login, { loading, error }] = useMutation<LoginMutation>(LoginGraphQL);
@@ -69,10 +66,6 @@ function Login() {
 
       navigate('/');
     }
-  }
-
-  if (user) {
-    return <Navigate to={{ pathname: "/" }} />;
   }
 
   return (

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { UserContext } from './UserContext';
-import { GetUserDataQuery, User } from './generated/graphql';
+import { GetUserDataQuery } from './generated/graphql';
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
 import { client } from './utils/Apollo';
 import { ChakraProvider, Container } from "@chakra-ui/react"
@@ -98,30 +97,28 @@ function Beep() {
   if (loading) return null;
 
   return (
-    <UserContext.Provider value={data?.getUser as User}>
-      <Router>
-        <NavBar />
-        <Container maxW="container.xl">
-          <Banners />
-          <Routes>
-            <Route path="/password/forgot" element={<ForgotPassword />} />
-            <Route path="/password/reset/:id" element={<ResetPassword />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile/edit" element={<EditProfile />} />
-            <Route path="/password/change" element={<ChangePassword />} />
-            <Route path="/account/verify/:id" element={<VerifyAccount />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/admin/*" element={<Admin />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/about" element={<About />} />
-            <Route path='/download' element={<Download />} />
-            <Route path="/" element={<Home />} />
-          </Routes>
-        </Container>
-      </Router>
-    </UserContext.Provider>
+    <Router>
+      <NavBar />
+      <Container maxW="container.xl">
+        <Banners />
+        <Routes>
+          <Route path="/password/forgot" element={<ForgotPassword />} />
+          <Route path="/password/reset/:id" element={<ResetPassword />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/profile/edit" element={<EditProfile />} />
+          <Route path="/password/change" element={<ChangePassword />} />
+          <Route path="/account/verify/:id" element={<VerifyAccount />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/admin/*" element={<Admin />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/about" element={<About />} />
+          <Route path='/download' element={<Download />} />
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Container>
+    </Router>
   );
 }
 

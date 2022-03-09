@@ -1,9 +1,8 @@
-import { gql, useMutation } from "@apollo/client";
-import React, { useContext } from "react";
+import React from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 import { GetUserData } from "../App";
-import { LogoutMutation } from "../generated/graphql";
-import { UserContext } from "../UserContext";
+import { GetUserDataQuery, LogoutMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import {
   Menu,
@@ -23,9 +22,11 @@ const Logout = gql`
 `;
 
 export function UserDropdown() {
-  const user = useContext(UserContext);
+  const { data } = useQuery<GetUserDataQuery>(GetUserData);
   const [logout] = useMutation<LogoutMutation>(Logout);
   const navigate = useNavigate();
+
+  const user = data?.getUser;
 
   async function handleLogout() {
     try {

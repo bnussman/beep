@@ -1,6 +1,5 @@
-import React, { FormEvent, useContext, useState } from 'react';
-import { UserContext } from '../UserContext';
-import { Link as RouterLink, Navigate, useNavigate } from "react-router-dom";
+import React, { FormEvent, useState } from 'react';
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
@@ -54,7 +53,6 @@ const SignUpGraphQL = gql`
 
 function SignUp() {
   const navigate = useNavigate();
-  const user = useContext(UserContext);
   const [first, setFirst] = useState<string>('');
   const [last, setLast] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -105,10 +103,6 @@ function SignUp() {
     catch (error) {
 
     }
-  }
-
-  if (user) {
-    return <Navigate to={{ pathname: "/" }} />;
   }
 
   return (

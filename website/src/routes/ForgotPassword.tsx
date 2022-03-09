@@ -1,5 +1,4 @@
-import React, { FormEvent, useContext, useState } from 'react';
-import { UserContext } from '../UserContext';
+import React, { FormEvent, useState } from 'react';
 import { Navigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { ForgotPasswordMutation } from '../generated/graphql';
@@ -16,7 +15,6 @@ const ForgotPasswordGraphQL = gql`
 
 function ForgotPassword() {
   const [forgot, { data, loading, error }] = useMutation<ForgotPasswordMutation>(ForgotPasswordGraphQL);
-  const user = useContext(UserContext);
   const [email, setEmail] = useState("");
 
   async function handleForgotPassword(e: FormEvent): Promise<void> {
@@ -30,10 +28,6 @@ function ForgotPassword() {
     }
     catch (error) {
     }
-  }
-
-  if (user) {
-    return <Navigate to={{ pathname: "/" }} />;
   }
 
   return (
