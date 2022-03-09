@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { Ref, useState } from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { Icon, IInputProps, Input } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-function LocationInput(props: IInputProps) {
+function PasswordInput(props: IInputProps, ref: Ref<unknown>) {
   const [show, setShow] = useState(false);
 
   const toggleShow = () => setShow((prev) => !prev);
@@ -20,8 +20,13 @@ function LocationInput(props: IInputProps) {
   );
 
   return (
-    <Input {...props} InputRightElement={ShowIcon} secureTextEntry={!show} />
+    <Input
+      {...props}
+      InputRightElement={ShowIcon}
+      secureTextEntry={!show}
+      ref={ref}
+    />
   );
 }
 
-export default React.forwardRef(LocationInput);
+export default React.forwardRef(PasswordInput);

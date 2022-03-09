@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Ref, useState } from "react";
 import * as Location from "expo-location";
 import Constants from "expo-constants";
 import Logger from "../utils/Logger";
@@ -6,7 +6,7 @@ import { TouchableWithoutFeedback } from "react-native";
 import { Box, Icon, IInputProps, Input, Spinner } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 
-function LocationInput(props: IInputProps) {
+function LocationInput(props: IInputProps, ref: Ref<unknown>) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function useCurrentLocation(): Promise<void> {
@@ -78,6 +78,7 @@ function LocationInput(props: IInputProps) {
       {...props}
       placeholder={isLoading ? "Loading" : undefined}
       InputRightElement={isLoading ? SpinnerIcon : CurrentLocationIcon}
+      ref={ref}
     />
   );
 }
