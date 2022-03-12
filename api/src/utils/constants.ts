@@ -11,3 +11,9 @@ export const DB_USER = process.env.POSTGRESQL_USER || "beep";
 export const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 
 export const REDIS_PASSWROD = process.env.REDIS_PASSWORD;
+
+export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
+
+export const S3_ACCESS_KEY_SECRET = process.env.S3_ACCESS_KEY_SECRET;
+
+export const S3_ENDPOINT_URL = process.env.S3_ENDPOINT_URL;

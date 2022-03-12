@@ -9,7 +9,7 @@ import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import AWS from 'aws-sdk';
 import { VerifyEmail } from '../entities/VerifyEmail';
-import * as Sentry from '@sentry/node';
+import { deleteObject } from '../utils/s3';
 
 @Resolver()
 export class AccountResolver {
@@ -139,16 +139,7 @@ export class AccountResolver {
       if (ctx.user.photoUrl) {
         const key: string = ctx.user.photoUrl.split("https://beep.us-east-1.linodeobjects.com/")[1];
 
-        const params = {
-          Bucket: "beep",
-          Key: key
-        };
-
-        s3.deleteObject(params, (error: Error) => {
-          if (error) {
-            Sentry.captureException(error);
-          }
-        });
+        deleteObject(s3, key);
       }
 
       ctx.user.photoUrl = result.Location;

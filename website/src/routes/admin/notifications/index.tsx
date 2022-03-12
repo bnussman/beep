@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useFormik } from "formik";
 import { EmailIcon } from "@chakra-ui/icons";
 import { gql, useMutation } from "@apollo/client";
-import { SendNotificationsMutation } from "../../../generated/graphql";
+import { CleanObjectStorageBucketMutation, SendNotificationsMutation } from "../../../generated/graphql";
 import { Error } from '../../../components/Error';
 import {
   AlertDialog,
@@ -20,7 +20,6 @@ import {
   Input,
   Stack,
   Textarea,
-  toast,
   useDisclosure,
   useToast
 } from "@chakra-ui/react";
@@ -31,12 +30,19 @@ const SendNotifications = gql`
     }
 `;
 
+const CleanObjectStorageBucket = gql`
+  mutation CleanObjectStorageBucket {
+    cleanObjectStorageBucket
+  }
+`;
+
 function Notifications() {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const cancelRef = useRef<any>();
   const toast = useToast();
 
   const [send, { error }] = useMutation<SendNotificationsMutation>(SendNotifications);
+  const [clean, { loading }] = useMutation<CleanObjectStorageBucketMutation>(CleanObjectStorageBucket);
 
   const onSubmit = ({ title, body, match }: { title: string; body: string; match: string; }) => {
     send({
@@ -50,6 +56,16 @@ function Notifications() {
       onClose();
     });
   };
+
+  const onClean = () => {
+    clean()
+      .then(({ data }) => {
+        toast({ status: 'success', description: `Cleaned ${data?.cleanObjectStorageBucket} objects` });
+      })
+      .catch((error) => {
+        toast({ status: 'error', description: error.message });
+      });
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -92,7 +108,22 @@ function Notifications() {
           />
         </FormControl>
       </Stack>
-      <Button colorScheme="purple" onClick={onOpen} rightIcon={<EmailIcon />} mt={4}>Send</Button>
+      <Button
+        colorScheme="purple"
+        onClick={onOpen}
+        rightIcon={<EmailIcon />}
+        mt={4}
+      >
+        Send
+      </Button>
+      <Button
+        colorScheme="red"
+        onClick={onClean}
+        isLoading={loading}
+        mt={4}
+      >
+        Clean Object Bucket
+      </Button>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}

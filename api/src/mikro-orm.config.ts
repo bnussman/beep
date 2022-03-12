@@ -8,7 +8,8 @@ export default {
     password: DB_PASSWORD,
     type: 'postgresql',
     clientUrl: `${DB_URL}/${DB_DATABASE}`,
-    // clientUrl: `postgresql://db.production.ridebeep.app:5432/${process.env.POSTGRESQL_DATABASE}`,
+    // clientUrl: `postgresql://db.production.ridebeep.app:5432/beep`,
     loadStrategy: LoadStrategy.JOINED,
     debug: !isProduction,
+    // debug: false,
 } as unknown as Configuration<IDatabaseDriver<Connection>>

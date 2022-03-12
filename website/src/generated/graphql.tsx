@@ -132,6 +132,7 @@ export type Mutation = {
   cancelBeep: Scalars['Boolean'];
   changePassword: Scalars['Boolean'];
   chooseBeep: QueueEntry;
+  cleanObjectStorageBucket: Scalars['Float'];
   clearQueue: Scalars['Boolean'];
   deleteAccount: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
@@ -666,7 +667,7 @@ export type EditAccountMutationVariables = Exact<{
 }>;
 
 
-export type EditAccountMutation = { __typename?: 'Mutation', editAccount: { __typename?: 'User', id: string, name: string } };
+export type EditAccountMutation = { __typename?: 'Mutation', editAccount: { __typename?: 'User', id: string } };
 
 export type AddProfilePictureMutationVariables = Exact<{
   picture: Scalars['Upload'];
@@ -767,6 +768,11 @@ export type SendNotificationsMutationVariables = Exact<{
 
 
 export type SendNotificationsMutation = { __typename?: 'Mutation', sendNotifications: number };
+
+export type CleanObjectStorageBucketMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CleanObjectStorageBucketMutation = { __typename?: 'Mutation', cleanObjectStorageBucket: number };
 
 export type DeleteRatingMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1349,7 +1355,6 @@ export const EditAccountDocument = gql`
     input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp}
   ) {
     id
-    name
   }
 }
     `;
@@ -1917,6 +1922,36 @@ export function useSendNotificationsMutation(baseOptions?: Apollo.MutationHookOp
 export type SendNotificationsMutationHookResult = ReturnType<typeof useSendNotificationsMutation>;
 export type SendNotificationsMutationResult = Apollo.MutationResult<SendNotificationsMutation>;
 export type SendNotificationsMutationOptions = Apollo.BaseMutationOptions<SendNotificationsMutation, SendNotificationsMutationVariables>;
+export const CleanObjectStorageBucketDocument = gql`
+    mutation CleanObjectStorageBucket {
+  cleanObjectStorageBucket
+}
+    `;
+export type CleanObjectStorageBucketMutationFn = Apollo.MutationFunction<CleanObjectStorageBucketMutation, CleanObjectStorageBucketMutationVariables>;
+
+/**
+ * __useCleanObjectStorageBucketMutation__
+ *
+ * To run a mutation, you first call `useCleanObjectStorageBucketMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCleanObjectStorageBucketMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cleanObjectStorageBucketMutation, { data, loading, error }] = useCleanObjectStorageBucketMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCleanObjectStorageBucketMutation(baseOptions?: Apollo.MutationHookOptions<CleanObjectStorageBucketMutation, CleanObjectStorageBucketMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CleanObjectStorageBucketMutation, CleanObjectStorageBucketMutationVariables>(CleanObjectStorageBucketDocument, options);
+      }
+export type CleanObjectStorageBucketMutationHookResult = ReturnType<typeof useCleanObjectStorageBucketMutation>;
+export type CleanObjectStorageBucketMutationResult = Apollo.MutationResult<CleanObjectStorageBucketMutation>;
+export type CleanObjectStorageBucketMutationOptions = Apollo.BaseMutationOptions<CleanObjectStorageBucketMutation, CleanObjectStorageBucketMutationVariables>;
 export const DeleteRatingDocument = gql`
     mutation DeleteRating($id: String!) {
   deleteRating(id: $id)
