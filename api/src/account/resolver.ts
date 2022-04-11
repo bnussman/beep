@@ -7,9 +7,8 @@ import { Context } from '../utils/context';
 import { EditAccountInput, ChangePasswordInput } from '../validators/account';
 import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
-import AWS from 'aws-sdk';
 import { VerifyEmail } from '../entities/VerifyEmail';
-import { deleteObject } from '../utils/s3';
+import { deleteObject, s3 } from '../utils/s3';
 
 @Resolver()
 export class AccountResolver {
@@ -116,13 +115,8 @@ export class AccountResolver {
   @Mutation(() => User)
   @Authorized('No Verification')
   public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
-    const s3 = new AWS.S3({
-      accessKeyId: process.env.S3_ACCESS_KEY_ID,
-      secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
-      endpoint: process.env.S3_ENDPOINT_URL
-    });
 
-    const extention = filename.substr(filename.lastIndexOf("."), filename.length);
+    const extention = filename.substring(filename.lastIndexOf("."), filename.length);
 
     filename = ctx.user.id + "-" + Date.now() + extention;
 
@@ -139,7 +133,7 @@ export class AccountResolver {
       if (ctx.user.photoUrl) {
         const key: string = ctx.user.photoUrl.split("https://beep.us-east-1.linodeobjects.com/")[1];
 
-        deleteObject(s3, key);
+        deleteObject(key);
       }
 
       ctx.user.photoUrl = result.Location;

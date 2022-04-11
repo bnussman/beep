@@ -26,15 +26,12 @@ This is the monorepo for the Beep App. Ride beep app is currently a substitute f
 
 ### Dependencies
 
-```
-sudo apt-get install nodejs
-sudo apt-get install npm
-```
-
-```
-sudo npm install --global yarn
-sudo npm install --global expo-cli
-```
+- Node.js (Install with [Volta](https://volta.sh/))
+- npm (Install with [Volta](https://volta.sh/))
+- Yarn (Install with [Volta](https://volta.sh/))
+- Docker
+- [docker-compose](https://docs.docker.com/compose/install/#install-compose)
+- Expo CLI (`npm install --global expo-cli`)
 
 ### Running Locally
 
@@ -50,6 +47,16 @@ cd beep
 Install dependencies
 ```
 yarn
+```
+
+Bring local db and redis up with Docker
+```
+docker-compose up -d
+```
+
+Setup DB scheme (go to the `api/` folder)
+```
+npx mikro-orm schema:create --run
 ```
 
 To run the development envrionment use
@@ -96,6 +103,15 @@ export POSTGRESQL_DATABASE=beep
 
 export REDIS_HOST=redis.staging.nussman.us
 export REDIS_PASSWORD=<a real password here>
+```
+
+You can also create a `.env` in `api/` to set the API's env. (`vim api/.env`)
+
+```env
+S3_ACCESS_KEY_ID=hkjvbyuverbvugfreukgsig
+S3_ACCESS_KEY_SECRET=hwgyeeurkgufgkerbvyrue
+S3_ENDPOINT_URL=https://us-east-1.linodeobjects.com
+GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 ```
 
 ### Services running for local development

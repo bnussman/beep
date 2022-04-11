@@ -1,6 +1,7 @@
+import * as unleash from 'unleash-client';
 import { sha256 } from 'js-sha256';
 import { sendResetEmail, createVerifyEmailEntryAndSendEmail } from './helpers';
-import { Entity, wrap } from '@mikro-orm/core';
+import { wrap } from '@mikro-orm/core';
 import { User } from '../entities/User';
 import { ForgotPassword } from '../entities/ForgotPassword';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
@@ -8,8 +9,7 @@ import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth'
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { lights } from '../utils/lights';
-import AWS from 'aws-sdk';
-import * as unleash from 'unleash-client';
+import { s3 } from '../utils/s3';
 
 @ObjectType()
 class Auth {
@@ -48,17 +48,11 @@ export class AuthResolver {
 
     const user = new User();
 
-    const s3 = new AWS.S3({
-      accessKeyId: process.env.S3_ACCESS_KEY_ID,
-      secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
-      endpoint: process.env.S3_ENDPOINT_URL
-    });
-
-    const extention = filename.substr(filename.lastIndexOf("."), filename.length);
+    const extention = filename.substring(filename.lastIndexOf("."), filename.length);
 
     const uploadParams = {
       Body: createReadStream(),
-      Key: "images/" + user.id + "-" + Date.now() + extention,
+      Key: `images/${user.id}-${Date.now()}${extention}`,
       Bucket: "beep",
       ACL: "public-read"
     };

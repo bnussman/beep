@@ -1,14 +1,21 @@
-import { S3 } from "aws-sdk";
 import * as Sentry from "@sentry/node";
+import { S3 } from "aws-sdk";
+import { S3_ACCESS_KEY_ID, S3_ACCESS_KEY_SECRET, S3_ENDPOINT_URL } from "./constants";
 
-export async function getAllObjects(s3: S3, params: S3.ListObjectsV2Request): Promise<S3.ObjectList> {
+export const s3 = new S3({
+  accessKeyId: S3_ACCESS_KEY_ID,
+  secretAccessKey: S3_ACCESS_KEY_SECRET,
+  endpoint: S3_ENDPOINT_URL
+});
+
+export async function getAllObjects(params: S3.ListObjectsV2Request): Promise<S3.ObjectList> {
   const { IsTruncated, Contents, NextContinuationToken } = await s3.listObjectsV2(params).promise();
 
   if (!IsTruncated) {
     return Contents || [];
   }
 
-  const objects = await getAllObjects(s3, { ...params, ContinuationToken: NextContinuationToken });
+  const objects = await getAllObjects({ ...params, ContinuationToken: NextContinuationToken });
 
   return objects.concat(Contents || []);
 }
@@ -39,7 +46,7 @@ function getTimestampFromKey(key: string | undefined): number {
 }
 
 
-export function getOlderObjectsToDelete(s3: S3, objects: S3.ObjectList) {
+export function getOlderObjectsToDelete(objects: S3.ObjectList) {
   if (objects.length <= 1) {
     throw new Error("Must have many objects to delete oldest objects");
   }
@@ -55,7 +62,7 @@ export function getOlderObjectsToDelete(s3: S3, objects: S3.ObjectList) {
   return objects.filter(object => object.Key !== newestObject.Key);
 }
 
-export async function deleteObject(s3: S3, key: string) {
+export async function deleteObject(key: string) {
   try {
     await s3.deleteObject({ Bucket: "beep", Key: key }).promise();
   }

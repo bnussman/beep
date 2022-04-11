@@ -8,3 +8,4 @@ build/**
 .expo/
 .idea/
 .DS_Store
+**/.env

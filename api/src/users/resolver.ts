@@ -1,17 +1,16 @@
+import PaginationArgs from '../args/Pagination';
+import EditUserValidator from '../validators/user/EditUser';
+import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser } from '../account/helpers';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
-import PaginationArgs from '../args/Pagination';
-import EditUserValidator from '../validators/user/EditUser';
 import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
-import fieldsToRelations from 'graphql-fields-to-relations';
 import { Paginated } from '../utils/paginated';
 import { search } from './helpers';
 import { sendNotification, sendNotificationsNew } from '../utils/notifications';
 import { S3 } from 'aws-sdk';
-import { S3_ACCESS_KEY_ID, S3_ACCESS_KEY_SECRET, S3_ENDPOINT_URL } from '../utils/constants';
 import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject } from '../utils/s3';
 
 @ObjectType()
@@ -120,13 +119,7 @@ export class UserResolver {
   @Mutation(() => Number)
   @Authorized(UserRole.ADMIN)
   public async cleanObjectStorageBucket(@Ctx() { em }: Context): Promise<number> {
-    const s3 = new S3({
-      accessKeyId: S3_ACCESS_KEY_ID,
-      secretAccessKey: S3_ACCESS_KEY_SECRET,
-      endpoint: S3_ENDPOINT_URL
-    });
-
-    const objects = await getAllObjects(s3, {
+    const objects = await getAllObjects({
       Bucket: 'beep',
       Prefix: 'images/',
     });
@@ -145,7 +138,7 @@ export class UserResolver {
       const objectsWithSameUser = objects.filter(object => object.Key?.startsWith(`images/${userId}`));
 
       if (objectsWithSameUser.length > 1) {
-        objectsToDelete.concat(getOlderObjectsToDelete(s3, objectsWithSameUser));
+        objectsToDelete.concat(getOlderObjectsToDelete(objectsWithSameUser));
       }
     }
 
@@ -153,7 +146,7 @@ export class UserResolver {
       if (object.Key === undefined) {
         throw new Error("Key is undefined when trying to delete an old object");
       }
-      deleteObject(s3, object.Key);
+      deleteObject(object.Key);
     }
 
     return objectsToDelete.length;
