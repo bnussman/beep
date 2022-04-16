@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { AddProfilePictureMutation, EditAccountMutation, GetUserDataQuery } from '../generated/graphql';
+import { AddProfilePictureMutation, EditAccountMutation, EditAccountMutationVariables, GetUserDataQuery } from '../generated/graphql';
 import { Error } from '../components/Error';
-import { Alert, Avatar, Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
+import { Alert, Avatar, Box, Button, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
 import { GetUserData } from '../App';
 import { Card } from '../components/Card';
+import { useForm } from "react-hook-form";
+import { useValidationErrors } from '../utils/useValidationErrors';
+
+const pick = (obj: any, keys: string[]) => Object.fromEntries(
+  keys
+  .filter(key => key in obj)
+  .map(key => [key, obj[key]])
+);
 
 const EditAccount = gql`
   mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
@@ -24,49 +32,33 @@ export const UploadPhoto = gql`
 `;
 
 export function EditProfile() {
-  const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
+  const [edit, { error }] = useMutation<EditAccountMutation>(EditAccount);
   const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
   const { data: userData } = useQuery<GetUserDataQuery>(GetUserData);
   const toast = useToast();
 
   const user = userData?.getUser;
-  
-  const [first, setFirst] = useState<string | undefined>(user?.first);
-  const [last, setLast] = useState<string | undefined>(user?.last);
-  const [email, setEmail] = useState<string | undefined>(user?.email);
-  const [phone, setPhone] = useState<string | undefined>(user?.phone);
-  const [venmo, setVenmo] = useState<string | null | undefined>(user?.venmo);
-  const [cashapp, setCashapp] = useState<string | null | undefined>(user?.cashapp);
-  const [photoUrl, setPhotoUrl] = useState<string | null | undefined>(user?.photoUrl);
 
-  useEffect(() => {
-    if (user) {
-      if (first !== user?.first) setFirst(user.first);
-      if (last !== user?.last) setLast(user.last);
-      if (email !== user?.email) setEmail(user.email);
-      if (phone !== user?.first) setPhone(user.phone);
-      if (venmo !== user?.venmo) setVenmo(user.venmo);
-      if (photoUrl !== user?.photoUrl) setPhotoUrl(user.photoUrl);
-      if (cashapp !== user?.cashapp) setCashapp(user.cashapp);
+  const validationErrors = useValidationErrors<EditAccountMutationVariables>(error);
+
+  const { handleSubmit, register, formState: { errors, isSubmitting, isValid } } = useForm<EditAccountMutationVariables>({
+     defaultValues: pick(user, ['first', 'last', 'email', 'phone', 'venmo'])
+  });
+
+  const onSubmit = handleSubmit(async (variables) => {
+    const { data } = await edit({ variables });
+
+    if (data) {
+      toast({ status: 'success', title: "Success", description: "Successfully updated profile" });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  });
 
-  async function handleEdit(e: any) {
-    e.preventDefault();
-    edit({ variables: { first, last, email, phone, venmo, cashapp } })
+  async function uploadPhoto(picture: File | undefined) {
+    if (!picture) return;
+    upload({ variables: { picture } })
       .then(() => {
-        toast({ status: 'success', title: "Success", description: "Successfully updated profile" });
-      })
-  }
-
-  async function uploadPhoto(photo: File | undefined) {
-    if (!photo) return;
-    await upload({
-      variables: {
-        picture: photo
-      }
-    });
+        toast({ status: 'success', title: "Success", description: "Successfully updated profile picture" });
+      });
   }
 
   if (!user) {
@@ -75,7 +67,7 @@ export function EditProfile() {
 
   return (
     <Card>
-      {error && <Error error={error} />}
+      {error && !validationErrors ? <Error error={error} /> : null}
       {uploadLoading &&
         <Alert status="info" mb={2}>
           <Spinner size="xs" mr={2} />
@@ -86,10 +78,10 @@ export function EditProfile() {
       <Box mb={6}>
         <Flex align="center">
           <Box>
-            <label htmlFor="photo">
-              <Avatar size="xl" src={photoUrl || undefined} />
-            </label>
-            <input
+            <FormLabel cursor="pointer" htmlFor="photo">
+              <Avatar size="xl" src={user?.photoUrl || undefined} />
+            </FormLabel>
+            <Input
               id="photo"
               type="file"
               onChange={(e) => uploadPhoto(e.target.files?.[0])}
@@ -102,37 +94,46 @@ export function EditProfile() {
           </Box>
         </Flex>
       </Box>
-      <form onSubmit={(e) => handleEdit(e)}>
+      <form onSubmit={onSubmit}>
         <Stack spacing={4}>
-          <FormControl id="email">
+          <FormControl>
             <FormLabel>Username</FormLabel>
             <Input
-              id="username"
               value={user?.username}
               disabled
             />
           </FormControl>
-          <FormControl>
+          <FormControl isInvalid={Boolean(errors.first) || Boolean(validationErrors?.first)}>
             <FormLabel>First Name</FormLabel>
             <Input
-              id="first"
-              value={first}
-              onChange={(value: any) => setFirst(value.target.value)}
+              {...register('first', {
+                required: 'This is required',
+              })}
             />
+            <FormErrorMessage>
+              {errors.first && errors.first.message}
+              {validationErrors?.first && validationErrors?.first[0]}
+            </FormErrorMessage>
           </FormControl>
-          <FormControl>
+          <FormControl isInvalid={Boolean(errors.last) || Boolean(validationErrors?.last)}>
             <FormLabel>Last Name</FormLabel>
             <Input
-              value={last}
-              onChange={(value: any) => setLast(value.target.value)}
+              {...register('last', {
+                required: 'This is required',
+              })}
             />
+            <FormErrorMessage>
+              {errors.last && errors.last.message}
+              {validationErrors?.last && validationErrors?.last[0]}
+            </FormErrorMessage>
           </FormControl>
-          <FormControl>
+          <FormControl isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}>
             <FormLabel>Email</FormLabel>
             <Input
               type="email"
-              value={email}
-              onChange={(value: any) => setEmail(value.target.value)}
+              {...register('email', {
+                required: 'This is required',
+              })}
             />
             <FormHelperText>
               {
@@ -143,30 +144,47 @@ export function EditProfile() {
                   : "Your email is not verified"
               }
             </FormHelperText>
+            <FormErrorMessage>
+              {errors.email && errors.email.message}
+              {validationErrors?.email && validationErrors?.email[0]}
+            </FormErrorMessage>
           </FormControl>
-          <FormControl>
+          <FormControl isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}>
             <FormLabel>Phone</FormLabel>
             <Input
               type="tel"
-              value={phone}
-              onChange={(value: any) => setPhone(value.target.value)}
+              {...register('phone', {
+                required: 'This is required',
+              })}
             />
+            <FormErrorMessage>
+              {errors.phone && errors.phone.message}
+              {validationErrors?.phone && validationErrors?.phone[0]}
+            </FormErrorMessage>
           </FormControl>
-          <FormControl>
+          <FormControl isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}>
             <FormLabel>Venmo</FormLabel>
             <Input
-              value={venmo || ''}
-              onChange={(value: any) => setVenmo(value.target.value)}
+              {...register('venmo')}
             />
+            <FormErrorMessage>
+              {errors.venmo && errors.venmo.message}
+              {validationErrors?.venmo && validationErrors?.venmo[0]}
+            </FormErrorMessage>
           </FormControl>
-          <FormControl>
+          <FormControl isInvalid={Boolean(errors.cashapp) || Boolean(validationErrors?.cashapp)}>
             <FormLabel>Cash App</FormLabel>
             <Input
-              value={cashapp || ''}
-              onChange={(value: any) => setCashapp(value.target.value)}
+              {...register('cashapp')}
             />
+            <FormErrorMessage>
+              {errors.cashapp && errors.cashapp.message}
+              {validationErrors?.cashapp && validationErrors?.cashapp[0]}
+            </FormErrorMessage>
           </FormControl>
-          <Button type="submit" isLoading={loading}>Update profile</Button>
+          <Button type="submit" isLoading={isSubmitting} isDisabled={!isValid}>
+            Update profile
+          </Button>
         </Stack>
       </form>
     </Card>

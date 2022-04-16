@@ -111,8 +111,6 @@ export function SignUp() {
     <Avatar size="2xl" src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} cursor="pointer" />
   ), [picture]);
 
-  console.log(error, validationErrors)
-
   return (
     <Container maxW="container.sm">
       <Card>
