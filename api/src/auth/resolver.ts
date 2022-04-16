@@ -71,7 +71,16 @@ export class AuthResolver {
 
     const tokens = new TokenEntry(user);
 
-    await ctx.em.persistAndFlush([user, tokens]);
+    // How do I make this not so ugly @Mikro-ORM
+    try {
+      await ctx.em.persistAndFlush([user, tokens]);
+    } catch (error: any) {
+      const msg = error.message as string;
+      if (msg.includes("unique constraint")) {
+        throw new Error("That username or email is taken");
+      }
+      throw error;
+    }
 
     createVerifyEmailEntryAndSendEmail(user, ctx.em);
 
