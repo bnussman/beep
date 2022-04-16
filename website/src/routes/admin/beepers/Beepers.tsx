@@ -64,8 +64,8 @@ function Beepers() {
       <Box>
         <Heading>Beepers</Heading>
         <Center>
-          <Heading size="xl" mt={4}>
-            Nobody is beeping right now 🥺
+          <Heading size="lg" mt={4}>
+            Nobody is beeping right now
           </Heading>
         </Center>
       </Box>

@@ -64,19 +64,15 @@ export default function NavBar() {
           <Switch
             isChecked={colorMode === "dark"}
             onChange={toggleColorMode}
-            colorScheme="brand"
+            colorScheme="black"
             size="lg"
             ml={2}
           />
           <Box>🌑</Box>
         </HStack>
         <>
-          {(user && user.role === UserRole.ADMIN) &&
-            <AdminDropdown />
-          }
-          {user &&
-            <UserDropdown />
-          }
+          {(user && user.role === UserRole.ADMIN) && <AdminDropdown />}
+          {user && <UserDropdown />}
           {!user &&
             <>
               <Button

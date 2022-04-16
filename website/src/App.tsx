@@ -8,7 +8,7 @@ import { theme } from './utils/theme';
 import { Download } from './routes/Download';
 import Home from './routes/Home';
 import Login from './routes/Login';
-import SignUp from './routes/SignUp';
+import { SignUp } from './routes/SignUp';
 import EditProfile from './routes/EditProfile';
 import ForgotPassword from './routes/ForgotPassword';
 import ResetPassword from './routes/ResetPassword';

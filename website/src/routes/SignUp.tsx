@@ -1,11 +1,13 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useMemo, useState } from 'react';
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
-import { SignUpMutation } from '../generated/graphql';
+import { SignUpMutation, SignUpMutationVariables } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { client } from '../utils/Apollo';
 import { GetUserData } from '../App';
 import { Card } from '../components/Card';
+import { useValidationErrors } from '../utils/useValidationErrors';
+import { useForm } from "react-hook-form";
 import {
   Link,
   Text,
@@ -24,7 +26,8 @@ import {
   Stack,
   Spacer,
   Center,
-  Heading
+  Heading,
+  FormErrorMessage
 } from '@chakra-ui/react';
 
 const SignUpGraphQL = gql`
@@ -70,35 +73,45 @@ const SignUpGraphQL = gql`
   }
 `;
 
-function SignUp() {
+export function SignUp() {
   const navigate = useNavigate();
-  const [first, setFirst] = useState<string>('');
-  const [last, setLast] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [venmo, setVenmo] = useState<string>('');
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [photo, setPhoto] = useState<File>();
+
   const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
 
-  async function handleSignUp(e: FormEvent): Promise<void> {
-    e.preventDefault();
+  const {
+    handleSubmit,
+    register,
+    reset,
+    watch,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<SignUpMutationVariables>({ mode: "onChange" });
 
-    signup({
-      variables: { first, last, email, phone, venmo, username, password, picture: photo }
-    })
-      .then(({ data }) => {
-        localStorage.setItem('user', JSON.stringify(data?.signup));
+  const picture = watch("picture");
 
-        client.writeQuery({
-          query: GetUserData,
-          data: { getUser: { ...data?.signup?.user } }
-        });
+  const validationErrors = useValidationErrors<SignUpMutationVariables>(error);
 
-        navigate('/');
-      })
-  }
+  const onSubmit = handleSubmit(async (variables) => {
+    const { data } = await signup({
+      variables: { ...variables, picture: variables.picture[0] }
+    });
+
+    if (data) {
+      localStorage.setItem('user', JSON.stringify(data?.signup));
+
+      client.writeQuery({
+        query: GetUserData,
+        data: { getUser: { ...data?.signup?.user } }
+      });
+
+      navigate('/');
+    }
+  });
+
+  const Image = useMemo(() => (
+    <Avatar size="2xl" src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} cursor="pointer" />
+  ), [picture]);
+
+  console.log(error, validationErrors)
 
   return (
     <Container maxW="container.sm">
@@ -106,7 +119,7 @@ function SignUp() {
         <Center pb={8}>
           <Heading>Sign Up</Heading>
         </Center>
-        {error && <Error error={error} />}
+        {error && !validationErrors ? <Error error={error} /> : null}
         <Alert mb={4} status="info">
           <AlertIcon />
           <Text>
@@ -116,86 +129,131 @@ function SignUp() {
             <Link as={RouterLink} to="/privacy">Privacy Policy</Link>
           </Text>
         </Alert>
-        <form onSubmit={handleSignUp}>
+        <form onSubmit={onSubmit}>
           <Stack>
             <HStack>
               <Stack w="full">
-                <FormControl>
+                <FormControl isInvalid={Boolean(errors.first) || Boolean(validationErrors?.first)}>
                   <FormLabel>First Name</FormLabel>
                   <Input
                     type="text"
-                    value={first}
-                    onChange={(value: any) => setFirst(value.target.value)}
+                    id="first"
+                    {...register('first', {
+                      required: 'This is required',
+                    })}
                   />
+                  <FormErrorMessage>
+                    {errors.first && errors.first.message}
+                    {validationErrors?.first && validationErrors?.first[0]}
+                  </FormErrorMessage>
                 </FormControl>
-                <FormControl>
+                <FormControl isInvalid={Boolean(errors.last) || Boolean(validationErrors?.last)}>
                   <FormLabel>Last Name</FormLabel>
                   <Input
                     type="text"
-                    value={last}
-                    onChange={(value: any) => setLast(value.target.value)}
+                    id="last"
+                    {...register('last', {
+                      required: 'This is required',
+                    })}
                   />
+                  <FormErrorMessage>
+                    {errors.last && errors.last.message}
+                    {validationErrors?.last && validationErrors?.last[0]}
+                  </FormErrorMessage>
                 </FormControl>
               </Stack>
               <Spacer />
               <Box>
-                <label
-                  htmlFor="photo"
-                >
-                  <Avatar size="2xl" src={photo ? URL.createObjectURL(photo) : undefined} />
-                </label>
-                <input
-                  hidden
-                  id="photo"
-                  type="file"
-                  onChange={(e) => {
-                    setPhoto(e.target.files?.[0]);
-                  }}
-                />
+                <FormControl isInvalid={Boolean(errors.picture) || Boolean(validationErrors?.picture)}>
+                  <FormLabel htmlFor="picture">
+                    {Image}
+                  </FormLabel>
+                  <Input
+                    hidden
+                    variant="unstyled"
+                    id="picture"
+                    type="file"
+                    {...register('picture', {
+                      required: 'This is required',
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.picture && errors.picture.message}
+                    {validationErrors?.picture && validationErrors?.picture[0]}
+                  </FormErrorMessage>
+                </FormControl>
               </Box>
             </HStack>
-            <FormControl>
+            <FormControl isInvalid={Boolean(Boolean(errors.email) || validationErrors?.email)}>
               <FormLabel>Email</FormLabel>
               <Input
                 type="email"
-                value={email}
-                onChange={(value: any) => setEmail(value.target.value)}
+                id="email"
+                {...register('email', {
+                  required: 'This is required',
+                })}
               />
               <FormHelperText>You must use a <Code>.edu</Code> to be eligible to use the Beep App</FormHelperText>
+              <FormErrorMessage>
+                {errors.email && errors.email.message}
+                {validationErrors?.email && validationErrors?.email[0]}
+              </FormErrorMessage>
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}>
               <FormLabel>Phone Number</FormLabel>
               <Input
                 type="phone"
-                value={phone}
-                onChange={(value: any) => setPhone(value.target.value)}
+                id="phone"
+                {...register('phone', {
+                  required: 'This is required',
+                })}
               />
+              <FormErrorMessage>
+                {errors.phone && errors.phone.message}
+                {validationErrors?.phone && validationErrors?.phone[0]}
+              </FormErrorMessage>
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}>
               <FormLabel>Venmo Username</FormLabel>
               <Input
                 type="text"
-                value={venmo}
-                onChange={(value: any) => setVenmo(value.target.value)}
+                id="venmo"
+                {...register('venmo')}
               />
+              <FormErrorMessage>
+                {errors.venmo && errors.venmo.message}
+                {validationErrors?.venmo && validationErrors?.venmo[0]}
+              </FormErrorMessage>
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={Boolean(errors.username) || Boolean(validationErrors?.username)}>
               <FormLabel>Username</FormLabel>
               <Input
                 type="text"
-                value={username}
-                onChange={(value: any) => setUsername(value.target.value)}
+                id="username"
+                {...register('username', {
+                  required: 'This is required',
+                })}
               />
+              <FormErrorMessage>
+                {errors.username && errors.username.message}
+                {validationErrors?.username && validationErrors?.username[0]}
+              </FormErrorMessage>
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={Boolean(errors.password) || Boolean(validationErrors?.password)}>
               <FormLabel>Password</FormLabel>
               <Input
                 type="password"
-                value={password}
-                onChange={(value: any) => setPassword(value.target.value)}
+                id="password"
+                {...register('password', {
+                  required: 'This is required',
+                })}
               />
+              <FormErrorMessage>
+                {errors.password && errors.password.message}
+                {validationErrors?.password && validationErrors?.password[0]}
+              </FormErrorMessage>
             </FormControl>
-            <Button type="submit" isLoading={loading} >
+            <Button type="submit" isLoading={isSubmitting} isDisabled={!isValid}>
               Sign Up
             </Button>
           </Stack>
@@ -204,5 +262,3 @@ function SignUp() {
     </Container>
   );
 }
-
-export default SignUp;
