@@ -5,7 +5,8 @@ import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { GetUserData } from '../App';
 import { client } from '../utils/Apollo';
-import { Box, Button, Input, FormControl, FormLabel } from "@chakra-ui/react"
+import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack, Center, Heading } from "@chakra-ui/react"
+import { Card } from '../components/Card';
 
 const LoginGraphQL = gql`
   mutation Login($username: String!, $password: String!) {
@@ -69,40 +70,48 @@ function Login() {
   }
 
   return (
-    <Box>
-      {error && <Error error={error} />}
-      <form onSubmit={handleLogin}>
-        <FormControl>
-          <FormLabel>Username or Email</FormLabel>
-          <Input
-            type="email"
-            onChange={(value: any) => setUsername(value.target.value)}
-          />
-        </FormControl>
-        <FormControl mt={2}>
-          <FormLabel>Password</FormLabel>
-          <Input
-            type="password"
-            onChange={(value: any) => setPassword(value.target.value)}
-          />
-        </FormControl>
-        <Box mt={4}>
-          <Button
-            type="submit"
-            onClick={handleLogin}
-            isLoading={loading}
-            disabled={!username || !password}
-          >
-            Sign in
-        </Button>
-        </Box>
-      </form>
-      <Box mt={8}>
-        <Button as={Link} to="/password/forgot" variant="link">
-          Forgot Password
-          </Button>
-      </Box>
-    </Box>
+    <Container maxW="container.sm">
+      <Card>
+        <Center pb={8}>
+          <Heading>Login</Heading>
+        </Center>
+        {error && <Error error={error} />}
+        <form onSubmit={handleLogin}>
+          <Stack spacing={4}>
+            <FormControl>
+              <FormLabel>Username or Email</FormLabel>
+              <Input
+                type="email"
+                onChange={(value: any) => setUsername(value.target.value)}
+              />
+            </FormControl>
+            <FormControl mt={2}>
+              <FormLabel>Password</FormLabel>
+              <Input
+                type="password"
+                onChange={(value: any) => setPassword(value.target.value)}
+              />
+            </FormControl>
+            <HStack>
+              <Button
+                type="submit"
+                onClick={handleLogin}
+                isLoading={loading}
+                disabled={!username || !password}
+                colorScheme="brand"
+                textColor="white"
+              >
+                Sign in
+              </Button>
+              <Spacer />
+              <Button as={Link} to="/password/forgot">
+                Forgot Password
+              </Button>
+            </HStack>
+          </Stack>
+        </form>
+      </Card>
+    </Container>
   );
 }
 
