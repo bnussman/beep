@@ -1,4 +1,4 @@
-import React, { FormEvent, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation, SignUpMutationVariables } from '../generated/graphql';
@@ -27,7 +27,8 @@ import {
   Spacer,
   Center,
   Heading,
-  FormErrorMessage
+  FormErrorMessage,
+  useBreakpointValue
 } from '@chakra-ui/react';
 
 const SignUpGraphQL = gql`
@@ -75,6 +76,7 @@ const SignUpGraphQL = gql`
 
 export function SignUp() {
   const navigate = useNavigate();
+  const avatarSize = useBreakpointValue({ base: 'xl', md: '2xl' });
 
   const [signup, { error }] = useMutation<SignUpMutation>(SignUpGraphQL);
 
@@ -107,11 +109,11 @@ export function SignUp() {
   });
 
   const Image = useMemo(() => (
-    <Avatar size="2xl" src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} cursor="pointer" />
-  ), [picture]);
+    <Avatar size={avatarSize} src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} cursor="pointer" />
+  ), [picture, avatarSize]);
 
   return (
-    <Container maxW="container.sm">
+    <Container maxW="container.sm" p={[0]}>
       <Card>
         <Center pb={8}>
           <Heading>Sign Up</Heading>

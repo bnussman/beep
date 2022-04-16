@@ -70,7 +70,7 @@ export function Login() {
   }
 
   return (
-    <Container maxW="container.sm">
+    <Container maxW="container.sm" p={[0]}>
       <Card>
         <Center pb={8}>
           <Heading>Login</Heading>

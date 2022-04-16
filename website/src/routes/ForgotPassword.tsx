@@ -31,7 +31,7 @@ export function ForgotPassword() {
   }
 
   return (
-    <Container maxW="container.sm">
+    <Container maxW="container.sm" p={[0]}>
       <Card>
         <Center pb={4}>
           <Heading>Forgot Password</Heading>
