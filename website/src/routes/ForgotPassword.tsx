@@ -1,10 +1,9 @@
 import React, { FormEvent, useState } from 'react';
-import { Navigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { ForgotPasswordMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
-import { Box, Button, Center, Container, Flex, FormControl, FormHelperText, FormLabel, Heading, Input } from '@chakra-ui/react';
+import { Button, Center, Container, FormControl, FormHelperText, FormLabel, Heading, Input } from '@chakra-ui/react';
 import { EmailIcon } from '@chakra-ui/icons';
 import { Card } from '../components/Card';
 
@@ -14,7 +13,7 @@ const ForgotPasswordGraphQL = gql`
   }
 `;
 
-function ForgotPassword() {
+export function ForgotPassword() {
   const [forgot, { data, loading, error }] = useMutation<ForgotPasswordMutation>(ForgotPasswordGraphQL);
   const [email, setEmail] = useState("");
 
@@ -65,5 +64,3 @@ function ForgotPassword() {
     </Container>
   );
 }
-
-export default ForgotPassword;

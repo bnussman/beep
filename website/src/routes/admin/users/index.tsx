@@ -1,13 +1,13 @@
-import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input } from "@chakra-ui/react"
 import React, { useEffect, useState } from 'react'
+import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input } from "@chakra-ui/react"
 import { Indicator } from '../../../components/Indicator';
-import Pagination from '../../../components/Pagination';
+import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetUsersQuery } from '../../../generated/graphql';
-import TdUser from '../../../components/TdUser';
+import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { SearchIcon } from '@chakra-ui/icons';
-import Loading from '../../../components/Loading';
+import { Loading } from '../../../components/Loading';
 import { useSearchParams } from "react-router-dom";
 
 export const UsersGraphQL = gql`
@@ -29,7 +29,7 @@ export const UsersGraphQL = gql`
   }
 `;
 
-function Users() {
+export function Users() {
   const pageLimit = 20;
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -126,5 +126,3 @@ function Users() {
     </Box>
   );
 }
-
-export default Users;

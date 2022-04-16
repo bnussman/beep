@@ -7,7 +7,7 @@ interface Props {
   user: Partial<User>;
 }
 
-function BasicUser(props: Props) {
+export function BasicUser(props: Props) {
   const { user } = props;
 
   return (
@@ -19,5 +19,3 @@ function BasicUser(props: Props) {
     </NavLink>
   );
 }
-
-export default BasicUser;

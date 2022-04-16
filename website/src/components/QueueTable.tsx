@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import TdUser from './TdUser';
+import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
 import { GetUserQuery } from '../generated/graphql';
 import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
@@ -54,7 +54,7 @@ interface Props {
 
 let sub: any;
 
-function QueueTable(props: Props) {
+export function QueueTable(props: Props) {
   const { user } = props;
 
   async function subscribe() {
@@ -126,5 +126,3 @@ function QueueTable(props: Props) {
     </Box>
   );
 }
-
-export default QueueTable;

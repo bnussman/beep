@@ -44,5 +44,3 @@ export function Error({ error, children }: Props) {
     </Alert>
   );
 }
-
-export default Error;

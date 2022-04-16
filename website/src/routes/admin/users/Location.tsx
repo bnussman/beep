@@ -22,7 +22,7 @@ const BeepersLocation = gql`
 
 let sub: any;
 
-function LocationView(props: Props) {
+export function LocationView(props: Props) {
   const { user } = props;
 
   async function subscribe() {
@@ -83,5 +83,3 @@ function LocationView(props: Props) {
     </Box>
   );
 }
-
-export default LocationView;

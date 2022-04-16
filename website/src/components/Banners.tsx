@@ -10,7 +10,7 @@ const Resend = gql`
   }
 `;
 
-export default function Banners() {
+export function Banners() {
   const { data } = useQuery<GetUserDataQuery>(GetUserData);
   const [resend, { loading }] = useMutation<ResendEmailMutation>(Resend);
   const toast = useToast();

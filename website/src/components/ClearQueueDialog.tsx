@@ -20,7 +20,7 @@ interface Props {
   setStopBeeping: (beeping: boolean) => void;
 }
 
-function ClearQueueDialog(props: Props) {
+export function ClearQueueDialog(props: Props) {
   const {
     isOpen,
     onClose,
@@ -60,5 +60,3 @@ function ClearQueueDialog(props: Props) {
     </AlertDialog>
   );
 }
-
-export default ClearQueueDialog;

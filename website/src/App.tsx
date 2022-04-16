@@ -6,21 +6,19 @@ import { client } from './utils/Apollo';
 import { ChakraProvider, Container } from "@chakra-ui/react"
 import { theme } from './utils/theme';
 import { Download } from './routes/Download';
-import Home from './routes/Home';
-import Login from './routes/Login';
+import { Home } from './routes/Home';
+import { Login } from './routes/Login';
 import { SignUp } from './routes/SignUp';
-import EditProfile from './routes/EditProfile';
-import ForgotPassword from './routes/ForgotPassword';
-import ResetPassword from './routes/ResetPassword';
+import { EditProfile } from './routes/EditProfile';
+import { ForgotPassword  } from './routes/ForgotPassword';
+import { ResetPassword  } from './routes/ResetPassword';
 import { ChangePassword } from './routes/ChangePassword';
-import VerifyAccount from './routes/VerifyAccount';
-import Admin from './routes/admin';
-import Privacy from './routes/Privacy';
-import Terms from './routes/Terms';
-import Faq from './routes/FAQ';
-import NavBar from './components/NavBar';
-import About from './routes/About';
-import Banners from './components/Banners';
+import { VerifyAccount } from './routes/VerifyAccount';
+import { Admin } from './routes/admin';
+import { Privacy } from './routes/Privacy';
+import { Terms } from './routes/Terms';
+import { Header } from './components/Header';
+import { Banners } from './components/Banners';
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
 
@@ -98,9 +96,9 @@ function Beep() {
 
   return (
     <Router>
-      <NavBar />
+      <Header />
       <Container maxW="container.xl">
-      <Banners />
+        <Banners />
         <Routes>
           <Route path="/password/forgot" element={<ForgotPassword />} />
           <Route path="/password/reset/:id" element={<ResetPassword />} />
@@ -112,8 +110,6 @@ function Beep() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/admin/*" element={<Admin />} />
-          <Route path="/faq" element={<Faq />} />
-          <Route path="/about" element={<About />} />
           <Route path='/download' element={<Download />} />
           <Route path="/" element={<Home />} />
         </Routes>

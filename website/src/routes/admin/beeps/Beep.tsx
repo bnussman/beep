@@ -1,9 +1,9 @@
 import React from "react";
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import BasicUser from "../../../components/BasicUser";
-import DeleteDialog from "../../../components/DeleteDialog";
-import Loading from "../../../components/Loading";
+import { BasicUser } from "../../../components/BasicUser";
+import { DeleteDialog } from "../../../components/DeleteDialog";
+import { Loading } from "../../../components/Loading";
 import { useNavigate, useParams } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteBeepMutation, GetBeepQuery } from '../../../generated/graphql';
@@ -44,7 +44,7 @@ const GetBeep = gql`
   }
 `;
 
-function BeepPage(): JSX.Element {
+export function Beep() {
   const { id } = useParams();
   const { data, loading } = useQuery<GetBeepQuery>(GetBeep, { variables: { id } });
   const [deleteBeep, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteBeepMutation>(DeleteBeep);
@@ -129,5 +129,3 @@ function BeepPage(): JSX.Element {
     </Box>
   );
 }
-
-export default BeepPage;

@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import Pagination from '../../../components/Pagination';
+import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetRatingsQuery } from '../../../generated/graphql';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import TdUser from '../../../components/TdUser';
+import { TdUser } from '../../../components/TdUser';
 import { NavLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import Loading from '../../../components/Loading';
+import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 
 dayjs.extend(relativeTime);
@@ -49,7 +49,7 @@ export function printStars(rating: number): string {
   return stars;
 }
 
-function Ratings() {
+export function Ratings() {
   const pageLimit = 25;
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, loading, error, refetch } = useQuery<GetRatingsQuery>(RatesGraphQL, {
@@ -118,5 +118,3 @@ function Ratings() {
     </Box>
   );
 }
-
-export default Ratings;

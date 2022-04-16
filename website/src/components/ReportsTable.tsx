@@ -1,11 +1,11 @@
+import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../generated/graphql';
-import Pagination from './Pagination';
-import React, { useState } from 'react';
+import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import TdUser from './TdUser';
+import { TdUser } from './TdUser';
 import { NavLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Indicator } from './Indicator';
@@ -48,7 +48,7 @@ query GetReports($id: String, $show: Int, $offset: Int) {
   }
 `;
 
-function ReportsTable(props: Props) {
+export function ReportsTable(props: Props) {
   const pageLimit = 5;
   const { data, loading, refetch } = useQuery<GetReportsQuery>(Reports, { variables: { id: props.userId, offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -125,5 +125,3 @@ function ReportsTable(props: Props) {
     </Box>
   );
 }
-
-export default ReportsTable;

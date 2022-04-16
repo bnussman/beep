@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Heading, Text, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Flex, Textarea, Box, Checkbox, Stack } from '@chakra-ui/react';
-import {DeleteReport, GetReport, UpdateReport} from './Report';
+import dayjs from 'dayjs';
+import { Heading, Text, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Flex, Textarea, Box, Checkbox, Stack } from '@chakra-ui/react';
+import { DeleteReport, GetReport, UpdateReport } from './Report';
 import { useQuery, useMutation } from '@apollo/client';
 import { DeleteReportMutation, GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
 import { DeleteIcon, ExternalLinkIcon} from '@chakra-ui/icons';
-import DeleteDialog from '../../../components/DeleteDialog';
+import { DeleteDialog } from '../../../components/DeleteDialog';
 import { Error } from '../../../components/Error';
-import dayjs from 'dayjs';
-import BasicUser from '../../../components/BasicUser';
+import { BasicUser } from '../../../components/BasicUser';
 import { Indicator } from '../../../components/Indicator';
 import { NavLink } from 'react-router-dom';
-import Loading from '../../../components/Loading';
+import { Loading } from '../../../components/Loading';
 
 interface Props {
   isOpen: boolean;
@@ -19,7 +19,7 @@ interface Props {
   id: string | null;
 }
 
-function ReportDrawer(props: Props) {
+export function ReportDrawer(props: Props) {
   if (!props.id) return null;
 
   const { isOpen, onClose, id } = props;
@@ -156,5 +156,3 @@ function ReportDrawer(props: Props) {
     </Drawer>
   )
 }
-
-export default ReportDrawer;

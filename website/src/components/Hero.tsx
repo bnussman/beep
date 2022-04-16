@@ -18,7 +18,7 @@ interface Props {
   buttonText: string;
 }
 
-export default function Hero(props: Props) {
+export function Hero(props: Props) {
   const { title, subtitle, image, buttonText, buttonLink } = props;
 
   return (

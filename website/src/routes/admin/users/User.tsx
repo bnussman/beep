@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
-import Loading from '../../../components/Loading';
-import BeepsTable from '../../../components/BeepsTable';
-import QueueTable from '../../../components/QueueTable';
-import DeleteDialog from '../../../components/DeleteDialog';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import LocationView from '../../../routes/admin/users/Location';
-import RatingsTable from '../../../components/RatingsTable';
-import ReportsTable from '../../../components/ReportsTable';
-import ClearQueueDialog from '../../../components/ClearQueueDialog';
-import SendNotificationDialog from '../../../components/SendNotificationDialog';
+import { Loading } from '../../../components/Loading';
+import { BeepsTable } from '../../../components/BeepsTable';
+import { QueueTable } from '../../../components/QueueTable';
+import { DeleteDialog } from '../../../components/DeleteDialog';
+import { LocationView } from '../../../routes/admin/users/Location';
+import { RatingsTable } from '../../../components/RatingsTable';
+import { ReportsTable } from '../../../components/ReportsTable';
+import { ClearQueueDialog } from '../../../components/ClearQueueDialog';
+import { SendNotificationDialog } from '../../../components/SendNotificationDialog';
 import { UsersGraphQL } from '../../../routes/admin/users';
 import { Details } from '../../../routes/admin/users/Details';
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
@@ -118,7 +118,7 @@ const tabs = [
   'reports',
 ]
 
-function User() {
+export function User() {
   const { id } = useParams();
   const { data, loading, error, refetch } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
   const [isDesktop] = useMediaQuery('(min-width: 800px)')
@@ -331,5 +331,3 @@ function User() {
     </>
   );
 }
-
-export default User;

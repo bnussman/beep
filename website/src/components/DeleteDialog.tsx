@@ -18,7 +18,7 @@ interface Props {
   doDelete: () => void;
 }
 
-function DeleteDialog(props: Props) {
+export function DeleteDialog(props: Props) {
   const { isOpen, onClose, cancelRef, doDelete, deleteLoading, title } = props;
 
   return (
@@ -48,5 +48,3 @@ function DeleteDialog(props: Props) {
     </AlertDialog>
   );
 }
-
-export default DeleteDialog;

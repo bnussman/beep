@@ -53,7 +53,7 @@ function DirectionButton(props: DirectionButtonProps) {
   )
 }
 
-export default function Pagination({
+export function Pagination({
   resultCount = 0,
   limit = 25,
   cutoff = 3,

@@ -1,13 +1,13 @@
+import React, { useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
+import { GetBeepsQuery } from '../generated/graphql';
+import { Pagination } from './Pagination';
+import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { TdUser } from './TdUser';
+import { Loading } from './Loading';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { gql, useQuery } from '@apollo/client';
-import { GetBeepsQuery } from '../generated/graphql';
-import Pagination from './Pagination';
-import React, { useState } from 'react';
-import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import TdUser from './TdUser';
-import Loading from './Loading';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -48,7 +48,7 @@ const Hisory = gql`
   }
 `;
 
-function BeepsTable(props: Props) {
+export function BeepsTable(props: Props) {
   const pageLimit = 5;
   const { data, loading, refetch } = useQuery<GetBeepsQuery>(Hisory, { variables: { id: props.userId, offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -119,5 +119,3 @@ function BeepsTable(props: Props) {
     </Box>
   );
 }
-
-export default BeepsTable;

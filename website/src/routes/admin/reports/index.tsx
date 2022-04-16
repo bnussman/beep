@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import TdUser from '../../../components/TdUser';
-import ReportDrawer from './Drawer';
-import Loading from '../../../components/Loading';
-import Pagination from '../../../components/Pagination';
+import { TdUser } from '../../../components/TdUser';
+import { ReportDrawer } from './Drawer';
+import { Loading } from '../../../components/Loading';
+import { Pagination } from '../../../components/Pagination';
 import { Indicator } from '../../../components/Indicator';
 import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../../../generated/graphql';
@@ -40,7 +40,7 @@ export const ReportsGraphQL = gql`
   }
 `;
 
-function Reports() {
+export function Reports() {
   const pageLimit = 25;
 
   const bg = useColorModeValue('gray.50', 'gray.700');
@@ -131,5 +131,3 @@ function Reports() {
     </Box>
   );
 }
-
-export default Reports;

@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import Pagination from '../../../components/Pagination';
+import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetBeepsQuery } from '../../../generated/graphql';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import TdUser from '../../../components/TdUser';
+import { TdUser } from '../../../components/TdUser';
 import { Link } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import Loading from '../../../components/Loading';
+import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 
 dayjs.extend(duration);
@@ -41,7 +41,7 @@ export const BeepsGraphQL = gql`
   }
 `;
 
-function Beeps() {
+export function Beeps() {
   const pageLimit = 25;
   const { data, loading, error, refetch } = useQuery<GetBeepsQuery>(BeepsGraphQL, { variables: { offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -112,5 +112,3 @@ function Beeps() {
     </Box>
   );
 }
-
-export default Beeps;

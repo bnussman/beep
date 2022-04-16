@@ -1,7 +1,7 @@
-import { Box } from "@chakra-ui/react";
 import React from "react";
-import { User } from "../../../generated/graphql";
 import GoogleMapReact from 'google-map-react';
+import { Box } from "@chakra-ui/react";
+import { User } from "../../../generated/graphql";
 import { Marker } from "../../../components/Marker";
 
 interface Props {
@@ -13,7 +13,7 @@ const center = {
   lng: -81.674205
 };
 
-function BeepersMap(props: Props) {
+export function BeepersMap(props: Props) {
   const { beepers } = props;
 
   return (
@@ -36,5 +36,3 @@ function BeepersMap(props: Props) {
     </Box>
   );
 }
-
-export default BeepersMap;

@@ -8,5 +8,3 @@ export function Loading() {
     </Center>
   );
 }
-
-export default Loading;

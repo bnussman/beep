@@ -36,7 +36,7 @@ const CleanObjectStorageBucket = gql`
   }
 `;
 
-function Notifications() {
+export function Notifications() {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const cancelRef = useRef<any>();
   const toast = useToast();
@@ -156,5 +156,3 @@ function Notifications() {
     </>
   );
 }
-
-export default Notifications;

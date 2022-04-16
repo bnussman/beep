@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import Pagination from '../../../components/Pagination';
+import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { Badge, Box, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import TdUser from '../../../components/TdUser';
-import Loading from '../../../components/Loading';
+import { TdUser } from '../../../components/TdUser';
+import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { GetInProgressBeepsQuery } from '../../../generated/graphql';
 import { Indicator } from '../../../components/Indicator';
@@ -42,7 +42,7 @@ export const ActiveBeepsGraphQL = gql`
   }
 `;
 
-function ActiveBeeps() {
+export function ActiveBeeps() {
   const pageLimit = 25;
   const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetInProgressBeepsQuery>(ActiveBeepsGraphQL, { variables: { offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -121,5 +121,3 @@ function ActiveBeeps() {
     </Box>
   );
 }
-
-export default ActiveBeeps;

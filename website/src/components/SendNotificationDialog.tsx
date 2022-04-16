@@ -30,7 +30,7 @@ interface Props {
   id: string;
 }
 
-function SendNotificationDialog(props: Props) {
+export function SendNotificationDialog(props: Props) {
   const { isOpen, onClose, id } = props;
   const toast = useToast();
 
@@ -86,5 +86,3 @@ function SendNotificationDialog(props: Props) {
       </Modal>
   );
 }
-
-export default SendNotificationDialog;

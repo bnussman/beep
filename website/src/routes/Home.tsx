@@ -1,9 +1,9 @@
-import { Container } from "@chakra-ui/react";
-import Hero from "../components/Hero";
 import React from 'react';
 import iPhoneImage from '../assets/white.png';
+import { Container } from "@chakra-ui/react";
+import { Hero } from "../components/Hero";
 
-function Home() {
+export function Home() {
   return (
     <Container maxW="container.xl">
       <Hero
@@ -16,5 +16,3 @@ function Home() {
     </Container>
   );
 }
-
-export default Home;

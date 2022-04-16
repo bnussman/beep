@@ -5,7 +5,7 @@ import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { VerifyAccountMutation } from '../generated/graphql';
 import { useParams } from 'react-router-dom';
-import Loading from '../components/Loading';
+import { Loading } from '../components/Loading';
 import { Box } from '@chakra-ui/react';
 
 const VerifyAccountGraphQL = gql`
@@ -14,7 +14,7 @@ const VerifyAccountGraphQL = gql`
   }
 `;
 
-function VerifyAccount() {
+export function VerifyAccount() {
   const { id } = useParams();
   const [verify, { data, loading, error }] = useMutation<VerifyAccountMutation>(VerifyAccountGraphQL);
 
@@ -44,5 +44,3 @@ function VerifyAccount() {
     </Box>
   );
 }
-
-export default VerifyAccount;

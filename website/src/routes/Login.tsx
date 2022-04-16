@@ -40,7 +40,7 @@ const LoginGraphQL = gql`
   }
 `;
 
-function Login() {
+export function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -114,5 +114,3 @@ function Login() {
     </Container>
   );
 }
-
-export default Login;

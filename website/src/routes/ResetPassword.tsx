@@ -15,7 +15,7 @@ const Reset = gql`
   }
 `;
 
-function ResetPassword() {
+export function ResetPassword() {
   const { id } = useParams();
   const [password, setPassword] = useState<string>("");
   const [reset, { data, loading, error }] = useMutation<ResetPasswordMutation>(Reset);
@@ -55,5 +55,3 @@ function ResetPassword() {
     </Box>
   );
 }
-
-export default ResetPassword;

@@ -1,17 +1,17 @@
-import { NavLink, useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { NavLink, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Indicator } from '../../../components/Indicator';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { DeleteReportMutation, GetReportQuery, UpdateReportMutation, User } from '../../../generated/graphql';
 import { Box, Button, Checkbox, Flex, Heading, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
-import React, { useEffect, useState } from "react";
 import { DeleteIcon } from "@chakra-ui/icons";
-import DeleteDialog from "../../../components/DeleteDialog";
+import { DeleteDialog } from "../../../components/DeleteDialog";
 import { Error } from '../../../components/Error';
-import BasicUser from "../../../components/BasicUser";
-import Loading from "../../../components/Loading";
+import { BasicUser } from "../../../components/BasicUser";
+import { Loading } from "../../../components/Loading";
 
 dayjs.extend(relativeTime);
 
@@ -66,7 +66,7 @@ export const GetReport = gql`
   }
 `;
 
-function ReportPage() {
+export function Report() {
   const { id } = useParams();
   const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
@@ -208,5 +208,3 @@ function ReportPage() {
     </Box>
   )
 }
-
-export default ReportPage;

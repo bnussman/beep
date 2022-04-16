@@ -23,7 +23,7 @@ export const UploadPhoto = gql`
   }
 `;
 
-function EditProfile() {
+export function EditProfile() {
   const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
   const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
   const { data: userData } = useQuery<GetUserDataQuery>(GetUserData);
@@ -108,7 +108,6 @@ function EditProfile() {
             <FormLabel>Username</FormLabel>
             <Input
               id="username"
-              label="Username"
               value={user?.username}
               disabled
             />
@@ -117,7 +116,6 @@ function EditProfile() {
             <FormLabel>First Name</FormLabel>
             <Input
               id="first"
-              label="First name"
               value={first}
               onChange={(value: any) => setFirst(value.target.value)}
             />
@@ -174,5 +172,3 @@ function EditProfile() {
     </Card>
   );
 }
-
-export default EditProfile;

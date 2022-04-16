@@ -7,7 +7,7 @@ interface Props {
   user: Partial<User>;
 }
 
-function TdUser(props: Props) {
+export function TdUser(props: Props) {
   return (
     <Td>
       <Box as={Link} to={`/admin/users/${props.user.id}`}>
@@ -19,5 +19,3 @@ function TdUser(props: Props) {
     </Td>
   );
 }
-
-export default TdUser;

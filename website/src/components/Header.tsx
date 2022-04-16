@@ -11,7 +11,6 @@ import {
   Box,
   Flex,
   HStack,
-  Stack,
   Button,
   Image,
   Switch,
@@ -19,7 +18,7 @@ import {
   Heading
 } from '@chakra-ui/react';
 
-export default function NavBar() {
+export function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { data } = useQuery<GetUserDataQuery>(GetUserData);
 

@@ -1,20 +1,20 @@
+import React from 'react';
 import { Route, Routes } from "react-router-dom";
 import { Container } from "@chakra-ui/react";
 import { Edit } from "./users/edit";
-import Beepers from './beepers/Beepers';
-import Users from './users';
-import User from './users/User';
-import React from 'react';
-import Reports from './reports';
-import Report from './reports/Report';
-import Beeps from './beeps';
-import Beep from './beeps/Beep';
-import Ratings from './ratings';
-import Rating from './ratings/Rating';
-import ActiveBeeps from "./beeps/ActiveBeeps";
-import Notifications from "./notifications";
+import { Beepers } from './beepers/Beepers';
+import { Users } from './users';
+import { User } from './users/User';
+import { Reports } from './reports';
+import { Report } from './reports/Report';
+import { Beeps } from './beeps';
+import { Beep } from './beeps/Beep';
+import { Ratings } from './ratings';
+import { Rating } from './ratings/Rating';
+import { ActiveBeeps } from "./beeps/ActiveBeeps";
+import { Notifications } from "./notifications";
 
-function Admin() {
+export function Admin() {
   return (
     <Container maxW="container.xl">
       <Routes>
@@ -35,5 +35,3 @@ function Admin() {
     </Container>
   );
 }
-
-export default Admin;

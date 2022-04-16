@@ -1,11 +1,11 @@
+import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { gql, useQuery } from '@apollo/client';
 import { GetRatingsQuery } from '../generated/graphql';
-import Pagination from './Pagination';
-import React, { useState } from 'react';
+import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import TdUser from './TdUser';
+import { TdUser } from './TdUser';
 import { printStars } from '../routes/admin/ratings';
 import { NavLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
@@ -42,7 +42,7 @@ const Ratings = gql`
   }
 `;
 
-function RatingsTable(props: Props) {
+export function RatingsTable(props: Props) {
   const pageLimit = 5;
   const { data, loading, refetch } = useQuery<GetRatingsQuery>(Ratings, { variables: { id: props.userId, offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -121,5 +121,3 @@ function RatingsTable(props: Props) {
     </Box>
   );
 }
-
-export default RatingsTable;
