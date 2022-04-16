@@ -12,6 +12,7 @@ import { search } from './helpers';
 import { sendNotification, sendNotificationsNew } from '../utils/notifications';
 import { S3 } from 'aws-sdk';
 import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject } from '../utils/s3';
+import { NotificationArgs } from './args';
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
@@ -94,7 +95,7 @@ export class UserResolver {
 
   @Mutation(() => Number)
   @Authorized(UserRole.ADMIN)
-  public async sendNotifications(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string, @Arg('match', { nullable: true }) match?: string): Promise<number> {
+  public async sendNotifications(@Ctx() ctx: Context, @Args() { title, match, body }: NotificationArgs): Promise<number> {
     const users = await ctx.em.find(User, match ? {
       email: { $like: match }
     } : {});

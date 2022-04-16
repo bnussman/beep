@@ -76,12 +76,11 @@ const SignUpGraphQL = gql`
 export function SignUp() {
   const navigate = useNavigate();
 
-  const [signup, { loading, error }] = useMutation<SignUpMutation>(SignUpGraphQL);
+  const [signup, { error }] = useMutation<SignUpMutation>(SignUpGraphQL);
 
   const {
     handleSubmit,
     register,
-    reset,
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<SignUpMutationVariables>({ mode: "onChange" });

@@ -1,9 +1,10 @@
 import React, { useRef } from "react";
-import { useFormik } from "formik";
+import { useForm } from "react-hook-form";
 import { EmailIcon } from "@chakra-ui/icons";
 import { gql, useMutation } from "@apollo/client";
-import { CleanObjectStorageBucketMutation, SendNotificationsMutation } from "../../../generated/graphql";
+import { CleanObjectStorageBucketMutation, SendNotificationsMutation, SendNotificationsMutationVariables } from "../../../generated/graphql";
 import { Error } from '../../../components/Error';
+import { useValidationErrors } from "../../../utils/useValidationErrors";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -14,6 +15,7 @@ import {
   Button,
   Code,
   FormControl,
+  FormErrorMessage,
   FormHelperText,
   FormLabel,
   Heading,
@@ -41,21 +43,28 @@ export function Notifications() {
   const cancelRef = useRef<any>();
   const toast = useToast();
 
-  const [send, { error }] = useMutation<SendNotificationsMutation>(SendNotifications);
+  const [send, { error, loading: notificationLoading }] = useMutation<SendNotificationsMutation>(SendNotifications);
   const [clean, { loading }] = useMutation<CleanObjectStorageBucketMutation>(CleanObjectStorageBucket);
 
-  const onSubmit = ({ title, body, match }: { title: string; body: string; match: string; }) => {
-    send({
-      variables: {
-        title,
-        body,
-        match: match ? match : undefined
-      }
-    }).then(data => {
-      toast({ title: `Sent notification to ${data.data?.sendNotifications} users.`})
-      onClose();
+  const {
+    handleSubmit,
+    register,
+    watch,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<SendNotificationsMutationVariables>({ mode: 'onChange' });
+
+  const validationErrors = useValidationErrors<SendNotificationsMutationVariables>(error);
+
+  const match = watch('match');
+
+  const onSubmit = handleSubmit((variables) => {
+    onClose();
+    send({ variables }).then(({ data }) => {
+      toast({ title: `Sent notification to ${data?.sendNotifications} users.`})
+      reset();
     });
-  };
+  });
 
   const onClean = () => {
     clean()
@@ -67,63 +76,66 @@ export function Notifications() {
       });
   }
 
-  const formik = useFormik({
-    initialValues: {
-      title: '',
-      body: '',
-      match: '',
-    },
-    onSubmit
-  });
-
   return (
     <>
       <Stack spacing={4}>
         <Heading>Notifications</Heading>
-        {error && <Error error={error} />}
-        <FormControl>
+        {error && !validationErrors ? <Error error={error} /> : null}
+        <FormControl isInvalid={Boolean(errors.title) || Boolean(validationErrors?.title)}>
           <FormLabel>Title</FormLabel>
           <Input
-            name="title"
-            value={formik.values.title}
-            onChange={formik.handleChange}
+            {...register('title', {
+              required: 'This is required',
+            })}
           />
+          <FormErrorMessage>
+            {errors.title && errors.title.message}
+            {validationErrors?.title && validationErrors?.title[0]}
+          </FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={Boolean(errors.match) || Boolean(validationErrors?.match)}>
           <FormLabel>Match</FormLabel>
           <Input
-            name="match"
-            value={formik.values.match}
-            onChange={formik.handleChange}
             placeholder="%@appstate.edu"
+            {...register('match')}
           />
           <FormHelperText>Leave this empty to send to all Beep App users.</FormHelperText>
+          <FormErrorMessage>
+            {errors.match && errors.match.message}
+            {validationErrors?.match && validationErrors?.match[0]}
+          </FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl isInvalid={Boolean(errors.body) || Boolean(validationErrors?.body)}>
           <FormLabel>Body</FormLabel>
           <Textarea
-            name="body"
-            value={formik.values.body}
-            onChange={formik.handleChange}
+            {...register('body', {
+              required: 'This is required',
+            })}
           />
+          <FormErrorMessage>
+            {errors.body && errors.body.message}
+            {validationErrors?.body && validationErrors?.body[0]}
+          </FormErrorMessage>
         </FormControl>
       </Stack>
       <Button
+        mt={4}
         colorScheme="purple"
         onClick={onOpen}
         rightIcon={<EmailIcon />}
-        mt={4}
+        isDisabled={!isValid}
+        isLoading={isSubmitting || notificationLoading}
       >
         Send
       </Button>
-      <Button
+      {/* <Button
         colorScheme="red"
         onClick={onClean}
         isLoading={loading}
         mt={4}
       >
         Clean Object Bucket
-      </Button>
+      </Button> */}
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -135,17 +147,17 @@ export function Notifications() {
               Send Notification
             </AlertDialogHeader>
             <AlertDialogBody>
-              Are you sure? {formik.values.match ? <>This will be sent to all user having an email that matches <Code>{formik.values.match}</Code></> : 'This will be sent to all Beep App users.'}
+              Are you sure? {match ? <>This will be sent to all user having an email that matches <Code>{match}</Code></> : 'This will be sent to all Beep App users.'}
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
               <Button
+                ml={3}
                 colorScheme="blue"
                 type="submit"
-                ml={3}
-                onClick={() => formik.handleSubmit()}
+                onClick={onSubmit}
               >
                 Send
               </Button>
