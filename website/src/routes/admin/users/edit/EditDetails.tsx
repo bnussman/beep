@@ -1,12 +1,12 @@
 import React from "react";
 import { Loading } from "../../../../components/Loading";
-import { Box, Button, Checkbox, FormControl, FormLabel, Heading, Input } from "@chakra-ui/react";
+import { Box, Button, Checkbox, FormControl, FormLabel, Input, useToast, FormErrorMessage, Stack } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
-import { Formik, Form, Field } from 'formik';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { EditUserMutation, GetEditableUserQuery } from '../../../../generated/graphql';
+import { EditUserMutation, EditUserMutationVariables, GetEditableUserQuery } from '../../../../generated/graphql';
 import { Error } from '../../../../components/Error';
-import { Success } from '../../../../components/Success';
+import { useValidationErrors } from "../../../../utils/useValidationErrors";
+import { useForm } from "react-hook-form";
 
 const GetEditableUser = gql`
   query GetEditableUser($id: String!) {
@@ -43,80 +43,75 @@ const EditUser = gql`
 
 export function EditDetails() {
   const { id } = useParams();
-  const { data, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, { variables: { id } });
-  const [edit, { data: mutateData, error: editError }] = useMutation<EditUserMutation>(EditUser);
-  
-  const user = { ...data?.getUser, __typename: undefined };
-
-  async function updateUser(values: any) {
-    await edit({
-      variables: {
-        id,
-        data: values
+  const toast = useToast();
+  const { handleSubmit, register, reset, formState: { errors, isSubmitting, isValid } } = useForm<EditUserMutationVariables['data']>();
+  const { data: raw, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, {
+    variables: { id },
+    onCompleted: (data) => {
+      if (data) {
+        const user = { ...data.getUser };
+        delete user.__typename;
+        reset(user)
       }
-    })
+    }
+  });
+  const [edit, { error: editError }] = useMutation<EditUserMutation>(EditUser);
+
+  const user = { ...raw?.getUser, __typename: undefined };
+
+  const validationErrors = useValidationErrors<EditUserMutationVariables['data']>(editError);
+
+  const onSubmit = handleSubmit(async (data) => {
+    const result = await edit({ variables: { id, data } });
+
+    if (result.data) {
+      toast({ status: 'success', title: "Success", description: `Successfully edited ${user.first}'s profile` });
+    }
+  });
+
+  if (error) {
+    return <Error error={error} />;
   }
+
+  if (!user || loading) {
+    return <Loading />;
+  }
+
+  delete user.__typename;
+
+  const keys = Object.keys(user);
 
   return (
     <Box>
-      {mutateData && <Success message="Successfully Edited User" />}
-      {error && <Error error={error} />}
-      {editError && <Error error={editError} />}
-      {loading && <Loading />}
-      {user && !loading &&
-        <Formik
-          initialValues={user}
-          onSubmit={async (values, { setSubmitting }) => {
-            await updateUser(values);
-            setSubmitting(false);
-          }}
-        >
-          {({ isSubmitting }) => (
-            <Form>
-              {Object.keys(user).filter((key) => key !== '__typename').map((key) => {
-                // @ts-expect-error i dont know what to do here, this component needs to be cleaned up
-                const type = typeof user[key];
-                return (
-                  <Field name={key}>
-                    {({ field, form }: { field: any, form: any }) => (
-                      <FormControl name={key} mt={2}>
-                        {type === "boolean" ?
-                          <>
-                            <Checkbox {...field} isChecked={field.value} name={key}>
-                              {key}
-                            </Checkbox>
-                          </>
-                          :
-                          (
-                            (type === "number") ?
-                              <>
-                                <FormLabel htmlFor={key}>{key}</FormLabel>
-                                <Input {...field} type="number" id={key} />
-                              </>
-                              :
-                              <>
-                                <FormLabel htmlFor={key}>{key}</FormLabel>
-                                <Input {...field} id={key} />
-                              </>
-                          )
-                        }
-                      </FormControl>
-                    )}
-                  </Field>
-                );
-              }
-              )}
-              <Button
-                mt={2}
-                type="submit"
-                isLoading={isSubmitting}
-              >
-                Update User
-              </Button>
-            </Form>
-          )}
-        </Formik>
-      }
+      {editError && !validationErrors ? <Error error={editError} /> : null}
+      <form onSubmit={onSubmit}>
+        <Stack spacing={4}>
+          {keys.map((_key) => {
+            const key = _key as keyof Omit<GetEditableUserQuery['getUser'], '__typename'>;
+            const type = typeof user[key];
+            return (
+              <FormControl key={key} isInvalid={Boolean(errors[key]) || Boolean(validationErrors?.[key])}>
+                <FormLabel>{key}</FormLabel>
+                {type === 'boolean' ?
+                  <Checkbox {...register(key)} />
+                :
+                  <Input
+                    type={type === 'number' ? 'number' : 'text'}
+                    {...register(key, {
+                      valueAsNumber: type === 'number'
+                    })}
+                  />
+                }
+                <FormErrorMessage>
+                  {errors[key] && errors[key]?.message}
+                  {validationErrors?.[key] && validationErrors[key]?.[0]}
+                </FormErrorMessage>
+              </FormControl>
+            );
+          })}
+          <Button type="submit" isLoading={isSubmitting}>Update User</Button>
+        </Stack>
+      </form>
     </Box>
   );
 }

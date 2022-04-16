@@ -24,7 +24,6 @@
     "@fontsource/poppins": "^4.4.5",
     "apollo-upload-client": "^16.0.0",
     "dayjs": "^1.10.7",
-    "formik": "^2.2.9",
     "framer-motion": "^5.5.5",
     "google-map-react": "^2.1.10",
     "graphql": "^15.6.1",
