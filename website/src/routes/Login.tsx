@@ -98,8 +98,15 @@ export function Login() {
                 onClick={handleLogin}
                 isLoading={loading}
                 disabled={!username || !password}
-                colorScheme="brand"
                 textColor="white"
+                bgGradient='linear(to-r, #fb7ba2, #fce043)'
+                boxShadow="0 0 15px 2px #fb7ba2"
+                _hover={{
+                  bgGradient: 'linear(to-r, pink.200, yellow.200)',
+                }}
+                _active={{
+                  bgGradient: 'linear(to-r, pink.300, yellow.400)',
+                }}
               >
                 Sign in
               </Button>

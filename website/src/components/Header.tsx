@@ -57,8 +57,8 @@ export function Header() {
           Ride Beep App
         </Heading>
       </HStack>
-      <HStack spacing={4}>
-        <HStack spacing={4} mr={4}>
+      <HStack spacing={[2, 4]}>
+        <HStack spacing={[2, 4]} mr={[0, 4]}>
           <Box>☀️</Box>
           <Switch
             isChecked={colorMode === "dark"}
