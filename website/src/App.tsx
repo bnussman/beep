@@ -12,7 +12,7 @@ import SignUp from './routes/SignUp';
 import EditProfile from './routes/EditProfile';
 import ForgotPassword from './routes/ForgotPassword';
 import ResetPassword from './routes/ResetPassword';
-import ChangePassword from './routes/ChangePassword';
+import { ChangePassword } from './routes/ChangePassword';
 import VerifyAccount from './routes/VerifyAccount';
 import Admin from './routes/admin';
 import Privacy from './routes/Privacy';
@@ -100,7 +100,7 @@ function Beep() {
     <Router>
       <NavBar />
       <Container maxW="container.xl">
-        <Banners />
+      <Banners />
         <Routes>
           <Route path="/password/forgot" element={<ForgotPassword />} />
           <Route path="/password/reset/:id" element={<ResetPassword />} />

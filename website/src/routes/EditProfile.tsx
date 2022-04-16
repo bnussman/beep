@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Navigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { AddProfilePictureMutation, EditAccountMutation, GetUserDataQuery } from '../generated/graphql';
-import { Success } from '../components/Success';
 import { Error } from '../components/Error';
-import { Alert, Avatar, Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Spinner, Text } from '@chakra-ui/react';
+import { Alert, Avatar, Box, Button, Flex, FormControl, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
 import { GetUserData } from '../App';
+import { Card } from '../components/Card';
 
 const EditAccount = gql`
   mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
@@ -27,6 +27,7 @@ function EditProfile() {
   const [edit, { data, loading, error }] = useMutation<EditAccountMutation>(EditAccount);
   const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
   const { data: userData } = useQuery<GetUserDataQuery>(GetUserData);
+  const toast = useToast();
 
   const user = userData?.getUser;
   
@@ -53,16 +54,10 @@ function EditProfile() {
 
   async function handleEdit(e: any) {
     e.preventDefault();
-    await edit({
-      variables: {
-        first: first,
-        last: last,
-        email: email,
-        phone: phone,
-        venmo: venmo,
-        cashapp: cashapp
-      }
-    });
+    edit({ variables: { first, last, email, phone, venmo, cashapp } })
+      .then(() => {
+        toast({ status: 'success', title: "Success", description: "Successfully updated profile" });
+      })
   }
 
   async function uploadPhoto(photo: File | undefined) {
@@ -79,10 +74,8 @@ function EditProfile() {
   }
 
   return (
-    <Box>
+    <Card>
       {error && <Error error={error} />}
-      {data && <Success message="Profile Updated" />}
-
       {uploadLoading &&
         <Alert status="info" mb={2}>
           <Spinner size="xs" mr={2} />
@@ -90,7 +83,6 @@ function EditProfile() {
         </Alert>
       }
       {uploadError && <Error error={uploadError} />}
-
       <Box mb={6}>
         <Flex align="center">
           <Box>
@@ -110,75 +102,76 @@ function EditProfile() {
           </Box>
         </Flex>
       </Box>
-
       <form onSubmit={(e) => handleEdit(e)}>
-        <FormControl id="email">
-          <FormLabel>Username</FormLabel>
-          <Input
-            id="username"
-            label="Username"
-            value={user?.username}
-            disabled
-          />
-        </FormControl>
-        <FormControl mt={2}>
-          <FormLabel>First Name</FormLabel>
-          <Input
-            id="first"
-            label="First name"
-            value={first}
-            onChange={(value: any) => setFirst(value.target.value)}
-          />
-        </FormControl>
-        <FormControl mt={2}>
-          <FormLabel>Last Name</FormLabel>
-          <Input
-            value={last}
-            onChange={(value: any) => setLast(value.target.value)}
-          />
-        </FormControl>
-        <FormControl mt={2}>
-          <FormLabel>Email</FormLabel>
-          <Input
-            type="email"
-            value={email}
-            onChange={(value: any) => setEmail(value.target.value)}
-          />
-          <FormHelperText>
-            {
-              user.isEmailVerified
-                ? user.isStudent
-                  ? "Your email is verified and you are a student"
-                  : "Your email is verified"
-                : "Your email is not verified"
-            }
-          </FormHelperText>
-        </FormControl>
-        <FormControl mt={2}>
-          <FormLabel>Phone</FormLabel>
-          <Input
-            type="tel"
-            value={phone}
-            onChange={(value: any) => setPhone(value.target.value)}
-          />
-        </FormControl>
-        <FormControl mt={2}>
-          <FormLabel>Venmo</FormLabel>
-          <Input
-            value={venmo || ''}
-            onChange={(value: any) => setVenmo(value.target.value)}
-          />
-        </FormControl>
-        <FormControl mt={2}>
-          <FormLabel>Cash App</FormLabel>
-          <Input
-            value={cashapp || ''}
-            onChange={(value: any) => setCashapp(value.target.value)}
-          />
-        </FormControl>
-        <Button mt={4} type="submit" isLoading={loading}>Update profile</Button>
+        <Stack spacing={4}>
+          <FormControl id="email">
+            <FormLabel>Username</FormLabel>
+            <Input
+              id="username"
+              label="Username"
+              value={user?.username}
+              disabled
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>First Name</FormLabel>
+            <Input
+              id="first"
+              label="First name"
+              value={first}
+              onChange={(value: any) => setFirst(value.target.value)}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Last Name</FormLabel>
+            <Input
+              value={last}
+              onChange={(value: any) => setLast(value.target.value)}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Email</FormLabel>
+            <Input
+              type="email"
+              value={email}
+              onChange={(value: any) => setEmail(value.target.value)}
+            />
+            <FormHelperText>
+              {
+                user.isEmailVerified
+                  ? user.isStudent
+                    ? "Your email is verified and you are a student"
+                    : "Your email is verified"
+                  : "Your email is not verified"
+              }
+            </FormHelperText>
+          </FormControl>
+          <FormControl>
+            <FormLabel>Phone</FormLabel>
+            <Input
+              type="tel"
+              value={phone}
+              onChange={(value: any) => setPhone(value.target.value)}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Venmo</FormLabel>
+            <Input
+              value={venmo || ''}
+              onChange={(value: any) => setVenmo(value.target.value)}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Cash App</FormLabel>
+            <Input
+              value={cashapp || ''}
+              onChange={(value: any) => setCashapp(value.target.value)}
+            />
+          </FormControl>
+          <Button type="submit" isLoading={loading}>Update profile</Button>
+        </Stack>
       </form>
-    </Box>
+    </Card>
   );
 }
 

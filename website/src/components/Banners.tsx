@@ -1,7 +1,7 @@
 import React from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetUserDataQuery, ResendEmailMutation } from '../generated/graphql';
-import { Alert, AlertIcon, Box, Button, Spacer, useToast } from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Button, Code, Spacer, useToast } from '@chakra-ui/react';
 import { GetUserData } from '../App';
 
 const Resend = gql`
@@ -38,17 +38,16 @@ export default function Banners() {
   if (user && !user.isEmailVerified) {
     return (
       <Box mb={4}>
-        <Alert status="error" mb={2} flexWrap="wrap">
+        <Alert status="error" mb={2}>
           <AlertIcon />
-          You need to verify your email!
+          Please verify your email
           <Spacer />
           <Button
             isLoading={loading}
             onClick={resendVarificationEmail}
             colorScheme="red"
-            ml={2}
           >
-            Resend my verification email
+            Resend
           </Button>
         </Alert>
       </Box>

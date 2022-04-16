@@ -42,7 +42,7 @@ export default function NavBar() {
   );
 
   return (
-    <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={4}>
+    <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={2}>
       <HStack spacing={4} alignItems='center'>
         <Icon />
         <Heading
@@ -81,23 +81,23 @@ export default function NavBar() {
             <>
               <Button
                 as={Link}
-                fontSize='sm'
-                fontWeight={400}
-                variant='link'
                 to='/login'
               >
-                Sign In
+                Login
               </Button>
               <Button
                 as={Link}
-                fontSize='sm'
-                fontWeight={600}
-                color='white'
-                bg='yellow.400'
                 to='/signup'
+                textColor="white"
+                bgGradient='linear(to-r, #fb7ba2, #fce043)'
+                boxShadow="0 0 15px 2px #fb7ba2"
                 _hover={{
-                  bg: 'yellow.300',
-                }}>
+                  bgGradient: 'linear(to-r, pink.200, yellow.200)',
+                }}
+                _active={{
+                  bgGradient: 'linear(to-r, pink.300, yellow.400)',
+                }}
+              >
                 Sign Up
               </Button>
             </>

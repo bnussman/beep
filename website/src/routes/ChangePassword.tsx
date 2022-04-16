@@ -3,8 +3,9 @@ import { Error } from '../components/Error';
 import { gql, useMutation } from '@apollo/client';
 import { ChangePasswordMutation } from '../generated/graphql';
 import { Success } from '../components/Success';
-import { Input, Button, FormControl, FormLabel } from '@chakra-ui/react';
+import { Input, Button, FormControl, FormLabel, Center, Heading, Container } from '@chakra-ui/react';
 import { LockIcon } from '@chakra-ui/icons';
+import { Card } from '../components/Card';
 
 const ChangePasswordGraphQL = gql`
   mutation ChangePassword($password: String!) {
@@ -12,7 +13,7 @@ const ChangePasswordGraphQL = gql`
   }
 `;
 
-function ChangePassword() {
+export function ChangePassword() {
   const [changePassword, { data, loading, error }] = useMutation<ChangePasswordMutation>(ChangePasswordGraphQL);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,22 +21,22 @@ function ChangePassword() {
   async function handleEdit(e: any): Promise<void> {
     e.preventDefault();
 
-    try {
-      await changePassword({
-        variables: {
-          password: password
-        }
+    changePassword({
+      variables: {
+        password: password
+      }
+    })
+      .then(() => {
+        setPassword('');
+        setConfirmPassword('');
       });
-      setPassword('');
-      setConfirmPassword('');
-    }
-    catch (error) {
-      console.error(error);
-    }
   }
 
   return (
-    <div>
+    <Card>
+      <Center pb={4}>
+        <Heading>Change Password</Heading>
+      </Center>
       {data?.changePassword && <Success message="Successfully changed your password" />}
       {error && <Error error={error} />}
       <form onSubmit={handleEdit}>
@@ -64,8 +65,6 @@ function ChangePassword() {
           Update password
         </Button>
       </form>
-    </div>
+    </Card>
   );
 }
-
-export default ChangePassword;
