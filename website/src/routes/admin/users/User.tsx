@@ -18,6 +18,7 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetUserQuery, RemoveUserMutation, VerifyUserMutation } from '../../../generated/graphql';
 import { DeleteIcon, CheckIcon } from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
+import { PhotoDialog } from '../../../components/PhotoDialog';
 import {
   useToast,
   useDisclosure,
@@ -156,6 +157,12 @@ export function User() {
     onClose: onSendNotificationClose
   } = useDisclosure();
 
+  const {
+    isOpen: isPhotoOpen,
+    onOpen: onPhotoOpen,
+    onClose: onPhotoClose
+  } = useDisclosure();
+
   async function doDelete() {
     await remove({
       variables: { id },
@@ -213,6 +220,8 @@ export function User() {
               <Avatar
                 src={user.photoUrl || ''}
                 size={isDesktop ? "2xl" : "xl"}
+                onClick={user.photoUrl ? onPhotoOpen : undefined}
+                cursor={user.photoUrl ? "pointer" : undefined}
               >
                 {user.isBeeping && <AvatarBadge boxSize="1.0em" bg="green.500" />}
               </Avatar>
@@ -327,6 +336,11 @@ export function User() {
         id={user.id}
         isOpen={isSendNotificationOpen}
         onClose={onSendNotificationClose}
+      />
+      <PhotoDialog
+        src={user.photoUrl}
+        isOpen={isPhotoOpen}
+        onClose={onPhotoClose}
       />
     </>
   );
