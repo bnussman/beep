@@ -19,10 +19,10 @@ export const Container = (props: Props & IBoxProps): JSX.Element => {
 
   if (keyboard) {
     return (
-      <Box h="100%">
+      <Box h="100%" bg="white" _dark={{ bg: "black" }}>
         <TouchableWithoutFeedback onPress={onPress}>
           <KeyboardAwareScrollView scrollEnabled={false} extraScrollHeight={70}>
-            <Box flex={1} bg="white" _dark={{ bg: "black" }} {...rest}>
+            <Box flex={1} {...rest}>
               {children}
             </Box>
           </KeyboardAwareScrollView>
