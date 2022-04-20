@@ -1,5 +1,7 @@
 export const isProduction = process.env.NODE_ENV === "production";
 
+export const ENVRIONMENT: 'staging' | 'production' | 'development' = process.env.GITLAB_ENVIRONMENT_NAME as 'staging' | 'production' ?? "development";
+
 export const DB_URL = process.env.POSTGRESQL_URL || "postgresql://localhost:5432";
 
 export const DB_DATABASE = process.env.POSTGRESQL_DATABASE || "beep";

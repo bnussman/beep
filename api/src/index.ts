@@ -105,7 +105,6 @@ async function onSubscribe(
 }
 
 async function start() {
-  console.log(process.env);
   unleash.initialize({
     url: 'https://gitlab.nussman.us/api/v4/feature_flags/unleash/7',
     instanceId: 'twYnSbSyVvAn-MvsBaBi',
