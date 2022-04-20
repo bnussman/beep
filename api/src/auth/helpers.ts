@@ -4,8 +4,9 @@ import { transporter } from "../utils/mailer";
 import { User } from '../entities/User';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { EntityManager } from "@mikro-orm/core";
+import { isProduction } from "../utils/constants";
 
-const url: string = process.env.NODE_ENV === "development" ? "https://staging.ridebeep.app" : "https://ridebeep.app";
+const url: string = !isProduction ? "http://localhost:3000" : "https://ridebeep.app";
 
 /**
  * Helper function to send password reset email to user

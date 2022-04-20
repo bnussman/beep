@@ -6,7 +6,10 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node build/src/index.js",
-    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"nodemon build/src/index.js\""
+    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"nodemon build/src/index.js\"",
+    "db:create": "npx mikro-orm schema:create --run",
+    "db:update": "npx mikro-orm schema:update --run",
+    "db:drop": "npx mikro-orm schema:drop --run"
   },
   "repository": {
     "type": "git",
