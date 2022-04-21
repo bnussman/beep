@@ -13,7 +13,8 @@ function PasswordInput(props: IInputProps, ref: Ref<unknown>) {
       <Icon
         mr={3}
         size="sm"
-        as={<MaterialCommunityIcons name={show ? "eye-outline" : "eye-off"} />}
+        name={show ? "eye-outline" : "eye-off"}
+        as={MaterialCommunityIcons}
         _dark={{ color: "white" }}
       />
     </TouchableWithoutFeedback>

@@ -34,22 +34,20 @@ const config = {
   },
 };
 
-const newColorTheme = {
-  primary: {
-    100: "#FFF9CC",
-    200: "#FFE041",
-    300: "#FFE967",
-    400: "#FFE041",
-    500: "#FFD203",
-    600: "#DBB002",
-    700: "#B79001",
-    800: "#937100",
-    900: "#7A5B00",
+const theme = extendTheme({
+  colors: {
+    primary: {
+      100: "#F1F3F7",
+      200: "#E4E8EF",
+      300: "#C1C6CF",
+      400: "#9397A0",
+      500: "#575A62",
+      600: "#3F4454",
+      700: "#2B3146",
+      800: "#1B2138",
+      900: "#10152F",
+    },
   },
-};
-
-const beepTheme = extendTheme({
-  colors: newColorTheme,
   config: {
     useSystemColorMode: true,
     initialColorMode: "dark",
@@ -172,7 +170,7 @@ function Beep() {
 function App2() {
   return (
     <NativeBaseProvider
-      theme={beepTheme}
+      theme={theme}
       colorModeManager={colorModeManager}
       config={config}
     >

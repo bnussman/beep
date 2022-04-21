@@ -8,6 +8,7 @@ import * as ImagePicker from "expo-image-picker";
 import { isMobile } from "../../utils/config";
 import { Container } from "../../components/Container";
 import { UserData } from "../../App";
+import { Alert } from "../../utils/Alert";
 import {
   AddProfilePictureMutation,
   EditAccountMutation,
@@ -23,11 +24,6 @@ import {
   Flex,
   Spacer,
 } from "native-base";
-import { Alert } from "../../utils/Alert";
-
-interface Props {
-  navigation: Navigation;
-}
 
 const EditAccount = gql`
   mutation EditAccount(
@@ -72,14 +68,14 @@ export function generateRNFile(uri: string, name: string) {
     : null;
 }
 
-export function EditProfileScreen(props: Props): JSX.Element {
+export function EditProfileScreen() {
   const { data: userData } = useQuery<UserDataQuery>(UserData);
 
   const user = userData?.getUser;
 
   const [edit, { loading }] = useMutation<EditAccountMutation>(EditAccount);
 
-  const [upload, { data, loading: uploadLoading, error }] =
+  const [upload, { loading: uploadLoading }] =
     useMutation<AddProfilePictureMutation>(UploadPhoto);
 
   const [photoLoading, setPhotoLoading] = useState<boolean>(false);

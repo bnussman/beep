@@ -121,7 +121,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <VStack space={6} my={2} mx={1}>
+      <VStack space={6} my={2} mx={2}>
         <Flex ml={2} direction="row" alignItems="center">
           <Avatar
             key={user?.photoUrl}
@@ -131,8 +131,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             {user?.isBeeping ? <Avatar.Badge size={20} bg="green.400" /> : null}
           </Avatar>
           <Box>
-            <Text bold>{user?.name}</Text>
-            <Text fontSize={14} mt={1} fontWeight={500}>
+            <Text fontWeight="extrabold">{user?.name}</Text>
+            <Text fontSize={14} mt={0.5} fontWeight={500}>
               @{user?.username}
             </Text>
           </Box>
@@ -147,7 +147,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 rounded="md"
                 bg={
                   index === props.state.index
-                    ? "rgba(237, 221, 97, 0.1)"
+                    ? "rgba(143, 143, 143, 0.1)"
                     : "transparent"
                 }
                 onPress={() => {
@@ -202,14 +202,14 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 </HStack>
               </Pressable>
             ) : null}
-            <Flex px={5} py={3} direction="row" alignItems="center">
-              <Text mr={4}>Dark Mode</Text>
+            <HStack px={5} py={3} space={5} alignItems="center">
+              <Text>☀️</Text>
               <Switch
                 isChecked={colorMode === "dark"}
                 onToggle={toggleColorMode}
               />
-            </Flex>
-            <WebsocketStatus />
+              <Text>️🌑</Text>
+            </HStack>
           </VStack>
         </VStack>
       </VStack>

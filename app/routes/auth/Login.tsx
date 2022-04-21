@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SplashScreen from "expo-splash-screen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import PasswordInput from "../../components/PasswordInput";
+import { Alert } from "../../utils/Alert";
+import { GradietnButton } from "../../components/GradientButton";
 import { isMobile } from "../../utils/config";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation } from "../../generated/graphql";
@@ -19,8 +22,6 @@ import {
   Spacer,
   Box,
 } from "native-base";
-import PasswordInput from "../../components/PasswordInput";
-import { Alert } from "../../utils/Alert";
 
 interface Props {
   navigation: Navigation;
@@ -107,10 +108,10 @@ function LoginScreen(props: Props): JSX.Element {
       <Center mt="40%">
         <Stack space={4} w="90%">
           <Box>
-            <Heading mr={4} fontWeight="extrabold">
+            <Heading size="xl" mr={4} fontWeight="extrabold">
               Welcome
             </Heading>
-            <Heading mr={4} fontWeight="extrabold">
+            <Heading size="xl" mr={4} fontWeight="extrabold">
               to Ride Beep App
             </Heading>
           </Box>
@@ -141,9 +142,12 @@ function LoginScreen(props: Props): JSX.Element {
             </Button>
           </Stack>
           <Flex direction="row">
-            <Button onPress={() => props.navigation.navigate("Sign Up")}>
+            <GradietnButton
+              size="sm"
+              onPress={() => props.navigation.navigate("Sign Up")}
+            >
               Sign Up
-            </Button>
+            </GradietnButton>
             <Spacer />
             <Button
               onPress={() => props.navigation.navigate("Forgot Password")}

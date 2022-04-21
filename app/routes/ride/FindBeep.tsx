@@ -35,6 +35,7 @@ import {
 } from "native-base";
 import LocationInput from "../../components/LocationInput";
 import { Alert } from "../../utils/Alert";
+import { GradietnButton } from "../../components/GradientButton";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -390,9 +391,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               returnKeyType="go"
             />
           </FormControl>
-          <Button
-            h={50}
-            size="lg"
+          <GradietnButton
             onPress={() => findBeep()}
             isLoading={isGetBeepLoading}
             isDisabled={
@@ -402,8 +401,8 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               !destination
             }
           >
-            Find a Beep
-          </Button>
+            Find Beep
+          </GradietnButton>
         </Stack>
       </Container>
     );

@@ -61,7 +61,8 @@ function LocationInput(props: IInputProps, ref: Ref<unknown>) {
       <Icon
         mr={3}
         size="sm"
-        as={<MaterialIcons name="my-location" />}
+        name="my-location"
+        as={MaterialIcons}
         _dark={{ color: "white" }}
       />
     </TouchableWithoutFeedback>
