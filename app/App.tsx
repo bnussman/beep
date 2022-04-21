@@ -160,7 +160,7 @@ function Beep() {
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Report" component={ReportScreen} />
           <Stack.Screen name="Rate" component={RateScreen} />
-          <Stack.Screen name="Pick Beeper" component={PickBeepScreen} />
+          <Stack.Screen name="Pick Driver" component={PickBeepScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

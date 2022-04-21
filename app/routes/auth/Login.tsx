@@ -104,59 +104,55 @@ function LoginScreen(props: Props): JSX.Element {
   }
 
   return (
-    <Container keyboard>
-      <Center mt="40%">
-        <Stack space={4} w="90%">
-          <Box>
-            <Heading size="xl" mr={4} fontWeight="extrabold">
-              Welcome
-            </Heading>
-            <Heading size="xl" mr={4} fontWeight="extrabold">
-              to Ride Beep App
-            </Heading>
-          </Box>
-          <Stack space={2}>
-            <Input
-              size="lg"
-              textContentType="username"
-              placeholder="Username or Email"
-              returnKeyType="next"
-              onChangeText={(text) => setUsername(text)}
-              onSubmitEditing={() => passwordRef?.current?.focus()}
-            />
-            <PasswordInput
-              size="lg"
-              placeholder="Password"
-              returnKeyType="go"
-              onChangeText={(text) => setPassword(text)}
-              ref={passwordRef}
-              onSubmitEditing={() => doLogin()}
-              textContentType="password"
-            />
-            <Button
-              isLoading={loading}
-              isDisabled={!username || !password}
-              onPress={() => doLogin()}
-            >
-              Login
-            </Button>
-          </Stack>
-          <Flex direction="row">
-            <GradietnButton
-              size="sm"
-              onPress={() => props.navigation.navigate("Sign Up")}
-            >
-              Sign Up
-            </GradietnButton>
-            <Spacer />
-            <Button
-              onPress={() => props.navigation.navigate("Forgot Password")}
-            >
-              Forgot Password
-            </Button>
-          </Flex>
+    <Container keyboard alignItems="center" justifyContent="center">
+      <Stack space={4} w="90%" mt="55%">
+        <Box>
+          <Heading size="xl" mr={4} fontWeight="extrabold">
+            Welcome
+          </Heading>
+          <Heading size="xl" mr={4} fontWeight="extrabold">
+            to Ride Beep App
+          </Heading>
+        </Box>
+        <Stack space={2}>
+          <Input
+            size="lg"
+            textContentType="username"
+            placeholder="Username or Email"
+            returnKeyType="next"
+            onChangeText={(text) => setUsername(text)}
+            onSubmitEditing={() => passwordRef?.current?.focus()}
+          />
+          <PasswordInput
+            size="lg"
+            placeholder="Password"
+            returnKeyType="go"
+            onChangeText={(text) => setPassword(text)}
+            ref={passwordRef}
+            onSubmitEditing={() => doLogin()}
+            textContentType="password"
+          />
+          <Button
+            isLoading={loading}
+            isDisabled={!username || !password}
+            onPress={() => doLogin()}
+          >
+            Login
+          </Button>
         </Stack>
-      </Center>
+        <Flex direction="row">
+          <GradietnButton
+            size="sm"
+            onPress={() => props.navigation.navigate("Sign Up")}
+          >
+            Sign Up
+          </GradietnButton>
+          <Spacer />
+          <Button onPress={() => props.navigation.navigate("Forgot Password")}>
+            Forgot Password
+          </Button>
+        </Flex>
+      </Stack>
     </Container>
   );
 }

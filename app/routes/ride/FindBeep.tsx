@@ -266,7 +266,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
       lastKnowLocation = await Location.getCurrentPositionAsync();
     }
 
-    return props.navigation.navigate("Pick Beeper", {
+    return props.navigation.navigate("Pick Driver", {
       latitude: lastKnowLocation.coords.latitude,
       longitude: lastKnowLocation.coords.longitude,
       handlePick: (id: string) => chooseBeep(id),

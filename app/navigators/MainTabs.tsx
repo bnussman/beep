@@ -34,7 +34,7 @@ export type MainNavParamList = {
   Register: undefined;
   Main: undefined;
   ForgotPassword: undefined;
-  "Pick Beeper": any;
+  "Pick Driver": any;
   "Forgot Password": any;
   "Sign Up": any;
 };

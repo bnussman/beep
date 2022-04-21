@@ -158,7 +158,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
   if (data?.getBeeperList && data.getBeeperList.length === 0) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Heading>Nobody is beeping 🥺</Heading>
+        <Heading>Nobody is beeping</Heading>
         <Text>There are no drivers within 20 miles of you</Text>
       </Container>
     );
