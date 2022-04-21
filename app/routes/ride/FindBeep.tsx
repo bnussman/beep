@@ -346,7 +346,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   if (user?.isBeeping) {
     return (
       <Container justifyContent="center" alignItems="center">
-        <Heading>You are beeping!</Heading>
+        <Heading fontWeight="extrabold">You are beeping!</Heading>
         <Text>You can&apos;t find a ride when you are beeping</Text>
       </Container>
     );

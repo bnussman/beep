@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import Logger from "../../utils/Logger";
@@ -402,8 +402,8 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       return (
         <Container alignItems="center" justifyContent="center">
           <Stack space={2} w="90%" alignItems="center">
-            <Heading>Your queue is empty</Heading>
-            <Text>
+            <Heading fontWeight="extrabold">Your queue is empty</Heading>
+            <Text textAlign="center">
               If someone wants you to beep them, it will appear here. If your
               app is closed, you will recieve a push notification.
             </Text>
