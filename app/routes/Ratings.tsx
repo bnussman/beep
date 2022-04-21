@@ -15,6 +15,7 @@ import {
   Box,
   VStack,
   Spacer,
+  Heading,
 } from "native-base";
 
 interface Props {
@@ -143,7 +144,7 @@ export function RatingsScreen(props: Props): JSX.Element {
 
   return (
     <Container alignItems="center" justifyContent="center">
-      <Text>Nothing to display!</Text>
+      <Heading fontWeight="extrabold">Nothing to display!</Heading>
       <Text>You have no ratings to display</Text>
     </Container>
   );

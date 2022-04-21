@@ -7,15 +7,14 @@ import { Navigation } from "../utils/Navigation";
 import { UserData } from "../App";
 import {
   Spinner,
-  Divider,
   Text,
   FlatList,
   Avatar,
-  Flex,
   Box,
   Heading,
   HStack,
 } from "native-base";
+import { Unpacked } from "../utils/config";
 
 interface Props {
   navigation: Navigation;
@@ -63,7 +62,11 @@ export function BeepsScreen(props: Props): JSX.Element {
 
   const beeps = data?.getBeeps;
 
-  const renderItem = ({ item }: { item: Beep }) => {
+  const renderItem = ({
+    item,
+  }: {
+    item: Unpacked<GetBeepHistoryQuery["getBeeps"]["items"]>;
+  }) => {
     const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
     return (
       <Pressable
@@ -139,7 +142,7 @@ export function BeepsScreen(props: Props): JSX.Element {
 
   return (
     <Container alignItems="center" justifyContent="center">
-      <Text>Nothing to display!</Text>
+      <Heading fontWeight="extrabold">Nothing to display!</Heading>
       <Text>You have no previous beeps to display</Text>
     </Container>
   );
