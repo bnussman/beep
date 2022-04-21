@@ -218,10 +218,15 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 }
 
 export function BeepDrawer() {
+  const { colorMode } = useColorMode();
+
   return (
     <Box flex={1}>
       <Drawer.Navigator
-        screenOptions={{ drawerType: "front" }}
+        screenOptions={{
+          drawerType: "front",
+          headerTintColor: colorMode === "dark" ? "white" : "black",
+        }}
         drawerContent={(props) => <CustomDrawerContent {...props} />}
       >
         <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
