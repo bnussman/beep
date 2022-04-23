@@ -1,3 +1,9 @@
+import { getMainDefinition, Observable } from "@apollo/client/utilities";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createUploadLink } from "apollo-upload-client";
+import { Client, ClientOptions, createClient } from "graphql-ws";
+import { print } from "graphql";
+import { setContext } from "@apollo/client/link/context";
 import {
   ApolloClient,
   ApolloLink,
@@ -6,14 +12,8 @@ import {
   Operation,
   split,
 } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import { getMainDefinition, Observable } from "@apollo/client/utilities";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createUploadLink } from "apollo-upload-client";
-import { Client, ClientOptions, createClient } from "graphql-ws";
-import { print } from "graphql";
 
-const ip = "192.168.1.18";
+const ip = "localhost";
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`

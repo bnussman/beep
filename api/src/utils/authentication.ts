@@ -13,7 +13,7 @@ export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
 
   if (roles[0] === 'No Verification') return true;
 
-  if (roles[0] === 'No Verification Self') return args.id === user.id;
+  if (roles[0] === 'No Verification Self') return args.id === undefined || args.id === user.id;
 
   if (!user.isEmailVerified) throw new AuthenticationError("Please verify your email to use the Beep App");
 

@@ -12,6 +12,7 @@ import { client, wsLink } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { UserData } from "../../App";
+import { Alert } from "../../utils/Alert";
 import {
   Avatar,
   Button,
@@ -22,7 +23,6 @@ import {
   VStack,
   Center,
 } from "native-base";
-import { Alert } from "../../utils/Alert";
 
 interface Props {
   navigation: Navigation;
@@ -84,7 +84,7 @@ const SignUp = gql`
 
 let picture: Scalars["Upload"];
 
-export function SignUpScreen(props: Props): JSX.Element {
+export function SignUpScreen(props: Props) {
   const [first, setFirst] = useState<string>("");
   const [last, setLast] = useState<string>("");
   const [email, setEmail] = useState<string>("");

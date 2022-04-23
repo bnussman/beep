@@ -102,7 +102,7 @@ export class User {
 
   @Field({ nullable: true })
   @Property({ nullable: true })
-  @Authorized('self')
+  @Authorized('No Verification Self')
   pushToken?: string;
 
   @Field({ nullable: true })
