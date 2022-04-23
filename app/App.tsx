@@ -1,4 +1,6 @@
 import "react-native-gesture-handler";
+import config from "./package.json";
+import * as Sentry from "sentry-expo";
 import React, { useEffect } from "react";
 import LoginScreen from "./routes/auth/Login";
 import init from "./utils/Init";
@@ -18,6 +20,7 @@ import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { updatePushToken } from "./utils/Notifications";
 import { SignUpScreen } from "./routes/auth/SignUp";
 import { LinearGradient } from "expo-linear-gradient";
+import { isMobile } from "./utils/config";
 import {
   DarkTheme,
   DefaultTheme,
@@ -26,9 +29,23 @@ import {
 
 const Stack = createStackNavigator();
 init();
-// Sentry.init();
+Sentry.init({
+  release: config.version,
+  dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
+  enableInExpoDevelopment: true,
+  debug: true,
+  enableAutoSessionTracking: true,
+});
 
-const config = {
+function setUserContext(user: any): void {
+  if (isMobile) {
+    Sentry.Native.setUser({ ...user });
+  } else {
+    Sentry.Browser.setUser({ ...user });
+  }
+}
+
+const nativeBaseConfig = {
   dependencies: {
     "linear-gradient": LinearGradient,
   },
@@ -112,6 +129,7 @@ function Beep() {
 
   useEffect(() => {
     if (data?.getUser?.id) {
+      setUserContext(data.getUser);
       subscribeToMore({
         document: UserSubscription,
         updateQuery: (prev, { subscriptionData }) => {
@@ -172,14 +190,14 @@ function App2() {
     <NativeBaseProvider
       theme={theme}
       colorModeManager={colorModeManager}
-      config={config}
+      config={nativeBaseConfig}
     >
       <Beep />
     </NativeBaseProvider>
   );
 }
 
-function App(): JSX.Element {
+function App() {
   return (
     <ApolloProvider client={client}>
       <App2 />

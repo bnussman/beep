@@ -19,17 +19,15 @@ export default {
     web: {
       favicon: "./assets/favicon.png",
     },
+    plugins: ["sentry-expo"],
     hooks: {
       postPublish: [
         {
           file: "sentry-expo/upload-sourcemaps",
           config: {
-            url: "https://sentry.nussman.us",
             setCommits: true,
             organization: "beep",
-            project: "beep-app",
-            authToken:
-              "cdabcfba119d4918bce8aa562e046ba3967a307c526647b985e81079f73d7d88",
+            project: "app",
           },
         },
       ],
