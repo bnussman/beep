@@ -11,8 +11,8 @@ import { generateRNFile } from "../settings/EditProfile";
 import { client, wsLink } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
-import { UserData } from "../../App";
 import { Alert } from "../../utils/Alert";
+import { UserData } from "../../utils/useUser";
 import {
   Avatar,
   Button,

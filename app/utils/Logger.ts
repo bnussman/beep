@@ -1,7 +1,7 @@
 import * as Sentry from "sentry-expo";
 import { isMobile } from "./config";
 
-class Logger {
+class _Logger {
   public info(data: any) {
     if (isMobile) Sentry.Native.captureMessage(data);
     //@ts-ignore
@@ -17,6 +17,4 @@ class Logger {
   }
 }
 
-const l = new Logger();
-
-export default l as Logger;
+export const Logger = new _Logger();

@@ -13,7 +13,7 @@ import { gql, useLazyQuery } from "@apollo/client";
 import { GetSuggestionsQuery } from "../generated/graphql";
 import { v4 } from "uuid";
 import Constants from "expo-constants";
-import Logger from "../utils/Logger";
+import { Logger } from "../utils/Logger";
 
 interface Props {
   getLocation: boolean;

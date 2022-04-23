@@ -1,12 +1,11 @@
 import React from "react";
+import ActionButton from "../../components/ActionButton";
+import { AcceptDenyButton } from "../../components/AcceptDenyButton";
+import { useUser } from "../../utils/useUser";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Linking, Platform, Pressable } from "react-native";
-import ActionButton from "../../components/ActionButton";
 import { Navigation } from "../../utils/Navigation";
-import { useQuery } from "@apollo/client";
-import { UserData } from "../../App";
-import { GetInitialQueueQuery, UserDataQuery } from "../../generated/graphql";
-import AcceptDenyButton from "../../components/AcceptDenyButton";
+import { GetInitialQueueQuery } from "../../generated/graphql";
 import { Unpacked } from "../../utils/config";
 import {
   Flex,
@@ -26,9 +25,7 @@ interface Props {
 }
 
 export function QueueItem({ item, index, navigation }: Props) {
-  const { data } = useQuery<UserDataQuery>(UserData);
-
-  const user = data?.getUser;
+  const { user } = useUser();
 
   function handleDirections(origin: string, dest: string): void {
     if (Platform.OS == "ios") {

@@ -17,7 +17,7 @@ interface Props {
   beepersId: string;
 }
 
-function LeaveButton(props: Props): JSX.Element {
+export function LeaveButton(props: Props) {
   const { beepersId } = props;
   const [leave] = useMutation<LeaveQueueMutation>(LeaveQueue, {
     variables: { id: beepersId },
@@ -65,5 +65,3 @@ function LeaveButton(props: Props): JSX.Element {
     </Button>
   );
 }
-
-export default LeaveButton;

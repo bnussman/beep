@@ -1,10 +1,11 @@
 import React from "react";
 import { Pressable } from "react-native";
 import { gql, useQuery } from "@apollo/client";
-import { GetBeepHistoryQuery, Beep, UserDataQuery } from "../generated/graphql";
+import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Navigation } from "../utils/Navigation";
-import { UserData } from "../App";
+import { Unpacked } from "../utils/config";
+import { useUser } from "../utils/useUser";
 import {
   Spinner,
   Text,
@@ -14,7 +15,6 @@ import {
   Heading,
   HStack,
 } from "native-base";
-import { Unpacked } from "../utils/config";
 
 interface Props {
   navigation: Navigation;
@@ -50,10 +50,8 @@ const GetBeepHistory = gql`
   }
 `;
 
-export function BeepsScreen(props: Props): JSX.Element {
-  const { data: userData } = useQuery<UserDataQuery>(UserData);
-
-  const user = userData?.getUser;
+export function BeepsScreen(props: Props) {
+  const { user } = useUser();
 
   const { data, loading, error } = useQuery<GetBeepHistoryQuery>(
     GetBeepHistory,

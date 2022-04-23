@@ -1,9 +1,9 @@
 import "react-native-gesture-handler";
-import config from "./package.json";
-import * as Sentry from "sentry-expo";
 import React, { useEffect } from "react";
-import LoginScreen from "./routes/auth/Login";
-import init from "./utils/Init";
+import * as Sentry from "sentry-expo";
+import config from "./package.json";
+import { init } from "./utils/Init";
+import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "react-native";
 import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
@@ -11,16 +11,17 @@ import { ProfileScreen } from "./routes/global/Profile";
 import { ReportScreen } from "./routes/global/Report";
 import { RateScreen } from "./routes/global/Rate";
 import { client } from "./utils/Apollo";
-import { ApolloProvider, gql, useQuery } from "@apollo/client";
+import { ApolloProvider, useQuery } from "@apollo/client";
 import { UserDataQuery } from "./generated/graphql";
-import { extendTheme, NativeBaseProvider, useColorMode } from "native-base";
+import { NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { updatePushToken } from "./utils/Notifications";
 import { SignUpScreen } from "./routes/auth/SignUp";
-import { LinearGradient } from "expo-linear-gradient";
 import { isMobile } from "./utils/config";
+import { NATIVE_BASE_CONFIG, NATIVE_BASE_THEME } from "./utils/constants";
+import { UserData, UserSubscription } from "./utils/useUser";
 import {
   DarkTheme,
   DefaultTheme,
@@ -45,91 +46,16 @@ function setUserContext(user: any): void {
   }
 }
 
-const nativeBaseConfig = {
-  dependencies: {
-    "linear-gradient": LinearGradient,
-  },
-};
-
-const theme = extendTheme({
-  colors: {
-    primary: {
-      100: "#F1F3F7",
-      200: "#E4E8EF",
-      300: "#C1C6CF",
-      400: "#9397A0",
-      500: "#575A62",
-      600: "#3F4454",
-      700: "#2B3146",
-      800: "#1B2138",
-      900: "#10152F",
-    },
-  },
-  config: {
-    useSystemColorMode: true,
-    initialColorMode: "dark",
-  },
-});
-
-export const UserData = gql`
-  query UserData {
-    getUser {
-      id
-      username
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      photoUrl
-      capacity
-      masksRequired
-      cashapp
-      pushToken
-    }
-  }
-`;
-
-export const UserSubscription = gql`
-  subscription UserUpdates {
-    getUserUpdates {
-      id
-      username
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      photoUrl
-      capacity
-      masksRequired
-      cashapp
-      pushToken
-    }
-  }
-`;
-
 function Beep() {
   const { colorMode } = useColorMode();
   const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
     errorPolicy: "none",
   });
 
+  const user = data?.getUser;
+
   useEffect(() => {
-    if (data?.getUser?.id) {
-      setUserContext(data.getUser);
+    if (user) {
       subscribeToMore({
         document: UserSubscription,
         updateQuery: (prev, { subscriptionData }) => {
@@ -141,9 +67,10 @@ function Beep() {
         },
       });
 
-      updatePushToken(data?.getUser?.pushToken);
+      setUserContext(user);
+      updatePushToken(user.pushToken);
     }
-  }, [data?.getUser?.id]);
+  }, [user]);
 
   if (loading) {
     return null;
@@ -158,7 +85,7 @@ function Beep() {
         theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
       >
         <Stack.Navigator
-          initialRouteName={data?.getUser?.id ? "Main" : "Login"}
+          initialRouteName={user ? "Main" : "Login"}
         >
           <Stack.Screen
             options={{ headerShown: false }}
@@ -188,9 +115,9 @@ function Beep() {
 function App2() {
   return (
     <NativeBaseProvider
-      theme={theme}
+      theme={NATIVE_BASE_THEME}
       colorModeManager={colorModeManager}
-      config={nativeBaseConfig}
+      config={NATIVE_BASE_CONFIG}
     >
       <Beep />
     </NativeBaseProvider>

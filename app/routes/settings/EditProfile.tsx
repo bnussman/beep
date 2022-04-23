@@ -1,19 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable } from "react-native";
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { Navigation } from "../../utils/Navigation";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
+// @ts-expect-error no types :(
 import * as mime from "react-native-mime-types";
 import * as ImagePicker from "expo-image-picker";
 import { isMobile } from "../../utils/config";
 import { Container } from "../../components/Container";
-import { UserData } from "../../App";
 import { Alert } from "../../utils/Alert";
+import { useUser } from "../../utils/useUser";
 import {
   AddProfilePictureMutation,
   EditAccountMutation,
   Maybe,
-  UserDataQuery,
 } from "../../generated/graphql";
 import {
   Spinner,
@@ -69,9 +68,7 @@ export function generateRNFile(uri: string, name: string) {
 }
 
 export function EditProfileScreen() {
-  const { data: userData } = useQuery<UserDataQuery>(UserData);
-
-  const user = userData?.getUser;
+  const { user } = useUser();
 
   const [edit, { loading }] = useMutation<EditAccountMutation>(EditAccount);
 

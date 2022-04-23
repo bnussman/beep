@@ -11,12 +11,11 @@ import { client, wsLink } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
-import { UserData } from "../../App";
+import { UserData } from "../../utils/useUser";
 import {
   Stack,
   Button,
   Input,
-  Center,
   Heading,
   Flex,
   Spacer,
@@ -59,7 +58,7 @@ const Login = gql`
   }
 `;
 
-function LoginScreen(props: Props): JSX.Element {
+export function LoginScreen(props: Props): JSX.Element {
   const [login, { loading }] = useMutation<LoginMutation>(Login);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -77,11 +76,7 @@ function LoginScreen(props: Props): JSX.Element {
     const pushToken = isMobile ? await getPushToken() : null;
 
     login({
-      variables: {
-        username: username,
-        password: password,
-        pushToken,
-      },
+      variables: { username, password, pushToken },
     })
       .then(async (data) => {
         await AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
@@ -156,5 +151,3 @@ function LoginScreen(props: Props): JSX.Element {
     </Container>
   );
 }
-
-export default LoginScreen;

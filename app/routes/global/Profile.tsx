@@ -1,25 +1,20 @@
 import React from "react";
+import { useUser } from "../../utils/useUser";
 import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
+import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
+import { GetUserProfileQuery, User } from "../../generated/graphql";
 import {
   Spinner,
   Text,
   Button,
   Avatar,
   Stack,
-  Flex,
   HStack,
   Center,
   Heading,
 } from "native-base";
-import { Container } from "../../components/Container";
-import { UserData } from "../../App";
-import {
-  GetUserProfileQuery,
-  User,
-  UserDataQuery,
-} from "../../generated/graphql";
 
 interface Props {
   route: any;
@@ -49,14 +44,11 @@ const GetUser = gql`
   }
 `;
 
-export function ProfileScreen(props: Props): JSX.Element {
-  const { data: userData } = useQuery<UserDataQuery>(UserData);
-
-  const user = userData?.getUser;
+export function ProfileScreen(props: Props) {
+  const { user } = useUser();
 
   const { data, loading, error } = useQuery<GetUserProfileQuery>(GetUser, {
     variables: { id: props.route.params.id },
-    fetchPolicy: "no-cache",
   });
 
   function handleReport() {

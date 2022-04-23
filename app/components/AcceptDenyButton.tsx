@@ -22,7 +22,7 @@ const UpdateBeeperQueue = gql`
   }
 `;
 
-function AcceptDenyButton(props: Props): JSX.Element {
+export function AcceptDenyButton(props: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [update] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
 
@@ -68,5 +68,3 @@ function AcceptDenyButton(props: Props): JSX.Element {
     </Button>
   );
 }
-
-export default AcceptDenyButton;

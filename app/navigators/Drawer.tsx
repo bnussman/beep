@@ -7,14 +7,12 @@ import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
 import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import {
   LogoutMutation,
   ResendMutation,
-  UserDataQuery,
 } from "../generated/graphql";
 import { client } from "../utils/Apollo";
-import { UserData } from "../App";
 import {
   LOCATION_TRACKING,
   StartBeepingScreen,
@@ -38,7 +36,7 @@ import {
   useColorMode,
   Spinner,
 } from "native-base";
-import { WebsocketStatus } from "../components/WebsocketStatus";
+import { UserData, useUser } from "../utils/useUser";
 
 const Logout = gql`
   mutation Logout {
@@ -74,9 +72,7 @@ const Resend = gql`
 `;
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
-  const { data: userData } = useQuery<UserDataQuery>(UserData);
-
-  const user = userData?.getUser;
+  const { user } = useUser();
 
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);

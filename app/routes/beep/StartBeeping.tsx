@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import Logger from "../../utils/Logger";
+import { Logger } from "../../utils/Logger";
+import { useUser } from "../../utils/useUser";
 import { isAndroid, Unpacked } from "../../utils/config";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
-import { UserData } from "../../App";
 import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
 import { Alert as NativeAlert, AppState, AppStateStatus } from "react-native";
 import {
   GetInitialQueueQuery,
   UpdateBeepSettingsMutation,
-  UserDataQuery,
 } from "../../generated/graphql";
 import {
   Input,
@@ -26,7 +25,6 @@ import {
   FormControl,
   Stack,
   FlatList,
-  Divider,
 } from "native-base";
 
 interface Props {
@@ -132,9 +130,7 @@ const UpdateBeepSettings = gql`
 export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen(props: Props): JSX.Element {
-  const { data: userData } = useQuery<UserDataQuery>(UserData);
-
-  const user = userData?.getUser;
+  const { user } = useUser();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [masksRequired, setMasksRequired] = useState(user?.masksRequired);

@@ -1,11 +1,11 @@
 import React from "react";
 import { Pressable } from "react-native";
+import { useUser } from "../utils/useUser";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsQuery, Rating, UserDataQuery } from "../generated/graphql";
+import { GetRatingsQuery, Rating } from "../generated/graphql";
 import { printStars } from "../components/Stars";
 import { Navigation } from "../utils/Navigation";
 import { Container } from "../components/Container";
-import { UserData } from "../App";
 import {
   Text,
   FlatList,
@@ -46,10 +46,8 @@ const Ratings = gql`
   }
 `;
 
-export function RatingsScreen(props: Props): JSX.Element {
-  const { data: userData } = useQuery<UserDataQuery>(UserData);
-
-  const user = userData?.getUser;
+export function RatingsScreen(props: Props) {
+  const { user } = useUser();
 
   const { data, loading, error } = useQuery<GetRatingsQuery>(Ratings, {
     variables: { id: user?.id },

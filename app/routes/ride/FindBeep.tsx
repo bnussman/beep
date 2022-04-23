@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import Logger from "../../utils/Logger";
-import LeaveButton from "./LeaveButton";
-import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIcons";
+import { Logger } from "../../utils/Logger";
+import { LeaveButton } from "./LeaveButton";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";
 import { Share, Linking, AppState, AppStateStatus } from "react-native";
@@ -12,13 +12,11 @@ import { RateCard } from "../../components/RateCard";
 import { Tags } from "./Tags";
 import { throttle } from "throttle-debounce";
 import { Container } from "../../components/Container";
-import { UserData } from "../../App";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
 import {
   GetEtaQuery,
   GetInitialRiderStatusQuery,
-  UserDataQuery,
 } from "../../generated/graphql";
 import {
   Button,
@@ -36,6 +34,7 @@ import {
 import LocationInput from "../../components/LocationInput";
 import { Alert } from "../../utils/Alert";
 import { GradietnButton } from "../../components/GradientButton";
+import { useUser } from "../../utils/useUser";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -130,9 +129,7 @@ let sub: any;
 let riderStatusSub: any;
 
 export function MainFindBeepScreen(props: Props): JSX.Element {
-  const { data: userData } = useQuery<UserDataQuery>(UserData);
-
-  const user = userData?.getUser;
+  const { user } = useUser();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
     InitialRiderStatus,
