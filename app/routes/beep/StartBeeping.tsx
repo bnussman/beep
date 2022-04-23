@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Constants from 'expo-constants';
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { Logger } from "../../utils/Logger";
@@ -205,7 +206,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
 
   async function getBeepingLocationPermissions(): Promise<boolean> {
     //Temporary fix for being able to toggle beeping in dev
-    if (__DEV__) return true;
+    if (__DEV__ || Constants.appOwnership === "expo") return true;
 
     const { status: fgStatus } =
       await Location.requestForegroundPermissionsAsync();
