@@ -19,8 +19,7 @@ import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { updatePushToken } from "./utils/Notifications";
 import { SignUpScreen } from "./routes/auth/SignUp";
-import { isMobile } from "./utils/config";
-import { NATIVE_BASE_CONFIG, NATIVE_BASE_THEME } from "./utils/constants";
+import { isMobile, NATIVE_BASE_CONFIG, NATIVE_BASE_THEME } from "./utils/constants";
 import { UserData, UserSubscription } from "./utils/useUser";
 import {
   DarkTheme,

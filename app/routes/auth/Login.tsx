@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import PasswordInput from "../../components/PasswordInput";
 import { Alert } from "../../utils/Alert";
 import { GradietnButton } from "../../components/GradientButton";
-import { isMobile } from "../../utils/config";
+import { isMobile } from "../../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation } from "../../generated/graphql";
 import { client, wsLink } from "../../utils/Apollo";

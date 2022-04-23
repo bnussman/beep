@@ -3,7 +3,7 @@ import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
-import { isAndroid, Unpacked } from "../../utils/config";
+import { isAndroid, Unpacked } from "../../utils/constants";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";

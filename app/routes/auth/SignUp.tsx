@@ -6,7 +6,7 @@ import { TouchableOpacity } from "react-native";
 import { getPushToken } from "../../utils/Notifications";
 import { gql, useMutation } from "@apollo/client";
 import { Scalars, SignUpMutation } from "../../generated/graphql";
-import { isMobile } from "../../utils/config";
+import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { client, wsLink } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Alert } from "react-native";
 import { GetInitialQueueQuery } from "../generated/graphql";
-import { isMobile, Unpacked } from "../utils/config";
+import { isMobile, Unpacked } from "../utils/constants";
 import { client } from "../utils/Apollo";
 import { ApolloError, gql } from "@apollo/client";
 import { Button } from "native-base";

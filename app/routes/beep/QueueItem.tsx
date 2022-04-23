@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Linking, Platform, Pressable } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
-import { Unpacked } from "../../utils/config";
+import { Unpacked } from "../../utils/constants";
 import {
   Flex,
   Box,

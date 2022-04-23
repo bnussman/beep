@@ -2,7 +2,7 @@ import React from "react";
 import { Box, IBoxProps } from "native-base";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { isMobile } from "../utils/config";
+import { isMobile } from "../utils/constants";
 
 interface Props {
   keyboard?: boolean;

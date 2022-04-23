@@ -1,6 +1,6 @@
 import React from "react";
 import { StatusBar } from "native-base";
-import { isIOS } from "./config";
+import { isIOS } from "./constants";
 
 export type barStyles = "light-content" | "dark-content";
 

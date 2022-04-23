@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert as NativeAlert } from "react-native";
-import { isMobile } from "../../utils/config";
+import { isMobile } from "../../utils/constants";
 import { gql, useMutation } from "@apollo/client";
 import { LeaveQueueMutation } from "../../generated/graphql";
 import { Button } from "native-base";

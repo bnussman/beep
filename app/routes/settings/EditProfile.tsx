@@ -5,7 +5,7 @@ import { ReactNativeFile } from "apollo-upload-client";
 // @ts-expect-error no types :(
 import * as mime from "react-native-mime-types";
 import * as ImagePicker from "expo-image-picker";
-import { isMobile } from "../../utils/config";
+import { isMobile } from "../../utils/constants";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { useUser } from "../../utils/useUser";

@@ -1,6 +1,6 @@
 import { ApolloError } from "@apollo/client";
 import { Alert as NativeAlert } from "react-native";
-import { isMobile } from "./config";
+import { isMobile } from "./constants";
 
 const doAlert = isMobile
   ? NativeAlert.alert

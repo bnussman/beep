@@ -4,7 +4,7 @@ import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Navigation } from "../utils/Navigation";
-import { Unpacked } from "../utils/config";
+import { Unpacked } from "../utils/constants";
 import { useUser } from "../utils/useUser";
 import {
   Spinner,

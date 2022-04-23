@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 import { Vibration, Platform } from "react-native";
 import { gql } from "@apollo/client";
 import { client } from "../utils/Apollo";
-import { isMobile } from "./config";
+import { isMobile } from "./constants";
 
 /**
  * Checks for permssion for Notifications, asks expo for push token, sets up notification listeners, returns
