@@ -4,7 +4,7 @@ import { RatingInput } from '../validators/rating';
 import { Beep } from '../entities/Beep';
 import { Paginated } from '../utils/paginated';
 import { Rating } from '../entities/Rating';
-import PaginationArgs from '../args/Pagination';
+import { PaginationArgs } from '../args/Pagination';
 import { QueryOrder } from '@mikro-orm/core';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { GraphQLResolveInfo } from 'graphql';

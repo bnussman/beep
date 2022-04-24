@@ -1,4 +1,4 @@
-import PaginationArgs from '../args/Pagination';
+import { PaginationArgs } from '../args/Pagination';
 import EditUserValidator from '../validators/user/EditUser';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';

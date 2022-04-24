@@ -4,7 +4,7 @@ import { User, UserRole } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { ReportInput, UpdateReportInput } from '../validators/report';
-import PaginationArgs from '../args/Pagination';
+import { PaginationArgs } from '../args/Pagination';
 import { Paginated } from '../utils/paginated';
 
 @ObjectType()

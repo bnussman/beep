@@ -4,7 +4,7 @@ import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } fro
 import { Paginated } from '../utils/paginated';
 import { UserRole } from '../entities/User';
 import { Context } from '../utils/context';
-import PaginationArgs from '../args/Pagination';
+import { PaginationArgs } from '../args/Pagination';
 
 @ObjectType()
 class BeepsResponse extends Paginated(Beep) { }

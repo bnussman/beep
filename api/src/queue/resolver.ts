@@ -5,7 +5,7 @@ import { PushNotification, sendNotification, sendNotifications } from "../utils/
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from "type-graphql";
 import fieldsToRelations from "graphql-fields-to-relations";
 import { QueryOrder } from "@mikro-orm/core";
-import PaginationArgs from "../args/Pagination";
+import { PaginationArgs } from "../args/Pagination";
 import { Paginated } from "../utils/paginated";
 import { GraphQLResolveInfo } from "graphql";
 
