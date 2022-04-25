@@ -4,7 +4,7 @@ include:
 image: node:current-alpine
 
 pages:
-  stage: production
+  stage: staging
   script:
     - export
     - cd website
@@ -17,4 +17,3 @@ pages:
         - public
   only:
     - master
-  when: manual
