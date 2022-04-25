@@ -12,15 +12,7 @@ import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { UserData } from "../../utils/useUser";
-import {
-  Stack,
-  Button,
-  Input,
-  Heading,
-  Flex,
-  Spacer,
-  Box,
-} from "native-base";
+import { Stack, Button, Input, Heading, Flex, Spacer, Box } from "native-base";
 
 interface Props {
   navigation: Navigation;
@@ -99,8 +91,8 @@ export function LoginScreen(props: Props): JSX.Element {
   }
 
   return (
-    <Container keyboard alignItems="center" justifyContent="center">
-      <Stack space={4} w="90%" mt="55%">
+    <Container keyboard center>
+      <Stack space={4} w="90%">
         <Box>
           <Heading size="xl" mr={4} fontWeight="extrabold">
             Welcome
@@ -151,3 +143,4 @@ export function LoginScreen(props: Props): JSX.Element {
     </Container>
   );
 }
+
