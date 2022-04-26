@@ -33,7 +33,7 @@ export default {
       ],
     },
     ios: {
-      supportsTablet: false,
+      supportsTablet: true,
       bundleIdentifier: "app.ridebeep.App",
       buildNumber: "12",
       infoPlist: {
