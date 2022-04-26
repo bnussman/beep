@@ -26,7 +26,7 @@ export default {
           file: "sentry-expo/upload-sourcemaps",
           config: {
             setCommits: true,
-            organization: "beep",
+            organization: "ian-banks-llc",
             project: "app",
           },
         },
