@@ -1,4 +1,4 @@
-const { getDefaultConfig } = require("metro-config");
+const { getDefaultConfig } = require("@expo/metro-config");
 const { resolver: defaultResolver } = getDefaultConfig.getDefaultValues();
 exports.resolver = {
   ...defaultResolver,
