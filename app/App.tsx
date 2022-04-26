@@ -85,6 +85,9 @@ function Beep() {
       >
         <Stack.Navigator
           initialRouteName={user ? "Main" : "Login"}
+          screenOptions={{
+            headerTintColor: colorMode === "dark" ? "white" : "black",
+          }}
         >
           <Stack.Screen
             options={{ headerShown: false }}
