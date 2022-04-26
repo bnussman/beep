@@ -5,9 +5,9 @@ export default {
     name: "Beep",
     slug: "Beep",
     owner: "bnussman",
-    version: "2.0.2",
+    version: "2.1.0",
     githubUrl: "https://github.com/bnussman/Beep",
-    primaryColor: "#ecc94b",
+    primaryColor: "#575A62",
     icon: "./assets/icon.png",
     notification: {
       iosDisplayInForeground: true,
