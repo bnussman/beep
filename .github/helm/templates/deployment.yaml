@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: {{ .Values.deployment.container.name }}
-          image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.name }}:latest"
           imagePullPolicy: {{ .Values.image.pull }}
           ports:
             - containerPort: {{ .Values.deployment.container.port }}
