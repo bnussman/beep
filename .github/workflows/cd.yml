@@ -26,4 +26,4 @@ jobs:
         with:
           push: true
           file: Dockerfile
-          tags: beep:latest
+          tags: bnussman/api:latest
