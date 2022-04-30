@@ -13,8 +13,8 @@ deployment:
   replicas: 1
   container:
     name: go
-    port: 8080
+    port: 3001
  
 service:
   type: ClusterIP
-  port: 8080
+  port: 3001
