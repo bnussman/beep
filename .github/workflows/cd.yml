@@ -50,5 +50,5 @@ jobs:
       - name: Deploy
         run: |
           helm upgrade --install --atomic --timeout 1m rest ./.github/helm/ -f ./.github/helm/values.yaml \
-            --kube-context nonprod --namespace beep --create-namespace \
+            --kube-context lke59324-ctx --namespace beep --create-namespace \
             --set image.tag=${{ needs.setup.outputs.tag }}
