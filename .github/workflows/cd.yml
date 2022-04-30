@@ -43,12 +43,10 @@ jobs:
           mv linux-amd64/helm /usr/local/bin/helm
           helm version
       - uses: actions/checkout@v2
-      - name: ls
-        run: ls -a
       - name: Lint helm charts
         run: helm lint ./.github/helm/
       - name: Deploy
         run: |
-          helm upgrade --install --atomic --timeout 1m rest ./.github/helm/ -f ./.github/helm/values.yaml \
+          helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml \
             --kube-context lke59324-ctx --namespace beep --create-namespace \
             --set image.tag=${{ needs.setup.outputs.tag }}
