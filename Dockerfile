@@ -2,9 +2,11 @@ FROM node:current-alpine
 
 WORKDIR /usr/api
 
-COPY api/package*.json ./
+COPY api/package.json ./
 
-RUN npm install
+RUN npm install -g pnpm
+
+RUN pnpm install
 
 COPY api/ .
 
