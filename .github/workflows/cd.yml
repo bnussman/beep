@@ -43,6 +43,8 @@ jobs:
           mv linux-amd64/helm /usr/local/bin/helm
           helm version
       - uses: actions/checkout@v2
+      - name: ls
+        run: ls -a
       - name: Lint helm charts
         run: helm lint ./.github/helm/
       - name: Deploy
