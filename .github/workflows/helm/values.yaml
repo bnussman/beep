@@ -1,0 +1,20 @@
+namespace: default
+ 
+env:
+  HTTP_ADDR: :3001
+ 
+image:
+  name: bnussman/api
+  tag: latest
+  pull: IfNotPresent
+ 
+deployment:
+  timestamp: 2006-01-02T15:04:05
+  replicas: 1
+  container:
+    name: go
+    port: 8080
+ 
+service:
+  type: ClusterIP
+  port: 8080

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: rest
+type: application
+icon: https://
+description: This is an HTTP API
+version: 0.0.1
