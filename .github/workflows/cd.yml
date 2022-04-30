@@ -31,10 +31,6 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - name: Download repository
-        uses: actions/download-artifact@v2
-        with:
-          name: repository
       - name: Create kube config
         run: |
           mkdir -p $HOME/.kube/
