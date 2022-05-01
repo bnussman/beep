@@ -39,10 +39,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Lint helm charts
         run: helm lint ./.github/helm/
-      - name: ls
-        run: ls -a
-      - name: ls2
-        run: ls -a .gitlab/helm
       - uses: actions/setup-node@v3
         with:
           node-version: 18
