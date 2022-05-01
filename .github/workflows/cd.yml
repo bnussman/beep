@@ -33,9 +33,6 @@ jobs:
           namespace: 'beep'
           chart: '.github/helm/'
           token: '${{ github.token }}'
-          value-files: >-
-          [
-            ".github/helm/values.yaml", 
-          ]
+          value-files: [".github/helm/values.yaml"]
         env:
           KUBECONFIG_FILE: '${{ secrets.KUBE_CONFIG }}'
