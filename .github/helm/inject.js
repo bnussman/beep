@@ -5,10 +5,10 @@ let content = '';
 const keys = Object.keys(process.env);
 
 for (const key of keys) {
-  content += `  ${key}: ${process.env[key]}\n`
+  content += `\n  ${key}: ${process.env[key]}`
 }
 
-fs.appendFile('.gitlab/helm/templates/configmap.yaml', content, err => {
+fs.appendFile(`${__dirname}/templates/configmap.yaml`, content, err => {
   if (err) {
     console.error(err)
     return
