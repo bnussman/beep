@@ -9,11 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Build variables
-        id: vars
-        run: |
-          echo "::set-output name=repo::$GITHUB_REPOSITORY"
-          echo "::set-output name=tag::$(git rev-parse --short "$GITHUB_SHA")"
       - uses: actions/checkout@v2
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -30,21 +25,17 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - name: Create kube config
-        run: |
-          mkdir -p $HOME/.kube/
-          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-      - name: Install helm
-        run: |
-          curl -LO https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz
-          tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
-          mv linux-amd64/helm /usr/local/bin/helm
-          helm version
       - uses: actions/checkout@v2
-      - name: Lint helm charts
-        run: helm lint ./.github/helm/
-      - name: Deploy
-        run: |
-          helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml \
-            --kube-context lke59324-ctx --namespace beep --create-namespace
+      - name: 'Deploy'
+        uses: 'deliverybot/helm@v1'
+        with:
+          release: 'api'
+          namespace: 'beep'
+          chart: '.github/helm/'
+          token: '${{ github.token }}'
+          value-files: >-
+          [
+            ".github/helm/values.yaml", 
+          ]
+        env:
+          KUBECONFIG_FILE: '${{ secrets.KUBE_CONFIG }}'
