@@ -42,7 +42,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 17
-      - run: node ./.gitlab/helm/inject.js
+      - run: node .github/helm/inject.js
       - name: Deploy
         run: |
           helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml \
