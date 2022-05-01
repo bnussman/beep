@@ -43,3 +43,5 @@ jobs:
         run: |
           helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml \
             --kube-context lke59324-ctx --namespace beep --create-namespace
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
