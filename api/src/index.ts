@@ -168,6 +168,8 @@ async function start() {
 
   await new Promise<void>(resolve => httpServer.listen({ port: 3001 }, resolve));
 
+  console.log(process.env);
+
   console.info(`🚕 Beep GraphQL Server Started at \x1b[36mhttp://0.0.0.0:3001${server.graphqlPath}\x1b[0m`);
 }
 
