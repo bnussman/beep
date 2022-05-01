@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 let context = '';
 
 const keys = Object.keys(process.env);
