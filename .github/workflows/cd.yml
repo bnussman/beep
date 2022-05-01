@@ -39,9 +39,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Lint helm charts
         run: helm lint ./.github/helm/
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 17
+      - run: node ./.gitlab/helm/inject.js
       - name: Deploy
         run: |
           helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml \
             --kube-context lke59324-ctx --namespace beep --create-namespace
-        env:
-          SECRETS_CONTEXT: ${{ toJson(secrets) }}

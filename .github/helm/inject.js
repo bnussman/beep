@@ -1,0 +1,1 @@
+console.log("HERE IS THE ENV", process.env);
