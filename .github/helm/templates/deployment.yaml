@@ -21,7 +21,7 @@ spec:
       containers:
         - name: {{ .Values.deployment.container.name }}
           image: "{{ .Values.image.name }}:latest"
-          imagePullPolicy: {{ .Values.image.pull }}
+          imagePullPolicy: "Always"
           ports:
             - containerPort: {{ .Values.deployment.container.port }}
           envFrom:
