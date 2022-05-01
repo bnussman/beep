@@ -41,7 +41,7 @@ jobs:
         run: helm lint ./.github/helm/
       - uses: actions/setup-node@v3
         with:
-          node-version: 17
+          node-version: 18
       - run: node .github/helm/inject.js
       - name: Deploy
         run: |
