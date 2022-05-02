@@ -9,7 +9,7 @@ const secrets = JSON.parse(process.env.secrets);
 const keys = Object.keys(secrets);
 
 for (const key of keys) {
-  content += `\n  ${key}: "${String(keys[key])}"`
+  content += `\n  ${key}: "${String(secrets[key])}"`
 }
 
 console.log(content);
