@@ -2,14 +2,12 @@ const fs = require('fs');
 
 let content = '';
 
-const keys = Object.keys(process.env);
+console.log(process.env.secrets);
 
-for (const key of keys) {
-  if (!process.env[key]) {
-    continue;
-  }
+const secrets = JSON.parse(process.env.secrets);
 
-  content += `\n  ${key}: "${String(process.env[key])}"`
+for (const key of secrets) {
+  content += `\n  ${key}: "${String(secrets[key])}"`
 }
 
 console.log(content);

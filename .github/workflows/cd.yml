@@ -43,6 +43,8 @@ jobs:
         with:
           node-version: 18
       - run: node .github/helm/inject.js
+          env:
+            secrets: ${{ toJSON(secrets) }}
       - name: Deploy
         run: |
           helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml \
