@@ -9,15 +9,7 @@ for (const key of keys) {
     continue;
   }
 
-  const value = String(process.env[key]);
-
-  if (value === "true") {
-    content += `\n  ${key}: "true"`
-  } else if (value === "false") {
-    content += `\n  ${key}: "false"`
-  } else {
-    content += `\n  ${key}: "${value}"`
-  }
+  content += `\n  ${key}: "${String(process.env[key])}"`
 }
 
 console.log(content);
