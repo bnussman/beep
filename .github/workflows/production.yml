@@ -1,9 +1,6 @@
-name: Continuous Deployment
+name: production
  
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
  
 jobs:
   build:
@@ -25,8 +22,8 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     environment:
-      name: staging
-      url: https://api.staging.ridebeep.app
+      name: production
+      url: https://api.ridebeep.app/graphql
     steps:
       - name: Create kube config
         run: |
@@ -50,5 +47,4 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
       - name: Deploy
         run: |
-          helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml \
-            --kube-context lke59324-ctx --namespace beep --create-namespace
+          helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml --namespace beep --create-namespace
