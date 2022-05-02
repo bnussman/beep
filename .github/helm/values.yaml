@@ -10,7 +10,7 @@ image:
  
 deployment:
   timestamp: 2006-01-02T15:04:05
-  replicas: 1
+  replicas: 3
   container:
     name: api
     port: 3001
