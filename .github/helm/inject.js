@@ -6,7 +6,7 @@ const keys = Object.keys(process.env);
 
 for (const key of keys) {
   if (process.env[key]) {
-    content += `\n  ${key}: ${process.env[key]}`
+    content += `\n  ${key}: ${String(process.env[key])}`
   }
 }
 
