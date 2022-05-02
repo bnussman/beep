@@ -5,6 +5,10 @@ let content = '';
 const keys = Object.keys(process.env);
 
 for (const key of keys) {
+  if (!process.env[key]) {
+    continue;
+  }
+
   const value = String(process.env[key]);
 
   if (value === "true") {
