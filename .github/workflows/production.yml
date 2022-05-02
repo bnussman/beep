@@ -47,4 +47,4 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
       - name: Deploy
         run: |
-          helm upgrade --install --atomic --timeout 1m api ./.github/helm/ -f ./.github/helm/values.yaml --namespace beep --create-namespace
+          helm upgrade --install --atomic --timeout 2m api ./.github/helm/ -f ./.github/helm/values.yaml --namespace beep --create-namespace
