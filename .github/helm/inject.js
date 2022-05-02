@@ -16,7 +16,7 @@ for (const key of keys) {
   } else if (value === "false") {
     content += `\n  ${key}: "false"`
   } else {
-    content += `\n  ${key}: ${value}`
+    content += `\n  ${key}: "${value}"`
   }
 }
 
