@@ -1,4 +1,5 @@
 import got from 'got';
+import { GOOGLE_API_KEYS } from '../utils/constants';
 import { Arg, Field, ObjectType, Query, Resolver } from "type-graphql";
 
 @ObjectType()
@@ -7,7 +8,7 @@ class Suggestion {
   public title!: string;
 }
 
-const keys: string[] = JSON.parse(process.env.GOOGLE_API_KEYS || '[]');
+const keys: string[] = JSON.parse(GOOGLE_API_KEYS || '[]');
 
 function getRandom<T>(data: T[]): T {
   return data[Math.floor(Math.random() * data.length)];

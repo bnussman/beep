@@ -4,7 +4,7 @@ import { transporter } from "../utils/mailer";
 import { User } from '../entities/User';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { EntityManager } from "@mikro-orm/core";
-import { ENVRIONMENT } from "../utils/constants";
+import { ENVIRONMENT } from "../utils/constants";
 
 const urls = {
   development: 'http://localhost:3000',
@@ -12,7 +12,7 @@ const urls = {
   production: 'https://ridebeep.app'
 };
 
-const url = urls[ENVRIONMENT];
+const url = urls[ENVIRONMENT];
 
 /**
  * Helper function to send password reset email to user

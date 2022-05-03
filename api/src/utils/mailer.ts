@@ -1,11 +1,12 @@
 import * as nodemailer from "nodemailer";
+import { MAIL_HOST, MAIL_PASSWORD, MAIL_PORT, MAIL_USER } from "./constants";
 
 export const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST,
-    port: Number(process.env.MAIL_PORT),
+    host: MAIL_HOST,
+    port: Number(MAIL_PORT),
     secure: true,
     auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASSWORD
+        user: MAIL_USER,
+        pass: MAIL_PASSWORD
     }
 }); 
