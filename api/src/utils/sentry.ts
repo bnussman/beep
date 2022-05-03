@@ -8,7 +8,7 @@ export function init(app: Router): void {
   Sentry.init({
     release: packageConfig.version,
     dsn: process.env.SENTRY_URL,
-    environment: process.env.GITLAB_ENVIRONMENT_NAME || "development",
+    environment: process.env.ENVIRONMENT_NAME || "development",
     tracesSampleRate: 1.0,
     debug: false,
     autoSessionTracking: true, 
