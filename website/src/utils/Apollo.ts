@@ -6,20 +6,20 @@ import { Client, ClientOptions, createClient } from 'graphql-ws';
 import { print } from 'graphql';
 
 function getUrl() {
-  if (import.meta.env.ENVIRONMENT_NAME === 'production') {
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === 'production') {
     return 'https://api.ridebeep.app/graphql';
   }
-  if (import.meta.env.ENVIRONMENT_NAME === 'preview') {
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === 'preview') {
     return 'https://api.staging.ridebeep.app/graphql';
   }
   return 'http://localhost:3001/graphql'
 }
 
 function getWSUrl() {
-  if (import.meta.env.ENVIRONMENT_NAME === 'production') {
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === 'production') {
     return 'wss://api.ridebeep.app/subscriptions';
   }
-  if (import.meta.env.ENVIRONMENT_NAME === 'preview') {
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === 'preview') {
     return 'wss://api.staging.ridebeep.app/subscriptions';
   }
   return 'ws://localhost:3001/subscriptions'

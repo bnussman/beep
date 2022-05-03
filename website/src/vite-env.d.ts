@@ -2,5 +2,5 @@
 
 interface ImportMetaEnv {
   VITE_GOOGLE_API_KEY: string;
-  ENVIRONMENT_NAME: 'preview' | 'production' | undefined;
+  VITE_ENVIRONMENT_NAME: 'preview' | 'production' | undefined;
 }
