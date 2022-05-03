@@ -50,7 +50,7 @@ class WebSocketLink extends ApolloLink {
             if (err instanceof CloseEvent)
               return sink.error(
                 new Error(
-                  `Socket closed with event ${err.code} ${err.reason || ''}`, // reason will be available on clean closes only
+                  `Socket closed with event ${err.code} ${err.reason || ''}`,
                 ),
               );
 
