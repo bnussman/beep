@@ -252,6 +252,7 @@ export type MutationReportUserArgs = {
 
 
 export type MutationResetPasswordArgs = {
+  id: Scalars['String'];
   input: ResetPasswordInput;
 };
 
@@ -481,7 +482,6 @@ export type ReportsResponse = {
 };
 
 export type ResetPasswordInput = {
-  id: Scalars['String'];
   password: Scalars['String'];
 };
 
@@ -492,7 +492,7 @@ export type SignUpInput = {
   last: Scalars['String'];
   password: Scalars['String'];
   phone: Scalars['String'];
-  picture: Scalars['Upload'];
+  picture?: InputMaybe<Scalars['Upload']>;
   pushToken?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
   venmo?: InputMaybe<Scalars['String']>;
@@ -587,16 +587,6 @@ export type VerifyEmail = {
   time: Scalars['DateTime'];
   user: User;
 };
-
-export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined, pushToken?: string | null | undefined } };
-
-export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined, pushToken?: string | null | undefined } };
 
 export type UpdateBeeperQueueMutationVariables = Exact<{
   queueId: Scalars['String'];
@@ -815,103 +805,6 @@ export type AddProfilePictureMutationVariables = Exact<{
 export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', photoUrl?: string | null | undefined } };
 
 
-export const UserDataDocument = gql`
-    query UserData {
-  getUser {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photoUrl
-    capacity
-    masksRequired
-    cashapp
-    pushToken
-  }
-}
-    `;
-
-/**
- * __useUserDataQuery__
- *
- * To run a query within a React component, call `useUserDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserDataQuery({
- *   variables: {
- *   },
- * });
- */
-export function useUserDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
-      }
-export function useUserDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
-        }
-export type UserDataQueryHookResult = ReturnType<typeof useUserDataQuery>;
-export type UserDataLazyQueryHookResult = ReturnType<typeof useUserDataLazyQuery>;
-export type UserDataQueryResult = ApolloReactCommon.QueryResult<UserDataQuery, UserDataQueryVariables>;
-export const UserUpdatesDocument = gql`
-    subscription UserUpdates {
-  getUserUpdates {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photoUrl
-    capacity
-    masksRequired
-    cashapp
-    pushToken
-  }
-}
-    `;
-
-/**
- * __useUserUpdatesSubscription__
- *
- * To run a query within a React component, call `useUserUpdatesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserUpdatesSubscription({
- *   variables: {
- *   },
- * });
- */
-export function useUserUpdatesSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
-      }
-export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
-export type UserUpdatesSubscriptionResult = ApolloReactCommon.SubscriptionResult<UserUpdatesSubscription>;
 export const UpdateBeeperQueueDocument = gql`
     mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
   setBeeperQueue(input: {queueId: $queueId, riderId: $riderId, value: $value})

@@ -251,6 +251,7 @@ export type MutationReportUserArgs = {
 
 
 export type MutationResetPasswordArgs = {
+  id: Scalars['String'];
   input: ResetPasswordInput;
 };
 
@@ -480,7 +481,6 @@ export type ReportsResponse = {
 };
 
 export type ResetPasswordInput = {
-  id: Scalars['String'];
   password: Scalars['String'];
 };
 
@@ -491,7 +491,7 @@ export type SignUpInput = {
   last: Scalars['String'];
   password: Scalars['String'];
   phone: Scalars['String'];
-  picture: Scalars['Upload'];
+  picture?: InputMaybe<Scalars['Upload']>;
   pushToken?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
   venmo?: InputMaybe<Scalars['String']>;
@@ -708,7 +708,7 @@ export type SignUpMutationVariables = Exact<{
   cashapp?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
   password: Scalars['String'];
-  picture: Scalars['Upload'];
+  picture?: InputMaybe<Scalars['Upload']>;
 }>;
 
 
@@ -1513,7 +1513,7 @@ export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const ResetPasswordDocument = gql`
     mutation ResetPassword($id: String!, $password: String!) {
-  resetPassword(input: {id: $id, password: $password})
+  resetPassword(id: $id, input: {password: $password})
 }
     `;
 export type ResetPasswordMutationFn = Apollo.MutationFunction<ResetPasswordMutation, ResetPasswordMutationVariables>;
@@ -1544,7 +1544,7 @@ export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPassword
 export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
 export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!) {
+    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload) {
   signup(
     input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password, picture: $picture}
   ) {
