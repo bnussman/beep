@@ -1,6 +1,9 @@
 name: production
  
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - production
  
 jobs:
   build:
@@ -23,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://api.ridebeep.app/graphql
+      url: https://ridebeep.app
     steps:
       - name: Create kube config
         run: |
