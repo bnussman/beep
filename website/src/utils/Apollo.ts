@@ -5,13 +5,25 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { Client, ClientOptions, createClient } from 'graphql-ws';
 import { print } from 'graphql';
 
-const dev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-const wsUrl = dev ? "ws://localhost:3001/subscriptions" : "wss://ridebeep.app/subscriptions";
-const url = dev ? "http://localhost:3001/graphql" : "https://ridebeep.app/graphql";
-// const wsUrl = "wss://ridebeep.app/subscriptions";
-// const url = "https://ridebeep.app/graphql";
-// const wsUrl = dev ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
-// const url = dev ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
+function getUrl() {
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === 'production') {
+    return 'https://api.ridebeep.app/graphql';
+  }
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === 'preview') {
+    return 'https://api.staging.ridebeep.app/graphql';
+  }
+  return 'http://localhost:3001/graphql'
+}
+
+function getWSUrl() {
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === 'production') {
+    return 'wss://api.ridebeep.app/subscriptions';
+  }
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === 'preview') {
+    return 'wss://api.staging.ridebeep.app/subscriptions';
+  }
+  return 'ws://localhost:3001/subscriptions'
+}
 
 class WebSocketLink extends ApolloLink {
   private client: Client;
@@ -38,7 +50,7 @@ class WebSocketLink extends ApolloLink {
             if (err instanceof CloseEvent)
               return sink.error(
                 new Error(
-                  `Socket closed with event ${err.code} ${err.reason || ''}`, // reason will be available on clean closes only
+                  `Socket closed with event ${err.code} ${err.reason || ''}`,
                 ),
               );
 
@@ -51,7 +63,7 @@ class WebSocketLink extends ApolloLink {
 }
 
 const uploadLink = createUploadLink({
-  uri: url,
+  uri: getUrl(),
 });
 
 const authLink = setContext(async (_, { headers }) => {
@@ -68,7 +80,7 @@ const authLink = setContext(async (_, { headers }) => {
 });
 
 const wsLink = new WebSocketLink({
-  url: wsUrl,
+  url: getWSUrl(),
   connectionParams: () => {
     const tokens = localStorage.getItem('user');
     if (tokens) {
