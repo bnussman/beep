@@ -2,13 +2,14 @@ import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import { Router } from 'express';
 import { User } from '../entities/User';
+import { SENTRY_URL, ENVIRONMENT } from './constants';
 import packageConfig from '../../package.json';
 
 export function init(app: Router): void {
   Sentry.init({
     release: packageConfig.version,
-    dsn: process.env.SENTRY_URL,
-    environment: process.env.GITLAB_ENVIRONMENT_NAME || "development",
+    dsn: SENTRY_URL,
+    environment: ENVIRONMENT || "development",
     tracesSampleRate: 1.0,
     debug: false,
     autoSessionTracking: true, 
