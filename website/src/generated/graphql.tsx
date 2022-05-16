@@ -611,6 +611,13 @@ export type GetBeepsQueryVariables = Exact<{
 
 export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string }, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
 
+export type UsersQueueQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UsersQueueQuery = { __typename?: 'Query', getQueue: Array<{ __typename?: 'QueueEntry', id: string, state: number, isAccepted: boolean, rider: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined } }> };
+
 export type GetQueueSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -1095,6 +1102,48 @@ export function useGetBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
 export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
 export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
+export const UsersQueueDocument = gql`
+    query UsersQueue($id: String) {
+  getQueue(id: $id) {
+    id
+    state
+    isAccepted
+    rider {
+      id
+      name
+      photoUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useUsersQueueQuery__
+ *
+ * To run a query within a React component, call `useUsersQueueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUsersQueueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUsersQueueQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUsersQueueQuery(baseOptions?: Apollo.QueryHookOptions<UsersQueueQuery, UsersQueueQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UsersQueueQuery, UsersQueueQueryVariables>(UsersQueueDocument, options);
+      }
+export function useUsersQueueLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UsersQueueQuery, UsersQueueQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UsersQueueQuery, UsersQueueQueryVariables>(UsersQueueDocument, options);
+        }
+export type UsersQueueQueryHookResult = ReturnType<typeof useUsersQueueQuery>;
+export type UsersQueueLazyQueryHookResult = ReturnType<typeof useUsersQueueLazyQuery>;
+export type UsersQueueQueryResult = Apollo.QueryResult<UsersQueueQuery, UsersQueueQueryVariables>;
 export const GetQueueDocument = gql`
     subscription GetQueue($id: String!) {
   getBeeperUpdates(id: $id) {

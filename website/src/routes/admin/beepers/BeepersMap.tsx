@@ -29,7 +29,8 @@ export function BeepersMap(props: Props) {
             lat={beeper.location?.latitude || 0}
             lng={beeper.location?.longitude || 0}
             text={beeper.name}
-            photoUrl={beeper.photoUrl}
+            user={beeper}
+            variant='queue'
           />
         ))}
       </GoogleMapReact>

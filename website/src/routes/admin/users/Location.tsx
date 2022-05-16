@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import GoogleMapReact from 'google-map-react';
 import { gql } from '@apollo/client';
 import { Box, Center } from '@chakra-ui/react';
-import { GetUserQuery } from '../../../generated/graphql';
+import { GetUserQuery, User } from '../../../generated/graphql';
 import { client } from '../../../utils/Apollo';
 import { GetUser } from './User';
 import { Marker } from '../../../components/Marker';
@@ -76,7 +76,8 @@ export function LocationView(props: Props) {
             lat={user.location.latitude}
             lng={user.location.longitude}
             text={user.name}
-            photoUrl={user.photoUrl}
+            user={user as User}
+            variant="default"
           />
         </GoogleMapReact>
       </div>
