@@ -11,7 +11,7 @@ import { GetUser } from '../routes/admin/users/User';
 
 dayjs.extend(duration);
 
-const GetQueue = gql`
+export const QueueSubscription = gql`
   subscription GetQueue($id: String!) {
     getBeeperUpdates(id: $id) {
       id
@@ -58,7 +58,7 @@ export function QueueTable(props: Props) {
   const { user } = props;
 
   async function subscribe() {
-    const a = client.subscribe({ query: GetQueue, variables: { id: user.id } });
+    const a = client.subscribe({ query: QueueSubscription, variables: { id: user.id } });
 
     sub = a.subscribe(({ data }) => {
       client.writeQuery({

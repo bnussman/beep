@@ -252,6 +252,7 @@ export type MutationReportUserArgs = {
 
 
 export type MutationResetPasswordArgs = {
+  id: Scalars['String'];
   input: ResetPasswordInput;
 };
 
@@ -481,7 +482,6 @@ export type ReportsResponse = {
 };
 
 export type ResetPasswordInput = {
-  id: Scalars['String'];
   password: Scalars['String'];
 };
 
@@ -492,7 +492,7 @@ export type SignUpInput = {
   last: Scalars['String'];
   password: Scalars['String'];
   phone: Scalars['String'];
-  picture: Scalars['Upload'];
+  picture?: InputMaybe<Scalars['Upload']>;
   pushToken?: InputMaybe<Scalars['String']>;
   username: Scalars['String'];
   venmo?: InputMaybe<Scalars['String']>;
@@ -587,16 +587,6 @@ export type VerifyEmail = {
   time: Scalars['DateTime'];
   user: User;
 };
-
-export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined, pushToken?: string | null | undefined } };
-
-export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined, pushToken?: string | null | undefined } };
 
 export type UpdateBeeperQueueMutationVariables = Exact<{
   queueId: Scalars['String'];
@@ -788,6 +778,21 @@ export type GetBeeperListQueryVariables = Exact<{
 
 export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photoUrl?: string | null | undefined, role: string, masksRequired: boolean, rating?: number | null | undefined, venmo?: string | null | undefined, cashapp?: string | null | undefined, location?: { __typename?: 'Point', latitude: number, longitude: number } | null | undefined }> };
 
+export type ChooseBeepMutationVariables = Exact<{
+  beeperId: Scalars['String'];
+  origin: Scalars['String'];
+  destination: Scalars['String'];
+  groupSize: Scalars['Float'];
+}>;
+
+
+export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null | undefined, cashapp?: string | null | undefined, username: string, phone: string, photoUrl?: string | null | undefined, masksRequired: boolean, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null | undefined } } };
+
+export type FindBeepQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FindBeepQuery = { __typename?: 'Query', findBeep: { __typename?: 'User', id: string, first: string, last: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photoUrl?: string | null | undefined, role: string } };
+
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String'];
 }>;
@@ -814,104 +819,31 @@ export type AddProfilePictureMutationVariables = Exact<{
 
 export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', photoUrl?: string | null | undefined } };
 
+export type UpdatePushTokenMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
 
-export const UserDataDocument = gql`
-    query UserData {
-  getUser {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photoUrl
-    capacity
-    masksRequired
-    cashapp
-    pushToken
-  }
-}
-    `;
 
-/**
- * __useUserDataQuery__
- *
- * To run a query within a React component, call `useUserDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserDataQuery({
- *   variables: {
- *   },
- * });
- */
-export function useUserDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
-      }
-export function useUserDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
-        }
-export type UserDataQueryHookResult = ReturnType<typeof useUserDataQuery>;
-export type UserDataLazyQueryHookResult = ReturnType<typeof useUserDataLazyQuery>;
-export type UserDataQueryResult = ApolloReactCommon.QueryResult<UserDataQuery, UserDataQueryVariables>;
-export const UserUpdatesDocument = gql`
-    subscription UserUpdates {
-  getUserUpdates {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photoUrl
-    capacity
-    masksRequired
-    cashapp
-    pushToken
-  }
-}
-    `;
+export type UpdatePushTokenMutation = { __typename?: 'Mutation', updatePushToken: boolean };
 
-/**
- * __useUserUpdatesSubscription__
- *
- * To run a query within a React component, call `useUserUpdatesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserUpdatesSubscription({
- *   variables: {
- *   },
- * });
- */
-export function useUserUpdatesSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
-      }
-export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
-export type UserUpdatesSubscriptionResult = ApolloReactCommon.SubscriptionResult<UserUpdatesSubscription>;
+export type RemoveTokenMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type RemoveTokenMutation = { __typename?: 'Mutation', removeToken: boolean };
+
+export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined, pushToken?: string | null | undefined } };
+
+export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined, pushToken?: string | null | undefined } };
+
+
 export const UpdateBeeperQueueDocument = gql`
     mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
   setBeeperQueue(input: {queueId: $queueId, riderId: $riderId, value: $value})
@@ -1937,6 +1869,115 @@ export function useGetBeeperListLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type GetBeeperListQueryHookResult = ReturnType<typeof useGetBeeperListQuery>;
 export type GetBeeperListLazyQueryHookResult = ReturnType<typeof useGetBeeperListLazyQuery>;
 export type GetBeeperListQueryResult = ApolloReactCommon.QueryResult<GetBeeperListQuery, GetBeeperListQueryVariables>;
+export const ChooseBeepDocument = gql`
+    mutation ChooseBeep($beeperId: String!, $origin: String!, $destination: String!, $groupSize: Float!) {
+  chooseBeep(
+    beeperId: $beeperId
+    input: {origin: $origin, destination: $destination, groupSize: $groupSize}
+  ) {
+    id
+    position
+    isAccepted
+    origin
+    destination
+    state
+    groupSize
+    beeper {
+      id
+      first
+      name
+      singlesRate
+      groupRate
+      isStudent
+      role
+      venmo
+      cashapp
+      username
+      phone
+      photoUrl
+      masksRequired
+      capacity
+      queueSize
+      location {
+        longitude
+        latitude
+      }
+    }
+  }
+}
+    `;
+export type ChooseBeepMutationFn = ApolloReactCommon.MutationFunction<ChooseBeepMutation, ChooseBeepMutationVariables>;
+
+/**
+ * __useChooseBeepMutation__
+ *
+ * To run a mutation, you first call `useChooseBeepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChooseBeepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [chooseBeepMutation, { data, loading, error }] = useChooseBeepMutation({
+ *   variables: {
+ *      beeperId: // value for 'beeperId'
+ *      origin: // value for 'origin'
+ *      destination: // value for 'destination'
+ *      groupSize: // value for 'groupSize'
+ *   },
+ * });
+ */
+export function useChooseBeepMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ChooseBeepMutation, ChooseBeepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<ChooseBeepMutation, ChooseBeepMutationVariables>(ChooseBeepDocument, options);
+      }
+export type ChooseBeepMutationHookResult = ReturnType<typeof useChooseBeepMutation>;
+export type ChooseBeepMutationResult = ApolloReactCommon.MutationResult<ChooseBeepMutation>;
+export type ChooseBeepMutationOptions = ApolloReactCommon.BaseMutationOptions<ChooseBeepMutation, ChooseBeepMutationVariables>;
+export const FindBeepDocument = gql`
+    query FindBeep {
+  findBeep {
+    id
+    first
+    last
+    isStudent
+    singlesRate
+    groupRate
+    capacity
+    queueSize
+    photoUrl
+    role
+  }
+}
+    `;
+
+/**
+ * __useFindBeepQuery__
+ *
+ * To run a query within a React component, call `useFindBeepQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindBeepQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindBeepQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFindBeepQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<FindBeepQuery, FindBeepQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<FindBeepQuery, FindBeepQueryVariables>(FindBeepDocument, options);
+      }
+export function useFindBeepLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<FindBeepQuery, FindBeepQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<FindBeepQuery, FindBeepQueryVariables>(FindBeepDocument, options);
+        }
+export type FindBeepQueryHookResult = ReturnType<typeof useFindBeepQuery>;
+export type FindBeepLazyQueryHookResult = ReturnType<typeof useFindBeepLazyQuery>;
+export type FindBeepQueryResult = ApolloReactCommon.QueryResult<FindBeepQuery, FindBeepQueryVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($password: String!) {
   changePassword(input: {password: $password})
@@ -2042,3 +2083,162 @@ export function useAddProfilePictureMutation(baseOptions?: ApolloReactHooks.Muta
 export type AddProfilePictureMutationHookResult = ReturnType<typeof useAddProfilePictureMutation>;
 export type AddProfilePictureMutationResult = ApolloReactCommon.MutationResult<AddProfilePictureMutation>;
 export type AddProfilePictureMutationOptions = ApolloReactCommon.BaseMutationOptions<AddProfilePictureMutation, AddProfilePictureMutationVariables>;
+export const UpdatePushTokenDocument = gql`
+    mutation UpdatePushToken($token: String!) {
+  updatePushToken(pushToken: $token)
+}
+    `;
+export type UpdatePushTokenMutationFn = ApolloReactCommon.MutationFunction<UpdatePushTokenMutation, UpdatePushTokenMutationVariables>;
+
+/**
+ * __useUpdatePushTokenMutation__
+ *
+ * To run a mutation, you first call `useUpdatePushTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePushTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePushTokenMutation, { data, loading, error }] = useUpdatePushTokenMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useUpdatePushTokenMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdatePushTokenMutation, UpdatePushTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<UpdatePushTokenMutation, UpdatePushTokenMutationVariables>(UpdatePushTokenDocument, options);
+      }
+export type UpdatePushTokenMutationHookResult = ReturnType<typeof useUpdatePushTokenMutation>;
+export type UpdatePushTokenMutationResult = ApolloReactCommon.MutationResult<UpdatePushTokenMutation>;
+export type UpdatePushTokenMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdatePushTokenMutation, UpdatePushTokenMutationVariables>;
+export const RemoveTokenDocument = gql`
+    mutation RemoveToken($token: String!) {
+  removeToken(token: $token)
+}
+    `;
+export type RemoveTokenMutationFn = ApolloReactCommon.MutationFunction<RemoveTokenMutation, RemoveTokenMutationVariables>;
+
+/**
+ * __useRemoveTokenMutation__
+ *
+ * To run a mutation, you first call `useRemoveTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeTokenMutation, { data, loading, error }] = useRemoveTokenMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useRemoveTokenMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveTokenMutation, RemoveTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<RemoveTokenMutation, RemoveTokenMutationVariables>(RemoveTokenDocument, options);
+      }
+export type RemoveTokenMutationHookResult = ReturnType<typeof useRemoveTokenMutation>;
+export type RemoveTokenMutationResult = ApolloReactCommon.MutationResult<RemoveTokenMutation>;
+export type RemoveTokenMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveTokenMutation, RemoveTokenMutationVariables>;
+export const UserDataDocument = gql`
+    query UserData {
+  getUser {
+    id
+    username
+    name
+    first
+    last
+    email
+    phone
+    venmo
+    isBeeping
+    isEmailVerified
+    isStudent
+    groupRate
+    singlesRate
+    photoUrl
+    capacity
+    masksRequired
+    cashapp
+    pushToken
+  }
+}
+    `;
+
+/**
+ * __useUserDataQuery__
+ *
+ * To run a query within a React component, call `useUserDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
+      }
+export function useUserDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
+        }
+export type UserDataQueryHookResult = ReturnType<typeof useUserDataQuery>;
+export type UserDataLazyQueryHookResult = ReturnType<typeof useUserDataLazyQuery>;
+export type UserDataQueryResult = ApolloReactCommon.QueryResult<UserDataQuery, UserDataQueryVariables>;
+export const UserUpdatesDocument = gql`
+    subscription UserUpdates {
+  getUserUpdates {
+    id
+    username
+    name
+    first
+    last
+    email
+    phone
+    venmo
+    isBeeping
+    isEmailVerified
+    isStudent
+    groupRate
+    singlesRate
+    photoUrl
+    capacity
+    masksRequired
+    cashapp
+    pushToken
+  }
+}
+    `;
+
+/**
+ * __useUserUpdatesSubscription__
+ *
+ * To run a query within a React component, call `useUserUpdatesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useUserUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserUpdatesSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserUpdatesSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
+      }
+export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
+export type UserUpdatesSubscriptionResult = ApolloReactCommon.SubscriptionResult<UserUpdatesSubscription>;

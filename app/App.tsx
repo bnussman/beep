@@ -62,7 +62,7 @@ function Beep() {
       subscribeToMore({
         document: UserSubscription,
         updateQuery: (prev, { subscriptionData }) => {
-          // @ts-expect-error we are correct
+          // @ts-expect-error apollo dumb
           const newFeedItem = subscriptionData.data.getUserUpdates;
           return Object.assign({}, prev, {
             getUser: newFeedItem,

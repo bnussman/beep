@@ -139,8 +139,8 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  public async resetPassword(@Ctx() ctx: Context, @Arg('input') input: ResetPasswordInput): Promise<boolean> {
-    const entry = await ctx.em.findOne(ForgotPassword, input.id, { populate: ['user'] });
+  public async resetPassword(@Ctx() ctx: Context, @Arg('id') id: string, @Arg('input') input: ResetPasswordInput): Promise<boolean> {
+    const entry = await ctx.em.findOne(ForgotPassword, id, { populate: ['user'] });
 
     if (!entry) {
       throw new Error("This reset password request does not exist");

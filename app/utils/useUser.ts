@@ -52,7 +52,9 @@ export const UserSubscription = gql`
 `;
 
 export function useUser() {
-  const { data, ...rest } = useQuery<UserDataQuery>(UserData, { fetchPolicy: 'cache-only' });
+  const { data, ...rest } = useQuery<UserDataQuery>(UserData, {
+    fetchPolicy: "cache-only",
+  });
 
   return { user: data?.getUser, ...rest };
 }
