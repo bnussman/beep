@@ -77,10 +77,5 @@ export class ResetPasswordInput {
     @Field()
     @IsString()
     @Length(5, 255)
-    id!: string;
-
-    @Field()
-    @IsString()
-    @Length(5, 255)
     password!: string;
 }

@@ -1,57 +1,74 @@
+import React from 'react';
 import { gql, useMutation } from '@apollo/client';
-import React, { FormEvent, useState } from 'react';
-import { ResetPasswordMutation } from '../generated/graphql';
+import { ResetPasswordInput, ResetPasswordMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
-import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { Button, Center, Container, FormControl, FormErrorMessage, FormLabel, Heading, Input } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
+import { Card } from '../components/Card';
+import { useValidationErrors } from '../utils/useValidationErrors';
+import { useForm } from 'react-hook-form';
 
 const Reset = gql`
   mutation ResetPassword($id: String!, $password: String!) {
-    resetPassword(input: {
+    resetPassword(
       id: $id,
-      password: $password
-    })
+      input: {
+        password: $password
+      }
+    )
   }
 `;
 
 export function ResetPassword() {
   const { id } = useParams();
-  const [password, setPassword] = useState<string>("");
-  const [reset, { data, loading, error }] = useMutation<ResetPasswordMutation>(Reset);
+  const [resetPassword, { data, error }] = useMutation<ResetPasswordMutation>(Reset);
 
-  async function handleResetPassword(e: FormEvent): Promise<void> {
-    e.preventDefault();
-    try {
-      await reset({ variables: { id: id, password: password } });
-    }
-    catch (error) {
-      //...
-    }
-  }
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<ResetPasswordInput>({ mode: 'onChange' });
+
+  const validationErrors = useValidationErrors<ResetPasswordInput>(error);
+
+  const onSubmit = handleSubmit(async (variables) => {
+    await resetPassword({ variables: { id, ...variables} });
+  });
 
   return (
-    <Box>
-      {error && <Error error={error} />}
-      {data && <Success message="Successfully changed password" />}
-      <form onSubmit={handleResetPassword}>
-        <FormControl>
-          <FormLabel>New Password</FormLabel>
-          <Input
-            type="password"
-            onChange={(value: any) => setPassword(value.target.value)}
-            disabled={data?.resetPassword}
-          />
-        </FormControl>
-        <Button
-          mt={4}
-          type="submit"
-          isLoading={loading}
-          disabled={data?.resetPassword}
-        >
-          Reset Password
-        </Button>
-      </form>
-    </Box>
+    <Container maxW="container.sm" p={[0]}>
+      <Card>
+        <Center pb={8}>
+          <Heading>Reset Password</Heading>
+        </Center>
+        {error && !validationErrors && <Error error={error} />}
+        {data && <Success message="Successfully changed password" />}
+        <form onSubmit={onSubmit}>
+          <FormControl isInvalid={Boolean(errors.password) || Boolean(validationErrors?.password)}>
+            <FormLabel>New Password</FormLabel>
+            <Input
+              type="password"
+              {...register('password', {
+                required: 'This is required',
+              })}
+            />
+            <FormErrorMessage>
+              {errors.password && errors.password.message}
+              {validationErrors?.password && validationErrors?.password[0]}
+            </FormErrorMessage>
+          </FormControl>
+          <Button
+            w="full"
+            mt={4}
+            type="submit"
+            isLoading={isSubmitting}
+            disabled={!isValid}
+          >
+            Reset Password
+          </Button>
+        </form>
+      </Card>
+    </Container>
   );
 }
