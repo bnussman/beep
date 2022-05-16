@@ -74,7 +74,7 @@ export function Marker(props: Props) {
             <PopoverBody>
               <QueuePreview user={user} />
             </PopoverBody>
-            <PopoverFooter cursor="pointer" onClick={copy}>{lat} {lng}</PopoverFooter>
+            <PopoverFooter cursor="pointer" onClick={copy}>{lat.toFixed(3)} {lng.toFixed(3)}</PopoverFooter>
           </PopoverContent>
         </Portal>
       </Popover>
