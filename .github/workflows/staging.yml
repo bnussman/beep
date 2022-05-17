@@ -10,6 +10,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "18.0.0"
+      - uses: actions/cache@v2
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+      - run: yarn --frozen-lockfile
+      - run: yarn build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: api
+          path: api/build
+  docker:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: api
+          path: api/build
+      - uses: actions/checkout@v2
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -22,7 +45,7 @@ jobs:
           file: Dockerfile
           tags: bnussman/api:latest
   deploy:
-    needs: [build]
+    needs: [docker]
     runs-on: ubuntu-latest
     environment:
       name: staging
