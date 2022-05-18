@@ -2,7 +2,7 @@ export const isProduction = process.env.NODE_ENV === "production";
 
 export const ENVIRONMENT: 'staging' | 'production' | 'development' = process.env.ENVIRONMENT_NAME as 'staging' | 'production' ?? "development";
 
-export const isDevelopment = ENVIRONMENT !== "production" || ENVIRONMENT !== "staging";
+export const isDevelopment = ENVIRONMENT !== "production" && ENVIRONMENT !== "staging";
 
 export const GOOGLE_API_KEYS = process.env.GOOGLE_API_KEYS;
 
