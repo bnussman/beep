@@ -32,6 +32,10 @@ jobs:
         with:
           name: api
           path: api/build
+      - name : machine ls
+        run : "ls -a"
+      - name : machine ls
+        run : "ls -a beep"
       - uses: actions/checkout@v2
       - name: Login to DockerHub
         uses: docker/login-action@v1
