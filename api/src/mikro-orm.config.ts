@@ -1,5 +1,5 @@
 import { Configuration, Connection, IDatabaseDriver, LoadStrategy } from "@mikro-orm/core";
-import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isProduction } from "./utils/constants";
+import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isDevelopment } from "./utils/constants";
 
 export default {
     entities: ['./build/src/entities/*.js'],
@@ -8,10 +8,8 @@ export default {
     password: DB_PASSWORD,
     type: 'postgresql',
     clientUrl: `${DB_URL}/${DB_DATABASE}`,
-    // clientUrl: `postgresql://db.production.ridebeep.app:5432/beep`,
     loadStrategy: LoadStrategy.JOINED,
-    debug: !isProduction,
-    // debug: false,
+    debug: isDevelopment,
     driverOptions: DB_CA ? {
       connection: {
         ssl: {
