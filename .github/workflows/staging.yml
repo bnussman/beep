@@ -35,7 +35,7 @@ jobs:
       - name : machine ls
         run : "ls -a"
       - name : machine ls
-        run : "ls -a beep"
+        run : "ls -a api"
       - uses: actions/checkout@v2
       - name: Login to DockerHub
         uses: docker/login-action@v1
