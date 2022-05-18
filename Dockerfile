@@ -1,6 +1,16 @@
 FROM node:current-alpine
 
-COPY api/build ./
+WORKDIR /usr/api
+
+COPY api/package.json ./
+
+RUN npm install -g pnpm
+
+RUN pnpm install
+
+COPY api/ .
+
+RUN npx tsc
 
 EXPOSE 3001
 
