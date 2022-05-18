@@ -1,5 +1,5 @@
 import { Configuration, Connection, IDatabaseDriver, LoadStrategy } from "@mikro-orm/core";
-import { DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isProduction } from "./utils/constants";
+import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isProduction } from "./utils/constants";
 
 export default {
     entities: ['./build/src/entities/*.js'],
@@ -12,4 +12,11 @@ export default {
     loadStrategy: LoadStrategy.JOINED,
     debug: !isProduction,
     // debug: false,
+    driverOptions: DB_CA ? {
+      connection: {
+        ssl: {
+          ca: DB_CA,
+        }
+      }
+    } : undefined,
 } as unknown as Configuration<IDatabaseDriver<Connection>>

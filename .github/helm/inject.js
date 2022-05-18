@@ -21,7 +21,7 @@ for (const key of keys) {
     continue;
   }
 
-  content += `\n  ${key}: "${String(secrets[key])}"`
+  content += `\n ${key}: "${String(secrets[key].replaceAll(/\n/g, "\\n"))}"`
 }
 
 console.log(content);
