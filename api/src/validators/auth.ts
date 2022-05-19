@@ -1,4 +1,4 @@
-import { IsAlpha, IsDefined, IsEmail, IsMobilePhone, isNotEmpty, IsNotEmpty, IsNotEmptyObject, IsObject, IsOptional, IsString, Length } from 'class-validator';
+import { IsAlpha, IsDefined, IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 import { Upload } from '../account/helpers';
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
@@ -64,7 +64,7 @@ export class SignUpInput implements Partial<User> {
 
   @Field(() => GraphQLUpload, { nullable: true })
   @IsDefined({ message: "You must add a profile picture" })
-  public picture!: Upload;
+  public picture?: Upload;
 
   @Field({ nullable: true })
   @IsString()
