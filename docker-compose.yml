@@ -10,12 +10,11 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - data:/var/lib/mysql
+      - data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: beep
       POSTGRES_PASSWORD: beep
       TZ: America/New_York
-
 
 volumes:
   data:

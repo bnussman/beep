@@ -48,6 +48,7 @@ jobs:
       - run: node .github/helm/inject.js
         env:
           secrets: ${{ toJSON(secrets) }}
+      - run: cat .github/helm/templates/configmap.yaml
       - name: Deploy
         run: |
           helm upgrade --install --atomic --timeout 5m api ./.github/helm/ -f ./.github/helm/values.yaml --namespace beep --create-namespace
