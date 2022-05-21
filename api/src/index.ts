@@ -6,7 +6,6 @@ import config from './mikro-orm.config';
 import ws from 'ws';
 import * as Sentry from "./utils/sentry";
 import * as RealSentry from "@sentry/node";
-import * as unleash from 'unleash-client';
 import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
 import { GraphQLError, GraphQLSchema, parse } from "graphql";
@@ -105,12 +104,6 @@ async function onSubscribe(
 }
 
 async function start() {
-  unleash.initialize({
-    url: 'https://gitlab.nussman.us/api/v4/feature_flags/unleash/7',
-    instanceId: 'twYnSbSyVvAn-MvsBaBi',
-    appName: 'production'
-  });
-
   const orm = await MikroORM.init(config);
 
   const app = express();
