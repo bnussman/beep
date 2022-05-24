@@ -1,22 +1,16 @@
 import React from "react";
 import { Box, IBoxProps } from "native-base";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { isMobile } from "../utils/constants";
+import { ScrollViewProps } from "react-native";
 
 interface Props {
   keyboard?: boolean;
   center?: boolean;
+  scrollViewProps?: ScrollViewProps;
 }
 
 export const Container = (props: Props & IBoxProps): JSX.Element => {
-  const { children, keyboard, center, ...rest } = props;
-
-  const onPress = () => {
-    if (isMobile) {
-      Keyboard.dismiss();
-    }
-  };
+  const { children, keyboard, center, scrollViewProps, ...rest } = props;
 
   const centerProps = center
     ? { alignItems: "center", justifyContent: "center" }
@@ -25,24 +19,23 @@ export const Container = (props: Props & IBoxProps): JSX.Element => {
   if (keyboard) {
     return (
       <Box h="100%" bg="white" _dark={{ bg: "black" }}>
-        <TouchableWithoutFeedback onPress={onPress}>
-          <KeyboardAwareScrollView
-            scrollEnabled={false}
-            extraScrollHeight={70}
-            contentContainerStyle={
-              center
-                ? {
-                    height: "100%",
-                    justifyContent: "center",
-                  }
-                : undefined
-            }
-          >
-            <Box flex={1} h="100%" {...centerProps} {...rest}>
-              {children}
-            </Box>
-          </KeyboardAwareScrollView>
-        </TouchableWithoutFeedback>
+        <KeyboardAwareScrollView
+          scrollEnabled={false}
+          extraHeight={100}
+          contentContainerStyle={
+            center
+              ? {
+                  height: "100%",
+                  justifyContent: "center",
+                }
+              : undefined
+          }
+          {...scrollViewProps}
+        >
+          <Box flex={1} h="100%" {...centerProps} {...rest}>
+            {children}
+          </Box>
+        </KeyboardAwareScrollView>
       </Box>
     );
   }

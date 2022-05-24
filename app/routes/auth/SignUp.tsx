@@ -145,7 +145,11 @@ export function SignUpScreen(props: Props) {
   };
 
   return (
-    <Container keyboard alignItems="center">
+    <Container
+      keyboard
+      alignItems="center"
+      scrollViewProps={{ bounces: false, scrollEnabled: true }}
+    >
       <Stack space={2} w="90%" mt={4}>
         <HStack space={4} alignItems="center">
           <Stack space={2} flexGrow={1}>
@@ -221,7 +225,11 @@ export function SignUpScreen(props: Props) {
             }
           >
             <TouchableOpacity onPress={chooseProfilePhoto}>
-              <Avatar source={photo ?? AvatarImage} size="xl" />
+              <Avatar
+                key={photo ? photo.uri : "default"}
+                source={photo ? { uri: photo.uri } : AvatarImage}
+                size="xl"
+              />
             </TouchableOpacity>
             <FormControl.ErrorMessage>
               {errors.picture?.message}
@@ -395,7 +403,7 @@ export function SignUpScreen(props: Props) {
         </Button>
         <Center>
           <Text>By signing up, you agree to our </Text>
-          <Flex direction="row">
+          <Flex direction="row" mb={8}>
             <Text
               bold
               onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
