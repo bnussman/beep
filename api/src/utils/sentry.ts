@@ -19,6 +19,9 @@ export function init(app: Router): void {
       new Tracing.Integrations.Postgres(),
     ],
     tracesSampler: (samplingContext) => {
+      if (samplingContext.request?.method === 'OPTIONS') {
+        return false;
+      }
       if (samplingContext?.transactionContext?.name === 'GET /.well-known/apollo/server-health') {
         return false;
       }

@@ -1,4 +1,3 @@
-import * as unleash from 'unleash-client';
 import { sha256 } from 'js-sha256';
 import { sendResetEmail, createVerifyEmailEntryAndSendEmail } from './helpers';
 import { wrap } from '@mikro-orm/core';
@@ -8,7 +7,6 @@ import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'typ
 import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth';
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
-import { lights } from '../utils/lights';
 import { s3 } from '../utils/s3';
 
 @ObjectType()
@@ -83,10 +81,6 @@ export class AuthResolver {
     }
 
     createVerifyEmailEntryAndSendEmail(user, ctx.em);
-
-    if (unleash.isEnabled('lights')) {
-      lights();
-    }
 
     return { user, tokens };
   }
