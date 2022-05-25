@@ -8,6 +8,11 @@ import * as Sentry from '@sentry/node';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { inOrder } from '../utils/sort';
+import { Point } from '../location/resolver';
+
+export function isDefined(value: any): boolean {
+  return value !== undefined || value !== null;
+}
 
 @Resolver(Beep)
 export class BeeperResolver {
@@ -21,7 +26,12 @@ export class BeeperResolver {
       throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
     }
 
-    wrap(ctx.user).assign(input);
+    if (!!input.latitude && !!input.longitude) {
+      wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
+    } 
+    else {
+      wrap(ctx.user).assign(input);
+    }
 
     pubSub.publish("User" + ctx.user.id, ctx.user);
 

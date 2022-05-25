@@ -6,7 +6,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions = {} as const;
+const defaultOptions =  {}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -42,6 +42,8 @@ export type BeeperSettingsInput = {
   capacity?: InputMaybe<Scalars['Float']>;
   groupRate?: InputMaybe<Scalars['Float']>;
   isBeeping?: InputMaybe<Scalars['Boolean']>;
+  latitude?: InputMaybe<Scalars['Float']>;
+  longitude?: InputMaybe<Scalars['Float']>;
   masksRequired?: InputMaybe<Scalars['Boolean']>;
   singlesRate?: InputMaybe<Scalars['Float']>;
 };

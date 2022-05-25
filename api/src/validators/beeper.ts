@@ -1,5 +1,5 @@
 import { User } from '../entities/User';
-import { IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString, Max, Min, ValidateIf } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 
 @InputType()
@@ -36,6 +36,17 @@ export class BeeperSettingsInput implements Partial<User> {
   @IsOptional()
   public masksRequired?: boolean;
 
+  @Field({ nullable: true })
+  @ValidateIf(o => o.isBeeping)
+  @IsNumber()
+  @IsDefined()
+  public latitude?: number;
+
+  @Field({ nullable: true })
+  @ValidateIf(o => o.isBeeping)
+  @IsNumber()
+  @IsDefined()
+  public longitude?: number;
 }
 
 @InputType()
