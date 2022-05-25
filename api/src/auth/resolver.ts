@@ -8,6 +8,7 @@ import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth'
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
+import { FileUpload } from 'graphql-upload';
 
 @ObjectType()
 class Auth {
@@ -42,7 +43,7 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
-    const { createReadStream, filename } = await input.picture;
+    const { createReadStream, filename } = await (input.picture as unknown as Promise<FileUpload>);
 
     const user = new User();
 
