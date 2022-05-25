@@ -116,12 +116,17 @@ export class AuthResolver {
       throw new Error("User does not exist");
     }
 
-    const existing = await ctx.em.findOne(ForgotPassword, { user: user });
+    const existing = await ctx.em.findOne(ForgotPassword, { user });
 
     if (existing) {
-      sendResetEmail(email, existing.id, user.username);
+      if ((existing.time.getTime() + (18000 * 1000)) < Date.now()) {
+        ctx.em.remove(existing);
+      }
+      else {
+        sendResetEmail(email, existing.id, user.username);
 
-      throw new Error("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
+        throw new Error("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
+      }
     }
 
     const entry = new ForgotPassword(user);
