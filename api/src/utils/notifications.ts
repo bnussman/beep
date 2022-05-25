@@ -21,7 +21,8 @@ export async function sendNotification(token: string | undefined, title: string,
       to: token,
       title: title,
       body: message,
-      sound: 'default'
+      sound: 'default',
+      _displayInForeground: true
     }
   });
 }
@@ -44,7 +45,8 @@ export async function sendNotificationsNew(to: string[], title: string, body: st
         to: batch,
         title,
         body,
-        sound: 'default'
+        sound: 'default',
+        _displayInForeground: true
       }
     });
   });
