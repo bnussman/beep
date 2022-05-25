@@ -117,7 +117,7 @@ export class RiderResolver {
   @Query(() => Beep, { nullable: true })
   @Authorized()
   public async getLastBeepToRate(@Ctx() ctx: Context): Promise<Beep | null> {
-    const beep = await ctx.em.findOne(Beep, { rider: ctx.user.id }, ['beeper'], { end: QueryOrder.DESC });
+    const beep = await ctx.em.findOne(Beep, { rider: ctx.user.id }, { populate: ['beeper'], orderBy: { end: QueryOrder.DESC } });
 
     if (!beep) return null;
 

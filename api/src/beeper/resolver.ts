@@ -8,6 +8,11 @@ import * as Sentry from '@sentry/node';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { inOrder } from '../utils/sort';
+import { Point } from '../location/resolver';
+
+export function isDefined(value: any): boolean {
+  return value !== undefined || value !== null;
+}
 
 @Resolver(Beep)
 export class BeeperResolver {
@@ -15,13 +20,18 @@ export class BeeperResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-    await ctx.em.populate(ctx.user, 'queue');
+    const queue = await ctx.user.queue.loadItems();
 
-    if (!input.isBeeping && (ctx.user.queue.length > 0)) {
+    if (!input.isBeeping && (queue.length > 0)) {
       throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
     }
 
-    wrap(ctx.user).assign(input);
+    if (!!input.latitude && !!input.longitude) {
+      wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
+    } 
+    else {
+      wrap(ctx.user).assign(input);
+    }
 
     pubSub.publish("User" + ctx.user.id, ctx.user);
 
@@ -33,7 +43,7 @@ export class BeeperResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
-    await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], undefined, { queue: { start: QueryOrder.ASC } });
+    await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], { orderBy: { queue: { start: QueryOrder.ASC } } });
 
     const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id === input.queueId);
 

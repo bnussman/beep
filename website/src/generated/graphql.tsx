@@ -41,6 +41,8 @@ export type BeeperSettingsInput = {
   capacity?: InputMaybe<Scalars['Float']>;
   groupRate?: InputMaybe<Scalars['Float']>;
   isBeeping?: InputMaybe<Scalars['Boolean']>;
+  latitude?: InputMaybe<Scalars['Float']>;
+  longitude?: InputMaybe<Scalars['Float']>;
   masksRequired?: InputMaybe<Scalars['Boolean']>;
   singlesRate?: InputMaybe<Scalars['Float']>;
 };

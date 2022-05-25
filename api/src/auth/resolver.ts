@@ -1,4 +1,3 @@
-import * as unleash from 'unleash-client';
 import { sha256 } from 'js-sha256';
 import { sendResetEmail, createVerifyEmailEntryAndSendEmail } from './helpers';
 import { wrap } from '@mikro-orm/core';
@@ -8,8 +7,8 @@ import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'typ
 import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth';
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
-import { lights } from '../utils/lights';
 import { s3 } from '../utils/s3';
+import { FileUpload } from 'graphql-upload';
 
 @ObjectType()
 class Auth {
@@ -44,7 +43,7 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
-    const { createReadStream, filename } = await input.picture;
+    const { createReadStream, filename } = await (input.picture as unknown as Promise<FileUpload>);
 
     const user = new User();
 
@@ -84,10 +83,6 @@ export class AuthResolver {
 
     createVerifyEmailEntryAndSendEmail(user, ctx.em);
 
-    if (unleash.isEnabled('lights')) {
-      lights();
-    }
-
     return { user, tokens };
   }
 
@@ -121,12 +116,17 @@ export class AuthResolver {
       throw new Error("User does not exist");
     }
 
-    const existing = await ctx.em.findOne(ForgotPassword, { user: user });
+    const existing = await ctx.em.findOne(ForgotPassword, { user });
 
     if (existing) {
-      sendResetEmail(email, existing.id, user.username);
+      if ((existing.time.getTime() + (18000 * 1000)) < Date.now()) {
+        ctx.em.remove(existing);
+      }
+      else {
+        sendResetEmail(email, existing.id, user.username);
 
-      throw new Error("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
+        throw new Error("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
+      }
     }
 
     const entry = new ForgotPassword(user);

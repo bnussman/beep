@@ -66,7 +66,7 @@ export class RatingResolver {
   @Query(() => Rating)
   @Authorized(UserRole.ADMIN)
   public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
-    return await ctx.em.findOneOrFail(Rating, id, fieldsToRelations(info));
+    return await ctx.em.findOneOrFail(Rating, id, { populate: fieldsToRelations(info) as Array<keyof Rating> });
   }
 
   @Mutation(() => Boolean)

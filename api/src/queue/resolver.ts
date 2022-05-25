@@ -1,7 +1,7 @@
 import { QueueEntry } from "../entities/QueueEntry";
 import { User, UserRole } from "../entities/User";
 import { Context } from "../utils/context";
-import { PushNotification, sendNotification, sendNotifications } from "../utils/notifications";
+import { PushNotification, sendNotifications } from "../utils/notifications";
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from "type-graphql";
 import fieldsToRelations from "graphql-fields-to-relations";
 import { QueryOrder } from "@mikro-orm/core";
@@ -18,7 +18,7 @@ export class QueueResolver {
   @Query(() => [QueueEntry])
   @Authorized()
   public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
-    const populate = fieldsToRelations(info);
+    const populate = fieldsToRelations(info) as Array<keyof QueueEntry>;
 
     return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate });
   }

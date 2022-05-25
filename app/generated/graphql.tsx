@@ -42,6 +42,8 @@ export type BeeperSettingsInput = {
   capacity?: InputMaybe<Scalars['Float']>;
   groupRate?: InputMaybe<Scalars['Float']>;
   isBeeping?: InputMaybe<Scalars['Boolean']>;
+  latitude?: InputMaybe<Scalars['Float']>;
+  longitude?: InputMaybe<Scalars['Float']>;
   masksRequired?: InputMaybe<Scalars['Boolean']>;
   singlesRate?: InputMaybe<Scalars['Float']>;
 };
@@ -658,16 +660,7 @@ export type LoginMutationVariables = Exact<{
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email: string, phone: string, venmo?: string | null | undefined, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null | undefined, capacity: number, masksRequired: boolean, cashapp?: string | null | undefined } } };
 
 export type SignUpMutationVariables = Exact<{
-  first: Scalars['String'];
-  last: Scalars['String'];
-  email: Scalars['String'];
-  phone: Scalars['String'];
-  venmo?: InputMaybe<Scalars['String']>;
-  cashapp?: InputMaybe<Scalars['String']>;
-  username: Scalars['String'];
-  password: Scalars['String'];
-  picture: Scalars['Upload'];
-  pushToken?: InputMaybe<Scalars['String']>;
+  input: SignUpInput;
 }>;
 
 
@@ -1241,10 +1234,8 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
 export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload!, $pushToken: String) {
-  signup(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp, username: $username, password: $password, picture: $picture, pushToken: $pushToken}
-  ) {
+    mutation SignUp($input: SignUpInput!) {
+  signup(input: $input) {
     tokens {
       id
       tokenid
@@ -1286,16 +1277,7 @@ export type SignUpMutationFn = ApolloReactCommon.MutationFunction<SignUpMutation
  * @example
  * const [signUpMutation, { data, loading, error }] = useSignUpMutation({
  *   variables: {
- *      first: // value for 'first'
- *      last: // value for 'last'
- *      email: // value for 'email'
- *      phone: // value for 'phone'
- *      venmo: // value for 'venmo'
- *      cashapp: // value for 'cashapp'
- *      username: // value for 'username'
- *      password: // value for 'password'
- *      picture: // value for 'picture'
- *      pushToken: // value for 'pushToken'
+ *      input: // value for 'input'
  *   },
  * });
  */

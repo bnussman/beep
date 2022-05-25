@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { Logger } from "../../utils/Logger";
@@ -109,22 +109,8 @@ const GetQueue = gql`
 `;
 
 const UpdateBeepSettings = gql`
-  mutation UpdateBeepSettings(
-    $singlesRate: Float!
-    $groupRate: Float!
-    $capacity: Float!
-    $isBeeping: Boolean!
-    $masksRequired: Boolean!
-  ) {
-    setBeeperStatus(
-      input: {
-        singlesRate: $singlesRate
-        groupRate: $groupRate
-        capacity: $capacity
-        isBeeping: $isBeeping
-        masksRequired: $masksRequired
-      }
-    )
+  mutation UpdateBeepSettings($input: BeeperSettingsInput!) {
+    setBeeperStatus(input: $input)
   }
 `;
 
@@ -233,13 +219,34 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       return;
     }
 
+    let lon = undefined;
+    let lat = undefined;
+
+    if (willBeBeeping) {
+      let lastKnowLocation = await Location.getLastKnownPositionAsync({
+        maxAge: 180000,
+        requiredAccuracy: 800,
+      });
+
+      if (!lastKnowLocation) {
+        lastKnowLocation = await Location.getCurrentPositionAsync();
+      }
+
+      lon = lastKnowLocation.coords.longitude;
+      lat = lastKnowLocation.coords.latitude;
+    }
+
     updateBeepSettings({
       variables: {
-        isBeeping: willBeBeeping,
-        singlesRate: Number(singlesRate),
-        groupRate: Number(groupRate),
-        masksRequired: masksRequired,
-        capacity: Number(capacity),
+        input: {
+          isBeeping: willBeBeeping,
+          singlesRate: Number(singlesRate),
+          groupRate: Number(groupRate),
+          masksRequired: masksRequired,
+          capacity: Number(capacity),
+          latitude: lat,
+          longitude: lon,
+        },
       },
     })
       .then(() => {
