@@ -69,7 +69,7 @@ export class BeeperResolver {
 
       ctx.user.queueSize = ctx.user.queue.getItems().filter((entry) => entry.isAccepted).length;
 
-      sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request`, "You will recieve another notification when they are on their way to pick you up.");
+      sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request ✅`, "You will recieve another notification when they are on their way to pick you up.");
 
       ctx.em.persist([queueEntry, ctx.user]);
     }
@@ -89,7 +89,7 @@ export class BeeperResolver {
       ctx.em.persist(ctx.user);
 
       if (input.value === "deny") {
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request`, "Open your app to find a diffrent beeper.");
+        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request 🚫`, "Open your app to find a diffrent beeper.");
       }
     }
     else {
@@ -101,10 +101,10 @@ export class BeeperResolver {
 
       switch (queueEntry.state) {
         case 1:
-          sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way!`, "Your beeper is on their way to pick you up.");
+          sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way 🚕`, "Your beeper is on their way to pick you up.");
           break;
         case 2:
-          sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here!`, "Your beeper is here to pick you up.");
+          sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here 📍`, "Your beeper is here to pick you up.");
           break;
         case 3:
           break;
@@ -145,7 +145,7 @@ export class BeeperResolver {
 
     for (const entry of ctx.user.queue) {
       if (entry.id === id) {
-        sendNotification(entry.rider.pushToken, "Beep Canceled", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
+        sendNotification(entry.rider.pushToken, "Beep Canceled 🚫", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
         pubSub.publish("Rider" + entry.rider.id, null);
       }
       else {

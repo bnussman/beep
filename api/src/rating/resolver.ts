@@ -41,7 +41,7 @@ export class RatingResolver {
 
     await ctx.em.persistAndFlush(user);
 
-    sendNotification(user.pushToken, "You got rated!", `${ctx.user.name()} rated you ${input.stars} stars!`);
+    sendNotification(user.pushToken, `You got rated ⭐️`, `${ctx.user.name()} rated you ${input.stars} stars!`);
 
     return true;
   }
