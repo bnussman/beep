@@ -89,7 +89,7 @@ export function SignUpScreen(props: Props) {
       const pushToken = isMobile ? await getPushToken() : null;
 
       const { data } = await signup({
-        variables: { input: { ...variables, picture } },
+        variables: { input: { ...variables, picture, pushToken } },
       });
 
       await AsyncStorage.setItem("auth", JSON.stringify(data?.signup));
