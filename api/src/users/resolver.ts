@@ -50,7 +50,7 @@ export class UserResolver {
     const user = await ctx.em.findOneOrFail(User, id);
 
     if (user.isEmailVerified === false && data.isEmailVerified === true) {
-      sendNotification(user.pushToken, "Account Verified", "An admin has approved your account.");
+      sendNotification(user.pushToken, "Account Verified ✅", "An admin has approved your account.");
     }
 
     Object.keys(data).forEach(key => {

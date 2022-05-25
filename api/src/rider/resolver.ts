@@ -26,7 +26,7 @@ export class RiderResolver {
 
     beeper.queue.add(entry);
 
-    sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue`, "Please open your app to accept or deny this rider.");
+    sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue 🚕`, "Please open your app to accept or deny this rider.");
 
     pubSub.publish("Beeper" + beeper.id, beeper.queue.getItems().sort(inOrder));
 
@@ -74,7 +74,7 @@ export class RiderResolver {
       throw new Error("You are not in that beepers queue.");
     }
 
-    sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue`, "They decided they did not want a beep from you!");
+    sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue 🥹`, "They decided they did not want a beep from you!");
 
     beeper.queue.remove(entry);
 
