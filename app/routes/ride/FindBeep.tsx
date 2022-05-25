@@ -8,7 +8,6 @@ import { Share, Linking, AppState, AppStateStatus } from "react-native";
 import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
 import { client } from "../../utils/Apollo";
-import { RateCard } from "../../components/RateCard";
 import { Tags } from "./Tags";
 import { throttle } from "throttle-debounce";
 import { Container } from "../../components/Container";
@@ -353,7 +352,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
     return (
       <Container keyboard alignItems="center" pt={2}>
         <Stack space={4} w="90%">
-          <RateCard navigation={props.navigation} />
+          {/* <RateCard navigation={props.navigation} /> */}
           {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
           <FormControl>
             <FormControl.Label>Group Size</FormControl.Label>

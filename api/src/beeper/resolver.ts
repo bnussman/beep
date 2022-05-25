@@ -15,9 +15,9 @@ export class BeeperResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-    await ctx.em.populate(ctx.user, 'queue');
+    const queue = await ctx.user.queue.loadItems();
 
-    if (!input.isBeeping && (ctx.user.queue.length > 0)) {
+    if (!input.isBeeping && (queue.length > 0)) {
       throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
     }
 
@@ -33,7 +33,7 @@ export class BeeperResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
-    await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], undefined, { queue: { start: QueryOrder.ASC } });
+    await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], { orderBy: { queue: { start: QueryOrder.ASC } } });
 
     const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id === input.queueId);
 
