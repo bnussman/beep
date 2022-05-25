@@ -1,9 +1,9 @@
 import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
-import { Vibration, Platform } from "react-native";
+import { Vibration } from "react-native";
 import { gql } from "@apollo/client";
 import { client } from "../utils/Apollo";
 import { isMobile } from "./constants";
+import { Toast } from "native-base";
 
 /**
  * Checks for permssion for Notifications, asks expo for push token, sets up notification listeners, returns
@@ -18,7 +18,7 @@ export async function getPushToken(): Promise<string | null> {
 
   const pushToken = await Notifications.getExpoPushTokenAsync();
 
-  setNotificationHandlers();
+  Notifications.addNotificationReceivedListener(handleNotification);
 
   return pushToken.data;
 }
@@ -28,15 +28,6 @@ export async function getPushToken(): Promise<string | null> {
  * @returns boolean true if client has location permissions
  */
 async function getNotificationPermission(): Promise<boolean> {
-  if (!Constants.isDevice) {
-    return false;
-  }
-
-  //TODO better fix
-  if (Platform.OS == "android") {
-    return true;
-  }
-
   const settings = await Notifications.requestPermissionsAsync({
     ios: {
       allowAlert: true,
@@ -50,34 +41,6 @@ async function getNotificationPermission(): Promise<boolean> {
     settings.granted ||
     settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
   );
-}
-
-/**
- * Set listiner function(s)
- */
-function setNotificationHandlers() {
-  const enteredBeeperQueueActions = [
-    {
-      actionId: "accept",
-      identifiter: "accept",
-      buttonTitle: "Accept",
-    },
-    {
-      actionId: "deny",
-      identifiter: "deny",
-      buttonTitle: "Deny",
-      options: {
-        isDestructive: true,
-      },
-    },
-  ];
-  Notifications.setNotificationCategoryAsync(
-    "enteredBeeperQueue",
-    // @ts-expect-error idk
-    enteredBeeperQueueActions
-  );
-  // @ts-expect-error idk
-  Notifications.addNotificationReceivedListener(handleNotification);
 }
 
 /**
@@ -106,7 +69,11 @@ export async function updatePushToken(
   }
 }
 
-async function handleNotification(notification: Notification): Promise<void> {
+function handleNotification(notification: Notifications.Notification): void {
   // @TODO toast if we ever can
   Vibration.vibrate();
+  Toast.show({
+    title: notification.request.content.title,
+    description: notification.request.content.body,
+  });
 }
