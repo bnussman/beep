@@ -5,6 +5,14 @@ import { client } from "../utils/Apollo";
 import { isMobile } from "./constants";
 import { Toast } from "native-base";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 /**
  * Checks for permssion for Notifications, asks expo for push token, sets up notification listeners, returns
  * push token to be used
