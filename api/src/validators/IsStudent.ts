@@ -14,7 +14,7 @@ export function IsStudent(validationOptions?: ValidationOptions) {
           return typeof value === 'string' && isEduEmail(value);
         },
         defaultMessage() {
-          return 'You must use a .edu email to use the Beep App';
+          return 'you must use a .edu email';
         }
       },
     });

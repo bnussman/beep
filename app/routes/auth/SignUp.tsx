@@ -1,11 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import AvatarImage from "../../assets/avatarDark.png";
 import * as Linking from "expo-linking";
 import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity } from "react-native";
 import { getPushToken } from "../../utils/Notifications";
-import { gql, useMutation } from "@apollo/client";
-import { Scalars, SignUpMutation } from "../../generated/graphql";
+import { ApolloError, gql, useMutation } from "@apollo/client";
+import { Scalars, SignUpInput, SignUpMutation } from "../../generated/graphql";
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { client, wsLink } from "../../utils/Apollo";
@@ -13,15 +14,24 @@ import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { UserData } from "../../utils/useUser";
+import { Controller, useForm } from "react-hook-form";
+import {
+  isValidationError,
+  useValidationErrors,
+} from "../../utils/useValidationErrors";
 import {
   Avatar,
   Button,
   Input,
   Text,
   Flex,
-  Box,
-  VStack,
   Center,
+  FormControl,
+  HStack,
+  Stack,
+  WarningOutlineIcon,
+  InputGroup,
+  InputLeftAddon,
 } from "native-base";
 
 interface Props {
@@ -29,32 +39,8 @@ interface Props {
 }
 
 const SignUp = gql`
-  mutation SignUp(
-    $first: String!
-    $last: String!
-    $email: String!
-    $phone: String!
-    $venmo: String
-    $cashapp: String
-    $username: String!
-    $password: String!
-    $picture: Upload!
-    $pushToken: String
-  ) {
-    signup(
-      input: {
-        first: $first
-        last: $last
-        email: $email
-        phone: $phone
-        venmo: $venmo
-        cashapp: $cashapp
-        username: $username
-        password: $password
-        picture: $picture
-        pushToken: $pushToken
-      }
-    ) {
+  mutation SignUp($input: SignUpInput!) {
+    signup(input: $input) {
       tokens {
         id
         tokenid
@@ -85,64 +71,46 @@ const SignUp = gql`
 let picture: Scalars["Upload"];
 
 export function SignUpScreen(props: Props) {
-  const [first, setFirst] = useState<string>("");
-  const [last, setLast] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [venmo, setVenmo] = useState<string>();
-  const [cashapp, setCashapp] = useState<string>();
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [signup, { error }] = useMutation<SignUpMutation>(SignUp);
+
+  const {
+    control,
+    handleSubmit,
+    setFocus,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpInput>();
+
+  const validationErrors = useValidationErrors<SignUpInput>(error);
+
   const [photo, setPhoto] = useState<any>();
 
-  const lastRef = useRef<any>();
-  const emailRef = useRef<any>();
-  const phoneRef = useRef<any>();
-  const venmoRef = useRef<any>();
-  const cashappRef = useRef<any>();
-  const usernameRef = useRef<any>();
-  const passwordRef = useRef<any>();
+  const onSubmit = handleSubmit(async (variables) => {
+    try {
+      const pushToken = isMobile ? await getPushToken() : null;
 
-  const [signup, { loading }] = useMutation<SignUpMutation>(SignUp);
+      const { data } = await signup({
+        variables: { input: { ...variables, picture } },
+      });
 
-  const handleSignUp = async () => {
-    if (!picture) {
-      return alert("Please choose a profile photo!");
+      await AsyncStorage.setItem("auth", JSON.stringify(data?.signup));
+
+      client.writeQuery({
+        query: UserData,
+        data: { getUser: { ...data?.signup.user, pushToken } },
+      });
+
+      wsLink.client.restart();
+
+      props.navigation.reset({
+        index: 0,
+        routes: [{ name: "Main" }],
+      });
+    } catch (error) {
+      if (!isValidationError(error as ApolloError)) {
+        Alert(error as ApolloError);
+      }
     }
-
-    const pushToken = isMobile ? await getPushToken() : null;
-
-    signup({
-      variables: {
-        first,
-        last,
-        email,
-        phone,
-        venmo,
-        cashapp,
-        username,
-        password,
-        picture,
-        pushToken,
-      },
-    })
-      .then(async (data) => {
-        await AsyncStorage.setItem("auth", JSON.stringify(data.data?.signup));
-
-        client.writeQuery({
-          query: UserData,
-          data: { getUser: { ...data.data?.signup.user, pushToken } },
-        });
-
-        wsLink.client.restart();
-
-        props.navigation.reset({
-          index: 0,
-          routes: [{ name: "Main" }],
-        });
-      })
-      .catch((error) => Alert(error));
-  };
+  });
 
   const chooseProfilePhoto = async () => {
     setPhoto(null);
@@ -176,106 +144,266 @@ export function SignUpScreen(props: Props) {
     }
   };
 
-  const isDisabled =
-    !first || !last || !email || !phone || !username || !password || !picture;
-
   return (
-    <Container keyboard alignItems="center">
-      <VStack space={4} w="90%" mt={4}>
-        <Flex
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
+    <Container
+      keyboard
+      alignItems="center"
+      scrollViewProps={{ bounces: false, scrollEnabled: true }}
+    >
+      <Stack space={2} w="90%" mt={4}>
+        <HStack space={4} alignItems="center">
+          <Stack space={2} flexGrow={1}>
+            <FormControl
+              isInvalid={
+                Boolean(errors.first) || Boolean(validationErrors?.first)
+              }
+            >
+              <FormControl.Label>First Name</FormControl.Label>
+              <Controller
+                name="first"
+                rules={{ required: "First name is required" }}
+                defaultValue=""
+                control={control}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Input
+                    onBlur={onBlur}
+                    onChangeText={(val) => onChange(val)}
+                    value={value}
+                    ref={ref}
+                    returnKeyLabel="next"
+                    returnKeyType="next"
+                    onSubmitEditing={() => setFocus("last")}
+                    textContentType="givenName"
+                    size="lg"
+                  />
+                )}
+              />
+              <FormControl.ErrorMessage
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {errors.first?.message}
+                {validationErrors?.first?.[0]}
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl
+              isInvalid={
+                Boolean(errors.last) || Boolean(validationErrors?.last)
+              }
+            >
+              <FormControl.Label>Last Name</FormControl.Label>
+              <Controller
+                name="last"
+                rules={{ required: "Last name is required" }}
+                defaultValue=""
+                control={control}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Input
+                    onBlur={onBlur}
+                    textContentType="familyName"
+                    onChangeText={(val) => onChange(val)}
+                    value={value}
+                    ref={ref}
+                    returnKeyLabel="next"
+                    returnKeyType="next"
+                    onSubmitEditing={() => setFocus("email")}
+                    size="lg"
+                  />
+                )}
+              />
+              <FormControl.ErrorMessage
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {errors.last?.message}
+                {validationErrors?.last?.[0]}
+              </FormControl.ErrorMessage>
+            </FormControl>
+          </Stack>
+          <FormControl
+            w="100px"
+            isInvalid={
+              Boolean(errors.picture) || Boolean(validationErrors?.picture)
+            }
+          >
+            <TouchableOpacity onPress={chooseProfilePhoto}>
+              <Avatar
+                key={photo ? photo.uri : "default"}
+                source={photo ? { uri: photo.uri } : AvatarImage}
+                size="xl"
+              />
+            </TouchableOpacity>
+            <FormControl.ErrorMessage>
+              {errors.picture?.message}
+              {validationErrors?.picture?.[0]}
+            </FormControl.ErrorMessage>
+          </FormControl>
+        </HStack>
+        <FormControl
+          isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}
         >
-          <Box width="70%">
-            <Input
-              size="lg"
-              textContentType="givenName"
-              placeholder="First Name"
-              returnKeyType="next"
-              onChangeText={(text) => setFirst(text)}
-              onSubmitEditing={() => lastRef.current.focus()}
-              mb={4}
-            />
-            <Input
-              size="lg"
-              ref={lastRef}
-              textContentType="familyName"
-              placeholder="Last Name"
-              returnKeyType="next"
-              onChangeText={(text) => setLast(text)}
-              onSubmitEditing={() => emailRef.current.focus()}
-            />
-          </Box>
-          <TouchableOpacity onPress={chooseProfilePhoto}>
-            <Avatar source={photo} size="xl" />
-          </TouchableOpacity>
-        </Flex>
-        <Input
-          size="lg"
-          ref={emailRef}
-          textContentType="emailAddress"
-          placeholder="Email"
-          returnKeyType="next"
-          onChangeText={(text) => setEmail(text)}
-          onSubmitEditing={() => phoneRef.current.focus()}
-        />
-        <Input
-          size="lg"
-          ref={phoneRef}
-          textContentType="telephoneNumber"
-          placeholder="Phone Number"
-          returnKeyType="next"
-          onChangeText={(text) => setPhone(text)}
-          onSubmitEditing={() => venmoRef.current.focus()}
-        />
-        <Input
-          size="lg"
-          ref={venmoRef}
-          textContentType="username"
-          placeholder="Venmo"
-          returnKeyType="next"
-          onChangeText={(text) => setVenmo(text)}
-          onSubmitEditing={() => cashappRef.current.focus()}
-        />
-        <Input
-          size="lg"
-          ref={cashappRef}
-          textContentType="username"
-          placeholder="Cash App"
-          returnKeyType="next"
-          onChangeText={(text) => setCashapp(text)}
-          onSubmitEditing={() => usernameRef.current.focus()}
-        />
-        <Input
-          size="lg"
-          ref={usernameRef}
-          textContentType="username"
-          placeholder="Username"
-          returnKeyType="next"
-          onChangeText={(text) => setUsername(text)}
-          onSubmitEditing={() => passwordRef.current.focus()}
-        />
-        <Input
-          size="lg"
-          ref={passwordRef}
-          textContentType="password"
-          placeholder="Password"
-          returnKeyType="go"
-          secureTextEntry={true}
-          onChangeText={(text) => setPassword(text)}
-          onSubmitEditing={handleSignUp}
-        />
-        <Button
-          isLoading={loading}
-          isDisabled={isDisabled}
-          onPress={handleSignUp}
+          <FormControl.Label>Email</FormControl.Label>
+          <Controller
+            name="email"
+            rules={{ required: "Email is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                onBlur={onBlur}
+                textContentType="emailAddress"
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("phone")}
+                autoCapitalize="none"
+                size="lg"
+              />
+            )}
+          />
+          <FormControl.HelperText>
+            You must your student email address 🎓
+          </FormControl.HelperText>
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.email?.message}
+            {validationErrors?.email?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}
         >
+          <FormControl.Label>Phone</FormControl.Label>
+          <Controller
+            name="phone"
+            rules={{ required: "Phone number is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                onBlur={onBlur}
+                textContentType="telephoneNumber"
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("venmo")}
+                size="lg"
+              />
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.phone?.message}
+            {validationErrors?.phone?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}
+        >
+          <FormControl.Label>Venmo Username</FormControl.Label>
+          <Controller
+            name="venmo"
+            rules={{ required: "Venmo username is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <InputGroup>
+                <InputLeftAddon children="@" />
+                <Input
+                  flexGrow={1}
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value as string | undefined}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  textContentType="username"
+                  onSubmitEditing={() => setFocus("username")}
+                  autoCapitalize="none"
+                  size="lg"
+                />
+              </InputGroup>
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.venmo?.message}
+            {validationErrors?.venmo?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={
+            Boolean(errors.username) || Boolean(validationErrors?.username)
+          }
+        >
+          <FormControl.Label>Username</FormControl.Label>
+          <Controller
+            name="username"
+            rules={{ required: "Username is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                autoCapitalize="none"
+                textContentType="username"
+                onSubmitEditing={() => setFocus("password")}
+                size="lg"
+              />
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.username?.message}
+            {validationErrors?.username?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={
+            Boolean(errors.password) || Boolean(validationErrors?.password)
+          }
+        >
+          <FormControl.Label>Password</FormControl.Label>
+          <Controller
+            name="password"
+            rules={{
+              required: "Password is required",
+              minLength: {
+                value: 5,
+                message: "Password must be longer than 5 characters",
+              },
+            }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="sign up"
+                returnKeyType="go"
+                secureTextEntry={true}
+                onSubmitEditing={onSubmit}
+                textContentType="password"
+                size="lg"
+              />
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.password?.message}
+            {validationErrors?.password?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <Button isLoading={isSubmitting} onPress={onSubmit} mt={2}>
           Sign Up
         </Button>
         <Center>
           <Text>By signing up, you agree to our </Text>
-          <Flex direction="row">
+          <Flex direction="row" mb={8}>
             <Text
               bold
               onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
@@ -291,7 +419,7 @@ export function SignUpScreen(props: Props) {
             </Text>
           </Flex>
         </Center>
-      </VStack>
+      </Stack>
     </Container>
   );
 }
