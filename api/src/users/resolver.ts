@@ -13,6 +13,8 @@ import { sendNotification, sendNotificationsNew } from '../utils/notifications';
 import { S3 } from 'aws-sdk';
 import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject } from '../utils/s3';
 import { NotificationArgs } from './args';
+import { AuthScopes } from '../utils/authentication';
+import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
@@ -21,15 +23,19 @@ export class UsersResponse extends Paginated(User) {}
 export class UserResolver {
 
   @Query(() => User)
-  @Authorized('No Verification')
+  @Authorized<AuthScopes>()
   public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
+    if (id && !ctx.user.isEmailVerified && id !== ctx.user.id) {
+      throw new AuthenticationError("You can't get infomration about other users untill you verify your account");
+    }
+
     const populate = fieldsToRelations(info, { excludeFields: ['location'] }) as Array<keyof User>;
 
     return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate });
   }
 
   @Mutation(() => Boolean)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async removeUser(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
     const user = ctx.em.getReference(User, id);
 
@@ -45,7 +51,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async editUser(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
     const user = await ctx.em.findOneOrFail(User, id);
 
@@ -71,7 +77,7 @@ export class UserResolver {
   }
 
   @Query(() => UsersResponse)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async getUsers(@Ctx() ctx: Context, @Args() { offset, show, query }: PaginationArgs): Promise<UsersResponse> {
     if (query) {
       return await search(ctx.em, offset, show, query);
@@ -94,7 +100,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Number)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async sendNotifications(@Ctx() ctx: Context, @Args() { title, match, body }: NotificationArgs): Promise<number> {
     const users = await ctx.em.find(User, match ? {
       email: { $like: match }
@@ -108,7 +114,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string, @Arg('id') id: string): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, id);
 
@@ -118,7 +124,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Number)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async cleanObjectStorageBucket(@Ctx() { em }: Context): Promise<number> {
     const objects = await getAllObjects({
       Bucket: 'beep',
@@ -156,7 +162,7 @@ export class UserResolver {
   @Subscription(() => User, {
     topics: ({ context }) => "User" + context.user.id,
   })
-  @Authorized('No Verification')
+  @Authorized<AuthScopes>()
   public getUserUpdates(@Ctx() ctx: Context, @Root() user: User): User {
     return user;
   }

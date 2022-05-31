@@ -1,14 +1,15 @@
+import * as Sentry from '@sentry/node';
 import { sendNotification } from '../utils/notifications';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep } from '../entities/Beep';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from '../validators/beeper';
-import * as Sentry from '@sentry/node';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { inOrder } from '../utils/sort';
 import { Point } from '../location/resolver';
+import { AuthScopes } from '../utils/authentication';
 
 export function isDefined(value: any): boolean {
   return value !== undefined || value !== null;
@@ -18,7 +19,7 @@ export function isDefined(value: any): boolean {
 export class BeeperResolver {
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
   public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
     const queue = await ctx.user.queue.loadItems();
 
@@ -41,7 +42,7 @@ export class BeeperResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], { orderBy: { queue: { start: QueryOrder.ASC } } });
 
@@ -133,7 +134,7 @@ export class BeeperResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
   public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
     const entry = ctx.em.getReference(QueueEntry, id);
 
@@ -167,7 +168,7 @@ export class BeeperResolver {
   @Subscription(() => [QueueEntry], {
     topics: ({ args }) => "Beeper" + args.id,
   })
-  @Authorized('self')
+  @Authorized<AuthScopes>(AuthScopes.SELF)
   public async getBeeperUpdates(@Arg("id") id: string, @Root() entry: QueueEntry[]): Promise<QueueEntry[]> {
     return entry;
   }

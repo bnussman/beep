@@ -10,6 +10,8 @@ import fieldsToRelations from 'graphql-fields-to-relations';
 import { GraphQLResolveInfo } from 'graphql';
 import { User, UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
+import { AuthScopes } from '../utils/authentication';
+import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 class RatingsResponse extends Paginated(Rating) { }
@@ -18,7 +20,7 @@ class RatingsResponse extends Paginated(Rating) { }
 export class RatingResolver {
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
   public async rateUser(@Ctx() ctx: Context, @Arg('input') input: RatingInput): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, input.userId);
 
@@ -47,8 +49,12 @@ export class RatingResolver {
   }
 
   @Query(() => RatingsResponse)
-  @Authorized('self')
+  @Authorized<AuthScopes>(AuthScopes.SELF)
   public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<RatingsResponse> {
+    if (!id && ctx.user.role !== UserRole.ADMIN) {
+      throw new AuthenticationError("You must be an admin to view ratings that are not your own.");
+    }
+    
     const [ratings, count] = await ctx.em.findAndCount(Rating, {}, {
       orderBy: { timestamp: QueryOrder.DESC },
       populate: ['rater', 'rated'],
@@ -64,13 +70,13 @@ export class RatingResolver {
   }
 
   @Query(() => Rating)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
     return await ctx.em.findOneOrFail(Rating, id, { populate: fieldsToRelations(info) as Array<keyof Rating> });
   }
 
   @Mutation(() => Boolean)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async deleteRating(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const rating = await ctx.em.findOneOrFail(Rating, id, { populate: ['rated'] });
 

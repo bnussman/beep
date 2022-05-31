@@ -5,6 +5,8 @@ import { Paginated } from '../utils/paginated';
 import { UserRole } from '../entities/User';
 import { Context } from '../utils/context';
 import { PaginationArgs } from '../args/Pagination';
+import { AuthScopes } from '../utils/authentication';
+import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 class BeepsResponse extends Paginated(Beep) { }
@@ -13,8 +15,13 @@ class BeepsResponse extends Paginated(Beep) { }
 export class BeepResolver {
 
   @Query(() => BeepsResponse)
-  @Authorized('self')
+  @Authorized<AuthScopes>(AuthScopes.SELF)
   public async getBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<BeepsResponse> {
+
+    if (!id && ctx.user.role !== UserRole.ADMIN) {
+      throw new AuthenticationError("You must be an admin to view beeps that are not your own.");
+    }
+
     const [beeps, count] = await ctx.em.findAndCount(
       Beep,
       {},
@@ -34,7 +41,7 @@ export class BeepResolver {
   }
 
   @Query(() => Beep)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async getBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<Beep> {
     const beep = await ctx.em.findOne(Beep, id, { populate: ['beeper', 'rider'] });
 
@@ -46,7 +53,7 @@ export class BeepResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized(UserRole.ADMIN)
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   public async deleteBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const beep = ctx.em.getReference(Beep, id);
 

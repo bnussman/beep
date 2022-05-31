@@ -4,6 +4,7 @@ import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine
 import { Context } from '../utils/context';
 import { LocationInput } from '../validators/location';
 import { AuthenticationError } from 'apollo-server-core';
+import { AuthScopes } from "../utils/authentication";
 
 @ObjectType()
 export class Point {
@@ -25,7 +26,7 @@ export class Point {
 export class LocationResolver {
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized<AuthScopes>()
   public async setLocation(
     @Ctx() ctx: Context,
     @Arg('location') location: LocationInput,
@@ -40,7 +41,7 @@ export class LocationResolver {
         throw new AuthenticationError("You can't update another user's location without being an admin.");
       }
 
-      const user = await ctx.em.findOneOrFail(User, id);
+      const user = ctx.em.getReference(User, id);
 
       user.location = new Point(location.latitude, location.longitude);
 

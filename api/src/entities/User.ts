@@ -5,6 +5,7 @@ import { Rating } from './Rating';
 import { v4 } from "uuid";
 import { PointType } from "../location/types";
 import { Point } from "../location/resolver";
+import { AuthScopes } from "../utils/authentication";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -41,10 +42,12 @@ export class User {
   @Field()
   @Property()
   @Unique()
+  @Authorized(AuthScopes.SELF)
   email!: string;
 
   @Field()
   @Property()
+  @Authorized(AuthScopes.SELF, AuthScopes.RIDING)
   phone!: string;
 
   @Field({ nullable: true })
@@ -57,7 +60,7 @@ export class User {
 
   @Field()
   @Property()
-  @Authorized('admin')
+  @Authorized<AuthScopes>(AuthScopes.ADMIN)
   password!: string;
 
   @Field()
@@ -102,7 +105,7 @@ export class User {
 
   @Field({ nullable: true })
   @Property({ nullable: true })
-  @Authorized('No Verification Self')
+  @Authorized<AuthScopes>(AuthScopes.SELF)
   pushToken?: string;
 
   @Field({ nullable: true })
@@ -121,10 +124,12 @@ export class User {
     columnType: 'geometry',
     nullable: true,
   })
+  @Authorized(AuthScopes.SELF, AuthScopes.RIDING)
   location?: Point;
 
   @Field(() => [QueueEntry])
   @OneToMany(() => QueueEntry, q => q.beeper, { orphanRemoval: true, lazy: true, eager: false })
+  @Authorized(AuthScopes.SELF)
   queue = new Collection<QueueEntry>(this);
 
   @Field(() => [Rating])
