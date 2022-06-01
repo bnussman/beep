@@ -6,7 +6,6 @@ import { Context } from '../utils/context';
 import { ReportInput, UpdateReportInput } from '../validators/report';
 import { PaginationArgs } from '../args/Pagination';
 import { Paginated } from '../utils/paginated';
-import { AuthScopes } from '../utils/authentication';
 
 @ObjectType()
 class ReportsResponse extends Paginated(Report) { }
@@ -15,7 +14,7 @@ class ReportsResponse extends Paginated(Report) { }
 export class ReportsResolver {
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
+  @Authorized()
   public async reportUser(@Ctx() ctx: Context, @Arg('input') input: ReportInput): Promise<boolean> {
     const user = ctx.em.getReference(User, input.userId);
 
@@ -27,7 +26,7 @@ export class ReportsResolver {
   }
 
   @Query(() => ReportsResponse)
-  @Authorized<AuthScopes>(AuthScopes.ADMIN)
+  @Authorized(UserRole.ADMIN)
   public async getReports(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<ReportsResponse> {
     const [reports, count] = await ctx.em.findAndCount(Report, {}, {
       orderBy: { timestamp: QueryOrder.DESC },
@@ -44,7 +43,7 @@ export class ReportsResolver {
   }
 
   @Mutation(() => Report)
-  @Authorized<AuthScopes>(AuthScopes.ADMIN)
+  @Authorized(UserRole.ADMIN)
   public async updateReport(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('input') input: UpdateReportInput): Promise<Report> {
     const report = await ctx.em.findOneOrFail(Report, id, { populate: ['reporter', 'reported', 'handledBy'] });
 
@@ -63,13 +62,13 @@ export class ReportsResolver {
   }
 
   @Query(() => Report)
-  @Authorized<AuthScopes>(AuthScopes.ADMIN)
+  @Authorized(UserRole.ADMIN)
   public async getReport(@Ctx() ctx: Context, @Arg('id') id: string): Promise<Report> {
     return await ctx.em.findOneOrFail(Report, id, { populate: ['reporter', 'reported', 'beep', 'handledBy'] });
   }
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>(AuthScopes.ADMIN)
+  @Authorized(UserRole.ADMIN)
   public async deleteReport(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const report = ctx.em.getReference(Report, id);
 

@@ -8,12 +8,11 @@ import { Context } from '../utils/context';
 import { Beep } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
 import { inOrder } from '../utils/sort';
-import { AuthScopes } from '../utils/authentication';
 
 @Resolver()
 export class RiderResolver {
   @Mutation(() => QueueEntry)
-  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
+  @Authorized()
   public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<QueueEntry> {
     const beeper = await ctx.em.findOneOrFail(User, beeperId, { populate: ['queue', 'queue.rider'] });
 
@@ -38,8 +37,20 @@ export class RiderResolver {
     return entry;
   }
 
+  @Query(() => User)
+  @Authorized()
+  public async findBeep(@Ctx() ctx: Context): Promise<User> {
+    const beeper = await ctx.em.findOne(User, { isBeeping: true });
+
+    if (!beeper) {
+      throw new Error("Nobody is beeping right now!");
+    }
+
+    return beeper;
+  }
+
   @Query(() => QueueEntry, { nullable: true })
-  @Authorized<AuthScopes>()
+  @Authorized()
   public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
     const entry = await ctx.em.findOne(QueueEntry, { rider: ctx.user }, { populate: ['beeper', 'beeper.queue'] });
 
@@ -53,7 +64,7 @@ export class RiderResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
+  @Authorized()
   public async riderLeaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('id') id: string): Promise<boolean> {
     const beeper = await ctx.em.findOneOrFail(User, id, { populate: ['queue', 'queue.rider'] });
 
@@ -86,7 +97,7 @@ export class RiderResolver {
   }
 
   @Query(() => [User])
-  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
+  @Authorized()
   public async getBeeperList(@Ctx() ctx: Context, @Arg('input') input: FindBeepInput): Promise<User[]> {
     if (input.radius === 0) {
       return await ctx.em.find(User, { isBeeping: true });
@@ -104,7 +115,7 @@ export class RiderResolver {
   }
 
   @Query(() => Beep, { nullable: true })
-  @Authorized<AuthScopes>(AuthScopes.VERIFIED)
+  @Authorized()
   public async getLastBeepToRate(@Ctx() ctx: Context): Promise<Beep | null> {
     const beep = await ctx.em.findOne(Beep, { rider: ctx.user.id }, { populate: ['beeper'], orderBy: { end: QueryOrder.DESC } });
 
@@ -123,7 +134,7 @@ export class RiderResolver {
     nullable: true,
     topics: ({ args }) => "Rider" + args.id,
   })
-  @Authorized<AuthScopes>(AuthScopes.SELF)
+  @Authorized('self')
   public getRiderUpdates(@Arg("id") id: string, @Root() entry: QueueEntry): QueueEntry | null {
     return entry;
   }

@@ -9,13 +9,12 @@ import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { deleteObject, s3 } from '../utils/s3';
-import { AuthScopes } from '../utils/authentication';
 
 @Resolver()
 export class AccountResolver {
 
   @Mutation(() => User)
-  @Authorized<AuthScopes>()
+  @Authorized('No Verification')
   public async editAccount(@Ctx() ctx: Context, @Arg('input') input: EditAccountInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
     const oldEmail = ctx.user.email;
 
@@ -37,7 +36,7 @@ export class AccountResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>()
+  @Authorized('No Verification')
   public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
     ctx.user.password = sha256(input.password);
 
@@ -47,7 +46,7 @@ export class AccountResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>()
+  @Authorized('No Verification')
   public async updatePushToken(@Ctx() ctx: Context, @Arg('pushToken') pushToken: string): Promise<boolean> {
     ctx.user.pushToken = pushToken;
 
@@ -98,7 +97,7 @@ export class AccountResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>()
+  @Authorized('No Verification')
   public async resendEmailVarification(@Ctx() ctx: Context): Promise<boolean> {
     await ctx.em.nativeDelete(VerifyEmail, { user: ctx.user });
 
@@ -108,13 +107,13 @@ export class AccountResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>()
+  @Authorized()
   public async deleteAccount(@Ctx() ctx: Context): Promise<boolean> {
     return await deleteUser(ctx.user, ctx.em);
   }
 
   @Mutation(() => User)
-  @Authorized<AuthScopes>()
+  @Authorized('No Verification')
   public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
 
     const extention = filename.substring(filename.lastIndexOf("."), filename.length);

@@ -9,7 +9,6 @@ import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
-import { AuthScopes } from '../utils/authentication';
 
 @ObjectType()
 class Auth {
@@ -88,18 +87,23 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>()
+  @Authorized('No Verification')
   public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
-    ctx.em.remove(ctx.token);
+    await ctx.em.removeAndFlush(ctx.token);
 
     if (isApp) {
       wrap(ctx.user).assign({
         pushToken: null
       });
-      ctx.em.persist(ctx.user);
+      await ctx.em.persistAndFlush(ctx.user);
     }
 
-    await ctx.em.flush();
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  public async removeToken(@Ctx() ctx: Context, @Arg('token') tokenid: string): Promise<boolean> {
+    await ctx.em.removeAndFlush({ tokenid: tokenid });
 
     return true;
   }

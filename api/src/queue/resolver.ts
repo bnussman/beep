@@ -1,14 +1,13 @@
-import fieldsToRelations from "graphql-fields-to-relations";
 import { QueueEntry } from "../entities/QueueEntry";
 import { User, UserRole } from "../entities/User";
 import { Context } from "../utils/context";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from "type-graphql";
+import fieldsToRelations from "graphql-fields-to-relations";
 import { QueryOrder } from "@mikro-orm/core";
 import { PaginationArgs } from "../args/Pagination";
 import { Paginated } from "../utils/paginated";
 import { GraphQLResolveInfo } from "graphql";
-import { AuthScopes } from "../utils/authentication";
 
 @ObjectType()
 class BeepsInProgressResponse extends Paginated(QueueEntry) {}
@@ -17,7 +16,7 @@ class BeepsInProgressResponse extends Paginated(QueueEntry) {}
 export class QueueResolver {
 
   @Query(() => [QueueEntry])
-  @Authorized<AuthScopes>(AuthScopes.SELF)
+  @Authorized()
   public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
     const populate = fieldsToRelations(info) as Array<keyof QueueEntry>;
 
@@ -25,7 +24,7 @@ export class QueueResolver {
   }
 
   @Query(() => BeepsInProgressResponse)
-  @Authorized<AuthScopes>(AuthScopes.ADMIN)
+  @Authorized(UserRole.ADMIN)
   public async getInProgressBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<BeepsInProgressResponse> {
     const [beeps, count] = await ctx.em.findAndCount(
       QueueEntry,
@@ -45,7 +44,7 @@ export class QueueResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized<AuthScopes>(AuthScopes.ADMIN)
+  @Authorized(UserRole.ADMIN)
   public async clearQueue(
     @Ctx() ctx: Context,
     @Arg('id') id: string,
