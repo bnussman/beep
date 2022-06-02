@@ -1,7 +1,7 @@
 import { getMainDefinition, Observable } from "@apollo/client/utilities";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createUploadLink } from "apollo-upload-client";
-import { Client, ClientOptions, createClient, WebSocket } from "graphql-ws";
+import { Client, ClientOptions, createClient } from "graphql-ws";
 import { print } from "graphql";
 import { setContext } from "@apollo/client/link/context";
 import {
