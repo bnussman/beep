@@ -76,7 +76,6 @@ const UserUpdates = gql`
 
 function Beep() {
   const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
-  console.log(import.meta.env);
 
   useEffect(() => {
     if (data?.getUser?.id) {

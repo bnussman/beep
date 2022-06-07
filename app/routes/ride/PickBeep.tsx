@@ -43,37 +43,9 @@ const GetBeepers = gql`
       rating
       venmo
       cashapp
-      location {
-        latitude
-        longitude
-      }
     }
   }
 `;
-
-function getDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  const R = 6371;
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c;
-  return d * 0.621371;
-}
-
-function deg2rad(deg: number): number {
-  return deg * (Math.PI / 180);
-}
 
 export function PickBeepScreen(props: Props): JSX.Element {
   const { navigation, route } = props;
@@ -100,20 +72,7 @@ export function PickBeepScreen(props: Props): JSX.Element {
   }
 
   function getDescription(user: User): string {
-    let distance = 0;
-    if (user.location) {
-      distance = getDistance(
-        route.params.latitude,
-        route.params.longitude,
-        user.location?.latitude,
-        user.location?.longitude
-      );
-    }
-    return `Queue Size: ${user.queueSize}\nCapacity: ${
-      user.capacity
-    } riders\nSingles: $${user.singlesRate}\nGroups: $${
-      user.groupRate
-    }\nDistance from you: ${distance.toFixed(2)} mi`;
+    return `Queue Size: ${user.queueSize}\nCapacity: ${user.capacity} riders\nSingles: $${user.singlesRate}\nGroups: $${user.groupRate}`;
   }
 
   const renderItem = ({ item }: { item: User }) => (

@@ -43,7 +43,7 @@ function createRestartableClient(options: ClientOptions): RestartableClient {
     ...options,
     on: {
       ...options.on,
-      opened: (socket) => {
+      opened: (socket: any) => {
         options.on?.opened?.(socket);
 
         restart = () => {

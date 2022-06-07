@@ -1,7 +1,8 @@
 import { UserRole } from "../entities/User";
-import { AuthChecker } from "type-graphql";
+import { AuthChecker, MiddlewareFn } from "type-graphql";
 import { Context } from "../utils/context";
 import { AuthenticationError } from "apollo-server-core";
+import { QueueEntry } from "../entities/QueueEntry";
 
 export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
   const { user } = context;
@@ -28,4 +29,33 @@ export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
   }
 
   return false;
+};
+
+export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next) => {
+  const result = await next();
+
+  console.log("--------------------------------------");
+  console.log(result, info);
+  console.log("--------------------------------------");
+
+  if (!context?.user) {
+    return result;
+  }
+
+  if (context.user.role === UserRole.ADMIN) {
+    return result;
+  }
+
+  //@ts-expect-error ill fix later
+  if (["email", "phone", "location"].includes(info.fieldName) && context.user[info.fieldName] !== result) {
+    // a protectd value is trying to used
+    const result = await context.em.findOne(QueueEntry, { isAccepted: true, $or: [ { rider: context.user.id }, { beeper: context.user.id} ] })
+    console.log("user is trying to access personal info of another user", info.fieldName)
+
+    if (!result) {
+      return null;
+    }
+  }
+
+  return result;
 };

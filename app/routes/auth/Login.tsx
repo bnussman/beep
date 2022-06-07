@@ -114,7 +114,7 @@ export function LoginScreen(props: Props): JSX.Element {
             size="lg"
             placeholder="Password"
             returnKeyType="go"
-            onChangeText={(text) => setPassword(text)}
+            onChangeText={(text: string) => setPassword(text)}
             ref={passwordRef}
             onSubmitEditing={() => doLogin()}
             textContentType="password"
@@ -143,4 +143,3 @@ export function LoginScreen(props: Props): JSX.Element {
     </Container>
   );
 }
-

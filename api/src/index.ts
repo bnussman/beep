@@ -10,7 +10,7 @@ import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
 import { GraphQLError, GraphQLSchema, parse } from "graphql";
 import { buildSchema } from 'type-graphql';
-import { authChecker } from "./utils/authentication";
+import { authChecker, LeakChecker } from "./utils/authentication";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { ValidationError } from 'class-validator';
 import { createServer } from 'http';
@@ -131,6 +131,7 @@ async function start() {
   const schema: GraphQLSchema = await buildSchema({
     resolvers: [__dirname + '/**/resolver.{ts,js}'],
     authChecker: authChecker,
+    globalMiddlewares: [LeakChecker],
     pubSub
   });
 
