@@ -38,12 +38,12 @@ export class User {
   @Unique()
   username!: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Property()
   @Unique()
   email!: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Property()
   phone!: string;
 
