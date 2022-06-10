@@ -95,7 +95,7 @@ async function onSubscribe(
 
   if (token) {
     return {
-      contextValue: { user: token.user, token },
+      contextValue: { user: token.user, token, em: orm.em.fork() },
       schema,
       document: parse(msg.payload.query),
       variableValues: msg.payload.variables

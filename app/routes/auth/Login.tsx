@@ -50,7 +50,7 @@ const Login = gql`
   }
 `;
 
-export function LoginScreen(props: Props): JSX.Element {
+export function LoginScreen(props: Props) {
   const [login, { loading }] = useMutation<LoginMutation>(Login);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -64,7 +64,7 @@ export function LoginScreen(props: Props): JSX.Element {
     }
   }, []);
 
-  async function doLogin() {
+  const onLogin = async () => {
     const pushToken = isMobile ? await getPushToken() : null;
 
     login({
@@ -88,7 +88,7 @@ export function LoginScreen(props: Props): JSX.Element {
       .catch((error: ApolloError) => {
         Alert(error);
       });
-  }
+  };
 
   return (
     <Container keyboard center>
@@ -107,8 +107,9 @@ export function LoginScreen(props: Props): JSX.Element {
             textContentType="username"
             placeholder="Username or Email"
             returnKeyType="next"
-            onChangeText={(text) => setUsername(text)}
+            onChangeText={(text: string) => setUsername(text)}
             onSubmitEditing={() => passwordRef?.current?.focus()}
+            autoCapitalize="none"
           />
           <PasswordInput
             size="lg"
@@ -116,13 +117,14 @@ export function LoginScreen(props: Props): JSX.Element {
             returnKeyType="go"
             onChangeText={(text: string) => setPassword(text)}
             ref={passwordRef}
-            onSubmitEditing={() => doLogin()}
+            onSubmitEditing={onLogin}
             textContentType="password"
+            autoCapitalize="none"
           />
           <Button
             isLoading={loading}
             isDisabled={!username || !password}
-            onPress={() => doLogin()}
+            onPress={onLogin}
           >
             Login
           </Button>
