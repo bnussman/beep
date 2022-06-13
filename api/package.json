@@ -45,7 +45,7 @@
     "graphql-subscriptions": "^2.0.0",
     "graphql-upload": "^12.0.0",
     "graphql-ws": "^5.5.5",
-    "ioredis": "^4.28.1",
+    "ioredis": "^5.0.6",
     "js-sha256": "^0.9.0",
     "nodemailer": "^6.7.2",
     "reflect-metadata": "^0.1.13",
