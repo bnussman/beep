@@ -33,7 +33,7 @@
     "@sentry/tracing": "^7.1.1",
     "apollo-server-core": "^3.6.1",
     "apollo-server-express": "^3.6.1",
-    "aws-sdk": "^2.1048.0",
+    "aws-sdk": "^2.1153.0",
     "class-validator": "^0.13.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
