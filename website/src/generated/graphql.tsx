@@ -604,14 +604,14 @@ export type ResendEmailMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type ResendEmailMutation = { __typename?: 'Mutation', resendEmailVarification: boolean };
 
-export type GetBeepsQueryVariables = Exact<{
+export type GetBeepsForUserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   show?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string }, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
+export type GetBeepsForUserQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string }, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> } };
 
 export type UsersQueueQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -627,23 +627,23 @@ export type GetQueueSubscriptionVariables = Exact<{
 
 export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null | undefined, username: string, first: string, last: string, name: string } }> };
 
-export type GetRatingsQueryVariables = Exact<{
+export type GetRatingsForUserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   show?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetRatingsQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: string | null | undefined, stars: number, rater: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } }> } };
+export type GetRatingsForUserQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: string | null | undefined, stars: number, rater: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } }> } };
 
-export type GetReportsQueryVariables = Exact<{
+export type GetReportsForUserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   show?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetReportsQuery = { __typename?: 'Query', getReports: { __typename?: 'ReportsResponse', count: number, items: Array<{ __typename?: 'Report', id: string, timestamp: any, reason: string, handled: boolean, handledBy?: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } | null | undefined, reporter: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, reported: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } }> } };
+export type GetReportsForUserQuery = { __typename?: 'Query', getReports: { __typename?: 'ReportsResponse', count: number, items: Array<{ __typename?: 'Report', id: string, timestamp: any, reason: string, handled: boolean, handledBy?: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } | null | undefined, reporter: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string }, reported: { __typename?: 'User', id: string, name: string, photoUrl?: string | null | undefined, username: string } }> } };
 
 export type SendNotificationMutationVariables = Exact<{
   title: Scalars['String'];
@@ -1043,8 +1043,8 @@ export function useResendEmailMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ResendEmailMutationHookResult = ReturnType<typeof useResendEmailMutation>;
 export type ResendEmailMutationResult = Apollo.MutationResult<ResendEmailMutation>;
 export type ResendEmailMutationOptions = Apollo.BaseMutationOptions<ResendEmailMutation, ResendEmailMutationVariables>;
-export const GetBeepsDocument = gql`
-    query GetBeeps($id: String, $show: Int, $offset: Int) {
+export const GetBeepsForUserDocument = gql`
+    query GetBeepsForUser($id: String, $show: Int, $offset: Int) {
   getBeeps(id: $id, show: $show, offset: $offset) {
     items {
       id
@@ -1076,16 +1076,16 @@ export const GetBeepsDocument = gql`
     `;
 
 /**
- * __useGetBeepsQuery__
+ * __useGetBeepsForUserQuery__
  *
- * To run a query within a React component, call `useGetBeepsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBeepsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetBeepsForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBeepsForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetBeepsQuery({
+ * const { data, loading, error } = useGetBeepsForUserQuery({
  *   variables: {
  *      id: // value for 'id'
  *      show: // value for 'show'
@@ -1093,17 +1093,17 @@ export const GetBeepsDocument = gql`
  *   },
  * });
  */
-export function useGetBeepsQuery(baseOptions?: Apollo.QueryHookOptions<GetBeepsQuery, GetBeepsQueryVariables>) {
+export function useGetBeepsForUserQuery(baseOptions?: Apollo.QueryHookOptions<GetBeepsForUserQuery, GetBeepsForUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBeepsQuery, GetBeepsQueryVariables>(GetBeepsDocument, options);
+        return Apollo.useQuery<GetBeepsForUserQuery, GetBeepsForUserQueryVariables>(GetBeepsForUserDocument, options);
       }
-export function useGetBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBeepsQuery, GetBeepsQueryVariables>) {
+export function useGetBeepsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBeepsForUserQuery, GetBeepsForUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBeepsQuery, GetBeepsQueryVariables>(GetBeepsDocument, options);
+          return Apollo.useLazyQuery<GetBeepsForUserQuery, GetBeepsForUserQueryVariables>(GetBeepsForUserDocument, options);
         }
-export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
-export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
-export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
+export type GetBeepsForUserQueryHookResult = ReturnType<typeof useGetBeepsForUserQuery>;
+export type GetBeepsForUserLazyQueryHookResult = ReturnType<typeof useGetBeepsForUserLazyQuery>;
+export type GetBeepsForUserQueryResult = Apollo.QueryResult<GetBeepsForUserQuery, GetBeepsForUserQueryVariables>;
 export const UsersQueueDocument = gql`
     query UsersQueue($id: String) {
   getQueue(id: $id) {
@@ -1190,8 +1190,8 @@ export function useGetQueueSubscription(baseOptions: Apollo.SubscriptionHookOpti
       }
 export type GetQueueSubscriptionHookResult = ReturnType<typeof useGetQueueSubscription>;
 export type GetQueueSubscriptionResult = Apollo.SubscriptionResult<GetQueueSubscription>;
-export const GetRatingsDocument = gql`
-    query GetRatings($id: String, $show: Int, $offset: Int) {
+export const GetRatingsForUserDocument = gql`
+    query GetRatingsForUser($id: String, $show: Int, $offset: Int) {
   getRatings(id: $id, show: $show, offset: $offset) {
     items {
       id
@@ -1217,16 +1217,16 @@ export const GetRatingsDocument = gql`
     `;
 
 /**
- * __useGetRatingsQuery__
+ * __useGetRatingsForUserQuery__
  *
- * To run a query within a React component, call `useGetRatingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRatingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetRatingsForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRatingsForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetRatingsQuery({
+ * const { data, loading, error } = useGetRatingsForUserQuery({
  *   variables: {
  *      id: // value for 'id'
  *      show: // value for 'show'
@@ -1234,19 +1234,19 @@ export const GetRatingsDocument = gql`
  *   },
  * });
  */
-export function useGetRatingsQuery(baseOptions?: Apollo.QueryHookOptions<GetRatingsQuery, GetRatingsQueryVariables>) {
+export function useGetRatingsForUserQuery(baseOptions?: Apollo.QueryHookOptions<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRatingsQuery, GetRatingsQueryVariables>(GetRatingsDocument, options);
+        return Apollo.useQuery<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>(GetRatingsForUserDocument, options);
       }
-export function useGetRatingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRatingsQuery, GetRatingsQueryVariables>) {
+export function useGetRatingsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRatingsQuery, GetRatingsQueryVariables>(GetRatingsDocument, options);
+          return Apollo.useLazyQuery<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>(GetRatingsForUserDocument, options);
         }
-export type GetRatingsQueryHookResult = ReturnType<typeof useGetRatingsQuery>;
-export type GetRatingsLazyQueryHookResult = ReturnType<typeof useGetRatingsLazyQuery>;
-export type GetRatingsQueryResult = Apollo.QueryResult<GetRatingsQuery, GetRatingsQueryVariables>;
-export const GetReportsDocument = gql`
-    query GetReports($id: String, $show: Int, $offset: Int) {
+export type GetRatingsForUserQueryHookResult = ReturnType<typeof useGetRatingsForUserQuery>;
+export type GetRatingsForUserLazyQueryHookResult = ReturnType<typeof useGetRatingsForUserLazyQuery>;
+export type GetRatingsForUserQueryResult = Apollo.QueryResult<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>;
+export const GetReportsForUserDocument = gql`
+    query GetReportsForUser($id: String, $show: Int, $offset: Int) {
   getReports(id: $id, show: $show, offset: $offset) {
     items {
       id
@@ -1278,16 +1278,16 @@ export const GetReportsDocument = gql`
     `;
 
 /**
- * __useGetReportsQuery__
+ * __useGetReportsForUserQuery__
  *
- * To run a query within a React component, call `useGetReportsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetReportsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetReportsForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReportsForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetReportsQuery({
+ * const { data, loading, error } = useGetReportsForUserQuery({
  *   variables: {
  *      id: // value for 'id'
  *      show: // value for 'show'
@@ -1295,17 +1295,17 @@ export const GetReportsDocument = gql`
  *   },
  * });
  */
-export function useGetReportsQuery(baseOptions?: Apollo.QueryHookOptions<GetReportsQuery, GetReportsQueryVariables>) {
+export function useGetReportsForUserQuery(baseOptions?: Apollo.QueryHookOptions<GetReportsForUserQuery, GetReportsForUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetReportsQuery, GetReportsQueryVariables>(GetReportsDocument, options);
+        return Apollo.useQuery<GetReportsForUserQuery, GetReportsForUserQueryVariables>(GetReportsForUserDocument, options);
       }
-export function useGetReportsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReportsQuery, GetReportsQueryVariables>) {
+export function useGetReportsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReportsForUserQuery, GetReportsForUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetReportsQuery, GetReportsQueryVariables>(GetReportsDocument, options);
+          return Apollo.useLazyQuery<GetReportsForUserQuery, GetReportsForUserQueryVariables>(GetReportsForUserDocument, options);
         }
-export type GetReportsQueryHookResult = ReturnType<typeof useGetReportsQuery>;
-export type GetReportsLazyQueryHookResult = ReturnType<typeof useGetReportsLazyQuery>;
-export type GetReportsQueryResult = Apollo.QueryResult<GetReportsQuery, GetReportsQueryVariables>;
+export type GetReportsForUserQueryHookResult = ReturnType<typeof useGetReportsForUserQuery>;
+export type GetReportsForUserLazyQueryHookResult = ReturnType<typeof useGetReportsForUserLazyQuery>;
+export type GetReportsForUserQueryResult = Apollo.QueryResult<GetReportsForUserQuery, GetReportsForUserQueryVariables>;
 export const SendNotificationDocument = gql`
     mutation SendNotification($title: String!, $body: String!, $id: String!) {
   sendNotification(title: $title, body: $body, id: $id)

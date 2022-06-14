@@ -17,7 +17,7 @@ interface Props {
 }
 
 const Reports = gql`
-query GetReports($id: String, $show: Int, $offset: Int) {
+query GetReportsForUser($id: String, $show: Int, $offset: Int) {
   getReports(id: $id, show: $show, offset: $offset) {
     items {
         id

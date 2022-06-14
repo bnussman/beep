@@ -1,5 +1,8 @@
 overwrite: true
 schema: "http://localhost:3001/graphql"
+config:
+  namingConvention:
+    enumValues: keep
 documents:
   - './**/*.tsx'
 generates:

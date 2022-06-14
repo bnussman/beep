@@ -17,7 +17,7 @@ interface Props {
 }
 
 const Hisory = gql`
-  query GetBeeps($id: String, $show: Int, $offset: Int) {
+  query GetBeepsForUser($id: String, $show: Int, $offset: Int) {
     getBeeps(id: $id, show: $show, offset: $offset) {
       items {
         id

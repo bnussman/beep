@@ -17,7 +17,7 @@ interface Props {
 }
 
 const Ratings = gql`
-  query GetRatings($id: String, $show: Int, $offset: Int) {
+  query GetRatingsForUser($id: String, $show: Int, $offset: Int) {
     getRatings(id: $id, show: $show, offset: $offset) {
       items {
         id
