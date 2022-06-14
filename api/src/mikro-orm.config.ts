@@ -1,7 +1,7 @@
-import { Configuration, Connection, IDatabaseDriver, LoadStrategy } from "@mikro-orm/core";
+import { Options, LoadStrategy } from "@mikro-orm/core";
 import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isDevelopment } from "./utils/constants";
 
-export default {
+const config: Options = {
     entities: ['./build/src/entities/*.js'],
     entitiesTs: ['./src/entities/*.ts'],
     user: DB_USER,
@@ -9,12 +9,14 @@ export default {
     type: 'postgresql',
     clientUrl: `${DB_URL}/${DB_DATABASE}`,
     loadStrategy: LoadStrategy.JOINED,
-    debug: false,
+    debug: isDevelopment,
     driverOptions: DB_CA ? {
       connection: {
         ssl: {
           ca: DB_CA,
         }
       }
-    } : undefined,
-} as unknown as Configuration<IDatabaseDriver<Connection>>
+    } : {},
+};
+
+export default config;

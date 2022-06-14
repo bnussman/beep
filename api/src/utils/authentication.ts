@@ -42,9 +42,9 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
     return result;
   }
 
-  // if (context.user.role === UserRole.ADMIN) {
-  //   return result;
-  // }
+  if (context.user.role === UserRole.ADMIN) {
+    return result;
+  }
 
   //@ts-expect-error ill fix later
   if (["email", "phone", "location"].includes(info.fieldName) && context.user[info.fieldName] !== result) {
