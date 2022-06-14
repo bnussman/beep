@@ -108,7 +108,7 @@ export function QueuePreview({ user }: Props) {
           <Link to={`/admin/users/${entry.rider.id}`}>
             <Box fontWeight="bold" whiteSpace="nowrap">{entry.rider.name}</Box>
           </Link>
-          <Text isTruncated>
+          <Text noOfLines={1}>
             {getStatus(entry.state)}
           </Text>
           <Spacer />
