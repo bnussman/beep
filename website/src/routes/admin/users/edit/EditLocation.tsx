@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import GoogleMapReact from 'google-map-react';
 import { Box, Button, FormControl, FormLabel, HStack, Input } from "@chakra-ui/react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
-import { LocationUpdateMutation, UserLocationQuery } from "../../../../generated/graphql";
+import { LocationUpdateMutation, User, UserLocationQuery } from "../../../../generated/graphql";
 import { Marker } from "../../../../components/Marker";
 import { Loading } from "../../../../components/Loading";
 import { Error } from '../../../../components/Error';
+import { Map } from '../../../../components/Map';
 
 export const UserLocation = gql`
   query UserLocation($id: String!) {
@@ -65,10 +65,9 @@ export function EditLocation() {
     refetch();
   };
 
-  const onMapClick = (data: GoogleMapReact.ClickEventValue) => {
-    const { lat, lng } = data;
-    setLongitude(lng);
-    setLatitude(lat);
+  const onMapClick = (data: mapboxgl.MapLayerMouseEvent) => {
+    setLongitude(data.lngLat.lng);
+    setLatitude(data.lngLat.lat);
   };
 
   if (loading) {
@@ -113,20 +112,20 @@ export function EditLocation() {
       </HStack>
       {user.location && (
         <div style={{ height: 450, width: '100%' }}>
-          <GoogleMapReact
-            bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
-            defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}
-            defaultZoom={15}
-            center={{ lat: user.location.latitude, lng: user.location.longitude }}
+          <Map
             onClick={onMapClick}
+            initialViewState={{
+              latitude: user.location.latitude,
+              longitude: user.location.longitude,
+              zoom: 13,
+            }}
           >
             <Marker
-              lat={user.location.latitude}
-              lng={user.location.longitude}
-              text={user.name}
-              photoUrl={user.photoUrl}
+              latitude={user.location.latitude}
+              longitude={user.location.longitude}
+              user={user as User}
             />
-          </GoogleMapReact>
+          </Map>
         </div>
       )}
     </Box>

@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import GoogleMapReact from 'google-map-react';
 import { gql } from '@apollo/client';
 import { Box, Center } from '@chakra-ui/react';
 import { GetUserQuery, User } from '../../../generated/graphql';
 import { client } from '../../../utils/Apollo';
 import { GetUser } from './User';
 import { Marker } from '../../../components/Marker';
+import { Map } from '../../../components/Map';
 
 interface Props {
   user: GetUserQuery['getUser'];
@@ -65,21 +65,21 @@ export function LocationView(props: Props) {
 
   return (
     <Box>
-      <div style={{ height: 650, width: '100%' }}>
-        <GoogleMapReact
-          bootstrapURLKeys={{ key: 'AIzaSyBgabJrpu7-ELWiUIKJlpBz2mL6GYjwCVI' }}
-          defaultCenter={{ lat: user.location.latitude, lng: user.location.longitude }}
-          defaultZoom={15}
-          center={{ lat: user.location.latitude, lng: user.location.longitude }}
+      <div style={{ height: 550, width: '100%' }}>
+        <Map
+          initialViewState={{
+            latitude: user.location.latitude,
+            longitude: user.location.longitude,
+            zoom: 13,
+          }}
         >
           <Marker
-            lat={user.location.latitude}
-            lng={user.location.longitude}
-            text={user.name}
+            latitude={user.location.latitude}
+            longitude={user.location.longitude}
             user={user as User}
             variant="default"
           />
-        </GoogleMapReact>
+        </Map>
       </div>
     </Box>
   );
