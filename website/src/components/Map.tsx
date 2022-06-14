@@ -9,6 +9,7 @@ export function Map(props: any) {
     <_Map
       mapStyle={colorMode === 'light' ? "mapbox://styles/mapbox/light-v10" : "mapbox://styles/mapbox/dark-v10"}
       mapboxAccessToken="pk.eyJ1IjoiYm51c3NtYW4iLCJhIjoiY2w0ZGhoeGRmMDEwejNjbng0M3NxOW1neSJ9.UwGQ7ZgxmyZAO_yh7hRm4A"
+      attributionControl={false}
       initialViewState={{
         latitude: 36.215735,
         longitude: -81.674205,
