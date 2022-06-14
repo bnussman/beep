@@ -103,7 +103,7 @@ export function ReportDrawer(props: Props) {
                 {data.getReport.handled && data.getReport.handledBy ?
                   <Flex align="center">
                     <Indicator color='green' />
-                    <Text isTruncated mr={2}>Handled by</Text>
+                    <Text noOfLines={1} mr={2}>Handled by</Text>
                     <BasicUser user={data.getReport.handledBy} />
                   </Flex>
                   :
