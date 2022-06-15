@@ -14,8 +14,7 @@ class _Logger {
   public error(e: any) {
     if (isMobile) {
       Sentry.Native.captureException(e);
-    }
-    else {
+    } else {
       Sentry.Browser.captureException(e);
     }
     console.warn(e);

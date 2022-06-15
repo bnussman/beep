@@ -2,11 +2,12 @@
   "name": "@beep/api",
   "version": "1.0.0",
   "description": "GraphQL API for the Beep App",
-  "main": "build/src/index.js",
+  "main": "build/index.js",
+  "private": true,
   "scripts": {
     "build": "npx tsc",
-    "start": "node build/src/index.js",
-    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"nodemon build/src/index.js\"",
+    "start": "node build/index.js",
+    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"nodemon build/index.js\"",
     "db:create": "npx mikro-orm schema:create --run",
     "db:update": "npx mikro-orm schema:update --run",
     "db:drop": "npx mikro-orm schema:drop --run"

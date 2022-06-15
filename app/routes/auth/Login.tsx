@@ -13,6 +13,7 @@ import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { UserData } from "../../utils/useUser";
 import { Stack, Button, Input, Heading, Flex, Spacer, Box } from "native-base";
+import { Logger } from "../../utils/Logger";
 
 interface Props {
   navigation: Navigation;
@@ -65,7 +66,13 @@ export function LoginScreen(props: Props) {
   }, []);
 
   const onLogin = async () => {
-    const pushToken = isMobile ? await getPushToken() : null;
+    let pushToken: string | null;
+    try {
+      pushToken = isMobile ? await getPushToken() : null;
+    } catch (error) {
+      Logger.error(error);
+      pushToken = null;
+    }
 
     login({
       variables: { username, password, pushToken },
