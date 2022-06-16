@@ -219,6 +219,7 @@ export function BeepDrawer() {
   return (
     <Box flex={1}>
       <Drawer.Navigator
+        useLegacyImplementation={true}
         screenOptions={{
           drawerType: "front",
           headerTintColor: colorMode === "dark" ? "white" : "black",
