@@ -64,7 +64,7 @@
     "@graphql-codegen/typescript": "^2.4.2",
     "@graphql-codegen/typescript-operations": "^2.2.2",
     "@graphql-codegen/typescript-react-apollo": "^3.2.3",
-    "@types/apollo-upload-client": "^14.1.0",
+    "@types/apollo-upload-client": "^17.0.0",
     "@types/react": "~17.0.21",
     "@types/react-dom": "~17.0.11",
     "@types/react-native": "~0.67.6",
