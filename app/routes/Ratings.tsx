@@ -55,7 +55,7 @@ export function RatingsScreen(props: Props) {
 
   const ratings = data?.getRatings;
 
-  const renderItem = ({ item }: { item: Rating }) => {
+  const renderItem = ({ item, index }: { item: Rating, index: number }) => {
     const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
     return (
@@ -67,6 +67,7 @@ export function RatingsScreen(props: Props) {
           my={2}
           px={4}
           py={4}
+          mt={index === 0 ? 4 : undefined}
           _light={{ bg: "coolGray.100" }}
           _dark={{ bg: "gray.900" }}
           rounded="lg"

@@ -62,8 +62,10 @@ export function BeepsScreen(props: Props) {
 
   const renderItem = ({
     item,
+    index,
   }: {
     item: Unpacked<GetBeepHistoryQuery["getBeeps"]["items"]>;
+    index: number,
   }) => {
     const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
     return (
@@ -77,6 +79,7 @@ export function BeepsScreen(props: Props) {
           my={2}
           px={4}
           py={4}
+          mt={index === 0 ? 4 : undefined}
           _light={{ bg: "coolGray.100" }}
           _dark={{ bg: "gray.900" }}
           rounded="lg"
