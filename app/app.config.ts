@@ -9,6 +9,7 @@ export default {
     githubUrl: "https://github.com/bnussman/Beep",
     primaryColor: "#575A62",
     icon: "./assets/icon.png",
+    userInterfaceStyle: "automatic",
     notification: {
       iosDisplayInForeground: true,
     },
