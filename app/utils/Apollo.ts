@@ -129,6 +129,7 @@ export const wsLink = new WebSocketLink({
   lazy: false,
   retryAttempts: Infinity,
   isFatalConnectionProblem: () => false,
+  shouldRetry: () => true,
   connectionParams: async () => {
     const tokens = await AsyncStorage.getItem("auth");
     if (tokens) {
