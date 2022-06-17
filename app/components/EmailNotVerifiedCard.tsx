@@ -5,6 +5,7 @@ import { Box, HStack, Icon, Text } from "native-base";
 export function EmailNotVerfiedCard() {
   return (
     <Box
+      mt={2}
       p={4}
       rounded="xl"
       _light={{ bg: "coolGray.100" }}
@@ -12,10 +13,11 @@ export function EmailNotVerfiedCard() {
     >
       <HStack alignItems="center">
         <Icon
-          color="red.400"
+          color="red.500"
           size={10}
           mr={4}
-          as={<MaterialCommunityIcons name="alert-circle-outline" />}
+          as={MaterialCommunityIcons}
+          name="alert-circle-outline"
         />
         <Text fontSize="md" fontWeight="extrabold">
           Your email is not verified

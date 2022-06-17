@@ -77,7 +77,6 @@ export function EditProfileScreen() {
 
   const [photoLoading, setPhotoLoading] = useState<boolean>(false);
   const [photo, setPhoto] = useState<any>();
-  const [username] = useState(user?.username);
   const [first, setFirst] = useState(user?.first);
   const [last, setLast] = useState(user?.last);
   const [email, setEmail] = useState(user?.email);
