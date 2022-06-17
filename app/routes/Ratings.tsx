@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable } from "react-native";
+import { Pressable, RefreshControl } from "react-native";
 import { useUser } from "../utils/useUser";
 import { gql, useQuery } from "@apollo/client";
 import { GetRatingsQuery, Rating } from "../generated/graphql";
@@ -16,6 +16,8 @@ import {
   VStack,
   Spacer,
   Heading,
+  Center,
+  useColorMode,
 } from "native-base";
 
 interface Props {
@@ -23,8 +25,8 @@ interface Props {
 }
 
 const Ratings = gql`
-  query GetRatings($id: String) {
-    getRatings(id: $id) {
+  query GetRatings($id: String, $offset: Int, $show: Int) {
+    getRatings(id: $id, offset: $offset, show: $show) {
       items {
         id
         stars
@@ -48,12 +50,50 @@ const Ratings = gql`
 
 export function RatingsScreen(props: Props) {
   const { user } = useUser();
+  const { colorMode } = useColorMode();
 
-  const { data, loading, error } = useQuery<GetRatingsQuery>(Ratings, {
-    variables: { id: user?.id },
+  const { data, loading, error, fetchMore, refetch } = useQuery<GetRatingsQuery>(Ratings, {
+    variables: { id: user?.id, offset: 0, show: 10 },
+    notifyOnNetworkStatusChange: true,
   });
 
-  const ratings = data?.getRatings;
+  const ratings = data?.getRatings.items;
+  const count = data?.getRatings.count || 0;
+  const isRefreshing = Boolean(data) && loading;
+  const canLoadMore = ratings && count && (ratings?.length < count);
+
+  const getMore = () => {
+    if (!canLoadMore || isRefreshing) return;
+
+    fetchMore({
+      variables: {
+        offset: ratings?.length || 0,
+        limit: 10
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return prev;
+        }
+
+        return {
+          getRatings: {
+            items: [...prev.getRatings.items, ...fetchMoreResult.getRatings.items],
+            count: fetchMoreResult.getRatings.count
+          }
+        };
+      }
+    });
+  };
+
+  const renderFooter = () => {
+    if (!isRefreshing) return null;
+
+    return (
+      <Center>
+        <Spinner mt={4} mb={9} color="gray.400" />
+      </Center>
+    );
+  };
 
   const renderItem = ({ item, index }: { item: Rating, index: number }) => {
     const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
@@ -112,7 +152,7 @@ export function RatingsScreen(props: Props) {
     );
   };
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <Container alignItems="center" justifyContent="center">
         <Text>Loading your ratings</Text>
@@ -129,13 +169,24 @@ export function RatingsScreen(props: Props) {
     );
   }
 
-  if (ratings && ratings.items.length > 0) {
+  if (ratings && ratings.length > 0) {
     return (
       <Container alignItems="center" justifyContent="center">
         <FlatList
           w="100%"
-          data={ratings.items as unknown as Rating[]}
+          data={ratings as unknown as Rating[]}
           renderItem={renderItem}
+          keyExtractor={rating => rating.id}
+          onEndReached={getMore}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={renderFooter()}
+          refreshControl={
+            <RefreshControl
+              tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+              refreshing={isRefreshing}
+              onRefresh={refetch}
+            />
+          }
         />
       </Container>
     );
