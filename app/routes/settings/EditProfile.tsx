@@ -205,13 +205,6 @@ export function EditProfileScreen() {
         </Flex>
         <Input
           size="lg"
-          value={username}
-          textContentType="username"
-          placeholder="Username"
-          isDisabled
-        />
-        <Input
-          size="lg"
           ref={emailRef}
           value={email}
           textContentType="emailAddress"

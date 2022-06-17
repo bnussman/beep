@@ -55,6 +55,7 @@ export function ProfileScreen(props: Props) {
 
   function handleReport() {
     props.navigation.navigate("Report", {
+      user: data?.getUser as User,
       id: props.route.params.id,
       name: data?.getUser.name || "",
       beep: props.route.params.beep,
@@ -109,7 +110,9 @@ export function ProfileScreen(props: Props) {
               uri: data.getUser.photoUrl ? data.getUser.photoUrl : undefined,
             }}
           />
-          <Heading size="2xl" fontWeight="extrabold">{data.getUser.name}</Heading>
+          <Heading size="2xl" fontWeight="extrabold">
+            {data.getUser.name}
+          </Heading>
           <Stack space={4}>
             {data.getUser.isBeeping ? (
               <Text>
