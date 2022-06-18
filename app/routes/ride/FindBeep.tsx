@@ -9,7 +9,6 @@ import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
 import { client } from "../../utils/Apollo";
 import { Tags } from "./Tags";
-import { throttle } from "throttle-debounce";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
@@ -29,11 +28,14 @@ import {
   HStack,
   Center,
   VStack,
+  Icon,
 } from "native-base";
 import LocationInput from "../../components/LocationInput";
 import { Alert } from "../../utils/Alert";
 import { GradietnButton } from "../../components/GradientButton";
 import { useUser } from "../../utils/useUser";
+import { throttle } from "../../utils/throttle";
+import { Subscription } from "../../utils/types";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -124,10 +126,10 @@ interface Props {
   navigation: Navigation;
 }
 
-let sub: any;
-let riderStatusSub: any;
+let sub: Subscription;
+let riderStatusSub: Subscription;
 
-export function MainFindBeepScreen(props: Props): JSX.Element {
+export function MainFindBeepScreen(props: Props) {
   const { user } = useUser();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
@@ -136,8 +138,8 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
       notifyOnNetworkStatusChange: true,
     }
   );
-  const [getETA, { data: eta, loading: etaLoading, error: etaError }] =
-    useLazyQuery<GetEtaQuery>(GetETA);
+
+  const [getETA, { data: eta, error: etaError }] = useLazyQuery<GetEtaQuery>(GetETA);
 
   const [groupSize, setGroupSize] = useState<string>("");
   const [origin, setOrigin] = useState<string>("");
@@ -372,7 +374,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               size="lg"
               ref={originRef}
               value={origin}
-              onChangeText={(value) => setOrigin(value)}
+              onChangeText={(value: string) => setOrigin(value)}
               onSubmitEditing={() => destinationRef.current.focus()}
               returnKeyType="next"
             />
@@ -456,7 +458,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               colorScheme="green"
               onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
               endIcon={
-                <MaterialCommunityIcons name="phone" color="white" size={22} />
+                <Icon as={MaterialCommunityIcons} name="phone" color="white" size={22} />
               }
             >
               Call Beeper
@@ -465,7 +467,8 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               colorScheme="green"
               onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
               endIcon={
-                <MaterialCommunityIcons
+                <Icon
+                  as={MaterialCommunityIcons}
                   name="message-text"
                   color="white"
                   size={22}

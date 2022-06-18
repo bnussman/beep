@@ -44,6 +44,8 @@ export class LocationResolver {
 
       user.location = new Point(location.latitude, location.longitude);
 
+      pubSub.publish("Location" + id, location);
+
       await ctx.em.persistAndFlush(user);
 
       return true;
