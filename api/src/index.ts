@@ -112,9 +112,7 @@ async function start() {
 
   Sentry.init(app);
 
-  app.use(RealSentry.Handlers.requestHandler({
-    transaction: 'handler'
-  }));
+  app.use(RealSentry.Handlers.requestHandler());
   app.use(RealSentry.Handlers.tracingHandler());
 
   const options = {
