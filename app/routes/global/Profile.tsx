@@ -14,6 +14,8 @@ import {
   HStack,
   Center,
   Heading,
+  Box,
+  Spacer,
 } from "native-base";
 
 interface Props {
@@ -53,6 +55,7 @@ export function ProfileScreen(props: Props) {
 
   function handleReport() {
     props.navigation.navigate("Report", {
+      user: data?.getUser as User,
       id: props.route.params.id,
       name: data?.getUser.name || "",
       beep: props.route.params.beep,
@@ -101,55 +104,58 @@ export function ProfileScreen(props: Props) {
       <Center>
         <Stack space={2} alignItems="center">
           <Avatar
-            size={130}
+            mt={4}
+            size={40}
             source={{
               uri: data.getUser.photoUrl ? data.getUser.photoUrl : undefined,
             }}
           />
-          <Heading>{data.getUser.name}</Heading>
+          <Heading size="2xl" fontWeight="extrabold">
+            {data.getUser.name}
+          </Heading>
+          <Stack space={4}>
+            {data.getUser.isBeeping ? (
+              <Text>
+                <Text fontWeight="extrabold">Queue Size </Text>
+                <Text>{data.getUser.queueSize}</Text>
+              </Text>
+            ) : null}
+            {data?.getUser.venmo ? (
+              <Text>
+                <Text fontWeight="extrabold">Venmo </Text>
+                <Text>@{data.getUser.venmo}</Text>
+              </Text>
+            ) : null}
+            {data?.getUser.cashapp ? (
+              <Text>
+                <Text fontWeight="extrabold">Cash App </Text>
+                <Text>@{data.getUser.cashapp}</Text>
+              </Text>
+            ) : null}
+            <Text>
+              <Text fontWeight="extrabold">Capacity </Text>
+              <Text>{data.getUser.capacity}</Text>
+            </Text>
+            <Text>
+              <Text fontWeight="extrabold">Singles Rate </Text>
+              <Text>${data.getUser.singlesRate}</Text>
+            </Text>
+            <Text>
+              <Text fontWeight="extrabold">Group Rate </Text>
+              <Text>${data.getUser.groupRate}</Text>
+            </Text>
+            {data.getUser.rating ? (
+              <Text>
+                <Text fontWeight="extrabold">Rating </Text>
+                <Text>{printStars(data.getUser.rating)}</Text>
+              </Text>
+            ) : null}
+          </Stack>
           {props.route.params.id !== user?.id ? (
-            <HStack space={4}>
-              <Button
-                colorScheme="red"
-                variant="subtle"
-                onPress={() => handleReport()}
-              >
-                Report User
-              </Button>
-              <Button colorScheme="blue" onPress={() => handleRate()}>
-                Rate User
-              </Button>
+            <HStack space={4} mt={4}>
+              <Button onPress={() => handleReport()}>Report User</Button>
+              <Button onPress={() => handleRate()}>Rate User</Button>
             </HStack>
-          ) : null}
-          {data.getUser.isBeeping ? (
-            <>
-              <Text>Queue Size</Text>
-              <Text>{data.getUser.queueSize}</Text>
-            </>
-          ) : null}
-          {data?.getUser.venmo ? (
-            <>
-              <Text>Venmo</Text>
-              <Text>@{data.getUser.venmo}</Text>
-            </>
-          ) : null}
-          {data?.getUser.cashapp ? (
-            <>
-              <Text>Cash App</Text>
-              <Text>@{data.getUser.cashapp}</Text>
-            </>
-          ) : null}
-          <Text>Capacity</Text>
-          <Text>{data.getUser.capacity}</Text>
-          <Text>Singles Rate</Text>
-          <Text>${data.getUser.singlesRate}</Text>
-          <Text>Group Rate</Text>
-          <Text>${data.getUser.groupRate}</Text>
-          {data.getUser.rating ? (
-            <>
-              <Text>Rating</Text>
-              <Text>{printStars(data.getUser.rating)}</Text>
-            </>
           ) : null}
         </Stack>
       </Center>

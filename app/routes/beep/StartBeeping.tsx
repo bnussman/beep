@@ -191,19 +191,24 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   ]);
 
   async function getBeepingLocationPermissions(): Promise<boolean> {
-    //Temporary fix for being able to toggle beeping in dev
-    if (__DEV__ || Constants.appOwnership === "expo") return true;
+    try {
+      //Temporary fix for being able to toggle beeping in dev
+      if (__DEV__ || Constants.appOwnership === "expo") return true;
 
-    const { status: fgStatus } =
-      await Location.requestForegroundPermissionsAsync();
-    const { status: bgStatus } =
-      await Location.requestBackgroundPermissionsAsync();
+      const { status: fgStatus } =
+        await Location.requestForegroundPermissionsAsync();
+      const { status: bgStatus } =
+        await Location.requestBackgroundPermissionsAsync();
 
-    if (fgStatus !== "granted" || bgStatus !== "granted") {
+      if (fgStatus !== "granted" || bgStatus !== "granted") {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      Logger.error(error);
       return false;
     }
-
-    return true;
   }
 
   async function toggleSwitch(): Promise<void> {

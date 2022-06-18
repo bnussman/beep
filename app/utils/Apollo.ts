@@ -13,7 +13,7 @@ import {
   split,
 } from "@apollo/client";
 
-const ip = "localhost";
+const ip = "192.168.1.3";
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`
@@ -129,6 +129,7 @@ export const wsLink = new WebSocketLink({
   lazy: false,
   retryAttempts: Infinity,
   isFatalConnectionProblem: () => false,
+  shouldRetry: () => true,
   connectionParams: async () => {
     const tokens = await AsyncStorage.getItem("auth");
     if (tokens) {

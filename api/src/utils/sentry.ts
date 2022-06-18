@@ -3,11 +3,9 @@ import * as Tracing from '@sentry/tracing';
 import { Router } from 'express';
 import { User } from '../entities/User';
 import { SENTRY_URL, ENVIRONMENT } from './constants';
-import packageConfig from '../../package.json';
 
 export function init(app: Router): void {
   Sentry.init({
-    release: packageConfig.version,
     dsn: SENTRY_URL,
     environment: ENVIRONMENT || "development",
     tracesSampleRate: 1.0,
@@ -16,6 +14,8 @@ export function init(app: Router): void {
     integrations: [
       new Sentry.Integrations.Http({ tracing: true }),
       new Tracing.Integrations.Express({ app }),
+      // new Tracing.Integrations.Apollo(),
+      new Tracing.Integrations.GraphQL(),
       new Tracing.Integrations.Postgres(),
     ],
     tracesSampler: (samplingContext) => {

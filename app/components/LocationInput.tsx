@@ -60,7 +60,7 @@ function LocationInput(props: IInputProps, ref: Ref<unknown>) {
     <TouchableWithoutFeedback onPress={() => useCurrentLocation()}>
       <Icon
         mr={3}
-        size="sm"
+        size="lg"
         name="my-location"
         as={MaterialIcons}
         _dark={{ color: "white" }}

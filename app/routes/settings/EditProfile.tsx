@@ -1,18 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Pressable } from "react-native";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import { ReactNativeFile } from "apollo-upload-client";
+import React, { useMemo, useEffect, useState } from "react";
 // @ts-expect-error no types :(
 import * as mime from "react-native-mime-types";
 import * as ImagePicker from "expo-image-picker";
+import { Pressable } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { useUser } from "../../utils/useUser";
+import { Controller, useForm } from "react-hook-form";
+import { isValidationError, useValidationErrors } from "../../utils/useValidationErrors";
+import { ApolloError, gql, useMutation } from "@apollo/client";
+import { ReactNativeFile } from "apollo-upload-client";
 import {
   AddProfilePictureMutation,
   EditAccountMutation,
-  Maybe,
+  EditAccountMutationVariables,
 } from "../../generated/graphql";
 import {
   Spinner,
@@ -20,8 +22,11 @@ import {
   Button,
   Stack,
   Avatar,
-  Flex,
-  Spacer,
+  FormControl,
+  WarningOutlineIcon,
+  InputGroup,
+  InputLeftAddon,
+  HStack,
 } from "native-base";
 
 const EditAccount = gql`
@@ -70,41 +75,37 @@ export function generateRNFile(uri: string, name: string) {
 export function EditProfileScreen() {
   const { user } = useUser();
 
-  const [edit, { loading }] = useMutation<EditAccountMutation>(EditAccount);
+  const defaultValues = useMemo(() => ({
+    first: user?.first,
+    last: user?.last,
+    email: user?.email ? user.email : undefined,
+    phone: user?.phone ? user.phone : undefined,
+    venmo: user?.venmo,
+    cashapp: user?.cashapp
+  }), [user]);
+
+  const [edit, { loading, error }] = useMutation<EditAccountMutation>(EditAccount);
+
+  const {
+    control,
+    handleSubmit,
+    setFocus,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm<EditAccountMutationVariables>({ defaultValues });
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues])
+
+  const validationErrors = useValidationErrors<EditAccountMutationVariables>(error);
 
   const [upload, { loading: uploadLoading }] =
     useMutation<AddProfilePictureMutation>(UploadPhoto);
 
-  const [photoLoading, setPhotoLoading] = useState<boolean>(false);
   const [photo, setPhoto] = useState<any>();
-  const [username] = useState(user?.username);
-  const [first, setFirst] = useState(user?.first);
-  const [last, setLast] = useState(user?.last);
-  const [email, setEmail] = useState(user?.email);
-  const [phone, setPhone] = useState(user?.phone);
-  const [venmo, setVenmo] = useState<Maybe<string> | undefined>(user?.venmo);
-  const [cashapp, setCashapp] = useState<Maybe<string> | undefined>(
-    user?.cashapp
-  );
-
-  const lastRef = useRef<any>();
-  const emailRef = useRef<any>();
-  const phoneRef = useRef<any>();
-  const venmoRef = useRef<any>();
-  const cashappRef = useRef<any>();
-
-  useEffect(() => {
-    if (first !== user?.first) setFirst(user?.first);
-    if (last !== user?.last) setLast(user?.last);
-    if (email !== user?.email) setEmail(user?.email);
-    if (phone !== user?.first) setPhone(user?.phone);
-    if (venmo !== user?.venmo) setVenmo(user?.venmo);
-    if (cashapp !== user?.cashapp) setCashapp(user?.cashapp);
-  }, [user]);
 
   async function handleUpdatePhoto(): Promise<void> {
-    setPhotoLoading(true);
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,
@@ -114,143 +115,252 @@ export function EditProfileScreen() {
     });
 
     if (result.cancelled) {
-      setPhotoLoading(false);
       return;
     }
 
-    let real;
+    let picture;
 
     if (!isMobile) {
       const res = await fetch(result.uri);
       const blob = await res.blob();
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
-      real = file;
+      picture = file;
       setPhoto(result);
     } else {
-      console.log(result);
       if (!result.cancelled) {
         setPhoto(result);
         const fileType = result.uri.split(".")[1];
-        console.log(fileType);
         const file = generateRNFile(result.uri, `file.${fileType}`);
-        real = file;
-        console.log(real);
-      } else {
-        setPhotoLoading(false);
+        picture = file;
       }
     }
 
     try {
-      await upload({
-        variables: {
-          picture: real,
-        },
-      });
+      await upload({ variables: { picture } });
     } catch (error) {
       Alert(error as ApolloError);
     }
 
     setPhoto(undefined);
-    setPhotoLoading(false);
   }
 
-  async function handleUpdate() {
-    edit({
-      variables: { first, last, email, phone, venmo, cashapp },
-    })
-      .then(() => {
-        alert("Successfully updated profile");
-      })
-      .catch((error: ApolloError) => {
-        Alert(error);
-      });
-  }
+  const onSubmit = handleSubmit(async (variables) => {
+    try {
+      await edit({ variables });
+    } catch (error) {
+      if (!isValidationError(error as ApolloError)) {
+        Alert(error as ApolloError);
+      }
+    }
+  });
 
   return (
-    <Container keyboard alignItems="center">
-      <Stack space={4} mt={4} w="90%">
-        <Flex direction="row">
-          <Stack space={4}>
-            <Input
-              size="lg"
-              minW={220}
-              value={first}
-              textContentType="givenName"
-              placeholder="First Name"
-              returnKeyType="next"
-              onChangeText={(text) => setFirst(text)}
-              onSubmitEditing={() => lastRef.current.focus()}
-            />
-            <Input
-              size="lg"
-              ref={lastRef}
-              value={last}
-              textContentType="familyName"
-              placeholder="Last Name"
-              returnKeyType="next"
-              onChangeText={(text) => setLast(text)}
-              onSubmitEditing={() => emailRef.current.focus()}
-            />
+    <Container
+      keyboard
+      alignItems="center"
+      scrollViewProps={{ bounces: false, scrollEnabled: true }}
+    >
+      <Stack space={2} mt={4} w="90%">
+        <HStack alignItems="center" space={8}>
+          <Stack space={2} flexGrow={1}>
+            <FormControl
+              isInvalid={
+                Boolean(errors.first) || Boolean(validationErrors?.first)
+              }
+            >
+              <FormControl.Label>First Name</FormControl.Label>
+              <Controller
+                name="first"
+                rules={{ required: "First name is required" }}
+                control={control}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Input
+                    onBlur={onBlur}
+                    onChangeText={(val) => onChange(val)}
+                    value={value}
+                    ref={ref}
+                    returnKeyLabel="next"
+                    returnKeyType="next"
+                    onSubmitEditing={() => setFocus("last")}
+                    textContentType="givenName"
+                    size="lg"
+                  />
+                )}
+              />
+              <FormControl.ErrorMessage
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {errors.first?.message}
+                {validationErrors?.first?.[0]}
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl
+              isInvalid={
+                Boolean(errors.last) || Boolean(validationErrors?.last)
+              }
+            >
+              <FormControl.Label>Last Name</FormControl.Label>
+              <Controller
+                name="last"
+                rules={{ required: "Last name is required" }}
+                control={control}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                  <Input
+                    onBlur={onBlur}
+                    onChangeText={(val) => onChange(val)}
+                    value={value}
+                    ref={ref}
+                    returnKeyLabel="next"
+                    returnKeyType="next"
+                    onSubmitEditing={() => setFocus("email")}
+                    textContentType="familyName"
+                    size="lg"
+                  />
+                )}
+              />
+              <FormControl.ErrorMessage
+                leftIcon={<WarningOutlineIcon size="xs" />}
+              >
+                {errors.last?.message}
+                {validationErrors?.last?.[0]}
+              </FormControl.ErrorMessage>
+            </FormControl>
           </Stack>
-          <Spacer />
           <Pressable onPress={() => handleUpdatePhoto()}>
             <Avatar
               key={user?.photoUrl}
               source={{ uri: photo?.uri || user?.photoUrl }}
-              size={90}
+              size="xl"
             />
-            {photoLoading || uploadLoading ? <Spinner /> : null}
+            {uploadLoading ? <Spinner /> : null}
           </Pressable>
-        </Flex>
-        <Input
-          size="lg"
-          value={username}
-          textContentType="username"
-          placeholder="Username"
-          isDisabled
-        />
-        <Input
-          size="lg"
-          ref={emailRef}
-          value={email}
-          textContentType="emailAddress"
-          placeholder="Email"
-          returnKeyType="next"
-          onChangeText={(text) => setEmail(text)}
-          onSubmitEditing={() => phoneRef.current.focus()}
-        />
-        <Input
-          size="lg"
-          ref={phoneRef}
-          value={phone}
-          textContentType="telephoneNumber"
-          placeholder="Phone Number"
-          returnKeyType="next"
-          onChangeText={(text) => setPhone(text)}
-          onSubmitEditing={() => venmoRef.current.focus()}
-        />
-        <Input
-          size="lg"
-          ref={venmoRef}
-          value={venmo || ""}
-          textContentType="username"
-          placeholder="Venmo Username"
-          returnKeyType="next"
-          onChangeText={(text) => setVenmo(text)}
-          onSubmitEditing={() => cashappRef.current.focus()}
-        />
-        <Input
-          size="lg"
-          ref={cashappRef}
-          value={cashapp || ""}
-          textContentType="username"
-          placeholder="Cash App Username"
-          returnKeyType="go"
-          onChangeText={(text) => setCashapp(text)}
-          onSubmitEditing={() => handleUpdate()}
-        />
-        <Button onPress={() => handleUpdate()} isLoading={loading}>
+        </HStack>
+        <FormControl
+          isInvalid={
+            Boolean(errors.email) || Boolean(validationErrors?.email)
+          }
+        >
+          <FormControl.Label>Email</FormControl.Label>
+          <Controller
+            name="email"
+            rules={{ required: "Email is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("phone")}
+                textContentType="emailAddress"
+                size="lg"
+              />
+            )}
+          />
+          <FormControl.ErrorMessage
+            leftIcon={<WarningOutlineIcon size="xs" />}
+          >
+            {errors.email?.message}
+            {validationErrors?.email?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={
+            Boolean(errors.phone) || Boolean(validationErrors?.phone)
+          }
+        >
+          <FormControl.Label>Phone Number</FormControl.Label>
+          <Controller
+            name="phone"
+            rules={{ required: "Phone number is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("phone")}
+                textContentType="telephoneNumber"
+                size="lg"
+              />
+            )}
+          />
+          <FormControl.ErrorMessage
+            leftIcon={<WarningOutlineIcon size="xs" />}
+          >
+            {errors.phone?.message}
+            {validationErrors?.phone?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}
+        >
+          <FormControl.Label>Venmo Username</FormControl.Label>
+          <Controller
+            name="venmo"
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <InputGroup>
+                <InputLeftAddon children="@" />
+                <Input
+                  flexGrow={1}
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value as string | undefined}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  textContentType="username"
+                  onSubmitEditing={() => setFocus("cashapp")}
+                  autoCapitalize="none"
+                  size="lg"
+                />
+              </InputGroup>
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.venmo?.message}
+            {validationErrors?.venmo?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={Boolean(errors.cashapp) || Boolean(validationErrors?.cashapp)}
+        >
+          <FormControl.Label>Cash App Username</FormControl.Label>
+          <Controller
+            name="cashapp"
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <InputGroup>
+                <InputLeftAddon children="$" />
+                <Input
+                  flexGrow={1}
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value as string | undefined}
+                  ref={ref}
+                  returnKeyLabel="update"
+                  returnKeyType="go"
+                  textContentType="username"
+                  onSubmitEditing={isDirty ? onSubmit : undefined}
+                  autoCapitalize="none"
+                  size="lg"
+                />
+              </InputGroup>
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.cashapp?.message}
+            {validationErrors?.cashapp?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <Button onPress={onSubmit} isLoading={loading} isDisabled={!isDirty} mt={2}>
           Update Profile
         </Button>
       </Stack>

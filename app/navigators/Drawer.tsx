@@ -8,10 +8,7 @@ import { BeepsScreen } from "../routes/Beeps";
 import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
-import {
-  LogoutMutation,
-  ResendMutation,
-} from "../generated/graphql";
+import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import {
   LOCATION_TRACKING,
@@ -35,6 +32,7 @@ import {
   Switch,
   useColorMode,
   Spinner,
+  Button,
 } from "native-base";
 import { UserData, useUser } from "../utils/useUser";
 
@@ -92,11 +90,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
 
-    props.navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" }],
-    });
-
     client.writeQuery({
       query: UserData,
       data: {
@@ -135,6 +128,22 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         </Flex>
         <VStack divider={<Divider />} space={4}>
           <VStack space={3}>
+            {!user?.isEmailVerified ? (
+              <Button
+                colorScheme="red"
+                isLoading={resendLoading}
+                onPress={handleResendVerification}
+                leftIcon={
+                  <Icon
+                    name="alert-circle-outline"
+                    size={6}
+                    as={MaterialCommunityIcons}
+                  />
+                }
+              >
+                Resend Verification Email
+              </Button>
+            ) : null}
             {props.state.routeNames.map((name: string, index: number) => (
               <Pressable
                 key={index}
@@ -156,7 +165,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                       index === props.state.index ? "primary.500" : "gray.500"
                     }
                     size={5}
-                    as={<MaterialCommunityIcons name={getIcon(name)} />}
+                    as={MaterialCommunityIcons}
+                    name={getIcon(name)}
                   />
                   <Text fontWeight={500}>{name}</Text>
                 </HStack>
@@ -170,7 +180,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                   <Icon
                     color="gray.500"
                     size={5}
-                    as={<MaterialCommunityIcons name="logout-variant" />}
+                    as={MaterialCommunityIcons}
+                    name="logout-variant"
                   />
                 )}
                 <Text mr={4} fontWeight={500}>
@@ -178,26 +189,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 </Text>
               </HStack>
             </Pressable>
-            {!user?.isEmailVerified ? (
-              <Pressable onPress={handleResendVerification}>
-                <HStack px={5} py={3} space={7} alignItems="center">
-                  {resendLoading ? (
-                    <Spinner size="sm" />
-                  ) : (
-                    <Icon
-                      color="red.400"
-                      size={6}
-                      as={
-                        <MaterialCommunityIcons name="alert-circle-outline" />
-                      }
-                    />
-                  )}
-                  <Text mr={4} fontWeight={500}>
-                    Resend Verification Email
-                  </Text>
-                </HStack>
-              </Pressable>
-            ) : null}
             <HStack px={5} py={3} space={5} alignItems="center">
               <Text>☀️</Text>
               <Switch
@@ -219,6 +210,7 @@ export function BeepDrawer() {
   return (
     <Box flex={1}>
       <Drawer.Navigator
+        useLegacyImplementation={true}
         screenOptions={{
           drawerType: "front",
           headerTintColor: colorMode === "dark" ? "white" : "black",
