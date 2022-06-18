@@ -86,11 +86,6 @@ export function LoginScreen(props: Props) {
         });
 
         wsLink.client.restart();
-
-        props.navigation.reset({
-          index: 0,
-          routes: [{ name: "Main" }],
-        });
       })
       .catch((error: ApolloError) => {
         Alert(error);

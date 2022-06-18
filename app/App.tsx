@@ -93,25 +93,32 @@ function Beep() {
             headerTintColor: colorMode === "dark" ? "white" : "black",
           }}
         >
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="Login"
-            component={LoginScreen}
-          />
-          <Stack.Screen name="Sign Up" component={SignUpScreen} />
-          <Stack.Screen
-            name="Forgot Password"
-            component={ForgotPasswordScreen}
-          />
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="Main"
-            component={BeepDrawer}
-          />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Report" component={ReportScreen} />
-          <Stack.Screen name="Rate" component={RateScreen} />
-          <Stack.Screen name="Pick Driver" component={PickBeepScreen} />
+          {!user ? 
+            <>
+              <Stack.Screen
+                options={{ headerShown: false }}
+                name="Login"
+                component={LoginScreen}
+              />
+              <Stack.Screen name="Sign Up" component={SignUpScreen} />
+              <Stack.Screen
+                name="Forgot Password"
+                component={ForgotPasswordScreen}
+              />
+            </>
+            :
+            <>
+              <Stack.Screen
+                options={{ headerShown: false }}
+                name="Main"
+                component={BeepDrawer}
+              />
+              <Stack.Screen name="Profile" component={ProfileScreen} />
+              <Stack.Screen name="Report" component={ReportScreen} options={{ presentation: "modal" }} />
+              <Stack.Screen name="Rate" component={RateScreen} options={{ presentation: "modal" }} />
+              <Stack.Screen name="Pick Driver" component={PickBeepScreen} />
+            </>
+          }
         </Stack.Navigator>
       </NavigationContainer>
     </>

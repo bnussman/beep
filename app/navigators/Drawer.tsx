@@ -90,11 +90,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
 
-    props.navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" }],
-    });
-
     client.writeQuery({
       query: UserData,
       data: {

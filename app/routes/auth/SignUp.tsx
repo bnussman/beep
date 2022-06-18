@@ -100,11 +100,6 @@ export function SignUpScreen(props: Props) {
       });
 
       wsLink.client.restart();
-
-      props.navigation.reset({
-        index: 0,
-        routes: [{ name: "Main" }],
-      });
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         Alert(error as ApolloError);
