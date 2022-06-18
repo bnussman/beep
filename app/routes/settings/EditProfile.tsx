@@ -1,15 +1,16 @@
 import React, { useMemo, useEffect, useState } from "react";
-import { Pressable } from "react-native";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import { ReactNativeFile } from "apollo-upload-client";
 // @ts-expect-error no types :(
 import * as mime from "react-native-mime-types";
 import * as ImagePicker from "expo-image-picker";
+import { Pressable } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
+import { isValidationError, useValidationErrors } from "../../utils/useValidationErrors";
+import { ApolloError, gql, useMutation } from "@apollo/client";
+import { ReactNativeFile } from "apollo-upload-client";
 import {
   AddProfilePictureMutation,
   EditAccountMutation,
@@ -21,15 +22,12 @@ import {
   Button,
   Stack,
   Avatar,
-  Flex,
-  Spacer,
   FormControl,
   WarningOutlineIcon,
   InputGroup,
   InputLeftAddon,
   HStack,
 } from "native-base";
-import {isValidationError, useValidationErrors} from "../../utils/useValidationErrors";
 
 const EditAccount = gql`
   mutation EditAccount(
@@ -105,12 +103,9 @@ export function EditProfileScreen() {
   const [upload, { loading: uploadLoading }] =
     useMutation<AddProfilePictureMutation>(UploadPhoto);
 
-  const [photoLoading, setPhotoLoading] = useState<boolean>(false);
   const [photo, setPhoto] = useState<any>();
 
   async function handleUpdatePhoto(): Promise<void> {
-    setPhotoLoading(true);
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,
@@ -120,45 +115,34 @@ export function EditProfileScreen() {
     });
 
     if (result.cancelled) {
-      setPhotoLoading(false);
       return;
     }
 
-    let real;
+    let picture;
 
     if (!isMobile) {
       const res = await fetch(result.uri);
       const blob = await res.blob();
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
-      real = file;
+      picture = file;
       setPhoto(result);
     } else {
-      console.log(result);
       if (!result.cancelled) {
         setPhoto(result);
         const fileType = result.uri.split(".")[1];
-        console.log(fileType);
         const file = generateRNFile(result.uri, `file.${fileType}`);
-        real = file;
-        console.log(real);
-      } else {
-        setPhotoLoading(false);
+        picture = file;
       }
     }
 
     try {
-      await upload({
-        variables: {
-          picture: real,
-        },
-      });
+      await upload({ variables: { picture } });
     } catch (error) {
       Alert(error as ApolloError);
     }
 
     setPhoto(undefined);
-    setPhotoLoading(false);
   }
 
   const onSubmit = handleSubmit(async (variables) => {
@@ -361,10 +345,10 @@ export function EditProfileScreen() {
                   onChangeText={(val) => onChange(val)}
                   value={value as string | undefined}
                   ref={ref}
-                  returnKeyLabel="sign up"
+                  returnKeyLabel="update"
                   returnKeyType="go"
                   textContentType="username"
-                  onSubmitEditing={onSubmit}
+                  onSubmitEditing={isDirty ? onSubmit : undefined}
                   autoCapitalize="none"
                   size="lg"
                 />
