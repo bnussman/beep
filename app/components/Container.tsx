@@ -28,7 +28,7 @@ export const Container = (props: Props & IBoxProps): JSX.Element => {
                   height: "100%",
                   justifyContent: "center",
                 }
-              : undefined
+                : { height: "100%" }
           }
           {...scrollViewProps}
         >

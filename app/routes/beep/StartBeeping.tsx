@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
@@ -26,7 +26,12 @@ import {
   FormControl,
   Stack,
   FlatList,
+  Box,
+  Spacer,
+  HStack,
+  Flex,
 } from "native-base";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 interface Props {
   navigation: Navigation;
@@ -136,6 +141,17 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
   const queue = data?.getQueue;
+
+  // ref
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  // variables
+  const snapPoints = useMemo(() => ['20%', '75%'], []);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log('handleSheetChanges', index);
+  }, []);
 
   useEffect(() => {
     AppState.addEventListener("change", _handleAppStateChange);
@@ -331,7 +347,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   }
   if (!isBeeping) {
     return (
-      <Container keyboard alignItems="center">
+      <Container keyboard alignItems="center" height="100%">
         <Stack space={4} w="90%" mt={4}>
           <FormControl>
             <FormControl.Label>Max Rider Capacity</FormControl.Label>
@@ -381,6 +397,30 @@ export function StartBeepingScreen(props: Props): JSX.Element {
             Require riders to have a mask
           </Checkbox>
         </Stack>
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          style={{
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 6,
+            },
+            shadowOpacity: 0.39,
+            shadowRadius: 8.30,
+            elevation: 13
+          }}
+        >
+          <Box p={4}>
+            <HStack alignItems="center">
+              <Heading fontWeight="extrabold" size="2xl">Your Queue</Heading>
+              <Spacer />
+              <Text fontWeight="extrabold">{queue?.length}</Text>
+            </HStack>
+          </Box>
+        </BottomSheet>
       </Container>
     );
   } else {

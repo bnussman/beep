@@ -30,6 +30,7 @@ import {
   NATIVE_BASE_CONFIG,
   NATIVE_BASE_THEME,
 } from "./utils/constants";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 
 const Stack = createStackNavigator();
 init();
@@ -127,13 +128,15 @@ function Beep() {
 
 function App2() {
   return (
-    <NativeBaseProvider
-      theme={NATIVE_BASE_THEME}
-      colorModeManager={colorModeManager}
-      config={NATIVE_BASE_CONFIG}
-    >
-      <Beep />
-    </NativeBaseProvider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <NativeBaseProvider
+        theme={NATIVE_BASE_THEME}
+        colorModeManager={colorModeManager}
+        config={NATIVE_BASE_CONFIG}
+      >
+        <Beep />
+      </NativeBaseProvider>
+    </GestureHandlerRootView>
   );
 }
 
