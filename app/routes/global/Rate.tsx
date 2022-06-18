@@ -38,7 +38,7 @@ export function RateScreen(props: Props): JSX.Element {
 
   async function rateUser() {
     rate({
-      refetchQueries: () => ["GetRateData"],
+      refetchQueries: () => ["GetRatings"],
       variables: {
         userId: props.route.params.user.id,
         beepId: props.route.params.beep,
