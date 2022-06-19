@@ -3,11 +3,11 @@ import {
   BottomSheetProps,
   default as _BottomSheet,
 } from "@gorhom/bottom-sheet";
-import { BottomSheetModalRef } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetModalProvider/types";
 import { useColorMode } from "native-base";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 export const BottomSheet = React.forwardRef<
-  BottomSheetModalRef,
+  BottomSheetMethods,
   BottomSheetProps
 >((props, ref) => {
   const { colorMode } = useColorMode();

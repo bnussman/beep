@@ -1,11 +1,11 @@
 import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { useUser } from "../../utils/useUser";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Linking, Platform, Pressable } from "react-native";
+import { Linking, Pressable } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { Unpacked } from "../../utils/constants";
+import { openDirections } from "../../utils/links";
 import {
   Flex,
   Box,
@@ -26,17 +26,7 @@ interface Props {
   navigation: Navigation;
 }
 
-export function QueueItem({ item, index, navigation }: Props) {
-  const { user } = useUser();
-
-  function handleDirections(origin: string, dest: string): void {
-    if (Platform.OS == "ios") {
-      Linking.openURL(`http://maps.apple.com/?saddr=${origin}&daddr=${dest}`);
-    } else {
-      Linking.openURL(`https://www.google.com/maps/dir/${origin}/${dest}/`);
-    }
-  }
-
+export function QueueItem({ item, navigation }: Props) {
   if (item.isAccepted) {
     return (
       <Box
@@ -127,7 +117,7 @@ export function QueueItem({ item, index, navigation }: Props) {
           {item.state <= 1 ? (
             <Button
               colorScheme="tertiary"
-              onPress={() => handleDirections("Current+Location", item.origin)}
+              onPress={() => openDirections("Current+Location", item.origin)}
               endIcon={
                 <Icon
                   as={MaterialCommunityIcons}
@@ -141,7 +131,7 @@ export function QueueItem({ item, index, navigation }: Props) {
             </Button>
           ) : (
             <Button
-              onPress={() => handleDirections(item.origin, item.destination)}
+              onPress={() => openDirections(item.origin, item.destination)}
               endIcon={
                 <Icon
                   as={MaterialCommunityIcons}

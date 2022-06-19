@@ -19,7 +19,8 @@ import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
-import { Alert as NativeAlert, AppState, AppStateStatus, Linking } from "react-native";
+import { Beep } from "./Beep";
+import { Alert as NativeAlert, AppState, AppStateStatus } from "react-native";
 import {
   GetInitialQueueQuery,
   UpdateBeepSettingsMutation,
@@ -32,20 +33,12 @@ import {
   Heading,
   FormControl,
   Stack,
-  FlatList,
   Box,
   Spacer,
   HStack,
-  Avatar,
-  Center,
-  Button,
-  Flex,
 } from "native-base";
-import { BottomSheetModalRef } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetModalProvider/types";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import ActionButton from "../../components/ActionButton";
-import { printStars } from "../../components/Stars";
-import { GradietnButton } from "../../components/GradientButton";
 
 interface Props {
   navigation: Navigation;
@@ -137,7 +130,7 @@ const UpdateBeepSettings = gql`
 
 export const LOCATION_TRACKING = "location-tracking";
 
-export function StartBeepingScreen(props: Props): JSX.Element {
+export function StartBeepingScreen(props: Props) {
   const { user } = useUser();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
@@ -148,10 +141,10 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
-  const { subscribeToMore, data, refetch } = useQuery<GetInitialQueueQuery>(
-    GetInitialQueue,
-    { notifyOnNetworkStatusChange: true }
-  );
+  const { subscribeToMore, data, refetch, loading } =
+    useQuery<GetInitialQueueQuery>(GetInitialQueue, {
+      notifyOnNetworkStatusChange: true,
+    });
 
   const [updateBeepSettings] =
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
@@ -159,7 +152,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   const queue = data?.getQueue;
 
   // ref
-  const bottomSheetRef = useRef<BottomSheetModalRef>(null);
+  const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
   // variables
   const snapPoints = useMemo(() => ["20%", "75%"], []);
@@ -331,32 +324,6 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     }
   }
 
-  function handleVenmo(groupSize: string | number, venmo: string): void {
-    if (Number(groupSize) > 1) {
-      Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${
-          (user?.groupRate || 0) * Number(groupSize)
-        }&note=Beep`
-      );
-    } else {
-      Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user?.singlesRate}&note=Beep`
-      );
-    }
-  }
-
-  function handleCashApp(groupSize: string | number, cashapp: string): void {
-    if (Number(groupSize) > 1) {
-      Linking.openURL(
-        `https://cash.app/$${cashapp}/${
-          Number(groupSize) * (user?.groupRate || 0)
-        }`
-      );
-    } else {
-      Linking.openURL(`https://cash.app/$${cashapp}/${user?.singlesRate || 0}`);
-    }
-  }
-
   useEffect(() => {
     const init = async () => {
       if (user?.isBeeping) {
@@ -445,117 +412,54 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     if (queue && queue?.length > 0) {
       return (
         <Container alignItems="center">
-          {queue[0] && (
-            <Flex w="100%" height="80%" px={6} py={4}>
-              <HStack alignItems="center" space={4}>
-                <Stack>
-                  <Heading fontWeight="extrabold" size="xl">
-                    {queue[0].rider.name}
+          {queue[0] && <Beep beep={queue[0]} />}
+          {queue.length > 1 ? (
+            <BottomSheet
+              ref={bottomSheetRef}
+              index={1}
+              snapPoints={snapPoints}
+              onChange={handleSheetChanges}
+            >
+              <Box pt={1} px={4}>
+                <HStack alignItems="center" mb={2}>
+                  <Heading fontWeight="extrabold" size="2xl">
+                    Queue
                   </Heading>
-                  <Text fontSize="xs">
-                    {queue[0].rider.rating !== null &&
-                    queue[0].rider.rating !== undefined
-                      ? printStars(queue[0].rider.rating)
-                      : null}
-                  </Text>
-                </Stack>
-                <Spacer />
-                <Avatar size="xl" source={{ uri: queue[0].rider.photoUrl }} />
-              </HStack>
-              <Stack space={2} mt={4}>
-                <Box>
-                  <Heading size="sm" fontWeight="extrabold">
-                    Group Size
-                  </Heading>
-                  <Text>{queue[0].groupSize}</Text>
-                </Box>
-                <Box>
-                  <Heading size="sm" fontWeight="extrabold">
-                    Pick Up
-                  </Heading>
-                  <Text>{queue[0].origin}</Text>
-                </Box>
-                <Box>
-                  <Heading size="sm" fontWeight="extrabold">
-                    Destination
-                  </Heading>
-                  <Text>{queue[0].destination}</Text>
-                </Box>
-              </Stack>
-              <Spacer />
-              <Stack space={3}>
-                {queue[0].rider.cashapp ? (
-                  <Button
-                    colorScheme="green"
-                    variant="subtle"
-                    onPress={() =>
-                      handleCashApp(queue[0].groupSize, item.rider.cashapp!)
-                    }
-                  >
-                    Request Money from Rider with Cash App
-                  </Button>
-                ) : null}
-                {queue[0].rider?.venmo ? (
-                  <Button
-                    colorScheme="blue"
-                    variant="subtle"
-                    onPress={() =>
-                      handleVenmo(queue[0].groupSize, queue[0].rider.venmo!)
-                    }
-                  >
-                    Request Money from Rider with Venmo
-                  </Button>
-                ) : null}
-                <Button
-                  colorScheme="red"
-                  backgroundColor="red.400"
-                  _pressed={{ backgroundColor: "red.500" }}
-                >
-                  Cancel Beep
-                </Button>
-                <GradietnButton onPress={() => null}>I'm here</GradietnButton>
-              </Stack>
-            </Flex>
-          )}
-          <BottomSheet
-            ref={bottomSheetRef}
-            index={1}
-            snapPoints={snapPoints}
-            onChange={handleSheetChanges}
-          >
-            <Box pt={1} px={4}>
-              <HStack alignItems="center" mb={2}>
-                <Heading fontWeight="extrabold" size="2xl">
-                  Queue
-                </Heading>
-                <Spacer />
-                {queue &&
-                  queue.length > 0 &&
-                  queue.some((entry) => !entry.isAccepted) && (
-                    <Box borderRadius="50%" bg="blue.400" w={4} h={4} mr={2} />
-                  )}
-              </HStack>
-            </Box>
-            <BottomSheetFlatList
-              data={queue.filter(
-                (entry) => queue[0]?.isAccepted && entry.id !== queue[0]?.id
-              )}
-              keyExtractor={(item) => item.id}
-              renderItem={({
-                item,
-                index,
-              }: {
-                item: Unpacked<GetInitialQueueQuery["getQueue"]>;
-                index: number;
-              }) => (
-                <QueueItem
-                  item={item}
-                  index={index}
-                  navigation={props.navigation}
-                />
-              )}
-            />
-          </BottomSheet>
+                  <Spacer />
+                  {queue &&
+                    queue.length > 0 &&
+                    queue.some((entry) => !entry.isAccepted) && (
+                      <Box
+                        borderRadius="50%"
+                        bg="blue.400"
+                        w={4}
+                        h={4}
+                        mr={2}
+                      />
+                    )}
+                </HStack>
+              </Box>
+              <BottomSheetFlatList
+                refreshing={loading && data.getQueue !== undefined}
+                onRefresh={refetch}
+                data={queue.filter((entry) => entry.id !== queue[0]?.id)}
+                keyExtractor={(item) => item.id}
+                renderItem={({
+                  item,
+                  index,
+                }: {
+                  item: Unpacked<GetInitialQueueQuery["getQueue"]>;
+                  index: number;
+                }) => (
+                  <QueueItem
+                    item={item}
+                    index={index}
+                    navigation={props.navigation}
+                  />
+                )}
+              />
+            </BottomSheet>
+          ) : null}
         </Container>
       );
     } else {

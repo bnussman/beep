@@ -1,13 +1,17 @@
-import React, { useState } from "react";
-import { Button } from "native-base";
+import React, { useEffect, useState } from "react";
+import { Button, Icon } from "native-base";
 import { gql, useMutation } from "@apollo/client";
-import { UpdateBeeperQueueMutation } from "../generated/graphql";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../utils/Alert";
+import { Unpacked } from "../utils/constants";
+import {
+  GetInitialQueueQuery,
+  UpdateBeeperQueueMutation,
+} from "../generated/graphql";
 
 interface Props {
-  type: string;
-  item: any;
+  type: "accept" | "deny";
+  item: Unpacked<GetInitialQueueQuery["getQueue"]>;
 }
 
 const UpdateBeeperQueue = gql`
@@ -28,36 +32,34 @@ export function AcceptDenyButton(props: Props) {
 
   const isAccept = props.type === "accept";
 
-  async function updateStatus(
-    queueId: string,
-    riderId: string,
-    value: string | boolean
-  ): Promise<void> {
+  useEffect(() => {
+    setLoading(false);
+  }, [props.item]);
+
+  const onPress = () => {
     setLoading(true);
 
     update({
       variables: {
-        queueId: queueId,
-        riderId: riderId,
-        value: value,
+        queueId: props.item.id,
+        riderId: props.item.rider.id,
+        value: props.type,
       },
     }).catch((error) => {
       Alert(error);
       setLoading(false);
     });
-  }
+  };
 
   return (
     <Button
-      flex={isAccept ? 1 : undefined}
       colorScheme={isAccept ? "green" : "red"}
       _text={{ color: "white" }}
       isLoading={loading}
-      onPress={() =>
-        updateStatus(props.item.id, props.item.rider.id, props.type)
-      }
+      onPress={onPress}
       endIcon={
-        <MaterialCommunityIcons
+        <Icon
+          as={MaterialCommunityIcons}
           name={isAccept ? "check" : "close"}
           size={22}
           color="white"
