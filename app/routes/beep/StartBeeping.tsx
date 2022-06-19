@@ -1,7 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
+import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid, Unpacked } from "../../utils/constants";
@@ -29,9 +36,16 @@ import {
   Box,
   Spacer,
   HStack,
+  Avatar,
+  Center,
+  Button,
   Flex,
 } from "native-base";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { BottomSheetModalRef } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetModalProvider/types";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import ActionButton from "../../components/ActionButton";
+import { printStars } from "../../components/Stars";
+import { GradietnButton } from "../../components/GradientButton";
 
 interface Props {
   navigation: Navigation;
@@ -83,6 +97,7 @@ const GetInitialQueue = gql`
         phone
         photoUrl
         isStudent
+        rating
       }
     }
   }
@@ -108,6 +123,7 @@ const GetQueue = gql`
         phone
         photoUrl
         isStudent
+        rating
       }
     }
   }
@@ -143,14 +159,14 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   const queue = data?.getQueue;
 
   // ref
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheetModalRef>(null);
 
   // variables
-  const snapPoints = useMemo(() => ['20%', '75%'], []);
+  const snapPoints = useMemo(() => ["20%", "75%"], []);
 
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
+    console.log("handleSheetChanges", index);
   }, []);
 
   useEffect(() => {
@@ -397,54 +413,101 @@ export function StartBeepingScreen(props: Props): JSX.Element {
             Require riders to have a mask
           </Checkbox>
         </Stack>
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={1}
-          snapPoints={snapPoints}
-          onChange={handleSheetChanges}
-          style={{
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 6,
-            },
-            shadowOpacity: 0.39,
-            shadowRadius: 8.30,
-            elevation: 13
-          }}
-        >
-          <Box p={4}>
-            <HStack alignItems="center">
-              <Heading fontWeight="extrabold" size="2xl">Your Queue</Heading>
-              <Spacer />
-              <Text fontWeight="extrabold">{queue?.length}</Text>
-            </HStack>
-          </Box>
-        </BottomSheet>
       </Container>
     );
   } else {
     if (queue && queue?.length > 0) {
       return (
         <Container alignItems="center">
-          <FlatList
-            w="100%"
-            data={data?.getQueue}
-            keyExtractor={(item) => item.id}
-            renderItem={({
-              item,
-              index,
-            }: {
-              item: Unpacked<GetInitialQueueQuery["getQueue"]>;
-              index: number;
-            }) => (
-              <QueueItem
-                item={item}
-                index={index}
-                navigation={props.navigation}
-              />
-            )}
-          />
+          {queue[0] && (
+            <Flex w="100%" height="80%" px={6} py={4}>
+              <HStack alignItems="center" space={4}>
+                <Stack>
+                  <Heading fontWeight="extrabold" size="xl">
+                    {queue[0].rider.name}
+                  </Heading>
+                  <Text fontSize="xs">
+                    {queue[0].rider.rating !== null &&
+                    queue[0].rider.rating !== undefined
+                      ? printStars(queue[0].rider.rating)
+                      : null}
+                  </Text>
+                </Stack>
+                <Spacer />
+                <Avatar size="xl" source={{ uri: queue[0].rider.photoUrl }} />
+              </HStack>
+              <Stack space={2} mt={4}>
+                <Box>
+                  <Heading size="sm" fontWeight="extrabold">
+                    Group Size
+                  </Heading>
+                  <Text>{queue[0].groupSize}</Text>
+                </Box>
+                <Box>
+                  <Heading size="sm" fontWeight="extrabold">
+                    Pick Up
+                  </Heading>
+                  <Text>{queue[0].origin}</Text>
+                </Box>
+                <Box>
+                  <Heading size="sm" fontWeight="extrabold">
+                    Destination
+                  </Heading>
+                  <Text>{queue[0].destination}</Text>
+                </Box>
+              </Stack>
+              <Spacer />
+              <Stack space={3}>
+                <Button
+                  colorScheme="red"
+                  backgroundColor="red.400"
+                  _pressed={{ backgroundColor: "red.500" }}
+                >
+                  Cancel Beep
+                </Button>
+                <GradietnButton onPress={() => null}>I'm here</GradietnButton>
+              </Stack>
+            </Flex>
+          )}
+          <BottomSheet
+            ref={bottomSheetRef}
+            index={1}
+            snapPoints={snapPoints}
+            onChange={handleSheetChanges}
+          >
+            <Box pt={1} px={4}>
+              <HStack alignItems="center" mb={2}>
+                <Heading fontWeight="extrabold" size="2xl">
+                  Queue
+                </Heading>
+                <Spacer />
+                {queue &&
+                  queue.length > 0 &&
+                  queue.some((entry) => !entry.isAccepted) && (
+                    <Box borderRadius="50%" bg="blue.400" w={4} h={4} mr={2} />
+                  )}
+              </HStack>
+            </Box>
+            <BottomSheetFlatList
+              data={queue.filter(
+                (entry) => queue[0]?.isAccepted && entry.id !== queue[0]?.id
+              )}
+              keyExtractor={(item) => item.id}
+              renderItem={({
+                item,
+                index,
+              }: {
+                item: Unpacked<GetInitialQueueQuery["getQueue"]>;
+                index: number;
+              }) => (
+                <QueueItem
+                  item={item}
+                  index={index}
+                  navigation={props.navigation}
+                />
+              )}
+            />
+          </BottomSheet>
         </Container>
       );
     } else {

@@ -16,6 +16,8 @@ import {
   Button,
   Text,
   Heading,
+  Spacer,
+  Stack,
 } from "native-base";
 
 interface Props {
@@ -208,7 +210,7 @@ export function QueueItem({ item, index, navigation }: Props) {
       _dark={{ bg: "gray.900" }}
       rounded="lg"
     >
-      <Box>
+      <Stack space={1}>
         <Pressable
           onPress={() =>
             navigation.navigate("Profile", {
@@ -218,6 +220,8 @@ export function QueueItem({ item, index, navigation }: Props) {
           }
         >
           <HStack alignItems="center">
+            <Heading fontWeight="extrabold">{item.rider.name}</Heading>
+            <Spacer />
             <Avatar
               mr={2}
               size={45}
@@ -225,21 +229,8 @@ export function QueueItem({ item, index, navigation }: Props) {
                 uri: item.rider.photoUrl ? item.rider.photoUrl : undefined,
               }}
             />
-            <Heading>{item.rider.name}</Heading>
           </HStack>
         </Pressable>
-        <Text>
-          <Text bold mr={2}>
-            Entered Queue
-          </Text>{" "}
-          <Text>
-            {new Date(item.start * 1000).toLocaleString("en-US", {
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            })}
-          </Text>
-        </Text>
         <Text>
           <Text bold>Group Size</Text> <Text>{item.groupSize}</Text>
         </Text>
@@ -255,7 +246,7 @@ export function QueueItem({ item, index, navigation }: Props) {
           </Text>{" "}
           <Text>{item.destination}</Text>
         </Text>
-      </Box>
+      </Stack>
       <HStack space={2} mt={2}>
         <AcceptDenyButton type="deny" item={item} />
         <AcceptDenyButton type="accept" item={item} />

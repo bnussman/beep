@@ -80,8 +80,8 @@ export async function updatePushToken(
 function handleNotification(notification: Notifications.Notification): void {
   // @TODO toast if we ever can
   Vibration.vibrate();
-  Toast.show({
-    title: notification.request.content.title,
-    description: notification.request.content.body,
-  });
+  // Toast.show({
+  //   title: notification.request.content.title,
+  //   description: notification.request.content.body,
+  // });
 }

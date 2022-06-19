@@ -30,7 +30,7 @@ import {
   NATIVE_BASE_CONFIG,
   NATIVE_BASE_THEME,
 } from "./utils/constants";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createStackNavigator();
 init();
@@ -94,7 +94,7 @@ function Beep() {
             headerTintColor: colorMode === "dark" ? "white" : "black",
           }}
         >
-          {!user ? 
+          {!user ? (
             <>
               <Stack.Screen
                 options={{ headerShown: false }}
@@ -107,7 +107,7 @@ function Beep() {
                 component={ForgotPasswordScreen}
               />
             </>
-            :
+          ) : (
             <>
               <Stack.Screen
                 options={{ headerShown: false }}
@@ -115,11 +115,19 @@ function Beep() {
                 component={BeepDrawer}
               />
               <Stack.Screen name="Profile" component={ProfileScreen} />
-              <Stack.Screen name="Report" component={ReportScreen} options={{ presentation: "modal" }} />
-              <Stack.Screen name="Rate" component={RateScreen} options={{ presentation: "modal" }} />
+              <Stack.Screen
+                name="Report"
+                component={ReportScreen}
+                options={{ presentation: "modal" }}
+              />
+              <Stack.Screen
+                name="Rate"
+                component={RateScreen}
+                options={{ presentation: "modal" }}
+              />
               <Stack.Screen name="Pick Driver" component={PickBeepScreen} />
             </>
-          }
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </>
@@ -128,7 +136,7 @@ function Beep() {
 
 function App2() {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <NativeBaseProvider
         theme={NATIVE_BASE_THEME}
         colorModeManager={colorModeManager}
