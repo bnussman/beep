@@ -1,5 +1,4 @@
 import React from "react";
-import ActionButton from "../../components/ActionButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { useUser } from "../../utils/useUser";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -18,6 +17,7 @@ import {
   Heading,
   Spacer,
   Stack,
+  Icon,
 } from "native-base";
 
 interface Props {
@@ -37,32 +37,6 @@ export function QueueItem({ item, index, navigation }: Props) {
     }
   }
 
-  function handleVenmo(groupSize: string | number, venmo: string): void {
-    if (Number(groupSize) > 1) {
-      Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${
-          (user?.groupRate || 0) * Number(groupSize)
-        }&note=Beep`
-      );
-    } else {
-      Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user?.singlesRate}&note=Beep`
-      );
-    }
-  }
-
-  function handleCashApp(groupSize: string | number, cashapp: string): void {
-    if (Number(groupSize) > 1) {
-      Linking.openURL(
-        `https://cash.app/$${cashapp}/${
-          Number(groupSize) * (user?.groupRate || 0)
-        }`
-      );
-    } else {
-      Linking.openURL(`https://cash.app/$${cashapp}/${user?.singlesRate || 0}`);
-    }
-  }
-
   if (item.isAccepted) {
     return (
       <Box
@@ -71,7 +45,7 @@ export function QueueItem({ item, index, navigation }: Props) {
         px={4}
         py={4}
         _light={{ bg: "coolGray.100" }}
-        _dark={{ bg: "gray.900" }}
+        _dark={{ bg: "gray.800" }}
         rounded="lg"
       >
         <Flex
@@ -105,7 +79,8 @@ export function QueueItem({ item, index, navigation }: Props) {
                       Linking.openURL("tel:" + item.rider.phone);
                     }}
                     endIcon={
-                      <MaterialCommunityIcons
+                      <Icon
+                        as={MaterialCommunityIcons}
                         name="phone"
                         color="white"
                         size={22}
@@ -117,7 +92,8 @@ export function QueueItem({ item, index, navigation }: Props) {
                       Linking.openURL("sms:" + item.rider.phone);
                     }}
                     endIcon={
-                      <MaterialCommunityIcons
+                      <Icon
+                        as={MaterialCommunityIcons}
                         name="message-text"
                         color="white"
                         size={22}
@@ -147,31 +123,14 @@ export function QueueItem({ item, index, navigation }: Props) {
             </Text>
           </Box>
         </Flex>
-        <VStack space={2}>
-          {item.rider?.venmo ? (
-            <Button
-              colorScheme="blue"
-              variant="subtle"
-              onPress={() => handleVenmo(item.groupSize, item.rider.venmo!)}
-            >
-              Request Money from Rider with Venmo
-            </Button>
-          ) : null}
-          {item.rider?.cashapp ? (
-            <Button
-              colorScheme="green"
-              variant="subtle"
-              onPress={() => handleCashApp(item.groupSize, item.rider.cashapp!)}
-            >
-              Request Money from Rider with Cash App
-            </Button>
-          ) : null}
+        <VStack space={2} mt={2}>
           {item.state <= 1 ? (
             <Button
               colorScheme="tertiary"
               onPress={() => handleDirections("Current+Location", item.origin)}
               endIcon={
-                <MaterialCommunityIcons
+                <Icon
+                  as={MaterialCommunityIcons}
                   name="map-legend"
                   color="white"
                   size={22}
@@ -184,7 +143,8 @@ export function QueueItem({ item, index, navigation }: Props) {
             <Button
               onPress={() => handleDirections(item.origin, item.destination)}
               endIcon={
-                <MaterialCommunityIcons
+                <Icon
+                  as={MaterialCommunityIcons}
                   name="map-legend"
                   color="white"
                   size={22}
@@ -194,7 +154,6 @@ export function QueueItem({ item, index, navigation }: Props) {
               Get Directions for Beep
             </Button>
           )}
-          <ActionButton item={item} index={index} />
         </VStack>
       </Box>
     );
@@ -207,7 +166,7 @@ export function QueueItem({ item, index, navigation }: Props) {
       px={4}
       py={4}
       _light={{ bg: "coolGray.100" }}
-      _dark={{ bg: "gray.900" }}
+      _dark={{ bg: "gray.800" }}
       rounded="lg"
     >
       <Stack space={1}>

@@ -19,7 +19,7 @@ import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
-import { Alert as NativeAlert, AppState, AppStateStatus } from "react-native";
+import { Alert as NativeAlert, AppState, AppStateStatus, Linking } from "react-native";
 import {
   GetInitialQueueQuery,
   UpdateBeepSettingsMutation,
@@ -331,6 +331,32 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     }
   }
 
+  function handleVenmo(groupSize: string | number, venmo: string): void {
+    if (Number(groupSize) > 1) {
+      Linking.openURL(
+        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${
+          (user?.groupRate || 0) * Number(groupSize)
+        }&note=Beep`
+      );
+    } else {
+      Linking.openURL(
+        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user?.singlesRate}&note=Beep`
+      );
+    }
+  }
+
+  function handleCashApp(groupSize: string | number, cashapp: string): void {
+    if (Number(groupSize) > 1) {
+      Linking.openURL(
+        `https://cash.app/$${cashapp}/${
+          Number(groupSize) * (user?.groupRate || 0)
+        }`
+      );
+    } else {
+      Linking.openURL(`https://cash.app/$${cashapp}/${user?.singlesRate || 0}`);
+    }
+  }
+
   useEffect(() => {
     const init = async () => {
       if (user?.isBeeping) {
@@ -458,6 +484,28 @@ export function StartBeepingScreen(props: Props): JSX.Element {
               </Stack>
               <Spacer />
               <Stack space={3}>
+                {queue[0].rider.cashapp ? (
+                  <Button
+                    colorScheme="green"
+                    variant="subtle"
+                    onPress={() =>
+                      handleCashApp(queue[0].groupSize, item.rider.cashapp!)
+                    }
+                  >
+                    Request Money from Rider with Cash App
+                  </Button>
+                ) : null}
+                {queue[0].rider?.venmo ? (
+                  <Button
+                    colorScheme="blue"
+                    variant="subtle"
+                    onPress={() =>
+                      handleVenmo(queue[0].groupSize, queue[0].rider.venmo!)
+                    }
+                  >
+                    Request Money from Rider with Venmo
+                  </Button>
+                ) : null}
                 <Button
                   colorScheme="red"
                   backgroundColor="red.400"
