@@ -1,10 +1,10 @@
 import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Linking, Pressable } from "react-native";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Alert, Linking, Pressable } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
-import { Unpacked } from "../../utils/constants";
+import { isMobile, Unpacked } from "../../utils/constants";
 import { openDirections } from "../../utils/links";
 import {
   Flex,
@@ -18,7 +18,12 @@ import {
   Spacer,
   Stack,
   Icon,
+  Menu,
+  Divider,
 } from "native-base";
+import { CancelBeep, CancelButton } from "../../components/CancelButton";
+import { ApolloError, useMutation } from "@apollo/client";
+import { printStars } from "../../components/Stars";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -27,6 +32,36 @@ interface Props {
 }
 
 export function QueueItem({ item, navigation }: Props) {
+  const [cancel] = useMutation(CancelBeep);
+
+  const onCancelPress = () => {
+    if (isMobile) {
+      Alert.alert(
+        "Cancel Beep?",
+        "Are you sure you want to cancel this beep?",
+        [
+          {
+            text: "No",
+            style: "cancel",
+          },
+          {
+            text: "Yes",
+            onPress: onCancel,
+          },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      onCancel();
+    }
+  };
+
+  const onCancel = () => {
+    cancel({ variables: { id: item.id } }).catch((error: ApolloError) => {
+      alert(error.message);
+    });
+  };
+
   if (item.isAccepted) {
     return (
       <Box
@@ -38,113 +73,114 @@ export function QueueItem({ item, navigation }: Props) {
         _dark={{ bg: "gray.800" }}
         rounded="lg"
       >
-        <Flex
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Box>
-            <Pressable
-              onPress={() =>
-                navigation.navigate("Profile", {
-                  id: item.rider.id,
-                  beep: item.id,
-                })
-              }
-            >
-              <Flex direction="row" alignItems="center">
-                <Avatar
-                  size={50}
-                  mr={2}
-                  source={{
-                    uri: item.rider.photoUrl ? item.rider.photoUrl : undefined,
-                  }}
-                />
-                <Text bold fontSize="xl">
+        <Box>
+          <Pressable
+            onPress={() =>
+              navigation.navigate("Profile", {
+                id: item.rider.id,
+                beep: item.id,
+              })
+            }
+          >
+            <HStack space={2} alignItems="center">
+              <Avatar
+                size={50}
+                source={{
+                  uri: item.rider.photoUrl ? item.rider.photoUrl : undefined,
+                }}
+              />
+              <Stack>
+                <Text fontWeight="extrabold" fontSize="xl">
                   {item.rider.name}
                 </Text>
-                <HStack space={2} ml={4}>
-                  <Button
-                    onPress={() => {
-                      Linking.openURL("tel:" + item.rider.phone);
-                    }}
-                    endIcon={
-                      <Icon
-                        as={MaterialCommunityIcons}
-                        name="phone"
-                        color="white"
-                        size={22}
-                      />
-                    }
-                  />
-                  <Button
-                    onPress={() => {
-                      Linking.openURL("sms:" + item.rider.phone);
-                    }}
-                    endIcon={
-                      <Icon
-                        as={MaterialCommunityIcons}
-                        name="message-text"
-                        color="white"
-                        size={22}
-                      />
-                    }
-                  />
-                </HStack>
-              </Flex>
-            </Pressable>
-            <Text>
-              <Text bold mr={2}>
-                Group Size
-              </Text>{" "}
-              <Text>{item.groupSize}</Text>
-            </Text>
-            <Text>
-              <Text bold mr={2}>
-                Pick Up
-              </Text>{" "}
-              <Text>{item.origin}</Text>
-            </Text>
-            <Text>
-              <Text bold mr={2}>
-                Drop Off
-              </Text>{" "}
-              <Text>{item.destination}</Text>
-            </Text>
-          </Box>
-        </Flex>
-        <VStack space={2} mt={2}>
-          {item.state <= 1 ? (
-            <Button
-              colorScheme="tertiary"
-              onPress={() => openDirections("Current+Location", item.origin)}
-              endIcon={
-                <Icon
-                  as={MaterialCommunityIcons}
-                  name="map-legend"
-                  color="white"
-                  size={22}
-                />
-              }
-            >
-              Get Directions to Rider
-            </Button>
-          ) : (
-            <Button
-              onPress={() => openDirections(item.origin, item.destination)}
-              endIcon={
-                <Icon
-                  as={MaterialCommunityIcons}
-                  name="map-legend"
-                  color="white"
-                  size={22}
-                />
-              }
-            >
-              Get Directions for Beep
-            </Button>
-          )}
-        </VStack>
+                <Text fontSize="xs">
+                  {item.rider.rating !== null && item.rider.rating !== undefined
+                    ? printStars(item.rider.rating)
+                    : null}
+                </Text>
+              </Stack>
+              <Spacer />
+              <Menu
+                key={`menu-${item.id}`}
+                w="190"
+                trigger={(triggerProps) => (
+                  <Pressable
+                    accessibilityLabel="More options menu"
+                    {...triggerProps}
+                  >
+                    <Icon
+                      as={Entypo}
+                      color="gray.400"
+                      name="dots-three-horizontal"
+                      size={19}
+                      mr={4}
+                    />
+                  </Pressable>
+                )}
+              >
+                <Menu.Item
+                  onPress={() => Linking.openURL("tel:" + item.rider.phone)}
+                >
+                  <HStack alignItems="center">
+                    <Text>Call</Text>
+                    <Spacer />
+                    <Icon as={MaterialCommunityIcons} name="phone" />
+                  </HStack>
+                </Menu.Item>
+                <Menu.Item
+                  onPress={() => Linking.openURL("sms:" + item.rider.phone)}
+                >
+                  <HStack alignItems="center">
+                    <Text>Text</Text>
+                    <Spacer />
+                    <Icon as={MaterialCommunityIcons} name="message-text" />
+                  </HStack>
+                </Menu.Item>
+                <Menu.Item
+                  onPress={() =>
+                    openDirections("Current+Location", item.origin)
+                  }
+                >
+                  <HStack alignItems="center">
+                    <Text>Directions to Rider</Text>
+                    <Spacer />
+                    <Icon as={MaterialCommunityIcons} name="map-legend" />
+                  </HStack>
+                </Menu.Item>
+                <Divider my={1} w="100%" />
+                <Menu.Item onPress={onCancelPress}>
+                  <HStack alignItems="center">
+                    <Text color="red.400">Cancel Beep</Text>
+                    <Spacer />
+                    <Icon
+                      as={MaterialCommunityIcons}
+                      name="cancel"
+                      color="red.400"
+                    />
+                  </HStack>
+                </Menu.Item>
+              </Menu>
+            </HStack>
+          </Pressable>
+          <Text>
+            <Text bold mr={2}>
+              Group Size
+            </Text>{" "}
+            <Text>{item.groupSize}</Text>
+          </Text>
+          <Text>
+            <Text bold mr={2}>
+              Pick Up
+            </Text>{" "}
+            <Text>{item.origin}</Text>
+          </Text>
+          <Text>
+            <Text bold mr={2}>
+              Drop Off
+            </Text>{" "}
+            <Text>{item.destination}</Text>
+          </Text>
+        </Box>
       </Box>
     );
   }
@@ -169,7 +205,16 @@ export function QueueItem({ item, navigation }: Props) {
           }
         >
           <HStack alignItems="center">
-            <Heading fontWeight="extrabold">{item.rider.name}</Heading>
+            <Stack>
+              <Text fontWeight="extrabold" fontSize="xl">
+                {item.rider.name}
+              </Text>
+              <Text fontSize="xs">
+                {item.rider.rating !== null && item.rider.rating !== undefined
+                  ? printStars(item.rider.rating)
+                  : null}
+              </Text>
+            </Stack>
             <Spacer />
             <Avatar
               mr={2}

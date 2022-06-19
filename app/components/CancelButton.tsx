@@ -10,7 +10,7 @@ interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
 }
 
-const CancelBeep = gql`
+export const CancelBeep = gql`
   mutation CancelBeep($id: String!) {
     cancelBeep(id: $id)
   }

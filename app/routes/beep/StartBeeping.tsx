@@ -20,7 +20,12 @@ import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
 import { Beep } from "./Beep";
-import { Alert as NativeAlert, AppState, AppStateStatus } from "react-native";
+import {
+  Alert as NativeAlert,
+  AppState,
+  AppStateStatus,
+  RefreshControl,
+} from "react-native";
 import {
   GetInitialQueueQuery,
   UpdateBeepSettingsMutation,
@@ -36,6 +41,8 @@ import {
   Box,
   Spacer,
   HStack,
+  useColorMode,
+  Flex,
 } from "native-base";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
@@ -132,6 +139,7 @@ export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen(props: Props) {
   const { user } = useUser();
+  const { colorMode } = useColorMode();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [masksRequired, setMasksRequired] = useState(user?.masksRequired);
@@ -155,12 +163,12 @@ export function StartBeepingScreen(props: Props) {
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
   // variables
-  const snapPoints = useMemo(() => ["20%", "75%"], []);
+  const snapPoints = useMemo(() => ["20%", "85%"], []);
 
   // callbacks
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  // const handleSheetChanges = useCallback((index: number) => {
+  //   console.log("handleSheetChanges", index);
+  // }, []);
 
   useEffect(() => {
     AppState.addEventListener("change", _handleAppStateChange);
@@ -348,12 +356,18 @@ export function StartBeepingScreen(props: Props) {
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-expect-error This works so I'm leaving it as is
         const newQueue = subscriptionData.data.getBeeperUpdates;
+        if (prev.getQueue.length < newQueue.length) {
+          bottomSheetRef.current?.expand();
+        }
         return Object.assign({}, prev, {
           getQueue: newQueue,
         });
       },
     });
   }
+
+  const isRefreshing = Boolean(data) && loading;
+
   if (!isBeeping) {
     return (
       <Container keyboard alignItems="center" height="100%">
@@ -412,14 +426,17 @@ export function StartBeepingScreen(props: Props) {
     if (queue && queue?.length > 0) {
       return (
         <Container alignItems="center">
-          {queue[0] && <Beep beep={queue[0]} />}
+          <Flex
+            w="100%"
+            height={queue.length > 1 ? "80%" : "100%"}
+            px={6}
+            py={4}
+            pb={queue.length > 1 ? 4 : 16}
+          >
+            {queue[0] && <Beep beep={queue[0]} navigation={props.navigation} />}
+          </Flex>
           {queue.length > 1 ? (
-            <BottomSheet
-              ref={bottomSheetRef}
-              index={1}
-              snapPoints={snapPoints}
-              onChange={handleSheetChanges}
-            >
+            <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
               <Box pt={1} px={4}>
                 <HStack alignItems="center" mb={2}>
                   <Heading fontWeight="extrabold" size="2xl">
@@ -444,6 +461,13 @@ export function StartBeepingScreen(props: Props) {
                 onRefresh={refetch}
                 data={queue.filter((entry) => entry.id !== queue[0]?.id)}
                 keyExtractor={(item) => item.id}
+                refreshControl={
+                  <RefreshControl
+                    tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+                    refreshing={isRefreshing}
+                    onRefresh={refetch}
+                  />
+                }
                 renderItem={({
                   item,
                   index,

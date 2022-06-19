@@ -39,13 +39,13 @@ export function openVenmo(
 
   if (groupSize > 1) {
     Linking.openURL(
-      `venmo://paycharge?txn=pay&recipients=${username}&amount=${
+      `venmo://paycharge?txn=charge&recipients=${username}&amount=${
         groupRate * groupSize
       }&note=Beep`
     );
   } else {
     Linking.openURL(
-      `venmo://paycharge?txn=pay&recipients=${username}&amount=${singlesRate}&note=Beep`
+      `venmo://paycharge?txn=charge&recipients=${username}&amount=${singlesRate}&note=Beep`
     );
   }
 }

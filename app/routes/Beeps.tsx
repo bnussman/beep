@@ -56,15 +56,16 @@ export function BeepsScreen(props: Props) {
   const { user } = useUser();
   const { colorMode } = useColorMode();
 
-  const { data, loading, error, fetchMore, refetch } = useQuery<GetBeepHistoryQuery>(
-    GetBeepHistory,
-    { variables: { id: user?.id, offset: 0, show: 10 }, notifyOnNetworkStatusChange: true }
-  );
+  const { data, loading, error, fetchMore, refetch } =
+    useQuery<GetBeepHistoryQuery>(GetBeepHistory, {
+      variables: { id: user?.id, offset: 0, show: 10 },
+      notifyOnNetworkStatusChange: true,
+    });
 
   const beeps = data?.getBeeps.items;
   const count = data?.getBeeps.count || 0;
   const isRefreshing = Boolean(data) && loading;
-  const canLoadMore = beeps && count && (beeps?.length < count);
+  const canLoadMore = beeps && count && beeps?.length < count;
 
   const getMore = () => {
     if (!canLoadMore || isRefreshing) return;
@@ -72,7 +73,7 @@ export function BeepsScreen(props: Props) {
     fetchMore({
       variables: {
         offset: beeps?.length || 0,
-        limit: 10
+        limit: 10,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) {
@@ -82,10 +83,10 @@ export function BeepsScreen(props: Props) {
         return {
           getBeeps: {
             items: [...prev.getBeeps.items, ...fetchMoreResult.getBeeps.items],
-            count: fetchMoreResult.getBeeps.count
-          }
+            count: fetchMoreResult.getBeeps.count,
+          },
         };
-      }
+      },
     });
   };
 
@@ -104,7 +105,7 @@ export function BeepsScreen(props: Props) {
     index,
   }: {
     item: Unpacked<GetBeepHistoryQuery["getBeeps"]["items"]>;
-    index: number,
+    index: number;
   }) => {
     const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
     return (
@@ -179,7 +180,7 @@ export function BeepsScreen(props: Props) {
           w="100%"
           data={beeps}
           renderItem={renderItem}
-          keyExtractor={beep => beep.id}
+          keyExtractor={(beep) => beep.id}
           onEndReached={getMore}
           onEndReachedThreshold={0.1}
           ListFooterComponent={renderFooter()}

@@ -1,26 +1,33 @@
 import React from "react";
 import { Unpacked } from "../../utils/constants";
-import { openCashApp, openVenmo } from "../../utils/links";
+import { openCashApp, openDirections, openVenmo } from "../../utils/links";
 import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
 import { GetInitialQueueQuery } from "../../generated/graphql";
+import { CancelButton } from "../../components/CancelButton";
+import { AcceptDenyButton } from "../../components/AcceptDenyButton";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Linking } from "react-native";
+import { Navigation } from "../../utils/Navigation";
 import { printStars } from "../../components/Stars";
 import {
   Avatar,
   Box,
   Button,
-  Flex,
+  Divider,
   Heading,
   HStack,
+  Icon,
+  Menu,
+  Pressable,
   Spacer,
   Stack,
   Text,
 } from "native-base";
-import { CancelButton } from "../../components/CancelButton";
-import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  navigation: Navigation;
 }
 
 export function Beep(props: Props) {
@@ -28,26 +35,86 @@ export function Beep(props: Props) {
   const { user } = useUser();
 
   return (
-    <Flex w="100%" height="80%" px={6} py={4}>
-      <HStack alignItems="center" space={4}>
-        <Stack>
-          <Heading fontWeight="extrabold" size="xl">
-            {beep.rider.name}
-          </Heading>
-          <Text fontSize="xs">
-            {beep.rider.rating !== null && beep.rider.rating !== undefined
-              ? printStars(beep.rider.rating)
-              : null}
-          </Text>
-        </Stack>
-        <Spacer />
-        <Avatar
-          size="xl"
-          source={
-            beep.rider.photoUrl ? { uri: beep.rider.photoUrl } : undefined
-          }
-        />
-      </HStack>
+    <>
+      <Pressable
+        onPress={() =>
+          props.navigation.navigate("Profile", {
+            id: beep.rider.id,
+            beep: beep.id,
+          })
+        }
+      >
+        <HStack alignItems="center" space={4}>
+          <Stack flexShrink={1}>
+            <Heading fontWeight="extrabold" size="xl">
+              {beep.rider.name}
+            </Heading>
+            <Text fontSize="xs">
+              {beep.rider.rating !== null && beep.rider.rating !== undefined
+                ? printStars(beep.rider.rating)
+                : null}
+            </Text>
+          </Stack>
+          {beep.isAccepted && (
+            <Menu
+              key={`menu-${beep.id}`}
+              w="190"
+              trigger={(triggerProps) => (
+                <Pressable
+                  accessibilityLabel="More options menu"
+                  {...triggerProps}
+                >
+                  <Icon
+                    as={Entypo}
+                    color="gray.400"
+                    name="dots-three-horizontal"
+                    size={19}
+                    mr={4}
+                  />
+                </Pressable>
+              )}
+            >
+              <Menu.Item
+                onPress={() => Linking.openURL("tel:" + beep.rider.phone)}
+              >
+                <HStack alignItems="center">
+                  <Text>Call</Text>
+                  <Spacer />
+                  <Icon as={MaterialCommunityIcons} name="phone" />
+                </HStack>
+              </Menu.Item>
+              <Menu.Item
+                onPress={() => Linking.openURL("sms:" + beep.rider.phone)}
+              >
+                <HStack alignItems="center">
+                  <Text>Text</Text>
+                  <Spacer />
+                  <Icon as={MaterialCommunityIcons} name="message-text" />
+                </HStack>
+              </Menu.Item>
+              {/* <Divider my={1} w="100%" />
+              <Menu.Item onPress={() => null}>
+                <HStack alignItems="center">
+                  <Text color="red.400">Cancel Beep</Text>
+                  <Spacer />
+                  <Icon
+                    as={MaterialCommunityIcons}
+                    name="cancel"
+                    color="red.400"
+                  />
+                </HStack>
+              </Menu.Item> */}
+            </Menu>
+          )}
+          <Spacer />
+          <Avatar
+            size="xl"
+            source={
+              beep.rider.photoUrl ? { uri: beep.rider.photoUrl } : undefined
+            }
+          />
+        </HStack>
+      </Pressable>
       <Stack space={2} mt={4}>
         <Box>
           <Heading size="sm" fontWeight="extrabold">
@@ -109,11 +176,41 @@ export function Beep(props: Props) {
                 Request Money from Rider with Venmo
               </Button>
             ) : null}
+            {beep.state <= 1 ? (
+              <Button
+                colorScheme="green"
+                onPress={() => openDirections("Current+Location", beep.origin)}
+                endIcon={
+                  <Icon
+                    as={MaterialCommunityIcons}
+                    name="map-legend"
+                    color="white"
+                    size={22}
+                  />
+                }
+              >
+                Get Directions to Rider
+              </Button>
+            ) : (
+              <Button
+                onPress={() => openDirections(beep.origin, beep.destination)}
+                endIcon={
+                  <Icon
+                    as={MaterialCommunityIcons}
+                    name="map-legend"
+                    color="white"
+                    size={22}
+                  />
+                }
+              >
+                Get Directions for Beep
+              </Button>
+            )}
             <CancelButton item={beep} />
             <ActionButton item={beep} />
           </>
         )}
       </Stack>
-    </Flex>
+    </>
   );
 }

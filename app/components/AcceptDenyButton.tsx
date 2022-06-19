@@ -53,10 +53,13 @@ export function AcceptDenyButton(props: Props) {
 
   return (
     <Button
+      flexGrow={isAccept ? 1 : undefined}
       colorScheme={isAccept ? "green" : "red"}
       _text={{ color: "white" }}
       isLoading={loading}
       onPress={onPress}
+      bg={isAccept ? "green.500" : "red.500"}
+      _pressed={{ bg: isAccept ? "green.600" : "red.600" }}
       endIcon={
         <Icon
           as={MaterialCommunityIcons}
