@@ -2235,7 +2235,7 @@
   resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-13.0.0.tgz#e2989b85e95a82bce216f88cf8fb583ab050ec95"
   integrity sha512-TI+l71+5aSKnShYclFa14Kum+hQMZ86b95SH6tQUG3qZEmLTarvWpKwqtTwQKqvlJSJrpFiSFu3eCuZokY6zWA==
 
-"@expo/webpack-config@~0.16.21":
+"@expo/webpack-config@^0.16.24":
   version "0.16.24"
   resolved "https://registry.yarnpkg.com/@expo/webpack-config/-/webpack-config-0.16.24.tgz#b5068cc7b37e65f85abc26a4d3a33cb890ec34d1"
   integrity sha512-Nml2uvNOpFKEyYvFrn1bTVXZWKcBGWO+duk+CuVT3WUG0istmPbP7qeneqzQ51oTbvbmxl8hUQ6EqEFFyubF/g==
