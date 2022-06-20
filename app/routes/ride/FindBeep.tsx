@@ -8,7 +8,6 @@ import { Share, Linking, AppState, AppStateStatus } from "react-native";
 import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
 import { client } from "../../utils/Apollo";
-import { Tags } from "./Tags";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
@@ -264,7 +263,7 @@ export function MainFindBeepScreen(props: Props) {
       lastKnowLocation = await Location.getCurrentPositionAsync();
     }
 
-    return props.navigation.navigate("Pick Driver", {
+    return props.navigation.navigate("Choose Beeper", {
       latitude: lastKnowLocation.coords.latitude,
       longitude: lastKnowLocation.coords.longitude,
       handlePick: (id: string) => chooseBeep(id),
@@ -409,16 +408,27 @@ export function MainFindBeepScreen(props: Props) {
   if (beep.isAccepted) {
     return (
       <Container pt={2}>
-        <Center>
+        <Stack alignItems="center" space={4}>
           <Avatar
             size={100}
             source={{
               uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
             }}
           />
-          <Heading>{beep.beeper.name}</Heading>
-          <Text>is your beeper!</Text>
-          <Tags user={beep.beeper} />
+          <Center>
+            <Heading fontWeight="extrabold">{beep.beeper.name}</Heading>
+            <Text>is your beeper!</Text>
+          </Center>
+          <HStack space={4}>
+            <Box alignItems="center">
+              <Text fontWeight="extrabold">Single</Text>
+              <Text>${beep.beeper.singlesRate}</Text>
+            </Box>
+            <Box alignItems="center">
+              <Text fontWeight="extrabold">Group</Text>
+              <Text>${beep.beeper.groupRate}</Text>
+            </Box>
+          </HStack>
           {beep.position <= 0 && (
             <Box
               _light={{ bg: "coolGray.50" }}
@@ -503,7 +513,7 @@ export function MainFindBeepScreen(props: Props) {
               <LeaveButton beepersId={beep.beeper.id} />
             ) : null}
           </VStack>
-        </Center>
+        </Stack>
       </Container>
     );
   } else {
@@ -516,13 +526,12 @@ export function MainFindBeepScreen(props: Props) {
               uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
             }}
           />
-          <Box alignItems="center">
+          <Center>
             <Text>Waiting on</Text>
             <Heading>{beep.beeper.name}</Heading>
             <Text>to accept your request.</Text>
-          </Box>
-          <Tags user={beep.beeper} />
-          <Box alignItems="center">
+          </Center>
+          <Center>
             <Text>
               {beep.beeper.first}
               {"'"}
@@ -532,7 +541,7 @@ export function MainFindBeepScreen(props: Props) {
               Rates
             </Text>
             <Text fontWeight="thin">per person</Text>
-          </Box>
+          </Center>
           <HStack space={4}>
             <Box alignItems="center">
               <Text fontWeight="extrabold">Single</Text>

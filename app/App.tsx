@@ -125,7 +125,10 @@ function Beep() {
                 component={RateScreen}
                 options={{ presentation: "modal" }}
               />
-              <Stack.Screen name="Pick Driver" component={PickBeepScreen} />
+              <Stack.Screen
+                name="Choose Beeper"
+                component={PickBeepScreen} 
+              />
             </>
           )}
         </Stack.Navigator>

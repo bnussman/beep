@@ -106,7 +106,7 @@ export class RiderResolver {
     const connection = ctx.em.getConnection();
 
     const raw: User[] = await connection.execute(`
-        SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude})) <= ${input.radius} * 1609.34 AND is_beeping = true
+        SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude})) <= ${input.radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude}))
     `);
 
     const data = raw.map(user => ctx.em.map(User, user));
