@@ -138,7 +138,8 @@ export function MainFindBeepScreen(props: Props) {
     }
   );
 
-  const [getETA, { data: eta, error: etaError }] = useLazyQuery<GetEtaQuery>(GetETA);
+  const [getETA, { data: eta, error: etaError }] =
+    useLazyQuery<GetEtaQuery>(GetETA);
 
   const [groupSize, setGroupSize] = useState<string>("");
   const [origin, setOrigin] = useState<string>("");
@@ -468,7 +469,12 @@ export function MainFindBeepScreen(props: Props) {
               colorScheme="green"
               onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
               endIcon={
-                <Icon as={MaterialCommunityIcons} name="phone" color="white" size={22} />
+                <Icon
+                  as={MaterialCommunityIcons}
+                  name="phone"
+                  color="white"
+                  size={22}
+                />
               }
             >
               Call Beeper
