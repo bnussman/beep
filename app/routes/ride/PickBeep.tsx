@@ -10,8 +10,6 @@ import {
   Text,
   Spinner,
   FlatList,
-  Divider,
-  Flex,
   Badge,
   Pressable,
   Avatar,
@@ -55,15 +53,17 @@ export function PickBeepScreen(props: Props) {
   const { navigation, route } = props;
   const { colorMode } = useColorMode();
 
-  const { data, loading, error, refetch } =
-    useQuery<GetBeeperListQuery>(GetBeepers, {
+  const { data, loading, error, refetch } = useQuery<GetBeeperListQuery>(
+    GetBeepers,
+    {
       variables: {
         latitude: route.params.latitude,
         longitude: route.params.longitude,
         radius: 20,
       },
       notifyOnNetworkStatusChange: true,
-    });
+    }
+  );
 
   const beepers = data?.getBeeperList;
   const isRefreshing = Boolean(data) && loading;
@@ -73,7 +73,13 @@ export function PickBeepScreen(props: Props) {
     navigation.goBack();
   }
 
-  const renderItem = ({ item, index }: { item: Unpacked<GetBeeperListQuery["getBeeperList"]>, index: number }) => (
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: Unpacked<GetBeeperListQuery["getBeeperList"]>;
+    index: number;
+  }) => (
     <Box
       mx={4}
       my={2}
@@ -88,14 +94,18 @@ export function PickBeepScreen(props: Props) {
         <HStack alignItems="center">
           <Stack flexShrink={1}>
             <HStack alignItems="center" mb={2}>
-              <Avatar mr={2} size="45px" source={{ uri: item.photoUrl || "" }} />
+              <Avatar
+                mr={2}
+                size="45px"
+                source={{ uri: item.photoUrl || "" }}
+              />
               <Stack>
-                <Text fontWeight="extrabold" fontSize="lg">{item.name}</Text>
-                {item.rating !== null && item.rating !== undefined ? 
-                  <Text fontSize="xs">
-                    {printStars(item.rating)}
-                  </Text>
-                  : null}
+                <Text fontWeight="extrabold" fontSize="lg">
+                  {item.name}
+                </Text>
+                {item.rating !== null && item.rating !== undefined ? (
+                  <Text fontSize="xs">{printStars(item.rating)}</Text>
+                ) : null}
               </Stack>
             </HStack>
             <Box>
@@ -109,18 +119,34 @@ export function PickBeepScreen(props: Props) {
               </Text>
               <Text>
                 <Text bold>Rates </Text>
-                <Text>${item.singlesRate} / ${item.groupRate}</Text>
+                <Text>
+                  ${item.singlesRate} / ${item.groupRate}
+                </Text>
               </Text>
             </Box>
           </Stack>
           <Spacer />
           <Stack space={2}>
             {index === 0 ? (
-              <Badge colorScheme="gray" variant="solid" fontWeight="extrabold" fontSize="xs">
+              <Badge
+                colorScheme="gray"
+                variant="solid"
+                fontWeight="extrabold"
+                fontSize="xs"
+              >
                 Closest to you 📍
-              </Badge>) : null}
-            {item.venmo ? <Badge bg="lightBlue.400" variant="solid" colorScheme="info">Venmo</Badge> : null}
-            {item.cashapp ? <Badge bg="green.400" variant="solid" colorScheme="success">Cash App</Badge> : null}
+              </Badge>
+            ) : null}
+            {item.venmo ? (
+              <Badge bg="lightBlue.400" variant="solid" colorScheme="info">
+                Venmo
+              </Badge>
+            ) : null}
+            {item.cashapp ? (
+              <Badge bg="green.400" variant="solid" colorScheme="success">
+                Cash App
+              </Badge>
+            ) : null}
           </Stack>
         </HStack>
       </Pressable>
@@ -151,7 +177,11 @@ export function PickBeepScreen(props: Props) {
         data={beepers}
         renderItem={renderItem}
         keyExtractor={(beeper) => beeper.id}
-        contentContainerStyle={beepers?.length === 0 ? { flex: 1, alignItems: "center", justifyContent: "center" } : undefined}
+        contentContainerStyle={
+          beepers?.length === 0
+            ? { flex: 1, alignItems: "center", justifyContent: "center" }
+            : undefined
+        }
         ListEmptyComponent={
           <>
             <Heading>Nobody is beeping</Heading>
