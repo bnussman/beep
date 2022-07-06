@@ -21,13 +21,13 @@ import {
   Input,
   Button,
   Stack,
-  Avatar,
   FormControl,
   WarningOutlineIcon,
   InputGroup,
   InputLeftAddon,
   HStack,
 } from "native-base";
+import { Avatar } from "../../components/Avatar";
 
 const EditAccount = gql`
   mutation EditAccount(
@@ -229,8 +229,7 @@ export function EditProfileScreen() {
           </Stack>
           <Pressable onPress={() => handleUpdatePhoto()}>
             <Avatar
-              key={user?.photoUrl}
-              source={{ uri: photo?.uri || user?.photoUrl }}
+              url={photo?.uri ?? user?.photoUrl}
               size="xl"
             />
             {uploadLoading ? <Spinner /> : null}

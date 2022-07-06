@@ -10,13 +10,13 @@ import {
   Spinner,
   Text,
   FlatList,
-  Avatar,
   Box,
   Heading,
   HStack,
   Center,
   useColorMode,
 } from "native-base";
+import { Avatar } from "../components/Avatar";
 
 interface Props {
   navigation: Navigation;
@@ -128,9 +128,7 @@ export function BeepsScreen(props: Props) {
             <Avatar
               size={35}
               mr={2}
-              source={{
-                uri: otherUser.photoUrl ? otherUser.photoUrl : undefined,
-              }}
+              url={otherUser.photoUrl}
             />
             <Heading size="md">
               {user?.id === item.rider.id

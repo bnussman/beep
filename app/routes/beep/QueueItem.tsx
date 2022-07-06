@@ -6,24 +6,20 @@ import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { isMobile, Unpacked } from "../../utils/constants";
 import { openDirections } from "../../utils/links";
+import { CancelBeep } from "../../components/CancelButton";
+import { ApolloError, useMutation } from "@apollo/client";
+import { printStars } from "../../components/Stars";
+import { Avatar } from "../../components/Avatar";
 import {
-  Flex,
   Box,
-  Avatar,
   HStack,
-  VStack,
-  Button,
   Text,
-  Heading,
   Spacer,
   Stack,
   Icon,
   Menu,
   Divider,
 } from "native-base";
-import { CancelBeep, CancelButton } from "../../components/CancelButton";
-import { ApolloError, useMutation } from "@apollo/client";
-import { printStars } from "../../components/Stars";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -85,9 +81,7 @@ export function QueueItem({ item, navigation }: Props) {
             <HStack space={2} alignItems="center">
               <Avatar
                 size={50}
-                source={{
-                  uri: item.rider.photoUrl ? item.rider.photoUrl : undefined,
-                }}
+                url={item.rider.photoUrl}
               />
               <Stack>
                 <Text fontWeight="extrabold" fontSize="xl">
@@ -219,9 +213,7 @@ export function QueueItem({ item, navigation }: Props) {
             <Avatar
               mr={2}
               size={45}
-              source={{
-                uri: item.rider.photoUrl ? item.rider.photoUrl : undefined,
-              }}
+              url={item.rider.photoUrl}
             />
           </HStack>
         </Pressable>

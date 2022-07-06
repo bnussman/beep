@@ -5,17 +5,15 @@ import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { GetUserProfileQuery, User } from "../../generated/graphql";
+import { Avatar } from "../../components/Avatar";
 import {
   Spinner,
   Text,
   Button,
-  Avatar,
   Stack,
   HStack,
   Center,
   Heading,
-  Box,
-  Spacer,
 } from "native-base";
 
 interface Props {
@@ -106,9 +104,7 @@ export function ProfileScreen(props: Props) {
           <Avatar
             mt={4}
             size={40}
-            source={{
-              uri: data.getUser.photoUrl ? data.getUser.photoUrl : undefined,
-            }}
+            url={data.getUser.photoUrl}
           />
           <Heading size="2xl" fontWeight="extrabold">
             {data.getUser.name}

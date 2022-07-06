@@ -11,10 +11,8 @@ import { Linking } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { printStars } from "../../components/Stars";
 import {
-  Avatar,
   Box,
   Button,
-  Divider,
   Heading,
   HStack,
   Icon,
@@ -24,6 +22,7 @@ import {
   Stack,
   Text,
 } from "native-base";
+import { Avatar } from "../../components/Avatar";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -109,9 +108,7 @@ export function Beep(props: Props) {
           <Spacer />
           <Avatar
             size="xl"
-            source={
-              beep.rider.photoUrl ? { uri: beep.rider.photoUrl } : undefined
-            }
+            url={beep.rider.photoUrl}
           />
         </HStack>
       </Pressable>

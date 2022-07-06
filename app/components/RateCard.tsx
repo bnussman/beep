@@ -1,8 +1,9 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Avatar, Box, Flex, Heading, Pressable, Text } from "native-base";
+import { Box, Flex, Heading, Pressable, Text } from "native-base";
 import { GetRateDataQuery, User } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
+import { Avatar } from "./Avatar";
 
 export const GetRateData = gql`
   query GetRateData {
@@ -51,11 +52,7 @@ export function RateCard(props: Props): JSX.Element | null {
           <Avatar
             size={35}
             mr={2}
-            source={{
-              uri: data.getLastBeepToRate.beeper.photoUrl
-                ? data.getLastBeepToRate.beeper.photoUrl
-                : undefined,
-            }}
+            url={data.getLastBeepToRate.beeper.photoUrl}
           />
           <Text fontWeight="thin">{data?.getLastBeepToRate?.beeper.name}</Text>
         </Flex>

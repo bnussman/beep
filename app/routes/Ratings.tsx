@@ -10,15 +10,15 @@ import {
   Text,
   FlatList,
   Spinner,
-  Avatar,
   Flex,
   Box,
-  VStack,
   Spacer,
   Heading,
   Center,
   useColorMode,
+  Stack,
 } from "native-base";
+import { Avatar } from "../components/Avatar";
 
 interface Props {
   navigation: Navigation;
@@ -116,11 +116,9 @@ export function RatingsScreen(props: Props) {
             <Avatar
               size={50}
               mr={4}
-              source={{
-                uri: otherUser.photoUrl ? otherUser.photoUrl : undefined,
-              }}
+              url={otherUser.photoUrl}
             />
-            <VStack space={4}>
+            <Stack space={2}>
               <Text>
                 {user?.id === item.rater.id ? (
                   <Flex direction="row" alignItems="center">
@@ -144,7 +142,7 @@ export function RatingsScreen(props: Props) {
               </Text>
               <Text>{printStars(item.stars)}</Text>
               {item.message && <Text>{item.message}</Text>}
-            </VStack>
+            </Stack>
             <Spacer />
           </Flex>
         </Box>

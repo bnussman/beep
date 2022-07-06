@@ -27,7 +27,6 @@ import {
   HStack,
   Divider,
   Icon,
-  Avatar,
   Flex,
   Switch,
   useColorMode,
@@ -35,6 +34,7 @@ import {
   Button,
 } from "native-base";
 import { UserData, useUser } from "../utils/useUser";
+import { Avatar } from "../components/Avatar";
 
 const Logout = gql`
   mutation Logout {
@@ -113,12 +113,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       <VStack space={6} my={2} mx={2}>
         <Flex ml={2} direction="row" alignItems="center">
           <Avatar
-            key={user?.photoUrl}
             mr={4}
-            source={{ uri: !user?.photoUrl ? undefined : user.photoUrl }}
-          >
-            {user?.isBeeping ? <Avatar.Badge size={20} bg="green.400" /> : null}
-          </Avatar>
+            url={user?.photoUrl}
+            online={user?.isBeeping}
+          />
           <Box>
             <Text fontWeight="extrabold">{user?.name}</Text>
             <Text fontSize={14} mt={0.5} fontWeight={500}>

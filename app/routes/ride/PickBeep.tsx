@@ -6,13 +6,13 @@ import { RefreshControl } from "react-native";
 import { GetBeeperListQuery } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
+import { Avatar } from "../../components/Avatar";
 import {
   Text,
   Spinner,
   FlatList,
   Badge,
   Pressable,
-  Avatar,
   Box,
   HStack,
   Spacer,
@@ -97,7 +97,7 @@ export function PickBeepScreen(props: Props) {
               <Avatar
                 mr={2}
                 size="45px"
-                source={{ uri: item.photoUrl || "" }}
+                url={item.photoUrl}
               />
               <Stack>
                 <Text fontWeight="extrabold" fontSize="lg">

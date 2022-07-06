@@ -23,7 +23,6 @@ import {
   Heading,
   Stack,
   FormControl,
-  Avatar,
   HStack,
   Center,
   VStack,
@@ -35,6 +34,7 @@ import { GradietnButton } from "../../components/GradientButton";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Subscription } from "../../utils/types";
+import { Avatar } from "../../components/Avatar";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -412,9 +412,7 @@ export function MainFindBeepScreen(props: Props) {
         <Stack alignItems="center" space={4}>
           <Avatar
             size={100}
-            source={{
-              uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
-            }}
+            url={beep.beeper.photoUrl}
           />
           <Center>
             <Heading fontWeight="extrabold">{beep.beeper.name}</Heading>
@@ -528,9 +526,7 @@ export function MainFindBeepScreen(props: Props) {
         <Stack space={4} w="90%" alignItems="center">
           <Avatar
             size={100}
-            source={{
-              uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
-            }}
+            url={beep.beeper.photoUrl}
           />
           <Center>
             <Text>Waiting on</Text>

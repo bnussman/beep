@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AvatarImage from "../../assets/avatarDark.png";
 import * as Linking from "expo-linking";
 import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity } from "react-native";
@@ -10,7 +9,6 @@ import { Scalars, SignUpInput, SignUpMutation } from "../../generated/graphql";
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { client, wsLink } from "../../utils/Apollo";
-import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { UserData } from "../../utils/useUser";
@@ -20,7 +18,6 @@ import {
   useValidationErrors,
 } from "../../utils/useValidationErrors";
 import {
-  Avatar,
   Button,
   Input,
   Text,
@@ -33,6 +30,7 @@ import {
   InputGroup,
   InputLeftAddon,
 } from "native-base";
+import { Avatar } from "../../components/Avatar";
 
 const SignUp = gql`
   mutation SignUp($input: SignUpInput!) {
@@ -217,8 +215,7 @@ export function SignUpScreen() {
           >
             <TouchableOpacity onPress={chooseProfilePhoto}>
               <Avatar
-                key={photo ? photo.uri : "default"}
-                source={photo ? { uri: photo.uri } : AvatarImage}
+                url={photo?.uri}
                 size="xl"
               />
             </TouchableOpacity>
