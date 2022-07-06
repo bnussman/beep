@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PasswordInput from "../../components/PasswordInput";
@@ -6,14 +6,16 @@ import { Alert } from "../../utils/Alert";
 import { GradietnButton } from "../../components/GradientButton";
 import { isMobile } from "../../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { LoginMutation } from "../../generated/graphql";
+import { LoginMutation, LoginMutationVariables } from "../../generated/graphql";
 import { client, wsLink } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { UserData } from "../../utils/useUser";
-import { Stack, Button, Input, Heading, Flex, Spacer, Box } from "native-base";
+import { Stack, Button, Input, Heading, Flex, Spacer, Box, FormControl, WarningOutlineIcon } from "native-base";
 import { Logger } from "../../utils/Logger";
+import { useValidationErrors } from "../../utils/useValidationErrors";
+import { Controller, useForm } from "react-hook-form";
 
 interface Props {
   navigation: Navigation;
@@ -52,10 +54,16 @@ const Login = gql`
 `;
 
 export function LoginScreen(props: Props) {
-  const [login, { loading }] = useMutation<LoginMutation>(Login);
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const passwordRef = useRef<any>();
+  const [login, { error }] = useMutation<LoginMutation>(Login);
+
+  const validationErrors = useValidationErrors<LoginMutationVariables>(error);
+
+  const {
+    control,
+    handleSubmit,
+    setFocus,
+    formState: { errors, isSubmitting },
+  } = useForm<Omit<LoginMutationVariables, 'pushToken'>>();
 
   useEffect(() => {
     try {
@@ -65,7 +73,7 @@ export function LoginScreen(props: Props) {
     }
   }, []);
 
-  const onLogin = async () => {
+  const onLogin = handleSubmit(async (variables) => {
     let pushToken: string | null;
     try {
       pushToken = isMobile ? await getPushToken() : null;
@@ -74,26 +82,26 @@ export function LoginScreen(props: Props) {
       pushToken = null;
     }
 
-    login({
-      variables: { username, password, pushToken },
-    })
-      .then(async (data) => {
-        await AsyncStorage.setItem("auth", JSON.stringify(data.data?.login));
-
-        client.writeQuery({
-          query: UserData,
-          data: { getUser: { ...data.data?.login.user, pushToken } },
-        });
-
-        wsLink.client.restart();
-      })
-      .catch((error: ApolloError) => {
-        Alert(error);
+    try {
+      const { data } = await login({
+        variables: { ...variables, pushToken },
       });
-  };
+
+      await AsyncStorage.setItem("auth", JSON.stringify(data?.login));
+
+      client.writeQuery({
+        query: UserData,
+        data: { getUser: { ...data?.login.user, pushToken } },
+      });
+
+      wsLink.client.restart();
+    } catch (error) {
+      Alert(error as ApolloError);
+    }
+  });
 
   return (
-    <Container keyboard center>
+    <Container keyboard center scrollViewProps={{ scrollEnabled: true, bounces: false  }}>
       <Stack space={4} w="90%">
         <Box>
           <Heading size="xl" mr={4} fontWeight="extrabold">
@@ -104,28 +112,74 @@ export function LoginScreen(props: Props) {
           </Heading>
         </Box>
         <Stack space={2}>
-          <Input
-            size="lg"
-            textContentType="username"
-            placeholder="Username or Email"
-            returnKeyType="next"
-            onChangeText={(text: string) => setUsername(text)}
-            onSubmitEditing={() => passwordRef?.current?.focus()}
-            autoCapitalize="none"
-          />
-          <PasswordInput
-            size="lg"
-            placeholder="Password"
-            returnKeyType="go"
-            onChangeText={(text: string) => setPassword(text)}
-            ref={passwordRef}
-            onSubmitEditing={onLogin}
-            textContentType="password"
-            autoCapitalize="none"
-          />
+          <FormControl
+            isInvalid={
+              Boolean(errors.username) || Boolean(validationErrors?.username)
+            }
+          >
+            <FormControl.Label>Username or Email</FormControl.Label>
+            <Controller
+              name="username"
+              rules={{ required: "Username or Email is required" }}
+              defaultValue=""
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  autoCapitalize="none"
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("password")}
+                  textContentType="username"
+                  size="lg"
+                />
+              )}
+            />
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}
+            >
+              {errors.username?.message}
+              {validationErrors?.username?.[0]}
+            </FormControl.ErrorMessage>
+          </FormControl>
+          <FormControl
+            isInvalid={
+              Boolean(errors.password) || Boolean(validationErrors?.password)
+            }
+          >
+            <FormControl.Label>Password</FormControl.Label>
+            <Controller
+              name="password"
+              rules={{ required: "Password is required" }}
+              defaultValue=""
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <PasswordInput
+                  autoCapitalize="none"
+                  onBlur={onBlur}
+                  onChangeText={(val: string) => onChange(val)}
+                  value={value}
+                  ref={ref}
+                  returnKeyLabel="login"
+                  returnKeyType="go"
+                  onSubmitEditing={onLogin}
+                  textContentType="password"
+                  size="lg"
+                />
+              )}
+            />
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}
+            >
+              {errors.password?.message}
+              {validationErrors?.password?.[0]}
+            </FormControl.ErrorMessage>
+          </FormControl>
           <Button
-            isLoading={loading}
-            isDisabled={!username || !password}
+            isLoading={isSubmitting}
             onPress={onLogin}
           >
             Login

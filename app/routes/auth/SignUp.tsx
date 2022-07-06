@@ -34,10 +34,6 @@ import {
   InputLeftAddon,
 } from "native-base";
 
-interface Props {
-  navigation: Navigation;
-}
-
 const SignUp = gql`
   mutation SignUp($input: SignUpInput!) {
     signup(input: $input) {
@@ -70,7 +66,7 @@ const SignUp = gql`
 
 let picture: Scalars["Upload"];
 
-export function SignUpScreen(props: Props) {
+export function SignUpScreen() {
   const [signup, { error }] = useMutation<SignUpMutation>(SignUp);
 
   const {
@@ -257,7 +253,7 @@ export function SignUpScreen(props: Props) {
             )}
           />
           <FormControl.HelperText>
-            You must your student email address 🎓
+            You must a .edu email address
           </FormControl.HelperText>
           <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
             {errors.email?.message}
