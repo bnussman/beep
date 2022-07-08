@@ -16,10 +16,7 @@ import { Stack, Button, Input, Heading, Flex, Spacer, Box, FormControl, WarningO
 import { Logger } from "../../utils/Logger";
 import { useValidationErrors } from "../../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
-
-interface Props {
-  navigation: Navigation;
-}
+import { useNavigation } from "@react-navigation/native";
 
 const Login = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -53,10 +50,12 @@ const Login = gql`
   }
 `;
 
-export function LoginScreen(props: Props) {
+export function LoginScreen() {
   const [login, { error }] = useMutation<LoginMutation>(Login);
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
+
+  const navigation = useNavigation<Navigation>();
 
   const {
     control,
@@ -188,12 +187,12 @@ export function LoginScreen(props: Props) {
         <Flex direction="row">
           <GradietnButton
             size="sm"
-            onPress={() => props.navigation.navigate("Sign Up")}
+            onPress={() => navigation.navigate("Sign Up")}
           >
             Sign Up
           </GradietnButton>
           <Spacer />
-          <Button onPress={() => props.navigation.navigate("Forgot Password")}>
+          <Button onPress={() => navigation.navigate("Forgot Password")}>
             Forgot Password
           </Button>
         </Flex>

@@ -5,11 +5,7 @@ import { Navigation } from "../../utils/Navigation";
 import { Input, Button, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { UserHeader } from "../../components/UserHeader";
-
-interface Props {
-  route: any;
-  navigation: Navigation;
-}
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const ReportUser = gql`
   mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
@@ -17,20 +13,22 @@ const ReportUser = gql`
   }
 `;
 
-export function ReportScreen(props: Props): JSX.Element {
+export function ReportScreen() {
   const [reason, setReason] = useState<string>();
   const [report, { loading }] = useMutation<ReportUserMutation>(ReportUser);
+  const { params } = useRoute<any>();
+  const { goBack } = useNavigation<Navigation>();
 
   async function reportUser() {
     try {
       await report({
         variables: {
-          userId: props.route.params.id,
-          beepId: props.route.params.beep,
+          userId: params.id,
+          beepId: params.beep,
           reason: reason,
         },
       });
-      props.navigation.goBack();
+      goBack();
     } catch (error) {
       alert(error);
     }
@@ -41,7 +39,7 @@ export function ReportScreen(props: Props): JSX.Element {
       <Stack space={4} w="90%" mt={4}>
         {useMemo(
           () => (
-            <UserHeader user={props.route.params.user} />
+            <UserHeader user={params.user} />
           ),
           []
         )}

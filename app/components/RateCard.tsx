@@ -4,6 +4,7 @@ import { Box, Flex, Heading, Pressable, Text } from "native-base";
 import { GetRateDataQuery, User } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { Avatar } from "./Avatar";
+import { useNavigation } from "@react-navigation/native";
 
 export const GetRateData = gql`
   query GetRateData {
@@ -19,11 +20,8 @@ export const GetRateData = gql`
   }
 `;
 
-interface Props {
-  navigation: Navigation;
-}
-
-export function RateCard(props: Props): JSX.Element | null {
+export function RateCard() {
+  const navigation = useNavigation<Navigation>();
   const { data, loading } = useQuery<GetRateDataQuery>(GetRateData);
 
   if (loading || !data?.getLastBeepToRate) return null;
@@ -38,7 +36,7 @@ export function RateCard(props: Props): JSX.Element | null {
     >
       <Pressable
         onPress={() => {
-          props.navigation.navigate("Rate", {
+          navigation.navigate("Rate", {
             id: data?.getLastBeepToRate?.beeper.id,
             user: data?.getLastBeepToRate?.beeper as User,
             beep: data?.getLastBeepToRate?.id,

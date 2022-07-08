@@ -1,5 +1,4 @@
 import React, {
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -20,6 +19,8 @@ import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
 import { Beep } from "./Beep";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import {
   Alert as NativeAlert,
   AppState,
@@ -44,12 +45,7 @@ import {
   useColorMode,
   Flex,
 } from "native-base";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-
-interface Props {
-  navigation: Navigation;
-}
+import { useNavigation } from "@react-navigation/native";
 
 let unsubscribe: any = null;
 
@@ -137,9 +133,10 @@ const UpdateBeepSettings = gql`
 
 export const LOCATION_TRACKING = "location-tracking";
 
-export function StartBeepingScreen(props: Props) {
+export function StartBeepingScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
+  const navigation = useNavigation<Navigation>();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [masksRequired, setMasksRequired] = useState(user?.masksRequired);
@@ -204,7 +201,7 @@ export function StartBeepingScreen(props: Props) {
   }
 
   React.useLayoutEffect(() => {
-    props.navigation.setOptions({
+    navigation.setOptions({
       // eslint-disable-next-line react/display-name
       headerRight: () => (
         <Switch
@@ -215,7 +212,7 @@ export function StartBeepingScreen(props: Props) {
       ),
     });
   }, [
-    props.navigation,
+    navigation,
     isBeeping,
     capacity,
     singlesRate,
@@ -433,7 +430,7 @@ export function StartBeepingScreen(props: Props) {
             py={4}
             pb={queue.length > 1 ? 4 : 16}
           >
-            {queue[0] && <Beep beep={queue[0]} navigation={props.navigation} />}
+            {queue[0] && <Beep beep={queue[0]} />}
           </Flex>
           {queue.length > 1 ? (
             <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
@@ -457,10 +454,11 @@ export function StartBeepingScreen(props: Props) {
                 </HStack>
               </Box>
               <BottomSheetFlatList
-                refreshing={loading && data.getQueue !== undefined}
+                refreshing={loading && data?.getQueue !== undefined}
                 onRefresh={refetch}
                 data={queue.filter((entry) => entry.id !== queue[0]?.id)}
                 keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <QueueItem item={item} />}
                 refreshControl={
                   <RefreshControl
                     tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
@@ -468,19 +466,6 @@ export function StartBeepingScreen(props: Props) {
                     onRefresh={refetch}
                   />
                 }
-                renderItem={({
-                  item,
-                  index,
-                }: {
-                  item: Unpacked<GetInitialQueueQuery["getQueue"]>;
-                  index: number;
-                }) => (
-                  <QueueItem
-                    item={item}
-                    index={index}
-                    navigation={props.navigation}
-                  />
-                )}
               />
             </BottomSheet>
           ) : null}

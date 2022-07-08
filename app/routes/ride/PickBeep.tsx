@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
@@ -20,11 +21,6 @@ import {
   useColorMode,
   Stack,
 } from "native-base";
-
-interface Props {
-  navigation: Navigation;
-  route: any;
-}
 
 const GetBeepers = gql`
   query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -49,16 +45,18 @@ const GetBeepers = gql`
   }
 `;
 
-export function PickBeepScreen(props: Props) {
-  const { navigation, route } = props;
+export function PickBeepScreen() {
   const { colorMode } = useColorMode();
+
+  const { params } = useRoute<any>();
+  const navigation = useNavigation<Navigation>();
 
   const { data, loading, error, refetch } = useQuery<GetBeeperListQuery>(
     GetBeepers,
     {
       variables: {
-        latitude: route.params.latitude,
-        longitude: route.params.longitude,
+        latitude: params.latitude,
+        longitude: params.longitude,
         radius: 20,
       },
       notifyOnNetworkStatusChange: true,
@@ -69,7 +67,7 @@ export function PickBeepScreen(props: Props) {
   const isRefreshing = Boolean(data) && loading;
 
   function goBack(id: string): void {
-    route.params.handlePick(id);
+    params.handlePick(id);
     navigation.goBack();
   }
 

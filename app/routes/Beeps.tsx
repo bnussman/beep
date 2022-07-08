@@ -1,11 +1,13 @@
 import React from "react";
 import { Pressable, RefreshControl } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Navigation } from "../utils/Navigation";
 import { Unpacked } from "../utils/constants";
 import { useUser } from "../utils/useUser";
+import { Avatar } from "../components/Avatar";
 import {
   Spinner,
   Text,
@@ -16,11 +18,6 @@ import {
   Center,
   useColorMode,
 } from "native-base";
-import { Avatar } from "../components/Avatar";
-
-interface Props {
-  navigation: Navigation;
-}
 
 const GetBeepHistory = gql`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -52,9 +49,11 @@ const GetBeepHistory = gql`
   }
 `;
 
-export function BeepsScreen(props: Props) {
+export function BeepsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
+
+  const navigation = useNavigation<Navigation>();
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetBeepHistoryQuery>(GetBeepHistory, {
@@ -111,7 +110,7 @@ export function BeepsScreen(props: Props) {
     return (
       <Pressable
         onPress={() =>
-          props.navigation.push("Profile", { id: otherUser.id, beep: item.id })
+          navigation.push("Profile", { id: otherUser.id, beep: item.id })
         }
       >
         <Box

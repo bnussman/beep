@@ -10,7 +10,10 @@
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "react": [ "./node_modules/@types/react" ]
+    }
   },
   "extends": "expo/tsconfig.base"
 }

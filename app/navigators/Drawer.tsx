@@ -35,6 +35,7 @@ import {
 } from "native-base";
 import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
+import { MainNavParamList } from "./MainTabs";
 
 const Logout = gql`
   mutation Logout {
@@ -42,7 +43,7 @@ const Logout = gql`
   }
 `;
 
-const Drawer = createDrawerNavigator();
+const Drawer = createDrawerNavigator<MainNavParamList>();
 
 const getIcon = (screenName: string) => {
   switch (screenName) {

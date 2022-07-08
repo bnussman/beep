@@ -1,11 +1,13 @@
 import React from "react";
 import { Pressable, RefreshControl } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../utils/useUser";
 import { gql, useQuery } from "@apollo/client";
 import { GetRatingsQuery, Rating } from "../generated/graphql";
 import { printStars } from "../components/Stars";
 import { Navigation } from "../utils/Navigation";
 import { Container } from "../components/Container";
+import { Avatar } from "../components/Avatar";
 import {
   Text,
   FlatList,
@@ -18,11 +20,6 @@ import {
   useColorMode,
   Stack,
 } from "native-base";
-import { Avatar } from "../components/Avatar";
-
-interface Props {
-  navigation: Navigation;
-}
 
 const Ratings = gql`
   query GetRatings($id: String, $offset: Int, $show: Int) {
@@ -48,9 +45,11 @@ const Ratings = gql`
   }
 `;
 
-export function RatingsScreen(props: Props) {
+export function RatingsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
+
+  const navigation = useNavigation<Navigation>();
 
   const { data, loading, error, fetchMore, refetch } = useQuery<GetRatingsQuery>(Ratings, {
     variables: { id: user?.id, offset: 0, show: 10 },
@@ -100,7 +99,7 @@ export function RatingsScreen(props: Props) {
 
     return (
       <Pressable
-        onPress={() => props.navigation.push("Profile", { id: otherUser.id })}
+        onPress={() => navigation.push("Profile", { id: otherUser.id })}
       >
         <Box
           mx={4}
@@ -141,7 +140,7 @@ export function RatingsScreen(props: Props) {
                 )}
               </Text>
               <Text>{printStars(item.stars)}</Text>
-              {item.message && <Text>{item.message}</Text>}
+              {item.message ? <Text>{item.message}</Text> : null}
             </Stack>
             <Spacer />
           </Flex>

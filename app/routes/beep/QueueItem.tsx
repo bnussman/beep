@@ -10,6 +10,7 @@ import { CancelBeep } from "../../components/CancelButton";
 import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Avatar } from "../../components/Avatar";
+import { useNavigation } from "@react-navigation/native";
 import {
   Box,
   HStack,
@@ -23,12 +24,11 @@ import {
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
-  index: number;
-  navigation: Navigation;
 }
 
-export function QueueItem({ item, navigation }: Props) {
+export function QueueItem({ item }: Props) {
   const [cancel] = useMutation(CancelBeep);
+  const { navigate } = useNavigation<Navigation>();
 
   const onCancelPress = () => {
     if (isMobile) {
@@ -72,7 +72,7 @@ export function QueueItem({ item, navigation }: Props) {
         <Box>
           <Pressable
             onPress={() =>
-              navigation.navigate("Profile", {
+              navigate("Profile", {
                 id: item.rider.id,
                 beep: item.id,
               })
@@ -192,7 +192,7 @@ export function QueueItem({ item, navigation }: Props) {
       <Stack space={1}>
         <Pressable
           onPress={() =>
-            navigation.navigate("Profile", {
+            navigate("Profile", {
               id: item.rider.id,
               beep: item.id,
             })

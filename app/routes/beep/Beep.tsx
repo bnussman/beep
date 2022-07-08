@@ -10,6 +10,8 @@ import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Linking } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { printStars } from "../../components/Stars";
+import { Avatar } from "../../components/Avatar";
+import { useNavigation } from "@react-navigation/native";
 import {
   Box,
   Button,
@@ -22,22 +24,21 @@ import {
   Stack,
   Text,
 } from "native-base";
-import { Avatar } from "../../components/Avatar";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
-  navigation: Navigation;
 }
 
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
+  const { navigate } = useNavigation<Navigation>();
 
   return (
     <>
       <Pressable
         onPress={() =>
-          props.navigation.navigate("Profile", {
+          navigate("Profile", {
             id: beep.rider.id,
             beep: beep.id,
           })

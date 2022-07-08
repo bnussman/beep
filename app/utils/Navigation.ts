@@ -1,6 +1,5 @@
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { MainNavParamList } from "../navigators/MainTabs";
+import { useNavigation as _useNavigation } from "@react-navigation/native";
 
-export type Navigation = BottomTabNavigationProp<MainNavParamList> & {
-  push: any;
-};
+export type Navigation = StackNavigationProp<MainNavParamList>;

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
+import LocationInput from "../../components/LocationInput";
+import * as SplashScreen from "expo-splash-screen";
+import * as Location from "expo-location";
 import { Logger } from "../../utils/Logger";
 import { LeaveButton } from "./LeaveButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as SplashScreen from "expo-splash-screen";
-import * as Location from "expo-location";
 import { Share, Linking, AppState, AppStateStatus } from "react-native";
 import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
@@ -11,6 +12,12 @@ import { client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
+import { Alert } from "../../utils/Alert";
+import { GradietnButton } from "../../components/GradientButton";
+import { useUser } from "../../utils/useUser";
+import { throttle } from "../../utils/throttle";
+import { Subscription } from "../../utils/types";
+import { Avatar } from "../../components/Avatar";
 import {
   GetEtaQuery,
   GetInitialRiderStatusQuery,
@@ -28,13 +35,7 @@ import {
   VStack,
   Icon,
 } from "native-base";
-import LocationInput from "../../components/LocationInput";
-import { Alert } from "../../utils/Alert";
-import { GradietnButton } from "../../components/GradientButton";
-import { useUser } from "../../utils/useUser";
-import { throttle } from "../../utils/throttle";
-import { Subscription } from "../../utils/types";
-import { Avatar } from "../../components/Avatar";
+import { useNavigation } from "@react-navigation/native";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -121,15 +122,13 @@ const GetETA = gql`
   }
 `;
 
-interface Props {
-  navigation: Navigation;
-}
-
 let sub: Subscription;
 let riderStatusSub: Subscription;
 
-export function MainFindBeepScreen(props: Props) {
+export function MainFindBeepScreen() {
   const { user } = useUser();
+
+  const { navigate } = useNavigation<Navigation>();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
     InitialRiderStatus,
@@ -264,7 +263,7 @@ export function MainFindBeepScreen(props: Props) {
       lastKnowLocation = await Location.getCurrentPositionAsync();
     }
 
-    return props.navigation.navigate("Choose Beeper", {
+    return navigate("Choose Beeper", {
       latitude: lastKnowLocation.coords.latitude,
       longitude: lastKnowLocation.coords.longitude,
       handlePick: (id: string) => chooseBeep(id),
