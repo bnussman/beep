@@ -2,7 +2,7 @@ import * as Notifications from "expo-notifications";
 import { Vibration } from "react-native";
 import { gql } from "@apollo/client";
 import { client } from "../utils/Apollo";
-import { isMobile } from "./constants";
+import { isAndroid, isMobile } from "./constants";
 import { Toast } from "native-base";
 
 Notifications.setNotificationHandler({
@@ -26,7 +26,6 @@ export async function getPushToken(): Promise<string | null> {
 
   const pushToken = await Notifications.getExpoPushTokenAsync();
 
-  Notifications.addNotificationReceivedListener(handleNotification);
 
   return pushToken.data;
 }
@@ -53,7 +52,7 @@ async function getNotificationPermission(): Promise<boolean> {
 
 /**
  * call getPushToken and send to backend
- * @param token a user's auth token
+ * @param {string | null} previousPushToken a user's previous push token to compare aginst
  */
 export async function updatePushToken(
   previousPushToken?: string | null
@@ -77,11 +76,13 @@ export async function updatePushToken(
   }
 }
 
-function handleNotification(notification: Notifications.Notification): void {
-  // @TODO toast if we ever can
+export function handleNotification(notification: Notifications.Notification): void {
   Vibration.vibrate();
-  // Toast.show({
-  //   title: notification.request.content.title,
-  //   description: notification.request.content.body,
-  // });
+  // if (isAndroid) {
+    // Only Toast for Android because we have iosDisplayInForeground for iOS
+    Toast.show({
+      title: notification.request.content.title,
+      description: notification.request.content.body,
+    });
+  // }
 }

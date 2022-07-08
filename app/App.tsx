@@ -1,7 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import * as Sentry from "sentry-expo";
 import config from "./package.json";
+import * as Sentry from "sentry-expo";
+import * as Notifications from "expo-notifications";
 import { init } from "./utils/Init";
 import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -12,25 +13,25 @@ import { ReportScreen } from "./routes/global/Report";
 import { RateScreen } from "./routes/global/Rate";
 import { client } from "./utils/Apollo";
 import { ApolloProvider, useQuery } from "@apollo/client";
-import { User, UserDataQuery } from "./generated/graphql";
+import { UserDataQuery } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
-import { updatePushToken } from "./utils/Notifications";
+import { handleNotification, updatePushToken } from "./utils/Notifications";
 import { SignUpScreen } from "./routes/auth/SignUp";
 import { UserData, UserSubscription } from "./utils/useUser";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { setUserContext } from "./utils/sentry";
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
 import {
-  isMobile,
   NATIVE_BASE_CONFIG,
   NATIVE_BASE_THEME,
 } from "./utils/constants";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createStackNavigator();
 init();
@@ -41,14 +42,6 @@ Sentry.init({
   debug: true,
   enableAutoSessionTracking: true,
 });
-
-function setUserContext(user: Partial<User>): void {
-  if (isMobile) {
-    Sentry.Native.setUser({ ...user } as Sentry.Native.User);
-  } else {
-    Sentry.Browser.setUser({ ...user } as Sentry.Native.User);
-  }
-}
 
 function Beep() {
   const { colorMode } = useColorMode();
@@ -75,6 +68,11 @@ function Beep() {
       updatePushToken(user.pushToken);
     }
   }, [user]);
+
+  React.useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(handleNotification);
+    return () => subscription.remove();
+  }, []);
 
   if (loading) {
     return null;
