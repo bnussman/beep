@@ -1,7 +1,7 @@
 # Beep App 🚖
 
-![staging](https://github.com/banks/beep/actions/workflows/staging/badge.svg)
-![production](https://github.com/banks/beep/actions/workflows/production/badge.svg)
+![staging](https://github.com/banks/beep/actions/workflows/staging.yml/badge.svg)
+![production](https://github.com/banks/beep/actions/workflows/production.yml/badge.svg)
 
 
 ## 📚 Introduction
