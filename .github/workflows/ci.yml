@@ -34,7 +34,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
       - run: yarn --frozen-lockfile
       - run: yarn workspace @beep/website typecheck
-  api:
+  app:
     runs-on: ubuntu-latest
     needs: install
     steps:
