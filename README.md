@@ -23,8 +23,9 @@ This is the monorepo for the Beep App. Ride beep app is currently a substitute f
 
 Clone this repository
 ```
-git clone git@github.com:linode/manager.git
+git clone git@github.com:bnussman/beep.git
 ```
+
 Go into the projects directory
 ```
 cd beep
