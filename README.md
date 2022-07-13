@@ -1,5 +1,6 @@
 # Beep App 🚖
 
+![ci](https://github.com/bnussman/beep/actions/workflows/ci.yml/badge.svg)
 ![staging](https://github.com/bnussman/beep/actions/workflows/staging.yml/badge.svg)
 ![production](https://github.com/bnussman/beep/actions/workflows/production.yml/badge.svg)
 
