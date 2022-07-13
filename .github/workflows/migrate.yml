@@ -27,7 +27,6 @@ jobs:
       - run: yarn workspace @beep/api db:migrate
         env:
           DB_URL: ${{ secrets.DB_URL }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_CA: ${{ secrets.DB_CA }}
