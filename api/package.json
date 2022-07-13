@@ -10,7 +10,8 @@
     "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"nodemon build/index.js\"",
     "db:create": "npx mikro-orm schema:create --run",
     "db:update": "npx mikro-orm schema:update --run",
-    "db:drop": "npx mikro-orm schema:drop --run"
+    "db:drop": "npx mikro-orm schema:drop --run",
+    "db:migrate": "npx mikro-orm migration:up"
   },
   "repository": {
     "type": "git",
