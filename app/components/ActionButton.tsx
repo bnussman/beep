@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import { GetInitialQueueQuery } from "../generated/graphql";
 import { Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { Button as _Button } from "native-base";
 import { useEffect } from "react";
 import { GradietnButton } from "./GradientButton";
 
 interface Props {
-  item: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
 }
 
 const UpdateBeeperQueue = gql`
@@ -23,11 +22,13 @@ const UpdateBeeperQueue = gql`
 `;
 
 function Button(props: Props) {
+  const { beep } = props;
+
   const [isLoading, setIsLoading] = useState(false);
   const [update] = useMutation(UpdateBeeperQueue);
 
   const getMessage = () => {
-    switch (props.item.state) {
+    switch (beep.state) {
       case 0:
         return "I'm on the way";
       case 1:
@@ -43,15 +44,15 @@ function Button(props: Props) {
 
   useEffect(() => {
     setIsLoading(false);
-  }, [props.item]);
+  }, [beep]);
 
   const onPress = () => {
     setIsLoading(true);
     update({
       variables: {
-        queueId: props.item.id,
-        riderId: props.item.rider.id,
-        value: props.item.state < 3 ? "next" : "complete",
+        queueId: beep.id,
+        riderId: beep.rider.id,
+        value: beep.state < 3 ? "next" : "complete",
       },
     }).catch((error: ApolloError) => {
       setIsLoading(false);

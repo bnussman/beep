@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { Alert } from "react-native";
 
 interface Props {
-  item: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
 }
 
 export const CancelBeep = gql`
@@ -17,12 +17,14 @@ export const CancelBeep = gql`
 `;
 
 function Button(props: Props) {
+  const { beep } = props;
+
   const [isLoading, setIsLoading] = useState(false);
   const [cancel] = useMutation(CancelBeep);
 
   useEffect(() => {
     setIsLoading(false);
-  }, [props.item]);
+  }, [beep]);
 
   const onPress = () => {
     if (isMobile) {
@@ -51,7 +53,7 @@ function Button(props: Props) {
 
   const onCancel = () => {
     setIsLoading(true);
-    cancel({ variables: { id: props.item.id } }).catch((error: ApolloError) => {
+    cancel({ variables: { id: beep.id } }).catch((error: ApolloError) => {
       setIsLoading(false);
       alert(error.message);
     });

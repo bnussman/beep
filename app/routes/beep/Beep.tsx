@@ -204,8 +204,8 @@ export function Beep(props: Props) {
                 Get Directions for Beep
               </Button>
             )}
-            <CancelButton item={beep} />
-            <ActionButton item={beep} />
+            <CancelButton beep={beep} />
+            <ActionButton beep={beep} />
           </>
         )}
       </Stack>
