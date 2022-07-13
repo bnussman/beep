@@ -1,18 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
+import LocationInput from "../../components/LocationInput";
+import * as SplashScreen from "expo-splash-screen";
+import * as Location from "expo-location";
 import { Logger } from "../../utils/Logger";
 import { LeaveButton } from "./LeaveButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as SplashScreen from "expo-splash-screen";
-import * as Location from "expo-location";
 import { Share, Linking, AppState, AppStateStatus } from "react-native";
 import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
 import { client } from "../../utils/Apollo";
-import { Tags } from "./Tags";
-import { throttle } from "throttle-debounce";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
+import { Alert } from "../../utils/Alert";
+import { GradietnButton } from "../../components/GradientButton";
+import { useUser } from "../../utils/useUser";
+import { throttle } from "../../utils/throttle";
+import { Subscription } from "../../utils/types";
+import { Avatar } from "../../components/Avatar";
 import {
   GetEtaQuery,
   GetInitialRiderStatusQuery,
@@ -25,15 +30,12 @@ import {
   Heading,
   Stack,
   FormControl,
-  Avatar,
   HStack,
   Center,
   VStack,
+  Icon,
 } from "native-base";
-import LocationInput from "../../components/LocationInput";
-import { Alert } from "../../utils/Alert";
-import { GradietnButton } from "../../components/GradientButton";
-import { useUser } from "../../utils/useUser";
+import { useNavigation } from "@react-navigation/native";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -120,15 +122,13 @@ const GetETA = gql`
   }
 `;
 
-interface Props {
-  navigation: Navigation;
-}
+let sub: Subscription;
+let riderStatusSub: Subscription;
 
-let sub: any;
-let riderStatusSub: any;
-
-export function MainFindBeepScreen(props: Props): JSX.Element {
+export function MainFindBeepScreen() {
   const { user } = useUser();
+
+  const { navigate } = useNavigation<Navigation>();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
     InitialRiderStatus,
@@ -136,7 +136,8 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
       notifyOnNetworkStatusChange: true,
     }
   );
-  const [getETA, { data: eta, loading: etaLoading, error: etaError }] =
+
+  const [getETA, { data: eta, error: etaError }] =
     useLazyQuery<GetEtaQuery>(GetETA);
 
   const [groupSize, setGroupSize] = useState<string>("");
@@ -262,7 +263,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
       lastKnowLocation = await Location.getCurrentPositionAsync();
     }
 
-    return props.navigation.navigate("Pick Driver", {
+    return navigate("Choose Beeper", {
       latitude: lastKnowLocation.coords.latitude,
       longitude: lastKnowLocation.coords.longitude,
       handlePick: (id: string) => chooseBeep(id),
@@ -372,7 +373,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               size="lg"
               ref={originRef}
               value={origin}
-              onChangeText={(value) => setOrigin(value)}
+              onChangeText={(value: string) => setOrigin(value)}
               onSubmitEditing={() => destinationRef.current.focus()}
               returnKeyType="next"
             />
@@ -407,16 +408,25 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
   if (beep.isAccepted) {
     return (
       <Container pt={2}>
-        <Center>
+        <Stack alignItems="center" space={4}>
           <Avatar
             size={100}
-            source={{
-              uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
-            }}
+            url={beep.beeper.photoUrl}
           />
-          <Heading>{beep.beeper.name}</Heading>
-          <Text>is your beeper!</Text>
-          <Tags user={beep.beeper} />
+          <Center>
+            <Heading fontWeight="extrabold">{beep.beeper.name}</Heading>
+            <Text>is your beeper!</Text>
+          </Center>
+          <HStack space={4}>
+            <Box alignItems="center">
+              <Text fontWeight="extrabold">Single</Text>
+              <Text>${beep.beeper.singlesRate}</Text>
+            </Box>
+            <Box alignItems="center">
+              <Text fontWeight="extrabold">Group</Text>
+              <Text>${beep.beeper.groupRate}</Text>
+            </Box>
+          </HStack>
           {beep.position <= 0 && (
             <Box
               _light={{ bg: "coolGray.50" }}
@@ -456,7 +466,12 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               colorScheme="green"
               onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
               endIcon={
-                <MaterialCommunityIcons name="phone" color="white" size={22} />
+                <Icon
+                  as={MaterialCommunityIcons}
+                  name="phone"
+                  color="white"
+                  size={22}
+                />
               }
             >
               Call Beeper
@@ -465,7 +480,8 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               colorScheme="green"
               onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
               endIcon={
-                <MaterialCommunityIcons
+                <Icon
+                  as={MaterialCommunityIcons}
                   name="message-text"
                   color="white"
                   size={22}
@@ -500,7 +516,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               <LeaveButton beepersId={beep.beeper.id} />
             ) : null}
           </VStack>
-        </Center>
+        </Stack>
       </Container>
     );
   } else {
@@ -509,17 +525,14 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
         <Stack space={4} w="90%" alignItems="center">
           <Avatar
             size={100}
-            source={{
-              uri: beep.beeper.photoUrl ? beep.beeper.photoUrl : undefined,
-            }}
+            url={beep.beeper.photoUrl}
           />
-          <Box alignItems="center">
+          <Center>
             <Text>Waiting on</Text>
             <Heading>{beep.beeper.name}</Heading>
             <Text>to accept your request.</Text>
-          </Box>
-          <Tags user={beep.beeper} />
-          <Box alignItems="center">
+          </Center>
+          <Center>
             <Text>
               {beep.beeper.first}
               {"'"}
@@ -529,7 +542,7 @@ export function MainFindBeepScreen(props: Props): JSX.Element {
               Rates
             </Text>
             <Text fontWeight="thin">per person</Text>
-          </Box>
+          </Center>
           <HStack space={4}>
             <Box alignItems="center">
               <Text fontWeight="extrabold">Single</Text>

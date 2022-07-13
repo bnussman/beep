@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
+import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid, Unpacked } from "../../utils/constants";
@@ -12,7 +18,15 @@ import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
-import { Alert as NativeAlert, AppState, AppStateStatus } from "react-native";
+import { Beep } from "./Beep";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import {
+  Alert as NativeAlert,
+  AppState,
+  AppStateStatus,
+  RefreshControl,
+} from "react-native";
 import {
   GetInitialQueueQuery,
   UpdateBeepSettingsMutation,
@@ -25,12 +39,13 @@ import {
   Heading,
   FormControl,
   Stack,
-  FlatList,
+  Box,
+  Spacer,
+  HStack,
+  useColorMode,
+  Flex,
 } from "native-base";
-
-interface Props {
-  navigation: Navigation;
-}
+import { useNavigation } from "@react-navigation/native";
 
 let unsubscribe: any = null;
 
@@ -78,6 +93,7 @@ const GetInitialQueue = gql`
         phone
         photoUrl
         isStudent
+        rating
       }
     }
   }
@@ -103,6 +119,7 @@ const GetQueue = gql`
         phone
         photoUrl
         isStudent
+        rating
       }
     }
   }
@@ -116,8 +133,10 @@ const UpdateBeepSettings = gql`
 
 export const LOCATION_TRACKING = "location-tracking";
 
-export function StartBeepingScreen(props: Props): JSX.Element {
+export function StartBeepingScreen() {
   const { user } = useUser();
+  const { colorMode } = useColorMode();
+  const navigation = useNavigation<Navigation>();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [masksRequired, setMasksRequired] = useState(user?.masksRequired);
@@ -127,15 +146,26 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
-  const { subscribeToMore, data, refetch } = useQuery<GetInitialQueueQuery>(
-    GetInitialQueue,
-    { notifyOnNetworkStatusChange: true }
-  );
+  const { subscribeToMore, data, refetch, loading } =
+    useQuery<GetInitialQueueQuery>(GetInitialQueue, {
+      notifyOnNetworkStatusChange: true,
+    });
 
   const [updateBeepSettings] =
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
   const queue = data?.getQueue;
+
+  // ref
+  const bottomSheetRef = useRef<BottomSheetMethods>(null);
+
+  // variables
+  const snapPoints = useMemo(() => ["20%", "85%"], []);
+
+  // callbacks
+  // const handleSheetChanges = useCallback((index: number) => {
+  //   console.log("handleSheetChanges", index);
+  // }, []);
 
   useEffect(() => {
     AppState.addEventListener("change", _handleAppStateChange);
@@ -171,7 +201,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
   }
 
   React.useLayoutEffect(() => {
-    props.navigation.setOptions({
+    navigation.setOptions({
       // eslint-disable-next-line react/display-name
       headerRight: () => (
         <Switch
@@ -182,7 +212,7 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       ),
     });
   }, [
-    props.navigation,
+    navigation,
     isBeeping,
     capacity,
     singlesRate,
@@ -323,15 +353,21 @@ export function StartBeepingScreen(props: Props): JSX.Element {
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-expect-error This works so I'm leaving it as is
         const newQueue = subscriptionData.data.getBeeperUpdates;
+        if (prev.getQueue.length < newQueue.length) {
+          bottomSheetRef.current?.expand();
+        }
         return Object.assign({}, prev, {
           getQueue: newQueue,
         });
       },
     });
   }
+
+  const isRefreshing = Boolean(data) && loading;
+
   if (!isBeeping) {
     return (
-      <Container keyboard alignItems="center">
+      <Container keyboard alignItems="center" height="100%">
         <Stack space={4} w="90%" mt={4}>
           <FormControl>
             <FormControl.Label>Max Rider Capacity</FormControl.Label>
@@ -387,24 +423,52 @@ export function StartBeepingScreen(props: Props): JSX.Element {
     if (queue && queue?.length > 0) {
       return (
         <Container alignItems="center">
-          <FlatList
+          <Flex
             w="100%"
-            data={data?.getQueue}
-            keyExtractor={(item) => item.id}
-            renderItem={({
-              item,
-              index,
-            }: {
-              item: Unpacked<GetInitialQueueQuery["getQueue"]>;
-              index: number;
-            }) => (
-              <QueueItem
-                item={item}
-                index={index}
-                navigation={props.navigation}
+            height={queue.length > 1 ? "80%" : "100%"}
+            px={6}
+            py={4}
+            pb={queue.length > 1 ? 4 : 16}
+          >
+            {queue[0] && <Beep beep={queue[0]} />}
+          </Flex>
+          {queue.length > 1 ? (
+            <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
+              <Box pt={1} px={4}>
+                <HStack alignItems="center" mb={2}>
+                  <Heading fontWeight="extrabold" size="2xl">
+                    Queue
+                  </Heading>
+                  <Spacer />
+                  {queue &&
+                    queue.length > 0 &&
+                    queue.some((entry) => !entry.isAccepted) && (
+                      <Box
+                        borderRadius="50%"
+                        bg="blue.400"
+                        w={4}
+                        h={4}
+                        mr={2}
+                      />
+                    )}
+                </HStack>
+              </Box>
+              <BottomSheetFlatList
+                refreshing={loading && data?.getQueue !== undefined}
+                onRefresh={refetch}
+                data={queue.filter((entry) => entry.id !== queue[0]?.id)}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <QueueItem item={item} />}
+                refreshControl={
+                  <RefreshControl
+                    tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+                    refreshing={isRefreshing}
+                    onRefresh={refetch}
+                  />
+                }
               />
-            )}
-          />
+            </BottomSheet>
+          ) : null}
         </Container>
       );
     } else {

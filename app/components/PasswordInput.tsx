@@ -1,9 +1,9 @@
-import React, { Ref, useState } from "react";
+import React, { useState } from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { Icon, IInputProps, Input } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-function PasswordInput(props: IInputProps, ref: Ref<unknown>) {
+function PasswordInput(props: IInputProps, ref: any) {
   const [show, setShow] = useState(false);
 
   const toggleShow = () => setShow((prev) => !prev);

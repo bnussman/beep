@@ -5,23 +5,17 @@ import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { GetUserProfileQuery, User } from "../../generated/graphql";
+import { Avatar } from "../../components/Avatar";
 import {
   Spinner,
   Text,
   Button,
-  Avatar,
   Stack,
   HStack,
   Center,
   Heading,
-  Box,
-  Spacer,
 } from "native-base";
-
-interface Props {
-  route: any;
-  navigation: Navigation;
-}
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -46,27 +40,29 @@ const GetUser = gql`
   }
 `;
 
-export function ProfileScreen(props: Props) {
+export function ProfileScreen() {
   const { user } = useUser();
+  const { params } = useRoute<any>();
+  const { navigate } = useNavigation<Navigation>();
 
   const { data, loading, error } = useQuery<GetUserProfileQuery>(GetUser, {
-    variables: { id: props.route.params.id },
+    variables: { id: params.id },
   });
 
   function handleReport() {
-    props.navigation.navigate("Report", {
+    navigate("Report", {
       user: data?.getUser as User,
-      id: props.route.params.id,
+      id: params.id,
       name: data?.getUser.name || "",
-      beep: props.route.params.beep,
+      beep: params.beep,
     });
   }
 
   function handleRate() {
-    if (props.route.params.beep) {
-      props.navigation.navigate("Rate", {
+    if (params.beep) {
+      navigate("Rate", {
         user: data?.getUser as User,
-        beep: props.route.params.beep,
+        beep: params.beep,
       });
     } else {
       alert(
@@ -106,9 +102,7 @@ export function ProfileScreen(props: Props) {
           <Avatar
             mt={4}
             size={40}
-            source={{
-              uri: data.getUser.photoUrl ? data.getUser.photoUrl : undefined,
-            }}
+            url={data.getUser.photoUrl}
           />
           <Heading size="2xl" fontWeight="extrabold">
             {data.getUser.name}
@@ -151,7 +145,7 @@ export function ProfileScreen(props: Props) {
               </Text>
             ) : null}
           </Stack>
-          {props.route.params.id !== user?.id ? (
+          {params?.id !== user?.id ? (
             <HStack space={4} mt={4}>
               <Button onPress={() => handleReport()}>Report User</Button>
               <Button onPress={() => handleRate()}>Rate User</Button>

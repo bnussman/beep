@@ -606,14 +606,6 @@ export type CancelBeepMutationVariables = Exact<{
 
 export type CancelBeepMutation = { __typename?: 'Mutation', cancelBeep: boolean };
 
-export type GetSuggestionsQueryVariables = Exact<{
-  location: Scalars['String'];
-  sessiontoken: Scalars['String'];
-}>;
-
-
-export type GetSuggestionsQuery = { __typename?: 'Query', getLocationSuggestions: Array<{ __typename?: 'Suggestion', title: string }> };
-
 export type GetRateDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -631,6 +623,8 @@ export type ResendMutation = { __typename?: 'Mutation', resendEmailVarification:
 
 export type GetBeepHistoryQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -638,6 +632,8 @@ export type GetBeepHistoryQuery = { __typename?: 'Query', getBeeps: { __typename
 
 export type GetRatingsQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -682,14 +678,14 @@ export type LocationUpdateMutation = { __typename?: 'Mutation', setLocation: boo
 export type GetInitialQueueQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInitialQueueQuery = { __typename?: 'Query', getQueue: Array<{ __typename?: 'QueueEntry', id: string, isAccepted: boolean, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photoUrl?: string | null, isStudent: boolean } }> };
+export type GetInitialQueueQuery = { __typename?: 'Query', getQueue: Array<{ __typename?: 'QueueEntry', id: string, isAccepted: boolean, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photoUrl?: string | null, isStudent: boolean, rating?: number | null } }> };
 
 export type GetQueueSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, isAccepted: boolean, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photoUrl?: string | null, isStudent: boolean } }> };
+export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, isAccepted: boolean, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photoUrl?: string | null, isStudent: boolean, rating?: number | null } }> };
 
 export type UpdateBeepSettingsMutationVariables = Exact<{
   input: BeeperSettingsInput;
@@ -897,42 +893,6 @@ export function useCancelBeepMutation(baseOptions?: ApolloReactHooks.MutationHoo
 export type CancelBeepMutationHookResult = ReturnType<typeof useCancelBeepMutation>;
 export type CancelBeepMutationResult = ApolloReactCommon.MutationResult<CancelBeepMutation>;
 export type CancelBeepMutationOptions = ApolloReactCommon.BaseMutationOptions<CancelBeepMutation, CancelBeepMutationVariables>;
-export const GetSuggestionsDocument = gql`
-    query GetSuggestions($location: String!, $sessiontoken: String!) {
-  getLocationSuggestions(location: $location, sessiontoken: $sessiontoken) {
-    title
-  }
-}
-    `;
-
-/**
- * __useGetSuggestionsQuery__
- *
- * To run a query within a React component, call `useGetSuggestionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSuggestionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSuggestionsQuery({
- *   variables: {
- *      location: // value for 'location'
- *      sessiontoken: // value for 'sessiontoken'
- *   },
- * });
- */
-export function useGetSuggestionsQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetSuggestionsQuery, GetSuggestionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<GetSuggestionsQuery, GetSuggestionsQueryVariables>(GetSuggestionsDocument, options);
-      }
-export function useGetSuggestionsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetSuggestionsQuery, GetSuggestionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<GetSuggestionsQuery, GetSuggestionsQueryVariables>(GetSuggestionsDocument, options);
-        }
-export type GetSuggestionsQueryHookResult = ReturnType<typeof useGetSuggestionsQuery>;
-export type GetSuggestionsLazyQueryHookResult = ReturnType<typeof useGetSuggestionsLazyQuery>;
-export type GetSuggestionsQueryResult = ApolloReactCommon.QueryResult<GetSuggestionsQuery, GetSuggestionsQueryVariables>;
 export const GetRateDataDocument = gql`
     query GetRateData {
   getLastBeepToRate {
@@ -1034,8 +994,8 @@ export type ResendMutationHookResult = ReturnType<typeof useResendMutation>;
 export type ResendMutationResult = ApolloReactCommon.MutationResult<ResendMutation>;
 export type ResendMutationOptions = ApolloReactCommon.BaseMutationOptions<ResendMutation, ResendMutationVariables>;
 export const GetBeepHistoryDocument = gql`
-    query GetBeepHistory($id: String) {
-  getBeeps(id: $id) {
+    query GetBeepHistory($id: String, $offset: Int, $show: Int) {
+  getBeeps(id: $id, offset: $offset, show: $show) {
     items {
       id
       start
@@ -1076,6 +1036,8 @@ export const GetBeepHistoryDocument = gql`
  * const { data, loading, error } = useGetBeepHistoryQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
  *   },
  * });
  */
@@ -1091,8 +1053,8 @@ export type GetBeepHistoryQueryHookResult = ReturnType<typeof useGetBeepHistoryQ
 export type GetBeepHistoryLazyQueryHookResult = ReturnType<typeof useGetBeepHistoryLazyQuery>;
 export type GetBeepHistoryQueryResult = ApolloReactCommon.QueryResult<GetBeepHistoryQuery, GetBeepHistoryQueryVariables>;
 export const GetRatingsDocument = gql`
-    query GetRatings($id: String) {
-  getRatings(id: $id) {
+    query GetRatings($id: String, $offset: Int, $show: Int) {
+  getRatings(id: $id, offset: $offset, show: $show) {
     items {
       id
       stars
@@ -1127,6 +1089,8 @@ export const GetRatingsDocument = gql`
  * const { data, loading, error } = useGetRatingsQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
  *   },
  * });
  */
@@ -1343,6 +1307,7 @@ export const GetInitialQueueDocument = gql`
       phone
       photoUrl
       isStudent
+      rating
     }
   }
 }
@@ -1394,6 +1359,7 @@ export const GetQueueDocument = gql`
       phone
       photoUrl
       isStudent
+      rating
     }
   }
 }

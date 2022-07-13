@@ -177,7 +177,7 @@ export function SignUp() {
                     })}
                   />
                   <FormErrorMessage>
-                    {errors.picture && errors.picture.message}
+                    {errors.picture && errors.picture.message as unknown as string}
                     {validationErrors?.picture && validationErrors?.picture[0]}
                   </FormErrorMessage>
                 </FormControl>
@@ -252,7 +252,7 @@ export function SignUp() {
                 {validationErrors?.password && validationErrors?.password[0]}
               </FormErrorMessage>
             </FormControl>
-            <Button type="submit" isLoading={isSubmitting} isDisabled={!isValid}>
+            <Button type="submit" isLoading={isSubmitting}>
               Sign Up
             </Button>
           </Stack>

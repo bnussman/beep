@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { ChooseBeepMutationVariables } from "../../generated/graphql";
 import { client } from "../../utils/Apollo";
 
 const ChooseBeep = gql`
@@ -69,6 +70,6 @@ export async function gqlFindBeep() {
   return await client.query({ query: FindBeep });
 }
 
-export async function gqlChooseBeep(input) {
+export async function gqlChooseBeep(input: ChooseBeepMutationVariables) {
   return await client.mutate({ mutation: ChooseBeep, variables: input });
 }

@@ -3,7 +3,7 @@ import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { gql, useMutation } from "@apollo/client";
 import { LeaveQueueMutation } from "../../generated/graphql";
-import { Button } from "native-base";
+import { Button, Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../../utils/Alert";
 
@@ -58,7 +58,7 @@ export function LeaveButton(props: Props) {
       colorScheme="red"
       _text={{ color: "#fff" }}
       endIcon={
-        <MaterialCommunityIcons name="exit-to-app" size={22} color="white" />
+        <Icon as={MaterialCommunityIcons} name="exit-to-app" size={22} color="white" />
       }
     >
       Leave Queue

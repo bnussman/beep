@@ -21,7 +21,8 @@ export function WebsocketStatus() {
       <Icon
         color={colorMap[status]}
         size={6}
-        as={<MaterialCommunityIcons name="checkbox-blank-circle" />}
+        name="checkbox-blank-circle"
+        as={MaterialCommunityIcons}
       />
       <Text mr={4} fontWeight={500}>
         {status}

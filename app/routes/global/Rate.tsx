@@ -7,11 +7,7 @@ import { Navigation } from "../../utils/Navigation";
 import { Button, Input, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
-
-interface Props {
-  route: any;
-  navigation: Navigation;
-}
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const RateUser = gql`
   mutation RateUser(
@@ -31,23 +27,26 @@ const RateUser = gql`
   }
 `;
 
-export function RateScreen(props: Props): JSX.Element {
+export function RateScreen() {
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
   const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
+
+  const { params } = useRoute<any>();
+  const { goBack } = useNavigation<Navigation>();
 
   async function rateUser() {
     rate({
       refetchQueries: () => ["GetRatings"],
       variables: {
-        userId: props.route.params.user.id,
-        beepId: props.route.params.beep,
+        userId: params.user.id,
+        beepId: params.beep,
         message: message,
         stars: stars,
       },
     })
       .then(() => {
-        props.navigation.goBack();
+        goBack();
       })
       .catch((error: ApolloError) => {
         Alert(error);
@@ -59,7 +58,7 @@ export function RateScreen(props: Props): JSX.Element {
       <Stack space={4} w="90%" mt={4}>
         {useMemo(
           () => (
-            <UserHeader user={props.route.params.user} />
+            <UserHeader user={params.user} />
           ),
           []
         )}

@@ -1,7 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import * as Sentry from "sentry-expo";
 import config from "./package.json";
+import * as Sentry from "sentry-expo";
+import * as Notifications from "expo-notifications";
 import { init } from "./utils/Init";
 import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -12,21 +13,22 @@ import { ReportScreen } from "./routes/global/Report";
 import { RateScreen } from "./routes/global/Rate";
 import { client } from "./utils/Apollo";
 import { ApolloProvider, useQuery } from "@apollo/client";
-import { User, UserDataQuery } from "./generated/graphql";
+import { UserDataQuery } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
-import { updatePushToken } from "./utils/Notifications";
+import { handleNotification, updatePushToken } from "./utils/Notifications";
 import { SignUpScreen } from "./routes/auth/SignUp";
 import { UserData, UserSubscription } from "./utils/useUser";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { setUserContext } from "./utils/sentry";
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
 import {
-  isMobile,
   NATIVE_BASE_CONFIG,
   NATIVE_BASE_THEME,
 } from "./utils/constants";
@@ -40,14 +42,6 @@ Sentry.init({
   debug: true,
   enableAutoSessionTracking: true,
 });
-
-function setUserContext(user: Partial<User>): void {
-  if (isMobile) {
-    Sentry.Native.setUser({ ...user });
-  } else {
-    Sentry.Browser.setUser({ ...user });
-  }
-}
 
 function Beep() {
   const { colorMode } = useColorMode();
@@ -75,6 +69,11 @@ function Beep() {
     }
   }, [user]);
 
+  React.useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(handleNotification);
+    return () => subscription.remove();
+  }, []);
+
   if (loading) {
     return null;
   }
@@ -93,7 +92,7 @@ function Beep() {
             headerTintColor: colorMode === "dark" ? "white" : "black",
           }}
         >
-          {!user ? 
+          {!user ? (
             <>
               <Stack.Screen
                 options={{ headerShown: false }}
@@ -106,7 +105,7 @@ function Beep() {
                 component={ForgotPasswordScreen}
               />
             </>
-            :
+          ) : (
             <>
               <Stack.Screen
                 options={{ headerShown: false }}
@@ -114,11 +113,22 @@ function Beep() {
                 component={BeepDrawer}
               />
               <Stack.Screen name="Profile" component={ProfileScreen} />
-              <Stack.Screen name="Report" component={ReportScreen} options={{ presentation: "modal" }} />
-              <Stack.Screen name="Rate" component={RateScreen} options={{ presentation: "modal" }} />
-              <Stack.Screen name="Pick Driver" component={PickBeepScreen} />
+              <Stack.Screen
+                name="Report"
+                component={ReportScreen}
+                options={{ presentation: "modal" }}
+              />
+              <Stack.Screen
+                name="Rate"
+                component={RateScreen}
+                options={{ presentation: "modal" }}
+              />
+              <Stack.Screen
+                name="Choose Beeper"
+                component={PickBeepScreen} 
+              />
             </>
-          }
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </>
@@ -127,13 +137,15 @@ function Beep() {
 
 function App2() {
   return (
-    <NativeBaseProvider
-      theme={NATIVE_BASE_THEME}
-      colorModeManager={colorModeManager}
-      config={NATIVE_BASE_CONFIG}
-    >
-      <Beep />
-    </NativeBaseProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NativeBaseProvider
+        theme={NATIVE_BASE_THEME}
+        colorModeManager={colorModeManager}
+        config={NATIVE_BASE_CONFIG}
+      >
+        <Beep />
+      </NativeBaseProvider>
+    </GestureHandlerRootView>
   );
 }
 

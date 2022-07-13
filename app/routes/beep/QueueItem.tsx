@@ -1,65 +1,62 @@
 import React from "react";
-import ActionButton from "../../components/ActionButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { useUser } from "../../utils/useUser";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Linking, Platform, Pressable } from "react-native";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Alert, Linking, Pressable } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
-import { Unpacked } from "../../utils/constants";
+import { isMobile, Unpacked } from "../../utils/constants";
+import { openDirections } from "../../utils/links";
+import { CancelBeep } from "../../components/CancelButton";
+import { ApolloError, useMutation } from "@apollo/client";
+import { printStars } from "../../components/Stars";
+import { Avatar } from "../../components/Avatar";
+import { useNavigation } from "@react-navigation/native";
 import {
-  Flex,
   Box,
-  Avatar,
   HStack,
-  VStack,
-  Button,
   Text,
-  Heading,
+  Spacer,
+  Stack,
+  Icon,
+  Menu,
+  Divider,
 } from "native-base";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
-  index: number;
-  navigation: Navigation;
 }
 
-export function QueueItem({ item, index, navigation }: Props) {
-  const { user } = useUser();
+export function QueueItem({ item }: Props) {
+  const [cancel] = useMutation(CancelBeep);
+  const { navigate } = useNavigation<Navigation>();
 
-  function handleDirections(origin: string, dest: string): void {
-    if (Platform.OS == "ios") {
-      Linking.openURL(`http://maps.apple.com/?saddr=${origin}&daddr=${dest}`);
-    } else {
-      Linking.openURL(`https://www.google.com/maps/dir/${origin}/${dest}/`);
-    }
-  }
-
-  function handleVenmo(groupSize: string | number, venmo: string): void {
-    if (Number(groupSize) > 1) {
-      Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${
-          (user?.groupRate || 0) * Number(groupSize)
-        }&note=Beep`
+  const onCancelPress = () => {
+    if (isMobile) {
+      Alert.alert(
+        "Cancel Beep?",
+        "Are you sure you want to cancel this beep?",
+        [
+          {
+            text: "No",
+            style: "cancel",
+          },
+          {
+            text: "Yes",
+            onPress: onCancel,
+          },
+        ],
+        { cancelable: true }
       );
     } else {
-      Linking.openURL(
-        `venmo://paycharge?txn=pay&recipients=${venmo}&amount=${user?.singlesRate}&note=Beep`
-      );
+      onCancel();
     }
-  }
+  };
 
-  function handleCashApp(groupSize: string | number, cashapp: string): void {
-    if (Number(groupSize) > 1) {
-      Linking.openURL(
-        `https://cash.app/$${cashapp}/${
-          Number(groupSize) * (user?.groupRate || 0)
-        }`
-      );
-    } else {
-      Linking.openURL(`https://cash.app/$${cashapp}/${user?.singlesRate || 0}`);
-    }
-  }
+  const onCancel = () => {
+    cancel({ variables: { id: item.id } }).catch((error: ApolloError) => {
+      alert(error.message);
+    });
+  };
 
   if (item.isAccepted) {
     return (
@@ -69,131 +66,115 @@ export function QueueItem({ item, index, navigation }: Props) {
         px={4}
         py={4}
         _light={{ bg: "coolGray.100" }}
-        _dark={{ bg: "gray.900" }}
+        _dark={{ bg: "gray.800" }}
         rounded="lg"
       >
-        <Flex
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Box>
-            <Pressable
-              onPress={() =>
-                navigation.navigate("Profile", {
-                  id: item.rider.id,
-                  beep: item.id,
-                })
-              }
-            >
-              <Flex direction="row" alignItems="center">
-                <Avatar
-                  size={50}
-                  mr={2}
-                  source={{
-                    uri: item.rider.photoUrl ? item.rider.photoUrl : undefined,
-                  }}
-                />
-                <Text bold fontSize="xl">
+        <Box>
+          <Pressable
+            onPress={() =>
+              navigate("Profile", {
+                id: item.rider.id,
+                beep: item.id,
+              })
+            }
+          >
+            <HStack space={2} alignItems="center">
+              <Avatar
+                size={50}
+                url={item.rider.photoUrl}
+              />
+              <Stack>
+                <Text fontWeight="extrabold" fontSize="xl">
                   {item.rider.name}
                 </Text>
-                <HStack space={2} ml={4}>
-                  <Button
-                    onPress={() => {
-                      Linking.openURL("tel:" + item.rider.phone);
-                    }}
-                    endIcon={
-                      <MaterialCommunityIcons
-                        name="phone"
-                        color="white"
-                        size={22}
-                      />
-                    }
-                  />
-                  <Button
-                    onPress={() => {
-                      Linking.openURL("sms:" + item.rider.phone);
-                    }}
-                    endIcon={
-                      <MaterialCommunityIcons
-                        name="message-text"
-                        color="white"
-                        size={22}
-                      />
-                    }
-                  />
-                </HStack>
-              </Flex>
-            </Pressable>
-            <Text>
-              <Text bold mr={2}>
-                Group Size
-              </Text>{" "}
-              <Text>{item.groupSize}</Text>
-            </Text>
-            <Text>
-              <Text bold mr={2}>
-                Pick Up
-              </Text>{" "}
-              <Text>{item.origin}</Text>
-            </Text>
-            <Text>
-              <Text bold mr={2}>
-                Drop Off
-              </Text>{" "}
-              <Text>{item.destination}</Text>
-            </Text>
-          </Box>
-        </Flex>
-        <VStack space={2}>
-          {item.rider?.venmo ? (
-            <Button
-              colorScheme="blue"
-              variant="subtle"
-              onPress={() => handleVenmo(item.groupSize, item.rider.venmo!)}
-            >
-              Request Money from Rider with Venmo
-            </Button>
-          ) : null}
-          {item.rider?.cashapp ? (
-            <Button
-              colorScheme="green"
-              variant="subtle"
-              onPress={() => handleCashApp(item.groupSize, item.rider.cashapp!)}
-            >
-              Request Money from Rider with Cash App
-            </Button>
-          ) : null}
-          {item.state <= 1 ? (
-            <Button
-              colorScheme="tertiary"
-              onPress={() => handleDirections("Current+Location", item.origin)}
-              endIcon={
-                <MaterialCommunityIcons
-                  name="map-legend"
-                  color="white"
-                  size={22}
-                />
-              }
-            >
-              Get Directions to Rider
-            </Button>
-          ) : (
-            <Button
-              onPress={() => handleDirections(item.origin, item.destination)}
-              endIcon={
-                <MaterialCommunityIcons
-                  name="map-legend"
-                  color="white"
-                  size={22}
-                />
-              }
-            >
-              Get Directions for Beep
-            </Button>
-          )}
-          <ActionButton item={item} index={index} />
-        </VStack>
+                <Text fontSize="xs">
+                  {item.rider.rating !== null && item.rider.rating !== undefined
+                    ? printStars(item.rider.rating)
+                    : null}
+                </Text>
+              </Stack>
+              <Spacer />
+              <Menu
+                key={`menu-${item.id}`}
+                w="190"
+                trigger={(triggerProps) => (
+                  <Pressable
+                    accessibilityLabel="More options menu"
+                    {...triggerProps}
+                  >
+                    <Icon
+                      as={Entypo}
+                      color="gray.400"
+                      name="dots-three-horizontal"
+                      size={19}
+                      mr={4}
+                    />
+                  </Pressable>
+                )}
+              >
+                <Menu.Item
+                  onPress={() => Linking.openURL("tel:" + item.rider.phone)}
+                >
+                  <HStack alignItems="center">
+                    <Text>Call</Text>
+                    <Spacer />
+                    <Icon as={MaterialCommunityIcons} name="phone" />
+                  </HStack>
+                </Menu.Item>
+                <Menu.Item
+                  onPress={() => Linking.openURL("sms:" + item.rider.phone)}
+                >
+                  <HStack alignItems="center">
+                    <Text>Text</Text>
+                    <Spacer />
+                    <Icon as={MaterialCommunityIcons} name="message-text" />
+                  </HStack>
+                </Menu.Item>
+                <Menu.Item
+                  onPress={() =>
+                    openDirections("Current+Location", item.origin)
+                  }
+                >
+                  <HStack alignItems="center">
+                    <Text>Directions to Rider</Text>
+                    <Spacer />
+                    <Icon as={MaterialCommunityIcons} name="map-legend" />
+                  </HStack>
+                </Menu.Item>
+                <Divider my={1} w="100%" />
+                <Menu.Item onPress={onCancelPress}>
+                  <HStack alignItems="center">
+                    <Text color="red.400">Cancel Beep</Text>
+                    <Spacer />
+                    <Icon
+                      as={MaterialCommunityIcons}
+                      name="cancel"
+                      color="red.400"
+                    />
+                  </HStack>
+                </Menu.Item>
+              </Menu>
+            </HStack>
+          </Pressable>
+          <Text>
+            <Text bold mr={2}>
+              Group Size
+            </Text>{" "}
+            <Text>{item.groupSize}</Text>
+          </Text>
+          <Text>
+            <Text bold mr={2}>
+              Pick Up
+            </Text>{" "}
+            <Text>{item.origin}</Text>
+          </Text>
+          <Text>
+            <Text bold mr={2}>
+              Drop Off
+            </Text>{" "}
+            <Text>{item.destination}</Text>
+          </Text>
+        </Box>
       </Box>
     );
   }
@@ -205,41 +186,37 @@ export function QueueItem({ item, index, navigation }: Props) {
       px={4}
       py={4}
       _light={{ bg: "coolGray.100" }}
-      _dark={{ bg: "gray.900" }}
+      _dark={{ bg: "gray.800" }}
       rounded="lg"
     >
-      <Box>
+      <Stack space={1}>
         <Pressable
           onPress={() =>
-            navigation.navigate("Profile", {
+            navigate("Profile", {
               id: item.rider.id,
               beep: item.id,
             })
           }
         >
           <HStack alignItems="center">
+            <Stack>
+              <Text fontWeight="extrabold" fontSize="xl">
+                {item.rider.name}
+              </Text>
+              <Text fontSize="xs">
+                {item.rider.rating !== null && item.rider.rating !== undefined
+                  ? printStars(item.rider.rating)
+                  : null}
+              </Text>
+            </Stack>
+            <Spacer />
             <Avatar
               mr={2}
               size={45}
-              source={{
-                uri: item.rider.photoUrl ? item.rider.photoUrl : undefined,
-              }}
+              url={item.rider.photoUrl}
             />
-            <Heading>{item.rider.name}</Heading>
           </HStack>
         </Pressable>
-        <Text>
-          <Text bold mr={2}>
-            Entered Queue
-          </Text>{" "}
-          <Text>
-            {new Date(item.start * 1000).toLocaleString("en-US", {
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            })}
-          </Text>
-        </Text>
         <Text>
           <Text bold>Group Size</Text> <Text>{item.groupSize}</Text>
         </Text>
@@ -255,7 +232,7 @@ export function QueueItem({ item, index, navigation }: Props) {
           </Text>{" "}
           <Text>{item.destination}</Text>
         </Text>
-      </Box>
+      </Stack>
       <HStack space={2} mt={2}>
         <AcceptDenyButton type="deny" item={item} />
         <AcceptDenyButton type="accept" item={item} />
