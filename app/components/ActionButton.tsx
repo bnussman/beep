@@ -45,15 +45,6 @@ function Button(props: Props) {
     setIsLoading(false);
   }, [props.item]);
 
-  const getColor = () => {
-    switch (props.item.state) {
-      case 3:
-        return "green";
-      default:
-        return "blue";
-    }
-  };
-
   const onPress = () => {
     setIsLoading(true);
     update({
