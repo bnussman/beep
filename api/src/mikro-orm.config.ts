@@ -17,6 +17,9 @@ const config: Options = {
       }
     }
   } : {},
+  migrations: {
+    allOrNothing: false,
+  }
 };
 
 export default config;
