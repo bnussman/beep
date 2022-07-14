@@ -74,11 +74,6 @@ export default class EditUserValidator implements Partial<User> {
   public capacity?: number;
 
   @Field({ nullable: true })
-  @IsBoolean()
-  @IsOptional()
-  public masksRequired?: boolean;
-
-  @Field({ nullable: true })
   @IsNumber()
   @Min(0)
   @IsOptional()

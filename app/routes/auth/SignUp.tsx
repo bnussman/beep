@@ -55,7 +55,6 @@ const SignUp = gql`
         singlesRate
         photoUrl
         capacity
-        masksRequired
         cashapp
       }
     }

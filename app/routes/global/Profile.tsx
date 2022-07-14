@@ -32,7 +32,6 @@ const GetUser = gql`
       singlesRate
       groupRate
       capacity
-      masksRequired
       photoUrl
       queueSize
       rating

@@ -37,7 +37,6 @@ const GetBeepers = gql`
       queueSize
       photoUrl
       role
-      masksRequired
       rating
       venmo
       cashapp

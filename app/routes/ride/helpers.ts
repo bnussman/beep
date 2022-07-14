@@ -37,7 +37,6 @@ const ChooseBeep = gql`
         username
         phone
         photoUrl
-        masksRequired
         capacity
         queueSize
         location {

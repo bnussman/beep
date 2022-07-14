@@ -86,10 +86,6 @@ export class User {
 
   @Field()
   @Property()
-  masksRequired: boolean = false;
-
-  @Field()
-  @Property()
   queueSize: number = 0;
 
   @Field({ nullable: true })

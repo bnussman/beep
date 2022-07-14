@@ -1,0 +1,34 @@
+name: migrate
+
+on: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: what environment's db should we migrate
+        options: 
+        - staging
+        - production
+      migration:
+        required: true
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+      - run: yarn --frozen-lockfile
+      - run: yarn workspace @beep/api db:migrate --only ${{ inputs.migration }} 
+        env:
+          DB_URL: ${{ secrets.DB_URL_PUBLIC }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_CA: ${{ secrets.DB_CA }}

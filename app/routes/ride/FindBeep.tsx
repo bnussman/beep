@@ -60,7 +60,6 @@ const InitialRiderStatus = gql`
         username
         phone
         photoUrl
-        masksRequired
         capacity
         queueSize
         location {
@@ -95,7 +94,6 @@ const RiderStatus = gql`
         username
         phone
         photoUrl
-        masksRequired
         capacity
         queueSize
         location {

@@ -25,7 +25,7 @@ export function __Avatar(props: Props & IAvatarProps) {
       key={key}
       source={source}
     >
-      {online && <_Avatar.Badge size={20} bg="green.400" />}
+      {online && <_Avatar.Badge size="4" bg="green.400" />}
     </_Avatar>
   );
 }

@@ -14,9 +14,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
-  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
 
@@ -44,7 +42,6 @@ export type BeeperSettingsInput = {
   isBeeping?: InputMaybe<Scalars['Boolean']>;
   latitude?: InputMaybe<Scalars['Float']>;
   longitude?: InputMaybe<Scalars['Float']>;
-  masksRequired?: InputMaybe<Scalars['Boolean']>;
   singlesRate?: InputMaybe<Scalars['Float']>;
 };
 
@@ -83,7 +80,6 @@ export type EditUserValidator = {
   isEmailVerified?: InputMaybe<Scalars['Boolean']>;
   isStudent?: InputMaybe<Scalars['Boolean']>;
   last?: InputMaybe<Scalars['String']>;
-  masksRequired?: InputMaybe<Scalars['Boolean']>;
   phone?: InputMaybe<Scalars['String']>;
   photoUrl?: InputMaybe<Scalars['String']>;
   pushToken?: InputMaybe<Scalars['String']>;
@@ -560,7 +556,6 @@ export type User = {
   isStudent: Scalars['Boolean'];
   last: Scalars['String'];
   location?: Maybe<Point>;
-  masksRequired: Scalars['Boolean'];
   name: Scalars['String'];
   password: Scalars['String'];
   phone?: Maybe<Scalars['String']>;
@@ -653,14 +648,14 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, masksRequired: boolean, cashapp?: string | null } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, cashapp?: string | null } } };
 
 export type SignUpMutationVariables = Exact<{
   input: SignUpInput;
 }>;
 
 
-export type SignUpMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, masksRequired: boolean, cashapp?: string | null } } };
+export type SignUpMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, cashapp?: string | null } } };
 
 export type LocationUpdateMutationVariables = Exact<{
   latitude: Scalars['Float'];
@@ -699,7 +694,7 @@ export type GetUserProfileQueryVariables = Exact<{
 }>;
 
 
-export type GetUserProfileQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, username: string, isBeeping: boolean, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, masksRequired: boolean, photoUrl?: string | null, queueSize: number, rating?: number | null } };
+export type GetUserProfileQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, username: string, isBeeping: boolean, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photoUrl?: string | null, queueSize: number, rating?: number | null } };
 
 export type RateUserMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -723,14 +718,14 @@ export type ReportUserMutation = { __typename?: 'Mutation', reportUser: boolean 
 export type GetInitialRiderStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, masksRequired: boolean, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
+export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
 
 export type RiderStatusSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, masksRequired: boolean, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
+export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
 
 export type BeepersLocationSubscriptionVariables = Exact<{
   id: Scalars['String'];
@@ -761,7 +756,7 @@ export type GetBeeperListQueryVariables = Exact<{
 }>;
 
 
-export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photoUrl?: string | null, role: string, masksRequired: boolean, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
+export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photoUrl?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
 
 export type ChooseBeepMutationVariables = Exact<{
   beeperId: Scalars['String'];
@@ -771,7 +766,7 @@ export type ChooseBeepMutationVariables = Exact<{
 }>;
 
 
-export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, masksRequired: boolean, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } };
+export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } };
 
 export type FindBeepQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -821,12 +816,12 @@ export type RemoveTokenMutation = { __typename?: 'Mutation', removeToken: boolea
 export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, masksRequired: boolean, cashapp?: string | null, pushToken?: string | null } };
+export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, cashapp?: string | null, pushToken?: string | null } };
 
 export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, masksRequired: boolean, cashapp?: string | null, pushToken?: string | null } };
+export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, cashapp?: string | null, pushToken?: string | null } };
 
 
 export const UpdateBeeperQueueDocument = gql`
@@ -1159,7 +1154,6 @@ export const LoginDocument = gql`
       singlesRate
       photoUrl
       capacity
-      masksRequired
       cashapp
     }
   }
@@ -1216,7 +1210,6 @@ export const SignUpDocument = gql`
       singlesRate
       photoUrl
       capacity
-      masksRequired
       cashapp
     }
   }
@@ -1433,7 +1426,6 @@ export const GetUserProfileDocument = gql`
     singlesRate
     groupRate
     capacity
-    masksRequired
     photoUrl
     queueSize
     rating
@@ -1560,7 +1552,6 @@ export const GetInitialRiderStatusDocument = gql`
       username
       phone
       photoUrl
-      masksRequired
       capacity
       queueSize
       location {
@@ -1621,7 +1612,6 @@ export const RiderStatusDocument = gql`
       username
       phone
       photoUrl
-      masksRequired
       capacity
       queueSize
       location {
@@ -1766,7 +1756,6 @@ export const GetBeeperListDocument = gql`
     queueSize
     photoUrl
     role
-    masksRequired
     rating
     venmo
     cashapp
@@ -1829,7 +1818,6 @@ export const ChooseBeepDocument = gql`
       username
       phone
       photoUrl
-      masksRequired
       capacity
       queueSize
       location {
@@ -2097,7 +2085,6 @@ export const UserDataDocument = gql`
     singlesRate
     photoUrl
     capacity
-    masksRequired
     cashapp
     pushToken
   }
@@ -2148,7 +2135,6 @@ export const UserUpdatesDocument = gql`
     singlesRate
     photoUrl
     capacity
-    masksRequired
     cashapp
     pushToken
   }
