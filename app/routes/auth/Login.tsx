@@ -43,7 +43,6 @@ const Login = gql`
         singlesRate
         photoUrl
         capacity
-        masksRequired
         cashapp
       }
     }

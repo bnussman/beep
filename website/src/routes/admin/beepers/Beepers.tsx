@@ -25,7 +25,6 @@ const BeepersGraphQL = gql`
       capacity
       isStudent
       queueSize
-      masksRequired
       location {
         longitude
         latitude

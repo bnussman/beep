@@ -63,12 +63,6 @@ export function Details({ user }: Props) {
         <strong>CashApp usename:</strong>
         <Text>{user.cashapp || "N/A"}</Text>
       </Box>
-      <Box>
-        <strong>Masks:</strong>
-        <Text>
-          {user.masksRequired ? 'Masks required' : 'Masks not required'}
-        </Text>
-      </Box>
     </Stack>
   );
 }

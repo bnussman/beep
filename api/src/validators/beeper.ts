@@ -32,11 +32,6 @@ export class BeeperSettingsInput implements Partial<User> {
   public isBeeping?: boolean;
 
   @Field({ nullable: true })
-  @IsBoolean()
-  @IsOptional()
-  public masksRequired?: boolean;
-
-  @Field({ nullable: true })
   @ValidateIf(o => o.isBeeping)
   @IsNumber()
   @IsDefined()

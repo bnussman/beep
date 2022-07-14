@@ -139,7 +139,6 @@ export function StartBeepingScreen() {
   const navigation = useNavigation<Navigation>();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
-  const [masksRequired, setMasksRequired] = useState(user?.masksRequired);
   const [singlesRate, setSinglesRate] = useState<string>(
     String(user?.singlesRate)
   );
@@ -217,7 +216,6 @@ export function StartBeepingScreen() {
     capacity,
     singlesRate,
     groupRate,
-    masksRequired,
   ]);
 
   async function getBeepingLocationPermissions(): Promise<boolean> {
@@ -277,7 +275,6 @@ export function StartBeepingScreen() {
           isBeeping: willBeBeeping,
           singlesRate: Number(singlesRate),
           groupRate: Number(groupRate),
-          masksRequired: masksRequired,
           capacity: Number(capacity),
           latitude: lat,
           longitude: lon,
@@ -409,13 +406,6 @@ export function StartBeepingScreen() {
               }
             />
           </FormControl>
-          <Checkbox
-            isChecked={masksRequired}
-            onChange={(value: boolean) => setMasksRequired(value)}
-            value="Masks?"
-          >
-            Require riders to have a mask
-          </Checkbox>
         </Stack>
       </Container>
     );

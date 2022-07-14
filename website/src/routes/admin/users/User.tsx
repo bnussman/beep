@@ -56,7 +56,6 @@ export const GetUser = gql`
       singlesRate
       groupRate
       capacity
-      masksRequired
       photoUrl
       queueSize
       phone

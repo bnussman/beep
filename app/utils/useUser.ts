@@ -19,7 +19,6 @@ export const UserData = gql`
       singlesRate
       photoUrl
       capacity
-      masksRequired
       cashapp
       pushToken
     }
@@ -44,7 +43,6 @@ export const UserSubscription = gql`
       singlesRate
       photoUrl
       capacity
-      masksRequired
       cashapp
       pushToken
     }
