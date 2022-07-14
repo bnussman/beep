@@ -27,8 +27,5 @@
   "resolutions": {
     "react": "^18.1.0",
     "react-dom": "^18.1.0"
-  },
-  "volta": {
-    "node": "18.0.0"
   }
 }
