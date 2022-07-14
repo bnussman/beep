@@ -39,7 +39,6 @@ export const GetUserData = gql`
       singlesRate
       photoUrl
       capacity
-      masksRequired
       username
       role
       cashapp
@@ -65,7 +64,6 @@ const UserUpdates = gql`
       singlesRate
       photoUrl
       capacity
-      masksRequired
       username
       role
       cashapp

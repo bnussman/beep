@@ -64,7 +64,6 @@ const SignUpGraphQL = gql`
         singlesRate
         photoUrl
         capacity
-        masksRequired
         username
         role
         cashapp

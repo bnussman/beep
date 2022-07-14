@@ -11,7 +11,8 @@
     "db:create": "mikro-orm schema:create --run",
     "db:update": "mikro-orm schema:update --run",
     "db:drop": "mikro-orm schema:drop --run",
-    "db:migrate": "mikro-orm migration:up"
+    "db:migrate": "mikro-orm migration:up",
+    "db:migration:create": "mikro-orm migration:create"
   },
   "repository": {
     "type": "git",
