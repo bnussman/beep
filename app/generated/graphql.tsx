@@ -696,6 +696,13 @@ export type GetUserProfileQueryVariables = Exact<{
 
 export type GetUserProfileQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, username: string, isBeeping: boolean, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photoUrl?: string | null, queueSize: number, rating?: number | null } };
 
+export type GetRatingsForUserQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetRatingsForUserQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: string | null, stars: number, rater: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string } }> } };
+
 export type RateUserMutationVariables = Exact<{
   userId: Scalars['String'];
   stars: Scalars['Float'];
@@ -1460,6 +1467,59 @@ export function useGetUserProfileLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type GetUserProfileQueryHookResult = ReturnType<typeof useGetUserProfileQuery>;
 export type GetUserProfileLazyQueryHookResult = ReturnType<typeof useGetUserProfileLazyQuery>;
 export type GetUserProfileQueryResult = ApolloReactCommon.QueryResult<GetUserProfileQuery, GetUserProfileQueryVariables>;
+export const GetRatingsForUserDocument = gql`
+    query GetRatingsForUser($id: String) {
+  getRatings(id: $id, show: 5, offset: 0) {
+    items {
+      id
+      timestamp
+      message
+      stars
+      rater {
+        id
+        name
+        photoUrl
+        username
+      }
+      rated {
+        id
+        name
+        photoUrl
+        username
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetRatingsForUserQuery__
+ *
+ * To run a query within a React component, call `useGetRatingsForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRatingsForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRatingsForUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetRatingsForUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>(GetRatingsForUserDocument, options);
+      }
+export function useGetRatingsForUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>(GetRatingsForUserDocument, options);
+        }
+export type GetRatingsForUserQueryHookResult = ReturnType<typeof useGetRatingsForUserQuery>;
+export type GetRatingsForUserLazyQueryHookResult = ReturnType<typeof useGetRatingsForUserLazyQuery>;
+export type GetRatingsForUserQueryResult = ApolloReactCommon.QueryResult<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>;
 export const RateUserDocument = gql`
     mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String!) {
   rateUser(

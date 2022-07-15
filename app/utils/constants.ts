@@ -31,6 +31,25 @@ export const NATIVE_BASE_THEME = extendTheme({
       900: "#10152F",
     },
   },
+  components: {
+    Input: {
+      baseStyle: {
+        borderRadius: '10px',
+      },
+    },
+    FormControlLabel: {
+      baseStyle: {
+        _text: {
+          fontWeight: 'extrabold',
+        },
+      },
+      defaultProps: {
+        _text: {
+          color: 'black',
+        },
+      },
+    },
+  },
   config: {
     useSystemColorMode: true,
     initialColorMode: "dark",

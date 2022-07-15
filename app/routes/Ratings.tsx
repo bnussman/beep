@@ -1,24 +1,19 @@
 import React from "react";
-import { Pressable, RefreshControl } from "react-native";
+import { RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../utils/useUser";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsQuery, Rating } from "../generated/graphql";
-import { printStars } from "../components/Stars";
+import { GetRatingsQuery, Rating as RatingType } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { Container } from "../components/Container";
-import { Avatar } from "../components/Avatar";
+import { Rating } from "../components/Rating";
 import {
   Text,
   FlatList,
   Spinner,
-  Flex,
-  Box,
-  Spacer,
   Heading,
   Center,
   useColorMode,
-  Stack,
 } from "native-base";
 
 const Ratings = gql`
@@ -48,8 +43,6 @@ const Ratings = gql`
 export function RatingsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
-
-  const navigation = useNavigation<Navigation>();
 
   const { data, loading, error, fetchMore, refetch } = useQuery<GetRatingsQuery>(Ratings, {
     variables: { id: user?.id, offset: 0, show: 10 },
@@ -94,61 +87,6 @@ export function RatingsScreen() {
     );
   };
 
-  const renderItem = ({ item, index }: { item: Rating, index: number }) => {
-    const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
-
-    return (
-      <Pressable
-        onPress={() => navigation.push("Profile", { id: otherUser.id })}
-      >
-        <Box
-          mx={4}
-          my={2}
-          px={4}
-          py={4}
-          mt={index === 0 ? 4 : undefined}
-          _light={{ bg: "coolGray.100" }}
-          _dark={{ bg: "gray.900" }}
-          rounded="lg"
-        >
-          <Flex direction="row" alignItems="center" p={2}>
-            <Avatar
-              size={50}
-              mr={4}
-              url={otherUser.photoUrl}
-            />
-            <Stack space={2}>
-              <Text>
-                {user?.id === item.rater.id ? (
-                  <Flex direction="row" alignItems="center">
-                    <Text _dark={{ color: "white" }} fontSize="md">
-                      You rated
-                    </Text>{" "}
-                    <Text bold fontSize="md" _dark={{ color: "white" }}>
-                      {otherUser.name}
-                    </Text>
-                  </Flex>
-                ) : (
-                  <Flex direction="row" alignItems="center">
-                    <Text bold fontSize="md" _dark={{ color: "white" }}>
-                      {otherUser.name}
-                    </Text>{" "}
-                    <Text fontSize="md" _dark={{ color: "white" }}>
-                      rated you
-                    </Text>
-                  </Flex>
-                )}
-              </Text>
-              <Text>{printStars(item.stars)}</Text>
-              {item.message ? <Text>{item.message}</Text> : null}
-            </Stack>
-            <Spacer />
-          </Flex>
-        </Box>
-      </Pressable>
-    );
-  };
-
   if (loading && !data) {
     return (
       <Container alignItems="center" justifyContent="center">
@@ -171,8 +109,8 @@ export function RatingsScreen() {
       <Container alignItems="center" justifyContent="center">
         <FlatList
           w="100%"
-          data={ratings as unknown as Rating[]}
-          renderItem={renderItem}
+          data={ratings}
+          renderItem={({ item, index }) => <Rating item={item} index={index} />}
           keyExtractor={rating => rating.id}
           onEndReached={getMore}
           onEndReachedThreshold={0.1}

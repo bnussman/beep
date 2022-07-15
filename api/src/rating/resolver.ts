@@ -47,7 +47,7 @@ export class RatingResolver {
   }
 
   @Query(() => RatingsResponse)
-  @Authorized('self')
+  @Authorized()
   public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<RatingsResponse> {
     const [ratings, count] = await ctx.em.findAndCount(Rating, {}, {
       orderBy: { timestamp: QueryOrder.DESC },

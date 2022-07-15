@@ -386,7 +386,7 @@ export function MainFindBeepScreen() {
               returnKeyType="go"
             />
           </FormControl>
-          <GradietnButton
+          <Button
             onPress={() => findBeep()}
             isLoading={isGetBeepLoading}
             isDisabled={
@@ -397,7 +397,7 @@ export function MainFindBeepScreen() {
             }
           >
             Find Beep
-          </GradietnButton>
+          </Button>
         </Stack>
       </Container>
     );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, RefreshControl } from "react-native";
+import { RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery } from "../generated/graphql";
@@ -12,11 +12,15 @@ import {
   Spinner,
   Text,
   FlatList,
-  Box,
+  Pressable,
   Heading,
   HStack,
   Center,
   useColorMode,
+  Flex,
+  Spacer,
+  Badge,
+  Stack,
 } from "native-base";
 
 const GetBeepHistory = gql`
@@ -107,48 +111,47 @@ export function BeepsScreen() {
     index: number;
   }) => {
     const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
+    const isRider = user?.id === item.rider.id;
     return (
       <Pressable
-        onPress={() =>
-          navigation.push("Profile", { id: otherUser.id, beep: item.id })
-        }
+        mx={4}
+        my={2}
+        p={5}
+        mt={index === 0 ? 4 : undefined}
+        _light={{ bg: "white", borderColor: "gray.100", borderWidth: 2 }}
+        _dark={{ bg: "gray.900", borderColor: "gray.800" }}
+        _pressed={{ _light: { bg: "gray.100" }, _dark: { bg: "gray.800" } }}
+        rounded="xl"
+        onPress={() => navigation.push("Profile", { id: otherUser.id, beep: item.id })}
       >
-        <Box
-          mx={4}
-          my={2}
-          px={4}
-          py={4}
-          mt={index === 0 ? 4 : undefined}
-          _light={{ bg: "coolGray.100" }}
-          _dark={{ bg: "gray.900" }}
-          rounded="lg"
-        >
-          <HStack alignItems="center">
-            <Avatar
-              size={35}
-              mr={2}
-              url={otherUser.photoUrl}
-            />
-            <Heading size="md">
-              {user?.id === item.rider.id
-                ? `${otherUser.name} beeped you`
-                : `You beeped ${otherUser.name}`}
-            </Heading>
-          </HStack>
+        <HStack alignItems="center" mb={2}>
+          <Avatar
+            size={12}
+            mr={2}
+            url={otherUser.photoUrl}
+          />
+          <Stack>
+            <Text fontSize="xl" fontWeight="extrabold">
+              {otherUser.name}
+            </Text>
+            <Text color="gray.400" fontSize="xs">
+              {new Date(item.start).toLocaleString()}
+            </Text>
+          </Stack>
+          <Spacer />
+          <Badge colorScheme='dark' borderRadius="lg">{isRider ? 'Ride' : 'Beep'}</Badge>
+        </HStack>
+        <Stack space={1}>
           <Text>
-            <Text bold>Group size:</Text> <Text>{item.groupSize}</Text>
+            <Text bold>Group size</Text> <Text>{item.groupSize}</Text>
           </Text>
           <Text>
-            <Text bold>Pick Up:</Text> <Text>{item.origin}</Text>
+            <Text bold>Pick Up</Text> <Text>{item.origin}</Text>
           </Text>
           <Text>
-            <Text bold>Drop Off:</Text> <Text>{item.destination}</Text>
+            <Text bold>Drop Off</Text> <Text>{item.destination}</Text>
           </Text>
-          <Text>
-            <Text bold>Date:</Text>{" "}
-            <Text>{new Date(item.start).toLocaleString()}</Text>
-          </Text>
-        </Box>
+        </Stack>
       </Pressable>
     );
   };

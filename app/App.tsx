@@ -112,7 +112,11 @@ function Beep() {
                 name="Main"
                 component={BeepDrawer}
               />
-              <Stack.Screen name="Profile" component={ProfileScreen} />
+              <Stack.Screen
+                name="Profile"
+                component={ProfileScreen}
+                options={{ presentation: "modal" }}
+              />
               <Stack.Screen
                 name="Report"
                 component={ReportScreen}
