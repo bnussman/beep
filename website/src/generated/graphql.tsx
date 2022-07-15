@@ -384,6 +384,7 @@ export type QueryGetRatingArgs = {
 
 
 export type QueryGetRatingsArgs = {
+  filter?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
   query?: InputMaybe<Scalars['String']>;

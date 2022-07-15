@@ -385,6 +385,7 @@ export type QueryGetRatingArgs = {
 
 
 export type QueryGetRatingsArgs = {
+  filter?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
   query?: InputMaybe<Scalars['String']>;
@@ -696,13 +697,6 @@ export type GetUserProfileQueryVariables = Exact<{
 
 export type GetUserProfileQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, username: string, isBeeping: boolean, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photoUrl?: string | null, queueSize: number, rating?: number | null } };
 
-export type GetRatingsForUserQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetRatingsForUserQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: string | null, stars: number, rater: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string } }> } };
-
 export type RateUserMutationVariables = Exact<{
   userId: Scalars['String'];
   stars: Scalars['Float'];
@@ -712,6 +706,13 @@ export type RateUserMutationVariables = Exact<{
 
 
 export type RateUserMutation = { __typename?: 'Mutation', rateUser: boolean };
+
+export type GetRatingsForUserQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetRatingsForUserQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: string | null, stars: number, rater: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string }, rated: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string } }> } };
 
 export type ReportUserMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -1467,9 +1468,45 @@ export function useGetUserProfileLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type GetUserProfileQueryHookResult = ReturnType<typeof useGetUserProfileQuery>;
 export type GetUserProfileLazyQueryHookResult = ReturnType<typeof useGetUserProfileLazyQuery>;
 export type GetUserProfileQueryResult = ApolloReactCommon.QueryResult<GetUserProfileQuery, GetUserProfileQueryVariables>;
+export const RateUserDocument = gql`
+    mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String!) {
+  rateUser(
+    input: {userId: $userId, beepId: $beepId, stars: $stars, message: $message}
+  )
+}
+    `;
+export type RateUserMutationFn = ApolloReactCommon.MutationFunction<RateUserMutation, RateUserMutationVariables>;
+
+/**
+ * __useRateUserMutation__
+ *
+ * To run a mutation, you first call `useRateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [rateUserMutation, { data, loading, error }] = useRateUserMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      stars: // value for 'stars'
+ *      message: // value for 'message'
+ *      beepId: // value for 'beepId'
+ *   },
+ * });
+ */
+export function useRateUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RateUserMutation, RateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<RateUserMutation, RateUserMutationVariables>(RateUserDocument, options);
+      }
+export type RateUserMutationHookResult = ReturnType<typeof useRateUserMutation>;
+export type RateUserMutationResult = ApolloReactCommon.MutationResult<RateUserMutation>;
+export type RateUserMutationOptions = ApolloReactCommon.BaseMutationOptions<RateUserMutation, RateUserMutationVariables>;
 export const GetRatingsForUserDocument = gql`
     query GetRatingsForUser($id: String) {
-  getRatings(id: $id, show: 5, offset: 0) {
+  getRatings(id: $id, show: 3, offset: 0, filter: "recieved") {
     items {
       id
       timestamp
@@ -1520,42 +1557,6 @@ export function useGetRatingsForUserLazyQuery(baseOptions?: ApolloReactHooks.Laz
 export type GetRatingsForUserQueryHookResult = ReturnType<typeof useGetRatingsForUserQuery>;
 export type GetRatingsForUserLazyQueryHookResult = ReturnType<typeof useGetRatingsForUserLazyQuery>;
 export type GetRatingsForUserQueryResult = ApolloReactCommon.QueryResult<GetRatingsForUserQuery, GetRatingsForUserQueryVariables>;
-export const RateUserDocument = gql`
-    mutation RateUser($userId: String!, $stars: Float!, $message: String, $beepId: String!) {
-  rateUser(
-    input: {userId: $userId, beepId: $beepId, stars: $stars, message: $message}
-  )
-}
-    `;
-export type RateUserMutationFn = ApolloReactCommon.MutationFunction<RateUserMutation, RateUserMutationVariables>;
-
-/**
- * __useRateUserMutation__
- *
- * To run a mutation, you first call `useRateUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRateUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [rateUserMutation, { data, loading, error }] = useRateUserMutation({
- *   variables: {
- *      userId: // value for 'userId'
- *      stars: // value for 'stars'
- *      message: // value for 'message'
- *      beepId: // value for 'beepId'
- *   },
- * });
- */
-export function useRateUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RateUserMutation, RateUserMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<RateUserMutation, RateUserMutationVariables>(RateUserDocument, options);
-      }
-export type RateUserMutationHookResult = ReturnType<typeof useRateUserMutation>;
-export type RateUserMutationResult = ApolloReactCommon.MutationResult<RateUserMutation>;
-export type RateUserMutationOptions = ApolloReactCommon.BaseMutationOptions<RateUserMutation, RateUserMutationVariables>;
 export const ReportUserDocument = gql`
     mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
   reportUser(input: {userId: $userId, reason: $reason, beepId: $beepId})
