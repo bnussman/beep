@@ -27,15 +27,17 @@ import {
   HStack,
   Divider,
   Icon,
-  Flex,
   Switch,
   useColorMode,
   Spinner,
   Button,
+  Stack,
 } from "native-base";
 import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
 import { MainNavParamList } from "./MainTabs";
+import { useNavigation } from "@react-navigation/native";
+import { Navigation } from "../utils/Navigation";
 
 const Logout = gql`
   mutation Logout {
@@ -72,7 +74,7 @@ const Resend = gql`
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
-
+  const { navigate } = useNavigation<Navigation>();
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
@@ -112,19 +114,22 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props}>
       <VStack space={6} my={2} mx={2}>
-        <Flex ml={2} direction="row" alignItems="center">
-          <Avatar
-            mr={4}
-            url={user?.photoUrl}
-            online={user?.isBeeping}
-          />
-          <Box>
-            <Text fontWeight="extrabold">{user?.name}</Text>
-            <Text fontSize={14} mt={0.5} fontWeight={500}>
-              @{user?.username}
-            </Text>
-          </Box>
-        </Flex>
+        <Pressable onPress={() => navigate("Profile", { id: user?.id })}>
+          <HStack alignItems="center">
+            <Avatar
+              mr={2}
+              size="md"
+              url={user?.photoUrl}
+              online={user?.isBeeping}
+            />
+            <Stack>
+              <Text fontWeight="extrabold" letterSpacing="sm" fontSize="md">{user?.name}</Text>
+              <Text color="gray.500">
+                @{user?.username}
+              </Text>
+            </Stack>
+          </HStack>
+        </Pressable>
         <VStack divider={<Divider />} space={4}>
           <VStack space={3}>
             {!user?.isEmailVerified ? (

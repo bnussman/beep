@@ -45,7 +45,12 @@ export const NATIVE_BASE_THEME = extendTheme({
       },
       defaultProps: {
         _text: {
-          color: 'black',
+          _dark: {
+            color: 'white',
+          },
+          _light: {
+            color: 'black',
+          },
         },
       },
     },

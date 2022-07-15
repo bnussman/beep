@@ -48,13 +48,25 @@ export class RatingResolver {
 
   @Query(() => RatingsResponse)
   @Authorized()
-  public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<RatingsResponse> {
+  public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string, @Arg('filter', { nullable: true }) filter?: 'recieved' | 'given'): Promise<RatingsResponse> {
+    let filters;
+
+    if (filter && id) {
+      filters = { [filter]: { id } };
+    }
+    else if (id) {
+      filters = { involved: { id } };
+    }
+    else {
+      filters = undefined;
+    }
+
     const [ratings, count] = await ctx.em.findAndCount(Rating, {}, {
       orderBy: { timestamp: QueryOrder.DESC },
       populate: ['rater', 'rated'],
       offset: offset,
       limit: show,
-      filters: id ? { in: { id } } : undefined
+      filters
     });
 
     return {

@@ -6,7 +6,9 @@ import { User } from "./User";
 
 @ObjectType()
 @Entity()
-@Filter({ name: 'in', cond: args => ({ $or: [{ rater: args.id } , { rated: args.id }] })})
+@Filter({ name: 'involved', cond: args => ({ $or: [{ rater: args.id } , { rated: args.id }] })})
+@Filter({ name: 'given', cond: args => ({ rater: args.id }) })
+@Filter({ name: 'recieved', cond: args => ({ rated: args.id }) })
 @Unique({ properties: ['beep', 'rater'] })
 export class Rating {
 
