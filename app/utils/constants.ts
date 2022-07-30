@@ -36,7 +36,7 @@ export const NATIVE_BASE_THEME = extendTheme({
       baseStyle: {
         _text: {
           fontWeight: 'extrabold',
-          letterSpacing: 'xs',
+          letterSpacing: 'sm',
         },
       },
       defaultProps: {

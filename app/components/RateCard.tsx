@@ -37,7 +37,6 @@ export function RateCard() {
       <Pressable
         onPress={() => {
           navigation.navigate("Rate", {
-            id: data?.getLastBeepToRate?.beeper.id,
             user: data?.getLastBeepToRate?.beeper as User,
             beep: data?.getLastBeepToRate?.id,
           });
