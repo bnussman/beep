@@ -23,7 +23,7 @@ export function ReportScreen() {
     try {
       await report({
         variables: {
-          userId: params.id,
+          userId: params.user.id,
           beepId: params.beep,
           reason: reason,
         },

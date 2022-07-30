@@ -51,13 +51,9 @@ export function ProfileScreen() {
     variables: { id: params.id },
   });
 
-
-
   const handleReport = () => {
     navigation.navigate("Report", {
       user: data?.getUser as User,
-      id: params.id,
-      name: data?.getUser.name || "",
       beep: params.beep,
     });
   }
@@ -70,7 +66,7 @@ export function ProfileScreen() {
       });
     } else {
       alert(
-        "You can only leave a rating when you've interacted with this user."
+        "You can only rate a user from a specific beep that took place."
       );
     }
   }
@@ -88,7 +84,7 @@ export function ProfileScreen() {
           </Menu>
       ),
     });
-  }, [navigation]);
+  }, [navigation, data]);
 
   if (loading) {
     return (

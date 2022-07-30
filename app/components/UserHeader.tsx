@@ -7,9 +7,7 @@ interface Props {
   user: User;
 }
 
-export function UserHeader(props: Props): JSX.Element {
-  const { user } = props;
-
+export function UserHeader({ user }: Props) {
   return (
     <Flex direction="row" alignItems="center">
       <Avatar

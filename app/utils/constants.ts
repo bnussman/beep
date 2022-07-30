@@ -32,15 +32,11 @@ export const NATIVE_BASE_THEME = extendTheme({
     },
   },
   components: {
-    Input: {
-      baseStyle: {
-        borderRadius: '10px',
-      },
-    },
     FormControlLabel: {
       baseStyle: {
         _text: {
           fontWeight: 'extrabold',
+          letterSpacing: 'xs',
         },
       },
       defaultProps: {
