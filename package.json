@@ -22,7 +22,7 @@
   "license": "SEE LICENSE IN LICENSE.MD",
   "private": true,
   "dependencies": {
-    "concurrently": "^7.2.1"
+    "concurrently": "^7.3.0"
   },
   "resolutions": {
     "react": "^18.1.0",
