@@ -3,7 +3,7 @@ import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
-import { RateSheet } from "../../components/RateSheet";
+import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { Logger } from "../../utils/Logger";
 import { LeaveButton } from "./LeaveButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -242,6 +242,7 @@ export function MainFindBeepScreen() {
       updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
     }
     if (previousData && !beep) {
+      client.refetchQueries({ include: [GetRateData] });
       riderStatusSub?.unsubscribe();
     }
   }, [data]);

@@ -204,7 +204,9 @@ export function Beep(props: Props) {
                 Get Directions for Beep
               </Button>
             )}
-            <CancelButton beep={beep} />
+            {beep.state < 3 && (
+              <CancelButton beep={beep} />
+            )}
             <ActionButton beep={beep} />
           </>
         )}

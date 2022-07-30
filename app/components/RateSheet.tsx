@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Box, Button, Center, Heading, HStack, Pressable, Spacer, Text } from "native-base";
-import { GetRateDataQuery, RateUserMutation, User } from "../generated/graphql";
+import { Center, Heading, HStack, Pressable, Spacer } from "native-base";
+import { GetRateDataQuery, RateUserMutation } from "../generated/graphql";
 import { BottomSheet } from "./BottomSheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
@@ -11,6 +11,7 @@ import { Avatar } from "./Avatar";
 import { GradietnButton } from "./GradientButton";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
+import { Ratings } from "../routes/Ratings";
 
 export const GetRateData = gql`
   query GetRateData {
@@ -40,7 +41,7 @@ export function RateSheet() {
 
    const onSubmit = () => {
     rate({
-      refetchQueries: () => ["GetRatings"],
+      refetchQueries: [Ratings],
       variables: {
         userId: beep?.beeper.id,
         beepId: beep?.id,

@@ -1,10 +1,8 @@
 import React from "react";
 import { RefreshControl } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { useUser } from "../utils/useUser";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsQuery, Rating as RatingType } from "../generated/graphql";
-import { Navigation } from "../utils/Navigation";
+import { GetRatingsQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
 import {
@@ -16,7 +14,7 @@ import {
   useColorMode,
 } from "native-base";
 
-const Ratings = gql`
+export const Ratings = gql`
   query GetRatings($id: String, $offset: Int, $show: Int) {
     getRatings(id: $id, offset: $offset, show: $show) {
       items {
