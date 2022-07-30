@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";
+import { useNavigation } from "@react-navigation/native";
+import { RateSheet } from "../../components/RateSheet";
 import { Logger } from "../../utils/Logger";
 import { LeaveButton } from "./LeaveButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -35,7 +37,6 @@ import {
   VStack,
   Icon,
 } from "native-base";
-import { useNavigation } from "@react-navigation/native";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -349,9 +350,8 @@ export function MainFindBeepScreen() {
 
   if (!beep) {
     return (
-      <Container keyboard alignItems="center" pt={2}>
+      <Container keyboard alignItems="center" pt={2} h="100%">
         <Stack space={4} w="90%">
-          {/* <RateCard navigation={props.navigation} /> */}
           {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
           <FormControl>
             <FormControl.Label>Group Size</FormControl.Label>
@@ -386,7 +386,7 @@ export function MainFindBeepScreen() {
               returnKeyType="go"
             />
           </FormControl>
-          <Button
+          <GradietnButton
             onPress={() => findBeep()}
             isLoading={isGetBeepLoading}
             isDisabled={
@@ -397,8 +397,9 @@ export function MainFindBeepScreen() {
             }
           >
             Find Beep
-          </Button>
+          </GradietnButton>
         </Stack>
+        <RateSheet />
       </Container>
     );
   }

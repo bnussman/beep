@@ -22,7 +22,7 @@ export const Container = (props: Props & IBoxProps): JSX.Element => {
         <KeyboardAwareScrollView
           scrollEnabled={false}
           extraHeight={150}
-          contentContainerStyle={center ? { height: '100%', justifyContent: 'center'} :  { justifyContent: "center" }}
+          contentContainerStyle={center ? { height: '100%', justifyContent: 'center'} :  { justifyContent: "center", height: '100%' }}
           {...scrollViewProps}
         >
           <Box flex={1} h="100%" {...centerProps} {...rest}>

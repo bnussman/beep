@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Pressable, Spinner, View } from "native-base";
+import { Box, Pressable, Spinner } from "native-base";
 
 interface Props {
   onPress: () => void;
@@ -7,10 +7,12 @@ interface Props {
   isLoading?: boolean;
   children: string | JSX.Element;
   size?: "sm" | "lg";
+  h?: '100%' | number;
+  w?: '100%' | number;
 }
 
 export function GradietnButton(props: Props) {
-  const { onPress, isDisabled, isLoading, children, size = "lg" } = props;
+  const { onPress, isDisabled, isLoading, children, size = "lg", ...rest } = props;
 
   return (
     <Pressable
@@ -24,6 +26,7 @@ export function GradietnButton(props: Props) {
         shadowRadius: 10,
         shadowColor: "#fb7ba2",
       }}
+      {...rest}
     >
       <Box
         bg={{
@@ -43,6 +46,7 @@ export function GradietnButton(props: Props) {
           color: "white",
           textAlign: "center",
         }}
+        {...rest}
       >
         {isLoading ? <Spinner size="sm" /> : children}
       </Box>

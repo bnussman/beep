@@ -3,10 +3,11 @@ import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
-import { GetRatingsQuery, GetUserProfileQuery, User } from "../../generated/graphql";
+import { GetUserProfileQuery, User } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { RatePreview } from "./RatePreview";
 import {
   Spinner,
   Text,
@@ -17,9 +18,7 @@ import {
   Menu,
   Pressable,
   Icon,
-  Box,
 } from "native-base";
-import { RatePreview } from "./RatePreview";
 
 const GetUser = gql`
   query GetUserProfile($id: String!) {

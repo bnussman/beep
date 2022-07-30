@@ -9,7 +9,7 @@ import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-const RateUser = gql`
+export const RateUser = gql`
   mutation RateUser(
     $userId: String!
     $stars: Float!
@@ -35,7 +35,7 @@ export function RateScreen() {
   const { params } = useRoute<any>();
   const { goBack } = useNavigation<Navigation>();
 
-  async function rateUser() {
+  const onSubmit = () => {
     rate({
       refetchQueries: () => ["GetRatings"],
       variables: {
@@ -70,11 +70,11 @@ export function RateScreen() {
           placeholder="Your rating message goes here"
           returnKeyType="go"
           onChangeText={(text) => setMessage(text)}
-          onSubmitEditing={() => rateUser()}
+          onSubmitEditing={onSubmit}
           blurOnSubmit={true}
         />
         <Button
-          onPress={() => rateUser()}
+          onPress={onSubmit}
           isDisabled={stars < 1}
           isLoading={loading}
         >
