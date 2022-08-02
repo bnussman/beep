@@ -26,13 +26,15 @@ export class RiderResolver {
 
     beeper.queue.add(entry);
 
-    sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue 🚕`, "Please open your app to accept or deny this rider.");
-
-    pubSub.publish("Beeper" + beeper.id, beeper.queue.getItems().sort(inOrder));
+    const queue = beeper.queue.getItems().sort(inOrder);
 
     entry.position = beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.isAccepted).length;
 
     await ctx.em.persistAndFlush(beeper);
+
+    sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue 🚕`, "Please open your app to accept or deny this rider.");
+
+    pubSub.publish("Beeper" + beeper.id, queue);
 
     return entry;
   }

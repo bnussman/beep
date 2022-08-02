@@ -1,16 +1,11 @@
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
-import { isAndroid, Unpacked } from "../../utils/constants";
+import { isAndroid } from "../../utils/constants";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
@@ -21,6 +16,7 @@ import { QueueItem } from "./QueueItem";
 import { Beep } from "./Beep";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import { useNavigation } from "@react-navigation/native";
 import {
   Alert as NativeAlert,
   AppState,
@@ -35,7 +31,6 @@ import {
   Input,
   Switch,
   Text,
-  Checkbox,
   Heading,
   FormControl,
   Stack,
@@ -45,7 +40,6 @@ import {
   useColorMode,
   Flex,
 } from "native-base";
-import { useNavigation } from "@react-navigation/native";
 
 let unsubscribe: any = null;
 
@@ -210,13 +204,7 @@ export function StartBeepingScreen() {
         />
       ),
     });
-  }, [
-    navigation,
-    isBeeping,
-    capacity,
-    singlesRate,
-    groupRate,
-  ]);
+  }, [navigation, isBeeping, capacity, singlesRate, groupRate]);
 
   async function getBeepingLocationPermissions(): Promise<boolean> {
     try {
@@ -449,6 +437,7 @@ export function StartBeepingScreen() {
                 data={queue.filter((entry) => entry.id !== queue[0]?.id)}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => <QueueItem item={item} />}
+                contentContainerStyle={{ paddingLeft: 8, paddingRight: 8 }}
                 refreshControl={
                   <RefreshControl
                     tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}

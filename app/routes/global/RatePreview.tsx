@@ -1,9 +1,10 @@
 import React from "react";
-import { Text, Box, HStack, Stack, Heading } from "native-base";
+import { Text, HStack, Stack, Heading } from "native-base";
 import { gql, useQuery } from "@apollo/client";
 import { GetRatingsQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { printStars } from "../../components/Stars";
+import { Card } from "../../components/Card";
 
 const Ratings = gql`
   query GetRatingsForUser($id: String) {
@@ -51,20 +52,9 @@ export function RatePreview({ id }: Props) {
     <>
       <Heading mt={6}>Ratings</Heading>
       {ratings?.map((rating) => (
-        <Box
-          my={2}
-          p={2}
-          _light={{ bg: "white", borderColor: "gray.100", borderWidth: 2 }}
-          _dark={{ bg: "gray.900", borderColor: "gray.800" }}
-          rounded="xl"
-          key={rating.id}
-        >
+        <Card key={rating.id} p={2} my={2}>
           <HStack alignItems="center" p={2}>
-            <Avatar
-              size="lg"
-              mr={4}
-              url={rating.rater.photoUrl}
-            />
+            <Avatar size="lg" mr={4} url={rating.rater.photoUrl} />
             <Stack>
               <Text fontWeight="extrabold" fontSize="lg">
                 {rating.rater.name}
@@ -76,8 +66,8 @@ export function RatePreview({ id }: Props) {
             </Stack>
           </HStack>
           {rating.message ? <Text>{rating.message}</Text> : null}
-        </Box>
+        </Card>
       ))}
-      </>
+    </>
   );
 }

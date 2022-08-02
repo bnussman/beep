@@ -7,7 +7,7 @@ import { EntityManager } from "@mikro-orm/core";
 import { ENVIRONMENT } from "../utils/constants";
 
 const urls = {
-  development: 'http://localhost:3000',
+  development: 'http://localhost:5173',
   staging: 'https://staging.ridebeep.app',
   production: 'https://ridebeep.app'
 };

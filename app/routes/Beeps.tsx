@@ -22,6 +22,7 @@ import {
   Badge,
   Stack,
 } from "native-base";
+import { Card } from "../components/Card";
 
 const GetBeepHistory = gql`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -113,23 +114,17 @@ export function BeepsScreen() {
     const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
     const isRider = user?.id === item.rider.id;
     return (
-      <Pressable
+      <Card
         mx={4}
         my={2}
-        p={5}
         mt={index === 0 ? 4 : undefined}
-        _light={{ bg: "white", borderColor: "gray.100", borderWidth: 2 }}
-        _dark={{ bg: "gray.900", borderColor: "gray.800" }}
-        _pressed={{ _light: { bg: "gray.100" }, _dark: { bg: "gray.800" } }}
-        rounded="xl"
-        onPress={() => navigation.push("Profile", { id: otherUser.id, beep: item.id })}
+        pressable
+        onPress={() =>
+          navigation.push("Profile", { id: otherUser.id, beep: item.id })
+        }
       >
         <HStack alignItems="center" mb={2}>
-          <Avatar
-            size={12}
-            mr={2}
-            url={otherUser.photoUrl}
-          />
+          <Avatar size={12} mr={2} url={otherUser.photoUrl} />
           <Stack>
             <Text fontSize="xl" fontWeight="extrabold">
               {otherUser.name}
@@ -139,7 +134,9 @@ export function BeepsScreen() {
             </Text>
           </Stack>
           <Spacer />
-          <Badge colorScheme='dark' borderRadius="lg">{isRider ? 'Ride' : 'Beep'}</Badge>
+          <Badge colorScheme="dark" borderRadius="lg">
+            {isRider ? "Ride" : "Beep"}
+          </Badge>
         </HStack>
         <Stack space={1}>
           <Text>
@@ -152,7 +149,7 @@ export function BeepsScreen() {
             <Text bold>Drop Off</Text> <Text>{item.destination}</Text>
           </Text>
         </Stack>
-      </Pressable>
+      </Card>
     );
   };
 

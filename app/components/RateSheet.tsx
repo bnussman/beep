@@ -39,7 +39,7 @@ export function RateSheet() {
 
   const snapPoints = useMemo(() => ["30%"], []);
 
-   const onSubmit = () => {
+  const onSubmit = () => {
     rate({
       refetchQueries: [Ratings],
       variables: {
@@ -54,7 +54,7 @@ export function RateSheet() {
       .catch((error: ApolloError) => {
         Alert(error);
       });
-  }
+  };
 
   if (!beep) return null;
 
@@ -69,10 +69,16 @@ export function RateSheet() {
       shadow="light"
     >
       <Center padding={4} height="100%">
-        <Pressable onPress={() => navigate("Profile", { id: beep.beeper.id, beep: beep.id })}>
-          <HStack space={2} alignItems='center'>
+        <Pressable
+          onPress={() =>
+            navigate("Profile", { id: beep.beeper.id, beep: beep.id })
+          }
+        >
+          <HStack space={2} alignItems="center">
             <Avatar url={beep.beeper.photoUrl} />
-            <Heading fontWeight="extrabold" letterSpacing="sm">{beep.beeper.name}</Heading>
+            <Heading fontWeight="extrabold" letterSpacing="sm">
+              {beep.beeper.name}
+            </Heading>
           </HStack>
         </Pressable>
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
@@ -89,5 +95,4 @@ export function RateSheet() {
       </Center>
     </BottomSheet>
   );
-
 }

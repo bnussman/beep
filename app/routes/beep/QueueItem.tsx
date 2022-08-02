@@ -21,6 +21,7 @@ import {
   Menu,
   Divider,
 } from "native-base";
+import { Card } from "../../components/Card";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -60,15 +61,7 @@ export function QueueItem({ item }: Props) {
 
   if (item.isAccepted) {
     return (
-      <Box
-        mx={4}
-        my={2}
-        px={4}
-        py={4}
-        _light={{ bg: "coolGray.100" }}
-        _dark={{ bg: "gray.800" }}
-        rounded="lg"
-      >
+      <Card mb={2}>
         <Box>
           <Pressable
             onPress={() =>
@@ -79,10 +72,7 @@ export function QueueItem({ item }: Props) {
             }
           >
             <HStack space={2} alignItems="center">
-              <Avatar
-                size={50}
-                url={item.rider.photoUrl}
-              />
+              <Avatar size={50} url={item.rider.photoUrl} />
               <Stack>
                 <Text fontWeight="extrabold" fontSize="xl">
                   {item.rider.name}
@@ -175,20 +165,12 @@ export function QueueItem({ item }: Props) {
             <Text>{item.destination}</Text>
           </Text>
         </Box>
-      </Box>
+      </Card>
     );
   }
 
   return (
-    <Box
-      mx={4}
-      my={2}
-      px={4}
-      py={4}
-      _light={{ bg: "coolGray.100" }}
-      _dark={{ bg: "gray.800" }}
-      rounded="lg"
-    >
+    <Card mb={2}>
       <Stack space={1}>
         <Pressable
           onPress={() =>
@@ -210,11 +192,7 @@ export function QueueItem({ item }: Props) {
               </Text>
             </Stack>
             <Spacer />
-            <Avatar
-              mr={2}
-              size={45}
-              url={item.rider.photoUrl}
-            />
+            <Avatar mr={2} size={45} url={item.rider.photoUrl} />
           </HStack>
         </Pressable>
         <Text>
@@ -237,6 +215,6 @@ export function QueueItem({ item }: Props) {
         <AcceptDenyButton type="deny" item={item} />
         <AcceptDenyButton type="accept" item={item} />
       </HStack>
-    </Box>
+    </Card>
   );
 }

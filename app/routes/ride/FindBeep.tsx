@@ -37,6 +37,9 @@ import {
   VStack,
   Icon,
 } from "native-base";
+import { Rates } from "./Rates";
+import { Card } from "../../components/Card";
+import { PlaceInQueue } from "./PlaceInQueue";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -409,33 +412,17 @@ export function MainFindBeepScreen() {
     return (
       <Container pt={2}>
         <Stack alignItems="center" space={4}>
-          <Avatar
-            size={100}
-            url={beep.beeper.photoUrl}
-          />
+          <Avatar size={100} url={beep.beeper.photoUrl} />
           <Center>
             <Heading fontWeight="extrabold">{beep.beeper.name}</Heading>
             <Text>is your beeper!</Text>
           </Center>
-          <HStack space={4}>
-            <Box alignItems="center">
-              <Text fontWeight="extrabold">Single</Text>
-              <Text>${beep.beeper.singlesRate}</Text>
-            </Box>
-            <Box alignItems="center">
-              <Text fontWeight="extrabold">Group</Text>
-              <Text>${beep.beeper.groupRate}</Text>
-            </Box>
-          </HStack>
+          <Rates
+            singles={beep.beeper.singlesRate}
+            group={beep.beeper.groupRate}
+          />
           {beep.position <= 0 && (
-            <Box
-              _light={{ bg: "coolGray.50" }}
-              _dark={{ bg: "gray.700" }}
-              rounded="lg"
-              p={4}
-              mt={2}
-              mb={4}
-            >
+            <Card w="90%" alignItems="center" justifyContent="center">
               <Heading size="md" fontWeight="extrabold">
                 Current Status
               </Heading>
@@ -450,17 +437,14 @@ export function MainFindBeepScreen() {
                   ) : null}
                 </>
               ) : null}
-            </Box>
+            </Card>
           )}
-          {beep.position > 0 ? (
-            <Center mb={4}>
-              <Heading>{beep.position}</Heading>
-              <Text>
-                {beep.position === 1 ? "person is" : "people are"} ahead of you
-                in {beep.beeper.first || "User"}&apos;s queue.
-              </Text>
-            </Center>
-          ) : null}
+          {beep.position > 0 && (
+            <PlaceInQueue
+              firstName={beep.beeper.first}
+              position={beep.position}
+            />
+          )}
           <VStack space={2} w="90%">
             <Button
               colorScheme="green"
@@ -521,12 +505,9 @@ export function MainFindBeepScreen() {
     );
   } else {
     return (
-      <Container alignItems="center" pt={2}>
+      <Container alignItems="center" justifyContent="center" pt={2}>
         <Stack space={4} w="90%" alignItems="center">
-          <Avatar
-            size={100}
-            url={beep.beeper.photoUrl}
-          />
+          <Avatar size={100} url={beep.beeper.photoUrl} />
           <Center>
             <Text>Waiting on</Text>
             <Heading>{beep.beeper.name}</Heading>
@@ -543,24 +524,14 @@ export function MainFindBeepScreen() {
             </Text>
             <Text fontWeight="thin">per person</Text>
           </Center>
-          <HStack space={4}>
-            <Box alignItems="center">
-              <Text fontWeight="extrabold">Single</Text>
-              <Text>${beep.beeper.singlesRate}</Text>
-            </Box>
-            <Box alignItems="center">
-              <Text fontWeight="extrabold">Group</Text>
-              <Text>${beep.beeper.groupRate}</Text>
-            </Box>
-          </HStack>
-          <Box alignItems="center">
-            <Heading fontWeight="extrabold">{beep.position}</Heading>
-            <Text>
-              {beep.position === 1 ? "person is" : "people are"} ahead of you in{" "}
-              {beep.beeper.first}
-              {"'"}s queue
-            </Text>
-          </Box>
+          <Rates
+            singles={beep.beeper.singlesRate}
+            group={beep.beeper.groupRate}
+          />
+          <PlaceInQueue
+            firstName={beep.beeper.first}
+            position={beep.position}
+          />
           <LeaveButton beepersId={beep.beeper.id} />
         </Stack>
       </Container>

@@ -42,15 +42,16 @@ export function RatingsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
 
-  const { data, loading, error, fetchMore, refetch } = useQuery<GetRatingsQuery>(Ratings, {
-    variables: { id: user?.id, offset: 0, show: 10 },
-    notifyOnNetworkStatusChange: true,
-  });
+  const { data, loading, error, fetchMore, refetch } =
+    useQuery<GetRatingsQuery>(Ratings, {
+      variables: { id: user?.id, offset: 0, show: 10 },
+      notifyOnNetworkStatusChange: true,
+    });
 
   const ratings = data?.getRatings.items;
   const count = data?.getRatings.count || 0;
   const isRefreshing = Boolean(data) && loading;
-  const canLoadMore = ratings && count && (ratings?.length < count);
+  const canLoadMore = ratings && count && ratings?.length < count;
 
   const getMore = () => {
     if (!canLoadMore || isRefreshing) return;
@@ -58,7 +59,7 @@ export function RatingsScreen() {
     fetchMore({
       variables: {
         offset: ratings?.length || 0,
-        limit: 10
+        limit: 10,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) {
@@ -67,11 +68,14 @@ export function RatingsScreen() {
 
         return {
           getRatings: {
-            items: [...prev.getRatings.items, ...fetchMoreResult.getRatings.items],
-            count: fetchMoreResult.getRatings.count
-          }
+            items: [
+              ...prev.getRatings.items,
+              ...fetchMoreResult.getRatings.items,
+            ],
+            count: fetchMoreResult.getRatings.count,
+          },
         };
-      }
+      },
     });
   };
 
@@ -109,7 +113,7 @@ export function RatingsScreen() {
           w="100%"
           data={ratings}
           renderItem={({ item, index }) => <Rating item={item} index={index} />}
-          keyExtractor={rating => rating.id}
+          keyExtractor={(rating) => rating.id}
           onEndReached={getMore}
           onEndReachedThreshold={0.1}
           ListFooterComponent={renderFooter()}
