@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { Logger } from "../../utils/Logger";
 import { LeaveButton } from "./LeaveButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Share, Linking, AppState, AppStateStatus } from "react-native";
 import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
@@ -20,6 +20,10 @@ import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Subscription } from "../../utils/types";
 import { Avatar } from "../../components/Avatar";
+import { Rates } from "./Rates";
+import { Card } from "../../components/Card";
+import { PlaceInQueue } from "./PlaceInQueue";
+import { GetBeepHistory } from "../Beeps";
 import {
   GetEtaQuery,
   GetInitialRiderStatusQuery,
@@ -28,18 +32,17 @@ import {
   Button,
   Text,
   Input,
-  Box,
   Heading,
   Stack,
   FormControl,
   HStack,
   Center,
-  VStack,
   Icon,
+  Spacer,
+  Spinner,
+  Pressable,
 } from "native-base";
-import { Rates } from "./Rates";
-import { Card } from "../../components/Card";
-import { PlaceInQueue } from "./PlaceInQueue";
+import { StatusBar } from "./StatusBar";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -245,7 +248,7 @@ export function MainFindBeepScreen() {
       updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
     }
     if (previousData && !beep) {
-      client.refetchQueries({ include: [GetRateData] });
+      client.refetchQueries({ include: [GetRateData, GetBeepHistory] });
       riderStatusSub?.unsubscribe();
     }
   }, [data]);
@@ -410,33 +413,68 @@ export function MainFindBeepScreen() {
 
   if (beep.isAccepted) {
     return (
-      <Container pt={2}>
-        <Stack alignItems="center" space={4}>
-          <Avatar size={100} url={beep.beeper.photoUrl} />
-          <Center>
-            <Heading fontWeight="extrabold">{beep.beeper.name}</Heading>
-            <Text>is your beeper!</Text>
-          </Center>
+      <Container p={2} px={4} alignItems="center">
+        <Stack alignItems="center" space={4} w="100%" h="94%">
+          <Pressable
+            onPress={() =>
+              navigate("Profile", { id: beep.beeper.id, beep: beep.id })
+            }
+          >
+            <HStack alignItems="center" space={4} w="100%">
+              <Stack flexShrink={1}>
+                <Heading
+                  size="xl"
+                  fontWeight="extrabold"
+                  letterSpacing="sm"
+                  isTruncated
+                >
+                  {beep.beeper.name}
+                </Heading>
+                <Text isTruncated fontSize="xs">
+                  <Text fontWeight="extrabold">Pick Up </Text>
+                  <Text>{beep.origin}</Text>
+                </Text>
+                <Text isTruncated fontSize="xs">
+                  <Text fontWeight="extrabold">Destination </Text>
+                  <Text>{beep.destination}</Text>
+                </Text>
+              </Stack>
+              <Spacer />
+              <Avatar size="xl" url={beep.beeper.photoUrl} />
+            </HStack>
+          </Pressable>
           <Rates
             singles={beep.beeper.singlesRate}
             group={beep.beeper.groupRate}
           />
           {beep.position <= 0 && (
-            <Card w="90%" alignItems="center" justifyContent="center">
-              <Heading size="md" fontWeight="extrabold">
+            <Card w="100%">
+              <Heading
+                size="md"
+                letterSpacing="sm"
+                fontWeight="extrabold"
+                mb={1}
+              >
                 Current Status
               </Heading>
               <Text>{getCurrentStatusMessage()}</Text>
-              {beep.state === 1 ? (
-                <>
-                  {etaError ? <Text mt={2}>{etaError.message}</Text> : null}
-                  {eta?.getETA && beep.beeper.location ? (
-                    <Text bold mt={2}>
-                      Your beeper is {eta.getETA} away
-                    </Text>
-                  ) : null}
-                </>
-              ) : null}
+              <StatusBar state={beep.state} />
+            </Card>
+          )}
+          {beep.state === 1 && (
+            <Card w="100%">
+              <HStack>
+                <Heading fontWeight="extrabold" size="sm">
+                  ETA
+                </Heading>
+                <Spacer />
+                {etaError ? <Text>{etaError.message}</Text> : null}
+                {eta?.getETA ? (
+                  <Text>{eta.getETA}</Text>
+                ) : (
+                  <Spinner size="sm" />
+                )}
+              </HStack>
             </Card>
           )}
           {beep.position > 0 && (
@@ -445,30 +483,24 @@ export function MainFindBeepScreen() {
               position={beep.position}
             />
           )}
-          <VStack space={2} w="90%">
+          <Spacer />
+          <Stack space={2} w="100%">
             <Button
-              colorScheme="green"
               onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
               endIcon={
-                <Icon
-                  as={MaterialCommunityIcons}
-                  name="phone"
-                  color="white"
-                  size={22}
-                />
+                <Icon as={Ionicons} name="ios-call" color="white" size="md" />
               }
             >
               Call Beeper
             </Button>
             <Button
-              colorScheme="green"
               onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
               endIcon={
                 <Icon
-                  as={MaterialCommunityIcons}
-                  name="message-text"
+                  as={Ionicons}
+                  name="ios-chatbox"
                   color="white"
-                  size={22}
+                  size="md"
                 />
               }
             >
@@ -476,8 +508,9 @@ export function MainFindBeepScreen() {
             </Button>
             {beep.beeper.venmo ? (
               <Button
-                colorScheme="blue"
-                variant="subtle"
+                rightIcon={
+                  <Icon as={Ionicons} size="md" name="ios-card-outline" />
+                }
                 onPress={() => Linking.openURL(getVenmoLink())}
               >
                 Pay Beeper with Venmo
@@ -490,7 +523,9 @@ export function MainFindBeepScreen() {
             ) : null}
             {Number(beep.groupSize) > 1 ? (
               <Button
-                colorScheme="blue"
+                rightIcon={
+                  <Icon as={Ionicons} name="ios-share-outline" size="md" />
+                }
                 onPress={() => shareVenmoInformation()}
               >
                 Share Venmo Info with Your Friends
@@ -499,31 +534,36 @@ export function MainFindBeepScreen() {
             {beep.position >= 1 ? (
               <LeaveButton beepersId={beep.beeper.id} />
             ) : null}
-          </VStack>
+          </Stack>
         </Stack>
       </Container>
     );
   } else {
     return (
-      <Container alignItems="center" justifyContent="center" pt={2}>
-        <Stack space={4} w="90%" alignItems="center">
+      <Container alignItems="center" pt={2}>
+        <Stack space={4} w="90%" alignItems="center" h="94%">
           <Avatar size={100} url={beep.beeper.photoUrl} />
           <Center>
             <Text>Waiting on</Text>
-            <Heading>{beep.beeper.name}</Heading>
+            <Heading letterSpacing="xs" fontWeight="extrabold">
+              {beep.beeper.name}
+            </Heading>
             <Text>to accept your request.</Text>
           </Center>
-          <Center>
-            <Text>
-              {beep.beeper.first}
-              {"'"}
-              {beep.beeper.first.charAt(beep.beeper.first.length - 1) != "s"
-                ? "s"
-                : ""}{" "}
-              Rates
+          <Card w="100%">
+            <Text isTruncated fontSize="xs">
+              <Text fontWeight="extrabold">Pick Up </Text>
+              <Text>{beep.origin}</Text>
             </Text>
-            <Text fontWeight="thin">per person</Text>
-          </Center>
+            <Text isTruncated fontSize="xs">
+              <Text fontWeight="extrabold">Destination </Text>
+              <Text>{beep.destination}</Text>
+            </Text>
+            <Text isTruncated fontSize="xs">
+              <Text fontWeight="extrabold">Number of Riders </Text>
+              <Text>{beep.groupSize}</Text>
+            </Text>
+          </Card>
           <Rates
             singles={beep.beeper.singlesRate}
             group={beep.beeper.groupRate}
@@ -532,7 +572,8 @@ export function MainFindBeepScreen() {
             firstName={beep.beeper.first}
             position={beep.position}
           />
-          <LeaveButton beepersId={beep.beeper.id} />
+          <Spacer />
+          <LeaveButton beepersId={beep.beeper.id} w="100%" size="lg" />
         </Stack>
       </Container>
     );

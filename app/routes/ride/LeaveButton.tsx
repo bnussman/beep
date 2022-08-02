@@ -3,7 +3,7 @@ import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { gql, useMutation } from "@apollo/client";
 import { LeaveQueueMutation } from "../../generated/graphql";
-import { Button, Icon } from "native-base";
+import { Button, IButtonProps, Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../../utils/Alert";
 
@@ -13,12 +13,12 @@ const LeaveQueue = gql`
   }
 `;
 
-interface Props {
+interface Props extends IButtonProps {
   beepersId: string;
 }
 
 export function LeaveButton(props: Props) {
-  const { beepersId } = props;
+  const { beepersId, ...rest } = props;
   const [leave] = useMutation<LeaveQueueMutation>(LeaveQueue, {
     variables: { id: beepersId },
   });
@@ -58,8 +58,14 @@ export function LeaveButton(props: Props) {
       colorScheme="red"
       _text={{ color: "#fff" }}
       endIcon={
-        <Icon as={MaterialCommunityIcons} name="exit-to-app" size={22} color="white" />
+        <Icon
+          as={MaterialCommunityIcons}
+          name="exit-to-app"
+          size={22}
+          color="white"
+        />
       }
+      {...rest}
     >
       Leave Queue
     </Button>

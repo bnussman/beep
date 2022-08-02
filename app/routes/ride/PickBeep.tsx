@@ -90,7 +90,12 @@ export function PickBeepScreen() {
           <HStack alignItems="center" mb={2}>
             <Avatar mr={2} size="45px" url={item.photoUrl} />
             <Stack>
-              <Text fontWeight="extrabold" fontSize="lg">
+              <Text
+                fontWeight="extrabold"
+                fontSize="lg"
+                letterSpacing="sm"
+                isTruncated
+              >
                 {item.name}
               </Text>
               {item.rating !== null && item.rating !== undefined ? (

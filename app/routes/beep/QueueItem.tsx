@@ -20,14 +20,16 @@ import {
   Icon,
   Menu,
   Divider,
+  Badge,
 } from "native-base";
 import { Card } from "../../components/Card";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  index: number;
 }
 
-export function QueueItem({ item }: Props) {
+export function QueueItem({ item, index }: Props) {
   const [cancel] = useMutation(CancelBeep);
   const { navigate } = useNavigation<Navigation>();
 
@@ -74,14 +76,13 @@ export function QueueItem({ item }: Props) {
             <HStack space={2} alignItems="center">
               <Avatar size={50} url={item.rider.photoUrl} />
               <Stack>
-                <Text fontWeight="extrabold" fontSize="xl">
+                <Text fontWeight="extrabold" letterSpacing="xs" fontSize="xl">
                   {item.rider.name}
                 </Text>
-                <Text fontSize="xs">
-                  {item.rider.rating !== null && item.rider.rating !== undefined
-                    ? printStars(item.rider.rating)
-                    : null}
-                </Text>
+                {item.rider.rating !== null &&
+                item.rider.rating !== undefined ? (
+                  <Text fontSize="xs">{printStars(item.rider.rating)}</Text>
+                ) : null}
               </Stack>
               <Spacer />
               <Menu

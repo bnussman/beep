@@ -1,5 +1,12 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Center, Heading, HStack, Pressable, Spacer } from "native-base";
+import {
+  Button,
+  Center,
+  Heading,
+  HStack,
+  Pressable,
+  Spacer,
+} from "native-base";
 import { GetRateDataQuery, RateUserMutation } from "../generated/graphql";
 import { BottomSheet } from "./BottomSheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
@@ -8,7 +15,6 @@ import { RateUser } from "../routes/global/Rate";
 import { Alert } from "../utils/Alert";
 import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";
-import { GradietnButton } from "./GradientButton";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../routes/Ratings";
@@ -83,15 +89,14 @@ export function RateSheet() {
         </Pressable>
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Spacer />
-        <GradietnButton
+        <Button
           w="100%"
-          size="sm"
           onPress={onSubmit}
           isDisabled={stars < 1}
           isLoading={loading}
         >
           Rate User
-        </GradietnButton>
+        </Button>
       </Center>
     </BottomSheet>
   );

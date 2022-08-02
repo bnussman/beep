@@ -24,7 +24,7 @@ import {
 } from "native-base";
 import { Card } from "../components/Card";
 
-const GetBeepHistory = gql`
+export const GetBeepHistory = gql`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
     getBeeps(id: $id, offset: $offset, show: $show) {
       items {
@@ -115,7 +115,7 @@ export function BeepsScreen() {
     const isRider = user?.id === item.rider.id;
     return (
       <Card
-        mx={4}
+        mx={2}
         my={2}
         mt={index === 0 ? 4 : undefined}
         pressable

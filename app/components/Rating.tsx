@@ -22,7 +22,7 @@ export function Rating(props: Props) {
 
   return (
     <Card
-      mx={4}
+      mx={2}
       my={2}
       mt={index === 0 ? 4 : undefined}
       pressable

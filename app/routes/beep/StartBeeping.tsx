@@ -436,7 +436,9 @@ export function StartBeepingScreen() {
                 onRefresh={refetch}
                 data={queue.filter((entry) => entry.id !== queue[0]?.id)}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <QueueItem item={item} />}
+                renderItem={({ item, index }) => (
+                  <QueueItem item={item} index={index} />
+                )}
                 contentContainerStyle={{ paddingLeft: 8, paddingRight: 8 }}
                 refreshControl={
                   <RefreshControl

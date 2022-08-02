@@ -5,7 +5,7 @@ import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { GetUserProfileQuery, User } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { RatePreview } from "./RatePreview";
 import {
@@ -55,7 +55,7 @@ export function ProfileScreen() {
       user: data?.getUser as User,
       beep: params.beep,
     });
-  }
+  };
 
   const handleRate = () => {
     if (params.beep) {
@@ -64,23 +64,34 @@ export function ProfileScreen() {
         beep: params.beep,
       });
     } else {
-      alert(
-        "You can only rate a user from a specific beep that took place."
-      );
+      alert("You can only rate a user from a specific beep that took place.");
     }
-  }
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Menu w="190" trigger={triggerProps => {
-          return <Pressable accessibilityLabel="More options menu" {...triggerProps}>
-            <Icon mr={3} size="xl" as={Ionicons} name="ios-ellipsis-horizontal-circle" />
-                </Pressable>;
-        }}>
-            <Menu.Item onPress={handleRate}>Rate</Menu.Item>
-            <Menu.Item onPress={handleReport}>Report</Menu.Item>
-          </Menu>
+        <Menu
+          w="190"
+          trigger={(triggerProps) => {
+            return (
+              <Pressable
+                accessibilityLabel="More options menu"
+                {...triggerProps}
+              >
+                <Icon
+                  mr={3}
+                  size="xl"
+                  as={Ionicons}
+                  name="ios-ellipsis-horizontal-circle"
+                />
+              </Pressable>
+            );
+          }}
+        >
+          <Menu.Item onPress={handleRate}>Rate</Menu.Item>
+          <Menu.Item onPress={handleReport}>Report</Menu.Item>
+        </Menu>
       ),
     });
   }, [navigation, data]);
@@ -119,7 +130,11 @@ export function ProfileScreen() {
           <Text color="gray.500">@{data.getUser.username}</Text>
         </Stack>
         <Spacer />
-        <Avatar size="xl" url={data.getUser.photoUrl} />
+        <Avatar
+          size="xl"
+          url={data.getUser.photoUrl}
+          online={data.getUser.isBeeping}
+        />
       </HStack>
       <Stack space={2}>
         {data.getUser.isBeeping ? (

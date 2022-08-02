@@ -26,7 +26,6 @@ export async function getPushToken(): Promise<string | null> {
 
   const pushToken = await Notifications.getExpoPushTokenAsync();
 
-
   return pushToken.data;
 }
 
@@ -76,13 +75,15 @@ export async function updatePushToken(
   }
 }
 
-export function handleNotification(notification: Notifications.Notification): void {
+export function handleNotification(
+  notification: Notifications.Notification
+): void {
   Vibration.vibrate();
-  // if (isAndroid) {
+  if (isAndroid) {
     // Only Toast for Android because we have iosDisplayInForeground for iOS
     Toast.show({
       title: notification.request.content.title,
       description: notification.request.content.body,
     });
-  // }
+  }
 }

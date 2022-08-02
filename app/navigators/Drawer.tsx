@@ -123,10 +123,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               online={user?.isBeeping}
             />
             <Stack>
-              <Text fontWeight="extrabold" letterSpacing="sm" fontSize="md">{user?.name}</Text>
-              <Text color="gray.500">
-                @{user?.username}
+              <Text fontWeight="extrabold" letterSpacing="sm" fontSize="md">
+                {user?.name}
               </Text>
+              <Text color="gray.500">@{user?.username}</Text>
             </Stack>
           </HStack>
         </Pressable>

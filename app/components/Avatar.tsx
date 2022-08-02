@@ -13,13 +13,13 @@ export function __Avatar(props: Props & IAvatarProps) {
 
   const source: ImageSourcePropType = url ? { uri: url } : AvatarImage;
 
-  const key = url ? url : 'default';
+  const key = url ? url : "default";
 
   return (
     <_Avatar
       _image={{
         defaultSource: AvatarImage,
-        fallbackSource: AvatarImage
+        fallbackSource: AvatarImage,
       }}
       {...rest}
       key={key}

@@ -9,7 +9,7 @@ interface Props {
 
 export function PlaceInQueue({ position, firstName }: Props) {
   return (
-    <Card w="90%" alignItems="center" justifyContent="center">
+    <Card w="100%" alignItems="center" justifyContent="center">
       <Heading>{position}</Heading>
       <Text>
         {position === 1 ? "person is" : "people are"} ahead of you in{" "}
