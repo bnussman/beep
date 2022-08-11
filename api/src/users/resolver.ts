@@ -108,9 +108,10 @@ export class UserResolver {
     const connection = ctx.em.getConnection();
 
     const result: UsersPerDomain[] = await connection.execute(`
-      select substring(email from '@(.*)$') as domain, count(*)
+      select substring(email from '@(.*)$') as domain, count(*) as count
       from "user"
       group by domain
+      order by count desc
     `);
 
     return result;
