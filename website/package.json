@@ -21,8 +21,6 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@fontsource/poppins": "^4.4.5",
-    "@nivo/core": "^0.79.0",
-    "@nivo/pie": "^0.79.1",
     "apollo-upload-client": "^17.0.0",
     "dayjs": "^1.11.4",
     "framer-motion": "^6.5.1",
@@ -31,6 +29,7 @@
     "mapbox-gl": "^2.9.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-google-charts": "^4.0.0",
     "react-hook-form": "^7.34.0",
     "react-map-gl": "^7.0.18",
     "react-router-dom": "^6.2.1"

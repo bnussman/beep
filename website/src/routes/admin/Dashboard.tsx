@@ -1,8 +1,8 @@
 import React from "react";
-import { Box, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr, useColorMode } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import { GetUsersPerDomainQuery } from "../../generated/graphql";
-import { ResponsivePie } from '@nivo/pie'
+import Chart from "react-google-charts";
 
 const UsersByDomainQuery = gql`
   query GetUsersPerDomain {
@@ -15,8 +15,11 @@ const UsersByDomainQuery = gql`
 
 export function Dashboard() {
   const { data, loading } = useQuery<GetUsersPerDomainQuery>(UsersByDomainQuery);
+  const { colorMode } = useColorMode();
 
   const usersPerDomain = data?.getUsersPerDomain ?? [];
+
+  const fontColor = colorMode === "dark" ? "white" : "black";
 
   if (loading) {
     return <Spinner />;
@@ -25,41 +28,16 @@ export function Dashboard() {
   return (
     <Box>
       <Heading>Dashboard</Heading>
-      <Box height="400px">
-        <ResponsivePie
-          data={usersPerDomain?.map(({ domain, count }) => ({
-            id: domain,
-            label: domain,
-            value: count
-          }))}
-          margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-          padAngle={0.7}
-          activeOuterRadiusOffset={8}
-          colors={{ scheme: 'nivo' }}
-          arcLinkLabelsSkipAngle={10}
-          arcLinkLabelsTextColor="#333333"
-          arcLinkLabelsThickness={2}
-          arcLinkLabelsColor={{ from: 'color' }}
-          arcLabelsSkipAngle={10}
-          legends={[
-            {
-              anchor: 'bottom',
-              direction: 'row',
-              justify: false,
-              translateX: 0,
-              translateY: 56,
-              itemsSpacing: 0,
-              itemWidth: 100,
-              itemHeight: 18,
-              itemTextColor: '#999',
-              itemDirection: 'left-to-right',
-              itemOpacity: 1,
-              symbolSize: 18,
-              symbolShape: 'circle',
-            }
-          ]}
-        />
-      </Box>
+      <Chart
+        chartType="PieChart"
+        data={[["School", "Count"], ...usersPerDomain.map(({ domain, count }) => ([domain, count]))]}
+        options={{
+          backgroundColor: "transparent",
+          legend: { textStyle: { color: fontColor } }
+        }}
+        width={"100%"}
+        height={"600px"}
+      />
       <Table>
         <Thead>
           <Tr>
