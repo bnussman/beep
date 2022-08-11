@@ -21,6 +21,8 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@fontsource/poppins": "^4.4.5",
+    "@nivo/core": "^0.79.0",
+    "@nivo/pie": "^0.79.1",
     "apollo-upload-client": "^17.0.0",
     "dayjs": "^1.11.4",
     "framer-motion": "^6.5.1",

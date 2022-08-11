@@ -333,6 +333,7 @@ export type Query = {
   getRiderStatus?: Maybe<QueueEntry>;
   getUser: User;
   getUsers: UsersResponse;
+  getUsersPerDomain: Array<UsersPerDomain>;
 };
 
 
@@ -571,6 +572,12 @@ export type User = {
   venmo?: Maybe<Scalars['String']>;
 };
 
+export type UsersPerDomain = {
+  __typename?: 'UsersPerDomain';
+  count: Scalars['Float'];
+  domain: Scalars['String'];
+};
+
 export type UsersResponse = {
   __typename?: 'UsersResponse';
   count: Scalars['Int'];
@@ -725,6 +732,11 @@ export type VerifyAccountMutationVariables = Exact<{
 
 
 export type VerifyAccountMutation = { __typename?: 'Mutation', verifyAccount: boolean };
+
+export type GetUsersPerDomainQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUsersPerDomainQuery = { __typename?: 'Query', getUsersPerDomain: Array<{ __typename?: 'UsersPerDomain', domain: string, count: number }> };
 
 export type GetBeeperListQueryVariables = Exact<{
   latitude: Scalars['Float'];
@@ -1684,6 +1696,41 @@ export function useVerifyAccountMutation(baseOptions?: Apollo.MutationHookOption
 export type VerifyAccountMutationHookResult = ReturnType<typeof useVerifyAccountMutation>;
 export type VerifyAccountMutationResult = Apollo.MutationResult<VerifyAccountMutation>;
 export type VerifyAccountMutationOptions = Apollo.BaseMutationOptions<VerifyAccountMutation, VerifyAccountMutationVariables>;
+export const GetUsersPerDomainDocument = gql`
+    query GetUsersPerDomain {
+  getUsersPerDomain {
+    domain
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetUsersPerDomainQuery__
+ *
+ * To run a query within a React component, call `useGetUsersPerDomainQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersPerDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersPerDomainQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUsersPerDomainQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersPerDomainQuery, GetUsersPerDomainQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUsersPerDomainQuery, GetUsersPerDomainQueryVariables>(GetUsersPerDomainDocument, options);
+      }
+export function useGetUsersPerDomainLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersPerDomainQuery, GetUsersPerDomainQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUsersPerDomainQuery, GetUsersPerDomainQueryVariables>(GetUsersPerDomainDocument, options);
+        }
+export type GetUsersPerDomainQueryHookResult = ReturnType<typeof useGetUsersPerDomainQuery>;
+export type GetUsersPerDomainLazyQueryHookResult = ReturnType<typeof useGetUsersPerDomainLazyQuery>;
+export type GetUsersPerDomainQueryResult = Apollo.QueryResult<GetUsersPerDomainQuery, GetUsersPerDomainQueryVariables>;
 export const GetBeeperListDocument = gql`
     query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
   getBeeperList(
