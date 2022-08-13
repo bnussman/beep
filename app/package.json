@@ -2,11 +2,6 @@
   "name": "@beep/app",
   "version": "2.1.0",
   "main": "index.js",
-  "workspaces": {
-    "nohoist": [
-      "**"
-    ]
-  },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -38,7 +33,7 @@
     "expo-updates": "~0.14.3",
     "graphql": "^15.6.1",
     "graphql-ws": "^5.9.1",
-    "native-base": "^3.4.9",
+    "native-base": "3.4.12-alpha.1",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-hook-form": "^7.34.0",
