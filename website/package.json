@@ -29,6 +29,7 @@
     "mapbox-gl": "^2.9.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-google-charts": "^4.0.0",
     "react-hook-form": "^7.34.0",
     "react-map-gl": "^7.0.18",
     "react-router-dom": "^6.2.1"

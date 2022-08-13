@@ -6,7 +6,6 @@ import * as Notifications from "expo-notifications";
 import { init } from "./utils/Init";
 import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar } from "react-native";
 import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
 import { ProfileScreen } from "./routes/global/Profile";
 import { ReportScreen } from "./routes/global/Report";
@@ -23,6 +22,7 @@ import { SignUpScreen } from "./routes/auth/SignUp";
 import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
+import { StatusBar } from 'expo-status-bar';
 import {
   DarkTheme,
   DefaultTheme,
@@ -80,9 +80,7 @@ function Beep() {
 
   return (
     <>
-      <StatusBar
-        barStyle={colorMode === "dark" ? "light-content" : "dark-content"}
-      />
+      <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
       <NavigationContainer
         theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
       >

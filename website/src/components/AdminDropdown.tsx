@@ -27,6 +27,9 @@ export function AdminDropdown() {
         Admin
       </Button>
       <MenuList>
+        <MenuItem as={Link} to="/admin">
+          Dashboard
+        </MenuItem>
         <MenuItem as={Link} to="/admin/users">
           Users
         </MenuItem>

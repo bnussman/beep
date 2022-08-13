@@ -1,7 +1,7 @@
 import { PaginationArgs } from '../args/Pagination';
 import EditUserValidator from '../validators/user/EditUser';
 import fieldsToRelations from 'graphql-fields-to-relations';
-import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser } from '../account/helpers';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
@@ -13,6 +13,15 @@ import { sendNotification, sendNotificationsNew } from '../utils/notifications';
 import { S3 } from 'aws-sdk';
 import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject } from '../utils/s3';
 import { NotificationArgs } from './args';
+
+@ObjectType()
+class UsersPerDomain {
+  @Field()
+  domain!: string;
+
+  @Field()
+  count!: number;
+}
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
@@ -91,6 +100,21 @@ export class UserResolver {
       items: users,
       count: count
     };
+  }
+
+  @Query(() => [UsersPerDomain])
+  @Authorized(UserRole.ADMIN)
+  public async getUsersPerDomain(@Ctx() ctx: Context): Promise<UsersPerDomain[]> {
+    const connection = ctx.em.getConnection();
+
+    const result: UsersPerDomain[] = await connection.execute(`
+      select substring(email from '@(.*)$') as domain, count(*) as count
+      from "user"
+      group by domain
+      order by count desc
+    `);
+
+    return result;
   }
 
   @Mutation(() => Number)

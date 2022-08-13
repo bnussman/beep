@@ -334,6 +334,7 @@ export type Query = {
   getRiderStatus?: Maybe<QueueEntry>;
   getUser: User;
   getUsers: UsersResponse;
+  getUsersPerDomain: Array<UsersPerDomain>;
 };
 
 
@@ -570,6 +571,12 @@ export type User = {
   singlesRate: Scalars['Float'];
   username: Scalars['String'];
   venmo?: Maybe<Scalars['String']>;
+};
+
+export type UsersPerDomain = {
+  __typename?: 'UsersPerDomain';
+  count: Scalars['Float'];
+  domain: Scalars['String'];
 };
 
 export type UsersResponse = {
