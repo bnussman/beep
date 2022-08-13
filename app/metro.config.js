@@ -1,7 +1,18 @@
 const { getDefaultConfig } = require("@expo/metro-config");
+const path = require('path');
 
-const defaultConfig = getDefaultConfig(__dirname);
+const config = getDefaultConfig(__dirname);
 
-defaultConfig.resolver.sourceExts.push("cjs");
+const workspaceRoot = path.resolve(__dirname, '..');
+const projectRoot = __dirname;
 
-module.exports = defaultConfig;
+config.watchFolders = [workspaceRoot];
+
+config.resolver.nodeModulesPaths = [
+  path.resolve(projectRoot, 'node_modules'),
+  path.resolve(workspaceRoot, 'node_modules'),
+];
+
+config.resolver.sourceExts.push("cjs");
+
+module.exports = config;
