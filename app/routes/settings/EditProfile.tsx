@@ -1,18 +1,21 @@
 import React, { useMemo, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // @ts-expect-error no types :(
 import * as mime from "react-native-mime-types";
+import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
-import { Pressable } from "react-native";
+import { Avatar } from "../../components/Avatar";
+import { Alert, Pressable } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
-import { useUser } from "../../utils/useUser";
+import { UserData, useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { isValidationError, useValidationErrors } from "../../utils/useValidationErrors";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import {
   AddProfilePictureMutation,
+  DeleteAccountMutation,
   EditAccountMutation,
   EditAccountMutationVariables,
 } from "../../generated/graphql";
@@ -26,8 +29,20 @@ import {
   InputGroup,
   InputLeftAddon,
   HStack,
+  Menu,
+  Icon,
 } from "native-base";
-import { Avatar } from "../../components/Avatar";
+import {useNavigation} from "@react-navigation/native";
+import {Navigation} from "../../utils/Navigation";
+import {Ionicons} from "@expo/vector-icons";
+import {LOCATION_TRACKING} from "../beep/StartBeeping";
+import {client} from "../../utils/Apollo";
+
+const DeleteAccount = gql`
+  mutation DeleteAccount {
+    deleteAccount
+  }
+`;
 
 const EditAccount = gql`
   mutation EditAccount(
@@ -74,6 +89,7 @@ export function generateRNFile(uri: string, name: string) {
 
 export function EditProfileScreen() {
   const { user } = useUser();
+  const navigation = useNavigation<Navigation>();
 
   const defaultValues = useMemo(() => ({
     first: user?.first,
@@ -85,6 +101,7 @@ export function EditProfileScreen() {
   }), [user]);
 
   const [edit, { loading, error }] = useMutation<EditAccountMutation>(EditAccount);
+  const [deleteAccount] = useMutation<DeleteAccountMutation>(DeleteAccount);
 
   const {
     control,
@@ -104,6 +121,71 @@ export function EditProfileScreen() {
     useMutation<AddProfilePictureMutation>(UploadPhoto);
 
   const [photo, setPhoto] = useState<any>();
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Menu
+          w="190"
+          trigger={(triggerProps) => {
+            return (
+              <Pressable
+                accessibilityLabel="More options menu"
+                {...triggerProps}
+              >
+                <Icon
+                  mr={3}
+                  size="xl"
+                  as={Ionicons}
+                  name="ios-ellipsis-horizontal-circle"
+                />
+              </Pressable>
+            );
+          }}
+        >
+          <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>Delete Account</Menu.Item>
+        </Menu>
+      ),
+    });
+  }, [navigation]);
+  
+  const handleDeleteWrapper = () => {
+    if (isMobile) {
+      Alert.alert(
+        "Delete Your Account?",
+        "Are you sure you want to delete your account? We will delete all of your account data. It will not be kept.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          { text: "Delete", onPress: handleDelete, style: 'destructive' },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      handleDelete();
+    }
+  }
+
+  const handleDelete = () => {
+    deleteAccount().then(() => {
+      AsyncStorage.clear();
+
+      if (!__DEV__) {
+        Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+      }
+
+      client.writeQuery({
+        query: UserData,
+        data: {
+          getUser: null,
+        },
+      });
+
+    }).catch((error: ApolloError) => alert(error.message));
+  };
+
 
   async function handleUpdatePhoto(): Promise<void> {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -139,7 +221,7 @@ export function EditProfileScreen() {
     try {
       await upload({ variables: { picture } });
     } catch (error) {
-      Alert(error as ApolloError);
+      alert(error?.message);
     }
 
     setPhoto(undefined);
@@ -150,7 +232,7 @@ export function EditProfileScreen() {
       await edit({ variables });
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
-        Alert(error as ApolloError);
+        alert(error?.message);
       }
     }
   });
