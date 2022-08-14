@@ -221,7 +221,7 @@ export function EditProfileScreen() {
     try {
       await upload({ variables: { picture } });
     } catch (error) {
-      alert(error?.message);
+      alert((error as ApolloError)?.message);
     }
 
     setPhoto(undefined);
@@ -232,7 +232,7 @@ export function EditProfileScreen() {
       await edit({ variables });
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
-        alert(error?.message);
+        alert((error as ApolloError)?.message);
       }
     }
   });
