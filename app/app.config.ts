@@ -46,6 +46,9 @@ export default {
           "The Beep App will use your location to provide ETA's to yourself and others",
         UIBackgroundModes: ["location", "fetch"],
       },
+      config: {
+        googleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0"
+      },
     },
     android: {
       package: "app.ridebeep.App",
@@ -59,6 +62,11 @@ export default {
         "FOREGROUND_SERVICE",
         "VIBRATE",
       ],
+      config: {
+        googleMaps: {
+          apiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc"
+        },
+      },
     },
     splash: {
       image: "./assets/splash.png",
