@@ -42,7 +42,7 @@ import {
   Spinner,
   Pressable,
 } from "native-base";
-import { StatusBar } from "./StatusBar";
+import MapView, { Marker } from "react-native-maps";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -150,6 +150,8 @@ export function MainFindBeepScreen() {
   const [destination, setDestination] = useState<string>("");
   const [isGetBeepLoading, setIsGetBeepLoading] = useState<boolean>(false);
 
+  const [location, setLocation] = useState<Location.LocationObject>();
+
   const originRef = useRef<any>();
   const destinationRef = useRef<any>();
 
@@ -186,6 +188,8 @@ export function MainFindBeepScreen() {
       lastKnowLocation = await Location.getCurrentPositionAsync();
     }
 
+    setLocation(lastKnowLocation);
+
     getETA({
       variables: {
         start: `${lat},${long}`,
@@ -200,18 +204,34 @@ export function MainFindBeepScreen() {
       variables: { id: data?.getRiderStatus?.beeper.id },
     });
 
-    sub = a.subscribe(({ data }) => {
+    sub = a.subscribe((values) => {
       throttleUpdateETA(
-        data.getLocationUpdates.latitude,
-        data.getLocationUpdates.longitude
+        values.data.getLocationUpdates.latitude,
+        values.data.getLocationUpdates.longitude
       );
+
+      const rideStatusData = { ...data };
+
+      if (rideStatusData.getRiderStatus?.beeper.location) {
+        rideStatusData.getRiderStatus.beeper.location.latitude = values.data.getLocationUpdates.latitude;
+        rideStatusData.getRiderStatus.beeper.location.longitude = values.data.getLocationUpdates.longitude;
+
+        client.writeQuery({
+          query: InitialRiderStatus,
+          data: { getRiderStatus: rideStatusData },
+        });
+      }
     });
   }
 
   const throttleUpdateETA = throttle(10000, updateETA);
 
   useEffect(() => {
-    SplashScreen.hideAsync();
+    try {
+      SplashScreen.hideAsync();
+    } catch (error) {
+      // ...
+    }
   }, []);
 
   useEffect(() => {
@@ -268,6 +288,8 @@ export function MainFindBeepScreen() {
     if (!lastKnowLocation) {
       lastKnowLocation = await Location.getCurrentPositionAsync();
     }
+
+    setLocation(lastKnowLocation);
 
     return navigate("Choose Beeper", {
       latitude: lastKnowLocation.coords.latitude,
@@ -448,18 +470,48 @@ export function MainFindBeepScreen() {
             group={beep.beeper.groupRate}
           />
           {beep.position <= 0 && (
-            <Card w="100%">
-              <Heading
-                size="md"
-                letterSpacing="sm"
-                fontWeight="extrabold"
-                mb={1}
+            <Stack w="100%" space={4}>
+              <Card w="100%">
+                <Heading
+                  size="md"
+                  letterSpacing="sm"
+                  fontWeight="extrabold"
+                  mb={1}
+                >
+                  Current Status
+                </Heading>
+                <Text>{getCurrentStatusMessage()}</Text>
+                {/* <StatusBar state={beep.state} /> */}
+              </Card>
+              <MapView
+                style={{ width: "100%", height: 200, borderRadius: 15 }}
+                initialRegion={{
+                  latitude: beep.beeper.location?.latitude ?? 0,
+                  longitude: beep.beeper.location?.longitude ?? 0,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
               >
-                Current Status
-              </Heading>
-              <Text>{getCurrentStatusMessage()}</Text>
-              <StatusBar state={beep.state} />
-            </Card>
+                <Marker
+                  coordinate={{
+                    latitude: beep.beeper.location?.latitude ?? 0,
+                    longitude: beep.beeper.location?.longitude ?? 0
+                  }}
+                  title={beep.beeper.name}
+                >
+                  <Text fontSize="3xl">🚕</Text>
+                </Marker>
+                {location && (
+                  <Marker
+                    coordinate={{
+                      latitude: location.coords.latitude,
+                      longitude: location.coords.longitude
+                    }}
+                    title="You"
+                  />
+                )}
+              </MapView>
+            </Stack>
           )}
           {beep.state === 1 && (
             <Card w="100%">
@@ -485,50 +537,59 @@ export function MainFindBeepScreen() {
           )}
           <Spacer />
           <Stack space={2} w="100%">
-            <Button
-              onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
-              endIcon={
-                <Icon as={Ionicons} name="ios-call" color="white" size="md" />
-              }
-            >
-              Call Beeper
-            </Button>
-            <Button
-              onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
-              endIcon={
-                <Icon
-                  as={Ionicons}
-                  name="ios-chatbox"
-                  color="white"
-                  size="md"
-                />
-              }
-            >
-              Text Beeper
-            </Button>
-            {beep.beeper.venmo ? (
+            <HStack space={2} w="100%">
               <Button
-                rightIcon={
-                  <Icon as={Ionicons} size="md" name="ios-card-outline" />
+                flexGrow={1}
+                onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
+                endIcon={
+                  <Icon as={Ionicons} name="ios-call" color="white" size="md" />
                 }
-                onPress={() => Linking.openURL(getVenmoLink())}
               >
-                Pay Beeper with Venmo
+                Call Beeper
               </Button>
-            ) : null}
+              <Button
+                flexGrow={1}
+                onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
+                endIcon={
+                  <Icon
+                    as={Ionicons}
+                    name="ios-chatbox"
+                    color="white"
+                    size="md"
+                  />
+                }
+              >
+                Text Beeper
+              </Button>
+            </HStack>
+            <HStack w="100%" space={2}>
+              {beep.beeper.venmo ? (
+                <Button
+                  colorScheme="lightBlue"
+                  flexGrow={1}
+                  rightIcon={
+                    <Icon as={Ionicons} size="md" name="ios-card-outline" />
+                  }
+                  onPress={() => Linking.openURL(getVenmoLink())}
+                >
+                  Pay with Venmo
+                </Button>
+              ) : null}
+              {Number(beep.groupSize) > 1 ? (
+                <Button
+                  flexShrink={1}
+                  rightIcon={
+                    <Icon as={Ionicons} name="ios-share-outline" size="md" />
+                  }
+                  onPress={() => shareVenmoInformation()}
+                >
+                  Share Venmo
+                </Button>
+              ) : null}
+            </HStack>
             {beep.beeper.cashapp ? (
               <Button onPress={() => Linking.openURL(getCashAppLink())}>
                 Pay Beeper with Cash App
-              </Button>
-            ) : null}
-            {Number(beep.groupSize) > 1 ? (
-              <Button
-                rightIcon={
-                  <Icon as={Ionicons} name="ios-share-outline" size="md" />
-                }
-                onPress={() => shareVenmoInformation()}
-              >
-                Share Venmo Info with Your Friends
               </Button>
             ) : null}
             {beep.position >= 1 ? (
