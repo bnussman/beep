@@ -21,7 +21,14 @@ export class DirectionsResolver {
   public async getETA(@Arg('start') start: string, @Arg('end') end: string): Promise<string> {
     const result = await got(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=${getRandom(keys)}`).json<any>();
 
-    return result?.routes[0]?.legs[0]?.duration?.text || '';
+    const eta = result?.routes[0]?.legs[0]?.duration?.text;
+
+
+    if (!eta) {
+      throw new Error("eta unavailable");
+    }
+
+    return eta;
   }
 
   @Query(() => [Suggestion])

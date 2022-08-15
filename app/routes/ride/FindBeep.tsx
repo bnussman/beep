@@ -213,8 +213,10 @@ export function MainFindBeepScreen() {
       const rideStatusData = { ...data };
 
       if (rideStatusData.getRiderStatus?.beeper.location) {
-        rideStatusData.getRiderStatus.beeper.location.latitude = values.data.getLocationUpdates.latitude;
-        rideStatusData.getRiderStatus.beeper.location.longitude = values.data.getLocationUpdates.longitude;
+        rideStatusData.getRiderStatus.beeper.location.latitude =
+          values.data.getLocationUpdates.latitude;
+        rideStatusData.getRiderStatus.beeper.location.longitude =
+          values.data.getLocationUpdates.longitude;
 
         client.writeQuery({
           query: InitialRiderStatus,
@@ -495,7 +497,7 @@ export function MainFindBeepScreen() {
                 <Marker
                   coordinate={{
                     latitude: beep.beeper.location?.latitude ?? 0,
-                    longitude: beep.beeper.location?.longitude ?? 0
+                    longitude: beep.beeper.location?.longitude ?? 0,
                   }}
                   title={beep.beeper.name}
                 >
@@ -505,7 +507,7 @@ export function MainFindBeepScreen() {
                   <Marker
                     coordinate={{
                       latitude: location.coords.latitude,
-                      longitude: location.coords.longitude
+                      longitude: location.coords.longitude,
                     }}
                     title="You"
                   />
@@ -520,8 +522,9 @@ export function MainFindBeepScreen() {
                   ETA
                 </Heading>
                 <Spacer />
-                {etaError ? <Text>{etaError.message}</Text> : null}
-                {eta?.getETA ? (
+                {etaError ? (
+                  <Text>{etaError.message}</Text>
+                ) : eta?.getETA ? (
                   <Text>{eta.getETA}</Text>
                 ) : (
                   <Spinner size="sm" />
