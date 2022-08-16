@@ -1,12 +1,4 @@
 import React, { useMemo, useRef, useState } from "react";
-import {
-  Button,
-  Center,
-  Heading,
-  HStack,
-  Pressable,
-  Spacer,
-} from "native-base";
 import { GetRateDataQuery, RateUserMutation } from "../generated/graphql";
 import { BottomSheet } from "./BottomSheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
@@ -18,6 +10,14 @@ import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../routes/Ratings";
+import {
+  Button,
+  Center,
+  Heading,
+  HStack,
+  Pressable,
+  Spacer,
+} from "native-base";
 
 export const GetRateData = gql`
   query GetRateData {
