@@ -134,6 +134,7 @@ export function ProfileScreen() {
           size="xl"
           url={data.getUser.photoUrl}
           online={data.getUser.isBeeping}
+          badgeSize="6"
         />
       </HStack>
       <Stack space={2}>

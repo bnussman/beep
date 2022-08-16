@@ -416,6 +416,7 @@ export function MainFindBeepScreen() {
       <Container p={2} px={4} alignItems="center">
         <Stack alignItems="center" space={4} w="100%" h="94%">
           <Pressable
+            w="100%"
             onPress={() =>
               navigate("Profile", { id: beep.beeper.id, beep: beep.id })
             }

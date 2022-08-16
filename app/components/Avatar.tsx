@@ -2,14 +2,16 @@ import React from "react";
 import { Avatar as _Avatar, IAvatarProps } from "native-base";
 import { ImageSourcePropType } from "react-native";
 import AvatarImage from "../assets/avatarDark.png";
+import { IAvatarBadgeProps } from "native-base/lib/typescript/components/composites/Avatar";
 
 interface Props {
   url: string | null | undefined;
   online?: boolean;
+  badgeSize?: IAvatarBadgeProps["size"];
 }
 
 export function __Avatar(props: Props & IAvatarProps) {
-  const { url, online, ...rest } = props;
+  const { url, online, badgeSize, ...rest } = props;
 
   const source: ImageSourcePropType = url ? { uri: url } : AvatarImage;
 
@@ -25,7 +27,7 @@ export function __Avatar(props: Props & IAvatarProps) {
       key={key}
       source={source}
     >
-      {online && <_Avatar.Badge size="4" bg="green.400" />}
+      {online && <_Avatar.Badge size={badgeSize ?? "4"} bg="green.400" />}
     </_Avatar>
   );
 }
