@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr, useColorMode } from "@chakra-ui/react";
+import { Box, Center, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr, useColorMode } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import { GetUsersPerDomainQuery } from "../../generated/graphql";
 import Chart from "react-google-charts";
@@ -22,7 +22,11 @@ export function Dashboard() {
   const fontColor = colorMode === "dark" ? "white" : "black";
 
   if (loading) {
-    return <Spinner />;
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
   }
 
   return (
