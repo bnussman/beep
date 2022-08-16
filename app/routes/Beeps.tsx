@@ -156,8 +156,7 @@ export function BeepsScreen() {
   if (loading && !data) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Text>Loading your history</Text>
-        <Spinner />
+        <Spinner size="lg" />
       </Container>
     );
   }

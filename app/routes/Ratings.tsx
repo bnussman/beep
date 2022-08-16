@@ -92,8 +92,7 @@ export function RatingsScreen() {
   if (loading && !data) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Text>Loading your ratings</Text>
-        <Spinner />
+        <Spinner size="lg" />
       </Container>
     );
   }
