@@ -175,6 +175,7 @@ export function ProfileScreen() {
           </Text>
         ) : null}
       </Stack>
+      <Spacer />
       <RatePreview id={params.id} />
     </Container>
   );

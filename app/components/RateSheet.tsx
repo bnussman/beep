@@ -76,17 +76,25 @@ export function RateSheet() {
     >
       <Center padding={4} height="100%">
         <Pressable
+          w="100%"
           onPress={() =>
             navigate("Profile", { id: beep.beeper.id, beep: beep.id })
           }
         >
           <HStack space={2} alignItems="center">
-            <Avatar url={beep.beeper.photoUrl} />
-            <Heading fontWeight="extrabold" letterSpacing="sm">
+            <Heading
+              fontSize="3xl"
+              fontWeight="extrabold"
+              letterSpacing="sm"
+              isTruncated
+            >
               {beep.beeper.name}
             </Heading>
+            <Spacer />
+            <Avatar url={beep.beeper.photoUrl} />
           </HStack>
         </Pressable>
+        <Spacer />
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Spacer />
         <Button

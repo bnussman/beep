@@ -10,7 +10,7 @@ interface Props {
 export function Rates({ singles, group }: Props) {
   return (
     <Card py={2} w="100%" alignItems="center">
-      <HStack space={4} alignItems="center">
+      <HStack space={4} alignItems="center" w="100%">
         <Text>
           <Text fontWeight="extrabold">Rates </Text>
           <Text>per person</Text>

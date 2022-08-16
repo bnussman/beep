@@ -8,21 +8,19 @@ import { Navigation } from "../utils/Navigation";
 import { Unpacked } from "../utils/constants";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
+import { Card } from "../components/Card";
 import {
   Spinner,
   Text,
   FlatList,
-  Pressable,
   Heading,
   HStack,
   Center,
   useColorMode,
-  Flex,
   Spacer,
   Badge,
   Stack,
 } from "native-base";
-import { Card } from "../components/Card";
 
 export const GetBeepHistory = gql`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
