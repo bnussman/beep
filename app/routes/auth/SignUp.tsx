@@ -213,10 +213,7 @@ export function SignUpScreen() {
             }
           >
             <TouchableOpacity onPress={chooseProfilePhoto}>
-              <Avatar
-                url={photo?.uri}
-                size="xl"
-              />
+              <Avatar url={photo?.uri} size="xl" />
             </TouchableOpacity>
             <FormControl.ErrorMessage>
               {errors.picture?.message}

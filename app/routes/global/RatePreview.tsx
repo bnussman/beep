@@ -5,6 +5,8 @@ import { Avatar } from "../../components/Avatar";
 import { printStars } from "../../components/Stars";
 import { Card } from "../../components/Card";
 import { RefreshControl } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Navigation } from "../../utils/Navigation";
 import {
   Text,
   HStack,
@@ -14,9 +16,8 @@ import {
   Spinner,
   FlatList,
   useColorMode,
+  Spacer,
 } from "native-base";
-import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 
 const Ratings = gql`
   query GetRatingsForUser($id: String, $offset: Int, $show: Int) {
@@ -107,10 +108,15 @@ export function RatePreview({ id }: Props) {
   }
 
   return (
-    <>
-      <Heading mt={6}>Ratings</Heading>
+    <Card m={4} mt={0} flexShrink={1}>
+      <HStack>
+        <Heading fontWeight="extrabold">Ratings</Heading>
+        <Spacer />
+        <Heading fontWeight="extrabold" size="xs" color="gray.400">
+          {count} ratings
+        </Heading>
+      </HStack>
       <FlatList
-        w="100%"
         data={ratings}
         renderItem={({ item: rating }) => (
           <Card
@@ -147,6 +153,6 @@ export function RatePreview({ id }: Props) {
           />
         }
       />
-    </>
+    </Card>
   );
 }

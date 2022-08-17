@@ -18,7 +18,10 @@ import {
   Menu,
   Pressable,
   Icon,
+  Box,
+  Flex,
 } from "native-base";
+import { Card } from "../../components/Card";
 
 const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -121,62 +124,74 @@ export function ProfileScreen() {
   }
 
   return (
-    <Container p={6} pt={4}>
-      <HStack alignItems="center">
-        <Stack>
-          <Heading size="lg" fontWeight="extrabold">
-            {data.getUser.name}
-          </Heading>
-          <Text color="gray.500">@{data.getUser.username}</Text>
-        </Stack>
-        <Spacer />
-        <Avatar
-          size="xl"
-          url={data.getUser.photoUrl}
-          online={data.getUser.isBeeping}
-          badgeSize="6"
-        />
-      </HStack>
-      <Stack space={2}>
-        {data.getUser.isBeeping ? (
-          <Text>
-            <Text fontWeight="extrabold">Queue Size </Text>
-            <Text>{data.getUser.queueSize}</Text>
-          </Text>
-        ) : null}
-        {data?.getUser.venmo ? (
-          <Text>
-            <Text fontWeight="extrabold">Venmo </Text>
-            <Text>@{data.getUser.venmo}</Text>
-          </Text>
-        ) : null}
-        {data?.getUser.cashapp ? (
-          <Text>
-            <Text fontWeight="extrabold">Cash App </Text>
-            <Text>@{data.getUser.cashapp}</Text>
-          </Text>
-        ) : null}
-        <Text>
-          <Text fontWeight="extrabold">Capacity </Text>
-          <Text>{data.getUser.capacity}</Text>
-        </Text>
-        <Text>
-          <Text fontWeight="extrabold">Singles Rate </Text>
-          <Text>${data.getUser.singlesRate}</Text>
-        </Text>
-        <Text>
-          <Text fontWeight="extrabold">Group Rate </Text>
-          <Text>${data.getUser.groupRate}</Text>
-        </Text>
-        {data.getUser.rating ? (
-          <Text>
-            <Text fontWeight="extrabold">Rating </Text>
-            <Text>{printStars(data.getUser.rating)}</Text>
-          </Text>
-        ) : null}
+    <Container>
+      <Stack space={2} p={4}>
+        <HStack alignItems="center">
+          <Stack>
+            <Heading
+              size="xl"
+              letterSpacing="sm"
+              fontWeight="extrabold"
+              isTruncated
+            >
+              {data.getUser.name}
+            </Heading>
+            <Heading size="sm" color="gray.500" fontWeight="extrabold">
+              @{data.getUser.username}
+            </Heading>
+          </Stack>
+          <Spacer />
+          <Avatar
+            size="xl"
+            url={data.getUser.photoUrl}
+            online={data.getUser.isBeeping}
+            badgeSize="6"
+          />
+        </HStack>
+        <Card>
+          <Stack space={2}>
+            {data.getUser.isBeeping ? (
+              <Text>
+                <Text fontWeight="extrabold">Queue Size </Text>
+                <Text>{data.getUser.queueSize}</Text>
+              </Text>
+            ) : null}
+            {data?.getUser.venmo ? (
+              <Text>
+                <Text fontWeight="extrabold">Venmo </Text>
+                <Text>@{data.getUser.venmo}</Text>
+              </Text>
+            ) : null}
+            {data?.getUser.cashapp ? (
+              <Text>
+                <Text fontWeight="extrabold">Cash App </Text>
+                <Text>@{data.getUser.cashapp}</Text>
+              </Text>
+            ) : null}
+            <Text>
+              <Text fontWeight="extrabold">Capacity </Text>
+              <Text>{data.getUser.capacity}</Text>
+            </Text>
+            <Text>
+              <Text fontWeight="extrabold">Singles Rate </Text>
+              <Text>${data.getUser.singlesRate}</Text>
+            </Text>
+            <Text>
+              <Text fontWeight="extrabold">Group Rate </Text>
+              <Text>${data.getUser.groupRate}</Text>
+            </Text>
+            {data.getUser.rating ? (
+              <Text>
+                <Text fontWeight="extrabold">Rating </Text>
+                <Text>{printStars(data.getUser.rating)}</Text>
+              </Text>
+            ) : null}
+          </Stack>
+        </Card>
       </Stack>
-      <Spacer />
-      <RatePreview id={params.id} />
+      <Flex flexShrink={1}>
+        <RatePreview id={params.id} />
+      </Flex>
     </Container>
   );
 }

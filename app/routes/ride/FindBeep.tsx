@@ -8,8 +8,6 @@ import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
-import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
-import { gqlChooseBeep } from "./helpers";
 import { client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
@@ -25,6 +23,8 @@ import { Card } from "../../components/Card";
 import { PlaceInQueue } from "./PlaceInQueue";
 import { GetBeepHistory } from "../Beeps";
 import {
+  ChooseBeepMutation,
+  ChooseBeepMutationVariables,
   GetEtaQuery,
   GetInitialRiderStatusQuery,
 } from "../../generated/graphql";
@@ -33,6 +33,13 @@ import {
   openVenmo,
   shareVenmoInformation,
 } from "../../utils/links";
+import {
+  ApolloError,
+  gql,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import {
   Button,
   Text,
@@ -46,7 +53,56 @@ import {
   Spacer,
   Spinner,
   Pressable,
+  WarningOutlineIcon,
 } from "native-base";
+import { Controller, useForm } from "react-hook-form";
+import { useValidationErrors } from "../../utils/useValidationErrors";
+
+const ChooseBeep = gql`
+  mutation ChooseBeep(
+    $beeperId: String!
+    $origin: String!
+    $destination: String!
+    $groupSize: Float!
+  ) {
+    chooseBeep(
+      beeperId: $beeperId
+      input: {
+        origin: $origin
+        destination: $destination
+        groupSize: $groupSize
+      }
+    ) {
+      id
+      position
+      isAccepted
+      origin
+      destination
+      state
+      groupSize
+      beeper {
+        id
+        first
+        name
+        singlesRate
+        groupRate
+        isStudent
+        role
+        venmo
+        cashapp
+        username
+        phone
+        photoUrl
+        capacity
+        queueSize
+        location {
+          longitude
+          latitude
+        }
+      }
+    }
+  }
+`;
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -149,27 +205,32 @@ export function MainFindBeepScreen() {
   const [getETA, { data: eta, error: etaError }] =
     useLazyQuery<GetEtaQuery>(GetETA);
 
-  const [groupSize, setGroupSize] = useState<string>("");
-  const [origin, setOrigin] = useState<string>("");
-  const [destination, setDestination] = useState<string>("");
-  const [isGetBeepLoading, setIsGetBeepLoading] = useState<boolean>(false);
+  const [getBeep, { loading: isGetBeepLoading, error: getBeepError }] =
+    useMutation<ChooseBeepMutation>(ChooseBeep);
 
-  const originRef = useRef<any>();
-  const destinationRef = useRef<any>();
+  const {
+    control,
+    handleSubmit,
+    setFocus,
+    formState: { errors, isSubmitting },
+  } = useForm<ChooseBeepMutationVariables>();
+
+  const validationErrors =
+    useValidationErrors<ChooseBeepMutationVariables>(getBeepError);
 
   const beep = data?.getRiderStatus;
 
   const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    AppState.addEventListener("change", _handleAppStateChange);
+    const listener = AppState.addEventListener("change", handleAppStateChange);
 
     return () => {
-      AppState.removeEventListener("change", _handleAppStateChange);
+      listener.remove();
     };
   }, []);
 
-  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (
       appState.current.match(/inactive|background/) &&
       nextAppState === "active"
@@ -276,31 +337,36 @@ export function MainFindBeepScreen() {
     return navigate("Choose Beeper", {
       latitude: lastKnowLocation.coords.latitude,
       longitude: lastKnowLocation.coords.longitude,
-      handlePick: (id: string) => chooseBeep(id),
+      handlePick: (id: string) =>
+        handleSubmit((values) => chooseBeep(id, values))(),
     });
   }
 
-  async function chooseBeep(id: string): Promise<void> {
-    setIsGetBeepLoading(true);
+  const chooseBeep = async (
+    id: string,
+    values: ChooseBeepMutationVariables
+  ) => {
+    console.log(id, values);
     try {
-      const data = await gqlChooseBeep({
-        beeperId: id,
-        origin: origin,
-        destination: destination,
-        groupSize: Number(groupSize),
+      const { data } = await getBeep({
+        variables: {
+          ...values,
+          beeperId: id,
+        },
       });
 
-      client.writeQuery({
-        query: InitialRiderStatus,
-        data: { getRiderStatus: { ...data.data.chooseBeep } },
-      });
+      if (data) {
+        client.writeQuery({
+          query: InitialRiderStatus,
+          data: { getRiderStatus: { ...data.chooseBeep } },
+        });
 
-      subscribeToRiderStatus();
+        subscribeToRiderStatus();
+      }
     } catch (error) {
       Alert(error as ApolloError);
     }
-    setIsGetBeepLoading(false);
-  }
+  };
 
   function getCurrentStatusMessage(): string {
     switch (beep?.state) {
@@ -331,48 +397,104 @@ export function MainFindBeepScreen() {
       <Container keyboard alignItems="center" pt={2} h="100%">
         <Stack space={4} w="90%">
           {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
-          <FormControl>
+          <FormControl
+            isInvalid={
+              Boolean(errors.groupSize) || Boolean(validationErrors?.groupSize)
+            }
+          >
             <FormControl.Label>Group Size</FormControl.Label>
-            <Input
-              size="lg"
-              w="100%"
-              keyboardType="number-pad"
-              value={groupSize}
-              onChangeText={(value) => setGroupSize(value)}
-              onSubmitEditing={() => originRef.current.focus()}
-              returnKeyType="next"
+            <Controller
+              name="groupSize"
+              rules={{ required: "Group size is required" }}
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  keyboardType="numeric"
+                  onBlur={onBlur}
+                  onChangeText={(val) =>
+                    onChange(val === "" ? undefined : Number(val))
+                  }
+                  value={value === undefined ? undefined : String(value)}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("origin")}
+                  size="lg"
+                />
+              )}
             />
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}
+            >
+              {errors.groupSize?.message}
+              {validationErrors?.groupSize?.[0]}
+            </FormControl.ErrorMessage>
           </FormControl>
-          <FormControl>
+          <FormControl
+            isInvalid={
+              Boolean(errors.origin) || Boolean(validationErrors?.origin)
+            }
+          >
             <FormControl.Label>Pick Up Location</FormControl.Label>
-            <LocationInput
-              size="lg"
-              ref={originRef}
-              value={origin}
-              onChangeText={(value: string) => setOrigin(value)}
-              onSubmitEditing={() => destinationRef.current.focus()}
-              returnKeyType="next"
+            <Controller
+              name="origin"
+              rules={{ required: "Pick up location is required" }}
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <LocationInput
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("destination")}
+                  textContentType="location"
+                  size="lg"
+                />
+              )}
             />
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}
+            >
+              {errors.origin?.message}
+              {validationErrors?.origin?.[0]}
+            </FormControl.ErrorMessage>
           </FormControl>
-          <FormControl>
+          <FormControl
+            isInvalid={
+              Boolean(errors.destination) ||
+              Boolean(validationErrors?.destination)
+            }
+          >
             <FormControl.Label>Destination Location</FormControl.Label>
-            <Input
-              size="lg"
-              ref={destinationRef}
-              value={destination}
-              onChangeText={(value) => setDestination(value)}
-              returnKeyType="go"
+            <Controller
+              name="destination"
+              rules={{ required: "Destination location is required" }}
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value}
+                  ref={ref}
+                  returnKeyType="go"
+                  onSubmitEditing={() => findBeep()}
+                  textContentType="location"
+                  size="lg"
+                />
+              )}
             />
+            <FormControl.ErrorMessage
+              leftIcon={<WarningOutlineIcon size="xs" />}
+            >
+              {errors.destination?.message}
+              {validationErrors?.destination?.[0]}
+            </FormControl.ErrorMessage>
           </FormControl>
           <GradietnButton
             onPress={() => findBeep()}
             isLoading={isGetBeepLoading}
-            isDisabled={
-              origin === "Loading your location..." ||
-              !origin ||
-              !groupSize ||
-              !destination
-            }
           >
             Find Beep
           </GradietnButton>

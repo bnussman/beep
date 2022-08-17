@@ -8,12 +8,12 @@ import { GetBeeperListQuery } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
+import { Card } from "../../components/Card";
 import {
   Text,
   Spinner,
   FlatList,
   Badge,
-  Pressable,
   Box,
   HStack,
   Spacer,
@@ -21,7 +21,6 @@ import {
   useColorMode,
   Stack,
 } from "native-base";
-import { Card } from "../../components/Card";
 
 const GetBeepers = gql`
   query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {

@@ -10,14 +10,7 @@ import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../routes/Ratings";
-import {
-  Button,
-  Center,
-  Heading,
-  HStack,
-  Pressable,
-  Spacer,
-} from "native-base";
+import { Button, Center, Heading, Pressable, Spacer } from "native-base";
 
 export const GetRateData = gql`
   query GetRateData {
@@ -28,6 +21,7 @@ export const GetRateData = gql`
         name
         username
         photoUrl
+        isBeeping
       }
     }
   }
@@ -43,7 +37,7 @@ export function RateSheet() {
 
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
-  const snapPoints = useMemo(() => ["30%"], []);
+  const snapPoints = useMemo(() => ["42%"], []);
 
   const onSubmit = () => {
     rate({
@@ -77,22 +71,26 @@ export function RateSheet() {
       <Center padding={4} height="100%">
         <Pressable
           w="100%"
+          alignItems="center"
           onPress={() =>
             navigate("Profile", { id: beep.beeper.id, beep: beep.id })
           }
         >
-          <HStack space={2} alignItems="center">
-            <Heading
-              fontSize="3xl"
-              fontWeight="extrabold"
-              letterSpacing="sm"
-              isTruncated
-            >
-              {beep.beeper.name}
-            </Heading>
-            <Spacer />
-            <Avatar url={beep.beeper.photoUrl} />
-          </HStack>
+          <Avatar
+            url={beep.beeper.photoUrl}
+            size="xl"
+            online={beep.beeper.isBeeping}
+            badgeSize="6"
+          />
+          <Heading
+            fontSize="3xl"
+            fontWeight="extrabold"
+            letterSpacing="sm"
+            isTruncated
+          >
+            {beep.beeper.name}
+          </Heading>
+          <Spacer />
         </Pressable>
         <Spacer />
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
