@@ -107,10 +107,7 @@ export function Beep(props: Props) {
             </Menu>
           )}
           <Spacer />
-          <Avatar
-            size="xl"
-            url={beep.rider.photoUrl}
-          />
+          <Avatar size="xl" url={beep.rider.photoUrl} />
         </HStack>
       </Pressable>
       <Stack space={2} mt={4}>
@@ -167,7 +164,8 @@ export function Beep(props: Props) {
                     beep.rider.venmo,
                     beep.groupSize,
                     user?.groupRate,
-                    user?.singlesRate
+                    user?.singlesRate,
+                    "charge"
                   )
                 }
               >
@@ -204,9 +202,7 @@ export function Beep(props: Props) {
                 Get Directions for Beep
               </Button>
             )}
-            {beep.state < 3 && (
-              <CancelButton beep={beep} />
-            )}
+            {beep.state < 3 && <CancelButton beep={beep} />}
             <ActionButton beep={beep} />
           </>
         )}

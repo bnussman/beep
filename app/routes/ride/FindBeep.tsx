@@ -2,12 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";
+import { StatusBar } from "./StatusBar";
 import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
-import { Logger } from "../../utils/Logger";
 import { LeaveButton } from "./LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
-import { Share, Linking, AppState, AppStateStatus } from "react-native";
+import { Linking, AppState, AppStateStatus } from "react-native";
 import { ApolloError, gql, useLazyQuery, useQuery } from "@apollo/client";
 import { gqlChooseBeep } from "./helpers";
 import { client } from "../../utils/Apollo";
@@ -29,6 +29,11 @@ import {
   GetInitialRiderStatusQuery,
 } from "../../generated/graphql";
 import {
+  openCashApp,
+  openVenmo,
+  shareVenmoInformation,
+} from "../../utils/links";
+import {
   Button,
   Text,
   Input,
@@ -42,7 +47,6 @@ import {
   Spinner,
   Pressable,
 } from "native-base";
-import { StatusBar } from "./StatusBar";
 
 const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -298,39 +302,6 @@ export function MainFindBeepScreen() {
     setIsGetBeepLoading(false);
   }
 
-  function getVenmoLink(): string {
-    if (!beep?.beeper.venmo) return "";
-
-    if (Number(beep.groupSize) > 1) {
-      return `venmo://paycharge?txn=pay&recipients=${
-        beep.beeper.venmo
-      }&amount=${beep.beeper.groupRate * beep.groupSize}&note=Beep`;
-    }
-    return `venmo://paycharge?txn=pay&recipients=${beep.beeper.venmo}&amount=${beep.beeper?.singlesRate}&note=Beep`;
-  }
-
-  function getCashAppLink(): string {
-    if (!beep?.beeper.cashapp) return "";
-
-    if (Number(beep.groupSize) > 1) {
-      return `https://cash.app/$${beep.beeper.cashapp}/${
-        beep.groupSize * beep.beeper.groupRate
-      }`;
-    }
-    return `https://cash.app/$${beep.beeper.cashapp}/${beep.beeper.singlesRate}`;
-  }
-
-  function shareVenmoInformation(): void {
-    try {
-      Share.share({
-        message: `Please Venmo ${beep?.beeper.venmo} $${beep?.beeper.groupRate} for the beep!`,
-        url: getVenmoLink(),
-      });
-    } catch (error) {
-      Logger.error(error);
-    }
-  }
-
   function getCurrentStatusMessage(): string {
     switch (beep?.state) {
       case 0:
@@ -469,8 +440,9 @@ export function MainFindBeepScreen() {
                   ETA
                 </Heading>
                 <Spacer />
-                {etaError ? <Text>{etaError.message}</Text> : null}
-                {eta?.getETA ? (
+                {etaError ? (
+                  <Text>{etaError.message}</Text>
+                ) : eta?.getETA ? (
                   <Text>{eta.getETA}</Text>
                 ) : (
                   <Spinner size="sm" />
@@ -507,76 +479,94 @@ export function MainFindBeepScreen() {
             >
               Text Beeper
             </Button>
-            {beep.beeper.venmo ? (
+            {beep.beeper.venmo && (
               <Button
                 rightIcon={
                   <Icon as={Ionicons} size="md" name="ios-card-outline" />
                 }
-                onPress={() => Linking.openURL(getVenmoLink())}
+                onPress={() =>
+                  openVenmo(
+                    beep.beeper.venmo,
+                    beep.groupSize,
+                    beep.beeper.groupRate,
+                    beep.beeper.singlesRate,
+                    "pay"
+                  )
+                }
               >
                 Pay Beeper with Venmo
               </Button>
-            ) : null}
-            {beep.beeper.cashapp ? (
-              <Button onPress={() => Linking.openURL(getCashAppLink())}>
+            )}
+            {beep.beeper.cashapp && (
+              <Button
+                onPress={() =>
+                  openCashApp(
+                    beep.beeper.cashapp,
+                    beep.groupSize,
+                    beep.beeper.groupRate,
+                    beep.beeper.singlesRate
+                  )
+                }
+              >
                 Pay Beeper with Cash App
               </Button>
-            ) : null}
-            {Number(beep.groupSize) > 1 ? (
+            )}
+            {beep.groupSize > 1 && (
               <Button
                 rightIcon={
                   <Icon as={Ionicons} name="ios-share-outline" size="md" />
                 }
-                onPress={() => shareVenmoInformation()}
+                onPress={() =>
+                  shareVenmoInformation(
+                    beep.beeper.venmo,
+                    beep.groupSize,
+                    beep.beeper.groupRate,
+                    beep.beeper.singlesRate
+                  )
+                }
               >
                 Share Venmo Info with Your Friends
               </Button>
-            ) : null}
-            {beep.position >= 1 ? (
-              <LeaveButton beepersId={beep.beeper.id} />
-            ) : null}
+            )}
+            {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
           </Stack>
         </Stack>
       </Container>
     );
-  } else {
-    return (
-      <Container alignItems="center" pt={2}>
-        <Stack space={4} w="90%" alignItems="center" h="94%">
-          <Avatar size={100} url={beep.beeper.photoUrl} />
-          <Center>
-            <Text>Waiting on</Text>
-            <Heading letterSpacing="xs" fontWeight="extrabold">
-              {beep.beeper.name}
-            </Heading>
-            <Text>to accept your request.</Text>
-          </Center>
-          <Card w="100%">
-            <Text isTruncated fontSize="xs">
-              <Text fontWeight="extrabold">Pick Up </Text>
-              <Text>{beep.origin}</Text>
-            </Text>
-            <Text isTruncated fontSize="xs">
-              <Text fontWeight="extrabold">Destination </Text>
-              <Text>{beep.destination}</Text>
-            </Text>
-            <Text isTruncated fontSize="xs">
-              <Text fontWeight="extrabold">Number of Riders </Text>
-              <Text>{beep.groupSize}</Text>
-            </Text>
-          </Card>
-          <Rates
-            singles={beep.beeper.singlesRate}
-            group={beep.beeper.groupRate}
-          />
-          <PlaceInQueue
-            firstName={beep.beeper.first}
-            position={beep.position}
-          />
-          <Spacer />
-          <LeaveButton beepersId={beep.beeper.id} w="100%" size="lg" />
-        </Stack>
-      </Container>
-    );
   }
+  return (
+    <Container alignItems="center" pt={2}>
+      <Stack space={4} w="90%" alignItems="center" h="94%">
+        <Avatar size={100} url={beep.beeper.photoUrl} />
+        <Center>
+          <Text>Waiting on</Text>
+          <Heading letterSpacing="xs" fontWeight="extrabold">
+            {beep.beeper.name}
+          </Heading>
+          <Text>to accept your request.</Text>
+        </Center>
+        <Card w="100%">
+          <Text isTruncated fontSize="xs">
+            <Text fontWeight="extrabold">Pick Up </Text>
+            <Text>{beep.origin}</Text>
+          </Text>
+          <Text isTruncated fontSize="xs">
+            <Text fontWeight="extrabold">Destination </Text>
+            <Text>{beep.destination}</Text>
+          </Text>
+          <Text isTruncated fontSize="xs">
+            <Text fontWeight="extrabold">Number of Riders </Text>
+            <Text>{beep.groupSize}</Text>
+          </Text>
+        </Card>
+        <Rates
+          singles={beep.beeper.singlesRate}
+          group={beep.beeper.groupRate}
+        />
+        <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
+        <Spacer />
+        <LeaveButton beepersId={beep.beeper.id} w="100%" size="lg" />
+      </Stack>
+    </Container>
+  );
 }
