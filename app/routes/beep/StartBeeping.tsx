@@ -121,7 +121,18 @@ const GetQueue = gql`
 
 const UpdateBeepSettings = gql`
   mutation UpdateBeepSettings($input: BeeperSettingsInput!) {
-    setBeeperStatus(input: $input)
+    setBeeperStatus(input: $input) {
+      id
+      singlesRate
+      groupRate
+      capacity
+      isBeeping
+      queueSize
+      location {
+        latitude
+        longitude
+      }
+    }
   }
 `;
 
@@ -149,26 +160,19 @@ export function StartBeepingScreen() {
 
   const queue = data?.getQueue;
 
-  // ref
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
-  // variables
   const snapPoints = useMemo(() => ["20%", "85%"], []);
 
-  // callbacks
-  // const handleSheetChanges = useCallback((index: number) => {
-  //   console.log("handleSheetChanges", index);
-  // }, []);
-
   useEffect(() => {
-    AppState.addEventListener("change", _handleAppStateChange);
+    const listener = AppState.addEventListener("change", handleAppStateChange);
 
     return () => {
-      AppState.removeEventListener("change", _handleAppStateChange);
+      listener.remove();
     };
   }, []);
 
-  const _handleAppStateChange = (nextAppState: AppStateStatus) => {
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === "active") {
       refetch();
     }

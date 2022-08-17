@@ -34,13 +34,13 @@ export function Rating(props: Props) {
           {user?.id === item.rater.id ? (
             <Text>
               <Text fontSize="md">You rated</Text>{" "}
-              <Text bold fontSize="md">
+              <Text fontWeight="extrabold" fontSize="md">
                 {otherUser.name}
               </Text>
             </Text>
           ) : (
             <Text>
-              <Text bold fontSize="md">
+              <Text fontWeight="extrabold" fontSize="md">
                 {otherUser.name}
               </Text>{" "}
               <Text fontSize="md">rated you</Text>

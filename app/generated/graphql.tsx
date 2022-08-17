@@ -151,8 +151,8 @@ export type Mutation = {
   riderLeaveQueue: Scalars['Boolean'];
   sendNotification: Scalars['Boolean'];
   sendNotifications: Scalars['Float'];
-  setBeeperQueue: Scalars['Boolean'];
-  setBeeperStatus: Scalars['Boolean'];
+  setBeeperQueue: Array<QueueEntry>;
+  setBeeperStatus: User;
   setLocation: Scalars['Boolean'];
   signup: Auth;
   updatePushToken: Scalars['Boolean'];
@@ -600,7 +600,7 @@ export type UpdateBeeperQueueMutationVariables = Exact<{
 }>;
 
 
-export type UpdateBeeperQueueMutation = { __typename?: 'Mutation', setBeeperQueue: boolean };
+export type UpdateBeeperQueueMutation = { __typename?: 'Mutation', setBeeperQueue: Array<{ __typename?: 'QueueEntry', id: string, isAccepted: boolean, groupSize: number, origin: string, destination: string, state: number }> };
 
 export type CancelBeepMutationVariables = Exact<{
   id: Scalars['String'];
@@ -695,7 +695,7 @@ export type UpdateBeepSettingsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateBeepSettingsMutation = { __typename?: 'Mutation', setBeeperStatus: boolean };
+export type UpdateBeepSettingsMutation = { __typename?: 'Mutation', setBeeperStatus: { __typename?: 'User', id: string, singlesRate: number, groupRate: number, capacity: number, isBeeping: boolean, queueSize: number, location?: { __typename?: 'Point', latitude: number, longitude: number } | null } };
 
 export type GetUserProfileQueryVariables = Exact<{
   id: Scalars['String'];
@@ -838,7 +838,14 @@ export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpda
 
 export const UpdateBeeperQueueDocument = gql`
     mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
-  setBeeperQueue(input: {queueId: $queueId, riderId: $riderId, value: $value})
+  setBeeperQueue(input: {queueId: $queueId, riderId: $riderId, value: $value}) {
+    id
+    isAccepted
+    groupSize
+    origin
+    destination
+    state
+  }
 }
     `;
 export type UpdateBeeperQueueMutationFn = ApolloReactCommon.MutationFunction<UpdateBeeperQueueMutation, UpdateBeeperQueueMutationVariables>;
@@ -1395,7 +1402,18 @@ export type GetQueueSubscriptionHookResult = ReturnType<typeof useGetQueueSubscr
 export type GetQueueSubscriptionResult = ApolloReactCommon.SubscriptionResult<GetQueueSubscription>;
 export const UpdateBeepSettingsDocument = gql`
     mutation UpdateBeepSettings($input: BeeperSettingsInput!) {
-  setBeeperStatus(input: $input)
+  setBeeperStatus(input: $input) {
+    id
+    singlesRate
+    groupRate
+    capacity
+    isBeeping
+    queueSize
+    location {
+      latitude
+      longitude
+    }
+  }
 }
     `;
 export type UpdateBeepSettingsMutationFn = ApolloReactCommon.MutationFunction<UpdateBeepSettingsMutation, UpdateBeepSettingsMutationVariables>;

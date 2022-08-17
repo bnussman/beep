@@ -150,8 +150,8 @@ export type Mutation = {
   riderLeaveQueue: Scalars['Boolean'];
   sendNotification: Scalars['Boolean'];
   sendNotifications: Scalars['Float'];
-  setBeeperQueue: Scalars['Boolean'];
-  setBeeperStatus: Scalars['Boolean'];
+  setBeeperQueue: Array<QueueEntry>;
+  setBeeperStatus: User;
   setLocation: Scalars['Boolean'];
   signup: Auth;
   updatePushToken: Scalars['Boolean'];

@@ -17,9 +17,9 @@ export function isDefined(value: any): boolean {
 @Resolver(Beep)
 export class BeeperResolver {
 
-  @Mutation(() => Boolean)
+  @Mutation(() => User)
   @Authorized()
-  public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
+  public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
     const queue = await ctx.user.queue.loadItems();
 
     if (!input.isBeeping && (queue.length > 0)) {
@@ -37,12 +37,12 @@ export class BeeperResolver {
 
     await ctx.em.persistAndFlush(ctx.user);
 
-    return true;
+    return ctx.user;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => [QueueEntry])
   @Authorized()
-  public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<boolean> {
+  public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<QueueEntry[]> {
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], { orderBy: { queue: { start: QueryOrder.ASC } } });
 
     const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id === input.queueId);
@@ -115,11 +115,13 @@ export class BeeperResolver {
       ctx.em.persist(queueEntry);
     }
 
-    this.sendRiderUpdates(ctx.user, ctx.user.queue.getItems().sort(inOrder), pubSub);
+    const queue = ctx.user.queue.getItems().sort(inOrder);
+
+    this.sendRiderUpdates(ctx.user, queue, pubSub);
 
     await ctx.em.flush();
 
-    return true;
+    return queue;
   }
 
   private async sendRiderUpdates(beeper: User, queue: QueueEntry[], pubSub: PubSubEngine) {

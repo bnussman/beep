@@ -17,7 +17,14 @@ const UpdateBeeperQueue = gql`
   ) {
     setBeeperQueue(
       input: { queueId: $queueId, riderId: $riderId, value: $value }
-    )
+    ) {
+      id
+      isAccepted
+      groupSize
+      origin
+      destination
+      state
+    }
   }
 `;
 

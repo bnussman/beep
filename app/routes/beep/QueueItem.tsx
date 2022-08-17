@@ -11,6 +11,7 @@ import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
+import { Card } from "../../components/Card";
 import {
   Box,
   HStack,
@@ -20,16 +21,14 @@ import {
   Icon,
   Menu,
   Divider,
-  Badge,
 } from "native-base";
-import { Card } from "../../components/Card";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
   index: number;
 }
 
-export function QueueItem({ item, index }: Props) {
+export function QueueItem({ item }: Props) {
   const [cancel] = useMutation(CancelBeep);
   const { navigate } = useNavigation<Navigation>();
 
