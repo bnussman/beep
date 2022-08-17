@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import * as Location from "expo-location";

@@ -1,5 +1,6 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
+import { Card } from "../../components/Card";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
@@ -18,10 +19,8 @@ import {
   Menu,
   Pressable,
   Icon,
-  Box,
   Flex,
 } from "native-base";
-import { Card } from "../../components/Card";
 
 const GetUser = gql`
   query GetUserProfile($id: String!) {
