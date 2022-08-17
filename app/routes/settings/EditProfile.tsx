@@ -10,14 +10,22 @@ import { isMobile } from "../../utils/constants";
 import { Container } from "../../components/Container";
 import { UserData, useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
-import { isValidationError, useValidationErrors } from "../../utils/useValidationErrors";
+import { useNavigation } from "@react-navigation/native";
+import { Navigation } from "../../utils/Navigation";
+import { Ionicons } from "@expo/vector-icons";
+import { LOCATION_TRACKING } from "../beep/StartBeeping";
+import { client } from "../../utils/Apollo";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import {
+  isValidationError,
+  useValidationErrors,
+} from "../../utils/useValidationErrors";
+import {
   AddProfilePictureMutation,
   DeleteAccountMutation,
+  EditAccountInput,
   EditAccountMutation,
-  EditAccountMutationVariables,
 } from "../../generated/graphql";
 import {
   Spinner,
@@ -32,11 +40,6 @@ import {
   Menu,
   Icon,
 } from "native-base";
-import {useNavigation} from "@react-navigation/native";
-import {Navigation} from "../../utils/Navigation";
-import {Ionicons} from "@expo/vector-icons";
-import {LOCATION_TRACKING} from "../beep/StartBeeping";
-import {client} from "../../utils/Apollo";
 
 const DeleteAccount = gql`
   mutation DeleteAccount {
@@ -45,26 +48,16 @@ const DeleteAccount = gql`
 `;
 
 const EditAccount = gql`
-  mutation EditAccount(
-    $first: String!
-    $last: String!
-    $email: String!
-    $phone: String!
-    $venmo: String
-    $cashapp: String
-  ) {
-    editAccount(
-      input: {
-        first: $first
-        last: $last
-        email: $email
-        phone: $phone
-        venmo: $venmo
-        cashapp: $cashapp
-      }
-    ) {
+  mutation EditAccount($input: EditAccountInput!) {
+    editAccount(input: $input) {
       id
       name
+      first
+      last
+      email
+      phone
+      venmo
+      cashapp
     }
   }
 `;
@@ -91,16 +84,20 @@ export function EditProfileScreen() {
   const { user } = useUser();
   const navigation = useNavigation<Navigation>();
 
-  const defaultValues = useMemo(() => ({
-    first: user?.first,
-    last: user?.last,
-    email: user?.email ? user.email : undefined,
-    phone: user?.phone ? user.phone : undefined,
-    venmo: user?.venmo,
-    cashapp: user?.cashapp
-  }), [user]);
+  const defaultValues = useMemo(
+    () => ({
+      first: user?.first,
+      last: user?.last,
+      email: user?.email ? user.email : undefined,
+      phone: user?.phone ? user.phone : undefined,
+      venmo: user?.venmo,
+      cashapp: user?.cashapp,
+    }),
+    [user]
+  );
 
-  const [edit, { loading, error }] = useMutation<EditAccountMutation>(EditAccount);
+  const [edit, { loading, error }] =
+    useMutation<EditAccountMutation>(EditAccount);
   const [deleteAccount] = useMutation<DeleteAccountMutation>(DeleteAccount);
 
   const {
@@ -109,13 +106,13 @@ export function EditProfileScreen() {
     setFocus,
     reset,
     formState: { errors, isDirty },
-  } = useForm<EditAccountMutationVariables>({ defaultValues });
+  } = useForm<EditAccountInput>({ defaultValues });
 
   useEffect(() => {
     reset(defaultValues);
-  }, [defaultValues])
+  }, [defaultValues]);
 
-  const validationErrors = useValidationErrors<EditAccountMutationVariables>(error);
+  const validationErrors = useValidationErrors<EditAccountInput>(error);
 
   const [upload, { loading: uploadLoading }] =
     useMutation<AddProfilePictureMutation>(UploadPhoto);
@@ -143,12 +140,14 @@ export function EditProfileScreen() {
             );
           }}
         >
-          <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>Delete Account</Menu.Item>
+          <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>
+            Delete Account
+          </Menu.Item>
         </Menu>
       ),
     });
   }, [navigation]);
-  
+
   const handleDeleteWrapper = () => {
     if (isMobile) {
       Alert.alert(
@@ -159,33 +158,33 @@ export function EditProfileScreen() {
             text: "Cancel",
             style: "cancel",
           },
-          { text: "Delete", onPress: handleDelete, style: 'destructive' },
+          { text: "Delete", onPress: handleDelete, style: "destructive" },
         ],
         { cancelable: true }
       );
     } else {
       handleDelete();
     }
-  }
-
-  const handleDelete = () => {
-    deleteAccount().then(() => {
-      AsyncStorage.clear();
-
-      if (!__DEV__) {
-        Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
-      }
-
-      client.writeQuery({
-        query: UserData,
-        data: {
-          getUser: null,
-        },
-      });
-
-    }).catch((error: ApolloError) => alert(error.message));
   };
 
+  const handleDelete = () => {
+    deleteAccount()
+      .then(() => {
+        AsyncStorage.clear();
+
+        if (!__DEV__) {
+          Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+        }
+
+        client.writeQuery({
+          query: UserData,
+          data: {
+            getUser: null,
+          },
+        });
+      })
+      .catch((error: ApolloError) => alert(error.message));
+  };
 
   async function handleUpdatePhoto(): Promise<void> {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -229,7 +228,7 @@ export function EditProfileScreen() {
 
   const onSubmit = handleSubmit(async (variables) => {
     try {
-      await edit({ variables });
+      await edit({ variables: { input: variables } });
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         alert((error as ApolloError)?.message);
@@ -310,17 +309,12 @@ export function EditProfileScreen() {
             </FormControl>
           </Stack>
           <Pressable onPress={() => handleUpdatePhoto()}>
-            <Avatar
-              url={photo?.uri ?? user?.photoUrl}
-              size="xl"
-            />
+            <Avatar url={photo?.uri ?? user?.photoUrl} size="xl" />
             {uploadLoading ? <Spinner /> : null}
           </Pressable>
         </HStack>
         <FormControl
-          isInvalid={
-            Boolean(errors.email) || Boolean(validationErrors?.email)
-          }
+          isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}
         >
           <FormControl.Label>Email</FormControl.Label>
           <Controller
@@ -341,17 +335,13 @@ export function EditProfileScreen() {
               />
             )}
           />
-          <FormControl.ErrorMessage
-            leftIcon={<WarningOutlineIcon size="xs" />}
-          >
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
             {errors.email?.message}
             {validationErrors?.email?.[0]}
           </FormControl.ErrorMessage>
         </FormControl>
         <FormControl
-          isInvalid={
-            Boolean(errors.phone) || Boolean(validationErrors?.phone)
-          }
+          isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}
         >
           <FormControl.Label>Phone Number</FormControl.Label>
           <Controller
@@ -372,9 +362,7 @@ export function EditProfileScreen() {
               />
             )}
           />
-          <FormControl.ErrorMessage
-            leftIcon={<WarningOutlineIcon size="xs" />}
-          >
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
             {errors.phone?.message}
             {validationErrors?.phone?.[0]}
           </FormControl.ErrorMessage>
@@ -411,7 +399,9 @@ export function EditProfileScreen() {
           </FormControl.ErrorMessage>
         </FormControl>
         <FormControl
-          isInvalid={Boolean(errors.cashapp) || Boolean(validationErrors?.cashapp)}
+          isInvalid={
+            Boolean(errors.cashapp) || Boolean(validationErrors?.cashapp)
+          }
         >
           <FormControl.Label>Cash App Username</FormControl.Label>
           <Controller
@@ -441,7 +431,12 @@ export function EditProfileScreen() {
             {validationErrors?.cashapp?.[0]}
           </FormControl.ErrorMessage>
         </FormControl>
-        <Button onPress={onSubmit} isLoading={loading} isDisabled={!isDirty} mt={2}>
+        <Button
+          onPress={onSubmit}
+          isLoading={loading}
+          isDisabled={!isDirty}
+          mt={2}
+        >
           Update Profile
         </Button>
       </Stack>

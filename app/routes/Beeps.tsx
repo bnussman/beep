@@ -128,13 +128,11 @@ export function BeepsScreen() {
               {otherUser.name}
             </Text>
             <Text color="gray.400" fontSize="xs">
-              {new Date(item.start).toLocaleString()}
+              {`${isRider ? "Ride" : "Beep"} - ${new Date(
+                item.start
+              ).toLocaleString()}`}
             </Text>
           </Stack>
-          <Spacer />
-          <Badge colorScheme="dark" borderRadius="lg">
-            {isRider ? "Ride" : "Beep"}
-          </Badge>
         </HStack>
         <Stack space={1}>
           <Text>

@@ -492,12 +492,14 @@ export function MainFindBeepScreen() {
               {validationErrors?.destination?.[0]}
             </FormControl.ErrorMessage>
           </FormControl>
-          <GradietnButton
+          <Button
+            _text={{ fontWeight: "extrabold" }}
             onPress={() => findBeep()}
             isLoading={isGetBeepLoading}
+            size="lg"
           >
             Find Beep
-          </GradietnButton>
+          </Button>
         </Stack>
         <RateSheet />
       </Container>

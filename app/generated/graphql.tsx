@@ -798,16 +798,11 @@ export type DeleteAccountMutationVariables = Exact<{ [key: string]: never; }>;
 export type DeleteAccountMutation = { __typename?: 'Mutation', deleteAccount: boolean };
 
 export type EditAccountMutationVariables = Exact<{
-  first: Scalars['String'];
-  last: Scalars['String'];
-  email: Scalars['String'];
-  phone: Scalars['String'];
-  venmo?: InputMaybe<Scalars['String']>;
-  cashapp?: InputMaybe<Scalars['String']>;
+  input: EditAccountInput;
 }>;
 
 
-export type EditAccountMutation = { __typename?: 'Mutation', editAccount: { __typename?: 'User', id: string, name: string } };
+export type EditAccountMutation = { __typename?: 'Mutation', editAccount: { __typename?: 'User', id: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, cashapp?: string | null } };
 
 export type AddProfilePictureMutationVariables = Exact<{
   picture: Scalars['Upload'];
@@ -1992,12 +1987,16 @@ export type DeleteAccountMutationHookResult = ReturnType<typeof useDeleteAccount
 export type DeleteAccountMutationResult = ApolloReactCommon.MutationResult<DeleteAccountMutation>;
 export type DeleteAccountMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteAccountMutation, DeleteAccountMutationVariables>;
 export const EditAccountDocument = gql`
-    mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
-  editAccount(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp}
-  ) {
+    mutation EditAccount($input: EditAccountInput!) {
+  editAccount(input: $input) {
     id
     name
+    first
+    last
+    email
+    phone
+    venmo
+    cashapp
   }
 }
     `;
@@ -2016,12 +2015,7 @@ export type EditAccountMutationFn = ApolloReactCommon.MutationFunction<EditAccou
  * @example
  * const [editAccountMutation, { data, loading, error }] = useEditAccountMutation({
  *   variables: {
- *      first: // value for 'first'
- *      last: // value for 'last'
- *      email: // value for 'email'
- *      phone: // value for 'phone'
- *      venmo: // value for 'venmo'
- *      cashapp: // value for 'cashapp'
+ *      input: // value for 'input'
  *   },
  * });
  */

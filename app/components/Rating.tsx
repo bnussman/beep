@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Flex, HStack, Spacer, Stack, Text } from "native-base";
+import { HStack, Stack, Text } from "native-base";
 import { GetRatingsQuery } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
@@ -28,34 +28,30 @@ export function Rating(props: Props) {
       pressable
       onPress={() => navigation.push("Profile", { id: otherUser.id })}
     >
-      <HStack alignItems="center" p={2}>
-        <Avatar size={50} mr={4} url={otherUser.photoUrl} />
-        <Stack space={2}>
-          <Text>
-            {user?.id === item.rater.id ? (
-              <Flex direction="row" alignItems="center">
-                <Text _dark={{ color: "white" }} fontSize="md">
-                  You rated
-                </Text>{" "}
-                <Text bold fontSize="md" _dark={{ color: "white" }}>
-                  {otherUser.name}
-                </Text>
-              </Flex>
-            ) : (
-              <Flex direction="row" alignItems="center">
-                <Text bold fontSize="md" _dark={{ color: "white" }}>
-                  {otherUser.name}
-                </Text>{" "}
-                <Text fontSize="md" _dark={{ color: "white" }}>
-                  rated you
-                </Text>
-              </Flex>
-            )}
+      <HStack alignItems="center" space={4}>
+        <Avatar size="lg" url={otherUser.photoUrl} />
+        <Stack space={1}>
+          {user?.id === item.rater.id ? (
+            <Text>
+              <Text fontSize="md">You rated</Text>{" "}
+              <Text bold fontSize="md">
+                {otherUser.name}
+              </Text>
+            </Text>
+          ) : (
+            <Text>
+              <Text bold fontSize="md">
+                {otherUser.name}
+              </Text>{" "}
+              <Text fontSize="md">rated you</Text>
+            </Text>
+          )}
+          <Text color="gray.400" fontSize="xs">
+            {new Date(item.timestamp).toLocaleString()}
           </Text>
           <Text>{printStars(item.stars)}</Text>
-          {item.message ? <Text>{item.message}</Text> : null}
+          {item.message && <Text>{item.message}</Text>}
         </Stack>
-        <Spacer />
       </HStack>
     </Card>
   );

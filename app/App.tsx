@@ -22,16 +22,13 @@ import { SignUpScreen } from "./routes/auth/SignUp";
 import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from "expo-status-bar";
+import { NATIVE_BASE_CONFIG, NATIVE_BASE_THEME } from "./utils/constants";
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
-import {
-  NATIVE_BASE_CONFIG,
-  NATIVE_BASE_THEME,
-} from "./utils/constants";
 
 const Stack = createStackNavigator();
 init();
@@ -70,7 +67,8 @@ function Beep() {
   }, [user]);
 
   React.useEffect(() => {
-    const subscription = Notifications.addNotificationReceivedListener(handleNotification);
+    const subscription =
+      Notifications.addNotificationReceivedListener(handleNotification);
     return () => subscription.remove();
   }, []);
 
@@ -125,10 +123,7 @@ function Beep() {
                 component={RateScreen}
                 options={{ presentation: "modal" }}
               />
-              <Stack.Screen
-                name="Choose Beeper"
-                component={PickBeepScreen} 
-              />
+              <Stack.Screen name="Choose Beeper" component={PickBeepScreen} />
             </>
           )}
         </Stack.Navigator>
