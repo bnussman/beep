@@ -120,7 +120,7 @@ export function PickBeepScreen() {
           </Box>
         </Stack>
         <Spacer />
-        <Stack space={2}>
+        <Stack space={2} flexShrink={1}>
           {index === 0 ? (
             <Badge
               colorScheme="gray"
@@ -128,7 +128,7 @@ export function PickBeepScreen() {
               fontWeight="extrabold"
               fontSize="xs"
             >
-              Closest to you 📍
+              Closest to you
             </Badge>
           ) : null}
           {item.venmo ? (
