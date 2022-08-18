@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 import { Logger } from "../utils/Logger";
 import { TouchableWithoutFeedback } from "react-native";
 import { Box, Icon, IInputProps, Input, Spinner } from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 function LocationInput(props: IInputProps, ref: any) {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,9 +61,9 @@ function LocationInput(props: IInputProps, ref: any) {
       <Icon
         mr={3}
         size="lg"
-        name="my-location"
-        as={MaterialIcons}
-        _dark={{ color: "white" }}
+        name="ios-location-sharp"
+        as={Ionicons}
+        _dark={{ color: "gray.200" }}
       />
     </TouchableWithoutFeedback>
   );

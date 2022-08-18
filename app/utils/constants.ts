@@ -32,20 +32,50 @@ export const NATIVE_BASE_THEME = extendTheme({
     },
   },
   components: {
+    Input: {
+      baseStyle: ({ colorMode }: { colorMode: "dark" | "light" }) => ({
+        borderRadius: 8,
+        backgroundColor: colorMode === "dark" ? "gray.800" : "coolGray.100",
+        placeholderTextColor: "primary.200",
+        fontWeight: "bold",
+      }),
+      defaultProps: {
+        borderWidth: 0,
+        p: 3,
+        fontSize: "sm",
+      },
+    },
+    InputLeftAddon: {
+      baseStyle: ({ colorMode }: { colorMode: "dark" | "light" }) => ({
+        backgroundColor: colorMode === "dark" ? "gray.800" : "coolGray.100",
+        placeholderTextColor: "primary.200",
+        fontWeight: "bold",
+      }),
+      defaultProps: {
+        borderWidth: 0,
+        pl: 4,
+        fontSize: "sm",
+      },
+    },
+    Button: {
+      baseStyle: {
+        borderRadius: 8,
+      },
+    },
     FormControlLabel: {
       baseStyle: {
         _text: {
-          fontWeight: 'extrabold',
-          letterSpacing: 'sm',
+          fontWeight: "extrabold",
+          letterSpacing: "sm",
         },
       },
       defaultProps: {
         _text: {
           _dark: {
-            color: 'white',
+            color: "white",
           },
           _light: {
-            color: 'black',
+            color: "black",
           },
         },
       },

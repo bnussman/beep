@@ -176,10 +176,7 @@ export function LoginScreen() {
               {validationErrors?.password?.[0]}
             </FormControl.ErrorMessage>
           </FormControl>
-          <Button
-            isLoading={isSubmitting}
-            onPress={onLogin}
-          >
+          <Button mt={3} isLoading={isSubmitting} onPress={onLogin}>
             Login
           </Button>
         </Stack>
