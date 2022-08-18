@@ -603,7 +603,7 @@ export function MainFindBeepScreen() {
             >
               Text Beeper
             </Button>
-            {beep.beeper.venmo && (
+            {beep.beeper.venmo ? (
               <Button
                 rightIcon={
                   <Icon as={Ionicons} size="md" name="ios-card-outline" />
@@ -620,8 +620,8 @@ export function MainFindBeepScreen() {
               >
                 Pay Beeper with Venmo
               </Button>
-            )}
-            {beep.beeper.cashapp && (
+            ) : null}
+            {beep.beeper.cashapp ? (
               <Button
                 onPress={() =>
                   openCashApp(
@@ -634,8 +634,8 @@ export function MainFindBeepScreen() {
               >
                 Pay Beeper with Cash App
               </Button>
-            )}
-            {beep.groupSize > 1 && (
+            ) : null}
+            {beep.groupSize > 1 ? (
               <Button
                 rightIcon={
                   <Icon as={Ionicons} name="ios-share-outline" size="md" />
@@ -649,9 +649,9 @@ export function MainFindBeepScreen() {
                   )
                 }
               >
-                Share Venmo Info with Your Friends
+                Share Venmo
               </Button>
-            )}
+            ) : null}
             {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
           </Stack>
         </Stack>
