@@ -17,8 +17,6 @@ import {
   HStack,
   Center,
   useColorMode,
-  Spacer,
-  Badge,
   Stack,
 } from "native-base";
 
@@ -134,7 +132,7 @@ export function BeepsScreen() {
             </Text>
           </Stack>
         </HStack>
-        <Stack space={1}>
+        <Stack>
           <Text>
             <Text bold>Group size</Text> <Text>{item.groupSize}</Text>
           </Text>
