@@ -162,7 +162,7 @@ export function StartBeepingScreen() {
 
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
-  const snapPoints = useMemo(() => ["20%", "85%"], []);
+  const snapPoints = useMemo(() => ["20%", "85%", "100%"], []);
 
   useEffect(() => {
     const listener = AppState.addEventListener("change", handleAppStateChange);

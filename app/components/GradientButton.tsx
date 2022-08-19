@@ -22,7 +22,6 @@ export function GradietnButton(props: Props) {
       style={{
         shadowOpacity: 1,
         elevation: 3,
-        zIndex: 999,
         shadowRadius: 10,
         shadowColor: "#fb7ba2",
       }}
