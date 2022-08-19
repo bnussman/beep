@@ -158,7 +158,7 @@ export function StartBeepingScreen() {
   const [updateBeepSettings] =
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
-  const queue = data?.getQueue;
+  const queue = data ? [...data.getQueue].sort((a, b) => a.start - b.start) : undefined;
 
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
