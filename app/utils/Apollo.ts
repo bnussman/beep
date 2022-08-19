@@ -13,7 +13,7 @@ import {
   split,
 } from "@apollo/client";
 
-const ip = "192.168.1.155";
+const ip = "192.168.1.251";
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`

@@ -426,7 +426,7 @@ export function StartBeepingScreen() {
                     queue.length > 0 &&
                     queue.some((entry) => !entry.isAccepted) && (
                       <Box
-                        borderRadius="50%"
+                        rounded="full"
                         bg="blue.400"
                         w={4}
                         h={4}
