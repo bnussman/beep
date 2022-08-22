@@ -65,6 +65,7 @@ const EditAccount = gql`
 export const UploadPhoto = gql`
   mutation AddProfilePicture($picture: Upload!) {
     addProfilePicture(picture: $picture) {
+      id
       photoUrl
     }
   }
