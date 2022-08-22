@@ -40,9 +40,8 @@ import {
   useColorMode,
   Flex,
 } from "native-base";
-import { Subscription } from "../../utils/types";
 
-let unsubscribe: Subscription | null = null;
+let unsubscribe: any = null;
 
 const LocationUpdate = gql`
   mutation LocationUpdate($location: LocationInput!) {
