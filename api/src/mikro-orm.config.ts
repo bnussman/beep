@@ -18,7 +18,7 @@ const config: Options = {
     }
   } : {},
   migrations: {
-    disableForeignKeys: true,
+    disableForeignKeys: false,
   }
 };
 
