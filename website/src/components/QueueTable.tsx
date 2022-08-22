@@ -37,10 +37,12 @@ export function getStatus(value: number): string {
     case 0:
       return "Waiting...";
     case 1:
-      return "Beeper is on the way";
+      return "Accepted";
     case 2:
-      return "Beeper is here";
+      return "Beeper is on the way";
     case 3:
+      return "Beeper is here";
+    case 4:
       return "Getting Beeped";
     default:
       return "yikes";

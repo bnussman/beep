@@ -14,10 +14,12 @@ export function getStatus(value: number): string {
     case 0:
       return "waiting";
     case 1:
-      return "on the way";
+      return "accepted";
     case 2:
-      return "here";
+      return "on the way";
     case 3:
+      return "here";
+    case 4:
       return "getting beeped";
     default:
       return "yikes";
