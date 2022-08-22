@@ -17,6 +17,9 @@ const config: Options = {
       }
     }
   } : {},
+  migrations: {
+    disableForeignKeys: true,
+  }
 };
 
 export default config;
