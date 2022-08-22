@@ -152,7 +152,7 @@ export type Mutation = {
   sendNotifications: Scalars['Float'];
   setBeeperQueue: Array<QueueEntry>;
   setBeeperStatus: User;
-  setLocation: Scalars['Boolean'];
+  setLocation: User;
   signup: Auth;
   updatePushToken: Scalars['Boolean'];
   updateReport: Report;
@@ -686,7 +686,7 @@ export type AddProfilePictureMutationVariables = Exact<{
 }>;
 
 
-export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', photoUrl?: string | null } };
+export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', id: string, photoUrl?: string | null } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -910,7 +910,7 @@ export type LocationUpdateMutationVariables = Exact<{
 }>;
 
 
-export type LocationUpdateMutation = { __typename?: 'Mutation', setLocation: boolean };
+export type LocationUpdateMutation = { __typename?: 'Mutation', setLocation: { __typename?: 'User', id: string, location?: { __typename?: 'Point', latitude: number, longitude: number } | null } };
 
 export type GetUsersQueryVariables = Exact<{
   show?: InputMaybe<Scalars['Int']>;
@@ -1449,6 +1449,7 @@ export type EditAccountMutationOptions = Apollo.BaseMutationOptions<EditAccountM
 export const AddProfilePictureDocument = gql`
     mutation AddProfilePicture($picture: Upload!) {
   addProfilePicture(picture: $picture) {
+    id
     photoUrl
   }
 }
@@ -2690,7 +2691,13 @@ export type UserLocationLazyQueryHookResult = ReturnType<typeof useUserLocationL
 export type UserLocationQueryResult = Apollo.QueryResult<UserLocationQuery, UserLocationQueryVariables>;
 export const LocationUpdateDocument = gql`
     mutation LocationUpdate($id: String!, $latitude: Float!, $longitude: Float!) {
-  setLocation(location: {latitude: $latitude, longitude: $longitude}, id: $id)
+  setLocation(location: {latitude: $latitude, longitude: $longitude}, id: $id) {
+    id
+    location {
+      latitude
+      longitude
+    }
+  }
 }
     `;
 export type LocationUpdateMutationFn = Apollo.MutationFunction<LocationUpdateMutation, LocationUpdateMutationVariables>;

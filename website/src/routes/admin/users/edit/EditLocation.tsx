@@ -31,7 +31,13 @@ const LocationUpdate = gql`
     setLocation(location: {
       latitude: $latitude,
       longitude: $longitude,
-    }, id: $id)
+    }, id: $id) {
+      id
+      location {
+        latitude
+        longitude
+      }
+    }
   }
 `;
 

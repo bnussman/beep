@@ -24,14 +24,14 @@ export class Point {
 @Resolver(Point)
 export class LocationResolver {
 
-  @Mutation(() => Boolean)
+  @Mutation(() => User)
   @Authorized()
   public async setLocation(
     @Ctx() ctx: Context,
     @Arg('location') location: LocationInput,
     @PubSub() pubSub: PubSubEngine,
     @Arg('id', { nullable: true }) id?: string
-  ): Promise<boolean> {
+  ): Promise<User> {
     if (id) {
       // If an id is passed, that probably means someone is change another user's location.
       // We should make sure only admins do this.
@@ -48,7 +48,7 @@ export class LocationResolver {
 
       await ctx.em.persistAndFlush(user);
 
-      return true;
+      return user;
     }
 
     ctx.user.location = new Point(location.latitude, location.longitude);
@@ -57,7 +57,7 @@ export class LocationResolver {
 
     await ctx.em.persistAndFlush(ctx.user);
 
-    return true;
+    return ctx.user;
   }
 
   @Subscription(() => Point, {

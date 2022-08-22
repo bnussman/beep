@@ -153,7 +153,7 @@ export type Mutation = {
   sendNotifications: Scalars['Float'];
   setBeeperQueue: Array<QueueEntry>;
   setBeeperStatus: User;
-  setLocation: Scalars['Boolean'];
+  setLocation: User;
   signup: Auth;
   updatePushToken: Scalars['Boolean'];
   updateReport: Report;
@@ -666,17 +666,11 @@ export type SignUpMutationVariables = Exact<{
 export type SignUpMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', tokens: { __typename?: 'TokenEntry', id: string, tokenid: string }, user: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photoUrl?: string | null, capacity: number, cashapp?: string | null } } };
 
 export type LocationUpdateMutationVariables = Exact<{
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-  altitude: Scalars['Float'];
-  accuracy?: InputMaybe<Scalars['Float']>;
-  altitideAccuracy?: InputMaybe<Scalars['Float']>;
-  heading: Scalars['Float'];
-  speed: Scalars['Float'];
+  location: LocationInput;
 }>;
 
 
-export type LocationUpdateMutation = { __typename?: 'Mutation', setLocation: boolean };
+export type LocationUpdateMutation = { __typename?: 'Mutation', setLocation: { __typename?: 'User', id: string, location?: { __typename?: 'Point', latitude: number, longitude: number } | null } };
 
 export type GetInitialQueueQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -809,7 +803,7 @@ export type AddProfilePictureMutationVariables = Exact<{
 }>;
 
 
-export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', photoUrl?: string | null } };
+export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', id: string, photoUrl?: string | null } };
 
 export type UpdatePushTokenMutationVariables = Exact<{
   token: Scalars['String'];
@@ -1262,10 +1256,14 @@ export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = ApolloReactCommon.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = ApolloReactCommon.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
 export const LocationUpdateDocument = gql`
-    mutation LocationUpdate($latitude: Float!, $longitude: Float!, $altitude: Float!, $accuracy: Float, $altitideAccuracy: Float, $heading: Float!, $speed: Float!) {
-  setLocation(
-    location: {latitude: $latitude, longitude: $longitude, altitude: $altitude, accuracy: $accuracy, altitideAccuracy: $altitideAccuracy, heading: $heading, speed: $speed}
-  )
+    mutation LocationUpdate($location: LocationInput!) {
+  setLocation(location: $location) {
+    id
+    location {
+      latitude
+      longitude
+    }
+  }
 }
     `;
 export type LocationUpdateMutationFn = ApolloReactCommon.MutationFunction<LocationUpdateMutation, LocationUpdateMutationVariables>;
@@ -1283,13 +1281,7 @@ export type LocationUpdateMutationFn = ApolloReactCommon.MutationFunction<Locati
  * @example
  * const [locationUpdateMutation, { data, loading, error }] = useLocationUpdateMutation({
  *   variables: {
- *      latitude: // value for 'latitude'
- *      longitude: // value for 'longitude'
- *      altitude: // value for 'altitude'
- *      accuracy: // value for 'accuracy'
- *      altitideAccuracy: // value for 'altitideAccuracy'
- *      heading: // value for 'heading'
- *      speed: // value for 'speed'
+ *      location: // value for 'location'
  *   },
  * });
  */
@@ -2047,6 +2039,7 @@ export type EditAccountMutationOptions = ApolloReactCommon.BaseMutationOptions<E
 export const AddProfilePictureDocument = gql`
     mutation AddProfilePicture($picture: Upload!) {
   addProfilePicture(picture: $picture) {
+    id
     photoUrl
   }
 }

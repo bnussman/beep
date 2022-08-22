@@ -44,26 +44,14 @@ import {
 let unsubscribe: any = null;
 
 const LocationUpdate = gql`
-  mutation LocationUpdate(
-    $latitude: Float!
-    $longitude: Float!
-    $altitude: Float!
-    $accuracy: Float
-    $altitideAccuracy: Float
-    $heading: Float!
-    $speed: Float!
-  ) {
-    setLocation(
-      location: {
-        latitude: $latitude
-        longitude: $longitude
-        altitude: $altitude
-        accuracy: $accuracy
-        altitideAccuracy: $altitideAccuracy
-        heading: $heading
-        speed: $speed
+  mutation LocationUpdate($location: LocationInput!) {
+    setLocation(location: $location) {
+      id
+      location {
+        latitude
+        longitude
       }
-    )
+    }
   }
 `;
 
@@ -158,7 +146,9 @@ export function StartBeepingScreen() {
   const [updateBeepSettings] =
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
-  const queue = data ? [...data.getQueue].sort((a, b) => a.start - b.start) : undefined;
+  const queue = data
+    ? [...data.getQueue].sort((a, b) => a.start - b.start)
+    : undefined;
 
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
@@ -425,13 +415,7 @@ export function StartBeepingScreen() {
                   {queue &&
                     queue.length > 0 &&
                     queue.some((entry) => !entry.isAccepted) && (
-                      <Box
-                        rounded="full"
-                        bg="blue.400"
-                        w={4}
-                        h={4}
-                        mr={2}
-                      />
+                      <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
                     )}
                 </HStack>
               </Box>
@@ -483,7 +467,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
     try {
       await client.mutate({
         mutation: LocationUpdate,
-        variables: locations[0].coords,
+        variables: { location: locations[0].coords },
       });
     } catch (e) {
       Logger.error(e);
