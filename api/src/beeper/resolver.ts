@@ -60,7 +60,7 @@ export class BeeperResolver {
     queueEntry.state = input.state;
 
     if (input.state === 1) {
-      ctx.user.queueSize = ctx.user.queue.getItems().filter((entry) => entry.state > 0).length + 1;
+      ctx.user.queueSize = ctx.user.queue.getItems().filter((entry) => entry.state > 0).length;
 
       ctx.em.persist(ctx.user);
     }
