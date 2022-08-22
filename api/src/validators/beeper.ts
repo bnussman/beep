@@ -46,16 +46,11 @@ export class BeeperSettingsInput implements Partial<User> {
 
 @InputType()
 export class UpdateQueueEntryInput {
-
   @Field()
   @IsString()
-  public value!: string;
+  public id!: string;
 
   @Field()
-  @IsString()
-  public riderId!: string;
-
-  @Field()
-  @IsString()
-  public queueId!: string;
+  @IsNumber()
+  public state!: number;
 }

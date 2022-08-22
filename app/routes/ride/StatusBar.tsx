@@ -6,14 +6,14 @@ interface Props {
 }
 
 export function StatusBar({ state }: Props) {
-  const iconMap = ["⏱", "🚕", "📍", "🚕"];
+  const iconMap = ["🚫", "⏱", "🚕", "📍", "🚕"];
 
   return (
     <Slider
       w="100%"
       value={state}
-      minValue={0}
-      maxValue={4}
+      minValue={1}
+      maxValue={5}
       step={1}
       isDisabled
       _disabled={{ opacity: 1 }}

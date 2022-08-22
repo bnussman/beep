@@ -28,7 +28,7 @@ export class RiderResolver {
 
     const queue = beeper.queue.getItems().sort(inOrder);
 
-    entry.position = beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.isAccepted).length;
+    entry.position = beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.state > 0).length;
 
     await ctx.em.persistAndFlush(beeper);
 
@@ -60,7 +60,7 @@ export class RiderResolver {
       return null;
     }
 
-    entry.position = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.isAccepted).length;
+    entry.position = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.state > 0).length;
 
     return entry;
   }
@@ -86,12 +86,12 @@ export class RiderResolver {
     pubSub.publish("Beeper" + beeper.id, queue.sort(inOrder));
 
     for (const entry of queue) {
-      entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.isAccepted).length;
+      entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.state > 0).length;
 
       pubSub.publish("Rider" + entry.rider.id, { ...entry, beeper });
     }
 
-    beeper.queueSize = beeper.queue.getItems().filter(entry => entry.isAccepted).length;
+    beeper.queueSize = beeper.queue.getItems().filter(entry => entry.state > 0).length;
 
     await ctx.em.persistAndFlush(beeper);
 

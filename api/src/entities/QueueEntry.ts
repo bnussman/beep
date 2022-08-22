@@ -3,6 +3,16 @@ import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { v4 } from "uuid";
 
+enum State {
+  DENIED = -1,
+  WAITING = 0,
+  ACCEPTED = 1,
+  ON_THE_WAY = 2,
+  HERE = 3,
+  IN_PROGRESS = 4,
+  COMPLETE = 5,
+}
+
 @ObjectType()
 @Entity()
 @Unique({ properties: ['rider'] })
@@ -22,11 +32,7 @@ export class QueueEntry {
 
     @Field()
     @Property()
-    state: number = 0;
-
-    @Field()
-    @Property()
-    isAccepted: boolean = false;
+    state: State = 0;
 
     @Field()
     @Property()

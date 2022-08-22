@@ -33,7 +33,6 @@ const QueueQuery = gql`
     getQueue(id: $id) {
       id
       state
-      isAccepted
       rider {
         id
         name
@@ -112,7 +111,7 @@ export function QueuePreview({ user }: Props) {
             {getStatus(entry.state)}
           </Text>
           <Spacer />
-          <Indicator color={entry.isAccepted ? 'green' : 'red'} />
+          <Indicator color={entry.state > 0 ? 'green' : 'red'} />
         </HStack>
       ))}
     </Box>

@@ -55,7 +55,7 @@ export function Beep(props: Props) {
                 : null}
             </Text>
           </Stack>
-          {beep.isAccepted && (
+          {beep.state > 0 && (
             <Menu
               key={`menu-${beep.id}`}
               w="190"
@@ -132,7 +132,7 @@ export function Beep(props: Props) {
       </Stack>
       <Spacer />
       <Stack space={3}>
-        {!beep.isAccepted ? (
+        {beep.state === 0 ? (
           <>
             <AcceptDenyButton item={beep} type="deny" />
             <AcceptDenyButton item={beep} type="accept" />

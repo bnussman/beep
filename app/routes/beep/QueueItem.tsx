@@ -60,7 +60,7 @@ export function QueueItem({ item }: Props) {
     });
   };
 
-  if (item.isAccepted) {
+  if (item.state > 0) {
     return (
       <Card mb={2}>
         <Box>

@@ -49,7 +49,7 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
   //@ts-expect-error ill fix later
   if (["email", "phone", "location"].includes(info.fieldName) && context.user[info.fieldName] !== result) {
     // a protectd value is trying to used
-    const entry = await context.em.findOne(QueueEntry, { isAccepted: true, $or: [ { rider: context.user.id }, { beeper: context.user.id} ] });
+    const entry = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: context.user.id }, { beeper: context.user.id} ] });
 
     const hasAcceptedEntry = entry !== null && entry !== undefined;
 

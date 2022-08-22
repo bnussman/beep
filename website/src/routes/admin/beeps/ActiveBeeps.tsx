@@ -22,7 +22,6 @@ export const ActiveBeepsGraphQL = gql`
         destination
         start
         groupSize
-        isAccepted
         state
         beeper {
           id
@@ -103,7 +102,7 @@ export function ActiveBeeps() {
                 <Td>{entry.destination}</Td>
                 <Td>{entry.groupSize}</Td>
                 <Td>{dayjs().to(entry.start * 1000)}</Td>
-                <Td>{entry.isAccepted ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
+                <Td>{entry.state > 0 ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
                 <Td>{getStatus(entry.state)}</Td>
               </Tr>
             ))}

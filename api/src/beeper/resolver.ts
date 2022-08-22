@@ -45,38 +45,30 @@ export class BeeperResolver {
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<QueueEntry[]> {
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], { orderBy: { queue: { start: QueryOrder.ASC } } });
 
-    const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id === input.queueId);
+    const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id === input.id);
 
     if (!queueEntry) throw new Error("Can't find queue entry");
 
-    if (input.value === 'accept' || input.value === 'deny') {
-      const numRidersBefore = ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && !entry.isAccepted).length;
+    const isAcceptingOrDenying = input.state === 1 || input.state === -1;
 
-      if (numRidersBefore != 0) {
-        throw new Error("You must respond to the rider who first joined your queue.");
-      }
-    }
-    else {
-      const numRidersBefore = ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && entry.isAccepted).length;
+    const numRidersBefore = isAcceptingOrDenying ? ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && entry.state === 0).length : ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && entry.state > 0).length;
 
-      if (numRidersBefore != 0) {
-        throw new Error("You must respond to the rider who first joined your queue.");
-      }
+    if (numRidersBefore !== 0) {
+      throw new Error("You must respond to the rider who first joined your queue.");
     }
 
-    if (input.value === 'accept') {
-      queueEntry.isAccepted = true;
+    queueEntry.state = input.state;
 
-      ctx.user.queueSize = ctx.user.queue.getItems().filter((entry) => entry.isAccepted).length;
+    if (input.state === 1) {
+      ctx.user.queueSize = ctx.user.queue.getItems().filter((entry) => entry.state > 0).length + 1;
 
-      sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request ✅`, "You will recieve another notification when they are on their way to pick you up.");
-
-      ctx.em.persist([queueEntry, ctx.user]);
+      ctx.em.persist(ctx.user);
     }
-    else if (input.value === 'deny' || input.value === 'complete') {
+
+    if (input.state === -1 || input.state === 5) {
       pubSub.publish("Rider" + queueEntry.rider.id, null);
 
-      if (input.value === 'complete') {
+      if (input.state === 5) {
         const beep = new Beep(queueEntry);
 
         ctx.em.persist(beep);
@@ -84,36 +76,35 @@ export class BeeperResolver {
 
       ctx.user.queue.remove(queueEntry);
 
-      ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.isAccepted).length;
+      ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.state > 0).length;
 
       ctx.em.persist(ctx.user);
+    }
 
-      if (input.value === "deny") {
+    switch (queueEntry.state) {
+      case -1:
         sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request 🚫`, "Open your app to find a diffrent beeper.");
-      }
+        break;
+      case 1:
+        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request ✅`, "You will recieve another notification when they are on their way to pick you up.");
+        break;
+      case 2:
+        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way 🚕`, "Your beeper is on their way to pick you up.");
+        break;
+      case 3:
+        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here 📍`, "Your beeper is here to pick you up.");
+        break;
+      case 4:
+        // Beep is in progress - no notification needed at this stage.
+        break;
+      case 5:
+        // Beep is complete.
+        break;
+      default:
+        Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
     }
-    else {
-      const numRidersBefore = ctx.user.queue.getItems().filter((entry: QueueEntry) => entry.start < queueEntry.start && entry.isAccepted).length;
 
-      if (numRidersBefore > 0) throw new Error("You are trying to advance a rider that should not currently be advanced.");
-
-      queueEntry.state++;
-
-      switch (queueEntry.state) {
-        case 1:
-          sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way 🚕`, "Your beeper is on their way to pick you up.");
-          break;
-        case 2:
-          sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here 📍`, "Your beeper is here to pick you up.");
-          break;
-        case 3:
-          break;
-        default:
-          Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
-      }
-
-      ctx.em.persist(queueEntry);
-    }
+    ctx.em.persist(queueEntry);
 
     const queue = ctx.user.queue.getItems().sort(inOrder);
 
@@ -159,7 +150,7 @@ export class BeeperResolver {
 
     ctx.user.queue.remove(entry);
 
-    ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.isAccepted).length;
+    ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.state > 0).length;
 
     await ctx.em.persistAndFlush(ctx.user);
 

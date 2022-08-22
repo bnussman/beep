@@ -254,75 +254,6 @@
           "nullable": false,
           "mappedType": "string"
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
-        "time": {
-          "name": "time",
-          "type": "timestamptz(0)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        }
-      },
-      "name": "verify_email",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "verify_email_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "verify_email_user_id_foreign": {
-          "constraintName": "verify_email_user_id_foreign",
-          "columnNames": [
-            "user_id"
-          ],
-          "localTableName": "public.verify_email",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.user",
-          "updateRule": "cascade"
-        }
-      }
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
         "tokenid": {
           "name": "tokenid",
           "type": "varchar(255)",
@@ -408,15 +339,6 @@
           "primary": false,
           "nullable": false,
           "mappedType": "integer"
-        },
-        "is_accepted": {
-          "name": "is_accepted",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "boolean"
         },
         "group_size": {
           "name": "group_size",
@@ -694,136 +616,6 @@
           "nullable": false,
           "mappedType": "string"
         },
-        "rater_id": {
-          "name": "rater_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
-        "rated_id": {
-          "name": "rated_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
-        "stars": {
-          "name": "stars",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        },
-        "message": {
-          "name": "message",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "string"
-        },
-        "timestamp": {
-          "name": "timestamp",
-          "type": "timestamptz(0)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "beep_id": {
-          "name": "beep_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        }
-      },
-      "name": "rating",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "rating_beep_id_rater_id_unique",
-          "columnNames": [
-            "beep_id",
-            "rater_id"
-          ],
-          "composite": true,
-          "primary": false,
-          "unique": true
-        },
-        {
-          "keyName": "rating_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "rating_rater_id_foreign": {
-          "constraintName": "rating_rater_id_foreign",
-          "columnNames": [
-            "rater_id"
-          ],
-          "localTableName": "public.rating",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.user",
-          "updateRule": "cascade"
-        },
-        "rating_rated_id_foreign": {
-          "constraintName": "rating_rated_id_foreign",
-          "columnNames": [
-            "rated_id"
-          ],
-          "localTableName": "public.rating",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.user",
-          "updateRule": "cascade"
-        },
-        "rating_beep_id_foreign": {
-          "constraintName": "rating_beep_id_foreign",
-          "columnNames": [
-            "beep_id"
-          ],
-          "localTableName": "public.rating",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.beep",
-          "updateRule": "cascade"
-        }
-      }
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
         "reporter_id": {
           "name": "reporter_id",
           "type": "varchar(255)",
@@ -962,6 +754,205 @@
           ],
           "referencedTableName": "public.beep",
           "deleteRule": "set null",
+          "updateRule": "cascade"
+        }
+      }
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "rater_id": {
+          "name": "rater_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "rated_id": {
+          "name": "rated_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "stars": {
+          "name": "stars",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "string"
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamptz(0)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "beep_id": {
+          "name": "beep_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "rating",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "rating_beep_id_rater_id_unique",
+          "columnNames": [
+            "beep_id",
+            "rater_id"
+          ],
+          "composite": true,
+          "primary": false,
+          "unique": true
+        },
+        {
+          "keyName": "rating_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "rating_rater_id_foreign": {
+          "constraintName": "rating_rater_id_foreign",
+          "columnNames": [
+            "rater_id"
+          ],
+          "localTableName": "public.rating",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.user",
+          "updateRule": "cascade"
+        },
+        "rating_rated_id_foreign": {
+          "constraintName": "rating_rated_id_foreign",
+          "columnNames": [
+            "rated_id"
+          ],
+          "localTableName": "public.rating",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.user",
+          "updateRule": "cascade"
+        },
+        "rating_beep_id_foreign": {
+          "constraintName": "rating_beep_id_foreign",
+          "columnNames": [
+            "beep_id"
+          ],
+          "localTableName": "public.rating",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.beep",
+          "updateRule": "cascade"
+        }
+      }
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "time": {
+          "name": "time",
+          "type": "timestamptz(0)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "verify_email",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "verify_email_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "verify_email_user_id_foreign": {
+          "constraintName": "verify_email_user_id_foreign",
+          "columnNames": [
+            "user_id"
+          ],
+          "localTableName": "public.verify_email",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.user",
           "updateRule": "cascade"
         }
       }

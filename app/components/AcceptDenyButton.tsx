@@ -15,16 +15,9 @@ interface Props {
 }
 
 const UpdateBeeperQueue = gql`
-  mutation UpdateBeeperQueue(
-    $queueId: String!
-    $riderId: String!
-    $value: String!
-  ) {
-    setBeeperQueue(
-      input: { queueId: $queueId, riderId: $riderId, value: $value }
-    ) {
+  mutation UpdateBeeperQueue($id: String!, $state: Float!) {
+    setBeeperQueue(input: { id: $id, state: $state }) {
       id
-      isAccepted
       groupSize
       origin
       destination
@@ -48,9 +41,8 @@ export function AcceptDenyButton(props: Props) {
 
     update({
       variables: {
-        queueId: props.item.id,
-        riderId: props.item.rider.id,
-        value: props.type,
+        id: props.item.id,
+        state: props.type === "accept" ? 1 : -1,
       },
     }).catch((error) => {
       Alert(error);

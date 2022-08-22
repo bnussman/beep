@@ -74,7 +74,6 @@ export const GetUser = gql`
         destination
         start
         groupSize
-        isAccepted
         state
         rider {
           id

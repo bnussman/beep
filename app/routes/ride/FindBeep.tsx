@@ -75,7 +75,6 @@ const ChooseBeep = gql`
     ) {
       id
       position
-      isAccepted
       origin
       destination
       state
@@ -109,7 +108,6 @@ const InitialRiderStatus = gql`
     getRiderStatus {
       id
       position
-      isAccepted
       origin
       destination
       state
@@ -143,7 +141,6 @@ const RiderStatus = gql`
     getRiderUpdates(id: $id) {
       id
       position
-      isAccepted
       origin
       destination
       state
@@ -301,15 +298,15 @@ export function MainFindBeepScreen() {
 
   useEffect(() => {
     if (
-      (beep?.state == 1 && previousData?.getRiderStatus?.state == 0) ||
-      (beep?.state == 1 && !previousData)
+      (beep?.state === 2 && previousData?.getRiderStatus?.state == 1) ||
+      (beep?.state === 2 && !previousData)
     ) {
       subscribeToLocation();
     }
-    if (beep?.state == 2 && previousData?.getRiderStatus?.state == 1) {
+    if (beep?.state === 3 && previousData?.getRiderStatus?.state === 2) {
       sub?.unsubscribe();
     }
-    if (beep?.beeper.location && beep?.state === 1) {
+    if (beep?.beeper.location && beep?.state === 2) {
       updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
     }
     if (previousData && !beep) {
@@ -371,12 +368,14 @@ export function MainFindBeepScreen() {
   function getCurrentStatusMessage(): string {
     switch (beep?.state) {
       case 0:
-        return "Beeper is getting ready to come get you.";
+        return "Waiting for beeper to accept or deny you.";
       case 1:
-        return "Beeper is on their way to get you.";
+        return "Beeper is getting ready to come get you.";
       case 2:
-        return "Beeper is here to pick you up!";
+        return "Beeper is on their way to get you.";
       case 3:
+        return "Beeper is here to pick you up!";
+      case 4:
         return "You are currenly in the car with your beeper.";
       default:
         return "Unknown";
@@ -506,7 +505,7 @@ export function MainFindBeepScreen() {
     );
   }
 
-  if (beep.isAccepted) {
+  if (beep.state > 0) {
     return (
       <Container p={2} px={4} alignItems="center">
         <Stack alignItems="center" space={4} w="100%" h="94%">
@@ -557,7 +556,7 @@ export function MainFindBeepScreen() {
               <StatusBar state={beep.state} />
             </Card>
           )}
-          {beep.state === 1 && (
+          {beep.state === 2 && (
             <Card w="100%">
               <HStack>
                 <Heading fontWeight="extrabold" size="sm">

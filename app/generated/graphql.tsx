@@ -424,7 +424,6 @@ export type QueueEntry = {
   destination: Scalars['String'];
   groupSize: Scalars['Float'];
   id: Scalars['String'];
-  isAccepted: Scalars['Boolean'];
   origin: Scalars['String'];
   position: Scalars['Float'];
   rider: User;
@@ -534,9 +533,8 @@ export type TokenEntry = {
 };
 
 export type UpdateQueueEntryInput = {
-  queueId: Scalars['String'];
-  riderId: Scalars['String'];
-  value: Scalars['String'];
+  id: Scalars['String'];
+  state: Scalars['Float'];
 };
 
 export type UpdateReportInput = {
@@ -594,13 +592,12 @@ export type VerifyEmail = {
 };
 
 export type UpdateBeeperQueueMutationVariables = Exact<{
-  queueId: Scalars['String'];
-  riderId: Scalars['String'];
-  value: Scalars['String'];
+  id: Scalars['String'];
+  state: Scalars['Float'];
 }>;
 
 
-export type UpdateBeeperQueueMutation = { __typename?: 'Mutation', setBeeperQueue: Array<{ __typename?: 'QueueEntry', id: string, isAccepted: boolean, groupSize: number, origin: string, destination: string, state: number }> };
+export type UpdateBeeperQueueMutation = { __typename?: 'Mutation', setBeeperQueue: Array<{ __typename?: 'QueueEntry', id: string, groupSize: number, origin: string, destination: string, state: number }> };
 
 export type CancelBeepMutationVariables = Exact<{
   id: Scalars['String'];
@@ -675,14 +672,14 @@ export type LocationUpdateMutation = { __typename?: 'Mutation', setLocation: { _
 export type GetInitialQueueQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInitialQueueQuery = { __typename?: 'Query', getQueue: Array<{ __typename?: 'QueueEntry', id: string, isAccepted: boolean, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photoUrl?: string | null, isStudent: boolean, rating?: number | null } }> };
+export type GetInitialQueueQuery = { __typename?: 'Query', getQueue: Array<{ __typename?: 'QueueEntry', id: string, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photoUrl?: string | null, isStudent: boolean, rating?: number | null } }> };
 
 export type GetQueueSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, isAccepted: boolean, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photoUrl?: string | null, isStudent: boolean, rating?: number | null } }> };
+export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photoUrl?: string | null, isStudent: boolean, rating?: number | null } }> };
 
 export type UpdateBeepSettingsMutationVariables = Exact<{
   input: BeeperSettingsInput;
@@ -734,19 +731,19 @@ export type ChooseBeepMutationVariables = Exact<{
 }>;
 
 
-export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } };
+export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } };
 
 export type GetInitialRiderStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
+export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
 
 export type RiderStatusSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'QueueEntry', id: string, position: number, isAccepted: boolean, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
+export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photoUrl?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
 
 export type BeepersLocationSubscriptionVariables = Exact<{
   id: Scalars['String'];
@@ -831,10 +828,9 @@ export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpda
 
 
 export const UpdateBeeperQueueDocument = gql`
-    mutation UpdateBeeperQueue($queueId: String!, $riderId: String!, $value: String!) {
-  setBeeperQueue(input: {queueId: $queueId, riderId: $riderId, value: $value}) {
+    mutation UpdateBeeperQueue($id: String!, $state: Float!) {
+  setBeeperQueue(input: {id: $id, state: $state}) {
     id
-    isAccepted
     groupSize
     origin
     destination
@@ -857,9 +853,8 @@ export type UpdateBeeperQueueMutationFn = ApolloReactCommon.MutationFunction<Upd
  * @example
  * const [updateBeeperQueueMutation, { data, loading, error }] = useUpdateBeeperQueueMutation({
  *   variables: {
- *      queueId: // value for 'queueId'
- *      riderId: // value for 'riderId'
- *      value: // value for 'value'
+ *      id: // value for 'id'
+ *      state: // value for 'state'
  *   },
  * });
  */
@@ -1296,7 +1291,6 @@ export const GetInitialQueueDocument = gql`
     query GetInitialQueue {
   getQueue {
     id
-    isAccepted
     groupSize
     origin
     destination
@@ -1348,7 +1342,6 @@ export const GetQueueDocument = gql`
     subscription GetQueue($id: String!) {
   getBeeperUpdates(id: $id) {
     id
-    isAccepted
     groupSize
     origin
     destination
@@ -1615,7 +1608,6 @@ export const ChooseBeepDocument = gql`
   ) {
     id
     position
-    isAccepted
     origin
     destination
     state
@@ -1677,7 +1669,6 @@ export const GetInitialRiderStatusDocument = gql`
   getRiderStatus {
     id
     position
-    isAccepted
     origin
     destination
     state
@@ -1737,7 +1728,6 @@ export const RiderStatusDocument = gql`
   getRiderUpdates(id: $id) {
     id
     position
-    isAccepted
     origin
     destination
     state

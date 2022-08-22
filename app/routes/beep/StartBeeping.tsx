@@ -40,8 +40,9 @@ import {
   useColorMode,
   Flex,
 } from "native-base";
+import { Subscription } from "../../utils/types";
 
-let unsubscribe: any = null;
+let unsubscribe: Subscription | null = null;
 
 const LocationUpdate = gql`
   mutation LocationUpdate($location: LocationInput!) {
@@ -59,7 +60,6 @@ const GetInitialQueue = gql`
   query GetInitialQueue {
     getQueue {
       id
-      isAccepted
       groupSize
       origin
       destination
@@ -85,7 +85,6 @@ const GetQueue = gql`
   subscription GetQueue($id: String!) {
     getBeeperUpdates(id: $id) {
       id
-      isAccepted
       groupSize
       origin
       destination
@@ -414,7 +413,7 @@ export function StartBeepingScreen() {
                   <Spacer />
                   {queue &&
                     queue.length > 0 &&
-                    queue.some((entry) => !entry.isAccepted) && (
+                    queue.some((entry) => entry.state === 0) && (
                       <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
                     )}
                 </HStack>

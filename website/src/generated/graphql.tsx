@@ -423,7 +423,6 @@ export type QueueEntry = {
   destination: Scalars['String'];
   groupSize: Scalars['Float'];
   id: Scalars['String'];
-  isAccepted: Scalars['Boolean'];
   origin: Scalars['String'];
   position: Scalars['Float'];
   rider: User;
@@ -533,9 +532,8 @@ export type TokenEntry = {
 };
 
 export type UpdateQueueEntryInput = {
-  queueId: Scalars['String'];
-  riderId: Scalars['String'];
-  value: Scalars['String'];
+  id: Scalars['String'];
+  state: Scalars['Float'];
 };
 
 export type UpdateReportInput = {
@@ -621,14 +619,14 @@ export type UsersQueueQueryVariables = Exact<{
 }>;
 
 
-export type UsersQueueQuery = { __typename?: 'Query', getQueue: Array<{ __typename?: 'QueueEntry', id: string, state: number, isAccepted: boolean, rider: { __typename?: 'User', id: string, name: string, photoUrl?: string | null } }> };
+export type UsersQueueQuery = { __typename?: 'Query', getQueue: Array<{ __typename?: 'QueueEntry', id: string, state: number, rider: { __typename?: 'User', id: string, name: string, photoUrl?: string | null } }> };
 
 export type GetQueueSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null, username: string, first: string, last: string, name: string } }> };
+export type GetQueueSubscription = { __typename?: 'Subscription', getBeeperUpdates: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null, username: string, first: string, last: string, name: string } }> };
 
 export type GetRatingsForUserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -753,7 +751,7 @@ export type GetInProgressBeepsQueryVariables = Exact<{
 }>;
 
 
-export type GetInProgressBeepsQuery = { __typename?: 'Query', getInProgressBeeps: { __typename?: 'BeepsInProgressResponse', count: number, items: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, beeper: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string } }> } };
+export type GetInProgressBeepsQuery = { __typename?: 'Query', getInProgressBeeps: { __typename?: 'BeepsInProgressResponse', count: number, items: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, state: number, beeper: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photoUrl?: string | null, username: string } }> } };
 
 export type DeleteBeepMutationVariables = Exact<{
   id: Scalars['String'];
@@ -856,7 +854,7 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photoUrl?: string | null, queueSize: number, phone?: string | null, username: string, rating?: number | null, email?: string | null, created?: any | null, pushToken?: string | null, location?: { __typename?: 'Point', latitude: number, longitude: number } | null, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, isAccepted: boolean, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null, username: string, first: string, last: string, name: string } }> } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photoUrl?: string | null, queueSize: number, phone?: string | null, username: string, rating?: number | null, email?: string | null, created?: any | null, pushToken?: string | null, location?: { __typename?: 'Point', latitude: number, longitude: number } | null, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, state: number, rider: { __typename?: 'User', id: string, photoUrl?: string | null, username: string, first: string, last: string, name: string } }> } };
 
 export type RemoveUserMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1115,7 +1113,6 @@ export const UsersQueueDocument = gql`
   getQueue(id: $id) {
     id
     state
-    isAccepted
     rider {
       id
       name
@@ -1160,7 +1157,6 @@ export const GetQueueDocument = gql`
     destination
     start
     groupSize
-    isAccepted
     state
     rider {
       id
@@ -1792,7 +1788,6 @@ export const GetInProgressBeepsDocument = gql`
       destination
       start
       groupSize
-      isAccepted
       state
       beeper {
         id
@@ -2424,7 +2419,6 @@ export const GetUserDocument = gql`
       destination
       start
       groupSize
-      isAccepted
       state
       rider {
         id

@@ -10,16 +10,9 @@ interface Props {
 }
 
 const UpdateBeeperQueue = gql`
-  mutation UpdateBeeperQueue(
-    $queueId: String!
-    $riderId: String!
-    $value: String!
-  ) {
-    setBeeperQueue(
-      input: { queueId: $queueId, riderId: $riderId, value: $value }
-    ) {
+  mutation UpdateBeeperQueue($id: String!, $state: Float!) {
+    setBeeperQueue(input: { id: $id, state: $state }) {
       id
-      isAccepted
       groupSize
       origin
       destination
@@ -37,12 +30,14 @@ function Button(props: Props) {
   const getMessage = () => {
     switch (beep.state) {
       case 0:
-        return "I'm on the way";
+        return "Accept";
       case 1:
-        return "I'm here";
+        return "I'm on the way";
       case 2:
-        return "I'm now beeping this rider";
+        return "I'm here";
       case 3:
+        return "I'm now beeping this rider";
+      case 4:
         return "Done beeping this rider";
       default:
         return "Yikes";
@@ -57,9 +52,8 @@ function Button(props: Props) {
     setIsLoading(true);
     update({
       variables: {
-        queueId: beep.id,
-        riderId: beep.rider.id,
-        value: beep.state < 3 ? "next" : "complete",
+        id: beep.id,
+        state: beep.state + 1,
       },
     }).catch((error: ApolloError) => {
       setIsLoading(false);
