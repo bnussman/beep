@@ -136,9 +136,9 @@ export function RatePreview({ id }: Props) {
                   {new Date(rating.timestamp).toLocaleString()}
                 </Text>
                 <Text fontSize="xs">{printStars(rating.stars)}</Text>
+                {rating.message ? <Text fontSize="xs">{rating.message}</Text> : null}
               </Stack>
             </HStack>
-            {rating.message ? <Text>{rating.message}</Text> : null}
           </Card>
         )}
         keyExtractor={(beep) => beep.id}
