@@ -13,6 +13,7 @@ import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
 import { Alert } from "../../utils/Alert";
+import { GradietnButton } from "../../components/GradientButton";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Subscription } from "../../utils/types";
@@ -56,7 +57,6 @@ import {
 } from "native-base";
 import { Controller, useForm } from "react-hook-form";
 import { useValidationErrors } from "../../utils/useValidationErrors";
-import MapView from "react-native-maps";
 
 const ChooseBeep = gql`
   mutation ChooseBeep(
@@ -499,7 +499,6 @@ export function MainFindBeepScreen() {
           >
             Find Beep
           </Button>
-          <MapView style={{ width: "100%", height: 300, borderRadius: 15 }} />
         </Stack>
         <RateSheet />
       </Container>

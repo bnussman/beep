@@ -15,9 +15,6 @@ export default {
     },
     extra: {
       GOOGLE_API_KEYS: process.env.GOOGLE_API_KEYS,
-      eas: {
-        projectId: "2c7a6adb-2579-43f1-962e-b23c7e541ec4",
-      },
     },
     platforms: ["ios", "android", "web"],
     web: {
@@ -50,7 +47,7 @@ export default {
         UIBackgroundModes: ["location", "fetch"],
       },
       config: {
-        googleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0",
+        googleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0"
       },
     },
     android: {
@@ -67,7 +64,7 @@ export default {
       ],
       config: {
         googleMaps: {
-          apiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
+          apiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc"
         },
       },
     },
