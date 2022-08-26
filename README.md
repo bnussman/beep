@@ -37,11 +37,6 @@ Install dependencies
 yarn
 ```
 
-Install Expo dependencies and link them (run this in the `app/` directory)
-```
-expo install
-```
-
 Bring local db and redis up with Docker
 ```
 docker-compose up -d
