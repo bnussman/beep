@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
-import * as Location from "expo-location";
 import { StatusBar } from "./StatusBar";
 import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
@@ -13,7 +12,6 @@ import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
 import { Alert } from "../../utils/Alert";
-import { GradietnButton } from "../../components/GradientButton";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Subscription } from "../../utils/types";
@@ -57,6 +55,8 @@ import {
 } from "native-base";
 import { Controller, useForm } from "react-hook-form";
 import { useValidationErrors } from "../../utils/useValidationErrors";
+import { BeepersMap } from "./BeepersMap";
+import { useLocation } from "../../utils/useLocation";
 
 const ChooseBeep = gql`
   mutation ChooseBeep(
@@ -190,6 +190,8 @@ let riderStatusSub: Subscription;
 export function MainFindBeepScreen() {
   const { user } = useUser();
 
+  const { getLocation } = useLocation(false);
+
   const { navigate } = useNavigation<Navigation>();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
@@ -209,7 +211,7 @@ export function MainFindBeepScreen() {
     control,
     handleSubmit,
     setFocus,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ChooseBeepMutationVariables>();
 
   const validationErrors =
@@ -239,19 +241,12 @@ export function MainFindBeepScreen() {
   };
 
   async function updateETA(lat: number, long: number): Promise<void> {
-    let lastKnowLocation = await Location.getLastKnownPositionAsync({
-      maxAge: 180000,
-      requiredAccuracy: 800,
-    });
-
-    if (!lastKnowLocation) {
-      lastKnowLocation = await Location.getCurrentPositionAsync();
-    }
+    const location = await getLocation();
 
     getETA({
       variables: {
         start: `${lat},${long}`,
-        end: `${lastKnowLocation.coords.latitude},${lastKnowLocation.coords.longitude}`,
+        end: `${location.coords.latitude},${location.coords.longitude}`,
       },
     });
   }
@@ -316,27 +311,18 @@ export function MainFindBeepScreen() {
   }, [data]);
 
   async function findBeep(): Promise<void> {
-    const { status } = await Location.requestForegroundPermissionsAsync();
+    try {
+      const location = await getLocation();
 
-    if (status !== "granted") {
-      return alert("You must enable location to find a ride.");
+      return navigate("Choose Beeper", {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        handlePick: (id: string) =>
+          handleSubmit((values) => chooseBeep(id, values))(),
+      });
+    } catch (error) {
+      alert("You must enable location to get a beep.");
     }
-
-    let lastKnowLocation = await Location.getLastKnownPositionAsync({
-      maxAge: 180000,
-      requiredAccuracy: 800,
-    });
-
-    if (!lastKnowLocation) {
-      lastKnowLocation = await Location.getCurrentPositionAsync();
-    }
-
-    return navigate("Choose Beeper", {
-      latitude: lastKnowLocation.coords.latitude,
-      longitude: lastKnowLocation.coords.longitude,
-      handlePick: (id: string) =>
-        handleSubmit((values) => chooseBeep(id, values))(),
-    });
   }
 
   const chooseBeep = async (
@@ -499,6 +485,7 @@ export function MainFindBeepScreen() {
           >
             Find Beep
           </Button>
+          <BeepersMap />
         </Stack>
         <RateSheet />
       </Container>
