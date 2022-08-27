@@ -121,26 +121,8 @@ export function PickBeepScreen() {
         </Stack>
         <Spacer />
         <Stack space={2} flexShrink={1}>
-          {index === 0 ? (
-            <Badge
-              colorScheme="gray"
-              variant="solid"
-              fontWeight="extrabold"
-              fontSize="xs"
-            >
-              Closest to you
-            </Badge>
-          ) : null}
-          {item.venmo ? (
-            <Badge bg="lightBlue.400" variant="solid" colorScheme="info">
-              Venmo
-            </Badge>
-          ) : null}
-          {item.cashapp ? (
-            <Badge bg="green.400" variant="solid" colorScheme="success">
-              Cash App
-            </Badge>
-          ) : null}
+          {item.venmo ? <Badge shadow={1}>Venmo</Badge> : null}
+          {item.cashapp ? <Badge shadow={1}>Cash App</Badge> : null}
         </Stack>
       </HStack>
     </Card>
