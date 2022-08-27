@@ -582,7 +582,12 @@ export function MainFindBeepScreen() {
           )}
           <Map
             showsUserLocation
-            style={{ flexGrow: 1, width: "100%", borderRadius: 15 }}
+            style={{
+              flexGrow: 1,
+              width: "100%",
+              borderRadius: 15,
+              overflow: "hidden",
+            }}
             initialRegion={{
               latitude: beep.beeper.location?.latitude ?? 0,
               longitude: beep.beeper.location?.longitude ?? 0,
@@ -596,7 +601,7 @@ export function MainFindBeepScreen() {
                 longitude: beep.beeper.location?.longitude ?? 0,
               }}
             >
-              <Text fontSize="xl">🚕</Text>
+              <Text fontSize="3xl">🚕</Text>
             </Marker>
           </Map>
           <Stack space={2} w="100%">

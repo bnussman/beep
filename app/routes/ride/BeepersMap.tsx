@@ -46,7 +46,13 @@ export function BeepersMap() {
   return (
     <Map
       showsUserLocation
-      style={{ width: "100%", height: 250, borderRadius: 15 }}
+      style={{
+        width: "100%",
+        height: 250,
+        borderRadius: 15,
+        marginTop: 16,
+        overflow: "hidden",
+      }}
       initialRegion={initialRegion}
     >
       {beepers?.map((beeper) => {
@@ -92,7 +98,7 @@ function BeeperMarker({ id, latitude, longitude }: AnonymousBeeper) {
 
   return (
     <MarkerAnimated ref={ref} coordinate={coordinate}>
-      <Text>🚕</Text>
+      <Text fontSize="2xl">🚕</Text>
     </MarkerAnimated>
   );
 }
