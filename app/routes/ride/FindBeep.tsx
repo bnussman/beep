@@ -278,20 +278,6 @@ export function MainFindBeepScreen() {
           },
         },
       });
-
-      // const rideStatusData = { ...data };
-
-      // if (rideStatusData.getRiderStatus?.beeper.location) {
-      //   rideStatusData.getRiderStatus.beeper.location.latitude =
-      //     values.data.getLocationUpdates.latitude;
-      //   rideStatusData.getRiderStatus.beeper.location.longitude =
-      //     values.data.getLocationUpdates.longitude;
-
-      //   client.writeQuery({
-      //     query: InitialRiderStatus,
-      //     data: { getRiderStatus: rideStatusData },
-      //   });
-      // }
     });
   }
 
@@ -359,7 +345,6 @@ export function MainFindBeepScreen() {
     id: string,
     values: ChooseBeepMutationVariables
   ) => {
-    console.log(id, values);
     try {
       const { data } = await getBeep({
         variables: {

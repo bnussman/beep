@@ -17,6 +17,13 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AnonymousBeeper = {
+  __typename?: 'AnonymousBeeper';
+  id: Scalars['String'];
+  latitude?: Maybe<Scalars['Float']>;
+  longitude?: Maybe<Scalars['Float']>;
+};
+
 export type Auth = {
   __typename?: 'Auth';
   tokens: TokenEntry;
@@ -318,6 +325,7 @@ export type Point = {
 export type Query = {
   __typename?: 'Query';
   findBeep: User;
+  getAllBeepersLocation: Array<AnonymousBeeper>;
   getBeep: Beep;
   getBeeperList: Array<User>;
   getBeeps: BeepsResponse;

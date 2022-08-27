@@ -18,6 +18,13 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AnonymousBeeper = {
+  __typename?: 'AnonymousBeeper';
+  id: Scalars['String'];
+  latitude?: Maybe<Scalars['Float']>;
+  longitude?: Maybe<Scalars['Float']>;
+};
+
 export type Auth = {
   __typename?: 'Auth';
   tokens: TokenEntry;
@@ -319,6 +326,7 @@ export type Point = {
 export type Query = {
   __typename?: 'Query';
   findBeep: User;
+  getAllBeepersLocation: Array<AnonymousBeeper>;
   getBeep: Beep;
   getBeeperList: Array<User>;
   getBeeps: BeepsResponse;
@@ -722,6 +730,11 @@ export type ReportUserMutationVariables = Exact<{
 
 
 export type ReportUserMutation = { __typename?: 'Mutation', reportUser: boolean };
+
+export type GetAllBeepersLocationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllBeepersLocationQuery = { __typename?: 'Query', getAllBeepersLocation: Array<{ __typename?: 'AnonymousBeeper', id: string, latitude?: number | null, longitude?: number | null }> };
 
 export type ChooseBeepMutationVariables = Exact<{
   beeperId: Scalars['String'];
@@ -1600,6 +1613,42 @@ export function useReportUserMutation(baseOptions?: ApolloReactHooks.MutationHoo
 export type ReportUserMutationHookResult = ReturnType<typeof useReportUserMutation>;
 export type ReportUserMutationResult = ApolloReactCommon.MutationResult<ReportUserMutation>;
 export type ReportUserMutationOptions = ApolloReactCommon.BaseMutationOptions<ReportUserMutation, ReportUserMutationVariables>;
+export const GetAllBeepersLocationDocument = gql`
+    query GetAllBeepersLocation {
+  getAllBeepersLocation {
+    id
+    latitude
+    longitude
+  }
+}
+    `;
+
+/**
+ * __useGetAllBeepersLocationQuery__
+ *
+ * To run a query within a React component, call `useGetAllBeepersLocationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllBeepersLocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllBeepersLocationQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllBeepersLocationQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>(GetAllBeepersLocationDocument, options);
+      }
+export function useGetAllBeepersLocationLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>(GetAllBeepersLocationDocument, options);
+        }
+export type GetAllBeepersLocationQueryHookResult = ReturnType<typeof useGetAllBeepersLocationQuery>;
+export type GetAllBeepersLocationLazyQueryHookResult = ReturnType<typeof useGetAllBeepersLocationLazyQuery>;
+export type GetAllBeepersLocationQueryResult = ApolloReactCommon.QueryResult<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>;
 export const ChooseBeepDocument = gql`
     mutation ChooseBeep($beeperId: String!, $origin: String!, $destination: String!, $groupSize: Float!) {
   chooseBeep(
