@@ -1,7 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "./StatusBar";
+import { Controller, useForm } from "react-hook-form";
+import { useValidationErrors } from "../../utils/useValidationErrors";
+import { BeepersMap } from "./BeepersMap";
+import { useLocation } from "../../utils/useLocation";
+import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
@@ -53,10 +57,7 @@ import {
   Pressable,
   WarningOutlineIcon,
 } from "native-base";
-import { Controller, useForm } from "react-hook-form";
-import { useValidationErrors } from "../../utils/useValidationErrors";
-import { BeepersMap } from "./BeepersMap";
-import { useLocation } from "../../utils/useLocation";
+import { Marker } from "react-native-maps";
 
 const ChooseBeep = gql`
   mutation ChooseBeep(
@@ -257,11 +258,25 @@ export function MainFindBeepScreen() {
       variables: { id: data?.getRiderStatus?.beeper.id },
     });
 
-    sub = a.subscribe(({ data }) => {
+    sub = a.subscribe((values) => {
       throttleUpdateETA(
-        data.getLocationUpdates.latitude,
-        data.getLocationUpdates.longitude
+        values.data.getLocationUpdates.latitude,
+        values.data.getLocationUpdates.longitude
       );
+
+      const rideStatusData = { ...data };
+
+      if (rideStatusData.getRiderStatus?.beeper.location) {
+        rideStatusData.getRiderStatus.beeper.location.latitude =
+          values.data.getLocationUpdates.latitude;
+        rideStatusData.getRiderStatus.beeper.location.longitude =
+          values.data.getLocationUpdates.longitude;
+
+        client.writeQuery({
+          query: InitialRiderStatus,
+          data: { getRiderStatus: rideStatusData },
+        });
+      }
     });
   }
 
@@ -293,8 +308,8 @@ export function MainFindBeepScreen() {
 
   useEffect(() => {
     if (
-      (beep?.state === 2 && previousData?.getRiderStatus?.state == 1) ||
-      (beep?.state === 2 && !previousData)
+      (beep?.state === 1 && previousData?.getRiderStatus?.state === 0) ||
+      (beep !== undefined && beep !== null && beep.state > 0 && !previousData)
     ) {
       subscribeToLocation();
     }
@@ -540,7 +555,6 @@ export function MainFindBeepScreen() {
                 Current Status
               </Heading>
               <Text>{getCurrentStatusMessage()}</Text>
-              <StatusBar state={beep.state} />
             </Card>
           )}
           {beep.state === 2 && (
@@ -566,7 +580,25 @@ export function MainFindBeepScreen() {
               position={beep.position}
             />
           )}
-          <Spacer />
+          <Map
+            showsUserLocation
+            style={{ flexGrow: 1, width: "100%", borderRadius: 15 }}
+            initialRegion={{
+              latitude: beep.beeper.location?.latitude ?? 0,
+              longitude: beep.beeper.location?.longitude ?? 0,
+              longitudeDelta: 0.05,
+              latitudeDelta: 0.05,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: beep.beeper.location?.latitude ?? 0,
+                longitude: beep.beeper.location?.longitude ?? 0,
+              }}
+            >
+              <Text fontSize="xl">🚕</Text>
+            </Marker>
+          </Map>
           <Stack space={2} w="100%">
             <Button
               onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
