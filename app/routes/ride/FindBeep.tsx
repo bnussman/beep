@@ -621,24 +621,7 @@ export function MainFindBeepScreen() {
             >
               Text Beeper
             </Button>
-            {beep.beeper.venmo ? (
-              <Button
-                rightIcon={
-                  <Icon as={Ionicons} size="md" name="ios-card-outline" />
-                }
-                onPress={() =>
-                  openVenmo(
-                    beep.beeper.venmo,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate,
-                    "pay"
-                  )
-                }
-              >
-                Pay Beeper with Venmo
-              </Button>
-            ) : null}
+
             {beep.beeper.cashapp ? (
               <Button
                 onPress={() =>
@@ -653,23 +636,44 @@ export function MainFindBeepScreen() {
                 Pay Beeper with Cash App
               </Button>
             ) : null}
-            {beep.groupSize > 1 ? (
-              <Button
-                rightIcon={
-                  <Icon as={Ionicons} name="ios-share-outline" size="md" />
-                }
-                onPress={() =>
-                  shareVenmoInformation(
-                    beep.beeper.venmo,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate
-                  )
-                }
-              >
-                Share Venmo
-              </Button>
-            ) : null}
+            <HStack w="100%" space={2}>
+              {beep.beeper.venmo ? (
+                <Button
+                  flexGrow={1}
+                  rightIcon={
+                    <Icon as={Ionicons} size="md" name="ios-card-outline" />
+                  }
+                  onPress={() =>
+                    openVenmo(
+                      beep.beeper.venmo,
+                      beep.groupSize,
+                      beep.beeper.groupRate,
+                      beep.beeper.singlesRate,
+                      "pay"
+                    )
+                  }
+                >
+                  Pay with Venmo
+                </Button>
+              ) : null}
+              {beep.groupSize > 1 ? (
+                <Button
+                  rightIcon={
+                    <Icon as={Ionicons} name="ios-share-outline" size="md" />
+                  }
+                  onPress={() =>
+                    shareVenmoInformation(
+                      beep.beeper.venmo,
+                      beep.groupSize,
+                      beep.beeper.groupRate,
+                      beep.beeper.singlesRate
+                    )
+                  }
+                >
+                  Share Venmo
+                </Button>
+              ) : null}
+            </HStack>
             {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
           </Stack>
         </Stack>
