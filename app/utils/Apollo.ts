@@ -159,7 +159,8 @@ const uploadLink = createUploadLink({
   uri: url,
 });
 
+export const cache = new InMemoryCache();
 export const client = new ApolloClient({
   link: ApolloLink.from([authLink, splitLink, uploadLink]),
-  cache: new InMemoryCache(),
+  cache,
 });

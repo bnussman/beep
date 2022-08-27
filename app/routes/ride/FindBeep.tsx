@@ -11,7 +11,7 @@ import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
-import { client } from "../../utils/Apollo";
+import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
@@ -264,19 +264,34 @@ export function MainFindBeepScreen() {
         values.data.getLocationUpdates.longitude
       );
 
-      const rideStatusData = { ...data };
+      cache.modify({
+        id: cache.identify({
+          __typename: "User",
+          id: beep?.beeper.id,
+        }),
+        fields: {
+          location() {
+            return {
+              latitude: values.data.getLocationUpdates.latitude,
+              longitude: values.data.getLocationUpdates.longitude,
+            };
+          },
+        },
+      });
 
-      if (rideStatusData.getRiderStatus?.beeper.location) {
-        rideStatusData.getRiderStatus.beeper.location.latitude =
-          values.data.getLocationUpdates.latitude;
-        rideStatusData.getRiderStatus.beeper.location.longitude =
-          values.data.getLocationUpdates.longitude;
+      // const rideStatusData = { ...data };
 
-        client.writeQuery({
-          query: InitialRiderStatus,
-          data: { getRiderStatus: rideStatusData },
-        });
-      }
+      // if (rideStatusData.getRiderStatus?.beeper.location) {
+      //   rideStatusData.getRiderStatus.beeper.location.latitude =
+      //     values.data.getLocationUpdates.latitude;
+      //   rideStatusData.getRiderStatus.beeper.location.longitude =
+      //     values.data.getLocationUpdates.longitude;
+
+      //   client.writeQuery({
+      //     query: InitialRiderStatus,
+      //     data: { getRiderStatus: rideStatusData },
+      //   });
+      // }
     });
   }
 
