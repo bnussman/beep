@@ -25,7 +25,7 @@ export class LocationInput {
   @Field({ nullable: true })
   @IsNumber()
   @IsOptional()
-  public altitideAccuracy?: number;
+  public altitudeAccuracy?: number;
 
   @Field({ nullable: true })
   @IsNumber()
