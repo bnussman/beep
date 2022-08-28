@@ -159,8 +159,10 @@ export function PickBeepScreen() {
         }
         ListEmptyComponent={
           <>
-            <Heading>Nobody is beeping</Heading>
-            <Text>There are no drivers within 20 miles of you</Text>
+            <Heading key="title">Nobody is beeping</Heading>
+            <Text key="message">
+              There are no drivers within 20 miles of you
+            </Text>
           </>
         }
         refreshControl={
