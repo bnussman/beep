@@ -79,11 +79,4 @@ export function handleNotification(
   notification: Notifications.Notification
 ): void {
   Vibration.vibrate();
-  if (isAndroid) {
-    // Only Toast for Android because we have iosDisplayInForeground for iOS
-    Toast.show({
-      title: notification.request.content.title,
-      description: notification.request.content.body,
-    });
-  }
 }
