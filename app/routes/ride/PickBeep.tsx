@@ -9,6 +9,7 @@ import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { Card } from "../../components/Card";
+import { useLocation } from "../../utils/useLocation";
 import {
   Text,
   Spinner,
@@ -46,7 +47,7 @@ const GetBeepers = gql`
 
 export function PickBeepScreen() {
   const { colorMode } = useColorMode();
-
+  const { location } = useLocation();
   const { params } = useRoute<any>();
   const navigation = useNavigation<Navigation>();
 
@@ -54,8 +55,8 @@ export function PickBeepScreen() {
     GetBeepers,
     {
       variables: {
-        latitude: params.latitude,
-        longitude: params.longitude,
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
         radius: 20,
       },
       notifyOnNetworkStatusChange: true,
@@ -128,7 +129,7 @@ export function PickBeepScreen() {
     </Card>
   );
 
-  if (!data && loading) {
+  if ((!data && loading) || location === undefined) {
     return (
       <Container alignItems="center" justifyContent="center">
         <Spinner size="lg" />

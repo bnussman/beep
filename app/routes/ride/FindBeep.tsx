@@ -327,18 +327,10 @@ export function MainFindBeepScreen() {
   }, [data]);
 
   async function findBeep(): Promise<void> {
-    try {
-      const location = await getLocation();
-
-      return navigate("Choose Beeper", {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        handlePick: (id: string) =>
-          handleSubmit((values) => chooseBeep(id, values))(),
-      });
-    } catch (error) {
-      alert("You must enable location to get a beep.");
-    }
+    return navigate("Choose Beeper", {
+      handlePick: (id: string) =>
+        handleSubmit((values) => chooseBeep(id, values))(),
+    });
   }
 
   const chooseBeep = async (
