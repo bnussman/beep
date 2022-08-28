@@ -2,8 +2,7 @@ import * as Notifications from "expo-notifications";
 import { Vibration } from "react-native";
 import { gql } from "@apollo/client";
 import { client } from "../utils/Apollo";
-import { isAndroid, isMobile } from "./constants";
-import { Toast } from "native-base";
+import { isMobile } from "./constants";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
