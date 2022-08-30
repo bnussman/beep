@@ -57,7 +57,7 @@ export class User {
 
   @Field()
   @Authorized('admin')
-  @OneToOne()
+  @OneToOne({ lazy: true, eager: false })
   password!: Password;
 
   @Field()

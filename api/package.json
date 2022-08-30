@@ -68,6 +68,7 @@
     "@types/nodemailer": "^6.4.5",
     "@types/uuid": "^8.3.3",
     "@types/ws": "^8.2.2",
+    "@types/bcrypt": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
     "concurrently": "^7.3.0",

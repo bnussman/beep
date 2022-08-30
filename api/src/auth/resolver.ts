@@ -10,6 +10,8 @@ import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
 import { Password, PasswordType } from '../entities/Password';
+import { compare, hash } from 'bcrypt';
+import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 class Auth {
@@ -25,10 +27,25 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async login(@Ctx() ctx: Context, @Arg('input') { username, password, pushToken }: LoginInput): Promise<Auth> {
-    const user = await ctx.em.findOne(User, { $or: [ { username, password: sha256(password) }, { email: username, password: sha256(password) } ] });
+    const user = await ctx.em.findOneOrFail(User, { $or: [ { username }, { email: username } ] }, { populate: ['password'] });
 
-    if (!user) {
-      throw new Error("Username, email, or password is incorrect.");
+    // @TODO: clean this up. probably use switch or something
+    if (user.password.type === PasswordType.SHA256) {
+      const isPasswordCorrect = sha256(password) === user.password.password;
+
+      if (!isPasswordCorrect) {
+        throw new AuthenticationError("Password is incorrect");
+      }
+    }
+    else if (user.password.type === PasswordType.BCRYPT) {
+      const isPasswordCorrect = await compare(password, user.password.password);
+
+      if (!isPasswordCorrect) {
+        throw new AuthenticationError("Password is incorrect");
+      }
+    }
+    else {
+      throw new Error("Unknown password type.");
     }
 
     const tokens = new TokenEntry(user);
@@ -68,10 +85,10 @@ export class AuthResolver {
       photoUrl: result.Location,
       password: new Password({
         type: PasswordType.BCRYPT,
-        password: sha256(input.password),
+        password: await hash(input.password, 10),
         user 
       })
-    });
+    }, { em: ctx.em });
 
     const tokens = new TokenEntry(user);
 
