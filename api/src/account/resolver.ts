@@ -9,6 +9,7 @@ import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { deleteObject, s3 } from '../utils/s3';
+import { Password, PasswordType } from '../entities/Password';
 
 @Resolver()
 export class AccountResolver {
@@ -37,8 +38,12 @@ export class AccountResolver {
 
   @Mutation(() => Boolean)
   @Authorized('No Verification')
-  public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
-    ctx.user.password = sha256(input.password);
+  public async changePassword(@Ctx() ctx: Context, @Arg('input') { password }: ChangePasswordInput): Promise<boolean> {
+    ctx.user.password = new Password({
+      user: ctx.user,
+      type: PasswordType.BCRYPT,
+      password
+    });
 
     await ctx.em.flush();
 

@@ -39,7 +39,7 @@ export class EditAccountInput implements Partial<User> {
 }
 
 @InputType()
-export class ChangePasswordInput implements Partial<User> {
+export class ChangePasswordInput {
     @Field()
     @IsString()
     @Length(6, 512)

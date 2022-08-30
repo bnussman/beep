@@ -1,10 +1,11 @@
-import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
+import { Collection, Entity, Enum, OneToMany, OneToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Authorized, Field, ObjectType } from "type-graphql";
 import { QueueEntry } from './QueueEntry';
 import { Rating } from './Rating';
 import { v4 } from "uuid";
 import { PointType } from "../location/types";
 import { Point } from "../location/resolver";
+import { Password } from "./Password";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -14,7 +15,6 @@ export enum UserRole {
 @ObjectType()
 @Entity()
 export class User {
-
   constructor(values?: Partial<User>) {
     if (values) {
       Object.assign(this, values);
@@ -56,9 +56,9 @@ export class User {
   cashapp?: string;
 
   @Field()
-  @Property()
   @Authorized('admin')
-  password!: string;
+  @OneToOne()
+  password!: Password;
 
   @Field()
   @Property()

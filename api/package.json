@@ -37,6 +37,7 @@
     "apollo-server-core": "^3.10.1",
     "apollo-server-express": "^3.10.1",
     "aws-sdk": "^2.1194.0",
+    "bcrypt": "^5.0.1",
     "class-validator": "^0.13.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",

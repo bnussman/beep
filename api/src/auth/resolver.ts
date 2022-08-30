@@ -9,6 +9,7 @@ import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
+import { Password, PasswordType } from '../entities/Password';
 
 @ObjectType()
 class Auth {
@@ -65,7 +66,11 @@ export class AuthResolver {
     wrap(user).assign({
       ...input,
       photoUrl: result.Location,
-      password: sha256(input.password)
+      password: new Password({
+        type: PasswordType.BCRYPT,
+        password: sha256(input.password),
+        user 
+      })
     });
 
     const tokens = new TokenEntry(user);
@@ -150,7 +155,11 @@ export class AuthResolver {
       throw new Error("Your reset token has expired. You must re-request to reset your password.");
     }
 
-    entry.user.password = sha256(input.password);
+    entry.user.password = new Password({
+      user: ctx.user,
+      type: PasswordType.BCRYPT,
+      password: input.password
+    });
 
     await ctx.em.nativeDelete(TokenEntry, { user: entry.user });
 
