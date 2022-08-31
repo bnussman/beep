@@ -87,6 +87,20 @@
           "nullable": false,
           "mappedType": "string"
         },
+        "password_type": {
+          "name": "password_type",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'sha256'",
+          "enumItems": [
+            "sha256",
+            "bcrypt"
+          ],
+          "mappedType": "enum"
+        },
         "is_beeping": {
           "name": "is_beeping",
           "type": "boolean",
