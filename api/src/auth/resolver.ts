@@ -168,7 +168,8 @@ export class AuthResolver {
       throw new Error("Your reset token has expired. You must re-request to reset your password.");
     }
 
-    entry.user.password = sha256(input.password);
+    entry.user.password = await hash(input.password, 10);
+    entry.user.passwordType = PasswordType.BCRYPT;
 
     await ctx.em.nativeDelete(TokenEntry, { user: entry.user });
 
