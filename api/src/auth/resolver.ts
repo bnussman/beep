@@ -9,7 +9,7 @@ import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
@@ -77,10 +77,13 @@ export class AuthResolver {
       throw new Error("No result from AWS");
     }
 
+    const password = await hash(input.password, 10);
+
     wrap(user).assign({
       ...input,
       photoUrl: result.Location,
-      password: sha256(input.password)
+      password,
+      passwordType: PasswordType.BCRYPT
     });
 
     const tokens = new TokenEntry(user);
