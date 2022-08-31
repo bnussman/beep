@@ -9,6 +9,7 @@ import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { Card } from "../../components/Card";
+import { useLocation } from "../../utils/useLocation";
 import {
   Text,
   Spinner,
@@ -46,7 +47,7 @@ const GetBeepers = gql`
 
 export function PickBeepScreen() {
   const { colorMode } = useColorMode();
-
+  const { location } = useLocation();
   const { params } = useRoute<any>();
   const navigation = useNavigation<Navigation>();
 
@@ -54,8 +55,8 @@ export function PickBeepScreen() {
     GetBeepers,
     {
       variables: {
-        latitude: params.latitude,
-        longitude: params.longitude,
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
         radius: 20,
       },
       notifyOnNetworkStatusChange: true,
@@ -121,32 +122,14 @@ export function PickBeepScreen() {
         </Stack>
         <Spacer />
         <Stack space={2} flexShrink={1}>
-          {index === 0 ? (
-            <Badge
-              colorScheme="gray"
-              variant="solid"
-              fontWeight="extrabold"
-              fontSize="xs"
-            >
-              Closest to you
-            </Badge>
-          ) : null}
-          {item.venmo ? (
-            <Badge bg="lightBlue.400" variant="solid" colorScheme="info">
-              Venmo
-            </Badge>
-          ) : null}
-          {item.cashapp ? (
-            <Badge bg="green.400" variant="solid" colorScheme="success">
-              Cash App
-            </Badge>
-          ) : null}
+          {item.venmo ? <Badge shadow={1}>Venmo</Badge> : null}
+          {item.cashapp ? <Badge shadow={1}>Cash App</Badge> : null}
         </Stack>
       </HStack>
     </Card>
   );
 
-  if (!data && loading) {
+  if ((!data && loading) || location === undefined) {
     return (
       <Container alignItems="center" justifyContent="center">
         <Spinner size="lg" />
@@ -177,8 +160,10 @@ export function PickBeepScreen() {
         }
         ListEmptyComponent={
           <>
-            <Heading>Nobody is beeping</Heading>
-            <Text>There are no drivers within 20 miles of you</Text>
+            <Heading key="title">Nobody is beeping</Heading>
+            <Text key="message">
+              There are no drivers within 20 miles of you
+            </Text>
           </>
         }
         refreshControl={

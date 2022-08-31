@@ -13,7 +13,8 @@ import {
   split,
 } from "@apollo/client";
 
-const ip = "localhost";
+const ip = "192.168.1.155";
+
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`
   : "wss://api.ridebeep.app/subscriptions";
@@ -158,7 +159,8 @@ const uploadLink = createUploadLink({
   uri: url,
 });
 
+export const cache = new InMemoryCache();
 export const client = new ApolloClient({
   link: ApolloLink.from([authLink, splitLink, uploadLink]),
-  cache: new InMemoryCache(),
+  cache,
 });

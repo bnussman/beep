@@ -8,7 +8,7 @@ export function Home() {
     <Container maxW="container.xl">
       <Hero
         title="Ride Beep App"
-        subtitle="Your ultimate travel companion. A simple way to get a ride at Appalachian State University. A product by students for students."
+        subtitle="Your ultimate ride-share app. A simple way to get a ride around college campuses. A product by students for students."
         image={iPhoneImage}
         buttonLink="/download"
         buttonText="Download"

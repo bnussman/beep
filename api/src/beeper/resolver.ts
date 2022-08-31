@@ -1,7 +1,7 @@
 import { sendNotification } from '../utils/notifications';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep } from '../entities/Beep';
-import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from '../validators/beeper';
 import * as Sentry from '@sentry/node';
@@ -9,13 +9,30 @@ import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { inOrder } from '../utils/sort';
 import { Point } from '../location/resolver';
+import { sha256 } from 'js-sha256';
 
-export function isDefined(value: any): boolean {
-  return value !== undefined || value !== null;
+@ObjectType()
+class AnonymousBeeper {
+  @Field()
+  public id!: string;
+
+  @Field({ nullable: true })
+  public latitude?: number;
+
+  @Field({ nullable: true })
+  public longitude?: number;
 }
 
 @Resolver(Beep)
 export class BeeperResolver {
+
+  @Query(() => [AnonymousBeeper])
+  @Authorized()
+  public async getAllBeepersLocation(@Ctx() ctx: Context): Promise<AnonymousBeeper[]> {
+    const beepers = await ctx.em.find(User, { isBeeping: true })
+
+    return beepers.map(({ id, location }) => ({ id: sha256(id).substring(0, 9), latitude: location?.latitude, longitude: location?.longitude }));
+  }
 
   @Mutation(() => User)
   @Authorized()

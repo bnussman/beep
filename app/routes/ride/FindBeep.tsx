@@ -1,19 +1,21 @@
 import React, { useEffect, useRef } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
-import * as Location from "expo-location";
-import { StatusBar } from "./StatusBar";
+import { Controller, useForm } from "react-hook-form";
+import { useValidationErrors } from "../../utils/useValidationErrors";
+import { BeepersMap } from "./BeepersMap";
+import { useLocation } from "../../utils/useLocation";
+import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
-import { client } from "../../utils/Apollo";
+import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
 import { Alert } from "../../utils/Alert";
-import { GradietnButton } from "../../components/GradientButton";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Subscription } from "../../utils/types";
@@ -55,8 +57,7 @@ import {
   Pressable,
   WarningOutlineIcon,
 } from "native-base";
-import { Controller, useForm } from "react-hook-form";
-import { useValidationErrors } from "../../utils/useValidationErrors";
+import { Marker } from "react-native-maps";
 
 const ChooseBeep = gql`
   mutation ChooseBeep(
@@ -190,6 +191,8 @@ let riderStatusSub: Subscription;
 export function MainFindBeepScreen() {
   const { user } = useUser();
 
+  const { getLocation } = useLocation(false);
+
   const { navigate } = useNavigation<Navigation>();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
@@ -209,7 +212,7 @@ export function MainFindBeepScreen() {
     control,
     handleSubmit,
     setFocus,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ChooseBeepMutationVariables>();
 
   const validationErrors =
@@ -239,19 +242,12 @@ export function MainFindBeepScreen() {
   };
 
   async function updateETA(lat: number, long: number): Promise<void> {
-    let lastKnowLocation = await Location.getLastKnownPositionAsync({
-      maxAge: 180000,
-      requiredAccuracy: 800,
-    });
-
-    if (!lastKnowLocation) {
-      lastKnowLocation = await Location.getCurrentPositionAsync();
-    }
+    const location = await getLocation();
 
     getETA({
       variables: {
         start: `${lat},${long}`,
-        end: `${lastKnowLocation.coords.latitude},${lastKnowLocation.coords.longitude}`,
+        end: `${location.coords.latitude},${location.coords.longitude}`,
       },
     });
   }
@@ -262,11 +258,26 @@ export function MainFindBeepScreen() {
       variables: { id: data?.getRiderStatus?.beeper.id },
     });
 
-    sub = a.subscribe(({ data }) => {
+    sub = a.subscribe((values) => {
       throttleUpdateETA(
-        data.getLocationUpdates.latitude,
-        data.getLocationUpdates.longitude
+        values.data.getLocationUpdates.latitude,
+        values.data.getLocationUpdates.longitude
       );
+
+      cache.modify({
+        id: cache.identify({
+          __typename: "User",
+          id: beep?.beeper.id,
+        }),
+        fields: {
+          location() {
+            return {
+              latitude: values.data.getLocationUpdates.latitude,
+              longitude: values.data.getLocationUpdates.longitude,
+            };
+          },
+        },
+      });
     });
   }
 
@@ -298,8 +309,8 @@ export function MainFindBeepScreen() {
 
   useEffect(() => {
     if (
-      (beep?.state === 2 && previousData?.getRiderStatus?.state == 1) ||
-      (beep?.state === 2 && !previousData)
+      (beep?.state === 1 && previousData?.getRiderStatus?.state === 0) ||
+      (beep !== undefined && beep !== null && beep.state > 0 && !previousData)
     ) {
       subscribeToLocation();
     }
@@ -316,24 +327,7 @@ export function MainFindBeepScreen() {
   }, [data]);
 
   async function findBeep(): Promise<void> {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      return alert("You must enable location to find a ride.");
-    }
-
-    let lastKnowLocation = await Location.getLastKnownPositionAsync({
-      maxAge: 180000,
-      requiredAccuracy: 800,
-    });
-
-    if (!lastKnowLocation) {
-      lastKnowLocation = await Location.getCurrentPositionAsync();
-    }
-
     return navigate("Choose Beeper", {
-      latitude: lastKnowLocation.coords.latitude,
-      longitude: lastKnowLocation.coords.longitude,
       handlePick: (id: string) =>
         handleSubmit((values) => chooseBeep(id, values))(),
     });
@@ -343,7 +337,6 @@ export function MainFindBeepScreen() {
     id: string,
     values: ChooseBeepMutationVariables
   ) => {
-    console.log(id, values);
     try {
       const { data } = await getBeep({
         variables: {
@@ -499,6 +492,7 @@ export function MainFindBeepScreen() {
           >
             Find Beep
           </Button>
+          <BeepersMap />
         </Stack>
         <RateSheet />
       </Container>
@@ -553,7 +547,6 @@ export function MainFindBeepScreen() {
                 Current Status
               </Heading>
               <Text>{getCurrentStatusMessage()}</Text>
-              <StatusBar state={beep.state} />
             </Card>
           )}
           {beep.state === 2 && (
@@ -579,7 +572,30 @@ export function MainFindBeepScreen() {
               position={beep.position}
             />
           )}
-          <Spacer />
+          <Map
+            showsUserLocation
+            style={{
+              flexGrow: 1,
+              width: "100%",
+              borderRadius: 15,
+              overflow: "hidden",
+            }}
+            initialRegion={{
+              latitude: beep.beeper.location?.latitude ?? 0,
+              longitude: beep.beeper.location?.longitude ?? 0,
+              longitudeDelta: 0.05,
+              latitudeDelta: 0.05,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: beep.beeper.location?.latitude ?? 0,
+                longitude: beep.beeper.location?.longitude ?? 0,
+              }}
+            >
+              <Text fontSize="3xl">🚕</Text>
+            </Marker>
+          </Map>
           <Stack space={2} w="100%">
             <Button
               onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
@@ -602,24 +618,7 @@ export function MainFindBeepScreen() {
             >
               Text Beeper
             </Button>
-            {beep.beeper.venmo ? (
-              <Button
-                rightIcon={
-                  <Icon as={Ionicons} size="md" name="ios-card-outline" />
-                }
-                onPress={() =>
-                  openVenmo(
-                    beep.beeper.venmo,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate,
-                    "pay"
-                  )
-                }
-              >
-                Pay Beeper with Venmo
-              </Button>
-            ) : null}
+
             {beep.beeper.cashapp ? (
               <Button
                 onPress={() =>
@@ -634,23 +633,44 @@ export function MainFindBeepScreen() {
                 Pay Beeper with Cash App
               </Button>
             ) : null}
-            {beep.groupSize > 1 ? (
-              <Button
-                rightIcon={
-                  <Icon as={Ionicons} name="ios-share-outline" size="md" />
-                }
-                onPress={() =>
-                  shareVenmoInformation(
-                    beep.beeper.venmo,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate
-                  )
-                }
-              >
-                Share Venmo
-              </Button>
-            ) : null}
+            <HStack w="100%" space={2}>
+              {beep.beeper.venmo ? (
+                <Button
+                  flexGrow={1}
+                  rightIcon={
+                    <Icon as={Ionicons} size="md" name="ios-card-outline" />
+                  }
+                  onPress={() =>
+                    openVenmo(
+                      beep.beeper.venmo,
+                      beep.groupSize,
+                      beep.beeper.groupRate,
+                      beep.beeper.singlesRate,
+                      "pay"
+                    )
+                  }
+                >
+                  Pay with Venmo
+                </Button>
+              ) : null}
+              {beep.groupSize > 1 ? (
+                <Button
+                  rightIcon={
+                    <Icon as={Ionicons} name="ios-share-outline" size="md" />
+                  }
+                  onPress={() =>
+                    shareVenmoInformation(
+                      beep.beeper.venmo,
+                      beep.groupSize,
+                      beep.beeper.groupRate,
+                      beep.beeper.singlesRate
+                    )
+                  }
+                >
+                  Share Venmo
+                </Button>
+              ) : null}
+            </HStack>
             {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
           </Stack>
         </Stack>

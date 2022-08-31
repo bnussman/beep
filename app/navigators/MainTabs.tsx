@@ -5,9 +5,13 @@ export type MainNavParamList = {
   Beeps: undefined;
   Ride: undefined;
   Beep: undefined;
-  PickBeepScreen: { handlePick: (id: string) => Promise<void>; latitude: number; longitude: number; } | undefined;
-  Report: { user?: User; beep: string; } | undefined;
-  Rate: { user?: User; beep?: string; } | undefined;
+  PickBeepScreen:
+    | {
+        handlePick: (id: string) => Promise<void>;
+      }
+    | undefined;
+  Report: { user?: User; beep: string } | undefined;
+  Rate: { user?: User; beep?: string } | undefined;
   Profile: { id: string | undefined; beep?: string } | undefined;
   EditProfileScreen: undefined;
   ProfilePhotoScreen: undefined;
