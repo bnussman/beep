@@ -70,8 +70,7 @@ jobs:
            token: ${{ secrets.EXPO_TOKEN }}
 
        - name: 📦 Install dependencies
-         run: expo install
-         working-directory: ./app
+         run: yarn
 
        - name: 🚀 Publish app
          run: expo publish --non-interactive
