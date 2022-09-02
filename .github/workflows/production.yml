@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Login to DockerHub
+      - name: 🔑 Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push image
+      - name: 💾 Build and push image
         uses: docker/build-push-action@v2
         with:
           push: true
@@ -28,27 +28,28 @@ jobs:
       name: production
       url: https://ridebeep.app
     steps:
-      - name: Create kube config
+      - name: 📃 Import kube config
         run: |
           mkdir -p $HOME/.kube/
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
-      - name: Install helm
+      - name: 📦 Install helm
         run: |
           curl -LO https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz
           tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
           mv linux-amd64/helm /usr/local/bin/helm
           helm version
       - uses: actions/checkout@v2
-      - name: Lint helm charts
+      - name: 🔍 Lint helm charts
         run: helm lint ./.github/helm/
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: 🔐 Inject Secrets
       - run: node .github/helm/inject.js
         env:
           secrets: ${{ toJSON(secrets) }}
-      - name: Deploy
+      - name: 🚀 Deploy api
         run: |
           helm upgrade --install --atomic --timeout 5m api ./.github/helm/ -f ./.github/helm/values.yaml --namespace beep --create-namespace
   publish:
