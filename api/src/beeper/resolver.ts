@@ -27,7 +27,7 @@ class AnonymousBeeper {
 export class BeeperResolver {
 
   @Query(() => [AnonymousBeeper])
-  @Authorized()
+  @Authorized("No Verification")
   public async getAllBeepersLocation(@Ctx() ctx: Context): Promise<AnonymousBeeper[]> {
     const beepers = await ctx.em.find(User, { isBeeping: true })
 
