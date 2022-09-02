@@ -55,9 +55,9 @@ export function BeepersMap() {
       }}
       initialRegion={initialRegion}
     >
-      {beepers?.map((beeper) => {
-        return <BeeperMarker key={beeper.id} {...beeper} />;
-      })}
+      {beepers?.map((beeper) => (
+        <BeeperMarker key={beeper.id} {...beeper} />
+      ))}
     </Map>
   );
 }

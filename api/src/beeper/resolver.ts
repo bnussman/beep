@@ -121,13 +121,11 @@ export class BeeperResolver {
         Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
     }
 
-    ctx.em.persist(queueEntry);
-
     const queue = ctx.user.queue.getItems().sort(inOrder);
 
-    this.sendRiderUpdates(ctx.user, queue, pubSub);
+    await ctx.em.persistAndFlush(queueEntry);
 
-    await ctx.em.flush();
+    this.sendRiderUpdates(ctx.user, queue, pubSub);
 
     return queue;
   }
