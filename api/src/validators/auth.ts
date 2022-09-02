@@ -23,8 +23,7 @@ export class LoginInput implements Partial<User> {
 }
 
 @InputType()
-export class SignUpInput implements Partial<User> {
-
+export class SignUpInput {
   @Field()
   @IsString()
   @IsNotEmpty()
