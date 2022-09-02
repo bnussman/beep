@@ -1,7 +1,7 @@
 import { sha256 } from 'js-sha256';
 import { sendResetEmail, createVerifyEmailEntryAndSendEmail } from './helpers';
 import { wrap } from '@mikro-orm/core';
-import { User } from '../entities/User';
+import { PasswordType, User } from '../entities/User';
 import { ForgotPassword } from '../entities/ForgotPassword';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
 import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth';
@@ -9,6 +9,8 @@ import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
+import { compare, hash } from 'bcrypt';
+import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 class Auth {
@@ -24,10 +26,23 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async login(@Ctx() ctx: Context, @Arg('input') { username, password, pushToken }: LoginInput): Promise<Auth> {
-    const user = await ctx.em.findOne(User, { $or: [ { username, password: sha256(password) }, { email: username, password: sha256(password) } ] });
+    const user = await ctx.em.findOneOrFail(User, { $or: [ { username }, { email: username } ] }, { populate: ['password', 'passwordType'] });
 
-    if (!user) {
-      throw new Error("Username, email, or password is incorrect.");
+    let isPasswordCorrect = false;
+
+    switch (user.passwordType) {
+      case (PasswordType.SHA256):
+        isPasswordCorrect = sha256(password) === user.password;
+        break;
+      case (PasswordType.BCRYPT): 
+        isPasswordCorrect = await compare(password, user.password);
+        break;
+      default:
+        throw new Error(`Unknown password type ${user.passwordType}`);
+    }
+
+    if (!isPasswordCorrect) {
+      throw new AuthenticationError("Password is incorrect.");
     }
 
     const tokens = new TokenEntry(user);
@@ -62,10 +77,13 @@ export class AuthResolver {
       throw new Error("No result from AWS");
     }
 
+    const password = await hash(input.password, 10);
+
     wrap(user).assign({
       ...input,
       photoUrl: result.Location,
-      password: sha256(input.password)
+      password,
+      passwordType: PasswordType.BCRYPT
     });
 
     const tokens = new TokenEntry(user);
@@ -150,7 +168,8 @@ export class AuthResolver {
       throw new Error("Your reset token has expired. You must re-request to reset your password.");
     }
 
-    entry.user.password = sha256(input.password);
+    entry.user.password = await hash(input.password, 10);
+    entry.user.passwordType = PasswordType.BCRYPT;
 
     await ctx.em.nativeDelete(TokenEntry, { user: entry.user });
 

@@ -5,10 +5,11 @@ import { wrap } from '@mikro-orm/core';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { EditAccountInput, ChangePasswordInput } from '../validators/account';
-import { User } from '../entities/User';
+import { PasswordType, User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { deleteObject, s3 } from '../utils/s3';
+import {hash} from 'bcrypt';
 
 @Resolver()
 export class AccountResolver {
@@ -38,7 +39,8 @@ export class AccountResolver {
   @Mutation(() => Boolean)
   @Authorized('No Verification')
   public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
-    ctx.user.password = sha256(input.password);
+    ctx.user.password = await hash(input.password, 10);
+    ctx.user.passwordType = PasswordType.BCRYPT;
 
     await ctx.em.flush();
 

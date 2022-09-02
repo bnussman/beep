@@ -11,6 +11,11 @@ export enum UserRole {
   USER = 'user'
 }
 
+export enum PasswordType {
+  SHA256 = 'sha256',
+  BCRYPT = 'bcrypt'
+}
+
 @ObjectType()
 @Entity()
 export class User {
@@ -56,9 +61,13 @@ export class User {
   cashapp?: string;
 
   @Field()
-  @Property()
+  @Property({ lazy: true })
   @Authorized('admin')
   password!: string;
+
+  @Field()
+  @Enum({ items: () => PasswordType, default: 'sha256', lazy: true })
+  passwordType!: PasswordType;
 
   @Field()
   @Property()
