@@ -132,13 +132,13 @@ export class AccountResolver {
     const result = await s3.upload(uploadParams).promise();
 
     if (result) {
-      if (ctx.user.photoUrl) {
-        const key: string = ctx.user.photoUrl.split("https://beep.us-east-1.linodeobjects.com/")[1];
+      if (ctx.user.picture) {
+        const key: string = ctx.user.picture.split("https://beep.us-east-1.linodeobjects.com/")[1];
 
         deleteObject(key);
       }
 
-      ctx.user.photoUrl = result.Location;
+      ctx.user.picture = result.Location;
 
       pubSub.publish("User" + ctx.user.id, ctx.user);
 

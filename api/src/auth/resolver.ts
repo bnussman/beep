@@ -73,15 +73,13 @@ export class AuthResolver {
 
     const result = await s3.upload(uploadParams).promise();
 
-    if (!result) {
-      throw new Error("No result from AWS");
-    }
+    const picture = result.Location;
 
     const password = await hash(input.password, 10);
 
     wrap(user).assign({
       ...input,
-      photoUrl: result.Location,
+      picture,
       password,
       passwordType: PasswordType.BCRYPT
     });
