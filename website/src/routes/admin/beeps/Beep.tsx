@@ -31,13 +31,13 @@ const GetBeep = gql`
       beeper {
         id
         name
-        photoUrl
+        picture
         username
       }
       rider {
         id
         name
-        photoUrl
+        picture
         username
       }
     }

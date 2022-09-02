@@ -30,13 +30,13 @@ const Ratings = gql`
         rater {
           id
           name
-          photoUrl
+          picture
           username
         }
         rated {
           id
           name
-          photoUrl
+          picture
           username
         }
       }
@@ -127,7 +127,7 @@ export function RatePreview({ id }: Props) {
             onPress={() => push("Profile", { id: rating.rater.id })}
           >
             <HStack alignItems="center" p={2}>
-              <Avatar size="lg" mr={4} url={rating.rater.photoUrl} />
+              <Avatar size="lg" mr={4} url={rating.rater.picture} />
               <Stack>
                 <Text fontWeight="extrabold" fontSize="lg">
                   {rating.rater.name}

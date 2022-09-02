@@ -21,7 +21,7 @@ const GetEditableUser = gql`
       singlesRate
       groupRate
       capacity
-      photoUrl
+      picture
       queueSize
       phone
       username

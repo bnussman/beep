@@ -56,7 +56,7 @@ export const GetUser = gql`
       singlesRate
       groupRate
       capacity
-      photoUrl
+      picture
       queueSize
       phone
       username
@@ -77,7 +77,7 @@ export const GetUser = gql`
         state
         rider {
           id
-          photoUrl
+          picture
           username
           first
           last
@@ -216,10 +216,10 @@ export function User() {
           <Flex alignItems="center">
             <Box mr={4}>
               <Avatar
-                src={user.photoUrl || ''}
+                src={user.picture || ''}
                 size={isDesktop ? "2xl" : "xl"}
-                onClick={user.photoUrl ? onPhotoOpen : undefined}
-                cursor={user.photoUrl ? "pointer" : undefined}
+                onClick={user.picture ? onPhotoOpen : undefined}
+                cursor={user.picture ? "pointer" : undefined}
               >
                 {user.isBeeping && <AvatarBadge boxSize="1.0em" bg="green.500" />}
               </Avatar>
@@ -336,7 +336,7 @@ export function User() {
         onClose={onSendNotificationClose}
       />
       <PhotoDialog
-        src={user.photoUrl}
+        src={user.picture}
         isOpen={isPhotoOpen}
         onClose={onPhotoClose}
       />

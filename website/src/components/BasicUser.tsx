@@ -13,7 +13,7 @@ export function BasicUser(props: Props) {
   return (
     <NavLink to={`/admin/users/${user.id}`}>
       <Flex align="center">
-        <Avatar src={user.photoUrl || undefined} mr={2} />
+        <Avatar src={user.picture || undefined} mr={2} />
         <Text>{user.name}</Text>
       </Flex>
     </NavLink>

@@ -38,7 +38,7 @@ const QueueQuery = gql`
       rider {
         id
         name
-        photoUrl
+        picture
       }
     }
   }
@@ -104,7 +104,7 @@ export function QueuePreview({ user }: Props) {
       {queue && queue.map((entry) => (
         <HStack key={entry.id}>
           <Link to={`/admin/users/${entry.rider.id}`}>
-            <Avatar src={entry.rider.photoUrl || ''} size="xs" />
+            <Avatar src={entry.rider.picture || ''} size="xs" />
           </Link>
           <Link to={`/admin/users/${entry.rider.id}`}>
             <Box fontWeight="bold" whiteSpace="nowrap">{entry.rider.name}</Box>

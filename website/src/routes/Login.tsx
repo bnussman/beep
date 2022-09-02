@@ -28,7 +28,7 @@ const LoginGraphQL = gql`
         isStudent
         groupRate
         singlesRate
-        photoUrl
+        picture
         capacity
         username
         role

@@ -37,7 +37,7 @@ export const GetUserData = gql`
       isStudent
       groupRate
       singlesRate
-      photoUrl
+      picture
       capacity
       username
       role
@@ -62,7 +62,7 @@ const UserUpdates = gql`
       isStudent
       groupRate
       singlesRate
-      photoUrl
+      picture
       capacity
       username
       role

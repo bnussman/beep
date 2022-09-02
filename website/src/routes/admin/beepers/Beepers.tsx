@@ -19,7 +19,7 @@ const BeepersGraphQL = gql`
       id
       username
       name
-      photoUrl
+      picture
       singlesRate
       groupRate
       capacity

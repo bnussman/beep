@@ -22,7 +22,7 @@ export const QueueSubscription = gql`
       state
       rider {
         id
-        photoUrl
+        picture
         username
         first
         last

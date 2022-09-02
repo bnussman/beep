@@ -37,7 +37,7 @@ const GetUser = gql`
       singlesRate
       groupRate
       capacity
-      photoUrl
+      picture
       queueSize
       rating
     }
@@ -142,7 +142,7 @@ export function ProfileScreen() {
           <Spacer />
           <Avatar
             size="xl"
-            url={data.getUser.photoUrl}
+            url={data.getUser.picture}
             online={data.getUser.isBeeping}
             badgeSize="6"
           />

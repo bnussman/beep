@@ -27,13 +27,13 @@ const Ratings = gql`
         rater {
           id
           name
-          photoUrl
+          picture
           username
         }
         rated {
           id
           name
-          photoUrl
+          picture
           username
         }
       }

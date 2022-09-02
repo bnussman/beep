@@ -62,7 +62,7 @@ const SignUpGraphQL = gql`
         isStudent
         groupRate
         singlesRate
-        photoUrl
+        picture
         capacity
         username
         role

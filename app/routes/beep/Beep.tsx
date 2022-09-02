@@ -107,7 +107,7 @@ export function Beep(props: Props) {
             </Menu>
           )}
           <Spacer />
-          <Avatar size="xl" url={beep.rider.photoUrl} />
+          <Avatar size="xl" url={beep.rider.picture} />
         </HStack>
       </Pressable>
       <Stack space={2} mt={4}>

@@ -59,7 +59,7 @@ export function UserDropdown() {
       >
         <Avatar
           size='sm'
-          src={user?.photoUrl || ''}
+          src={user?.picture || ''}
         >
           {user?.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
         </Avatar>

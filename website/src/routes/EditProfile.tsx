@@ -27,7 +27,7 @@ export const UploadPhoto = gql`
   mutation AddProfilePicture ($picture: Upload!){
     addProfilePicture (picture: $picture) {
       id
-      photoUrl
+      picture
     }
   }
 `;
@@ -80,7 +80,7 @@ export function EditProfile() {
         <Flex align="center">
           <Box>
             <FormLabel cursor="pointer" htmlFor="photo">
-              <Avatar size="xl" src={user?.photoUrl || undefined} />
+              <Avatar size="xl" src={user?.picture || undefined} />
             </FormLabel>
             <Input
               id="photo"

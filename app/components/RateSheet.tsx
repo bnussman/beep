@@ -20,7 +20,7 @@ export const GetRateData = gql`
         id
         name
         username
-        photoUrl
+        picture
         isBeeping
       }
     }
@@ -77,7 +77,7 @@ export function RateSheet() {
           }
         >
           <Avatar
-            url={beep.beeper.photoUrl}
+            url={beep.beeper.picture}
             size="xl"
             online={beep.beeper.isBeeping}
             badgeSize="6"

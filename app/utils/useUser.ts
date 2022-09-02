@@ -17,7 +17,7 @@ export const UserData = gql`
       isStudent
       groupRate
       singlesRate
-      photoUrl
+      picture
       capacity
       cashapp
       pushToken
@@ -41,7 +41,7 @@ export const UserSubscription = gql`
       isStudent
       groupRate
       singlesRate
-      photoUrl
+      picture
       capacity
       cashapp
       pushToken
