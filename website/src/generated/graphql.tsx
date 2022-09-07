@@ -117,8 +117,8 @@ export type GetBeepInput = {
 
 export type LocationInput = {
   accuracy?: InputMaybe<Scalars['Float']>;
-  altitideAccuracy?: InputMaybe<Scalars['Float']>;
   altitude?: InputMaybe<Scalars['Float']>;
+  altitudeAccuracy?: InputMaybe<Scalars['Float']>;
   heading?: InputMaybe<Scalars['Float']>;
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
@@ -565,6 +565,7 @@ export type User = {
   location?: Maybe<Point>;
   name: Scalars['String'];
   password: Scalars['String'];
+  passwordType: Scalars['String'];
   phone?: Maybe<Scalars['String']>;
   photoUrl?: Maybe<Scalars['String']>;
   pushToken?: Maybe<Scalars['String']>;
