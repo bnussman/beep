@@ -5,7 +5,7 @@ import { wrap } from '@mikro-orm/core';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { EditAccountInput, ChangePasswordInput } from '../validators/account';
-import { PasswordType, User } from '../entities/User';
+import { PasswordType, User, UserRole } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { deleteObject, s3 } from '../utils/s3';
@@ -111,6 +111,10 @@ export class AccountResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async deleteAccount(@Ctx() ctx: Context): Promise<boolean> {
+    if (ctx.user.role === UserRole.ADMIN) {
+      throw new Error("Admin accounts cannot be deleted.");
+    }
+
     return await deleteUser(ctx.user, ctx.em);
   }
 
