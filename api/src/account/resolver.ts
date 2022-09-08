@@ -1,4 +1,3 @@
-import { sha256 } from 'js-sha256';
 import { createVerifyEmailEntryAndSendEmail } from "../auth/helpers";
 import { isEduEmail, deleteUser, Upload } from './helpers';
 import { wrap } from '@mikro-orm/core';
@@ -9,7 +8,7 @@ import { PasswordType, User, UserRole } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { deleteObject, s3 } from '../utils/s3';
-import {hash} from 'bcrypt';
+import { hash } from 'bcrypt';
 
 @Resolver()
 export class AccountResolver {
