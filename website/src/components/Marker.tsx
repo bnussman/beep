@@ -52,7 +52,7 @@ export function Marker(props: Props) {
           <PopoverTrigger>
             <Box width="max-content" cursor="pointer">
               <Center>
-                <Avatar src={user?.photoUrl || ''} size="xs" />
+                <Avatar src={user?.photo || ''} size="xs" />
               </Center>
               <Text>{user.name}</Text>
             </Box>
@@ -63,7 +63,7 @@ export function Marker(props: Props) {
               <PopoverHeader>
                 <Link to={`/admin/users/${user?.id}/queue`}>
                   <HStack>
-                    <Avatar src={user?.photoUrl || ''} />
+                    <Avatar src={user?.photo || ''} />
                     <Stack spacing={0}>
                       <Text fontWeight="extrabold">{user?.name}</Text>
                       <Text>@{user?.username}</Text>
@@ -89,7 +89,7 @@ export function Marker(props: Props) {
         <Tooltip label={`${latitude}, ${longitude}`} aria-label={`${latitude}, ${longitude}`}>
           <Box>
             <Center>
-              <Avatar src={user?.photoUrl || ''} size="xs" />
+              <Avatar src={user?.photo || ''} size="xs" />
             </Center>
             <Text>{user.name}</Text>
           </Box>

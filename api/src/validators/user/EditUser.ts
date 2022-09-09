@@ -91,7 +91,7 @@ export default class EditUserValidator implements Partial<User> {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  public photoUrl?: string;
+  public photo?: string;
 
   @Field({ nullable: true })
   @IsString()

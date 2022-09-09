@@ -26,13 +26,13 @@ export const BeepsGraphQL = gql`
         beeper {
           id
           name
-          photoUrl
+          photo
           username
         }
         rider {
           id
           name
-          photoUrl
+          photo
           username
         }
       }

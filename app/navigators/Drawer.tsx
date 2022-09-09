@@ -119,7 +119,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             <Avatar
               mr={2}
               size="md"
-              url={user?.photoUrl}
+              url={user?.photo}
               online={user?.isBeeping}
             />
             <Stack>

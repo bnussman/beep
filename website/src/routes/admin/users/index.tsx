@@ -15,7 +15,7 @@ export const UsersGraphQL = gql`
     getUsers(show: $show, offset: $offset, query: $query) {
       items {
         id
-        photoUrl
+        photo
         name
         email
         isStudent

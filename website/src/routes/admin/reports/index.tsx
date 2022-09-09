@@ -25,13 +25,13 @@ export const ReportsGraphQL = gql`
         reporter {
           id
           name
-          photoUrl
+          photo
           username
         }
         reported {
           id
           name
-          photoUrl
+          photo
           username
         }
       }

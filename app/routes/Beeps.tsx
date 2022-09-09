@@ -35,14 +35,14 @@ export const GetBeepHistory = gql`
           name
           first
           last
-          photoUrl
+          photo
         }
         beeper {
           id
           name
           first
           last
-          photoUrl
+          photo
         }
       }
       count
@@ -120,7 +120,7 @@ export function BeepsScreen() {
         }
       >
         <HStack alignItems="center" mb={2}>
-          <Avatar size={12} mr={2} url={otherUser.photoUrl} />
+          <Avatar size={12} mr={2} url={otherUser.photo} />
           <Stack>
             <Text fontSize="xl" fontWeight="extrabold">
               {otherUser.name}

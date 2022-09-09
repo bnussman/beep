@@ -15,7 +15,7 @@ export function UserHeader({ user, size = 'md' }: Props) {
       <Avatar
         mr={2}
         size={size}
-        url={user.photoUrl}
+        url={user.photo}
       />
       <Box>
         <Heading size="md" letterSpacing="sm" fontWeight="extrabold">{user.name}</Heading>

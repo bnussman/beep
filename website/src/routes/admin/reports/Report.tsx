@@ -47,19 +47,19 @@ export const GetReport = gql`
       reporter {
         id
         name
-        photoUrl
+        photo
         username
       }
       reported {
         id
         name
-        photoUrl
+        photo
         username
       }
       handledBy {
         id
         name
-        photoUrl
+        photo
         username
       }
     }

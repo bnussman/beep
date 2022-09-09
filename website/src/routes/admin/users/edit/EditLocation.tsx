@@ -13,7 +13,7 @@ export const UserLocation = gql`
     getUser(id: $id) {
       id
       name
-      photoUrl
+      photo
       location {
         latitude
         longitude

@@ -36,7 +36,7 @@ const GetBeepers = gql`
       groupRate
       capacity
       queueSize
-      photoUrl
+      photo
       role
       rating
       venmo
@@ -88,7 +88,7 @@ export function PickBeepScreen() {
       <HStack alignItems="center">
         <Stack flexShrink={1}>
           <HStack alignItems="center" mb={2}>
-            <Avatar mr={2} size="45px" url={item.photoUrl} />
+            <Avatar mr={2} size="45px" url={item.photo} />
             <Stack>
               <Text
                 fontWeight="extrabold"

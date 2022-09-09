@@ -27,19 +27,19 @@ query GetReportsForUser($id: String, $show: Int, $offset: Int) {
         handledBy {
           id
           name
-          photoUrl
+          photo
           username
         }
         reporter {
           id
           name
-          photoUrl
+          photo
           username
         }
         reported {
           id
           name
-          photoUrl
+          photo
           username
         }
       }
