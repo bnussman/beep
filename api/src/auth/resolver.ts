@@ -107,14 +107,15 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   @Authorized('No Verification')
   public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
-    await ctx.em.removeAndFlush(ctx.token);
+    ctx.em.remove(ctx.token);
 
     if (isApp) {
-      wrap(ctx.user).assign({
-        pushToken: null
-      });
-      await ctx.em.persistAndFlush(ctx.user);
+      ctx.user.pushToken = null;
     }
+
+    ctx.em.persist(ctx.user);
+
+    await ctx.em.flush();
 
     return true;
   }

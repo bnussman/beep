@@ -13,7 +13,7 @@ export interface PushNotification {
  * @param {string} title for the notification
  * @param {string} message is the body of the push notification
  */
-export async function sendNotification(token: string | undefined, title: string, message: string): Promise<void> {
+export async function sendNotification(token: string | null, title: string, message: string): Promise<void> {
   if (!token) return;
 
   await got.post('https://api.expo.dev/v2/push/send', {

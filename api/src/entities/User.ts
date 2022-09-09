@@ -105,10 +105,10 @@ export class User {
   @Enum(() => UserRole)
   role: UserRole = UserRole.USER;
 
-  @Field({ nullable: true })
-  @Property({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @Property({ type: String, nullable: true })
   @Authorized('No Verification Self')
-  pushToken?: string;
+  pushToken!: string | null;
 
   @Field({ nullable: true })
   @Property({ nullable: true })
