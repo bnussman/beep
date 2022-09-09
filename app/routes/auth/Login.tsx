@@ -12,11 +12,21 @@ import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { UserData } from "../../utils/useUser";
-import { Stack, Button, Input, Heading, Flex, Spacer, Box, FormControl, WarningOutlineIcon } from "native-base";
 import { Logger } from "../../utils/Logger";
 import { useValidationErrors } from "../../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
+import {
+  Stack,
+  Button,
+  Input,
+  Heading,
+  Flex,
+  Spacer,
+  Box,
+  FormControl,
+  WarningOutlineIcon,
+} from "native-base";
 
 const Login = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -61,7 +71,7 @@ export function LoginScreen() {
     handleSubmit,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<Omit<LoginMutationVariables, 'pushToken'>>();
+  } = useForm<Omit<LoginMutationVariables, "pushToken">>();
 
   useEffect(() => {
     try {
@@ -99,7 +109,11 @@ export function LoginScreen() {
   });
 
   return (
-    <Container keyboard center scrollViewProps={{ scrollEnabled: true, bounces: false  }}>
+    <Container
+      keyboard
+      center
+      scrollViewProps={{ scrollEnabled: true, bounces: false }}
+    >
       <Stack space={4} w="90%">
         <Box>
           <Heading size="xl" mr={4} fontWeight="extrabold">
