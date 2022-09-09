@@ -58,41 +58,25 @@ export class AccountResolver {
 
   @Mutation(() => Boolean)
   public async verifyAccount(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-    const entry = await ctx.em.findOne(VerifyEmail, id, { populate: ['user'] });
+    const verification = await ctx.em.findOneOrFail(VerifyEmail, id, { populate: ['user'] });
 
-    if (!entry) {
-      throw new Error("Invalid verify email token");
-    }
-
-    // @TODO clean up this if condition
-    if ((entry.time.getTime() + (18000 * 1000)) < Date.now()) {
-      await ctx.em.removeAndFlush(entry);
+    if ((verification.time.getTime() + (18000 * 1000)) < Date.now()) {
+      await ctx.em.removeAndFlush(verification);
       throw new Error("Your verification token has expired");
     }
 
-    const usersEmail: string | undefined = entry.user.email;
-
-    if (!usersEmail) {
-      await ctx.em.removeAndFlush(entry);
-      throw new Error("Please ensure you have a valid email set in your profile. Visit your app or our website to re-send a varification email.");
-    }
-
-    if (entry.email !== usersEmail) {
-      await ctx.em.removeAndFlush(entry);
+    if (verification.email !== verification.user.email) {
+      await ctx.em.removeAndFlush(verification);
       throw new Error("You tried to verify an email address that is not the same as your current email.");
     }
 
-    const update = isEduEmail(entry.email) ? { isEmailVerified: true, isStudent: true } : { isEmailVerified: true };
+    const update = isEduEmail(verification.email) ? { isEmailVerified: true, isStudent: true } : { isEmailVerified: true };
 
-    const user = await ctx.em.findOne(User, entry.user);
+    wrap(verification.user).assign(update);
 
-    if (!user) throw new Error("You tried to verify an account that does not exist");
+    pubSub.publish("User" + verification.user.id, verification.user);
 
-    wrap(user).assign(update);
-
-    pubSub.publish("User" + user.id, user);
-
-    await ctx.em.removeAndFlush(entry);
+    await ctx.em.removeAndFlush(verification);
 
     return true;
   }
