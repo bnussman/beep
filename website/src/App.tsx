@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { GetUserDataQuery } from './generated/graphql';
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
 import { client } from './utils/Apollo';
-import { ChakraProvider, Container } from "@chakra-ui/react"
+import { Box, Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
 import { Download } from './routes/Download';
 import { Home } from './routes/Home';
@@ -90,7 +90,13 @@ function Beep() {
     }
   }, [data?.getUser?.id]);
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    );
+  };
 
   return (
     <Router>

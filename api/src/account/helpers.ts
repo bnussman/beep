@@ -25,7 +25,7 @@ export interface Upload {
  * @returns boolean true if ends in ".edu" and false if otherwise
  */
 export function isEduEmail(email: string): boolean {
-  return (email.substr(email.length - 3) === "edu");
+  return (email.substring(email.length - 3) === "edu");
 }
 
 /**
