@@ -3,7 +3,7 @@ import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
 import { useValidationErrors } from "../../utils/useValidationErrors";
-import { BeepersMap } from "./BeepersMap";
+import { BeeperMarker, BeepersMap } from "./BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
@@ -587,14 +587,11 @@ export function MainFindBeepScreen() {
               latitudeDelta: 0.05,
             }}
           >
-            <Marker
-              coordinate={{
-                latitude: beep.beeper.location?.latitude ?? 0,
-                longitude: beep.beeper.location?.longitude ?? 0,
-              }}
-            >
-              <Text fontSize="3xl">🚕</Text>
-            </Marker>
+            <BeeperMarker
+              id={beep.beeper.id}
+              latitude={beep.beeper.location?.latitude ?? 0}
+              longitude={beep.beeper.location?.longitude ?? 0}
+            />
           </Map>
           <Stack space={2} w="100%">
             <Button

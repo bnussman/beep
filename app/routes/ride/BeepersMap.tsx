@@ -65,7 +65,7 @@ export function BeepersMap() {
 const LATITUDE_DELTA = 0.01;
 const LONGITUDE_DELTA = 0.01;
 
-function BeeperMarker({ id, latitude, longitude }: AnonymousBeeper) {
+export function BeeperMarker({ id, latitude, longitude }: AnonymousBeeper) {
   const ref = useRef<MarkerAnimated>(null);
   const [coordinate] = useState(
     new AnimatedRegion({
