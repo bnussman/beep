@@ -96,7 +96,7 @@ function Beep() {
         <Spinner size="xl" />
       </Center>
     );
-  };
+  }
 
   return (
     <Router>
