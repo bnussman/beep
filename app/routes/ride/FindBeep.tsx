@@ -92,7 +92,7 @@ const ChooseBeep = gql`
         cashapp
         username
         phone
-        photoUrl
+        photo
         capacity
         queueSize
         location {
@@ -125,7 +125,7 @@ const InitialRiderStatus = gql`
         cashapp
         username
         phone
-        photoUrl
+        photo
         capacity
         queueSize
         location {
@@ -158,7 +158,7 @@ const RiderStatus = gql`
         cashapp
         username
         phone
-        photoUrl
+        photo
         capacity
         queueSize
         location {
@@ -529,7 +529,7 @@ export function MainFindBeepScreen() {
                 </Text>
               </Stack>
               <Spacer />
-              <Avatar size="xl" url={beep.beeper.photoUrl} />
+              <Avatar size="xl" url={beep.beeper.photo} />
             </HStack>
           </Pressable>
           <Rates
@@ -680,7 +680,7 @@ export function MainFindBeepScreen() {
   return (
     <Container alignItems="center" pt={2}>
       <Stack space={4} w="90%" alignItems="center" h="94%">
-        <Avatar size={100} url={beep.beeper.photoUrl} />
+        <Avatar size={100} url={beep.beeper.photo} />
         <Center>
           <Text>Waiting on</Text>
           <Heading letterSpacing="xs" fontWeight="extrabold">

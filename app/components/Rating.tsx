@@ -29,7 +29,7 @@ export function Rating(props: Props) {
       onPress={() => navigation.push("Profile", { id: otherUser.id })}
     >
       <HStack alignItems="center" space={4}>
-        <Avatar size="lg" url={otherUser.photoUrl} />
+        <Avatar size="lg" url={otherUser.photo} />
         <Stack space={1}>
           {user?.id === item.rater.id ? (
             <Text>

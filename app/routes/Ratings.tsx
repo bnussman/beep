@@ -25,12 +25,12 @@ export const Ratings = gql`
         rater {
           id
           name
-          photoUrl
+          photo
         }
         rated {
           id
           name
-          photoUrl
+          photo
         }
       }
       count

@@ -28,7 +28,7 @@ const Hisory = gql`
         groupSize
         beeper {
           id
-          photoUrl
+          photo
           username
           first
           last
@@ -36,7 +36,7 @@ const Hisory = gql`
         }
         rider {
           id
-          photoUrl
+          photo
           username
           first
           last

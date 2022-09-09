@@ -66,7 +66,7 @@ export const UploadPhoto = gql`
   mutation AddProfilePicture($picture: Upload!) {
     addProfilePicture(picture: $picture) {
       id
-      photoUrl
+      photo
     }
   }
 `;
@@ -310,7 +310,7 @@ export function EditProfileScreen() {
             </FormControl>
           </Stack>
           <Pressable onPress={() => handleUpdatePhoto()}>
-            <Avatar url={photo?.uri ?? user?.photoUrl} size="xl" />
+            <Avatar url={photo?.uri ?? user?.photo} size="xl" />
             {uploadLoading ? <Spinner /> : null}
           </Pressable>
         </HStack>

@@ -81,7 +81,7 @@ export class AuthResolver {
 
     wrap(user).assign({
       ...input,
-      photoUrl: result.Location,
+      photo: result.Location,
       password,
       passwordType: PasswordType.BCRYPT
     });

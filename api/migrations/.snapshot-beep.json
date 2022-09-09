@@ -195,8 +195,8 @@
           "nullable": true,
           "mappedType": "string"
         },
-        "photo_url": {
-          "name": "photo_url",
+        "photo": {
+          "name": "photo",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,

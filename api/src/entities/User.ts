@@ -112,7 +112,7 @@ export class User {
 
   @Field({ nullable: true })
   @Property({ nullable: true })
-  photoUrl?: string;
+  photo?: string;
 
   @Field(() => String)
   @Property({ persist: false })

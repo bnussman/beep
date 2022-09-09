@@ -51,7 +51,7 @@ const Login = gql`
         isStudent
         groupRate
         singlesRate
-        photoUrl
+        photo
         capacity
         cashapp
       }

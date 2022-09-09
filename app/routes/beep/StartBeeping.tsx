@@ -72,7 +72,7 @@ const GetInitialQueue = gql`
         venmo
         cashapp
         phone
-        photoUrl
+        photo
         isStudent
         rating
       }
@@ -97,7 +97,7 @@ const GetQueue = gql`
         venmo
         cashapp
         phone
-        photoUrl
+        photo
         isStudent
         rating
       }

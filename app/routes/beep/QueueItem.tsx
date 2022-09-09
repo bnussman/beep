@@ -73,7 +73,7 @@ export function QueueItem({ item }: Props) {
             }
           >
             <HStack space={2} alignItems="center">
-              <Avatar size={50} url={item.rider.photoUrl} />
+              <Avatar size={50} url={item.rider.photo} />
               <Stack>
                 <Text fontWeight="extrabold" letterSpacing="xs" fontSize="xl">
                   {item.rider.name}
@@ -192,7 +192,7 @@ export function QueueItem({ item }: Props) {
               </Text>
             </Stack>
             <Spacer />
-            <Avatar mr={2} size={45} url={item.rider.photoUrl} />
+            <Avatar mr={2} size={45} url={item.rider.photo} />
           </HStack>
         </Pressable>
         <Text>
