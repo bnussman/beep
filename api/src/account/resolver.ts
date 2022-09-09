@@ -118,23 +118,18 @@ export class AccountResolver {
 
     const result = await s3.upload(uploadParams).promise();
 
-    if (result) {
-      if (ctx.user.photoUrl) {
-        const key: string = ctx.user.photoUrl.split("https://beep.us-east-1.linodeobjects.com/")[1];
+    if (ctx.user.photoUrl) {
+      const key = ctx.user.photoUrl.split("https://beep.us-east-1.linodeobjects.com/")[1];
 
-        deleteObject(key);
-      }
-
-      ctx.user.photoUrl = result.Location;
-
-      pubSub.publish("User" + ctx.user.id, ctx.user);
-
-      await ctx.em.flush();
-
-      return ctx.user;
+      deleteObject(key);
     }
-    else {
-      throw new Error("No result from S3");
-    }
+
+    ctx.user.photoUrl = result.Location;
+
+    pubSub.publish("User" + ctx.user.id, ctx.user);
+
+    await ctx.em.flush();
+
+    return ctx.user;
   }
 }
