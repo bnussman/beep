@@ -38,7 +38,7 @@ export const Container = (props: Props & IBoxProps): JSX.Element => {
   }
 
   return (
-    <Box flex={1} bg="white" _dark={{ bg: "black" }} {...rest}>
+    <Box flex={1} bg="white" _dark={{ bg: "black" }} {...rest} {...centerProps}>
       {children}
     </Box>
   );

@@ -100,7 +100,7 @@ export function ProfileScreen() {
 
   if (loading) {
     return (
-      <Container alignItems="center" justifyContent="center">
+      <Container center>
         <Spinner size="lg" />
       </Container>
     );
@@ -108,7 +108,7 @@ export function ProfileScreen() {
 
   if (error) {
     return (
-      <Container alignItems="center" justifyContent="center">
+      <Container center>
         <Text>{error.message}</Text>
       </Container>
     );
@@ -116,7 +116,7 @@ export function ProfileScreen() {
 
   if (!data?.getUser) {
     return (
-      <Container alignItems="center" justifyContent="center">
+      <Container center>
         <Text>User does not exist</Text>
       </Container>
     );

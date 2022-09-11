@@ -89,9 +89,9 @@ export function RatingsScreen() {
     );
   };
 
-  if (loading && !data) {
+  if (loading && !ratings) {
     return (
-      <Container alignItems="center" justifyContent="center">
+      <Container center>
         <Spinner size="lg" />
       </Container>
     );
@@ -99,39 +99,39 @@ export function RatingsScreen() {
 
   if (error) {
     return (
-      <Container alignItems="center" justifyContent="center">
+      <Container center>
         <Text>{error.message}</Text>
       </Container>
     );
   }
 
-  if (ratings && ratings.length > 0) {
+  if (ratings?.length === 0) {
     return (
-      <Container alignItems="center" justifyContent="center">
-        <FlatList
-          w="100%"
-          data={ratings}
-          renderItem={({ item, index }) => <Rating item={item} index={index} />}
-          keyExtractor={(rating) => rating.id}
-          onEndReached={getMore}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={renderFooter()}
-          refreshControl={
-            <RefreshControl
-              tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-              refreshing={isRefreshing}
-              onRefresh={refetch}
-            />
-          }
-        />
+      <Container center>
+        <Heading fontWeight="extrabold">Nothing to display!</Heading>
+        <Text>You have no ratings to display</Text>
       </Container>
     );
   }
 
   return (
-    <Container alignItems="center" justifyContent="center">
-      <Heading fontWeight="extrabold">Nothing to display!</Heading>
-      <Text>You have no ratings to display</Text>
+    <Container>
+      <FlatList
+        w="100%"
+        data={ratings}
+        renderItem={({ item, index }) => <Rating item={item} index={index} />}
+        keyExtractor={(rating) => rating.id}
+        onEndReached={getMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooter()}
+        refreshControl={
+          <RefreshControl
+            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+            refreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        }
+      />
     </Container>
   );
 }

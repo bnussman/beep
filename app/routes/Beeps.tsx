@@ -5,19 +5,15 @@ import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Navigation } from "../utils/Navigation";
-import { Unpacked } from "../utils/constants";
 import { useUser } from "../utils/useUser";
-import { Avatar } from "../components/Avatar";
-import { Card } from "../components/Card";
+import { Beep } from "../components/Beep";
 import {
   Spinner,
   Text,
   FlatList,
   Heading,
-  HStack,
   Center,
   useColorMode,
-  Stack,
 } from "native-base";
 
 export const GetBeepHistory = gql`
@@ -53,8 +49,6 @@ export const GetBeepHistory = gql`
 export function BeepsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
-
-  const navigation = useNavigation<Navigation>();
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetBeepHistoryQuery>(GetBeepHistory, {
@@ -100,56 +94,9 @@ export function BeepsScreen() {
     );
   };
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: Unpacked<GetBeepHistoryQuery["getBeeps"]["items"]>;
-    index: number;
-  }) => {
-    const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
-    const isRider = user?.id === item.rider.id;
+  if (loading && !beeps) {
     return (
-      <Card
-        mx={2}
-        my={2}
-        mt={index === 0 ? 4 : undefined}
-        pressable
-        onPress={() =>
-          navigation.push("Profile", { id: otherUser.id, beep: item.id })
-        }
-      >
-        <HStack alignItems="center" mb={2}>
-          <Avatar size={12} mr={2} url={otherUser.photo} />
-          <Stack>
-            <Text fontSize="xl" fontWeight="extrabold">
-              {otherUser.name}
-            </Text>
-            <Text color="gray.400" fontSize="xs">
-              {`${isRider ? "Ride" : "Beep"} - ${new Date(
-                item.start
-              ).toLocaleString()}`}
-            </Text>
-          </Stack>
-        </HStack>
-        <Stack>
-          <Text>
-            <Text bold>Group size</Text> <Text>{item.groupSize}</Text>
-          </Text>
-          <Text>
-            <Text bold>Pick Up</Text> <Text>{item.origin}</Text>
-          </Text>
-          <Text>
-            <Text bold>Drop Off</Text> <Text>{item.destination}</Text>
-          </Text>
-        </Stack>
-      </Card>
-    );
-  };
-
-  if (loading && !data) {
-    return (
-      <Container alignItems="center" justifyContent="center">
+      <Container center>
         <Spinner size="lg" />
       </Container>
     );
@@ -157,39 +104,39 @@ export function BeepsScreen() {
 
   if (error) {
     return (
-      <Container alignItems="center" justifyContent="center">
+      <Container center>
         <Text>{error.message}</Text>
       </Container>
     );
   }
 
-  if (beeps && beeps.length > 0) {
+  if (beeps?.length === 0) {
     return (
-      <Container alignItems="center" justifyContent="center">
-        <FlatList
-          w="100%"
-          data={beeps}
-          renderItem={renderItem}
-          keyExtractor={(beep) => beep.id}
-          onEndReached={getMore}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={renderFooter()}
-          refreshControl={
-            <RefreshControl
-              tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-              refreshing={isRefreshing}
-              onRefresh={refetch}
-            />
-          }
-        />
+      <Container center>
+        <Heading fontWeight="extrabold">Nothing to display!</Heading>
+        <Text>You have no previous beeps to display</Text>
       </Container>
     );
   }
 
   return (
-    <Container alignItems="center" justifyContent="center">
-      <Heading fontWeight="extrabold">Nothing to display!</Heading>
-      <Text>You have no previous beeps to display</Text>
+    <Container>
+      <FlatList
+        w="100%"
+        data={beeps}
+        renderItem={({ item, index }) => <Beep item={item} index={index} />}
+        keyExtractor={(beep) => beep.id}
+        onEndReached={getMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooter()}
+        refreshControl={
+          <RefreshControl
+            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+            refreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        }
+      />
     </Container>
   );
 }
