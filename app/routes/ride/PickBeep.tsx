@@ -79,7 +79,7 @@ export function PickBeepScreen() {
     index: number;
   }) => (
     <Card
-      mx={4}
+      mx={2}
       my={2}
       mt={index === 0 ? 4 : undefined}
       pressable
