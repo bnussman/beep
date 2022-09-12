@@ -57,7 +57,6 @@ import {
   Pressable,
   WarningOutlineIcon,
 } from "native-base";
-import { Marker } from "react-native-maps";
 
 const ChooseBeep = gql`
   mutation ChooseBeep(
