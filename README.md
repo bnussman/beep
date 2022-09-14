@@ -77,8 +77,3 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 
 ## 📈 Stats
 ![Alt](https://repobeats.axiom.co/api/embed/1b46a8057ec1f00f48ce7a9fbe9353c7cbe4ff83.svg "Repobeats analytics image")
-
-## 🚓 License
-
-This project is licensed under the Apache 2.0 Licence.
-
