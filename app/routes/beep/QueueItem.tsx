@@ -1,6 +1,6 @@
 import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Alert, Linking, Pressable } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
@@ -93,10 +93,10 @@ export function QueueItem({ item }: Props) {
                     {...triggerProps}
                   >
                     <Icon
-                      as={Entypo}
+                      as={Ionicons}
+                      name="ios-ellipsis-horizontal-circle"
                       color="gray.400"
-                      name="dots-three-horizontal"
-                      size={19}
+                      size="xl"
                       mr={4}
                     />
                   </Pressable>
@@ -108,7 +108,7 @@ export function QueueItem({ item }: Props) {
                   <HStack alignItems="center">
                     <Text>Call</Text>
                     <Spacer />
-                    <Icon as={MaterialCommunityIcons} name="phone" />
+                    <Icon as={Ionicons} name="ios-call" />
                   </HStack>
                 </Menu.Item>
                 <Menu.Item
@@ -117,7 +117,7 @@ export function QueueItem({ item }: Props) {
                   <HStack alignItems="center">
                     <Text>Text</Text>
                     <Spacer />
-                    <Icon as={MaterialCommunityIcons} name="message-text" />
+                    <Icon as={Ionicons} name="ios-chatbox" />
                   </HStack>
                 </Menu.Item>
                 <Menu.Item
@@ -128,7 +128,7 @@ export function QueueItem({ item }: Props) {
                   <HStack alignItems="center">
                     <Text>Directions to Rider</Text>
                     <Spacer />
-                    <Icon as={MaterialCommunityIcons} name="map-legend" />
+                    <Icon as={Ionicons} name="ios-map" />
                   </HStack>
                 </Menu.Item>
                 <Divider my={1} w="100%" />
@@ -137,8 +137,8 @@ export function QueueItem({ item }: Props) {
                     <Text color="red.400">Cancel Beep</Text>
                     <Spacer />
                     <Icon
-                      as={MaterialCommunityIcons}
-                      name="cancel"
+                      as={Ionicons}
+                      name="ios-close-circle"
                       color="red.400"
                     />
                   </HStack>

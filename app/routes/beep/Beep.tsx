@@ -6,7 +6,7 @@ import { ActionButton } from "../../components/ActionButton";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Linking } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { printStars } from "../../components/Stars";
@@ -65,10 +65,10 @@ export function Beep(props: Props) {
                   {...triggerProps}
                 >
                   <Icon
-                    as={Entypo}
                     color="gray.400"
-                    name="dots-three-horizontal"
-                    size={19}
+                    as={Ionicons}
+                    name="ios-ellipsis-horizontal-circle"
+                    size="xl"
                     mr={4}
                   />
                 </Pressable>
@@ -80,7 +80,7 @@ export function Beep(props: Props) {
                 <HStack alignItems="center">
                   <Text>Call</Text>
                   <Spacer />
-                  <Icon as={MaterialCommunityIcons} name="phone" />
+                  <Icon as={Ionicons} name="ios-call" />
                 </HStack>
               </Menu.Item>
               <Menu.Item
@@ -89,7 +89,7 @@ export function Beep(props: Props) {
                 <HStack alignItems="center">
                   <Text>Text</Text>
                   <Spacer />
-                  <Icon as={MaterialCommunityIcons} name="message-text" />
+                  <Icon as={Ionicons} name="ios-chatbox" />
                 </HStack>
               </Menu.Item>
               {/* <Divider my={1} w="100%" />
@@ -139,65 +139,53 @@ export function Beep(props: Props) {
           </>
         ) : (
           <>
-            {beep.rider.cashapp ? (
-              <Button
-                colorScheme="green"
-                variant="subtle"
-                onPress={() =>
-                  openCashApp(
-                    beep.rider.cashapp,
-                    beep.groupSize,
-                    user?.groupRate,
-                    user?.singlesRate
-                  )
-                }
-              >
-                Request Money from Rider with Cash App
-              </Button>
-            ) : null}
-            {beep.rider?.venmo ? (
-              <Button
-                colorScheme="blue"
-                variant="subtle"
-                onPress={() =>
-                  openVenmo(
-                    beep.rider.venmo,
-                    beep.groupSize,
-                    user?.groupRate,
-                    user?.singlesRate,
-                    "charge"
-                  )
-                }
-              >
-                Request Money from Rider with Venmo
-              </Button>
-            ) : null}
+            {beep.state > 2 && (
+              <>
+                {beep.rider.cashapp ? (
+                  <Button
+                    colorScheme="green"
+                    variant="subtle"
+                    onPress={() =>
+                      openCashApp(
+                        beep.rider.cashapp,
+                        beep.groupSize,
+                        user?.groupRate,
+                        user?.singlesRate
+                      )
+                    }
+                  >
+                    Request Money from Rider with Cash App
+                  </Button>
+                ) : null}
+                {beep.rider?.venmo ? (
+                  <Button
+                    colorScheme="blue"
+                    variant="subtle"
+                    onPress={() =>
+                      openVenmo(
+                        beep.rider.venmo,
+                        beep.groupSize,
+                        user?.groupRate,
+                        user?.singlesRate,
+                        "charge"
+                      )
+                    }
+                  >
+                    Request Money from Rider with Venmo
+                  </Button>
+                ) : null}
+              </>
+            )}
             {beep.state <= 1 ? (
               <Button
                 colorScheme="green"
                 onPress={() => openDirections("Current+Location", beep.origin)}
-                endIcon={
-                  <Icon
-                    as={MaterialCommunityIcons}
-                    name="map-legend"
-                    color="white"
-                    size={22}
-                  />
-                }
               >
                 Get Directions to Rider
               </Button>
             ) : (
               <Button
                 onPress={() => openDirections(beep.origin, beep.destination)}
-                endIcon={
-                  <Icon
-                    as={MaterialCommunityIcons}
-                    name="map-legend"
-                    color="white"
-                    size={22}
-                  />
-                }
               >
                 Get Directions for Beep
               </Button>
