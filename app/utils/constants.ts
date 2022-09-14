@@ -1,9 +1,12 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { extendTheme } from "native-base";
 import { Platform } from "react-native";
+import * as Device from "expo-device";
 
 export const isMobile: boolean =
   Platform.OS == "ios" || Platform.OS == "android";
+
+export const isSimulator = Device.isDevice === false;
 
 export const isAndroid: boolean = Platform.OS == "android";
 

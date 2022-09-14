@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import PasswordInput from "../../components/PasswordInput";
 import { Alert } from "../../utils/Alert";
 import { GradietnButton } from "../../components/GradientButton";
-import { isMobile } from "../../utils/constants";
+import { isMobile, isSimulator } from "../../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../../generated/graphql";
 import { client, wsLink } from "../../utils/Apollo";
@@ -84,8 +84,9 @@ export function LoginScreen() {
   const onLogin = handleSubmit(async (variables) => {
     let pushToken: string | null;
     try {
-      pushToken = isMobile ? await getPushToken() : null;
+      pushToken = !isSimulator ? await getPushToken() : null;
     } catch (error) {
+      alert(error);
       Logger.error(error);
       pushToken = null;
     }

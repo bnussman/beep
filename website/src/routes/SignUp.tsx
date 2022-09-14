@@ -8,6 +8,7 @@ import { GetUserData } from '../App';
 import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from "react-hook-form";
+import { PasswordInput } from '../components/PasswordInput';
 import {
   Link,
   Text,
@@ -239,8 +240,7 @@ export function SignUp() {
             </FormControl>
             <FormControl isInvalid={Boolean(errors.password) || Boolean(validationErrors?.password)}>
               <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
+              <PasswordInput
                 id="password"
                 {...register('password', {
                   required: 'This is required',

@@ -7,10 +7,11 @@ import { GetUserData } from '../App';
 import { client } from '../utils/Apollo';
 import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack, Center, Heading } from "@chakra-ui/react"
 import { Card } from '../components/Card';
+import { PasswordInput } from '../components/PasswordInput';
 
 const LoginGraphQL = gql`
   mutation Login($username: String!, $password: String!) {
-    login(input: {username: $username, password: $password}) {
+    login(input: { username: $username, password: $password }) {
       tokens {
         id
         tokenid
@@ -47,7 +48,6 @@ export function Login() {
 
   async function handleLogin(e: FormEvent) {
     e.preventDefault();
-
 
     const result = await login({
       variables: {
@@ -86,10 +86,7 @@ export function Login() {
             </FormControl>
             <FormControl mt={2}>
               <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                onChange={(value: any) => setPassword(value.target.value)}
-              />
+              <PasswordInput onChange={(value: any) => setPassword(value.target.value)} />
             </FormControl>
             <HStack>
               <Button
