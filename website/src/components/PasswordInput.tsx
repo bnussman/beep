@@ -14,7 +14,6 @@ export const  PasswordInput = forwardRef<HTMLInputElement, InputProps>((props: I
         ref={ref}
         pr='4.5rem'
         type={show ? 'text' : 'password'}
-        placeholder='Enter password'
         {...props}
       />
       <InputRightElement width='4.5rem'>
