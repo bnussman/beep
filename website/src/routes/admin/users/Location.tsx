@@ -28,6 +28,7 @@ export function LocationView(props: Props) {
   async function subscribe() {
     const a = client.subscribe({ query: BeepersLocation, variables: { id: user.id } });
 
+    console.log("subbing")
     sub = a.subscribe(({ data }) => {
       client.writeQuery({
         query: GetUser,
