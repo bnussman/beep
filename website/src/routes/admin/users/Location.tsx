@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { gql } from '@apollo/client';
 import { Box, Center } from '@chakra-ui/react';
 import { GetUserQuery, User } from '../../../generated/graphql';
-import { client } from '../../../utils/Apollo';
+import { cache, client } from '../../../utils/Apollo';
 import { GetUser } from './User';
 import { Marker } from '../../../components/Marker';
 import { Map } from '../../../components/Map';
@@ -29,20 +29,20 @@ export function LocationView(props: Props) {
     const a = client.subscribe({ query: BeepersLocation, variables: { id: user.id } });
 
     sub = a.subscribe(({ data }) => {
-      client.writeQuery({
-        query: GetUser,
-        data: {
-          getUser: {
-            ...user,
-            location: {
+
+      cache.modify({
+        id: cache.identify({
+          __typename: "User",
+          id: user.id,
+        }),
+        fields: {
+          location() {
+            return {
               latitude: data.getLocationUpdates.latitude,
               longitude: data.getLocationUpdates.longitude,
-            }
-          }
+            };
+          },
         },
-        variables: {
-          id: user.id
-        }
       });
     });
   }

@@ -17,12 +17,7 @@ import { Beep } from "./Beep";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Alert as NativeAlert,
-  AppState,
-  AppStateStatus,
-  RefreshControl,
-} from "react-native";
+import { Alert as NativeAlert, RefreshControl } from "react-native";
 import {
   GetInitialQueueQuery,
   UpdateBeepSettingsMutation,
@@ -151,20 +146,6 @@ export function StartBeepingScreen() {
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
   const snapPoints = useMemo(() => ["20%", "85%", "100%"], []);
-
-  useEffect(() => {
-    const listener = AppState.addEventListener("change", handleAppStateChange);
-
-    return () => {
-      listener.remove();
-    };
-  }, []);
-
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === "active") {
-      refetch();
-    }
-  };
 
   function toggleSwitchWrapper(): void {
     if (isAndroid && !isBeeping) {
@@ -330,7 +311,10 @@ export function StartBeepingScreen() {
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-expect-error This works so I'm leaving it as is
         const newQueue = subscriptionData.data.getBeeperUpdates;
-        if (prev.getQueue.length < newQueue.length) {
+        if (
+          prev.getQueue !== undefined &&
+          prev.getQueue.length < newQueue.length
+        ) {
           bottomSheetRef.current?.expand();
         }
         return Object.assign({}, prev, {

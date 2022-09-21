@@ -282,7 +282,7 @@ export function User() {
           isLazy
           mt="4"
           colorScheme="brand"
-          lazyBehavior="keepMounted"
+          lazyBehavior="unmount"
           index={tab && tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0}
           onChange={(index: number) => navigate(`/admin/users/${user.id}/${tabs[index].toLocaleLowerCase()}`)}
         >

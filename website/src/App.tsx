@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { GetUserDataQuery } from './generated/graphql';
-import { ApolloProvider, gql, useQuery } from '@apollo/client';
+import { GetUserDataQuery, UserUpdatesSubscription } from './generated/graphql';
+import { ApolloProvider, gql, useQuery, useSubscription } from '@apollo/client';
 import { client } from './utils/Apollo';
 import { Box, Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
@@ -73,24 +73,9 @@ const UserUpdates = gql`
 `;
 
 function Beep() {
-  const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
+  const { data } = useSubscription<UserUpdatesSubscription>(UserUpdates);
 
-  useEffect(() => {
-    if (data?.getUser?.id) {
-      subscribeToMore({
-        document: UserUpdates,
-        updateQuery: (prev, { subscriptionData }) => {
-          //@ts-ignore
-          const newFeedItem = subscriptionData.data.getUserUpdates;
-          return Object.assign({}, prev, {
-            getUser: newFeedItem
-          });
-        }
-      });
-    }
-  }, [data?.getUser?.id]);
-
-  if (loading) {
+  if (data?.getUserUpdates === undefined) {
     return (
       <Center h="100vh">
         <Spinner size="xl" />

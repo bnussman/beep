@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
-import { Linking, AppState, AppStateStatus } from "react-native";
+import { Linking } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
@@ -194,7 +194,7 @@ export function MainFindBeepScreen() {
 
   const { navigate } = useNavigation<Navigation>();
 
-  const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
+  const { data, previousData } = useQuery<GetInitialRiderStatusQuery>(
     InitialRiderStatus,
     {
       notifyOnNetworkStatusChange: true,
@@ -218,27 +218,6 @@ export function MainFindBeepScreen() {
     useValidationErrors<ChooseBeepMutationVariables>(getBeepError);
 
   const beep = data?.getRiderStatus;
-
-  const appState = useRef(AppState.currentState);
-
-  useEffect(() => {
-    const listener = AppState.addEventListener("change", handleAppStateChange);
-
-    return () => {
-      listener.remove();
-    };
-  }, []);
-
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.current.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
-      refetch();
-    }
-
-    appState.current = nextAppState;
-  };
 
   async function updateETA(lat: number, long: number): Promise<void> {
     const location = await getLocation();

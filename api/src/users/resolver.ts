@@ -1,7 +1,7 @@
 import { PaginationArgs } from '../args/Pagination';
 import EditUserValidator from '../validators/user/EditUser';
 import fieldsToRelations from 'graphql-fields-to-relations';
-import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription, UseMiddleware, ResolverData, AuthChecker } from 'type-graphql';
 import { deleteUser } from '../account/helpers';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';

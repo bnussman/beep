@@ -40,6 +40,8 @@ Sentry.init({
   enableAutoSessionTracking: true,
 });
 
+let sub: null | (() => void) = null;
+
 function Beep() {
   const { colorMode } = useColorMode();
   const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
@@ -50,20 +52,26 @@ function Beep() {
 
   useEffect(() => {
     if (user) {
-      subscribeToMore({
-        document: UserSubscription,
-        updateQuery: (prev, { subscriptionData }) => {
-          // @ts-expect-error apollo dumb
-          const newFeedItem = subscriptionData.data.getUserUpdates;
-          return Object.assign({}, prev, {
-            getUser: newFeedItem,
-          });
-        },
-      });
+      if (!sub) {
+        sub = subscribeToMore({
+          document: UserSubscription,
+          updateQuery: (prev, { subscriptionData }) => {
+            // @ts-expect-error apollo dumb
+            const newFeedItem = subscriptionData.data.getUserUpdates;
+            return Object.assign({}, prev, {
+              getUser: newFeedItem,
+            });
+          },
+        });
+      }
 
       setUserContext(user);
       updatePushToken(user.pushToken);
     }
+
+    // return () => {
+    //   sub?.();
+    // };
   }, [user]);
 
   React.useEffect(() => {
