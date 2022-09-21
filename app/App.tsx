@@ -30,6 +30,8 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 
+let unsubscribe: (() => void) | null = null;
+
 const Stack = createStackNavigator();
 init();
 Sentry.init({
@@ -50,16 +52,18 @@ function Beep() {
 
   useEffect(() => {
     if (user) {
-      subscribeToMore({
-        document: UserSubscription,
-        updateQuery: (prev, { subscriptionData }) => {
-          // @ts-expect-error apollo dumb
-          const newFeedItem = subscriptionData.data.getUserUpdates;
-          return Object.assign({}, prev, {
-            getUser: newFeedItem,
-          });
-        },
-      });
+      if (unsubscribe === null) {
+        unsubscribe = subscribeToMore({
+          document: UserSubscription,
+          updateQuery: (prev, { subscriptionData }) => {
+            // @ts-expect-error apollo dumb
+            const newFeedItem = subscriptionData.data.getUserUpdates;
+            return Object.assign({}, prev, {
+              getUser: newFeedItem,
+            });
+          },
+        });
+      }
 
       setUserContext(user);
       updatePushToken(user.pushToken);
