@@ -8,7 +8,7 @@ import * as Sentry from "./utils/sentry";
 import * as RealSentry from "@sentry/node";
 import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
-import { GraphQLError, GraphQLSchema, parse } from "graphql";
+import { GraphQLError, GraphQLSchema } from "graphql";
 import { buildSchema } from 'type-graphql';
 import { authChecker, LeakChecker } from "./utils/authentication";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
@@ -18,7 +18,7 @@ import { graphqlUploadExpress } from "graphql-upload";
 import { ApolloServer, ExpressContext } from "apollo-server-express";
 import { ApolloError, ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { Context, SubscribeMessage } from "graphql-ws";
+import { Context } from "graphql-ws";
 import { REDIS_HOST, REDIS_PASSWROD } from "./utils/constants";
 
 function formatError(error: GraphQLError) {
@@ -59,7 +59,6 @@ async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Co
     bearer,
     {
       populate: ['user'],
-      // cache: true
     }
   );
 
@@ -70,37 +69,6 @@ async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Co
   }
 
   return context;
-}
-
-async function onSubscribe(
-  { connectionParams }: Context<Record<string, unknown> | undefined>,
-  msg: SubscribeMessage,
-  schema: GraphQLSchema,
-  orm: MikroORM<IDatabaseDriver<Connection>>
-) {
-  const bearer = connectionParams?.token as string | undefined;
-
-  if (!bearer) {
-    throw new Error("No Authentication Token Provided");
-  }
-
-  const token = await orm.em.fork().findOne(
-    TokenEntry,
-    bearer,
-    {
-      populate: ['user'],
-      // cache: true
-    }
-  );
-
-  if (token) {
-    return {
-      contextValue: { user: token.user, token, em: orm.em.fork() },
-      schema,
-      document: parse(msg.payload.query),
-      variableValues: msg.payload.variables
-    }
-  }
 }
 
 async function start() {
@@ -149,7 +117,32 @@ async function start() {
 
   useServer({
     schema,
-    onSubscribe: (ctx, msg) => onSubscribe(ctx, msg, schema, orm),
+    onConnect: async (ctx: Context<{ token?: string }, { token?: TokenEntry }>) => {
+      const bearer = ctx.connectionParams?.token;
+
+      if (!bearer) {
+        return false;
+      }
+
+      const token = await orm.em.fork().findOne(
+        TokenEntry,
+        bearer,
+        {
+          populate: ['user'],
+        }
+      );
+
+      if (!token) {
+        return false;
+      }
+
+      ctx.extra.token = token;
+    },
+    context: (ctx) => ({
+       user: ctx.extra.token?.user,
+       token: ctx.extra.token,
+       em: orm.em.fork()
+    }),
   }, wsServer);
 
   await server.start();
