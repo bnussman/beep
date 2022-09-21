@@ -158,7 +158,6 @@ export class BeeperResolver {
       }
       else {
         entry.position = newQueue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
-        console.log(entry.position);
         pubSub.publish("Rider" + entry.rider.id, entry);
       }
     }

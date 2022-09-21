@@ -103,11 +103,13 @@ const splitLink = split(
   wsLink,
 );
 
+export const cache = new InMemoryCache();
+
 export const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     splitLink,
     uploadLink
   ]),
-  cache: new InMemoryCache()
+  cache
 });
