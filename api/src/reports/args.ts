@@ -22,13 +22,13 @@ export class ReportInput implements Partial<Report> {
 
 @InputType()
 export class UpdateReportInput implements Partial<Report> {
-    @Field({ nullable: true })
-    @IsBoolean()
-    @IsOptional()
-    public handled?: boolean;
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  public handled?: boolean;
 
-    @Field({ nullable: true })
-    @IsString()
-    @IsOptional()
-    public notes?: string;
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  public notes?: string;
 }

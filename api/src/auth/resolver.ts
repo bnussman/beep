@@ -4,7 +4,7 @@ import { wrap } from '@mikro-orm/core';
 import { PasswordType, User } from '../entities/User';
 import { ForgotPassword } from '../entities/ForgotPassword';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
-import { LoginInput, ResetPasswordInput, SignUpInput } from '../validators/auth';
+import { LoginInput, ResetPasswordInput, SignUpInput } from './args';
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';

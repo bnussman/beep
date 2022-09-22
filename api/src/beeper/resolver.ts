@@ -3,7 +3,7 @@ import { QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep } from '../entities/Beep';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
-import { BeeperSettingsInput, UpdateQueueEntryInput } from '../validators/beeper';
+import { BeeperSettingsInput, UpdateQueueEntryInput } from './args';
 import * as Sentry from '@sentry/node';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';

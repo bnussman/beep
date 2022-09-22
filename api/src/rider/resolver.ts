@@ -3,7 +3,7 @@ import { QueryOrder } from '@mikro-orm/core';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
-import { GetBeepInput, FindBeepInput } from '../validators/rider';
+import { GetBeepInput, FindBeepInput } from './args';
 import { Context } from '../utils/context';
 import { Beep } from '../entities/Beep';
 import { Rating } from '../entities/Rating';

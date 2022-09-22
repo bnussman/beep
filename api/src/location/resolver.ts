@@ -2,7 +2,7 @@ import { IsLatitude, IsLongitude } from 'class-validator';
 import { User, UserRole } from '../entities/User';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
-import { LocationInput } from '../validators/location';
+import { LocationInput } from './args';
 import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()

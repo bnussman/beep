@@ -5,7 +5,6 @@ import { QueueEntry } from '../entities/QueueEntry';
 
 @InputType()
 export class GetBeepInput implements Partial<QueueEntry> {
-
   @Field()
   @IsString()
   @IsNotEmpty({ message: "Please specify an origin location" })

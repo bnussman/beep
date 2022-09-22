@@ -4,7 +4,6 @@ import { Rating } from '../entities/Rating';
 
 @InputType()
 export class RatingInput implements Partial<Rating> {
-
   @Field()
   @IsString()
   public userId!: string;

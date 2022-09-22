@@ -4,7 +4,6 @@ import { Field, InputType } from 'type-graphql';
 
 @InputType()
 export class BeeperSettingsInput implements Partial<User> {
-
   @Field({ nullable: true })
   @Max(200)
   @Min(0)

@@ -3,7 +3,7 @@ import { QueryOrder, wrap } from '@mikro-orm/core';
 import { User, UserRole } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
-import { ReportInput, UpdateReportInput } from '../validators/report';
+import { ReportInput, UpdateReportInput } from './args';
 import { PaginationArgs } from '../args/Pagination';
 import { Paginated } from '../utils/paginated';
 

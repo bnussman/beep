@@ -1,6 +1,6 @@
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
-import { RatingInput } from '../validators/rating';
+import { RatingInput } from './args';
 import { Beep } from '../entities/Beep';
 import { Paginated } from '../utils/paginated';
 import { Rating } from '../entities/Rating';
