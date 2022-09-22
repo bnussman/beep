@@ -65,6 +65,11 @@ export const NATIVE_BASE_THEME = extendTheme({
         borderRadius: 10,
       },
     },
+    IconButton: {
+      baseStyle: {
+        borderRadius: 10,
+      },
+    },
     FormControlLabel: {
       baseStyle: {
         _text: {

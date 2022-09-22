@@ -6,25 +6,24 @@ import { ActionButton } from "../../components/ActionButton";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Ionicons } from "@expo/vector-icons";
 import { Linking } from "react-native";
 import { Navigation } from "../../utils/Navigation";
-import { printStars } from "../../components/Stars";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
+import { Card } from "../../components/Card";
 import {
   Box,
   Button,
   Heading,
   HStack,
   Icon,
-  Menu,
+  IconButton,
   Pressable,
   Spacer,
   Stack,
   Text,
 } from "native-base";
-import { Card } from "../../components/Card";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -85,18 +84,25 @@ export function Beep(props: Props) {
         ) : (
           <>
             <HStack space={2}>
-              <Button
+              <IconButton
                 flexGrow={1}
+                variant="solid"
                 onPress={() => Linking.openURL("tel:" + beep.rider.phone)}
-              >
-                Call
-              </Button>
-              <Button
+                icon={<Icon as={Ionicons} name="ios-call" size="md" />}
+              />
+              <IconButton
                 flexGrow={1}
+                variant="solid"
                 onPress={() => Linking.openURL("sms:" + beep.rider.phone)}
-              >
-                Text
-              </Button>
+                icon={
+                  <Icon
+                    as={Ionicons}
+                    name="ios-chatbox"
+                    color="white"
+                    size="md"
+                  />
+                }
+              />
             </HStack>
             {beep.state > 2 && (
               <>
