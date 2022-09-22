@@ -1,13 +1,12 @@
 import { IsAlpha, IsDefined, IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { Upload } from '../account/helpers';
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import { IsStudent } from './IsStudent';
+import { Upload } from '../users/helpers';
 
 @InputType()
 export class LoginInput implements Partial<User> {
-
   @Field()
   @IsString()
   public username!: string;

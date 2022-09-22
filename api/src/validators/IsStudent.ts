@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { isEduEmail } from '../account/helpers';
+import { isEduEmail } from '../users/helpers';
 
 export function IsStudent(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string): void {
