@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { AddProfilePictureMutation, EditAccountMutation, EditAccountMutationVariables, EditUserInput, EditUserMutation, GetUserDataQuery } from '../generated/graphql';
@@ -48,8 +48,10 @@ export function EditProfile() {
 
   const validationErrors = useValidationErrors<EditUserInput>(error);
 
-  const { handleSubmit, register, formState: { errors, isSubmitting, isValid } } = useForm<EditUserInput>({
-     defaultValues: pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp'])
+  const defaultValues = pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp']);
+
+  const { handleSubmit, register, reset, formState: { errors, isSubmitting, isValid } } = useForm<EditUserInput>({
+     defaultValues 
   });
 
   const onSubmit = handleSubmit(async (variables) => {
@@ -67,6 +69,10 @@ export function EditProfile() {
         toast({ status: 'success', title: "Success", description: "Successfully updated profile picture" });
       });
   }
+
+  useEffect(() => {
+    reset(pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp']));
+  }, [user]);
 
   if (!user) {
     return <Navigate to={{ pathname: "/login" }} />;
