@@ -1,7 +1,6 @@
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import { Router } from 'express';
-import { User } from '../entities/User';
 import { SENTRY_URL, ENVIRONMENT } from './constants';
 
 export function init(app: Router): void {
@@ -28,12 +27,4 @@ export function init(app: Router): void {
       return true;
     },
   });
-}
-
-export function setUserContext(user: Partial<User>): void {
-  Sentry.setUser(user);
-}
-
-export function captureError(e: any): void {
-  Sentry.captureException(e);
 }
