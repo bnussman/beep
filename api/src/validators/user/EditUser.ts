@@ -1,10 +1,10 @@
 import { User, UserRole } from '../../entities/User';
 import { IsBoolean, IsEmail, IsMobilePhone, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
-import { Field, InputType } from 'type-graphql';
+import { Authorized, Field, InputType } from 'type-graphql';
 import { IsStudent } from '../IsStudent';
 
 @InputType()
-export default class EditUserValidator implements Partial<User> {
+export class EditUserInput implements Partial<User> {
 
   @Field({ nullable: true })
   @IsString()
@@ -45,11 +45,13 @@ export default class EditUserValidator implements Partial<User> {
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
+  @Authorized(UserRole.ADMIN)
   public isEmailVerified?: boolean;
 
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
+  @Authorized(UserRole.ADMIN)
   public isStudent?: boolean;
 
   @Field({ nullable: true })
@@ -77,10 +79,12 @@ export default class EditUserValidator implements Partial<User> {
   @IsNumber()
   @Min(0)
   @IsOptional()
+  @Authorized(UserRole.ADMIN)
   public queueSize?: number;
 
   @Field({ nullable: true })
   @IsOptional()
+  @Authorized(UserRole.ADMIN)
   public role?: UserRole;
 
   @Field({ nullable: true })
@@ -96,5 +100,6 @@ export default class EditUserValidator implements Partial<User> {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  @Authorized(UserRole.ADMIN)
   public username?: string;
 }

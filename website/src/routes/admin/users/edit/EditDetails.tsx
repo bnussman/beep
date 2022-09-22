@@ -1,16 +1,20 @@
 import React from "react";
-import { Loading } from "../../../../components/Loading";
 import { Box, Button, Checkbox, FormControl, FormLabel, Input, useToast, FormErrorMessage, Stack } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { EditUserMutation, EditUserMutationVariables, GetEditableUserQuery } from '../../../../generated/graphql';
+import { gql, useMutation } from '@apollo/client';
+import { EditUserInput, EditUserMutation, GetUserQuery } from '../../../../generated/graphql';
 import { Error } from '../../../../components/Error';
 import { useValidationErrors } from "../../../../utils/useValidationErrors";
 import { useForm } from "react-hook-form";
 
-const GetEditableUser = gql`
-  query GetEditableUser($id: String!) {
-    getUser(id: $id) {
+interface Props {
+  user: GetUserQuery['getUser'];
+}
+
+const EditUser = gql`
+  mutation EditUser($id: String!, $data: EditUserInput!) {
+    editUser(id: $id, data: $data) {
+      id
       first
       last
       isBeeping
@@ -32,33 +36,39 @@ const GetEditableUser = gql`
   }
 `;
 
-const EditUser = gql`
-  mutation EditUser($id: String!, $data: EditUserValidator!) {
-    editUser(id: $id, data: $data) {
-      username
-    }
+interface Omit {
+  <T extends object, K extends [...(keyof T)[]]>
+  (obj: T, ...keys: K): {
+      [K2 in Exclude<keyof T, K[number]>]: T[K2]
   }
-`;
+}
 
-export function EditDetails() {
+const omit: Omit = (obj, ...keys) => {
+  const ret = {} as {
+      [K in keyof typeof obj]: (typeof obj)[K]
+  };
+  let key: keyof typeof obj;
+  for (key in obj) {
+      if (!(keys.includes(key))) {
+          ret[key] = obj[key];
+      }
+  }
+  return ret;
+};
+
+export function EditDetails({ user }: Props) {
   const { id } = useParams();
   const toast = useToast();
-  const { handleSubmit, register, reset, formState: { errors, isSubmitting, isValid } } = useForm<EditUserMutationVariables['data']>();
-  const { data: raw, loading, error } = useQuery<GetEditableUserQuery>(GetEditableUser, {
-    variables: { id },
-    onCompleted: (data) => {
-      if (data) {
-        const user = { ...data.getUser };
-        delete user.__typename;
-        reset(user)
-      }
-    }
-  });
+
+  const defaultValues = omit(user, 'id', '__typename', 'name', 'location', 'queue', 'created', 'rating');
+
   const [edit, { error: editError }] = useMutation<EditUserMutation>(EditUser);
 
-  const user = { ...raw?.getUser, __typename: undefined };
+  const { handleSubmit, register, reset, formState: { errors, isSubmitting } } = useForm<EditUserInput>({
+    defaultValues
+  });
 
-  const validationErrors = useValidationErrors<EditUserMutationVariables['data']>(editError);
+  const validationErrors = useValidationErrors<EditUserInput>(editError);
 
   const onSubmit = handleSubmit(async (data) => {
     const result = await edit({ variables: { id, data } });
@@ -68,17 +78,7 @@ export function EditDetails() {
     }
   });
 
-  if (error) {
-    return <Error error={error} />;
-  }
-
-  if (!user || loading) {
-    return <Loading />;
-  }
-
-  delete user.__typename;
-
-  const keys = Object.keys(user);
+  const keys = Object.keys(defaultValues);
 
   return (
     <Box>
@@ -86,8 +86,8 @@ export function EditDetails() {
       <form onSubmit={onSubmit}>
         <Stack spacing={4}>
           {keys.map((_key) => {
-            const key = _key as keyof Omit<GetEditableUserQuery['getUser'], '__typename'>;
-            const type = typeof user[key];
+            const key = _key as keyof EditUserInput;
+            const type = typeof defaultValues[key];
             return (
               <FormControl key={key} isInvalid={Boolean(errors[key]) || Boolean(validationErrors?.[key])}>
                 <FormLabel>{key}</FormLabel>

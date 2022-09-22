@@ -1,5 +1,4 @@
 import { PaginationArgs } from '../args/Pagination';
-import EditUserValidator from '../validators/user/EditUser';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser } from '../account/helpers';
@@ -13,6 +12,8 @@ import { sendNotification, sendNotificationsNew } from '../utils/notifications';
 import { S3 } from 'aws-sdk';
 import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject } from '../utils/s3';
 import { NotificationArgs } from './args';
+import { EditUserInput } from '../validators/user/EditUser';
+import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
 
 @ObjectType()
 class UsersPerDomain {
@@ -54,9 +55,11 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @Authorized(UserRole.ADMIN)
-  public async editUser(@Ctx() ctx: Context, @Arg("id") id: string, @Arg('data') data: EditUserValidator, @PubSub() pubSub: PubSubEngine): Promise<User> {
-    const user = await ctx.em.findOneOrFail(User, id);
+  @Authorized('No Verification Self')
+  public async editUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id: string, @Arg('data') data: EditUserInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
+    const user = !id ? ctx.user : await ctx.em.findOneOrFail(User, id);
+
+    const oldEmail = ctx.user.email;
 
     if (user.isEmailVerified === false && data.isEmailVerified === true) {
       sendNotification(user.pushToken, "Account Verified ✅", "An admin has approved your account.");
@@ -72,7 +75,13 @@ export class UserResolver {
 
     wrap(user).assign(data);
 
-    pubSub.publish("User" + id, user);
+    if (id === undefined && oldEmail !== data.email) {
+      wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
+
+      createVerifyEmailEntryAndSendEmail(ctx.user, ctx.em);
+    }
+
+    pubSub.publish("User" + user.id, user);
 
     await ctx.em.flush();
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { AddProfilePictureMutation, EditAccountMutation, EditAccountMutationVariables, GetUserDataQuery } from '../generated/graphql';
+import { AddProfilePictureMutation, EditAccountMutation, EditAccountMutationVariables, EditUserInput, EditUserMutation, GetUserDataQuery } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
 import { GetUserData } from '../App';
@@ -16,9 +16,15 @@ const pick = (obj: any, keys: string[]) => Object.fromEntries(
 );
 
 const EditAccount = gql`
-  mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
-    editAccount (input: { first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp }) {
+  mutation EditAccount($data: EditUserInput!) {
+    editUser (data: $data) {
       id
+      first
+      last
+      email
+      phone
+      venmo
+      cashapp
     }
   }
 `;
@@ -33,21 +39,21 @@ export const UploadPhoto = gql`
 `;
 
 export function EditProfile() {
-  const [edit, { error }] = useMutation<EditAccountMutation>(EditAccount);
+  const [edit, { error }] = useMutation<EditUserMutation>(EditAccount);
   const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
   const { data: userData } = useQuery<GetUserDataQuery>(GetUserData);
   const toast = useToast();
 
   const user = userData?.getUser;
 
-  const validationErrors = useValidationErrors<EditAccountMutationVariables>(error);
+  const validationErrors = useValidationErrors<EditUserInput>(error);
 
-  const { handleSubmit, register, formState: { errors, isSubmitting, isValid } } = useForm<EditAccountMutationVariables>({
-     defaultValues: pick(user, ['first', 'last', 'email', 'phone', 'venmo'])
+  const { handleSubmit, register, formState: { errors, isSubmitting, isValid } } = useForm<EditUserInput>({
+     defaultValues: pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp'])
   });
 
   const onSubmit = handleSubmit(async (variables) => {
-    const { data } = await edit({ variables });
+    const { data } = await edit({ variables: { data: variables } });
 
     if (data) {
       toast({ status: 'success', title: "Success", description: "Successfully updated profile" });

@@ -67,16 +67,7 @@ export type ChangePasswordInput = {
   password: Scalars['String'];
 };
 
-export type EditAccountInput = {
-  cashapp?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  first: Scalars['String'];
-  last: Scalars['String'];
-  phone: Scalars['String'];
-  venmo?: InputMaybe<Scalars['String']>;
-};
-
-export type EditUserValidator = {
+export type EditUserInput = {
   capacity?: InputMaybe<Scalars['Float']>;
   cashapp?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
@@ -143,7 +134,6 @@ export type Mutation = {
   deleteBeep: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   deleteReport: Scalars['Boolean'];
-  editAccount: User;
   editUser: User;
   forgotPassword: Scalars['Boolean'];
   login: Auth;
@@ -161,7 +151,6 @@ export type Mutation = {
   setBeeperStatus: User;
   setLocation: User;
   signup: Auth;
-  updatePushToken: Scalars['Boolean'];
   updateReport: Report;
   verifyAccount: Scalars['Boolean'];
 };
@@ -209,14 +198,9 @@ export type MutationDeleteReportArgs = {
 };
 
 
-export type MutationEditAccountArgs = {
-  input: EditAccountInput;
-};
-
-
 export type MutationEditUserArgs = {
-  data: EditUserValidator;
-  id: Scalars['String'];
+  data: EditUserInput;
+  id?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -298,11 +282,6 @@ export type MutationSetLocationArgs = {
 
 export type MutationSignupArgs = {
   input: SignUpInput;
-};
-
-
-export type MutationUpdatePushTokenArgs = {
-  pushToken: Scalars['String'];
 };
 
 
@@ -677,16 +656,11 @@ export type ChangePasswordMutationVariables = Exact<{
 export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: boolean };
 
 export type EditAccountMutationVariables = Exact<{
-  first: Scalars['String'];
-  last: Scalars['String'];
-  email: Scalars['String'];
-  phone: Scalars['String'];
-  venmo?: InputMaybe<Scalars['String']>;
-  cashapp?: InputMaybe<Scalars['String']>;
+  data: EditUserInput;
 }>;
 
 
-export type EditAccountMutation = { __typename?: 'Mutation', editAccount: { __typename?: 'User', id: string } };
+export type EditAccountMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, cashapp?: string | null } };
 
 export type AddProfilePictureMutationVariables = Exact<{
   picture: Scalars['Upload'];
@@ -863,7 +837,7 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, rating?: number | null, email?: string | null, created?: any | null, pushToken?: string | null, location?: { __typename?: 'Point', latitude: number, longitude: number } | null, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, state: number, rider: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string } }> } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, rating?: number | null, email?: string | null, created?: any | null, pushToken?: string | null, location?: { __typename?: 'Point', latitude: number, longitude: number } | null, queue: Array<{ __typename?: 'QueueEntry', id: string, origin: string, destination: string, start: number, groupSize: number, state: number, rider: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string } }> } };
 
 export type RemoveUserMutationVariables = Exact<{
   id: Scalars['String'];
@@ -874,11 +848,11 @@ export type RemoveUserMutation = { __typename?: 'Mutation', removeUser: boolean 
 
 export type VerifyUserMutationVariables = Exact<{
   id: Scalars['String'];
-  data: EditUserValidator;
+  data: EditUserInput;
 }>;
 
 
-export type VerifyUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', username: string } };
+export type VerifyUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, isEmailVerified: boolean, isStudent: boolean } };
 
 export type ClearQueueMutationVariables = Exact<{
   id: Scalars['String'];
@@ -888,20 +862,13 @@ export type ClearQueueMutationVariables = Exact<{
 
 export type ClearQueueMutation = { __typename?: 'Mutation', clearQueue: boolean };
 
-export type GetEditableUserQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type GetEditableUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, email?: string | null, cashapp?: string | null, pushToken?: string | null } };
-
 export type EditUserMutationVariables = Exact<{
   id: Scalars['String'];
-  data: EditUserValidator;
+  data: EditUserInput;
 }>;
 
 
-export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', username: string } };
+export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, email?: string | null, cashapp?: string | null, pushToken?: string | null } };
 
 export type UserLocationQueryVariables = Exact<{
   id: Scalars['String'];
@@ -1412,11 +1379,15 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const EditAccountDocument = gql`
-    mutation EditAccount($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String) {
-  editAccount(
-    input: {first: $first, last: $last, email: $email, phone: $phone, venmo: $venmo, cashapp: $cashapp}
-  ) {
+    mutation EditAccount($data: EditUserInput!) {
+  editUser(data: $data) {
     id
+    first
+    last
+    email
+    phone
+    venmo
+    cashapp
   }
 }
     `;
@@ -1435,12 +1406,7 @@ export type EditAccountMutationFn = Apollo.MutationFunction<EditAccountMutation,
  * @example
  * const [editAccountMutation, { data, loading, error }] = useEditAccountMutation({
  *   variables: {
- *      first: // value for 'first'
- *      last: // value for 'last'
- *      email: // value for 'email'
- *      phone: // value for 'phone'
- *      venmo: // value for 'venmo'
- *      cashapp: // value for 'cashapp'
+ *      data: // value for 'data'
  *   },
  * });
  */
@@ -2401,6 +2367,8 @@ export const GetUserDocument = gql`
   getUser(id: $id) {
     id
     name
+    first
+    last
     isBeeping
     isStudent
     isEmailVerified
@@ -2501,9 +2469,11 @@ export type RemoveUserMutationHookResult = ReturnType<typeof useRemoveUserMutati
 export type RemoveUserMutationResult = Apollo.MutationResult<RemoveUserMutation>;
 export type RemoveUserMutationOptions = Apollo.BaseMutationOptions<RemoveUserMutation, RemoveUserMutationVariables>;
 export const VerifyUserDocument = gql`
-    mutation VerifyUser($id: String!, $data: EditUserValidator!) {
+    mutation VerifyUser($id: String!, $data: EditUserInput!) {
   editUser(id: $id, data: $data) {
-    username
+    id
+    isEmailVerified
+    isStudent
   }
 }
     `;
@@ -2566,9 +2536,10 @@ export function useClearQueueMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type ClearQueueMutationHookResult = ReturnType<typeof useClearQueueMutation>;
 export type ClearQueueMutationResult = Apollo.MutationResult<ClearQueueMutation>;
 export type ClearQueueMutationOptions = Apollo.BaseMutationOptions<ClearQueueMutation, ClearQueueMutationVariables>;
-export const GetEditableUserDocument = gql`
-    query GetEditableUser($id: String!) {
-  getUser(id: $id) {
+export const EditUserDocument = gql`
+    mutation EditUser($id: String!, $data: EditUserInput!) {
+  editUser(id: $id, data: $data) {
+    id
     first
     last
     isBeeping
@@ -2586,41 +2557,6 @@ export const GetEditableUserDocument = gql`
     email
     cashapp
     pushToken
-  }
-}
-    `;
-
-/**
- * __useGetEditableUserQuery__
- *
- * To run a query within a React component, call `useGetEditableUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetEditableUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetEditableUserQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetEditableUserQuery(baseOptions: Apollo.QueryHookOptions<GetEditableUserQuery, GetEditableUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetEditableUserQuery, GetEditableUserQueryVariables>(GetEditableUserDocument, options);
-      }
-export function useGetEditableUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEditableUserQuery, GetEditableUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetEditableUserQuery, GetEditableUserQueryVariables>(GetEditableUserDocument, options);
-        }
-export type GetEditableUserQueryHookResult = ReturnType<typeof useGetEditableUserQuery>;
-export type GetEditableUserLazyQueryHookResult = ReturnType<typeof useGetEditableUserLazyQuery>;
-export type GetEditableUserQueryResult = Apollo.QueryResult<GetEditableUserQuery, GetEditableUserQueryVariables>;
-export const EditUserDocument = gql`
-    mutation EditUser($id: String!, $data: EditUserValidator!) {
-  editUser(id: $id, data: $data) {
-    username
   }
 }
     `;

@@ -68,16 +68,7 @@ export type ChangePasswordInput = {
   password: Scalars['String'];
 };
 
-export type EditAccountInput = {
-  cashapp?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  first: Scalars['String'];
-  last: Scalars['String'];
-  phone: Scalars['String'];
-  venmo?: InputMaybe<Scalars['String']>;
-};
-
-export type EditUserValidator = {
+export type EditUserInput = {
   capacity?: InputMaybe<Scalars['Float']>;
   cashapp?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
@@ -144,7 +135,6 @@ export type Mutation = {
   deleteBeep: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   deleteReport: Scalars['Boolean'];
-  editAccount: User;
   editUser: User;
   forgotPassword: Scalars['Boolean'];
   login: Auth;
@@ -162,7 +152,6 @@ export type Mutation = {
   setBeeperStatus: User;
   setLocation: User;
   signup: Auth;
-  updatePushToken: Scalars['Boolean'];
   updateReport: Report;
   verifyAccount: Scalars['Boolean'];
 };
@@ -210,14 +199,9 @@ export type MutationDeleteReportArgs = {
 };
 
 
-export type MutationEditAccountArgs = {
-  input: EditAccountInput;
-};
-
-
 export type MutationEditUserArgs = {
-  data: EditUserValidator;
-  id: Scalars['String'];
+  data: EditUserInput;
+  id?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -299,11 +283,6 @@ export type MutationSetLocationArgs = {
 
 export type MutationSignupArgs = {
   input: SignUpInput;
-};
-
-
-export type MutationUpdatePushTokenArgs = {
-  pushToken: Scalars['String'];
 };
 
 
@@ -803,11 +782,11 @@ export type DeleteAccountMutationVariables = Exact<{ [key: string]: never; }>;
 export type DeleteAccountMutation = { __typename?: 'Mutation', deleteAccount: boolean };
 
 export type EditAccountMutationVariables = Exact<{
-  input: EditAccountInput;
+  input: EditUserInput;
 }>;
 
 
-export type EditAccountMutation = { __typename?: 'Mutation', editAccount: { __typename?: 'User', id: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, cashapp?: string | null } };
+export type EditAccountMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, cashapp?: string | null } };
 
 export type AddProfilePictureMutationVariables = Exact<{
   picture: Scalars['Upload'];
@@ -815,13 +794,6 @@ export type AddProfilePictureMutationVariables = Exact<{
 
 
 export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', id: string, photo?: string | null } };
-
-export type UpdatePushTokenMutationVariables = Exact<{
-  token: Scalars['String'];
-}>;
-
-
-export type UpdatePushTokenMutation = { __typename?: 'Mutation', updatePushToken: boolean };
 
 export type RemoveTokenMutationVariables = Exact<{
   token: Scalars['String'];
@@ -2037,8 +2009,8 @@ export type DeleteAccountMutationHookResult = ReturnType<typeof useDeleteAccount
 export type DeleteAccountMutationResult = ApolloReactCommon.MutationResult<DeleteAccountMutation>;
 export type DeleteAccountMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteAccountMutation, DeleteAccountMutationVariables>;
 export const EditAccountDocument = gql`
-    mutation EditAccount($input: EditAccountInput!) {
-  editAccount(input: $input) {
+    mutation EditAccount($input: EditUserInput!) {
+  editUser(data: $input) {
     id
     name
     first
@@ -2110,37 +2082,6 @@ export function useAddProfilePictureMutation(baseOptions?: ApolloReactHooks.Muta
 export type AddProfilePictureMutationHookResult = ReturnType<typeof useAddProfilePictureMutation>;
 export type AddProfilePictureMutationResult = ApolloReactCommon.MutationResult<AddProfilePictureMutation>;
 export type AddProfilePictureMutationOptions = ApolloReactCommon.BaseMutationOptions<AddProfilePictureMutation, AddProfilePictureMutationVariables>;
-export const UpdatePushTokenDocument = gql`
-    mutation UpdatePushToken($token: String!) {
-  updatePushToken(pushToken: $token)
-}
-    `;
-export type UpdatePushTokenMutationFn = ApolloReactCommon.MutationFunction<UpdatePushTokenMutation, UpdatePushTokenMutationVariables>;
-
-/**
- * __useUpdatePushTokenMutation__
- *
- * To run a mutation, you first call `useUpdatePushTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePushTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updatePushTokenMutation, { data, loading, error }] = useUpdatePushTokenMutation({
- *   variables: {
- *      token: // value for 'token'
- *   },
- * });
- */
-export function useUpdatePushTokenMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdatePushTokenMutation, UpdatePushTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<UpdatePushTokenMutation, UpdatePushTokenMutationVariables>(UpdatePushTokenDocument, options);
-      }
-export type UpdatePushTokenMutationHookResult = ReturnType<typeof useUpdatePushTokenMutation>;
-export type UpdatePushTokenMutationResult = ApolloReactCommon.MutationResult<UpdatePushTokenMutation>;
-export type UpdatePushTokenMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdatePushTokenMutation, UpdatePushTokenMutationVariables>;
 export const RemoveTokenDocument = gql`
     mutation RemoveToken($token: String!) {
   removeToken(token: $token)

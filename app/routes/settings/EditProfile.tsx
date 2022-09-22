@@ -47,9 +47,9 @@ const DeleteAccount = gql`
   }
 `;
 
-const EditAccount = gql`
-  mutation EditAccount($input: EditAccountInput!) {
-    editAccount(input: $input) {
+export const EditAccount = gql`
+  mutation EditAccount($input: EditUserInput!) {
+    editUser(data: $input) {
       id
       name
       first

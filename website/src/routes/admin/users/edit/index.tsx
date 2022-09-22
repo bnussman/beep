@@ -8,10 +8,29 @@ import {
   TabPanels,
   TabPanel,
   Box,
-  Heading
+  Heading,
+  Spinner
 } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { GetUserQuery } from "../../../../generated/graphql";
+import { GetUser } from "../User";
+import { Error } from '../../../../components/Error';
 
 export function Edit() {
+  const { id } = useParams();
+  const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
+
+  const user = data?.getUser;
+
+  if (loading || !user) {
+    return <Spinner />;
+  }
+  
+  if (error) {
+    return <Error error={error} />;
+  }
+
   return (
     <Box>
       <Heading>Edit</Heading>
@@ -22,7 +41,7 @@ export function Edit() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <EditDetails />
+            <EditDetails user={user} />
           </TabPanel>
           <TabPanel>
             <EditLocation />

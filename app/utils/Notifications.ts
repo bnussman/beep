@@ -1,8 +1,8 @@
 import * as Notifications from "expo-notifications";
 import { Vibration } from "react-native";
-import { gql } from "@apollo/client";
 import { client } from "../utils/Apollo";
 import { isMobile } from "./constants";
+import { EditAccount } from "../routes/settings/EditProfile";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -56,12 +56,6 @@ export async function updatePushToken(
   previousPushToken?: string | null
 ): Promise<void> {
   if (isMobile) {
-    const UpdatePushToken = gql`
-      mutation UpdatePushToken($token: String!) {
-        updatePushToken(pushToken: $token)
-      }
-    `;
-
     const token = await getPushToken();
 
     if (previousPushToken && token === previousPushToken) {
@@ -69,7 +63,10 @@ export async function updatePushToken(
     }
 
     if (token) {
-      await client.mutate({ mutation: UpdatePushToken, variables: { token } });
+      await client.mutate({
+        mutation: EditAccount,
+        variables: { data: { pushToken: token } },
+      });
     }
   }
 }

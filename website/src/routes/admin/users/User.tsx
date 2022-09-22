@@ -47,6 +47,8 @@ export const GetUser = gql`
     getUser(id: $id) {
       id
       name
+      first
+      last
       isBeeping
       isStudent
       isEmailVerified
@@ -95,9 +97,11 @@ const RemoveUser = gql`
 `;
 
 const VerifyUser = gql`
-  mutation VerifyUser($id: String!, $data: EditUserValidator!) {
+  mutation VerifyUser($id: String!, $data: EditUserInput!) {
     editUser(id: $id, data: $data) {
-      username
+      id
+      isEmailVerified
+      isStudent
     }
   }
 `;
@@ -191,8 +195,6 @@ export function User() {
   const onVerify = () => {
     verify({
       variables: { id, data: { isEmailVerified: true, isStudent: true } },
-      refetchQueries: [UsersGraphQL, GetUser],
-      awaitRefetchQueries: false
     }).then(() => {
       toast({ title: "User verified", status: "success" });
     });

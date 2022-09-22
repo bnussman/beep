@@ -3,7 +3,7 @@ import { isEduEmail, deleteUser, Upload } from './helpers';
 import { wrap } from '@mikro-orm/core';
 import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
-import { EditAccountInput, ChangePasswordInput } from '../validators/account';
+import { ChangePasswordInput } from '../validators/account';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import { VerifyEmail } from '../entities/VerifyEmail';
@@ -12,44 +12,11 @@ import { hash } from 'bcrypt';
 
 @Resolver()
 export class AccountResolver {
-
-  @Mutation(() => User)
-  @Authorized('No Verification')
-  public async editAccount(@Ctx() ctx: Context, @Arg('input') input: EditAccountInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
-    const oldEmail = ctx.user.email;
-
-    wrap(ctx.user).assign(input);
-
-    if (oldEmail !== input.email) {
-      await ctx.em.nativeDelete(VerifyEmail, { user: ctx.user });
-
-      wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
-
-      await createVerifyEmailEntryAndSendEmail(ctx.user, ctx.em);
-    }
-
-    pubSub.publish("User" + ctx.user.id, ctx.user);
-
-    await ctx.em.flush();
-
-    return ctx.user;
-  }
-
   @Mutation(() => Boolean)
   @Authorized('No Verification')
   public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
     ctx.user.password = await hash(input.password, 10);
     ctx.user.passwordType = PasswordType.BCRYPT;
-
-    await ctx.em.flush();
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  @Authorized('No Verification')
-  public async updatePushToken(@Ctx() ctx: Context, @Arg('pushToken') pushToken: string): Promise<boolean> {
-    ctx.user.pushToken = pushToken;
 
     await ctx.em.flush();
 
