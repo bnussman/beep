@@ -24,6 +24,7 @@ import {
   Stack,
   Text,
 } from "native-base";
+import { Card } from "../../components/Card";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -45,91 +46,35 @@ export function Beep(props: Props) {
         }
       >
         <HStack alignItems="center" space={4}>
-          <Stack flexShrink={1}>
-            <Heading fontWeight="extrabold" size="xl">
-              {beep.rider.name}
-            </Heading>
-            <Text fontSize="xs">
-              {beep.rider.rating !== null && beep.rider.rating !== undefined
-                ? printStars(beep.rider.rating)
-                : null}
-            </Text>
-          </Stack>
-          {beep.state > 0 && (
-            <Menu
-              key={`menu-${beep.id}`}
-              w="190"
-              trigger={(triggerProps) => (
-                <Pressable
-                  accessibilityLabel="More options menu"
-                  {...triggerProps}
-                >
-                  <Icon
-                    color="gray.400"
-                    as={Ionicons}
-                    name="ios-ellipsis-horizontal-circle"
-                    size="xl"
-                    mr={4}
-                  />
-                </Pressable>
-              )}
-            >
-              <Menu.Item
-                onPress={() => Linking.openURL("tel:" + beep.rider.phone)}
-              >
-                <HStack alignItems="center">
-                  <Text>Call</Text>
-                  <Spacer />
-                  <Icon as={Ionicons} name="ios-call" />
-                </HStack>
-              </Menu.Item>
-              <Menu.Item
-                onPress={() => Linking.openURL("sms:" + beep.rider.phone)}
-              >
-                <HStack alignItems="center">
-                  <Text>Text</Text>
-                  <Spacer />
-                  <Icon as={Ionicons} name="ios-chatbox" />
-                </HStack>
-              </Menu.Item>
-              {/* <Divider my={1} w="100%" />
-              <Menu.Item onPress={() => null}>
-                <HStack alignItems="center">
-                  <Text color="red.400">Cancel Beep</Text>
-                  <Spacer />
-                  <Icon
-                    as={MaterialCommunityIcons}
-                    name="cancel"
-                    color="red.400"
-                  />
-                </HStack>
-              </Menu.Item> */}
-            </Menu>
-          )}
+          <Heading flexShrink={1} fontWeight="extrabold" size="xl">
+            {beep.rider.name}
+          </Heading>
           <Spacer />
           <Avatar size="xl" url={beep.rider.photo} />
         </HStack>
       </Pressable>
-      <Stack space={2} mt={4}>
-        <Box>
-          <Heading size="sm" fontWeight="extrabold">
-            Group Size
-          </Heading>
-          <Text>{beep.groupSize}</Text>
-        </Box>
-        <Box>
-          <Heading size="sm" fontWeight="extrabold">
-            Pick Up
-          </Heading>
-          <Text>{beep.origin}</Text>
-        </Box>
-        <Box>
-          <Heading size="sm" fontWeight="extrabold">
-            Destination
-          </Heading>
-          <Text>{beep.destination}</Text>
-        </Box>
-      </Stack>
+      <Card mt={4}>
+        <Stack space={2}>
+          <Box>
+            <Heading size="sm" fontWeight="extrabold">
+              Group Size
+            </Heading>
+            <Text>{beep.groupSize}</Text>
+          </Box>
+          <Box>
+            <Heading size="sm" fontWeight="extrabold">
+              Pick Up
+            </Heading>
+            <Text>{beep.origin}</Text>
+          </Box>
+          <Box>
+            <Heading size="sm" fontWeight="extrabold">
+              Destination
+            </Heading>
+            <Text>{beep.destination}</Text>
+          </Box>
+        </Stack>
+      </Card>
       <Spacer />
       <Stack space={3}>
         {beep.state === 0 ? (
@@ -139,12 +84,24 @@ export function Beep(props: Props) {
           </>
         ) : (
           <>
+            <HStack space={2}>
+              <Button
+                flexGrow={1}
+                onPress={() => Linking.openURL("tel:" + beep.rider.phone)}
+              >
+                Call
+              </Button>
+              <Button
+                flexGrow={1}
+                onPress={() => Linking.openURL("sms:" + beep.rider.phone)}
+              >
+                Text
+              </Button>
+            </HStack>
             {beep.state > 2 && (
               <>
                 {beep.rider.cashapp ? (
                   <Button
-                    colorScheme="green"
-                    variant="subtle"
                     onPress={() =>
                       openCashApp(
                         beep.rider.cashapp,
@@ -159,8 +116,6 @@ export function Beep(props: Props) {
                 ) : null}
                 {beep.rider?.venmo ? (
                   <Button
-                    colorScheme="blue"
-                    variant="subtle"
                     onPress={() =>
                       openVenmo(
                         beep.rider.venmo,
@@ -178,7 +133,6 @@ export function Beep(props: Props) {
             )}
             {beep.state <= 1 ? (
               <Button
-                colorScheme="green"
                 onPress={() => openDirections("Current+Location", beep.origin)}
               >
                 Get Directions to Rider

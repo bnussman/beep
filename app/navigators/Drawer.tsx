@@ -126,7 +126,9 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               <Text fontWeight="extrabold" letterSpacing="sm" fontSize="md">
                 {user?.name}
               </Text>
-              <Text color="gray.500">@{user?.username}</Text>
+              <Text color="gray.500" _dark={{ color: "gray.300" }}>
+                @{user?.username}
+              </Text>
             </Stack>
           </HStack>
         </Pressable>

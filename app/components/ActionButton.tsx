@@ -3,7 +3,7 @@ import { GetInitialQueueQuery } from "../generated/graphql";
 import { Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
-import { GradietnButton } from "./GradientButton";
+import { Button } from "native-base";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -21,7 +21,7 @@ const UpdateBeeperQueue = gql`
   }
 `;
 
-function Button(props: Props) {
+function _Button(props: Props) {
   const { beep } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -62,10 +62,10 @@ function Button(props: Props) {
   };
 
   return (
-    <GradietnButton size="lg" isLoading={isLoading} onPress={onPress}>
+    <Button size="lg" isLoading={isLoading} onPress={onPress}>
       {getMessage()}
-    </GradietnButton>
+    </Button>
   );
 }
 
-export const ActionButton = React.memo(Button);
+export const ActionButton = React.memo(_Button);

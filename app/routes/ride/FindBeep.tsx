@@ -593,27 +593,31 @@ export function MainFindBeepScreen() {
             />
           </Map>
           <Stack space={2} w="100%">
-            <Button
-              onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
-              endIcon={
-                <Icon as={Ionicons} name="ios-call" color="white" size="md" />
-              }
-            >
-              Call Beeper
-            </Button>
-            <Button
-              onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
-              endIcon={
-                <Icon
-                  as={Ionicons}
-                  name="ios-chatbox"
-                  color="white"
-                  size="md"
-                />
-              }
-            >
-              Text Beeper
-            </Button>
+            <HStack space={2} w="100%">
+              <Button
+                flexGrow={1}
+                onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
+                endIcon={
+                  <Icon as={Ionicons} name="ios-call" color="white" size="md" />
+                }
+              >
+                Call Beeper
+              </Button>
+              <Button
+                flexGrow={1}
+                onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
+                endIcon={
+                  <Icon
+                    as={Ionicons}
+                    name="ios-chatbox"
+                    color="white"
+                    size="md"
+                  />
+                }
+              >
+                Text Beeper
+              </Button>
+            </HStack>
 
             {beep.beeper.cashapp ? (
               <Button
@@ -685,15 +689,15 @@ export function MainFindBeepScreen() {
           <Text>to accept your request.</Text>
         </Center>
         <Card w="100%">
-          <Text isTruncated fontSize="xs">
+          <Text>
             <Text fontWeight="extrabold">Pick Up </Text>
             <Text>{beep.origin}</Text>
           </Text>
-          <Text isTruncated fontSize="xs">
+          <Text>
             <Text fontWeight="extrabold">Destination </Text>
             <Text>{beep.destination}</Text>
           </Text>
-          <Text isTruncated fontSize="xs">
+          <Text>
             <Text fontWeight="extrabold">Number of Riders </Text>
             <Text>{beep.groupSize}</Text>
           </Text>

@@ -61,7 +61,6 @@ function Button(props: Props) {
 
   return (
     <_Button
-      size="lg"
       isLoading={isLoading}
       colorScheme="red"
       onPress={onPress}
