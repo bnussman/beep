@@ -62,7 +62,12 @@ function _Button(props: Props) {
   };
 
   return (
-    <Button size="lg" isLoading={isLoading} onPress={onPress}>
+    <Button
+      size="lg"
+      isLoading={isLoading}
+      onPress={onPress}
+      _text={{ fontWeight: "extrabold" }}
+    >
       {getMessage()}
     </Button>
   );

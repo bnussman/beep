@@ -32,15 +32,6 @@ export const NATIVE_BASE_THEME = extendTheme({
       700: "#2B3146",
       800: "#1B2138",
       900: "#10152F",
-      // 100: "#FEFBDC",
-      // 200: "#FDF6BA",
-      // 300: "#FBEE97",
-      // 400: "#F7E57C",
-      // 500: "#F2D852",
-      // 600: "#D0B53B",
-      // 700: "#AE9429",
-      // 800: "#8C741A",
-      // 900: "#745D0F",
     },
   },
   components: {
@@ -71,7 +62,7 @@ export const NATIVE_BASE_THEME = extendTheme({
     },
     Button: {
       baseStyle: {
-        borderRadius: 8,
+        borderRadius: 10,
       },
     },
     FormControlLabel: {

@@ -112,7 +112,7 @@ export function RatePreview({ id }: Props) {
       <HStack>
         <Heading fontWeight="extrabold">Ratings</Heading>
         <Spacer />
-        <Heading fontWeight="extrabold" size="xs" color="gray.400">
+        <Heading size="xs" color="gray.400">
           {count} ratings
         </Heading>
       </HStack>
@@ -136,7 +136,9 @@ export function RatePreview({ id }: Props) {
                   {new Date(rating.timestamp).toLocaleString()}
                 </Text>
                 <Text fontSize="xs">{printStars(rating.stars)}</Text>
-                {rating.message ? <Text fontSize="xs">{rating.message}</Text> : null}
+                {rating.message ? (
+                  <Text fontSize="xs">{rating.message}</Text>
+                ) : null}
               </Stack>
             </HStack>
           </Card>

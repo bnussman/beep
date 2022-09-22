@@ -135,7 +135,7 @@ export function ProfileScreen() {
             >
               {data.getUser.name}
             </Heading>
-            <Heading size="sm" color="gray.500" fontWeight="extrabold">
+            <Heading size="sm" color="gray.500">
               @{data.getUser.username}
             </Heading>
           </Stack>
