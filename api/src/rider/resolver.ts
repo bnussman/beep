@@ -39,18 +39,6 @@ export class RiderResolver {
     return entry;
   }
 
-  @Query(() => User)
-  @Authorized()
-  public async findBeep(@Ctx() ctx: Context): Promise<User> {
-    const beeper = await ctx.em.findOne(User, { isBeeping: true });
-
-    if (!beeper) {
-      throw new Error("Nobody is beeping right now!");
-    }
-
-    return beeper;
-  }
-
   @Query(() => QueueEntry, { nullable: true })
   @Authorized()
   public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
