@@ -303,7 +303,6 @@ export type Point = {
 
 export type Query = {
   __typename?: 'Query';
-  findBeep: User;
   getAllBeepersLocation: Array<AnonymousBeeper>;
   getBeep: Beep;
   getBeeperList: Array<User>;
