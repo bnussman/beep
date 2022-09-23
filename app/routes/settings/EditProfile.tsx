@@ -24,8 +24,8 @@ import {
 import {
   AddProfilePictureMutation,
   DeleteAccountMutation,
-  EditAccountInput,
   EditAccountMutation,
+  EditUserInput,
 } from "../../generated/graphql";
 import {
   Spinner,
@@ -107,13 +107,13 @@ export function EditProfileScreen() {
     setFocus,
     reset,
     formState: { errors, isDirty },
-  } = useForm<EditAccountInput>({ defaultValues });
+  } = useForm<EditUserInput>({ defaultValues });
 
   useEffect(() => {
     reset(defaultValues);
   }, [defaultValues]);
 
-  const validationErrors = useValidationErrors<EditAccountInput>(error);
+  const validationErrors = useValidationErrors<EditUserInput>(error);
 
   const [upload, { loading: uploadLoading }] =
     useMutation<AddProfilePictureMutation>(UploadPhoto);
@@ -260,7 +260,7 @@ export function EditProfileScreen() {
                   <Input
                     onBlur={onBlur}
                     onChangeText={(val) => onChange(val)}
-                    value={value}
+                    value={value ? value : undefined}
                     ref={ref}
                     returnKeyLabel="next"
                     returnKeyType="next"
@@ -291,7 +291,7 @@ export function EditProfileScreen() {
                   <Input
                     onBlur={onBlur}
                     onChangeText={(val) => onChange(val)}
-                    value={value}
+                    value={value ? value : undefined}
                     ref={ref}
                     returnKeyLabel="next"
                     returnKeyType="next"
@@ -326,7 +326,7 @@ export function EditProfileScreen() {
               <Input
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
-                value={value}
+                value={value ? value : undefined}
                 ref={ref}
                 returnKeyLabel="next"
                 returnKeyType="next"
@@ -353,7 +353,7 @@ export function EditProfileScreen() {
               <Input
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
-                value={value}
+                value={value ? value : undefined}
                 ref={ref}
                 returnKeyLabel="next"
                 returnKeyType="next"
