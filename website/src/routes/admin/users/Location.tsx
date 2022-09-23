@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { gql } from '@apollo/client';
 import { Box, Center } from '@chakra-ui/react';
-import { GetUserQuery, User } from '../../../generated/graphql';
+import { GetUserQuery } from '../../../generated/graphql';
 import { cache, client } from '../../../utils/Apollo';
-import { GetUser } from './User';
 import { Marker } from '../../../components/Marker';
 import { Map } from '../../../components/Map';
 
@@ -75,7 +74,10 @@ export function LocationView(props: Props) {
           <Marker
             latitude={user.location.latitude}
             longitude={user.location.longitude}
-            user={user as User}
+            userId={user.id}
+            username={user.username}
+            photo={user.photo}
+            name={user.name}
             variant="default"
           />
         </Map>
