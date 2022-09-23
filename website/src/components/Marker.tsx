@@ -1,6 +1,5 @@
 import React from "react";
 import { Marker as _Marker } from 'react-map-gl';
-import { User } from "../generated/graphql";
 import { Link } from "react-router-dom";
 import { QueuePreview } from "./QueuePreview";
 import {
@@ -21,18 +20,21 @@ import {
   Portal,
   HStack,
   Stack,
-  Tooltip
+  Tooltip,
 } from "@chakra-ui/react";
 
 interface Props {
   latitude: number;
   longitude: number;
-  user: User;
+  username: string;
+  userId: string;
+  photo: string | null | undefined;
+  name: string;
   variant?: 'queue' | 'default';
 }
 
 export function Marker(props: Props) {
-  const { latitude, longitude, user, variant } = props;
+  const { latitude, longitude, variant, userId, username, photo, name } = props;
   const { onCopy } = useClipboard(`${latitude},${longitude}`);
   const toast = useToast();
 
@@ -41,10 +43,6 @@ export function Marker(props: Props) {
     toast({ title: "Copied coordinates to clipboard", status: "info" });
   };
 
-  if (!user) {
-    return null;
-  }
-
   if (variant === 'queue') {
     return (
       <_Marker longitude={longitude} latitude={latitude}>
@@ -52,28 +50,28 @@ export function Marker(props: Props) {
           <PopoverTrigger>
             <Box width="max-content" cursor="pointer">
               <Center>
-                <Avatar src={user?.photo || ''} size="xs" />
+                <Avatar src={photo || ''} size="xs" />
               </Center>
-              <Text>{user.name}</Text>
+              <Text>{name}</Text>
             </Box>
           </PopoverTrigger>
           <Portal>
             <PopoverContent>
               <PopoverArrow />
               <PopoverHeader>
-                <Link to={`/admin/users/${user?.id}/queue`}>
+                <Link to={`/admin/users/${userId}/queue`}>
                   <HStack>
-                    <Avatar src={user?.photo || ''} />
+                    <Avatar src={photo || ''} />
                     <Stack spacing={0}>
-                      <Text fontWeight="extrabold">{user?.name}</Text>
-                      <Text>@{user?.username}</Text>
+                      <Text fontWeight="extrabold">{name}</Text>
+                      <Text>@{username}</Text>
                     </Stack>
                   </HStack>
                 </Link>
               </PopoverHeader>
               <PopoverCloseButton />
               <PopoverBody>
-                <QueuePreview user={user} />
+                <QueuePreview userId={userId} />
               </PopoverBody>
               <PopoverFooter cursor="pointer" onClick={copy}>{latitude.toFixed(3)} {longitude.toFixed(3)}</PopoverFooter>
             </PopoverContent>
@@ -89,9 +87,9 @@ export function Marker(props: Props) {
         <Tooltip label={`${latitude}, ${longitude}`} aria-label={`${latitude}, ${longitude}`}>
           <Box>
             <Center>
-              <Avatar src={user?.photo || ''} size="xs" />
+              <Avatar src={photo || ''} size="xs" />
             </Center>
-            <Text>{user.name}</Text>
+            <Text>{name}</Text>
           </Box>
         </Tooltip>
       </Box>

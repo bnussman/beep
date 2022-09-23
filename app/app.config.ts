@@ -47,7 +47,7 @@ export default {
         UIBackgroundModes: ["location", "fetch"],
       },
       config: {
-        googleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0"
+        googleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0",
       },
     },
     android: {
@@ -64,7 +64,7 @@ export default {
       ],
       config: {
         googleMaps: {
-          apiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc"
+          apiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
         },
       },
     },

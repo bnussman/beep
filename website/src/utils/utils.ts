@@ -21,3 +21,5 @@ export function getMobileOperatingSystem() {
 
   return "unknown";
 }
+
+export type Unpacked<T> = T extends (infer U)[] ? U : T;

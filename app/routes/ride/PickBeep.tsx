@@ -4,7 +4,7 @@ import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
 import { RefreshControl } from "react-native";
-import { GetBeeperListQuery } from "../../generated/graphql";
+import { GetBeepersQuery } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
@@ -24,10 +24,8 @@ import {
 } from "native-base";
 
 const GetBeepers = gql`
-  query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
-    getBeeperList(
-      input: { latitude: $latitude, longitude: $longitude, radius: $radius }
-    ) {
+  query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
+    getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
       id
       name
       first
@@ -51,7 +49,7 @@ export function PickBeepScreen() {
   const { params } = useRoute<any>();
   const navigation = useNavigation<Navigation>();
 
-  const { data, loading, error, refetch } = useQuery<GetBeeperListQuery>(
+  const { data, loading, error, refetch } = useQuery<GetBeepersQuery>(
     GetBeepers,
     {
       variables: {
@@ -63,7 +61,7 @@ export function PickBeepScreen() {
     }
   );
 
-  const beepers = data?.getBeeperList;
+  const beepers = data?.getBeepers;
   const isRefreshing = Boolean(data) && loading;
 
   function goBack(id: string): void {
@@ -75,7 +73,7 @@ export function PickBeepScreen() {
     item,
     index,
   }: {
-    item: Unpacked<GetBeeperListQuery["getBeeperList"]>;
+    item: Unpacked<GetBeepersQuery["getBeepers"]>;
     index: number;
   }) => (
     <Card

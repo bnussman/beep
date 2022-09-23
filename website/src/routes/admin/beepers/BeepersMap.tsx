@@ -1,11 +1,11 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
-import { User } from "../../../generated/graphql";
+import { GetBeepersQuery } from "../../../generated/graphql";
 import { Marker } from "../../../components/Marker";
 import { Map } from "../../../components/Map";
 
 interface Props {
-  beepers: User[] | undefined;
+  beepers: GetBeepersQuery['getBeepers'];
 }
 
 export function BeepersMap(props: Props) {
@@ -20,12 +20,15 @@ export function BeepersMap(props: Props) {
           zoom: 12,
         }}
       >
-        {beepers?.map((beeper: User) => (
+        {beepers?.map((beeper) => (
           <Marker
             key={beeper.id}
             latitude={beeper.location?.latitude || 0}
             longitude={beeper.location?.longitude || 0}
-            user={beeper}
+            userId={beeper.id}
+            photo={beeper.photo}
+            name={beeper.name}
+            username={beeper.username}
             variant='queue'
           />
         ))}

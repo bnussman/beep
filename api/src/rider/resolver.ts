@@ -2,8 +2,8 @@ import { sendNotification } from '../utils/notifications';
 import { QueryOrder } from '@mikro-orm/core';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
-import { Arg, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
-import { GetBeepInput, FindBeepInput } from './args';
+import { Arg, Args, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { GetBeepInput, GetBeepersArgs } from './args';
 import { Context } from '../utils/context';
 import { Beep } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
@@ -88,15 +88,15 @@ export class RiderResolver {
 
   @Query(() => [User])
   @Authorized()
-  public async getBeeperList(@Ctx() ctx: Context, @Arg('input') input: FindBeepInput): Promise<User[]> {
-    if (input.radius === 0) {
+  public async getBeepers(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
+    if (radius === 0) {
       return await ctx.em.find(User, { isBeeping: true });
     }
 
     const connection = ctx.em.getConnection();
 
     const raw: User[] = await connection.execute(`
-        SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude})) <= ${input.radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude}))
+        SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))
     `);
 
     const data = raw.map(user => ctx.em.map(User, user));

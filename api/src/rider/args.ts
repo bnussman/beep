@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
 import { Point } from '../location/resolver';
-import { Field, InputType } from 'type-graphql';
+import { ArgsType, Field, InputType } from 'type-graphql';
 import { QueueEntry } from '../entities/QueueEntry';
 
 @InputType()
@@ -22,8 +22,8 @@ export class GetBeepInput implements Partial<QueueEntry> {
   public groupSize?: number;
 }
 
-@InputType()
-export class FindBeepInput implements Point {
+@ArgsType()
+export class GetBeepersArgs implements Point {
   @Field()
   @IsNumber()
   longitude!: number;

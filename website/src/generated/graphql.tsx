@@ -87,12 +87,6 @@ export type EditUserInput = {
   venmo?: InputMaybe<Scalars['String']>;
 };
 
-export type FindBeepInput = {
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-  radius?: InputMaybe<Scalars['Float']>;
-};
-
 export type ForgotPassword = {
   __typename?: 'ForgotPassword';
   id: Scalars['String'];
@@ -305,7 +299,7 @@ export type Query = {
   __typename?: 'Query';
   getAllBeepersLocation: Array<AnonymousBeeper>;
   getBeep: Beep;
-  getBeeperList: Array<User>;
+  getBeepers: Array<User>;
   getBeeps: BeepsResponse;
   getETA: Scalars['String'];
   getInProgressBeeps: BeepsInProgressResponse;
@@ -328,8 +322,10 @@ export type QueryGetBeepArgs = {
 };
 
 
-export type QueryGetBeeperListArgs = {
-  input: FindBeepInput;
+export type QueryGetBeepersArgs = {
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  radius?: InputMaybe<Scalars['Float']>;
 };
 
 
@@ -718,14 +714,14 @@ export type GetUsersPerDomainQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsersPerDomainQuery = { __typename?: 'Query', getUsersPerDomain: Array<{ __typename?: 'UsersPerDomain', domain: string, count: number }> };
 
-export type GetBeeperListQueryVariables = Exact<{
+export type GetBeepersQueryVariables = Exact<{
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   radius?: InputMaybe<Scalars['Float']>;
 }>;
 
 
-export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, username: string, name: string, photo?: string | null, singlesRate: number, groupRate: number, capacity: number, isStudent: boolean, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null }> };
+export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, username: string, name: string, photo?: string | null, singlesRate: number, groupRate: number, capacity: number, isStudent: boolean, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null }> };
 
 export type GetInProgressBeepsQueryVariables = Exact<{
   show?: InputMaybe<Scalars['Int']>;
@@ -1702,11 +1698,9 @@ export function useGetUsersPerDomainLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetUsersPerDomainQueryHookResult = ReturnType<typeof useGetUsersPerDomainQuery>;
 export type GetUsersPerDomainLazyQueryHookResult = ReturnType<typeof useGetUsersPerDomainLazyQuery>;
 export type GetUsersPerDomainQueryResult = Apollo.QueryResult<GetUsersPerDomainQuery, GetUsersPerDomainQueryVariables>;
-export const GetBeeperListDocument = gql`
-    query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
-  getBeeperList(
-    input: {latitude: $latitude, longitude: $longitude, radius: $radius}
-  ) {
+export const GetBeepersDocument = gql`
+    query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
+  getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
     id
     username
     name
@@ -1725,16 +1719,16 @@ export const GetBeeperListDocument = gql`
     `;
 
 /**
- * __useGetBeeperListQuery__
+ * __useGetBeepersQuery__
  *
- * To run a query within a React component, call `useGetBeeperListQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBeeperListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetBeepersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBeepersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetBeeperListQuery({
+ * const { data, loading, error } = useGetBeepersQuery({
  *   variables: {
  *      latitude: // value for 'latitude'
  *      longitude: // value for 'longitude'
@@ -1742,17 +1736,17 @@ export const GetBeeperListDocument = gql`
  *   },
  * });
  */
-export function useGetBeeperListQuery(baseOptions: Apollo.QueryHookOptions<GetBeeperListQuery, GetBeeperListQueryVariables>) {
+export function useGetBeepersQuery(baseOptions: Apollo.QueryHookOptions<GetBeepersQuery, GetBeepersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBeeperListQuery, GetBeeperListQueryVariables>(GetBeeperListDocument, options);
+        return Apollo.useQuery<GetBeepersQuery, GetBeepersQueryVariables>(GetBeepersDocument, options);
       }
-export function useGetBeeperListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBeeperListQuery, GetBeeperListQueryVariables>) {
+export function useGetBeepersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBeepersQuery, GetBeepersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBeeperListQuery, GetBeeperListQueryVariables>(GetBeeperListDocument, options);
+          return Apollo.useLazyQuery<GetBeepersQuery, GetBeepersQueryVariables>(GetBeepersDocument, options);
         }
-export type GetBeeperListQueryHookResult = ReturnType<typeof useGetBeeperListQuery>;
-export type GetBeeperListLazyQueryHookResult = ReturnType<typeof useGetBeeperListLazyQuery>;
-export type GetBeeperListQueryResult = Apollo.QueryResult<GetBeeperListQuery, GetBeeperListQueryVariables>;
+export type GetBeepersQueryHookResult = ReturnType<typeof useGetBeepersQuery>;
+export type GetBeepersLazyQueryHookResult = ReturnType<typeof useGetBeepersLazyQuery>;
+export type GetBeepersQueryResult = Apollo.QueryResult<GetBeepersQuery, GetBeepersQueryVariables>;
 export const GetInProgressBeepsDocument = gql`
     query getInProgressBeeps($show: Int, $offset: Int) {
   getInProgressBeeps(show: $show, offset: $offset) {

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client';
-import { GetBeeperListQuery, User } from '../../../generated/graphql';
+import { GetBeepersQuery } from '../../../generated/graphql';
 import { Badge, Box, Center, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
@@ -8,14 +8,8 @@ import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
 
 const BeepersGraphQL = gql`
-  query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
-    getBeeperList(
-      input: {
-        latitude: $latitude,
-        longitude: $longitude,
-        radius: $radius
-      }
-    ) {
+  query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
+    getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
       id
       username
       name
@@ -40,13 +34,15 @@ export function Beepers() {
     error,
     startPolling,
     stopPolling
-  } = useQuery<GetBeeperListQuery>(BeepersGraphQL, {
+  } = useQuery<GetBeepersQuery>(BeepersGraphQL, {
     variables: {
       latitude: 0,
       longitude: 0,
       radius: 0
     }
   });
+
+  const beepers = data?.getBeepers;
 
   useEffect(() => {
     startPolling(1500);
@@ -55,10 +51,15 @@ export function Beepers() {
     };
   }, []);
 
-  if (error) return <Error error={error} />;
-  if (loading) return <Loading />;
+  if (loading || beepers === undefined) {
+    return <Loading />;
+  }
 
-  if (data?.getBeeperList.length === 0) {
+  if (error) {
+    return <Error error={error} />;
+  }
+
+  if (beepers?.length === 0) {
     return (
       <Box>
         <Heading>Beepers</Heading>
@@ -76,10 +77,10 @@ export function Beepers() {
       <Flex align="center">
         <Heading>Beepers</Heading>
         <Badge ml={2}>
-          {String(data?.getBeeperList.length || 0)}
+          {String(beepers?.length ?? 0)}
         </Badge>
       </Flex>
-      <BeepersMap beepers={data?.getBeeperList as User[]} />
+      <BeepersMap beepers={beepers} />
       <Box overflowX="auto">
         <Table>
           <Thead>
@@ -91,7 +92,7 @@ export function Beepers() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getBeeperList && (data.getBeeperList).map(beeper => (
+            {beepers.map((beeper) => (
               <Tr key={beeper.id}>
                 <TdUser user={beeper} />
                 <Td>{beeper.queueSize} riders</Td>

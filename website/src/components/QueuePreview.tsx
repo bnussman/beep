@@ -45,16 +45,16 @@ const QueueQuery = gql`
 `;
 
 interface Props {
-  user: { id: string; };
+  userId: string;
 }
 
-export function QueuePreview({ user }: Props) {
-  const { data, loading, error } = useQuery<UsersQueueQuery>(QueueQuery, { variables: { id: user.id } });
+export function QueuePreview({ userId }: Props) {
+  const { data, loading, error } = useQuery<UsersQueueQuery>(QueueQuery, { variables: { id: userId } });
 
   const queue = data?.getQueue;
 
   async function subscribe() {
-    const a = client.subscribe({ query: QueueSubscription, variables: { id: user.id } });
+    const a = client.subscribe({ query: QueueSubscription, variables: { id: userId } });
 
     sub = a.subscribe(({ data }) => {
       client.writeQuery({
@@ -62,7 +62,7 @@ export function QueuePreview({ user }: Props) {
         data: {
           getQueue: data.getBeeperUpdates
         },
-        variables: { id: user.id }
+        variables: { id: userId }
       });
     });
   }

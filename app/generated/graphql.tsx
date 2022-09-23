@@ -88,12 +88,6 @@ export type EditUserInput = {
   venmo?: InputMaybe<Scalars['String']>;
 };
 
-export type FindBeepInput = {
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-  radius?: InputMaybe<Scalars['Float']>;
-};
-
 export type ForgotPassword = {
   __typename?: 'ForgotPassword';
   id: Scalars['String'];
@@ -306,7 +300,7 @@ export type Query = {
   __typename?: 'Query';
   getAllBeepersLocation: Array<AnonymousBeeper>;
   getBeep: Beep;
-  getBeeperList: Array<User>;
+  getBeepers: Array<User>;
   getBeeps: BeepsResponse;
   getETA: Scalars['String'];
   getInProgressBeeps: BeepsInProgressResponse;
@@ -329,8 +323,10 @@ export type QueryGetBeepArgs = {
 };
 
 
-export type QueryGetBeeperListArgs = {
-  input: FindBeepInput;
+export type QueryGetBeepersArgs = {
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  radius?: InputMaybe<Scalars['Float']>;
 };
 
 
@@ -759,14 +755,14 @@ export type LeaveQueueMutationVariables = Exact<{
 
 export type LeaveQueueMutation = { __typename?: 'Mutation', riderLeaveQueue: boolean };
 
-export type GetBeeperListQueryVariables = Exact<{
+export type GetBeepersQueryVariables = Exact<{
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   radius?: InputMaybe<Scalars['Float']>;
 }>;
 
 
-export type GetBeeperListQuery = { __typename?: 'Query', getBeeperList: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
+export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String'];
@@ -1895,11 +1891,9 @@ export function useLeaveQueueMutation(baseOptions?: ApolloReactHooks.MutationHoo
 export type LeaveQueueMutationHookResult = ReturnType<typeof useLeaveQueueMutation>;
 export type LeaveQueueMutationResult = ApolloReactCommon.MutationResult<LeaveQueueMutation>;
 export type LeaveQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<LeaveQueueMutation, LeaveQueueMutationVariables>;
-export const GetBeeperListDocument = gql`
-    query GetBeeperList($latitude: Float!, $longitude: Float!, $radius: Float) {
-  getBeeperList(
-    input: {latitude: $latitude, longitude: $longitude, radius: $radius}
-  ) {
+export const GetBeepersDocument = gql`
+    query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
+  getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
     id
     name
     first
@@ -1918,16 +1912,16 @@ export const GetBeeperListDocument = gql`
     `;
 
 /**
- * __useGetBeeperListQuery__
+ * __useGetBeepersQuery__
  *
- * To run a query within a React component, call `useGetBeeperListQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBeeperListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetBeepersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBeepersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetBeeperListQuery({
+ * const { data, loading, error } = useGetBeepersQuery({
  *   variables: {
  *      latitude: // value for 'latitude'
  *      longitude: // value for 'longitude'
@@ -1935,17 +1929,17 @@ export const GetBeeperListDocument = gql`
  *   },
  * });
  */
-export function useGetBeeperListQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetBeeperListQuery, GetBeeperListQueryVariables>) {
+export function useGetBeepersQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetBeepersQuery, GetBeepersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<GetBeeperListQuery, GetBeeperListQueryVariables>(GetBeeperListDocument, options);
+        return ApolloReactHooks.useQuery<GetBeepersQuery, GetBeepersQueryVariables>(GetBeepersDocument, options);
       }
-export function useGetBeeperListLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetBeeperListQuery, GetBeeperListQueryVariables>) {
+export function useGetBeepersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetBeepersQuery, GetBeepersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<GetBeeperListQuery, GetBeeperListQueryVariables>(GetBeeperListDocument, options);
+          return ApolloReactHooks.useLazyQuery<GetBeepersQuery, GetBeepersQueryVariables>(GetBeepersDocument, options);
         }
-export type GetBeeperListQueryHookResult = ReturnType<typeof useGetBeeperListQuery>;
-export type GetBeeperListLazyQueryHookResult = ReturnType<typeof useGetBeeperListLazyQuery>;
-export type GetBeeperListQueryResult = ApolloReactCommon.QueryResult<GetBeeperListQuery, GetBeeperListQueryVariables>;
+export type GetBeepersQueryHookResult = ReturnType<typeof useGetBeepersQuery>;
+export type GetBeepersLazyQueryHookResult = ReturnType<typeof useGetBeepersLazyQuery>;
+export type GetBeepersQueryResult = ApolloReactCommon.QueryResult<GetBeepersQuery, GetBeepersQueryVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($password: String!) {
   changePassword(input: {password: $password})
