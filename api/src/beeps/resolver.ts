@@ -1,10 +1,9 @@
 import { Beep } from '../entities/Beep';
 import { QueryOrder } from '@mikro-orm/core';
 import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
-import { Paginated } from '../utils/paginated';
+import { Paginated, PaginationArgs } from '../utils/pagination';
 import { UserRole } from '../entities/User';
 import { Context } from '../utils/context';
-import { PaginationArgs } from '../args/Pagination';
 
 @ObjectType()
 class BeepsResponse extends Paginated(Beep) { }

@@ -4,8 +4,7 @@ import { User, UserRole } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { ReportInput, UpdateReportInput } from './args';
-import { PaginationArgs } from '../args/Pagination';
-import { Paginated } from '../utils/paginated';
+import { Paginated, PaginationArgs } from '../utils/pagination';
 
 @ObjectType()
 class ReportsResponse extends Paginated(Report) { }

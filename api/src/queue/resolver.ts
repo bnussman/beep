@@ -1,12 +1,11 @@
+import fieldsToRelations from "graphql-fields-to-relations";
 import { QueueEntry } from "../entities/QueueEntry";
 import { User, UserRole } from "../entities/User";
 import { Context } from "../utils/context";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from "type-graphql";
-import fieldsToRelations from "graphql-fields-to-relations";
 import { QueryOrder } from "@mikro-orm/core";
-import { PaginationArgs } from "../args/Pagination";
-import { Paginated } from "../utils/paginated";
+import { Paginated, PaginationArgs } from "../utils/pagination";
 import { GraphQLResolveInfo } from "graphql";
 
 @ObjectType()
