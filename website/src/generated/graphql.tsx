@@ -480,10 +480,18 @@ export type SignUpInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  getBeeperLocationUpdates: AnonymousBeeper;
   getBeeperUpdates: Array<QueueEntry>;
   getLocationUpdates?: Maybe<Point>;
   getRiderUpdates?: Maybe<QueueEntry>;
   getUserUpdates: User;
+};
+
+
+export type SubscriptionGetBeeperLocationUpdatesArgs = {
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  radius: Scalars['Float'];
 };
 
 
@@ -870,7 +878,7 @@ export type UserLocationQueryVariables = Exact<{
 }>;
 
 
-export type UserLocationQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, photo?: string | null, location?: { __typename?: 'Point', latitude: number, longitude: number } | null } };
+export type UserLocationQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string, location?: { __typename?: 'Point', latitude: number, longitude: number } | null } };
 
 export type LocationUpdateMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2586,6 +2594,7 @@ export const UserLocationDocument = gql`
     id
     name
     photo
+    username
     location {
       latitude
       longitude

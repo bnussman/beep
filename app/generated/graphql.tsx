@@ -481,10 +481,18 @@ export type SignUpInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  getBeeperLocationUpdates: AnonymousBeeper;
   getBeeperUpdates: Array<QueueEntry>;
   getLocationUpdates?: Maybe<Point>;
   getRiderUpdates?: Maybe<QueueEntry>;
   getUserUpdates: User;
+};
+
+
+export type SubscriptionGetBeeperLocationUpdatesArgs = {
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  radius: Scalars['Float'];
 };
 
 
@@ -710,6 +718,15 @@ export type GetAllBeepersLocationQueryVariables = Exact<{ [key: string]: never; 
 
 
 export type GetAllBeepersLocationQuery = { __typename?: 'Query', getAllBeepersLocation: Array<{ __typename?: 'AnonymousBeeper', id: string, latitude?: number | null, longitude?: number | null }> };
+
+export type GetBeeperLocationUpdatesSubscriptionVariables = Exact<{
+  radius: Scalars['Float'];
+  longitude: Scalars['Float'];
+  latitude: Scalars['Float'];
+}>;
+
+
+export type GetBeeperLocationUpdatesSubscription = { __typename?: 'Subscription', getBeeperLocationUpdates: { __typename?: 'AnonymousBeeper', id: string, latitude?: number | null, longitude?: number | null } };
 
 export type ChooseBeepMutationVariables = Exact<{
   beeperId: Scalars['String'];
@@ -1617,6 +1634,44 @@ export function useGetAllBeepersLocationLazyQuery(baseOptions?: ApolloReactHooks
 export type GetAllBeepersLocationQueryHookResult = ReturnType<typeof useGetAllBeepersLocationQuery>;
 export type GetAllBeepersLocationLazyQueryHookResult = ReturnType<typeof useGetAllBeepersLocationLazyQuery>;
 export type GetAllBeepersLocationQueryResult = ApolloReactCommon.QueryResult<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>;
+export const GetBeeperLocationUpdatesDocument = gql`
+    subscription GetBeeperLocationUpdates($radius: Float!, $longitude: Float!, $latitude: Float!) {
+  getBeeperLocationUpdates(
+    radius: $radius
+    longitude: $longitude
+    latitude: $latitude
+  ) {
+    id
+    latitude
+    longitude
+  }
+}
+    `;
+
+/**
+ * __useGetBeeperLocationUpdatesSubscription__
+ *
+ * To run a query within a React component, call `useGetBeeperLocationUpdatesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useGetBeeperLocationUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBeeperLocationUpdatesSubscription({
+ *   variables: {
+ *      radius: // value for 'radius'
+ *      longitude: // value for 'longitude'
+ *      latitude: // value for 'latitude'
+ *   },
+ * });
+ */
+export function useGetBeeperLocationUpdatesSubscription(baseOptions: ApolloReactHooks.SubscriptionHookOptions<GetBeeperLocationUpdatesSubscription, GetBeeperLocationUpdatesSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useSubscription<GetBeeperLocationUpdatesSubscription, GetBeeperLocationUpdatesSubscriptionVariables>(GetBeeperLocationUpdatesDocument, options);
+      }
+export type GetBeeperLocationUpdatesSubscriptionHookResult = ReturnType<typeof useGetBeeperLocationUpdatesSubscription>;
+export type GetBeeperLocationUpdatesSubscriptionResult = ApolloReactCommon.SubscriptionResult<GetBeeperLocationUpdatesSubscription>;
 export const ChooseBeepDocument = gql`
     mutation ChooseBeep($beeperId: String!, $origin: String!, $destination: String!, $groupSize: Float!) {
   chooseBeep(

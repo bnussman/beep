@@ -10,7 +10,6 @@ import { RatingsTable } from '../../../components/RatingsTable';
 import { ReportsTable } from '../../../components/ReportsTable';
 import { ClearQueueDialog } from '../../../components/ClearQueueDialog';
 import { SendNotificationDialog } from '../../../components/SendNotificationDialog';
-import { UsersGraphQL } from '../../../routes/admin/users';
 import { Details } from '../../../routes/admin/users/Details';
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
 import { UserRole } from '../../../types/User';

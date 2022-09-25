@@ -14,6 +14,7 @@ export const UserLocation = gql`
       id
       name
       photo
+      username
       location {
         latitude
         longitude
@@ -129,7 +130,10 @@ export function EditLocation() {
             <Marker
               latitude={user.location.latitude}
               longitude={user.location.longitude}
-              user={user as User}
+              userId={user.id}
+              username={user.username}
+              photo={user.photo}
+              name={user.name}
             />
           </Map>
         </div>

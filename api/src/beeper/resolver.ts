@@ -12,7 +12,7 @@ import { Point } from '../location/resolver';
 import { sha256 } from 'js-sha256';
 
 @ObjectType()
-class AnonymousBeeper {
+export class AnonymousBeeper {
   @Field()
   public id!: string;
 

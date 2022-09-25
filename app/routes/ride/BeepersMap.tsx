@@ -1,18 +1,37 @@
 import { Map } from "../../components/Map";
 import { useLocation } from "../../utils/useLocation";
 import { AnimatedRegion, MarkerAnimated, Region } from "react-native-maps";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "native-base";
 import { Platform } from "react-native";
 import {
   AnonymousBeeper,
+  BeepersLocationSubscription,
   GetAllBeepersLocationQuery,
 } from "../../generated/graphql";
 
 const BeepersLocations = gql`
   query GetAllBeepersLocation {
     getAllBeepersLocation {
+      id
+      latitude
+      longitude
+    }
+  }
+`;
+
+const BeeperLocationUpdates = gql`
+  subscription GetBeeperLocationUpdates(
+    $radius: Float!
+    $longitude: Float!
+    $latitude: Float!
+  ) {
+    getBeeperLocationUpdates(
+      radius: $radius
+      longitude: $longitude
+      latitude: $latitude
+    ) {
       id
       latitude
       longitude
@@ -27,12 +46,16 @@ export function BeepersMap() {
 
   const beepers = data?.getAllBeepersLocation;
 
-  useEffect(() => {
-    startPolling(10000);
-    return () => {
-      stopPolling();
-    };
-  }, []);
+  const sub = useSubscription<BeepersLocationSubscription>(
+    BeeperLocationUpdates,
+    {
+      variables: {
+        radius: 20,
+        latitude: location?.coords.latitude ?? 0,
+        longitude: location?.coords.longitude ?? 0,
+      },
+    }
+  );
 
   const initialRegion: Region | undefined = location
     ? {

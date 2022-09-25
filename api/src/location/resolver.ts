@@ -4,6 +4,9 @@ import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine
 import { Context } from '../utils/context';
 import { LocationInput } from './args';
 import { AuthenticationError } from 'apollo-server-core';
+import { AnonymousBeeper } from '../beeper/resolver';
+import { getDistance } from '../utils/dist';
+import { sha256 } from 'js-sha256';
 
 @ObjectType()
 export class Point {
@@ -45,6 +48,7 @@ export class LocationResolver {
       user.location = new Point(location.latitude, location.longitude);
 
       pubSub.publish("Location" + id, location);
+      pubSub.publish("Beepers", { id: sha256(id).substring(0, 9), ...location });
 
       await ctx.em.persistAndFlush(user);
 
@@ -54,6 +58,7 @@ export class LocationResolver {
     ctx.user.location = new Point(location.latitude, location.longitude);
 
     pubSub.publish("Location" + ctx.user.id, location);
+    pubSub.publish("Beepers", { id: sha256(ctx.user.id).substring(0, 9), ...location });
 
     await ctx.em.persistAndFlush(ctx.user);
 
@@ -69,5 +74,18 @@ export class LocationResolver {
       latitude: entry.latitude,
       longitude: entry.longitude,
     };
+  }
+
+  @Subscription(() => AnonymousBeeper, {
+    filter: ({ args, payload }) => {
+      console.log("payload:", payload)
+      console.log("args:", args)
+      // return true;
+      return getDistance(args.latitude, args.longitude, payload.latitude, payload.longitude) < args.radius;
+    },
+    topics: "Beepers"
+  })
+  public getBeeperLocationUpdates(@Arg('latitude') latitude: number, @Arg('longitude') longitude: number, @Arg('radius') radius: number, @Root() location: AnonymousBeeper): AnonymousBeeper {
+    return location;
   }
 }
