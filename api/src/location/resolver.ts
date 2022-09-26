@@ -78,9 +78,9 @@ export class LocationResolver {
 
   @Subscription(() => AnonymousBeeper, {
     filter: ({ args, payload }) => {
-      console.log("payload:", payload)
-      console.log("args:", args)
-      // return true;
+      if (args.radius === 0) {
+        return true;
+      }
       return getDistance(args.latitude, args.longitude, payload.latitude, payload.longitude) < args.radius;
     },
     topics: "Beepers"

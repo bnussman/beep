@@ -9,7 +9,9 @@ import {
   AnonymousBeeper,
   BeepersLocationSubscription,
   GetAllBeepersLocationQuery,
+  GetBeeperLocationUpdatesSubscription,
 } from "../../generated/graphql";
+import { cache } from "../../utils/Apollo";
 
 const BeepersLocations = gql`
   query GetAllBeepersLocation {
@@ -46,16 +48,38 @@ export function BeepersMap() {
 
   const beepers = data?.getAllBeepersLocation;
 
-  const sub = useSubscription<BeepersLocationSubscription>(
-    BeeperLocationUpdates,
-    {
-      variables: {
-        radius: 20,
-        latitude: location?.coords.latitude ?? 0,
-        longitude: location?.coords.longitude ?? 0,
-      },
-    }
-  );
+  useSubscription<GetBeeperLocationUpdatesSubscription>(BeeperLocationUpdates, {
+    variables: {
+      radius: 20,
+      latitude: location?.coords.latitude ?? 0,
+      longitude: location?.coords.longitude ?? 0,
+    },
+    onSubscriptionData({ subscriptionData }) {
+      const data = subscriptionData.data?.getBeeperLocationUpdates;
+      if (
+        data &&
+        data.latitude !== null &&
+        data.latitude !== undefined &&
+        data.longitude !== null &&
+        data.longitude !== undefined
+      ) {
+        cache.modify({
+          id: cache.identify({
+            __typename: "AnonymousBeeper",
+            id: data.id,
+          }),
+          fields: {
+            latitude() {
+              return data.latitude;
+            },
+            longitude() {
+              return data.longitude;
+            },
+          },
+        });
+      }
+    },
+  });
 
   const initialRegion: Region | undefined = location
     ? {
