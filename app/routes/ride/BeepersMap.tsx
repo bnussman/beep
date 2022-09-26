@@ -47,6 +47,13 @@ export function BeepersMap() {
 
   const beepers = data?.getAllBeepersLocation;
 
+  useEffect(() => {
+    startPolling(15000);
+    return () => {
+      stopPolling();
+    };
+  }, []);
+
   useSubscription<GetBeeperLocationUpdatesSubscription>(BeeperLocationUpdates, {
     variables: {
       radius: 20,

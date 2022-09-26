@@ -64,7 +64,7 @@ export function Beepers() {
   const beepers = data?.getBeepers;
 
   useEffect(() => {
-    startPolling(1500);
+    startPolling(15000);
     return () => {
       stopPolling();
     };
