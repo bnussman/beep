@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react'
-import { gql, useQuery } from '@apollo/client';
-import { GetBeepersQuery } from '../../../generated/graphql';
+import { gql, useQuery, useSubscription } from '@apollo/client';
+import { GetBeeperLocationUpdatesSubscription, GetBeepersQuery } from '../../../generated/graphql';
 import { Badge, Box, Center, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
+import { cache } from '../../../utils/Apollo';
 
 const BeepersGraphQL = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -23,6 +24,24 @@ const BeepersGraphQL = gql`
         longitude
         latitude
       }
+    }
+  }
+`;
+
+const BeeperLocationUpdates = gql`
+  subscription GetBeeperLocationUpdates(
+    $radius: Float!
+    $longitude: Float!
+    $latitude: Float!
+  ) {
+    getBeeperLocationUpdates(
+      radius: $radius
+      longitude: $longitude
+      latitude: $latitude
+    ) {
+      id
+      latitude
+      longitude
     }
   }
 `;
@@ -50,6 +69,40 @@ export function Beepers() {
       stopPolling();
     };
   }, []);
+
+  useSubscription<GetBeeperLocationUpdatesSubscription>(BeeperLocationUpdates, {
+    variables: {
+      radius: 0,
+      latitude: 0,
+      longitude: 0,
+    },
+    onSubscriptionData({ subscriptionData }) {
+      const data = subscriptionData.data?.getBeeperLocationUpdates;
+      if (
+        data &&
+        data.latitude !== null &&
+        data.latitude !== undefined &&
+        data.longitude !== null &&
+        data.longitude !== undefined
+      ) {
+        cache.modify({
+          id: cache.identify({
+            __typename: "AnonymousBeeper",
+            id: data.id,
+          }),
+          fields: {
+            latitude() {
+              return data.latitude;
+            },
+            longitude() {
+              return data.longitude;
+            },
+          },
+        });
+      }
+    },
+  });
+
 
   if (loading || beepers === undefined) {
     return <Loading />;

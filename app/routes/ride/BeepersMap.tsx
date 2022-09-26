@@ -5,13 +5,12 @@ import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "native-base";
 import { Platform } from "react-native";
+import { cache } from "../../utils/Apollo";
 import {
   AnonymousBeeper,
-  BeepersLocationSubscription,
   GetAllBeepersLocationQuery,
   GetBeeperLocationUpdatesSubscription,
 } from "../../generated/graphql";
-import { cache } from "../../utils/Apollo";
 
 const BeepersLocations = gql`
   query GetAllBeepersLocation {
