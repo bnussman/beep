@@ -57,6 +57,7 @@ export function PickBeepScreen() {
         longitude: location?.coords.longitude,
         radius: 20,
       },
+      skip: !location,
       notifyOnNetworkStatusChange: true,
     }
   );
