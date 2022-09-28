@@ -1,5 +1,5 @@
 import { IsNumber, IsOptional } from 'class-validator';
-import { Field, InputType } from 'type-graphql';
+import { ArgsType, Field, InputType } from 'type-graphql';
 
 @InputType()
 export class LocationInput {
@@ -36,4 +36,19 @@ export class LocationInput {
   @IsNumber()
   @IsOptional()
   public speed!: number;
+}
+
+@ArgsType()
+export class BeeperLocationArgs {
+  @Field()
+  @IsNumber()
+  public latitude!: number;
+
+  @Field()
+  @IsNumber()
+  public longitude!: number;
+
+  @Field()
+  @IsNumber()
+  public radius!: number;
 }

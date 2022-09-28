@@ -1,8 +1,8 @@
 import { IsLatitude, IsLongitude } from 'class-validator';
 import { User, UserRole } from '../entities/User';
-import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
-import { LocationInput } from './args';
+import { BeeperLocationArgs, LocationInput } from './args';
 import { AuthenticationError } from 'apollo-server-core';
 import { AnonymousBeeper } from '../beeper/resolver';
 import { getDistance } from '../utils/dist';
@@ -88,7 +88,7 @@ export class LocationResolver {
       return getDistance(args.latitude, args.longitude, payload.latitude, payload.longitude) < args.radius;
     },
   })
-  public getBeeperLocationUpdates(@Arg('latitude') latitude: number, @Arg('longitude') longitude: number, @Arg('radius') radius: number, @Root() location: AnonymousBeeper | null): AnonymousBeeper | null {
+  public getBeeperLocationUpdates(@Args() args: BeeperLocationArgs, @Root() location: AnonymousBeeper | null): AnonymousBeeper | null {
     return location;
   }
 }

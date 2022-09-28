@@ -13,8 +13,16 @@ import {
 } from "../../generated/graphql";
 
 const BeepersLocations = gql`
-  query GetAllBeepersLocation {
-    getAllBeepersLocation {
+  query GetAllBeepersLocation(
+    $radius: Float!
+    $longitude: Float!
+    $latitude: Float!
+  ) {
+    getAllBeepersLocation(
+      radius: $radius
+      longitude: $longitude
+      latitude: $latitude
+    ) {
       id
       latitude
       longitude
@@ -42,7 +50,14 @@ const BeeperLocationUpdates = gql`
 
 export function BeepersMap() {
   const { location } = useLocation();
-  const { data } = useQuery<GetAllBeepersLocationQuery>(BeepersLocations);
+  const { data } = useQuery<GetAllBeepersLocationQuery>(BeepersLocations, {
+    variables: {
+      radius: 20,
+      latitude: location?.coords.latitude ?? 0,
+      longitude: location?.coords.longitude ?? 0,
+    },
+    skip: !location,
+  });
 
   const beepers = data?.getAllBeepersLocation;
 
@@ -52,6 +67,7 @@ export function BeepersMap() {
       latitude: location?.coords.latitude ?? 0,
       longitude: location?.coords.longitude ?? 0,
     },
+    skip: !location,
     onSubscriptionData({ subscriptionData }) {
       const updatedData = subscriptionData.data?.getBeeperLocationUpdates;
       if (updatedData) {
