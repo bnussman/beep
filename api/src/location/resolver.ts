@@ -77,15 +77,18 @@ export class LocationResolver {
   }
 
   @Subscription(() => AnonymousBeeper, {
+    topics: "Beepers",
     filter: ({ args, payload }) => {
       if (args.radius === 0) {
         return true;
       }
+      if (payload.latitide === null || payload.longitude === null) {
+        return true;
+      }
       return getDistance(args.latitude, args.longitude, payload.latitude, payload.longitude) < args.radius;
     },
-    topics: "Beepers"
   })
-  public getBeeperLocationUpdates(@Arg('latitude') latitude: number, @Arg('longitude') longitude: number, @Arg('radius') radius: number, @Root() location: AnonymousBeeper): AnonymousBeeper {
+  public getBeeperLocationUpdates(@Arg('latitude') latitude: number, @Arg('longitude') longitude: number, @Arg('radius') radius: number, @Root() location: AnonymousBeeper | null): AnonymousBeeper | null {
     return location;
   }
 }

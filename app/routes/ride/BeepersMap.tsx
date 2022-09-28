@@ -5,7 +5,7 @@ import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "native-base";
 import { Platform } from "react-native";
-import { cache } from "../../utils/Apollo";
+import { cache, client } from "../../utils/Apollo";
 import {
   AnonymousBeeper,
   GetAllBeepersLocationQuery,
@@ -47,12 +47,12 @@ export function BeepersMap() {
 
   const beepers = data?.getAllBeepersLocation;
 
-  useEffect(() => {
-    startPolling(15000);
-    return () => {
-      stopPolling();
-    };
-  }, []);
+  // useEffect(() => {
+  //   startPolling(15000);
+  //   return () => {
+  //     stopPolling();
+  //   };
+  // }, []);
 
   useSubscription<GetBeeperLocationUpdatesSubscription>(BeeperLocationUpdates, {
     variables: {
@@ -61,28 +61,42 @@ export function BeepersMap() {
       longitude: location?.coords.longitude ?? 0,
     },
     onSubscriptionData({ subscriptionData }) {
-      const data = subscriptionData.data?.getBeeperLocationUpdates;
-      if (
-        data &&
-        data.latitude !== null &&
-        data.latitude !== undefined &&
-        data.longitude !== null &&
-        data.longitude !== undefined
-      ) {
-        cache.modify({
-          id: cache.identify({
+      const updatedData = subscriptionData.data?.getBeeperLocationUpdates;
+      if (updatedData) {
+        const index =
+          beepers === undefined
+            ? -1
+            : beepers.findIndex((beeper) => beeper.id === updatedData.id);
+
+        if (index === -1) {
+          // Add new online beeper to queue
+          const beepers = data?.getAllBeepersLocation ?? [];
+          client.writeQuery({
+            query: BeepersLocations,
+            data: { getAllBeepersLocation: [updatedData, ...beepers] },
+          });
+        } else if (
+          updatedData.latitude === null &&
+          updatedData.longitude === null
+        ) {
+          cache.evict({ id: updatedData.id });
+        } else {
+          const id = cache.identify({
             __typename: "AnonymousBeeper",
-            id: data.id,
-          }),
-          fields: {
-            latitude() {
-              return data.latitude;
+            id: updatedData.id,
+          });
+          cache.modify({
+            id,
+            fields: {
+              latitude() {
+                return updatedData.latitude;
+              },
+              longitude() {
+                return updatedData.longitude;
+              },
             },
-            longitude() {
-              return data.longitude;
-            },
-          },
-        });
+          });
+        }
       }
     },
   });
