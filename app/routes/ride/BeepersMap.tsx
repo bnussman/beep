@@ -42,17 +42,9 @@ const BeeperLocationUpdates = gql`
 
 export function BeepersMap() {
   const { location } = useLocation();
-  const { data, startPolling, stopPolling } =
-    useQuery<GetAllBeepersLocationQuery>(BeepersLocations);
+  const { data } = useQuery<GetAllBeepersLocationQuery>(BeepersLocations);
 
   const beepers = data?.getAllBeepersLocation;
-
-  // useEffect(() => {
-  //   startPolling(15000);
-  //   return () => {
-  //     stopPolling();
-  //   };
-  // }, []);
 
   useSubscription<GetBeeperLocationUpdatesSubscription>(BeeperLocationUpdates, {
     variables: {
@@ -70,10 +62,15 @@ export function BeepersMap() {
 
         if (index === -1) {
           // Add new online beeper to queue
-          const beepers = data?.getAllBeepersLocation ?? [];
+          const oldCacheData = client.readQuery({
+            query: BeepersLocations,
+          });
+          const beepers = oldCacheData?.getAllBeepersLocation ?? [];
           client.writeQuery({
             query: BeepersLocations,
-            data: { getAllBeepersLocation: [updatedData, ...beepers] },
+            data: {
+              getAllBeepersLocation: [updatedData, ...beepers],
+            },
           });
         } else if (
           updatedData.latitude === null &&

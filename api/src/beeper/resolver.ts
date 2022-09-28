@@ -37,10 +37,12 @@ export class BeeperResolver {
   @Mutation(() => User)
   @Authorized()
   public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
-    const queue = await ctx.user.queue.loadItems();
 
-    if (!input.isBeeping && (queue.length > 0)) {
-      throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
+    if (!input.isBeeping) {
+      const queue = await ctx.user.queue.loadItems();
+      if (queue.length > 0) {
+        throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
+      }
     }
 
     if (!!input.latitude && !!input.longitude) {
