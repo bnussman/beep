@@ -280,7 +280,7 @@ export function MainFindBeepScreen() {
     });
   }
 
-  const throttleUpdateETA = throttle(15000, updateETA);
+  const throttleUpdateETA = throttle(20000, updateETA);
 
   useEffect(() => {
     SplashScreen.hideAsync();
