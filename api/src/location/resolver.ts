@@ -82,13 +82,10 @@ export class LocationResolver {
       if (args.radius === 0) {
         return true;
       }
-      if (payload.latitide === null || payload.longitude === null) {
-        return true;
-      }
       return getDistance(args.latitude, args.longitude, payload.latitude, payload.longitude) < args.radius;
     },
   })
-  public getBeeperLocationUpdates(@Args() args: BeeperLocationArgs, @Root() location: AnonymousBeeper | null): AnonymousBeeper | null {
+  public getBeeperLocationUpdates(@Args() args: BeeperLocationArgs, @Root() location: AnonymousBeeper): AnonymousBeeper {
     return location;
   }
 }

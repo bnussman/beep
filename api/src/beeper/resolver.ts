@@ -63,12 +63,6 @@ export class BeeperResolver {
       wrap(ctx.user).assign(input);
     }
 
-    if (input.isBeeping) {
-      pubSub.publish("Beepers", { id: sha256(ctx.user.id).substring(0, 9), latitude: input.latitude, longitude: input.longitude });
-    } else {
-      pubSub.publish("Beepers", { id: sha256(ctx.user.id).substring(0, 9), latitude: null, longitude: null });
-    }
-
     pubSub.publish("User" + ctx.user.id, ctx.user);
 
     await ctx.em.persistAndFlush(ctx.user);
