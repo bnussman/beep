@@ -5,7 +5,7 @@ import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "native-base";
 import { Platform } from "react-native";
-import { cache } from "../../utils/Apollo";
+import { cache, client } from "../../utils/Apollo";
 import {
   AnonymousBeeper,
   GetAllBeepersLocationQuery,
@@ -13,8 +13,16 @@ import {
 } from "../../generated/graphql";
 
 const BeepersLocations = gql`
-  query GetAllBeepersLocation {
-    getAllBeepersLocation {
+  query GetAllBeepersLocation(
+    $radius: Float!
+    $longitude: Float!
+    $latitude: Float!
+  ) {
+    getAllBeepersLocation(
+      radius: $radius
+      longitude: $longitude
+      latitude: $latitude
+    ) {
       id
       latitude
       longitude
@@ -43,7 +51,14 @@ const BeeperLocationUpdates = gql`
 export function BeepersMap() {
   const { location } = useLocation();
   const { data, startPolling, stopPolling } =
-    useQuery<GetAllBeepersLocationQuery>(BeepersLocations);
+    useQuery<GetAllBeepersLocationQuery>(BeepersLocations, {
+      variables: {
+        radius: 20,
+        latitude: location?.coords.latitude ?? 0,
+        longitude: location?.coords.longitude ?? 0,
+      },
+      skip: !location,
+    });
 
   const beepers = data?.getAllBeepersLocation;
 
@@ -60,6 +75,7 @@ export function BeepersMap() {
       latitude: location?.coords.latitude ?? 0,
       longitude: location?.coords.longitude ?? 0,
     },
+    skip: !location,
     onSubscriptionData({ subscriptionData }) {
       const data = subscriptionData.data?.getBeeperLocationUpdates;
       if (

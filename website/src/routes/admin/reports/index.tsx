@@ -10,6 +10,7 @@ import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../../../generated/graphql';
 import { Error } from '../../../components/Error';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue, useDisclosure } from '@chakra-ui/react';
+import { useSearchParams } from 'react-router-dom';
 
 dayjs.extend(relativeTime);
 
@@ -41,28 +42,29 @@ export const ReportsGraphQL = gql`
 `;
 
 export function Reports() {
-  const pageLimit = 25;
-
+  const pageLimit = 20;
+  const [searchParams, setSearchParams] = useSearchParams();
   const bg = useColorModeValue('gray.50', 'gray.700');
+  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+  const [id, setId] = useState<string | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { data, loading, error, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, {
     variables: {
-      offset: 0,
+      offset: (page - 1) * pageLimit,
       show: pageLimit
     }
   });
 
+  const setCurrentPage = (page: number) => {
+    setSearchParams({ page: String(page) });
+  };
+
   const reports = data?.getReports.items;
 
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [id, setId] = useState<string | null>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  async function fetchReports(page: number) {
+  const fetchReports = async (page: number) => {
     refetch({
-      variables: {
-        offset: page
-      }
+      offset: page
     });
   }
 
@@ -79,7 +81,7 @@ export function Reports() {
       <Pagination
         resultCount={data?.getReports.count}
         limit={pageLimit}
-        currentPage={currentPage}
+        currentPage={page}
         setCurrentPage={setCurrentPage}
         onPageChange={fetchReports}
       />
@@ -118,7 +120,7 @@ export function Reports() {
       <Pagination
         resultCount={data?.getReports.count}
         limit={pageLimit}
-        currentPage={currentPage}
+        currentPage={page}
         setCurrentPage={setCurrentPage}
         onPageChange={fetchReports}
       />

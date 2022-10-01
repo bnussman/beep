@@ -1,10 +1,8 @@
 import React from "react";
 import { RefreshControl } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
-import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import {

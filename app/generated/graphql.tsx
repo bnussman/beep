@@ -318,6 +318,13 @@ export type Query = {
 };
 
 
+export type QueryGetAllBeepersLocationArgs = {
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  radius: Scalars['Float'];
+};
+
+
 export type QueryGetBeepArgs = {
   id: Scalars['String'];
 };
@@ -490,6 +497,7 @@ export type Subscription = {
 
 
 export type SubscriptionGetBeeperLocationUpdatesArgs = {
+  anonymize?: InputMaybe<Scalars['Boolean']>;
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   radius: Scalars['Float'];
@@ -714,7 +722,11 @@ export type ReportUserMutationVariables = Exact<{
 
 export type ReportUserMutation = { __typename?: 'Mutation', reportUser: boolean };
 
-export type GetAllBeepersLocationQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllBeepersLocationQueryVariables = Exact<{
+  radius: Scalars['Float'];
+  longitude: Scalars['Float'];
+  latitude: Scalars['Float'];
+}>;
 
 
 export type GetAllBeepersLocationQuery = { __typename?: 'Query', getAllBeepersLocation: Array<{ __typename?: 'AnonymousBeeper', id: string, latitude?: number | null, longitude?: number | null }> };
@@ -1599,8 +1611,12 @@ export type ReportUserMutationHookResult = ReturnType<typeof useReportUserMutati
 export type ReportUserMutationResult = ApolloReactCommon.MutationResult<ReportUserMutation>;
 export type ReportUserMutationOptions = ApolloReactCommon.BaseMutationOptions<ReportUserMutation, ReportUserMutationVariables>;
 export const GetAllBeepersLocationDocument = gql`
-    query GetAllBeepersLocation {
-  getAllBeepersLocation {
+    query GetAllBeepersLocation($radius: Float!, $longitude: Float!, $latitude: Float!) {
+  getAllBeepersLocation(
+    radius: $radius
+    longitude: $longitude
+    latitude: $latitude
+  ) {
     id
     latitude
     longitude
@@ -1620,10 +1636,13 @@ export const GetAllBeepersLocationDocument = gql`
  * @example
  * const { data, loading, error } = useGetAllBeepersLocationQuery({
  *   variables: {
+ *      radius: // value for 'radius'
+ *      longitude: // value for 'longitude'
+ *      latitude: // value for 'latitude'
  *   },
  * });
  */
-export function useGetAllBeepersLocationQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>) {
+export function useGetAllBeepersLocationQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return ApolloReactHooks.useQuery<GetAllBeepersLocationQuery, GetAllBeepersLocationQueryVariables>(GetAllBeepersLocationDocument, options);
       }

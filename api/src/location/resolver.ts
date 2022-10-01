@@ -1,8 +1,8 @@
 import { IsLatitude, IsLongitude } from 'class-validator';
 import { User, UserRole } from '../entities/User';
-import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
-import { LocationInput } from './args';
+import { BeeperLocationArgs, LocationInput } from './args';
 import { AuthenticationError } from 'apollo-server-core';
 import { AnonymousBeeper } from '../beeper/resolver';
 import { getDistance } from '../utils/dist';
@@ -48,7 +48,7 @@ export class LocationResolver {
       user.location = new Point(location.latitude, location.longitude);
 
       pubSub.publish("Location" + id, location);
-      pubSub.publish("Beepers", { id: sha256(id).substring(0, 9), ...location });
+      pubSub.publish("Beepers", { id, ...location });
 
       await ctx.em.persistAndFlush(user);
 
@@ -77,15 +77,21 @@ export class LocationResolver {
   }
 
   @Subscription(() => AnonymousBeeper, {
+    topics: "Beepers",
     filter: ({ args, payload }) => {
       if (args.radius === 0) {
         return true;
       }
       return getDistance(args.latitude, args.longitude, payload.latitude, payload.longitude) < args.radius;
     },
-    topics: "Beepers"
   })
-  public getBeeperLocationUpdates(@Arg('latitude') latitude: number, @Arg('longitude') longitude: number, @Arg('radius') radius: number, @Root() location: AnonymousBeeper): AnonymousBeeper {
-    return location;
+  public getBeeperLocationUpdates(@Ctx() ctx: Context, @Args() args: BeeperLocationArgs, @Root() data: AnonymousBeeper,  @Arg('anonymize', { nullable: true, defaultValue: true }) anonymize: boolean): AnonymousBeeper {
+    if (anonymize) {
+      return { id: sha256(data.id).substring(0, 9), latitude: data.latitude, longitude: data.longitude };
+    }
+    if (ctx.user.role !== UserRole.ADMIN) {
+      throw new AuthenticationError("You can't do that.");
+    }
+    return data;
   }
 }

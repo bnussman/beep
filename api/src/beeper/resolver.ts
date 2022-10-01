@@ -1,7 +1,7 @@
 import { sendNotification } from '../utils/notifications';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep } from '../entities/Beep';
-import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from './args';
 import * as Sentry from '@sentry/node';
@@ -10,6 +10,7 @@ import { User } from '../entities/User';
 import { inOrder } from '../utils/sort';
 import { Point } from '../location/resolver';
 import { sha256 } from 'js-sha256';
+import { BeeperLocationArgs } from '../location/args';
 
 @ObjectType()
 export class AnonymousBeeper {
@@ -28,19 +29,31 @@ export class BeeperResolver {
 
   @Query(() => [AnonymousBeeper])
   @Authorized("No Verification")
-  public async getAllBeepersLocation(@Ctx() ctx: Context): Promise<AnonymousBeeper[]> {
-    const beepers = await ctx.em.find(User, { isBeeping: true })
+  public async getAllBeepersLocation(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: BeeperLocationArgs): Promise<AnonymousBeeper[]> {
+    if (radius === 0) {
+      const beepers = await ctx.em.find(User, { isBeeping: true });
 
-    return beepers.map(({ id, location }) => ({ id: sha256(id).substring(0, 9), latitude: location?.latitude, longitude: location?.longitude }));
+      return beepers.map(({ id, location }) => ({ id: sha256(id).substring(0, 9), latitude: location?.latitude, longitude: location?.longitude }));
+    }
+
+    const connection = ctx.em.getConnection();
+
+    const raw: User[] = await connection.execute(`SELECT location, id FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))`);
+
+    const data = raw.map(user => ctx.em.map(User, user));
+
+    return data.map(({ id, location }) => ({ id: sha256(id).substring(0, 9), latitude: location?.latitude, longitude: location?.longitude }));
   }
 
   @Mutation(() => User)
   @Authorized()
   public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
-    const queue = await ctx.user.queue.loadItems();
 
-    if (!input.isBeeping && (queue.length > 0)) {
-      throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
+    if (!input.isBeeping) {
+      const queue = await ctx.user.queue.loadItems();
+      if (queue.length > 0) {
+        throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
+      }
     }
 
     if (!!input.latitude && !!input.longitude) {

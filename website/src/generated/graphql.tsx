@@ -317,6 +317,13 @@ export type Query = {
 };
 
 
+export type QueryGetAllBeepersLocationArgs = {
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  radius: Scalars['Float'];
+};
+
+
 export type QueryGetBeepArgs = {
   id: Scalars['String'];
 };
@@ -489,6 +496,7 @@ export type Subscription = {
 
 
 export type SubscriptionGetBeeperLocationUpdatesArgs = {
+  anonymize?: InputMaybe<Scalars['Boolean']>;
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   radius: Scalars['Float'];
@@ -735,6 +743,7 @@ export type GetBeeperLocationUpdatesSubscriptionVariables = Exact<{
   radius: Scalars['Float'];
   longitude: Scalars['Float'];
   latitude: Scalars['Float'];
+  anonymize?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -1765,11 +1774,12 @@ export type GetBeepersQueryHookResult = ReturnType<typeof useGetBeepersQuery>;
 export type GetBeepersLazyQueryHookResult = ReturnType<typeof useGetBeepersLazyQuery>;
 export type GetBeepersQueryResult = Apollo.QueryResult<GetBeepersQuery, GetBeepersQueryVariables>;
 export const GetBeeperLocationUpdatesDocument = gql`
-    subscription GetBeeperLocationUpdates($radius: Float!, $longitude: Float!, $latitude: Float!) {
+    subscription GetBeeperLocationUpdates($radius: Float!, $longitude: Float!, $latitude: Float!, $anonymize: Boolean) {
   getBeeperLocationUpdates(
     radius: $radius
     longitude: $longitude
     latitude: $latitude
+    anonymize: $anonymize
   ) {
     id
     latitude
@@ -1793,6 +1803,7 @@ export const GetBeeperLocationUpdatesDocument = gql`
  *      radius: // value for 'radius'
  *      longitude: // value for 'longitude'
  *      latitude: // value for 'latitude'
+ *      anonymize: // value for 'anonymize'
  *   },
  * });
  */
