@@ -33,11 +33,13 @@ const BeeperLocationUpdates = gql`
     $radius: Float!
     $longitude: Float!
     $latitude: Float!
+    $anonymize: Boolean
   ) {
     getBeeperLocationUpdates(
       radius: $radius
       longitude: $longitude
       latitude: $latitude
+      anonymize: $anonymize
     ) {
       id
       latitude
@@ -75,6 +77,7 @@ export function Beepers() {
       radius: 0,
       latitude: 0,
       longitude: 0,
+      anonymize: false,
     },
     onSubscriptionData({ subscriptionData }) {
       const data = subscriptionData.data?.getBeeperLocationUpdates;
@@ -87,15 +90,15 @@ export function Beepers() {
       ) {
         cache.modify({
           id: cache.identify({
-            __typename: "AnonymousBeeper",
+            __typename: "User",
             id: data.id,
           }),
           fields: {
-            latitude() {
-              return data.latitude;
-            },
-            longitude() {
-              return data.longitude;
+            location() {
+              return {
+                latitude: data.latitude,
+                longitude: data.longitude,
+              };
             },
           },
         });

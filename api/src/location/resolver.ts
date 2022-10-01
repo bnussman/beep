@@ -48,7 +48,7 @@ export class LocationResolver {
       user.location = new Point(location.latitude, location.longitude);
 
       pubSub.publish("Location" + id, location);
-      pubSub.publish("Beepers", { id: sha256(id).substring(0, 9), ...location });
+      pubSub.publish("Beepers", { id, ...location });
 
       await ctx.em.persistAndFlush(user);
 
@@ -85,7 +85,13 @@ export class LocationResolver {
       return getDistance(args.latitude, args.longitude, payload.latitude, payload.longitude) < args.radius;
     },
   })
-  public getBeeperLocationUpdates(@Args() args: BeeperLocationArgs, @Root() location: AnonymousBeeper): AnonymousBeeper {
-    return location;
+  public getBeeperLocationUpdates(@Ctx() ctx: Context, @Args() args: BeeperLocationArgs, @Root() data: AnonymousBeeper,  @Arg('anonymize', { nullable: true, defaultValue: true }) anonymize: boolean): AnonymousBeeper {
+    if (anonymize) {
+      return { id: sha256(data.id).substring(0, 9), latitude: data.latitude, longitude: data.longitude };
+    }
+    if (ctx.user.role !== UserRole.ADMIN) {
+      throw new AuthenticationError("You can't do that.");
+    }
+    return data;
   }
 }
