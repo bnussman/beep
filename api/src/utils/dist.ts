@@ -1,5 +1,3 @@
-import { Point } from "../location/resolver";
-
 export function getDistance(
   lat1: number,
   lon1: number,
