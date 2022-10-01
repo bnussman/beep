@@ -58,7 +58,7 @@ export class LocationResolver {
     ctx.user.location = new Point(location.latitude, location.longitude);
 
     pubSub.publish("Location" + ctx.user.id, location);
-    pubSub.publish("Beepers", { id: sha256(ctx.user.id).substring(0, 9), ...location });
+    pubSub.publish("Beepers", { id: ctx.user.id, ...location });
 
     await ctx.em.persistAndFlush(ctx.user);
 
