@@ -30,7 +30,7 @@ export const UsersGraphQL = gql`
 `;
 
 export function Users() {
-  const pageLimit = 2;
+  const pageLimit = 20;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState<string>();
