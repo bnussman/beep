@@ -13,7 +13,7 @@ import {
   split,
 } from "@apollo/client";
 
-const ip = "192.168.1.181";
+const ip = "localhost";
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`
@@ -160,7 +160,12 @@ const uploadLink = createUploadLink({
 });
 
 export const cache = new InMemoryCache();
+
 export const client = new ApolloClient({
-  link: ApolloLink.from([authLink, splitLink, uploadLink]),
+  link: ApolloLink.from([
+    authLink,
+    splitLink,
+    uploadLink as unknown as ApolloLink,
+  ]),
   cache,
 });

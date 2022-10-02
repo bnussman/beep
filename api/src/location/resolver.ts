@@ -36,9 +36,6 @@ export class LocationResolver {
     @Arg('id', { nullable: true }) id?: string
   ): Promise<User> {
     if (id) {
-      // If an id is passed, that probably means someone is change another user's location.
-      // We should make sure only admins do this.
-
       if (ctx.user.role !== UserRole.ADMIN) {
         throw new AuthenticationError("You can't update another user's location without being an admin.");
       }

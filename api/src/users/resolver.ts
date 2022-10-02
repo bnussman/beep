@@ -75,7 +75,7 @@ export class UserResolver {
 
     wrap(user).assign(data);
 
-    if (id === undefined && oldEmail !== data.email) {
+    if (id === undefined && data.email && (oldEmail !== data.email)) {
       wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
 
       createVerifyEmailEntryAndSendEmail(ctx.user, ctx.em);

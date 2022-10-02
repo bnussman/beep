@@ -65,7 +65,7 @@ export async function updatePushToken(
     if (token) {
       await client.mutate({
         mutation: EditAccount,
-        variables: { data: { pushToken: token } },
+        variables: { input: { pushToken: token } },
       });
     }
   }

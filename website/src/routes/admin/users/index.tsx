@@ -40,7 +40,8 @@ export function Users() {
   const { loading, error, data, refetch } = useQuery<GetUsersQuery>(UsersGraphQL, {
       variables: {
         offset: (page - 1) * pageLimit,
-        show: pageLimit
+        show: pageLimit,
+        query: !query ? undefined : query
       }
     }
   );
@@ -50,22 +51,6 @@ export function Users() {
   };
 
   const users = data?.getUsers;
-
-  const fetchUsers = (page: number) => {
-    refetch({
-      offset: page
-    })
-  };
-
-  useEffect(() => {
-    if (query !== undefined) {
-      setCurrentPage(1);
-      refetch({
-        offset: 0,
-        query
-      });
-    }
-  }, [query]);
 
   if (error) return <Error error={error} />;
 
@@ -77,7 +62,6 @@ export function Users() {
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchUsers}
       />
       <InputGroup mb={4}>
         <InputLeftElement
@@ -121,7 +105,6 @@ export function Users() {
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchUsers}
       />
     </Box>
   );

@@ -242,8 +242,10 @@ export function EditProfileScreen() {
       keyboard
       alignItems="center"
       scrollViewProps={{ bounces: false, scrollEnabled: true }}
+      px={6}
+      pt={2}
     >
-      <Stack space={2} mt={4} w="90%">
+      <Stack space={2} w="100%">
         <HStack alignItems="center" space={8}>
           <Stack space={2} flexGrow={1}>
             <FormControl

@@ -76,8 +76,8 @@ export function BeepersMap() {
       longitude: location?.coords.longitude ?? 0,
     },
     skip: !location,
-    onSubscriptionData({ subscriptionData }) {
-      const data = subscriptionData.data?.getBeeperLocationUpdates;
+    onData(d) {
+      const data = d.data.data?.getBeeperLocationUpdates;
       if (
         data &&
         data.latitude !== null &&

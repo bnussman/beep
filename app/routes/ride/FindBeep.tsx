@@ -242,7 +242,6 @@ export function MainFindBeepScreen() {
 
   async function updateETA(lat: number, long: number): Promise<void> {
     const location = await getLocation();
-
     getETA({
       variables: {
         start: `${lat},${long}`,
@@ -280,7 +279,7 @@ export function MainFindBeepScreen() {
     });
   }
 
-  const throttleUpdateETA = throttle(20000, updateETA);
+  const throttleUpdateETA = throttle(25000, updateETA);
 
   useEffect(() => {
     SplashScreen.hideAsync();
@@ -316,7 +315,7 @@ export function MainFindBeepScreen() {
     if (beep?.state === 3 && previousData?.getRiderStatus?.state === 2) {
       sub?.unsubscribe();
     }
-    if (beep?.beeper.location && beep?.state === 2) {
+    if (!previousData && beep?.beeper.location && beep?.state === 2) {
       updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
     }
     if (previousData && !beep) {
