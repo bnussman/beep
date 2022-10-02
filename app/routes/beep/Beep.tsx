@@ -22,8 +22,11 @@ import {
   Spacer,
   Stack,
   Text,
+  useClipboard,
+  useToast,
 } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { printStars } from "../../components/Stars";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -33,6 +36,13 @@ export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
   const { navigate } = useNavigation<Navigation>();
+  const { onCopy } = useClipboard();
+  const { show } = useToast();
+
+  const copy = (value: string) => {
+    show({ description: "Copied to Clipboard 📋" });
+    onCopy(value);
+  };
 
   return (
     <>
@@ -45,9 +55,19 @@ export function Beep(props: Props) {
         }
       >
         <HStack alignItems="center" space={4}>
-          <Heading flexShrink={1} fontWeight="extrabold" size="xl">
-            {beep.rider.name}
-          </Heading>
+          <Stack>
+            <Heading
+              flexShrink={1}
+              fontWeight="extrabold"
+              letterSpacing="sm"
+              size="xl"
+            >
+              {beep.rider.name}
+            </Heading>
+            {beep.rider.rating !== null && beep.rider.rating !== undefined ? (
+              <Text fontSize="xs">{printStars(beep.rider.rating)}</Text>
+            ) : null}
+          </Stack>
           <Spacer />
           <Avatar size="xl" url={beep.rider.photo} />
         </HStack>
@@ -55,23 +75,43 @@ export function Beep(props: Props) {
       <Card mt={4}>
         <Stack space={2}>
           <Box>
-            <Heading size="sm" fontWeight="extrabold">
+            <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
               Group Size
             </Heading>
             <Text>{beep.groupSize}</Text>
           </Box>
-          <Box>
-            <Heading size="sm" fontWeight="extrabold">
-              Pick Up
-            </Heading>
-            <Text>{beep.origin}</Text>
-          </Box>
-          <Box>
-            <Heading size="sm" fontWeight="extrabold">
-              Destination
-            </Heading>
-            <Text>{beep.destination}</Text>
-          </Box>
+          <Pressable onPress={() => copy(beep.origin)}>
+            <Box>
+              <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
+                Pick Up
+              </Heading>
+              <HStack alignItems="center" space={2}>
+                <Text flexShrink={1}>{beep.origin}</Text>
+                <Spacer />
+                <Icon
+                  as={MaterialCommunityIcons}
+                  name="content-copy"
+                  size="sm"
+                />
+              </HStack>
+            </Box>
+          </Pressable>
+          <Pressable onPress={() => copy(beep.destination)}>
+            <Box>
+              <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
+                Destination
+              </Heading>
+              <HStack alignItems="center" space={2}>
+                <Text flexShrink={1}>{beep.destination}</Text>
+                <Spacer />
+                <Icon
+                  as={MaterialCommunityIcons}
+                  name="content-copy"
+                  size="sm"
+                />
+              </HStack>
+            </Box>
+          </Pressable>
         </Stack>
       </Card>
       <Spacer />
@@ -88,7 +128,9 @@ export function Beep(props: Props) {
                 flexGrow={1}
                 variant="solid"
                 onPress={() => Linking.openURL("tel:" + beep.rider.phone)}
-                icon={<Icon as={Ionicons} name="ios-call" size="md" />}
+                icon={
+                  <Icon as={Ionicons} color="white" name="ios-call" size="md" />
+                }
               />
               <IconButton
                 flexGrow={1}
@@ -108,6 +150,7 @@ export function Beep(props: Props) {
               <>
                 {beep.rider.cashapp ? (
                   <Button
+                    colorScheme="green"
                     onPress={() =>
                       openCashApp(
                         beep.rider.cashapp,
@@ -122,6 +165,7 @@ export function Beep(props: Props) {
                 ) : null}
                 {beep.rider?.venmo ? (
                   <Button
+                    colorScheme="lightBlue"
                     onPress={() =>
                       openVenmo(
                         beep.rider.venmo,

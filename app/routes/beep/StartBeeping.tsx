@@ -396,8 +396,7 @@ export function StartBeepingScreen() {
           <Flex
             w="100%"
             height={queue.length > 1 ? "80%" : "100%"}
-            px={4}
-            py={4}
+            p={3}
             pb={queue.length > 1 ? 4 : 16}
           >
             {queue[0] && <Beep beep={queue[0]} />}
