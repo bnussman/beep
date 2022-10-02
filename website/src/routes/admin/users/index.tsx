@@ -31,20 +31,17 @@ export const UsersGraphQL = gql`
 
 export function Users() {
   const pageLimit = 20;
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState<string>();
-
   const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
 
-  const { loading, error, data, refetch } = useQuery<GetUsersQuery>(UsersGraphQL, {
-      variables: {
-        offset: (page - 1) * pageLimit,
-        show: pageLimit,
-        query: !query ? undefined : query
-      }
+  const { loading, error, data } = useQuery<GetUsersQuery>(UsersGraphQL, {
+    variables: {
+      offset: (page - 1) * pageLimit,
+      show: pageLimit,
+      query: !query ? undefined : query
     }
-  );
+  });
 
   const setCurrentPage = (page: number) => {
     setSearchParams({ page: String(page) });
@@ -52,7 +49,9 @@ export function Users() {
 
   const users = data?.getUsers;
 
-  if (error) return <Error error={error} />;
+  if (error) {
+    return <Error error={error} />;
+  }
 
   return (
     <Box>
