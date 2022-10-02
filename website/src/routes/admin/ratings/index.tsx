@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../../components/Pagination';
@@ -6,7 +6,7 @@ import { gql, useQuery } from '@apollo/client';
 import { GetRatingsQuery } from '../../../generated/graphql';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useSearchParams } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
@@ -50,22 +50,24 @@ export function printStars(rating: number): string {
 }
 
 export function Ratings() {
-  const pageLimit = 25;
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, loading, error, refetch } = useQuery<GetRatingsQuery>(RatesGraphQL, {
+  const pageLimit = 20;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+
+  const { data, loading, error } = useQuery<GetRatingsQuery>(RatesGraphQL, {
     variables: {
-      offset: 0,
+      offset: (page - 1) * pageLimit,
       show: pageLimit
     }
   });
 
-  async function fetchRatings(page: number) {
-    refetch({
-      offset: page
-    });
-  }
+  const setCurrentPage = (page: number) => {
+    setSearchParams({ page: String(page) });
+  };
 
-  if (error) return <Error error={error} />;
+  if (error) {
+    return <Error error={error} />;
+  }
 
   return (
     <Box>
@@ -73,9 +75,8 @@ export function Ratings() {
       <Pagination
         resultCount={data?.getRatings.count}
         limit={pageLimit}
-        currentPage={currentPage}
+        currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchRatings}
       />
       <Box overflowX="auto">
         <Table>
@@ -111,9 +112,8 @@ export function Ratings() {
       <Pagination
         resultCount={data?.getRatings.count}
         limit={pageLimit}
-        currentPage={currentPage}
+        currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchRatings}
       />
     </Box>
   );

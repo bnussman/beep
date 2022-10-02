@@ -49,7 +49,7 @@ export function Reports() {
   const [id, setId] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { data, loading, error, refetch } = useQuery<GetReportsQuery>(ReportsGraphQL, {
+  const { data, loading, error } = useQuery<GetReportsQuery>(ReportsGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -61,12 +61,6 @@ export function Reports() {
   };
 
   const reports = data?.getReports.items;
-
-  const fetchReports = async (page: number) => {
-    refetch({
-      offset: page
-    });
-  }
 
   function openReport(id: string) {
     setId(id);
@@ -83,7 +77,6 @@ export function Reports() {
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchReports}
       />
       <Box overflowX="auto">
         <Table>
@@ -122,7 +115,6 @@ export function Reports() {
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchReports}
       />
       <ReportDrawer
         isOpen={isOpen}
