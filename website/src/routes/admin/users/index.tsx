@@ -30,7 +30,7 @@ export const UsersGraphQL = gql`
 `;
 
 export function Users() {
-  const pageLimit = 20;
+  const pageLimit = 2;
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState<string>();
@@ -62,7 +62,6 @@ export function Users() {
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={setCurrentPage}
       />
       <InputGroup mb={4}>
         <InputLeftElement
@@ -106,7 +105,6 @@ export function Users() {
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={setCurrentPage}
       />
     </Box>
   );

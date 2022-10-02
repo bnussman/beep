@@ -9,7 +9,7 @@ interface PaginationProps {
   neighbors?: number;
   currentPage: number;
   setCurrentPage: (page: number) => void;
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
 }
 
 interface DirectionButtonProps {
@@ -70,17 +70,17 @@ export function Pagination({
   function increment() {
     if (currentPage < pageCount) {
       setCurrentPage(currentPage + 1);
-      onPageChange(currentPage * limit);
+      onPageChange?.(currentPage * limit);
     }
   }
   function decrement() {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
-      onPageChange(((currentPage - 1) * limit) - limit);
+      onPageChange?.(((currentPage - 1) * limit) - limit);
     }
   }
   function navigateTo(pageNum: number) {
-    onPageChange((pageNum - 1) * limit);
+    onPageChange?.((pageNum - 1) * limit);
     setCurrentPage(pageNum);
   }
 
