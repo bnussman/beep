@@ -16,7 +16,7 @@ export class TokenEntry {
     tokenid: string = v4();
 
     @Field(() => User)
-    @ManyToOne()
+    @ManyToOne(() => User)
     user!: User;
     
     constructor(u: User) {
