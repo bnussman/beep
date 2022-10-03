@@ -14,6 +14,7 @@ import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
 import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { GraphQLUpload } from 'graphql-upload';
+import { setContext } from "@sentry/node";
 
 @ObjectType()
 class UsersPerDomain {
@@ -158,6 +159,8 @@ export class UserResolver {
       Bucket: "beep",
       ACL: "public-read"
     };
+
+    setContext("uploadParams", uploadParams);
 
     const result = await s3.upload(uploadParams).promise();
 
