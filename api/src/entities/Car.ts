@@ -1,5 +1,5 @@
-import { PrimaryKey, Authorized, Field, ObjectType } from "type-graphql";
-import { Entity, Property } from "@mikro-orm/core";
+import { Field, ObjectType } from "type-graphql";
+import { Entity, Property, PrimaryKey } from "@mikro-orm/core";
 import { v4 } from "uuid";
 
 @ObjectType()
