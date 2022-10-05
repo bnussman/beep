@@ -1,6 +1,7 @@
 import { Field, ObjectType } from "type-graphql";
-import { Entity, Property, PrimaryKey } from "@mikro-orm/core";
+import { Entity, Property, PrimaryKey, ManyToOne } from "@mikro-orm/core";
 import { v4 } from "uuid";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -8,6 +9,10 @@ export class Car {
   @PrimaryKey()
   @Field()
   id: string = v4();
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  user!: User;
 
   @Field()
   @Property()
