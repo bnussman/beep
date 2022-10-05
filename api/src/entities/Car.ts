@@ -6,6 +6,12 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class Car {
+  constructor(values?: Partial<Car>) {
+    if (values) {
+      Object.assign(this, values);
+    }
+  }
+
   @PrimaryKey()
   @Field()
   id: string = v4();
@@ -21,6 +27,10 @@ export class Car {
   @Field()
   @Property()
   model!: string;
+
+  @Field()
+  @Property()
+  color!: string;
 
   @Field()
   @Property()
