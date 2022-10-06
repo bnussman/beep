@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { CreateCarMutationVariables, Scalars } from "../../generated/graphql";
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
+import { CarsQuery } from "./Cars";
 import {
   Image,
   CheckIcon,
@@ -17,7 +18,6 @@ import {
   Flex,
   Pressable,
 } from "native-base";
-import { CarsQuery } from "./Cars";
 
 const AddCarMutation = gql`
   mutation CreateCar(

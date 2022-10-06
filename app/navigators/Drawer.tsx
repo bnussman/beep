@@ -10,6 +10,12 @@ import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
+import { UserData, useUser } from "../utils/useUser";
+import { Avatar } from "../components/Avatar";
+import { MainNavParamList } from "./MainTabs";
+import { useNavigation } from "@react-navigation/native";
+import { Navigation } from "../utils/Navigation";
+import { Cars } from "../routes/cars/Cars";
 import {
   LOCATION_TRACKING,
   StartBeepingScreen,
@@ -33,12 +39,6 @@ import {
   Button,
   Stack,
 } from "native-base";
-import { UserData, useUser } from "../utils/useUser";
-import { Avatar } from "../components/Avatar";
-import { MainNavParamList } from "./MainTabs";
-import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../utils/Navigation";
-import { CarsRouter } from "../routes/cars";
 
 const Logout = gql`
   mutation Logout {
@@ -227,7 +227,7 @@ export function BeepDrawer() {
       >
         <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
         <Drawer.Screen name="Beep" component={StartBeepingScreen} />
-        <Drawer.Screen name="Cars" component={CarsRouter} />
+        <Drawer.Screen name="Cars" component={Cars} />
         <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
         <Drawer.Screen
           name="Change Password"

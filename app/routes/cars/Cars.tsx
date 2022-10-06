@@ -52,8 +52,7 @@ export function Cars() {
   const isRefreshing = Boolean(data) && loading;
 
   useLayoutEffect(() => {
-    const navigator = navigation.getParent();
-    navigator?.setOptions({
+    navigation.setOptions({
       headerRight: () => {
         return (
           <IconButton
