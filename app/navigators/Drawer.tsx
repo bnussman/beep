@@ -38,6 +38,7 @@ import { Avatar } from "../components/Avatar";
 import { MainNavParamList } from "./MainTabs";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
+import { Cars } from "../routes/cars";
 
 const Logout = gql`
   mutation Logout {
@@ -61,6 +62,8 @@ const getIcon = (screenName: string) => {
       return "car-multiple";
     case "Ratings":
       return "account-star";
+    case "My Cars":
+      return "car";
     default:
       return "car";
   }
@@ -224,6 +227,7 @@ export function BeepDrawer() {
       >
         <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
         <Drawer.Screen name="Beep" component={StartBeepingScreen} />
+        <Drawer.Screen name="Cars" component={Cars} />
         <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
         <Drawer.Screen
           name="Change Password"

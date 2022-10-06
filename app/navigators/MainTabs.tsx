@@ -23,4 +23,5 @@ export type MainNavParamList = {
   "Choose Beeper": any;
   "Forgot Password": any;
   "Sign Up": any;
+  "Cars": any;
 };

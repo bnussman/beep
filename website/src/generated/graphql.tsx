@@ -63,6 +63,25 @@ export type BeepsResponse = {
   items: Array<Beep>;
 };
 
+export type Car = {
+  __typename?: 'Car';
+  color: Scalars['String'];
+  created: Scalars['DateTime'];
+  id: Scalars['String'];
+  make: Scalars['String'];
+  model: Scalars['String'];
+  photo: Scalars['String'];
+  updated: Scalars['DateTime'];
+  user: User;
+  year: Scalars['Float'];
+};
+
+export type CarsResponse = {
+  __typename?: 'CarsResponse';
+  count: Scalars['Int'];
+  items: Array<Car>;
+};
+
 export type ChangePasswordInput = {
   password: Scalars['String'];
 };
@@ -124,8 +143,10 @@ export type Mutation = {
   chooseBeep: QueueEntry;
   cleanObjectStorageBucket: Scalars['Float'];
   clearQueue: Scalars['Boolean'];
+  createCar: Car;
   deleteAccount: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
+  deleteCar: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   deleteReport: Scalars['Boolean'];
   editUser: User;
@@ -177,7 +198,21 @@ export type MutationClearQueueArgs = {
 };
 
 
+export type MutationCreateCarArgs = {
+  color: Scalars['String'];
+  make: Scalars['String'];
+  model: Scalars['String'];
+  photo?: InputMaybe<Scalars['Upload']>;
+  year: Scalars['Float'];
+};
+
+
 export type MutationDeleteBeepArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCarArgs = {
   id: Scalars['String'];
 };
 
@@ -301,6 +336,7 @@ export type Query = {
   getBeep: Beep;
   getBeepers: Array<User>;
   getBeeps: BeepsResponse;
+  getCars: CarsResponse;
   getETA: Scalars['String'];
   getInProgressBeeps: BeepsInProgressResponse;
   getLastBeepToRate?: Maybe<Beep>;
@@ -337,6 +373,14 @@ export type QueryGetBeepersArgs = {
 
 
 export type QueryGetBeepsArgs = {
+  id?: InputMaybe<Scalars['String']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetCarsArgs = {
   id?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
   query?: InputMaybe<Scalars['String']>;
@@ -542,6 +586,7 @@ export type UpdateReportInput = {
 export type User = {
   __typename?: 'User';
   capacity: Scalars['Float'];
+  cars: Array<Car>;
   cashapp?: Maybe<Scalars['String']>;
   created?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;

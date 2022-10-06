@@ -13,7 +13,7 @@ class CarsResponse extends Paginated(Car) {}
 @Resolver(Car)
 export class CarResolver {
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Car)
   @Authorized()
   public async createCar(@Ctx() ctx: Context, @Args() data: CarArgs): Promise<Car> {
     const { photo, ...input } = data;
@@ -58,5 +58,15 @@ export class CarResolver {
       items: cars,
       count: count
     };
+  }
+
+  @Mutation(() => Boolean)
+  @Authorized()
+  public async deleteCar(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
+    const car = ctx.em.getReference(Car, id);
+
+    await ctx.em.removeAndFlush(car);
+
+    return true;
   }
 }
