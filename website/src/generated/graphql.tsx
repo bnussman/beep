@@ -824,6 +824,14 @@ export type GetBeepsQueryVariables = Exact<{
 
 export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } }> } };
 
+export type GetCarsQueryVariables = Exact<{
+  offset?: InputMaybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string, created: any, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
+
 export type SendNotificationsMutationVariables = Exact<{
   title: Scalars['String'];
   body: Scalars['String'];
@@ -2053,6 +2061,56 @@ export function useGetBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
 export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
 export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
+export const GetCarsDocument = gql`
+    query GetCars($offset: Int, $show: Int) {
+  getCars(offset: $offset, show: $show) {
+    items {
+      id
+      make
+      model
+      year
+      color
+      photo
+      created
+      user {
+        id
+        photo
+        name
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetCarsQuery__
+ *
+ * To run a query within a React component, call `useGetCarsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCarsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCarsQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
+ *   },
+ * });
+ */
+export function useGetCarsQuery(baseOptions?: Apollo.QueryHookOptions<GetCarsQuery, GetCarsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCarsQuery, GetCarsQueryVariables>(GetCarsDocument, options);
+      }
+export function useGetCarsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCarsQuery, GetCarsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCarsQuery, GetCarsQueryVariables>(GetCarsDocument, options);
+        }
+export type GetCarsQueryHookResult = ReturnType<typeof useGetCarsQuery>;
+export type GetCarsLazyQueryHookResult = ReturnType<typeof useGetCarsLazyQuery>;
+export type GetCarsQueryResult = Apollo.QueryResult<GetCarsQuery, GetCarsQueryVariables>;
 export const SendNotificationsDocument = gql`
     mutation SendNotifications($title: String!, $body: String!, $match: String) {
   sendNotifications(title: $title, body: $body, match: $match)

@@ -743,7 +743,11 @@ export type CreateCarMutationVariables = Exact<{
 
 export type CreateCarMutation = { __typename?: 'Mutation', createCar: { __typename?: 'Car', id: string, make: string, model: string, year: number, color: string } };
 
-export type GetCarsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCarsQueryVariables = Exact<{
+  getCarsId?: InputMaybe<Scalars['String']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
+}>;
 
 
 export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string }> } };
@@ -1540,8 +1544,8 @@ export type CreateCarMutationHookResult = ReturnType<typeof useCreateCarMutation
 export type CreateCarMutationResult = ApolloReactCommon.MutationResult<CreateCarMutation>;
 export type CreateCarMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateCarMutation, CreateCarMutationVariables>;
 export const GetCarsDocument = gql`
-    query GetCars {
-  getCars {
+    query GetCars($getCarsId: String, $offset: Int, $show: Int) {
+  getCars(id: $getCarsId, offset: $offset, show: $show) {
     items {
       id
       make
@@ -1567,6 +1571,9 @@ export const GetCarsDocument = gql`
  * @example
  * const { data, loading, error } = useGetCarsQuery({
  *   variables: {
+ *      getCarsId: // value for 'getCarsId'
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
  *   },
  * });
  */

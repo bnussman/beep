@@ -20,10 +20,11 @@ import {
   HStack,
   Spacer,
 } from "native-base";
+import { useUser } from "../../utils/useUser";
 
 export const CarsQuery = gql`
-  query GetCars {
-    getCars {
+  query GetCars($getCarsId: String, $offset: Int, $show: Int) {
+    getCars(id: $getCarsId, offset: $offset, show: $show) {
       items {
         id
         make
@@ -40,8 +41,11 @@ export const CarsQuery = gql`
 export function Cars() {
   const navigation = useNavigation<Navigation>();
   const { colorMode } = useColorMode();
+  const { user } = useUser();
 
-  const { data, loading, error, refetch } = useQuery<GetCarsQuery>(CarsQuery);
+  const { data, loading, error, refetch } = useQuery<GetCarsQuery>(CarsQuery, {
+    variables: { id: user?.id },
+  });
 
   const cars = data?.getCars.items;
 
