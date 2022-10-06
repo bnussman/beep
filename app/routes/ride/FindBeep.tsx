@@ -384,8 +384,8 @@ export function MainFindBeepScreen() {
 
   if (!beep) {
     return (
-      <Container keyboard alignItems="center" pt={2} h="100%">
-        <Stack space={4} w="90%">
+      <Container keyboard alignItems="center" pt={2} h="100%" px={4}>
+        <Stack space={4} w="100%">
           {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
           <FormControl
             isInvalid={
