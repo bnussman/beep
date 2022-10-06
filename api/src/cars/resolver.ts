@@ -37,7 +37,9 @@ export class CarResolver {
       ...input,
       user: ctx.user,
       photo: upload.Location,
-    });
+    }, { em: ctx.em });
+
+    await ctx.em.persistAndFlush(car);
 
     return car;
   }

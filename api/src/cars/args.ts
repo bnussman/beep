@@ -21,6 +21,6 @@ export class CarArgs {
   public color!: string;
 
   @Field(() => GraphQLUpload, { nullable: true })
-  @IsDefined({ message: "You must add a profile picture" })
+  @IsDefined({ message: "You must add a picture of your car" })
   public photo?: Upload;
 }

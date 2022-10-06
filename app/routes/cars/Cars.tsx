@@ -7,6 +7,7 @@ import { gql, useQuery } from "@apollo/client";
 import { GetCarsQuery } from "../../generated/graphql";
 import { RefreshControl } from "react-native";
 import { Card } from "../../components/Card";
+import { Image } from "../../components/Image";
 import {
   FlatList,
   Heading,
@@ -15,9 +16,12 @@ import {
   Spinner,
   Text,
   useColorMode,
+  Stack,
+  HStack,
+  Spacer,
 } from "native-base";
 
-const CarsQuery = gql`
+export const CarsQuery = gql`
   query GetCars {
     getCars {
       items {
@@ -26,6 +30,7 @@ const CarsQuery = gql`
         model
         year
         color
+        photo
       }
       count
     }
@@ -84,10 +89,31 @@ export function Cars() {
     <Container>
       <FlatList
         height="100%"
+        p={2}
         data={cars}
         renderItem={({ item: car }) => (
-          <Card>
-            <Text>{car.id}</Text>
+          <Card my={2}>
+            <HStack alignItems="center">
+              <Stack>
+                <Heading
+                  fontSize="md"
+                  fontWeight="extrabold"
+                  letterSpacing="sm"
+                  textTransform="capitalize"
+                >
+                  {car.make} {car.model} {car.year}
+                </Heading>
+                <Text textTransform="capitalize">{car.color}</Text>
+              </Stack>
+              <Spacer />
+              <Image
+                borderRadius="xl"
+                w={24}
+                h={16}
+                source={{ uri: car.photo }}
+                alt={`car-${car.id}`}
+              />
+            </HStack>
           </Card>
         )}
         keyExtractor={(car) => car.id}

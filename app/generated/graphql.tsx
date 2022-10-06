@@ -732,10 +732,21 @@ export type UpdateBeepSettingsMutationVariables = Exact<{
 
 export type UpdateBeepSettingsMutation = { __typename?: 'Mutation', setBeeperStatus: { __typename?: 'User', id: string, singlesRate: number, groupRate: number, capacity: number, isBeeping: boolean, queueSize: number, location?: { __typename?: 'Point', latitude: number, longitude: number } | null } };
 
+export type CreateCarMutationVariables = Exact<{
+  make: Scalars['String'];
+  model: Scalars['String'];
+  year: Scalars['Float'];
+  color: Scalars['String'];
+  photo: Scalars['Upload'];
+}>;
+
+
+export type CreateCarMutation = { __typename?: 'Mutation', createCar: { __typename?: 'Car', id: string, make: string, model: string, year: number, color: string } };
+
 export type GetCarsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string }> } };
+export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string }> } };
 
 export type GetUserProfileQueryVariables = Exact<{
   id: Scalars['String'];
@@ -1487,6 +1498,47 @@ export function useUpdateBeepSettingsMutation(baseOptions?: ApolloReactHooks.Mut
 export type UpdateBeepSettingsMutationHookResult = ReturnType<typeof useUpdateBeepSettingsMutation>;
 export type UpdateBeepSettingsMutationResult = ApolloReactCommon.MutationResult<UpdateBeepSettingsMutation>;
 export type UpdateBeepSettingsMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateBeepSettingsMutation, UpdateBeepSettingsMutationVariables>;
+export const CreateCarDocument = gql`
+    mutation CreateCar($make: String!, $model: String!, $year: Float!, $color: String!, $photo: Upload!) {
+  createCar(make: $make, model: $model, year: $year, color: $color, photo: $photo) {
+    id
+    make
+    model
+    year
+    color
+  }
+}
+    `;
+export type CreateCarMutationFn = ApolloReactCommon.MutationFunction<CreateCarMutation, CreateCarMutationVariables>;
+
+/**
+ * __useCreateCarMutation__
+ *
+ * To run a mutation, you first call `useCreateCarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCarMutation, { data, loading, error }] = useCreateCarMutation({
+ *   variables: {
+ *      make: // value for 'make'
+ *      model: // value for 'model'
+ *      year: // value for 'year'
+ *      color: // value for 'color'
+ *      photo: // value for 'photo'
+ *   },
+ * });
+ */
+export function useCreateCarMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateCarMutation, CreateCarMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<CreateCarMutation, CreateCarMutationVariables>(CreateCarDocument, options);
+      }
+export type CreateCarMutationHookResult = ReturnType<typeof useCreateCarMutation>;
+export type CreateCarMutationResult = ApolloReactCommon.MutationResult<CreateCarMutation>;
+export type CreateCarMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateCarMutation, CreateCarMutationVariables>;
 export const GetCarsDocument = gql`
     query GetCars {
   getCars {
@@ -1496,6 +1548,7 @@ export const GetCarsDocument = gql`
       model
       year
       color
+      photo
     }
     count
   }
