@@ -13,10 +13,10 @@ export function Details({ user }: Props) {
     <Stack spacing={2}>
       <Box>
         <strong>Email:</strong>
-          <Text>
-            <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
-            {user.email}
-          </Text>
+        <Text>
+          <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
+          {user.email}
+        </Text>
       </Box>
       <Box>
         <strong>Push Notification Token:</strong>

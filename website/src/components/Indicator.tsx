@@ -28,6 +28,6 @@ export function Indicator({ color, ...rest }: Props) {
   };
 
   return (
-    <Box w={4} h={4} bgColor={getColor()} borderRadius="full" {...getBorderProps()} {...rest} />
+    <Box display="inline-flex" w={4} h={4} bgColor={getColor()} borderRadius="full" {...getBorderProps()} {...rest} />
   );
 }

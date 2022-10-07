@@ -54,6 +54,7 @@ export function Header() {
           textAlign={["center", "center", "left", "left"]}
           display={{ base: 'none', md: "unset" }}
           _dark={{ color: 'white' }}
+          _hover={{ bgGradient: 'linear(to-l, #fb7ba2, #fce043)' }}
         >
           Ride Beep App
         </Heading>
