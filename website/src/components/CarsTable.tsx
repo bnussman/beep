@@ -52,7 +52,7 @@ export function CarsTable(props: Props) {
   if (count === 0) {
     return (
       <Center h="100px">
-        This user has no ride history.
+        This user has no cars.
       </Center>
     );
   }
