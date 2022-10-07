@@ -117,11 +117,8 @@ export function LoginScreen() {
     >
       <Stack space={4} w="90%">
         <Box>
-          <Heading size="xl" mr={4} fontWeight="extrabold">
-            Welcome
-          </Heading>
-          <Heading size="xl" mr={4} fontWeight="extrabold">
-            to Ride Beep App
+          <Heading size="2xl" mr={4} fontWeight="extrabold" letterSpacing="xs">
+            Ride Beep App 🚕
           </Heading>
         </Box>
         <Stack space={2}>
@@ -191,17 +188,14 @@ export function LoginScreen() {
               {validationErrors?.password?.[0]}
             </FormControl.ErrorMessage>
           </FormControl>
-          <Button mt={3} isLoading={isSubmitting} onPress={onLogin}>
+          <Button mt={3} isLoading={isSubmitting} onPress={onLogin} _text={{ fontWeight: 'extrabold' }}>
             Login
           </Button>
         </Stack>
         <Flex direction="row">
-          <GradietnButton
-            size="sm"
-            onPress={() => navigation.navigate("Sign Up")}
-          >
+          <Button onPress={() => navigation.navigate("Sign Up")} shadow={4}>
             Sign Up
-          </GradietnButton>
+          </Button>
           <Spacer />
           <Button onPress={() => navigation.navigate("Forgot Password")}>
             Forgot Password
