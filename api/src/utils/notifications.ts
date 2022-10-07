@@ -1,10 +1,13 @@
 import got from "got";
+import * as Sentry from "@sentry/node";
 
 export interface PushNotification {
   to: string | string[];
   title: string;
   body: string;
 }
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
  * Use Expo's API to send a push notification
@@ -16,15 +19,19 @@ export interface PushNotification {
 export async function sendNotification(token: string | null, title: string, message: string): Promise<void> {
   if (!token) return;
 
-  await got.post('https://api.expo.dev/v2/push/send', {
-    json: {
-      to: token,
-      title: title,
-      body: message,
-      sound: 'default',
-      _displayInForeground: true
-    }
-  });
+  try {
+    await got.post('https://api.expo.dev/v2/push/send', {
+      json: {
+        to: token,
+        title: title,
+        body: message,
+        sound: 'default',
+        _displayInForeground: true
+      }
+    });
+  } catch (error) {
+    Sentry.captureException(error);
+  }
 }
 
 /**
@@ -33,23 +40,33 @@ export async function sendNotification(token: string | null, title: string, mess
  * @param {PushNotification[]} notifications an array of Expo Notifications
  */
 export async function sendNotifications(notifications: PushNotification[]): Promise<void> {
-  await got.post('https://api.expo.dev/v2/push/send', { json: notifications });
+  try {
+    await got.post('https://api.expo.dev/v2/push/send', { json: notifications });
+  } catch (error) {
+    Sentry.captureException(error);
+  }
 }
 
 export async function sendNotificationsNew(to: string[], title: string, body: string): Promise<void> {
   const batches = chunkArrayInGroups(to, 100);
 
-  batches.forEach((batch) => {
-    got.post('https://api.expo.dev/v2/push/send', {
-      json: {
-        to: batch,
-        title,
-        body,
-        sound: 'default',
-        _displayInForeground: true
-      }
-    });
-  });
+  for (const batch of batches) {
+    try {
+      await got.post('https://api.expo.dev/v2/push/send', {
+        json: {
+          to: batch,
+          title,
+          body,
+          sound: 'default',
+          _displayInForeground: true
+        }
+      });
+    } catch (error) {
+      Sentry.captureException(error);
+    }
+
+    await sleep(3000);
+  }
 }
 
 function chunkArrayInGroups<T>(arr: T[], size: number) {
