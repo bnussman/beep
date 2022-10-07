@@ -9,6 +9,7 @@ import { CreateCarMutationVariables, Scalars } from "../../generated/graphql";
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
+import { capitalize, colors, years, makes, getModels } from "./utils";
 import {
   Image,
   CheckIcon,
@@ -51,6 +52,7 @@ export function AddCar() {
   const { handleSubmit, setValue, watch } = useForm();
 
   const photo = watch("photo");
+  const make = watch("make");
 
   const [addCar, { loading }] =
     useMutation<CreateCarMutationVariables>(AddCarMutation);
@@ -107,8 +109,9 @@ export function AddCar() {
             endIcon: <CheckIcon size="5" />,
           }}
         >
-          <Select.Item label="Toyota" value="toyota" />
-          <Select.Item label="Honda" value="honda" />
+          {makes.map((make) => (
+            <Select.Item key={make} label={make} value={make} />
+          ))}
         </Select>
         <Select
           accessibilityLabel="Choose Model"
@@ -119,8 +122,10 @@ export function AddCar() {
             endIcon: <CheckIcon size="5" />,
           }}
         >
-          <Select.Item label="Tundra" value="tundra" />
-          <Select.Item label="Tacoma" value="tacoma" />
+
+          {!make ? [] : getModels(make).map((make) => (
+            <Select.Item key={make} label={make} value={make} />
+          ))}
         </Select>
         <Select
           accessibilityLabel="Choose Year"
@@ -131,8 +136,9 @@ export function AddCar() {
             endIcon: <CheckIcon size="5" />,
           }}
         >
-          <Select.Item label="2016" value="2016" />
-          <Select.Item label="2022" value="2022" />
+          {years.map((year) => (
+            <Select.Item key={year} label={year} value={year} />
+          ))}
         </Select>
         <Select
           accessibilityLabel="Choose Color"
@@ -143,8 +149,9 @@ export function AddCar() {
             endIcon: <CheckIcon size="5" />,
           }}
         >
-          <Select.Item label="Blue" value="blue" />
-          <Select.Item label="Red" value="red" />
+          {colors.map((color) => (
+            <Select.Item key={color} label={capitalize(color)} value={color} />
+          ))}
         </Select>
         <Pressable onPress={choosePhoto}>
           {photo ? (
@@ -157,11 +164,12 @@ export function AddCar() {
           ) : (
             <Flex
               height="48"
-              bgColor="gray.800"
+              bgColor="gray.100"
               borderRadius="2xl"
               alignItems="center"
               justifyContent="center"
               _text={{ fontWeight: "extrabold" }}
+              _dark={{ bgColor: "gray.800" }}
             >
               Click to attach a photo of your 🚙
             </Flex>

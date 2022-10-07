@@ -45,7 +45,7 @@ export class CarResolver {
   }
 
   @Query(() => CarsResponse)
-  @Authorized()
+  @Authorized('self')
   public async getCars(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<CarsResponse> {
     const filter = id ? { user: id } : {};
 
@@ -63,7 +63,7 @@ export class CarResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized()
+  @Authorized('self')
   public async deleteCar(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
     const car = ctx.em.getReference(Car, id);
 
