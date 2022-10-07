@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
-import { CreateCarMutationVariables, Scalars } from "../../generated/graphql";
+import { CreateCarMutation, CreateCarMutationVariables, Scalars } from "../../generated/graphql";
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
@@ -60,9 +60,9 @@ export function AddCar() {
   const photo = watch("photo");
   const make = watch("make");
 
-  const [addCar, { error }] = useMutation<CreateCarMutationVariables>(AddCarMutation);
+  const [addCar, { error }] = useMutation<CreateCarMutation>(AddCarMutation);
 
-  const validationErrors = useValidationErrors<SignUpInput>(error);
+  const validationErrors = useValidationErrors<CreateCarMutationVariables>(error);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
