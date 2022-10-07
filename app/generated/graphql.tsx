@@ -767,7 +767,7 @@ export type EditCarMutationVariables = Exact<{
 export type EditCarMutation = { __typename?: 'Mutation', editCar: boolean };
 
 export type GetCarsQueryVariables = Exact<{
-  getCarsId?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
   show?: InputMaybe<Scalars['Int']>;
 }>;
@@ -1630,8 +1630,8 @@ export type EditCarMutationHookResult = ReturnType<typeof useEditCarMutation>;
 export type EditCarMutationResult = ApolloReactCommon.MutationResult<EditCarMutation>;
 export type EditCarMutationOptions = ApolloReactCommon.BaseMutationOptions<EditCarMutation, EditCarMutationVariables>;
 export const GetCarsDocument = gql`
-    query GetCars($getCarsId: String, $offset: Int, $show: Int) {
-  getCars(id: $getCarsId, offset: $offset, show: $show) {
+    query GetCars($id: String, $offset: Int, $show: Int) {
+  getCars(id: $id, offset: $offset, show: $show) {
     items {
       id
       make
@@ -1658,7 +1658,7 @@ export const GetCarsDocument = gql`
  * @example
  * const { data, loading, error } = useGetCarsQuery({
  *   variables: {
- *      getCarsId: // value for 'getCarsId'
+ *      id: // value for 'id'
  *      offset: // value for 'offset'
  *      show: // value for 'show'
  *   },

@@ -38,6 +38,7 @@ import {
   TabPanels,
   useMediaQuery
 } from '@chakra-ui/react';
+import { CarsTable } from '../../../components/CarsTable';
 
 dayjs.extend(relativeTime);
 
@@ -118,6 +119,7 @@ const tabs = [
   'beeps',
   'ratings',
   'reports',
+  'cars',
 ]
 
 export function User() {
@@ -310,6 +312,9 @@ export function User() {
             </TabPanel>
             <TabPanel>
               <ReportsTable userId={user.id} />
+            </TabPanel>
+            <TabPanel>
+              <CarsTable userId={user.id} />
             </TabPanel>
           </TabPanels>
         </Tabs>

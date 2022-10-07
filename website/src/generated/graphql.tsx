@@ -666,6 +666,15 @@ export type GetBeepsForUserQueryVariables = Exact<{
 
 export type GetBeepsForUserQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string }, rider: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string } }> } };
 
+export type GetCarsForUserQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetCarsForUserQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string, created: any, default: boolean }> } };
+
 export type UsersQueueQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
 }>;
@@ -1166,6 +1175,53 @@ export function useGetBeepsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetBeepsForUserQueryHookResult = ReturnType<typeof useGetBeepsForUserQuery>;
 export type GetBeepsForUserLazyQueryHookResult = ReturnType<typeof useGetBeepsForUserLazyQuery>;
 export type GetBeepsForUserQueryResult = Apollo.QueryResult<GetBeepsForUserQuery, GetBeepsForUserQueryVariables>;
+export const GetCarsForUserDocument = gql`
+    query GetCarsForUser($id: String, $offset: Int, $show: Int) {
+  getCars(id: $id, offset: $offset, show: $show) {
+    items {
+      id
+      make
+      model
+      year
+      color
+      photo
+      created
+      default
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetCarsForUserQuery__
+ *
+ * To run a query within a React component, call `useGetCarsForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCarsForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCarsForUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
+ *   },
+ * });
+ */
+export function useGetCarsForUserQuery(baseOptions?: Apollo.QueryHookOptions<GetCarsForUserQuery, GetCarsForUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCarsForUserQuery, GetCarsForUserQueryVariables>(GetCarsForUserDocument, options);
+      }
+export function useGetCarsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCarsForUserQuery, GetCarsForUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCarsForUserQuery, GetCarsForUserQueryVariables>(GetCarsForUserDocument, options);
+        }
+export type GetCarsForUserQueryHookResult = ReturnType<typeof useGetCarsForUserQuery>;
+export type GetCarsForUserLazyQueryHookResult = ReturnType<typeof useGetCarsForUserLazyQuery>;
+export type GetCarsForUserQueryResult = Apollo.QueryResult<GetCarsForUserQuery, GetCarsForUserQueryVariables>;
 export const UsersQueueDocument = gql`
     query UsersQueue($id: String) {
   getQueue(id: $id) {
