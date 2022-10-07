@@ -11,6 +11,7 @@ import { Card } from "../../components/Card";
 import { Image } from "../../components/Image";
 import { useUser } from "../../utils/useUser";
 import { Alert } from "react-native";
+import { cache } from "../../utils/Apollo";
 import {
   FlatList,
   Heading,
@@ -25,7 +26,6 @@ import {
   Badge,
   Center,
 } from "native-base";
-import { cache } from "../../utils/Apollo";
 
 export const DeleteCar = gql`
   mutation DeleteCar($id: String!) {
@@ -40,8 +40,8 @@ export const EditCar = gql`
 `;
 
 export const CarsQuery = gql`
-  query GetCars($getCarsId: String, $offset: Int, $show: Int) {
-    getCars(id: $getCarsId, offset: $offset, show: $show) {
+  query GetCars($id: String, $offset: Int, $show: Int) {
+    getCars(id: $id, offset: $offset, show: $show) {
       items {
         id
         make
