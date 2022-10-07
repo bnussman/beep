@@ -3,9 +3,10 @@ import { Context } from '../utils/context';
 import { Car } from '../entities/Car';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { QueryOrder, wrap } from '@mikro-orm/core';
-import { CarArgs } from './args';
+import { CarArgs, EditCarArgs } from './args';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
+import { UserRole } from '../entities/User';
 
 @ObjectType()
 class CarsResponse extends Paginated(Car) {}
@@ -37,8 +38,10 @@ export class CarResolver {
       ...input,
       user: ctx.user,
       photo: upload.Location,
+      default: true,
     }, { em: ctx.em });
 
+    await ctx.em.nativeUpdate(Car, { user: ctx.user.id }, { default: false });
     await ctx.em.persistAndFlush(car);
 
     return car;
@@ -47,7 +50,7 @@ export class CarResolver {
   @Query(() => CarsResponse)
   @Authorized('self')
   public async getCars(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<CarsResponse> {
-    const filter = id ? { user: id } : {};
+    const filter = id || !id && ctx.user.role !== UserRole.ADMIN ? { user: id } : {};
 
     const [cars, count] = await ctx.em.findAndCount(Car, filter, {
       orderBy: { created: QueryOrder.DESC },
@@ -64,8 +67,22 @@ export class CarResolver {
 
   @Mutation(() => Boolean)
   @Authorized('self')
+  public async editCar(@Ctx() ctx: Context, @Arg("id") id: string, @Args() data: EditCarArgs): Promise<boolean> {
+    await ctx.em.nativeUpdate(Car, { user: ctx.user.id, id: { $ne: id } }, { default: false });
+    await ctx.em.nativeUpdate(Car, { user: ctx.user.id, id }, data);
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @Authorized('self')
   public async deleteCar(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
-    const car = ctx.em.getReference(Car, id);
+    const car = await ctx.em.findOneOrFail(Car, id);
+    const count = await ctx.em.count(Car, { user: ctx.user.id });
+
+    if (car.default && count > 1) {
+      throw new Error("You must make another car default before you delete this one.");
+    }
 
     await ctx.em.removeAndFlush(car);
 

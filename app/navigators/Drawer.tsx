@@ -5,7 +5,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MainFindBeepScreen } from "../routes/ride/FindBeep";
 import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
-import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { LogoutMutation, ResendMutation } from "../generated/graphql";
@@ -229,10 +228,6 @@ export function BeepDrawer() {
         <Drawer.Screen name="Beep" component={StartBeepingScreen} />
         <Drawer.Screen name="Cars" component={Cars} />
         <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
-        <Drawer.Screen
-          name="Change Password"
-          component={ChangePasswordScreen}
-        />
         <Drawer.Screen name="Beeps" component={BeepsScreen} />
         <Drawer.Screen name="Ratings" component={RatingsScreen} />
       </Drawer.Navigator>

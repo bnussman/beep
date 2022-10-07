@@ -2,7 +2,7 @@ import { Icon, IconProps } from "@chakra-ui/react";
 import React from "react";
 
 interface Props extends IconProps {
-  color: 'red' | 'green';
+  color: string;
 }
 
 export function Indicator({ color, ...rest }: Props) {

@@ -68,6 +68,7 @@ export type Car = {
   __typename?: 'Car';
   color: Scalars['String'];
   created: Scalars['DateTime'];
+  default: Scalars['Boolean'];
   id: Scalars['String'];
   make: Scalars['String'];
   model: Scalars['String'];
@@ -150,6 +151,7 @@ export type Mutation = {
   deleteCar: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   deleteReport: Scalars['Boolean'];
+  editCar: Scalars['Boolean'];
   editUser: User;
   forgotPassword: Scalars['Boolean'];
   login: Auth;
@@ -224,6 +226,12 @@ export type MutationDeleteRatingArgs = {
 
 
 export type MutationDeleteReportArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationEditCarArgs = {
+  default: Scalars['Boolean'];
   id: Scalars['String'];
 };
 
@@ -743,6 +751,21 @@ export type CreateCarMutationVariables = Exact<{
 
 export type CreateCarMutation = { __typename?: 'Mutation', createCar: { __typename?: 'Car', id: string, make: string, model: string, year: number, color: string } };
 
+export type DeleteCarMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteCarMutation = { __typename?: 'Mutation', deleteCar: boolean };
+
+export type EditCarMutationVariables = Exact<{
+  default: Scalars['Boolean'];
+  id: Scalars['String'];
+}>;
+
+
+export type EditCarMutation = { __typename?: 'Mutation', editCar: boolean };
+
 export type GetCarsQueryVariables = Exact<{
   getCarsId?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -750,7 +773,7 @@ export type GetCarsQueryVariables = Exact<{
 }>;
 
 
-export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string }> } };
+export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string, default: boolean }> } };
 
 export type GetUserProfileQueryVariables = Exact<{
   id: Scalars['String'];
@@ -813,19 +836,19 @@ export type ChooseBeepMutationVariables = Exact<{
 }>;
 
 
-export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } };
+export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } };
 
 export type GetInitialRiderStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
+export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } | null };
 
 export type RiderStatusSubscriptionVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null } } | null };
+export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } | null };
 
 export type BeepersLocationSubscriptionVariables = Exact<{
   id: Scalars['String'];
@@ -1543,6 +1566,69 @@ export function useCreateCarMutation(baseOptions?: ApolloReactHooks.MutationHook
 export type CreateCarMutationHookResult = ReturnType<typeof useCreateCarMutation>;
 export type CreateCarMutationResult = ApolloReactCommon.MutationResult<CreateCarMutation>;
 export type CreateCarMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateCarMutation, CreateCarMutationVariables>;
+export const DeleteCarDocument = gql`
+    mutation DeleteCar($id: String!) {
+  deleteCar(id: $id)
+}
+    `;
+export type DeleteCarMutationFn = ApolloReactCommon.MutationFunction<DeleteCarMutation, DeleteCarMutationVariables>;
+
+/**
+ * __useDeleteCarMutation__
+ *
+ * To run a mutation, you first call `useDeleteCarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCarMutation, { data, loading, error }] = useDeleteCarMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteCarMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteCarMutation, DeleteCarMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<DeleteCarMutation, DeleteCarMutationVariables>(DeleteCarDocument, options);
+      }
+export type DeleteCarMutationHookResult = ReturnType<typeof useDeleteCarMutation>;
+export type DeleteCarMutationResult = ApolloReactCommon.MutationResult<DeleteCarMutation>;
+export type DeleteCarMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteCarMutation, DeleteCarMutationVariables>;
+export const EditCarDocument = gql`
+    mutation EditCar($default: Boolean!, $id: String!) {
+  editCar(default: $default, id: $id)
+}
+    `;
+export type EditCarMutationFn = ApolloReactCommon.MutationFunction<EditCarMutation, EditCarMutationVariables>;
+
+/**
+ * __useEditCarMutation__
+ *
+ * To run a mutation, you first call `useEditCarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditCarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editCarMutation, { data, loading, error }] = useEditCarMutation({
+ *   variables: {
+ *      default: // value for 'default'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useEditCarMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditCarMutation, EditCarMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<EditCarMutation, EditCarMutationVariables>(EditCarDocument, options);
+      }
+export type EditCarMutationHookResult = ReturnType<typeof useEditCarMutation>;
+export type EditCarMutationResult = ApolloReactCommon.MutationResult<EditCarMutation>;
+export type EditCarMutationOptions = ApolloReactCommon.BaseMutationOptions<EditCarMutation, EditCarMutationVariables>;
 export const GetCarsDocument = gql`
     query GetCars($getCarsId: String, $offset: Int, $show: Int) {
   getCars(id: $getCarsId, offset: $offset, show: $show) {
@@ -1553,6 +1639,7 @@ export const GetCarsDocument = gql`
       year
       color
       photo
+      default
     }
     count
   }
@@ -1873,6 +1960,13 @@ export const ChooseBeepDocument = gql`
         longitude
         latitude
       }
+      cars {
+        id
+        photo
+        make
+        color
+        model
+      }
     }
   }
 }
@@ -1934,6 +2028,13 @@ export const GetInitialRiderStatusDocument = gql`
         longitude
         latitude
       }
+      cars {
+        id
+        photo
+        make
+        color
+        model
+      }
     }
   }
 }
@@ -1992,6 +2093,13 @@ export const RiderStatusDocument = gql`
       location {
         longitude
         latitude
+      }
+      cars {
+        id
+        photo
+        make
+        color
+        model
       }
     }
   }

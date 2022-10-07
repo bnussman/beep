@@ -48,6 +48,7 @@ import {
   Input,
   Heading,
   Stack,
+  Image,
   FormControl,
   HStack,
   Center,
@@ -56,6 +57,7 @@ import {
   Spinner,
   Pressable,
   WarningOutlineIcon,
+  Badge,
 } from "native-base";
 
 const ChooseBeep = gql`
@@ -98,6 +100,13 @@ const ChooseBeep = gql`
           longitude
           latitude
         }
+        cars {
+          id
+          photo
+          make
+          color
+          model
+        }
       }
     }
   }
@@ -131,6 +140,13 @@ const InitialRiderStatus = gql`
           longitude
           latitude
         }
+        cars {
+          id
+          photo
+          make
+          color
+          model
+        }
       }
     }
   }
@@ -163,6 +179,13 @@ const RiderStatus = gql`
         location {
           longitude
           latitude
+        }
+        cars {
+          id
+          photo
+          make
+          color
+          model
         }
       }
     }
@@ -365,7 +388,7 @@ export function MainFindBeepScreen() {
       case 2:
         return "Beeper is on their way to get you.";
       case 3:
-        return "Beeper is here to pick you up!";
+        return `Beeper is here to pick you up in a ${beep.beeper.cars[0].color} ${beep.beeper.cars[0].make} ${beep.beeper.cars[0].model}`;
       case 4:
         return "You are currenly in the car with your beeper.";
       default:
@@ -570,28 +593,41 @@ export function MainFindBeepScreen() {
               position={beep.position}
             />
           )}
-          <Map
-            showsUserLocation
-            style={{
-              flexGrow: 1,
-              width: "100%",
-              borderRadius: 15,
-              overflow: "hidden",
-            }}
-            initialRegion={{
-              latitude: beep.beeper.location?.latitude ?? 0,
-              longitude: beep.beeper.location?.longitude ?? 0,
-              longitudeDelta: 0.05,
-              latitudeDelta: 0.05,
-            }}
-          >
-            <BeeperMarker
-              id={beep.beeper.id}
-              latitude={beep.beeper.location?.latitude ?? 0}
-              longitude={beep.beeper.location?.longitude ?? 0}
-            />
-          </Map>
-          <Stack space={2} w="100%">
+          {beep.state  === 3 ? 
+            (
+             <Image
+             borderRadius="xl"
+             w="100%"
+             h={48}
+             flexGrow={1}
+             source={{ uri: beep.beeper.cars[0].photo }}
+             alt={`car-${beep.beeper.cars[0].id}`}
+             />
+            )
+            : (
+            <Map
+              showsUserLocation
+              style={{
+                flexGrow: 1,
+                width: "100%",
+                borderRadius: 15,
+                overflow: "hidden",
+              }}
+              initialRegion={{
+                latitude: beep.beeper.location?.latitude ?? 0,
+                longitude: beep.beeper.location?.longitude ?? 0,
+                longitudeDelta: 0.05,
+                latitudeDelta: 0.05,
+              }}
+            >
+              <BeeperMarker
+                id={beep.beeper.id}
+                latitude={beep.beeper.location?.latitude ?? 0}
+                longitude={beep.beeper.location?.longitude ?? 0}
+              />
+            </Map>
+          )}
+          <Stack space={2} w="100%" alignSelf="flex-end">
             <HStack space={2} w="100%">
               <Button
                 flexGrow={1}
@@ -652,7 +688,7 @@ export function MainFindBeepScreen() {
                   Pay with Venmo
                 </Button>
               ) : null}
-              {beep.groupSize > 1 ? (
+              {beep.beeper.venmo && beep.groupSize > 1 ? (
                 <Button
                   rightIcon={
                     <Icon as={Ionicons} name="ios-share-outline" size="md" />

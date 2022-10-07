@@ -18,7 +18,9 @@ import {
   Button,
   Flex,
   Pressable,
+  Icon,
 } from "native-base";
+import { Ionicons } from "@expo/vector-icons";
 
 const AddCarMutation = gql`
   mutation CreateCar(
@@ -160,6 +162,7 @@ export function AddCar() {
               width="100%"
               borderRadius="2xl"
               source={{ uri: photo.uri }}
+              alt="uploaded car image"
             />
           ) : (
             <Flex
@@ -171,7 +174,15 @@ export function AddCar() {
               _text={{ fontWeight: "extrabold" }}
               _dark={{ bgColor: "gray.800" }}
             >
-              Click to attach a photo of your 🚙
+              Attach a Photo
+              <Icon
+                mt={2}
+                as={Ionicons}
+                name="ios-add-sharp"
+                size="xl"
+                color="black"
+                _dark={{ color: "white" }}
+              />
             </Flex>
           )}
         </Pressable>

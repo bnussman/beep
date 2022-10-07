@@ -108,7 +108,7 @@ export function RatingsScreen() {
   if (ratings?.length === 0) {
     return (
       <Container center>
-        <Heading fontWeight="extrabold">Nothing to display!</Heading>
+        <Heading fontWeight="extrabold">No Ratings</Heading>
         <Text>You have no ratings to display</Text>
       </Container>
     );

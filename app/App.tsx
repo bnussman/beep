@@ -30,6 +30,7 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
+import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -123,6 +124,10 @@ function Beep() {
                 name="Rate"
                 component={RateScreen}
                 options={{ presentation: "modal" }}
+              />
+              <Stack.Screen
+                name="Change Password"
+                component={ChangePasswordScreen}
               />
               <Stack.Screen name="Choose Beeper" component={PickBeepScreen} />
               <Stack.Screen name="Add Car" component={AddCar} />

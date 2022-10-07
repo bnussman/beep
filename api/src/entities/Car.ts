@@ -41,6 +41,10 @@ export class Car {
   year!: number;
 
   @Field()
+  @Property({ default: false })
+  default!: boolean;
+
+  @Field()
   @Property()
   created: Date = new Date();
 

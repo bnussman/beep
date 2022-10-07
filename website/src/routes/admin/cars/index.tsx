@@ -9,6 +9,7 @@ import { TdUser } from '../../../components/TdUser';
 import { useSearchParams } from 'react-router-dom';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
+import { Indicator } from '../../../components/Indicator';
 
 dayjs.extend(relativeTime);
 
@@ -86,7 +87,9 @@ export function Cars() {
                 <Td>{car.make}</Td>
                 <Td>{car.model}</Td>
                 <Td>{car.year}</Td>
-                <Td>{car.color}</Td>
+                <Td>
+                  <Indicator color={car.color} />
+                </Td>
                 <Td>{dayjs().to(car.created)}</Td>
                 <Td>
                   <Image src={car.photo} w="24" borderRadius="2xl" />

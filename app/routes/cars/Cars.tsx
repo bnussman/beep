@@ -3,11 +3,14 @@ import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import { Ionicons } from "@expo/vector-icons";
-import { gql, useQuery } from "@apollo/client";
-import { GetCarsQuery } from "../../generated/graphql";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { DeleteCarMutation, EditCarMutation, GetCarsQuery } from "../../generated/graphql";
 import { RefreshControl } from "react-native";
+import { isMobile, Unpacked } from "../../utils/constants";
 import { Card } from "../../components/Card";
 import { Image } from "../../components/Image";
+import { useUser } from "../../utils/useUser";
+import { Alert } from "react-native";
 import {
   FlatList,
   Heading,
@@ -19,8 +22,22 @@ import {
   Stack,
   HStack,
   Spacer,
+  Badge,
+  Center,
 } from "native-base";
-import { useUser } from "../../utils/useUser";
+import { cache } from "../../utils/Apollo";
+
+export const DeleteCar = gql`
+  mutation DeleteCar($id: String!) {
+    deleteCar(id: $id)
+  }
+`;
+
+export const EditCar = gql`
+  mutation EditCar($default: Boolean!, $id: String!) {
+    editCar(default: $default, id: $id)
+  }
+`;
 
 export const CarsQuery = gql`
   query GetCars($getCarsId: String, $offset: Int, $show: Int) {
@@ -32,24 +49,133 @@ export const CarsQuery = gql`
         year
         color
         photo
+        default
       }
       count
     }
   }
 `;
 
+const PAGE_SIZE = 10;
+
 export function Cars() {
   const navigation = useNavigation<Navigation>();
   const { colorMode } = useColorMode();
   const { user } = useUser();
 
-  const { data, loading, error, refetch } = useQuery<GetCarsQuery>(CarsQuery, {
-    variables: { id: user?.id },
+  const { data, loading, error, refetch, fetchMore } = useQuery<GetCarsQuery>(CarsQuery, {
+    variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
+    notifyOnNetworkStatusChange: true,
   });
 
-  const cars = data?.getCars.items;
+  const [_deleteCar] = useMutation<DeleteCarMutation>(DeleteCar);
 
+  const [editCar] = useMutation<EditCarMutation>(EditCar);
+
+  const cars = data?.getCars.items;
+  const count = data?.getCars.count ?? 0;
   const isRefreshing = Boolean(data) && loading;
+  const canLoadMore = cars && count && cars?.length < count;
+
+  const getMore = () => {
+    if (!canLoadMore || isRefreshing) return;
+
+    fetchMore({
+      variables: {
+        offset: cars?.length ?? 0,
+        limit: PAGE_SIZE,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return prev;
+        }
+
+        return {
+          getCars: {
+            items: [...prev.getCars.items, ...fetchMoreResult.getCars.items],
+            count: fetchMoreResult.getCars.count,
+          },
+        };
+      },
+    });
+  };
+
+  const renderFooter = () => {
+    if (!isRefreshing) return null;
+
+    if (!count || count < PAGE_SIZE) return null;
+
+    return (
+      <Center>
+        <Spinner mt={4} mb={9} color="gray.400" />
+      </Center>
+    );
+  };
+
+  const onLongPress = (car: Unpacked<GetCarsQuery['getCars']['items']>) => {
+    if (isMobile) {
+      Alert.alert(
+        "Delete Car?",
+        "Are you sure you want to delete this car?",
+        [
+          {
+            text: "No",
+            style: "cancel",
+          },
+          { text: "Yes", onPress: () => deleteCar(car) },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      deleteCar(car);
+    }
+  }
+
+  const deleteCar = (car: Unpacked<GetCarsQuery['getCars']['items']>) => {
+    _deleteCar({
+      variables: { id: car.id }, 
+      update: (cache) => {
+        cache.evict({
+          id: cache.identify({
+            __typename: 'Car',
+            id: car.id,
+          }),
+        });
+      },
+    }).catch((error: ApolloError) => alert(error?.message));
+  };
+
+  const setDefault = (id: string) => {
+    const oldDefaultId = cars?.find(car => car.default)?.id;
+
+    editCar({ variables: { id, default: true } }).then(() => {
+      if (oldDefaultId) {
+        cache.modify({
+          id: cache.identify({
+            __typename: "Car",
+            id: oldDefaultId,
+          }),
+          fields: {
+            default() {
+              return false;
+            },
+          },
+        });
+      }
+
+      cache.modify({
+        id: cache.identify({
+          __typename: "Car",
+          id,
+        }),
+        fields: {
+          default() {
+            return true;
+          },
+        },
+      });
+    });
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -95,9 +221,9 @@ export function Cars() {
         p={2}
         data={cars}
         renderItem={({ item: car }) => (
-          <Card my={2}>
+          <Card my={2} pressable onLongPress={() => onLongPress(car)} onPress={car.default ? undefined : () => setDefault(car.id)}>
             <HStack alignItems="center">
-              <Stack>
+              <Stack space={2}>
                 <Heading
                   fontSize="md"
                   fontWeight="extrabold"
@@ -106,7 +232,10 @@ export function Cars() {
                 >
                   {car.make} {car.model} {car.year}
                 </Heading>
-                <Text textTransform="capitalize">{car.color}</Text>
+                <HStack space={3}>
+                  {car.default && <Badge borderRadius="lg">Default</Badge>}
+                  <Badge borderRadius="lg" _text={{ textTransform: "capitalize" }} colorScheme={['black', 'white'].includes(car.color) ? undefined : car.color}>{car.color}</Badge>
+                </HStack>
               </Stack>
               <Spacer />
               <Image
@@ -133,6 +262,9 @@ export function Cars() {
             <Text key="message">You have no cars on your account!</Text>
           </>
         }
+        onEndReached={getMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooter()}
         refreshControl={
           <RefreshControl
             tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}

@@ -67,6 +67,7 @@ export type Car = {
   __typename?: 'Car';
   color: Scalars['String'];
   created: Scalars['DateTime'];
+  default: Scalars['Boolean'];
   id: Scalars['String'];
   make: Scalars['String'];
   model: Scalars['String'];
@@ -149,6 +150,7 @@ export type Mutation = {
   deleteCar: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   deleteReport: Scalars['Boolean'];
+  editCar: Scalars['Boolean'];
   editUser: User;
   forgotPassword: Scalars['Boolean'];
   login: Auth;
@@ -223,6 +225,12 @@ export type MutationDeleteRatingArgs = {
 
 
 export type MutationDeleteReportArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationEditCarArgs = {
+  default: Scalars['Boolean'];
   id: Scalars['String'];
 };
 

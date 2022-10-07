@@ -566,6 +566,16 @@
           "nullable": false,
           "mappedType": "integer"
         },
+        "default": {
+          "name": "default",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "boolean"
+        },
         "created": {
           "name": "created",
           "type": "timestamptz(0)",

@@ -73,7 +73,7 @@ export class BeeperResolver {
   @Mutation(() => [QueueEntry])
   @Authorized()
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<QueueEntry[]> {
-    await ctx.em.populate(ctx.user, ['queue', 'queue.rider'], { orderBy: { queue: { start: QueryOrder.ASC } } });
+    await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, orderBy: { queue: { start: QueryOrder.ASC } } });
 
     const queueEntry = ctx.user.queue.getItems().find((entry: QueueEntry) => entry.id === input.id);
 
@@ -122,7 +122,7 @@ export class BeeperResolver {
         sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way 🚕`, "Your beeper is on their way to pick you up.");
         break;
       case 3:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here 📍`, "Your beeper is here to pick you up.");
+        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here 📍`, `Look for a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`);
         break;
       case 4:
         // Beep is in progress - no notification needed at this stage.

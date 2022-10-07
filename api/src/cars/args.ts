@@ -1,4 +1,4 @@
-import { IsDefined, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsNumber, IsString } from 'class-validator';
 import { GraphQLUpload, Upload } from 'graphql-upload';
 import { ArgsType, Field } from 'type-graphql';
 
@@ -23,4 +23,12 @@ export class CarArgs {
   @Field(() => GraphQLUpload, { nullable: true })
   @IsDefined({ message: "You must add a picture of your car" })
   public photo?: Upload;
+}
+
+
+@ArgsType()
+export class EditCarArgs {
+  @Field()
+  @IsBoolean()
+  public default!: boolean;
 }
