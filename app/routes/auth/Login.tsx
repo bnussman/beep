@@ -193,7 +193,7 @@ export function LoginScreen() {
           </Button>
         </Stack>
         <Flex direction="row">
-          <Button onPress={() => navigation.navigate("Sign Up")} shadow={4}>
+          <Button onPress={() => navigation.navigate("Sign Up")}>
             Sign Up
           </Button>
           <Spacer />
