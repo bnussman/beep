@@ -11,6 +11,7 @@ import { inOrder } from '../utils/sort';
 import { Point } from '../location/resolver';
 import { sha256 } from 'js-sha256';
 import { BeeperLocationArgs } from '../location/args';
+import { Car } from '../entities/Car';
 
 @ObjectType()
 export class AnonymousBeeper {
@@ -48,6 +49,13 @@ export class BeeperResolver {
   @Mutation(() => User)
   @Authorized()
   public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
+    if (input.isBeeping) {
+      const car = await ctx.em.findOne(Car, { user: ctx.user.id, default: true });
+
+      if (!car) {
+        throw new Error("You need to add a car to your account to beep.");
+      }
+    }
 
     if (!input.isBeeping) {
       const queue = await ctx.user.queue.loadItems();
