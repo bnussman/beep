@@ -71,8 +71,14 @@ export class CarResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized('self')
+  @Authorized()
   public async editCar(@Ctx() ctx: Context, @Arg("id") id: string, @Args() data: EditCarArgs): Promise<boolean> {
+    const car = await ctx.em.findOneOrFail(Car, id);
+
+    if (ctx.user.role !== UserRole.ADMIN && car.user.id !== ctx.user.id) {
+      throw new AuthenticationError("you can't do that"); 
+    }
+    
     await ctx.em.nativeUpdate(Car, { user: ctx.user.id, id: { $ne: id } }, { default: false });
     await ctx.em.nativeUpdate(Car, { user: ctx.user.id, id }, data);
 
