@@ -35,7 +35,10 @@ export const DeleteCar = gql`
 
 export const EditCar = gql`
   mutation EditCar($default: Boolean!, $id: String!) {
-    editCar(default: $default, id: $id)
+    editCar(default: $default, id: $id) {
+      id
+      default
+    }
   }
 `;
 
@@ -162,18 +165,6 @@ export function Cars() {
           },
         });
       }
-
-      cache.modify({
-        id: cache.identify({
-          __typename: "Car",
-          id,
-        }),
-        fields: {
-          default() {
-            return true;
-          },
-        },
-      });
     });
   };
 

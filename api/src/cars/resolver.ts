@@ -42,7 +42,8 @@ export class CarResolver {
       default: true,
     }, { em: ctx.em });
 
-    await ctx.em.nativeUpdate(Car, { user: ctx.user.id }, { default: false });
+    ctx.em.nativeUpdate(Car, { user: ctx.user.id }, { default: false });
+
     await ctx.em.persistAndFlush(car);
 
     return car;
@@ -70,19 +71,22 @@ export class CarResolver {
     };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Car)
   @Authorized()
-  public async editCar(@Ctx() ctx: Context, @Arg("id") id: string, @Args() data: EditCarArgs): Promise<boolean> {
+  public async editCar(@Ctx() ctx: Context, @Arg("id") id: string, @Args() data: EditCarArgs): Promise<Car> {
     const car = await ctx.em.findOneOrFail(Car, id);
 
     if (ctx.user.role !== UserRole.ADMIN && car.user.id !== ctx.user.id) {
       throw new AuthenticationError("you can't do that"); 
     }
     
-    await ctx.em.nativeUpdate(Car, { user: ctx.user.id, id: { $ne: id } }, { default: false });
-    await ctx.em.nativeUpdate(Car, { user: ctx.user.id, id }, data);
+    ctx.em.nativeUpdate(Car, { user: ctx.user.id, id: { $ne: id } }, { default: false });
 
-    return true;
+    wrap(car).assign(data);
+
+    await ctx.em.persistAndFlush(car);
+
+    return car;
   }
 
   @Mutation(() => Boolean)
