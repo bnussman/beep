@@ -10,6 +10,11 @@ import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
 import { capitalize, colors, years, makes, getModels } from "./utils";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  isValidationError,
+  useValidationErrors,
+} from "../../utils/useValidationErrors";
 import {
   Image,
   CheckIcon,
@@ -20,7 +25,6 @@ import {
   Pressable,
   Icon,
 } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
 
 const AddCarMutation = gql`
   mutation CreateCar(
@@ -51,13 +55,14 @@ let picture: Scalars["Upload"];
 export function AddCar() {
   const navigation = useNavigation<Navigation>();
 
-  const { handleSubmit, setValue, watch } = useForm();
+  const { handleSubmit, setValue, watch, formState: { isSubmitting } } = useForm();
 
   const photo = watch("photo");
   const make = watch("make");
 
-  const [addCar, { loading }] =
-    useMutation<CreateCarMutationVariables>(AddCarMutation);
+  const [addCar, { error }] = useMutation<CreateCarMutationVariables>(AddCarMutation);
+
+  const validationErrors = useValidationErrors<SignUpInput>(error);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -87,16 +92,19 @@ export function AddCar() {
   };
 
   const onSubmit = handleSubmit(async (variables) => {
-    addCar({
-      variables: { ...variables, year: Number(variables.year), photo: picture },
-      refetchQueries: [CarsQuery],
-    })
-      .then(() => {
-        navigation.goBack();
+    try {
+      await addCar({
+        variables: { ...variables, year: Number(variables.year), photo: picture },
+        refetchQueries: [CarsQuery],
       })
-      .catch((error: ApolloError) => {
-        alert(JSON.stringify(error));
-      });
+
+      navigation.goBack();
+    }
+    catch (error)  {
+      if (!isValidationError(error as ApolloError)) {
+        alert((error as ApolloError).message);
+      }
+    }
   });
 
   return (
@@ -188,7 +196,7 @@ export function AddCar() {
         </Pressable>
         <Button
           _text={{ fontWeight: "extrabold" }}
-          isLoading={loading}
+          isLoading={isSubmitting}
           onPress={onSubmit}
         >
           Add Car
