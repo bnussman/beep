@@ -190,7 +190,7 @@ export function EditProfileScreen() {
       .catch((error: ApolloError) => alert(error.message));
   };
 
-  async function handleUpdatePhoto(): Promise<void> {
+  const handleUpdatePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,
