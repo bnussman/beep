@@ -45,6 +45,9 @@ export function AdminDropdown() {
         <MenuItem as={Link} to="/admin/ratings">
           Ratings
         </MenuItem>
+        <MenuItem as={Link} to="/admin/cars">
+          Cars
+        </MenuItem>
         <MenuItem as={Link} to="/admin/beeps/active">
           Beeps in progress
         </MenuItem>

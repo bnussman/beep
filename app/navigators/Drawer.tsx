@@ -5,11 +5,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MainFindBeepScreen } from "../routes/ride/FindBeep";
 import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
-import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
+import { UserData, useUser } from "../utils/useUser";
+import { Avatar } from "../components/Avatar";
+import { MainNavParamList } from "./MainTabs";
+import { useNavigation } from "@react-navigation/native";
+import { Navigation } from "../utils/Navigation";
+import { Cars } from "../routes/cars/Cars";
 import {
   LOCATION_TRACKING,
   StartBeepingScreen,
@@ -33,11 +38,6 @@ import {
   Button,
   Stack,
 } from "native-base";
-import { UserData, useUser } from "../utils/useUser";
-import { Avatar } from "../components/Avatar";
-import { MainNavParamList } from "./MainTabs";
-import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../utils/Navigation";
 
 const Logout = gql`
   mutation Logout {
@@ -61,6 +61,8 @@ const getIcon = (screenName: string) => {
       return "car-multiple";
     case "Ratings":
       return "account-star";
+    case "My Cars":
+      return "car";
     default:
       return "car";
   }
@@ -224,11 +226,8 @@ export function BeepDrawer() {
       >
         <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
         <Drawer.Screen name="Beep" component={StartBeepingScreen} />
+        <Drawer.Screen name="Cars" component={Cars} />
         <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
-        <Drawer.Screen
-          name="Change Password"
-          component={ChangePasswordScreen}
-        />
         <Drawer.Screen name="Beeps" component={BeepsScreen} />
         <Drawer.Screen name="Ratings" component={RatingsScreen} />
       </Drawer.Navigator>

@@ -24,11 +24,13 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
 import { NATIVE_BASE_CONFIG, NATIVE_BASE_THEME } from "./utils/constants";
+import { AddCar } from "./routes/cars/AddCar";
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
+import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -123,7 +125,12 @@ function Beep() {
                 component={RateScreen}
                 options={{ presentation: "modal" }}
               />
+              <Stack.Screen
+                name="Change Password"
+                component={ChangePasswordScreen}
+              />
               <Stack.Screen name="Choose Beeper" component={PickBeepScreen} />
+              <Stack.Screen name="Add Car" component={AddCar} />
             </>
           )}
         </Stack.Navigator>

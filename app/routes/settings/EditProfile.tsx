@@ -141,6 +141,9 @@ export function EditProfileScreen() {
             );
           }}
         >
+          <Menu.Item onPress={() => navigation.push("Change Password")}>
+            Change Password
+          </Menu.Item>
           <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>
             Delete Account
           </Menu.Item>
@@ -187,7 +190,7 @@ export function EditProfileScreen() {
       .catch((error: ApolloError) => alert(error.message));
   };
 
-  async function handleUpdatePhoto(): Promise<void> {
+  const handleUpdatePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,
@@ -242,7 +245,7 @@ export function EditProfileScreen() {
       keyboard
       alignItems="center"
       scrollViewProps={{ bounces: false, scrollEnabled: true }}
-      px={6}
+      px={4}
       pt={2}
     >
       <Stack space={2} w="100%">
