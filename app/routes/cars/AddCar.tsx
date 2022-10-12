@@ -249,7 +249,7 @@ export function AddCar() {
           </FormControl.ErrorMessage>
         </FormControl>
         <FormControl
-          isInvalid={Boolean(errors.color) || Boolean(validationErrors?.color)}
+          isInvalid={Boolean(errors.photo) || Boolean(validationErrors?.photo)}
         >
           <Controller
             name="photo"
