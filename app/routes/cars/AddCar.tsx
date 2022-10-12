@@ -4,8 +4,12 @@ import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { useForm } from "react-hook-form";
-import { CreateCarMutation, CreateCarMutationVariables, Scalars } from "../../generated/graphql";
+import { useForm, Controller } from "react-hook-form";
+import {
+  CreateCarMutation,
+  CreateCarMutationVariables,
+  Scalars,
+} from "../../generated/graphql";
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
@@ -24,6 +28,8 @@ import {
   Flex,
   Pressable,
   Icon,
+  FormControl,
+  WarningOutlineIcon,
 } from "native-base";
 
 const AddCarMutation = gql`
@@ -55,14 +61,21 @@ let picture: Scalars["Upload"];
 export function AddCar() {
   const navigation = useNavigation<Navigation>();
 
-  const { handleSubmit, setValue, watch, formState: { isSubmitting } } = useForm();
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { isSubmitting, errors },
+  } = useForm();
 
   const photo = watch("photo");
   const make = watch("make");
 
   const [addCar, { error }] = useMutation<CreateCarMutation>(AddCarMutation);
 
-  const validationErrors = useValidationErrors<CreateCarMutationVariables>(error);
+  const validationErrors =
+    useValidationErrors<CreateCarMutationVariables>(error);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -94,13 +107,16 @@ export function AddCar() {
   const onSubmit = handleSubmit(async (variables) => {
     try {
       await addCar({
-        variables: { ...variables, year: Number(variables.year), photo: picture },
+        variables: {
+          ...variables,
+          year: Number(variables.year),
+          photo: picture,
+        },
         refetchQueries: [CarsQuery],
-      })
+      });
 
       navigation.goBack();
-    }
-    catch (error)  {
+    } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         alert((error as ApolloError).message);
       }
@@ -110,90 +126,175 @@ export function AddCar() {
   return (
     <Container p={4}>
       <Stack space={4}>
-        <Select
-          accessibilityLabel="Choose Make"
-          placeholder="Make"
-          onValueChange={(value) => setValue("make", value)}
-          _selectedItem={{
-            bg: "teal.600",
-            endIcon: <CheckIcon size="5" />,
-          }}
+        <FormControl
+          isInvalid={Boolean(errors.make) || Boolean(validationErrors?.make)}
         >
-          {makes.map((make) => (
-            <Select.Item key={make} label={make} value={make} />
-          ))}
-        </Select>
-        <Select
-          accessibilityLabel="Choose Model"
-          placeholder="Model"
-          onValueChange={(value) => setValue("model", value)}
-          _selectedItem={{
-            bg: "teal.600",
-            endIcon: <CheckIcon size="5" />,
-          }}
+          <Controller
+            name="make"
+            rules={{ required: "Make is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange } }) => (
+              <Select
+                accessibilityLabel="Choose Make"
+                placeholder="Make"
+                onValueChange={(value) => onChange(value)}
+                _selectedItem={{
+                  bg: "teal.600",
+                  endIcon: <CheckIcon size="5" />,
+                }}
+              >
+                {makes.map((make) => (
+                  <Select.Item key={make} label={make} value={make} />
+                ))}
+              </Select>
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.make?.message}
+            {validationErrors?.make?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={Boolean(errors.model) || Boolean(validationErrors?.model)}
         >
-
-          {!make ? [] : getModels(make).map((make) => (
-            <Select.Item key={make} label={make} value={make} />
-          ))}
-        </Select>
-        <Select
-          accessibilityLabel="Choose Year"
-          placeholder="Year"
-          onValueChange={(value) => setValue("year", value)}
-          _selectedItem={{
-            bg: "teal.600",
-            endIcon: <CheckIcon size="5" />,
-          }}
+          <Controller
+            name="model"
+            rules={{ required: "Model is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange } }) => (
+              <Select
+                accessibilityLabel="Choose Model"
+                placeholder="Model"
+                onValueChange={(value) => onChange(value)}
+                _selectedItem={{
+                  bg: "teal.600",
+                  endIcon: <CheckIcon size="5" />,
+                }}
+              >
+                {!make
+                  ? []
+                  : getModels(make).map((make) => (
+                      <Select.Item key={make} label={make} value={make} />
+                    ))}
+              </Select>
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.model?.message}
+            {validationErrors?.model?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={Boolean(errors.year) || Boolean(validationErrors?.year)}
         >
-          {years.map((year) => (
-            <Select.Item key={year} label={year} value={year} />
-          ))}
-        </Select>
-        <Select
-          accessibilityLabel="Choose Color"
-          placeholder="Color"
-          onValueChange={(value) => setValue("color", value)}
-          _selectedItem={{
-            bg: "teal.600",
-            endIcon: <CheckIcon size="5" />,
-          }}
+          <Controller
+            name="year"
+            rules={{ required: "Year is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange } }) => (
+              <Select
+                accessibilityLabel="Choose Year"
+                placeholder="Year"
+                onValueChange={(value) => onChange(value)}
+                _selectedItem={{
+                  bg: "teal.600",
+                  endIcon: <CheckIcon size="5" />,
+                }}
+              >
+                {years.map((year) => (
+                  <Select.Item key={year} label={year} value={year} />
+                ))}
+              </Select>
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.year?.message}
+            {validationErrors?.year?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={Boolean(errors.color) || Boolean(validationErrors?.color)}
         >
-          {colors.map((color) => (
-            <Select.Item key={color} label={capitalize(color)} value={color} />
-          ))}
-        </Select>
-        <Pressable onPress={choosePhoto}>
-          {photo ? (
-            <Image
-              height="48"
-              width="100%"
-              borderRadius="2xl"
-              source={{ uri: photo.uri }}
-              alt="uploaded car image"
-            />
-          ) : (
-            <Flex
-              height="48"
-              bgColor="gray.100"
-              borderRadius="2xl"
-              alignItems="center"
-              justifyContent="center"
-              _text={{ fontWeight: "extrabold" }}
-              _dark={{ bgColor: "gray.800" }}
-            >
-              Attach a Photo
-              <Icon
-                mt={2}
-                as={Ionicons}
-                name="ios-add-sharp"
-                size="xl"
-                color="black"
-                _dark={{ color: "white" }}
-              />
-            </Flex>
-          )}
-        </Pressable>
+          <Controller
+            name="color"
+            rules={{ required: "Color is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange } }) => (
+              <Select
+                accessibilityLabel="Choose Color"
+                placeholder="Color"
+                onValueChange={(value) => onChange(value)}
+                _selectedItem={{
+                  bg: "teal.600",
+                  endIcon: <CheckIcon size="5" />,
+                }}
+              >
+                {colors.map((color) => (
+                  <Select.Item
+                    key={color}
+                    label={capitalize(color)}
+                    value={color}
+                  />
+                ))}
+              </Select>
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.color?.message}
+            {validationErrors?.color?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
+        <FormControl
+          isInvalid={Boolean(errors.color) || Boolean(validationErrors?.color)}
+        >
+          <Controller
+            name="photo"
+            rules={{ required: "Photo is required" }}
+            defaultValue=""
+            control={control}
+            render={() => (
+              <Pressable onPress={choosePhoto}>
+                {photo ? (
+                  <Image
+                    height="48"
+                    width="100%"
+                    borderRadius="2xl"
+                    source={{ uri: photo.uri }}
+                    alt="uploaded car image"
+                  />
+                ) : (
+                  <Flex
+                    height="48"
+                    bgColor="gray.100"
+                    borderRadius="2xl"
+                    alignItems="center"
+                    justifyContent="center"
+                    _text={{ fontWeight: "extrabold" }}
+                    _dark={{ bgColor: "gray.800" }}
+                  >
+                    Attach a Photo
+                    <Icon
+                      mt={2}
+                      as={Ionicons}
+                      name="ios-add-sharp"
+                      size="xl"
+                      color="black"
+                      _dark={{ color: "white" }}
+                    />
+                  </Flex>
+                )}
+              </Pressable>
+            )}
+          />
+          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+            {errors.photo?.message}
+            {validationErrors?.photo?.[0]}
+          </FormControl.ErrorMessage>
+        </FormControl>
         <Button
           _text={{ fontWeight: "extrabold" }}
           isLoading={isSubmitting}

@@ -10,6 +10,7 @@ export const colors = [
   'orange',
   'tan',
   'brown',
+  'silver'
 ];
 
 export function capitalize(value: string) {
