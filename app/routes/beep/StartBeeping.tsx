@@ -345,7 +345,7 @@ export function StartBeepingScreen() {
   if (!isBeeping) {
     return (
       <Container keyboard alignItems="center" height="100%">
-        <Stack space={4} w="90%" mt={4}>
+        <Stack space={4} w="100%" p={4}>
           <FormControl>
             <FormControl.Label>Max Rider Capacity</FormControl.Label>
             <Input
@@ -439,8 +439,8 @@ export function StartBeepingScreen() {
       );
     } else {
       return (
-        <Container alignItems="center" justifyContent="center">
-          <Stack space={2} w="90%" alignItems="center">
+        <Container center>
+          <Stack space={2} p={4} alignItems="center">
             <Heading fontWeight="extrabold">Your queue is empty</Heading>
             <Text textAlign="center">
               If someone wants you to beep them, it will appear here. If your

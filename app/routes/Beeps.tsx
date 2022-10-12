@@ -111,7 +111,7 @@ export function BeepsScreen() {
   if (beeps?.length === 0) {
     return (
       <Container center>
-        <Heading fontWeight="extrabold">Nothing to display!</Heading>
+        <Heading fontWeight="extrabold">No Beeps</Heading>
         <Text>You have no previous beeps to display</Text>
       </Container>
     );

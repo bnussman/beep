@@ -5,6 +5,7 @@ import { Rating } from './Rating';
 import { v4 } from "uuid";
 import { PointType } from "../location/types";
 import { Point } from "../location/resolver";
+import { Car } from "./Car";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -135,6 +136,10 @@ export class User {
   @Field(() => [Rating])
   @OneToMany(() => Rating, r => r.rated, { lazy: true, eager: false })
   ratings = new Collection<Rating>(this);
+
+  @Field(() => [Car])
+  @OneToMany(() => Car, r => r.user, { lazy: true, eager: false, orphanRemoval: true })
+  cars = new Collection<Car>(this);
 
   @Field({ nullable: true })
   @Property({ nullable: true })

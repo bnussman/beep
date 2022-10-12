@@ -49,10 +49,12 @@ export function Header() {
           to="/"
           size="md"
           fontWeight="bold"
-          bgGradient='linear(to-l, #fb7ba2, #fce043)'
           bgClip='text'
+          color="gray.800"
           textAlign={["center", "center", "left", "left"]}
           display={{ base: 'none', md: "unset" }}
+          _dark={{ color: 'white' }}
+          _hover={{ bgGradient: 'linear(to-l, #fb7ba2, #fce043)' }}
         >
           Ride Beep App
         </Heading>
