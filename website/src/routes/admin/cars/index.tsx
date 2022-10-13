@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetCarsQuery } from '../../../generated/graphql';
-import { Box, Heading, Image, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Heading, Image, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { useSearchParams } from 'react-router-dom';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
+import { PhotoDialog } from '../../../components/PhotoDialog';
 
 dayjs.extend(relativeTime);
 
@@ -40,6 +41,14 @@ export function Cars() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
 
+  const {
+    isOpen: isPhotoOpen,
+    onOpen: onPhotoOpen,
+    onClose: onPhotoClose
+  } = useDisclosure();
+
+  const [selectedCarId, setSelectedCarId] = useState<string>();
+
   const { data, loading, error } = useQuery<GetCarsQuery>(CarsQuery, {
     variables: {
       offset: (page - 1) * pageLimit,
@@ -50,8 +59,15 @@ export function Cars() {
   const cars = data?.getCars.items;
   const count = data?.getCars.count;
 
+  const selectedCar = cars?.find(car => car.id === selectedCarId);
+
   const setCurrentPage = (page: number) => {
     setSearchParams({ page: String(page) });
+  };
+
+  const onPhotoClick = (id: string) => {
+    setSelectedCarId(id);
+    onPhotoOpen();
   };
 
   if (error) {
@@ -91,7 +107,7 @@ export function Cars() {
                   <Indicator color={car.color} />
                 </Td>
                 <Td>{dayjs().to(car.created)}</Td>
-                <Td>
+                <Td onClick={() => onPhotoClick(car.id)}>
                   <Image src={car.photo} w="24" borderRadius="2xl" />
                 </Td>
               </Tr>
@@ -105,6 +121,11 @@ export function Cars() {
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
+      />
+      <PhotoDialog
+        src={selectedCar?.photo}
+        isOpen={isPhotoOpen}
+        onClose={onPhotoClose}
       />
     </Box>
   );
