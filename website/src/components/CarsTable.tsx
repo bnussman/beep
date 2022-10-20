@@ -90,7 +90,7 @@ export function CarsTable(props: Props) {
                 <Td>{car.model}</Td>
                 <Td>{car.year}</Td>
                 <Td>
-                  <Indicator color={car.color} />
+                  <Indicator color={car.color} tooltip={car.color} />
                 </Td>
                 <Td>{dayjs().to(car.created)}</Td>
                 <Td>
