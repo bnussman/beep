@@ -26,6 +26,7 @@ import {
   Box,
   FormControl,
   WarningOutlineIcon,
+  HStack,
 } from "native-base";
 
 const Login = gql`
@@ -188,19 +189,32 @@ export function LoginScreen() {
               {validationErrors?.password?.[0]}
             </FormControl.ErrorMessage>
           </FormControl>
-          <Button mt={3} isLoading={isSubmitting} onPress={onLogin} _text={{ fontWeight: 'extrabold' }}>
+          <Button
+            mt={3}
+            isLoading={isSubmitting}
+            onPress={onLogin}
+            _text={{ fontWeight: "extrabold" }}
+          >
             Login
           </Button>
         </Stack>
-        <Flex direction="row">
-          <Button onPress={() => navigation.navigate("Sign Up")}>
+        <HStack>
+          <Button
+            variant="link"
+            _text={{ fontWeight: "extrabold" }}
+            onPress={() => navigation.navigate("Sign Up")}
+          >
             Sign Up
           </Button>
           <Spacer />
-          <Button onPress={() => navigation.navigate("Forgot Password")}>
+          <Button
+            variant="link"
+            _text={{ fontWeight: "extrabold" }}
+            onPress={() => navigation.navigate("Forgot Password")}
+          >
             Forgot Password
           </Button>
-        </Flex>
+        </HStack>
       </Stack>
     </Container>
   );
