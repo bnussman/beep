@@ -150,7 +150,7 @@ export type Mutation = {
   deleteCar: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   deleteReport: Scalars['Boolean'];
-  editCar: Scalars['Boolean'];
+  editCar: Car;
   editUser: User;
   forgotPassword: Scalars['Boolean'];
   login: Auth;

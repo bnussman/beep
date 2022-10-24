@@ -151,7 +151,7 @@ export type Mutation = {
   deleteCar: Scalars['Boolean'];
   deleteRating: Scalars['Boolean'];
   deleteReport: Scalars['Boolean'];
-  editCar: Scalars['Boolean'];
+  editCar: Car;
   editUser: User;
   forgotPassword: Scalars['Boolean'];
   login: Auth;
@@ -764,7 +764,7 @@ export type EditCarMutationVariables = Exact<{
 }>;
 
 
-export type EditCarMutation = { __typename?: 'Mutation', editCar: boolean };
+export type EditCarMutation = { __typename?: 'Mutation', editCar: { __typename?: 'Car', id: string, default: boolean } };
 
 export type GetCarsQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1599,7 +1599,10 @@ export type DeleteCarMutationResult = ApolloReactCommon.MutationResult<DeleteCar
 export type DeleteCarMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteCarMutation, DeleteCarMutationVariables>;
 export const EditCarDocument = gql`
     mutation EditCar($default: Boolean!, $id: String!) {
-  editCar(default: $default, id: $id)
+  editCar(default: $default, id: $id) {
+    id
+    default
+  }
 }
     `;
 export type EditCarMutationFn = ApolloReactCommon.MutationFunction<EditCarMutation, EditCarMutationVariables>;
