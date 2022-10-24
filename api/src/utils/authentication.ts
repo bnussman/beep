@@ -34,12 +34,6 @@ export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
 export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next) => {
   const result = await next();
 
-  if (info.fieldName === "cars") {
-    console.log("--------------------------------------");
-    console.log(result[0].user.id);
-    console.log("--------------------------------------");
-  }
-
   if (!context?.user) {
     return result;
   }
@@ -49,7 +43,7 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
   }
 
   //@ts-expect-error ill fix later
-  if ((["email", "phone", "location"].includes(info.fieldName) && context.user[info.fieldName] !== result) || (info.fieldName === "cars" && result[0]?.user.id !== context.user.id)) {
+  if ((["email", "phone", "location"].includes(info.fieldName) && context.user[info.fieldName] !== result) || (info.fieldName === "cars" && result[0]?.user.id !== context?.user?.id)) {
     // a protectd value is trying to used
     const entry = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: context.user.id }, { beeper: context.user.id} ] });
 
