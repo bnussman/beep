@@ -165,7 +165,7 @@ export const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     splitLink,
-    uploadLink as unknown as ApolloLink,
+    uploadLink,
   ]),
   cache,
 });
