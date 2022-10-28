@@ -57,7 +57,6 @@ import {
   Spinner,
   Pressable,
   WarningOutlineIcon,
-  Badge,
 } from "native-base";
 
 const ChooseBeep = gql`
@@ -593,18 +592,16 @@ export function MainFindBeepScreen() {
               position={beep.position}
             />
           )}
-          {beep.state  === 3 ? 
-            (
-             <Image
-             borderRadius="xl"
-             w="100%"
-             h={48}
-             flexGrow={1}
-             source={{ uri: beep.beeper.cars[0].photo }}
-             alt={`car-${beep.beeper.cars[0].id}`}
-             />
-            )
-            : (
+          {beep.state === 3 ? (
+            <Image
+              borderRadius="xl"
+              w="100%"
+              h={48}
+              flexGrow={1}
+              source={{ uri: beep.beeper.cars[0].photo }}
+              alt={`car-${beep.beeper.cars[0].id}`}
+            />
+          ) : (
             <Map
               showsUserLocation
               style={{
