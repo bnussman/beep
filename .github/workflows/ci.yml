@@ -17,9 +17,9 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-      - run: yarn --frozen-lockfile
-      - run: yarn build:api
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-workspace.yaml') }}
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm build:api
   website:
     runs-on: ubuntu-latest
     steps:
@@ -29,9 +29,9 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-      - run: yarn --frozen-lockfile
-      - run: yarn workspace @beep/website typecheck
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-workspace.yaml') }}
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm --filter @beep/website typecheck
   app:
     runs-on: ubuntu-latest
     steps:
@@ -41,6 +41,6 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-      - run: yarn --frozen-lockfile
-      - run: yarn workspace @beep/app typecheck
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-workspace.yaml') }}
+      - run: pnpm --frozen-lockfile
+      - run: pnpm --filter @beep/app typecheck

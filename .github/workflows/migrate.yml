@@ -24,11 +24,11 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-workspace.yaml') }}
       - name: 📦 install packages
-        run: yarn --frozen-lockfile
+        run: pnpm i --frozen-lockfile
       - name: 💿 run migration
-        run: yarn workspace @beep/api db:migrate --only ${{ inputs.migration }} 
+        run: pnpm --filter @beep/api db:migrate --only ${{ inputs.migration }} 
         env:
           DB_URL: ${{ secrets.DB_URL_PUBLIC }}
           DB_USER: ${{ secrets.DB_USER }}

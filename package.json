@@ -8,15 +8,15 @@
     ]
   },
   "scripts": {
-    "clean": "rm -rf node-modules/ && rm -rf app/node_modules/ && rm -rf website/node_modules && rm yarn.lock",
-    "build:api": "yarn workspace @beep/api build",
-    "build:website": "yarn workspace @beep/website build",
-    "build": "yarn build:api",
-    "dev": "concurrently -n app,api,website -c blue,magenta,green \"yarn workspace @beep/app web\" \"yarn workspace @beep/api dev\" \"yarn workspace @beep/website dev\"",
-    "start:app": "yarn workspace @beep/app start",
-    "start:website": "yarn workspace @beep/website dev",
-    "start:api": "yarn workspace @beep/api start",
-    "codegen": "concurrently \"yarn workspace @beep/app codegen\" \"yarn workspace @beep/website codegen\""
+    "clean": "rm -rf node-modules/ && rm -rf app/node_modules/ && rm -rf website/node_modules && rm pnpm-workspace.yaml",
+    "build:api": "pnpm --filter @beep/api build",
+    "build:website": "pnpm --filter @beep/website build",
+    "build": "pnpm build:api",
+    "dev": "concurrently -n app,api,website -c blue,magenta,green \"pnpm --filter @beep/app web\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
+    "start:app": "pnpm --filter @beep/app start",
+    "start:website": "pnpm --filter @beep/website dev",
+    "start:api": "pnpm --filter @beep/api start",
+    "codegen": "concurrently \"pnpm --filter @beep/app codegen\" \"pnpm --filter @beep/website codegen\""
   },
   "license": "SEE LICENSE IN LICENSE.MD",
   "private": true,
