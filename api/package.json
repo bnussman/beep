@@ -29,8 +29,8 @@
   "license": "ISC",
   "dependencies": {
     "@graphql-tools/schema": "^8.5.1",
-    "@mikro-orm/core": "^5.4.2",
-    "@mikro-orm/postgresql": "^5.4.2",
+    "@mikro-orm/core": "5.4.2",
+    "@mikro-orm/postgresql": "5.4.2",
     "@sentry/integrations": "^7.14.0",
     "@sentry/node": "^7.14.0",
     "@sentry/tracing": "^7.14.0",
@@ -59,8 +59,8 @@
     "ws": "^8.9.0"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^5.4.2",
-    "@mikro-orm/migrations": "^5.4.2",
+    "@mikro-orm/cli": "5.4.2",
+    "@mikro-orm/migrations": "5.4.2",
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.9",
     "@types/express": "^4.17.14",

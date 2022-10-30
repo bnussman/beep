@@ -3184,7 +3184,7 @@
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
   integrity sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==
 
-"@mikro-orm/cli@^5.4.2":
+"@mikro-orm/cli@5.4.2":
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/@mikro-orm/cli/-/cli-5.4.2.tgz#c7e51c247aa4d1e89b3d6188c0dc0310004452c0"
   integrity sha512-/y1zeV2Q72eMEP3VfcQhon7HJ1I6sHsWWhAR1gwpCIrQ10hgcsgMk6r6VObMYfqPxSSMU9+S9WRG6mp1L7UMAQ==
@@ -3196,7 +3196,7 @@
     yargonaut "1.1.4"
     yargs "15.4.1"
 
-"@mikro-orm/core@^5.4.2", "@mikro-orm/core@~5.4.2":
+"@mikro-orm/core@5.4.2", "@mikro-orm/core@~5.4.2":
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/@mikro-orm/core/-/core-5.4.2.tgz#62793e90237f06a8a88ffb92426eb382c3a87922"
   integrity sha512-4JZfkUQNSvLh2RKNPl+2qy3RXmWdWOy8e++Owsb2qzmsL0T6CjIOz2kd+yPqZVvFH+unF5R1eQit/xnP3biM+A==
@@ -3218,7 +3218,7 @@
     knex "2.3.0"
     sqlstring "2.3.3"
 
-"@mikro-orm/migrations@^5.4.2":
+"@mikro-orm/migrations@5.4.2":
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/@mikro-orm/migrations/-/migrations-5.4.2.tgz#167ef9e8e5c6953f7f5136b25ada0a8578f966fd"
   integrity sha512-eXy8vaSrMfmUkjm4yBDle5SA80dL3csIyuP3sp/wmKMxKmzMUXX6CUyNy6kahplOpnjhplFy9uMzFg2fQfQV+g==
@@ -3228,7 +3228,7 @@
     knex "2.3.0"
     umzug "3.2.1"
 
-"@mikro-orm/postgresql@^5.4.2":
+"@mikro-orm/postgresql@5.4.2":
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/@mikro-orm/postgresql/-/postgresql-5.4.2.tgz#e55fed2725a4333801b3b0c58c2b7933b0ae5b81"
   integrity sha512-HSScFbelq/X27JAAkG9CqDRQjp7eQ3MCrD45ey2NpUJli3qG4VnsCCO0rD9K/TThC4rXO/8ZPramhPXSlwnYTA==
