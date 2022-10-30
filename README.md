@@ -14,8 +14,7 @@ This is the monorepo for the Beep App. Ride beep app is currently a substitute f
 ### Dependencies
 
 - Node.js (Install with [Volta](https://volta.sh/))
-- npm (Install with [Volta](https://volta.sh/))
-- Yarn (Install with [Volta](https://volta.sh/))
+- pnpm
 - Docker
 - [docker-compose](https://docs.docker.com/compose/install/#install-compose)
 - Expo CLI (`npm install --global expo-cli`)
@@ -34,7 +33,7 @@ cd beep
 
 Install dependencies
 ```
-yarn
+pnpm
 ```
 
 Bring local db and redis up with Docker
@@ -44,12 +43,12 @@ docker-compose up -d
 
 Create the database schema (run this in the `api/` directory)
 ```
-yarn db:create
+pnpm db:create
 ```
 
 To run the development envrionment use in the repo's root
 ```
-yarn dev
+pnpm dev
 ```
 
 By default, the api will use your local database and redis from docker. You should not need an `.env` to develop locally
@@ -71,9 +70,8 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 
 ## ⚠️ Troubleshooting
 
-- Use `yarn clean` to clear all dependencies in the project's repository
-- Run `yarn` in the repo's root to install dependences
-- Run `expo install` in the `app/` directory
+- Use `pnpm clean` to clear all dependencies in the project's repository
+- Run `pnpm` in the repo's root to install dependences
 
 ## 📈 Stats
 ![Alt](https://repobeats.axiom.co/api/embed/1b46a8057ec1f00f48ce7a9fbe9353c7cbe4ff83.svg "Repobeats analytics image")
