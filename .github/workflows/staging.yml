@@ -20,7 +20,7 @@ jobs:
         with:
           push: true
           file: Dockerfile
-          tags: bnussman/api:latest
+          tags: bnussman/api:staging
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -52,4 +52,4 @@ jobs:
       - run: cat .github/helm/templates/configmap.yaml
       - name: 🚀 Deploy api
         run: |
-          helm upgrade --install --atomic --timeout 5m api ./.github/helm/ -f ./.github/helm/values.yaml --namespace beep --create-namespace
+          helm upgrade --install --atomic --timeout 5m api ./.github/helm/ -f ./.github/helm/values-staging.yaml --namespace beep --create-namespace

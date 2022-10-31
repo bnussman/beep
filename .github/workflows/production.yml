@@ -20,7 +20,7 @@ jobs:
         with:
           push: true
           file: Dockerfile
-          tags: bnussman/api:latest
+          tags: bnussman/api:production
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
       - name: 🚀 Deploy api
         run: |
-          helm upgrade --install --atomic --timeout 5m api ./.github/helm/ -f ./.github/helm/values.yaml --namespace beep --create-namespace
+          helm upgrade --install --atomic --timeout 5m api ./.github/helm/ -f ./.github/helm/values-production.yaml --namespace beep --create-namespace
   publish:
      runs-on: ubuntu-latest
      steps:

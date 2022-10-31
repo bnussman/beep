@@ -5,7 +5,7 @@ env:
  
 image:
   name: bnussman/api
-  tag: latest
+  tag: staging
   pull: Always
  
 deployment:
