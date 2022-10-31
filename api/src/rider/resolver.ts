@@ -44,18 +44,15 @@ export class RiderResolver {
   public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
     const entry = await ctx.em.findOne(
       QueueEntry,
-      { rider: ctx.user },
+      { rider: ctx.user, beeper: { cars: { default: true }} },
       {
         populate: ['beeper', 'beeper.queue', 'beeper.cars'],
-        // populateWhere: { beeper: { cars: { default: true } } }
       }
     );
 
     if (!entry) {
       return null;
     }
-
-    await entry.beeper.cars.init({ where: { default: true }});
 
     entry.position = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.state > 0).length;
 
