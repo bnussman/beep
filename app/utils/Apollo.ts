@@ -13,21 +13,21 @@ import {
   split,
 } from "@apollo/client";
 
-const ip = "localhost";
+const ip = "192.168.1.181";
 
-// const wsUrl = __DEV__
-//   ? `ws://${ip}:3001/subscriptions`
-//   : "wss://api.ridebeep.app/subscriptions";
-// const url = __DEV__
-//   ? `http://${ip}:3001/graphql`
-//   : "https://api.ridebeep.app/graphql";
+const wsUrl = __DEV__
+  ? `ws://${ip}:3001/subscriptions`
+  : "wss://api.ridebeep.app/subscriptions";
+const url = __DEV__
+  ? `http://${ip}:3001/graphql`
+  : "https://api.ridebeep.app/graphql";
 // const wsUrl = "wss://staging.ridebeep.app/subscriptions";
 // const url = "https://staging.ridebeep.app/graphql";
 
 // const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
 // const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
-const wsUrl = "wss://api.ridebeep.app/subscriptions";
-const url = "https://api.ridebeep.app/graphql";
+// const wsUrl = "wss://api.ridebeep.app/subscriptions";
+// const url = "https://api.ridebeep.app/graphql";
 
 interface RestartableClient extends Client {
   restart(): void;
@@ -162,10 +162,6 @@ const uploadLink = createUploadLink({
 export const cache = new InMemoryCache();
 
 export const client = new ApolloClient({
-  link: ApolloLink.from([
-    authLink,
-    splitLink,
-    uploadLink,
-  ]),
+  link: ApolloLink.from([authLink, splitLink, uploadLink]),
   cache,
 });

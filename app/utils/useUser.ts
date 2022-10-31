@@ -20,7 +20,6 @@ export const UserData = gql`
       photo
       capacity
       cashapp
-      pushToken
     }
   }
 `;
@@ -44,7 +43,6 @@ export const UserSubscription = gql`
       photo
       capacity
       cashapp
-      pushToken
     }
   }
 `;

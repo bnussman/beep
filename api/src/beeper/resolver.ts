@@ -166,7 +166,7 @@ export class BeeperResolver {
   public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
     const entry = ctx.em.getReference(QueueEntry, id);
 
-    await ctx.user.queue.init({ orderBy: { start: QueryOrder.ASC }, populate: ['rider', 'beeper'] });
+    await ctx.user.queue.init({ orderBy: { start: QueryOrder.ASC }, populate: ['rider', 'beeper', 'beeper.cars'], where: { beeper: { cars: { default: true } } } });
 
     const newQueue = ctx.user.queue.getItems().filter(entry => entry.id !== id);
 
