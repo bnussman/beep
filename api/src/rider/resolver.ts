@@ -65,7 +65,7 @@ export class RiderResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async riderLeaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('id') id: string): Promise<boolean> {
-    const beeper = await ctx.em.findOneOrFail(User, id, { populate: ['queue', 'queue.rider'] });
+    const beeper = await ctx.em.findOneOrFail(User, { id, cars: { default: true } }, { populate: ['queue', 'queue.rider', 'cars'] });
 
     const entry = beeper.queue.getItems().find((_entry: QueueEntry) => _entry.rider.id === ctx.user.id);
 
