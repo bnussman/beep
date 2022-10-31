@@ -41,7 +41,7 @@ jobs:
           helm version
       - uses: actions/checkout@v2
       - name: 🔍 Lint helm charts
-        run: helm lint ./.github/helm/
+        run: helm lint ./.github/helm/ -f ./.github/helm/values-staging.yaml
       - uses: actions/setup-node@v3
         with:
           node-version: 18
