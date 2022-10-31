@@ -63,11 +63,12 @@ export class User {
 
   @Field()
   @Property({ lazy: true })
-  @Authorized('admin')
+  @Authorized(UserRole.ADMIN)
   password!: string;
 
   @Field()
   @Enum({ items: () => PasswordType, default: 'sha256', lazy: true })
+  @Authorized(UserRole.ADMIN)
   passwordType!: PasswordType;
 
   @Field()
@@ -108,7 +109,7 @@ export class User {
 
   @Field(() => String, { nullable: true })
   @Property({ type: String, nullable: true })
-  @Authorized('No Verification Self')
+  @Authorized(UserRole.ADMIN)
   pushToken!: string | null;
 
   @Field({ nullable: true })

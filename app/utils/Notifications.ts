@@ -48,19 +48,9 @@ async function getNotificationPermission(): Promise<boolean> {
   );
 }
 
-/**
- * call getPushToken and send to backend
- * @param {string | null} previousPushToken a user's previous push token to compare aginst
- */
-export async function updatePushToken(
-  previousPushToken?: string | null
-): Promise<void> {
+export async function updatePushToken(): Promise<void> {
   if (isMobile) {
     const token = await getPushToken();
-
-    if (previousPushToken && token === previousPushToken) {
-      return;
-    }
 
     if (token) {
       await client.mutate({
@@ -74,5 +64,5 @@ export async function updatePushToken(
 export function handleNotification(
   notification: Notifications.Notification
 ): void {
-  Vibration.vibrate();
+  // Vibration.vibrate();
 }

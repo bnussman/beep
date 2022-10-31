@@ -68,7 +68,7 @@ function Beep() {
       }
 
       setUserContext(user);
-      updatePushToken(user.pushToken);
+      updatePushToken();
     }
   }, [user]);
 
