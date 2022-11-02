@@ -59,10 +59,16 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
   }
 
   if (["email", "phone"].includes(info.fieldName)) {
-    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id, [info.fieldName]: result } }, { beeper: { id: context.user.id, [info.fieldName]: result }} ] });
+    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'] });
 
     if (beep) {
-      return result;
+      const otherUser = beep.beeper.id === context.user.id ? beep.rider : beep.beeper;
+
+      if (otherUser[info.fieldName as 'email' | 'phone'] === result) {
+        return result;
+      }
+
+      return null;
     } 
 
     return null;
