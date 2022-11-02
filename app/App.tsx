@@ -48,6 +48,9 @@ function Beep() {
   const { colorMode } = useColorMode();
   const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
     errorPolicy: "none",
+    onCompleted: () => {
+      updatePushToken();
+    },
   });
 
   const user = data?.getUser;
@@ -68,7 +71,6 @@ function Beep() {
       }
 
       setUserContext(user);
-      updatePushToken();
     }
   }, [user]);
 
