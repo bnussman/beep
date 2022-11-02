@@ -334,15 +334,13 @@ export function MainFindBeepScreen() {
     ) {
       subscribeToLocation();
     }
-    if (beep?.state === 3 && previousData?.getRiderStatus?.state === 2) {
-      sub?.unsubscribe();
-    }
     if (!previousData && beep?.beeper.location && beep?.state === 2) {
       updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
     }
     if (previousData && !beep) {
       client.refetchQueries({ include: [GetRateData, GetBeepHistory] });
       riderStatusSub?.unsubscribe();
+      sub?.unsubscribe();
     }
   }, [data]);
 
