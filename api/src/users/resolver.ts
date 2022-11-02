@@ -34,7 +34,7 @@ export class UserResolver {
   @Query(() => User)
   @Authorized('No Verification')
   public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
-    const populate = fieldsToRelations(info, { excludeFields: ['location'] }) as Array<keyof User>;
+    const populate = fieldsToRelations(info) as Array<keyof User>;
 
     return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate });
   }
