@@ -79,31 +79,25 @@ export function Beepers() {
       longitude: 0,
       anonymize: false,
     },
-    // for some reason, this is not working. I blame @types/apollo-upload-client... Once @types/apollo-upload-client
-    // updates to use the latest apollo client, this should start working
     onData(data) {
-      console.log(data)
-    },
-    onSubscriptionData({ subscriptionData }) {
-      const data = subscriptionData.data?.getBeeperLocationUpdates;
-      console.log(data)
+      const location = data.data.data?.getBeeperLocationUpdates;
       if (
-        data &&
-        data.latitude !== null &&
-        data.latitude !== undefined &&
-        data.longitude !== null &&
-        data.longitude !== undefined
+        location &&
+        location.latitude !== null &&
+        location.latitude !== undefined &&
+        location.longitude !== null &&
+        location.longitude !== undefined
       ) {
         cache.modify({
           id: cache.identify({
             __typename: "User",
-            id: data.id,
+            id: location.id,
           }),
           fields: {
             location() {
               return {
-                latitude: data.latitude,
-                longitude: data.longitude,
+                latitude: location.latitude,
+                longitude: location.longitude,
               };
             },
           },
