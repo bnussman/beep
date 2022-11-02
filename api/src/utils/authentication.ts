@@ -1,5 +1,5 @@
 import { User, UserRole } from "../entities/User";
-import { AuthChecker, MiddlewareFn } from "type-graphql";
+import { AuthChecker, createMethodDecorator, MiddlewareFn } from "type-graphql";
 import { Context } from "../utils/context";
 import { AuthenticationError } from "apollo-server-core";
 import { QueueEntry } from "../entities/QueueEntry";
@@ -58,8 +58,8 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
     return [];
   }
 
-  if ((["email", "phone", "location"].includes(info.fieldName) && context.user[info.fieldName as keyof User] !== result)) {
-    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: context.user.id }, { beeper: context.user.id} ] });
+  if (["email", "phone"].includes(info.fieldName)) {
+    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id, [info.fieldName]: result } }, { beeper: { id: context.user.id, [info.fieldName]: result }} ] });
 
     if (beep) {
       return result;
@@ -67,6 +67,24 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
 
     return null;
   }
+
+
+  if (["location"].includes(info.fieldName)) {
+    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'] });
+
+    if (beep) {
+      const otherUser = beep.beeper.id === context.user.id ? beep.rider : beep.beeper;
+
+      if (otherUser.location?.latitude === result.latitude && otherUser.location?.longitude === result.longitude) {
+        return result;
+      }
+
+      return null;
+    }
+
+    return null;
+  }
+
 
   return result;
 };
