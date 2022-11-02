@@ -20,7 +20,7 @@
   },
   "license": "SEE LICENSE IN LICENSE.MD",
   "private": true,
-  "dependencies": {
+  "devDependencies": {
     "concurrently": "^7.5.0"
   },
   "resolutions": {
