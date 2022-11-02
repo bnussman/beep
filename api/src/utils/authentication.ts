@@ -1,4 +1,4 @@
-import { User, UserRole } from "../entities/User";
+import { User, User, UserRole } from "../entities/User";
 import { AuthChecker, createMethodDecorator, MiddlewareFn } from "type-graphql";
 import { Context } from "../utils/context";
 import { AuthenticationError } from "apollo-server-core";
@@ -59,6 +59,11 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
   }
 
   if (["email", "phone"].includes(info.fieldName)) {
+
+    if (context.user[info.fieldName as 'email' | 'phone'] === result) {
+      return result;
+    }
+
     const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'] });
 
     if (beep) {
