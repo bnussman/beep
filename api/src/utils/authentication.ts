@@ -1,5 +1,5 @@
-import { User, User, UserRole } from "../entities/User";
-import { AuthChecker, createMethodDecorator, MiddlewareFn } from "type-graphql";
+import { UserRole } from "../entities/User";
+import { AuthChecker, MiddlewareFn } from "type-graphql";
 import { Context } from "../utils/context";
 import { AuthenticationError } from "apollo-server-core";
 import { QueueEntry } from "../entities/QueueEntry";
