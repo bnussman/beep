@@ -260,7 +260,7 @@ importers:
       react-map-gl: ^7.0.19
       react-router-dom: ^6.4.1
       typescript: ^4.8.4
-      vite: ^3.2.1
+      vite: ^3.2.2
     dependencies:
       '@apollo/client': 3.7.1_gx7iz7m2buhjkttyrgqpt34fdm
       '@chakra-ui/icons': 2.0.11_react@18.2.0
@@ -291,7 +291,7 @@ importers:
       '@types/react-dom': 18.0.8
       '@vitejs/plugin-react-refresh': 1.3.6
       typescript: 4.8.4
-      vite: 3.2.1
+      vite: 3.2.2
 
 packages:
 
@@ -18518,8 +18518,8 @@ packages:
     resolution: {integrity: sha512-/juG65kTL4Cy2su4P8HjtkTxk6VmJDiOPBufWniqQ6wknac6jNiXS9vU+hO3wgusiyqWlzTbVHi0dyJqRONg3w==}
     dev: true
 
-  /vite/3.2.1:
-    resolution: {integrity: sha512-ADtMkfHuWq4tskJsri2n2FZkORO8ZyhI+zIz7zTrDAgDEtct1jdxOg3YsZBfHhKjmMoWLOSCr+64qrEDGo/DbQ==}
+  /vite/3.2.2:
+    resolution: {integrity: sha512-pLrhatFFOWO9kS19bQ658CnRYzv0WLbsPih6R+iFeEEhDOuYgYCX2rztUViMz/uy/V8cLCJvLFeiOK7RJEzHcw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
