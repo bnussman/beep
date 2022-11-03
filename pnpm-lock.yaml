@@ -19,9 +19,9 @@ importers:
       '@mikro-orm/core': 5.4.2
       '@mikro-orm/migrations': 5.4.2
       '@mikro-orm/postgresql': 5.4.2
-      '@sentry/integrations': ^7.14.0
-      '@sentry/node': ^7.14.0
-      '@sentry/tracing': ^7.14.0
+      '@sentry/integrations': ^7.17.3
+      '@sentry/node': ^7.17.3
+      '@sentry/tracing': ^7.17.3
       '@types/bcrypt': ^5.0.0
       '@types/cors': ^2.8.9
       '@types/express': ^4.17.14
@@ -64,9 +64,9 @@ importers:
       '@graphql-tools/schema': 8.5.1_graphql@15.8.0
       '@mikro-orm/core': 5.4.2_uj67vzfpozpid5h7tc4b5gq7km
       '@mikro-orm/postgresql': 5.4.2_32erfeycwkyvqeroqobrff5v74
-      '@sentry/integrations': 7.17.2
-      '@sentry/node': 7.17.2
-      '@sentry/tracing': 7.17.2
+      '@sentry/integrations': 7.17.3
+      '@sentry/node': 7.17.3
+      '@sentry/tracing': 7.17.3
       apollo-server-core: 3.10.3_graphql@15.8.0
       apollo-server-express: 3.10.3_4mq2c443wwzwcb6dpxnwkfvrzm
       aws-sdk: 2.1243.0
@@ -3879,7 +3879,7 @@ packages:
     dependencies:
       '@graphql-tools/utils': 8.13.0_graphql@15.8.0
       graphql: 15.8.0
-      tslib: 2.4.0
+      tslib: 2.4.1
 
   /@graphql-tools/mock/8.7.7_graphql@15.8.0:
     resolution: {integrity: sha512-0KVikQjJJYmm9AEjM1OoXRd0KZOrQoPIXhFWm6wrNB4vqz1iMrySiIHoIaPoLjV/QWZz+aKYRYdnjlQ6btrBFA==}
@@ -3890,7 +3890,7 @@ packages:
       '@graphql-tools/utils': 8.13.0_graphql@15.8.0
       fast-json-stable-stringify: 2.1.0
       graphql: 15.8.0
-      tslib: 2.4.0
+      tslib: 2.4.1
     dev: false
 
   /@graphql-tools/optimize/1.3.1_graphql@15.8.0:
@@ -4014,7 +4014,7 @@ packages:
       '@graphql-tools/merge': 8.3.7_graphql@15.8.0
       '@graphql-tools/utils': 8.13.0_graphql@15.8.0
       graphql: 15.8.0
-      tslib: 2.4.0
+      tslib: 2.4.1
       value-or-promise: 1.0.11
 
   /@graphql-tools/url-loader/7.16.5_graphql@15.8.0:
@@ -4086,7 +4086,7 @@ packages:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       graphql: 15.8.0
-      tslib: 2.4.0
+      tslib: 2.4.1
 
   /@graphql-tools/utils/8.9.0_graphql@15.8.0:
     resolution: {integrity: sha512-pjJIWH0XOVnYGXCqej8g/u/tsfV4LvLlj0eATKQu5zwnxd/TiTHq7Cg313qUPTFFHZ3PP5wJ15chYVtLDwaymg==}
@@ -6002,12 +6002,12 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/core/7.17.2:
-    resolution: {integrity: sha512-mBFjngWJPN3V1A/tz/qa1jkQvmZtU07hhlWg+kmajD0nFulPHUWEvZhsi8NFveGcxMxc/wmaSSLcEOpKq5L29g==}
+  /@sentry/core/7.17.3:
+    resolution: {integrity: sha512-PSboa9aOVnvZU+C6/shKlHUA7zjAl6z5BKRHF8mEljEYql6bh0HfJJKXtBHMz1sWnmzMa/qABSKLpnP5ZQlJNw==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.17.2
-      '@sentry/utils': 7.17.2
+      '@sentry/types': 7.17.3
+      '@sentry/utils': 7.17.3
       tslib: 1.14.1
     dev: false
 
@@ -6030,12 +6030,12 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/integrations/7.17.2:
-    resolution: {integrity: sha512-xHS5AK3YOpFIlCWX3rSfxwNUJ/lOKSXU0vx+AI0PAGJFNK4KEu47SKthhq1AArVr3jqFjcy3ZV5+XTjxbzydAA==}
+  /@sentry/integrations/7.17.3:
+    resolution: {integrity: sha512-KSdWxqePSP9QsPfIw8ZsX/o6uQ3W21yA8MyzKng52KK4zt6qT5KsCrEJSUdGY+osuG7HQ8ONM7kNkqOUDvBzjg==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.17.2
-      '@sentry/utils': 7.17.2
+      '@sentry/types': 7.17.3
+      '@sentry/utils': 7.17.3
       localforage: 1.10.0
       tslib: 1.14.1
     dev: false
@@ -6050,13 +6050,13 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/node/7.17.2:
-    resolution: {integrity: sha512-dMHff7C3MgKpIlbLkrEEtq1nX8o1Tiax/DWOtj5dLrPMsjQyivMs906GeS3GJkX7YeMMfy93j8gC+qIK54gqFw==}
+  /@sentry/node/7.17.3:
+    resolution: {integrity: sha512-kBmj5GiE0BWQ1CqnJN3bOOmaNNvS+HKb9nPic+QloPnH6xDFVUcmx774s3qjtnyLOQTzPpy3vXCA15rYflNJBQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.17.2
-      '@sentry/types': 7.17.2
-      '@sentry/utils': 7.17.2
+      '@sentry/core': 7.17.3
+      '@sentry/types': 7.17.3
+      '@sentry/utils': 7.17.3
       cookie: 0.4.2
       https-proxy-agent: 5.0.1
       lru_map: 0.3.3
@@ -6102,13 +6102,13 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/tracing/7.17.2:
-    resolution: {integrity: sha512-j9I/g6SMkQjMPrBdzYQJSDk0qc30LJ9wZl6uKXes7dpfASq+IPcRdkPyRc5ZZX6HD/iUAlaCrBKNmYsK4+I5aw==}
+  /@sentry/tracing/7.17.3:
+    resolution: {integrity: sha512-ZBYq1AuE2dadxbuY7j3xpf9BNP/Uu7rjuvLoCmQeFrjJ4W80jqIfdUYmWCN6EaVhhAgh7J+1RQL+c79ONkPFQQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.17.2
-      '@sentry/types': 7.17.2
-      '@sentry/utils': 7.17.2
+      '@sentry/core': 7.17.3
+      '@sentry/types': 7.17.3
+      '@sentry/utils': 7.17.3
       tslib: 1.14.1
     dev: false
 
@@ -6122,8 +6122,8 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/types/7.17.2:
-    resolution: {integrity: sha512-zxhNQ8Xt/hfP8bFZEV66ovJZK7aUqok5w1wjsHgkUz/S6/gkiMrDYT3OtRCRuY3mfQu9KmeBniM0xZkaxREJ1w==}
+  /@sentry/types/7.17.3:
+    resolution: {integrity: sha512-+buEJo/4TKErjwF8Tq3XXKFZx4Utpvqs52e7i7Sur2qfyBNwRgBILceQvdnzw86JNZT2myeYmrfVbsaxAk7ilA==}
     engines: {node: '>=8'}
     dev: false
 
@@ -6132,11 +6132,11 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /@sentry/utils/7.17.2:
-    resolution: {integrity: sha512-l8t6qzyi+UUzD0a/oOYn4i+Eii+Ei29/TVwj/+9ogfJzBk6dSwSLvXievsyCRpcN3tftpWP0cHREcbZN64ZOWw==}
+  /@sentry/utils/7.17.3:
+    resolution: {integrity: sha512-Sd7BwVn6IClvaXbZaj/LnEcrMm8yjQtZkTVSrM2Vlv1lLeaH61JxSAFU6QntF+f/cCfZ7wSdNhWOfW3qZJ7t3Q==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.17.2
+      '@sentry/types': 7.17.3
       tslib: 1.14.1
     dev: false
 
@@ -11747,7 +11747,7 @@ packages:
       graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 15.8.0
-      tslib: 2.4.0
+      tslib: 2.4.1
 
   /graphql-upload/12.0.0_graphql@15.8.0:
     resolution: {integrity: sha512-ovZ3Q7sZ17Bmn8tYl22MfrpNR7nYM/DUszXWgkue7SFIlI9jtqszHAli8id8ZcnGBc9GF0gUTNSskYWW+5aNNQ==}
@@ -16708,7 +16708,7 @@ packages:
   /rxjs/7.5.7:
     resolution: {integrity: sha512-z9MzKh/UcOqB3i20H6rtrlaE/CgjLOvheWK/9ILrbhROGTweAi1BaFsTT9FbwZi5Trr1qNRs+MXkhmR06awzQA==}
     dependencies:
-      tslib: 2.4.0
+      tslib: 2.4.1
     dev: true
 
   /safe-buffer/5.1.2:
@@ -18042,7 +18042,6 @@ packages:
 
   /tslib/2.4.1:
     resolution: {integrity: sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==}
-    dev: false
 
   /tsutils/3.21.0_typescript@4.8.4:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
