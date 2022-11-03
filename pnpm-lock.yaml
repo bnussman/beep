@@ -154,7 +154,7 @@ importers:
       prettier: ^2.5.1
       react: ^18.1.0
       react-dom: ^18.1.0
-      react-hook-form: ^7.38.0
+      react-hook-form: ^7.39.1
       react-native: 0.69.4
       react-native-gesture-handler: ~2.5.0
       react-native-keyboard-aware-scroll-view: ^0.9.5
@@ -194,7 +194,7 @@ importers:
       native-base: 3.4.12-alpha.1_5ncpycpwpbemfrcmtrcswu7doi
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-hook-form: 7.38.0_react@18.2.0
+      react-hook-form: 7.39.1_react@18.2.0
       react-native: 0.69.4_otspjrsspon4ofp37rshhlhp2y
       react-native-gesture-handler: 2.5.0_5ifwsx3kh4yeq2aw7ur5frzkxu
       react-native-keyboard-aware-scroll-view: 0.9.5_react-native@0.69.4
@@ -256,7 +256,7 @@ importers:
       react: ^18.1.0
       react-dom: ^18.1.0
       react-google-charts: ^4.0.0
-      react-hook-form: ^7.38.0
+      react-hook-form: ^7.39.1
       react-map-gl: ^7.0.19
       react-router-dom: ^6.4.1
       typescript: ^4.8.4
@@ -277,7 +277,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-google-charts: 4.0.0_biqbaboplfbrettd7655fr4n2y
-      react-hook-form: 7.38.0_react@18.2.0
+      react-hook-form: 7.39.1_react@18.2.0
       react-map-gl: 7.0.19_6nlej2sgzao4w63iqaban4rulm
       react-router-dom: 6.4.2_biqbaboplfbrettd7655fr4n2y
     devDependencies:
@@ -15979,8 +15979,8 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /react-hook-form/7.38.0_react@18.2.0:
-    resolution: {integrity: sha512-gxWW1kMeru9xR1GoR+Iw4hA+JBOM3SHfr4DWCUKY0xc7Vv1MLsF109oHtBeWl9shcyPFx67KHru44DheN0XY5A==}
+  /react-hook-form/7.39.1_react@18.2.0:
+    resolution: {integrity: sha512-MiF9PCILN5KulhSGbnjohMiTOrB47GerDTichMNP0y2cPUu1GTRFqbunOxCE9N1499YTLMV/ne4gFzqCp1rxrQ==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
