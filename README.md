@@ -21,9 +21,9 @@ This is the monorepo for the Beep App. Ride beep app is currently a substitute f
 
 ### 💻 Running Locally
 
-Clone this repository
+Fork this repository
 ```
-git clone git@github.com:bnussman/beep.git
+git clone <url of your fork>
 ```
 
 Go into the projects directory
