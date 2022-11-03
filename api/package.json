@@ -36,7 +36,7 @@
     "@sentry/tracing": "^7.17.3",
     "apollo-server-core": "^3.10.3",
     "apollo-server-express": "^3.10.3",
-    "aws-sdk": "^2.1242.0",
+    "aws-sdk": "^2.1246.0",
     "bcrypt": "^5.1.0",
     "class-validator": "^0.13.2",
     "cors": "^2.8.5",
