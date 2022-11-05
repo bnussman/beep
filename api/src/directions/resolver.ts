@@ -1,6 +1,7 @@
 import got from 'got';
 import { GOOGLE_API_KEYS } from '../utils/constants';
 import { Arg, Field, ObjectType, Query, Resolver } from "type-graphql";
+import * as Sentry from '@sentry/node';
 
 @ObjectType()
 class Suggestion {
@@ -21,7 +22,14 @@ export class DirectionsResolver {
   public async getETA(@Arg('start') start: string, @Arg('end') end: string): Promise<string> {
     const result = await got(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=${getRandom(keys)}`).json<any>();
 
-    return result?.routes[0]?.legs[0]?.duration?.text || '';
+    const eta = result?.routes?.[0]?.legs?.[0]?.duration?.text;
+
+    if (!eta) {
+      Sentry.captureMessage("ETA from Google Maps API was undefined");
+      throw new Error("ETA Unavailable");
+    }
+
+    return eta;
   }
 
   @Query(() => [Suggestion])
