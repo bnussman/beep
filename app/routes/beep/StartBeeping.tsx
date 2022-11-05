@@ -5,7 +5,7 @@ import * as TaskManager from "expo-task-manager";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
-import { isAndroid } from "../../utils/constants";
+import { isAndroid, isMobile } from "../../utils/constants";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
@@ -39,6 +39,7 @@ import {
   HStack,
   useColorMode,
   Flex,
+  FlatList as NativeFlatList,
 } from "native-base";
 
 let unsubscribe: any = null;
@@ -342,6 +343,8 @@ export function StartBeepingScreen() {
 
   const isRefreshing = Boolean(data) && loading;
 
+  const FlatList = isMobile ? BottomSheetFlatList : NativeFlatList;
+
   if (!isBeeping) {
     return (
       <Container keyboard alignItems="center" height="100%">
@@ -416,7 +419,7 @@ export function StartBeepingScreen() {
                     )}
                 </HStack>
               </Box>
-              <BottomSheetFlatList
+              <FlatList
                 refreshing={loading && data?.getQueue !== undefined}
                 onRefresh={refetch}
                 data={queue.filter((entry) => entry.id !== queue[0]?.id)}

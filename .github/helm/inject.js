@@ -2,7 +2,7 @@ const fs = require('fs');
 
 let content = '';
 
-console.log(process.env.secrets);
+// console.log(process.env.secrets);
 
 const excludedSecrets = [
   "github_token",
@@ -24,7 +24,7 @@ for (const key of keys) {
   content += `\n  ${key}: "${String(secrets[key].replaceAll(/\n/g, "\\n"))}"`
 }
 
-console.log(content);
+// console.log(content);
 
 fs.appendFile(`${__dirname}/templates/configmap.yaml`, content, err => {
   if (err) {
