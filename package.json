@@ -8,7 +8,7 @@
     ]
   },
   "scripts": {
-    "clean": "rm -rf node-modules/ && rm -rf app/node_modules/ && rm -rf website/node_modules && rm pnpm-workspace.yaml",
+    "clean": "rm -rf node-modules/ && rm -rf app/node_modules/ && rm -rf website/node_modules && rm pnpm-lock.yaml",
     "build:api": "pnpm --filter @beep/api build",
     "build:website": "pnpm --filter @beep/website build",
     "build": "pnpm build:api",
