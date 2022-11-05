@@ -214,6 +214,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
 export function BeepDrawer() {
   const { colorMode } = useColorMode();
+  const { user } = useUser();
 
   return (
     <Box flex={1}>
@@ -224,7 +225,9 @@ export function BeepDrawer() {
         }}
         drawerContent={(props) => <CustomDrawerContent {...props} />}
       >
-        <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
+        {!user?.isBeeping && (
+          <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
+        )}
         <Drawer.Screen name="Beep" component={StartBeepingScreen} />
         <Drawer.Screen name="Cars" component={Cars} />
         <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />

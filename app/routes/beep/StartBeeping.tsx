@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
+import * as SplashScreen from "expo-splash-screen";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
@@ -21,6 +22,7 @@ import {
   Alert as NativeAlert,
   AppState,
   AppStateStatus,
+  Pressable,
   RefreshControl,
 } from "react-native";
 import {
@@ -151,7 +153,7 @@ export function StartBeepingScreen() {
 
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
-  const snapPoints = useMemo(() => ["20%", "85%", "100%"], []);
+  const snapPoints = useMemo(() => ["15%", "85%", "100%"], []);
 
   useEffect(() => {
     const listener = AppState.addEventListener("change", handleAppStateChange);
@@ -322,6 +324,10 @@ export function StartBeepingScreen() {
     init();
   }, []);
 
+  useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
+
   function sub(): void {
     unsubscribe = subscribeToMore({
       document: GetQueue,
@@ -398,7 +404,7 @@ export function StartBeepingScreen() {
         <Container alignItems="center">
           <Flex
             w="100%"
-            height={queue.length > 1 ? "80%" : "100%"}
+            height={queue.length > 1 ? "85%" : "100%"}
             p={3}
             pb={queue.length > 1 ? 4 : 16}
           >
@@ -406,19 +412,18 @@ export function StartBeepingScreen() {
           </Flex>
           {queue.length > 1 ? (
             <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
-              <Box pt={1} px={4}>
-                <HStack alignItems="center" mb={2}>
+              <Pressable onPress={() => bottomSheetRef.current?.expand()}>
+                <HStack alignItems="center" mb={2} pt={1} px={4}>
                   <Heading fontWeight="extrabold" size="2xl">
                     Queue
                   </Heading>
                   <Spacer />
-                  {queue &&
-                    queue.length > 0 &&
+                  {queue.length > 0 &&
                     queue.some((entry) => entry.state === 0) && (
                       <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
                     )}
                 </HStack>
-              </Box>
+              </Pressable>
               <FlatList
                 refreshing={loading && data?.getQueue !== undefined}
                 onRefresh={refetch}

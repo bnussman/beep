@@ -3,6 +3,7 @@ import { AuthChecker, MiddlewareFn } from "type-graphql";
 import { Context } from "../utils/context";
 import { AuthenticationError } from "apollo-server-core";
 import { QueueEntry } from "../entities/QueueEntry";
+import * as Sentry from '@sentry/node';
 
 export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
   const { user } = context;
@@ -45,11 +46,13 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
   }
 
   // If a user is trying to get cars and the car is not their own, make sure they are in a beep with the other user.
-  if (info.fieldName === "cars" && result[0]?.user.id !== context?.user?.id) {
-    if (!result[0]?.user.id) {
+  if (info.fieldName === "cars" && ((typeof result[0]?.user === 'object' && result[0]?.user.id !== context?.user?.id) || (typeof result[0]?.user === 'string' && result[0]?.user !== context?.user?.id))) {
+    const userId = typeof result[0]?.user === 'string' ? result[0].user : result[0]?.user?.id;
+    if (!userId) {
+      Sentry.captureMessage("Unable to get user id from cars array when checking auth");
       throw new Error("Unable to get user id from cars array when checking auth");
     }
-    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, rider: context.user.id, beeper: result[0]?.user.id });
+    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, rider: context.user.id, beeper: userId });
 
     if (beep) {
       return result;
