@@ -59,7 +59,7 @@ importers:
       typescript: ^4.8.4
       uuid: ^9.0.0
       wkx: ^0.5.0
-      ws: ^8.10.0
+      ws: ^8.11.0
     dependencies:
       '@graphql-tools/schema': 8.5.1_graphql@15.8.0
       '@mikro-orm/core': 5.5.2_mnmm6i7xaworivd6ubwlzgb4au
@@ -89,7 +89,7 @@ importers:
       type-graphql: 1.1.1_v2revtygxcm7xrdg2oz3ssohfu
       uuid: 9.0.0
       wkx: 0.5.0
-      ws: 8.10.0
+      ws: 8.11.0
     devDependencies:
       '@mikro-orm/cli': 5.5.2_mnmm6i7xaworivd6ubwlzgb4au
       '@mikro-orm/migrations': 5.5.2_@mikro-orm+core@5.5.2
@@ -18981,6 +18981,20 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+    dev: true
+
+  /ws/8.11.0:
+    resolution: {integrity: sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
 
   /xcode/3.0.1:
     resolution: {integrity: sha512-kCz5k7J7XbJtjABOvkc5lJmkiDh8VhjVCGNiqdKCscmVpdVUpEAyXv1xmCLkQJ5dsHqx3IPO4XW+NTDhU/fatA==}
