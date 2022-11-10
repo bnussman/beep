@@ -86,20 +86,20 @@ export function AddCar() {
       base64: false,
     });
 
-    if (result.cancelled) {
+    if (result.canceled) {
       return;
     }
 
     setValue("photo", result);
 
     if (!isMobile) {
-      const res = await fetch(result.uri);
+      const res = await fetch(result.assets[0].uri);
       const blob = await res.blob();
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
       picture = file;
     } else {
-      const file = generateRNFile(result.uri, "file.jpg");
+      const file = generateRNFile(result.assets[0].uri, "file.jpg");
       picture = file;
     }
   };

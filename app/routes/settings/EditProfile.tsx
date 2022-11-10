@@ -199,24 +199,24 @@ export function EditProfileScreen() {
       base64: false,
     });
 
-    if (result.cancelled) {
+    if (result.canceled) {
       return;
     }
 
     let picture;
 
     if (!isMobile) {
-      const res = await fetch(result.uri);
+      const res = await fetch(result.assets[0].uri);
       const blob = await res.blob();
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
       picture = file;
       setPhoto(result);
     } else {
-      if (!result.cancelled) {
+      if (!result.canceled) {
         setPhoto(result);
-        const fileType = result.uri.split(".")[1];
-        const file = generateRNFile(result.uri, `file.${fileType}`);
+        const fileType = result.assets[0].uri.split(".")[1];
+        const file = generateRNFile(result.assets[0].uri, `file.${fileType}`);
         picture = file;
       }
     }

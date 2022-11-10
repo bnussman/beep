@@ -13,6 +13,7 @@ import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { UserData } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
+import { Avatar } from "../../components/Avatar";
 import {
   isValidationError,
   useValidationErrors,
@@ -30,7 +31,6 @@ import {
   InputGroup,
   InputLeftAddon,
 } from "native-base";
-import { Avatar } from "../../components/Avatar";
 
 const SignUp = gql`
   mutation SignUp($input: SignUpInput!) {
@@ -112,21 +112,21 @@ export function SignUpScreen() {
       base64: false,
     });
 
-    if (result.cancelled) {
+    if (result.canceled) {
       return;
     }
 
     if (!isMobile) {
-      const res = await fetch(result.uri);
+      const res = await fetch(result.assets[0].uri);
       const blob = await res.blob();
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
       picture = file;
       setPhoto(result);
     } else {
-      if (!result.cancelled) {
+      if (!result.canceled) {
         setPhoto(result);
-        const file = generateRNFile(result.uri, "file.jpg");
+        const file = generateRNFile(result.assets[0].uri, "file.jpg");
         picture = file;
       }
     }
