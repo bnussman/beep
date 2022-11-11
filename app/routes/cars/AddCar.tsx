@@ -90,7 +90,7 @@ export function AddCar() {
       return;
     }
 
-    setValue("photo", result);
+    setValue("photo", result.assets[0]);
 
     if (!isMobile) {
       const res = await fetch(result.assets[0].uri);

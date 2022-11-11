@@ -211,10 +211,10 @@ export function EditProfileScreen() {
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
       picture = file;
-      setPhoto(result);
+      setPhoto(result.assets[0]);
     } else {
       if (!result.canceled) {
-        setPhoto(result);
+        setPhoto(result.assets[0]);
         const fileType = result.assets[0].uri.split(".")[1];
         const file = generateRNFile(result.assets[0].uri, `file.${fileType}`);
         picture = file;
