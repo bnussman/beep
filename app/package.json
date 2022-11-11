@@ -31,7 +31,7 @@
     "expo-status-bar": "~1.4.2",
     "expo-task-manager": "~11.0.1",
     "expo-updates": "~0.15.4",
-    "graphql": "^15.6.1",
+    "graphql": "^16.6.0",
     "graphql-ws": "^5.11.2",
     "native-base": "3.4.12-alpha.1",
     "react": "18.1.0",

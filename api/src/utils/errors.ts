@@ -1,8 +1,6 @@
-import { ApolloError } from "apollo-server-core";
-import { ValidationError } from "class-validator";
-import { GraphQLError } from "graphql";
+import { ApolloError, ValidationError } from "apollo-server-core";
 
-export function formatError(error: GraphQLError) {
+export function formatError(error: ApolloError) {
   if (error?.message === "Argument Validation Error") {
     const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
 

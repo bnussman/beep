@@ -13,7 +13,8 @@ export function Alert(error: ApolloError, title = "Error") {
     const keys = Object.keys(errors);
 
     const output = keys.map((key) => {
-      return errors[key][0] as string;
+      const validationErrorMessages = errors[key] as string[];
+      return validationErrorMessages[0];
     });
 
     doAlert(title, output.join("\n"));

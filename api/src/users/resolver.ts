@@ -1,4 +1,4 @@
-import fieldsToRelations from 'graphql-fields-to-relations';
+import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser, isEduEmail, Upload, search } from './helpers';
 import { QueryOrder, wrap } from '@mikro-orm/core';
