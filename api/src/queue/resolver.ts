@@ -1,4 +1,4 @@
-import fieldsToRelations from "graphql-fields-to-relations";
+import fieldsToRelations from "@banksnussman/graphql-fields-to-relations";
 import { QueueEntry } from "../entities/QueueEntry";
 import { User, UserRole } from "../entities/User";
 import { Context } from "../utils/context";

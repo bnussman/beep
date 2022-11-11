@@ -1,4 +1,4 @@
-import fieldsToRelations from 'graphql-fields-to-relations';
+import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { RatingInput } from './args';
