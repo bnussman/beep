@@ -34,7 +34,7 @@ importers:
       '@typescript-eslint/parser': ^5.42.1
       apollo-server-core: ^3.10.3
       apollo-server-express: ^3.10.3
-      aws-sdk: ^2.1249.0
+      aws-sdk: ^2.1252.0
       bcrypt: ^5.1.0
       class-validator: ^0.13.2
       concurrently: ^7.5.0
@@ -69,7 +69,7 @@ importers:
       '@sentry/tracing': 7.17.3
       apollo-server-core: 3.10.3_graphql@15.8.0
       apollo-server-express: 3.10.3_4mq2c443wwzwcb6dpxnwkfvrzm
-      aws-sdk: 2.1249.0
+      aws-sdk: 2.1252.0
       bcrypt: 5.1.0
       class-validator: 0.13.2
       cors: 2.8.5
@@ -8404,8 +8404,8 @@ packages:
     engines: {node: '>= 0.4'}
     dev: false
 
-  /aws-sdk/2.1249.0:
-    resolution: {integrity: sha512-kJXbCgdqvhmylwq2ncoTv6mx/0zIll3fsN5NQ08qDSOTZtZRYkm4I/IS1vQSeVCmsnkfO7WpyA5Uv1Gt4MJApg==}
+  /aws-sdk/2.1252.0:
+    resolution: {integrity: sha512-ayBNGAPhCm/tyWNki24cwPgI8DUm/suKTh2YDB6SrgeROyHJHMTXpj1dVaYXrBrZjRN7erVi5g7pkaxzCt/28A==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
