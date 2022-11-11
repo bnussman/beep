@@ -17,7 +17,8 @@ export function Error({ error, children }: Props) {
         <AlertIcon />
         <Box>
           {Object.keys(errors).map(key => {
-            return <Text>{errors[key][0]}</Text>;
+            const validationMessages = errors[key] as string[];
+            return <Text>{validationMessages[0]}</Text>;
           })}
         </Box>
       </Alert>
