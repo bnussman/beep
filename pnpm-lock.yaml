@@ -49,7 +49,7 @@ importers:
       graphql-subscriptions: ^2.0.0
       graphql-upload: 13.0.0
       graphql-ws: ^5.11.2
-      ioredis: ^5.1.0
+      ioredis: ^5.2.4
       js-sha256: ^0.9.0
       nodemailer: ^6.8.0
       nodemon: ^2.0.20
@@ -81,7 +81,7 @@ importers:
       graphql-subscriptions: 2.0.0_graphql@16.6.0
       graphql-upload: 13.0.0_graphql@16.6.0
       graphql-ws: 5.11.2_graphql@16.6.0
-      ioredis: 5.2.3
+      ioredis: 5.2.4
       js-sha256: 0.9.0
       nodemailer: 6.8.0
       reflect-metadata: 0.1.13
@@ -9350,8 +9350,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /cluster-key-slot/1.1.1:
-    resolution: {integrity: sha512-rwHwUfXL40Chm1r08yrhU3qpUvdVlgkKNeyeGPOxnW8/SyVDvgRaed/Uz54AqWNaTCAThlj6QAs3TZcKI0xDEw==}
+  /cluster-key-slot/1.1.2:
+    resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
     engines: {node: '>=0.10.0'}
     dev: false
 
@@ -12524,7 +12524,7 @@ packages:
       graphql-subscriptions: 2.0.0_graphql@16.6.0
       iterall: 1.3.0
     optionalDependencies:
-      ioredis: 5.2.3
+      ioredis: 5.2.4
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -13156,12 +13156,12 @@ packages:
     dependencies:
       loose-envify: 1.4.0
 
-  /ioredis/5.2.3:
-    resolution: {integrity: sha512-gQNcMF23/NpvjCaa1b5YycUyQJ9rBNH2xP94LWinNpodMWVUPP5Ai/xXANn/SM7gfIvI62B5CCvZxhg5pOgyMw==}
+  /ioredis/5.2.4:
+    resolution: {integrity: sha512-qIpuAEt32lZJQ0XyrloCRdlEdUUNGG9i0UOk6zgzK6igyudNWqEBxfH6OlbnOOoBBvr1WB02mm8fR55CnikRng==}
     engines: {node: '>=12.22.0'}
     dependencies:
       '@ioredis/commands': 1.2.0
-      cluster-key-slot: 1.1.1
+      cluster-key-slot: 1.1.2
       debug: 4.3.4
       denque: 2.1.0
       lodash.defaults: 4.2.0
