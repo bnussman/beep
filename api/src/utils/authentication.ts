@@ -1,7 +1,6 @@
 import { UserRole } from "../entities/User";
 import { AuthChecker, MiddlewareFn } from "type-graphql";
 import { Context } from "../utils/context";
-import { AuthenticationError } from "apollo-server-core";
 import { QueueEntry } from "../entities/QueueEntry";
 import * as Sentry from '@sentry/node';
 
@@ -17,7 +16,7 @@ export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
 
   if (roles[0] === 'No Verification Self') return args.id === undefined || args.id === user.id;
 
-  if (!user.isEmailVerified) throw new AuthenticationError("Please verify your email to use the Beep App");
+  if (!user.isEmailVerified) throw new Error("Please verify your email to use the Beep App");
 
   if (roles.length === 0) return true;
 

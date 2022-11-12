@@ -10,7 +10,6 @@ import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
 import { compare, hash } from 'bcrypt';
-import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 class Auth {
@@ -42,7 +41,7 @@ export class AuthResolver {
     }
 
     if (!isPasswordCorrect) {
-      throw new AuthenticationError("Password is incorrect.");
+      throw new Error("Password is incorrect.");
     }
 
     const tokens = new TokenEntry(user);
@@ -107,6 +106,10 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   @Authorized('No Verification')
   public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
+    if (!ctx.token || !ctx.user) {
+      throw new Error("User not logged in");
+    }
+
     ctx.em.remove(ctx.token);
 
     if (isApp) {

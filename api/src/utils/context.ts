@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/node";
-import { ExpressContext } from "apollo-server-express";
 import { Context as WSContext } from "graphql-ws";
 import { Connection, EntityManager, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "../entities/TokenEntry";
@@ -11,7 +10,7 @@ export interface Context {
     token: TokenEntry;
 }
 
-export async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDriver<Connection>>) {
+export async function getContext(data: any, orm: MikroORM<IDatabaseDriver<Connection>>): Promise<Context> {
   Sentry.configureScope(scope => scope.setTransactionName(data.req.body?.operationName));
 
   const em = orm.em.fork();
@@ -21,7 +20,7 @@ export async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDr
   const bearer = data.req.get("Authorization")?.split(" ")[1];
 
   if (!bearer) {
-    return context;
+    return context as Context;
   }
 
   const token = await em.findOne(
@@ -38,7 +37,7 @@ export async function getContext(data: ExpressContext, orm: MikroORM<IDatabaseDr
     return { user: token.user, token, em };
   }
 
-  return context;
+  return context as Context;
 }
 
 export async function onConnect(ctx: WSContext<{ token?: string }, { token?: TokenEntry }>, orm: MikroORM<IDatabaseDriver<Connection>>) {
