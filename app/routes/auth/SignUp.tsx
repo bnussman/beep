@@ -6,7 +6,7 @@ import { TouchableOpacity } from "react-native";
 import { getPushToken } from "../../utils/Notifications";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { Scalars, SignUpInput, SignUpMutation } from "../../generated/graphql";
-import { isMobile } from "../../utils/constants";
+import { isMobile, isSimulator } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { client, wsLink } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
@@ -64,7 +64,13 @@ const SignUp = gql`
 let picture: Scalars["Upload"];
 
 export function SignUpScreen() {
-  const [signup, { error }] = useMutation<SignUpMutation>(SignUp);
+  const [signup, { error }] = useMutation<SignUpMutation>(SignUp, {
+    context: {
+      headers: {
+        "apollo-require-preflight": true,
+      },
+    },
+  });
 
   const {
     control,
@@ -79,7 +85,7 @@ export function SignUpScreen() {
 
   const onSubmit = handleSubmit(async (variables) => {
     try {
-      const pushToken = isMobile ? await getPushToken() : null;
+      const pushToken = isMobile && !isSimulator ? await getPushToken() : null;
 
       const { data } = await signup({
         variables: { input: { ...variables, picture, pushToken } },

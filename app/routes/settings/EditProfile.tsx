@@ -116,7 +116,13 @@ export function EditProfileScreen() {
   const validationErrors = useValidationErrors<EditUserInput>(error);
 
   const [upload, { loading: uploadLoading }] =
-    useMutation<AddProfilePictureMutation>(UploadPhoto);
+    useMutation<AddProfilePictureMutation>(UploadPhoto, {
+      context: {
+        headers: {
+          "apollo-require-preflight": true,
+        },
+      },
+    });
 
   const [photo, setPhoto] = useState<any>();
 
@@ -228,7 +234,7 @@ export function EditProfileScreen() {
     }
 
     setPhoto(undefined);
-  }
+  };
 
   const onSubmit = handleSubmit(async (variables) => {
     try {

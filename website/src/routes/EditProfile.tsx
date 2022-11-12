@@ -40,7 +40,13 @@ export const UploadPhoto = gql`
 
 export function EditProfile() {
   const [edit, { error }] = useMutation<EditUserMutation>(EditAccount);
-  const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto);
+  const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto, {
+   context: {
+      headers: {
+        'apollo-require-preflight': true,
+      },
+    },
+  });
   const { data: userData } = useQuery<GetUserDataQuery>(GetUserData);
   const toast = useToast();
 

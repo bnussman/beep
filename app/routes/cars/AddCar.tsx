@@ -72,7 +72,13 @@ export function AddCar() {
   const photo = watch("photo");
   const make = watch("make");
 
-  const [addCar, { error }] = useMutation<CreateCarMutation>(AddCarMutation);
+  const [addCar, { error }] = useMutation<CreateCarMutation>(AddCarMutation, {
+    context: {
+      headers: {
+        "apollo-require-preflight": true,
+      },
+    },
+  });
 
   const validationErrors =
     useValidationErrors<CreateCarMutationVariables>(error);
