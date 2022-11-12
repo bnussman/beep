@@ -26,6 +26,15 @@ class UsersPerDomain {
 }
 
 @ObjectType()
+class UsersWithBeeps {
+  @Field()
+  user!: User;
+
+  @Field()
+  beeps!: number;
+}
+
+@ObjectType()
 export class UsersResponse extends Paginated(User) {}
 
 @Resolver(User)
@@ -215,6 +224,27 @@ export class UserResolver {
     `);
 
     return result;
+  }
+
+  @Query(() => [UsersWithBeeps])
+  @Authorized()
+  public async getUsersWithBeeps(@Ctx() ctx: Context): Promise<UsersWithBeeps[]> {
+    const connection = ctx.em.getConnection();
+
+    const result: (User & { beeps: number })[] = await connection.execute(`
+      SELECT
+        public. "user".*,
+        count(beep.beeper_id) AS beeps
+      FROM
+        public. "user"
+        LEFT JOIN beep ON ("user".id = beep.beeper_id)
+      GROUP BY
+        public.user.id
+      ORDER BY
+        beeps DESC
+    `);
+
+    return result.map(({ beeps, ...user }) => ({ user: new User(user), beeps }));
   }
 
   @Mutation(() => Number)

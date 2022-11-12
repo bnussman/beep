@@ -30,6 +30,9 @@ export function AdminDropdown() {
         <MenuItem as={Link} to="/admin">
           Dashboard
         </MenuItem>
+        <MenuItem as={Link} to="/admin/users/beeps">
+          Users by Beeps
+        </MenuItem>
         <MenuItem as={Link} to="/admin/users">
           Users
         </MenuItem>

@@ -78,7 +78,13 @@ export function SignUp() {
   const navigate = useNavigate();
   const avatarSize = useBreakpointValue({ base: 'xl', md: '2xl' });
 
-  const [signup, { error }] = useMutation<SignUpMutation>(SignUpGraphQL);
+  const [signup, { error }] = useMutation<SignUpMutation>(SignUpGraphQL, {
+    context: {
+      headers: {
+        'apollo-require-preflight': true,
+      },
+    },
+  });
 
   const {
     handleSubmit,

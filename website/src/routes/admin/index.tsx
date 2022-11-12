@@ -15,6 +15,7 @@ import { ActiveBeeps } from "./beeps/ActiveBeeps";
 import { Notifications } from "./notifications";
 import { Dashboard } from './Dashboard';
 import { Cars } from './cars';
+import { UsersByBeeps } from './users/UsersByBeeps';
 
 export function Admin() {
   return (
@@ -22,6 +23,7 @@ export function Admin() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="users" element={<Users />} />
+        <Route path="users/beeps" element={<UsersByBeeps />} />
         <Route path="beepers" element={<Beepers />} />
         <Route path="beeps" element={<Beeps />} />
         <Route path="cars" element={<Cars />} />

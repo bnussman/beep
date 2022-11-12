@@ -359,6 +359,7 @@ export type Query = {
   getUser: User;
   getUsers: UsersResponse;
   getUsersPerDomain: Array<UsersPerDomain>;
+  getUsersWithBeeps: Array<UsersWithBeeps>;
 };
 
 
@@ -633,6 +634,12 @@ export type UsersResponse = {
   __typename?: 'UsersResponse';
   count: Scalars['Int'];
   items: Array<User>;
+};
+
+export type UsersWithBeeps = {
+  __typename?: 'UsersWithBeeps';
+  beeps: Scalars['Float'];
+  user: User;
 };
 
 export type VerifyEmail = {
@@ -917,12 +924,12 @@ export type RemoveTokenMutation = { __typename?: 'Mutation', removeToken: boolea
 export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null, pushToken?: string | null } };
+export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
 
 export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null, pushToken?: string | null } };
+export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
 
 
 export const UpdateBeeperQueueDocument = gql`
@@ -2461,7 +2468,6 @@ export const UserDataDocument = gql`
     photo
     capacity
     cashapp
-    pushToken
   }
 }
     `;
@@ -2511,7 +2517,6 @@ export const UserUpdatesDocument = gql`
     photo
     capacity
     cashapp
-    pushToken
   }
 }
     `;
