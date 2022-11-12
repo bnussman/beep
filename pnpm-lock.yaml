@@ -151,7 +151,7 @@ importers:
       expo-updates: ~0.15.4
       graphql: ^16.6.0
       graphql-ws: ^5.11.2
-      native-base: 3.4.12-alpha.1
+      native-base: 3.4.21
       prettier: ^2.5.1
       react: ^18.1.0
       react-dom: ^18.1.0
@@ -192,7 +192,7 @@ importers:
       expo-updates: 0.15.4_expo@47.0.3
       graphql: 16.6.0
       graphql-ws: 5.11.2_graphql@16.6.0
-      native-base: 3.4.12-alpha.1_c6knci4t5y3jced5eizqneufl4
+      native-base: 3.4.21_c6knci4t5y3jced5eizqneufl4
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.39.1_react@18.2.0
@@ -4938,26 +4938,26 @@ packages:
   /@internationalized/date/3.0.1:
     resolution: {integrity: sha512-E/3lASs4mAeJ2Z2ye6ab7eUD0bPUfTeNVTAv6IS+ne9UtMu9Uepb9A1U2Ae0hDr6WAlBuvUtrakaxEdYB9TV6Q==}
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
     dev: false
 
   /@internationalized/message/3.0.9:
     resolution: {integrity: sha512-yHQggKWUuSvj1GznVtie4tcYq+xMrkd/lTKCFHp6gG18KbIliDw+UI7sL9+yJPGuWiR083xuLyyhzqiPbNOEww==}
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       intl-messageformat: 10.2.1
     dev: false
 
   /@internationalized/number/3.1.1:
     resolution: {integrity: sha512-dBxCQKIxvsZvW2IBt3KsqrCfaw2nV6o6a8xsloJn/hjW0ayeyhKuiiMtTwW3/WGNPP7ZRyDbtuiUEjMwif1ENQ==}
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
     dev: false
 
   /@internationalized/string/3.0.0:
     resolution: {integrity: sha512-NUSr4u+mNu5BysXFeVWZW4kvjXylPkU/YYqaWzdNuz1eABfehFiZTEYhWAAMzI3U8DTxfqF9PM3zyhk5gcfz6w==}
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
     dev: false
 
   /@ioredis/commands/1.2.0:
@@ -5511,7 +5511,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/label': 3.4.2_react@18.2.0
       '@react-aria/toggle': 3.4.0_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
@@ -5528,7 +5528,7 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/listbox': 3.7.0_react@18.2.0
@@ -5553,7 +5553,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -5566,7 +5566,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -5579,7 +5579,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@internationalized/date': 3.0.1
       '@internationalized/message': 3.0.9
       '@internationalized/number': 3.1.1
@@ -5595,7 +5595,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
       react: 18.2.0
@@ -5606,7 +5606,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-types/label': 3.7.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -5618,7 +5618,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/focus': 3.9.0_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/label': 3.4.2_react@18.2.0
@@ -5634,7 +5634,7 @@ packages:
   /@react-aria/live-announcer/3.1.1:
     resolution: {integrity: sha512-e7b+dRh1SUTla42vzjdbhGYkeLD7E6wIYjYaHW9zZ37rBkSqLHUhTigh3eT3k5NxFlDD/uRxTYuwaFnWQgR+4g==}
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
     dev: false
 
   /@react-aria/menu/3.6.2_biqbaboplfbrettd7655fr4n2y:
@@ -5643,7 +5643,7 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/overlays': 3.11.0_biqbaboplfbrettd7655fr4n2y
@@ -5665,7 +5665,7 @@ packages:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/focus': 3.9.0_react@18.2.0
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
@@ -5685,7 +5685,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/focus': 3.9.0_react@18.2.0
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
@@ -5702,7 +5702,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/focus': 3.9.0_react@18.2.0
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
@@ -5718,7 +5718,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/focus': 3.9.0_react@18.2.0
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
@@ -5737,7 +5737,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       react: 18.2.0
     dev: false
 
@@ -5746,7 +5746,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/selection': 3.11.0_react@18.2.0
@@ -5763,7 +5763,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/focus': 3.9.0_react@18.2.0
       '@react-aria/label': 3.4.2_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
@@ -5777,7 +5777,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/focus': 3.9.0_react@18.2.0
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
@@ -5793,7 +5793,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/ssr': 3.3.0_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -5806,7 +5806,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/interactions': 3.12.0_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -5822,7 +5822,7 @@ packages:
     dependencies:
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-native-aria/interactions': 0.2.8_4r3cdqp3lrtwebhzxhqucfs6yq
-      '@react-stately/toggle': 3.4.2_react@18.2.0
+      '@react-stately/toggle': 3.2.1_react@18.2.0
       '@react-types/checkbox': 3.4.0_react@18.2.0
       react: 18.2.0
       react-native: 0.70.5_otspjrsspon4ofp37rshhlhp2y
@@ -5838,7 +5838,7 @@ packages:
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-native-aria/toggle': 0.2.3_4r3cdqp3lrtwebhzxhqucfs6yq
       '@react-native-aria/utils': 0.2.8_4r3cdqp3lrtwebhzxhqucfs6yq
-      '@react-stately/toggle': 3.4.2_react@18.2.0
+      '@react-stately/toggle': 3.2.1_react@18.2.0
       react: 18.2.0
       react-native: 0.70.5_otspjrsspon4ofp37rshhlhp2y
     dev: false
@@ -5977,7 +5977,7 @@ packages:
       react: '*'
       react-native: '*'
     dependencies:
-      '@react-aria/focus': 3.9.0_react@18.2.0
+      '@react-aria/focus': 3.2.3_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-native-aria/interactions': 0.2.8_4r3cdqp3lrtwebhzxhqucfs6yq
       '@react-native-aria/utils': 0.2.8_4r3cdqp3lrtwebhzxhqucfs6yq
@@ -6326,7 +6326,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/toggle': 3.4.2_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/checkbox': 3.4.0_react@18.2.0
@@ -6338,7 +6338,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/toggle': 3.4.2_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/checkbox': 3.4.0_react@18.2.0
@@ -6351,7 +6351,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-types/shared': 3.15.0_react@18.2.0
       react: 18.2.0
     dev: false
@@ -6361,7 +6361,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-types/shared': 3.15.0_react@18.2.0
       react: 18.2.0
     dev: false
@@ -6371,7 +6371,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/list': 3.5.4_react@18.2.0
       '@react-stately/menu': 3.4.2_react@18.2.0
       '@react-stately/select': 3.3.2_react@18.2.0
@@ -6386,7 +6386,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/list': 3.5.4_react@18.2.0
       '@react-stately/menu': 3.4.2_react@18.2.0
       '@react-stately/select': 3.3.2_react@18.2.0
@@ -6401,7 +6401,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/virtualizer': 3.3.1_react@18.2.0
       '@react-types/grid': 3.1.4_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -6414,7 +6414,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/collections': 3.4.4_react@18.2.0
       '@react-stately/selection': 3.11.0_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
@@ -6427,7 +6427,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/overlays': 3.4.2_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/menu': 3.7.2_react@18.2.0
@@ -6440,7 +6440,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/overlays': 3.6.4_react@18.2.0
       react: 18.2.0
@@ -6451,7 +6451,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/radio': 3.3.0_react@18.2.0
       react: 18.2.0
@@ -6462,7 +6462,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/radio': 3.3.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -6474,7 +6474,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/collections': 3.4.4_react@18.2.0
       '@react-stately/list': 3.5.4_react@18.2.0
       '@react-stately/menu': 3.4.2_react@18.2.0
@@ -6490,7 +6490,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/collections': 3.4.4_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -6502,7 +6502,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
@@ -6515,7 +6515,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/i18n': 3.6.1_react@18.2.0
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
@@ -6529,7 +6529,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/list': 3.5.4_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/tabs': 3.0.0-alpha.2_react@18.2.0
@@ -6541,7 +6541,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/list': 3.5.4_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/tabs': 3.0.0-alpha.2_react@18.2.0
@@ -6553,7 +6553,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/checkbox': 3.4.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -6565,7 +6565,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/utils': 3.5.1_react@18.2.0
       '@react-types/checkbox': 3.4.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
@@ -6577,7 +6577,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-stately/collections': 3.4.4_react@18.2.0
       '@react-stately/selection': 3.11.0_react@18.2.0
       '@react-stately/utils': 3.5.1_react@18.2.0
@@ -6590,7 +6590,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       react: 18.2.0
     dev: false
 
@@ -6599,7 +6599,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       '@react-aria/utils': 3.14.0_react@18.2.0
       '@react-types/shared': 3.15.0_react@18.2.0
       react: 18.2.0
@@ -7305,7 +7305,7 @@ packages:
   /@types/lodash.has/4.5.7:
     resolution: {integrity: sha512-nfbAzRbsZBdzSAkL9iiLy4SQk89uuFcXBFwZ7pf6oZhBgPvNys8BY5Twp/w8XvZKGt1o6cAa85wX4QhqO3uQ7A==}
     dependencies:
-      '@types/lodash': 4.14.186
+      '@types/lodash': 4.14.188
     dev: false
 
   /@types/lodash.mergewith/4.6.6:
@@ -7314,12 +7314,12 @@ packages:
       '@types/lodash': 4.14.187
     dev: false
 
-  /@types/lodash/4.14.186:
-    resolution: {integrity: sha512-eHcVlLXP0c2FlMPm56ITode2AgLMSa6aJ05JTTbYbI+7EMkCEE5qk2E41d5g2lCVTqRe0GnnRFurmlCsDODrPw==}
-    dev: false
-
   /@types/lodash/4.14.187:
     resolution: {integrity: sha512-MrO/xLXCaUgZy3y96C/iOsaIqZSeupyTImKClHunL5GrmaiII2VwvWmLBu2hwa0Kp0sV19CsyjtrTc/Fx8rg/A==}
+    dev: false
+
+  /@types/lodash/4.14.188:
+    resolution: {integrity: sha512-zmEmF5OIM3rb7SbLCFYoQhO4dGt2FRM9AMkxvA3LaADOF1n8in/zGJlWji9fmafLoNyz+FoL6FE0SLtGIArD7w==}
     dev: false
 
   /@types/long/4.0.2:
@@ -7426,6 +7426,10 @@ packages:
     dependencies:
       source-map: 0.6.1
     dev: true
+
+  /@types/use-subscription/1.0.0:
+    resolution: {integrity: sha512-0WWZ5GUDKMXUY/1zy4Ur5/zsC0s/B+JjXfHdkvx6JgDNZzZV5eW+KKhDqsTGyqX56uh99gwGwbsKbVwkcVIKQA==}
+    dev: false
 
   /@types/uuid/8.3.4:
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
@@ -10428,7 +10432,7 @@ packages:
   /dom-helpers/5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
     dependencies:
-      '@babel/runtime': 7.20.0
+      '@babel/runtime': 7.20.1
       csstype: 3.1.1
     dev: false
 
@@ -15160,8 +15164,8 @@ packages:
       - supports-color
     dev: true
 
-  /native-base/3.4.12-alpha.1_c6knci4t5y3jced5eizqneufl4:
-    resolution: {integrity: sha512-8WKjc691yDrXNs+XhJaau5sWdYUhgc/pOkjEt5pS0L8Nqd+PWbNGjXbfB5SEe2P3pNnAQwjwFLGUtjWZjyDXBQ==}
+  /native-base/3.4.21_c6knci4t5y3jced5eizqneufl4:
+    resolution: {integrity: sha512-5HlwohfIKwZVtjqtnaI48dDkmUmNfCfFtQZaQR4yJgHmDMdi7+mNwGJAiCUc6YDhRoknlGMR0MirLIuvRFhV5w==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-native': '*'
@@ -15195,6 +15199,8 @@ packages:
       '@types/lodash.has': 4.5.7
       '@types/react': 18.0.24
       '@types/react-native': 0.70.6
+      '@types/use-subscription': 1.0.0
+      inline-style-prefixer: 6.0.1
       lodash.clonedeep: 4.5.0
       lodash.get: 4.4.2
       lodash.has: 4.5.2
@@ -15214,6 +15220,7 @@ packages:
       react-native-svg: 13.4.0_4r3cdqp3lrtwebhzxhqucfs6yq
       stable-hash: 0.0.2
       tinycolor2: 1.4.2
+      use-subscription: 1.8.0_react@18.2.0
     dev: false
 
   /natural-compare-lite/1.4.0:
@@ -19292,6 +19299,15 @@ packages:
       detect-node-es: 1.1.0
       react: 18.2.0
       tslib: 2.4.1
+    dev: false
+
+  /use-subscription/1.8.0_react@18.2.0:
+    resolution: {integrity: sha512-LISuG0/TmmoDoCRmV5XAqYkd3UCBNM0ML3gGBndze65WITcsExCD3DTvXXTLyNcOC0heFQZzluW88bN/oC1DQQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
   /use-sync-external-store/1.2.0_react@18.2.0:

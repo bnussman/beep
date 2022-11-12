@@ -33,7 +33,7 @@
     "expo-updates": "~0.15.4",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.11.2",
-    "native-base": "3.4.12-alpha.1",
+    "native-base": "3.4.21",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-hook-form": "^7.39.1",
