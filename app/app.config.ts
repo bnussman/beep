@@ -57,7 +57,6 @@ export default {
       package: "app.ridebeep.App",
       versionCode: 35,
       googleServicesFile: "./google-services.json",
-      useNextNotificationsApi: true,
       permissions: [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
