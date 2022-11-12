@@ -1,7 +1,8 @@
-import { ApolloError, ValidationError } from "apollo-server-core";
+import { GraphQLError, GraphQLFormattedError } from "graphql";
 
-export function formatError(error: ApolloError) {
+export function formatError(error: GraphQLFormattedError) {
   if (error?.message === "Argument Validation Error") {
+    // @ts-expect-error fix types here
     const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
 
     const output: { [key: string]: string[] } = {};
@@ -14,7 +15,7 @@ export function formatError(error: ApolloError) {
       output[error.property] = items;
     }
 
-    return new ApolloError("Validation Error", undefined, output);
+    return new GraphQLError("Validation Error", output);
   }
 
   return error;

@@ -3,7 +3,6 @@ import { User, UserRole } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperLocationArgs, LocationInput } from './args';
-import { AuthenticationError } from 'apollo-server-core';
 import { AnonymousBeeper } from '../beeper/resolver';
 import { getDistance } from '../utils/dist';
 import { sha256 } from 'js-sha256';
@@ -37,7 +36,7 @@ export class LocationResolver {
   ): Promise<User> {
     if (id) {
       if (ctx.user.role !== UserRole.ADMIN) {
-        throw new AuthenticationError("You can't update another user's location without being an admin.");
+        throw new Error("You can't update another user's location without being an admin.");
       }
 
       const user = await ctx.em.findOneOrFail(User, id);
@@ -87,7 +86,7 @@ export class LocationResolver {
       return { id: sha256(data.id).substring(0, 9), latitude: data.latitude, longitude: data.longitude };
     }
     if (ctx.user.role !== UserRole.ADMIN) {
-      throw new AuthenticationError("You can't do that.");
+      throw new Error("You can't do that.");
     }
     return data;
   }

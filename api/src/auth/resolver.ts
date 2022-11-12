@@ -10,7 +10,6 @@ import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
 import { compare, hash } from 'bcrypt';
-import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 class Auth {
@@ -42,7 +41,7 @@ export class AuthResolver {
     }
 
     if (!isPasswordCorrect) {
-      throw new AuthenticationError("Password is incorrect.");
+      throw new Error("Password is incorrect.");
     }
 
     const tokens = new TokenEntry(user);

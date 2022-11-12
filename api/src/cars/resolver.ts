@@ -7,7 +7,6 @@ import { CarArgs, EditCarArgs } from './args';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
 import { UserRole } from '../entities/User';
-import { AuthenticationError } from 'apollo-server-core';
 
 @ObjectType()
 class CarsResponse extends Paginated(Car) {}
@@ -53,7 +52,7 @@ export class CarResolver {
   @Authorized('self')
   public async getCars(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<CarsResponse> {
     if (!id && ctx.user.role !== UserRole.ADMIN) {
-      throw new AuthenticationError("You cant do that");
+      throw new Error("You cant do that");
     }
 
     const filter = id ? { user: id  } : {};
@@ -77,7 +76,7 @@ export class CarResolver {
     const car = await ctx.em.findOneOrFail(Car, id);
 
     if (ctx.user.role !== UserRole.ADMIN && car.user.id !== ctx.user.id) {
-      throw new AuthenticationError("you can't do that"); 
+      throw new Error("you can't do that"); 
     }
     
     ctx.em.nativeUpdate(Car, { user: ctx.user.id, id: { $ne: id } }, { default: false });
