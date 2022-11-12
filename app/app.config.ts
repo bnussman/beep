@@ -5,7 +5,7 @@ export default {
     name: "Beep",
     slug: "Beep",
     owner: "bnussman",
-    version: "2.5.0",
+    version: "2.6.0",
     githubUrl: "https://github.com/bnussman/Beep",
     primaryColor: "#575A62",
     icon: "./assets/icon.png",
@@ -36,7 +36,7 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "app.ridebeep.App",
-      buildNumber: "16",
+      buildNumber: "17",
       infoPlist: {
         NSLocationWhenInUseUsageDescription:
           "The Beep App uses your location to pick origins, destinations, and predict ride times",
@@ -52,7 +52,7 @@ export default {
     },
     android: {
       package: "app.ridebeep.App",
-      versionCode: 34,
+      versionCode: 35,
       googleServicesFile: "./google-services.json",
       useNextNotificationsApi: true,
       permissions: [
