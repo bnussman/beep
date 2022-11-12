@@ -1,5 +1,5 @@
 import { ClassType, Field, Int, ObjectType, ArgsType } from 'type-graphql';
-import { Max, Min } from 'class-validator';
+import { IsNumber, Max, Min } from 'class-validator';
 
 export function Paginated<T>(TItemClass: ClassType<T>) {
   @ObjectType({ isAbstract: true })
@@ -16,10 +16,12 @@ export function Paginated<T>(TItemClass: ClassType<T>) {
 @ArgsType()
 export class PaginationArgs {
   @Field(() => Int, { nullable: true })
+  @IsNumber()
   @Min(0)
   offset?: number;
 
   @Field(() => Int, { nullable: true })
+  @IsNumber()
   @Min(1)
   @Max(50)
   show?: number;

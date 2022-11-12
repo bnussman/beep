@@ -358,7 +358,7 @@ export type Query = {
   getUser: User;
   getUsers: UsersResponse;
   getUsersPerDomain: Array<UsersPerDomain>;
-  getUsersWithBeeps: Array<UsersWithBeeps>;
+  getUsersWithBeeps: UsersWithBeepsResponse;
 };
 
 
@@ -454,6 +454,13 @@ export type QueryGetUserArgs = {
 
 
 export type QueryGetUsersArgs = {
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetUsersWithBeepsArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   query?: InputMaybe<Scalars['String']>;
   show?: InputMaybe<Scalars['Int']>;
@@ -639,6 +646,12 @@ export type UsersWithBeeps = {
   __typename?: 'UsersWithBeeps';
   beeps: Scalars['Float'];
   user: User;
+};
+
+export type UsersWithBeepsResponse = {
+  __typename?: 'UsersWithBeepsResponse';
+  count: Scalars['Int'];
+  items: Array<UsersWithBeeps>;
 };
 
 export type VerifyEmail = {
@@ -960,10 +973,13 @@ export type ClearQueueMutationVariables = Exact<{
 
 export type ClearQueueMutation = { __typename?: 'Mutation', clearQueue: boolean };
 
-export type GetUsersWithBeepsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetUsersWithBeepsQueryVariables = Exact<{
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
 
 
-export type GetUsersWithBeepsQuery = { __typename?: 'Query', getUsersWithBeeps: Array<{ __typename?: 'UsersWithBeeps', beeps: number, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> };
+export type GetUsersWithBeepsQuery = { __typename?: 'Query', getUsersWithBeeps: { __typename?: 'UsersWithBeepsResponse', count: number, items: Array<{ __typename?: 'UsersWithBeeps', beeps: number, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
 
 export type EditUserMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2775,14 +2791,17 @@ export type ClearQueueMutationHookResult = ReturnType<typeof useClearQueueMutati
 export type ClearQueueMutationResult = Apollo.MutationResult<ClearQueueMutation>;
 export type ClearQueueMutationOptions = Apollo.BaseMutationOptions<ClearQueueMutation, ClearQueueMutationVariables>;
 export const GetUsersWithBeepsDocument = gql`
-    query getUsersWithBeeps {
-  getUsersWithBeeps {
-    user {
-      id
-      photo
-      name
+    query getUsersWithBeeps($show: Int, $offset: Int) {
+  getUsersWithBeeps(show: $show, offset: $offset) {
+    items {
+      user {
+        id
+        photo
+        name
+      }
+      beeps
     }
-    beeps
+    count
   }
 }
     `;
@@ -2799,6 +2818,8 @@ export const GetUsersWithBeepsDocument = gql`
  * @example
  * const { data, loading, error } = useGetUsersWithBeepsQuery({
  *   variables: {
+ *      show: // value for 'show'
+ *      offset: // value for 'offset'
  *   },
  * });
  */

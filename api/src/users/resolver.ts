@@ -35,6 +35,9 @@ class UsersWithBeeps {
 }
 
 @ObjectType()
+export class UsersWithBeepsResponse extends Paginated(UsersWithBeeps) {}
+
+@ObjectType()
 export class UsersResponse extends Paginated(User) {}
 
 @Resolver(User)
@@ -226,10 +229,12 @@ export class UserResolver {
     return result;
   }
 
-  @Query(() => [UsersWithBeeps])
+  @Query(() => UsersWithBeepsResponse)
   @Authorized()
-  public async getUsersWithBeeps(@Ctx() ctx: Context): Promise<UsersWithBeeps[]> {
+  public async getUsersWithBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<UsersWithBeepsResponse> {
     const connection = ctx.em.getConnection();
+
+    const count = await ctx.em.count(User);
 
     const result: (User & { beeps: number })[] = await connection.execute(`
       SELECT
@@ -242,9 +247,14 @@ export class UserResolver {
         public.user.id
       ORDER BY
         beeps DESC
+      OFFSET ${offset}
+      LIMIT ${show};
     `);
 
-    return result.map(({ beeps, ...user }) => ({ user: new User(user), beeps }));
+    return {
+      items: result.map(({ beeps, ...user }) => ({ user: new User(user), beeps })),
+      count
+    };
   }
 
   @Mutation(() => Number)
