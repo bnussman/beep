@@ -35,7 +35,7 @@
     "@sentry/integrations": "^7.19.0",
     "@sentry/node": "^7.19.0",
     "@sentry/tracing": "^7.19.0",
-    "aws-sdk": "^2.1252.0",
+    "aws-sdk": "^2.1253.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "class-validator": "^0.13.2",

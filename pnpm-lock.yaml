@@ -34,7 +34,7 @@ importers:
       '@types/ws': ^8.2.2
       '@typescript-eslint/eslint-plugin': ^5.42.1
       '@typescript-eslint/parser': ^5.42.1
-      aws-sdk: ^2.1252.0
+      aws-sdk: ^2.1253.0
       bcrypt: ^5.1.0
       body-parser: ^1.20.1
       class-validator: ^0.13.2
@@ -68,7 +68,7 @@ importers:
       '@sentry/integrations': 7.19.0
       '@sentry/node': 7.19.0
       '@sentry/tracing': 7.19.0
-      aws-sdk: 2.1252.0
+      aws-sdk: 2.1253.0
       bcrypt: 5.1.0
       body-parser: 1.20.1
       class-validator: 0.13.2
@@ -8288,8 +8288,8 @@ packages:
     engines: {node: '>= 0.4'}
     dev: false
 
-  /aws-sdk/2.1252.0:
-    resolution: {integrity: sha512-ayBNGAPhCm/tyWNki24cwPgI8DUm/suKTh2YDB6SrgeROyHJHMTXpj1dVaYXrBrZjRN7erVi5g7pkaxzCt/28A==}
+  /aws-sdk/2.1253.0:
+    resolution: {integrity: sha512-jlEfWPmRGRdeSVhtRhZnX/vvbJtHu6wzrm7DEUytef5I8P9kxFXnY/lByaXN20WpoU9Kw8zcEOVYIre4LLgswA==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       buffer: 4.9.2
