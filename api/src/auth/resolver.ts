@@ -106,10 +106,6 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   @Authorized('No Verification')
   public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
-    if (!ctx.token || !ctx.user) {
-      throw new Error("User not logged in");
-    }
-
     ctx.em.remove(ctx.token);
 
     if (isApp) {
