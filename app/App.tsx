@@ -23,7 +23,7 @@ import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
-import { NATIVE_BASE_CONFIG, NATIVE_BASE_THEME } from "./utils/constants";
+import { NATIVE_BASE_THEME } from "./utils/constants";
 import { AddCar } from "./routes/cars/AddCar";
 import {
   DarkTheme,
@@ -147,7 +147,6 @@ function App2() {
       <NativeBaseProvider
         theme={NATIVE_BASE_THEME}
         colorModeManager={colorModeManager}
-        config={NATIVE_BASE_CONFIG}
       >
         <Beep />
       </NativeBaseProvider>
