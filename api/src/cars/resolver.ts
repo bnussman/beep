@@ -89,10 +89,15 @@ export class CarResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized('self')
+  @Authorized()
   public async deleteCar(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
     const car = await ctx.em.findOneOrFail(Car, id);
-    const count = await ctx.em.count(Car, { user: ctx.user.id });
+
+    if (car.user.id !== ctx.user.id && ctx.user.role !== UserRole.ADMIN) {
+      throw new Error("You can only delete your own cars.");
+    }
+
+    const count = await ctx.em.count(Car, { user: car.user.id });
 
     if (car.default && count > 1) {
       throw new Error("You must make another car default before you delete this one.");

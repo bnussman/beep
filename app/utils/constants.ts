@@ -1,4 +1,3 @@
-import { LinearGradient } from "expo-linear-gradient";
 import { extendTheme } from "native-base";
 import { Platform } from "react-native";
 import * as Device from "expo-device";
@@ -14,11 +13,7 @@ export const isIOS: boolean = Platform.OS == "ios";
 
 export type Unpacked<T> = T extends (infer U)[] ? U : T;
 
-export const NATIVE_BASE_CONFIG = {
-  dependencies: {
-    "linear-gradient": LinearGradient,
-  },
-};
+export const PAGE_SIZE = 10;
 
 export const NATIVE_BASE_THEME = extendTheme({
   colors: {

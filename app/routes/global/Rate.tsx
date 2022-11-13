@@ -51,7 +51,7 @@ export function RateScreen() {
       .catch((error: ApolloError) => {
         Alert(error);
       });
-  }
+  };
 
   return (
     <Container alignItems="center" keyboard>
@@ -73,11 +73,7 @@ export function RateScreen() {
           onSubmitEditing={onSubmit}
           blurOnSubmit={true}
         />
-        <Button
-          onPress={onSubmit}
-          isDisabled={stars < 1}
-          isLoading={loading}
-        >
+        <Button onPress={onSubmit} isDisabled={stars < 1} isLoading={loading}>
           Rate User
         </Button>
       </Stack>

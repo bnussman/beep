@@ -5,6 +5,7 @@ import { gql, useQuery } from "@apollo/client";
 import { GetRatingsQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
+import { PAGE_SIZE } from "../utils/constants";
 import {
   Text,
   FlatList,
@@ -44,7 +45,7 @@ export function RatingsScreen() {
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetRatingsQuery>(Ratings, {
-      variables: { id: user?.id, offset: 0, show: 10 },
+      variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
     });
 
@@ -59,7 +60,7 @@ export function RatingsScreen() {
     fetchMore({
       variables: {
         offset: ratings?.length || 0,
-        limit: 10,
+        limit: PAGE_SIZE,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) {
@@ -81,6 +82,8 @@ export function RatingsScreen() {
 
   const renderFooter = () => {
     if (!isRefreshing) return null;
+
+    if (!count || count < PAGE_SIZE) return null;
 
     return (
       <Center>
@@ -119,7 +122,7 @@ export function RatingsScreen() {
       <FlatList
         w="100%"
         data={ratings}
-        renderItem={({ item, index }) => <Rating item={item} index={index} />}
+        renderItem={(data) => <Rating {...data} />}
         keyExtractor={(rating) => rating.id}
         onEndReached={getMore}
         onEndReachedThreshold={0.1}

@@ -4,14 +4,18 @@ import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { DeleteCarMutation, EditCarMutation, GetCarsQuery } from "../../generated/graphql";
 import { RefreshControl } from "react-native";
-import { isMobile, Unpacked } from "../../utils/constants";
+import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
 import { Card } from "../../components/Card";
 import { Image } from "../../components/Image";
 import { useUser } from "../../utils/useUser";
 import { Alert } from "react-native";
 import { cache } from "../../utils/Apollo";
+import {
+  DeleteCarMutation,
+  EditCarMutation,
+  GetCarsQuery,
+} from "../../generated/graphql";
 import {
   FlatList,
   Heading,
@@ -59,17 +63,18 @@ export const CarsQuery = gql`
   }
 `;
 
-const PAGE_SIZE = 10;
-
 export function Cars() {
   const navigation = useNavigation<Navigation>();
   const { colorMode } = useColorMode();
   const { user } = useUser();
 
-  const { data, loading, error, refetch, fetchMore } = useQuery<GetCarsQuery>(CarsQuery, {
-    variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
-    notifyOnNetworkStatusChange: true,
-  });
+  const { data, loading, error, refetch, fetchMore } = useQuery<GetCarsQuery>(
+    CarsQuery,
+    {
+      variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
+      notifyOnNetworkStatusChange: true,
+    }
+  );
 
   const [_deleteCar] = useMutation<DeleteCarMutation>(DeleteCar);
 
@@ -115,7 +120,7 @@ export function Cars() {
     );
   };
 
-  const onLongPress = (car: Unpacked<GetCarsQuery['getCars']['items']>) => {
+  const onLongPress = (car: Unpacked<GetCarsQuery["getCars"]["items"]>) => {
     if (isMobile) {
       Alert.alert(
         "Delete Car?",
@@ -132,15 +137,15 @@ export function Cars() {
     } else {
       deleteCar(car);
     }
-  }
+  };
 
-  const deleteCar = (car: Unpacked<GetCarsQuery['getCars']['items']>) => {
+  const deleteCar = (car: Unpacked<GetCarsQuery["getCars"]["items"]>) => {
     _deleteCar({
-      variables: { id: car.id }, 
+      variables: { id: car.id },
       update: (cache) => {
         cache.evict({
           id: cache.identify({
-            __typename: 'Car',
+            __typename: "Car",
             id: car.id,
           }),
         });
@@ -149,7 +154,7 @@ export function Cars() {
   };
 
   const setDefault = (id: string) => {
-    const oldDefaultId = cars?.find(car => car.default)?.id;
+    const oldDefaultId = cars?.find((car) => car.default)?.id;
 
     editCar({ variables: { id, default: true } }).then(() => {
       if (oldDefaultId) {
@@ -212,7 +217,12 @@ export function Cars() {
         p={2}
         data={cars}
         renderItem={({ item: car }) => (
-          <Card my={2} pressable onLongPress={() => onLongPress(car)} onPress={car.default ? undefined : () => setDefault(car.id)}>
+          <Card
+            my={2}
+            pressable
+            onLongPress={() => onLongPress(car)}
+            onPress={car.default ? undefined : () => setDefault(car.id)}
+          >
             <HStack alignItems="center">
               <Stack space={2}>
                 <Heading
@@ -225,7 +235,17 @@ export function Cars() {
                 </Heading>
                 <HStack space={3}>
                   {car.default && <Badge borderRadius="lg">Default</Badge>}
-                  <Badge borderRadius="lg" _text={{ textTransform: "capitalize" }} colorScheme={['black', 'white'].includes(car.color) ? undefined : car.color}>{car.color}</Badge>
+                  <Badge
+                    borderRadius="lg"
+                    _text={{ textTransform: "capitalize" }}
+                    colorScheme={
+                      ["black", "white"].includes(car.color)
+                        ? undefined
+                        : car.color
+                    }
+                  >
+                    {car.color}
+                  </Badge>
                 </HStack>
               </Stack>
               <Spacer />

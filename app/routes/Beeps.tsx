@@ -5,6 +5,7 @@ import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
+import { PAGE_SIZE } from "../utils/constants";
 import {
   Spinner,
   Text,
@@ -50,7 +51,7 @@ export function BeepsScreen() {
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetBeepHistoryQuery>(GetBeepHistory, {
-      variables: { id: user?.id, offset: 0, show: 10 },
+      variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
     });
 
@@ -65,7 +66,7 @@ export function BeepsScreen() {
     fetchMore({
       variables: {
         offset: beeps?.length || 0,
-        limit: 10,
+        limit: PAGE_SIZE,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) {
@@ -85,6 +86,7 @@ export function BeepsScreen() {
   const renderFooter = () => {
     if (!isRefreshing) return null;
 
+    if (!count || count < PAGE_SIZE) return null;
     return (
       <Center>
         <Spinner mt={4} mb={9} color="gray.400" />
@@ -122,7 +124,7 @@ export function BeepsScreen() {
       <FlatList
         w="100%"
         data={beeps}
-        renderItem={({ item, index }) => <Beep item={item} index={index} />}
+        renderItem={(data) => <Beep {...data} />}
         keyExtractor={(beep) => beep.id}
         onEndReached={getMore}
         onEndReachedThreshold={0.1}
