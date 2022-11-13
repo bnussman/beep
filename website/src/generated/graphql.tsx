@@ -153,6 +153,7 @@ export type Mutation = {
   editCar: Car;
   editUser: User;
   forgotPassword: Scalars['Boolean'];
+  leaveQueue: Scalars['Boolean'];
   login: Auth;
   logout: Scalars['Boolean'];
   rateUser: Scalars['Boolean'];
@@ -161,7 +162,6 @@ export type Mutation = {
   reportUser: Scalars['Boolean'];
   resendEmailVarification: Scalars['Boolean'];
   resetPassword: Scalars['Boolean'];
-  riderLeaveQueue: Scalars['Boolean'];
   sendNotification: Scalars['Boolean'];
   sendNotifications: Scalars['Float'];
   setBeeperQueue: Array<QueueEntry>;
@@ -246,6 +246,11 @@ export type MutationForgotPasswordArgs = {
 };
 
 
+export type MutationLeaveQueueArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationLoginArgs = {
   input: LoginInput;
 };
@@ -279,11 +284,6 @@ export type MutationReportUserArgs = {
 export type MutationResetPasswordArgs = {
   id: Scalars['String'];
   input: ResetPasswordInput;
-};
-
-
-export type MutationRiderLeaveQueueArgs = {
-  id: Scalars['String'];
 };
 
 

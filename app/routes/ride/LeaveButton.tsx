@@ -9,7 +9,7 @@ import { Alert } from "../../utils/Alert";
 
 const LeaveQueue = gql`
   mutation LeaveQueue($id: String!) {
-    riderLeaveQueue(id: $id)
+    leaveQueue(id: $id)
   }
 `;
 

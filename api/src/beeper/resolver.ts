@@ -121,13 +121,13 @@ export class BeeperResolver {
 
     switch (queueEntry.state) {
       case -1:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request 🚫`, "Open your app to find a diffrent beeper.");
+        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request 🚫`, "Open your app to find a diffrent beeper");
         break;
       case 1:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request ✅`, "You will recieve another notification when they are on their way to pick you up.");
+        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request ✅`, "You will recieve another notification when they are on their way to pick you up");
         break;
       case 2:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way 🚕`, "Your beeper is on their way to pick you up.");
+        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way 🚕`, `Your beeper is on their way in a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`);
         break;
       case 3:
         sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here 📍`, `Look for a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`);
