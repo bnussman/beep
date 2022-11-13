@@ -141,7 +141,6 @@ importers:
       expo: ^47.0.0
       expo-device: ~5.0.0
       expo-image-picker: ~14.0.1
-      expo-linear-gradient: ~12.0.1
       expo-linking: ~3.2.3
       expo-location: ~15.0.1
       expo-notifications: ~0.17.0
@@ -182,7 +181,6 @@ importers:
       expo: 47.0.3_@babel+core@7.19.6
       expo-device: 5.0.0_expo@47.0.3
       expo-image-picker: 14.0.1_expo@47.0.3
-      expo-linear-gradient: 12.0.1_expo@47.0.3
       expo-linking: 3.2.3_expo@47.0.3
       expo-location: 15.0.1_expo@47.0.3
       expo-notifications: 0.17.0_expo@47.0.3
@@ -11342,14 +11340,6 @@ packages:
       expo: '*'
     dependencies:
       expo: 47.0.3_@babel+core@7.19.6
-
-  /expo-linear-gradient/12.0.1_expo@47.0.3:
-    resolution: {integrity: sha512-TMl/wBTVQOliL4S3DS5Aa3UFfVySr0mdJEHLG6kfBdMCLkr+tfLI2rGyJ+scS7xgMsvhTIaurhf1+Z0sL3aLCg==}
-    peerDependencies:
-      expo: '*'
-    dependencies:
-      expo: 47.0.3_@babel+core@7.19.6
-    dev: false
 
   /expo-linking/3.2.3_expo@47.0.3:
     resolution: {integrity: sha512-PgiWCao9TecLOPdtWyiNSY+UQGAwdjFx4KbHd1YsF0KnM1CJ2idcaHpDRlQPWSNmDebUZYN461/dVtJi9b2krg==}
