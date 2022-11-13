@@ -15,11 +15,11 @@ class BeepsInProgressResponse extends Paginated(QueueEntry) {}
 export class QueueResolver {
 
   @Query(() => [QueueEntry])
-  @Authorized()
+  @Authorized("self")
   public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<QueueEntry[]> {
     const populate = fieldsToRelations(info) as Array<keyof QueueEntry>;
 
-    return await ctx.em.find(QueueEntry, { beeper: id || ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate });
+    return await ctx.em.find(QueueEntry, { beeper: id ?? ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate });
   }
 
   @Query(() => BeepsInProgressResponse)
