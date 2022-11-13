@@ -3,8 +3,7 @@ import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PasswordInput from "../../components/PasswordInput";
 import { Alert } from "../../utils/Alert";
-import { GradietnButton } from "../../components/GradientButton";
-import { isMobile, isSimulator } from "../../utils/constants";
+import { isSimulator } from "../../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../../generated/graphql";
 import { client, wsLink } from "../../utils/Apollo";
@@ -21,7 +20,6 @@ import {
   Button,
   Input,
   Heading,
-  Flex,
   Spacer,
   Box,
   FormControl,
