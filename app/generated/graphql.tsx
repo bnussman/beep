@@ -360,6 +360,7 @@ export type Query = {
   getUsers: UsersResponse;
   getUsersPerDomain: Array<UsersPerDomain>;
   getUsersWithBeeps: UsersWithBeepsResponse;
+  getUsersWithRides: UsersWithRidesResponse;
 };
 
 
@@ -462,6 +463,13 @@ export type QueryGetUsersArgs = {
 
 
 export type QueryGetUsersWithBeepsArgs = {
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetUsersWithRidesArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   query?: InputMaybe<Scalars['String']>;
   show?: InputMaybe<Scalars['Int']>;
@@ -653,6 +661,18 @@ export type UsersWithBeepsResponse = {
   __typename?: 'UsersWithBeepsResponse';
   count: Scalars['Int'];
   items: Array<UsersWithBeeps>;
+};
+
+export type UsersWithRides = {
+  __typename?: 'UsersWithRides';
+  rides: Scalars['Float'];
+  user: User;
+};
+
+export type UsersWithRidesResponse = {
+  __typename?: 'UsersWithRidesResponse';
+  count: Scalars['Int'];
+  items: Array<UsersWithRides>;
 };
 
 export type VerifyEmail = {

@@ -1,23 +1,23 @@
 import React from 'react'
-import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box } from "@chakra-ui/react"
+import { Table, Thead, Tbody, Tr, Th, Td, Box } from "@chakra-ui/react"
 import { gql, useQuery } from '@apollo/client';
 import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { Loading } from '../../../components/Loading';
-import { GetUsersWithBeepsQuery } from '../../../generated/graphql';
 import { useSearchParams } from 'react-router-dom';
 import { Pagination } from '../../../components/Pagination';
+import { GetUsersWithRidesQuery } from '../../../generated/graphql';
 
-export const UsersWithBeeps = gql`
-  query getUsersWithBeeps($show: Int, $offset: Int) {
-    getUsersWithBeeps(show: $show, offset: $offset) {
+export const UsersWithRides = gql`
+  query getUsersWithRides($show: Int, $offset: Int) {
+    getUsersWithRides(show: $show, offset: $offset) {
       items {
         user {
           id
           photo
           name
         }
-        beeps
+        rides
       }
       count
     }
@@ -26,10 +26,10 @@ export const UsersWithBeeps = gql`
 
 const pageLimit = 20;
 
-export function UsersByBeeps() {
+export function Rides() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
-  const { loading, error, data } = useQuery<GetUsersWithBeepsQuery>(UsersWithBeeps, {
+  const { loading, error, data } = useQuery<GetUsersWithRidesQuery>(UsersWithRides, {
     variables: {
       show: pageLimit,
       offset: (page - 1) * pageLimit,
@@ -46,9 +46,8 @@ export function UsersByBeeps() {
 
   return (
     <Box>
-      <Heading>Leaderboards</Heading>
       <Pagination
-        resultCount={data?.getUsersWithBeeps.count}
+        resultCount={data?.getUsersWithRides.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -62,10 +61,10 @@ export function UsersByBeeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getUsersWithBeeps.items.map(({ user, beeps }) => (
+            {data?.getUsersWithRides.items.map(({ user, rides }) => (
               <Tr key={user.id}>
                 <TdUser user={user} />
-                <Td>{beeps}</Td>
+                <Td>{rides}</Td>
               </Tr>
             ))}
           </Tbody>
@@ -73,7 +72,7 @@ export function UsersByBeeps() {
       </Box>
       {loading && <Loading />}
       <Pagination
-        resultCount={data?.getUsersWithBeeps.count}
+        resultCount={data?.getUsersWithRides.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

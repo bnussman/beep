@@ -35,7 +35,19 @@ class UsersWithBeeps {
 }
 
 @ObjectType()
+class UsersWithRides {
+  @Field()
+  user!: User;
+
+  @Field()
+  rides!: number;
+}
+
+@ObjectType()
 export class UsersWithBeepsResponse extends Paginated(UsersWithBeeps) {}
+
+@ObjectType()
+export class UsersWithRidesResponse extends Paginated(UsersWithRides) {}
 
 @ObjectType()
 export class UsersResponse extends Paginated(User) {}
@@ -253,6 +265,36 @@ export class UserResolver {
 
     return {
       items: result.map(({ beeps, ...user }) => ({ user: new User(user), beeps })),
+      count
+    };
+  }
+
+
+
+  @Query(() => UsersWithRidesResponse)
+  @Authorized()
+  public async getUsersWithRides(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<UsersWithRidesResponse> {
+    const connection = ctx.em.getConnection();
+
+    const count = await ctx.em.count(User);
+
+    const result: (User & { rides: number })[] = await connection.execute(`
+      SELECT
+        public. "user".*,
+        count(beep.rider_id) AS rides
+      FROM
+        public. "user"
+        LEFT JOIN beep ON ("user".id = beep.rider_id)
+      GROUP BY
+        public.user.id
+      ORDER BY
+        rides DESC
+      OFFSET ${offset}
+      LIMIT ${show};
+    `);
+
+    return {
+      items: result.map(({ rides, ...user }) => ({ user: new User(user), rides })),
       count
     };
   }

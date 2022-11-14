@@ -359,6 +359,7 @@ export type Query = {
   getUsers: UsersResponse;
   getUsersPerDomain: Array<UsersPerDomain>;
   getUsersWithBeeps: UsersWithBeepsResponse;
+  getUsersWithRides: UsersWithRidesResponse;
 };
 
 
@@ -461,6 +462,13 @@ export type QueryGetUsersArgs = {
 
 
 export type QueryGetUsersWithBeepsArgs = {
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryGetUsersWithRidesArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   query?: InputMaybe<Scalars['String']>;
   show?: InputMaybe<Scalars['Int']>;
@@ -652,6 +660,18 @@ export type UsersWithBeepsResponse = {
   __typename?: 'UsersWithBeepsResponse';
   count: Scalars['Int'];
   items: Array<UsersWithBeeps>;
+};
+
+export type UsersWithRides = {
+  __typename?: 'UsersWithRides';
+  rides: Scalars['Float'];
+  user: User;
+};
+
+export type UsersWithRidesResponse = {
+  __typename?: 'UsersWithRidesResponse';
+  count: Scalars['Int'];
+  items: Array<UsersWithRides>;
 };
 
 export type VerifyEmail = {
@@ -869,6 +889,22 @@ export type GetCarsQueryVariables = Exact<{
 
 export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string, created: any, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
 
+export type GetUsersWithBeepsQueryVariables = Exact<{
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetUsersWithBeepsQuery = { __typename?: 'Query', getUsersWithBeeps: { __typename?: 'UsersWithBeepsResponse', count: number, items: Array<{ __typename?: 'UsersWithBeeps', beeps: number, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
+
+export type GetUsersWithRidesQueryVariables = Exact<{
+  show?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetUsersWithRidesQuery = { __typename?: 'Query', getUsersWithRides: { __typename?: 'UsersWithRidesResponse', count: number, items: Array<{ __typename?: 'UsersWithRides', rides: number, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
+
 export type SendNotificationsMutationVariables = Exact<{
   title: Scalars['String'];
   body: Scalars['String'];
@@ -972,14 +1008,6 @@ export type ClearQueueMutationVariables = Exact<{
 
 
 export type ClearQueueMutation = { __typename?: 'Mutation', clearQueue: boolean };
-
-export type GetUsersWithBeepsQueryVariables = Exact<{
-  show?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-}>;
-
-
-export type GetUsersWithBeepsQuery = { __typename?: 'Query', getUsersWithBeeps: { __typename?: 'UsersWithBeepsResponse', count: number, items: Array<{ __typename?: 'UsersWithBeeps', beeps: number, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
 
 export type EditUserMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2203,6 +2231,94 @@ export function useGetCarsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetCarsQueryHookResult = ReturnType<typeof useGetCarsQuery>;
 export type GetCarsLazyQueryHookResult = ReturnType<typeof useGetCarsLazyQuery>;
 export type GetCarsQueryResult = Apollo.QueryResult<GetCarsQuery, GetCarsQueryVariables>;
+export const GetUsersWithBeepsDocument = gql`
+    query getUsersWithBeeps($show: Int, $offset: Int) {
+  getUsersWithBeeps(show: $show, offset: $offset) {
+    items {
+      user {
+        id
+        photo
+        name
+      }
+      beeps
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetUsersWithBeepsQuery__
+ *
+ * To run a query within a React component, call `useGetUsersWithBeepsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersWithBeepsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersWithBeepsQuery({
+ *   variables: {
+ *      show: // value for 'show'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetUsersWithBeepsQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>(GetUsersWithBeepsDocument, options);
+      }
+export function useGetUsersWithBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>(GetUsersWithBeepsDocument, options);
+        }
+export type GetUsersWithBeepsQueryHookResult = ReturnType<typeof useGetUsersWithBeepsQuery>;
+export type GetUsersWithBeepsLazyQueryHookResult = ReturnType<typeof useGetUsersWithBeepsLazyQuery>;
+export type GetUsersWithBeepsQueryResult = Apollo.QueryResult<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>;
+export const GetUsersWithRidesDocument = gql`
+    query getUsersWithRides($show: Int, $offset: Int) {
+  getUsersWithRides(show: $show, offset: $offset) {
+    items {
+      user {
+        id
+        photo
+        name
+      }
+      rides
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetUsersWithRidesQuery__
+ *
+ * To run a query within a React component, call `useGetUsersWithRidesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersWithRidesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersWithRidesQuery({
+ *   variables: {
+ *      show: // value for 'show'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetUsersWithRidesQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersWithRidesQuery, GetUsersWithRidesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUsersWithRidesQuery, GetUsersWithRidesQueryVariables>(GetUsersWithRidesDocument, options);
+      }
+export function useGetUsersWithRidesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersWithRidesQuery, GetUsersWithRidesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUsersWithRidesQuery, GetUsersWithRidesQueryVariables>(GetUsersWithRidesDocument, options);
+        }
+export type GetUsersWithRidesQueryHookResult = ReturnType<typeof useGetUsersWithRidesQuery>;
+export type GetUsersWithRidesLazyQueryHookResult = ReturnType<typeof useGetUsersWithRidesLazyQuery>;
+export type GetUsersWithRidesQueryResult = Apollo.QueryResult<GetUsersWithRidesQuery, GetUsersWithRidesQueryVariables>;
 export const SendNotificationsDocument = gql`
     mutation SendNotifications($title: String!, $body: String!, $match: String) {
   sendNotifications(title: $title, body: $body, match: $match)
@@ -2790,50 +2906,6 @@ export function useClearQueueMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type ClearQueueMutationHookResult = ReturnType<typeof useClearQueueMutation>;
 export type ClearQueueMutationResult = Apollo.MutationResult<ClearQueueMutation>;
 export type ClearQueueMutationOptions = Apollo.BaseMutationOptions<ClearQueueMutation, ClearQueueMutationVariables>;
-export const GetUsersWithBeepsDocument = gql`
-    query getUsersWithBeeps($show: Int, $offset: Int) {
-  getUsersWithBeeps(show: $show, offset: $offset) {
-    items {
-      user {
-        id
-        photo
-        name
-      }
-      beeps
-    }
-    count
-  }
-}
-    `;
-
-/**
- * __useGetUsersWithBeepsQuery__
- *
- * To run a query within a React component, call `useGetUsersWithBeepsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUsersWithBeepsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUsersWithBeepsQuery({
- *   variables: {
- *      show: // value for 'show'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useGetUsersWithBeepsQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>(GetUsersWithBeepsDocument, options);
-      }
-export function useGetUsersWithBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>(GetUsersWithBeepsDocument, options);
-        }
-export type GetUsersWithBeepsQueryHookResult = ReturnType<typeof useGetUsersWithBeepsQuery>;
-export type GetUsersWithBeepsLazyQueryHookResult = ReturnType<typeof useGetUsersWithBeepsLazyQuery>;
-export type GetUsersWithBeepsQueryResult = Apollo.QueryResult<GetUsersWithBeepsQuery, GetUsersWithBeepsQueryVariables>;
 export const EditUserDocument = gql`
     mutation EditUser($id: String!, $data: EditUserInput!) {
   editUser(id: $id, data: $data) {
