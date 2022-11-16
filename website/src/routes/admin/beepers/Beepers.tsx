@@ -78,8 +78,8 @@ export function Beepers() {
       label: "North Carolina",
       value: {
         latitude: 35.683560,
-        longitude: -80.271723,
-        zoom: 7,
+        longitude: -80.071723,
+        zoom: 6,
       }
     },
   ];
