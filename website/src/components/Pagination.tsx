@@ -30,10 +30,8 @@ function PageButton(props: PageButtonProps) {
   const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   return (
-    <Button onClick={onClick} _hover={isDisabled ? { cursor: 'default' } : undefined} size={!isDesktop ? "sm": undefined}>
-      <Text color={active ? "yellow.400" : undefined}>
-        {children}
-      </Text>
+    <Button onClick={onClick} disabled={active} size={!isDesktop ? "sm": undefined}>
+      {children}
     </Button>
   );
 }
