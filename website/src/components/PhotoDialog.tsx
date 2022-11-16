@@ -20,7 +20,7 @@ export function PhotoDialog(props: Props) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent borderRadius="2xl">
         <Image borderRadius="2xl" src={src} />

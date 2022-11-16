@@ -1,5 +1,4 @@
 import React from 'react';
-import Logo from '../assets/icon.png';
 import { Link } from "react-router-dom";
 import { UserDropdown } from './UserDropdown';
 import { AdminDropdown } from './AdminDropdown';
@@ -8,14 +7,12 @@ import { useQuery } from '@apollo/client';
 import { GetUserDataQuery } from '../generated/graphql';
 import { GetUserData } from '../App';
 import {
-  Box,
   Flex,
   HStack,
   Button,
-  Image,
-  Switch,
   useColorMode,
-  Heading
+  Heading,
+  useColorModeValue
 } from '@chakra-ui/react';
 
 export function Header() {
@@ -24,43 +21,30 @@ export function Header() {
 
   const user = data?.getUser;
 
-  const Icon = () => (
-    <Flex
-      as={Link}
-      to="/"
-      backgroundColor='white'
-      alignItems='center'
-      justifyContent='center'
-      borderRadius='xl'
-      boxShadow="dark-lg"
-      width={10}
-      height={10}
-    >
-      <Image h={8} src={Logo} />
-    </Flex>
-  );
-
   return (
-    <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={2}>
+    <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={4} bg={useColorModeValue("white", "rgb(20, 24, 28)")} borderBottom="1px" borderBottomColor={useColorModeValue("gray.100", "#32373e")}>
       <HStack spacing={4} alignItems='center'>
-        <Icon />
         <Heading
           as={Link}
           to="/"
           size="md"
-          fontWeight="bold"
-          bgClip='text'
           color="gray.800"
-          textAlign={["center", "center", "left", "left"]}
-          display={{ base: 'none', md: "unset" }}
           _dark={{ color: 'white' }}
-          _hover={{ bgGradient: 'linear(to-l, #fb7ba2, #fce043)' }}
+          display={{ base: 'none', md: "unset" }}
         >
           Ride Beep App
         </Heading>
+        <Heading
+          as={Link}
+          to="/"
+          size={{ base: 'xl', md: "md" }}
+        >
+          🚕
+        </Heading>
       </HStack>
       <HStack spacing={[2, 4]}>
-        <HStack spacing={[2, 4]} mr={[0, 4]}>
+        <Button variant="outline" onClick={toggleColorMode}>{colorMode === 'light' ? "🌙" : "☀️"}</Button>
+        {/* <HStack spacing={[2, 4]} mr={[0, 4]}>
           <Box>☀️</Box>
           <Switch
             isChecked={colorMode === "dark"}
@@ -70,7 +54,7 @@ export function Header() {
             ml={2}
           />
           <Box>🌑</Box>
-        </HStack>
+        </HStack> */}
         <>
           {(user && user.role === UserRole.ADMIN) && <AdminDropdown />}
           {user && <UserDropdown />}

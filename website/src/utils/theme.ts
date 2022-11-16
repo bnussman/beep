@@ -1,21 +1,29 @@
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, StyleFunctionProps } from "@chakra-ui/react";
+import { mode } from '@chakra-ui/theme-tools';
 
 export const theme = extendTheme({
   fonts: {
     heading: "poppins",
     body: "poppins",
   },
-  colors: {
-    brand: {
-      100: "#FFF9CC",
-      200: "#FFE041",
-      300: "#FFE967",
-      400: "#FFE041",
-      500: "#FFD203",
-      600: "#DBB002",
-      700: "#B79001",
-      800: "#937100",
-      900: "#7A5B00",
+  styles: {
+    global: (props: StyleFunctionProps) => ({
+      body: {
+        bg: mode(props.theme.semanticTokens.colors['chakra-body-bg']._light, 'rgb(14, 17, 19)')(props),
+      },
+    }),
+  },
+  components: {
+    Table: {
+      parts: ['th', 'td'],
+      baseStyle: {
+        th: {
+          border: 'none !important',
+        },
+        td: {
+          border: 'none !important',
+        },
+      },
     },
   },
 });

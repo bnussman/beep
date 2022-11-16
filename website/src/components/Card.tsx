@@ -7,7 +7,7 @@ export function Card({ children, ...props }: BoxProps) {
       p={8}
       borderRadius="xl"
       borderWidth="1px"
-      _dark={{ bg: "gray.700", boxShadow: "none" }}
+      _dark={{ bg: "rgb(20, 24, 28)", boxShadow: "none" }}
       {...props}
     >
       {children}
