@@ -116,7 +116,7 @@ export function Pagination({
   }
 
   return (
-    <Box mb={3} mt={3}>
+    <Box mb={2} mt={2}>
       <Flex align="center">
         {!!resultCount &&
           <Text noOfLines={1}>

@@ -1,11 +1,11 @@
 import React from 'react'
-import { Heading, Box, Tabs, TabList, Tab, TabPanel, TabPanels } from "@chakra-ui/react"
+import { Heading, Tabs, TabList, Tab, TabPanel, TabPanels, Stack } from "@chakra-ui/react"
 import { Beeps } from './beeps';
 import { Rides } from './rides';
 
 export function Leaderboards() {
   return (
-    <Box>
+    <Stack>
       <Heading>Leaderboards</Heading>
       <Tabs isLazy colorScheme="brand">
         <TabList>
@@ -21,6 +21,6 @@ export function Leaderboards() {
           </TabPanel>
         </TabPanels>
       </Tabs>
-    </Box>
+    </Stack>
   );
 }

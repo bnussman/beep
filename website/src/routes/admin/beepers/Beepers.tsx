@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { gql, useQuery, useSubscription } from '@apollo/client';
 import { GetBeeperLocationUpdatesSubscription, GetBeepersQuery } from '../../../generated/graphql';
-import { Badge, Box, Center, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Badge, Box, Center, Heading, HStack, Select, Spacer, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
@@ -64,6 +64,27 @@ export function Beepers() {
   });
 
   const beepers = data?.getBeepers;
+
+  const options = [
+    {
+      label: "Boone",
+      value: {
+        latitude: 36.215735,
+        longitude: -81.674205,
+        zoom: 12,
+      },
+    },
+    {
+      label: "North Carolina",
+      value: {
+        latitude: 35.683560,
+        longitude: -80.271723,
+        zoom: 7,
+      }
+    },
+  ];
+
+  const [selectedOption, setSelectedOption] = useState<string>();
 
   useEffect(() => {
     startPolling(15000);
@@ -130,13 +151,19 @@ export function Beepers() {
 
   return (
     <Box>
-      <Flex align="center">
+      <HStack alignItems="center">
         <Heading>Beepers</Heading>
         <Badge ml={2}>
           {String(beepers?.length ?? 0)}
         </Badge>
-      </Flex>
-      <BeepersMap beepers={beepers} />
+        <Spacer />
+        <Box>
+          <Select variant='filled' value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)}>
+            {options.map((option) => <option value={option.label}>{option.label}</option>)}
+          </Select>
+        </Box>
+      </HStack>
+      <BeepersMap beepers={beepers} viewState={options.find((option) => option.label === selectedOption)?.value} />
       <Box overflowX="auto">
         <Table>
           <Thead>
