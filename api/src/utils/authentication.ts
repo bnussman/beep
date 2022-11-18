@@ -66,13 +66,15 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
       return result;
     }
 
-    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'] });
+    const beeps = await context.em.find(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'] });
 
-    if (beep) {
-      const otherUser = beep.beeper.id === context.user.id ? beep.rider : beep.beeper;
+    if (beeps && beeps.length > 0) {
+      for (const beep of beeps) {
+        const otherUser = beep.beeper.id === context.user.id ? beep.rider : beep.beeper;
 
-      if (otherUser[info.fieldName as 'email' | 'phone'] === result) {
-        return result;
+        if (otherUser[info.fieldName as 'email' | 'phone'] === result) {
+          return result;
+        }
       }
 
       return null;
