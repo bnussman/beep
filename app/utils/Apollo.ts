@@ -12,8 +12,11 @@ import {
   Operation,
   split,
 } from "@apollo/client";
+import { Logger } from "./Logger";
 
-const ip = "192.168.1.181";
+export const cache = new InMemoryCache();
+
+const ip = "192.168.1.251";
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`
@@ -140,7 +143,26 @@ export const wsLink = new WebSocketLink({
     }
   },
   on: {
-    connected: () => console.log("[Websocket] Connected"),
+    connected: (socket, payload: Record<"user", any> | undefined) => {
+      if (!payload?.user) {
+        return;
+      }
+      try {
+        cache.modify({
+          id: cache.identify({
+            __typename: "User",
+            id: payload.user.id,
+          }),
+          fields: {
+            isBeeping() {
+              return payload.user.isBeeping;
+            },
+          },
+        });
+      } catch (e) {
+        Logger.error(e);
+      }
+    },
     connecting: () => console.log("[Websocket] Connecting"),
     opened: () => console.log("[Websocket] Opened"),
     closed: () => console.log("[Websocket] Closed"),
@@ -158,8 +180,6 @@ const splitLink = split(({ query }) => {
 const uploadLink = createUploadLink({
   uri: url,
 });
-
-export const cache = new InMemoryCache();
 
 export const client = new ApolloClient({
   link: ApolloLink.from([authLink, splitLink, uploadLink]),

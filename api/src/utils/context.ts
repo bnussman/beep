@@ -44,7 +44,7 @@ export async function onConnect(ctx: WSContext<{ token?: string }, { token?: Tok
   const bearer = ctx.connectionParams?.token;
 
   if (!bearer) {
-    return false;
+    return true;
   }
 
   const token = await orm.em.fork().findOne(
@@ -55,9 +55,8 @@ export async function onConnect(ctx: WSContext<{ token?: string }, { token?: Tok
     }
   );
 
-  if (!token) {
-    return false;
+  if (token) {
+    ctx.extra.token = token;
+    return { user: token.user };
   }
-
-  ctx.extra.token = token;
 }

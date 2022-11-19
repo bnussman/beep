@@ -62,7 +62,6 @@ async function start() {
   const server = new ApolloServer<APIContext>({
     schema,
     formatError,
-    // context: (ctx) => getContext(ctx, orm),
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
