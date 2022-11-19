@@ -15,6 +15,8 @@ export type Unpacked<T> = T extends (infer U)[] ? U : T;
 
 export const PAGE_SIZE = 10;
 
+export const BEEPER_ICON = "🦃";
+
 export const NATIVE_BASE_THEME = extendTheme({
   colors: {
     primary: {

@@ -5,12 +5,13 @@ import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "native-base";
 import { Platform } from "react-native";
-import { cache, client } from "../../utils/Apollo";
+import { cache } from "../../utils/Apollo";
 import {
   AnonymousBeeper,
   GetAllBeepersLocationQuery,
   GetBeeperLocationUpdatesSubscription,
 } from "../../generated/graphql";
+import { BEEPER_ICON } from "../../utils/constants";
 
 const BeepersLocations = gql`
   query GetAllBeepersLocation(
@@ -167,7 +168,7 @@ export function BeeperMarker({ id, latitude, longitude }: AnonymousBeeper) {
 
   return (
     <MarkerAnimated ref={ref} coordinate={coordinate}>
-      <Text fontSize="2xl">🚕</Text>
+      <Text fontSize="2xl">{BEEPER_ICON}</Text>
     </MarkerAnimated>
   );
 }
