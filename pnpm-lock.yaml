@@ -20,9 +20,9 @@ importers:
       '@mikro-orm/core': 5.5.3
       '@mikro-orm/migrations': 5.5.3
       '@mikro-orm/postgresql': 5.5.3
-      '@sentry/integrations': ^7.19.0
-      '@sentry/node': ^7.19.0
-      '@sentry/tracing': ^7.19.0
+      '@sentry/integrations': ^7.20.0
+      '@sentry/node': ^7.20.0
+      '@sentry/tracing': ^7.20.0
       '@types/bcrypt': ^5.0.0
       '@types/body-parser': ^1.19.2
       '@types/cors': ^2.8.9
@@ -65,9 +65,9 @@ importers:
       '@banksnussman/graphql-fields-to-relations': 2.0.0
       '@mikro-orm/core': 5.5.3_73c42wkoiqn7u4lk4fcjp5lq4q
       '@mikro-orm/postgresql': 5.5.3_2raacla5frr7z24irl7bw5xc44
-      '@sentry/integrations': 7.19.0
-      '@sentry/node': 7.19.0
-      '@sentry/tracing': 7.19.0
+      '@sentry/integrations': 7.20.0
+      '@sentry/node': 7.20.0
+      '@sentry/tracing': 7.20.0
       aws-sdk: 2.1258.0
       bcrypt: 5.1.0
       body-parser: 1.20.1
@@ -6946,12 +6946,12 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/core/7.19.0:
-    resolution: {integrity: sha512-YF9cTBcAnO4R44092BJi5Wa2/EO02xn2ziCtmNgAVTN2LD31a/YVGxGBt/FDr4Y6yeuVehaqijVVvtpSmXrGJw==}
+  /@sentry/core/7.20.0:
+    resolution: {integrity: sha512-8dIHk8niyEyVayUQpgECHnV2p444nPBjIyuQrtkdTxL7sBLC5+Y0DhRjxg9cJyZe/bZnXVerGkgcA7niKW4W8A==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.19.0
-      '@sentry/utils': 7.19.0
+      '@sentry/types': 7.20.0
+      '@sentry/utils': 7.20.0
       tslib: 1.14.1
     dev: false
 
@@ -6974,12 +6974,12 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/integrations/7.19.0:
-    resolution: {integrity: sha512-0x5AGU7EBIzOTSqD7TFvD4S5eX6hbqbvb4YCzJt3SIZC3bO4FiBu2t0y+PIZUSsupnqafBIIWsCcGWeKrNHAyA==}
+  /@sentry/integrations/7.20.0:
+    resolution: {integrity: sha512-wT00rtdKiVOZm/2fGEotIQ2ItCU9xTODz3KveQLq2X2nI5Jg4opkDOY2NorEnuOfBNg6BncBxaC8TG8ujvRyfw==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.19.0
-      '@sentry/utils': 7.19.0
+      '@sentry/types': 7.20.0
+      '@sentry/utils': 7.20.0
       localforage: 1.10.0
       tslib: 1.14.1
     dev: false
@@ -6994,13 +6994,13 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/node/7.19.0:
-    resolution: {integrity: sha512-yG7Tx32WqOkEHVotFLrumCcT9qlaSDTkFNZ+yLSvZXx74ifsE781DzBA9W7K7bBdYO3op+p2YdsOKzf3nPpAyQ==}
+  /@sentry/node/7.20.0:
+    resolution: {integrity: sha512-aB0VSueCiWPg53DIevnKNYSu2OGsPweWO1eKhMhu1uJNbL+ZYAFRczdcLdkWCqa38X5jjqO82GKuIZYpXUGX+A==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.19.0
-      '@sentry/types': 7.19.0
-      '@sentry/utils': 7.19.0
+      '@sentry/core': 7.20.0
+      '@sentry/types': 7.20.0
+      '@sentry/utils': 7.20.0
       cookie: 0.4.2
       https-proxy-agent: 5.0.1
       lru_map: 0.3.3
@@ -7046,13 +7046,13 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/tracing/7.19.0:
-    resolution: {integrity: sha512-SWY17M3TsgBePaGowUcSqBwaT0TJQzuNexVnLojuU0k6F57L9hubvP9zaoosoCfARXQ/3NypAFWnlJyf570rFQ==}
+  /@sentry/tracing/7.20.0:
+    resolution: {integrity: sha512-qg3sMvjuMQl/NEaF8I2IpvUcJ4HGGVIwEqqqZ6hkeHXIKt02p6f+nls45pVhluMiNHAaQJ+vefMTUc3E1yZwDA==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/core': 7.19.0
-      '@sentry/types': 7.19.0
-      '@sentry/utils': 7.19.0
+      '@sentry/core': 7.20.0
+      '@sentry/types': 7.20.0
+      '@sentry/utils': 7.20.0
       tslib: 1.14.1
     dev: false
 
@@ -7066,8 +7066,8 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/types/7.19.0:
-    resolution: {integrity: sha512-oGRAT6lfzoKrxO1mvxiSj0XHxWPd6Gd1wpPGuu6iJo03xgWDS+MIlD1h2unqL4N5fAzLjzmbC2D2lUw50Kn2pA==}
+  /@sentry/types/7.20.0:
+    resolution: {integrity: sha512-x17ddduGWqW95neBFVvxzmInb5WXVw+2PcNASHXpGFhi7v2gz2a7/w2CcIKxsqODNnc+z/k1t0Y+uy9B6aH6ag==}
     engines: {node: '>=8'}
     dev: false
 
@@ -7076,11 +7076,11 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /@sentry/utils/7.19.0:
-    resolution: {integrity: sha512-2L6lq+c9Ol2uiRxQDdcgoapmHJp24MhMN0gIkn2alSfMJ+ls6bGXzQHx6JAIdoOiwFQXRZHKL9ecfAc8O+vItA==}
+  /@sentry/utils/7.20.0:
+    resolution: {integrity: sha512-4lc122TFgkaCAvoPRy+uc5vgOCumTa/2nPkzCSxVsezQs+ebHxyMJQK7GWBLI6P+EzKfEjlgyMzRWaPJ3iJatA==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry/types': 7.19.0
+      '@sentry/types': 7.20.0
       tslib: 1.14.1
     dev: false
 
@@ -7953,25 +7953,25 @@ packages:
     resolution: {integrity: sha512-LOmVnY1iTU2D8tv4Xf6MVMZZ+juIJ87Kt/plMijjN20NMAXGmH4u8bS1t0uT74cZ5gwpocYueV58YwyI8y+GKw==}
     engines: {node: '>=8'}
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.4.0
 
   /@wry/context/0.7.0:
     resolution: {integrity: sha512-LcDAiYWRtwAoSOArfk7cuYvFXytxfVrdX7yxoUmK7pPITLk5jYh2F8knCwS7LjgYL8u1eidPlKKV6Ikqq0ODqQ==}
     engines: {node: '>=8'}
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.4.0
 
   /@wry/equality/0.5.3:
     resolution: {integrity: sha512-avR+UXdSrsF2v8vIqIgmeTY0UR91UT+IyablCyKe/uk22uOJ8fusKZnH9JH9e1/EtLeNJBtagNmL3eJdnOV53g==}
     engines: {node: '>=8'}
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.4.0
 
   /@wry/trie/0.3.2:
     resolution: {integrity: sha512-yRTyhWSls2OY/pYLfwff867r8ekooZ4UI+/gxot5Wj8EFwSf2rG+n+Mo/6LoLQm1TKA4GRj2+LCpbfS937dClQ==}
     engines: {node: '>=8'}
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.4.0
 
   /@xmldom/xmldom/0.7.6:
     resolution: {integrity: sha512-HHXP9hskkFQHy8QxxUXkS7946FFIhYVfGqsk0WLwllmexN9x/+R4UBLvurHEuyXRfVEObVR8APuQehykLviwSQ==}
@@ -12723,7 +12723,7 @@ packages:
       graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 15.8.0
-      tslib: 2.4.1
+      tslib: 2.4.0
 
   /graphql-tag/2.12.6_graphql@16.6.0:
     resolution: {integrity: sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==}
@@ -12732,7 +12732,7 @@ packages:
       graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 16.6.0
-      tslib: 2.4.1
+      tslib: 2.4.0
 
   /graphql-upload/13.0.0_graphql@16.6.0:
     resolution: {integrity: sha512-YKhx8m/uOtKu4Y1UzBFJhbBGJTlk7k4CydlUUiNrtxnwZv0WigbRHP+DVhRNKt7u7DXOtcKZeYJlGtnMXvreXA==}
@@ -19014,7 +19014,7 @@ packages:
     resolution: {integrity: sha512-uivwYcQaxAucv1CzRp2n/QdYPo4ILf9VXgH19zEIjFx2EJufV16P0JtJVpYHy89DItG6Kwj2oIUjrcK5au+4tQ==}
     engines: {node: '>=8'}
     dependencies:
-      tslib: 2.4.1
+      tslib: 2.4.0
 
   /ts-log/2.2.5:
     resolution: {integrity: sha512-PGcnJoTBnVGy6yYNFxWVNkdcAuAMstvutN9MgDJIV6L0oG8fB+ZNNy1T+wJzah8RPGor1mZuPQkVfXNDpy9eHA==}
