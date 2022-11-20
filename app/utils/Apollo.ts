@@ -147,6 +147,7 @@ export const wsLink = new WebSocketLink({
       if (!payload?.user) {
         return;
       }
+
       try {
         cache.modify({
           id: cache.identify({
@@ -156,6 +157,30 @@ export const wsLink = new WebSocketLink({
           fields: {
             isBeeping() {
               return payload.user.isBeeping;
+            },
+            first() {
+              return payload.user.first;
+            },
+            last() {
+              return payload.user.last;
+            },
+            phone() {
+              return payload.user.phone;
+            },
+            venmo() {
+              return payload.user.venmo;
+            },
+            cashapp() {
+              return payload.user.cashapp;
+            },
+            photo() {
+              return payload.user.photo;
+            },
+            name() {
+              return payload.user.name;
+            },
+            email() {
+              return payload.user.email;
             },
           },
         });
