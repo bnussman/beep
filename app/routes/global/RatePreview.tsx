@@ -17,6 +17,7 @@ import {
   FlatList,
   useColorMode,
   Spacer,
+  Box,
 } from "native-base";
 
 const Ratings = gql`
@@ -54,13 +55,11 @@ const PAGE_SIZE = 5;
 export function RatePreview({ id }: Props) {
   const { colorMode } = useColorMode();
   const { push } = useNavigation<Navigation>();
-  const { data, loading, fetchMore, refetch } = useQuery<GetRatingsQuery>(
-    Ratings,
-    {
+  const { data, loading, error, fetchMore, refetch } =
+    useQuery<GetRatingsQuery>(Ratings, {
       variables: { id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
-    }
-  );
+    });
 
   const ratings = data?.getRatings.items;
   const count = data?.getRatings.count || 0;
@@ -96,6 +95,8 @@ export function RatePreview({ id }: Props) {
   const renderFooter = () => {
     if (!isRefreshing) return null;
 
+    if (!count || count < PAGE_SIZE) return null;
+
     return (
       <Center>
         <Spinner mt={4} mb={9} color="gray.400" />
@@ -103,12 +104,24 @@ export function RatePreview({ id }: Props) {
     );
   };
 
-  if (!ratings || !count || count === 0) {
-    return null;
+  if (loading && !ratings) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
+  }
+
+  if (error) {
+    return (
+      <Center>
+        <Text>{error.message}</Text>
+      </Center>
+    );
   }
 
   return (
-    <Card m={4} mt={0} flexShrink={1}>
+    <Box m={4} mt={0} flexGrow={1}>
       <HStack>
         <Heading fontWeight="extrabold">Ratings</Heading>
         <Spacer />
@@ -155,6 +168,6 @@ export function RatePreview({ id }: Props) {
           />
         }
       />
-    </Card>
+    </Box>
   );
 }

@@ -218,7 +218,7 @@ export function Cars() {
         data={cars}
         renderItem={({ item: car }) => (
           <Card
-            my={2}
+            my={1.5}
             pressable
             onLongPress={() => onLongPress(car)}
             onPress={car.default ? undefined : () => setDefault(car.id)}

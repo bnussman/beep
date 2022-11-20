@@ -78,9 +78,8 @@ export function PickBeepScreen() {
     index: number;
   }) => (
     <Card
-      mx={2}
-      my={2}
-      mt={index === 0 ? 4 : undefined}
+      m={1.5}
+      mt={index === 0 ? 3 : undefined}
       pressable
       onPress={() => goBack(item.id)}
     >

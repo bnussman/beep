@@ -22,8 +22,7 @@ export function Rating(props: Props) {
 
   return (
     <Card
-      mx={1.5}
-      my={1.5}
+      m={1.5}
       mt={index === 0 ? 3 : undefined}
       pressable
       onPress={() => navigation.push("Profile", { id: otherUser.id })}

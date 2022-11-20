@@ -87,6 +87,7 @@ export function BeepsScreen() {
     if (!isRefreshing) return null;
 
     if (!count || count < PAGE_SIZE) return null;
+
     return (
       <Center>
         <Spinner mt={4} mb={9} color="gray.400" />

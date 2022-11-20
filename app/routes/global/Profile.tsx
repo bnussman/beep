@@ -19,8 +19,8 @@ import {
   Menu,
   Pressable,
   Icon,
-  Flex,
 } from "native-base";
+import { useUser } from "../../utils/useUser";
 
 const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -46,6 +46,7 @@ const GetUser = gql`
 
 export function ProfileScreen() {
   const { params } = useRoute<any>();
+  const { user } = useUser();
   const navigation = useNavigation<Navigation>();
 
   const { data, loading, error } = useQuery<GetUserProfileQuery>(GetUser, {
@@ -60,43 +61,43 @@ export function ProfileScreen() {
   };
 
   const handleRate = () => {
-    if (params.beep) {
-      navigation.navigate("Rate", {
-        user: data?.getUser as User,
-        beep: params.beep,
-      });
-    } else {
-      alert("You can only rate a user from a specific beep that took place.");
-    }
+    navigation.navigate("Rate", {
+      user: data?.getUser as User,
+      beep: params.beep,
+    });
   };
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Menu
-          w="190"
-          trigger={(triggerProps) => {
-            return (
-              <Pressable
-                accessibilityLabel="More options menu"
-                {...triggerProps}
-              >
-                <Icon
-                  mr={3}
-                  size="xl"
-                  as={Ionicons}
-                  name="ios-ellipsis-horizontal-circle"
-                />
-              </Pressable>
-            );
-          }}
-        >
-          <Menu.Item onPress={handleRate}>Rate</Menu.Item>
-          <Menu.Item onPress={handleReport}>Report</Menu.Item>
-        </Menu>
-      ),
-    });
-  }, [navigation, data]);
+    if (user?.id !== params.id) {
+      navigation.setOptions({
+        headerRight: () => (
+          <Menu
+            w="190"
+            trigger={(triggerProps) => {
+              return (
+                <Pressable
+                  accessibilityLabel="More options menu"
+                  {...triggerProps}
+                >
+                  <Icon
+                    mr={3}
+                    size="xl"
+                    as={Ionicons}
+                    name="ios-ellipsis-horizontal-circle"
+                  />
+                </Pressable>
+              );
+            }}
+          >
+            {Boolean(params.beep) && (
+              <Menu.Item onPress={handleRate}>Rate</Menu.Item>
+            )}
+            <Menu.Item onPress={handleReport}>Report</Menu.Item>
+          </Menu>
+        ),
+      });
+    }
+  }, [navigation, params]);
 
   if (loading) {
     return (
@@ -124,7 +125,7 @@ export function ProfileScreen() {
 
   return (
     <Container>
-      <Stack space={2} p={4}>
+      <Stack space={2} p={3}>
         <HStack alignItems="center">
           <Stack>
             <Heading
@@ -135,9 +136,7 @@ export function ProfileScreen() {
             >
               {data.getUser.name}
             </Heading>
-            <Heading size="sm" color="gray.500">
-              @{data.getUser.username}
-            </Heading>
+            <Text color="gray.500">@{data.getUser.username}</Text>
           </Stack>
           <Spacer />
           <Avatar
@@ -188,9 +187,7 @@ export function ProfileScreen() {
           </Stack>
         </Card>
       </Stack>
-      <Flex flexShrink={1}>
-        <RatePreview id={params.id} />
-      </Flex>
+      <RatePreview id={params.id} />
     </Container>
   );
 }
