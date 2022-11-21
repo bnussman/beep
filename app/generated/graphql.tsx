@@ -581,11 +581,6 @@ export type SubscriptionGetLocationUpdatesArgs = {
   id: Scalars['String'];
 };
 
-
-export type SubscriptionGetRiderUpdatesArgs = {
-  id: Scalars['String'];
-};
-
 export type Suggestion = {
   __typename?: 'Suggestion';
   title: Scalars['String'];
@@ -883,9 +878,7 @@ export type GetInitialRiderStatusQueryVariables = Exact<{ [key: string]: never; 
 
 export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } | null };
 
-export type RiderStatusSubscriptionVariables = Exact<{
-  id: Scalars['String'];
-}>;
+export type RiderStatusSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
 export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'QueueEntry', id: string, position: number, origin: string, destination: string, state: number, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } | null };
@@ -2110,8 +2103,8 @@ export type GetInitialRiderStatusQueryHookResult = ReturnType<typeof useGetIniti
 export type GetInitialRiderStatusLazyQueryHookResult = ReturnType<typeof useGetInitialRiderStatusLazyQuery>;
 export type GetInitialRiderStatusQueryResult = ApolloReactCommon.QueryResult<GetInitialRiderStatusQuery, GetInitialRiderStatusQueryVariables>;
 export const RiderStatusDocument = gql`
-    subscription RiderStatus($id: String!) {
-  getRiderUpdates(id: $id) {
+    subscription RiderStatus {
+  getRiderUpdates {
     id
     position
     origin
@@ -2161,11 +2154,10 @@ export const RiderStatusDocument = gql`
  * @example
  * const { data, loading, error } = useRiderStatusSubscription({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useRiderStatusSubscription(baseOptions: ApolloReactHooks.SubscriptionHookOptions<RiderStatusSubscription, RiderStatusSubscriptionVariables>) {
+export function useRiderStatusSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<RiderStatusSubscription, RiderStatusSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return ApolloReactHooks.useSubscription<RiderStatusSubscription, RiderStatusSubscriptionVariables>(RiderStatusDocument, options);
       }

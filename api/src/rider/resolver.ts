@@ -127,8 +127,7 @@ export class RiderResolver {
     nullable: true,
     topics: ({ context }) => "Rider" + context.user.id,
   })
-  @Authorized('self')
-  public getRiderUpdates(@Arg("id") id: string, @Root() entry: QueueEntry): QueueEntry | null {
+  public getRiderUpdates(@Root() entry: QueueEntry): QueueEntry | null {
     return entry;
   }
 }

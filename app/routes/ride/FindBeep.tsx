@@ -152,8 +152,8 @@ const InitialRiderStatus = gql`
 `;
 
 const RiderStatus = gql`
-  subscription RiderStatus($id: String!) {
-    getRiderUpdates(id: $id) {
+  subscription RiderStatus {
+    getRiderUpdates {
       id
       position
       origin
@@ -316,7 +316,6 @@ export function MainFindBeepScreen() {
   function subscribeToRiderStatus(): void {
     const a = client.subscribe({
       query: RiderStatus,
-      variables: { id: user?.id },
     });
 
     riderStatusSub = a.subscribe(({ data }) => {

@@ -580,11 +580,6 @@ export type SubscriptionGetLocationUpdatesArgs = {
   id: Scalars['String'];
 };
 
-
-export type SubscriptionGetRiderUpdatesArgs = {
-  id: Scalars['String'];
-};
-
 export type Suggestion = {
   __typename?: 'Suggestion';
   title: Scalars['String'];
