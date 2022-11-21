@@ -1,3 +1,5 @@
+import { QueueEntry } from "../entities/QueueEntry";
+
 export function getDistance(
   lat1: number,
   lon1: number,
@@ -22,4 +24,12 @@ export function getDistance(
 
 function deg2rad(deg: number): number {
   return deg * (Math.PI / 180);
+}
+
+export function getPositionInQueue(queue: QueueEntry[], entry: QueueEntry) {
+  return queue.filter((q: QueueEntry) => q.start < entry.start && q.state > 0).length;
+}
+
+export function getQueueSize(queue: QueueEntry[]) {
+  return queue.filter(entry => entry.state > 0).length
 }

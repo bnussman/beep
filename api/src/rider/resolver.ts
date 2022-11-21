@@ -8,6 +8,7 @@ import { Context } from '../utils/context';
 import { Beep } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
 import { inOrder } from '../utils/sort';
+import { getPositionInQueue, getQueueSize } from '../utils/dist';
 
 @Resolver()
 export class RiderResolver {
@@ -28,7 +29,7 @@ export class RiderResolver {
 
     const queue = beeper.queue.getItems().sort(inOrder);
 
-    entry.position = beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.state > 0).length;
+    entry.position = getPositionInQueue(queue, entry);
 
     await ctx.em.persistAndFlush(beeper);
 
@@ -45,16 +46,14 @@ export class RiderResolver {
     const entry = await ctx.em.findOne(
       QueueEntry,
       { rider: ctx.user, beeper: { cars: { default: true }} },
-      {
-        populate: ['beeper', 'beeper.queue', 'beeper.cars'],
-      }
+      { populate: ['beeper', 'beeper.queue', 'beeper.cars'] }
     );
 
     if (!entry) {
       return null;
     }
 
-    entry.position = entry.beeper.queue.getItems().filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.state > 0).length;
+    entry.position = getPositionInQueue(entry.beeper.queue.getItems(), entry);
 
     return entry;
   }
@@ -80,12 +79,12 @@ export class RiderResolver {
     pubSub.publish("Beeper" + beeper.id, queue.sort(inOrder));
 
     for (const entry of queue) {
-      entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start && _entry.state > 0).length;
+      entry.position = getPositionInQueue(queue, entry);
 
       pubSub.publish("Rider" + entry.rider.id, { ...entry, beeper });
     }
 
-    beeper.queueSize = beeper.queue.getItems().filter(entry => entry.state > 0).length;
+    beeper.queueSize = getQueueSize(queue);
 
     await ctx.em.persistAndFlush(beeper);
 
@@ -105,9 +104,7 @@ export class RiderResolver {
         SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))
     `);
 
-    const data = raw.map(user => ctx.em.map(User, user));
-
-    return data;
+    return raw.map(user => ctx.em.map(User, user));
   }
 
   @Query(() => Beep, { nullable: true })
@@ -128,7 +125,7 @@ export class RiderResolver {
 
   @Subscription(() => QueueEntry, {
     nullable: true,
-    topics: ({ args }) => "Rider" + args.id,
+    topics: ({ context }) => "Rider" + context.user.id,
   })
   @Authorized('self')
   public getRiderUpdates(@Arg("id") id: string, @Root() entry: QueueEntry): QueueEntry | null {

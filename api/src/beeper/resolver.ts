@@ -1,10 +1,10 @@
+import * as Sentry from '@sentry/node';
 import { sendNotification } from '../utils/notifications';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep } from '../entities/Beep';
 import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from './args';
-import * as Sentry from '@sentry/node';
 import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { inOrder } from '../utils/sort';
@@ -12,6 +12,7 @@ import { Point } from '../location/resolver';
 import { sha256 } from 'js-sha256';
 import { BeeperLocationArgs } from '../location/args';
 import { Car } from '../entities/Car';
+import { getPositionInQueue, getQueueSize } from '../utils/dist';
 
 @ObjectType()
 export class AnonymousBeeper {
@@ -98,7 +99,7 @@ export class BeeperResolver {
     queueEntry.state = input.state;
 
     if (input.state === 1) {
-      ctx.user.queueSize = ctx.user.queue.getItems().filter((entry) => entry.state > 0).length;
+      ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
 
       ctx.em.persist(ctx.user);
     }
@@ -155,7 +156,7 @@ export class BeeperResolver {
     pubSub.publish("Beeper" + beeper.id, queue);
 
     for (const entry of queue) {
-      entry.position = queue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
+      entry.position = getPositionInQueue(queue, entry);
 
       pubSub.publish("Rider" + entry.rider.id, entry);
     }
@@ -178,14 +179,14 @@ export class BeeperResolver {
         pubSub.publish("Rider" + entry.rider.id, null);
       }
       else {
-        entry.position = newQueue.filter((_entry: QueueEntry) => _entry.start < entry.start).length;
+        entry.position = getPositionInQueue(newQueue, entry);
         pubSub.publish("Rider" + entry.rider.id, entry);
       }
     }
 
     ctx.user.queue.remove(entry);
 
-    ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.state > 0).length;
+    ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
 
     await ctx.em.persistAndFlush(ctx.user);
 
