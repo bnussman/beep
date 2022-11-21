@@ -328,6 +328,29 @@ export function StartBeepingScreen() {
     SplashScreen.hideAsync();
   }, []);
 
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    const handleIsBeepingChange = async () => {
+      if (user.isBeeping && !isBeeping) {
+        if (!(await getBeepingLocationPermissions())) {
+          alert("You must allow background location to start beeping!");
+          return;
+        }
+        startLocationTracking();
+        sub();
+      }
+      if (!user.isBeeping && isBeeping) {
+          if (unsubscribe) unsubscribe();
+          stopLocationTracking();
+      }
+    };
+
+    handleIsBeepingChange();
+  }, [user])
+
   function sub(): void {
     unsubscribe = subscribeToMore({
       document: GetQueue,
