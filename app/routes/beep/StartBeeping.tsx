@@ -341,10 +341,12 @@ export function StartBeepingScreen() {
         }
         startLocationTracking();
         sub();
+        setIsBeeping(true);
       }
       if (!user.isBeeping && isBeeping) {
-          if (unsubscribe) unsubscribe();
-          stopLocationTracking();
+        if (unsubscribe) unsubscribe();
+        stopLocationTracking();
+        setIsBeeping(false);
       }
     };
 
