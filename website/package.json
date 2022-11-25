@@ -18,7 +18,7 @@
     "@fontsource/poppins": "^4.5.10",
     "apollo-upload-client": "^17.0.0",
     "dayjs": "^1.11.6",
-    "framer-motion": "^7.6.7",
+    "framer-motion": "^7.6.12",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.11.2",
     "mapbox-gl": "^2.11.0",
@@ -30,10 +30,10 @@
     "react-router-dom": "^6.4.3"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^2.13.12",
+    "@graphql-codegen/cli": "^2.14.1",
     "@graphql-codegen/typescript": "2.8.2",
     "@graphql-codegen/typescript-operations": "2.5.7",
-    "@graphql-codegen/typescript-react-apollo": "3.3.6",
+    "@graphql-codegen/typescript-react-apollo": "3.3.7",
     "@types/apollo-upload-client": "^17.0.2",
     "@types/node": "^18.7.23",
     "@types/react": "^18.0.20",
