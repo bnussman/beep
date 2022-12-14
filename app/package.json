@@ -16,9 +16,9 @@
     "@expo/vector-icons": "^13.0.0",
     "@gorhom/bottom-sheet": "^4.4.5",
     "@react-native-async-storage/async-storage": "~1.17.3",
-    "@react-navigation/drawer": "^6.5.4",
-    "@react-navigation/native": "^6.1.0",
-    "@react-navigation/stack": "^6.3.8",
+    "@react-navigation/drawer": "^6.5.5",
+    "@react-navigation/native": "^6.1.1",
+    "@react-navigation/stack": "^6.3.9",
     "apollo-upload-client": "^17.0.0",
     "expo": "^47.0.0",
     "expo-device": "~5.0.0",
@@ -63,8 +63,8 @@
     "@types/react-dom": "~18.0.9",
     "@types/react-native": "~0.70.6",
     "@types/uuid": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.46.0",
-    "@typescript-eslint/parser": "^5.46.0",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^8.29.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.3.0",
@@ -75,6 +75,6 @@
   },
   "private": true,
   "volta": {
-    "node": "16.17.1"
+    "node": "16.19.0"
   }
 }
