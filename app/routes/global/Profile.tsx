@@ -9,6 +9,7 @@ import { Avatar } from "../../components/Avatar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { RatePreview } from "./RatePreview";
+import { useUser } from "../../utils/useUser";
 import {
   Spinner,
   Text,
@@ -20,7 +21,6 @@ import {
   Pressable,
   Icon,
 } from "native-base";
-import { useUser } from "../../utils/useUser";
 
 const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -97,7 +97,7 @@ export function ProfileScreen() {
         ),
       });
     }
-  }, [navigation, params]);
+  }, [navigation, params, data]);
 
   if (loading) {
     return (
