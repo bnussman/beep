@@ -1,12 +1,10 @@
 {
   "name": "@beep/monorepo",
-  "repository": "git@gitlab.nussman.us:beep-app/Beep.git",
-  "author": "Banks Nussman",
-  "workspaces": {
-    "packages": [
-      "./*"
-    ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bnussman/beep.git"
   },
+  "author": "Banks Nussman",
   "scripts": {
     "clean": "rm -rf node-modules/ && rm -rf app/node_modules/ && rm -rf website/node_modules && rm pnpm-lock.yaml",
     "build:api": "pnpm --filter @beep/api build",
@@ -18,7 +16,6 @@
     "start:api": "pnpm --filter @beep/api start",
     "codegen": "concurrently \"pnpm --filter @beep/app codegen\" \"pnpm --filter @beep/website codegen\""
   },
-  "license": "SEE LICENSE IN LICENSE.MD",
   "private": true,
   "devDependencies": {
     "concurrently": "^7.6.0"
