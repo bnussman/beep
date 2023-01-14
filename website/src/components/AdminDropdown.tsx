@@ -11,7 +11,7 @@ import {
 export function AdminDropdown() {
   return (
     <Menu>
-      <Button as={MenuButton}>
+      <Button as={MenuButton} variant="outline">
         Admin
       </Button>
       <MenuList>

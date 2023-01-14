@@ -37,24 +37,13 @@ export function Header() {
         <Heading
           as={Link}
           to="/"
-          size={{ base: 'xl', md: "md" }}
+          size={{ base: 'xl', md: "lg" }}
         >
           🚕
         </Heading>
       </HStack>
       <HStack spacing={[2, 4]}>
         <Button variant="outline" onClick={toggleColorMode}>{colorMode === 'light' ? "🌙" : "☀️"}</Button>
-        {/* <HStack spacing={[2, 4]} mr={[0, 4]}>
-          <Box>☀️</Box>
-          <Switch
-            isChecked={colorMode === "dark"}
-            onChange={toggleColorMode}
-            colorScheme="black"
-            size="lg"
-            ml={2}
-          />
-          <Box>🌑</Box>
-        </HStack> */}
         <>
           {(user && user.role === UserRole.ADMIN) && <AdminDropdown />}
           {user && <UserDropdown />}
