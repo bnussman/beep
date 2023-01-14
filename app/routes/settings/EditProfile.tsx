@@ -211,21 +211,21 @@ export function EditProfileScreen() {
 
     let picture;
 
-    if (!isMobile) {
+    if (isMobile) {
+      setPhoto(result.assets[0]);
+      const fileType = result.assets[0].uri.split(".")[1];
+      const file = generateRNFile(result.assets[0].uri, `file.${fileType}`);
+      picture = file;
+    } else {
       const res = await fetch(result.assets[0].uri);
       const blob = await res.blob();
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
       picture = file;
       setPhoto(result.assets[0]);
-    } else {
-      if (!result.canceled) {
-        setPhoto(result.assets[0]);
-        const fileType = result.assets[0].uri.split(".")[1];
-        const file = generateRNFile(result.assets[0].uri, `file.${fileType}`);
-        picture = file;
-      }
     }
+
+    console.log(picture);
 
     try {
       await upload({ variables: { picture } });

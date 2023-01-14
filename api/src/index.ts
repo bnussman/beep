@@ -54,7 +54,8 @@ async function start() {
     resolvers: [__dirname + '/**/resolver.{ts,js}'],
     authChecker: authChecker,
     globalMiddlewares: [LeakChecker],
-    pubSub
+    pubSub,
+    validate: { forbidUnknownValues: false }
   });
 
   app.use(graphqlUploadExpress({ maxFiles: 1 }));

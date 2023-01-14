@@ -17,15 +17,10 @@ export class ValidationError extends GraphQLError {
 export function formatError(formattedError: GraphQLFormattedError, error: any) {
   const originalError = unwrapResolverError(error);
 
-  // if (originalError instanceof ArgumentValidationError) {
-  //   console.log("hey")
-  // }
-
   if (error?.message === "Argument Validation Error") {
     // @ts-expect-error fix types here
     const errors = originalError.validationErrors;
 
-    console.log(originalError)
     const output: { [key: string]: string[] } = {};
 
     for (const error of errors) {

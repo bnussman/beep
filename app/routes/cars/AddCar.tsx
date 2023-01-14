@@ -72,13 +72,16 @@ export function AddCar() {
   const photo = watch("photo");
   const make = watch("make");
 
-  const [addCar, { error }] = useMutation<CreateCarMutation>(AddCarMutation, {
-    context: {
-      headers: {
-        "apollo-require-preflight": true,
+  const [addCar, { error, loading }] = useMutation<CreateCarMutation>(
+    AddCarMutation,
+    {
+      context: {
+        headers: {
+          "apollo-require-preflight": true,
+        },
       },
-    },
-  });
+    }
+  );
 
   const validationErrors =
     useValidationErrors<CreateCarMutationVariables>(error);
@@ -303,7 +306,7 @@ export function AddCar() {
         </FormControl>
         <Button
           _text={{ fontWeight: "extrabold" }}
-          isLoading={isSubmitting}
+          isLoading={isSubmitting || loading}
           onPress={onSubmit}
         >
           Add Car
