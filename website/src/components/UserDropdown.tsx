@@ -28,7 +28,7 @@ export function UserDropdown() {
 
   const user = data?.getUser;
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     try {
       await logout();
 
@@ -65,17 +65,25 @@ export function UserDropdown() {
         </Avatar>
       </MenuButton>
       <MenuList>
-        <MenuItem isDisabled>
-          @{user?.username}
+        <MenuItem>
+          <Avatar
+            boxSize='1.75rem'
+            src={user?.photo ?? undefined}
+            mr='12px'
+          >
+            {user?.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
+          </Avatar>
+          <span>{user?.username}</span>
         </MenuItem>
-        <MenuItem as={Link} to={`/profile/edit`}>
+        <MenuDivider />
+        <MenuItem as={Link} to="/profile/edit">
           Edit Account
         </MenuItem>
         <MenuItem as={Link} to="/password/change">
           Change Password
         </MenuItem>
         <MenuDivider />
-        <MenuItem onClick={() => handleLogout()}>
+        <MenuItem onClick={handleLogout}>
           Sign out
         </MenuItem>
       </MenuList>
