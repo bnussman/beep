@@ -23,7 +23,7 @@ export function Rating(props: Props) {
   return (
     <Card
       mt={2}
-      mx={2}
+      mx={1}
       pressable
       onPress={() => navigation.push("Profile", { id: otherUser.id })}
     >
@@ -32,17 +32,17 @@ export function Rating(props: Props) {
         <Stack space={1}>
           {user?.id === item.rater.id ? (
             <Text>
-              <Text fontSize="md">You rated</Text>{" "}
-              <Text fontWeight="extrabold" fontSize="md">
+              <Text fontSize="sm">You rated</Text>{" "}
+              <Text fontWeight="extrabold" fontSize="md" letterSpacing="sm">
                 {otherUser.name}
               </Text>
             </Text>
           ) : (
             <Text>
-              <Text fontWeight="extrabold" fontSize="md">
+              <Text fontWeight="extrabold" fontSize="md" letterSpacing="sm">
                 {otherUser.name}
               </Text>{" "}
-              <Text fontSize="md">rated you</Text>
+              <Text fontSize="sm">rated you</Text>
             </Text>
           )}
           <Text color="gray.400" fontSize="xs">

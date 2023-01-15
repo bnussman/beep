@@ -42,6 +42,7 @@ import {
   useColorMode,
   Flex,
   FlatList as NativeFlatList,
+  InfoIcon,
 } from "native-base";
 
 let unsubscribe: any = null;
@@ -379,7 +380,7 @@ export function StartBeepingScreen() {
   if (!isBeeping) {
     return (
       <Container keyboard alignItems="center" height="100%">
-        <Stack space={4} w="100%" p={4}>
+        <Stack space={2} w="100%" p={4}>
           <FormControl>
             <FormControl.Label>Max Rider Capacity</FormControl.Label>
             <Input
@@ -389,6 +390,9 @@ export function StartBeepingScreen() {
               value={String(capacity)}
               onChangeText={(value) => setCapacity(value)}
             />
+            <FormControl.HelperText>
+              Maximum number of riders you can safely fit in your car
+            </FormControl.HelperText>
           </FormControl>
           <FormControl>
             <FormControl.Label>Singles Rate</FormControl.Label>
@@ -404,6 +408,9 @@ export function StartBeepingScreen() {
                 </Text>
               }
             />
+            <FormControl.HelperText>
+              Price for a single person riding alone
+            </FormControl.HelperText>
           </FormControl>
           <FormControl>
             <FormControl.Label>Group Rate</FormControl.Label>
@@ -419,8 +426,16 @@ export function StartBeepingScreen() {
                 </Text>
               }
             />
+            <FormControl.HelperText>
+              Price per person in a group
+            </FormControl.HelperText>
           </FormControl>
         </Stack>
+        <Spacer />
+        <HStack alignItems="center" mb={10} space={2}>
+          <InfoIcon />
+          <Text fontSize="xs" color="gray.500">Use the toggle in the top right to start beeping</Text>
+        </HStack>
       </Container>
     );
   } else {
