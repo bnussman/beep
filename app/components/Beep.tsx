@@ -21,8 +21,8 @@ export function Beep({ item, index }: Props) {
 
   return (
     <Card
-      m={1.5}
-      mt={index === 0 ? 3 : undefined}
+      mt={2}
+      mx={2}
       pressable
       onPress={() =>
         navigation.push("Profile", { id: otherUser.id, beep: item.id })

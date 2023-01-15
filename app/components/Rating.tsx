@@ -15,15 +15,15 @@ interface Props {
 }
 
 export function Rating(props: Props) {
-  const { item, index } = props;
+  const { item } = props;
   const { user } = useUser();
   const navigation = useNavigation<Navigation>();
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
   return (
     <Card
-      m={1.5}
-      mt={index === 0 ? 3 : undefined}
+      mt={2}
+      mx={2}
       pressable
       onPress={() => navigation.push("Profile", { id: otherUser.id })}
     >
