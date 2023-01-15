@@ -124,28 +124,30 @@ export function ProfileScreen() {
   }
 
   return (
-    <Container>
-      <Stack space={2} p={3}>
-        <HStack alignItems="center">
-          <Stack>
-            <Heading
-              size="xl"
-              letterSpacing="sm"
-              fontWeight="extrabold"
-              isTruncated
-            >
-              {data.getUser.name}
-            </Heading>
-            <Text color="gray.500">@{data.getUser.username}</Text>
-          </Stack>
-          <Spacer />
-          <Avatar
-            size="xl"
-            url={data.getUser.photo}
-            online={data.getUser.isBeeping}
-            badgeSize="6"
-          />
-        </HStack>
+    <Container p={3}>
+      <Stack space={2} flexShrink={1}>
+        <Card>
+          <HStack alignItems="center">
+            <Stack>
+              <Heading
+                size="lg"
+                letterSpacing="xs"
+                fontWeight="extrabold"
+                isTruncated
+              >
+                {data.getUser.name}
+              </Heading>
+              <Heading size="sm" color="gray.500">@{data.getUser.username}</Heading>
+            </Stack>
+            <Spacer />
+            <Avatar
+              size="lg"
+              url={data.getUser.photo}
+              online={data.getUser.isBeeping}
+              badgeSize="6"
+            />
+          </HStack>
+        </Card>
         <Card>
           <Stack space={2}>
             {data.getUser.isBeeping ? (
@@ -186,8 +188,8 @@ export function ProfileScreen() {
             ) : null}
           </Stack>
         </Card>
+        <RatePreview id={params.id} />
       </Stack>
-      <RatePreview id={params.id} />
     </Container>
   );
 }

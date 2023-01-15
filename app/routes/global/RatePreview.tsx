@@ -121,8 +121,8 @@ export function RatePreview({ id }: Props) {
   }
 
   return (
-    <Box m={4} mt={0} flexGrow={1}>
-      <HStack>
+    <Card flexShrink={1}>
+      <HStack alignItems="center">
         <Heading fontWeight="extrabold">Ratings</Heading>
         <Spacer />
         <Heading size="xs" color="gray.400">
@@ -134,15 +134,15 @@ export function RatePreview({ id }: Props) {
         renderItem={({ item: rating }) => (
           <Card
             key={rating.id}
-            p={2}
-            my={2}
+            p={1}
+            mt={2}
             pressable
             onPress={() => push("Profile", { id: rating.rater.id })}
           >
             <HStack alignItems="center" p={2}>
-              <Avatar size="lg" mr={4} url={rating.rater.photo} />
+              <Avatar size="md" mr={4} url={rating.rater.photo} />
               <Stack>
-                <Text fontWeight="extrabold" fontSize="lg">
+                <Text fontWeight="extrabold" fontSize="lg" letterSpacing="xs">
                   {rating.rater.name}
                 </Text>
                 <Text color="gray.400" fontSize="xs" mb={1}>
@@ -168,6 +168,6 @@ export function RatePreview({ id }: Props) {
           />
         }
       />
-    </Box>
+    </Card>
   );
 }
