@@ -378,7 +378,21 @@ export function StartBeepingScreen() {
 
   const FlatList = isMobile ? BottomSheetFlatList : NativeFlatList;
 
-  if (!isBeeping) {
+  if (isBeeping && queue?.length === 0) {
+    return (
+      <Container center>
+        <Stack space={2} p={4} alignItems="center">
+          <Heading fontWeight="extrabold">Your queue is empty</Heading>
+          <Text textAlign="center">
+            If someone wants you to beep them, it will appear here. If your app
+            is closed, you will recieve a push notification.
+          </Text>
+        </Stack>
+      </Container>
+    );
+  }
+
+  if (!isBeeping || !queue) {
     return (
       <Container keyboard alignItems="center" height="100%">
         <Stack space={2} w="100%" p={4}>
@@ -441,67 +455,52 @@ export function StartBeepingScreen() {
         </HStack>
       </Container>
     );
-  } else {
-    if (queue && queue?.length > 0) {
-      return (
-        <Container alignItems="center">
-          <Flex
-            w="100%"
-            height={queue.length > 1 ? "85%" : "100%"}
-            p={3}
-            pb={queue.length > 1 ? 4 : 16}
-          >
-            {queue[0] && <Beep beep={queue[0]} />}
-          </Flex>
-          {queue.length > 1 ? (
-            <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
-              <Pressable onPress={() => bottomSheetRef.current?.expand()}>
-                <HStack alignItems="center" mb={2} pt={1} px={4}>
-                  <Heading fontWeight="extrabold" size="2xl">
-                    Queue
-                  </Heading>
-                  <Spacer />
-                  {queue.length > 0 &&
-                    queue.some((entry) => entry.state === 0) && (
-                      <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
-                    )}
-                </HStack>
-              </Pressable>
-              <FlatList
-                refreshing={loading && data?.getQueue !== undefined}
-                onRefresh={refetch}
-                data={queue.filter((entry) => entry.id !== queue[0]?.id)}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item, index }) => (
-                  <QueueItem item={item} index={index} />
-                )}
-                contentContainerStyle={{ paddingLeft: 8, paddingRight: 8 }}
-                refreshControl={
-                  <RefreshControl
-                    tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-                    refreshing={isRefreshing}
-                    onRefresh={refetch}
-                  />
-                }
-              />
-            </BottomSheet>
-          ) : null}
-        </Container>
-      );
-    } else {
-      return (
-        <Container center>
-          <Stack space={2} p={4} alignItems="center">
-            <Heading fontWeight="extrabold">Your queue is empty</Heading>
-            <Text textAlign="center">
-              If someone wants you to beep them, it will appear here. If your
-              app is closed, you will recieve a push notification.
-            </Text>
-          </Stack>
-        </Container>
-      );
-    }
   }
+
+  return (
+    <Container alignItems="center">
+      <Flex
+        w="100%"
+        height={queue.length > 1 ? "85%" : "100%"}
+        p={3}
+        pb={queue.length > 1 ? 4 : 16}
+      >
+        {queue[0] && <Beep beep={queue[0]} />}
+      </Flex>
+      {queue.length > 1 ? (
+        <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
+          <Pressable onPress={() => bottomSheetRef.current?.expand()}>
+            <HStack alignItems="center" mb={2} pt={1} px={4}>
+              <Heading fontWeight="extrabold" size="2xl">
+                Queue
+              </Heading>
+              <Spacer />
+              {queue.length > 0 && queue.some((entry) => entry.state === 0) && (
+                <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
+              )}
+            </HStack>
+          </Pressable>
+          <FlatList
+            refreshing={loading && data?.getQueue !== undefined}
+            onRefresh={refetch}
+            data={queue.filter((entry) => entry.id !== queue[0]?.id)}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => (
+              <QueueItem item={item} index={index} />
+            )}
+            contentContainerStyle={{ paddingLeft: 8, paddingRight: 8 }}
+            refreshControl={
+              <RefreshControl
+                tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+                refreshing={isRefreshing}
+                onRefresh={refetch}
+              />
+            }
+          />
+        </BottomSheet>
+      ) : null}
+    </Container>
+  );
 }
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {

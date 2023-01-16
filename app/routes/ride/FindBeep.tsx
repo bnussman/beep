@@ -706,6 +706,7 @@ export function MainFindBeepScreen() {
       </Container>
     );
   }
+
   return (
     <Container alignItems="center" pt={2}>
       <Stack space={4} w="90%" alignItems="center" h="94%">
