@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { RateUserMutation } from "../../generated/graphql";
 import { RateBar } from "../../components/Rate";
@@ -54,14 +54,13 @@ export function RateScreen() {
   };
 
   return (
-    <Container alignItems="center" keyboard>
-      <Stack space={4} w="90%" mt={4}>
-        {useMemo(
-          () => (
-            <UserHeader user={params.user} />
-          ),
-          []
-        )}
+    <Container keyboard p={4}>
+      <Stack space={4} w="full">
+        <UserHeader
+          username={params.user.username}
+          name={params.user.name}
+          picture={params.user.photo}
+        />
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Input
           size="lg"

@@ -1,25 +1,24 @@
 import React from "react";
-import { User } from "../generated/graphql";
 import { Text, Box, Heading, HStack } from "native-base";
 import { Avatar } from "./Avatar";
-import { ThemeComponentSizeType } from "native-base/lib/typescript/components/types";
 
 interface Props {
-  user: User;
-  size?: ThemeComponentSizeType<"Avatar">;
+  name: string;
+  picture: string;
+  username: string;
 }
 
-export function UserHeader({ user, size = 'md' }: Props) {
+export function UserHeader({ picture, name, username }: Props) {
   return (
     <HStack alignItems="center">
-      <Avatar
-        mr={2}
-        size={size}
-        url={user.photo}
-      />
+      <Avatar mr={2} size="md" url={picture} />
       <Box>
-        <Heading size="md" letterSpacing="sm" fontWeight="extrabold">{user.name}</Heading>
-        <Text>@{user.username}</Text>
+        <Heading size="md" letterSpacing="xs" fontWeight="extrabold">
+          {name}
+        </Heading>
+        <Text color="gray.500" letterSpacing="sm">
+          @{username}
+        </Text>
       </Box>
     </HStack>
   );

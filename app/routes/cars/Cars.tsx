@@ -214,11 +214,11 @@ export function Cars() {
     <Container>
       <FlatList
         height="100%"
-        p={2}
         data={cars}
         renderItem={({ item: car }) => (
           <Card
-            my={1.5}
+            mt={2}
+            mx={1}
             pressable
             onLongPress={() => onLongPress(car)}
             onPress={car.default ? undefined : () => setDefault(car.id)}

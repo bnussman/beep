@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { ReportUserMutation } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
@@ -35,14 +35,13 @@ export function ReportScreen() {
   }
 
   return (
-    <Container alignItems="center" keyboard>
-      <Stack space={4} w="90%" mt={4}>
-        {useMemo(
-          () => (
-            <UserHeader user={params.user} />
-          ),
-          []
-        )}
+    <Container keyboard p={4}>
+      <Stack space={4} w="full">
+        <UserHeader
+          username={params.user.username}
+          name={params.user.name}
+          picture={params.user.photo}
+        />
         <Input
           size="lg"
           h={100}
