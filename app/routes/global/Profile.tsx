@@ -124,7 +124,7 @@ export function ProfileScreen() {
   }
 
   return (
-    <Container p={3}>
+    <Container p={2}>
       <Stack space={2} flexShrink={1}>
         <Card>
           <HStack alignItems="center">
@@ -137,7 +137,9 @@ export function ProfileScreen() {
               >
                 {data.getUser.name}
               </Heading>
-              <Heading size="sm" color="gray.500">@{data.getUser.username}</Heading>
+              <Heading size="sm" color="gray.500">
+                @{data.getUser.username}
+              </Heading>
             </Stack>
             <Spacer />
             <Avatar
