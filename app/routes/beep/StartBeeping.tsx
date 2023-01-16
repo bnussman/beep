@@ -60,8 +60,8 @@ const LocationUpdate = gql`
 `;
 
 const GetInitialQueue = gql`
-  query GetInitialQueue {
-    getQueue {
+  query GetInitialQueue($id: String) {
+    getQueue(id: $id) {
       id
       groupSize
       origin
@@ -143,6 +143,7 @@ export function StartBeepingScreen() {
   const { subscribeToMore, data, refetch, loading } =
     useQuery<GetInitialQueueQuery>(GetInitialQueue, {
       notifyOnNetworkStatusChange: true,
+      variables: { id: user?.id },
     });
 
   const [updateBeepSettings] =
@@ -352,7 +353,7 @@ export function StartBeepingScreen() {
     };
 
     handleIsBeepingChange();
-  }, [user])
+  }, [user]);
 
   function sub(): void {
     unsubscribe = subscribeToMore({
@@ -434,7 +435,9 @@ export function StartBeepingScreen() {
         <Spacer />
         <HStack alignItems="center" mb={10} space={2}>
           <InfoIcon />
-          <Text fontSize="xs" color="gray.500">Use the toggle in the top right to start beeping</Text>
+          <Text fontSize="xs" color="gray.500">
+            Use the toggle in the top right to start beeping
+          </Text>
         </HStack>
       </Container>
     );

@@ -21,7 +21,10 @@ export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
   if (roles.length === 0) return true;
 
   if (roles[0] === 'self') {
-    return args.id === undefined || args.id === user.id;
+    if (!args.id) {
+      return false;
+    }
+    return args.id === user.id;
   }
 
   if (roles[0] == context.user.role) {

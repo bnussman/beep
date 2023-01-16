@@ -51,10 +51,6 @@ export class CarResolver {
   @Query(() => CarsResponse)
   @Authorized('self')
   public async getCars(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<CarsResponse> {
-    if (!id && ctx.user.role !== UserRole.ADMIN) {
-      throw new Error("You cant do that");
-    }
-
     const filter = id ? { user: id  } : {};
 
     const [cars, count] = await ctx.em.findAndCount(Car, filter, {

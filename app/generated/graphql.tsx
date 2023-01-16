@@ -756,7 +756,9 @@ export type LocationUpdateMutationVariables = Exact<{
 
 export type LocationUpdateMutation = { __typename?: 'Mutation', setLocation: { __typename?: 'User', id: string, location?: { __typename?: 'Point', latitude: number, longitude: number } | null } };
 
-export type GetInitialQueueQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetInitialQueueQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+}>;
 
 
 export type GetInitialQueueQuery = { __typename?: 'Query', getQueue: Array<{ __typename?: 'QueueEntry', id: string, groupSize: number, origin: string, destination: string, state: number, start: number, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photo?: string | null, isStudent: boolean, rating?: number | null } }> };
@@ -1419,8 +1421,8 @@ export type LocationUpdateMutationHookResult = ReturnType<typeof useLocationUpda
 export type LocationUpdateMutationResult = ApolloReactCommon.MutationResult<LocationUpdateMutation>;
 export type LocationUpdateMutationOptions = ApolloReactCommon.BaseMutationOptions<LocationUpdateMutation, LocationUpdateMutationVariables>;
 export const GetInitialQueueDocument = gql`
-    query GetInitialQueue {
-  getQueue {
+    query GetInitialQueue($id: String) {
+  getQueue(id: $id) {
     id
     groupSize
     origin
@@ -1455,6 +1457,7 @@ export const GetInitialQueueDocument = gql`
  * @example
  * const { data, loading, error } = useGetInitialQueueQuery({
  *   variables: {
+ *      id: // value for 'id'
  *   },
  * });
  */
