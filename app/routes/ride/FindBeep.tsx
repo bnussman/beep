@@ -708,8 +708,8 @@ export function MainFindBeepScreen() {
   }
 
   return (
-    <Container alignItems="center" pt={2}>
-      <Stack space={4} w="90%" alignItems="center" h="94%">
+    <Container alignItems="center" p={2}>
+      <Stack space={4} w="100%" alignItems="center" h="94%">
         <Avatar size={100} url={beep.beeper.photo} />
         <Center>
           <Text>Waiting on</Text>
