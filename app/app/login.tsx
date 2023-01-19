@@ -1,20 +1,19 @@
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import PasswordInput from "../../components/PasswordInput";
-import { Alert } from "../../utils/Alert";
-import { isSimulator } from "../../utils/constants";
+import PasswordInput from "../components/PasswordInput";
+import { Alert } from "../utils/Alert";
+import { isSimulator } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { LoginMutation, LoginMutationVariables } from "../../generated/graphql";
-import { client, wsLink } from "../../utils/Apollo";
-import { getPushToken } from "../../utils/Notifications";
-import { Navigation } from "../../utils/Navigation";
-import { Container } from "../../components/Container";
-import { UserData } from "../../utils/useUser";
-import { Logger } from "../../utils/Logger";
-import { useValidationErrors } from "../../utils/useValidationErrors";
+import { LoginMutation, LoginMutationVariables } from "../generated/graphql";
+import { client, wsLink } from "../utils/Apollo";
+import { getPushToken } from "../utils/Notifications";
+import { Container } from "../components/Container";
+import { UserData } from "../utils/useUser";
+import { Logger } from "../utils/Logger";
+import { useValidationErrors } from "../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigation } from "@react-navigation/native";
+import { Stack as ExpoRouter } from "expo-router";
 import {
   Stack,
   Button,
@@ -26,8 +25,9 @@ import {
   WarningOutlineIcon,
   HStack,
 } from "native-base";
+import { useRouter } from "expo-router";
 
-const Login = gql`
+const LoginGraphQL = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
     login(
       input: { username: $username, password: $password, pushToken: $pushToken }
@@ -58,12 +58,12 @@ const Login = gql`
   }
 `;
 
-export function LoginScreen() {
-  const [login, { error }] = useMutation<LoginMutation>(Login);
+function Login() {
+  const [login, { error }] = useMutation<LoginMutation>(LoginGraphQL);
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
 
-  const navigation = useNavigation<Navigation>();
+  const router = useRouter();
 
   const {
     control,
@@ -114,6 +114,7 @@ export function LoginScreen() {
       center
       scrollViewProps={{ scrollEnabled: true, bounces: false }}
     >
+      <ExpoRouter.Screen options={{ headerShown: false }} />
       <Stack space={4} w="90%">
         <Box>
           <Heading size="2xl" mr={4} fontWeight="extrabold" letterSpacing="xs">
@@ -200,7 +201,7 @@ export function LoginScreen() {
           <Button
             variant="link"
             _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Sign Up")}
+            onPress={() => router.push("signup")}
           >
             Sign Up
           </Button>
@@ -208,7 +209,7 @@ export function LoginScreen() {
           <Button
             variant="link"
             _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Forgot Password")}
+            onPress={() => router.push("forgot")}
           >
             Forgot Password
           </Button>
@@ -217,3 +218,5 @@ export function LoginScreen() {
     </Container>
   );
 }
+
+export default Login;

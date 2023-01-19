@@ -4,6 +4,7 @@ export default {
   expo: {
     name: "Beep",
     slug: "Beep",
+    scheme: "beep",
     owner: "bnussman",
     version: "2.6.0",
     githubUrl: "https://github.com/bnussman/Beep",
@@ -22,6 +23,7 @@ export default {
     platforms: ["ios", "android", "web"],
     web: {
       favicon: "./assets/favicon.png",
+      bundler: "metro",
     },
     plugins: ["sentry-expo"],
     hooks: {
