@@ -84,13 +84,13 @@ async function start() {
   await server.start();
 
   app.use(
-      '/graphql',
-      cors<cors.CorsRequest>(),
-      json(),
-      expressMiddleware(server, {
-        context: (ctx) => getContext(ctx, orm),
-      }),
-    );
+    '/graphql',
+    cors<cors.CorsRequest>(),
+    json(),
+    expressMiddleware(server, {
+      context: (ctx) => getContext(ctx, orm),
+    }),
+  );
 
   app.use(RealSentry.Handlers.errorHandler());
 
