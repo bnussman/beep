@@ -7,7 +7,7 @@
 
 ## 📚 Introduction
 
-This is the monorepo for the Beep App. Ride beep app is currently a substitute for the facebook page that people use to get around Boone, NC. This app allows college students to make money by beeping and allows for an easy and cheap way to get where they want around campus and Boone. The owners are students at App State, Ian Murphy and Banks Nussman, who saw the flaws of the facebook page and wanted to improve the experience with leaving everything that was great about the original idea.
+This is the monorepo for the Beep App. The *Beep App* is a full stack ride share application. This app is built for students at college campuses and currently is mostly used by students at Appalachian State University. This application is not afilliated with any university and is independently developed and maintained.
 
 ## ⌨️ Developing Locally
 
@@ -17,7 +17,7 @@ This is the monorepo for the Beep App. Ride beep app is currently a substitute f
 - pnpm
 - Docker
 - [docker-compose](https://docs.docker.com/compose/install/#install-compose)
-- Expo CLI (`npm install --global expo-cli`)
+- Expo CLI
 
 ### 💻 Running Locally
 
