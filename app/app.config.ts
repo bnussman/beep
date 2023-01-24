@@ -22,6 +22,7 @@ export default {
     platforms: ["ios", "android", "web"],
     web: {
       favicon: "./assets/favicon.png",
+      bundler: "metro",
     },
     plugins: ["sentry-expo"],
     hooks: {
