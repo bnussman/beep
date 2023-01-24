@@ -23,12 +23,33 @@ export const DeleteReport = gql`
 
 export const UpdateReport = gql`
   mutation UpdateReport($id: String!, $notes: String, $handled: Boolean) {
-    updateReport(id: $id,
-      input: {
-        notes: $notes,
-        handled: $handled
-      }) {
+    updateReport(id: $id, input: { notes: $notes, handled: $handled }) {
+      id
+      reason
+      timestamp
+      handled
+      notes
+      beep {
         id
+      }
+      reporter {
+        id
+        name
+        photo
+        username
+      }
+      reported {
+        id
+        name
+        photo
+        username
+      }
+      handledBy {
+        id
+        name
+        photo
+        username
+      }
     }
   }
 `;
@@ -68,7 +89,7 @@ export const GetReport = gql`
 
 export function Report() {
   const { id } = useParams();
-  const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
+  const { data, loading, error } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
   const [deleteReport, { loading: deleteLoading }] = useMutation<DeleteReportMutation>(DeleteReport);
   const navigate = useNavigate();
@@ -79,20 +100,14 @@ export function Report() {
   const onClose = () => setIsOpen(false);
   const cancelRef = React.useRef();
 
-  async function updateReport() {
-    const result = await update({
+  function updateReport() {
+    update({
       variables: {
         id,
         handled: isHandled,
         notes
       },
-      refetchQueries: () => ['getReports'],
-      awaitRefetchQueries: true
     });
-    if (result) {
-      await refetch();
-    }
-    onClose();
   }
 
   useEffect(() => {

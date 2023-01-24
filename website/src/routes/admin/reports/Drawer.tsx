@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { Heading, Text, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Flex, Textarea, Box, Checkbox, Stack } from '@chakra-ui/react';
+import { Heading, Text, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Flex, Textarea, Box, Checkbox, Stack, HStack } from '@chakra-ui/react';
 import { DeleteReport, GetReport, UpdateReport } from './Report';
 import { useQuery, useMutation } from '@apollo/client';
 import { DeleteReportMutation, GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
@@ -20,8 +20,6 @@ interface Props {
 }
 
 export function ReportDrawer(props: Props) {
-  if (!props.id) return null;
-
   const { isOpen, onClose, id } = props;
   const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
@@ -41,20 +39,14 @@ export function ReportDrawer(props: Props) {
     onClose();
   }
 
-  async function updateReport() {
-    const result = await update({
+  function updateReport() {
+    update({
       variables: {
         id,
         handled: isHandled,
         notes
       },
-      refetchQueries: () => ['getReports'],
-      awaitRefetchQueries: true
     });
-    if (result) {
-      await refetch();
-    }
-    onClose();
   }
 
   useEffect(() => {
@@ -69,6 +61,7 @@ export function ReportDrawer(props: Props) {
       isOpen={isOpen}
       placement="right"
       onClose={onClose}
+      size="md"
     >
       <DrawerOverlay />
       <DrawerContent>
@@ -101,16 +94,16 @@ export function ReportDrawer(props: Props) {
               <Box>
                 <Heading size="md">Status</Heading>
                 {data.getReport.handled && data.getReport.handledBy ?
-                  <Flex align="center">
+                  <HStack alignItems="center">
                     <Indicator color='green' />
                     <Text noOfLines={1} mr={2}>Handled by</Text>
                     <BasicUser user={data.getReport.handledBy} />
-                  </Flex>
+                  </HStack>
                   :
-                  <Box>
+                  <HStack>
                     <Indicator color='red' />
                     <span>Not handled</span>
-                  </Box>
+                  </HStack>
                 }
               </Box>
               <Textarea

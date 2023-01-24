@@ -47,6 +47,13 @@ export const theme = extendTheme({
         }
       })
     },
+    Drawer: {
+      baseStyle: (props: StyleFunctionProps) => ({
+        dialog: {
+          bg: mode(props.theme.semanticTokens.colors['chakra-body-bg']._light, 'rgb(14, 17, 19)')(props),
+        }
+      })
+    },
     Menu: {
       baseStyle: (props: StyleFunctionProps) => ({
         list: {

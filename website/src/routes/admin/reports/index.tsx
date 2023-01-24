@@ -44,7 +44,7 @@ export const ReportsGraphQL = gql`
 export function Reports() {
   const pageLimit = 20;
   const [searchParams, setSearchParams] = useSearchParams();
-  const bg = useColorModeValue('gray.50', 'gray.700');
+  const bg = useColorModeValue('gray.50', 'rgb(20, 24, 28)');
   const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
   const [id, setId] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
