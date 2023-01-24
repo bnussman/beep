@@ -15,7 +15,7 @@ interface PaginationProps {
 interface DirectionButtonProps {
   direction: 'left' | 'right';
   onClick: () => void;
-  disabled: boolean;
+  isDisabled: boolean;
 }
 
 interface PageButtonProps {
@@ -30,19 +30,19 @@ function PageButton(props: PageButtonProps) {
   const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   return (
-    <Button onClick={onClick} disabled={active} size={!isDesktop ? "sm": undefined}>
+    <Button onClick={onClick} isDisabled={active || isDisabled} size={!isDesktop ? "sm": undefined}>
       {children}
     </Button>
   );
 }
 
 function DirectionButton(props: DirectionButtonProps) {
-  const { disabled, onClick, direction } = props;
+  const { isDisabled, onClick, direction } = props;
   const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   return (
     <Button
-      disabled={disabled}
+      isDisabled={isDisabled}
       onClick={onClick}
       size={!isDesktop ? "sm": undefined}
     >
@@ -126,7 +126,7 @@ export function Pagination({
         <Spacer />
         <Box>
           <ButtonGroup isAttached>
-            <DirectionButton direction='left' disabled={currentPage === 1} onClick={decrement} />
+            <DirectionButton direction='left' isDisabled={currentPage === 1} onClick={decrement} />
             {
               pages.map((page, index) => 
                 page ? (
@@ -141,7 +141,7 @@ export function Pagination({
                   : <PageButton key={index} isDisabled>...</PageButton>
               )
             }
-            <DirectionButton direction='right' disabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
+            <DirectionButton direction='right' isDisabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
           </ButtonGroup>
         </Box>
       </Flex>

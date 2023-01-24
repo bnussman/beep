@@ -60,7 +60,7 @@ export function ChangePassword() {
           isLoading={loading}
           type="submit"
           rightIcon={<LockIcon />}
-          disabled={!password || password !== confirmPassword}
+          isDisabled={!password || password !== confirmPassword}
         >
           Update password
         </Button>

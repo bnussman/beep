@@ -63,7 +63,7 @@ export function ResetPassword() {
             mt={4}
             type="submit"
             isLoading={isSubmitting}
-            disabled={!isValid}
+            isDisabled={!isValid}
           >
             Reset Password
           </Button>

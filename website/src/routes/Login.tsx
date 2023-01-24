@@ -93,7 +93,7 @@ export function Login() {
                 type="submit"
                 onClick={handleLogin}
                 isLoading={loading}
-                disabled={!username || !password}
+                isDisabled={!username || !password}
                 textColor="white"
                 bgGradient='linear(to-r, #fb7ba2, #fce043)'
                 boxShadow="0 0 15px 2px #fb7ba2"

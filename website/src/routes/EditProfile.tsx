@@ -119,7 +119,7 @@ export function EditProfile() {
             <FormLabel>Username</FormLabel>
             <Input
               value={user?.username}
-              disabled
+              isDisabled
             />
           </FormControl>
           <FormControl isInvalid={Boolean(errors.first) || Boolean(validationErrors?.first)}>

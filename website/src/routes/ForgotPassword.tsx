@@ -45,7 +45,7 @@ export function ForgotPassword() {
               type="email"
               placeholder="example@ridebeep.app"
               onChange={(value: any) => setEmail(value.target.value)}
-              disabled={data?.forgotPassword}
+              isDisabled={data?.forgotPassword}
             />
             <FormHelperText>We'll send you an email with a link to reset your password.</FormHelperText>
           </FormControl>
@@ -55,7 +55,7 @@ export function ForgotPassword() {
             type="submit"
             rightIcon={<EmailIcon />}
             isLoading={loading}
-            disabled={data?.forgotPassword || !email}
+            isDisabled={data?.forgotPassword || !email}
           >
             Send Reset Password Email
           </Button>
