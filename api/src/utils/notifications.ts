@@ -20,6 +20,7 @@ export async function sendNotification(token: string | null, title: string, mess
 
   try {
     await fetch('https://api.expo.dev/v2/push/send', {
+      method: "POST",
       body: JSON.stringify({
         to: token,
         title: title,
@@ -40,7 +41,7 @@ export async function sendNotification(token: string | null, title: string, mess
  */
 export async function sendNotifications(notifications: PushNotification[]): Promise<void> {
   try {
-    await fetch('https://api.expo.dev/v2/push/send', { body: JSON.stringify(notifications) });
+    await fetch('https://api.expo.dev/v2/push/send', { method: "POST", body: JSON.stringify(notifications) });
   } catch (error) {
     Sentry.captureException(error);
   }
@@ -52,6 +53,7 @@ export async function sendNotificationsNew(to: string[], title: string, body: st
   for (const batch of batches) {
     try {
       await fetch('https://api.expo.dev/v2/push/send', {
+        method: "POST",
         body: JSON.stringify({
           to: batch,
           title,
