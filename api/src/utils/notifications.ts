@@ -1,4 +1,3 @@
-import got from "got";
 import * as Sentry from "@sentry/node";
 
 export interface PushNotification {
@@ -20,14 +19,14 @@ export async function sendNotification(token: string | null, title: string, mess
   if (!token) return;
 
   try {
-    await got.post('https://api.expo.dev/v2/push/send', {
-      json: {
+    await fetch('https://api.expo.dev/v2/push/send', {
+      body: JSON.stringify({
         to: token,
         title: title,
         body: message,
         sound: 'default',
         _displayInForeground: true
-      }
+      })
     });
   } catch (error) {
     Sentry.captureException(error);
@@ -41,7 +40,7 @@ export async function sendNotification(token: string | null, title: string, mess
  */
 export async function sendNotifications(notifications: PushNotification[]): Promise<void> {
   try {
-    await got.post('https://api.expo.dev/v2/push/send', { json: notifications });
+    await fetch('https://api.expo.dev/v2/push/send', { body: JSON.stringify(notifications) });
   } catch (error) {
     Sentry.captureException(error);
   }
@@ -52,14 +51,14 @@ export async function sendNotificationsNew(to: string[], title: string, body: st
 
   for (const batch of batches) {
     try {
-      await got.post('https://api.expo.dev/v2/push/send', {
-        json: {
+      await fetch('https://api.expo.dev/v2/push/send', {
+        body: JSON.stringify({
           to: batch,
           title,
           body,
           sound: 'default',
           _displayInForeground: true
-        }
+        })
       });
     } catch (error) {
       Sentry.captureException(error);
