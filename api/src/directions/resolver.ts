@@ -1,4 +1,3 @@
-import got from 'got';
 import { GOOGLE_API_KEYS } from '../utils/constants';
 import { Arg, Field, ObjectType, Query, Resolver } from "type-graphql";
 import * as Sentry from '@sentry/node';
@@ -20,9 +19,11 @@ export class DirectionsResolver {
 
   @Query(() => String)
   public async getETA(@Arg('start') start: string, @Arg('end') end: string): Promise<string> {
-    const result = await got(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=${getRandom(keys)}`).json<any>();
+    const result = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=${getRandom(keys)}`);
 
-    const eta = result?.routes?.[0]?.legs?.[0]?.duration?.text;
+    const data = await result.json();
+
+    const eta = data?.routes?.[0]?.legs?.[0]?.duration?.text;
 
     if (!eta) {
       Sentry.captureMessage("ETA from Google Maps API was undefined");
@@ -34,11 +35,13 @@ export class DirectionsResolver {
 
   @Query(() => [Suggestion])
   public async getLocationSuggestions(@Arg('location') location: string, @Arg('sessiontoken') sessiontoken: string): Promise<Suggestion[]> {
-    const result = await got(encodeURI(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=${getRandom(keys)}&sessiontoken=${sessiontoken}`)).json<any>();
+    const result = await fetch(encodeURI(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=${getRandom(keys)}&sessiontoken=${sessiontoken}`));
+
+    const data = await result.json();
 
     const output: Suggestion[] = [];
 
-    for (const prediction of result.predictions) {
+    for (const prediction of data.predictions) {
       output.push({ title: prediction.description });
     }
 
