@@ -42,7 +42,7 @@ export function Header() {
           🚕
         </Heading>
       </HStack>
-      <HStack spacing={[2, 4]}>
+      <HStack spacing={[2, 3]}>
         <Button variant="outline" onClick={toggleColorMode}>{colorMode === 'light' ? "🌙" : "☀️"}</Button>
         <>
           {(user && user.role === UserRole.ADMIN) && <AdminDropdown />}
