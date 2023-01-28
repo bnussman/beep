@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Box, Button, ButtonGroup, Flex, Spacer, Text, useMediaQuery } from "@chakra-ui/react";
+import { Button, ButtonGroup, Flex, Spacer, Text, useMediaQuery } from "@chakra-ui/react";
 
 interface PaginationProps {
   resultCount?: number;
@@ -116,35 +116,31 @@ export function Pagination({
   }
 
   return (
-    <Box mb={2} mt={2}>
-      <Flex align="center">
-        {!!resultCount &&
-          <Text noOfLines={1}>
-            {`Showing ${(currentPage - 1) * limit + 1} to ${currentPage * limit <= resultCount ? currentPage * limit : resultCount}	of ${resultCount} results`}
-          </Text>
+    <Flex alignItems="center" mb={2} mt={2} flexWrap="wrap">
+      {!!resultCount &&
+        <Text noOfLines={1}>
+          {`Showing ${(currentPage - 1) * limit + 1} to ${currentPage * limit <= resultCount ? currentPage * limit : resultCount}	of ${resultCount} results`}
+        </Text>
+      }
+      <Spacer />
+      <ButtonGroup isAttached>
+        <DirectionButton direction='left' isDisabled={currentPage === 1} onClick={decrement} />
+        {
+          pages.map((page, index) =>
+            page ? (
+              <PageButton
+                key={index}
+                active={currentPage === page}
+                onClick={() => navigateTo(page)}
+              >
+                {page}
+              </PageButton>
+            )
+              : <PageButton key={index} isDisabled>...</PageButton>
+          )
         }
-        <Spacer />
-        <Box>
-          <ButtonGroup isAttached>
-            <DirectionButton direction='left' isDisabled={currentPage === 1} onClick={decrement} />
-            {
-              pages.map((page, index) => 
-                page ? (
-                    <PageButton
-                      key={index}
-                      active={currentPage === page}
-                      onClick={() => navigateTo(page)}
-                    >
-                      {page}
-                    </PageButton>
-                  )
-                  : <PageButton key={index} isDisabled>...</PageButton>
-              )
-            }
-            <DirectionButton direction='right' isDisabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
-          </ButtonGroup>
-        </Box>
-      </Flex>
-    </Box>
+        <DirectionButton direction='right' isDisabled={currentPage === pageCount || resultCount === 0} onClick={increment} />
+      </ButtonGroup>
+    </Flex>
   );
 }
