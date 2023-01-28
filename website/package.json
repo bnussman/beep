@@ -10,7 +10,7 @@
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.4",
+    "@apollo/client": "^3.7.5",
     "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.4.8",
     "@chakra-ui/theme-tools": "^2.0.16",
@@ -19,7 +19,7 @@
     "@fontsource/poppins": "^4.5.10",
     "apollo-upload-client": "^17.0.0",
     "dayjs": "^1.11.7",
-    "framer-motion": "^8.5.2",
+    "framer-motion": "^8.5.4",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.11.2",
     "mapbox-gl": "^2.12.0",
@@ -28,7 +28,7 @@
     "react-google-charts": "^4.0.0",
     "react-hook-form": "^7.42.0",
     "react-map-gl": "^7.0.21",
-    "react-router-dom": "^6.7.0"
+    "react-router-dom": "^6.8.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^2.16.4",

@@ -12,7 +12,7 @@
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.4",
+    "@apollo/client": "^3.7.5",
     "@expo/vector-icons": "^13.0.0",
     "@gorhom/bottom-sheet": "^4.4.5",
     "@react-native-async-storage/async-storage": "~1.17.11",
@@ -22,7 +22,7 @@
     "apollo-upload-client": "^17.0.0",
     "expo": "^47.0.13",
     "expo-device": "~5.0.0",
-    "expo-image-picker": "~14.0.2",
+    "expo-image-picker": "~14.1.0",
     "expo-linking": "~3.3.0",
     "expo-location": "~15.0.1",
     "expo-notifications": "~0.17.0",
@@ -53,7 +53,6 @@
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
-    "@expo/webpack-config": "^0.17.2",
     "@graphql-codegen/cli": "^2.16.4",
     "@graphql-codegen/typescript": "^2.8.7",
     "@graphql-codegen/typescript-operations": "^2.5.12",
