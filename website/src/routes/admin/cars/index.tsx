@@ -4,13 +4,15 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetCarsQuery } from '../../../generated/graphql';
-import { Box, Heading, Image, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
+import { Box, Heading, IconButton, Image, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { useSearchParams } from 'react-router-dom';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
 import { PhotoDialog } from '../../../components/PhotoDialog';
+import { DeleteIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { DeleteCarDialog } from './DeleteCarDialog';
 
 dayjs.extend(relativeTime);
 
@@ -47,6 +49,12 @@ export function Cars() {
     onClose: onPhotoClose
   } = useDisclosure();
 
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose
+  } = useDisclosure();
+
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
   const { data, loading, error } = useQuery<GetCarsQuery>(CarsQuery, {
@@ -63,6 +71,12 @@ export function Cars() {
 
   const setCurrentPage = (page: number) => {
     setSearchParams({ page: String(page) });
+  };
+
+
+  const onDelete = (id: string) => {
+    setSelectedCarId(id);
+    onDeleteOpen();
   };
 
   const onPhotoClick = (id: string) => {
@@ -108,7 +122,10 @@ export function Cars() {
                 </Td>
                 <Td>{dayjs().to(car.created)}</Td>
                 <Td onClick={() => onPhotoClick(car.id)}>
-                  <Image src={car.photo} w="24" borderRadius="2xl" />
+                  <Image src={car.photo} borderRadius="lg" maxH="56px" />
+                </Td>
+                <Td>
+                  <IconButton icon={<DeleteIcon />} aria-label={`Delete car ${car.id} action menu`} size="sm" colorScheme="red" onClick={() => onDelete(car.id)} />
                 </Td>
               </Tr>
             ))}
@@ -126,6 +143,11 @@ export function Cars() {
         src={selectedCar?.photo}
         isOpen={isPhotoOpen}
         onClose={onPhotoClose}
+      />
+      <DeleteCarDialog 
+        car={selectedCar}
+        onClose={onDeleteClose}
+        isOpen={isDeleteOpen}
       />
     </Box>
   );

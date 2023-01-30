@@ -3,10 +3,11 @@ import { Context } from '../utils/context';
 import { Car } from '../entities/Car';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { QueryOrder, wrap } from '@mikro-orm/core';
-import { CarArgs, EditCarArgs } from './args';
+import { CarArgs, DeleteCarArgs, EditCarArgs } from './args';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload';
 import { UserRole } from '../entities/User';
+import { sendNotification } from '../utils/notifications';
 
 @ObjectType()
 class CarsResponse extends Paginated(Car) {}
@@ -86,8 +87,8 @@ export class CarResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async deleteCar(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
-    const car = await ctx.em.findOneOrFail(Car, id);
+  public async deleteCar(@Ctx() ctx: Context, @Args() args: DeleteCarArgs): Promise<boolean> {
+    const car = await ctx.em.findOneOrFail(Car, args.id);
 
     if (car.user.id !== ctx.user.id && ctx.user.role !== UserRole.ADMIN) {
       throw new Error("You can only delete your own cars.");
@@ -100,6 +101,10 @@ export class CarResolver {
     }
 
     await ctx.em.removeAndFlush(car);
+
+    if (args.notification) {
+      sendNotification(car.user.pushToken, `${car.make} ${car.model} deleted`, args.notification);
+    }
 
     return true;
   }

@@ -1,6 +1,7 @@
-import { IsBoolean, IsDefined, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString } from 'class-validator';
 import { GraphQLUpload, Upload } from 'graphql-upload';
-import { ArgsType, Field } from 'type-graphql';
+import { UserRole } from '../entities/User';
+import { ArgsType, Authorized, Field } from 'type-graphql';
 import { IsMake, IsModelFor } from '../validators/IsStudent';
 
 @ArgsType()
@@ -34,4 +35,17 @@ export class EditCarArgs {
   @Field()
   @IsBoolean()
   public default!: boolean;
+}
+
+@ArgsType()
+export class DeleteCarArgs {
+  @Field()
+  @IsString()
+  public id!: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  @Authorized(UserRole.ADMIN)
+  public notification!: string;
 }

@@ -876,6 +876,13 @@ export type GetBeepsQueryVariables = Exact<{
 
 export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } }> } };
 
+export type DeleteCarMutationVariables = Exact<{
+  deleteCarId: Scalars['String'];
+}>;
+
+
+export type DeleteCarMutation = { __typename?: 'Mutation', deleteCar: boolean };
+
 export type GetCarsQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
   show?: InputMaybe<Scalars['Int']>;
@@ -950,7 +957,7 @@ export type UpdateReportMutationVariables = Exact<{
 }>;
 
 
-export type UpdateReportMutation = { __typename?: 'Mutation', updateReport: { __typename?: 'Report', id: string } };
+export type UpdateReportMutation = { __typename?: 'Mutation', updateReport: { __typename?: 'Report', id: string, reason: string, timestamp: any, handled: boolean, notes?: string | null, beep?: { __typename?: 'Beep', id: string } | null, reporter: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, reported: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, handledBy?: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } | null } };
 
 export type GetReportQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2176,6 +2183,37 @@ export function useGetBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetBeepsQueryHookResult = ReturnType<typeof useGetBeepsQuery>;
 export type GetBeepsLazyQueryHookResult = ReturnType<typeof useGetBeepsLazyQuery>;
 export type GetBeepsQueryResult = Apollo.QueryResult<GetBeepsQuery, GetBeepsQueryVariables>;
+export const DeleteCarDocument = gql`
+    mutation DeleteCar($deleteCarId: String!) {
+  deleteCar(id: $deleteCarId)
+}
+    `;
+export type DeleteCarMutationFn = Apollo.MutationFunction<DeleteCarMutation, DeleteCarMutationVariables>;
+
+/**
+ * __useDeleteCarMutation__
+ *
+ * To run a mutation, you first call `useDeleteCarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCarMutation, { data, loading, error }] = useDeleteCarMutation({
+ *   variables: {
+ *      deleteCarId: // value for 'deleteCarId'
+ *   },
+ * });
+ */
+export function useDeleteCarMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCarMutation, DeleteCarMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCarMutation, DeleteCarMutationVariables>(DeleteCarDocument, options);
+      }
+export type DeleteCarMutationHookResult = ReturnType<typeof useDeleteCarMutation>;
+export type DeleteCarMutationResult = Apollo.MutationResult<DeleteCarMutation>;
+export type DeleteCarMutationOptions = Apollo.BaseMutationOptions<DeleteCarMutation, DeleteCarMutationVariables>;
 export const GetCarsDocument = gql`
     query GetCars($offset: Int, $show: Int) {
   getCars(offset: $offset, show: $show) {
@@ -2550,6 +2588,31 @@ export const UpdateReportDocument = gql`
     mutation UpdateReport($id: String!, $notes: String, $handled: Boolean) {
   updateReport(id: $id, input: {notes: $notes, handled: $handled}) {
     id
+    reason
+    timestamp
+    handled
+    notes
+    beep {
+      id
+    }
+    reporter {
+      id
+      name
+      photo
+      username
+    }
+    reported {
+      id
+      name
+      photo
+      username
+    }
+    handledBy {
+      id
+      name
+      photo
+      username
+    }
   }
 }
     `;
