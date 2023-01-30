@@ -20,6 +20,7 @@
     "@react-navigation/native": "^6.1.2",
     "@react-navigation/stack": "^6.3.11",
     "apollo-upload-client": "^17.0.0",
+    "car-info": "^0.1.2",
     "expo": "^47.0.13",
     "expo-device": "~5.0.0",
     "expo-image-picker": "~14.1.0",

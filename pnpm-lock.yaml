@@ -133,6 +133,7 @@ importers:
       '@typescript-eslint/parser': ^5.49.0
       apollo-upload-client: ^17.0.0
       babel-preset-expo: ^9.2.2
+      car-info: ^0.1.2
       eslint: ^8.31.0
       eslint-config-airbnb: ^19.0.4
       eslint-config-prettier: ^8.6.0
@@ -178,6 +179,7 @@ importers:
       '@react-navigation/native': 6.1.2_sno66hrxozhatneih5oux35g2a
       '@react-navigation/stack': 6.3.11_5wxgstggibrkn34vykweuuv62e
       apollo-upload-client: 17.0.0_cl266j5heg6bkjgofoa6a7jfyi
+      car-info: 0.1.2
       expo: 47.0.13_@babel+core@7.20.12
       expo-device: 5.0.0_expo@47.0.13
       expo-image-picker: 14.1.0_expo@47.0.13

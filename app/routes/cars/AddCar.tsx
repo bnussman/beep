@@ -13,7 +13,8 @@ import {
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
-import { capitalize, colors, years, makes, getModels } from "./utils";
+import { getMakes, getModels } from "car-info";
+import { capitalize, colors, years } from "./utils";
 import { Ionicons } from "@expo/vector-icons";
 import {
   isValidationError,
@@ -31,6 +32,8 @@ import {
   FormControl,
   WarningOutlineIcon,
 } from "native-base";
+
+const makes = getMakes();
 
 const AddCarMutation = gql`
   mutation CreateCar(
@@ -184,7 +187,7 @@ export function AddCar() {
               >
                 {!make
                   ? []
-                  : getModels(make).map((make) => (
+                  : getModels(make).map((make: string) => (
                       <Select.Item key={make} label={make} value={make} />
                     ))}
               </Select>
