@@ -37,6 +37,7 @@ importers:
       aws-sdk: ^2.1304.0
       bcrypt: ^5.1.0
       body-parser: ^1.20.1
+      car-info: ^0.1.2
       class-validator: ^0.14.0
       concurrently: ^7.6.0
       cors: ^2.8.5
@@ -70,6 +71,7 @@ importers:
       aws-sdk: 2.1304.0
       bcrypt: 5.1.0
       body-parser: 1.20.1
+      car-info: 0.1.2
       class-validator: 0.14.0
       cors: 2.8.5
       dotenv: 16.0.3
@@ -8233,6 +8235,10 @@ packages:
       tslib: 2.4.1
       upper-case-first: 2.0.2
     dev: true
+
+  /car-info/0.1.2:
+    resolution: {integrity: sha512-zM8vrNuZH4URYFgiVuxKFWQ9g3D04PaHRrErjpg45/wWQTnEDrnnWmyH0wsT/JFxoNHLLTueIOAzuAjC0toWpA==}
+    dev: false
 
   /caseless/0.12.0:
     resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
