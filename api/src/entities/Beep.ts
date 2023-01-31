@@ -16,6 +16,7 @@ export enum Status {
 @ObjectType()
 @Entity()
 @Filter({ name: 'in', cond: args => ({ $or: [{ beeper: args.id } , { rider: args.id }] })})
+@Filter({ name: 'inProgress', cond: { status: { $and: [{ $ne: Status.DENIED }, { $ne: Status.COMPLETE }] }}})
 export class Beep {
   constructor(values?: Partial<Beep>) {
     if (values) {

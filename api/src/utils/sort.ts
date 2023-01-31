@@ -1,5 +1,5 @@
-import { QueueEntry } from "../entities/QueueEntry";
+import { Beep } from "../entities/Beep";
 
-export function inOrder(a: QueueEntry, b: QueueEntry): number {
-  return a.start - b.start;
+export function inOrder(a: Beep, b: Beep): number {
+  return a.start.getMilliseconds() - b.start.getMilliseconds();
 }
