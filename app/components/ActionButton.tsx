@@ -6,7 +6,10 @@ import { useEffect } from "react";
 import { Button } from "native-base";
 import { Status } from "../utils/types";
 
-type InProgressStatuses = Exclude<Status, Status.COMPLETE | Status.DENIED>;
+type InProgressStatuses = Exclude<
+  Status,
+  Status.COMPLETE | Status.DENIED | Status.CANCELED
+>;
 
 const nextStatusMap: Record<InProgressStatuses, Status> = {
   [Status.WAITING]: Status.ACCEPTED,
