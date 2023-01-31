@@ -58,7 +58,7 @@ export class Beep {
 
   @Field()
   @Enum(() => Status)
-  status!: Status;
+  status: Status = Status.COMPLETE;
 
   @Field()
   @Property({ persist: false })

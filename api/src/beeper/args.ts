@@ -50,6 +50,6 @@ export class UpdateQueueEntryInput {
   @IsString()
   public id!: string;
 
-  @Field()
+  @Field(() => Status)
   public status!: Status;
 }
