@@ -78,7 +78,7 @@ const ChooseBeep = gql`
       position
       origin
       destination
-      state
+      status
       groupSize
       beeper {
         id
@@ -118,7 +118,7 @@ const InitialRiderStatus = gql`
       position
       origin
       destination
-      state
+      status
       groupSize
       beeper {
         id
@@ -158,7 +158,7 @@ const RiderStatus = gql`
       position
       origin
       destination
-      state
+      status
       groupSize
       beeper {
         id

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Icon } from "native-base";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../utils/Alert";
 import { Unpacked } from "../utils/constants";
@@ -8,23 +8,12 @@ import {
   GetInitialQueueQuery,
   UpdateBeeperQueueMutation,
 } from "../generated/graphql";
+import { UpdateBeeperQueue } from "./ActionButton";
 
 interface Props {
   type: "accept" | "deny";
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
 }
-
-const UpdateBeeperQueue = gql`
-  mutation UpdateBeeperQueue($id: String!, $state: Float!) {
-    setBeeperQueue(input: { id: $id, state: $state }) {
-      id
-      groupSize
-      origin
-      destination
-      state
-    }
-  }
-`;
 
 export function AcceptDenyButton(props: Props) {
   const [loading, setLoading] = useState<boolean>(false);

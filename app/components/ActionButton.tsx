@@ -9,14 +9,14 @@ interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
 }
 
-const UpdateBeeperQueue = gql`
-  mutation UpdateBeeperQueue($id: String!, $state: Float!) {
-    setBeeperQueue(input: { id: $id, state: $state }) {
+export const UpdateBeeperQueue = gql`
+  mutation UpdateBeeperQueue($id: String!, $status: String!) {
+    setBeeperQueue(input: { id: $id, status: $status }) {
       id
       groupSize
       origin
       destination
-      state
+      status
     }
   }
 `;

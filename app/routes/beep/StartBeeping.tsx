@@ -66,7 +66,7 @@ const GetInitialQueue = gql`
       groupSize
       origin
       destination
-      state
+      status
       start
       rider {
         id
@@ -91,7 +91,7 @@ const GetQueue = gql`
       groupSize
       origin
       destination
-      state
+      status
       start
       rider {
         id

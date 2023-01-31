@@ -22,7 +22,7 @@ export const ActiveBeepsGraphQL = gql`
         destination
         start
         groupSize
-        state
+        status
         beeper {
           id
           name

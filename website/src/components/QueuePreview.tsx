@@ -34,7 +34,7 @@ const QueueQuery = gql`
   query UsersQueue($id: String) {
     getQueue(id: $id) {
       id
-      state
+      status
       rider {
         id
         name

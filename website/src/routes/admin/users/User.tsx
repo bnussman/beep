@@ -76,7 +76,7 @@ export const GetUser = gql`
         destination
         start
         groupSize
-        state
+        status
         rider {
           id
           photo
