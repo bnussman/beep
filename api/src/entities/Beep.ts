@@ -52,9 +52,9 @@ export class Beep {
   @Property()
   start!: Date;
 
-  @Field()
-  @Property()
-  end!: Date;
+  @Field(() => Date, { nullable: true })
+  @Property({ nullable: true })
+  end?: Date | null;
 
   @Field()
   @Enum(() => Status)

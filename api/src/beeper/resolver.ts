@@ -108,6 +108,8 @@ export class BeeperResolver {
 
       ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.status !== Status.WAITING).length;
 
+      queueEntry.end = new Date();
+
       ctx.em.persist(ctx.user);
     }
 
