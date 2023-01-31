@@ -4,7 +4,7 @@ import { User } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { GetBeepInput, GetBeepersArgs } from './args';
 import { Context } from '../utils/context';
-import { Beep } from '../entities/Beep';
+import { Beep, Status } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
 import { inOrder } from '../utils/sort';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
@@ -22,7 +22,15 @@ export class RiderResolver {
 
     const { groupSize, origin, destination } = input;
 
-    const entry = new Beep({ groupSize, origin, destination, rider: ctx.user, beeper });
+    const entry = new Beep({
+      groupSize,
+      origin,
+      destination,
+      rider: ctx.user,
+      beeper,
+      start: new Date(),
+      status: Status.WAITING
+    });
 
     beeper.queue.add(entry);
 
