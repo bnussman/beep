@@ -577,12 +577,13 @@
         },
         "end": {
           "name": "end",
-          "type": "jsonb",
+          "type": "timestamptz(0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "mappedType": "json"
+          "length": 6,
+          "mappedType": "datetime"
         },
         "status": {
           "name": "status",
