@@ -4,6 +4,7 @@ import { User } from "./User";
 import { v4 } from 'uuid';
 
 export enum Status {
+  CANCELED = "canceled",
   DENIED = "denied",
   WAITING = "waiting",
   ACCEPTED = "accepted",

@@ -3,6 +3,7 @@ export enum UserRole {
     USER = 'user'
 }
 export enum Status {
+  CANCELED = "canceled",
   DENIED = "denied",
   WAITING = "waiting",
   ACCEPTED = "accepted",

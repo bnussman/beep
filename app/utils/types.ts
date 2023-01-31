@@ -4,6 +4,7 @@ export interface Subscription {
 }
 
 export enum Status {
+  CANCELED = "canceled",
   DENIED = "denied",
   WAITING = "waiting",
   ACCEPTED = "accepted",

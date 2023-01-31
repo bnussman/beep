@@ -95,7 +95,7 @@ export class BeeperResolver {
       throw new Error("You must respond to the rider who first joined your queue.");
     }
 
-    queueEntry.status = input.status;
+    queueEntry.status = input.status as Status;
 
     if (input.status === Status.ACCEPTED) {
       ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
@@ -136,13 +136,13 @@ export class BeeperResolver {
         Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
     }
 
-    const queue = ctx.user.queue.getItems().sort(inOrder);
+    const queueNew = ctx.user.queue.getItems().filter(beep => ![Status.COMPLETE, Status.CANCELED, Status.COMPLETE].includes(beep.status)).sort(inOrder);
 
     await ctx.em.persistAndFlush(queueEntry);
 
-    this.sendRiderUpdates(ctx.user, queue, pubSub);
+    this.sendRiderUpdates(ctx.user, queueNew, pubSub);
 
-    return queue;
+    return queueNew;
   }
 
   private async sendRiderUpdates(beeper: User, queue: Beep[], pubSub: PubSubEngine) {
@@ -179,7 +179,7 @@ export class BeeperResolver {
       }
     }
 
-    ctx.user.queue.remove(entry);
+    entry.status = Status.CANCELED
 
     ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
 

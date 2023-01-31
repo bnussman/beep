@@ -9,6 +9,7 @@ import {
   UpdateBeeperQueueMutation,
 } from "../generated/graphql";
 import { UpdateBeeperQueue } from "./ActionButton";
+import { Status } from "../utils/types";
 
 interface Props {
   type: "accept" | "deny";
@@ -31,7 +32,7 @@ export function AcceptDenyButton(props: Props) {
     update({
       variables: {
         id: props.item.id,
-        state: props.type === "accept" ? 1 : -1,
+        status: props.type === "accept" ? Status.ACCEPTED : Status.DENIED,
       },
     }).catch((error) => {
       Alert(error);
