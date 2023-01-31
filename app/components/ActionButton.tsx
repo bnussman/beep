@@ -4,6 +4,17 @@ import { Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
 import { Button } from "native-base";
+import { Status } from "../utils/types";
+
+type InProgressStatuses = Exclude<Status, Status.COMPLETE | Status.DENIED>;
+
+const nextStatusMap: Record<InProgressStatuses, Status> = {
+  [Status.WAITING]: Status.ACCEPTED,
+  [Status.ACCEPTED]: Status.ON_THE_WAY,
+  [Status.ON_THE_WAY]: Status.HERE,
+  [Status.HERE]: Status.IN_PROGRESS,
+  [Status.IN_PROGRESS]: Status.COMPLETE,
+};
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -28,16 +39,16 @@ function _Button(props: Props) {
   const [update] = useMutation(UpdateBeeperQueue);
 
   const getMessage = () => {
-    switch (beep.state) {
-      case 0:
+    switch (beep.status) {
+      case Status.WAITING:
         return "Accept";
-      case 1:
+      case Status.ACCEPTED:
         return "I'm on the way";
-      case 2:
+      case Status.ON_THE_WAY:
         return "I'm here";
-      case 3:
+      case Status.HERE:
         return "I'm now beeping this rider";
-      case 4:
+      case Status.IN_PROGRESS:
         return "Done beeping this rider";
       default:
         return "Yikes";
@@ -53,7 +64,7 @@ function _Button(props: Props) {
     update({
       variables: {
         id: beep.id,
-        state: beep.state + 1,
+        status: nextStatusMap[beep.status as InProgressStatuses],
       },
     }).catch((error: ApolloError) => {
       setIsLoading(false);

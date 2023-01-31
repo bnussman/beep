@@ -22,6 +22,7 @@ import {
   Menu,
   Divider,
 } from "native-base";
+import { Status } from "../../utils/types";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -60,7 +61,7 @@ export function QueueItem({ item }: Props) {
     });
   };
 
-  if (item.state > 0) {
+  if (item.status !== Status.WAITING) {
     return (
       <Card mb={2}>
         <Box>

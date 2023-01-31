@@ -8,23 +8,7 @@ import { client } from '../utils/Apollo';
 import { gql, useQuery } from '@apollo/client';
 import { QueueSubscription } from './QueueTable';
 import { Link } from 'react-router-dom';
-
-export function getStatus(value: number): string {
-  switch (value) {
-    case 0:
-      return "waiting";
-    case 1:
-      return "accepted";
-    case 2:
-      return "on the way";
-    case 3:
-      return "here";
-    case 4:
-      return "getting beeped";
-    default:
-      return "yikes";
-  }
-}
+import { Status } from '../types/User';
 
 dayjs.extend(duration);
 
@@ -110,10 +94,10 @@ export function QueuePreview({ userId }: Props) {
             <Box fontWeight="bold" whiteSpace="nowrap">{entry.rider.name}</Box>
           </Link>
           <Text noOfLines={1}>
-            {getStatus(entry.state)}
+            {entry.status}
           </Text>
           <Spacer />
-          <Indicator color={entry.state > 0 ? 'green' : 'red'} />
+          <Indicator color={entry.status !== Status.WAITING ? 'green' : 'red'} />
         </HStack>
       ))}
     </Box>

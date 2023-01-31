@@ -44,6 +44,7 @@ import {
   FlatList as NativeFlatList,
   InfoIcon,
 } from "native-base";
+import { Status } from "../../utils/types";
 
 let unsubscribe: any = null;
 
@@ -475,9 +476,10 @@ export function StartBeepingScreen() {
                 Queue
               </Heading>
               <Spacer />
-              {queue.length > 0 && queue.some((entry) => entry.state === 0) && (
-                <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
-              )}
+              {queue.length > 0 &&
+                queue.some((entry) => entry.status === Status.WAITING) && (
+                  <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
+                )}
             </HStack>
           </Pressable>
           <FlatList

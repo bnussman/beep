@@ -27,6 +27,7 @@ import {
 } from "native-base";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printStars } from "../../components/Stars";
+import { Status } from "../../utils/types";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -116,7 +117,7 @@ export function Beep(props: Props) {
       </Card>
       <Spacer />
       <Stack space={3}>
-        {beep.state === 0 ? (
+        {beep.status === Status.WAITING ? (
           <>
             <AcceptDenyButton item={beep} type="deny" />
             <AcceptDenyButton item={beep} type="accept" />
@@ -146,7 +147,9 @@ export function Beep(props: Props) {
                 }
               />
             </HStack>
-            {beep.state > 2 && (
+            {[Status.HERE, Status.IN_PROGRESS].includes(
+              beep.status as Status
+            ) && (
               <>
                 {beep.rider.cashapp ? (
                   <Button
@@ -181,7 +184,9 @@ export function Beep(props: Props) {
                 ) : null}
               </>
             )}
-            {beep.state <= 1 ? (
+            {[Status.ON_THE_WAY, Status.WAITING].includes(
+              beep.status as Status
+            ) ? (
               <Button
                 onPress={() => openDirections("Current+Location", beep.origin)}
               >
@@ -194,7 +199,9 @@ export function Beep(props: Props) {
                 Get Directions for Beep
               </Button>
             )}
-            {beep.state < 3 && <CancelButton beep={beep} />}
+            {[Status.ON_THE_WAY, Status.WAITING, Status.ACCEPTED].includes(
+              beep.status as Status
+            ) && <CancelButton beep={beep} />}
             <ActionButton beep={beep} />
           </>
         )}

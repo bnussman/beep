@@ -10,6 +10,7 @@ import { Error } from '../../../components/Error';
 import { GetInProgressBeepsQuery } from '../../../generated/graphql';
 import { Indicator } from '../../../components/Indicator';
 import { getStatus } from '../../../components/QueueTable';
+import { Status } from '../../../types/User';
 
 dayjs.extend(duration);
 
@@ -102,8 +103,8 @@ export function ActiveBeeps() {
                 <Td>{entry.destination}</Td>
                 <Td>{entry.groupSize}</Td>
                 <Td>{dayjs().to(entry.start * 1000)}</Td>
-                <Td>{entry.state > 0 ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
-                <Td>{getStatus(entry.state)}</Td>
+                <Td>{entry.status !== Status.WAITING ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
+                <Td>{entry.status}</Td>
               </Tr>
             ))}
           </Tbody>

@@ -18,7 +18,7 @@ import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
 import { Alert } from "../../utils/Alert";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
-import { Subscription } from "../../utils/types";
+import { Status, Subscription } from "../../utils/types";
 import { Avatar } from "../../components/Avatar";
 import { Rates } from "./Rates";
 import { Card } from "../../components/Card";
@@ -326,14 +326,26 @@ export function MainFindBeepScreen() {
     });
   }
 
+  const isAcceptedBeep = [
+    Status.ACCEPTED,
+    Status.IN_PROGRESS,
+    Status.HERE,
+    Status.ON_THE_WAY,
+  ].includes(beep?.status as Status);
+
   useEffect(() => {
     if (
-      (beep?.state === 1 && previousData?.getRiderStatus?.state === 0) ||
-      (beep !== undefined && beep !== null && beep.state > 0 && !previousData)
+      (beep?.status === Status.ACCEPTED &&
+        previousData?.getRiderStatus?.status === Status.WAITING) ||
+      (beep !== undefined && beep !== null && isAcceptedBeep && !previousData)
     ) {
       subscribeToLocation();
     }
-    if (!previousData && beep?.beeper.location && beep?.state === 2) {
+    if (
+      !previousData &&
+      beep?.beeper.location &&
+      beep?.status === Status.ON_THE_WAY
+    ) {
       updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
     }
     if (previousData && !beep) {
@@ -376,16 +388,16 @@ export function MainFindBeepScreen() {
   };
 
   function getCurrentStatusMessage(): string {
-    switch (beep?.state) {
-      case 0:
+    switch (beep?.status) {
+      case Status.WAITING:
         return "Waiting for beeper to accept or deny you.";
-      case 1:
-        return "Beeper is getting ready to come get you.";
-      case 2:
+      case Status.ACCEPTED:
+        return "Beeper is getting ready to come get you. They will be on the way soon.";
+      case Status.ON_THE_WAY:
         return "Beeper is on their way to get you.";
-      case 3:
+      case Status.HERE:
         return `Beeper is here to pick you up in a ${beep.beeper.cars[0].color} ${beep.beeper.cars[0].make} ${beep.beeper.cars[0].model}`;
-      case 4:
+      case Status.IN_PROGRESS:
         return "You are currenly in the car with your beeper.";
       default:
         return "Unknown";
@@ -516,7 +528,7 @@ export function MainFindBeepScreen() {
     );
   }
 
-  if (beep.state > 0) {
+  if (isAcceptedBeep) {
     return (
       <Container p={2} px={4} alignItems="center">
         <Stack alignItems="center" space={4} w="100%" h="94%">
@@ -566,7 +578,7 @@ export function MainFindBeepScreen() {
               <Text>{getCurrentStatusMessage()}</Text>
             </Card>
           )}
-          {beep.state === 2 && (
+          {beep.status === Status.ON_THE_WAY && (
             <Card w="100%">
               <HStack>
                 <Heading fontWeight="extrabold" size="sm">
@@ -589,7 +601,7 @@ export function MainFindBeepScreen() {
               position={beep.position}
             />
           )}
-          {beep.state === 3 ? (
+          {beep.status === Status.HERE ? (
             <Image
               borderRadius="xl"
               w="100%"
