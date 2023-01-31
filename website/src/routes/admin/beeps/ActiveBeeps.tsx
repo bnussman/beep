@@ -95,7 +95,7 @@ export function ActiveBeeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {beeps && (beeps?.items).map(entry => (
+            {beeps && beeps?.items?.map(entry => (
               <Tr key={entry.id}>
                 <TdUser user={entry.beeper} />
                 <TdUser user={entry.rider} />
