@@ -1,5 +1,5 @@
 import { sendNotification } from '../utils/notifications';
-import { QueryOrder } from '@mikro-orm/core';
+import { LoadStrategy, QueryOrder } from '@mikro-orm/core';
 import { User } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { GetBeepInput, GetBeepersArgs } from './args';
@@ -14,7 +14,15 @@ export class RiderResolver {
   @Mutation(() => Beep)
   @Authorized()
   public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<Beep> {
-    const beeper = await ctx.em.findOneOrFail(User, beeperId, { populate: ['queue', 'queue.rider', 'cars'], filters: ['inProgress'] });
+    const beeper = await ctx.em.findOneOrFail(
+      User,
+      beeperId,
+      {
+        populate: ['queue', 'queue.rider', 'cars'],
+        strategy: LoadStrategy.SELECT_IN,
+        filters: ['inProgress']
+      }
+    );
 
     if (!beeper.isBeeping) {
       throw new Error("The user you have chosen is no longer beeping at this time.");
@@ -31,6 +39,8 @@ export class RiderResolver {
       start: new Date(),
       status: Status.WAITING
     });
+
+    console.log(beeper.queue)
 
     beeper.queue.add(entry);
 
@@ -68,9 +78,19 @@ export class RiderResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async leaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('id') id: string): Promise<boolean> {
-    const beeper = await ctx.em.findOneOrFail(User, { id, cars: { default: true } }, { populate: ['queue', 'queue.rider', 'cars'] });
+    const beeper = await ctx.em.findOneOrFail(
+      User,
+      { id, cars: { default: true } },
+      {
+        strategy: LoadStrategy.SELECT_IN,
+        populate: ['queue', 'queue.rider', 'cars'],
+        filters: ['inProgress']
+      }
+    );
 
-    const entry = beeper.queue.getItems().find((_entry) => _entry.rider.id === ctx.user.id);
+    let queue = beeper.queue.getItems();
+
+    const entry = queue.find((beep) => beep.rider.id === ctx.user.id);
 
     if (!entry) {
       throw new Error("You are not in that beepers queue.");
@@ -78,9 +98,9 @@ export class RiderResolver {
 
     sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue 🥹`, "They decided they did not want a beep from you!");
 
-    beeper.queue.remove(entry);
+    entry.status = Status.CANCELED;
 
-    const queue = beeper.queue.getItems();
+    queue = queue.filter(beep => beep.status !== Status.CANCELED);
 
     pubSub.publish("Rider" + ctx.user.id, null);
     pubSub.publish("Beeper" + beeper.id, queue.sort(inOrder));

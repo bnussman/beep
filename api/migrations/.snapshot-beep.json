@@ -594,6 +594,7 @@
           "nullable": false,
           "default": "'complete'",
           "enumItems": [
+            "canceled",
             "denied",
             "waiting",
             "accepted",
