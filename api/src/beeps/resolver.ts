@@ -9,7 +9,7 @@ import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
 import { PushNotification, sendNotifications } from '../utils/notifications';
 
 @ObjectType()
-class BeepsResponse extends Paginated(Beep) { }
+class BeepsResponse extends Paginated(Beep) {}
 
 @Resolver(Beep)
 export class BeepResolver {
@@ -21,7 +21,7 @@ export class BeepResolver {
       Beep,
       {},
       {
-        orderBy: { end: QueryOrder.DESC },
+        orderBy: { start: QueryOrder.DESC },
         limit: show,
         offset: offset,
         populate: ['beeper', 'rider'],

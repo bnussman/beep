@@ -99,6 +99,7 @@ export class RiderResolver {
     sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue 🥹`, "They decided they did not want a beep from you!");
 
     entry.status = Status.CANCELED;
+    entry.end = new Date();
 
     queue = queue.filter(beep => beep.status !== Status.CANCELED);
 
@@ -137,11 +138,27 @@ export class RiderResolver {
   @Query(() => Beep, { nullable: true })
   @Authorized()
   public async getLastBeepToRate(@Ctx() ctx: Context): Promise<Beep | null> {
-    const beep = await ctx.em.findOne(Beep, { rider: ctx.user.id }, { populate: ['beeper'], orderBy: { end: QueryOrder.DESC } });
+    const beep = await ctx.em.findOne(
+      Beep,
+      { rider: ctx.user.id },
+      {
+        populate: ['beeper'],
+        orderBy: { start: QueryOrder.DESC }
+      }
+    );
 
-    if (!beep) return null;
+    if (!beep) {
+      return null;
+    }
 
-    const count = await ctx.em.count(Rating, { rater: ctx.user.id, rated: beep.beeper.id, timestamp: { $gte: beep.end } });
+    const count = await ctx.em.count(
+      Rating,
+      {
+        rater: ctx.user.id,
+        rated: beep.beeper.id,
+        timestamp: { $gte: beep.end }
+      }
+    );
 
     if (count > 0) {
       return null;

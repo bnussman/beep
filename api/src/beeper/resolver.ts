@@ -180,6 +180,7 @@ export class BeeperResolver {
     }
 
     entry.status = Status.CANCELED
+    entry.end = new Date();
 
     ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
 

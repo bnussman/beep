@@ -34,7 +34,7 @@ export type Beep = {
   __typename?: 'Beep';
   beeper: User;
   destination: Scalars['String'];
-  end: Scalars['DateTime'];
+  end?: Maybe<Scalars['DateTime']>;
   groupSize: Scalars['Float'];
   id: Scalars['String'];
   origin: Scalars['String'];
@@ -683,7 +683,7 @@ export type GetBeepsForUserQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepsForUserQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string }, rider: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string } }> } };
+export type GetBeepsForUserQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end?: any | null, groupSize: number, beeper: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string }, rider: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string } }> } };
 
 export type GetCarsForUserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -850,7 +850,7 @@ export type GetBeepQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepQuery = { __typename?: 'Query', getBeep: { __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } } };
+export type GetBeepQuery = { __typename?: 'Query', getBeep: { __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end?: any | null, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } } };
 
 export type GetBeepsQueryVariables = Exact<{
   show?: InputMaybe<Scalars['Int']>;
@@ -858,7 +858,7 @@ export type GetBeepsQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end: any, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } }> } };
+export type GetBeepsQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end?: any | null, groupSize: number, status: string, beeper: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } }> } };
 
 export type DeleteCarMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2122,6 +2122,7 @@ export const GetBeepsDocument = gql`
       start
       end
       groupSize
+      status
       beeper {
         id
         name
