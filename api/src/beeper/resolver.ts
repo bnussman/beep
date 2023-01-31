@@ -136,7 +136,7 @@ export class BeeperResolver {
         Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
     }
 
-    const queueNew = ctx.user.queue.getItems().filter(beep => ![Status.COMPLETE, Status.CANCELED, Status.COMPLETE].includes(beep.status)).sort(inOrder);
+    const queueNew = ctx.user.queue.getItems().filter(beep => ![Status.COMPLETE, Status.CANCELED, Status.DENIED].includes(beep.status)).sort(inOrder);
 
     await ctx.em.persistAndFlush(queueEntry);
 

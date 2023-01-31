@@ -68,7 +68,6 @@ const GetInitialQueue = gql`
       origin
       destination
       status
-      start
       rider {
         id
         name
@@ -93,7 +92,6 @@ const GetQueue = gql`
       origin
       destination
       status
-      start
       rider {
         id
         name
@@ -150,9 +148,7 @@ export function StartBeepingScreen() {
   const [updateBeepSettings] =
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
-  const queue = data
-    ? [...data.getQueue].sort((a, b) => a.start - b.start)
-    : undefined;
+  const queue = data?.getQueue;
 
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
