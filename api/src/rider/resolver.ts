@@ -1,6 +1,5 @@
 import { sendNotification } from '../utils/notifications';
 import { QueryOrder } from '@mikro-orm/core';
-import { QueueEntry } from '../entities/QueueEntry';
 import { User } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { GetBeepInput, GetBeepersArgs } from './args';
@@ -12,9 +11,9 @@ import { getPositionInQueue, getQueueSize } from '../utils/dist';
 
 @Resolver()
 export class RiderResolver {
-  @Mutation(() => QueueEntry)
+  @Mutation(() => Beep)
   @Authorized()
-  public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<QueueEntry> {
+  public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<Beep> {
     const beeper = await ctx.em.findOneOrFail(User, beeperId, { populate: ['queue', 'queue.rider', 'cars'] });
 
     if (!beeper.isBeeping) {
@@ -23,7 +22,7 @@ export class RiderResolver {
 
     const { groupSize, origin, destination } = input;
 
-    const entry = new QueueEntry({ groupSize, origin, destination, rider: ctx.user, beeper });
+    const entry = new Beep({ groupSize, origin, destination, rider: ctx.user, beeper });
 
     beeper.queue.add(entry);
 
@@ -40,11 +39,11 @@ export class RiderResolver {
     return entry;
   }
 
-  @Query(() => QueueEntry, { nullable: true })
+  @Query(() => Beep, { nullable: true })
   @Authorized()
-  public async getRiderStatus(@Ctx() ctx: Context): Promise<QueueEntry | null> {
+  public async getRiderStatus(@Ctx() ctx: Context): Promise<Beep | null> {
     const entry = await ctx.em.findOne(
-      QueueEntry,
+      Beep,
       { rider: ctx.user, beeper: { cars: { default: true }} },
       { populate: ['beeper', 'beeper.queue', 'beeper.cars'] }
     );
@@ -63,7 +62,7 @@ export class RiderResolver {
   public async leaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('id') id: string): Promise<boolean> {
     const beeper = await ctx.em.findOneOrFail(User, { id, cars: { default: true } }, { populate: ['queue', 'queue.rider', 'cars'] });
 
-    const entry = beeper.queue.getItems().find((_entry: QueueEntry) => _entry.rider.id === ctx.user.id);
+    const entry = beeper.queue.getItems().find((_entry) => _entry.rider.id === ctx.user.id);
 
     if (!entry) {
       throw new Error("You are not in that beepers queue.");
@@ -123,11 +122,11 @@ export class RiderResolver {
     return beep;
   }
 
-  @Subscription(() => QueueEntry, {
+  @Subscription(() => Beep, {
     nullable: true,
     topics: ({ context }) => "Rider" + context.user.id,
   })
-  public getRiderUpdates(@Root() entry: QueueEntry): QueueEntry | null {
+  public getRiderUpdates(@Root() entry: Beep): Beep | null {
     return entry;
   }
 }

@@ -1,10 +1,9 @@
 import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
 import { Point } from '../location/resolver';
 import { ArgsType, Field, InputType } from 'type-graphql';
-import { QueueEntry } from '../entities/QueueEntry';
 
 @InputType()
-export class GetBeepInput implements Partial<QueueEntry> {
+export class GetBeepInput {
   @Field()
   @IsString()
   @IsNotEmpty({ message: "Please specify an origin location" })

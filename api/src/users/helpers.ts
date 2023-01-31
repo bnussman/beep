@@ -5,7 +5,6 @@ import { Stream } from "stream";
 import { Rating } from "../entities/Rating";
 import { Report } from "../entities/Report";
 import { Beep } from "../entities/Beep";
-import { QueueEntry } from "../entities/QueueEntry";
 import { ForgotPassword } from "../entities/ForgotPassword";
 import { VerifyEmail } from "../entities/VerifyEmail";
 import { TokenEntry } from "../entities/TokenEntry";
@@ -38,9 +37,6 @@ export async function deleteUser(user: User, em: EntityManager): Promise<boolean
   await em.nativeDelete(ForgotPassword, { user: user });
 
   await em.nativeDelete(VerifyEmail, { user: user });
-
-  await em.nativeDelete(QueueEntry, { beeper: user });
-  await em.nativeDelete(QueueEntry, { rider: user });
 
   await em.nativeDelete(Beep, { beeper: user });
   await em.nativeDelete(Beep, { rider: user });

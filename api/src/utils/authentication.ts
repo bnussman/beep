@@ -1,8 +1,8 @@
 import { UserRole } from "../entities/User";
 import { AuthChecker, MiddlewareFn } from "type-graphql";
 import { Context } from "../utils/context";
-import { QueueEntry } from "../entities/QueueEntry";
 import * as Sentry from '@sentry/node';
+import { Beep } from "../entities/Beep";
 
 export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
   const { user } = context;
@@ -54,7 +54,7 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
       Sentry.captureMessage("Unable to get user id from cars array when checking auth");
       throw new Error("Unable to get user id from cars array when checking auth");
     }
-    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, rider: context.user.id, beeper: userId });
+    const beep = await context.em.findOne(Beep, { rider: context.user.id, beeper: userId }, { filters: ['inProgress'] });
 
     if (beep) {
       return result;
@@ -69,7 +69,7 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
       return result;
     }
 
-    const beeps = await context.em.find(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'] });
+    const beeps = await context.em.find(Beep, { $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'], filters: ['inProgress'] });
 
     if (beeps && beeps.length > 0) {
       for (const beep of beeps) {
@@ -88,7 +88,7 @@ export const LeakChecker: MiddlewareFn<Context> = async ({ context, info }, next
 
 
   if (["location"].includes(info.fieldName)) {
-    const beep = await context.em.findOne(QueueEntry, { state: { $gt: 0 }, $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'] });
+    const beep = await context.em.findOne(Beep, { $or: [ { rider: { id: context.user.id } }, { beeper: { id: context.user.id }} ] }, { populate: ['rider', 'beeper'], filters: ['inProgress'] });
 
     if (beep) {
       const otherUser = beep.beeper.id === context.user.id ? beep.rider : beep.beeper;
