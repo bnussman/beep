@@ -9,7 +9,7 @@ import cors from 'cors';
 import { json } from 'body-parser';
 import * as Sentry from "./utils/sentry";
 import * as RealSentry from "@sentry/node";
-import { MikroORM } from "@mikro-orm/core";
+import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
 import { GraphQLSchema } from "graphql";
 import { buildSchema } from 'type-graphql';
@@ -26,6 +26,9 @@ import { getContext, onConnect } from "./utils/context";
 import { formatError } from "./utils/errors";
 import { Context as APIContext } from "./utils/context";
 import { expressMiddleware } from '@apollo/server/express4';
+import { EntityManager } from "@mikro-orm/postgresql";
+import { QueueEntry } from "./entities/QueueEntry";
+import { Beep } from "./entities/Beep";
 
 async function start() {
   const orm = await MikroORM.init(config);
@@ -97,6 +100,17 @@ async function start() {
   await new Promise<void>(resolve => httpServer.listen({ port: 3001 }, resolve));
 
   console.info(`🚕 Beep GraphQL Server Started at \x1b[36mhttp://0.0.0.0:3001/graphql\x1b[0m`);
+
+  // migrate();
+}
+
+async function migrate(em: EntityManager) {
+  const queueEntries = await em.find(QueueEntry, {});
+
+  for (const entry of queueEntries) {
+    const beep = new Beep({ ...entry, start: new Date(entry.start * 1000) });
+    await em.persistAndFlush(beep);
+  }
 }
 
 start();
