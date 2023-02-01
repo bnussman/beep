@@ -20,6 +20,7 @@ export class RiderResolver {
       {
         populate: ['queue', 'queue.rider', 'cars'],
         strategy: LoadStrategy.SELECT_IN,
+        orderBy: { queue: { start: QueryOrder.ASC } },
         filters: ['inProgress']
       }
     );
@@ -44,7 +45,7 @@ export class RiderResolver {
 
     beeper.queue.add(entry);
 
-    const queue = beeper.queue.getItems().sort(inOrder);
+    const queue = beeper.queue.getItems();
 
     entry.position = getPositionInQueue(queue, entry);
 
@@ -84,7 +85,8 @@ export class RiderResolver {
       {
         strategy: LoadStrategy.SELECT_IN,
         populate: ['queue', 'queue.rider', 'cars'],
-        filters: ['inProgress']
+        filters: ['inProgress'],
+        orderBy: { queue: { start: QueryOrder.ASC } }
       }
     );
 
@@ -104,7 +106,7 @@ export class RiderResolver {
     queue = queue.filter(beep => beep.status !== Status.CANCELED);
 
     pubSub.publish("Rider" + ctx.user.id, null);
-    pubSub.publish("Beeper" + beeper.id, queue.sort(inOrder));
+    pubSub.publish("Beeper" + beeper.id, queue);
 
     for (const entry of queue) {
       entry.position = getPositionInQueue(queue, entry);

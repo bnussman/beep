@@ -81,7 +81,15 @@ export class BeeperResolver {
   @Mutation(() => [Beep])
   @Authorized()
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<Beep[]> {
-    await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, filters: ['inProgress'], orderBy: { queue: { start: QueryOrder.ASC } } });
+    await ctx.em.populate(
+      ctx.user,
+      ['queue', 'queue.rider', 'cars'],
+      {
+        where: { cars: { default: true } },
+        filters: ['inProgress'],
+        orderBy: { queue: { start: QueryOrder.ASC } }
+      }
+    );
 
     const queueEntry = ctx.user.queue.getItems().find((entry) => entry.id === input.id);
 
@@ -136,7 +144,7 @@ export class BeeperResolver {
         Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
     }
 
-    const queueNew = ctx.user.queue.getItems().filter(beep => ![Status.COMPLETE, Status.CANCELED, Status.DENIED].includes(beep.status)).sort(inOrder);
+    const queueNew = ctx.user.queue.getItems().filter(beep => ![Status.COMPLETE, Status.CANCELED, Status.DENIED].includes(beep.status));
 
     await ctx.em.persistAndFlush(queueEntry);
 
@@ -161,6 +169,8 @@ export class BeeperResolver {
     const entry = ctx.em.getReference(Beep, id);
 
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, filters: ['inProgress'], orderBy: { queue: { start: QueryOrder.ASC } } });
+
+    console.log(ctx.user.queue)
 
     // await ctx.user.queue.init({ orderBy: { start: QueryOrder.ASC }, populate: ['rider', 'beeper', 'beeper.cars'], filter: [], where: { beeper: { cars: { default: true } } } });
 
