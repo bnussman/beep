@@ -60,19 +60,40 @@ export class RiderResolver {
   @Query(() => Beep, { nullable: true })
   @Authorized()
   public async getRiderStatus(@Ctx() ctx: Context): Promise<Beep | null> {
-    const entry = await ctx.em.findOne(
+    const beep = await ctx.em.findOne(
       Beep,
-      { rider: ctx.user, beeper: { cars: { default: true }} },
-      { populate: ['beeper', 'beeper.queue', 'beeper.cars'], filters: ['inProgress'] }
+      {
+        rider: ctx.user,
+        beeper: {
+          cars: {
+            default: true
+          }
+        },
+      },
+      {
+        populate: ['beeper', 'beeper.cars'],
+        filters: ['inProgress']
+      }
     );
 
-    if (!entry) {
+    if (!beep) {
       return null;
     }
 
-    entry.position = getPositionInQueue(entry.beeper.queue.getItems(), entry);
+    beep.position = await ctx.em.count(
+      Beep,
+      {
+        start: {
+          $lt: beep.start
+        },
+        status: { $ne: Status.WAITING }
+      },
+      {
+        filters: ['inProgress']
+      }
+    );
 
-    return entry;
+    return beep;
   }
 
   @Mutation(() => Boolean)
