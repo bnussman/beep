@@ -3,7 +3,7 @@ import { Migration } from '@mikro-orm/migrations';
 export class Migration20230131200743 extends Migration {
 
   async up(): Promise<void> {
-    // this.addSql('drop table if exists "queue_entry" cascade;');
+    this.addSql('drop table if exists "queue_entry" cascade;');
 
     this.addSql('alter table "user" drop constraint if exists "user_role_check";');
 
@@ -31,11 +31,11 @@ export class Migration20230131200743 extends Migration {
   }
 
   async down(): Promise<void> {
-    // this.addSql('create table "queue_entry" ("id" varchar(255) not null, "origin" varchar(255) not null, "destination" varchar(255) not null, "state" int not null, "group_size" int not null, "start" bigint not null, "beeper_id" varchar(255) not null, "rider_id" varchar(255) not null, constraint "queue_entry_pkey" primary key ("id"));');
-    // this.addSql('alter table "queue_entry" add constraint "queue_entry_rider_id_unique" unique ("rider_id");');
+    this.addSql('create table "queue_entry" ("id" varchar(255) not null, "origin" varchar(255) not null, "destination" varchar(255) not null, "state" int not null, "group_size" int not null, "start" bigint not null, "beeper_id" varchar(255) not null, "rider_id" varchar(255) not null, constraint "queue_entry_pkey" primary key ("id"));');
+    this.addSql('alter table "queue_entry" add constraint "queue_entry_rider_id_unique" unique ("rider_id");');
 
-    // this.addSql('alter table "queue_entry" add constraint "queue_entry_beeper_id_foreign" foreign key ("beeper_id") references "user" ("id") on update cascade;');
-    // this.addSql('alter table "queue_entry" add constraint "queue_entry_rider_id_foreign" foreign key ("rider_id") references "user" ("id") on update cascade;');
+    this.addSql('alter table "queue_entry" add constraint "queue_entry_beeper_id_foreign" foreign key ("beeper_id") references "user" ("id") on update cascade;');
+    this.addSql('alter table "queue_entry" add constraint "queue_entry_rider_id_foreign" foreign key ("rider_id") references "user" ("id") on update cascade;');
 
     this.addSql('alter table "user" drop constraint if exists "user_role_check";');
 
