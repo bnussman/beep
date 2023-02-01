@@ -6,7 +6,6 @@ import { GetBeepInput, GetBeepersArgs } from './args';
 import { Context } from '../utils/context';
 import { Beep, Status } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
-import { inOrder } from '../utils/sort';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
 
 @Resolver()

@@ -6,7 +6,6 @@ import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSub
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from './args';
 import { User } from '../entities/User';
-import { inOrder } from '../utils/sort';
 import { Point } from '../location/resolver';
 import { sha256 } from 'js-sha256';
 import { BeeperLocationArgs } from '../location/args';
