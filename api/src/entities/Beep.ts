@@ -2,7 +2,6 @@ import { Entity, Enum, Filter, ManyToOne, PrimaryKey, Property } from "@mikro-or
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { v4 } from 'uuid';
-import { registerEnumType } from "type-graphql";
 
 export enum Status {
   CANCELED = "canceled",
@@ -15,18 +14,11 @@ export enum Status {
   COMPLETE = "complete",
 }
 
-registerEnumType(Status, {
-  name: "Status",
-  description: "The status of a beep",
-});
-
-
 @ObjectType()
 @Entity()
 @Filter({ name: 'in', cond: args => ({ $or: [{ beeper: args.id } , { rider: args.id }] })})
 @Filter({ name: 'inProgress', cond: { $and: [{ status: { $ne: Status.DENIED } }, { status: { $ne: Status.COMPLETE } }, { status: { $ne: Status.CANCELED } }] }})
 export class Beep {
-
   constructor(values?: Partial<Beep>) {
     if (values) {
       Object.assign(this, values);
@@ -65,7 +57,7 @@ export class Beep {
   @Property({ type: 'datetime', nullable: true })
   end!: Date | null;
 
-  @Field(() => Status)
+  @Field()
   @Enum(() => Status)
   status: Status = Status.COMPLETE;
 
@@ -73,4 +65,3 @@ export class Beep {
   @Property({ persist: false })
   position: number = -1;
 }
-
