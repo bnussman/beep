@@ -6,6 +6,7 @@ import { PointType } from "../location/types";
 import { Point } from "../location/resolver";
 import { Car } from "./Car";
 import { Beep } from "./Beep";
+import { registerEnumType } from "type-graphql";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -16,6 +17,17 @@ export enum PasswordType {
   SHA256 = 'sha256',
   BCRYPT = 'bcrypt'
 }
+
+registerEnumType(UserRole, {
+  name: "UserRole",
+  description: "User permissions role",
+});
+
+registerEnumType(PasswordType, {
+  name: "PasswordType",
+  description: "Method used to hash password",
+});
+
 
 @ObjectType()
 @Entity()
@@ -66,7 +78,7 @@ export class User {
   @Authorized(UserRole.ADMIN)
   password!: string;
 
-  @Field()
+  @Field(() => PasswordType)
   @Enum({ items: () => PasswordType, default: 'sha256', lazy: true })
   @Authorized(UserRole.ADMIN)
   passwordType!: PasswordType;
@@ -103,7 +115,7 @@ export class User {
   @Property({ columnType: 'numeric', nullable: true })
   rating?: number;
 
-  @Field()
+  @Field(() => UserRole)
   @Enum(() => UserRole)
   role: UserRole = UserRole.USER;
 
