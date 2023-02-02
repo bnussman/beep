@@ -1,4 +1,4 @@
-import { Beep } from '../entities/Beep';
+import { Beep, Status } from '../entities/Beep';
 import { LoadStrategy, QueryOrder } from '@mikro-orm/core';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from 'type-graphql';
 import { Paginated, PaginationArgs } from '../utils/pagination';
@@ -114,6 +114,8 @@ export class BeepResolver {
 
     for (const entry of entries) {
       pubSub.publish("Rider" + entry.rider.id, null);
+      entry.status = Status.CANCELED;
+
       if (entry.rider.pushToken) {
         toSend.push({
           to: entry.rider.pushToken,
@@ -139,7 +141,6 @@ export class BeepResolver {
     }
 
     user.queueSize = 0;
-    user.queue.removeAll();
 
     pubSub.publish("Beeper" + id, []);
 

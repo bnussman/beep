@@ -40,8 +40,6 @@ export class RiderResolver {
       status: Status.WAITING
     });
 
-    console.log(beeper.queue)
-
     beeper.queue.add(entry);
 
     const queue = beeper.queue.getItems();
@@ -151,7 +149,7 @@ export class RiderResolver {
     const connection = ctx.em.getConnection();
 
     const raw: User[] = await connection.execute(`
-        SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))
+      SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))
     `);
 
     return raw.map(user => ctx.em.map(User, user));
