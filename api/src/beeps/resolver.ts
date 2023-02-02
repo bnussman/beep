@@ -1,5 +1,5 @@
 import { Beep } from '../entities/Beep';
-import { QueryOrder } from '@mikro-orm/core';
+import { LoadStrategy, QueryOrder } from '@mikro-orm/core';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from 'type-graphql';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { User, UserRole } from '../entities/User';
@@ -94,9 +94,19 @@ export class BeepResolver {
     @Arg('stopBeeping') stopBeeping: boolean,
     @PubSub() pubSub: PubSubEngine
   ): Promise<boolean> {
-    const user = await ctx.em.findOneOrFail(User, id, { populate: ['queue', 'queue.rider'] });
+    const user = await ctx.em.findOneOrFail(
+      User,
+      id,
+      {
+        strategy: LoadStrategy.SELECT_IN,
+        populate: ['queue', 'queue.rider'],
+        filters: ['inProgress']
+      }
+    );
 
-    if (user.queueSize === 0 && user.queue.length === 0) throw new Error('Queue is already clear!');
+    if (user.queueSize === 0 && user.queue.length === 0) {
+      throw new Error('Queue is already clear!');
+    }
 
     const entries: Beep[] = user.queue.getItems();
 
