@@ -54,18 +54,18 @@ export class BeeperResolver {
       if (!car) {
         throw new Error("You need to add a car to your account to beep.");
       }
-    }
+    } else {
+      const queueSize = await ctx.em.count(Beep, {}, { filters: ['inProgress'] });
 
-    if (!input.isBeeping) {
-      const queue = await ctx.user.queue.loadItems();
-      if (queue.length > 0) {
-        throw new Error("You can't stop beeping when you still have beeps to complete or riders in your queue");
+      if (queueSize > 0) {
+        throw new Error("You can't stop beeping when you still have riders in your queue");
       }
     }
 
+
     if (!!input.latitude && !!input.longitude) {
       wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
-    } 
+    }
     else {
       wrap(ctx.user).assign(input);
     }
