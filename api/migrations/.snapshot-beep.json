@@ -108,6 +108,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "false",
           "mappedType": "boolean"
         },
         "is_email_verified": {
@@ -117,6 +118,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "false",
           "mappedType": "boolean"
         },
         "is_student": {
@@ -126,6 +128,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "false",
           "mappedType": "boolean"
         },
         "group_rate": {
@@ -135,6 +138,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "4",
           "mappedType": "integer"
         },
         "singles_rate": {
@@ -144,6 +148,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "3",
           "mappedType": "integer"
         },
         "capacity": {
@@ -153,6 +158,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "4",
           "mappedType": "integer"
         },
         "queue_size": {
@@ -162,6 +168,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "0",
           "mappedType": "integer"
         },
         "rating": {
@@ -180,6 +187,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "'user'",
           "enumItems": [
             "admin",
             "user"
@@ -308,131 +316,6 @@
             "user_id"
           ],
           "localTableName": "public.token_entry",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.user",
-          "updateRule": "cascade"
-        }
-      }
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
-        "origin": {
-          "name": "origin",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
-        "destination": {
-          "name": "destination",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
-        "state": {
-          "name": "state",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        },
-        "group_size": {
-          "name": "group_size",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        },
-        "start": {
-          "name": "start",
-          "type": "bigint",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "bigint"
-        },
-        "beeper_id": {
-          "name": "beeper_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        },
-        "rider_id": {
-          "name": "rider_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "string"
-        }
-      },
-      "name": "queue_entry",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "queue_entry_rider_id_unique",
-          "columnNames": [
-            "rider_id"
-          ],
-          "composite": false,
-          "primary": false,
-          "unique": true
-        },
-        {
-          "keyName": "queue_entry_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "queue_entry_beeper_id_foreign": {
-          "constraintName": "queue_entry_beeper_id_foreign",
-          "columnNames": [
-            "beeper_id"
-          ],
-          "localTableName": "public.queue_entry",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.user",
-          "updateRule": "cascade"
-        },
-        "queue_entry_rider_id_foreign": {
-          "constraintName": "queue_entry_rider_id_foreign",
-          "columnNames": [
-            "rider_id"
-          ],
-          "localTableName": "public.queue_entry",
           "referencedColumnNames": [
             "id"
           ],
@@ -698,9 +581,29 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": 6,
           "mappedType": "datetime"
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'complete'",
+          "enumItems": [
+            "canceled",
+            "denied",
+            "waiting",
+            "accepted",
+            "on_the_way",
+            "here",
+            "in_progress",
+            "complete"
+          ],
+          "mappedType": "enum"
         }
       },
       "name": "beep",

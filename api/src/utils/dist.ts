@@ -1,4 +1,4 @@
-import { QueueEntry } from "../entities/QueueEntry";
+import { Beep, Status } from "../entities/Beep";
 
 export function getDistance(
   lat1: number,
@@ -26,10 +26,10 @@ function deg2rad(deg: number): number {
   return deg * (Math.PI / 180);
 }
 
-export function getPositionInQueue(queue: QueueEntry[], entry: QueueEntry) {
-  return queue.filter((q: QueueEntry) => q.start < entry.start && q.state > 0).length;
+export function getPositionInQueue(queue: Beep[], entry: Beep) {
+  return queue.filter((q) => q.start < entry.start && q.status !== Status.WAITING).length;
 }
 
-export function getQueueSize(queue: QueueEntry[]) {
-  return queue.filter(entry => entry.state > 0).length
+export function getQueueSize(queue: Beep[]) {
+  return queue.filter(entry => entry.status !== Status.WAITING).length
 }

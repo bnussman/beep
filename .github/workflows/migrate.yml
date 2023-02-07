@@ -9,8 +9,7 @@ on:
         options: 
         - staging
         - production
-      migration:
-        required: true
+
 jobs:
   migrate:
     runs-on: ubuntu-latest
@@ -28,7 +27,7 @@ jobs:
       - name: 📦 install packages
         run: pnpm i --frozen-lockfile
       - name: 💿 run migration
-        run: pnpm --filter @beep/api db:migrate --only ${{ inputs.migration }} 
+        run: pnpm --filter @beep/api db:migrate
         env:
           DB_URL: ${{ secrets.DB_URL_PUBLIC }}
           DB_USER: ${{ secrets.DB_USER }}

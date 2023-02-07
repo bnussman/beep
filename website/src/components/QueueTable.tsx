@@ -8,6 +8,7 @@ import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { client } from '../utils/Apollo';
 import { gql } from '@apollo/client';
 import { GetUser } from '../routes/admin/users/User';
+import { Status } from '../types/User';
 
 dayjs.extend(duration);
 
@@ -19,7 +20,7 @@ export const QueueSubscription = gql`
       destination
       start
       groupSize
-      state
+      status
       rider {
         id
         photo
@@ -117,8 +118,8 @@ export function QueueTable(props: Props) {
                 <Td>{entry.destination}</Td>
                 <Td>{entry.groupSize}</Td>
                 <Td>{dayjs().to(entry.start * 1000)}</Td>
-                <Td>{entry.state > 0 ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
-                <Td>{getStatus(entry.state)}</Td>
+                <Td>{entry.status !== Status.WAITING ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
+                <Td>{entry.status}</Td>
               </Tr>
             )
           })}

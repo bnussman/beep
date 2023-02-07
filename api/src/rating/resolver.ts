@@ -11,7 +11,7 @@ import { User, UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
 
 @ObjectType()
-class RatingsResponse extends Paginated(Rating) { }
+class RatingsResponse extends Paginated(Rating) {}
 
 @Resolver(Rating)
 export class RatingResolver {

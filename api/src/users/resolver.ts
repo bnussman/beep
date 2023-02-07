@@ -1,7 +1,7 @@
 import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser, isEduEmail, Upload, search } from './helpers';
-import { QueryOrder, wrap } from '@mikro-orm/core';
+import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
@@ -60,7 +60,7 @@ export class UserResolver {
   public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
     const populate = fieldsToRelations(info) as Array<keyof User>;
 
-    return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate });
+    return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
   }
 
   @Mutation(() => Boolean)

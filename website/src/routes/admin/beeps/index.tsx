@@ -4,12 +4,13 @@ import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { GetBeepsQuery } from '../../../generated/graphql';
-import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
-import { Link, useSearchParams } from 'react-router-dom';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { useSearchParams } from 'react-router-dom';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
+import { Indicator } from '../../../components/Indicator';
+import { Status } from '../../../types/User';
 
 dayjs.extend(duration);
 
@@ -23,6 +24,7 @@ export const BeepsGraphQL = gql`
         start
         end
         groupSize
+        status
         beeper {
           id
           name
@@ -40,6 +42,17 @@ export const BeepsGraphQL = gql`
     }
   }
 `;
+
+const beepStatusMap: Record<Status, string> = {
+  [Status.WAITING]: 'orange',
+  [Status.ON_THE_WAY]: 'orange',
+  [Status.ACCEPTED]: 'green',
+  [Status.IN_PROGRESS]: 'green',
+  [Status.HERE]: 'green',
+  [Status.DENIED]: 'red',
+  [Status.CANCELED]: 'red',
+  [Status.COMPLETE]: 'green',
+};
 
 export function Beeps() {
   const pageLimit = 20;
@@ -78,11 +91,12 @@ export function Beeps() {
               <Th>Rider</Th>
               <Th>Origin</Th>
               <Th>Destination</Th>
-              <Th>Group Size</Th>
-              <Th>Start Time</Th>
-              <Th>End Time</Th>
+              <Th>Group</Th>
+              <Th>Status</Th>
+              <Th>Start</Th>
+              <Th>End</Th>
               <Th>Duration</Th>
-              <Th></Th>
+              {/* <Th></Th> */}
             </Tr>
           </Thead>
           <Tbody>
@@ -93,14 +107,20 @@ export function Beeps() {
                 <Td>{entry.origin}</Td>
                 <Td>{entry.destination}</Td>
                 <Td>{entry.groupSize}</Td>
+                <Td>
+                  <HStack>
+                    <Indicator color={beepStatusMap[entry.status as Status]} />
+                    <Text textTransform="capitalize">{entry.status}</Text>
+                  </HStack>
+                </Td>
                 <Td>{dayjs().to(entry.start)}</Td>
                 <Td>{dayjs().to(entry.end)}</Td>
                 <Td>{dayjs.duration(new Date(entry.end).getTime() - new Date(entry.start).getTime()).humanize()}</Td>
-                <Td>
+                {/* <Td>
                   <Link to={entry.id}>
                     <ExternalLinkIcon />
                   </Link>
-                </Td>
+                </Td> */}
               </Tr>
             ))}
           </Tbody>

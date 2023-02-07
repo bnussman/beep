@@ -16,7 +16,7 @@ import { Logger } from "./Logger";
 
 export const cache = new InMemoryCache();
 
-const ip = "172.20.10.2";
+const ip = "localhost";
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`

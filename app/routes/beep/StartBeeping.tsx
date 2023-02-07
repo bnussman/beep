@@ -44,6 +44,7 @@ import {
   FlatList as NativeFlatList,
   InfoIcon,
 } from "native-base";
+import { Status } from "../../utils/types";
 
 let unsubscribe: any = null;
 
@@ -66,8 +67,7 @@ const GetInitialQueue = gql`
       groupSize
       origin
       destination
-      state
-      start
+      status
       rider {
         id
         name
@@ -91,8 +91,7 @@ const GetQueue = gql`
       groupSize
       origin
       destination
-      state
-      start
+      status
       rider {
         id
         name
@@ -149,9 +148,7 @@ export function StartBeepingScreen() {
   const [updateBeepSettings] =
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
 
-  const queue = data
-    ? [...data.getQueue].sort((a, b) => a.start - b.start)
-    : undefined;
+  const queue = data?.getQueue;
 
   const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
@@ -475,9 +472,10 @@ export function StartBeepingScreen() {
                 Queue
               </Heading>
               <Spacer />
-              {queue.length > 0 && queue.some((entry) => entry.state === 0) && (
-                <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
-              )}
+              {queue.length > 0 &&
+                queue.some((entry) => entry.status === Status.WAITING) && (
+                  <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
+                )}
             </HStack>
           </Pressable>
           <FlatList

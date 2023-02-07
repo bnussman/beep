@@ -1,11 +1,11 @@
 import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Authorized, Field, ObjectType } from "type-graphql";
-import { QueueEntry } from './QueueEntry';
 import { Rating } from './Rating';
 import { v4 } from "uuid";
 import { PointType } from "../location/types";
 import { Point } from "../location/resolver";
 import { Car } from "./Car";
+import { Beep } from "./Beep";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -130,9 +130,9 @@ export class User {
   })
   location?: Point;
 
-  @Field(() => [QueueEntry])
-  @OneToMany(() => QueueEntry, q => q.beeper, { orphanRemoval: true, lazy: true, eager: false })
-  queue = new Collection<QueueEntry>(this);
+  @Field(() => [Beep])
+  @OneToMany(() => Beep, q => q.beeper, { orphanRemoval: true, lazy: true, eager: false })
+  queue = new Collection<Beep>(this);
 
   @Field(() => [Rating])
   @OneToMany(() => Rating, r => r.rated, { lazy: true, eager: false })

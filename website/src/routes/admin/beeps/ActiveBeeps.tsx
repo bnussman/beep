@@ -10,6 +10,7 @@ import { Error } from '../../../components/Error';
 import { GetInProgressBeepsQuery } from '../../../generated/graphql';
 import { Indicator } from '../../../components/Indicator';
 import { getStatus } from '../../../components/QueueTable';
+import { Status } from '../../../types/User';
 
 dayjs.extend(duration);
 
@@ -22,7 +23,7 @@ export const ActiveBeepsGraphQL = gql`
         destination
         start
         groupSize
-        state
+        status
         beeper {
           id
           name
@@ -94,16 +95,16 @@ export function ActiveBeeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {beeps && (beeps?.items).map(entry => (
+            {beeps && beeps?.items?.map(entry => (
               <Tr key={entry.id}>
                 <TdUser user={entry.beeper} />
                 <TdUser user={entry.rider} />
                 <Td>{entry.origin}</Td>
                 <Td>{entry.destination}</Td>
                 <Td>{entry.groupSize}</Td>
-                <Td>{dayjs().to(entry.start * 1000)}</Td>
-                <Td>{entry.state > 0 ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
-                <Td>{getStatus(entry.state)}</Td>
+                <Td>{dayjs().to(entry.start)}</Td>
+                <Td>{entry.status !== Status.WAITING ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
+                <Td>{entry.status}</Td>
               </Tr>
             ))}
           </Tbody>
