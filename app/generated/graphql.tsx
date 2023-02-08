@@ -699,7 +699,7 @@ export type GetBeepHistoryQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepHistoryQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, start: any, end?: any | null, groupSize: number, origin: string, destination: string, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, photo?: string | null }, beeper: { __typename?: 'User', id: string, name: string, first: string, last: string, photo?: string | null } }> } };
+export type GetBeepHistoryQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, start: any, end?: any | null, groupSize: number, origin: string, destination: string, status: string, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, photo?: string | null }, beeper: { __typename?: 'User', id: string, name: string, first: string, last: string, photo?: string | null } }> } };
 
 export type GetRatingsQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1124,6 +1124,7 @@ export const GetBeepHistoryDocument = gql`
       groupSize
       origin
       destination
+      status
       rider {
         id
         name

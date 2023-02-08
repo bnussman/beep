@@ -25,6 +25,7 @@ export const GetBeepHistory = gql`
         groupSize
         origin
         destination
+        status
         rider {
           id
           name
