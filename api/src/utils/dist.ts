@@ -31,5 +31,5 @@ export function getPositionInQueue(queue: Beep[], entry: Beep) {
 }
 
 export function getQueueSize(queue: Beep[]) {
-  return queue.filter(entry => entry.status !== Status.WAITING).length
+  return queue.filter(entry => ![Status.WAITING, Status.COMPLETE, Status.CANCELED, Status.DENIED].includes(entry.status)).length
 }

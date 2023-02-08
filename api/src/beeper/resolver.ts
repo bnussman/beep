@@ -113,7 +113,7 @@ export class BeeperResolver {
     if (input.status === Status.DENIED || input.status === Status.COMPLETE) {
       pubSub.publish("Rider" + queueEntry.rider.id, null);
 
-      ctx.user.queueSize = ctx.user.queue.getItems().filter(entry => entry.status !== Status.WAITING).length;
+      ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
 
       queueEntry.end = new Date();
 
