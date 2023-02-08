@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { GetBeepsQuery } from '../generated/graphql';
 import { Pagination } from './Pagination';
-import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
 import { Loading } from './Loading';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Indicator } from './Indicator';
+import { Status } from '../types/User';
+import { beepStatusMap } from '../routes/admin/beeps';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -26,6 +29,7 @@ const Hisory = gql`
         start
         end
         groupSize
+        status
         beeper {
           id
           photo
@@ -88,12 +92,13 @@ export function BeepsTable(props: Props) {
               <Th>Origin</Th>
               <Th>Destination</Th>
               <Th>Group Size</Th>
+              <Th>Status</Th>
               <Th>Duration</Th>
               <Th>When</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getBeeps && (data.getBeeps.items).map(ride => {
+            {data?.getBeeps.items.map(ride => {
               return (
                 <Tr key={ride.id}>
                   <TdUser user={ride.beeper} />
@@ -101,6 +106,12 @@ export function BeepsTable(props: Props) {
                   <Td>{ride.origin}</Td>
                   <Td>{ride.destination}</Td>
                   <Td>{ride.groupSize}</Td>
+                  <Td>
+                    <HStack>
+                      <Indicator color={beepStatusMap[ride.status as Status]} />
+                      <Text textTransform="capitalize">{ride.status.replaceAll("_", " ")}</Text>
+                    </HStack>
+                  </Td>
                   <Td>{dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize()}</Td>
                   <Td>{dayjs().to(ride.end)}</Td>
                 </Tr>

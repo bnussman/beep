@@ -43,7 +43,7 @@ export const BeepsGraphQL = gql`
   }
 `;
 
-const beepStatusMap: Record<Status, string> = {
+export const beepStatusMap: Record<Status, string> = {
   [Status.WAITING]: 'orange',
   [Status.ON_THE_WAY]: 'orange',
   [Status.ACCEPTED]: 'green',
