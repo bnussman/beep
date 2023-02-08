@@ -110,7 +110,7 @@ export function Beeps() {
                 <Td>
                   <HStack>
                     <Indicator color={beepStatusMap[entry.status as Status]} />
-                    <Text textTransform="capitalize">{entry.status}</Text>
+                    <Text textTransform="capitalize">{entry.status.replaceAll("_", " ")}</Text>
                   </HStack>
                 </Td>
                 <Td>{dayjs().to(entry.start)}</Td>

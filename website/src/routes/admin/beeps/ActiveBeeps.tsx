@@ -104,7 +104,7 @@ export function ActiveBeeps() {
                 <Td>{entry.groupSize}</Td>
                 <Td>{dayjs().to(entry.start)}</Td>
                 <Td>{entry.status !== Status.WAITING ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
-                <Td>{entry.status}</Td>
+                <Td>{entry.status.replaceAll("_", " ")}</Td>
               </Tr>
             ))}
           </Tbody>
