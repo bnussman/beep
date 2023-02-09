@@ -31,6 +31,9 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 let unsubscribe: (() => void) | null = null;
 
@@ -156,9 +159,11 @@ function App2() {
 
 function App() {
   return (
-    <ApolloProvider client={client}>
-      <App2 />
-    </ApolloProvider>
+    <QueryClientProvider client={queryClient}>
+      <ApolloProvider client={client}>
+        <App2 />
+      </ApolloProvider>
+    </QueryClientProvider>
   );
 }
 

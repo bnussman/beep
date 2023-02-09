@@ -25,4 +25,5 @@ export type MainNavParamList = {
   "Sign Up": any;
   Cars: any;
   "Add Car": any;
+  Changelog: undefined;
 };
