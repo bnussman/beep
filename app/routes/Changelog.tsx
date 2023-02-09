@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Divider, FlatList, Pressable, Spinner, Text } from "native-base";
 import { Container } from "../components/Container";
 import { openURL } from "expo-linking";
+import { useRef, useState } from "react";
 
 export interface Author {
   name: string;
@@ -98,15 +99,23 @@ export interface Commit {
 }
 
 export function Changelog() {
-  const { data, isLoading, error } = useQuery<Commit[]>({
-    queryFn: async () => {
-      const response = await fetch(
-        "https://api.github.com/repos/bnussman/beep/commits?sha=production"
-      );
-      return await response.json();
-    },
-    queryKey: ["github"],
-  });
+  const ref = useRef(1);
+  const { data, isLoading, error, fetchNextPage, hasNextPage } =
+    useInfiniteQuery<Commit[]>({
+      queryFn: async () => {
+        const response = await fetch(
+          `https://api.github.com/repos/bnussman/beep/commits?sha=production&page=${ref.current}`
+        );
+        return await response.json();
+      },
+      getNextPageParam: (lastPage, pages) => {
+        if (lastPage[lastPage.length - 1].parents.length > 0) {
+          return pages.length + 1;
+        }
+        return null;
+      },
+      queryKey: ["github"],
+    });
 
   if (isLoading) {
     return (
@@ -123,9 +132,10 @@ export function Changelog() {
   return (
     <Container>
       <FlatList
-        data={data}
+        data={data?.pages.flatMap((page) => page)}
         ItemSeparatorComponent={Divider}
         keyExtractor={(item) => item.sha}
+        onEndReached={hasNextPage ? () => fetchNextPage() : undefined}
         renderItem={({ item }) => (
           <Pressable onPress={() => openURL(item.html_url)} p={2}>
             <Text>{item.commit.message}</Text>

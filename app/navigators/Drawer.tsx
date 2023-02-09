@@ -64,6 +64,8 @@ const getIcon = (screenName: string) => {
       return "account-star";
     case "My Cars":
       return "car";
+    case "Changelog":
+      return "playlist-plus";
     default:
       return "car";
   }
