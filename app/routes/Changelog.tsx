@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { Box, Divider, FlatList, Spinner } from "native-base";
+import { Divider, FlatList, Pressable, Spinner, Text } from "native-base";
 import { Container } from "../components/Container";
+import { openURL } from "expo-linking";
 
 export interface Author {
   name: string;
@@ -100,7 +101,7 @@ export function Changelog() {
   const { data, isLoading, error } = useQuery<Commit[]>({
     queryFn: async () => {
       const response = await fetch(
-        "https://api.github.com/repos/bnussman/beep/commits"
+        "https://api.github.com/repos/bnussman/beep/commits?sha=production"
       );
       return await response.json();
     },
@@ -124,7 +125,12 @@ export function Changelog() {
       <FlatList
         data={data}
         ItemSeparatorComponent={Divider}
-        renderItem={({ item }) => <Box p={2}>{item.commit.message}</Box>}
+        keyExtractor={(item) => item.sha}
+        renderItem={({ item }) => (
+          <Pressable onPress={() => openURL(item.html_url)} p={2}>
+            <Text>{item.commit.message}</Text>
+          </Pressable>
+        )}
       />
     </Container>
   );
