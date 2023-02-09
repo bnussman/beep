@@ -55,7 +55,7 @@ export class BeeperResolver {
         throw new Error("You need to add a car to your account to beep.");
       }
     } else {
-      const queueSize = await ctx.em.count(Beep, {}, { filters: ['inProgress'] });
+      const queueSize = await ctx.em.count(Beep, { beeper: ctx.user.id }, { filters: ['inProgress'] });
 
       if (queueSize > 0) {
         throw new Error("You can't stop beeping when you still have riders in your queue");
