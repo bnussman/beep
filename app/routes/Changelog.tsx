@@ -1,13 +1,16 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { Card } from "../components/Card";
 import { Container } from "../components/Container";
 import { openURL } from "expo-linking";
 import { RefreshControl } from "react-native";
 import {
+  Avatar,
   Center,
-  Divider,
   FlatList,
-  Pressable,
+  Heading,
+  HStack,
   Spinner,
+  Stack,
   Text,
   useColorMode,
 } from "native-base";
@@ -162,15 +165,29 @@ export function Changelog() {
     <Container>
       <FlatList
         data={data?.pages.flatMap((page) => page)}
-        ItemSeparatorComponent={Divider}
         keyExtractor={(item) => item.sha}
         onEndReached={hasNextPage ? () => fetchNextPage() : undefined}
         ListFooterComponent={renderFooter()}
         onEndReachedThreshold={0.1}
         renderItem={({ item }) => (
-          <Pressable onPress={() => openURL(item.html_url)} p={2}>
+          <Card mt={2} mx={1} pressable onPress={() => openURL(item.html_url)}>
+            <HStack space={2} mb={2} alignItems="center">
+              <Avatar source={{ uri: item.committer.avatar_url }} />
+              <Stack>
+                <Heading
+                  fontSize="xl"
+                  fontWeight="extrabold"
+                  letterSpacing="sm"
+                >
+                  {item.commit.committer.name}
+                </Heading>
+                <Text color="gray.400">
+                  {new Date(item.commit.committer.date).toLocaleString()}
+                </Text>
+              </Stack>
+            </HStack>
             <Text>{item.commit.message}</Text>
-          </Pressable>
+          </Card>
         )}
         refreshControl={
           <RefreshControl
