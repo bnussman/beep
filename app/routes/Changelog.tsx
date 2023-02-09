@@ -1,8 +1,16 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { Divider, FlatList, Pressable, Spinner, Text } from "native-base";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Container } from "../components/Container";
 import { openURL } from "expo-linking";
-import { useRef, useState } from "react";
+import { RefreshControl } from "react-native";
+import {
+  Center,
+  Divider,
+  FlatList,
+  Pressable,
+  Spinner,
+  Text,
+  useColorMode,
+} from "native-base";
 
 export interface Author {
   name: string;
@@ -99,23 +107,44 @@ export interface Commit {
 }
 
 export function Changelog() {
-  const ref = useRef(1);
-  const { data, isLoading, error, fetchNextPage, hasNextPage } =
-    useInfiniteQuery<Commit[]>({
-      queryFn: async () => {
-        const response = await fetch(
-          `https://api.github.com/repos/bnussman/beep/commits?sha=production&page=${ref.current}`
-        );
-        return await response.json();
-      },
-      getNextPageParam: (lastPage, pages) => {
-        if (lastPage[lastPage.length - 1].parents.length > 0) {
-          return pages.length + 1;
-        }
-        return null;
-      },
-      queryKey: ["github"],
-    });
+  const { colorMode } = useColorMode();
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isRefetching,
+    isFetchingNextPage,
+    refetch,
+  } = useInfiniteQuery<Commit[]>({
+    queryFn: async ({ pageParam }) => {
+      const response = await fetch(
+        `https://api.github.com/repos/bnussman/beep/commits?sha=production&page=${
+          pageParam ?? 1
+        }`
+      );
+      return await response.json();
+    },
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage[lastPage.length - 1].parents.length > 0) {
+        return pages.length + 1;
+      }
+      return null;
+    },
+    queryKey: ["github"],
+  });
+
+  const renderFooter = () => {
+    if (isFetchingNextPage) {
+      return (
+        <Center>
+          <Spinner mt={4} mb={9} color="gray.400" />
+        </Center>
+      );
+    }
+    return null;
+  };
 
   if (isLoading) {
     return (
@@ -136,11 +165,20 @@ export function Changelog() {
         ItemSeparatorComponent={Divider}
         keyExtractor={(item) => item.sha}
         onEndReached={hasNextPage ? () => fetchNextPage() : undefined}
+        ListFooterComponent={renderFooter()}
+        onEndReachedThreshold={0.1}
         renderItem={({ item }) => (
           <Pressable onPress={() => openURL(item.html_url)} p={2}>
             <Text>{item.commit.message}</Text>
           </Pressable>
         )}
+        refreshControl={
+          <RefreshControl
+            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+            refreshing={isRefetching}
+            onRefresh={refetch}
+          />
+        }
       />
     </Container>
   );
