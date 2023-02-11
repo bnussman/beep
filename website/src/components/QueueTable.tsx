@@ -117,7 +117,7 @@ export function QueueTable(props: Props) {
                 <Td>{entry.origin}</Td>
                 <Td>{entry.destination}</Td>
                 <Td>{entry.groupSize}</Td>
-                <Td>{dayjs().to(entry.start * 1000)}</Td>
+                <Td>{dayjs().to(entry.start)}</Td>
                 <Td>{entry.status !== Status.WAITING ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
                 <Td>{entry.status}</Td>
               </Tr>
