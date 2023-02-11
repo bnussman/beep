@@ -23,6 +23,7 @@ export class RatingResolver {
 
     const beep = await ctx.em.findOne(Beep, {
         $and: [
+          { id: input.beepId },
           { status: { $ne: Status.DENIED } },
           { status: { $ne: Status.WAITING } }
         ]
