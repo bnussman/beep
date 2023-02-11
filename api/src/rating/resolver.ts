@@ -2,7 +2,7 @@ import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { RatingInput } from './args';
-import { Beep } from '../entities/Beep';
+import { Beep, Status } from '../entities/Beep';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { Rating } from '../entities/Rating';
 import { QueryOrder } from '@mikro-orm/core';
@@ -21,9 +21,16 @@ export class RatingResolver {
   public async rateUser(@Ctx() ctx: Context, @Arg('input') input: RatingInput): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, input.userId);
 
-    const beep = input.beepId ? ctx.em.getReference(Beep, input.beepId) : undefined;
+    const beep = await ctx.em.findOne(Beep, {
+        $and: [
+          { status: { $ne: Status.DENIED } },
+          { status: { $ne: Status.WAITING } }
+        ]
+    });
 
-    if (!beep) throw new Error("You can only leave a rating when a beep is associated.");
+    if (!beep) {
+      throw new Error("You can only leave a rating after you have been accepted");
+    }
 
     const rating = new Rating(ctx.user, user, input.stars, beep, input.message);
 
