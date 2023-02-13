@@ -136,19 +136,6 @@ export function Beepers() {
     return <Error error={error} />;
   }
 
-  if (beepers?.length === 0) {
-    return (
-      <Box>
-        <Heading>Beepers</Heading>
-        <Center>
-          <Heading size="lg" mt={4}>
-            Nobody is beeping right now
-          </Heading>
-        </Center>
-      </Box>
-    );
-  }
-
   return (
     <Box>
       <HStack alignItems="center">
