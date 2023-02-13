@@ -85,7 +85,7 @@ export function QueuePreview({ userId }: Props) {
 
   return (
     <Box>
-      {queue && queue.map((entry) => (
+      {queue?.map((entry) => (
         <HStack key={entry.id}>
           <Link to={`/admin/users/${entry.rider.id}`}>
             <Avatar src={entry.rider.photo || ''} size="xs" />

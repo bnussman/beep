@@ -96,31 +96,25 @@ export function Beeps() {
               <Th>Start</Th>
               <Th>End</Th>
               <Th>Duration</Th>
-              {/* <Th></Th> */}
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getBeeps && (data.getBeeps.items).map(entry => (
-              <Tr key={entry.id}>
-                <TdUser user={entry.beeper} />
-                <TdUser user={entry.rider} />
-                <Td>{entry.origin}</Td>
-                <Td>{entry.destination}</Td>
-                <Td>{entry.groupSize}</Td>
+            {data?.getBeeps.items.map((beep) => (
+              <Tr key={beep.id}>
+                <TdUser user={beep.beeper} />
+                <TdUser user={beep.rider} />
+                <Td>{beep.origin}</Td>
+                <Td>{beep.destination}</Td>
+                <Td>{beep.groupSize}</Td>
                 <Td>
                   <HStack>
-                    <Indicator color={beepStatusMap[entry.status as Status]} />
-                    <Text textTransform="capitalize">{entry.status.replaceAll("_", " ")}</Text>
+                    <Indicator color={beepStatusMap[beep.status as Status]} />
+                    <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
                   </HStack>
                 </Td>
-                <Td>{dayjs().to(entry.start)}</Td>
-                <Td>{dayjs().to(entry.end)}</Td>
-                <Td>{dayjs.duration(new Date(entry.end).getTime() - new Date(entry.start).getTime()).humanize()}</Td>
-                {/* <Td>
-                  <Link to={entry.id}>
-                    <ExternalLinkIcon />
-                  </Link>
-                </Td> */}
+                <Td>{dayjs().to(beep.start)}</Td>
+                <Td>{beep.end ? dayjs().to(beep.end) : "N/A"}</Td>
+                <Td>{beep.end ? dayjs.duration(new Date(beep.end).getTime() - new Date(beep.start).getTime()).humanize() : "N/A"}</Td>
               </Tr>
             ))}
           </Tbody>

@@ -25,10 +25,10 @@
     "mapbox-gl": "^2.12.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-google-charts": "^4.0.0",
     "react-hook-form": "^7.43.1",
     "react-map-gl": "^7.0.21",
-    "react-router-dom": "^6.8.1"
+    "react-router-dom": "^6.8.1",
+    "recharts": "^2.4.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^3.0.0",

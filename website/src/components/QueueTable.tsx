@@ -4,11 +4,12 @@ import duration from 'dayjs/plugin/duration';
 import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
 import { GetUserQuery } from '../generated/graphql';
-import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { client } from '../utils/Apollo';
 import { gql } from '@apollo/client';
 import { GetUser } from '../routes/admin/users/User';
 import { Status } from '../types/User';
+import { beepStatusMap } from '../routes/admin/beeps';
 
 dayjs.extend(duration);
 
@@ -32,23 +33,6 @@ export const QueueSubscription = gql`
     }
   }
 `;
-
-export function getStatus(value: number): string {
-  switch (value) {
-    case 0:
-      return "Waiting...";
-    case 1:
-      return "Accepted";
-    case 2:
-      return "Beeper is on the way";
-    case 3:
-      return "Beeper is here";
-    case 4:
-      return "Getting Beeped";
-    default:
-      return "yikes";
-  }
-}
 
 interface Props {
   user: GetUserQuery['getUser'];
@@ -105,24 +89,25 @@ export function QueueTable(props: Props) {
             <Th>Destination</Th>
             <Th>Group Size</Th>
             <Th>Start Time</Th>
-            <Th>Is Accepted?</Th>
             <Th>Status</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {user.queue && user.queue.map(entry => {
-            return (
-              <Tr key={entry.id}>
-                <TdUser user={entry.rider} />
-                <Td>{entry.origin}</Td>
-                <Td>{entry.destination}</Td>
-                <Td>{entry.groupSize}</Td>
-                <Td>{dayjs().to(entry.start)}</Td>
-                <Td>{entry.status !== Status.WAITING ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
-                <Td>{entry.status}</Td>
-              </Tr>
-            )
-          })}
+          {user.queue.map((beep) => (
+            <Tr key={beep.id}>
+              <TdUser user={beep.rider} />
+              <Td>{beep.origin}</Td>
+              <Td>{beep.destination}</Td>
+              <Td>{beep.groupSize}</Td>
+              <Td>{dayjs().to(beep.start)}</Td>
+              <Td>
+                <HStack>
+                  <Indicator color={beepStatusMap[beep.status as Status]} />
+                  <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
+                </HStack>
+              </Td>
+            </Tr>
+          ))}
         </Tbody>
       </Table>
     </Box>

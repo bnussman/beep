@@ -1,8 +1,8 @@
 import React from "react";
-import { Box, Center, Heading, Spinner, Table, Tbody, Td, Th, Thead, Tr, useColorMode } from "@chakra-ui/react";
+import { Badge, Box, Center, Heading, HStack, Spinner, Table, Tbody, Td, Th, Thead, Tr, useColorMode, Text } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import { GetUsersPerDomainQuery } from "../../generated/graphql";
-import Chart from "react-google-charts";
+import { Pie, PieChart, ResponsiveContainer } from "recharts";
 
 const UsersByDomainQuery = gql`
   query GetUsersPerDomain {
@@ -12,6 +12,8 @@ const UsersByDomainQuery = gql`
     }
   }
 `;
+
+
 
 export function Dashboard() {
   const { data, loading } = useQuery<GetUsersPerDomainQuery>(UsersByDomainQuery);
@@ -32,16 +34,17 @@ export function Dashboard() {
   return (
     <Box>
       <Heading>Dashboard</Heading>
-      <Chart
-        chartType="PieChart"
-        data={[["School", "Count"], ...usersPerDomain.map(({ domain, count }) => ([domain, count]))]}
-        options={{
-          backgroundColor: "transparent",
-          legend: { textStyle: { color: fontColor } }
-        }}
-        width={"100%"}
-        height={"600px"}
-      />
+      <ResponsiveContainer width="100%" height={600}>
+        <PieChart width={400} height={600}>
+          <Pie
+            dataKey="value"
+            data={usersPerDomain.map((item, index) => ({ name: item.domain, value: item.count, fill: '#'+(Math.random()*0xFFFFFF<<0).toString(16) }))}
+            label={(data) => `${data.name} (${data.value})`}
+            fill="#8884d8"
+            // color={colorMode === 'dark' ? 'white' : undefined}
+          />
+        </PieChart>
+      </ResponsiveContainer>
       <Table>
         <Thead>
           <Tr>
