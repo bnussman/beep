@@ -49,7 +49,7 @@ importers:
       graphql-subscriptions: ^2.0.0
       graphql-upload: 13.0.0
       graphql-ws: ^5.11.3
-      ioredis: ^5.3.0
+      ioredis: ^5.3.1
       js-sha256: ^0.9.0
       nodemailer: ^6.9.1
       nodemon: ^2.0.20
@@ -81,7 +81,7 @@ importers:
       graphql-subscriptions: 2.0.0_graphql@16.6.0
       graphql-upload: 13.0.0_graphql@16.6.0
       graphql-ws: 5.11.3_graphql@16.6.0
-      ioredis: 5.3.0
+      ioredis: 5.3.1
       js-sha256: 0.9.0
       nodemailer: 6.9.1
       reflect-metadata: 0.1.13
@@ -125,7 +125,7 @@ importers:
       '@react-navigation/native': ^6.1.3
       '@react-navigation/stack': ^6.3.12
       '@sentry/react-native': ^4.14.0
-      '@tanstack/react-query': ^4.24.4
+      '@tanstack/react-query': ^4.24.6
       '@types/apollo-upload-client': ^17.0.2
       '@types/react': ~18.0.28
       '@types/react-dom': ~18.0.10
@@ -183,7 +183,7 @@ importers:
       '@react-navigation/native': 6.1.3_4abxuapkhmo52mhwaeeet7psu4
       '@react-navigation/stack': 6.3.12_fzvkmumkmiztydbrtnofdtrlum
       '@sentry/react-native': 4.14.0_4abxuapkhmo52mhwaeeet7psu4
-      '@tanstack/react-query': 4.24.4_5ltrbq4k3th7ucjbxabykyadgy
+      '@tanstack/react-query': 4.24.6_5ltrbq4k3th7ucjbxabykyadgy
       apollo-upload-client: 17.0.0_j3rhk27qsxtoox537gn7bjecv4
       car-info: 0.1.2
       expo: 47.0.13_@babel+core@7.20.12
@@ -7013,12 +7013,12 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@tanstack/query-core/4.24.4:
-    resolution: {integrity: sha512-9dqjv9eeB6VHN7lD3cLo16ZAjfjCsdXetSAD5+VyKqLUvcKTL0CklGQRJu+bWzdrS69R6Ea4UZo8obHYZnG6aA==}
+  /@tanstack/query-core/4.24.6:
+    resolution: {integrity: sha512-Tfru6YTDTCpX7dKVwHp/sosw/dNjEdzrncduUjIkQxn7n7u+74HT2ZrGtwwrU6Orws4x7zp3FKRqBPWVVhpx9w==}
     dev: false
 
-  /@tanstack/react-query/4.24.4_5ltrbq4k3th7ucjbxabykyadgy:
-    resolution: {integrity: sha512-RpaS/3T/a3pHuZJbIAzAYRu+1nkp+/enr9hfRXDS/mojwx567UiMksoqW4wUFWlwIvWTXyhot2nbIipTKEg55Q==}
+  /@tanstack/react-query/4.24.6_5ltrbq4k3th7ucjbxabykyadgy:
+    resolution: {integrity: sha512-pbJUVZCS4pcXS0kZiY+mVJ01ude0GrH5OXT2g9whcqSveRG/YVup/XdA9NdRpSMGkP2HxDRxxRNsTXkniWeIIA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -7029,7 +7029,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@tanstack/query-core': 4.24.4
+      '@tanstack/query-core': 4.24.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-native: 0.71.2_2exiyaescjxorpwwmy4ejghgte
@@ -10872,7 +10872,7 @@ packages:
     dependencies:
       graphql-subscriptions: 2.0.0_graphql@16.6.0
     optionalDependencies:
-      ioredis: 5.3.0
+      ioredis: 5.3.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -11275,8 +11275,8 @@ packages:
     dependencies:
       loose-envify: 1.4.0
 
-  /ioredis/5.3.0:
-    resolution: {integrity: sha512-Id9jKHhsILuIZpHc61QkagfVdUj2Rag5GzG1TGEvRNeM7dtTOjICgjC+tvqYxi//PuX2wjQ+Xjva2ONBuf92Pw==}
+  /ioredis/5.3.1:
+    resolution: {integrity: sha512-C+IBcMysM6v52pTLItYMeV4Hz7uriGtoJdz7SSBDX6u+zwSYGirLdQh3L7t/OItWITcw3gTFMjJReYUwS4zihg==}
     engines: {node: '>=12.22.0'}
     dependencies:
       '@ioredis/commands': 1.2.0
