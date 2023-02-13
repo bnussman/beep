@@ -41,7 +41,6 @@ export function Dashboard() {
             data={usersPerDomain.map((item, index) => ({ name: item.domain, value: item.count, fill: '#'+(Math.random()*0xFFFFFF<<0).toString(16) }))}
             label={(data) => `${data.name} (${data.value})`}
             fill="#8884d8"
-            // color={colorMode === 'dark' ? 'white' : undefined}
           />
         </PieChart>
       </ResponsiveContainer>

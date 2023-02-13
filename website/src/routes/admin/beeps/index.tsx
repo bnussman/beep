@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
@@ -59,12 +59,24 @@ export function Beeps() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
 
-  const { data, loading, error } = useQuery<GetBeepsQuery>(BeepsGraphQL, {
+  const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetBeepsQuery>(BeepsGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
     }
   });
+
+  useEffect(() => {
+    startPolling(3000);
+
+    if (data) {
+      refetch();
+    }
+    
+    return () => {
+      stopPolling();
+    }
+  }, []);
 
   const setCurrentPage = (page: number) => {
     setSearchParams({ page: String(page) });

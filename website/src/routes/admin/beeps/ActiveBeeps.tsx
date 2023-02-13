@@ -3,14 +3,15 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
-import { Badge, Box, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Badge, Box, Flex, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { GetInProgressBeepsQuery } from '../../../generated/graphql';
 import { Indicator } from '../../../components/Indicator';
-import { getStatus } from '../../../components/QueueTable';
 import { Status } from '../../../types/User';
+import { beepStatusMap } from '.';
+import { useSearchParams } from 'react-router-dom';
 
 dayjs.extend(duration);
 
@@ -44,24 +45,32 @@ export const ActiveBeepsGraphQL = gql`
 
 export function ActiveBeeps() {
   const pageLimit = 25;
-  const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetInProgressBeepsQuery>(ActiveBeepsGraphQL, { variables: { offset: 0, show: pageLimit } });
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+  const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetInProgressBeepsQuery>(ActiveBeepsGraphQL, {
+    variables: {
+      offset: (page - 1) * pageLimit,
+      show: pageLimit
+    }
+  });
 
   useEffect(() => {
-    startPolling(4000);
+    startPolling(2000);
+    if (data) {
+      refetch();
+    }
     return () => {
       stopPolling();
     };
   }, []);
 
-  async function fetchBeeps(page: number) {
-    refetch({
-      offset: page,
-      show: pageLimit
-    })
-  }
+  const setCurrentPage = (page: number) => {
+    setSearchParams({ page: String(page) });
+  };
 
-  if (error) return <Error error={error} />;
+  if (error) {
+    return <Error error={error} />;
+  }
 
   const beeps = data?.getInProgressBeeps;
 
@@ -76,9 +85,8 @@ export function ActiveBeeps() {
       <Pagination
         resultCount={beeps?.count}
         limit={pageLimit}
-        currentPage={currentPage}
+        currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchBeeps}
       />
       <Box overflowX="auto">
         <Table>
@@ -90,21 +98,24 @@ export function ActiveBeeps() {
               <Th>Destination</Th>
               <Th>Group Size</Th>
               <Th>Start Time</Th>
-              <Th>Is Accepted</Th>
               <Th>Status</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {beeps && beeps?.items?.map(entry => (
-              <Tr key={entry.id}>
-                <TdUser user={entry.beeper} />
-                <TdUser user={entry.rider} />
-                <Td>{entry.origin}</Td>
-                <Td>{entry.destination}</Td>
-                <Td>{entry.groupSize}</Td>
-                <Td>{dayjs().to(entry.start)}</Td>
-                <Td>{entry.status !== Status.WAITING ? <Indicator color='green' /> : <Indicator color='red' />}</Td>
-                <Td>{entry.status.replaceAll("_", " ")}</Td>
+            {beeps?.items.map((beep) => (
+              <Tr key={beep.id}>
+                <TdUser user={beep.beeper} />
+                <TdUser user={beep.rider} />
+                <Td>{beep.origin}</Td>
+                <Td>{beep.destination}</Td>
+                <Td>{beep.groupSize}</Td>
+                <Td>{dayjs().to(beep.start)}</Td>
+                <Td>
+                  <HStack>
+                    <Indicator color={beepStatusMap[beep.status as Status]} />
+                    <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
+                  </HStack>
+                </Td>
               </Tr>
             ))}
           </Tbody>
@@ -114,9 +125,8 @@ export function ActiveBeeps() {
       <Pagination
         resultCount={beeps?.count}
         limit={pageLimit}
-        currentPage={currentPage}
+        currentPage={page}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchBeeps}
       />
     </Box>
   );
