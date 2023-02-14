@@ -170,10 +170,16 @@ function App() {
       links: [
         httpBatchLink({
           url: "http://localhost:3001/trpc",
-          headers() {
-            return {
-              authorization: "",
-            };
+          async headers() {
+            const tokens = await AsyncStorage.getItem("auth");
+            if (tokens) {
+              const auth = JSON.parse(tokens);
+              const token = auth?.tokens?.id as string | undefined;
+              if (token) {
+                return { Authorization: `Bearer ${token}` };
+              }
+            }
+            return {};
           },
         }),
       ],

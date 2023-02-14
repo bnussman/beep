@@ -29,14 +29,14 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 
-const t = initTRPC.create();
+const t = initTRPC.context<APIContext>().create();
 
 const router = t.router;
 
 const userRouter = router({
   getUser: t.procedure
     .query(({ input, ctx }) => {
-      return "hey"
+      return ctx.user;
     }),
 });
 
@@ -116,7 +116,31 @@ async function start() {
     cors<cors.CorsRequest>(),
     trpcExpress.createExpressMiddleware({
       router: appRouter,
-      // createContext,
+      async createContext(options) {
+        const em = orm.em.fork();
+
+        const context = { em };
+
+        const bearer = options.req.get("Authorization")?.split(" ")[1];
+
+        if (!bearer) {
+          return context as APIContext;
+        }
+
+        const token = await em.findOne(
+          TokenEntry,
+          bearer,
+          {
+            populate: ['user'],
+          }
+        );
+
+        if (token?.user) {
+          return { user: token.user, token, em };
+        }
+
+        return context as APIContext;
+      },
     }),
   );
 
