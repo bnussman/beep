@@ -113,6 +113,7 @@ async function start() {
 
   app.use(
     '/trpc',
+    cors<cors.CorsRequest>(),
     trpcExpress.createExpressMiddleware({
       router: appRouter,
       // createContext,
