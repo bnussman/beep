@@ -26,6 +26,25 @@ import { getContext, onConnect } from "./utils/context";
 import { formatError } from "./utils/errors";
 import { Context as APIContext } from "./utils/context";
 import { expressMiddleware } from '@apollo/server/express4';
+import { initTRPC } from '@trpc/server';
+import * as trpcExpress from '@trpc/server/adapters/express';
+
+const t = initTRPC.create();
+
+const router = t.router;
+
+const userRouter = router({
+  getUser: t.procedure
+    .query(({ input, ctx }) => {
+      return "hey"
+    }),
+});
+
+const appRouter = router({
+  user: userRouter,
+});
+
+export type AppRouter = typeof appRouter;
 
 async function start() {
   const orm = await MikroORM.init(config);
@@ -92,11 +111,21 @@ async function start() {
     }),
   );
 
+  app.use(
+    '/trpc',
+    trpcExpress.createExpressMiddleware({
+      router: appRouter,
+      // createContext,
+    }),
+  );
+
   app.use(RealSentry.Handlers.errorHandler());
 
   await new Promise<void>(resolve => httpServer.listen({ port: 3001 }, resolve));
+  
 
   console.info(`🚕 Beep GraphQL Server Started at \x1b[36mhttp://0.0.0.0:3001/graphql\x1b[0m`);
 }
+
 
 start();

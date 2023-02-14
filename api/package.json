@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "GraphQL API for the Beep App",
   "main": "build/index.js",
+  "types": "./src/index.ts",
   "private": true,
   "scripts": {
     "build": "tsc",
@@ -35,6 +36,7 @@
     "@sentry/integrations": "^7.37.1",
     "@sentry/node": "^7.37.1",
     "@sentry/tracing": "^7.37.1",
+    "@trpc/server": "^10.11.1",
     "aws-sdk": "^2.1313.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
