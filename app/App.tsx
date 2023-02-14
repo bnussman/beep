@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
 import * as Notifications from "expo-notifications";
@@ -32,6 +32,9 @@ import {
 } from "@react-navigation/native";
 import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { trpc } from "./utils/trpc";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { httpBatchLink } from "@trpc/client";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +58,10 @@ function Beep() {
       updatePushToken();
     },
   });
+
+  const q = trpc.user.getUser.useQuery();
+
+  console.log(q);
 
   const user = data?.getUser;
 
@@ -158,12 +165,29 @@ function App2() {
 }
 
 function App() {
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: "http://localhost:3001/trpc",
+          headers() {
+            return {
+              authorization: "",
+            };
+          },
+        }),
+      ],
+    })
+  );
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ApolloProvider client={client}>
-        <App2 />
-      </ApolloProvider>
-    </QueryClientProvider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ApolloProvider client={client}>
+          <App2 />
+        </ApolloProvider>
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }
 

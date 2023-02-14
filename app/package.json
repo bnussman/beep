@@ -12,8 +12,8 @@
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@beep/api": "*",
     "@apollo/client": "^3.7.7",
+    "@beep/api": "*",
     "@expo/vector-icons": "^13.0.0",
     "@gorhom/bottom-sheet": "^4.4.5",
     "@react-native-async-storage/async-storage": "~1.17.11",
@@ -22,6 +22,7 @@
     "@react-navigation/stack": "^6.3.12",
     "@sentry/react-native": "^4.14.0",
     "@tanstack/react-query": "^4.24.6",
+    "@trpc/client": "^10.11.1",
     "@trpc/react-query": "^10.11.1",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.2",
