@@ -1,11 +1,12 @@
 import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
-import { Authorized, Field, ObjectType } from "type-graphql";
+import { Authorized, Field, ObjectType, UseMiddleware } from "type-graphql";
 import { Rating } from './Rating';
 import { v4 } from "uuid";
 import { PointType } from "../location/types";
 import { Point } from "../location/resolver";
 import { Car } from "./Car";
 import { Beep } from "./Beep";
+import { MustBeInAcceptedBeep } from "../utils/decorators";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -47,10 +48,12 @@ export class User {
   @Field({ nullable: true })
   @Property()
   @Unique()
+  @UseMiddleware(MustBeInAcceptedBeep)
   email!: string;
 
   @Field({ nullable: true })
   @Property()
+  @UseMiddleware(MustBeInAcceptedBeep)
   phone!: string;
 
   @Field({ nullable: true })
@@ -122,6 +125,7 @@ export class User {
     return `${this.first} ${this.last}`;
   }
 
+  @UseMiddleware(MustBeInAcceptedBeep)
   @Field({ nullable: true })
   @Property({
     type: PointType,
@@ -140,6 +144,7 @@ export class User {
 
   @Field(() => [Car])
   @OneToMany(() => Car, r => r.user, { lazy: true, eager: false, orphanRemoval: true })
+  @UseMiddleware(MustBeInAcceptedBeep)
   cars = new Collection<Car>(this);
 
   @Field({ nullable: true })
