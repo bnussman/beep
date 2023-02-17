@@ -13,12 +13,17 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
     throw new Error("You can only use this middleware with the the User entity");
   }
 
+  // User is not authenticated so trust that our main auth handler
+  if (!context.user) {
+    return await next();
+  }
+
   // User is getting their own information, so just resolve
   if (user.id === context.user.id) {
     return await next();
   }
 
-  console.log(`making sure ${context.user.name()} can see ${user.name()}'s ${info.fieldName}`)
+  // console.log(`making sure ${context.user.name()} can see ${user.name()}'s ${info.fieldName}`)
 
   const beep = await context.em.findOne(
     Beep,
@@ -27,7 +32,12 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
         { rider: { id: context.user.id } },
         { beeper: { id: context.user.id } }
       ],
-      status: Status.ACCEPTED
+      $and: [
+        { status: { $ne: Status.DENIED } },
+        { status: { $ne: Status.COMPLETE } },
+        { status: { $ne: Status.CANCELED } },
+        { status: { $ne: Status.WAITING } },
+      ]
     },
     {
       filters: ['inProgress'],
@@ -35,9 +45,14 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
     }
   );
 
+  // console.log(beep)
+
   if (!beep) {
+    console.log(`${context.user.name()} did NOT have permission to see ${user.first}'s ${info.fieldName}`)
     return null;
   }
+
+  console.log(`${context.user.name()} had permission to see ${user.first}'s ${info.fieldName}`)
 
   return await next();
 };

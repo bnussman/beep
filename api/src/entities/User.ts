@@ -142,7 +142,7 @@ export class User {
   @OneToMany(() => Rating, r => r.rated, { lazy: true, eager: false })
   ratings = new Collection<Rating>(this);
 
-  @Field(() => [Car])
+  @Field(() => [Car], { nullable: true })
   @OneToMany(() => Car, r => r.user, { lazy: true, eager: false, orphanRemoval: true })
   @UseMiddleware(MustBeInAcceptedBeep)
   cars = new Collection<Car>(this);
