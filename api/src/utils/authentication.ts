@@ -1,8 +1,6 @@
 import { UserRole } from "../entities/User";
-import { AuthChecker, MiddlewareFn } from "type-graphql";
+import { AuthChecker } from "type-graphql";
 import { Context } from "../utils/context";
-import * as Sentry from '@sentry/node';
-import { Beep } from "../entities/Beep";
 
 export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
   const { user } = context;

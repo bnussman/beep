@@ -1,17 +1,22 @@
 import * as Sentry from '@sentry/node';
 import { Beep, Status } from "../entities/Beep";
 import { QueryOrder } from "@mikro-orm/core";
-import { User } from "../entities/User";
+import { User, UserRole } from "../entities/User";
 import { MiddlewareFn } from "type-graphql";
 import { Context } from "./context";
 
 export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, info, root }, next) => {
-  const user = root as User;
-
   if (info.parentType.name !== "User") {
     Sentry.captureException("MustBeInAcceptedBeep middleware was used on a non-user entity");
     throw new Error("You can only use this middleware with the the User entity");
   }
+
+  // If the requesting user is an admin, let them see the value no matter what
+  if (context.user.role === UserRole.ADMIN) {
+    return await next();
+  }
+
+  const user = root as User;
 
   // unauthenticated request so just trust that authorization was handled by our main auth checker
   if (!context.user) {
@@ -38,7 +43,6 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
       ]
     },
     {
-      filters: ['inProgress'],
       orderBy: { start: QueryOrder.DESC }
     }
   );
