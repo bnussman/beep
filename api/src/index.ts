@@ -13,7 +13,7 @@ import { MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
 import { GraphQLSchema } from "graphql";
 import { buildSchema } from 'type-graphql';
-import { authChecker, LeakChecker } from "./utils/authentication";
+import { authChecker } from "./utils/authentication";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { createServer } from 'http';
 import { graphqlUploadExpress } from "graphql-upload";
@@ -53,7 +53,6 @@ async function start() {
   const schema: GraphQLSchema = await buildSchema({
     resolvers: [__dirname + '/**/resolver.{ts,js}'],
     authChecker: authChecker,
-    globalMiddlewares: [LeakChecker],
     pubSub,
     validate: { forbidUnknownValues: false }
   });
