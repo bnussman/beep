@@ -589,7 +589,7 @@ export type UpdateReportInput = {
 export type User = {
   __typename?: 'User';
   capacity: Scalars['Float'];
-  cars: Array<Car>;
+  cars?: Maybe<Array<Car>>;
   cashapp?: Maybe<Scalars['String']>;
   created?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;

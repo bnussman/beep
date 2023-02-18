@@ -590,7 +590,7 @@ export type UpdateReportInput = {
 export type User = {
   __typename?: 'User';
   capacity: Scalars['Float'];
-  cars: Array<Car>;
+  cars?: Maybe<Array<Car>>;
   cashapp?: Maybe<Scalars['String']>;
   created?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;
@@ -857,17 +857,17 @@ export type ChooseBeepMutationVariables = Exact<{
 }>;
 
 
-export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } };
+export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars?: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> | null } } };
 
 export type GetInitialRiderStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } | null };
+export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars?: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> | null } } | null };
 
 export type RiderStatusSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } | null };
+export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars?: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> | null } } | null };
 
 export type BeepersLocationSubscriptionVariables = Exact<{
   id: Scalars['String'];
