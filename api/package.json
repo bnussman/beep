@@ -3,20 +3,17 @@
   "version": "1.0.0",
   "description": "GraphQL API for the Beep App",
   "main": "build/index.js",
+  "author": "Banks Nussman",
   "private": true,
   "scripts": {
     "build": "tsc",
     "start": "node build/index.js",
-    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"nodemon build/index.js\"",
+    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"node --watch build/index.js\"",
     "db:create": "mikro-orm schema:create --run",
     "db:update": "mikro-orm schema:update --run",
     "db:drop": "mikro-orm schema:drop --run",
     "db:migrate": "mikro-orm migration:up",
     "db:migration:create": "mikro-orm migration:create"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://gitlab.nussman.us/beep-app/Beep.git"
   },
   "mikro-orm": {
     "useTsNode": true,
@@ -25,8 +22,6 @@
       "./build/mikro-orm.config.js"
     ]
   },
-  "author": "Banks Nussman",
-  "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.4.0",
     "@banksnussman/graphql-fields-to-relations": "^2.0.0",
@@ -73,7 +68,6 @@
     "@typescript-eslint/parser": "^5.52.0",
     "concurrently": "^7.6.0",
     "eslint": "^8.34.0",
-    "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   },
