@@ -1,9 +1,9 @@
-import { User } from "../entities/User";
-import { MiddlewareFn } from "type-graphql";
-import { Context } from "./context";
 import * as Sentry from '@sentry/node';
 import { Beep, Status } from "../entities/Beep";
 import { QueryOrder } from "@mikro-orm/core";
+import { User } from "../entities/User";
+import { MiddlewareFn } from "type-graphql";
+import { Context } from "./context";
 
 export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, info, root }, next) => {
   const user = root as User;
@@ -13,7 +13,7 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
     throw new Error("You can only use this middleware with the the User entity");
   }
 
-  // User is not authenticated so trust that our main auth handler
+  // unauthenticated request so just trust that authorization was handled by our main auth checker
   if (!context.user) {
     return await next();
   }
@@ -22,8 +22,6 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
   if (user.id === context.user.id) {
     return await next();
   }
-
-  // console.log(`making sure ${context.user.name()} can see ${user.name()}'s ${info.fieldName}`)
 
   const beep = await context.em.findOne(
     Beep,
@@ -45,14 +43,12 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
     }
   );
 
-  // console.log(beep)
-
   if (!beep) {
-    console.log(`${context.user.name()} did NOT have permission to see ${user.first}'s ${info.fieldName}`)
+    // console.log(`${context.user.name()} did NOT have permission to see ${user.first}'s ${info.fieldName}`)
     return null;
   }
 
-  console.log(`${context.user.name()} had permission to see ${user.first}'s ${info.fieldName}`)
+  // console.log(`${context.user.name()} had permission to see ${user.first}'s ${info.fieldName}`)
 
   return await next();
 };
