@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { HStack, Stack, Text } from "native-base";
+import { HStack, Spacer, Stack, Text } from "native-base";
 import { GetRatingsQuery } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
@@ -20,6 +20,9 @@ export function Rating(props: Props) {
   const navigation = useNavigation<Navigation>();
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
+  const isRater = user?.id === item.rater.id;
+  const isRated = user?.id === item.rated.id;
+
   return (
     <Card
       mt={2}
@@ -27,31 +30,29 @@ export function Rating(props: Props) {
       pressable
       onPress={() => navigation.push("Profile", { id: otherUser.id })}
     >
-      <HStack alignItems="center" space={4}>
-        <Avatar size="lg" url={otherUser.photo} />
-        <Stack space={1}>
-          {user?.id === item.rater.id ? (
-            <Text>
-              <Text fontSize="sm">You rated</Text>{" "}
-              <Text fontWeight="extrabold" fontSize="md" letterSpacing="sm">
-                {otherUser.name}
-              </Text>
+      <Stack space={2}>
+        <HStack alignItems="center" space={2}>
+          <Avatar size={12} url={otherUser.photo} />
+          <Stack flexShrink={1}>
+            <Text
+              fontSize="xl"
+              letterSpacing="sm"
+              fontWeight="extrabold"
+              isTruncated
+            >
+              {otherUser.name}
             </Text>
-          ) : (
-            <Text>
-              <Text fontWeight="extrabold" fontSize="md" letterSpacing="sm">
-                {otherUser.name}
-              </Text>{" "}
-              <Text fontSize="sm">rated you</Text>
+            <Text color="gray.400" fontSize="xs" isTruncated>
+              {`${isRater ? "Rated" : "Recieved"} - ${new Date(
+                item.timestamp
+              ).toLocaleString(undefined, { dateStyle: 'short', timeStyle: "short" })}`}
             </Text>
-          )}
-          <Text color="gray.400" fontSize="xs">
-            {new Date(item.timestamp).toLocaleString()}
-          </Text>
+          </Stack>
+          <Spacer />
           <Text>{printStars(item.stars)}</Text>
-          {item.message && <Text>{item.message}</Text>}
-        </Stack>
-      </HStack>
+        </HStack>
+        {item.message && <Text>{item.message}</Text>}
+      </Stack>
     </Card>
   );
 }
