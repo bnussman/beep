@@ -11,17 +11,17 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
     throw new Error("You can only use this middleware with the the User entity");
   }
 
+  // unauthenticated request so just trust that authorization was handled by our main auth checker
+  if (!context.user) {
+    return await next();
+  }
+
   // If the requesting user is an admin, let them see the value no matter what
   if (context.user.role === UserRole.ADMIN) {
     return await next();
   }
 
   const user = root as User;
-
-  // unauthenticated request so just trust that authorization was handled by our main auth checker
-  if (!context.user) {
-    return await next();
-  }
 
   // User is getting their own information, so just resolve
   if (user.id === context.user.id) {
