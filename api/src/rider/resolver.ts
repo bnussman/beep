@@ -28,6 +28,10 @@ export class RiderResolver {
       throw new Error("The user you have chosen is no longer beeping at this time.");
     }
 
+    if (beeper.queue.getItems().some(beep => beep.rider.id === ctx.user.id)) {
+      throw new Error("You are already in an in progress beep.");
+    }
+
     const { groupSize, origin, destination } = input;
 
     const entry = new Beep({
@@ -160,7 +164,10 @@ export class RiderResolver {
   public async getLastBeepToRate(@Ctx() ctx: Context): Promise<Beep | null> {
     const beep = await ctx.em.findOne(
       Beep,
-      { rider: ctx.user.id },
+      {
+        rider: ctx.user.id,
+        status: Status.COMPLETE,
+      },
       {
         populate: ['beeper'],
         orderBy: { start: QueryOrder.DESC }

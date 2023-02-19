@@ -169,10 +169,6 @@ export class BeeperResolver {
 
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, filters: ['inProgress'], orderBy: { queue: { start: QueryOrder.ASC } } });
 
-    console.log(ctx.user.queue)
-
-    // await ctx.user.queue.init({ orderBy: { start: QueryOrder.ASC }, populate: ['rider', 'beeper', 'beeper.cars'], filter: [], where: { beeper: { cars: { default: true } } } });
-
     const newQueue = ctx.user.queue.getItems().filter(entry => entry.id !== id);
 
     pubSub.publish("Beeper" + ctx.user.id, newQueue);
