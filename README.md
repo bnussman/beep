@@ -33,7 +33,7 @@ cd beep
 
 Install dependencies
 ```
-pnpm
+pnpm i
 ```
 
 Bring local db and redis up with Docker
