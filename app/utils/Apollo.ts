@@ -1,9 +1,10 @@
-import { getMainDefinition, Observable } from "@apollo/client/utilities";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getMainDefinition, Observable } from "@apollo/client/utilities";
 import { createUploadLink } from "apollo-upload-client";
 import { Client, ClientOptions, createClient } from "graphql-ws";
 import { print } from "graphql";
 import { setContext } from "@apollo/client/link/context";
+import { Logger } from "./Logger";
 import {
   ApolloClient,
   ApolloLink,
@@ -12,11 +13,10 @@ import {
   Operation,
   split,
 } from "@apollo/client";
-import { Logger } from "./Logger";
-
-export const cache = new InMemoryCache();
 
 const ip = "localhost";
+
+export const cache = new InMemoryCache();
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`
