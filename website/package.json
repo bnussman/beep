@@ -10,7 +10,7 @@
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.8",
+    "@apollo/client": "^3.7.9",
     "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.5.1",
     "@chakra-ui/theme-tools": "^2.0.16",
@@ -19,28 +19,28 @@
     "@fontsource/poppins": "^4.5.10",
     "apollo-upload-client": "^17.0.0",
     "dayjs": "^1.11.7",
-    "framer-motion": "^9.0.4",
+    "framer-motion": "^10.0.1",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.11.3",
-    "mapbox-gl": "^2.12.1",
+    "mapbox-gl": "^2.13.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-hook-form": "^7.43.1",
+    "react-hook-form": "^7.43.2",
     "react-map-gl": "^7.0.21",
-    "react-router-dom": "^6.8.1",
+    "react-router-dom": "^6.8.2",
     "recharts": "^2.4.3"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^3.0.0",
-    "@graphql-codegen/typescript": "3.0.0",
-    "@graphql-codegen/typescript-operations": "3.0.0",
+    "@graphql-codegen/cli": "^3.2.1",
+    "@graphql-codegen/typescript": "3.0.1",
+    "@graphql-codegen/typescript-operations": "3.0.1",
     "@graphql-codegen/typescript-react-apollo": "3.3.7",
     "@types/apollo-upload-client": "^17.0.2",
-    "@types/node": "^18.14.0",
+    "@types/node": "^18.14.2",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
     "typescript": "^4.9.5",
-    "vite": "^4.1.2"
+    "vite": "^4.1.4"
   }
 }
