@@ -25,7 +25,7 @@
     "mapbox-gl": "^2.13.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-hook-form": "^7.43.2",
+    "react-hook-form": "^7.43.3",
     "react-map-gl": "^7.0.21",
     "react-router-dom": "^6.8.2",
     "recharts": "^2.4.3"
@@ -36,7 +36,7 @@
     "@graphql-codegen/typescript-operations": "3.0.1",
     "@graphql-codegen/typescript-react-apollo": "3.3.7",
     "@types/apollo-upload-client": "^17.0.2",
-    "@types/node": "^18.14.2",
+    "@types/node": "^18.14.4",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
