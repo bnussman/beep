@@ -85,6 +85,7 @@ export class RiderResolver {
     beep.position = await ctx.em.count(
       Beep,
       {
+        beeper: beep.beeper,
         start: {
           $lt: beep.start
         },
