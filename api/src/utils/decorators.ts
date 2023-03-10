@@ -32,8 +32,8 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
     Beep,
     {
       $or: [
-        { rider: { id: context.user.id } },
-        { beeper: { id: context.user.id } }
+        { rider: { id: context.user.id }, beeper: { id: user.id } },
+        { beeper: { id: context.user.id }, rider: { id: user.id } }
       ],
       $and: [
         { status: { $ne: Status.DENIED } },
@@ -42,9 +42,6 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
         { status: { $ne: Status.WAITING } },
       ]
     },
-    {
-      orderBy: { start: QueryOrder.DESC }
-    }
   );
 
   if (!beep) {
