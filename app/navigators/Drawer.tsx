@@ -38,7 +38,6 @@ import {
   Button,
   Stack,
 } from "native-base";
-import { Changelog } from "../routes/Changelog";
 
 const Logout = gql`
   mutation Logout {
@@ -236,7 +235,6 @@ export function BeepDrawer() {
         <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
         <Drawer.Screen name="Beeps" component={BeepsScreen} />
         <Drawer.Screen name="Ratings" component={RatingsScreen} />
-        <Drawer.Screen name="Changelog" component={Changelog} />
       </Drawer.Navigator>
     </Box>
   );

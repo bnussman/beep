@@ -123,7 +123,6 @@ importers:
       '@react-navigation/native': ^6.1.6
       '@react-navigation/stack': ^6.3.16
       '@sentry/react-native': 4.13.0
-      '@tanstack/react-query': ^4.26.1
       '@types/apollo-upload-client': ^17.0.2
       '@types/react': ~18.0.28
       '@types/react-dom': ~18.0.11
@@ -181,7 +180,6 @@ importers:
       '@react-navigation/native': 6.1.6_yqouayos4dnow7nnkhah4yzuzq
       '@react-navigation/stack': 6.3.16_pf4j4f7edywtcmcmtmj6rq4iri
       '@sentry/react-native': 4.13.0_yqouayos4dnow7nnkhah4yzuzq
-      '@tanstack/react-query': 4.26.1_bblof3d6od7kdqr2urb3dykbey
       apollo-upload-client: 17.0.0_ln2d5caovca7u46kpv26o6jc3i
       car-info: 0.1.2
       expo: 48.0.6_@babel+core@7.20.12
@@ -6815,29 +6813,6 @@ packages:
     resolution: {integrity: sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw==}
     dependencies:
       tslib: 2.5.0
-    dev: false
-
-  /@tanstack/query-core/4.26.1:
-    resolution: {integrity: sha512-Zrx2pVQUP4ndnsu6+K/m8zerXSVY8QM+YSbxA1/jbBY21GeCd5oKfYl92oXPK0hPEUtoNuunIdiq0ZMqLos+Zg==}
-    dev: false
-
-  /@tanstack/react-query/4.26.1_bblof3d6od7kdqr2urb3dykbey:
-    resolution: {integrity: sha512-i3dnz4TOARGIXrXQ5P7S25Zfi4noii/bxhcwPurh2nrf5EUCcAt/95TB2HSmMweUBx206yIMWUMEQ7ptd6zwDg==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 4.26.1
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-native: 0.71.3_2exiyaescjxorpwwmy4ejghgte
-      use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
   /@tootallnate/once/2.0.0:
