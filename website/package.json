@@ -19,7 +19,7 @@
     "@fontsource/poppins": "^4.5.10",
     "apollo-upload-client": "^17.0.0",
     "dayjs": "^1.11.7",
-    "framer-motion": "^10.2.3",
+    "framer-motion": "^10.2.4",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.12.0",
     "mapbox-gl": "^2.13.0",
@@ -27,7 +27,7 @@
     "react-dom": "^18.1.0",
     "react-hook-form": "^7.43.5",
     "react-map-gl": "^7.0.21",
-    "react-router-dom": "^6.8.2",
+    "react-router-dom": "^6.9.0",
     "recharts": "^2.4.3"
   },
   "devDependencies": {
