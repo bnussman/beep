@@ -62,12 +62,15 @@ export class BeeperResolver {
       }
     }
 
+    console.log(input)
 
     if (!!input.latitude && !!input.longitude) {
       wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
     }
     else {
-      wrap(ctx.user).assign(input);
+      wrap(ctx.user).assign({
+        isBeeping: input.isBeeping,
+      });
     }
 
     pubSub.publish("User" + ctx.user.id, ctx.user);
