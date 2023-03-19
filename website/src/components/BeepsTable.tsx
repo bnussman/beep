@@ -5,12 +5,12 @@ import { Pagination } from './Pagination';
 import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
 import { Loading } from './Loading';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { Indicator } from './Indicator';
 import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -54,15 +54,19 @@ const Hisory = gql`
 
 export function BeepsTable(props: Props) {
   const pageLimit = 5;
-  const { data, loading, refetch } = useQuery<GetBeepsQuery>(Hisory, { variables: { id: props.userId, offset: 0, show: pageLimit } });
+
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  async function fetchHistory(page: number) {
-    refetch({
-      id: props.userId,
-      offset: page
-    })
-  }
+  const { data, loading } = useQuery<GetBeepsQuery>(
+    Hisory,
+    {
+      variables: {
+        id: props.userId,
+        offset: (currentPage - 1) * pageLimit,
+        show: pageLimit
+      }
+    }
+  );
 
   if (data?.getBeeps && data.getBeeps.items.length === 0) {
     return (
@@ -72,16 +76,13 @@ export function BeepsTable(props: Props) {
     );
   }
 
-  if (loading) return <Loading />;
-
   return (
     <Box>
       <Pagination
-        resultCount={data?.getBeeps?.count}
+        resultCount={data?.getBeeps.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchHistory}
       />
       <Box overflowX="auto">
         <Table>
@@ -98,34 +99,31 @@ export function BeepsTable(props: Props) {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getBeeps.items.map(ride => {
-              return (
-                <Tr key={ride.id}>
-                  <TdUser user={ride.beeper} />
-                  <TdUser user={ride.rider} />
-                  <Td>{ride.origin}</Td>
-                  <Td>{ride.destination}</Td>
-                  <Td>{ride.groupSize}</Td>
-                  <Td>
-                    <HStack>
-                      <Indicator color={beepStatusMap[ride.status as Status]} />
-                      <Text textTransform="capitalize">{ride.status.replaceAll("_", " ")}</Text>
-                    </HStack>
-                  </Td>
-                  <Td>{dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize()}</Td>
-                  <Td>{dayjs().to(ride.end)}</Td>
-                </Tr>
-              )
-            })}
+            {data?.getBeeps.items.map((ride) => (
+              <Tr key={ride.id}>
+                <TdUser user={ride.beeper} />
+                <TdUser user={ride.rider} />
+                <Td>{ride.origin}</Td>
+                <Td>{ride.destination}</Td>
+                <Td>{ride.groupSize}</Td>
+                <Td>
+                  <HStack>
+                    <Indicator color={beepStatusMap[ride.status as Status]} />
+                    <Text textTransform="capitalize">{ride.status.replaceAll("_", " ")}</Text>
+                  </HStack>
+                </Td>
+                <Td>{dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize()}</Td>
+                <Td>{dayjs().to(ride.end)}</Td>
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.getBeeps?.count}
+        resultCount={data?.getBeeps.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchHistory}
       />
     </Box>
   );
