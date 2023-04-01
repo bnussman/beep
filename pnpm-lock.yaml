@@ -152,7 +152,7 @@ importers:
       expo-updates: ~0.16.3
       graphql: ^16.6.0
       graphql-ws: ^5.12.1
-      native-base: 3.4.28
+      native-base: 3.4.12-alpha.1
       prettier: ^2.8.7
       react: ^18.1.0
       react-dom: ^18.1.0
@@ -196,7 +196,7 @@ importers:
       expo-updates: 0.16.3_expo@48.0.9
       graphql: 16.6.0
       graphql-ws: 5.12.1_graphql@16.6.0
-      native-base: 3.4.28_jgn6fnomfpywmpjnd325jkhqme
+      native-base: 3.4.12-alpha.1_jgn6fnomfpywmpjnd325jkhqme
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.43.9_react@18.2.0
@@ -5765,6 +5765,19 @@ packages:
       react: 18.2.0
     dev: false
 
+  /@react-aria/focus/3.2.3_react@18.2.0:
+    resolution: {integrity: sha512-+OWmJMivrq3f8ApWihH1KJYqYj3rZV34YJORacBohcAsF1Qd1V1/P+w3dMkf24kV0wqAiWePCF1FwgnrL/rYzQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0-rc.1
+    dependencies:
+      '@babel/runtime': 7.21.0
+      '@react-aria/interactions': 3.14.0_react@18.2.0
+      '@react-aria/utils': 3.15.0_react@18.2.0
+      '@react-types/shared': 3.17.0_react@18.2.0
+      clsx: 1.2.1
+      react: 18.2.0
+    dev: false
+
   /@react-aria/i18n/3.7.0_react@18.2.0:
     resolution: {integrity: sha512-PZCWmhO9mJvelwiYlsXLY6W4L2o+oza3xnDx0cZDVqp/Hf+OwMAPHWtZsFRTKdjk4TaOPB/ISc9HknWn6UpY4w==}
     peerDependencies:
@@ -6013,7 +6026,7 @@ packages:
     dependencies:
       '@react-aria/utils': 3.15.0_react@18.2.0
       '@react-native-aria/interactions': 0.2.8_yqouayos4dnow7nnkhah4yzuzq
-      '@react-stately/toggle': 3.2.1_react@18.2.0
+      '@react-stately/toggle': 3.5.0_react@18.2.0
       '@react-types/checkbox': 3.4.2_react@18.2.0
       react: 18.2.0
       react-native: 0.71.3_2exiyaescjxorpwwmy4ejghgte
@@ -6029,7 +6042,7 @@ packages:
       '@react-aria/utils': 3.15.0_react@18.2.0
       '@react-native-aria/toggle': 0.2.3_yqouayos4dnow7nnkhah4yzuzq
       '@react-native-aria/utils': 0.2.8_yqouayos4dnow7nnkhah4yzuzq
-      '@react-stately/toggle': 3.2.1_react@18.2.0
+      '@react-stately/toggle': 3.5.0_react@18.2.0
       react: 18.2.0
       react-native: 0.71.3_2exiyaescjxorpwwmy4ejghgte
     dev: false
@@ -6095,8 +6108,8 @@ packages:
       react-native: 0.71.3_2exiyaescjxorpwwmy4ejghgte
     dev: false
 
-  /@react-native-aria/overlays/0.3.5_bblof3d6od7kdqr2urb3dykbey:
-    resolution: {integrity: sha512-xM7IpK+NL54Y3dM4mprsYwRWJa65f6Skh8H+90E64LEeYFtp3JLvJnFPfoeH5vTBiCqdtDgvMOOIEDa+b7iEPQ==}
+  /@react-native-aria/overlays/0.3.3-rc.0_bblof3d6od7kdqr2urb3dykbey:
+    resolution: {integrity: sha512-RgaIYIHMltt0RdMrVwfXLAVxc22TIUY1Yx07HbQRMdt4LcSmU8pyp5CEtJ/MQCXceuqocnXfsUxyHOSnfhmfpA==}
     peerDependencies:
       react: '*'
       react-dom: '*'
@@ -6123,7 +6136,7 @@ packages:
       '@react-aria/utils': 3.15.0_react@18.2.0
       '@react-native-aria/interactions': 0.2.8_yqouayos4dnow7nnkhah4yzuzq
       '@react-native-aria/utils': 0.2.8_yqouayos4dnow7nnkhah4yzuzq
-      '@react-stately/radio': 3.2.1_react@18.2.0
+      '@react-stately/radio': 3.7.0_react@18.2.0
       '@react-types/radio': 3.4.0_react@18.2.0
       react: 18.2.0
       react-native: 0.71.3_2exiyaescjxorpwwmy4ejghgte
@@ -6141,7 +6154,7 @@ packages:
       '@react-aria/slider': 3.3.0_react@18.2.0
       '@react-aria/utils': 3.15.0_react@18.2.0
       '@react-native-aria/utils': 0.2.8_yqouayos4dnow7nnkhah4yzuzq
-      '@react-stately/slider': 3.0.1_react@18.2.0
+      '@react-stately/slider': 3.3.0_react@18.2.0
       react: 18.2.0
       react-native: 0.71.3_2exiyaescjxorpwwmy4ejghgte
     dev: false
@@ -7488,6 +7501,12 @@ packages:
       '@types/node': 18.15.11
     dev: true
 
+  /@types/lodash.has/4.5.7:
+    resolution: {integrity: sha512-nfbAzRbsZBdzSAkL9iiLy4SQk89uuFcXBFwZ7pf6oZhBgPvNys8BY5Twp/w8XvZKGt1o6cAa85wX4QhqO3uQ7A==}
+    dependencies:
+      '@types/lodash': 4.14.192
+    dev: false
+
   /@types/lodash.mergewith/4.6.7:
     resolution: {integrity: sha512-3m+lkO5CLRRYU0fhGRp7zbsGi6+BZj0uTVSwvcKU+nSlhjA9/QRNfuSGnD2mX6hQA7ZbmcCkzk5h4ZYGOtk14A==}
     dependencies:
@@ -8243,7 +8262,7 @@ packages:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
     engines: {node: '>=10', npm: '>=6'}
     dependencies:
-      '@babel/runtime': 7.20.13
+      '@babel/runtime': 7.21.0
       cosmiconfig: 7.1.0
       resolve: 1.22.1
     dev: false
@@ -12465,10 +12484,6 @@ packages:
     resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
     dev: false
 
-  /lodash.uniqueid/4.0.1:
-    resolution: {integrity: sha512-GQQWaIeGlL6DIIr06kj1j6sSmBxyNMwI8kaX9aKpHR/XsMTiaXDVPNPAkiboOTK9OJpTJF/dXT3xYoFQnj386Q==}
-    dev: false
-
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
@@ -13281,8 +13296,8 @@ packages:
       - supports-color
     dev: false
 
-  /native-base/3.4.28_jgn6fnomfpywmpjnd325jkhqme:
-    resolution: {integrity: sha512-EDg9UFDNmfYXPInpRbxce+4oWFEIGaM7aG6ey4hVllcvMC3PkgCvkiXEB+7EemgC7Qr8CuFjgMTx7P0vvnwZeQ==}
+  /native-base/3.4.12-alpha.1_jgn6fnomfpywmpjnd325jkhqme:
+    resolution: {integrity: sha512-8WKjc691yDrXNs+XhJaau5sWdYUhgc/pOkjEt5pS0L8Nqd+PWbNGjXbfB5SEe2P3pNnAQwjwFLGUtjWZjyDXBQ==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-native': '*'
@@ -13292,6 +13307,8 @@ packages:
       react-native-safe-area-context: '*'
       react-native-svg: '*'
     dependencies:
+      '@react-aria/focus': 3.2.3_react@18.2.0
+      '@react-aria/utils': 3.15.0_react@18.2.0
       '@react-aria/visually-hidden': 3.7.0_react@18.2.0
       '@react-native-aria/button': 0.2.4_yqouayos4dnow7nnkhah4yzuzq
       '@react-native-aria/checkbox': 0.2.3_yqouayos4dnow7nnkhah4yzuzq
@@ -13299,7 +13316,7 @@ packages:
       '@react-native-aria/focus': 0.2.7_yqouayos4dnow7nnkhah4yzuzq
       '@react-native-aria/interactions': 0.2.8_yqouayos4dnow7nnkhah4yzuzq
       '@react-native-aria/listbox': 0.2.4-alpha.3_yqouayos4dnow7nnkhah4yzuzq
-      '@react-native-aria/overlays': 0.3.5_bblof3d6od7kdqr2urb3dykbey
+      '@react-native-aria/overlays': 0.3.3-rc.0_bblof3d6od7kdqr2urb3dykbey
       '@react-native-aria/radio': 0.2.5_yqouayos4dnow7nnkhah4yzuzq
       '@react-native-aria/slider': 0.2.5-alpha.2_yqouayos4dnow7nnkhah4yzuzq
       '@react-native-aria/tabs': 0.2.8_yqouayos4dnow7nnkhah4yzuzq
@@ -13311,9 +13328,9 @@ packages:
       '@react-stately/slider': 3.0.1_react@18.2.0
       '@react-stately/tabs': 3.0.0-alpha.1_react@18.2.0
       '@react-stately/toggle': 3.2.1_react@18.2.0
+      '@types/lodash.has': 4.5.7
       '@types/react': 18.0.31
       '@types/react-native': 0.71.3
-      inline-style-prefixer: 6.0.4
       lodash.clonedeep: 4.5.0
       lodash.get: 4.4.2
       lodash.has: 4.5.2
@@ -13325,15 +13342,14 @@ packages:
       lodash.omit: 4.5.0
       lodash.omitby: 4.6.0
       lodash.pick: 4.4.0
-      lodash.uniqueid: 4.0.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-native: 0.71.3_2exiyaescjxorpwwmy4ejghgte
+      react-native-keyboard-aware-scroll-view: 0.9.5_react-native@0.71.3
       react-native-safe-area-context: 4.5.0_yqouayos4dnow7nnkhah4yzuzq
       react-native-svg: 13.4.0_yqouayos4dnow7nnkhah4yzuzq
       stable-hash: 0.0.2
       tinycolor2: 1.6.0
-      use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
   /natural-compare-lite/1.4.0:
