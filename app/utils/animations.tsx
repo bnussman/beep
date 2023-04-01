@@ -96,17 +96,17 @@ export const ConfettiPiece = ({
         { translateX: localX.value },
         { translateY: localY.value },
         { rotate: localAngle.value + "deg" },
-        { rotateX: localAngle.value + "deg" },
-        { rotateY: localAngle.value + "deg" },
+        // { rotateX: localAngle.value + "deg" },
+        // { rotateY: localAngle.value + "deg" },
       ],
     };
   });
 
   return (
     <Animated.View style={[styles.confettiContainer, uas]}>
-      <Box bgColor={color} w={CONFETTI_SIZE} h={CONFETTI_SIZE} />
+      {/* <Box bgColor={color} w={CONFETTI_SIZE} h={CONFETTI_SIZE} /> */}
       {/* <Text>{BEEPER_ICON}</Text> */}
-      {/* <Text fontSize="2xl">🍆</Text> */}
+      <Text fontSize="4xl">🍆</Text>
     </Animated.View>
   );
 };
