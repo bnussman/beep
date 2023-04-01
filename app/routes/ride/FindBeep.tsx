@@ -10,7 +10,13 @@ import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
-import { Linking, AppState, AppStateStatus } from "react-native";
+import {
+  Linking,
+  AppState,
+  AppStateStatus,
+  Dimensions,
+  StyleSheet,
+} from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
@@ -48,7 +54,6 @@ import {
   Input,
   Heading,
   Stack,
-  Image,
   FormControl,
   HStack,
   Center,
@@ -57,7 +62,10 @@ import {
   Spinner,
   Pressable,
   WarningOutlineIcon,
+  Image,
 } from "native-base";
+import { confetti, ConfettiPiece } from "../../utils/animations";
+import Animated, { FadeOut } from "react-native-reanimated";
 
 const ChooseBeep = gql`
   mutation ChooseBeep(
@@ -208,6 +216,8 @@ const GetETA = gql`
 
 let sub: Subscription;
 let riderStatusSub: Subscription;
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 export function MainFindBeepScreen() {
   const { user } = useUser();
@@ -416,6 +426,14 @@ export function MainFindBeepScreen() {
   if (!beep) {
     return (
       <Container keyboard alignItems="center" pt={2} h="100%" px={4}>
+        <Animated.View
+          style={{ position: "absolute", width: "100%", zIndex: 10 }}
+          exiting={FadeOut.duration(500)}
+        >
+          {confetti.map((e) => {
+            return <ConfettiPiece {...e} />;
+          })}
+        </Animated.View>
         <Stack space={4} w="100%">
           {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
           <FormControl
