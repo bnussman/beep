@@ -668,7 +668,7 @@ export type UpdateBeeperQueueMutationVariables = Exact<{
 }>;
 
 
-export type UpdateBeeperQueueMutation = { __typename?: 'Mutation', setBeeperQueue: Array<{ __typename?: 'Beep', id: string, groupSize: number, origin: string, destination: string, status: string }> };
+export type UpdateBeeperQueueMutation = { __typename?: 'Mutation', setBeeperQueue: Array<{ __typename?: 'Beep', id: string, groupSize: number, origin: string, destination: string, status: string, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photo?: string | null, isStudent: boolean, rating?: number | null } }> };
 
 export type CancelBeepMutationVariables = Exact<{
   id: Scalars['String'];
@@ -952,6 +952,18 @@ export const UpdateBeeperQueueDocument = gql`
     origin
     destination
     status
+    rider {
+      id
+      name
+      first
+      last
+      venmo
+      cashapp
+      phone
+      photo
+      isStudent
+      rating
+    }
   }
 }
     `;

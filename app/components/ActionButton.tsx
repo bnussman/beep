@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { GetInitialQueueQuery } from "../generated/graphql";
 import { Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
 import { Button } from "native-base";
 import { Status } from "../utils/types";
+import {
+  GetInitialQueueQuery,
+  UpdateBeeperQueueMutation,
+} from "../generated/graphql";
 
 type InProgressStatuses = Exclude<
   Status,
@@ -31,6 +34,18 @@ export const UpdateBeeperQueue = gql`
       origin
       destination
       status
+      rider {
+        id
+        name
+        first
+        last
+        venmo
+        cashapp
+        phone
+        photo
+        isStudent
+        rating
+      }
     }
   }
 `;
@@ -39,7 +54,7 @@ function _Button(props: Props) {
   const { beep } = props;
 
   const [isLoading, setIsLoading] = useState(false);
-  const [update] = useMutation(UpdateBeeperQueue);
+  const [update] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
 
   const getMessage = () => {
     switch (beep.status) {
