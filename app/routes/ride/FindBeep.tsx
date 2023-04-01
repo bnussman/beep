@@ -696,6 +696,7 @@ export function MainFindBeepScreen() {
               {beep.beeper.venmo ? (
                 <Button
                   flexGrow={1}
+                  colorScheme="lightBlue"
                   rightIcon={
                     <Icon as={Ionicons} size="md" name="ios-card-outline" />
                   }

@@ -225,8 +225,6 @@ export function EditProfileScreen() {
       setPhoto(result.assets[0]);
     }
 
-    console.log(picture);
-
     try {
       await upload({ variables: { picture } });
     } catch (error) {

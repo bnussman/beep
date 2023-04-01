@@ -62,8 +62,6 @@ export class BeeperResolver {
       }
     }
 
-    console.log(input)
-
     if (!!input.latitude && !!input.longitude) {
       wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
     }
