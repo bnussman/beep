@@ -46,9 +46,11 @@ export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, inf
 
   if (!beep) {
     console.log(`${context.user.name()} did NOT have permission to see ${user.first}'s ${info.fieldName}`)
+    Sentry.captureMessage(`${context.user.name()} did NOT have permission to see ${user.first}'s ${info.fieldName}`);
     return null;
   }
 
+  Sentry.captureMessage(`${context.user.name()} did have permission to see ${user.first}'s ${info.fieldName}`);
   console.log(`${context.user.name()} had permission to see ${user.first}'s ${info.fieldName}`)
 
   return await next();
