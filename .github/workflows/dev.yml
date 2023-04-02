@@ -1,4 +1,4 @@
-name: staging
+name: dev
  
 on:
   push:
@@ -25,8 +25,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: staging
-      url: https://staging.ridebeep.app
+      name: dev
+      url: https://dev.ridebeep.app
     steps:
       - name: 📃 Import kube config
         run: |
