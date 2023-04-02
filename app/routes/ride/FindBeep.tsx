@@ -64,8 +64,6 @@ import {
   WarningOutlineIcon,
   Image,
 } from "native-base";
-import { confetti, ConfettiPiece } from "../../utils/animations";
-import Animated, { FadeOut } from "react-native-reanimated";
 
 const ChooseBeep = gql`
   mutation ChooseBeep(
@@ -426,16 +424,7 @@ export function MainFindBeepScreen() {
   if (!beep) {
     return (
       <Container keyboard alignItems="center" pt={2} h="100%" px={4}>
-        <Animated.View
-          style={{ position: "absolute", width: "100%", zIndex: 10 }}
-          exiting={FadeOut.duration(500)}
-        >
-          {confetti.map((e) => {
-            return <ConfettiPiece {...e} />;
-          })}
-        </Animated.View>
         <Stack space={4} w="100%">
-          {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
           <FormControl
             isInvalid={
               Boolean(errors.groupSize) || Boolean(validationErrors?.groupSize)

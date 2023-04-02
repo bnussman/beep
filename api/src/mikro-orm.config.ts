@@ -9,7 +9,7 @@ const config: Options = {
   type: 'postgresql',
   clientUrl: `${DB_URL}/${DB_DATABASE}`,
   loadStrategy: LoadStrategy.JOINED,
-  debug: false,
+  debug: isDevelopment,
   driverOptions: DB_CA ? {
     connection: {
       ssl: {
