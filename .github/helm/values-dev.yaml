@@ -1,0 +1,20 @@
+namespace: default
+ 
+env:
+  HTTP_ADDR: :3001
+ 
+image:
+  name: bnussman/api
+  tag: staging
+  pull: Always
+ 
+deployment:
+  timestamp: 2006-01-02T15:04:05
+  replicas: 3
+  container:
+    name: api
+    port: 3001
+ 
+service:
+  type: ClusterIP
+  port: 3001
