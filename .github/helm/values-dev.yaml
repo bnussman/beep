@@ -18,6 +18,3 @@ deployment:
 service:
   type: LoadBalancer
   port: 443
-
-hpa:
-  enabled: true
