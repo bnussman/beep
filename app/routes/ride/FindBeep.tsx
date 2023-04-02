@@ -215,8 +215,6 @@ const GetETA = gql`
 let sub: Subscription;
 let riderStatusSub: Subscription;
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
 export function MainFindBeepScreen() {
   const { user } = useUser();
 
