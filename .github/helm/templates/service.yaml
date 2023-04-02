@@ -8,6 +8,10 @@ spec:
   type: {{ .Values.service.type }}
   selector:
     app: {{ .Release.Name }}
+  metadata:
+    annotations:
+      service.beta.kubernetes.io/linode-loadbalancer-default-protocol: https
+      service.beta.kubernetes.io/linode-loadbalancer-check-type: connection
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.deployment.container.port }}
