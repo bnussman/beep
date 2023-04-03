@@ -316,13 +316,15 @@ export function MainFindBeepScreen() {
   }, []);
 
   useEffect(() => {
-    if (
-      !previousData &&
-      beep?.beeper.location &&
-      beep?.status === Status.ON_THE_WAY
-    ) {
-      updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
+    // If no ETA has been gotten, try to get it
+    if (!eta && beep?.beeper.location && beep?.status === Status.ON_THE_WAY) {
+      throttleUpdateETA(
+        beep.beeper.location.latitude,
+        beep.beeper.location.longitude
+      );
     }
+
+    // Run some code when a beep completes
     if (previousData && !beep) {
       client.refetchQueries({ include: [GetRateData, GetBeepHistory] });
     }
