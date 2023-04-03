@@ -82,9 +82,9 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 5. Configure Secrets in Github
 6. Create new Github Actions workflow
 7. Deploy to Kubernetes by pushing to specified branch
-    - After the namespace has been created, you must add HTTPS TLS secrets so that the Linode NodeBalancer can deploy `sudo kubectl --kubeconfig ~/Downloads/dev-kubeconfig.yaml create secret tls cert --cert /etc/letsencrypt/live/dev.ridebeep.app/fullchain.pem --key /etc/letsencrypt/live/dev.ridebeep.app/privkey.pem --namespace beep`
-8. Configure Linode NodeBalancer
-9. Update Cloudflare to point to Linode NodeBalancer
+    - After the `beep` namespace has been created, you must add a TLS secrets so that the Linode NodeBalancer can deploy
+    - `sudo kubectl --kubeconfig ~/Downloads/dev-kubeconfig.yaml create secret tls cert --cert /etc/letsencrypt/live/dev.ridebeep.app/fullchain.pem --key /etc/letsencrypt/live/dev.ridebeep.app/privkey.pem --namespace beep`
+8. Update Cloudflare to point to Linode NodeBalancer
 
 ## 📈 Stats
 ![Alt](https://repobeats.axiom.co/api/embed/1b46a8057ec1f00f48ce7a9fbe9353c7cbe4ff83.svg "Repobeats analytics image")
