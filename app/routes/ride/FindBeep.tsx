@@ -210,9 +210,7 @@ const GetETA = gql`
 
 export function MainFindBeepScreen() {
   const { user } = useUser();
-
   const { getLocation } = useLocation(false);
-
   const { navigate } = useNavigation<Navigation>();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
@@ -244,12 +242,7 @@ export function MainFindBeepScreen() {
   useSubscription<BeepersLocationSubscription>(BeepersLocation, {
     variables: { id: beep?.beeper.id },
     onData({ data }) {
-      if (!data?.data?.getLocationUpdates) return;
-
-      throttleUpdateETA(
-        data.data.getLocationUpdates.latitude,
-        data.data.getLocationUpdates.longitude
-      );
+      if (!data?.data?.getLocationUpdates?.latitude) return;
 
       cache.modify({
         id: cache.identify({
@@ -285,7 +278,26 @@ export function MainFindBeepScreen() {
   const validationErrors =
     useValidationErrors<ChooseBeepMutationVariables>(getBeepError);
 
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (nextAppState === "active") {
+      refetch();
+    }
+  };
+
+  const updateETA = throttle(25000, async (lat: number, long: number) => {
+    const location = await getLocation();
+
+    getETA({
+      variables: {
+        start: `${lat},${long}`,
+        end: `${location.coords.latitude},${location.coords.longitude}`,
+      },
+    });
+  });
+
   useEffect(() => {
+    SplashScreen.hideAsync();
+
     const listener = AppState.addEventListener("change", handleAppStateChange);
 
     return () => {
@@ -293,49 +305,24 @@ export function MainFindBeepScreen() {
     };
   }, []);
 
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === "active") {
-      refetch();
-    }
-  };
-
-  async function updateETA(lat: number, long: number): Promise<void> {
-    const location = await getLocation();
-    getETA({
-      variables: {
-        start: `${lat},${long}`,
-        end: `${location.coords.latitude},${location.coords.longitude}`,
-      },
-    });
-  }
-
-  const throttleUpdateETA = throttle(25000, updateETA);
-
-  useEffect(() => {
-    SplashScreen.hideAsync();
-  }, []);
-
   useEffect(() => {
     // If no ETA has been gotten, try to get it
-    if (!eta && beep?.beeper.location && beep?.status === Status.ON_THE_WAY) {
-      throttleUpdateETA(
-        beep.beeper.location.latitude,
-        beep.beeper.location.longitude
-      );
+    if (beep?.beeper.location && beep?.status === Status.ON_THE_WAY) {
+      updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
     }
 
     // Run some code when a beep completes
     if (previousData && !beep) {
       client.refetchQueries({ include: [GetRateData, GetBeepHistory] });
     }
-  }, [data]);
+  }, [beep]);
 
-  async function findBeep(): Promise<void> {
-    return navigate("Choose Beeper", {
+  const findBeep = () => {
+    navigate("Choose Beeper", {
       handlePick: (id: string) =>
         handleSubmit((values) => chooseBeep(id, values))(),
     });
-  }
+  };
 
   const chooseBeep = async (
     id: string,
