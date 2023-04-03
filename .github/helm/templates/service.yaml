@@ -3,9 +3,10 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace | default .Values.namespace }}
-  # annotations:
-    # service.beta.kubernetes.io/linode-loadbalancer-default-protocol: https
-    # service.beta.kubernetes.io/linode-loadbalancer-check-type: connection
+  annotations:
+    service.beta.kubernetes.io/linode-loadbalancer-default-protocol: https
+    service.beta.kubernetes.io/linode-loadbalancer-check-type: connection
+    service.beta.kubernetes.io/linode-loadbalancer-port-443: '{ "tls-secret-name": "cert", "protocol": "https" }'
  
 spec:
   type: {{ .Values.service.type }}
