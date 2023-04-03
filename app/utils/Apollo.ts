@@ -14,7 +14,7 @@ import {
   split,
 } from "@apollo/client";
 
-const ip = "192.168.1.180";
+const ip = "192.168.1.65";
 
 export const cache = new InMemoryCache();
 

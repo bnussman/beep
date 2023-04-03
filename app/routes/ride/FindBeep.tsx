@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
@@ -10,21 +10,14 @@ import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  Linking,
-  AppState,
-  AppStateStatus,
-  Dimensions,
-  StyleSheet,
-} from "react-native";
+import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
-import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
 import { Alert } from "../../utils/Alert";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
-import { Status, Subscription } from "../../utils/types";
+import { Status } from "../../utils/types";
 import { Avatar } from "../../components/Avatar";
 import { Rates } from "./Rates";
 import { Card } from "../../components/Card";
@@ -35,6 +28,8 @@ import {
   ChooseBeepMutationVariables,
   GetEtaQuery,
   GetInitialRiderStatusQuery,
+  RiderStatusSubscription,
+  BeepersLocationSubscription,
 } from "../../generated/graphql";
 import {
   openCashApp,
@@ -47,6 +42,7 @@ import {
   useLazyQuery,
   useMutation,
   useQuery,
+  useSubscription,
 } from "@apollo/client";
 import {
   Button,
@@ -212,9 +208,6 @@ const GetETA = gql`
   }
 `;
 
-let sub: Subscription;
-let riderStatusSub: Subscription;
-
 export function MainFindBeepScreen() {
   const { user } = useUser();
 
@@ -228,6 +221,53 @@ export function MainFindBeepScreen() {
       notifyOnNetworkStatusChange: true,
     }
   );
+
+  const beep = data?.getRiderStatus;
+
+  const isAcceptedBeep = [
+    Status.ACCEPTED,
+    Status.IN_PROGRESS,
+    Status.HERE,
+    Status.ON_THE_WAY,
+  ].includes(beep?.status as Status);
+
+  useSubscription<RiderStatusSubscription>(RiderStatus, {
+    onData({ data }) {
+      client.writeQuery({
+        query: InitialRiderStatus,
+        data: { getRiderStatus: data.data?.getRiderUpdates },
+      });
+    },
+    skip: !beep,
+  });
+
+  useSubscription<BeepersLocationSubscription>(BeepersLocation, {
+    variables: { id: beep?.beeper.id },
+    onData({ data }) {
+      if (!data?.data?.getLocationUpdates) return;
+
+      throttleUpdateETA(
+        data.data.getLocationUpdates.latitude,
+        data.data.getLocationUpdates.longitude
+      );
+
+      cache.modify({
+        id: cache.identify({
+          __typename: "User",
+          id: beep?.beeper.id,
+        }),
+        fields: {
+          location() {
+            return {
+              latitude: data.data?.getLocationUpdates?.latitude,
+              longitude: data.data?.getLocationUpdates?.longitude,
+            };
+          },
+        },
+      });
+    },
+    skip: !isAcceptedBeep,
+  });
 
   const [getETA, { data: eta, error: etaError }] =
     useLazyQuery<GetEtaQuery>(GetETA);
@@ -245,10 +285,6 @@ export function MainFindBeepScreen() {
   const validationErrors =
     useValidationErrors<ChooseBeepMutationVariables>(getBeepError);
 
-  const beep = data?.getRiderStatus;
-
-  const appState = useRef(AppState.currentState);
-
   useEffect(() => {
     const listener = AppState.addEventListener("change", handleAppStateChange);
 
@@ -258,14 +294,9 @@ export function MainFindBeepScreen() {
   }, []);
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.current.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
+    if (nextAppState === "active") {
       refetch();
     }
-
-    appState.current = nextAppState;
   };
 
   async function updateETA(lat: number, long: number): Promise<void> {
@@ -278,35 +309,6 @@ export function MainFindBeepScreen() {
     });
   }
 
-  async function subscribeToLocation() {
-    const a = client.subscribe({
-      query: BeepersLocation,
-      variables: { id: data?.getRiderStatus?.beeper.id },
-    });
-
-    sub = a.subscribe((values) => {
-      throttleUpdateETA(
-        values.data.getLocationUpdates.latitude,
-        values.data.getLocationUpdates.longitude
-      );
-
-      cache.modify({
-        id: cache.identify({
-          __typename: "User",
-          id: beep?.beeper.id,
-        }),
-        fields: {
-          location() {
-            return {
-              latitude: values.data.getLocationUpdates.latitude,
-              longitude: values.data.getLocationUpdates.longitude,
-            };
-          },
-        },
-      });
-    });
-  }
-
   const throttleUpdateETA = throttle(25000, updateETA);
 
   useEffect(() => {
@@ -314,39 +316,6 @@ export function MainFindBeepScreen() {
   }, []);
 
   useEffect(() => {
-    if (user?.id && beep && !riderStatusSub) {
-      subscribeToRiderStatus();
-    }
-  }, [user, beep]);
-
-  function subscribeToRiderStatus(): void {
-    const a = client.subscribe({
-      query: RiderStatus,
-    });
-
-    riderStatusSub = a.subscribe(({ data }) => {
-      client.writeQuery({
-        query: InitialRiderStatus,
-        data: { getRiderStatus: data.getRiderUpdates },
-      });
-    });
-  }
-
-  const isAcceptedBeep = [
-    Status.ACCEPTED,
-    Status.IN_PROGRESS,
-    Status.HERE,
-    Status.ON_THE_WAY,
-  ].includes(beep?.status as Status);
-
-  useEffect(() => {
-    if (
-      (beep?.status === Status.ACCEPTED &&
-        previousData?.getRiderStatus?.status === Status.WAITING) ||
-      (beep !== undefined && beep !== null && isAcceptedBeep && !previousData)
-    ) {
-      subscribeToLocation();
-    }
     if (
       !previousData &&
       beep?.beeper.location &&
@@ -356,8 +325,6 @@ export function MainFindBeepScreen() {
     }
     if (previousData && !beep) {
       client.refetchQueries({ include: [GetRateData, GetBeepHistory] });
-      riderStatusSub?.unsubscribe();
-      sub?.unsubscribe();
     }
   }, [data]);
 
@@ -385,8 +352,6 @@ export function MainFindBeepScreen() {
           query: InitialRiderStatus,
           data: { getRiderStatus: { ...data.chooseBeep } },
         });
-
-        subscribeToRiderStatus();
       }
     } catch (error) {
       Alert(error as ApolloError);
