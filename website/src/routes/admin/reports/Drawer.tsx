@@ -21,7 +21,7 @@ interface Props {
 
 export function ReportDrawer(props: Props) {
   const { isOpen, onClose, id } = props;
-  const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
+  const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id }, skip: !id });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
   const [deleteReport, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteReportMutation>(DeleteReport);
 
