@@ -350,6 +350,7 @@ export type Query = {
   getQueue: Array<Beep>;
   getRating: Rating;
   getRatings: RatingsResponse;
+  getRedisChannels: Array<Scalars['String']>;
   getReport: Report;
   getReports: ReportsResponse;
   getRiderStatus?: Maybe<Beep>;

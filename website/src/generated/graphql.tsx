@@ -349,6 +349,7 @@ export type Query = {
   getQueue: Array<Beep>;
   getRating: Rating;
   getRatings: RatingsResponse;
+  getRedisChannels: Array<Scalars['String']>;
   getReport: Report;
   getReports: ReportsResponse;
   getRiderStatus?: Maybe<Beep>;
@@ -810,6 +811,11 @@ export type GetUsersPerDomainQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUsersPerDomainQuery = { __typename?: 'Query', getUsersPerDomain: Array<{ __typename?: 'UsersPerDomain', domain: string, count: number }> };
+
+export type RedisChannelsQueryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RedisChannelsQueryQuery = { __typename?: 'Query', getRedisChannels: Array<string> };
 
 export type GetBeepersQueryVariables = Exact<{
   latitude: Scalars['Float'];
@@ -1885,6 +1891,38 @@ export function useGetUsersPerDomainLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetUsersPerDomainQueryHookResult = ReturnType<typeof useGetUsersPerDomainQuery>;
 export type GetUsersPerDomainLazyQueryHookResult = ReturnType<typeof useGetUsersPerDomainLazyQuery>;
 export type GetUsersPerDomainQueryResult = Apollo.QueryResult<GetUsersPerDomainQuery, GetUsersPerDomainQueryVariables>;
+export const RedisChannelsQueryDocument = gql`
+    query RedisChannelsQuery {
+  getRedisChannels
+}
+    `;
+
+/**
+ * __useRedisChannelsQueryQuery__
+ *
+ * To run a query within a React component, call `useRedisChannelsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRedisChannelsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRedisChannelsQueryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRedisChannelsQueryQuery(baseOptions?: Apollo.QueryHookOptions<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>(RedisChannelsQueryDocument, options);
+      }
+export function useRedisChannelsQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>(RedisChannelsQueryDocument, options);
+        }
+export type RedisChannelsQueryQueryHookResult = ReturnType<typeof useRedisChannelsQueryQuery>;
+export type RedisChannelsQueryLazyQueryHookResult = ReturnType<typeof useRedisChannelsQueryLazyQuery>;
+export type RedisChannelsQueryQueryResult = Apollo.QueryResult<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>;
 export const GetBeepersDocument = gql`
     query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
   getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
