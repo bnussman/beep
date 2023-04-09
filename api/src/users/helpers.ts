@@ -7,7 +7,7 @@ import { Report } from "../entities/Report";
 import { Beep } from "../entities/Beep";
 import { ForgotPassword } from "../entities/ForgotPassword";
 import { VerifyEmail } from "../entities/VerifyEmail";
-import { Token } from "../entities/TokenEntry";
+import { Token } from "../entities/Token";
 
 /**
  * Used for handling GraphQL Uploads
