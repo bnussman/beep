@@ -42,7 +42,7 @@ jobs:
         name: Install pnpm
         id: pnpm-install
         with:
-          version: lastest
+          version: latest
           run_install: false
       - name: Get pnpm store directory
         id: pnpm-cache
