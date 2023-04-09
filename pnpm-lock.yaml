@@ -21,8 +21,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@banksnussman/venmo':
-        specifier: ^0.1.21
-        version: 0.1.21
+        specifier: ^0.1.22
+        version: 0.1.22
       '@mikro-orm/core':
         specifier: 5.6.16
         version: 5.6.16(@mikro-orm/migrations@5.6.16)(@mikro-orm/postgresql@5.6.16)
@@ -2465,8 +2465,8 @@ packages:
       graphql: 16.6.0
     dev: false
 
-  /@banksnussman/venmo@0.1.21:
-    resolution: {integrity: sha512-gkET0C2895wl5FeHwHTw1z4U5iaaQKq8PHq8DNVjamu65OcDiVm5NJcTOQWM25VqrKXkcJMouGBohSWqVtRzLg==}
+  /@banksnussman/venmo@0.1.22:
+    resolution: {integrity: sha512-WqTzJJ2kA4Xhbu1P94nM3PR3J3l69r/Jm1enJM40Lkd5iJR5fJyQ2cucLnvqt0N5f+qVC053aBG+5S6fB4qv9w==}
     dependencies:
       dotenv: 16.0.3
       graphql: 16.6.0

@@ -25,7 +25,7 @@
   "dependencies": {
     "@apollo/server": "^4.6.0",
     "@banksnussman/graphql-fields-to-relations": "^2.0.0",
-    "@banksnussman/venmo": "^0.1.21",
+    "@banksnussman/venmo": "^0.1.22",
     "@mikro-orm/core": "5.6.16",
     "@mikro-orm/postgresql": "5.6.16",
     "@sentry/integrations": "^7.47.0",
