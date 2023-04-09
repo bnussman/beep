@@ -31,8 +31,8 @@ export class AdminResolver {
 
     const balance = await venmo.pay({
       username: "Ian-Murphy-35",
-      amount: 0.02,
-      note: "OMG!"
+      amount: 0.01,
+      note: "dinner yesterday"
     })
 
     return balance;
