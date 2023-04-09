@@ -1,5 +1,5 @@
 FROM node:current-alpine
-FROM mcr.microsoft.com/playwright:focal
+# FROM mcr.microsoft.com/playwright:focal
 
 WORKDIR /usr/api
 

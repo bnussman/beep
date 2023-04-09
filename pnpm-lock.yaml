@@ -20,9 +20,6 @@ importers:
       '@banksnussman/graphql-fields-to-relations':
         specifier: ^2.0.0
         version: 2.0.0
-      '@banksnussman/venmo':
-        specifier: ^0.1.22
-        version: 0.1.22
       '@mikro-orm/core':
         specifier: 5.6.16
         version: 5.6.16(@mikro-orm/migrations@5.6.16)(@mikro-orm/postgresql@5.6.16)
@@ -2463,18 +2460,6 @@ packages:
     resolution: {integrity: sha512-tNhm7byGNIEsTGd+/zPClUEMzOVo1CSURWPHuYafTCZg/CGO49fG7XRjFl5OkhHE6T6LZGszn6vc4rwFyVfoVg==}
     dependencies:
       graphql: 16.6.0
-    dev: false
-
-  /@banksnussman/venmo@0.1.22:
-    resolution: {integrity: sha512-WqTzJJ2kA4Xhbu1P94nM3PR3J3l69r/Jm1enJM40Lkd5iJR5fJyQ2cucLnvqt0N5f+qVC053aBG+5S6fB4qv9w==}
-    dependencies:
-      dotenv: 16.0.3
-      graphql: 16.6.0
-      graphql-request: 5.2.0(graphql@16.6.0)
-      playwright: 1.32.2
-      uuid: 9.0.0
-    transitivePeerDependencies:
-      - encoding
     dev: false
 
   /@chakra-ui/accordion@2.1.11(@chakra-ui/system@2.5.5)(framer-motion@10.11.2)(react@18.2.0):
@@ -10373,6 +10358,7 @@ packages:
   /extract-files@9.0.0:
     resolution: {integrity: sha512-CvdFfHkC95B4bBBk36hcEmvdR2awOdhhVUYH6S/zrVj3477zven/fJMYg7121h4T1xHZC+tetUpubpAhxwI7hQ==}
     engines: {node: ^10.17.0 || ^12.0.0 || >= 13.7.0}
+    dev: true
 
   /fast-decode-uri-component@1.0.1:
     resolution: {integrity: sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==}
@@ -11006,6 +10992,7 @@ packages:
       graphql: 16.6.0
     transitivePeerDependencies:
       - encoding
+    dev: true
 
   /graphql-subscriptions@2.0.0(graphql@16.6.0):
     resolution: {integrity: sha512-s6k2b8mmt9gF9pEfkxsaO1lTxaySfKoEJzEfmwguBbQ//Oq23hIXCfR1hm4kdh5hnR20RdwB+s3BCb+0duHSZA==}
@@ -13817,21 +13804,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       find-up: 3.0.0
-
-  /playwright-core@1.32.2:
-    resolution: {integrity: sha512-zD7aonO+07kOTthsrCR3YCVnDcqSHIJpdFUtZEMOb6//1Rc7/6mZDRdw+nlzcQiQltOOsiqI3rrSyn/SlyjnJQ==}
-    engines: {node: '>=14'}
-    hasBin: true
-    dev: false
-
-  /playwright@1.32.2:
-    resolution: {integrity: sha512-jHVnXJke0PXpuPszKtk9y1zZSlzO5+2a+aockT/AND0oeXx46FiJEFrafthurglLygVZA+1gEbtUM1C7qtTV+Q==}
-    engines: {node: '>=14'}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      playwright-core: 1.32.2
-    dev: false
 
   /plist@3.0.6:
     resolution: {integrity: sha512-WiIVYyrp8TD4w8yCvyeIr+lkmrGRd5u0VbRnU+tP/aRLxP/YadJUYOMZJ/6hIa3oUyVCsycXvtNRgd5XBJIbiA==}
