@@ -7,7 +7,7 @@ import { Report } from "../entities/Report";
 import { Beep } from "../entities/Beep";
 import { ForgotPassword } from "../entities/ForgotPassword";
 import { VerifyEmail } from "../entities/VerifyEmail";
-import { TokenEntry } from "../entities/TokenEntry";
+import { Token } from "../entities/TokenEntry";
 
 /**
  * Used for handling GraphQL Uploads
@@ -47,7 +47,7 @@ export async function deleteUser(user: User, em: EntityManager): Promise<boolean
   await em.nativeDelete(Rating, { rater: user });
   await em.nativeDelete(Rating, { rated: user });
 
-  await em.nativeDelete(TokenEntry, { user });
+  await em.nativeDelete(Token, { user });
 
   await em.nativeDelete(User, user);
 

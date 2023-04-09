@@ -1,13 +1,13 @@
 import * as Sentry from "@sentry/node";
 import { Context as WSContext } from "graphql-ws";
 import { Connection, EntityManager, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
-import { TokenEntry } from "../entities/TokenEntry";
 import { User } from "../entities/User";
+import { Token } from "../entities/Token";
 
 export interface Context {
     em: EntityManager;
     user: User;
-    token: TokenEntry;
+    token: Token;
 }
 
 export async function getContext(data: any, orm: MikroORM<IDatabaseDriver<Connection>>): Promise<Context> {
@@ -24,7 +24,7 @@ export async function getContext(data: any, orm: MikroORM<IDatabaseDriver<Connec
   }
 
   const token = await em.findOne(
-    TokenEntry,
+    Token,
     bearer,
     {
       populate: ['user'],
@@ -40,7 +40,7 @@ export async function getContext(data: any, orm: MikroORM<IDatabaseDriver<Connec
   return context as Context;
 }
 
-export async function onConnect(ctx: WSContext<{ token?: string }, { token?: TokenEntry }>, orm: MikroORM<IDatabaseDriver<Connection>>) {
+export async function onConnect(ctx: WSContext<{ token?: string }, { token?: Token }>, orm: MikroORM<IDatabaseDriver<Connection>>) {
   const bearer = ctx.connectionParams?.token;
 
   if (!bearer) {
@@ -48,7 +48,7 @@ export async function onConnect(ctx: WSContext<{ token?: string }, { token?: Tok
   }
 
   const token = await orm.em.fork().findOne(
-    TokenEntry,
+    Token,
     bearer,
     {
       populate: ['user'],
