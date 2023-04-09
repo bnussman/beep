@@ -5,7 +5,7 @@ import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class TokenEntry {
+export class Token {
 
   @PrimaryKey()
   @Field()
