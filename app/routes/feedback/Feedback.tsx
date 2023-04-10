@@ -3,6 +3,7 @@ import { Container } from "../../components/Container";
 import { gql, useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
 import {
+  Text,
   Button,
   FormControl,
   Input,
@@ -17,7 +18,8 @@ import {
   CreateFeedbackMutation,
   CreateFeedbackMutationVariables,
 } from "../../generated/graphql";
-import { Alert } from "react-native";
+import { Alert, Linking } from "react-native";
+import { Card } from "../../components/Card";
 
 const CreateFeedback = gql`
   mutation CreateFeedback($message: String!) {
@@ -64,6 +66,20 @@ export function Feedback() {
   return (
     <Container p={3} keyboard>
       <Stack space={2}>
+        <Card
+          pressable
+          onPress={() =>
+            Linking.openURL(
+              "https://apps.apple.com/us/app/ride-beep-app/id1528601773"
+            )
+          }
+        >
+          <Text>
+            Please submit your ideas, bugs, and feature requests here! If you
+            like the app, pleae consider clicking here to leave us an App Store
+            rating.
+          </Text>
+        </Card>
         <FormControl
           isInvalid={
             Boolean(errors.message) || Boolean(validationErrors?.message)
