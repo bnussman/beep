@@ -3,6 +3,7 @@ import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MainFindBeepScreen } from "../routes/ride/FindBeep";
+import { Feedback } from "../routes/feedback/Feedback";
 import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
@@ -65,6 +66,8 @@ const getIcon = (screenName: string) => {
       return "car";
     case "Changelog":
       return "playlist-plus";
+    case "Feedback":
+      return "help-circle-outline";
     default:
       return "car";
   }
@@ -235,6 +238,7 @@ export function BeepDrawer() {
         <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
         <Drawer.Screen name="Beeps" component={BeepsScreen} />
         <Drawer.Screen name="Ratings" component={RatingsScreen} />
+        <Drawer.Screen name="Feedback" component={Feedback} />
       </Drawer.Navigator>
     </Box>
   );

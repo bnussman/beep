@@ -14,6 +14,7 @@ import { Rating } from './ratings/Rating';
 import { ActiveBeeps } from "./beeps/ActiveBeeps";
 import { Notifications } from "./notifications";
 import { Dashboard } from './Dashboard';
+import { Feedback } from './Feedback';
 import { Cars } from './cars';
 import { Leaderboards } from './leaderboards';
 
@@ -27,6 +28,7 @@ export function Admin() {
         <Route path="beepers" element={<Beepers />} />
         <Route path="beeps" element={<Beeps />} />
         <Route path="cars" element={<Cars />} />
+        <Route path="feedback" element={<Feedback />} />
         <Route path="beeps/active" element={<ActiveBeeps />} />
         <Route path="beeps/:id" element={<Beep />} />
         <Route path="users/:id/edit" element={<Edit />} />

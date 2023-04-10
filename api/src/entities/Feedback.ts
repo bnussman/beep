@@ -5,7 +5,13 @@ import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class VerifyEmail {
+export class Feedback {
+  constructor(values?: Partial<Feedback>) {
+    if (values) {
+      Object.assign(this, values);
+    }
+  }
+
   @PrimaryKey()
   @Field()
   id: string = v4();
@@ -16,14 +22,9 @@ export class VerifyEmail {
 
   @Field()
   @Property()
-  time: Date = new Date();
+  message!: string;
 
   @Field()
   @Property()
-  email!: string;
-
-  constructor(u: User, e: string) {
-    this.user = u;
-    this.email = e;
-  }
+  created: Date = new Date();
 }
