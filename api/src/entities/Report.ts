@@ -6,52 +6,52 @@ import { User } from "./User";
 
 @ObjectType()
 @Entity()
-@Filter({ name: 'in', cond: args => ({ $or: [{ reporter: args.id } , { reported: args.id }] })})
+@Filter({ name: 'in', cond: args => ({ $or: [{ reporter: args.id }, { reported: args.id }] }) })
 export class Report {
 
-    @PrimaryKey()
-    @Field()
-    id: string = v4();
+  @PrimaryKey()
+  @Field()
+  id: string = v4();
 
-    @Field()
-    @ManyToOne()
-    reporter!: User;
+  @Field()
+  @ManyToOne()
+  reporter!: User;
 
-    @Field()
-    @ManyToOne()
-    reported!: User;
+  @Field()
+  @ManyToOne()
+  reported!: User;
 
-    @Field(() => User, { nullable: true })
-    @ManyToOne(() => User, { nullable: true })
-    handledBy?: User | null;
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true })
+  handledBy?: User | null;
 
-    @Field()
-    @Property()
-    reason!: string;
+  @Field()
+  @Property()
+  reason!: string;
 
-    @Field({ nullable: true })
-    @Property({ nullable: true })
-    notes?: string;
+  @Field({ nullable: true })
+  @Property({ nullable: true })
+  notes?: string;
 
-    @Field()
-    @Property() 
-    timestamp: Date;
+  @Field()
+  @Property()
+  timestamp: Date;
 
-    @Field()
-    @Property({ default: false })
-    handled: boolean = false;
+  @Field()
+  @Property({ default: false })
+  handled: boolean = false;
 
-    @Field({ nullable: true })
-    @ManyToOne({ nullable: true })
-    beep?: Beep;
+  @Field({ nullable: true })
+  @ManyToOne({ nullable: true })
+  beep?: Beep;
 
-    constructor(reporter: User, reported: User, reason: string, beep?: string) {
-        this.reporter = reporter;
-        this.reported = reported;
-        this.reason = reason;
-        this.timestamp = new Date();
-        if (beep) {
-            this.beep = beep as unknown as Beep;
-        }
+  constructor(reporter: User, reported: User, reason: string, beep?: string) {
+    this.reporter = reporter;
+    this.reported = reported;
+    this.reason = reason;
+    this.timestamp = new Date();
+    if (beep) {
+      this.beep = beep as unknown as Beep;
     }
+  }
 }

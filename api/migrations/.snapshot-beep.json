@@ -218,7 +218,8 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true
+          "nullable": true,
+          "mappedType": "unknown"
         },
         "created": {
           "name": "created",
@@ -376,6 +377,75 @@
             "user_id"
           ],
           "localTableName": "public.forgot_password",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.user",
+          "updateRule": "cascade"
+        }
+      }
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "created": {
+          "name": "created",
+          "type": "timestamptz(0)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "feedback",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "feedback_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "feedback_user_id_foreign": {
+          "constraintName": "feedback_user_id_foreign",
+          "columnNames": [
+            "user_id"
+          ],
+          "localTableName": "public.feedback",
           "referencedColumnNames": [
             "id"
           ],

@@ -103,6 +103,20 @@ export type EditUserInput = {
   venmo?: InputMaybe<Scalars['String']>;
 };
 
+export type Feedback = {
+  __typename?: 'Feedback';
+  created: Scalars['DateTime'];
+  id: Scalars['String'];
+  message: Scalars['String'];
+  user: User;
+};
+
+export type FeedbackResonse = {
+  __typename?: 'FeedbackResonse';
+  count: Scalars['Int'];
+  items: Array<Feedback>;
+};
+
 export type ForgotPassword = {
   __typename?: 'ForgotPassword';
   id: Scalars['String'];
@@ -141,6 +155,7 @@ export type Mutation = {
   cleanObjectStorageBucket: Scalars['Float'];
   clearQueue: Scalars['Boolean'];
   createCar: Car;
+  createFeedback: Feedback;
   deleteAccount: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
   deleteCar: Scalars['Boolean'];
@@ -202,6 +217,11 @@ export type MutationCreateCarArgs = {
   model: Scalars['String'];
   photo?: InputMaybe<Scalars['Upload']>;
   year: Scalars['Float'];
+};
+
+
+export type MutationCreateFeedbackArgs = {
+  message: Scalars['String'];
 };
 
 
@@ -343,6 +363,7 @@ export type Query = {
   getBeeps: BeepsResponse;
   getCars: CarsResponse;
   getETA: Scalars['String'];
+  getFeedback: Array<Scalars['String']>;
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
@@ -399,6 +420,13 @@ export type QueryGetCarsArgs = {
 export type QueryGetEtaArgs = {
   end: Scalars['String'];
   start: Scalars['String'];
+};
+
+
+export type QueryGetFeedbackArgs = {
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 

@@ -104,6 +104,20 @@ export type EditUserInput = {
   venmo?: InputMaybe<Scalars['String']>;
 };
 
+export type Feedback = {
+  __typename?: 'Feedback';
+  created: Scalars['DateTime'];
+  id: Scalars['String'];
+  message: Scalars['String'];
+  user: User;
+};
+
+export type FeedbackResonse = {
+  __typename?: 'FeedbackResonse';
+  count: Scalars['Int'];
+  items: Array<Feedback>;
+};
+
 export type ForgotPassword = {
   __typename?: 'ForgotPassword';
   id: Scalars['String'];
@@ -142,6 +156,7 @@ export type Mutation = {
   cleanObjectStorageBucket: Scalars['Float'];
   clearQueue: Scalars['Boolean'];
   createCar: Car;
+  createFeedback: Feedback;
   deleteAccount: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
   deleteCar: Scalars['Boolean'];
@@ -203,6 +218,11 @@ export type MutationCreateCarArgs = {
   model: Scalars['String'];
   photo?: InputMaybe<Scalars['Upload']>;
   year: Scalars['Float'];
+};
+
+
+export type MutationCreateFeedbackArgs = {
+  message: Scalars['String'];
 };
 
 
@@ -344,6 +364,7 @@ export type Query = {
   getBeeps: BeepsResponse;
   getCars: CarsResponse;
   getETA: Scalars['String'];
+  getFeedback: Array<Scalars['String']>;
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
@@ -400,6 +421,13 @@ export type QueryGetCarsArgs = {
 export type QueryGetEtaArgs = {
   end: Scalars['String'];
   start: Scalars['String'];
+};
+
+
+export type QueryGetFeedbackArgs = {
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -797,6 +825,13 @@ export type GetCarsQueryVariables = Exact<{
 
 export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string, default: boolean }> } };
 
+export type CreateFeedbackMutationVariables = Exact<{
+  message: Scalars['String'];
+}>;
+
+
+export type CreateFeedbackMutation = { __typename?: 'Mutation', createFeedback: { __typename?: 'Feedback', id: string } };
+
 export type GetUserProfileQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -926,23 +961,6 @@ export type AddProfilePictureMutationVariables = Exact<{
 
 
 export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', id: string, photo?: string | null } };
-
-export type RemoveTokenMutationVariables = Exact<{
-  token: Scalars['String'];
-}>;
-
-
-export type RemoveTokenMutation = { __typename?: 'Mutation', removeToken: boolean };
-
-export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
-
-export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
 
 
 export const UpdateBeeperQueueDocument = gql`
@@ -1710,6 +1728,39 @@ export function useGetCarsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type GetCarsQueryHookResult = ReturnType<typeof useGetCarsQuery>;
 export type GetCarsLazyQueryHookResult = ReturnType<typeof useGetCarsLazyQuery>;
 export type GetCarsQueryResult = ApolloReactCommon.QueryResult<GetCarsQuery, GetCarsQueryVariables>;
+export const CreateFeedbackDocument = gql`
+    mutation CreateFeedback($message: String!) {
+  createFeedback(message: $message) {
+    id
+  }
+}
+    `;
+export type CreateFeedbackMutationFn = ApolloReactCommon.MutationFunction<CreateFeedbackMutation, CreateFeedbackMutationVariables>;
+
+/**
+ * __useCreateFeedbackMutation__
+ *
+ * To run a mutation, you first call `useCreateFeedbackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFeedbackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFeedbackMutation, { data, loading, error }] = useCreateFeedbackMutation({
+ *   variables: {
+ *      message: // value for 'message'
+ *   },
+ * });
+ */
+export function useCreateFeedbackMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateFeedbackMutation, CreateFeedbackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<CreateFeedbackMutation, CreateFeedbackMutationVariables>(CreateFeedbackDocument, options);
+      }
+export type CreateFeedbackMutationHookResult = ReturnType<typeof useCreateFeedbackMutation>;
+export type CreateFeedbackMutationResult = ApolloReactCommon.MutationResult<CreateFeedbackMutation>;
+export type CreateFeedbackMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateFeedbackMutation, CreateFeedbackMutationVariables>;
 export const GetUserProfileDocument = gql`
     query GetUserProfile($id: String!) {
   getUser(id: $id) {
@@ -2442,127 +2493,3 @@ export function useAddProfilePictureMutation(baseOptions?: ApolloReactHooks.Muta
 export type AddProfilePictureMutationHookResult = ReturnType<typeof useAddProfilePictureMutation>;
 export type AddProfilePictureMutationResult = ApolloReactCommon.MutationResult<AddProfilePictureMutation>;
 export type AddProfilePictureMutationOptions = ApolloReactCommon.BaseMutationOptions<AddProfilePictureMutation, AddProfilePictureMutationVariables>;
-export const RemoveTokenDocument = gql`
-    mutation RemoveToken($token: String!) {
-  removeToken(token: $token)
-}
-    `;
-export type RemoveTokenMutationFn = ApolloReactCommon.MutationFunction<RemoveTokenMutation, RemoveTokenMutationVariables>;
-
-/**
- * __useRemoveTokenMutation__
- *
- * To run a mutation, you first call `useRemoveTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeTokenMutation, { data, loading, error }] = useRemoveTokenMutation({
- *   variables: {
- *      token: // value for 'token'
- *   },
- * });
- */
-export function useRemoveTokenMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveTokenMutation, RemoveTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<RemoveTokenMutation, RemoveTokenMutationVariables>(RemoveTokenDocument, options);
-      }
-export type RemoveTokenMutationHookResult = ReturnType<typeof useRemoveTokenMutation>;
-export type RemoveTokenMutationResult = ApolloReactCommon.MutationResult<RemoveTokenMutation>;
-export type RemoveTokenMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveTokenMutation, RemoveTokenMutationVariables>;
-export const UserDataDocument = gql`
-    query UserData {
-  getUser {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photo
-    capacity
-    cashapp
-  }
-}
-    `;
-
-/**
- * __useUserDataQuery__
- *
- * To run a query within a React component, call `useUserDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserDataQuery({
- *   variables: {
- *   },
- * });
- */
-export function useUserDataQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
-      }
-export function useUserDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserDataQuery, UserDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<UserDataQuery, UserDataQueryVariables>(UserDataDocument, options);
-        }
-export type UserDataQueryHookResult = ReturnType<typeof useUserDataQuery>;
-export type UserDataLazyQueryHookResult = ReturnType<typeof useUserDataLazyQuery>;
-export type UserDataQueryResult = ApolloReactCommon.QueryResult<UserDataQuery, UserDataQueryVariables>;
-export const UserUpdatesDocument = gql`
-    subscription UserUpdates {
-  getUserUpdates {
-    id
-    username
-    name
-    first
-    last
-    email
-    phone
-    venmo
-    isBeeping
-    isEmailVerified
-    isStudent
-    groupRate
-    singlesRate
-    photo
-    capacity
-    cashapp
-  }
-}
-    `;
-
-/**
- * __useUserUpdatesSubscription__
- *
- * To run a query within a React component, call `useUserUpdatesSubscription` and pass it any options that fit your needs.
- * When your component renders, `useUserUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserUpdatesSubscription({
- *   variables: {
- *   },
- * });
- */
-export function useUserUpdatesSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useSubscription<UserUpdatesSubscription, UserUpdatesSubscriptionVariables>(UserUpdatesDocument, options);
-      }
-export type UserUpdatesSubscriptionHookResult = ReturnType<typeof useUserUpdatesSubscription>;
-export type UserUpdatesSubscriptionResult = ApolloReactCommon.SubscriptionResult<UserUpdatesSubscription>;
