@@ -10,7 +10,7 @@ class FeedbackResonse extends Paginated(Feedback) {}
 
 @Resolver()
 export class FeedbackResolver {
-  @Query(() => [String])
+  @Query(() => FeedbackResonse)
   @Authorized(UserRole.ADMIN)
   public async getFeedback(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<FeedbackResonse> {
     const [items, count] = await ctx.em.findAndCount(Feedback, {}, { offset, limit: show });

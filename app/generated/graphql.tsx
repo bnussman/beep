@@ -364,7 +364,7 @@ export type Query = {
   getBeeps: BeepsResponse;
   getCars: CarsResponse;
   getETA: Scalars['String'];
-  getFeedback: Array<Scalars['String']>;
+  getFeedback: FeedbackResonse;
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;

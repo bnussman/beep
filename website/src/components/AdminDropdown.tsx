@@ -45,6 +45,9 @@ export function AdminDropdown() {
         <MenuItem as={Link} to="/admin/notifications">
           Notifications
         </MenuItem>
+        <MenuItem as={Link} to="/admin/feedback">
+          Feedback
+        </MenuItem>
       </MenuList>
     </Menu>
   );

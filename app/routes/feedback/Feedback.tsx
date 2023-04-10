@@ -34,6 +34,7 @@ export function Feedback() {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -51,6 +52,7 @@ export function Feedback() {
           "Thank you for your feedback!",
           "We will contact you if we have any further questions"
         );
+        reset();
       })
       .catch((error) => {
         if (!isValidationError(error)) {
