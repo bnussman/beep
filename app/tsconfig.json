@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
+    "experimentalDecorators": true,
     "paths": {
       "react": [ "./node_modules/@types/react" ]
     }
