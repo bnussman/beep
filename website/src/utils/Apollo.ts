@@ -6,6 +6,7 @@ import { Client, ClientOptions, createClient } from 'graphql-ws';
 import { print } from 'graphql';
 
 function getUrl() {
+  // return 'https://api.dev.ridebeep.app/graphql';
   if (import.meta.env.VITE_ENVIRONMENT_NAME === 'production') {
     return 'https://api.ridebeep.app/graphql';
   }
@@ -16,6 +17,7 @@ function getUrl() {
 }
 
 function getWSUrl() {
+    // return 'wss://api.dev.ridebeep.app/subscriptions';
   if (import.meta.env.VITE_ENVIRONMENT_NAME === 'production') {
     return 'wss://api.ridebeep.app/subscriptions';
   }

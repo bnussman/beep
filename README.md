@@ -33,7 +33,7 @@ cd beep
 
 Install dependencies
 ```
-pnpm
+pnpm i
 ```
 
 Bring local db and redis up with Docker
@@ -72,6 +72,19 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 
 - Use `pnpm clean` to clear all dependencies in the project's repository
 - Run `pnpm` in the repo's root to install dependences
+
+## 🚀 Standing up a new environment
+
+1. Create new Github Environment
+2. Create Kubernetes Cluster
+3. Create Database
+4. Create Redis Instance
+5. Configure Secrets in Github
+6. Create new Github Actions workflow
+7. Deploy to Kubernetes by pushing to specified branch
+    - After the `beep` namespace has been created, you must add a TLS secrets so that the Linode NodeBalancer can deploy
+    - `sudo kubectl --kubeconfig ~/Downloads/dev-kubeconfig.yaml create secret tls cert --cert /etc/letsencrypt/live/dev.ridebeep.app/fullchain.pem --key /etc/letsencrypt/live/dev.ridebeep.app/privkey.pem --namespace beep`
+8. Update Cloudflare to point to Linode NodeBalancer
 
 ## 📈 Stats
 ![Alt](https://repobeats.axiom.co/api/embed/1b46a8057ec1f00f48ce7a9fbe9353c7cbe4ff83.svg "Repobeats analytics image")

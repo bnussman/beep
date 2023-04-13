@@ -62,12 +62,13 @@ export class BeeperResolver {
       }
     }
 
-
     if (!!input.latitude && !!input.longitude) {
       wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
     }
     else {
-      wrap(ctx.user).assign(input);
+      wrap(ctx.user).assign({
+        isBeeping: input.isBeeping,
+      });
     }
 
     pubSub.publish("User" + ctx.user.id, ctx.user);
@@ -168,10 +169,6 @@ export class BeeperResolver {
     const entry = ctx.em.getReference(Beep, id);
 
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, filters: ['inProgress'], orderBy: { queue: { start: QueryOrder.ASC } } });
-
-    console.log(ctx.user.queue)
-
-    // await ctx.user.queue.init({ orderBy: { start: QueryOrder.ASC }, populate: ['rider', 'beeper', 'beeper.cars'], filter: [], where: { beeper: { cars: { default: true } } } });
 
     const newQueue = ctx.user.queue.getItems().filter(entry => entry.id !== id);
 

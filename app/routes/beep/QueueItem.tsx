@@ -106,43 +106,23 @@ export function QueueItem({ item }: Props) {
                 <Menu.Item
                   onPress={() => Linking.openURL("tel:" + item.rider.phone)}
                 >
-                  <HStack alignItems="center">
-                    <Text>Call</Text>
-                    <Spacer />
-                    <Icon as={Ionicons} name="ios-call" />
-                  </HStack>
+                  Call
                 </Menu.Item>
                 <Menu.Item
                   onPress={() => Linking.openURL("sms:" + item.rider.phone)}
                 >
-                  <HStack alignItems="center">
-                    <Text>Text</Text>
-                    <Spacer />
-                    <Icon as={Ionicons} name="ios-chatbox" />
-                  </HStack>
+                  Text
                 </Menu.Item>
                 <Menu.Item
                   onPress={() =>
                     openDirections("Current+Location", item.origin)
                   }
                 >
-                  <HStack alignItems="center">
-                    <Text>Directions to Rider</Text>
-                    <Spacer />
-                    <Icon as={Ionicons} name="ios-map" />
-                  </HStack>
+                  Directions to Rider
                 </Menu.Item>
                 <Divider my={1} w="100%" />
-                <Menu.Item onPress={onCancelPress}>
-                  <HStack alignItems="center">
-                    <Text color="red.400">Cancel Beep</Text>
-                    <Spacer />
-                    <Icon
-                      as={Ionicons}
-                      name="ios-close-circle"
-                      color="red.400"
-                    />
-                  </HStack>
+                <Menu.Item onPress={onCancelPress} _text={{ color: "red.400" }}>
+                  Cancel Beep
                 </Menu.Item>
               </Menu>
             </HStack>

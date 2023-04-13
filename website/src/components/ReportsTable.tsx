@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
 import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../generated/graphql';
 import { Pagination } from './Pagination';
@@ -9,6 +7,8 @@ import { TdUser } from './TdUser';
 import { NavLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Indicator } from './Indicator';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
 
@@ -17,9 +17,9 @@ interface Props {
 }
 
 const Reports = gql`
-query GetReportsForUser($id: String, $show: Int, $offset: Int) {
-  getReports(id: $id, show: $show, offset: $offset) {
-    items {
+  query GetReportsForUser($id: String, $show: Int, $offset: Int) {
+    getReports(id: $id, show: $show, offset: $offset) {
+      items {
         id
         timestamp
         reason
@@ -50,15 +50,17 @@ query GetReportsForUser($id: String, $show: Int, $offset: Int) {
 
 export function ReportsTable(props: Props) {
   const pageLimit = 5;
-  const { data, loading, refetch } = useQuery<GetReportsQuery>(Reports, { variables: { id: props.userId, offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
-
-  async function fetchReports(page: number) {
-    refetch({
-      id: props.userId,
-      offset: page
-    })
-  }
+  const { data, loading } = useQuery<GetReportsQuery>(
+    Reports,
+    {
+      variables: {
+        id: props.userId,
+        offset: (currentPage - 1) * pageLimit,
+        show: pageLimit
+      }
+    }
+  );
 
   if (data?.getReports && data.getReports.items.length === 0) {
     return (
@@ -79,11 +81,10 @@ export function ReportsTable(props: Props) {
   return (
     <Box>
       <Pagination
-        resultCount={data?.getReports?.count}
+        resultCount={data?.getReports.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchReports}
       />
       <Box overflowX="auto">
         <Table>
@@ -98,7 +99,7 @@ export function ReportsTable(props: Props) {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getReports && (data.getReports.items).map(report => (
+            {data?.getReports.items.map((report) => (
               <Tr key={report.id}>
                 <TdUser user={report.reporter} />
                 <TdUser user={report.reported} />
@@ -116,11 +117,10 @@ export function ReportsTable(props: Props) {
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.getReports?.count}
+        resultCount={data?.getReports.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchReports}
       />
     </Box>
   );

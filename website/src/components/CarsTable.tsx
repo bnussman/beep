@@ -36,18 +36,20 @@ const GetCarsForUser = gql`
 
 export function CarsTable(props: Props) {
   const pageLimit = 5;
-  const { data, loading, refetch } = useQuery<GetCarsForUserQuery>(GetCarsForUser, { variables: { id: props.userId, offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const { data, loading } = useQuery<GetCarsForUserQuery>(
+    GetCarsForUser,
+    {
+      variables: {
+        id: props.userId,
+        offset: (currentPage - 1) * pageLimit,
+        show: pageLimit 
+      }
+    }
+  );
 
   const cars = data?.getCars.items;
   const count = data?.getCars.count;
-
-  async function fetchHistory(page: number) {
-    refetch({
-      id: props.userId,
-      offset: page
-    })
-  }
 
   if (count === 0) {
     return (
@@ -68,7 +70,6 @@ export function CarsTable(props: Props) {
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchHistory}
       />
       <Box overflowX="auto">
         <Table>
@@ -84,7 +85,7 @@ export function CarsTable(props: Props) {
             </Tr>
           </Thead>
           <Tbody>
-            {cars && cars.map(car => (
+            {cars?.map((car) => (
               <Tr key={car.id}>
                 <Td>{car.make}</Td>
                 <Td>{car.model}</Td>
@@ -109,7 +110,6 @@ export function CarsTable(props: Props) {
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchHistory}
       />
     </Box>
   );

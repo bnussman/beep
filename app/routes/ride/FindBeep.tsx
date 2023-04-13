@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
@@ -14,11 +14,10 @@ import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
-import { EmailNotVerfiedCard } from "../../components/EmailNotVerifiedCard";
 import { Alert } from "../../utils/Alert";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
-import { Status, Subscription } from "../../utils/types";
+import { Status } from "../../utils/types";
 import { Avatar } from "../../components/Avatar";
 import { Rates } from "./Rates";
 import { Card } from "../../components/Card";
@@ -29,6 +28,8 @@ import {
   ChooseBeepMutationVariables,
   GetEtaQuery,
   GetInitialRiderStatusQuery,
+  RiderStatusSubscription,
+  BeepersLocationSubscription,
 } from "../../generated/graphql";
 import {
   openCashApp,
@@ -41,6 +42,7 @@ import {
   useLazyQuery,
   useMutation,
   useQuery,
+  useSubscription,
 } from "@apollo/client";
 import {
   Button,
@@ -48,7 +50,6 @@ import {
   Input,
   Heading,
   Stack,
-  Image,
   FormControl,
   HStack,
   Center,
@@ -57,6 +58,7 @@ import {
   Spinner,
   Pressable,
   WarningOutlineIcon,
+  Image,
 } from "native-base";
 
 const ChooseBeep = gql`
@@ -206,14 +208,9 @@ const GetETA = gql`
   }
 `;
 
-let sub: Subscription;
-let riderStatusSub: Subscription;
-
 export function MainFindBeepScreen() {
   const { user } = useUser();
-
   const { getLocation } = useLocation(false);
-
   const { navigate } = useNavigation<Navigation>();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
@@ -222,6 +219,48 @@ export function MainFindBeepScreen() {
       notifyOnNetworkStatusChange: true,
     }
   );
+
+  const beep = data?.getRiderStatus;
+
+  const isAcceptedBeep = [
+    Status.ACCEPTED,
+    Status.IN_PROGRESS,
+    Status.HERE,
+    Status.ON_THE_WAY,
+  ].includes(beep?.status as Status);
+
+  useSubscription<RiderStatusSubscription>(RiderStatus, {
+    onData({ data }) {
+      client.writeQuery({
+        query: InitialRiderStatus,
+        data: { getRiderStatus: data.data?.getRiderUpdates },
+      });
+    },
+    skip: !beep,
+  });
+
+  useSubscription<BeepersLocationSubscription>(BeepersLocation, {
+    variables: { id: beep?.beeper.id },
+    onData({ data }) {
+      if (!data?.data?.getLocationUpdates?.latitude) return;
+
+      cache.modify({
+        id: cache.identify({
+          __typename: "User",
+          id: beep?.beeper.id,
+        }),
+        fields: {
+          location() {
+            return {
+              latitude: data.data?.getLocationUpdates?.latitude,
+              longitude: data.data?.getLocationUpdates?.longitude,
+            };
+          },
+        },
+      });
+    },
+    skip: !isAcceptedBeep,
+  });
 
   const [getETA, { data: eta, error: etaError }] =
     useLazyQuery<GetEtaQuery>(GetETA);
@@ -239,11 +278,26 @@ export function MainFindBeepScreen() {
   const validationErrors =
     useValidationErrors<ChooseBeepMutationVariables>(getBeepError);
 
-  const beep = data?.getRiderStatus;
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (nextAppState === "active") {
+      refetch();
+    }
+  };
 
-  const appState = useRef(AppState.currentState);
+  const updateETA = throttle(25000, async (lat: number, long: number) => {
+    const location = await getLocation();
+
+    getETA({
+      variables: {
+        start: `${lat},${long}`,
+        end: `${location.coords.latitude},${location.coords.longitude}`,
+      },
+    });
+  });
 
   useEffect(() => {
+    SplashScreen.hideAsync();
+
     const listener = AppState.addEventListener("change", handleAppStateChange);
 
     return () => {
@@ -251,116 +305,24 @@ export function MainFindBeepScreen() {
     };
   }, []);
 
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appState.current.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
-      refetch();
-    }
-
-    appState.current = nextAppState;
-  };
-
-  async function updateETA(lat: number, long: number): Promise<void> {
-    const location = await getLocation();
-    getETA({
-      variables: {
-        start: `${lat},${long}`,
-        end: `${location.coords.latitude},${location.coords.longitude}`,
-      },
-    });
-  }
-
-  async function subscribeToLocation() {
-    const a = client.subscribe({
-      query: BeepersLocation,
-      variables: { id: data?.getRiderStatus?.beeper.id },
-    });
-
-    sub = a.subscribe((values) => {
-      throttleUpdateETA(
-        values.data.getLocationUpdates.latitude,
-        values.data.getLocationUpdates.longitude
-      );
-
-      cache.modify({
-        id: cache.identify({
-          __typename: "User",
-          id: beep?.beeper.id,
-        }),
-        fields: {
-          location() {
-            return {
-              latitude: values.data.getLocationUpdates.latitude,
-              longitude: values.data.getLocationUpdates.longitude,
-            };
-          },
-        },
-      });
-    });
-  }
-
-  const throttleUpdateETA = throttle(25000, updateETA);
-
   useEffect(() => {
-    SplashScreen.hideAsync();
-  }, []);
-
-  useEffect(() => {
-    if (user?.id && beep && !riderStatusSub) {
-      subscribeToRiderStatus();
-    }
-  }, [user, beep]);
-
-  function subscribeToRiderStatus(): void {
-    const a = client.subscribe({
-      query: RiderStatus,
-    });
-
-    riderStatusSub = a.subscribe(({ data }) => {
-      client.writeQuery({
-        query: InitialRiderStatus,
-        data: { getRiderStatus: data.getRiderUpdates },
-      });
-    });
-  }
-
-  const isAcceptedBeep = [
-    Status.ACCEPTED,
-    Status.IN_PROGRESS,
-    Status.HERE,
-    Status.ON_THE_WAY,
-  ].includes(beep?.status as Status);
-
-  useEffect(() => {
-    if (
-      (beep?.status === Status.ACCEPTED &&
-        previousData?.getRiderStatus?.status === Status.WAITING) ||
-      (beep !== undefined && beep !== null && isAcceptedBeep && !previousData)
-    ) {
-      subscribeToLocation();
-    }
-    if (
-      !previousData &&
-      beep?.beeper.location &&
-      beep?.status === Status.ON_THE_WAY
-    ) {
+    // If no ETA has been gotten, try to get it
+    if (beep?.beeper.location && beep?.status === Status.ON_THE_WAY) {
       updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
     }
+
+    // Run some code when a beep completes
     if (previousData && !beep) {
       client.refetchQueries({ include: [GetRateData, GetBeepHistory] });
-      riderStatusSub?.unsubscribe();
-      sub?.unsubscribe();
     }
-  }, [data]);
+  }, [beep]);
 
-  async function findBeep(): Promise<void> {
-    return navigate("Choose Beeper", {
+  const findBeep = () => {
+    navigate("Choose Beeper", {
       handlePick: (id: string) =>
         handleSubmit((values) => chooseBeep(id, values))(),
     });
-  }
+  };
 
   const chooseBeep = async (
     id: string,
@@ -379,8 +341,6 @@ export function MainFindBeepScreen() {
           query: InitialRiderStatus,
           data: { getRiderStatus: { ...data.chooseBeep } },
         });
-
-        subscribeToRiderStatus();
       }
     } catch (error) {
       Alert(error as ApolloError);
@@ -396,7 +356,7 @@ export function MainFindBeepScreen() {
       case Status.ON_THE_WAY:
         return "Beeper is on their way to get you.";
       case Status.HERE:
-        return `Beeper is here to pick you up in a ${beep.beeper.cars[0].color} ${beep.beeper.cars[0].make} ${beep.beeper.cars[0].model}`;
+        return `Beeper is here to pick you up in a ${beep.beeper.cars?.[0].color} ${beep.beeper.cars?.[0].make} ${beep.beeper.cars?.[0].model}`;
       case Status.IN_PROGRESS:
         return "You are currenly in the car with your beeper.";
       default:
@@ -417,7 +377,6 @@ export function MainFindBeepScreen() {
     return (
       <Container keyboard alignItems="center" pt={2} h="100%" px={4}>
         <Stack space={4} w="100%">
-          {!user?.isEmailVerified ? <EmailNotVerfiedCard /> : null}
           <FormControl
             isInvalid={
               Boolean(errors.groupSize) || Boolean(validationErrors?.groupSize)
@@ -607,8 +566,8 @@ export function MainFindBeepScreen() {
               w="100%"
               h={48}
               flexGrow={1}
-              source={{ uri: beep.beeper.cars[0].photo }}
-              alt={`car-${beep.beeper.cars[0].id}`}
+              source={{ uri: beep.beeper.cars?.[0].photo }}
+              alt={`car-${beep.beeper.cars?.[0].id}`}
             />
           ) : (
             <Map
@@ -678,6 +637,7 @@ export function MainFindBeepScreen() {
               {beep.beeper.venmo ? (
                 <Button
                   flexGrow={1}
+                  colorScheme="lightBlue"
                   rightIcon={
                     <Icon as={Ionicons} size="md" name="ios-card-outline" />
                   }

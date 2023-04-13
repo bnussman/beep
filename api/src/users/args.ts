@@ -3,7 +3,7 @@ import { ArgsType } from "type-graphql";
 import { IsBoolean, IsEmail, IsMobilePhone, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Authorized, Field, InputType } from 'type-graphql';
 import { User, UserRole } from "../entities/User";
-import { IsStudent } from "../validators/IsStudent";
+import { IsStudent } from "../utils/validators";
 
 @ArgsType()
 export class NotificationArgs {

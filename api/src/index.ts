@@ -6,14 +6,13 @@ import express from "express";
 import config from './mikro-orm.config';
 import ws from 'ws';
 import cors from 'cors';
-import { json } from 'body-parser';
 import * as Sentry from "./utils/sentry";
 import * as RealSentry from "@sentry/node";
+import { json } from 'body-parser';
 import { MikroORM } from "@mikro-orm/core";
 import { TokenEntry } from "./entities/TokenEntry";
-import { GraphQLSchema } from "graphql";
 import { buildSchema } from 'type-graphql';
-import { authChecker, LeakChecker } from "./utils/authentication";
+import { authChecker } from "./utils/authentication";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { createServer } from 'http';
 import { graphqlUploadExpress } from "graphql-upload";
@@ -69,10 +68,9 @@ async function start() {
     subscriber: new Redis(options)
   });
 
-  const schema: GraphQLSchema = await buildSchema({
+  const schema = await buildSchema({
     resolvers: [__dirname + '/**/resolver.{ts,js}'],
-    authChecker: authChecker,
-    globalMiddlewares: [LeakChecker],
+    authChecker,
     pubSub,
     validate: { forbidUnknownValues: false }
   });

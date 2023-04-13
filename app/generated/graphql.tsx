@@ -104,6 +104,20 @@ export type EditUserInput = {
   venmo?: InputMaybe<Scalars['String']>;
 };
 
+export type Feedback = {
+  __typename?: 'Feedback';
+  created: Scalars['DateTime'];
+  id: Scalars['String'];
+  message: Scalars['String'];
+  user: User;
+};
+
+export type FeedbackResonse = {
+  __typename?: 'FeedbackResonse';
+  count: Scalars['Int'];
+  items: Array<Feedback>;
+};
+
 export type ForgotPassword = {
   __typename?: 'ForgotPassword';
   id: Scalars['String'];
@@ -142,6 +156,7 @@ export type Mutation = {
   cleanObjectStorageBucket: Scalars['Float'];
   clearQueue: Scalars['Boolean'];
   createCar: Car;
+  createFeedback: Feedback;
   deleteAccount: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
   deleteCar: Scalars['Boolean'];
@@ -203,6 +218,11 @@ export type MutationCreateCarArgs = {
   model: Scalars['String'];
   photo?: InputMaybe<Scalars['Upload']>;
   year: Scalars['Float'];
+};
+
+
+export type MutationCreateFeedbackArgs = {
+  message: Scalars['String'];
 };
 
 
@@ -344,12 +364,14 @@ export type Query = {
   getBeeps: BeepsResponse;
   getCars: CarsResponse;
   getETA: Scalars['String'];
+  getFeedback: FeedbackResonse;
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
   getQueue: Array<Beep>;
   getRating: Rating;
   getRatings: RatingsResponse;
+  getRedisChannels: Array<Scalars['String']>;
   getReport: Report;
   getReports: ReportsResponse;
   getRiderStatus?: Maybe<Beep>;
@@ -399,6 +421,13 @@ export type QueryGetCarsArgs = {
 export type QueryGetEtaArgs = {
   end: Scalars['String'];
   start: Scalars['String'];
+};
+
+
+export type QueryGetFeedbackArgs = {
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -590,7 +619,7 @@ export type UpdateReportInput = {
 export type User = {
   __typename?: 'User';
   capacity: Scalars['Float'];
-  cars: Array<Car>;
+  cars?: Maybe<Array<Car>>;
   cashapp?: Maybe<Scalars['String']>;
   created?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;
@@ -668,7 +697,7 @@ export type UpdateBeeperQueueMutationVariables = Exact<{
 }>;
 
 
-export type UpdateBeeperQueueMutation = { __typename?: 'Mutation', setBeeperQueue: Array<{ __typename?: 'Beep', id: string, groupSize: number, origin: string, destination: string, status: string }> };
+export type UpdateBeeperQueueMutation = { __typename?: 'Mutation', setBeeperQueue: Array<{ __typename?: 'Beep', id: string, groupSize: number, origin: string, destination: string, status: string, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, venmo?: string | null, cashapp?: string | null, phone?: string | null, photo?: string | null, isStudent: boolean, rating?: number | null } }> };
 
 export type CancelBeepMutationVariables = Exact<{
   id: Scalars['String'];
@@ -796,6 +825,13 @@ export type GetCarsQueryVariables = Exact<{
 
 export type GetCarsQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string, default: boolean }> } };
 
+export type CreateFeedbackMutationVariables = Exact<{
+  message: Scalars['String'];
+}>;
+
+
+export type CreateFeedbackMutation = { __typename?: 'Mutation', createFeedback: { __typename?: 'Feedback', id: string } };
+
 export type GetUserProfileQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -857,17 +893,17 @@ export type ChooseBeepMutationVariables = Exact<{
 }>;
 
 
-export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } };
+export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars?: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> | null } } };
 
 export type GetInitialRiderStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } | null };
+export type GetInitialRiderStatusQuery = { __typename?: 'Query', getRiderStatus?: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars?: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> | null } } | null };
 
 export type RiderStatusSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> } } | null };
+export type RiderStatusSubscription = { __typename?: 'Subscription', getRiderUpdates?: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars?: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> | null } } | null };
 
 export type BeepersLocationSubscriptionVariables = Exact<{
   id: Scalars['String'];
@@ -952,6 +988,18 @@ export const UpdateBeeperQueueDocument = gql`
     origin
     destination
     status
+    rider {
+      id
+      name
+      first
+      last
+      venmo
+      cashapp
+      phone
+      photo
+      isStudent
+      rating
+    }
   }
 }
     `;
@@ -1697,6 +1745,39 @@ export function useGetCarsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type GetCarsQueryHookResult = ReturnType<typeof useGetCarsQuery>;
 export type GetCarsLazyQueryHookResult = ReturnType<typeof useGetCarsLazyQuery>;
 export type GetCarsQueryResult = ApolloReactCommon.QueryResult<GetCarsQuery, GetCarsQueryVariables>;
+export const CreateFeedbackDocument = gql`
+    mutation CreateFeedback($message: String!) {
+  createFeedback(message: $message) {
+    id
+  }
+}
+    `;
+export type CreateFeedbackMutationFn = ApolloReactCommon.MutationFunction<CreateFeedbackMutation, CreateFeedbackMutationVariables>;
+
+/**
+ * __useCreateFeedbackMutation__
+ *
+ * To run a mutation, you first call `useCreateFeedbackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFeedbackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFeedbackMutation, { data, loading, error }] = useCreateFeedbackMutation({
+ *   variables: {
+ *      message: // value for 'message'
+ *   },
+ * });
+ */
+export function useCreateFeedbackMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateFeedbackMutation, CreateFeedbackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<CreateFeedbackMutation, CreateFeedbackMutationVariables>(CreateFeedbackDocument, options);
+      }
+export type CreateFeedbackMutationHookResult = ReturnType<typeof useCreateFeedbackMutation>;
+export type CreateFeedbackMutationResult = ApolloReactCommon.MutationResult<CreateFeedbackMutation>;
+export type CreateFeedbackMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateFeedbackMutation, CreateFeedbackMutationVariables>;
 export const GetUserProfileDocument = gql`
     query GetUserProfile($id: String!) {
   getUser(id: $id) {

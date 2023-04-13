@@ -103,6 +103,20 @@ export type EditUserInput = {
   venmo?: InputMaybe<Scalars['String']>;
 };
 
+export type Feedback = {
+  __typename?: 'Feedback';
+  created: Scalars['DateTime'];
+  id: Scalars['String'];
+  message: Scalars['String'];
+  user: User;
+};
+
+export type FeedbackResonse = {
+  __typename?: 'FeedbackResonse';
+  count: Scalars['Int'];
+  items: Array<Feedback>;
+};
+
 export type ForgotPassword = {
   __typename?: 'ForgotPassword';
   id: Scalars['String'];
@@ -141,6 +155,7 @@ export type Mutation = {
   cleanObjectStorageBucket: Scalars['Float'];
   clearQueue: Scalars['Boolean'];
   createCar: Car;
+  createFeedback: Feedback;
   deleteAccount: Scalars['Boolean'];
   deleteBeep: Scalars['Boolean'];
   deleteCar: Scalars['Boolean'];
@@ -202,6 +217,11 @@ export type MutationCreateCarArgs = {
   model: Scalars['String'];
   photo?: InputMaybe<Scalars['Upload']>;
   year: Scalars['Float'];
+};
+
+
+export type MutationCreateFeedbackArgs = {
+  message: Scalars['String'];
 };
 
 
@@ -343,12 +363,14 @@ export type Query = {
   getBeeps: BeepsResponse;
   getCars: CarsResponse;
   getETA: Scalars['String'];
+  getFeedback: FeedbackResonse;
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
   getQueue: Array<Beep>;
   getRating: Rating;
   getRatings: RatingsResponse;
+  getRedisChannels: Array<Scalars['String']>;
   getReport: Report;
   getReports: ReportsResponse;
   getRiderStatus?: Maybe<Beep>;
@@ -398,6 +420,13 @@ export type QueryGetCarsArgs = {
 export type QueryGetEtaArgs = {
   end: Scalars['String'];
   start: Scalars['String'];
+};
+
+
+export type QueryGetFeedbackArgs = {
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
+  show?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -589,7 +618,7 @@ export type UpdateReportInput = {
 export type User = {
   __typename?: 'User';
   capacity: Scalars['Float'];
-  cars: Array<Car>;
+  cars?: Maybe<Array<Car>>;
   cashapp?: Maybe<Scalars['String']>;
   created?: Maybe<Scalars['DateTime']>;
   email?: Maybe<Scalars['String']>;
@@ -810,6 +839,19 @@ export type GetUsersPerDomainQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUsersPerDomainQuery = { __typename?: 'Query', getUsersPerDomain: Array<{ __typename?: 'UsersPerDomain', domain: string, count: number }> };
+
+export type RedisChannelsQueryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RedisChannelsQueryQuery = { __typename?: 'Query', getRedisChannels: Array<string> };
+
+export type FeedbackQueryVariables = Exact<{
+  offset?: InputMaybe<Scalars['Int']>;
+  show?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type FeedbackQuery = { __typename?: 'Query', getFeedback: { __typename?: 'FeedbackResonse', count: number, items: Array<{ __typename?: 'Feedback', id: string, message: string, created: any, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
 
 export type GetBeepersQueryVariables = Exact<{
   latitude: Scalars['Float'];
@@ -1885,6 +1927,84 @@ export function useGetUsersPerDomainLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetUsersPerDomainQueryHookResult = ReturnType<typeof useGetUsersPerDomainQuery>;
 export type GetUsersPerDomainLazyQueryHookResult = ReturnType<typeof useGetUsersPerDomainLazyQuery>;
 export type GetUsersPerDomainQueryResult = Apollo.QueryResult<GetUsersPerDomainQuery, GetUsersPerDomainQueryVariables>;
+export const RedisChannelsQueryDocument = gql`
+    query RedisChannelsQuery {
+  getRedisChannels
+}
+    `;
+
+/**
+ * __useRedisChannelsQueryQuery__
+ *
+ * To run a query within a React component, call `useRedisChannelsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRedisChannelsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRedisChannelsQueryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useRedisChannelsQueryQuery(baseOptions?: Apollo.QueryHookOptions<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>(RedisChannelsQueryDocument, options);
+      }
+export function useRedisChannelsQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>(RedisChannelsQueryDocument, options);
+        }
+export type RedisChannelsQueryQueryHookResult = ReturnType<typeof useRedisChannelsQueryQuery>;
+export type RedisChannelsQueryLazyQueryHookResult = ReturnType<typeof useRedisChannelsQueryLazyQuery>;
+export type RedisChannelsQueryQueryResult = Apollo.QueryResult<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>;
+export const FeedbackDocument = gql`
+    query Feedback($offset: Int, $show: Int) {
+  getFeedback(offset: $offset, show: $show) {
+    items {
+      id
+      message
+      created
+      user {
+        id
+        photo
+        name
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useFeedbackQuery__
+ *
+ * To run a query within a React component, call `useFeedbackQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFeedbackQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFeedbackQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
+ *   },
+ * });
+ */
+export function useFeedbackQuery(baseOptions?: Apollo.QueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
+      }
+export function useFeedbackLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
+        }
+export type FeedbackQueryHookResult = ReturnType<typeof useFeedbackQuery>;
+export type FeedbackLazyQueryHookResult = ReturnType<typeof useFeedbackLazyQuery>;
+export type FeedbackQueryResult = Apollo.QueryResult<FeedbackQuery, FeedbackQueryVariables>;
 export const GetBeepersDocument = gql`
     query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
   getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {

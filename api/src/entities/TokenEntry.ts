@@ -7,19 +7,19 @@ import { User } from "./User";
 @Entity()
 export class TokenEntry {
 
-    @PrimaryKey()
-    @Field()
-    id: string = v4();
+  @PrimaryKey()
+  @Field()
+  id: string = v4();
 
-    @Field()
-    @Property() 
-    tokenid: string = v4();
+  @Field()
+  @Property()
+  tokenid: string = v4();
 
-    @Field(() => User)
-    @ManyToOne(() => User)
-    user!: User;
-    
-    constructor(u: User) {
-        this.user = u;
-    }
+  @Field(() => User)
+  @ManyToOne(() => User)
+  user!: User;
+
+  constructor(u: User) {
+    this.user = u;
+  }
 }

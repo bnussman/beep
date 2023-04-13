@@ -44,15 +44,16 @@ const Ratings = gql`
 
 export function RatingsTable(props: Props) {
   const pageLimit = 5;
-  const { data, loading, refetch } = useQuery<GetRatingsQuery>(Ratings, { variables: { id: props.userId, offset: 0, show: pageLimit } });
   const [currentPage, setCurrentPage] = useState<number>(1);
-
-  async function fetchRatings(page: number) {
-    refetch({
-      id: props.userId,
-      offset: page
-    })
-  }
+  const { data, loading } = useQuery<GetRatingsQuery>(
+    Ratings, {
+      variables: {
+        id: props.userId,
+        offset: (currentPage - 1) * pageLimit,
+        show: pageLimit
+      }
+    }
+  );
 
   if (data?.getRatings && data.getRatings.items.length === 0) {
     return (
@@ -73,11 +74,10 @@ export function RatingsTable(props: Props) {
   return (
     <Box>
       <Pagination
-        resultCount={data?.getRatings?.count}
+        resultCount={data?.getRatings.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchRatings}
       />
       <Box overflowX="auto">
         <Table>
@@ -88,35 +88,32 @@ export function RatingsTable(props: Props) {
               <Th>Message</Th>
               <Th>Stars</Th>
               <Th>Date</Th>
-              <Th> </Th>
+              <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getRatings && (data.getRatings.items).map(rating => {
-              return (
-                <Tr key={rating.id}>
-                  <TdUser user={rating.rater} />
-                  <TdUser user={rating.rated} />
-                  <Td>{rating.message || "N/A"}</Td>
-                  <Td>{printStars(rating.stars)}</Td>
-                  <Td>{dayjs().to(rating.timestamp)}</Td>
-                  <Td>
-                    <NavLink to={`/admin/ratings/${rating.id}`}>
-                      <ExternalLinkIcon />
-                    </NavLink>
-                  </Td>
-                </Tr>
-              )
-            })}
+            {data?.getRatings.items.map((rating) => (
+              <Tr key={rating.id}>
+                <TdUser user={rating.rater} />
+                <TdUser user={rating.rated} />
+                <Td>{rating.message || "N/A"}</Td>
+                <Td>{printStars(rating.stars)}</Td>
+                <Td>{dayjs().to(rating.timestamp)}</Td>
+                <Td>
+                  <NavLink to={`/admin/ratings/${rating.id}`}>
+                    <ExternalLinkIcon />
+                  </NavLink>
+                </Td>
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.getRatings?.count}
+        resultCount={data?.getRatings.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        onPageChange={fetchRatings}
       />
     </Box>
   );

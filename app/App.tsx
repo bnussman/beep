@@ -31,7 +31,7 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { trpc } from "./utils/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { httpBatchLink } from "@trpc/client";
@@ -188,11 +188,9 @@ function App() {
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <ApolloProvider client={client}>
-          <App2 />
-        </ApolloProvider>
-      </QueryClientProvider>
+      <ApolloProvider client={client}>
+        <App2 />
+      </ApolloProvider>
     </trpc.Provider>
   );
 }

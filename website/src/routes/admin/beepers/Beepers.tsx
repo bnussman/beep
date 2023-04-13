@@ -143,14 +143,8 @@ export function Beepers() {
         <Badge ml={2}>
           {String(beepers?.length ?? 0)}
         </Badge>
-        <Spacer />
-        <Box>
-          <Select variant='filled' value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)}>
-            {options.map((option) => <option value={option.label}>{option.label}</option>)}
-          </Select>
-        </Box>
       </HStack>
-      <BeepersMap beepers={beepers} viewState={options.find((option) => option.label === selectedOption)?.value} />
+      <BeepersMap beepers={beepers} />
       <Box overflowX="auto">
         <Table>
           <Thead>

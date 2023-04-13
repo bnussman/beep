@@ -62,7 +62,15 @@ export class BeepResolver {
   public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<Beep[]> {
     const populate = fieldsToRelations(info) as Array<keyof Beep>;
 
-    return await ctx.em.find(Beep, { beeper: id ?? ctx.user.id }, { orderBy: { start: QueryOrder.ASC }, populate, filters: ['inProgress'] });
+    return await ctx.em.find(
+      Beep,
+      { beeper: id ?? ctx.user.id },
+      {
+        orderBy: { start: QueryOrder.ASC },
+        populate,
+        filters: ['inProgress']
+      }
+    );
   }
 
   @Query(() => BeepsResponse)

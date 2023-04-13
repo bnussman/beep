@@ -184,7 +184,7 @@ export function Beep(props: Props) {
                 ) : null}
               </>
             )}
-            {[Status.ON_THE_WAY, Status.WAITING].includes(
+            {[Status.ON_THE_WAY, Status.ACCEPTED].includes(
               beep.status as Status
             ) ? (
               <Button

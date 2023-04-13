@@ -3,7 +3,7 @@ import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
 import { GraphQLUpload } from 'graphql-upload';
 import { Upload } from '../users/helpers';
-import { IsStudent } from '../validators/IsStudent';
+import { IsStudent } from '../utils/validators';
 
 @InputType()
 export class LoginInput implements Partial<User> {

@@ -1,8 +1,7 @@
 import React from "react";
-import { Badge, Box, Center, Heading, HStack, Spinner, Table, Tbody, Td, Th, Thead, Tr, useColorMode, Text } from "@chakra-ui/react";
+import { Box, Center, Heading, ListItem, Spinner, Stack, Table, Tbody, Td, Th, Thead, Tr, UnorderedList } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
-import { GetUsersPerDomainQuery } from "../../generated/graphql";
-import { Pie, PieChart, ResponsiveContainer } from "recharts";
+import { GetUsersPerDomainQuery, RedisChannelsQueryQuery } from "../../generated/graphql";
 
 const UsersByDomainQuery = gql`
   query GetUsersPerDomain {
@@ -13,17 +12,19 @@ const UsersByDomainQuery = gql`
   }
 `;
 
-
+const RedisChannelsQuery = gql`
+  query RedisChannelsQuery {
+    getRedisChannels  
+  }
+`;
 
 export function Dashboard() {
   const { data, loading } = useQuery<GetUsersPerDomainQuery>(UsersByDomainQuery);
-  const { colorMode } = useColorMode();
+  const { data: redisChannels, loading: redisLoading } = useQuery<RedisChannelsQueryQuery>(RedisChannelsQuery);
 
   const usersPerDomain = data?.getUsersPerDomain ?? [];
 
-  const fontColor = colorMode === "dark" ? "white" : "black";
-
-  if (loading) {
+  if (loading || redisLoading) {
     return (
       <Center>
         <Spinner />
@@ -32,34 +33,33 @@ export function Dashboard() {
   }
 
   return (
-    <Box>
+    <Stack spacing={4}>
       <Heading>Dashboard</Heading>
-      <ResponsiveContainer width="100%" height={600}>
-        <PieChart width={400} height={600}>
-          <Pie
-            dataKey="value"
-            data={usersPerDomain.map((item, index) => ({ name: item.domain, value: item.count, fill: '#'+(Math.random()*0xFFFFFF<<0).toString(16) }))}
-            label={(data) => `${data.name} (${data.value})`}
-            fill="#8884d8"
-          />
-        </PieChart>
-      </ResponsiveContainer>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Domain</Th>
-            <Th>Count</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {usersPerDomain?.map(({ domain, count }) => (
-            <Tr key={domain}>
-              <Td>{domain}</Td>
-              <Td>{count}</Td>
+      <Box>
+        <Heading size="md">Redis Channels</Heading>
+        <UnorderedList>
+          {redisChannels?.getRedisChannels.map((channel) => (<ListItem>{channel}</ListItem>))}
+        </UnorderedList>
+      </Box>
+      <Box>
+        <Heading size="md">Domains</Heading>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Domain</Th>
+              <Th>Count</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </Box>
+          </Thead>
+          <Tbody>
+            {usersPerDomain?.map(({ domain, count }) => (
+              <Tr key={domain}>
+                <Td>{domain}</Td>
+                <Td>{count}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
+    </Stack>
   );
 }
