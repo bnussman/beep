@@ -23,6 +23,7 @@ importers:
       '@sentry/integrations': ^7.47.0
       '@sentry/node': ^7.47.0
       '@sentry/tracing': ^7.47.0
+      '@trpc/server': ^10.19.1
       '@types/bcrypt': ^5.0.0
       '@types/body-parser': ^1.19.2
       '@types/cors': ^2.8.13
@@ -67,6 +68,7 @@ importers:
       '@sentry/integrations': 7.47.0
       '@sentry/node': 7.47.0
       '@sentry/tracing': 7.47.0
+      '@trpc/server': 10.19.1
       aws-sdk: 2.1357.0
       bcrypt: 5.1.0
       body-parser: 1.20.2
@@ -7238,6 +7240,10 @@ packages:
     resolution: {integrity: sha512-H61dIgoAjiA7/SfuHlUAsqshhaxOSSRFyEfaoBwYvXzLyno+fvQRUXvxpsC4A8IsDuNX2pxiggAK8AwTNKqIzg==}
     peerDependencies:
       '@trpc/server': 10.19.1
+    dev: false
+
+  /@trpc/server/10.19.1:
+    resolution: {integrity: sha512-LAa8BQhMYJL+GU28cigOPKlEogCEBeff1wIKflnUj34ou1ythwTboe7Mi6rjDW3Q9EasP7s9YmqRv9Fkp8fL4Q==}
     dev: false
 
   /@tsconfig/node10/1.0.9:
