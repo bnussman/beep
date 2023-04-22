@@ -22,6 +22,8 @@ const FeedbackGQL = gql`
         user {
           id
           photo
+          first
+          last
           name
         }
       }
