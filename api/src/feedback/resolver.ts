@@ -4,6 +4,7 @@ import { Context } from "../utils/context";
 import { Paginated, PaginationArgs } from "../utils/pagination";
 import { Feedback } from "../entities/Feedback";
 import { FeedbackArgs } from "./args";
+import { QueryOrder } from "@mikro-orm/core";
 
 @ObjectType()
 class FeedbackResonse extends Paginated(Feedback) {}
@@ -13,7 +14,7 @@ export class FeedbackResolver {
   @Query(() => FeedbackResonse)
   @Authorized(UserRole.ADMIN)
   public async getFeedback(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<FeedbackResonse> {
-    const [items, count] = await ctx.em.findAndCount(Feedback, {}, { populate: ['user'], offset, limit: show });
+    const [items, count] = await ctx.em.findAndCount(Feedback, {}, { populate: ['user'], offset, limit: show, orderBy: { created: QueryOrder.DESC} });
 
     return { items, count };
   }
