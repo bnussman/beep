@@ -13,7 +13,7 @@ export class FeedbackResolver {
   @Query(() => FeedbackResonse)
   @Authorized(UserRole.ADMIN)
   public async getFeedback(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<FeedbackResonse> {
-    const [items, count] = await ctx.em.findAndCount(Feedback, {}, { offset, limit: show });
+    const [items, count] = await ctx.em.findAndCount(Feedback, {}, { populate: ['user'], offset, limit: show });
 
     return { items, count };
   }
