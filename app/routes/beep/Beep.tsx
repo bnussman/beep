@@ -28,6 +28,7 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
+import { Logger } from "../../utils/Logger";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -128,7 +129,12 @@ export function Beep(props: Props) {
               <IconButton
                 flexGrow={1}
                 variant="solid"
-                onPress={() => Linking.openURL("tel:" + beep.rider.phone)}
+                onPress={() => {
+                  Logger.info(
+                    `Calling ${beep.rider.name} with phone ${beep.rider.phone} in ${beep.status} beep`
+                  );
+                  Linking.openURL("tel:" + beep.rider.phone);
+                }}
                 icon={
                   <Icon as={Ionicons} color="white" name="ios-call" size="md" />
                 }
@@ -136,7 +142,12 @@ export function Beep(props: Props) {
               <IconButton
                 flexGrow={1}
                 variant="solid"
-                onPress={() => Linking.openURL("sms:" + beep.rider.phone)}
+                onPress={() => {
+                  Logger.info(
+                    `Texting ${beep.rider.name} with phone ${beep.rider.phone} in ${beep.status} beep`
+                  );
+                  Linking.openURL("sms:" + beep.rider.phone);
+                }}
                 icon={
                   <Icon
                     as={Ionicons}

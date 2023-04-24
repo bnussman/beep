@@ -77,7 +77,6 @@ const GetInitialQueue = gql`
         cashapp
         phone
         photo
-        isStudent
         rating
       }
     }
@@ -101,7 +100,6 @@ const GetQueue = gql`
         cashapp
         phone
         photo
-        isStudent
         rating
       }
     }
