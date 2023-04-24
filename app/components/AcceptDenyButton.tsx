@@ -10,6 +10,7 @@ import {
 } from "../generated/graphql";
 import { UpdateBeeperQueue } from "./ActionButton";
 import { Status } from "../utils/types";
+import { Logger } from "../utils/Logger";
 
 interface Props {
   type: "accept" | "deny";
@@ -29,15 +30,27 @@ export function AcceptDenyButton(props: Props) {
   const onPress = () => {
     setLoading(true);
 
+    let message = `Before accept, phone was ${props.item.rider.phone}, after it was `;
+
     update({
       variables: {
         id: props.item.id,
         status: props.type === "accept" ? Status.ACCEPTED : Status.DENIED,
       },
-    }).catch((error) => {
-      Alert(error);
-      setLoading(false);
-    });
+    })
+      .then(({ data }) => {
+        const beep = data?.setBeeperQueue.find(
+          (entry) => entry.id === props.item.id
+        );
+        if (beep) {
+          message += beep.rider.phone;
+          Logger.info(message);
+        }
+      })
+      .catch((error) => {
+        Alert(error);
+        setLoading(false);
+      });
   };
 
   return (
