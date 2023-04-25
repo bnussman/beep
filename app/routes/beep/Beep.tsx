@@ -1,6 +1,11 @@
 import React from "react";
 import { Unpacked } from "../../utils/constants";
-import { openCashApp, openDirections, openVenmo } from "../../utils/links";
+import {
+  getRawPhoneNumber,
+  openCashApp,
+  openDirections,
+  openVenmo,
+} from "../../utils/links";
 import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
 import { GetInitialQueueQuery } from "../../generated/graphql";
@@ -133,7 +138,7 @@ export function Beep(props: Props) {
                   Logger.info(
                     `Calling ${beep.rider.name} with phone ${beep.rider.phone} in ${beep.status} beep`
                   );
-                  Linking.openURL("tel:" + beep.rider.phone);
+                  Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
                 }}
                 icon={
                   <Icon as={Ionicons} color="white" name="ios-call" size="md" />
@@ -146,7 +151,7 @@ export function Beep(props: Props) {
                   Logger.info(
                     `Texting ${beep.rider.name} with phone ${beep.rider.phone} in ${beep.status} beep`
                   );
-                  Linking.openURL("sms:" + beep.rider.phone);
+                  Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
                 }}
                 icon={
                   <Icon

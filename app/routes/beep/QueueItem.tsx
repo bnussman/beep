@@ -5,7 +5,7 @@ import { Alert, Linking, Pressable } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { isMobile, Unpacked } from "../../utils/constants";
-import { openDirections } from "../../utils/links";
+import { getRawPhoneNumber, openDirections } from "../../utils/links";
 import { CancelBeep } from "../../components/CancelButton";
 import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "../../components/Stars";
@@ -104,12 +104,20 @@ export function QueueItem({ item }: Props) {
                 )}
               >
                 <Menu.Item
-                  onPress={() => Linking.openURL("tel:" + item.rider.phone)}
+                  onPress={() =>
+                    Linking.openURL(
+                      "tel:" + getRawPhoneNumber(item.rider.phone)
+                    )
+                  }
                 >
                   Call
                 </Menu.Item>
                 <Menu.Item
-                  onPress={() => Linking.openURL("sms:" + item.rider.phone)}
+                  onPress={() =>
+                    Linking.openURL(
+                      "sms:" + getRawPhoneNumber(item.rider.phone)
+                    )
+                  }
                 >
                   Text
                 </Menu.Item>

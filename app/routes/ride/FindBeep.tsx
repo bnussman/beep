@@ -32,6 +32,7 @@ import {
   BeepersLocationSubscription,
 } from "../../generated/graphql";
 import {
+  getRawPhoneNumber,
   openCashApp,
   openVenmo,
   shareVenmoInformation,
@@ -596,7 +597,9 @@ export function MainFindBeepScreen() {
             <HStack space={2} w="100%">
               <Button
                 flexGrow={1}
-                onPress={() => Linking.openURL(`tel:${beep.beeper.phone}`)}
+                onPress={() =>
+                  Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
+                }
                 endIcon={
                   <Icon as={Ionicons} name="ios-call" color="white" size="md" />
                 }
@@ -605,7 +608,9 @@ export function MainFindBeepScreen() {
               </Button>
               <Button
                 flexGrow={1}
-                onPress={() => Linking.openURL(`sms:${beep.beeper.phone}`)}
+                onPress={() =>
+                  Linking.openURL(`sms:${getRawPhoneNumber(beep.beeper.phone)}`)
+                }
                 endIcon={
                   <Icon
                     as={Ionicons}

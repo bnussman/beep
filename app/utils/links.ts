@@ -86,3 +86,10 @@ export function shareVenmoInformation(
     Logger.error(error);
   }
 }
+
+export function getRawPhoneNumber(phone: string | null | undefined) {
+  if (!phone) {
+    return null;
+  }
+  return phone.replace(/\D/g, "");
+}
