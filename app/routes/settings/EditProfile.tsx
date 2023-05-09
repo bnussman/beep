@@ -1,6 +1,5 @@
 import React, { useMemo, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// @ts-expect-error no types :(
 import * as mime from "react-native-mime-types";
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
