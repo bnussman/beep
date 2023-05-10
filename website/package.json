@@ -19,7 +19,7 @@
     "@fontsource/poppins": "^4.5.10",
     "apollo-upload-client": "^17.0.0",
     "dayjs": "^1.11.7",
-    "framer-motion": "^10.12.8",
+    "framer-motion": "^10.12.9",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.12.1",
     "mapkit-react": "^1.10.0",
