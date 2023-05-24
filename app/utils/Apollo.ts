@@ -13,15 +13,20 @@ import {
   Operation,
   split,
 } from "@apollo/client";
+import Constants from "expo-constants";
 
 const ip = "192.168.1.65";
 
 export const cache = new InMemoryCache();
 
-const wsUrl = __DEV__
+const wsUrl = Constants.manifest?.extra?.API_ROOT
+  ? `${Constants.manifest?.extra?.API_ROOT}/subscriptions`
+  : __DEV__
   ? `ws://${ip}:3001/subscriptions`
   : "wss://api.ridebeep.app/subscriptions";
-const url = __DEV__
+const url = Constants.manifest?.extra?.API_ROOT
+  ? `${Constants.manifest?.extra?.API_ROOT}/graphql`
+  : __DEV__
   ? `http://${ip}:3001/graphql`
   : "https://api.ridebeep.app/graphql";
 // const wsUrl = "wss://staging.ridebeep.app/subscriptions";

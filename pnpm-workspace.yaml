@@ -2,3 +2,4 @@ packages:
   - 'app'
   - 'website'
   - 'api'
+  - 'test'

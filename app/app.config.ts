@@ -15,6 +15,7 @@ export default {
     },
     extra: {
       GOOGLE_API_KEYS: process.env.GOOGLE_API_KEYS,
+      API_ROOT: process.env.API_ROOT,
       eas: {
         projectId: "2c7a6adb-2579-43f1-962e-b23c7e541ec4",
       },
