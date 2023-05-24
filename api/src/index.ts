@@ -25,6 +25,17 @@ import { getContext, onConnect } from "./utils/context";
 import { formatError } from "./utils/errors";
 import { Context as APIContext } from "./utils/context";
 import { expressMiddleware } from '@apollo/server/express4';
+import { BeepResolver } from "./beeps/resolver";
+import { BeeperResolver } from "./beeper/resolver";
+import { RatingResolver } from "./rating/resolver";
+import { AdminResolver } from "./admin/resolver";
+import { ReportsResolver } from "./reports/resolver";
+import { FeedbackResolver } from "./feedback/resolver";
+import { UserResolver } from "./users/resolver";
+import { LocationResolver } from "./location/resolver";
+import { CarResolver } from "./cars/resolver";
+import { AuthResolver } from "./auth/resolver";
+import { RiderResolver } from "./rider/resolver";
 
 async function start() {
   const orm = await MikroORM.init(config);
@@ -50,10 +61,22 @@ async function start() {
   });
 
   const schema = await buildSchema({
-    resolvers: [__dirname + '/**/resolver.{ts,js}'],
+    resolvers: [
+      BeepResolver,
+      BeeperResolver,
+      RatingResolver,
+      AdminResolver,
+      ReportsResolver,
+      FeedbackResolver,
+      UserResolver,
+      LocationResolver,
+      CarResolver,
+      AuthResolver,
+      RiderResolver,
+      AdminResolver,
+    ],
     authChecker,
     pubSub,
-    validate: { forbidUnknownValues: false }
   });
 
   app.use(graphqlUploadExpress({ maxFiles: 1 }));
