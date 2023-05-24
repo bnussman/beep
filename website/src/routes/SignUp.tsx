@@ -78,7 +78,7 @@ export function SignUp() {
   const navigate = useNavigate();
   const avatarSize = useBreakpointValue({ base: 'xl', md: '2xl' });
 
-  const [signup, { error }] = useMutation<SignUpMutation>(SignUpGraphQL, {
+  const [signup, { error, loading }] = useMutation<SignUpMutation>(SignUpGraphQL, {
     context: {
       headers: {
         'apollo-require-preflight': true,
@@ -257,7 +257,7 @@ export function SignUp() {
                 {validationErrors?.password && validationErrors?.password[0]}
               </FormErrorMessage>
             </FormControl>
-            <Button type="submit" isLoading={isSubmitting}>
+            <Button type="submit" isLoading={loading}>
               Sign Up
             </Button>
           </Stack>
