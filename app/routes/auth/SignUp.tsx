@@ -5,7 +5,11 @@ import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity } from "react-native";
 import { getPushToken } from "../../utils/Notifications";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { Scalars, SignUpInput, SignUpMutation } from "../../generated/graphql";
+import {
+  SignUpInput,
+  SignUpMutation,
+  SignUpMutationVariables,
+} from "../../generated/graphql";
 import { isMobile, isSimulator } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { client, wsLink } from "../../utils/Apollo";
@@ -61,7 +65,7 @@ const SignUp = gql`
   }
 `;
 
-let picture: Scalars["Upload"];
+let picture: SignUpMutationVariables["input"]["picture"];
 
 export function SignUpScreen() {
   const [signup, { error }] = useMutation<SignUpMutation>(SignUp, {
