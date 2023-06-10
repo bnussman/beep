@@ -12,7 +12,7 @@
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.14",
+    "@apollo/client": "^3.7.15",
     "@expo/vector-icons": "^13.0.0",
     "@gorhom/bottom-sheet": "^4.4.7",
     "@react-native-async-storage/async-storage": "~1.18.2",
@@ -50,12 +50,12 @@
     "react-native-screens": "~3.20.0",
     "react-native-svg": "13.9.0",
     "react-native-web": "~0.18.12",
-    "sentry-expo": "~6.1.1",
+    "sentry-expo": "~6.2.1",
     "styled-components": "^5.3.10",
     "styled-system": "^5.1.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.19.3",
+    "@babel/core": "^7.22.5",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@graphql-codegen/cli": "^3.3.1",
     "@graphql-codegen/typescript": "^3.0.4",
@@ -75,7 +75,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^2.8.8",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.3"
   },
   "private": true,
   "volta": {
