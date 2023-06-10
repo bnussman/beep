@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "typecheck": "tsc",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen"
   },
   "dependencies": {
     "@apollo/client": "^3.7.15",
