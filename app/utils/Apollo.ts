@@ -15,7 +15,7 @@ import {
 } from "@apollo/client";
 import Constants from "expo-constants";
 
-const ip = "192.168.1.65";
+const ip = "localhost";
 
 export const cache = new InMemoryCache();
 

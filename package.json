@@ -14,11 +14,11 @@
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
     "start:api": "pnpm --filter @beep/api start",
-    "codegen": "concurrently \"pnpm --filter @beep/app codegen\" \"pnpm --filter @beep/website codegen\""
+    "codegen": "concurrently -n app,website -c blue,green \"pnpm --filter @beep/app codegen\" \"pnpm --filter @beep/website codegen\""
   },
   "private": true,
   "devDependencies": {
-    "concurrently": "^8.0.1"
+    "concurrently": "^8.2.0"
   },
   "resolutions": {
     "react": "^18.1.0",

@@ -36,6 +36,7 @@ import { LocationResolver } from "./location/resolver";
 import { CarResolver } from "./cars/resolver";
 import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
+import { DirectionsResolver } from "./directions/resolver";
 
 async function start() {
   const orm = await MikroORM.init(config);
@@ -74,6 +75,7 @@ async function start() {
       AuthResolver,
       RiderResolver,
       AdminResolver,
+      DirectionsResolver,
     ],
     authChecker,
     pubSub,

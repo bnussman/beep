@@ -8,7 +8,6 @@ import { useForm, Controller } from "react-hook-form";
 import {
   CreateCarMutation,
   CreateCarMutationVariables,
-  Scalars,
 } from "../../generated/graphql";
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
@@ -59,7 +58,7 @@ const AddCarMutation = gql`
   }
 `;
 
-let picture: Scalars["Upload"];
+let picture: CreateCarMutationVariables["photo"];
 
 export function AddCar() {
   const navigation = useNavigation<Navigation>();
