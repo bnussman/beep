@@ -32,15 +32,15 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
+    // {
+    //   name: 'chromium',
+    //   use: { ...devices['Desktop Chrome'] },
+    // },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
 
     {
       name: 'webkit',
@@ -70,9 +70,11 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'API_ROOT=https://api.staging.ridebeep.app pnpm --filter @beep/app web',
+    command: 'cd .. && docker compose up -d && pnpm dev',
     url: 'http://127.0.0.1:19000',
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     stdout: 'pipe',
+    stderr: 'pipe',
+    timeout: 90000,
   },
 });
