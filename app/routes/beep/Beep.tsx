@@ -135,9 +135,6 @@ export function Beep(props: Props) {
                 flexGrow={1}
                 variant="solid"
                 onPress={() => {
-                  Logger.info(
-                    `Calling ${beep.rider.name} with phone ${beep.rider.phone} in ${beep.status} beep`
-                  );
                   Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
                 }}
                 icon={
@@ -148,9 +145,6 @@ export function Beep(props: Props) {
                 flexGrow={1}
                 variant="solid"
                 onPress={() => {
-                  Logger.info(
-                    `Texting ${beep.rider.name} with phone ${beep.rider.phone} in ${beep.status} beep`
-                  );
                   Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
                 }}
                 icon={
