@@ -14,11 +14,11 @@ export class Point {
     this.longitude = longitude;
   }
 
-  @Field()
+  @Field(() => Number)
   @IsLongitude()
   public longitude: number;
 
-  @Field()
+  @Field(() => Number)
   @IsLatitude()
   public latitude: number;
 }
@@ -30,9 +30,9 @@ export class LocationResolver {
   @Authorized()
   public async setLocation(
     @Ctx() ctx: Context,
-    @Arg('location') location: LocationInput,
+    @Arg('location', () => LocationInput) location: LocationInput,
     @PubSub() pubSub: PubSubEngine,
-    @Arg('id', { nullable: true }) id?: string
+    @Arg('id', () => String, { nullable: true }) id?: string
   ): Promise<User> {
     if (id) {
       if (ctx.user.role !== UserRole.ADMIN) {
@@ -65,7 +65,7 @@ export class LocationResolver {
     nullable: true,
     topics: ({ args }) => "Location" + args.id,
   })
-  public getLocationUpdates(@Arg("id") id: string, @Root() entry: LocationInput): Point {
+  public getLocationUpdates(@Arg("id", () => String) id: string, @Root() entry: LocationInput): Point {
     return {
       latitude: entry.latitude,
       longitude: entry.longitude,
@@ -81,7 +81,7 @@ export class LocationResolver {
       return getDistance(args.latitude, args.longitude, payload.latitude, payload.longitude) < args.radius;
     },
   })
-  public getBeeperLocationUpdates(@Ctx() ctx: Context, @Args() args: BeeperLocationArgs, @Root() data: AnonymousBeeper,  @Arg('anonymize', { nullable: true, defaultValue: true }) anonymize: boolean): AnonymousBeeper {
+  public getBeeperLocationUpdates(@Ctx() ctx: Context, @Args(() => BeeperLocationArgs) args: BeeperLocationArgs, @Root() data: AnonymousBeeper,  @Arg('anonymize', () => Boolean, { nullable: true, defaultValue: true }) anonymize: boolean): AnonymousBeeper {
     if (anonymize) {
       return { id: sha256(data.id).substring(0, 9), latitude: data.latitude, longitude: data.longitude };
     }

@@ -1,43 +1,42 @@
 import { User } from '../entities/User';
 import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString, Max, Min, ValidateIf } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
-import { Status } from '../entities/Beep';
 
 @InputType()
 export class BeeperSettingsInput implements Partial<User> {
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @Max(200)
   @Min(0)
   @IsNumber()
   @IsOptional()
   public singlesRate?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @Max(200)
   @Min(0)
   @IsNumber()
   @IsOptional()
   public groupRate?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @Max(100)
   @Min(0)
   @IsNumber()
   @IsOptional()
   public capacity?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
   public isBeeping?: boolean;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @ValidateIf(o => o.isBeeping)
   @IsNumber()
   @IsDefined()
   public latitude?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @ValidateIf(o => o.isBeeping)
   @IsNumber()
   @IsDefined()
@@ -46,10 +45,10 @@ export class BeeperSettingsInput implements Partial<User> {
 
 @InputType()
 export class UpdateQueueEntryInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   public id!: string;
 
-  @Field()
+  @Field(() => String)
   public status!: string;
 }

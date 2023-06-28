@@ -11,41 +11,40 @@ import { User } from "./User";
 @Filter({ name: 'recieved', cond: args => ({ rated: args.id }) })
 @Unique({ properties: ['beep', 'rater'] })
 export class Rating {
+  @PrimaryKey()
+  @Field(() => String)
+  id: string = v4();
 
-    @PrimaryKey()
-    @Field()
-    id: string = v4();
+  @Field(() => User)
+  @ManyToOne(() => User)
+  rater!: User;
 
-    @Field(() => User)
-    @ManyToOne(() => User)
-    rater!: User;
+  @Field(() => User)
+  @ManyToOne(() => User)
+  rated!: User;
 
-    @Field(() => User)
-    @ManyToOne(() => User)
-    rated!: User;
+  @Field(() => Number)
+  @Property()
+  stars!: number;
 
-    @Field()
-    @Property()
-    stars!: number;
+  @Field(() => String, { nullable: true })
+  @Property({ nullable: true })
+  message?: string;
 
-    @Field({ nullable: true })
-    @Property({ nullable: true })
-    message?: string;
+  @Field(() => Date)
+  @Property() 
+  timestamp: Date;
 
-    @Field()
-    @Property() 
-    timestamp: Date;
+  @Field(() => Beep)
+  @ManyToOne(() => Beep)
+  beep!: Beep;
 
-    @Field(() => Beep)
-    @ManyToOne(() => Beep)
-    beep!: Beep;
-
-    constructor(rater: User, rated: User, stars: number, beep: Beep, message?: string) {
-        this.rater = rater;
-        this.rated = rated;
-        this.stars = stars;
-        this.message = message;
-        this.beep = beep;
-        this.timestamp = new Date();
-    }
+  constructor(rater: User, rated: User, stars: number, beep: Beep, message?: string) {
+    this.rater = rater;
+    this.rated = rated;
+    this.stars = stars;
+    this.message = message;
+    this.beep = beep;
+    this.timestamp = new Date();
+  }
 }

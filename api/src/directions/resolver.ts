@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/node';
 
 @ObjectType()
 class Suggestion {
-  @Field()
+  @Field(() => String)
   public title!: string;
 }
 
@@ -18,7 +18,7 @@ function getRandom<T>(data: T[]): T {
 export class DirectionsResolver {
 
   @Query(() => String)
-  public async getETA(@Arg('start') start: string, @Arg('end') end: string): Promise<string> {
+  public async getETA(@Arg('start', () => String) start: string, @Arg('end', () => String) end: string): Promise<string> {
     const result = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${start}&destination=${end}&key=${getRandom(keys)}`);
 
     const data = await result.json();
@@ -34,7 +34,7 @@ export class DirectionsResolver {
   }
 
   @Query(() => [Suggestion])
-  public async getLocationSuggestions(@Arg('location') location: string, @Arg('sessiontoken') sessiontoken: string): Promise<Suggestion[]> {
+  public async getLocationSuggestions(@Arg('location', () => String) location: string, @Arg('sessiontoken', () => String) sessiontoken: string): Promise<Suggestion[]> {
     const result = await fetch(encodeURI(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=${getRandom(keys)}&sessiontoken=${sessiontoken}`));
 
     const data = await result.json();

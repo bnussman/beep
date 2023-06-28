@@ -4,17 +4,16 @@ import { Field, InputType } from 'type-graphql';
 
 @InputType()
 export class ReportInput implements Partial<Report> {
-
-  @Field()
+  @Field(() => String)
   @IsString()
   public userId!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsNotEmpty()
   public reason!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public beepId?: string;
@@ -22,12 +21,12 @@ export class ReportInput implements Partial<Report> {
 
 @InputType()
 export class UpdateReportInput implements Partial<Report> {
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
   public handled?: boolean;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public notes?: string;

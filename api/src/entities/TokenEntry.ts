@@ -8,10 +8,10 @@ import { User } from "./User";
 export class TokenEntry {
 
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = v4();
 
-  @Field()
+  @Field(() => String)
   @Property()
   tokenid: string = v4();
 

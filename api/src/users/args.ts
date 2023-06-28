@@ -7,112 +7,112 @@ import { IsStudent } from "../utils/validators";
 
 @ArgsType()
 export class NotificationArgs {
-  @Field()
+  @Field(() => String)
   @MinLength(3)
   title!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   match?: string;
 
-  @Field()
+  @Field(() => String)
   @MinLength(5)
   body!: string;
 }
 
 @InputType()
 export class EditUserInput implements Partial<User> {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public first?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public last?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsEmail()
   @IsOptional()
   @IsStudent()
   public email?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsMobilePhone("en-US")
   @IsOptional()
   public phone?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public venmo?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public cashapp?: string;
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
   public isBeeping?: boolean;
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
   @Authorized(UserRole.ADMIN)
   public isEmailVerified?: boolean;
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
   @Authorized(UserRole.ADMIN)
   public isStudent?: boolean;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @IsNumber()
   @Min(0)
   @Max(100)
   @IsOptional()
   public groupRate?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @IsNumber()
   @Min(0)
   @Max(100)
   @IsOptional()
   public singlesRate?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @IsNumber()
   @Min(0)
   @Max(20)
   @IsOptional()
   public capacity?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @IsNumber()
   @Min(0)
   @IsOptional()
   @Authorized(UserRole.ADMIN)
   public queueSize?: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @Authorized(UserRole.ADMIN)
   public role?: UserRole;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public pushToken?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public photo?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   @Authorized(UserRole.ADMIN)
@@ -121,7 +121,7 @@ export class EditUserInput implements Partial<User> {
 
 @InputType()
 export class ChangePasswordInput implements Partial<User> {
-    @Field()
+    @Field(() => String)
     @IsString()
     @Length(6, 512)
     password!: string;

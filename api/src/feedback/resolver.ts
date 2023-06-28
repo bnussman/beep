@@ -13,7 +13,7 @@ class FeedbackResonse extends Paginated(Feedback) {}
 export class FeedbackResolver {
   @Query(() => FeedbackResonse)
   @Authorized(UserRole.ADMIN)
-  public async getFeedback(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<FeedbackResonse> {
+  public async getFeedback(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show }: PaginationArgs): Promise<FeedbackResonse> {
     const [items, count] = await ctx.em.findAndCount(Feedback, {}, { populate: ['user'], offset, limit: show, orderBy: { created: QueryOrder.DESC} });
 
     return { items, count };
@@ -21,7 +21,7 @@ export class FeedbackResolver {
 
   @Mutation(() => Feedback)
   @Authorized()
-  public async createFeedback(@Ctx() ctx: Context, @Args() { message }: FeedbackArgs): Promise<Feedback> {
+  public async createFeedback(@Ctx() ctx: Context, @Args(() => FeedbackArgs) { message }: FeedbackArgs): Promise<Feedback> {
     const feedback = new Feedback({
       user: ctx.user,
       message,

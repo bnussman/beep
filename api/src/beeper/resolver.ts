@@ -14,13 +14,13 @@ import { getPositionInQueue, getQueueSize } from '../utils/dist';
 
 @ObjectType()
 export class AnonymousBeeper {
-  @Field()
+  @Field(() => String)
   public id!: string;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   public latitude?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   public longitude?: number;
 }
 
@@ -29,7 +29,7 @@ export class BeeperResolver {
 
   @Query(() => [AnonymousBeeper])
   @Authorized("No Verification")
-  public async getAllBeepersLocation(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: BeeperLocationArgs): Promise<AnonymousBeeper[]> {
+  public async getAllBeepersLocation(@Ctx() ctx: Context, @Args(() => BeeperLocationArgs) { latitude, longitude, radius }: BeeperLocationArgs): Promise<AnonymousBeeper[]> {
     if (radius === 0) {
       const beepers = await ctx.em.find(User, { isBeeping: true });
 
@@ -47,7 +47,7 @@ export class BeeperResolver {
 
   @Mutation(() => User)
   @Authorized()
-  public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input', () => BeeperSettingsInput) input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
     if (input.isBeeping) {
       const car = await ctx.em.findOne(Car, { user: ctx.user.id, default: true });
 
@@ -80,7 +80,7 @@ export class BeeperResolver {
 
   @Mutation(() => [Beep])
   @Authorized()
-  public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<Beep[]> {
+  public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input', () => UpdateQueueEntryInput) input: UpdateQueueEntryInput): Promise<Beep[]> {
     await ctx.em.populate(
       ctx.user,
       ['queue', 'queue.rider', 'cars'],
@@ -165,7 +165,7 @@ export class BeeperResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
+  public async cancelBeep(@Ctx() ctx: Context, @Arg('id', () => String) id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
     const entry = ctx.em.getReference(Beep, id);
 
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, filters: ['inProgress'], orderBy: { queue: { start: QueryOrder.ASC } } });
@@ -199,7 +199,7 @@ export class BeeperResolver {
     topics: ({ args }) => "Beeper" + args.id,
   })
   @Authorized('self')
-  public async getBeeperUpdates(@Arg("id") id: string, @Root() entry: Beep[]): Promise<Beep[]> {
+  public async getBeeperUpdates(@Arg("id", () => String) id: string, @Root() entry: Beep[]): Promise<Beep[]> {
     return entry;
   }
 }

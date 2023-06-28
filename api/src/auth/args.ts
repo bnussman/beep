@@ -7,15 +7,15 @@ import { IsStudent } from '../utils/validators';
 
 @InputType()
 export class LoginInput implements Partial<User> {
-  @Field()
+  @Field(() => String)
   @IsString()
   public username!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   public password!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public pushToken?: string;
@@ -24,39 +24,39 @@ export class LoginInput implements Partial<User> {
 @InputType()
 export class SignUpInput implements Partial<User> {
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsNotEmpty()
   public username!: string;
 
-  @Field()
+  @Field(() => String)
   @IsAlpha()
   @IsNotEmpty()
   public first!: string;
 
-  @Field()
+  @Field(() => String)
   @IsAlpha()
   @IsNotEmpty()
   public last!: string;
 
-  @Field()
+  @Field(() => String)
   @IsMobilePhone("en-US")
   public phone!: string;
 
-  @Field()
+  @Field(() => String)
   @IsEmail()
   @IsStudent()
   public email!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   public venmo?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   public cashapp?: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @Length(5, 255)
   public password!: string;
@@ -65,7 +65,7 @@ export class SignUpInput implements Partial<User> {
   @IsDefined({ message: "You must add a profile picture" })
   public picture?: Upload;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   public pushToken?: string;
 
@@ -73,7 +73,7 @@ export class SignUpInput implements Partial<User> {
 
 @InputType()
 export class ResetPasswordInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   @Length(5, 255)
   password!: string;

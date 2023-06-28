@@ -13,18 +13,18 @@ export class Feedback {
   }
 
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = v4();
 
-  @Field()
+  @Field(() => User)
   @ManyToOne()
   user!: User;
 
-  @Field()
+  @Field(() => String)
   @Property()
   message!: string;
 
-  @Field()
+  @Field(() => Date)
   @Property()
   created: Date = new Date();
 }

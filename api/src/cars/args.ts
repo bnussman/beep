@@ -6,21 +6,21 @@ import { IsMake, IsModelFor } from '../utils/validators';
 
 @ArgsType()
 export class CarArgs {
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsMake()
   public make!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsModelFor("make")
   public model!: string;
 
-  @Field()
+  @Field(() => Number)
   @IsNumber()
   public year!: number;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   public color!: string;
 
@@ -32,18 +32,18 @@ export class CarArgs {
 
 @ArgsType()
 export class EditCarArgs {
-  @Field()
+  @Field(() => Boolean)
   @IsBoolean()
   public default!: boolean;
 }
 
 @ArgsType()
 export class DeleteCarArgs {
-  @Field()
+  @Field(() => String)
   @IsString()
   public id!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   @Authorized(UserRole.ADMIN)

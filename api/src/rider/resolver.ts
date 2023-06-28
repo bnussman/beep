@@ -12,7 +12,7 @@ import { getPositionInQueue, getQueueSize } from '../utils/dist';
 export class RiderResolver {
   @Mutation(() => Beep)
   @Authorized()
-  public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<Beep> {
+  public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId', () => String) beeperId: string, @Arg('input', () => GetBeepInput) input: GetBeepInput): Promise<Beep> {
     const beeper = await ctx.em.findOneOrFail(
       User,
       beeperId,
@@ -101,7 +101,7 @@ export class RiderResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async leaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('id') id: string): Promise<boolean> {
+  public async leaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('id', () => String) id: string): Promise<boolean> {
     const beeper = await ctx.em.findOneOrFail(
       User,
       { id, cars: { default: true } },
@@ -146,7 +146,7 @@ export class RiderResolver {
 
   @Query(() => [User])
   @Authorized()
-  public async getBeepers(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
+  public async getBeepers(@Ctx() ctx: Context, @Args(() => GetBeepersArgs) { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
     if (radius === 0) {
       return await ctx.em.find(User, { isBeeping: true });
     }

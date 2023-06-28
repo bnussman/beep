@@ -13,42 +13,42 @@ export class Car {
   }
 
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = v4();
 
   @ManyToOne(() => User)
   @Field(() => User)
   user!: User;
 
-  @Field()
+  @Field(() => String)
   @Property()
   make!: string;
 
-  @Field()
+  @Field(() => String)
   @Property()
   model!: string;
 
-  @Field()
+  @Field(() => String)
   @Property()
   color!: string;
 
-  @Field()
+  @Field(() => String)
   @Property()
   photo!: string;
 
-  @Field()
+  @Field(() => Number)
   @Property()
   year!: number;
 
-  @Field()
+  @Field(() => Boolean)
   @Property({ default: false })
   default!: boolean;
 
-  @Field()
+  @Field(() => Date)
   @Property()
   created: Date = new Date();
 
-  @Field()
+  @Field(() => Date)
   @Property({ onUpdate: () => new Date() })
   updated: Date = new Date();
 }

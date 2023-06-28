@@ -4,17 +4,17 @@ import { ArgsType, Field, InputType } from 'type-graphql';
 
 @InputType()
 export class GetBeepInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsNotEmpty({ message: "Please specify an origin location" })
   public origin?: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsNotEmpty({ message: "Please specify a destination location" })
   public destination?: string;
 
-  @Field()
+  @Field(() => Number)
   @IsNumber()
   @Min(1)
   @Max(30, { message: "Your group is too big" })
@@ -23,15 +23,15 @@ export class GetBeepInput {
 
 @ArgsType()
 export class GetBeepersArgs implements Point {
-  @Field()
+  @Field(() => Number)
   @IsNumber()
   longitude!: number;
 
-  @Field()
+  @Field(() => Number)
   @IsNumber()
   latitude!: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @IsNumber()
   @Min(0)
   @Max(30)

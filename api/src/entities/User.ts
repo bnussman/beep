@@ -29,84 +29,84 @@ export class User {
   }
 
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = v4();
 
-  @Field()
+  @Field(() => String)
   @Property()
   first!: string;
 
-  @Field()
+  @Field(() => String)
   @Property()
   last!: string;
 
-  @Field()
+  @Field(() => String)
   @Property()
   @Unique()
   username!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @Property()
   @Unique()
   @UseMiddleware(MustBeInAcceptedBeep)
   email!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @Property()
   @UseMiddleware(MustBeInAcceptedBeep)
   phone!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @Property({ nullable: true })
   venmo?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @Property({ nullable: true })
   cashapp?: string;
 
-  @Field()
+  @Field(() => String)
   @Property({ lazy: true })
   @Authorized(UserRole.ADMIN)
   password!: string;
 
-  @Field()
+  @Field(() => String)
   @Enum({ items: () => PasswordType, default: 'sha256', lazy: true })
   @Authorized(UserRole.ADMIN)
   passwordType!: PasswordType;
 
-  @Field()
+  @Field(() => Boolean)
   @Property()
   isBeeping: boolean = false;
 
-  @Field()
+  @Field(() => Boolean)
   @Property()
   isEmailVerified: boolean = false;
 
-  @Field()
+  @Field(() => Boolean)
   @Property()
   isStudent: boolean = false;
 
-  @Field()
+  @Field(() => Number)
   @Property()
   groupRate: number = 4.0;
 
-  @Field()
+  @Field(() => Number)
   @Property()
   singlesRate: number = 3.0;
 
-  @Field()
+  @Field(() => Number)
   @Property()
   capacity: number = 4;
 
-  @Field()
+  @Field(() => Number)
   @Property()
   queueSize: number = 0;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @Property({ columnType: 'numeric', nullable: true })
   rating?: number;
 
-  @Field()
+  @Field(() => String)
   @Enum(() => UserRole)
   role: UserRole = UserRole.USER;
 
@@ -115,7 +115,7 @@ export class User {
   @Authorized(UserRole.ADMIN)
   pushToken!: string | null;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @Property({ nullable: true })
   photo?: string;
 
@@ -126,7 +126,7 @@ export class User {
   }
 
   @UseMiddleware(MustBeInAcceptedBeep)
-  @Field({ nullable: true })
+  @Field(() => Point, { nullable: true })
   @Property({
     type: PointType,
     columnType: 'geometry',
@@ -147,7 +147,7 @@ export class User {
   @UseMiddleware(MustBeInAcceptedBeep)
   cars = new Collection<Car>(this);
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   @Property({ nullable: true })
   created: Date = new Date();
 }

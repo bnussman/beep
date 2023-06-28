@@ -38,7 +38,7 @@ export class Beep {
   }
 
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = v4();
 
   @Field(() => User)
@@ -49,19 +49,19 @@ export class Beep {
   @ManyToOne(() => User)
   rider!: User;
 
-  @Field()
+  @Field(() => String)
   @Property()
   origin!: string;
 
-  @Field()
+  @Field(() => String)
   @Property()
   destination!: string;
 
-  @Field()
+  @Field(() => Number)
   @Property()
   groupSize!: number;
 
-  @Field()
+  @Field(() => Date)
   @Property()
   start!: Date;
 
@@ -69,11 +69,11 @@ export class Beep {
   @Property({ type: 'datetime', nullable: true })
   end!: Date | null;
 
-  @Field()
+  @Field(() => String)
   @Enum(() => Status)
   status: Status = Status.COMPLETE;
 
-  @Field()
+  @Field(() => Number)
   @Property({ persist: false })
   position: number = -1;
 }

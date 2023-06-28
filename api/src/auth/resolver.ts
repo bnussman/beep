@@ -13,7 +13,7 @@ import { compare, hash } from 'bcrypt';
 
 @ObjectType()
 class Auth {
-  @Field()
+  @Field(() => User)
   public user!: User;
 
   @Field(() => TokenEntry)
@@ -24,7 +24,7 @@ class Auth {
 export class AuthResolver {
 
   @Mutation(() => Auth)
-  public async login(@Ctx() ctx: Context, @Arg('input') { username, password, pushToken }: LoginInput): Promise<Auth> {
+  public async login(@Ctx() ctx: Context, @Arg('input', () => LoginInput) { username, password, pushToken }: LoginInput): Promise<Auth> {
     const user = await ctx.em.findOneOrFail(User, { $or: [ { username }, { email: username } ] }, { populate: ['password', 'passwordType'] });
 
     let isPasswordCorrect = false;
@@ -56,7 +56,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Auth)
-  public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
+  public async signup(@Ctx() ctx: Context, @Arg('input', () => SignUpInput) input: SignUpInput): Promise<Auth> {
     const { createReadStream, filename } = await (input.picture as unknown as Promise<FileUpload>);
 
     const user = new User();
@@ -105,7 +105,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @Authorized('No Verification')
-  public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
+  public async logout(@Ctx() ctx: Context, @Arg('isApp', () => Boolean, { nullable: true }) isApp?: boolean): Promise<boolean> {
     ctx.em.remove(ctx.token);
 
     if (isApp) {
@@ -120,14 +120,14 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  public async removeToken(@Ctx() ctx: Context, @Arg('token') tokenid: string): Promise<boolean> {
+  public async removeToken(@Ctx() ctx: Context, @Arg('token', () => String) tokenid: string): Promise<boolean> {
     await ctx.em.removeAndFlush({ tokenid: tokenid });
 
     return true;
   }
 
   @Mutation(() => Boolean)
-  public async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string): Promise<boolean> {
+  public async forgotPassword(@Ctx() ctx: Context, @Arg('email', () => String) email: string): Promise<boolean> {
     const user = await ctx.em.findOne(User, { email }); 
 
     if (!user) {
@@ -157,7 +157,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  public async resetPassword(@Ctx() ctx: Context, @Arg('id') id: string, @Arg('input') input: ResetPasswordInput): Promise<boolean> {
+  public async resetPassword(@Ctx() ctx: Context, @Arg('id', () => String) id: string, @Arg('input', () => ResetPasswordInput) input: ResetPasswordInput): Promise<boolean> {
     const entry = await ctx.em.findOne(ForgotPassword, id, { populate: ['user'] });
 
     if (!entry) {
