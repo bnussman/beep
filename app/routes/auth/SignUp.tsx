@@ -147,8 +147,9 @@ export function SignUpScreen() {
       keyboard
       alignItems="center"
       scrollViewProps={{ bounces: false, scrollEnabled: true }}
+      px={4}
     >
-      <Stack space={2} w="90%" mt={4}>
+      <Stack space={2} w="full" mt={4}>
         <HStack space={4} alignItems="center">
           <Stack space={2} flexGrow={1}>
             <FormControl
