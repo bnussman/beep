@@ -79,6 +79,7 @@ async function start() {
     ],
     authChecker,
     pubSub,
+    validate: true,
   });
 
   app.use(graphqlUploadExpress({ maxFiles: 1 }));
