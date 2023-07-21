@@ -13,10 +13,13 @@ import {
   Operation,
   split,
 } from "@apollo/client";
+import Constants from "expo-constants";
 
-const ip = "localhost";
+const ip = Constants.experienceUrl.split("//")[1].split(":")[0];
 
 export const cache = new InMemoryCache();
+
+alert(Constants.experienceUrl)
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`
@@ -94,19 +97,19 @@ class WebSocketLink extends ApolloLink {
             if (Array.isArray(err))
               // GraphQLError[]
               return sink.error(
-                new Error(err.map(({ message }) => message).join(", "))
+                new Error(err.map(({ message }) => message).join(", ")),
               );
 
             if (err instanceof CloseEvent)
               return sink.error(
                 new Error(
-                  `Socket closed with event ${err.code} ${err.reason || ""}` // reason will be available on clean closes only
-                )
+                  `Socket closed with event ${err.code} ${err.reason || ""}`, // reason will be available on clean closes only
+                ),
               );
 
             return sink.error(err);
           },
-        }
+        },
       );
     });
   }
