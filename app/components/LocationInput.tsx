@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
-import Constants from "expo-constants";
 import { Logger } from "../utils/Logger";
 import { TouchableWithoutFeedback } from "react-native";
 import { Box, Icon, IInputProps, Input, Spinner } from "native-base";
@@ -12,10 +11,11 @@ function LocationInput(props: IInputProps, ref: any) {
   async function useCurrentLocation(): Promise<void> {
     setIsLoading(true);
     props.onChangeText?.("");
+    console.log(process.env)
 
     try {
       Location.setGoogleApiKey(
-        JSON.parse(Constants.manifest?.extra?.GOOGLE_API_KEYS)[0] || ""
+        JSON.parse(process.env.EXPO_PUBLIC_GOOGLE_API_KEYS ?? "[]")[0] || ""
       );
     } catch (error) {
       Logger.error(error);
@@ -29,7 +29,7 @@ function LocationInput(props: IInputProps, ref: any) {
       return alert("You must enable location to use this feature.");
     }
 
-    const position = await Location.getCurrentPositionAsync({});
+    const position = await Location.getCurrentPositionAsync();
     const location = await Location.reverseGeocodeAsync({
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
@@ -37,7 +37,7 @@ function LocationInput(props: IInputProps, ref: any) {
 
     let string;
 
-    if (!location[0].name) {
+    if (!location?.[0]?.name) {
       string = position.coords.latitude + ", " + position.coords.longitude;
     } else {
       string =

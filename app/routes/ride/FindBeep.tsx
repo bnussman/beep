@@ -392,9 +392,7 @@ export function MainFindBeepScreen() {
                 <Input
                   keyboardType="numeric"
                   onBlur={onBlur}
-                  onChangeText={(val) =>
-                    onChange(val === "" ? undefined : Number(val))
-                  }
+                  onChangeText={(val) => onChange(val === "" ? 0 : Number(val))}
                   value={value === undefined ? undefined : String(value)}
                   ref={ref}
                   returnKeyLabel="next"
