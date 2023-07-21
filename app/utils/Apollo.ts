@@ -19,8 +19,6 @@ const ip = Constants.experienceUrl.split("//")[1].split(":")[0];
 
 export const cache = new InMemoryCache();
 
-alert(Constants.experienceUrl)
-
 const wsUrl = __DEV__
   ? `ws://${ip}:3001/subscriptions`
   : "wss://api.ridebeep.app/subscriptions";
