@@ -7,8 +7,8 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "node build/index.js",
-    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"node --watch build/index.js\"",
+    "start": "bun build/index.js",
+    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"bun --watch build/index.js\"",
     "db:create": "mikro-orm schema:create --run",
     "db:update": "mikro-orm schema:update --run",
     "db:drop": "mikro-orm schema:drop --run",
