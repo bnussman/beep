@@ -87,6 +87,7 @@ async function start() {
   const server = new ApolloServer<APIContext>({
     schema,
     formatError,
+    csrfPrevention: true,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
