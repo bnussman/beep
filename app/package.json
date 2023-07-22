@@ -22,7 +22,7 @@
     "@sentry/react-native": "5.5.0",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.4",
-    "expo": "^49.0.3",
+    "expo": "^49.0.4",
     "expo-application": "^5.3.0",
     "expo-constants": "^14.4.2",
     "expo-device": "~5.4.0",
@@ -51,7 +51,7 @@
     "react-native-svg": "13.9.0",
     "react-native-web": "~0.19.6",
     "sentry-expo": "~7.0.1",
-    "styled-components": "^6.0.4",
+    "styled-components": "^6.0.5",
     "styled-system": "^5.1.5"
   },
   "devDependencies": {
