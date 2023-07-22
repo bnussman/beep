@@ -1,5 +1,5 @@
 import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString } from 'class-validator';
-import { GraphQLUpload, Upload } from 'graphql-upload';
+import { GraphQLUpload, Upload } from '@banksnussman/graphql-upload';
 import { UserRole } from '../entities/User';
 import { ArgsType, Authorized, Field } from 'type-graphql';
 import { IsMake, IsModelFor } from '../utils/validators';

@@ -8,7 +8,7 @@ import { LoginInput, ResetPasswordInput, SignUpInput } from './args';
 import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
-import { FileUpload } from 'graphql-upload';
+import { FileUpload } from '@banksnussman/graphql-upload';
 import { compare, hash } from 'bcrypt';
 
 @ObjectType()
