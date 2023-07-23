@@ -13,7 +13,7 @@ import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
 import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
 import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
-import { GraphQLUpload } from '@banksnussman/graphql-upload';
+import { GraphQLUpload } from 'graphql-upload';
 import { setContext } from "@sentry/node";
 
 @ObjectType()
