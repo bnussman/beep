@@ -1,7 +1,7 @@
 import { IsAlpha, IsDefined, IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
-import { GraphQLUpload } from 'graphql-upload';
+import { GraphQLUpload } from 'graphql-upload-minimal';
 import { Upload } from '../users/helpers';
 import { IsStudent } from '../utils/validators';
 

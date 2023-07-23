@@ -5,7 +5,7 @@ import { Paginated, PaginationArgs } from '../utils/pagination';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { CarArgs, DeleteCarArgs, EditCarArgs } from './args';
 import { s3 } from '../utils/s3';
-import { FileUpload } from 'graphql-upload';
+import { FileUpload } from 'graphql-upload-minimal';
 import { UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
 

@@ -66,7 +66,7 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 |------------|-------------------------------|
 | API        | http://localhost:3001/graphql |
 | Website    | http://localhost:5173         |
-| App        | http://localhost:19000        |
+| App        | http://localhost:8081         |
 
 ## ⚠️ Troubleshooting
 

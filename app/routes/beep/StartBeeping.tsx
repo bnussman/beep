@@ -187,7 +187,6 @@ export function StartBeepingScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      // eslint-disable-next-line react/display-name
       headerRight: () => (
         <Switch
           mr={3}
