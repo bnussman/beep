@@ -15,7 +15,7 @@ import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { createServer } from 'http';
-import { graphqlUploadExpress } from "graphql-upload";
+import { graphqlUploadExpress } from "graphql-upload-minimal";
 import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { useServer } from 'graphql-ws/lib/use/ws';
