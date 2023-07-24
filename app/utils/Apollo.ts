@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
 import { getMainDefinition, Observable } from "@apollo/client/utilities";
 import { createUploadLink } from "apollo-upload-client";
 import { Client, ClientOptions, createClient } from "graphql-ws";
@@ -14,6 +13,7 @@ import {
   Operation,
   split,
 } from "@apollo/client";
+import Constants from "expo-constants";
 
 const ip = Constants.experienceUrl.split("//")[1].split(":")[0];
 
@@ -156,22 +156,42 @@ export const wsLink = new WebSocketLink({
             id: payload.user.id,
           }),
           fields: {
-            // @todo can we just spread the user's data here insted of specifying each field?
-            isBeeping: payload.user.isBeeping,
-            first: payload.user.first,
-            last: payload.user.last,
-            phone: payload.user.phone,
-            venmo : payload.user.venmo,
-            cashapp: payload.user.cashapp,
-            photo: payload.user.photo,
-            name: payload.user.name,
-            email: payload.user.email,
+            isBeeping() {
+              return payload.user.isBeeping;
+            },
+            first() {
+              return payload.user.first;
+            },
+            last() {
+              return payload.user.last;
+            },
+            phone() {
+              return payload.user.phone;
+            },
+            venmo() {
+              return payload.user.venmo;
+            },
+            cashapp() {
+              return payload.user.cashapp;
+            },
+            photo() {
+              return payload.user.photo;
+            },
+            name() {
+              return payload.user.name;
+            },
+            email() {
+              return payload.user.email;
+            },
           },
         });
       } catch (e) {
         Logger.error(e);
       }
     },
+    connecting: () => console.log("[Websocket] Connecting"),
+    opened: () => console.log("[Websocket] Opened"),
+    closed: () => console.log("[Websocket] Closed"),
   },
 });
 
