@@ -198,7 +198,7 @@ export class BeeperResolver {
   @Subscription(() => [Beep], {
     topics: ({ args }) => "Beeper" + args.id,
   })
-  @Authorized('self')
+  @Authorized('No Verification Self')
   public async getBeeperUpdates(@Arg("id") id: string, @Root() entry: Beep[]): Promise<Beep[]> {
     return entry;
   }
