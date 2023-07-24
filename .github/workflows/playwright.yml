@@ -40,6 +40,8 @@ jobs:
       run: pnpm exec playwright install --with-deps
     - name: Build the api
       run: pnpm build:api
+    - name: Start DB and Redis
+      run: docker compose up -d
     - name: Init the DB
       run: pnpm --filter @beep/api db:create
     - name: Run Playwright tests
