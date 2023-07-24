@@ -63,7 +63,6 @@
     "@types/apollo-upload-client": "^17.0.2",
     "@types/react": "~18.2.15",
     "@types/react-dom": "~18.2.7",
-    "@types/react-native": "~0.71.3",
     "@types/uuid": "^9.0.2",
     "babel-preset-expo": "^9.5.0",
     "typescript": "^5.1.6"

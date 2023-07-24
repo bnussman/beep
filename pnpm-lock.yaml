@@ -293,9 +293,6 @@ importers:
       '@types/react-dom':
         specifier: ~18.2.7
         version: 18.2.7
-      '@types/react-native':
-        specifier: ~0.71.3
-        version: 0.71.3
       '@types/uuid':
         specifier: ^9.0.2
         version: 9.0.2
@@ -7620,6 +7617,7 @@ packages:
     resolution: {integrity: sha512-0Uqw1YZ0qbVla0MMWFTANFm6W8KYWNvGQmYfucdecbXivLMcQ2v4PovuYFKr7bE6Bc5nDCUEaga962Y8gcDF7A==}
     dependencies:
       '@types/react': 18.2.15
+    dev: false
 
   /@types/react@18.2.15:
     resolution: {integrity: sha512-oEjE7TQt1fFTFSbf8kkNuc798ahTUzn3Le67/PWjE8MAfYAD/qB7O8hSTcromLFqHCt9bcdOg5GXMokzTjJ5SA==}
