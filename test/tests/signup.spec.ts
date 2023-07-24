@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 
-test('has beep', async ({ page }) => {
+test('a user can sign up', async ({ page }) => {
   await page.goto('/', { timeout: 80000 });
 
   await page.goto('http://localhost:8081/');
@@ -21,7 +21,6 @@ test('has beep', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Password' }).fill('test12345');
   await page.getByLabel('--').locator('img').click();
   await page.setInputFiles("input[type='file']", '../app/assets/icon.png');
-  // await page.locator('div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div > div > div > div > div > div > div > div > div > div > div:nth-child(3) > div').first().setInputFiles('../app/assets/icon.png');
   await page.getByRole('button', { name: 'Sign Up' }).click();
   await page.getByText("Ride");
   await page.getByText("Group Size");
