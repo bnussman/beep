@@ -38,6 +38,8 @@ jobs:
       run: pnpm i --frozen-lockfile
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
+    - name: Build the api
+      run: pnpm build:api
     - name: Run Playwright tests
       run: pnpm --filter @beep/test test
     - uses: actions/upload-artifact@v3
