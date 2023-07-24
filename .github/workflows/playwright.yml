@@ -40,6 +40,8 @@ jobs:
       run: pnpm exec playwright install --with-deps
     - name: Build the api
       run: pnpm build:api
+    - name: Init the DB
+      run: pnpm --filter @beep/api db:create
     - name: Run Playwright tests
       run: pnpm --filter @beep/test test
     - uses: actions/upload-artifact@v3
