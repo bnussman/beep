@@ -306,8 +306,8 @@ importers:
   test:
     devDependencies:
       '@playwright/test':
-        specifier: ^1.34.2
-        version: 1.34.2
+        specifier: ^1.36.1
+        version: 1.36.1
 
   website:
     dependencies:
@@ -5692,13 +5692,13 @@ packages:
       webcrypto-core: 1.7.7
     dev: true
 
-  /@playwright/test@1.34.2:
-    resolution: {integrity: sha512-v/LBnwzD0225q8xEv3t9DmNPX61yvNnEbiA8PoNk1fbkxApJFCWYLPpQbdVWzHaARdZD9g1PYBoOvnffortfKw==}
-    engines: {node: '>=14'}
+  /@playwright/test@1.36.1:
+    resolution: {integrity: sha512-YK7yGWK0N3C2QInPU6iaf/L3N95dlGdbsezLya4n0ZCh3IL7VgPGxC6Gnznh9ApWdOmkJeleT2kMTcWPRZvzqg==}
+    engines: {node: '>=16'}
     hasBin: true
     dependencies:
       '@types/node': 20.4.4
-      playwright-core: 1.34.2
+      playwright-core: 1.36.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -12895,9 +12895,9 @@ packages:
     dependencies:
       find-up: 3.0.0
 
-  /playwright-core@1.34.2:
-    resolution: {integrity: sha512-MrkgGWLANc5qthXduvIY1a/tuafROyTORVd86fwKwgoYrmnBooN/GgeZSBm7ljTLV2FCWNSXV3se7qeScKn83g==}
-    engines: {node: '>=14'}
+  /playwright-core@1.36.1:
+    resolution: {integrity: sha512-7+tmPuMcEW4xeCL9cp9KxmYpQYHKkyjwoXRnoeTowaeNat8PoBMk/HwCYhqkH2fRkshfKEOiVus/IhID2Pg8kg==}
+    engines: {node: '>=16'}
     hasBin: true
     dev: true
 
