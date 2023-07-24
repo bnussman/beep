@@ -3,6 +3,7 @@ import type { ExpoConfig } from 'expo/config';
 const config: ExpoConfig = {
   name: "Beep",
   slug: "Beep",
+  scheme: "beep",
   owner: "bnussman",
   version: "2.8.0",
   githubUrl: "https://github.com/bnussman/Beep",
