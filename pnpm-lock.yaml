@@ -272,9 +272,6 @@ importers:
       '@babel/core':
         specifier: ^7.22.5
         version: 7.22.5
-      '@babel/plugin-proposal-export-namespace-from':
-        specifier: ^7.18.9
-        version: 7.18.9(@babel/core@7.22.5)
       '@graphql-codegen/cli':
         specifier: ^4.0.1
         version: 4.0.1(@babel/core@7.22.5)(graphql@16.7.1)
