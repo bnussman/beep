@@ -40,8 +40,8 @@ Sentry.init({
   release: config.version,
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
   enableInExpoDevelopment: true,
-  debug: true,
   enableAutoSessionTracking: true,
+  enableAutoPerformanceTracing: true,
 });
 
 function Beep() {
