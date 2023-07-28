@@ -236,8 +236,8 @@ importers:
         specifier: ^0.9.5
         version: 0.9.5(react-native@0.72.3)
       react-native-maps:
-        specifier: 1.7.1
-        version: 1.7.1(react-native-web@0.19.6)(react-native@0.72.3)(react@18.2.0)
+        specifier: 0.31.1
+        version: 0.31.1(react-native-web@0.19.6)(react-native@0.72.3)(react@18.2.0)
       react-native-mime-types:
         specifier: ^2.4.0
         version: 2.4.0
@@ -8917,6 +8917,14 @@ packages:
     engines: {node: '>= 0.6.0'}
     dev: true
 
+  /deprecated-react-native-prop-types@2.3.0:
+    resolution: {integrity: sha512-pWD0voFtNYxrVqvBMYf5gq3NA2GCpfodS1yNynTPc93AYA/KEMGeWDqqeUB6R2Z9ZofVhks2aeJXiuQqKNpesA==}
+    dependencies:
+      '@react-native/normalize-color': 2.1.0
+      invariant: 2.2.4
+      prop-types: 15.8.1
+    dev: false
+
   /deprecated-react-native-prop-types@4.1.0:
     resolution: {integrity: sha512-WfepZHmRbbdTvhcolb8aOKEvQdcmTMn5tKLbqbXmkBvjFjRVWAYqsXk/DBsV8TZxws8SdGHLuHaJrHSQUPRdfw==}
     dependencies:
@@ -12784,17 +12792,18 @@ packages:
       react-native-iphone-x-helper: 1.3.1(react-native@0.72.3)
     dev: false
 
-  /react-native-maps@1.7.1(react-native-web@0.19.6)(react-native@0.72.3)(react@18.2.0):
-    resolution: {integrity: sha512-CHVLzL+Q2jiUGgbt4/vosxVI1SukWyaLGjD62VLgR/wZpnH4Umi9ql1bmKDPWcfj2C1QZwMU0Yc7rXTbvZUIiw==}
+  /react-native-maps@0.31.1(react-native-web@0.19.6)(react-native@0.72.3)(react@18.2.0):
+    resolution: {integrity: sha512-vipeOPykqLRMCLcLUCZEB+cTdNSlq88NLb0jChY4UGTY5fgOS7GYWkfswy6bW1ayTRLxJS3zpMGFDUY59/ZrXA==}
     peerDependencies:
-      react: '>= 17.0.1'
-      react-native: '>= 0.64.3'
+      react: '>= 16.0'
+      react-native: '>= 0.51'
       react-native-web: '>= 0.11'
     peerDependenciesMeta:
       react-native-web:
         optional: true
     dependencies:
       '@types/geojson': 7946.0.10
+      deprecated-react-native-prop-types: 2.3.0
       react: 18.2.0
       react-native: 0.72.3(@babel/core@7.22.5)(@babel/preset-env@7.22.9)(react@18.2.0)
       react-native-web: 0.19.6(react-dom@18.2.0)(react@18.2.0)
