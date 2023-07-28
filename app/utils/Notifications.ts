@@ -3,6 +3,7 @@ import { Vibration } from "react-native";
 import { client } from "../utils/Apollo";
 import { isMobile } from "./constants";
 import { EditAccount } from "../routes/settings/EditProfile";
+import { Logger } from "./Logger";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,9 +24,15 @@ export async function getPushToken(): Promise<string | null> {
     return null;
   }
 
-  const pushToken = await Notifications.getExpoPushTokenAsync();
+  try {
+    const pushToken = await Notifications.getExpoPushTokenAsync();
 
-  return pushToken.data;
+    return pushToken.data;
+  } catch(error) {
+    Logger.error(error);
+
+    return null;
+  }
 }
 
 /**
