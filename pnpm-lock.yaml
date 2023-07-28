@@ -236,8 +236,8 @@ importers:
         specifier: ^0.9.5
         version: 0.9.5(react-native@0.72.3)
       react-native-maps:
-        specifier: 1.7.1
-        version: 1.7.1(react-native-web@0.19.6)(react-native@0.72.3)(react@18.2.0)
+        specifier: ^2.0.0-beta.14
+        version: 2.0.0-beta.14(react-native-web@0.19.6)(react-native@0.72.3)(react@18.2.0)
       react-native-mime-types:
         specifier: ^2.4.0
         version: 2.4.0
@@ -12784,11 +12784,11 @@ packages:
       react-native-iphone-x-helper: 1.3.1(react-native@0.72.3)
     dev: false
 
-  /react-native-maps@1.7.1(react-native-web@0.19.6)(react-native@0.72.3)(react@18.2.0):
-    resolution: {integrity: sha512-CHVLzL+Q2jiUGgbt4/vosxVI1SukWyaLGjD62VLgR/wZpnH4Umi9ql1bmKDPWcfj2C1QZwMU0Yc7rXTbvZUIiw==}
+  /react-native-maps@2.0.0-beta.14(react-native-web@0.19.6)(react-native@0.72.3)(react@18.2.0):
+    resolution: {integrity: sha512-y5YixAx1cC4ZLy7LbNyaj6HNcaH3BwXJGYn91n9mYGzTKrRqAPjEBdFqL6TEq+07/bIn4JOriklQuXjDSmU5Rw==}
     peerDependencies:
-      react: '>= 17.0.1'
-      react-native: '>= 0.64.3'
+      react: '>= 18.0.0'
+      react-native: '>= 0.69.0'
       react-native-web: '>= 0.11'
     peerDependenciesMeta:
       react-native-web:
