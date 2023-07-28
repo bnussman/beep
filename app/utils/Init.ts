@@ -2,6 +2,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { handleUpdateCheck } from "./Updates";
 
 export function init(): void {
-  handleUpdateCheck();
+  // handleUpdateCheck();
   SplashScreen.preventAutoHideAsync();
 }
