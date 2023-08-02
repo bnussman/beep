@@ -15,7 +15,15 @@ import {
 } from "@apollo/client";
 import Constants from "expo-constants";
 
-const ip = Constants.experienceUrl.split("//")[1].split(":")[0];
+function getLocalIP() {
+  try {
+    return Constants.experienceUrl.split("//")[1].split(":")[0];
+  } catch (error) {
+    return "localhost";
+  }
+}
+
+const ip = getLocalIP();
 
 export const cache = new InMemoryCache();
 
