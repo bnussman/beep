@@ -1,5 +1,4 @@
 import * as Notifications from "expo-notifications";
-import { Vibration } from "react-native";
 import { client } from "../utils/Apollo";
 import { isMobile } from "./constants";
 import { EditAccount } from "../routes/settings/EditProfile";
@@ -25,7 +24,9 @@ export async function getPushToken(): Promise<string | null> {
   }
 
   try {
-    const pushToken = await Notifications.getExpoPushTokenAsync();
+    const pushToken = await Notifications.getExpoPushTokenAsync({
+      projectId: "2c7a6adb-2579-43f1-962e-b23c7e541ec4"
+    });
 
     return pushToken.data;
   } catch(error) {
