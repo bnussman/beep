@@ -28,18 +28,21 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
+import * as SplashScreen from "expo-splash-screen";
+import config from "./package.json";
+import * as Sentry from "sentry-expo";
 
 let unsubscribe: (() => void) | null = null;
 
+SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
-// init();
-// Sentry.init({
-//   release: config.version,
-//   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
-//   enableInExpoDevelopment: true,
-//   enableAutoSessionTracking: true,
-//   enableAutoPerformanceTracing: true,
-// });
+Sentry.init({
+  release: config.version,
+  dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
+  enableInExpoDevelopment: true,
+  enableAutoSessionTracking: true,
+  enableAutoPerformanceTracing: true,
+});
 
 function Beep() {
   const { colorMode } = useColorMode();
