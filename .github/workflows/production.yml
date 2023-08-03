@@ -61,10 +61,10 @@ jobs:
        - name: 🏗 Setup Node
          uses: actions/setup-node@v3
          with:
-           node-version: 16.x
+           node-version: 18.x
 
        - name: 🏗 Setup Expo
-         uses: expo/expo-github-action@v7
+         uses: expo/expo-github-action@v8
          with:
            expo-version: latest
            token: ${{ secrets.EXPO_TOKEN }}
@@ -88,5 +88,5 @@ jobs:
              ${{ runner.os }}-pnpm-store-
        - run: pnpm i --frozen-lockfile
        - name: 🚀 Publish app
-         run: expo publish --non-interactive
+         run: eas update --auto
          working-directory: ./app
