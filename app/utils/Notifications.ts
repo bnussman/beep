@@ -1,8 +1,8 @@
 import * as Notifications from "expo-notifications";
-import { Vibration } from "react-native";
 import { client } from "../utils/Apollo";
 import { isMobile } from "./constants";
 import { EditAccount } from "../routes/settings/EditProfile";
+import { Logger } from "./Logger";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,9 +23,17 @@ export async function getPushToken(): Promise<string | null> {
     return null;
   }
 
-  const pushToken = await Notifications.getExpoPushTokenAsync();
+  try {
+    const pushToken = await Notifications.getExpoPushTokenAsync({
+      projectId: "2c7a6adb-2579-43f1-962e-b23c7e541ec4"
+    });
 
-  return pushToken.data;
+    return pushToken.data;
+  } catch(error) {
+    Logger.error(error);
+
+    return null;
+  }
 }
 
 /**
