@@ -77,5 +77,6 @@ export default defineConfig({
     stdout: 'pipe',
     stderr: 'pipe',
     timeout: 90000,
+    ignoreHTTPSErrors: true,
   },
 });
