@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 
 test('a user can sign up', async ({ page }) => {
-  await page.goto('/', { timeout: 80000 });
+  await page.goto('/', { timeout: 80000, waitUntil: 'networkidle' });
 
   await page.getByRole('button', { name: 'Sign Up' }).click();
   await page.getByLabel('First Name').click();
