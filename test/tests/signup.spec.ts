@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 test('a user can sign up', async ({ page }) => {
   await page.goto('/', { timeout: 80000 });
 
-  await page.goto('http://localhost:8081/');
   await page.getByRole('button', { name: 'Sign Up' }).click();
   await page.getByLabel('First Name').click();
   await page.getByLabel('First Name').fill('Test');
