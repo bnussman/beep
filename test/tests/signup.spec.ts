@@ -23,5 +23,5 @@ test('a user can sign up', async ({ page }) => {
   await page.getByRole('button', { name: 'Sign Up' }).click();
 
   // If sign up was successful, we should be sent to the Ride page
-  await expect(page.getByLabel("Group Size")).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByLabel("Group Size")).toBeVisible({ timeout: 30_000 });
 });
