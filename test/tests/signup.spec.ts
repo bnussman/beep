@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test('a user can sign up', async ({ page }) => {
   await page.goto('/', { timeout: 200_000, waitUntil: 'domcontentloaded' });
@@ -21,6 +21,7 @@ test('a user can sign up', async ({ page }) => {
   await page.getByLabel('--').locator('img').click();
   await page.setInputFiles("input[type='file']", '../app/assets/icon.png');
   await page.getByRole('button', { name: 'Sign Up' }).click();
-  await page.getByText("Ride");
-  await page.getByText("Group Size");
+
+  // If sign up was successful, we should be sent to the Ride page
+  await expect(page.getByLabel("Group Size")).toBeVisible();
 });
