@@ -12,5 +12,5 @@ build/**
 yarn-error.log
 api/storage.json
 **/test-results/
-test/playwright-report/
+test/playwright-report/**
 test/playwright/.cache/
