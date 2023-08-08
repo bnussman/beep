@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('a user can sign up', async ({ page }) => {
-  await page.goto('/', { timeout: 200_000, waitUntil: 'domcontentloaded' });
+  await page.goto('/', { timeout: 200_000 });
 
   await page.getByRole('button', { name: 'Sign Up' }).click();
   await page.getByLabel('First Name').click();
