@@ -1,7 +1,7 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-test('the sign in page renders', async ({ page }) => {
+test('the app works', async ({ page }) => {
   await page.goto('/', { timeout: 200_000 });
 
-  await page.getByText("Ride Beep App")
+  await expect(page.getByText("Ride Beep App")).toBeVisible();
 });
