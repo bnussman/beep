@@ -87,7 +87,7 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 7. Deploy to Kubernetes by pushing to specified branch 
     - After the `beep` namespace has been created, you must add a TLS secrets so that the Linode NodeBalancer can deploy
     - Generate a cert with `sudo certbot certonly --manual --preferred-challenges=dns --email banks@nussman.us --server https://acme-v02.api.letsencrypt.org/directory --agree-tos -d api.dev.ridebeep.app`
-    - `sudo kubectl --kubeconfig ~/Downloads/dev-kubeconfig.yaml create secret tls cert --cert /etc/letsencrypt/live/api.dev.ridebeep.app/fullchain.pem --key /etc/letsencrypt/live/api.dev.ridebeep.app/privkey.pem --namespace beep`
+    - Set cert in Kubernetes `sudo kubectl --kubeconfig ~/Downloads/dev-kubeconfig.yaml create secret tls cert --cert /etc/letsencrypt/live/api.dev.ridebeep.app/fullchain.pem --key /etc/letsencrypt/live/api.dev.ridebeep.app/privkey.pem --namespace beep`
 9. Update Cloudflare to point to Linode NodeBalancer
 
 ## 📈 Stats
