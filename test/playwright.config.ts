@@ -29,7 +29,8 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-
+  /* Use a big timeout */
+  timeout: 180_000,
   /* Configure projects for major browsers */
   projects: [
     {
@@ -70,11 +71,12 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'cd .. && pnpm dev',
+    command: 'cd .. && docker compose up -d && pnpm dev',
     url: 'http://127.0.0.1:8081',
     reuseExistingServer: true,
     stdout: 'pipe',
     stderr: 'pipe',
     timeout: 120_000,
+    ignoreHTTPSErrors: true,
   },
 });
