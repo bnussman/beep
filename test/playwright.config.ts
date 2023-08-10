@@ -21,7 +21,6 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
-  timeout: 120_000,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -71,12 +70,11 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'cd .. && docker compose up -d && pnpm dev',
+    command: 'cd .. && pnpm dev',
     url: 'http://127.0.0.1:8081',
     reuseExistingServer: true,
     stdout: 'pipe',
     stderr: 'pipe',
     timeout: 120_000,
-    ignoreHTTPSErrors: true,
   },
 });
