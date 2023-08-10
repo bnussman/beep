@@ -19,5 +19,5 @@ jobs:
           git pull
           git switch production
           git pull
-          git merge main -y
+          git merge main
           git push origin production
