@@ -1,9 +1,3 @@
-export const isProduction = process.env.NODE_ENV === "production";
-
-export const ENVIRONMENT: 'staging' | 'production' | 'development' = process.env.ENVIRONMENT_NAME as 'staging' | 'production' ?? "development";
-
-export const isDevelopment = ENVIRONMENT !== "production" && ENVIRONMENT !== "staging";
-
 export const GOOGLE_API_KEYS = process.env.GOOGLE_API_KEYS;
 
 export const SENTRY_URL = process.env.SENTRY_URL;
@@ -35,3 +29,9 @@ export const MAIL_PORT = process.env.MAIL_PORT;
 export const MAIL_USER = process.env.MAIL_USER;
 
 export const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
+
+export const isProduction = process.env.NODE_ENV === "production";
+
+export const ENVIRONMENT: 'staging' | 'production' | 'development' = process.env.ENVIRONMENT_NAME as 'staging' | 'production' ?? "development";
+
+export const isDevelopment = ENVIRONMENT !== "production" && ENVIRONMENT !== "staging" && DB_PASSWORD === 'beep';

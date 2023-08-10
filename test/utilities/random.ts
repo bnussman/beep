@@ -1,3 +1,11 @@
-export function getRandomString() {
-  return Math.random().toString(36).slice(2, 7);
+export function getRandomString(length = 5) {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+
+  let str = '';
+
+  for (let i = 0; i < length; i++) {
+    str += letters.charAt(Math.floor(Math.random() * letters.length)) 
+  }
+
+  return str;
 }
