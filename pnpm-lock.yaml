@@ -70,8 +70,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(graphql@16.7.1)
       graphql-upload-minimal:
-        specifier: ^1.5.4
-        version: 1.5.4(graphql@16.7.1)
+        specifier: ^1.5.5
+        version: 1.5.5(graphql@16.7.1)
       graphql-ws:
         specifier: ^5.14.0
         version: 5.14.0(graphql@16.7.1)
@@ -10636,8 +10636,8 @@ packages:
       graphql: 16.7.1
       tslib: 2.6.1
 
-  /graphql-upload-minimal@1.5.4(graphql@16.7.1):
-    resolution: {integrity: sha512-bBZ2J1kg6Guq++IkAhyyyd5QThHa9Mrl2NRqIumrSi2T/7SdoqduhIEdqZ+U4oniZP9jLzcIOyo+l8b+NuSgCw==}
+  /graphql-upload-minimal@1.5.5(graphql@16.7.1):
+    resolution: {integrity: sha512-eNIBl850Sj2Lp14ak+9pK4KINQw2Hkk/t15yY3pPQ0jntkCODL5csTECxsqIYRJisoxNFnIrX4zAGlKGvXc17A==}
     engines: {node: '>=12'}
     peerDependencies:
       graphql: 0.13.1 - 16
