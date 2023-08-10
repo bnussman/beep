@@ -1,6 +1,9 @@
-# Beep App 🚖
+# Beep App 🚕
 
 ![ci](https://github.com/bnussman/beep/actions/workflows/ci.yml/badge.svg)
+![e2e](https://github.com/bnussman/beep/actions/workflows/e2e.yml/badge.svg)
+
+![dev](https://github.com/bnussman/beep/actions/workflows/dev.yml/badge.svg)
 ![staging](https://github.com/bnussman/beep/actions/workflows/staging.yml/badge.svg)
 ![production](https://github.com/bnussman/beep/actions/workflows/production.yml/badge.svg?branch=production)
 

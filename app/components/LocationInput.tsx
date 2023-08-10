@@ -11,15 +11,6 @@ function LocationInput(props: IInputProps, ref: any) {
   async function useCurrentLocation(): Promise<void> {
     setIsLoading(true);
     props.onChangeText?.("");
-    console.log(process.env)
-
-    try {
-      Location.setGoogleApiKey(
-        JSON.parse(process.env.EXPO_PUBLIC_GOOGLE_API_KEYS ?? "[]")[0] || ""
-      );
-    } catch (error) {
-      Logger.error(error);
-    }
 
     const { status } = await Location.requestForegroundPermissionsAsync();
 

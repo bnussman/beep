@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-import * as Tracing from '@sentry/tracing';
 import { Router } from 'express';
 import { SENTRY_URL, ENVIRONMENT } from './constants';
 
@@ -12,10 +11,10 @@ export function init(app: Router): void {
     autoSessionTracking: true, 
     integrations: [
       new Sentry.Integrations.Http({ tracing: true }),
-      new Tracing.Integrations.Express({ app }),
+      new Sentry.Integrations.Express({ app }),
       // new Tracing.Integrations.Apollo(),
-      new Tracing.Integrations.GraphQL(),
-      new Tracing.Integrations.Postgres(),
+      new Sentry.Integrations.GraphQL(),
+      new Sentry.Integrations.Postgres(),
     ],
     tracesSampler: (samplingContext) => {
       if (samplingContext.request?.method === 'OPTIONS') {

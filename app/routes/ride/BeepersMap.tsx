@@ -93,10 +93,10 @@ export function BeepersMap() {
           }),
           fields: {
             latitude() {
-              return data.latitude;
+              return data.latitude!;
             },
             longitude() {
-              return data.longitude;
+              return data.longitude!;
             },
           },
         });

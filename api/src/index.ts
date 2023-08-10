@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import "dotenv/config";
-import "@sentry/tracing";
 import Redis from 'ioredis';
 import express from "express";
 import config from './mikro-orm.config';

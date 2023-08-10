@@ -1,9 +1,6 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import config from "./package.json";
-import * as Sentry from "sentry-expo";
 import * as Notifications from "expo-notifications";
-import { init } from "./utils/Init";
 import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
@@ -31,17 +28,20 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
+import * as SplashScreen from "expo-splash-screen";
+import config from "./package.json";
+import * as Sentry from "sentry-expo";
 
 let unsubscribe: (() => void) | null = null;
 
+SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
-init();
 Sentry.init({
   release: config.version,
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
   enableInExpoDevelopment: true,
-  debug: true,
   enableAutoSessionTracking: true,
+  enableAutoPerformanceTracing: true,
 });
 
 function Beep() {

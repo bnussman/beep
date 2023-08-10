@@ -1,0 +1,14 @@
+{
+  "name": "@beep/test",
+  "version": "0.0.0",
+  "description": "Contains e2e tests for the Beep App",
+  "scripts": {
+    "test": "playwright test",
+    "debug": "playwright test --debug",
+    "ui": "playwright test --ui",
+    "codegen": "playwright codegen"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.36.2"
+  }
+}

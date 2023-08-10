@@ -10,6 +10,7 @@ import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload-minimal';
 import { compare, hash } from 'bcrypt';
+import { isDevelopment } from '../utils/constants';
 
 @ObjectType()
 class Auth {
@@ -57,10 +58,6 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async signup(@Ctx() ctx: Context, @Arg('input', () => SignUpInput) input: SignUpInput): Promise<Auth> {
-    if (!input.picture) {
-      throw new Error("You must upload a profile picture!");
-    }
-
     const { createReadStream, filename } = await (input.picture as unknown as Promise<FileUpload>);
 
     const user = new User();
@@ -86,8 +83,15 @@ export class AuthResolver {
       ...input,
       photo: result.Location,
       password,
-      passwordType: PasswordType.BCRYPT
+      passwordType: PasswordType.BCRYPT,
     });
+
+    if (isDevelopment) {
+      wrap(user).assign({
+        isEmailVerified: true,
+        isStudent: true,
+      });
+    }
 
     const tokens = new TokenEntry(user);
 
@@ -102,7 +106,9 @@ export class AuthResolver {
       throw error;
     }
 
-    createVerifyEmailEntryAndSendEmail(user, ctx.em);
+    if (!isDevelopment) {
+      createVerifyEmailEntryAndSendEmail(user, ctx.em);
+    }
 
     return { user, tokens };
   }

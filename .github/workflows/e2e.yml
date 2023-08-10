@@ -1,0 +1,57 @@
+name: e2e
+
+on:
+  push:
+    branches:
+      - main
+      - production
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - uses: pnpm/action-setup@v2.2.4
+      name: Install pnpm
+      id: pnpm-install
+      with:
+        version: latest
+        run_install: false
+    - name: Get pnpm store directory
+      id: pnpm-cache
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+    - uses: actions/cache@v3
+      name: Setup pnpm cache
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+    - name: 📦 install packages
+      run: pnpm i --frozen-lockfile
+    - name: Install Playwright Browsers
+      run: pnpm exec playwright install --with-deps chromium
+    - name: Start DB and Redis
+      run: docker compose up -d
+    - name: Build the api
+      run: pnpm build:api
+    - name: Init the DB
+      run: pnpm --filter @beep/api db:create
+    - name: Run Playwright tests
+      run: pnpm --filter @beep/test test
+      env:
+        S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+        S3_ACCESS_KEY_SECRET: ${{ secrets.S3_ACCESS_KEY_SECRET }}
+        S3_ENDPOINT_URL: ${{ secrets.S3_ENDPOINT_URL }}
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: playwright-report
+        path: test/playwright-report/
+        retention-days: 10
