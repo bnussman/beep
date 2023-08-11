@@ -91,12 +91,12 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 9. Update Cloudflare to point to Linode NodeBalancer
 
 ## 🔒 Secrets
-
-> This section outlines all environment variables / secrets needed to run the app in production
+This section outlines all environment variables / secrets needed to run the app in production
 
 ### App
-
-None 🎉
+| Secret                   | Description                                                                  | Example                               |
+|--------------------------|------------------------------------------------------------------------------|---------------------------------------|
+| `EXPO_TOKEN`             | Used by Github Actions to deploy updates                                     |                                       |
 
 ### Website
 | Secret                   | Description                                                                  | Example                               |
@@ -105,23 +105,27 @@ None 🎉
 | `VITE_ENVIRONMENT_NAME`  | A environment name so the site knows which API URL to use                    | `production`                          |
 
 ### API
-| Secret                 | Description                                                                  | Example                               |
-|------------------------|------------------------------------------------------------------------------|---------------------------------------|
-| `DB_CA`                | A CA Cerrtificate to connnect to the PostgreSQL database                     |                                       |
-| `DB_PASSWORD`          | A password for the PostgreSQL database                                       |                                       |
-| `DB_URL`               | A PostgreSQL database URL in the form                                        | `postgresql://localhost:5432`         |
-| `DB_USER`              | A PostgreSQL database user                                                   |                                       |
-| `ENVIRONMENT_NAME`     | A environment name used to help the server know what links to use in emails  | `production`                          |
-| `KUBE_CONFIG`          | A kubeconfig for the Kubernetes cluster that will host the API               |                                       |
-| `REDIS_HOST`           | A hostname or IP of the Redis server                                         |                                       |
-| `REDIS_PASSWORD`       | A password for the Redis server                                              |                                       |
-| `MAIL_HOST`            | The hostname of the email server                                             |                                       |
-| `MAIL_PORT`            | The port of the email server                                                 |                                       |
-| `MAIL_PASSWORD`        | The password for the email account                                           |                                       |
-| `MAIL_USER`            | The username or email of the email account used to send emails               |                                       |
-| `S3_ACCESS_KEY_ID`     | The S3 access key ID                                                         |                                       |
-| `S3_ACCESS_KEY_SECRET` | The S3 access key secret                                                     |                                       |
-| `S3_ENDPOINT_URL`      | The S3 server URL                                                            | `https://us-east-1.linodeobjects.com` |
+| Secret                 | Description                                                                  | Example                                                |
+|------------------------|------------------------------------------------------------------------------|--------------------------------------------------------|
+| `DB_CA`                | A CA Cerrtificate to connnect to the PostgreSQL database                     |                                                        |
+| `DB_PASSWORD`          | A password for the PostgreSQL database                                       |                                                        |
+| `DB_URL`               | A PostgreSQL database URL in the form                                        | `postgresql://localhost:5432`                          |
+| `DB_USER`              | A PostgreSQL database user                                                   |                                                        |
+| `ENVIRONMENT_NAME`     | A environment name used to help the server know what links to use in emails  | `production`                                           |
+| `KUBE_CONFIG`          | A kubeconfig for the Kubernetes cluster that will host the API               |                                                        |
+| `REDIS_HOST`           | A hostname or IP of the Redis server                                         |                                                        |
+| `REDIS_PASSWORD`       | A password for the Redis server                                              |                                                        |
+| `MAIL_HOST`            | The hostname of the email server                                             |                                                        |
+| `MAIL_PORT`            | The port of the email server                                                 |                                                        |
+| `MAIL_PASSWORD`        | The password for the email account                                           |                                                        |
+| `MAIL_USER`            | The username or email of the email account used to send emails               |                                                        |
+| `S3_ACCESS_KEY_ID`     | The S3 access key ID                                                         |                                                        |
+| `S3_ACCESS_KEY_SECRET` | The S3 access key secret                                                     |                                                        |
+| `S3_ENDPOINT_URL`      | The S3 server URL                                                            | `https://us-east-1.linodeobjects.com`                  |
+| `SENTRY_URL`           | The Sentry DSN                                                               |                                                        |
+| `GOOGLE_API_KEYS`      | A JSON array of Google Maps/Directions API keys                              | `["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]`  |
+| `DOCKERHUB_TOKEN`      | Docker Hub Token so Github Actions can upload API server images              |                                                        |
+| `DOCKERHUB_USERNAME`   | Docker Hub Username so Github Actions can upload API server images           |                                                        |'
 
 ## 📈 Stats
 ![Alt](https://repobeats.axiom.co/api/embed/1b46a8057ec1f00f48ce7a9fbe9353c7cbe4ff83.svg "Repobeats analytics image")
