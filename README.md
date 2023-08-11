@@ -71,11 +71,6 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 | Website    | http://localhost:5173         |
 | App        | http://localhost:8081         |
 
-## ⚠️ Troubleshooting
-
-- Use `pnpm clean` to clear all dependencies in the project's repository
-- Run `pnpm` in the repo's root to install dependences
-
 ## 🚀 Standing up a new environment
 
 1. Create new Github Environment
