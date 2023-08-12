@@ -7,10 +7,10 @@ export function Terms() {
     <Stack alignItems="center" spacing={4}>
       <Heading size="2xl">Terms of Service</Heading>
       <Heading size="sm">Modified and Effective as of January 19, 2021</Heading>
-      <Accordion allowMultiple allowToggle w="100%">
+      <Accordion allowMultiple allowToggle w="100%" defaultIndex={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               The Company
             </Box>
             <AccordionIcon />
@@ -21,7 +21,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Contractual Relationship
             </Box>
             <AccordionIcon />
@@ -41,7 +41,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Agreement to Binding Arbitration
             </Box>
             <AccordionIcon />
@@ -71,7 +71,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Services
             </Box>
             <AccordionIcon />
@@ -92,7 +92,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Access and Use of the Services
             </Box>
             <AccordionIcon />
@@ -116,7 +116,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Payment
             </Box>
             <AccordionIcon />
@@ -131,7 +131,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Disclaimers
             </Box>
             <AccordionIcon />
@@ -142,7 +142,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Limitation of Liability
             </Box>
             <AccordionIcon />
@@ -158,7 +158,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Indemnity
             </Box>
             <AccordionIcon />
@@ -169,7 +169,7 @@ export function Terms() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box as="span" flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Other Provisions
             </Box>
             <AccordionIcon />

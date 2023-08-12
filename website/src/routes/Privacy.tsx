@@ -228,10 +228,10 @@ export function Privacy() {
       <Heading size='1xl'>
         Modified and Effective as of January 2, 2021
       </Heading>
-      <Accordion allowMultiple allowToggle w="100%">
+      <Accordion allowMultiple allowToggle w="100%" defaultIndex={[0, 1, 2, 3, 4]}>
         <AccordionItem>
           <AccordionButton>
-            <Box flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Introduction
             </Box>
             <AccordionIcon />
@@ -242,7 +242,7 @@ export function Privacy() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               What Information Do We Collect?
             </Box>
             <AccordionIcon />
@@ -253,7 +253,7 @@ export function Privacy() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               How Do We Use Your Information?
             </Box>
             <AccordionIcon />
@@ -264,7 +264,7 @@ export function Privacy() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Will Your Information Be Shared With Anyone?
             </Box>
             <AccordionIcon />
@@ -275,7 +275,7 @@ export function Privacy() {
         </AccordionItem>
         <AccordionItem>
           <AccordionButton>
-            <Box flex='1' textAlign='left' fontWeight="bold">
+            <Box as="span" flex='1' textAlign='left' fontWeight="bold" fontSize="xl">
               Do We Use Cookies and Other Tracking Technologies?
             </Box>
             <AccordionIcon />
