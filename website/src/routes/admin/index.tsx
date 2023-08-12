@@ -13,17 +13,19 @@ import { Ratings } from './ratings';
 import { Rating } from './ratings/Rating';
 import { ActiveBeeps } from "./beeps/ActiveBeeps";
 import { Notifications } from "./notifications";
-import { Dashboard } from './Dashboard';
+import { Redis } from './Redis';
 import { Feedback } from './Feedback';
 import { Cars } from './cars';
 import { Leaderboards } from './leaderboards';
+import { UsersByDomain } from './UsersByDomain';
 
 export function Admin() {
   return (
     <Container maxW="container.xl">
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="redis" element={<Redis />} />
         <Route path="users" element={<Users />} />
+        <Route path="users/domain" element={<UsersByDomain />} />
         <Route path="leaderboards" element={<Leaderboards />} />
         <Route path="beepers" element={<Beepers />} />
         <Route path="beeps" element={<Beeps />} />

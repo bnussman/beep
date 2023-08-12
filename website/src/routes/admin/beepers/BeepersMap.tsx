@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box } from "@chakra-ui/react";
 import { GetBeepersQuery } from "../../../generated/graphql";
 import { Marker } from "../../../components/Marker";
@@ -12,7 +12,7 @@ export function BeepersMap(props: Props) {
   const { beepers } = props;
 
   return (
-    <Box mb={4} mt={4} height={600} width='100%'>
+    <Box mb={4} mt={4} height={600} width='100%' borderRadius="20px" overflow="hidden">
       <Map>
         {beepers?.map((beeper) => (
           <Marker

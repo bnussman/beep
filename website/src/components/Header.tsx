@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import { UserDropdown } from './UserDropdown';
-import { AdminDropdown } from './AdminDropdown';
+import { UserMenu } from './UserMenu';
+import { AdminMenu } from './AdminMenu';
 import { UserRole } from '../types/User';
 import { useQuery } from '@apollo/client';
 import { GetUserDataQuery } from '../generated/graphql';
@@ -45,8 +45,8 @@ export function Header() {
       <HStack spacing={[2, 3]}>
         <Button variant="outline" onClick={toggleColorMode}>{colorMode === 'light' ? "🌙" : "☀️"}</Button>
         <>
-          {(user && user.role === UserRole.ADMIN) && <AdminDropdown />}
-          {user && <UserDropdown />}
+          {user?.role === UserRole.ADMIN && <AdminMenu />}
+          {user && <UserMenu />}
           {!user &&
             <>
               <Button
