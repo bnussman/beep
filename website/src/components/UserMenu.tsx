@@ -61,7 +61,7 @@ export function UserMenu() {
             size='xs'
             src={user?.photo || ''}
           >
-            {user?.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
+            {user?.isBeeping && <AvatarBadge boxSize="0.75rem" bg="green.500" />}
           </Avatar>
         }
       >

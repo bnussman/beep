@@ -9,6 +9,6 @@
     "codegen": "playwright codegen"
   },
   "devDependencies": {
-    "@playwright/test": "^1.36.2"
+    "@playwright/test": "^1.37.0"
   }
 }
