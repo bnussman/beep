@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { GetUserDataQuery } from './generated/graphql';
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
 import { client } from './utils/Apollo';
-import { Box, Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
+import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
 import { Download } from './routes/Download';
 import { Home } from './routes/Home';
@@ -21,6 +21,7 @@ import { Header } from './components/Header';
 import { Banners } from './components/Banners';
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
+import { NotFound } from './components/NotFound';
 
 export const GetUserData = gql`
   query GetUserData {
@@ -116,6 +117,7 @@ function Beep() {
           <Route path="/admin/*" element={<Admin />} />
           <Route path='/download' element={<Download />} />
           <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
     </Router>

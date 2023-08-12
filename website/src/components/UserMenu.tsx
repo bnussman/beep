@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GetUserData } from "../App";
 import { GetUserDataQuery, LogoutMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
+import { LiaKeySolid, LiaSignOutAltSolid, LiaUserEditSolid } from 'react-icons/lia';
 import {
   Menu,
   MenuButton,
@@ -13,6 +14,7 @@ import {
   Avatar,
   AvatarBadge,
   MenuDivider,
+  Icon,
 } from "@chakra-ui/react"
 
 const Logout = gql`
@@ -21,7 +23,7 @@ const Logout = gql`
   }
 `;
 
-export function UserDropdown() {
+export function UserMenu() {
   const { data } = useQuery<GetUserDataQuery>(GetUserData);
   const [logout] = useMutation<LogoutMutation>(Logout);
   const navigate = useNavigate();
@@ -53,37 +55,30 @@ export function UserDropdown() {
     <Menu>
       <MenuButton
         as={Button}
-        rounded='full'
-        variant='link'
-        cursor='pointer'
+        variant="outline"
+        leftIcon={
+          <Avatar
+            size='xs'
+            src={user?.photo || ''}
+          >
+            {user?.isBeeping && <AvatarBadge boxSize="0.75rem" bg="green.500" />}
+          </Avatar>
+        }
       >
-        <Avatar
-          size='sm'
-          src={user?.photo || ''}
-        >
-          {user?.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
-        </Avatar>
+        {user?.username}
       </MenuButton>
       <MenuList>
-        <MenuItem>
-          <Avatar
-            boxSize='1.75rem'
-            src={user?.photo ?? undefined}
-            mr='12px'
-          >
-            {user?.isBeeping && <AvatarBadge boxSize="1.0rem" bg="green.500" />}
-          </Avatar>
-          <span>{user?.username}</span>
-        </MenuItem>
-        <MenuDivider />
-        <MenuItem as={Link} to="/profile/edit">
+        <MenuItem icon={<Icon fontSize="2xl" as={LiaUserEditSolid} />} as={Link} to="/profile/edit">
           Edit Account
         </MenuItem>
-        <MenuItem as={Link} to="/password/change">
+        <MenuItem icon={<Icon fontSize="2xl" as={LiaKeySolid} />} as={Link} to="/password/change">
           Change Password
         </MenuItem>
         <MenuDivider />
-        <MenuItem onClick={handleLogout}>
+        <MenuItem
+          onClick={handleLogout}
+          icon={<Icon fontSize="2xl" as={LiaSignOutAltSolid} />}
+        >
           Sign out
         </MenuItem>
       </MenuList>

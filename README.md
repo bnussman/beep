@@ -16,11 +16,13 @@ This is the monorepo for the Beep App. The *Beep App* is a full stack ride share
 
 ### Dependencies
 
-- Node.js (Install with [Volta](https://volta.sh/))
+#### Required
+- Node.js
 - pnpm
-- Docker
-- [docker-compose](https://docs.docker.com/compose/install/#install-compose)
-- Expo CLI
+- Docker Compose
+
+#### Optional
+- EAS CLI
 
 ### 💻 Running Locally
 
