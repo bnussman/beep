@@ -18,6 +18,7 @@ import { Feedback } from './Feedback';
 import { Cars } from './cars';
 import { Leaderboards } from './leaderboards';
 import { UsersByDomain } from './UsersByDomain';
+import { NotFound } from '../../components/NotFound';
 
 export function Admin() {
   return (
@@ -25,7 +26,7 @@ export function Admin() {
       <Routes>
         <Route path="redis" element={<Redis />} />
         <Route path="users" element={<Users />} />
-        <Route path="users/domain" element={<UsersByDomain />} />
+        <Route path="users/domain*" element={<UsersByDomain />} />
         <Route path="leaderboards" element={<Leaderboards />} />
         <Route path="beepers" element={<Beepers />} />
         <Route path="beeps" element={<Beeps />} />
@@ -41,6 +42,7 @@ export function Admin() {
         <Route path="ratings" element={<Ratings />} />
         <Route path="ratings/:id" element={<Rating />} />
         <Route path="notifications" element={<Notifications />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Container>
   );

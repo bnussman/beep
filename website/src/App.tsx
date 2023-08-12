@@ -21,6 +21,7 @@ import { Header } from './components/Header';
 import { Banners } from './components/Banners';
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
+import { NotFound } from './components/NotFound';
 
 export const GetUserData = gql`
   query GetUserData {
@@ -116,6 +117,7 @@ function Beep() {
           <Route path="/admin/*" element={<Admin />} />
           <Route path='/download' element={<Download />} />
           <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
     </Router>
