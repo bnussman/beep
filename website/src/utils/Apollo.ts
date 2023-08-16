@@ -13,7 +13,7 @@ function getUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === 'preview') {
     return 'https://api.staging.ridebeep.app/graphql';
   }
-  return 'http://localhost:3001/graphql'
+  return 'http://localhost:3000/graphql'
 }
 
 function getWSUrl() {
@@ -24,7 +24,7 @@ function getWSUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === 'preview') {
     return 'wss://api.staging.ridebeep.app/subscriptions';
   }
-  return 'ws://localhost:3001/subscriptions'
+  return 'ws://localhost:3000/subscriptions'
 }
 
 class WebSocketLink extends ApolloLink {

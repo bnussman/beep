@@ -118,9 +118,9 @@ async function start() {
 
   app.use(RealSentry.Handlers.errorHandler());
 
-  await new Promise<void>(resolve => httpServer.listen({ port: 3001 }, resolve));
+  await new Promise<void>(resolve => httpServer.listen({ port: 3000 }, resolve));
 
-  console.info(`🚕 Beep GraphQL Server Started at \x1b[36mhttp://0.0.0.0:3001/graphql\x1b[0m`);
+  console.info(`🚕 Beep GraphQL Server Started at \x1b[36mhttp://0.0.0.0:3000/graphql\x1b[0m`);
 }
 
 start();

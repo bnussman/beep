@@ -13,6 +13,6 @@ COPY api/ .
 
 RUN npx tsc
 
-EXPOSE 3001
+EXPOSE 3000
 
 CMD [ "node", "build/index.js" ]

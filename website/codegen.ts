@@ -2,7 +2,7 @@ import { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "http://localhost:3001/graphql",
+  schema: "http://localhost:3000/graphql",
   config: {
     namingConvention: {
       enumValues: "keep"
