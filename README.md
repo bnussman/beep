@@ -69,7 +69,7 @@ GOOGLE_API_KEYS="["jgfhwgqjkfgwegjfgwekfegy","ghejfqwuguyiqfgvuyvu"]"
 ### 🌎 Services running for local development
 | Service    | URL                           |
 |------------|-------------------------------|
-| API        | http://localhost:3001/graphql |
+| API        | http://localhost:3000/graphql |
 | Website    | http://localhost:5173         |
 | App        | http://localhost:8081         |
 
