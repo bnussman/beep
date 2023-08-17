@@ -329,6 +329,9 @@ importers:
       '@fontsource/poppins':
         specifier: ^5.0.8
         version: 5.0.8
+      '@formkit/auto-animate':
+        specifier: ^0.7.0
+        version: 0.7.0
       apollo-upload-client:
         specifier: ^17.0.0
         version: 17.0.0(@apollo/client@3.8.1)(graphql@16.8.0)
@@ -4647,6 +4650,10 @@ packages:
     resolution: {integrity: sha512-k/MEBstff4sttohyEpXxCmC3MqbUn9VvHGlZ8fauLzkbwXmVrEeyzS+4uhrvAk9DWU9/7otYWxyDox4nT/KVLQ==}
     dependencies:
       tslib: 2.6.1
+    dev: false
+
+  /@formkit/auto-animate@0.7.0:
+    resolution: {integrity: sha512-RczHUr0AhRPssREoNdRjLfk2b/id9/DFnbIq18QM8L7E4zNV3XH+WO480EZ46BQHDEsv76YPJ0JbG2Y2i3GfXw==}
     dev: false
 
   /@gar/promisify@1.1.3:
