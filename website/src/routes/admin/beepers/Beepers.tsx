@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { gql, useQuery, useSubscription } from '@apollo/client';
 import { GetBeeperLocationUpdatesSubscription, GetBeepersQuery } from '../../../generated/graphql';
-import { Badge, Box, Center, Heading, HStack, Select, Spacer, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Badge, Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
 import { cache } from '../../../utils/Apollo';
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 const BeepersGraphQL = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -84,7 +85,7 @@ export function Beepers() {
     },
   ];
 
-  const [selectedOption, setSelectedOption] = useState<string>();
+  const [animationParent] = useAutoAnimate();
 
   useEffect(() => {
     startPolling(15000);
@@ -155,7 +156,7 @@ export function Beepers() {
               <Th>Rate</Th>
             </Tr>
           </Thead>
-          <Tbody>
+          <Tbody ref={animationParent}>
             {beepers.map((beeper) => (
               <Tr key={beeper.id}>
                 <TdUser user={beeper} />

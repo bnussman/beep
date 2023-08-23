@@ -24,6 +24,8 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    permissions: ['geolocation'],
+    geolocation: { latitude: 36.215735, longitude: -81.674205 },
   },
   /* Use a big timeout */
   timeout: 180_000,

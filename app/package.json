@@ -1,6 +1,6 @@
 {
   "name": "@beep/app",
-  "version": "2.8.1",
+  "version": "2.8.2",
   "main": "index.js",
   "scripts": {
     "start": "expo start",
@@ -34,7 +34,7 @@
     "expo-status-bar": "~1.6.0",
     "expo-task-manager": "~11.3.0",
     "expo-updates": "~0.18.11",
-    "graphql": "^16.7.1",
+    "graphql": "^16.8.0",
     "graphql-ws": "^5.14.0",
     "native-base": "3.4.12-alpha.1",
     "react": "18.1.0",

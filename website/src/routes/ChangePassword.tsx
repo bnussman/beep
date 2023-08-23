@@ -3,8 +3,7 @@ import { Error } from '../components/Error';
 import { gql, useMutation } from '@apollo/client';
 import { ChangePasswordMutation } from '../generated/graphql';
 import { Success } from '../components/Success';
-import { Input, Button, FormControl, FormLabel, Center, Heading, Container } from '@chakra-ui/react';
-import { LockIcon } from '@chakra-ui/icons';
+import { Input, Button, FormControl, FormLabel, Center, Heading, Container, Flex, Stack } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 
 const ChangePasswordGraphQL = gql`
@@ -33,38 +32,44 @@ export function ChangePassword() {
   }
 
   return (
-    <Card>
-      <Center pb={4}>
-        <Heading>Change Password</Heading>
-      </Center>
-      {data?.changePassword && <Success message="Successfully changed your password" />}
-      {error && <Error error={error} />}
-      <form onSubmit={handleEdit}>
-        <FormControl id="password">
-          <FormLabel>Password</FormLabel>
-          <Input
-            type="password"
-            value={password}
-            onChange={(value: any) => setPassword(value.target.value)}
-          />
-        </FormControl>
-        <FormControl id="password2" mt={2} mb={2}>
-          <FormLabel>Repreat Password</FormLabel>
-          <Input
-            type="password"
-            value={confirmPassword}
-            onChange={(value: any) => setConfirmPassword(value.target.value)}
-          />
-        </FormControl>
-        <Button
-          isLoading={loading}
-          type="submit"
-          rightIcon={<LockIcon />}
-          isDisabled={!password || password !== confirmPassword}
-        >
-          Update password
-        </Button>
-      </form>
-    </Card>
+    <Container maxW="container.sm" p={[0]}>
+      <Card>
+        <Center pb={4}>
+          <Heading>Change Password</Heading>
+        </Center>
+        {data?.changePassword && <Success message="Successfully changed your password" />}
+        {error && <Error error={error} />}
+        <form onSubmit={handleEdit}>
+          <Stack>
+            <FormControl id="password">
+              <FormLabel>Password</FormLabel>
+              <Input
+                type="password"
+                value={password}
+                onChange={(value: any) => setPassword(value.target.value)}
+              />
+            </FormControl>
+            <FormControl id="password2" mt={2} mb={2}>
+              <FormLabel>Repreat Password</FormLabel>
+              <Input
+                type="password"
+                value={confirmPassword}
+                onChange={(value: any) => setConfirmPassword(value.target.value)}
+              />
+            </FormControl>
+            <Flex justifyContent="flex-end">
+              <Button
+                isLoading={loading}
+                type="submit"
+                colorScheme="blue"
+                isDisabled={!password || password !== confirmPassword}
+              >
+                Update password
+              </Button>
+            </Flex>
+          </Stack>
+        </form>
+      </Card>
+    </Container>
   );
 }

@@ -28,10 +28,10 @@ const ip = getLocalIP();
 export const cache = new InMemoryCache();
 
 const wsUrl = __DEV__
-  ? `ws://${ip}:3001/subscriptions`
+  ? `ws://${ip}:3000/subscriptions`
   : "wss://api.ridebeep.app/subscriptions";
 const url = __DEV__
-  ? `http://${ip}:3001/graphql`
+  ? `http://${ip}:3000/graphql`
   : "https://api.ridebeep.app/graphql";
 // const wsUrl = "wss://staging.ridebeep.app/subscriptions";
 // const url = "https://staging.ridebeep.app/graphql";

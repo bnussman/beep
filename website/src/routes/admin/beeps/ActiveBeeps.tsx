@@ -12,6 +12,7 @@ import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
 import { beepStatusMap } from '.';
 import { useSearchParams } from 'react-router-dom';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 dayjs.extend(duration);
 
@@ -53,6 +54,8 @@ export function ActiveBeeps() {
       show: pageLimit
     }
   });
+
+  const [animationParent] = useAutoAnimate();
 
   useEffect(() => {
     startPolling(2000);
@@ -101,7 +104,7 @@ export function ActiveBeeps() {
               <Th>Status</Th>
             </Tr>
           </Thead>
-          <Tbody>
+          <Tbody ref={animationParent}>
             {beeps?.items.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />

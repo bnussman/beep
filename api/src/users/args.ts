@@ -1,4 +1,4 @@
-import { Length, MinLength } from "class-validator";
+import { IsAlpha, Length, MinLength } from "class-validator";
 import { ArgsType } from "type-graphql";
 import { IsBoolean, IsEmail, IsMobilePhone, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Authorized, Field, InputType } from 'type-graphql';
@@ -24,11 +24,13 @@ export class EditUserInput implements Partial<User> {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
+  @IsAlpha()
   public first?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
+  @IsAlpha()
   public last?: string;
 
   @Field(() => String, { nullable: true })

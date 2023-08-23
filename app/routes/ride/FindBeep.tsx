@@ -359,7 +359,7 @@ export function MainFindBeepScreen() {
       case Status.HERE:
         return `Beeper is here to pick you up in a ${beep.beeper.cars?.[0].color} ${beep.beeper.cars?.[0].make} ${beep.beeper.cars?.[0].model}`;
       case Status.IN_PROGRESS:
-        return "You are currenly in the car with your beeper.";
+        return "You are currently in the car with your beeper.";
       default:
         return "Unknown";
     }

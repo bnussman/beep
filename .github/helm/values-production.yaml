@@ -1,7 +1,7 @@
 namespace: default
  
 env:
-  HTTP_ADDR: :3001
+  HTTP_ADDR: :3000
  
 image:
   name: bnussman/api
@@ -13,7 +13,7 @@ deployment:
   replicas: 3
   container:
     name: api
-    port: 3001
+    port: 3000
  
 service:
   type: LoadBalancer

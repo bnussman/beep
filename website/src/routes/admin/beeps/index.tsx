@@ -11,6 +11,7 @@ import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 dayjs.extend(duration);
 
@@ -58,6 +59,8 @@ export function Beeps() {
   const pageLimit = 20;
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+  
+  const [animationParent] = useAutoAnimate();
 
   const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetBeepsQuery>(BeepsGraphQL, {
     variables: {
@@ -110,7 +113,7 @@ export function Beeps() {
               <Th>Duration</Th>
             </Tr>
           </Thead>
-          <Tbody>
+          <Tbody ref={animationParent}>
             {data?.getBeeps.items.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />
