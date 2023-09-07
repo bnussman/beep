@@ -13,7 +13,7 @@ import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
 import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
 import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
-import { GraphQLUpload } from 'graphql-upload-minimal';
+import { FileUpload, GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
 
 @ObjectType()
@@ -171,15 +171,14 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification')
-  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) upload: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
+    const { createReadStream, filename } = await (upload as unknown as Promise<FileUpload>);
 
     const extention = filename.substring(filename.lastIndexOf("."), filename.length);
 
-    filename = ctx.user.id + "-" + Date.now() + extention;
-
     const uploadParams = {
       Body: createReadStream(),
-      Key: "images/" + filename,
+      Key: "images/" + ctx.user.id + "-" + Date.now() + extention,
       Bucket: "beep",
       ACL: "public-read"
     };
