@@ -32,7 +32,7 @@
     "aws-sdk": "^2.1453.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
-    "car-info": "^0.1.4",
+    "car-info": "^0.1.5",
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
