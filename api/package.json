@@ -52,6 +52,7 @@
     "ws": "^8.14.1"
   },
   "devDependencies": {
+    "bun-types": "latest",
     "@mikro-orm/cli": "5.8.0",
     "@mikro-orm/migrations": "5.8.0",
     "@types/bcrypt": "^5.0.0",
