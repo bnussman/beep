@@ -91,7 +91,11 @@ const wsLink = new WebSocketLink({
         token: auth?.tokens?.id
       }
     }
-  }
+  },
+  on: {
+    error: console.log,
+    closed: console.log,
+  },
 });
 
 const splitLink = split(

@@ -3,7 +3,6 @@ import "dotenv/config";
 import Redis from 'ioredis';
 import express from "express";
 import config from './mikro-orm.config';
-import ws from 'ws';
 import cors from 'cors';
 import * as Sentry from "./utils/sentry";
 import * as RealSentry from "@sentry/node";
@@ -36,6 +35,7 @@ import { CarResolver } from "./cars/resolver";
 import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
+import { WebSocketServer } from "ws";
 
 async function start() {
   const orm = await MikroORM.init(config);
@@ -90,7 +90,7 @@ async function start() {
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
-  const wsServer = new ws.Server({
+  const wsServer = new WebSocketServer({
     server: httpServer,
     path: '/subscriptions',
   });
