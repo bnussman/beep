@@ -13,6 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v2.2.4
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
@@ -23,6 +29,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v2.2.4
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
@@ -33,6 +45,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v2.2.4
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
