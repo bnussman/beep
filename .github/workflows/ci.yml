@@ -10,6 +10,9 @@ on:
 jobs:
   api:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -17,10 +20,12 @@ jobs:
         with:
           bun-version: latest
       - run: bun i
-      - run: cd api
       - run: bun run build
   website:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./website
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -28,10 +33,12 @@ jobs:
         with:
           bun-version: latest
       - run: bun i
-      - run: cd website
       - run: bun typecheck
   app:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -39,5 +46,4 @@ jobs:
         with:
           bun-version: latest
       - run: bun i
-      - run: cd app
       - run: bun typecheck
