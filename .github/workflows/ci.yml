@@ -13,45 +13,31 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - uses: pnpm/action-setup@v2.2.4
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: latest
-          run_install: false
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
       - run: bun i
-      - run: pnpm build:api
+      - run: cd api
+      - run: bun build:api
   website:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - uses: pnpm/action-setup@v2.2.4
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: latest
-          run_install: false
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
       - run: bun i
-      - run: pnpm --filter @beep/website typecheck
+      - run: cd website
+      - run: bun typecheck
   app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - uses: pnpm/action-setup@v2.2.4
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: latest
-          run_install: false
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - run: pnpm --filter @beep/app typecheck
+      - run: bun i
+      - run: cd app
+      - run: bun typecheck
