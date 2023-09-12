@@ -11,10 +11,10 @@ import { S3 } from 'aws-sdk';
 import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject, s3 } from '../utils/s3';
 import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
 import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
-import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
+import { password } from 'bun';
 
 @ObjectType()
 class UsersPerDomain {
@@ -116,7 +116,7 @@ export class UserResolver {
   @Mutation(() => Boolean)
   @Authorized('No Verification')
   public async changePassword(@Ctx() ctx: Context, @Arg('input', () => ChangePasswordInput) input: ChangePasswordInput): Promise<boolean> {
-    ctx.user.password = await hash(input.password, 10);
+    ctx.user.password = await password.hash(input.password, 'bcrypt');
     ctx.user.passwordType = PasswordType.BCRYPT;
 
     await ctx.em.flush();
