@@ -18,7 +18,7 @@ jobs:
           bun-version: latest
       - run: bun i
       - run: cd api
-      - run: bun build:api
+      - run: bun run build
   website:
     runs-on: ubuntu-latest
     steps:
