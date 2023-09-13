@@ -1,9 +1,53 @@
-import { Link, Redirect, Stack } from 'expo-router';
-import { Text, View } from 'react-native';
-import { useUser } from '../../utils/useUser';
+import { Redirect, Stack } from 'expo-router';
+import { Text } from 'react-native';
+import { UserData, UserSubscription } from '../../utils/useUser';
+import { useQuery } from '@apollo/client';
+import { UserDataQuery } from '../../generated/graphql';
+import { handleNotification, updatePushToken } from '../../utils/Notifications';
+import { useEffect } from 'react';
+import { setUserContext } from '../../utils/sentry';
+import * as Notifications from "expo-notifications";
+
+let unsubscribe: (() => void) | null = null;
 
 export default function AppLayout() {
-  const { user, loading } = useUser();
+  const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
+    errorPolicy: "none",
+    onCompleted: () => {
+      updatePushToken();
+    },
+  });
+
+  const user = data?.getUser;
+
+  useEffect(() => {
+    if (user) {
+      if (unsubscribe === null) {
+        unsubscribe = subscribeToMore({
+          document: UserSubscription,
+          updateQuery: (prev, { subscriptionData }) => {
+            // @ts-expect-error apollo dumb
+            const newFeedItem = subscriptionData.data.getUserUpdates;
+            return Object.assign({}, prev, {
+              getUser: newFeedItem,
+            });
+          },
+        });
+      }
+
+      setUserContext(user);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const subscription =
+      Notifications.addNotificationReceivedListener(handleNotification);
+    return () => subscription.remove();
+  }, []);
+
+  if (loading) {
+    return null;
+  }
 
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (loading) {
