@@ -8,13 +8,12 @@ import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../generated/graphql";
 import { client, wsLink } from "../utils/Apollo";
 import { getPushToken } from "../utils/Notifications";
-import { Navigation } from "../utils/Navigation";
 import { Container } from "../components/Container";
 import { UserData } from "../utils/useUser";
 import { Logger } from "../utils/Logger";
 import { useValidationErrors } from "../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigation } from "@react-navigation/native";
+import { Stack as RouterStack } from 'expo-router';
 import {
   Stack,
   Button,
@@ -26,6 +25,8 @@ import {
   WarningOutlineIcon,
   HStack,
 } from "native-base";
+import { Link } from "expo-router";
+import { router } from 'expo-router';
 
 const LoginGQL = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -62,8 +63,6 @@ export default function Login() {
   const [login, { error }] = useMutation<LoginMutation>(LoginGQL);
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
-
-  const navigation = useNavigation<Navigation>();
 
   const {
     control,
@@ -102,6 +101,8 @@ export default function Login() {
         data: { getUser: { ...data?.login.user, pushToken } },
       });
 
+      // router.replace('/');
+
       wsLink.client.restart();
     } catch (error) {
       Alert(error as ApolloError);
@@ -114,6 +115,7 @@ export default function Login() {
       center
       scrollViewProps={{ scrollEnabled: true, bounces: false }}
     >
+      <RouterStack.Screen options={{ headerShown: false }} />
       <Stack space={4} w="90%">
         <Box>
           <Heading size="2xl" mr={4} fontWeight="extrabold" letterSpacing="xs">
@@ -197,21 +199,23 @@ export default function Login() {
           </Button>
         </Stack>
         <HStack>
-          <Button
-            variant="link"
-            _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Sign Up")}
-          >
-            Sign Up
-          </Button>
+          <Link href="/signup" asChild>
+            <Button
+              variant="link"
+              _text={{ fontWeight: "extrabold" }}
+            >
+              Sign Up
+            </Button>
+          </Link>
           <Spacer />
-          <Button
-            variant="link"
-            _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Forgot Password")}
-          >
-            Forgot Password
-          </Button>
+          <Link href="/forgot-password" asChild>
+            <Button
+              variant="link"
+              _text={{ fontWeight: "extrabold" }}
+            >
+              Forgot Password
+            </Button>
+          </Link>
         </HStack>
       </Stack>
     </Container>

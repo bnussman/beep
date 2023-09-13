@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { ForgotPasswordMutation } from "../../generated/graphql";
+import { ForgotPasswordMutation } from "../generated/graphql";
 import { Input, Button, Stack } from "native-base";
-import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
+import { Container } from "../components/Container";
+import { Alert } from "../utils/Alert";
+import { Stack as RouterStack } from 'expo-router';
 
 const ForgotPassword = gql`
   mutation ForgotPassword($email: String!) {
@@ -11,7 +12,7 @@ const ForgotPassword = gql`
   }
 `;
 
-export function ForgotPasswordScreen(): JSX.Element {
+export default function ForgotPasswordScreen() {
   const [forgot, { loading }] =
     useMutation<ForgotPasswordMutation>(ForgotPassword);
   const [email, setEmail] = useState<string>("");
@@ -26,7 +27,8 @@ export function ForgotPasswordScreen(): JSX.Element {
 
   return (
     <Container alignItems="center" keyboard>
-      <Stack mt={4} space={4} w="90%">
+      <RouterStack.Screen options={{ title: "Forgot Password" }} />
+      <Stack p={4} space={4} width="full">
         <Input
           size="lg"
           textContentType="emailAddress"

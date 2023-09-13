@@ -1,9 +1,7 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
-import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
-import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
 import { ProfileScreen } from "./routes/global/Profile";
 import { ReportScreen } from "./routes/global/Report";
 import { RateScreen } from "./routes/global/Rate";
@@ -15,7 +13,6 @@ import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { handleNotification, updatePushToken } from "./utils/Notifications";
-import { SignUpScreen } from "./routes/auth/SignUp";
 import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
@@ -98,16 +95,6 @@ function Beep() {
         >
           {!user ? (
             <>
-              <Stack.Screen
-                options={{ headerShown: false }}
-                name="Login"
-                component={LoginScreen}
-              />
-              <Stack.Screen name="Sign Up" component={SignUpScreen} />
-              <Stack.Screen
-                name="Forgot Password"
-                component={ForgotPasswordScreen}
-              />
             </>
           ) : (
             <>

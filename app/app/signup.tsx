@@ -3,25 +3,25 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity } from "react-native";
-import { getPushToken } from "../../utils/Notifications";
+import { getPushToken } from "../utils/Notifications";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import {
   SignUpInput,
   SignUpMutation,
   SignUpMutationVariables,
-} from "../../generated/graphql";
-import { isMobile, isSimulator } from "../../utils/constants";
-import { generateRNFile } from "../settings/EditProfile";
-import { client, wsLink } from "../../utils/Apollo";
-import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
-import { UserData } from "../../utils/useUser";
+} from "../generated/graphql";
+import { isMobile, isSimulator } from "../utils/constants";
+import { generateRNFile } from "../routes/settings/EditProfile";
+import { client, wsLink } from "../utils/Apollo";
+import { Container } from "../components/Container";
+import { Alert } from "../utils/Alert";
+import { UserData } from "../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
-import { Avatar } from "../../components/Avatar";
+import { Avatar } from "../components/Avatar";
 import {
   isValidationError,
   useValidationErrors,
-} from "../../utils/useValidationErrors";
+} from "../utils/useValidationErrors";
 import {
   Button,
   Input,
@@ -67,7 +67,7 @@ const SignUp = gql`
 
 let picture: SignUpMutationVariables["input"]["picture"];
 
-export function SignUpScreen() {
+export default function SignUpScreen() {
   const [signup, { error }] = useMutation<SignUpMutation>(SignUp, {
     context: {
       headers: {
