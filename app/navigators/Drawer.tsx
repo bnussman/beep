@@ -79,7 +79,7 @@ const Resend = gql`
   }
 `;
 
-function CustomDrawerContent(props: DrawerContentComponentProps) {
+export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
   const { navigate } = useNavigation<Navigation>();
   const { colorMode, toggleColorMode } = useColorMode();

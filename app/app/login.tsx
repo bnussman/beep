@@ -101,7 +101,7 @@ export default function Login() {
         data: { getUser: { ...data?.login.user, pushToken } },
       });
 
-      // router.replace('/');
+      router.replace("/(app)/ride");
 
       wsLink.client.restart();
     } catch (error) {
