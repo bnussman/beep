@@ -12,7 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import { Ionicons } from "@expo/vector-icons";
-import { LOCATION_TRACKING } from "../beep/StartBeeping";
+
 import { client } from "../../utils/Apollo";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
@@ -39,6 +39,7 @@ import {
   Menu,
   Icon,
 } from "native-base";
+import { LOCATION_TRACKING } from "./beep";
 
 const DeleteAccount = gql`
   mutation DeleteAccount {
@@ -80,7 +81,7 @@ export function generateRNFile(uri: string, name: string) {
     : null;
 }
 
-export function EditProfileScreen() {
+export default function EditProfileScreen() {
   const { user } = useUser();
   const navigation = useNavigation<Navigation>();
 

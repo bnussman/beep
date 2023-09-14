@@ -1,24 +1,24 @@
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
-import { Container } from "../../components/Container";
+import { Container } from "../../../components/Container";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
+import { Navigation } from "../../../utils/Navigation";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useForm, Controller } from "react-hook-form";
 import {
   CreateCarMutation,
   CreateCarMutationVariables,
-} from "../../generated/graphql";
-import { isMobile } from "../../utils/constants";
-import { generateRNFile } from "../settings/EditProfile";
-import { CarsQuery } from "./Cars";
+} from "../../../generated/graphql";
+import { isMobile } from "../../../utils/constants";
+import { generateRNFile } from "../profile";
+import { CarsQuery } from "./index";
 import { getMakes, getModels } from "car-info";
-import { capitalize, colors, years } from "./utils";
+import { capitalize, colors, years } from "../../../utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import {
   isValidationError,
   useValidationErrors,
-} from "../../utils/useValidationErrors";
+} from "../../../utils/useValidationErrors";
 import {
   Image,
   CheckIcon,
@@ -60,7 +60,7 @@ const AddCarMutation = gql`
 
 let picture: CreateCarMutationVariables["photo"];
 
-export function AddCar() {
+export default function AddCar() {
   const navigation = useNavigation<Navigation>();
 
   const {

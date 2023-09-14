@@ -9,7 +9,7 @@ import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
-import { Ratings } from "../routes/Ratings";
+import { Ratings } from "../app/(app)/ratings";
 import { Button, Center, Heading, Pressable, Spacer } from "native-base";
 
 export const GetRateData = gql`

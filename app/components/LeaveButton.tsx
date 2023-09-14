@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Alert as NativeAlert } from "react-native";
-import { isMobile } from "../../utils/constants";
+import { isMobile } from "../utils/constants";
 import { gql, useMutation } from "@apollo/client";
-import { LeaveQueueMutation } from "../../generated/graphql";
+import { LeaveQueueMutation } from "../generated/graphql";
 import { Button, IButtonProps, Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Alert } from "../../utils/Alert";
+import { Alert } from "../utils/Alert";
 
 const LeaveQueue = gql`
   mutation LeaveQueue($id: String!) {

@@ -1,17 +1,17 @@
 import React from "react";
-import { AcceptDenyButton } from "../../components/AcceptDenyButton";
+import { AcceptDenyButton } from "../components/AcceptDenyButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Alert, Linking, Pressable } from "react-native";
-import { Navigation } from "../../utils/Navigation";
-import { GetInitialQueueQuery } from "../../generated/graphql";
-import { isMobile, Unpacked } from "../../utils/constants";
-import { getRawPhoneNumber, openDirections } from "../../utils/links";
-import { CancelBeep } from "../../components/CancelButton";
+import { Navigation } from "../utils/Navigation";
+import { GetInitialQueueQuery } from "../generated/graphql";
+import { isMobile, Unpacked } from "../utils/constants";
+import { getRawPhoneNumber, openDirections } from "../utils/links";
+import { CancelBeep } from "./CancelButton";
 import { ApolloError, useMutation } from "@apollo/client";
-import { printStars } from "../../components/Stars";
-import { Avatar } from "../../components/Avatar";
+import { printStars } from "./Stars";
+import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { Card } from "../../components/Card";
+import { Card } from "./Card";
 import {
   Box,
   HStack,
@@ -22,7 +22,7 @@ import {
   Menu,
   Divider,
 } from "native-base";
-import { Status } from "../../utils/types";
+import { Status } from "../utils/types";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;

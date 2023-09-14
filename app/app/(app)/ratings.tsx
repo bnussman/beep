@@ -1,11 +1,11 @@
 import React from "react";
 import { RefreshControl } from "react-native";
-import { useUser } from "../utils/useUser";
+import { useUser } from "../../utils/useUser";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsQuery } from "../generated/graphql";
-import { Container } from "../components/Container";
-import { Rating } from "../components/Rating";
-import { PAGE_SIZE } from "../utils/constants";
+import { GetRatingsQuery } from "../../generated/graphql";
+import { Container } from "../../components/Container";
+import { Rating } from "../../components/Rating";
+import { PAGE_SIZE } from "../../utils/constants";
 import {
   Text,
   FlatList,
@@ -39,7 +39,7 @@ export const Ratings = gql`
   }
 `;
 
-export function RatingsScreen() {
+export default function RatingsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
 

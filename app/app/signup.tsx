@@ -11,7 +11,7 @@ import {
   SignUpMutationVariables,
 } from "../generated/graphql";
 import { isMobile, isSimulator } from "../utils/constants";
-import { generateRNFile } from "../routes/settings/EditProfile";
+import { generateRNFile } from "./(app)/profile";
 import { client, wsLink } from "../utils/Apollo";
 import { Container } from "../components/Container";
 import { Alert } from "../utils/Alert";

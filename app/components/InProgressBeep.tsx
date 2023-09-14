@@ -1,21 +1,21 @@
 import React from "react";
-import { Unpacked } from "../../utils/constants";
+import { Unpacked } from "../utils/constants";
 import {
   getRawPhoneNumber,
   openCashApp,
   openDirections,
   openVenmo,
-} from "../../utils/links";
-import { useUser } from "../../utils/useUser";
-import { ActionButton } from "../../components/ActionButton";
-import { GetInitialQueueQuery } from "../../generated/graphql";
-import { CancelButton } from "../../components/CancelButton";
-import { AcceptDenyButton } from "../../components/AcceptDenyButton";
+} from "../utils/links";
+import { useUser } from "../utils/useUser";
+import { ActionButton } from "./ActionButton";
+import { GetInitialQueueQuery } from "../generated/graphql";
+import { CancelButton } from "./CancelButton";
+import { AcceptDenyButton } from "./AcceptDenyButton";
 import { Linking } from "react-native";
-import { Navigation } from "../../utils/Navigation";
-import { Avatar } from "../../components/Avatar";
+import { Navigation } from "../utils/Navigation";
+import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { Card } from "../../components/Card";
+import { Card } from "./Card";
 import {
   Box,
   Button,
@@ -31,15 +31,15 @@ import {
   useToast,
 } from "native-base";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { printStars } from "../../components/Stars";
-import { Status } from "../../utils/types";
-import { Logger } from "../../utils/Logger";
+import { printStars } from "./Stars";
+import { Status } from "../utils/types";
+import { Logger } from "../utils/Logger";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
 }
 
-export function Beep(props: Props) {
+export function InProgressBeep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
   const { navigate } = useNavigation<Navigation>();

@@ -2,26 +2,14 @@ import * as React from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MainFindBeepScreen } from "../routes/ride/FindBeep";
-import { Feedback } from "../routes/feedback/Feedback";
-import { RatingsScreen } from "../routes/Ratings";
-import { BeepsScreen } from "../routes/Beeps";
-import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import { UserData, useUser } from "../utils/useUser";
-import { Avatar } from "../components/Avatar";
-import { MainNavParamList } from "./MainTabs";
+import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
-import { Cars } from "../routes/cars/Cars";
 import {
-  LOCATION_TRACKING,
-  StartBeepingScreen,
-} from "../routes/beep/StartBeeping";
-import {
-  createDrawerNavigator,
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
@@ -39,6 +27,7 @@ import {
   Button,
   Stack,
 } from "native-base";
+import { LOCATION_TRACKING } from "../app/(app)/beep";
 
 const Logout = gql`
   mutation Logout {
@@ -46,27 +35,21 @@ const Logout = gql`
   }
 `;
 
-const Drawer = createDrawerNavigator<MainNavParamList>();
-
 const getIcon = (screenName: string) => {
   switch (screenName) {
-    case "Ride":
+    case "ride":
       return "car";
-    case "Beep":
+    case "beep":
       return "steering";
-    case "Edit Profile":
+    case "profile":
       return "account-edit";
-    case "Change Password":
-      return "form-textbox-password";
-    case "Beeps":
+    case "beeps":
       return "car-multiple";
-    case "Ratings":
+    case "ratings":
       return "account-star";
-    case "My Cars":
+    case "cars":
       return "car";
-    case "Changelog":
-      return "playlist-plus";
-    case "Feedback":
+    case "feedback":
       return "help-circle-outline";
     default:
       return "car";
@@ -214,32 +197,5 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
         </VStack>
       </VStack>
     </DrawerContentScrollView>
-  );
-}
-
-export function BeepDrawer() {
-  const { colorMode } = useColorMode();
-  const { user } = useUser();
-
-  return (
-    <Box flex={1}>
-      <Drawer.Navigator
-        screenOptions={{
-          drawerType: "front",
-          headerTintColor: colorMode === "dark" ? "white" : "black",
-        }}
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-      >
-        {!user?.isBeeping && (
-          <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
-        )}
-        <Drawer.Screen name="Beep" component={StartBeepingScreen} />
-        <Drawer.Screen name="Cars" component={Cars} />
-        <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
-        <Drawer.Screen name="Beeps" component={BeepsScreen} />
-        <Drawer.Screen name="Ratings" component={RatingsScreen} />
-        <Drawer.Screen name="Feedback" component={Feedback} />
-      </Drawer.Navigator>
-    </Box>
   );
 }

@@ -1,17 +1,17 @@
-import { Map } from "../../components/Map";
-import { useLocation } from "../../utils/useLocation";
+import { Map } from "./Map";
+import { useLocation } from "../utils/useLocation";
 import { AnimatedRegion, MarkerAnimated, Region } from "react-native-maps";
 import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "native-base";
 import { Platform } from "react-native";
-import { cache } from "../../utils/Apollo";
+import { cache } from "../utils/Apollo";
 import {
   AnonymousBeeper,
   GetAllBeepersLocationQuery,
   GetBeeperLocationUpdatesSubscription,
-} from "../../generated/graphql";
-import { BEEPER_ICON } from "../../utils/constants";
+} from "../generated/graphql";
+import { BEEPER_ICON } from "../utils/constants";
 
 const BeepersLocations = gql`
   query GetAllBeepersLocation(

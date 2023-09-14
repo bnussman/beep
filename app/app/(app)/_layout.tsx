@@ -1,4 +1,4 @@
-import { Redirect } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { Text } from 'react-native';
 import { UserData, UserSubscription } from '../../utils/useUser';
@@ -8,7 +8,7 @@ import { handleNotification, updatePushToken } from '../../utils/Notifications';
 import { useEffect } from 'react';
 import { setUserContext } from '../../utils/sentry';
 import * as Notifications from "expo-notifications";
-import { CustomDrawerContent } from '../../navigators/Drawer';
+import { CustomDrawerContent } from '../../components/Drawer';
 
 let unsubscribe: (() => void) | null = null;
 
@@ -65,5 +65,10 @@ export default function AppLayout() {
   }
 
   // This layout can be deferred because it's not the root layout.
-  return <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />}/>;
+  return (
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />} />
+    </>
+  );
 }

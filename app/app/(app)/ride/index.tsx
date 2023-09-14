@@ -1,28 +1,27 @@
 import React, { useEffect } from "react";
-import LocationInput from "../../components/LocationInput";
+import LocationInput from "../../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
-import { useValidationErrors } from "../../utils/useValidationErrors";
-import { BeeperMarker, BeepersMap } from "./BeepersMap";
-import { useLocation } from "../../utils/useLocation";
-import { Map } from "../../components/Map";
+import { useValidationErrors } from "../../../utils/useValidationErrors";
+import { BeeperMarker, BeepersMap } from "../../../components/BeepersMap";
+import { useLocation } from "../../../utils/useLocation";
+import { Map } from "../../../components/Map";
 import { useNavigation } from "@react-navigation/native";
-import { GetRateData, RateSheet } from "../../components/RateSheet";
-import { LeaveButton } from "./LeaveButton";
+import { GetRateData, RateSheet } from "../../../components/RateSheet";
+import { LeaveButton } from "../../../components/LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
-import { cache, client } from "../../utils/Apollo";
-import { Container } from "../../components/Container";
-import { Navigation } from "../../utils/Navigation";
-import { Alert } from "../../utils/Alert";
-import { useUser } from "../../utils/useUser";
-import { throttle } from "../../utils/throttle";
-import { Status } from "../../utils/types";
-import { Avatar } from "../../components/Avatar";
-import { Rates } from "./Rates";
-import { Card } from "../../components/Card";
-import { PlaceInQueue } from "./PlaceInQueue";
-import { GetBeepHistory } from "../Beeps";
+import { cache, client } from "../../../utils/Apollo";
+import { Container } from "../../../components/Container";
+import { Navigation } from "../../../utils/Navigation";
+import { Alert } from "../../../utils/Alert";
+import { useUser } from "../../../utils/useUser";
+import { throttle } from "../../../utils/throttle";
+import { Status } from "../../../utils/types";
+import { Avatar } from "../../../components/Avatar";
+import { Rates } from "../../../components/Rates";
+import { Card } from "../../../components/Card";
+import { PlaceInQueue } from "../../../components/PlaceInQueue";
 import {
   ChooseBeepMutation,
   ChooseBeepMutationVariables,
@@ -30,13 +29,13 @@ import {
   GetInitialRiderStatusQuery,
   RiderStatusSubscription,
   BeepersLocationSubscription,
-} from "../../generated/graphql";
+} from "../../../generated/graphql";
 import {
   getRawPhoneNumber,
   openCashApp,
   openVenmo,
   shareVenmoInformation,
-} from "../../utils/links";
+} from "../../../utils/links";
 import {
   ApolloError,
   gql,
@@ -61,6 +60,8 @@ import {
   WarningOutlineIcon,
   Image,
 } from "native-base";
+import { GetBeepHistory } from "../beeps";
+import { router } from "expo-router";
 
 const ChooseBeep = gql`
   mutation ChooseBeep(
@@ -209,7 +210,7 @@ const GetETA = gql`
   }
 `;
 
-export function MainFindBeepScreen() {
+export default function MainFindBeepScreen() {
   const { user } = useUser();
   const { getLocation } = useLocation(false);
   const { navigate } = useNavigation<Navigation>();
@@ -319,10 +320,7 @@ export function MainFindBeepScreen() {
   }, [beep]);
 
   const findBeep = () => {
-    navigate("Choose Beeper", {
-      handlePick: (id: string) =>
-        handleSubmit((values) => chooseBeep(id, values))(),
-    });
+    router.push("/(app)/ride/pick");
   };
 
   const chooseBeep = async (

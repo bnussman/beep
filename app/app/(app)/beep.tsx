@@ -13,8 +13,7 @@ import { Navigation } from "../../utils/Navigation";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
-import { QueueItem } from "./QueueItem";
-import { Beep } from "./Beep";
+import { QueueItem } from "../../components/QueueItem";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
@@ -45,6 +44,7 @@ import {
   InfoIcon,
 } from "native-base";
 import { Status } from "../../utils/types";
+import { InProgressBeep } from "../../components/InProgressBeep";
 
 let unsubscribe: any = null;
 
@@ -125,7 +125,7 @@ const UpdateBeepSettings = gql`
 
 export const LOCATION_TRACKING = "location-tracking";
 
-export function StartBeepingScreen() {
+export default function StartBeepingScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
   const navigation = useNavigation<Navigation>();
@@ -459,7 +459,7 @@ export function StartBeepingScreen() {
         p={3}
         pb={queue.length > 1 ? 4 : 16}
       >
-        {queue[0] && <Beep beep={queue[0]} />}
+        {queue[0] && <InProgressBeep beep={queue[0]} />}
       </Flex>
       {queue.length > 1 ? (
         <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>

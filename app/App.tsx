@@ -9,16 +9,15 @@ import { client } from "./utils/Apollo";
 import { ApolloProvider, useQuery } from "@apollo/client";
 import { UserDataQuery } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
-import { BeepDrawer } from "./navigators/Drawer";
+import { BeepDrawer } from "./components/Drawer";
 import { colorModeManager } from "./utils/theme";
-import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { handleNotification, updatePushToken } from "./utils/Notifications";
 import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
 import { NATIVE_BASE_THEME } from "./utils/constants";
-import { AddCar } from "./routes/cars/AddCar";
+import { AddCar } from "./app/(app)/cars/add";
 import {
   DarkTheme,
   DefaultTheme,
@@ -118,7 +117,6 @@ function Beep() {
                 name="Change Password"
                 component={ChangePasswordScreen}
               />
-              <Stack.Screen name="Choose Beeper" component={PickBeepScreen} />
               <Stack.Screen name="Add Car" component={AddCar} />
             </>
           )}

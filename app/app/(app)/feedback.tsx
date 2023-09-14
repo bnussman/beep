@@ -29,7 +29,7 @@ const CreateFeedback = gql`
   }
 `;
 
-export function Feedback() {
+export default function Feedback() {
   const [createFeedback, { loading, error }] =
     useMutation<CreateFeedbackMutation>(CreateFeedback);
 

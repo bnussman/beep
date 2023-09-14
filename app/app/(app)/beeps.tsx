@@ -1,11 +1,11 @@
 import React from "react";
 import { RefreshControl } from "react-native";
 import { gql, useQuery } from "@apollo/client";
-import { GetBeepHistoryQuery } from "../generated/graphql";
-import { Container } from "../components/Container";
-import { useUser } from "../utils/useUser";
-import { Beep } from "../components/Beep";
-import { PAGE_SIZE } from "../utils/constants";
+import { GetBeepHistoryQuery } from "../../generated/graphql";
+import { Container } from "../../components/Container";
+import { useUser } from "../../utils/useUser";
+import { Beep } from "../../components/Beep";
+import { PAGE_SIZE } from "../../utils/constants";
 import {
   Spinner,
   Text,
@@ -46,7 +46,7 @@ export const GetBeepHistory = gql`
   }
 `;
 
-export function BeepsScreen() {
+export default function BeepsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
 

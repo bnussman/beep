@@ -19,7 +19,7 @@ export function Beep() {
   const { colorMode } = useColorMode();
   return (
     <ThemeProvider value={colorMode === "dark" ? DarkTheme: DefaultTheme}>
-      <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
+      <StatusBar style={colorMode === "light" ? "dark" : "light"} />
       <Stack />
     </ThemeProvider >
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { Heading, Text } from "native-base";
-import { Card } from "../../components/Card";
+import { Card } from "../components/Card";
 
 interface Props {
   position: number;
