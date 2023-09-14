@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { ChangePasswordMutation } from "../../generated/graphql";
+import { ChangePasswordMutation } from "../generated/graphql";
 import { Input, Button, Stack } from "native-base";
-import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
+import { Container } from "../components/Container";
+import { Alert } from "../utils/Alert";
 
 const ChangePassword = gql`
   mutation ChangePassword($password: String!) {
@@ -11,7 +11,7 @@ const ChangePassword = gql`
   }
 `;
 
-export function ChangePasswordScreen(): JSX.Element {
+export default function ChangePasswordScreen(): JSX.Element {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [changePassword, { loading }] =

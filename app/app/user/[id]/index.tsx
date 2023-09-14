@@ -1,15 +1,14 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Card } from "../../components/Card";
-import { printStars } from "../../components/Stars";
-import { Container } from "../../components/Container";
-import { Navigation } from "../../utils/Navigation";
-import { GetUserProfileQuery, User } from "../../generated/graphql";
-import { Avatar } from "../../components/Avatar";
+import { Card } from "../../../components/Card";
+import { printStars } from "../../../components/Stars";
+import { Container } from "../../../components/Container";
+import { GetUserProfileQuery } from "../../../generated/graphql";
+import { Avatar } from "../../../components/Avatar";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { RatePreview } from "./RatePreview";
-import { useUser } from "../../utils/useUser";
+import { useNavigation } from "@react-navigation/native";
+import { RatePreview } from "../../../components/RatePreview";
+import { useUser } from "../../../utils/useUser";
 import {
   Spinner,
   Text,
@@ -21,8 +20,9 @@ import {
   Pressable,
   Icon,
 } from "native-base";
+import { router, useLocalSearchParams } from "expo-router";
 
-const GetUser = gql`
+export const GetUser = gql`
   query GetUserProfile($id: String!) {
     getUser(id: $id) {
       id
@@ -44,27 +44,21 @@ const GetUser = gql`
   }
 `;
 
-export function ProfileScreen() {
-  const { params } = useRoute<any>();
+export default function ProfileScreen() {
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
+  const params = useLocalSearchParams();
 
   const { data, loading, error } = useQuery<GetUserProfileQuery>(GetUser, {
     variables: { id: params.id },
   });
 
   const handleReport = () => {
-    navigation.navigate("Report", {
-      user: data?.getUser as User,
-      beep: params.beep,
-    });
+    router.push({ pathname: '/user/[id]/report', params: { id: data?.getUser.id ?? "", beep: params.beep } });
   };
 
   const handleRate = () => {
-    navigation.navigate("Rate", {
-      user: data?.getUser as User,
-      beep: params.beep,
-    });
+    router.push({ pathname: '/user/[id]/rate', params: { id: data?.getUser.id ?? "", beep: params.beep } });
   };
 
   React.useLayoutEffect(() => {
@@ -190,7 +184,7 @@ export function ProfileScreen() {
             ) : null}
           </Stack>
         </Card>
-        <RatePreview id={params.id} />
+        <RatePreview id={params.id as string} />
       </Stack>
     </Container>
   );

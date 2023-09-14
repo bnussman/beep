@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import { RateUserMutation } from "../../generated/graphql";
-import { RateBar } from "../../components/Rate";
-import { UserHeader } from "../../components/UserHeader";
-import { Navigation } from "../../utils/Navigation";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { GetUserProfileQuery, RateUserMutation } from "../../../generated/graphql";
+import { RateBar } from "../../../components/Rate";
+import { UserHeader } from "../../../components/UserHeader";
 import { Button, Input, Stack } from "native-base";
-import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { Container } from "../../../components/Container";
+import { Alert } from "../../../utils/Alert";
+import { useRoute } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
+import { GetUser } from ".";
 
 export const RateUser = gql`
   mutation RateUser(
@@ -27,26 +28,30 @@ export const RateUser = gql`
   }
 `;
 
-export function RateScreen() {
+export default function RateScreen() {
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
   const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
+  const params = useLocalSearchParams();
 
-  const { params } = useRoute<any>();
-  const { goBack } = useNavigation<Navigation>();
+  const { data } = useQuery<GetUserProfileQuery>(GetUser, {
+    variables: { id: params.id },
+  });
+
+  const user = data?.getUser;
 
   const onSubmit = () => {
     rate({
       refetchQueries: () => ["GetRatings"],
       variables: {
-        userId: params.user.id,
+        userId: params.id,
         beepId: params.beep,
         message: message,
         stars: stars,
       },
     })
       .then(() => {
-        goBack();
+        router.back();
       })
       .catch((error: ApolloError) => {
         Alert(error);
@@ -57,9 +62,9 @@ export function RateScreen() {
     <Container keyboard p={4}>
       <Stack space={4} w="full">
         <UserHeader
-          username={params.user.username}
-          name={params.user.name}
-          picture={params.user.photo}
+          username={user?.username ?? ""}
+          name={user?.name ?? ""}
+          picture={user?.photo ?? ""}
         />
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Input

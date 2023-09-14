@@ -2,14 +2,10 @@ import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
 import { createStackNavigator } from "@react-navigation/stack";
-import { ProfileScreen } from "./routes/global/Profile";
-import { ReportScreen } from "./routes/global/Report";
-import { RateScreen } from "./routes/global/Rate";
 import { client } from "./utils/Apollo";
 import { ApolloProvider, useQuery } from "@apollo/client";
 import { UserDataQuery } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
-import { BeepDrawer } from "./components/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { handleNotification, updatePushToken } from "./utils/Notifications";
 import { UserData, UserSubscription } from "./utils/useUser";
@@ -17,13 +13,11 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
 import { NATIVE_BASE_THEME } from "./utils/constants";
-import { AddCar } from "./app/(app)/cars/add";
 import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
-import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
@@ -97,27 +91,6 @@ function Beep() {
             </>
           ) : (
             <>
-              <Stack.Screen
-                options={{ headerShown: false }}
-                name="Main"
-                component={BeepDrawer}
-              />
-              <Stack.Screen name="Profile" component={ProfileScreen} />
-              <Stack.Screen
-                name="Report"
-                component={ReportScreen}
-                options={{ presentation: "modal" }}
-              />
-              <Stack.Screen
-                name="Rate"
-                component={RateScreen}
-                options={{ presentation: "modal" }}
-              />
-              <Stack.Screen
-                name="Change Password"
-                component={ChangePasswordScreen}
-              />
-              <Stack.Screen name="Add Car" component={AddCar} />
             </>
           )}
         </Stack.Navigator>

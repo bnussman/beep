@@ -9,8 +9,6 @@ import { isMobile } from "../../utils/constants";
 import { Container } from "../../components/Container";
 import { UserData, useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 import { Ionicons } from "@expo/vector-icons";
 
 import { client } from "../../utils/Apollo";
@@ -40,6 +38,7 @@ import {
   Icon,
 } from "native-base";
 import { LOCATION_TRACKING } from "./beep";
+import { router, useNavigation } from "expo-router";
 
 const DeleteAccount = gql`
   mutation DeleteAccount {
@@ -83,7 +82,7 @@ export function generateRNFile(uri: string, name: string) {
 
 export default function EditProfileScreen() {
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const defaultValues = useMemo(
     () => ({
@@ -147,7 +146,7 @@ export default function EditProfileScreen() {
             );
           }}
         >
-          <Menu.Item onPress={() => navigation.push("Change Password")}>
+          <Menu.Item onPress={() => router.push("/change-password")}>
             Change Password
           </Menu.Item>
           <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>

@@ -1,12 +1,10 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsQuery } from "../../generated/graphql";
-import { Avatar } from "../../components/Avatar";
-import { printStars } from "../../components/Stars";
-import { Card } from "../../components/Card";
+import { GetRatingsQuery } from "../generated/graphql";
+import { Avatar } from "../components/Avatar";
+import { printStars } from "../components/Stars";
+import { Card } from "../components/Card";
 import { RefreshControl } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 import {
   Text,
   HStack,
@@ -17,8 +15,8 @@ import {
   FlatList,
   useColorMode,
   Spacer,
-  Box,
 } from "native-base";
+import { router } from "expo-router";
 
 const Ratings = gql`
   query GetRatingsForUser($id: String, $offset: Int, $show: Int) {
@@ -54,7 +52,6 @@ const PAGE_SIZE = 5;
 
 export function RatePreview({ id }: Props) {
   const { colorMode } = useColorMode();
-  const { push } = useNavigation<Navigation>();
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetRatingsQuery>(Ratings, {
       variables: { id, offset: 0, show: PAGE_SIZE },
@@ -137,7 +134,7 @@ export function RatePreview({ id }: Props) {
             p={1}
             mt={2}
             pressable
-            onPress={() => push("Profile", { id: rating.rater.id })}
+            onPress={() => router.push({ pathname: "/user/[id]/", params: { id: rating.rater.id } })}
           >
             <HStack alignItems="center" p={2}>
               <Avatar size="md" mr={4} url={rating.rater.photo} />

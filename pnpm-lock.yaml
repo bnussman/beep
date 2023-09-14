@@ -293,6 +293,9 @@ importers:
       '@types/react-dom':
         specifier: ~18.0.10
         version: 18.0.10
+      '@types/url-parse':
+        specifier: ^1.4.9
+        version: 1.4.9
       '@types/uuid':
         specifier: ^9.0.3
         version: 9.0.3
@@ -8800,6 +8803,10 @@ packages:
   /@types/stylis@4.2.0:
     resolution: {integrity: sha512-n4sx2bqL0mW1tvDf/loQ+aMX7GQD3lc3fkCMC55VFNDu/vBOabO+LTIeXKM14xK0ppk5TUGcWRjiSpIlUpghKw==}
     dev: false
+
+  /@types/url-parse@1.4.9:
+    resolution: {integrity: sha512-pFvFO5NSAVwp8vDSENcAF13eyAcBIv/OXKvMU466CEwu/+5tyUwW05mVzhmcxaU9j9iTSYOypQqbTrYUa1emFw==}
+    dev: true
 
   /@types/uuid@9.0.3:
     resolution: {integrity: sha512-taHQQH/3ZyI3zP8M/puluDEIEvtQHVYcC6y3N8ijFtAd28+Ey/G4sg1u2gB01S8MwybLOKAp9/yCMu/uR5l3Ug==}

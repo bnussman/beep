@@ -13,7 +13,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../../utils/Apollo";
 import { Container } from "../../../components/Container";
-import { Navigation } from "../../../utils/Navigation";
 import { Alert } from "../../../utils/Alert";
 import { useUser } from "../../../utils/useUser";
 import { throttle } from "../../../utils/throttle";
@@ -213,7 +212,6 @@ const GetETA = gql`
 export default function MainFindBeepScreen() {
   const { user } = useUser();
   const { getLocation } = useLocation(false);
-  const { navigate } = useNavigation<Navigation>();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
     InitialRiderStatus,
@@ -491,7 +489,7 @@ export default function MainFindBeepScreen() {
           <Pressable
             w="100%"
             onPress={() =>
-              navigate("Profile", { id: beep.beeper.id, beep: beep.id })
+              router.push({ pathname: "/user/[id]/", params: { id: beep.beeper.id, beep: beep.id } })
             }
           >
             <HStack alignItems="center" space={4} w="100%">

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
-import { ReportUserMutation } from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { GetUserProfileQuery, ReportUserMutation } from "../../../generated/graphql";
 import { Input, Button, Stack } from "native-base";
-import { Container } from "../../components/Container";
-import { UserHeader } from "../../components/UserHeader";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { Container } from "../../../components/Container";
+import { UserHeader } from "../../../components/UserHeader";
+import { router, useLocalSearchParams } from "expo-router";
+import { GetUser } from ".";
 
 const ReportUser = gql`
   mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
@@ -13,22 +13,27 @@ const ReportUser = gql`
   }
 `;
 
-export function ReportScreen() {
+export default function ReportScreen() {
   const [reason, setReason] = useState<string>();
   const [report, { loading }] = useMutation<ReportUserMutation>(ReportUser);
-  const { params } = useRoute<any>();
-  const { goBack } = useNavigation<Navigation>();
+  const params = useLocalSearchParams();
+
+  const { data } = useQuery<GetUserProfileQuery>(GetUser, {
+    variables: { id: params.id },
+  });
+
+  const user = data?.getUser;
 
   async function reportUser() {
     try {
       await report({
         variables: {
-          userId: params.user.id,
+          userId: params.id,
           beepId: params.beep,
           reason: reason,
         },
       });
-      goBack();
+      router.back();
     } catch (error) {
       alert(error);
     }
@@ -38,9 +43,9 @@ export function ReportScreen() {
     <Container keyboard p={4}>
       <Stack space={4} w="full">
         <UserHeader
-          username={params.user.username}
-          name={params.user.name}
-          picture={params.user.photo}
+          username={user?.username ?? ""}
+          name={user?.name ?? ""}
+          picture={user?.photo ?? ""}
         />
         <Input
           size="lg"

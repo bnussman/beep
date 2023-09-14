@@ -9,10 +9,12 @@ import { useEffect } from 'react';
 import { setUserContext } from '../../utils/sentry';
 import * as Notifications from "expo-notifications";
 import { CustomDrawerContent } from '../../components/Drawer';
+import { useColorMode } from 'native-base';
 
 let unsubscribe: (() => void) | null = null;
 
 export default function AppLayout() {
+  const { colorMode } = useColorMode();
   const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
     errorPolicy: "none",
     onCompleted: () => {
@@ -68,7 +70,10 @@ export default function AppLayout() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />} />
+      <Drawer screenOptions={{
+          drawerType: "front",
+          headerTintColor: colorMode === "dark" ? "white" : "black",
+        }} drawerContent={(props) => <CustomDrawerContent {...props} />} />
     </>
   );
 }

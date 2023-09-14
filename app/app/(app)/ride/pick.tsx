@@ -1,11 +1,10 @@
 import React from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../../components/Stars";
 import { Unpacked } from "../../../utils/constants";
 import { RefreshControl } from "react-native";
 import { GetBeepersQuery } from "../../../generated/graphql";
-import { Navigation } from "../../../utils/Navigation";
 import { Container } from "../../../components/Container";
 import { Avatar } from "../../../components/Avatar";
 import { Card } from "../../../components/Card";
@@ -22,6 +21,7 @@ import {
   useColorMode,
   Stack,
 } from "native-base";
+import { router } from "expo-router";
 
 const GetBeepers = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -47,7 +47,6 @@ export default function PickBeepScreen() {
   const { colorMode } = useColorMode();
   const { location } = useLocation();
   const { params } = useRoute<any>();
-  const navigation = useNavigation<Navigation>();
 
   const { data, loading, error, refetch } = useQuery<GetBeepersQuery>(
     GetBeepers,
@@ -67,7 +66,7 @@ export default function PickBeepScreen() {
 
   function goBack(id: string): void {
     params.handlePick(id);
-    navigation.goBack();
+    router.back();
   }
 
   const renderItem = ({

@@ -1,21 +1,20 @@
 import React, { useLayoutEffect } from "react";
-import { Container } from "../../../components/Container";
+import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../../utils/Navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { RefreshControl } from "react-native";
-import { isMobile, PAGE_SIZE, Unpacked } from "../../../utils/constants";
-import { Card } from "../../../components/Card";
-import { Image } from "../../../components/Image";
-import { useUser } from "../../../utils/useUser";
+import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
+import { Card } from "../../components/Card";
+import { Image } from "../../components/Image";
+import { useUser } from "../../utils/useUser";
 import { Alert } from "react-native";
-import { cache } from "../../../utils/Apollo";
+import { cache } from "../../utils/Apollo";
 import {
   DeleteCarMutation,
   EditCarMutation,
   GetCarsQuery,
-} from "../../../generated/graphql";
+} from "../../generated/graphql";
 import {
   FlatList,
   Heading,
@@ -65,7 +64,7 @@ export const CarsQuery = gql`
 `;
 
 export default function Cars() {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
   const { colorMode } = useColorMode();
   const { user } = useUser();
 
@@ -179,7 +178,7 @@ export default function Cars() {
       headerRight: () => {
         return (
           <IconButton
-            onPress={() => router.push('/(app)/cars/add')}
+            onPress={() => router.push('/add-car')}
             mr={2}
             icon={
               <Icon

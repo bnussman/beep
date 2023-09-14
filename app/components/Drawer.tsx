@@ -8,7 +8,6 @@ import { client } from "../utils/Apollo";
 import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../utils/Navigation";
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
@@ -28,6 +27,7 @@ import {
   Stack,
 } from "native-base";
 import { LOCATION_TRACKING } from "../app/(app)/beep";
+import { router } from "expo-router";
 
 const Logout = gql`
   mutation Logout {
@@ -64,7 +64,6 @@ const Resend = gql`
 
 export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
-  const { navigate } = useNavigation<Navigation>();
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
@@ -104,7 +103,7 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props}>
       <VStack space={6} my={2} mx={2}>
-        <Pressable onPress={() => navigate("Profile", { id: user?.id })}>
+        <Pressable onPress={() => router.push({ pathname: "/user/[id]/", params: { id: user?.id ?? "" } } )}>
           <HStack alignItems="center">
             <Avatar
               mr={2}

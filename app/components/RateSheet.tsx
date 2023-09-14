@@ -3,14 +3,14 @@ import { GetRateDataQuery, RateUserMutation } from "../generated/graphql";
 import { BottomSheet } from "./BottomSheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { RateUser } from "../routes/global/Rate";
 import { Alert } from "../utils/Alert";
 import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../app/(app)/ratings";
 import { Button, Center, Heading, Pressable, Spacer } from "native-base";
+import { RateUser } from "../app/user/[id]/rate";
+import { router } from "expo-router";
 
 export const GetRateData = gql`
   query GetRateData {
@@ -31,7 +31,6 @@ export function RateSheet() {
   const { data } = useQuery<GetRateDataQuery>(GetRateData);
   const [stars, setStars] = useState<number>(0);
   const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
-  const { navigate } = useNavigation<Navigation>();
 
   const beep = data?.getLastBeepToRate;
 
@@ -72,9 +71,7 @@ export function RateSheet() {
         <Pressable
           w="100%"
           alignItems="center"
-          onPress={() =>
-            navigate("Profile", { id: beep.beeper.id, beep: beep.id })
-          }
+          onPress={() => router.push({ pathname: "/user/[id]/", params: { id: beep.beeper.id, beep: beep.id } })}
         >
           <Avatar
             url={beep.beeper.photo}
