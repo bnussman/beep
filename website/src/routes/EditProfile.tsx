@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Navigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { AddProfilePictureMutation, EditAccountMutation, EditAccountMutationVariables, EditUserInput, EditUserMutation, GetUserDataQuery } from '../generated/graphql';
+import { AddProfilePictureMutation, EditUserInput, EditUserMutation, GetUserDataQuery } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
 import { GetUserData } from '../App';
