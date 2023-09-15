@@ -1,14 +1,14 @@
 import React from "react";
 import { useRoute } from "@react-navigation/native";
 import { gql, useQuery } from "@apollo/client";
-import { printStars } from "../../../components/Stars";
-import { Unpacked } from "../../../utils/constants";
+import { printStars } from "../components/Stars";
+import { Unpacked } from "../utils/constants";
 import { RefreshControl } from "react-native";
-import { GetBeepersQuery } from "../../../generated/graphql";
-import { Container } from "../../../components/Container";
-import { Avatar } from "../../../components/Avatar";
-import { Card } from "../../../components/Card";
-import { useLocation } from "../../../utils/useLocation";
+import { GetBeepersQuery } from "../generated/graphql";
+import { Container } from "../components/Container";
+import { Avatar } from "../components/Avatar";
+import { Card } from "../components/Card";
+import { useLocation } from "../utils/useLocation";
 import {
   Text,
   Spinner,

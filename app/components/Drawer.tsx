@@ -7,13 +7,11 @@ import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
-import { useNavigation } from "@react-navigation/native";
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import {
-  Box,
   Pressable,
   VStack,
   Text,
@@ -27,7 +25,7 @@ import {
   Stack,
 } from "native-base";
 import { LOCATION_TRACKING } from "../app/(app)/beep";
-import { router } from "expo-router";
+import { router, useRootNavigation } from "expo-router";
 
 const Logout = gql`
   mutation Logout {
@@ -139,34 +137,13 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
                 Resend Verification Email
               </Button>
             ) : null}
-            {props.state.routeNames.map((name: string, index: number) => (
-              <Pressable
-                key={index}
-                px={5}
-                py={3}
-                rounded="md"
-                bg={
-                  index === props.state.index
-                    ? "rgba(143, 143, 143, 0.1)"
-                    : "transparent"
-                }
-                onPress={() => {
-                  props.navigation.navigate(name);
-                }}
-              >
-                <HStack space={7} alignItems="center">
-                  <Icon
-                    color={
-                      index === props.state.index ? "primary.500" : "gray.500"
-                    }
-                    size={5}
-                    as={MaterialCommunityIcons}
-                    name={getIcon(name)}
-                  />
-                  <Text fontWeight={500}>{name}</Text>
-                </HStack>
-              </Pressable>
-            ))}
+            <NavigationItem name="Ride" navigate={() => router.push("/(app)/ride")} />
+            <NavigationItem name="Beep" navigate={() => router.push("/(app)/beep")} />
+            <NavigationItem name="Cars" navigate={() => router.push("/(app)/cars")} />
+            <NavigationItem name="Profile" navigate={() => router.push("/(app)/profile")} />
+            <NavigationItem name="Beeps" navigate={() => router.push("/(app)/beeps")} />
+            <NavigationItem name="Ratings" navigate={() => router.push("/(app)/ratings")} />
+            <NavigationItem name="Feedback" navigate={() => router.push("/(app)/feedback")} />
             <Pressable onPress={handleLogout}>
               <HStack px={5} py={3} space={7} alignItems="center">
                 {loading ? (
@@ -196,5 +173,37 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
         </VStack>
       </VStack>
     </DrawerContentScrollView>
+  );
+}
+
+interface NavigationItemProps {
+  name: string;
+  navigate: () => void;
+}
+
+function NavigationItem({ name, navigate }: NavigationItemProps) {
+  const navigation = useRootNavigation();
+  const currentRouteName = navigation?.getCurrentRoute()?.name;
+  const isActive =  currentRouteName === name.toLowerCase();
+
+  return (
+    <Pressable
+      key={name}
+      px={5}
+      py={3}
+      rounded="md"
+      bg={isActive ? "rgba(143, 143, 143, 0.1)" : "transparent"}
+      onPress={navigate}
+    >
+      <HStack space={7} alignItems="center">
+        <Icon
+          color={isActive ? "primary.500" : "gray.500"}
+          size={5}
+          as={MaterialCommunityIcons}
+          name={getIcon(name.toLowerCase())}
+        />
+        <Text fontWeight={500}>{name}</Text>
+      </HStack>
+    </Pressable>
   );
 }
