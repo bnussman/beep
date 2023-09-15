@@ -6,9 +6,8 @@ import { UserHeader } from "../../../components/UserHeader";
 import { Button, Input, Stack } from "native-base";
 import { Container } from "../../../components/Container";
 import { Alert } from "../../../utils/Alert";
-import { useRoute } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
-import { GetUser } from ".";
+import { GetUser } from "../../user/[id]";
 
 export const RateUser = gql`
   mutation RateUser(

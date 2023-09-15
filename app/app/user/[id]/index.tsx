@@ -54,16 +54,16 @@ export default function ProfileScreen() {
   });
 
   const handleReport = () => {
-    router.push({ pathname: '/user/[id]/report', params: { id: data?.getUser.id ?? "", beep: params.beep } });
+    router.push({ pathname: '/report/[id]/', params: { id: data?.getUser.id ?? "", beep: params.beep } });
   };
 
   const handleRate = () => {
-    router.push({ pathname: '/user/[id]/rate', params: { id: data?.getUser.id ?? "", beep: params.beep } });
+    router.push({ pathname: '/rate/[id]/', params: { id: data?.getUser.id ?? "", beep: params.beep } });
   };
 
   React.useLayoutEffect(() => {
     if (user?.id !== params.id) {
-      navigation.setOptions({
+      navigation.getParent()?.setOptions({
         headerRight: () => (
           <Menu
             w="190"

@@ -6,7 +6,7 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 
-import { Slot, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NATIVE_BASE_THEME } from "../utils/constants";
@@ -20,7 +20,7 @@ export function Beep() {
   return (
     <ThemeProvider value={colorMode === "dark" ? DarkTheme: DefaultTheme}>
       <StatusBar style={colorMode === "light" ? "dark" : "light"} />
-      <Stack />
+      <Stack initialRouteName="drawer" />
     </ThemeProvider >
   );
 }

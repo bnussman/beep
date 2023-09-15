@@ -24,9 +24,11 @@ import {
   FormControl,
   WarningOutlineIcon,
   HStack,
+  useColorMode,
 } from "native-base";
 import { Link } from "expo-router";
 import { router } from 'expo-router';
+import { StatusBar } from "expo-status-bar";
 
 const LoginGQL = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -61,6 +63,7 @@ const LoginGQL = gql`
 
 export default function Login() {
   const [login, { error }] = useMutation<LoginMutation>(LoginGQL);
+  const { colorMode } = useColorMode();
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
 
@@ -115,6 +118,7 @@ export default function Login() {
       center
       scrollViewProps={{ scrollEnabled: true, bounces: false }}
     >
+      <StatusBar style={colorMode === "light" ? "dark" : "light"} />
       <RouterStack.Screen options={{ headerShown: false }} />
       <Stack space={4} w="90%">
         <Box>

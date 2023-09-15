@@ -6,11 +6,10 @@ import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { Alert } from "../utils/Alert";
 import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";
-import { useNavigation } from "@react-navigation/native";
 import { Ratings } from "../app/(app)/ratings";
 import { Button, Center, Heading, Pressable, Spacer } from "native-base";
-import { RateUser } from "../app/user/[id]/rate";
 import { router } from "expo-router";
+import { RateUser } from "../app/rate/[id]";
 
 export const GetRateData = gql`
   query GetRateData {

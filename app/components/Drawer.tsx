@@ -26,6 +26,7 @@ import {
 } from "native-base";
 import { LOCATION_TRACKING } from "../app/(app)/beep";
 import { router, useRootNavigation } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 const Logout = gql`
   mutation Logout {
@@ -100,6 +101,7 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props}>
+      <StatusBar style={colorMode === "light" ? "dark" : "light"} />
       <VStack space={6} my={2} mx={2}>
         <Pressable onPress={() => router.push({ pathname: "/user/[id]/", params: { id: user?.id ?? "" } } )}>
           <HStack alignItems="center">
