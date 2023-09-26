@@ -3,7 +3,7 @@ import "dotenv/config";
 import Redis from 'ioredis';
 import express from "express";
 import config from './mikro-orm.config';
-import ws from 'ws';
+import { WebSocketServer } from 'ws';
 import cors from 'cors';
 import * as Sentry from "./utils/sentry";
 import * as RealSentry from "@sentry/node";
@@ -90,7 +90,7 @@ async function start() {
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
-  const wsServer = new ws.Server({
+  const wsServer = new WebSocketServer({
     server: httpServer,
     path: '/subscriptions',
   });
