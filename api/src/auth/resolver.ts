@@ -9,7 +9,7 @@ import { TokenEntry } from '../entities/TokenEntry';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload-minimal';
-import { compare, hash } from 'bcrypt';
+import { password as bunPassword } from 'bun';
 import { isDevelopment } from '../utils/constants';
 
 @ObjectType()
@@ -35,7 +35,7 @@ export class AuthResolver {
         isPasswordCorrect = sha256(password) === user.password;
         break;
       case (PasswordType.BCRYPT): 
-        isPasswordCorrect = await compare(password, user.password);
+        isPasswordCorrect = await bunPassword.verify(password, user.password, "bcrypt");
         break;
       default:
         throw new Error(`Unknown password type ${user.passwordType}`);
@@ -77,7 +77,7 @@ export class AuthResolver {
       throw new Error("No result from AWS");
     }
 
-    const password = await hash(input.password, 10);
+    const password = await bunPassword.hash(input.password, "bcrypt");
 
     wrap(user).assign({
       ...input,
@@ -178,7 +178,7 @@ export class AuthResolver {
       throw new Error("Your reset token has expired. You must re-request to reset your password.");
     }
 
-    entry.user.password = await hash(input.password, 10);
+    entry.user.password = await bunPassword.hash(input.password, "bcrypt");
     entry.user.passwordType = PasswordType.BCRYPT;
 
     await ctx.em.nativeDelete(TokenEntry, { user: entry.user });

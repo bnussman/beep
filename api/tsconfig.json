@@ -20,7 +20,10 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "bun-types" // add Bun global
+    ]
   },
   "compileOnSave": true,
   "include": [
