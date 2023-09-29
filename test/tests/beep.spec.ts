@@ -66,7 +66,7 @@ test('a beep can happen between a rider and driver', async ({ browser }) => {
   await beeperPage.getByText("I'm on the way").click();
 
   await expect(riderPage.getByText("Beeper is on their way to get you.")).toBeVisible();
-  await expect(riderPage.getByText("ETA")).toBeVisible();
+  await expect(riderPage.getByText("ETA", { exact: false })).toBeVisible();
 
   await beeperPage.getByText("I'm here").click();
 
