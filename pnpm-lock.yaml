@@ -124,6 +124,9 @@ importers:
       '@types/ws':
         specifier: ^8.5.6
         version: 8.5.6
+      bun-types:
+        specifier: latest
+        version: 1.0.4-canary.20231003T140149
       concurrently:
         specifier: ^8.2.1
         version: 8.2.1
@@ -9342,6 +9345,10 @@ packages:
   /builtins@1.0.3:
     resolution: {integrity: sha512-uYBjakWipfaO/bXI7E8rq6kpwHRZK5cNYrUv2OzZSI/FvmdMyXJ2tG9dKcjEC5YHmHpUAwsargWIZNWdxb/bnQ==}
     dev: false
+
+  /bun-types@1.0.4-canary.20231003T140149:
+    resolution: {integrity: sha512-eEoFyj4wBCnqQGgK3pJ3LEq8Cps8nr3bU0nFYDp4vW1fSiQISwge1Y7YFOW9ffVJWZvaxHzJfzL13ZT6JcHGTg==}
+    dev: true
 
   /busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}

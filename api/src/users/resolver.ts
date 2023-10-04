@@ -171,15 +171,14 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification')
-  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
-
+  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) picture: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
+    const { createReadStream, filename } = await picture;
+    
     const extention = filename.substring(filename.lastIndexOf("."), filename.length);
-
-    filename = ctx.user.id + "-" + Date.now() + extention;
 
     const uploadParams = {
       Body: createReadStream(),
-      Key: "images/" + filename,
+      Key: "images/" + ctx.user.id + "-" + Date.now() + extention,
       Bucket: "beep",
       ACL: "public-read"
     };
