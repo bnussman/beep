@@ -1,4 +1,3 @@
-import { createStackNavigator } from "@react-navigation/stack";
 import { useColorMode } from "native-base";
 import { useIsSignedIn, useIsSignedOut } from "../utils/useUser";
 import { Drawer } from "./Drawer";
@@ -12,8 +11,10 @@ import { LoginScreen } from "../routes/auth/Login";
 import { SignUpScreen } from "../routes/auth/SignUp";
 import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
 import { StaticParamList, createStaticNavigation } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const RootStack = createStackNavigator({
+// const RootStack = createStackNavigator({
+const RootStack = createNativeStackNavigator({
   screens: {},
   screenOptions: () => {
     const { colorMode } = useColorMode();
@@ -53,14 +54,14 @@ const RootStack = createStackNavigator({
     SignedOut: {
       if: useIsSignedOut,
       screens: {
-        SignIn: {
+        Login: {
           screen: LoginScreen,
           options: {
             headerShown: false,            
           },
         },
-        SignUp: SignUpScreen,
-        ForgotPassword: ForgotPasswordScreen,
+        'Sign Up': SignUpScreen,
+        'Forgot Password': ForgotPasswordScreen,
       },
     },
   },

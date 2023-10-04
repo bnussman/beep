@@ -199,7 +199,7 @@ export function LoginScreen() {
           <Button
             variant="link"
             _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("SignUp")}
+            onPress={() => navigation.navigate("Sign Up")}
           >
             Sign Up
           </Button>
@@ -207,7 +207,7 @@ export function LoginScreen() {
           <Button
             variant="link"
             _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("ForgotPassword")}
+            onPress={() => navigation.navigate("Forgot Password")}
           >
             Forgot Password
           </Button>

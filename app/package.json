@@ -19,6 +19,7 @@
     "@react-navigation/drawer": "next",
     "@react-navigation/native": "next",
     "@react-navigation/stack": "next",
+    "@react-navigation/native-stack": "next",
     "@sentry/react-native": "5.5.0",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.5",

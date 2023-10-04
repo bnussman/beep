@@ -10,7 +10,7 @@ import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
-import { UserData, useUser } from "../utils/useUser";
+import { UserData, useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Cars } from "../routes/cars/Cars";
@@ -24,7 +24,6 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import {
-  Box,
   Pressable,
   VStack,
   Text,
@@ -54,7 +53,10 @@ export const Drawer = createDrawerNavigator({
   },
   drawerContent: (props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />,
   screens: {
-    Ride: MainFindBeepScreen,
+    Ride: {
+      screen: MainFindBeepScreen,
+      if: useIsUserNotBeeping,
+    },
     Beep: StartBeepingScreen,
     Cars: Cars,
     'Edit Profile': EditProfileScreen,

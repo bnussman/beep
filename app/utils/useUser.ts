@@ -64,18 +64,13 @@ export function useIsSignedIn() {
 }
 
 export function useIsSignedOut() {
-  const { data } = useQuery<UserDataQuery>(UserData, {
-    fetchPolicy: "cache-only",
-  });
-
-  return !Boolean(data?.getUser);
+  return !useIsSignedIn();
 }
-
 
 export function useIsUserNotBeeping() {
   const { data } = useQuery<UserDataQuery>(UserData, {
     fetchPolicy: "cache-only",
   });
 
-  return !Boolean(data?.getUser.isBeeping);
+  return !Boolean(data?.getUser?.isBeeping);
 }
