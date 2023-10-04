@@ -54,3 +54,19 @@ export function useUser() {
 
   return { user: data?.getUser, ...rest };
 }
+
+export function useIsSignedIn() {
+  const { data } = useQuery<UserDataQuery>(UserData, {
+    fetchPolicy: "cache-only",
+  });
+
+  return Boolean(data?.getUser);
+}
+
+export function useIsSignedOut() {
+  const { data } = useQuery<UserDataQuery>(UserData, {
+    fetchPolicy: "cache-only",
+  });
+
+  return !Boolean(data?.getUser);
+}

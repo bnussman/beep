@@ -16,7 +16,7 @@ import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { handleNotification, updatePushToken } from "./utils/Notifications";
 import { SignUpScreen } from "./routes/auth/SignUp";
-import { UserData, UserSubscription } from "./utils/useUser";
+import { UserData, UserSubscription, useIsSignedIn, useIsSignedOut } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
@@ -26,6 +26,8 @@ import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
+  StaticParamList,
+  createStaticNavigation,
 } from "@react-navigation/native";
 import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
@@ -35,7 +37,59 @@ import * as Sentry from "sentry-expo";
 let unsubscribe: (() => void) | null = null;
 
 SplashScreen.preventAutoHideAsync();
-const Stack = createStackNavigator();
+
+// const Stack = createStackNavigator();
+
+const RootStack = createStackNavigator({
+  screens: {
+    // Common screens
+  },
+  screenOptions: {
+  },
+  groups: {
+    SignedIn: {
+      if: useIsSignedIn,
+      screens: {
+        Main: {
+          screen: BeepDrawer,
+          options: {
+            headerShown: false,
+          },
+        },
+        Profile: ProfileScreen,
+        Report: ReportScreen,
+        Rate: RateScreen,
+        ChangePassword: ChangePasswordScreen,
+        ChooseBeeper: PickBeepScreen,
+        AddCar: AddCar,
+      },
+    },
+    SignedOut: {
+      if: useIsSignedOut,
+      screens: {
+        SignIn: {
+          screen: LoginScreen,
+          options: {
+            headerShown: false,            
+          },
+        },
+        SignUp: SignUpScreen,
+        ForgotPassword: ForgotPasswordScreen,
+      },
+    },
+  },
+});
+
+type RootStackParamList = StaticParamList<typeof RootStack>;
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+}
+
+const Navigation = createStaticNavigation(RootStack);
+
 Sentry.init({
   release: config.version,
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
@@ -87,10 +141,11 @@ function Beep() {
   return (
     <>
       <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
-      <NavigationContainer
+      {/* <NavigationContainer
         theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
-      >
-        <Stack.Navigator
+      > */}
+        <Navigation />
+        {/* <Stack.Navigator
           initialRouteName={user ? "Main" : "Login"}
           screenOptions={{
             headerTintColor: colorMode === "dark" ? "white" : "black",
@@ -135,8 +190,8 @@ function Beep() {
               <Stack.Screen name="Add Car" component={AddCar} />
             </>
           )}
-        </Stack.Navigator>
-      </NavigationContainer>
+        </Stack.Navigator> */}
+      {/* </NavigationContainer> */}
     </>
   );
 }

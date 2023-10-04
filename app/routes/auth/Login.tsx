@@ -63,7 +63,7 @@ export function LoginScreen() {
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
 
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const {
     control,
@@ -200,7 +200,7 @@ export function LoginScreen() {
           <Button
             variant="link"
             _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Sign Up")}
+            onPress={() => navigation.navigate("SignUp")}
           >
             Sign Up
           </Button>
@@ -208,7 +208,7 @@ export function LoginScreen() {
           <Button
             variant="link"
             _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Forgot Password")}
+            onPress={() => navigation.navigate("ForgotPassword")}
           >
             Forgot Password
           </Button>
