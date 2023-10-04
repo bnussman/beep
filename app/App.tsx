@@ -1,94 +1,29 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
-import { LoginScreen } from "./routes/auth/Login";
-import { createStackNavigator } from "@react-navigation/stack";
-import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
-import { ProfileScreen } from "./routes/global/Profile";
-import { ReportScreen } from "./routes/global/Report";
-import { RateScreen } from "./routes/global/Rate";
+import * as SplashScreen from "expo-splash-screen";
+import * as Sentry from "sentry-expo";
 import { client } from "./utils/Apollo";
 import { ApolloProvider, useQuery } from "@apollo/client";
 import { UserDataQuery } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
-import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
-import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { handleNotification, updatePushToken } from "./utils/Notifications";
-import { SignUpScreen } from "./routes/auth/SignUp";
-import { UserData, UserSubscription, useIsSignedIn, useIsSignedOut } from "./utils/useUser";
+import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
 import { NATIVE_BASE_THEME } from "./utils/constants";
-import { AddCar } from "./routes/cars/AddCar";
+import { Navigation } from "./navigators/Navigation";
+import config from "./package.json";
 import {
   DarkTheme,
   DefaultTheme,
-  NavigationContainer,
-  StaticParamList,
-  createStaticNavigation,
 } from "@react-navigation/native";
-import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
-import * as SplashScreen from "expo-splash-screen";
-import config from "./package.json";
-import * as Sentry from "sentry-expo";
 
 let unsubscribe: (() => void) | null = null;
 
 SplashScreen.preventAutoHideAsync();
-
-// const Stack = createStackNavigator();
-
-const RootStack = createStackNavigator({
-  screens: {
-    // Common screens
-  },
-  screenOptions: {
-  },
-  groups: {
-    SignedIn: {
-      if: useIsSignedIn,
-      screens: {
-        Main: {
-          screen: BeepDrawer,
-          options: {
-            headerShown: false,
-          },
-        },
-        Profile: ProfileScreen,
-        Report: ReportScreen,
-        Rate: RateScreen,
-        ChangePassword: ChangePasswordScreen,
-        ChooseBeeper: PickBeepScreen,
-        AddCar: AddCar,
-      },
-    },
-    SignedOut: {
-      if: useIsSignedOut,
-      screens: {
-        SignIn: {
-          screen: LoginScreen,
-          options: {
-            headerShown: false,            
-          },
-        },
-        SignUp: SignUpScreen,
-        ForgotPassword: ForgotPasswordScreen,
-      },
-    },
-  },
-});
-
-type RootStackParamList = StaticParamList<typeof RootStack>;
-
-declare global {
-  namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
-  }
-}
-
-const Navigation = createStaticNavigation(RootStack);
 
 Sentry.init({
   release: config.version,
@@ -141,57 +76,7 @@ function Beep() {
   return (
     <>
       <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
-      {/* <NavigationContainer
-        theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
-      > */}
-        <Navigation />
-        {/* <Stack.Navigator
-          initialRouteName={user ? "Main" : "Login"}
-          screenOptions={{
-            headerTintColor: colorMode === "dark" ? "white" : "black",
-          }}
-        >
-          {!user ? (
-            <>
-              <Stack.Screen
-                options={{ headerShown: false }}
-                name="Login"
-                component={LoginScreen}
-              />
-              <Stack.Screen name="Sign Up" component={SignUpScreen} />
-              <Stack.Screen
-                name="Forgot Password"
-                component={ForgotPasswordScreen}
-              />
-            </>
-          ) : (
-            <>
-              <Stack.Screen
-                options={{ headerShown: false }}
-                name="Main"
-                component={BeepDrawer}
-              />
-              <Stack.Screen name="Profile" component={ProfileScreen} />
-              <Stack.Screen
-                name="Report"
-                component={ReportScreen}
-                options={{ presentation: "modal" }}
-              />
-              <Stack.Screen
-                name="Rate"
-                component={RateScreen}
-                options={{ presentation: "modal" }}
-              />
-              <Stack.Screen
-                name="Change Password"
-                component={ChangePasswordScreen}
-              />
-              <Stack.Screen name="Choose Beeper" component={PickBeepScreen} />
-              <Stack.Screen name="Add Car" component={AddCar} />
-            </>
-          )}
-        </Stack.Navigator> */}
-      {/* </NavigationContainer> */}
+      <Navigation theme={colorMode === "dark" ? DarkTheme : DefaultTheme} />
     </>
   );
 }

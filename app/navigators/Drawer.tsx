@@ -12,7 +12,6 @@ import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
-import { MainNavParamList } from "./MainTabs";
 import { useNavigation } from "@react-navigation/native";
 import { Cars } from "../routes/cars/Cars";
 import {
@@ -45,7 +44,25 @@ const Logout = gql`
   }
 `;
 
-const Drawer = createDrawerNavigator<MainNavParamList>();
+export const Drawer = createDrawerNavigator({
+  screenOptions: () => {
+    const { colorMode } = useColorMode();
+    return {
+      headerTintColor: colorMode === "dark" ? "white" : "black",
+      drawerType: "front",
+    }
+  },
+  drawerContent: (props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />,
+  screens: {
+    Ride: MainFindBeepScreen,
+    Beep: StartBeepingScreen,
+    Cars: Cars,
+    'Edit Profile': EditProfileScreen,
+    Beeps: BeepsScreen,
+    Ratings: RatingsScreen,
+    Feedback: Feedback,
+  },
+});
 
 const getIcon = (screenName: string) => {
   switch (screenName) {

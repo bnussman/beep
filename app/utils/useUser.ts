@@ -70,3 +70,12 @@ export function useIsSignedOut() {
 
   return !Boolean(data?.getUser);
 }
+
+
+export function useIsUserNotBeeping() {
+  const { data } = useQuery<UserDataQuery>(UserData, {
+    fetchPolicy: "cache-only",
+  });
+
+  return !Boolean(data?.getUser.isBeeping);
+}
