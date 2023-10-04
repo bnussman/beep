@@ -14,7 +14,6 @@ import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
 import { MainNavParamList } from "./MainTabs";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../utils/Navigation";
 import { Cars } from "../routes/cars/Cars";
 import {
   LOCATION_TRACKING,
@@ -81,7 +80,7 @@ const Resend = gql`
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
@@ -118,10 +117,14 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       .catch((error) => alert(error.message));
   };
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <DrawerContentScrollView {...props}>
       <VStack space={6} my={2} mx={2}>
-        <Pressable onPress={() => navigate("Profile", { id: user?.id })}>
+        <Pressable onPress={() => navigate("Profile", { id: user.id })}>
           <HStack alignItems="center">
             <Avatar
               mr={2}

@@ -1,11 +1,10 @@
 import React from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation, useRoute } from "@react-navigation/native";
 import { gql, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
 import { RefreshControl } from "react-native";
 import { GetBeepersQuery } from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { Card } from "../../components/Card";
@@ -43,11 +42,15 @@ const GetBeepers = gql`
   }
 `;
 
-export function PickBeepScreen() {
+type Props = StaticScreenProps<{
+  handlePick: (id: string) => void;
+}>;
+
+
+export function PickBeepScreen({ route }: Props) {
   const { colorMode } = useColorMode();
   const { location } = useLocation();
-  const { params } = useRoute<any>();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const { data, loading, error, refetch } = useQuery<GetBeepersQuery>(
     GetBeepers,
@@ -66,7 +69,7 @@ export function PickBeepScreen() {
   const isRefreshing = Boolean(data) && loading;
 
   function goBack(id: string): void {
-    params.handlePick(id);
+    route.params.handlePick(id);
     navigation.goBack();
   }
 

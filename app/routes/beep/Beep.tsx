@@ -12,7 +12,6 @@ import { GetInitialQueueQuery } from "../../generated/graphql";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Linking } from "react-native";
-import { Navigation } from "../../utils/Navigation";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "../../components/Card";
@@ -42,7 +41,7 @@ interface Props {
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
   const { onCopy } = useClipboard();
   const { show } = useToast();
 

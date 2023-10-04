@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { RateUserMutation } from "../../generated/graphql";
+import { Beep, RateUserMutation, User } from "../../generated/graphql";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
-import { Navigation } from "../../utils/Navigation";
 import { Button, Input, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 
 export const RateUser = gql`
   mutation RateUser(
@@ -27,13 +26,18 @@ export const RateUser = gql`
   }
 `;
 
-export function RateScreen() {
+type Props = StaticScreenProps<{
+  user: User;
+  beep?: string;
+}>;
+
+export function RateScreen({ route }: Props) {
+  const params = route.params;
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
   const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
 
-  const { params } = useRoute<any>();
-  const { goBack } = useNavigation<Navigation>();
+  const { goBack } = useNavigation();
 
   const onSubmit = () => {
     rate({
@@ -59,7 +63,7 @@ export function RateScreen() {
         <UserHeader
           username={params.user.username}
           name={params.user.name}
-          picture={params.user.photo}
+          picture={params.user.photo ?? ""}
         />
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Input

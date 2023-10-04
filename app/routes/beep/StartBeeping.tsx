@@ -9,7 +9,6 @@ import { useUser } from "../../utils/useUser";
 import { isAndroid, isMobile } from "../../utils/constants";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { client } from "../../utils/Apollo";
-import { Navigation } from "../../utils/Navigation";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
@@ -128,7 +127,7 @@ export const LOCATION_TRACKING = "location-tracking";
 export function StartBeepingScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [singlesRate, setSinglesRate] = useState<string>(

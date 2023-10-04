@@ -2,7 +2,6 @@ import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Alert, Linking, Pressable } from "react-native";
-import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { isMobile, Unpacked } from "../../utils/constants";
 import { getRawPhoneNumber, openDirections } from "../../utils/links";
@@ -31,7 +30,7 @@ interface Props {
 
 export function QueueItem({ item }: Props) {
   const [cancel] = useMutation(CancelBeep);
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
 
   const onCancelPress = () => {
     if (isMobile) {

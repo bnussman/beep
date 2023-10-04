@@ -1,7 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { RefreshControl } from "react-native";
@@ -64,7 +63,7 @@ export const CarsQuery = gql`
 `;
 
 export function Cars() {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
   const { colorMode } = useColorMode();
   const { user } = useUser();
 
@@ -178,7 +177,7 @@ export function Cars() {
       headerRight: () => {
         return (
           <IconButton
-            onPress={() => navigation.navigate("Add Car")}
+            onPress={() => navigation.navigate("AddCar")}
             mr={2}
             icon={
               <Icon

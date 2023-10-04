@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Badge, HStack, Spacer, Stack, Text } from "native-base";
 import { GetBeepHistoryQuery } from "../generated/graphql";
-import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { Unpacked } from "../utils/constants";
@@ -27,7 +26,7 @@ export const beepStatusMap: Record<Status, string> = {
 
 export function Beep({ item }: Props) {
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
   const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
   const isRider = user?.id === item.rider.id;
 
@@ -41,7 +40,7 @@ export function Beep({ item }: Props) {
       mx={1}
       pressable
       onPress={() =>
-        navigation.push("Profile", { id: otherUser.id, beep: item.id })
+        navigation.navigate("Profile", { id: otherUser.id, beep: item.id })
       }
     >
       <HStack alignItems="center" mb={2}>

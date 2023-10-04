@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { ReportUserMutation } from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
+import { Beep, ReportUserMutation, User } from "../../generated/graphql";
 import { Input, Button, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { UserHeader } from "../../components/UserHeader";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 
 const ReportUser = gql`
   mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
@@ -13,11 +12,16 @@ const ReportUser = gql`
   }
 `;
 
-export function ReportScreen() {
+type Props = StaticScreenProps<{
+  user: User;
+  beep?: string;
+}>;
+
+export function ReportScreen({ route }: Props) {
+  const params = route.params;
   const [reason, setReason] = useState<string>();
   const [report, { loading }] = useMutation<ReportUserMutation>(ReportUser);
-  const { params } = useRoute<any>();
-  const { goBack } = useNavigation<Navigation>();
+  const { goBack } = useNavigation();
 
   async function reportUser() {
     try {
@@ -40,7 +44,7 @@ export function ReportScreen() {
         <UserHeader
           username={params.user.username}
           name={params.user.name}
-          picture={params.user.photo}
+          picture={params.user.photo ?? ""}
         />
         <Input
           size="lg"
