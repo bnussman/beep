@@ -236,30 +236,3 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     </DrawerContentScrollView>
   );
 }
-
-export function BeepDrawer() {
-  const { colorMode } = useColorMode();
-  const { user } = useUser();
-
-  return (
-    <Box flex={1}>
-      <Drawer.Navigator
-        screenOptions={{
-          drawerType: "front",
-          headerTintColor: colorMode === "dark" ? "white" : "black",
-        }}
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-      >
-        {!user?.isBeeping && (
-          <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
-        )}
-        <Drawer.Screen name="Beep" component={StartBeepingScreen} />
-        <Drawer.Screen name="Cars" component={Cars} />
-        <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
-        <Drawer.Screen name="Beeps" component={BeepsScreen} />
-        <Drawer.Screen name="Ratings" component={RatingsScreen} />
-        <Drawer.Screen name="Feedback" component={Feedback} />
-      </Drawer.Navigator>
-    </Box>
-  );
-}
