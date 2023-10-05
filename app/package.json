@@ -64,6 +64,7 @@
     "@types/apollo-upload-client": "^17.0.3",
     "@types/react": "~18.2.18",
     "@types/react-dom": "~18.0.10",
+    "@types/url-parse": "^1.4.9",
     "babel-preset-expo": "^9.5.1",
     "typescript": "^5.1.6"
   },

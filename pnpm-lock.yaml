@@ -293,6 +293,9 @@ importers:
       '@types/react-dom':
         specifier: ~18.0.10
         version: 18.0.11
+      '@types/url-parse':
+        specifier: ^1.4.9
+        version: 1.4.9
       babel-preset-expo:
         specifier: ^9.5.1
         version: 9.5.1(@babel/core@7.22.9)
@@ -8591,6 +8594,10 @@ packages:
   /@types/stylis@4.2.1:
     resolution: {integrity: sha512-OSaMrXUKxVigGlKRrET39V2xdhzlztQ9Aqumn1WbCBKHOi9ry7jKSd7rkyj0GzmWaU960Rd+LpOFpLfx5bMQAg==}
     dev: false
+
+  /@types/url-parse@1.4.9:
+    resolution: {integrity: sha512-pFvFO5NSAVwp8vDSENcAF13eyAcBIv/OXKvMU466CEwu/+5tyUwW05mVzhmcxaU9j9iTSYOypQqbTrYUa1emFw==}
+    dev: true
 
   /@types/uuid@9.0.4:
     resolution: {integrity: sha512-zAuJWQflfx6dYJM62vna+Sn5aeSWhh3OB+wfUEACNcqUSc0AGc5JKl+ycL1vrH7frGTXhJchYjE1Hak8L819dA==}
