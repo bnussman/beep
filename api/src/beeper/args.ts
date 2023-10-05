@@ -1,7 +1,6 @@
 import { User } from '../entities/User';
 import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString, Max, Min, ValidateIf } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
-import { Status } from '../entities/Beep';
 
 @InputType()
 export class BeeperSettingsInput implements Partial<User> {
