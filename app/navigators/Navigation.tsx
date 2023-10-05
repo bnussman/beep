@@ -13,9 +13,17 @@ import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
 import { StaticParamList, createStaticNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// const RootStack = createStackNavigator({
 const RootStack = createNativeStackNavigator({
-  screens: {},
+  screens: {
+    // This is stupid but it has to go here rather than the signed in group because logout will crash the ios app
+    Login: {
+      if: useIsSignedOut,
+      screen: LoginScreen,
+      options: {
+        headerShown: false,
+      },
+    },
+  },
   screenOptions: () => {
     const { colorMode } = useColorMode();
     return {
@@ -37,13 +45,13 @@ const RootStack = createNativeStackNavigator({
         Report: {
           screen: ReportScreen,
           options: {
-           presentation: 'modal',
+            presentation: 'modal',
           }
         },
         Rate: {
           screen: RateScreen,
           options: {
-           presentation: 'modal',
+            presentation: 'modal',
           }
         },
         ChangePassword: ChangePasswordScreen,
@@ -54,12 +62,6 @@ const RootStack = createNativeStackNavigator({
     SignedOut: {
       if: useIsSignedOut,
       screens: {
-        Login: {
-          screen: LoginScreen,
-          options: {
-            headerShown: false,            
-          },
-        },
         'Sign Up': SignUpScreen,
         'Forgot Password': ForgotPasswordScreen,
       },
