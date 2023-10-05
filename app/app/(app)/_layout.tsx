@@ -70,10 +70,14 @@ export default function AppLayout() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Drawer initialRouteName="ride" screenOptions={{
+      <Drawer
+        initialRouteName="ride"
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+        screenOptions={{
           drawerType: "front",
           headerTintColor: colorMode === "dark" ? "white" : "black",
-        }} drawerContent={(props) => <CustomDrawerContent {...props} />} />
+        }}
+      />
     </>
   );
 }
