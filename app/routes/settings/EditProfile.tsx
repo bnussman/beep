@@ -145,7 +145,7 @@ export function EditProfileScreen() {
             );
           }}
         >
-          <Menu.Item onPress={() => navigation.navigate("ChangePassword")}>
+          <Menu.Item onPress={() => navigation.navigate("Change Password")}>
             Change Password
           </Menu.Item>
           <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>

@@ -318,7 +318,7 @@ export function MainFindBeepScreen() {
   }, [beep]);
 
   const findBeep = () => {
-    navigate("ChooseBeeper", {
+    navigate("Choose Beeper", {
       handlePick: (id: string) =>
         handleSubmit((values) => chooseBeep(id, values))(),
     });

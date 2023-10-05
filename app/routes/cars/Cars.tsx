@@ -177,7 +177,7 @@ export function Cars() {
       headerRight: () => {
         return (
           <IconButton
-            onPress={() => navigation.navigate("AddCar")}
+            onPress={() => navigation.navigate("Add Car")}
             mr={2}
             icon={
               <Icon

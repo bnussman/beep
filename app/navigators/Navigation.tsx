@@ -54,9 +54,9 @@ const RootStack = createNativeStackNavigator({
             presentation: 'modal',
           }
         },
-        ChangePassword: ChangePasswordScreen,
-        ChooseBeeper: PickBeepScreen,
-        AddCar: AddCar,
+        "Change Password": ChangePasswordScreen,
+        "Choose Beeper": PickBeepScreen,
+        "Add Car": AddCar,
       },
     },
     SignedOut: {
