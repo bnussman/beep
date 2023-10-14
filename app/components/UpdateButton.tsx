@@ -7,6 +7,8 @@ export function UpdateButton() {
   const [hasUpdate, setHasUpdate] = useState(false);
 
   useEffect(() => {
+    if (__DEV__) return;
+
     const check = async () => {
       try {
         const update = await Updates.checkForUpdateAsync();
@@ -18,6 +20,7 @@ export function UpdateButton() {
         Logger.error(error);
       }
     };
+
 
     check();
   }, []);
