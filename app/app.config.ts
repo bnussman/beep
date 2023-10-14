@@ -14,7 +14,8 @@ const config: ExpoConfig = {
     iosDisplayInForeground: true,
   },
   updates: {
-    url: "https://u.expo.dev/2c7a6adb-2579-43f1-962e-b23c7e541ec4"
+    url: "https://u.expo.dev/2c7a6adb-2579-43f1-962e-b23c7e541ec4",
+    fallbackToCacheTimeout: 10_000,
   },
   runtimeVersion: {
     policy: "sdkVersion"
