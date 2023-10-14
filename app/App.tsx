@@ -61,7 +61,7 @@ async function updateApp() {
   }
 }
 
-updateApp();
+// updateApp();
 
 function Beep() {
   const { colorMode } = useColorMode();
