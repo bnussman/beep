@@ -46,23 +46,6 @@ Sentry.init({
   enableAutoPerformanceTracing: true,
 });
 
-async function updateApp() {
-  if (__DEV__) return;
-
-  try {
-    const update = await Updates.checkForUpdateAsync();
-
-    if (update.isAvailable) {
-      await Updates.fetchUpdateAsync();
-      await Updates.reloadAsync();
-    }
-  } catch (error) {
-    Logger.error(error);
-  }
-}
-
-// updateApp();
-
 function Beep() {
   const { colorMode } = useColorMode();
   const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {

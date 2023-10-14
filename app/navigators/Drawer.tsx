@@ -39,6 +39,7 @@ import {
   Stack,
   Spacer,
 } from "native-base";
+import { UpdateButton } from "../components/UpdateButton";
 
 const Logout = gql`
   mutation Logout {
@@ -215,6 +216,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             </HStack>
           </VStack>
         </VStack>
+        <UpdateButton />
       </VStack>
     </DrawerContentScrollView>
   );
