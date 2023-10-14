@@ -1,6 +1,7 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
+import * as Updates from "expo-updates";
 import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
@@ -31,6 +32,7 @@ import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
+import { Logger } from "./utils/Logger";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -43,6 +45,23 @@ Sentry.init({
   enableAutoSessionTracking: true,
   enableAutoPerformanceTracing: true,
 });
+
+async function updateApp() {
+  if (__DEV__) return;
+
+  try {
+    const update = await Updates.checkForUpdateAsync();
+
+    if (update.isAvailable) {
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
+    }
+  } catch (error) {
+    Logger.error(error);
+  }
+}
+
+updateApp();
 
 function Beep() {
   const { colorMode } = useColorMode();
