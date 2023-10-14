@@ -26,7 +26,6 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import {
-  Box,
   Pressable,
   VStack,
   Text,
@@ -38,6 +37,7 @@ import {
   Spinner,
   Button,
   Stack,
+  Spacer,
 } from "native-base";
 
 const Logout = gql`
@@ -129,7 +129,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               url={user?.photo}
               online={user?.isBeeping}
             />
-            <Stack>
+            <Stack flexShrink={1}>
               <Text fontWeight="extrabold" letterSpacing="sm" fontSize="md">
                 {user?.name}
               </Text>
@@ -137,6 +137,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 @{user?.username}
               </Text>
             </Stack>
+            <Spacer />
+            <Text fontSize="3xl" px={2}>🎃</Text>
           </HStack>
         </Pressable>
         <VStack divider={<Divider />} space={4}>
@@ -222,24 +224,22 @@ export function BeepDrawer() {
   const { user } = useUser();
 
   return (
-    <Box flex={1}>
-      <Drawer.Navigator
-        screenOptions={{
-          drawerType: "front",
-          headerTintColor: colorMode === "dark" ? "white" : "black",
-        }}
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-      >
-        {!user?.isBeeping && (
-          <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
-        )}
-        <Drawer.Screen name="Beep" component={StartBeepingScreen} />
-        <Drawer.Screen name="Cars" component={Cars} />
-        <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
-        <Drawer.Screen name="Beeps" component={BeepsScreen} />
-        <Drawer.Screen name="Ratings" component={RatingsScreen} />
-        <Drawer.Screen name="Feedback" component={Feedback} />
-      </Drawer.Navigator>
-    </Box>
+    <Drawer.Navigator
+      screenOptions={{
+        drawerType: "front",
+        headerTintColor: colorMode === "dark" ? "white" : "black",
+      }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
+      {!user?.isBeeping && (
+        <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
+      )}
+      <Drawer.Screen name="Beep" component={StartBeepingScreen} />
+      <Drawer.Screen name="Cars" component={Cars} />
+      <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
+      <Drawer.Screen name="Beeps" component={BeepsScreen} />
+      <Drawer.Screen name="Ratings" component={RatingsScreen} />
+      <Drawer.Screen name="Feedback" component={Feedback} />
+    </Drawer.Navigator>
   );
 }
