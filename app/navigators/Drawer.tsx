@@ -139,7 +139,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               </Text>
             </Stack>
             <Spacer />
-            <Text fontSize="3xl" px={2}>👻</Text>
+            <Text fontSize="3xl" px={2}>🎃</Text>
           </HStack>
         </Pressable>
         <VStack divider={<Divider />} space={4}>
