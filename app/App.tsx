@@ -1,6 +1,7 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
+import * as Updates from "expo-updates";
 import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
@@ -31,6 +32,7 @@ import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
+import { Logger } from "./utils/Logger";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -141,24 +143,18 @@ function Beep() {
   );
 }
 
-function App2() {
+function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NativeBaseProvider
         theme={NATIVE_BASE_THEME}
         colorModeManager={colorModeManager}
       >
-        <Beep />
+        <ApolloProvider client={client}>
+          <Beep />
+        </ApolloProvider>
       </NativeBaseProvider>
     </GestureHandlerRootView>
-  );
-}
-
-function App() {
-  return (
-    <ApolloProvider client={client}>
-      <App2 />
-    </ApolloProvider>
   );
 }
 
