@@ -143,24 +143,18 @@ function Beep() {
   );
 }
 
-function App2() {
+function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NativeBaseProvider
         theme={NATIVE_BASE_THEME}
         colorModeManager={colorModeManager}
       >
-        <Beep />
+        <ApolloProvider client={client}>
+          <Beep />
+        </ApolloProvider>
       </NativeBaseProvider>
     </GestureHandlerRootView>
-  );
-}
-
-function App() {
-  return (
-    <ApolloProvider client={client}>
-      <App2 />
-    </ApolloProvider>
   );
 }
 
