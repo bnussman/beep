@@ -39,7 +39,7 @@ import {
   Stack,
   Spacer,
 } from "native-base";
-import { UpdateButton } from "../components/UpdateButton";
+import { useAutoUpdate } from "../utils/updates";
 
 const Logout = gql`
   mutation Logout {
@@ -87,6 +87,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
     useMutation<ResendMutation>(Resend);
+
+  useAutoUpdate();
 
   const handleLogout = async () => {
     await logout({
@@ -215,7 +217,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             </HStack>
           </VStack>
         </VStack>
-        <UpdateButton />
       </VStack>
     </DrawerContentScrollView>
   );
