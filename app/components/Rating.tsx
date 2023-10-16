@@ -6,13 +6,23 @@ import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { printStars } from "./Stars";
-import { Unpacked } from "../utils/constants";
+import { Unpacked, isMobile } from "../utils/constants";
 import { Card } from "./Card";
+import { Alert } from "react-native";
+import { ApolloError, gql, useMutation } from "@apollo/client";
+
+type Rating = Unpacked<GetRatingsQuery["getRatings"]["items"]>;
 
 interface Props {
-  item: Unpacked<GetRatingsQuery["getRatings"]["items"]>;
+  item: Rating;
   index: number;
 }
+
+export const DeleteRating = gql`
+  mutation DeleteRating($id: String!) {
+    deleteRating(id: $id)
+  }
+`;
 
 export function Rating(props: Props) {
   const { item } = props;
@@ -21,7 +31,41 @@ export function Rating(props: Props) {
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
   const isRater = user?.id === item.rater.id;
-  const isRated = user?.id === item.rated.id;
+
+  const [_deleteRating] = useMutation(DeleteRating);
+
+  const onLongPress = () => {
+    if (isMobile) {
+      Alert.alert(
+        "Delete Rating?",
+        "Are you sure you want to delete this rating?",
+        [
+          {
+            text: "No",
+            style: "cancel",
+          },
+          { text: "Yes", onPress: deleteRating },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      deleteRating();
+    }
+  };
+
+  const deleteRating = () => {
+    _deleteRating({
+      variables: { id: item.id },
+      update: (cache) => {
+        cache.evict({
+          id: cache.identify({
+            __typename: "Rating",
+            id: item.id,
+          }),
+        });
+      },
+    }).catch((error: ApolloError) => alert(error?.message));
+  };
 
   return (
     <Card
@@ -29,6 +73,7 @@ export function Rating(props: Props) {
       mx={1}
       pressable
       onPress={() => navigation.push("Profile", { id: otherUser.id })}
+      onLongPress={onLongPress}
     >
       <Stack space={2}>
         <HStack alignItems="center" space={2}>
@@ -43,7 +88,7 @@ export function Rating(props: Props) {
               {otherUser.name}
             </Text>
             <Text color="gray.400" fontSize="xs" isTruncated>
-              {`${isRater ? "Rated" : "Recieved"} - ${new Date(
+              {`${isRater ? "You rated" : "Rated you"} - ${new Date(
                 item.timestamp
               ).toLocaleString(undefined, { dateStyle: 'short', timeStyle: "short" })}`}
             </Text>
