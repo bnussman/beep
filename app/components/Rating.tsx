@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { HStack, Spacer, Stack, Text } from "native-base";
-import { GetRatingsQuery } from "../generated/graphql";
+import { GetRatingsQuery, useDeleteRatingMutation } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
@@ -9,7 +9,6 @@ import { printStars } from "./Stars";
 import { Unpacked, isMobile } from "../utils/constants";
 import { Card } from "./Card";
 import { Alert } from "react-native";
-import { ApolloError, gql, useMutation } from "@apollo/client";
 
 type Rating = Unpacked<GetRatingsQuery["getRatings"]["items"]>;
 
@@ -17,12 +16,6 @@ interface Props {
   item: Rating;
   index: number;
 }
-
-export const DeleteRating = gql`
-  mutation DeleteRating($id: String!) {
-    deleteRating(id: $id)
-  }
-`;
 
 export function Rating(props: Props) {
   const { item } = props;
@@ -32,7 +25,22 @@ export function Rating(props: Props) {
 
   const isRater = user?.id === item.rater.id;
 
-  const [_deleteRating] = useMutation(DeleteRating);
+  const [deleteRating] = useDeleteRatingMutation({
+    variables: {
+      id: item.id
+    },
+    onError(error) {
+      alert(error.message);
+    },
+    update(cache) {
+      cache.evict({
+        id: cache.identify({
+          __typename: "Rating",
+          id: item.id,
+        }),
+      });
+    }
+  });
 
   const onLongPress = () => {
     if (isMobile) {
@@ -44,27 +52,13 @@ export function Rating(props: Props) {
             text: "No",
             style: "cancel",
           },
-          { text: "Yes", onPress: deleteRating },
+          { text: "Yes", onPress: () => deleteRating() },
         ],
         { cancelable: true }
       );
     } else {
       deleteRating();
     }
-  };
-
-  const deleteRating = () => {
-    _deleteRating({
-      variables: { id: item.id },
-      update: (cache) => {
-        cache.evict({
-          id: cache.identify({
-            __typename: "Rating",
-            id: item.id,
-          }),
-        });
-      },
-    }).catch((error: ApolloError) => alert(error?.message));
   };
 
   return (
