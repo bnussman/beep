@@ -22,7 +22,7 @@ export function Header() {
   const user = data?.getUser;
 
   return (
-    <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={4} borderBottom="1px" bg={useColorModeValue("rgba(255, 255, 255, 0.8)", "rgb(20, 24, 28, 0.85)")} borderBottomColor={useColorModeValue("gray.100", "#32373e")} position="fixed" w="full" zIndex={999} css={{ backdropFilter: 'blur(4px)' }}>
+    <Flex as="nav" h={16} alignItems='center' justifyContent='space-between' px={4} mb={4} borderBottom="1px" bg={useColorModeValue("rgba(255, 255, 255, 0.8)", "rgb(20, 24, 28, 0.85)")} borderBottomColor={useColorModeValue("gray.100", "#32373e")} position="fixed" w="full" zIndex={999} css={{ backdropFilter: 'blur(4px)' }}>
       <HStack spacing={4} alignItems='center'>
         <Heading
           as={Link}
