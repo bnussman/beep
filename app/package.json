@@ -12,7 +12,7 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
-    "@apollo/client": "^3.8.5",
+    "@apollo/client": "^3.8.6",
     "@expo/vector-icons": "^13.0.0",
     "@gorhom/bottom-sheet": "^4.5.1",
     "@react-native-async-storage/async-storage": "~1.18.2",
@@ -35,7 +35,7 @@
     "expo-task-manager": "~11.3.0",
     "expo-updates": "~0.18.16",
     "graphql": "^16.8.1",
-    "graphql-ws": "^5.14.1",
+    "graphql-ws": "^5.14.2",
     "native-base": "3.4.12-alpha.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
@@ -63,7 +63,7 @@
     "@types/apollo-upload-client": "^17.0.3",
     "@types/react": "~18.2.18",
     "@types/react-dom": "~18.0.10",
-    "@types/uuid": "^9.0.5",
+    "@types/uuid": "^9.0.6",
     "babel-preset-expo": "^9.5.1",
     "typescript": "^5.1.6"
   },
