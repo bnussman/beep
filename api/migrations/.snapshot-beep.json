@@ -689,6 +689,16 @@
           "unique": false
         },
         {
+          "keyName": "beep_beeper_id_rider_id_index",
+          "columnNames": [
+            "beeper_id",
+            "rider_id"
+          ],
+          "composite": true,
+          "primary": false,
+          "unique": false
+        },
+        {
           "keyName": "beep_pkey",
           "columnNames": [
             "id"

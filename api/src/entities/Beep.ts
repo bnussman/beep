@@ -30,6 +30,7 @@ export enum Status {
     ]
   }
 })
+@Index({ properties: ["beeper", "rider"] })
 export class Beep {
   constructor(values?: Partial<Beep>) {
     if (values) {
