@@ -66,6 +66,7 @@ export class Beep {
 
   @Field()
   @Property()
+  @Index()
   start!: Date;
 
   @Field(() => Date, { nullable: true })
