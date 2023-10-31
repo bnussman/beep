@@ -1,18 +1,15 @@
-FROM node:current-alpine
-# FROM mcr.microsoft.com/playwright:focal
+FROM oven/bun:canary
 
 WORKDIR /usr/api
 
 COPY api/package.json ./
 
-RUN npm install -g pnpm
-
-RUN pnpm install
+RUN bun install
 
 COPY api/ .
 
-RUN npx tsc
+RUN bun tsc
 
 EXPOSE 3000
 
-CMD [ "node", "build/index.js" ]
+CMD [ "bun", "run", "build/index.js" ]
