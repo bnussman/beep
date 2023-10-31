@@ -3,12 +3,13 @@ name: e2e
 on:
   push:
     branches:
-      - main
-      - production
+        - main
+        - production
+  pull_request:
 
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -37,7 +38,7 @@ jobs:
       run: pnpm i --frozen-lockfile
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps chromium
-    - name: Start DB and Redis
+    - name: Start Docker services (PostgreSQL, Redis, and S3)
       run: docker compose up -d
     - name: Build the api
       run: pnpm build:api

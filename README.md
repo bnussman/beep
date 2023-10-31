@@ -56,8 +56,8 @@ To run the development envrionment use in the repo's root
 pnpm dev
 ```
 
-By default, the api will use your local database and redis from docker. You should not need an `.env` to develop locally
-You can create a `.env` in `api/` to set the API's env. (`vim api/.env`)
+By default, the api will use your local database, redis, and s3 server from docker. You should not need an `.env` to develop locally
+You can create a `.env` in `api/` to set the API's env if needed. (`vim api/.env`)
 
 ```env
 S3_ACCESS_KEY_ID=hkjvbyuverbvugfreukgsig
