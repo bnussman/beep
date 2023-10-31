@@ -16,6 +16,9 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: 16
+    - uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: canary
     - uses: pnpm/action-setup@v2.2.4
       name: Install pnpm
       id: pnpm-install
