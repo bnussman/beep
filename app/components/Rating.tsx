@@ -1,16 +1,19 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { HStack, Spacer, Stack, Text } from "native-base";
-import { GetRatingsQuery } from "../generated/graphql";
+import { GetRatingsQuery, useDeleteRatingMutation } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { printStars } from "./Stars";
-import { Unpacked } from "../utils/constants";
+import { Unpacked, isMobile } from "../utils/constants";
 import { Card } from "./Card";
+import { Alert } from "react-native";
+
+type Rating = Unpacked<GetRatingsQuery["getRatings"]["items"]>;
 
 interface Props {
-  item: Unpacked<GetRatingsQuery["getRatings"]["items"]>;
+  item: Rating;
   index: number;
 }
 
@@ -21,7 +24,42 @@ export function Rating(props: Props) {
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
   const isRater = user?.id === item.rater.id;
-  const isRated = user?.id === item.rated.id;
+
+  const [deleteRating] = useDeleteRatingMutation({
+    variables: {
+      id: item.id
+    },
+    onError(error) {
+      alert(error.message);
+    },
+    update(cache) {
+      cache.evict({
+        id: cache.identify({
+          __typename: "Rating",
+          id: item.id,
+        }),
+      });
+    }
+  });
+
+  const onLongPress = () => {
+    if (isMobile) {
+      Alert.alert(
+        "Delete Rating?",
+        "Are you sure you want to delete this rating?",
+        [
+          {
+            text: "No",
+            style: "cancel",
+          },
+          { text: "Yes", onPress: () => deleteRating() },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      deleteRating();
+    }
+  };
 
   return (
     <Card
@@ -29,6 +67,7 @@ export function Rating(props: Props) {
       mx={1}
       pressable
       onPress={() => navigation.push("Profile", { id: otherUser.id })}
+      onLongPress={onLongPress}
     >
       <Stack space={2}>
         <HStack alignItems="center" space={2}>
@@ -43,7 +82,7 @@ export function Rating(props: Props) {
               {otherUser.name}
             </Text>
             <Text color="gray.400" fontSize="xs" isTruncated>
-              {`${isRater ? "Rated" : "Recieved"} - ${new Date(
+              {`${isRater ? "You rated" : "Rated you"} - ${new Date(
                 item.timestamp
               ).toLocaleString(undefined, { dateStyle: 'short', timeStyle: "short" })}`}
             </Text>

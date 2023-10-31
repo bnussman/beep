@@ -10,7 +10,7 @@ export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' |
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string | number; output: string; }
+  ID: { input: string; output: string; }
   String: { input: string; output: string; }
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
@@ -822,6 +822,14 @@ export type VerifyAccountMutationVariables = Exact<{
 
 export type VerifyAccountMutation = { __typename?: 'Mutation', verifyAccount: boolean };
 
+export type FeedbackQueryVariables = Exact<{
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type FeedbackQuery = { __typename?: 'Query', getFeedback: { __typename?: 'FeedbackResonse', count: number, items: Array<{ __typename?: 'Feedback', id: string, message: string, created: any, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
+
 export type GetUsersPerDomainQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -831,14 +839,6 @@ export type RedisChannelsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type RedisChannelsQueryQuery = { __typename?: 'Query', getRedisChannels: Array<string> };
-
-export type FeedbackQueryVariables = Exact<{
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  show?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type FeedbackQuery = { __typename?: 'Query', getFeedback: { __typename?: 'FeedbackResonse', count: number, items: Array<{ __typename?: 'Feedback', id: string, message: string, created: any, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
 
 export type GetBeepersQueryVariables = Exact<{
   latitude: Scalars['Float']['input'];
@@ -1879,6 +1879,52 @@ export function useVerifyAccountMutation(baseOptions?: Apollo.MutationHookOption
 export type VerifyAccountMutationHookResult = ReturnType<typeof useVerifyAccountMutation>;
 export type VerifyAccountMutationResult = Apollo.MutationResult<VerifyAccountMutation>;
 export type VerifyAccountMutationOptions = Apollo.BaseMutationOptions<VerifyAccountMutation, VerifyAccountMutationVariables>;
+export const FeedbackDocument = gql`
+    query Feedback($offset: Int, $show: Int) {
+  getFeedback(offset: $offset, show: $show) {
+    items {
+      id
+      message
+      created
+      user {
+        id
+        photo
+        name
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useFeedbackQuery__
+ *
+ * To run a query within a React component, call `useFeedbackQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFeedbackQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFeedbackQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
+ *   },
+ * });
+ */
+export function useFeedbackQuery(baseOptions?: Apollo.QueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
+      }
+export function useFeedbackLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
+        }
+export type FeedbackQueryHookResult = ReturnType<typeof useFeedbackQuery>;
+export type FeedbackLazyQueryHookResult = ReturnType<typeof useFeedbackLazyQuery>;
+export type FeedbackQueryResult = Apollo.QueryResult<FeedbackQuery, FeedbackQueryVariables>;
 export const GetUsersPerDomainDocument = gql`
     query GetUsersPerDomain {
   getUsersPerDomain {
@@ -1946,52 +1992,6 @@ export function useRedisChannelsQueryLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type RedisChannelsQueryQueryHookResult = ReturnType<typeof useRedisChannelsQueryQuery>;
 export type RedisChannelsQueryLazyQueryHookResult = ReturnType<typeof useRedisChannelsQueryLazyQuery>;
 export type RedisChannelsQueryQueryResult = Apollo.QueryResult<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>;
-export const FeedbackDocument = gql`
-    query Feedback($offset: Int, $show: Int) {
-  getFeedback(offset: $offset, show: $show) {
-    items {
-      id
-      message
-      created
-      user {
-        id
-        photo
-        name
-      }
-    }
-    count
-  }
-}
-    `;
-
-/**
- * __useFeedbackQuery__
- *
- * To run a query within a React component, call `useFeedbackQuery` and pass it any options that fit your needs.
- * When your component renders, `useFeedbackQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFeedbackQuery({
- *   variables: {
- *      offset: // value for 'offset'
- *      show: // value for 'show'
- *   },
- * });
- */
-export function useFeedbackQuery(baseOptions?: Apollo.QueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
-      }
-export function useFeedbackLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
-        }
-export type FeedbackQueryHookResult = ReturnType<typeof useFeedbackQuery>;
-export type FeedbackLazyQueryHookResult = ReturnType<typeof useFeedbackLazyQuery>;
-export type FeedbackQueryResult = Apollo.QueryResult<FeedbackQuery, FeedbackQueryVariables>;
 export const GetBeepersDocument = gql`
     query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
   getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {

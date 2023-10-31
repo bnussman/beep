@@ -102,7 +102,7 @@ function Beep() {
   return (
     <Router>
       <Header />
-      <Container maxW="container.xl" pt={20}>
+      <Container as="main" maxW="container.xl" pt={20}>
         <Banners />
         <Routes>
           <Route path="/password/forgot" element={<ForgotPassword />} />
