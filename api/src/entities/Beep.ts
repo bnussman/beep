@@ -44,10 +44,12 @@ export class Beep {
 
   @Field(() => User)
   @ManyToOne(() => User)
+  @Index()
   beeper!: User;
 
   @Field(() => User)
   @ManyToOne(() => User)
+  @Index()
   rider!: User;
 
   @Field()

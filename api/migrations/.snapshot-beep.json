@@ -681,6 +681,24 @@
       "indexes": [
         {
           "columnNames": [
+            "beeper_id"
+          ],
+          "composite": false,
+          "keyName": "beep_beeper_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "rider_id"
+          ],
+          "composite": false,
+          "keyName": "beep_rider_id_index",
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
             "status"
           ],
           "composite": false,
