@@ -88,8 +88,8 @@ importers:
         specifier: ^0.1.13
         version: 0.1.13
       type-graphql:
-        specifier: 2.0.0-beta.2
-        version: 2.0.0-beta.2(class-validator@0.14.0)(graphql@16.8.1)
+        specifier: 2.0.0-beta.3
+        version: 2.0.0-beta.3(class-validator@0.14.0)(graphql-scalars@1.22.4)(graphql@16.8.1)
       uuid:
         specifier: ^9.0.1
         version: 9.0.1
@@ -5550,7 +5550,7 @@ packages:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       graphql: 16.8.1
-      tslib: 2.5.3
+      tslib: 2.6.2
     dev: true
 
   /@graphql-tools/prisma-loader@8.0.1(@types/node@20.8.9)(graphql@16.8.1):
@@ -5609,7 +5609,7 @@ packages:
       '@ardatan/relay-compiler': 12.0.0(graphql@16.8.1)
       '@graphql-tools/utils': 10.0.4(graphql@16.8.1)
       graphql: 16.8.1
-      tslib: 2.5.3
+      tslib: 2.6.2
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -5624,7 +5624,7 @@ packages:
       '@graphql-tools/merge': 9.0.0(graphql@16.8.1)
       '@graphql-tools/utils': 10.0.4(graphql@16.8.1)
       graphql: 16.8.1
-      tslib: 2.6.1
+      tslib: 2.6.2
       value-or-promise: 1.0.12
     dev: true
 
@@ -5675,7 +5675,7 @@ packages:
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
       graphql: 16.8.1
-      tslib: 2.5.3
+      tslib: 2.6.2
     dev: true
 
   /@graphql-tools/utils@10.0.3(graphql@16.8.1):
@@ -5687,7 +5687,7 @@ packages:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
       dset: 3.1.2
       graphql: 16.8.1
-      tslib: 2.5.3
+      tslib: 2.6.2
     dev: true
 
   /@graphql-tools/utils@10.0.4(graphql@16.8.1):
@@ -6181,14 +6181,14 @@ packages:
     dependencies:
       asn1js: 3.0.5
       pvtsutils: 1.3.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@peculiar/json-schema@1.1.12:
     resolution: {integrity: sha512-coUfuoMeIB7B8/NMekxaDzLhaYmp0HZNPEjYRm9goRou8UZIC3z21s0sL9AWoCw4EG876QyO3kYrc61WNF9B/w==}
     engines: {node: '>=8.0.0'}
     dependencies:
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@peculiar/webcrypto@1.4.3:
@@ -6198,7 +6198,7 @@ packages:
       '@peculiar/asn1-schema': 2.3.6
       '@peculiar/json-schema': 1.1.12
       pvtsutils: 1.3.2
-      tslib: 2.6.1
+      tslib: 2.6.2
       webcrypto-core: 1.7.7
     dev: true
 
@@ -8357,7 +8357,7 @@ packages:
       busboy: 1.6.0
       fast-querystring: 1.1.2
       fast-url-parser: 1.1.3
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /@whatwg-node/node-fetch@0.4.11:
@@ -8606,7 +8606,7 @@ packages:
     dependencies:
       pvtsutils: 1.3.2
       pvutils: 1.1.3
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /assert@2.0.0:
@@ -11091,6 +11091,16 @@ packages:
     transitivePeerDependencies:
       - encoding
     dev: true
+
+  /graphql-scalars@1.22.4(graphql@16.8.1):
+    resolution: {integrity: sha512-ILnv7jq5VKHLUyoaTFX7lgYrjCd6vTee9i8/B+D4zJKJT5TguOl0KkpPEbXHjmeor8AZYrVsrYUHdqRBMX1pjA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      graphql: 16.8.1
+      tslib: 2.6.2
+    dev: false
 
   /graphql-subscriptions@2.0.0(graphql@16.8.1):
     resolution: {integrity: sha512-s6k2b8mmt9gF9pEfkxsaO1lTxaySfKoEJzEfmwguBbQ//Oq23hIXCfR1hm4kdh5hnR20RdwB+s3BCb+0duHSZA==}
@@ -13707,7 +13717,7 @@ packages:
   /pvtsutils@1.3.2:
     resolution: {integrity: sha512-+Ipe2iNUyrZz+8K/2IOo+kKikdtfhRKzNpQbruF2URmqPtoqAs8g3xS7TJvFF2GcPXjh7DkqMnpVveRFq4PgEQ==}
     dependencies:
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /pvutils@1.1.3:
@@ -14515,14 +14525,6 @@ packages:
     hasBin: true
     dev: false
 
-  /semver@7.5.1:
-    resolution: {integrity: sha512-Wvss5ivl8TMRZXXESstBA4uR5iXgEN/VC5/sOcuXdVLzcdkz4HWetIoRfG5gb5X+ij/G9rw9YoGn3QoQ8OCSpw==}
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      lru-cache: 6.0.0
-    dev: false
-
   /semver@7.5.3:
     resolution: {integrity: sha512-QBlUtyVk/5EeHbi7X0fw6liDZc7BBmEaSYn01fMU1OUYbf6GPsbTtd8WmnqbI20SeycoHSeiybkE/q1Q+qlThQ==}
     engines: {node: '>=10'}
@@ -15299,10 +15301,6 @@ packages:
     resolution: {integrity: sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==}
     dev: true
 
-  /tslib@2.5.2:
-    resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
-    dev: false
-
   /tslib@2.5.3:
     resolution: {integrity: sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==}
 
@@ -15346,12 +15344,13 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  /type-graphql@2.0.0-beta.2(class-validator@0.14.0)(graphql@16.8.1):
-    resolution: {integrity: sha512-MCGxRvNADu5Wp9QEudI/WQgiqHJfjanGcKRk/ErCow6IaG04NNI7o3bjjxQVWC+qDundSOhmaquNdjDiiTbcqQ==}
-    engines: {node: '>= 14.5.0'}
+  /type-graphql@2.0.0-beta.3(class-validator@0.14.0)(graphql-scalars@1.22.4)(graphql@16.8.1):
+    resolution: {integrity: sha512-5HEiQaWHPYhPmbJuMmT+IZgjsnbNWsW37osUISwgr5EpcHZ4krLl8eBoOfjFya4mxAWYshlpSO1ahaucJQqM5g==}
+    engines: {node: '>= 16.16.0'}
     peerDependencies:
       class-validator: '>=0.14.0'
-      graphql: ^16.6.0
+      graphql: ^16.7.1
+      graphql-scalars: ^1.22.2
     peerDependenciesMeta:
       class-validator:
         optional: true
@@ -15361,9 +15360,10 @@ packages:
       class-validator: 0.14.0
       graphql: 16.8.1
       graphql-query-complexity: 0.12.0(graphql@16.8.1)
+      graphql-scalars: 1.22.4(graphql@16.8.1)
       graphql-subscriptions: 2.0.0(graphql@16.8.1)
-      semver: 7.5.1
-      tslib: 2.5.2
+      semver: 7.5.4
+      tslib: 2.6.2
     dev: false
 
   /type-is@1.6.18:
@@ -15756,7 +15756,7 @@ packages:
       '@peculiar/json-schema': 1.1.12
       asn1js: 3.0.5
       pvtsutils: 1.3.2
-      tslib: 2.6.1
+      tslib: 2.6.2
     dev: true
 
   /webidl-conversions@3.0.1:

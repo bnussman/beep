@@ -1,5 +1,5 @@
 import { GraphQLError, GraphQLFormattedError } from "graphql";
-import { unwrapResolverError } from '@apollo/server/errors';
+import { ValidationError as ClassValidatorError } from 'class-validator';
 
 export class ValidationError extends GraphQLError {
   public constructor(validationErrors: any) {
@@ -14,12 +14,9 @@ export class ValidationError extends GraphQLError {
   }
 }
 
-export function formatError(formattedError: GraphQLFormattedError, error: any) {
-  const originalError = unwrapResolverError(error);
-
+export function formatError(formattedError: GraphQLFormattedError, error: GraphQLError) {
   if (error?.message === "Argument Validation Error") {
-    // @ts-expect-error fix types here
-    const errors = originalError.validationErrors;
+    const errors = formattedError.extensions!.validationErrors as ClassValidatorError[];
 
     const output: { [key: string]: string[] } = {};
 
