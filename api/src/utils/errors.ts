@@ -14,7 +14,7 @@ export class ValidationError extends GraphQLError {
   }
 }
 
-export function formatError(formattedError: GraphQLFormattedError, error: GraphQLError) {
+export function formatError(formattedError: GraphQLFormattedError, error: any) {
   if (error?.message === "Argument Validation Error") {
     const errors = formattedError.extensions!.validationErrors as ClassValidatorError[];
 
