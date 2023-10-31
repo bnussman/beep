@@ -15,6 +15,7 @@ import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
+import { S3_BUCKET_URL } from '../utils/constants';
 
 @ObjectType()
 class UsersPerDomain {
@@ -189,7 +190,7 @@ export class UserResolver {
     const result = await s3.upload(uploadParams).promise();
 
     if (ctx.user.photo) {
-      const key = ctx.user.photo.split("https://beep.us-east-1.linodeobjects.com/")[1];
+      const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
       deleteObject(key);
     }
