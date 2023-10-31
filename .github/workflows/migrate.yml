@@ -1,18 +1,18 @@
 name: migrate
 
-on:
+on: 
   workflow_dispatch:
     inputs:
       environment:
         type: choice
         description: what environment's db should we migrate
-        options:
+        options: 
         - staging
         - production
 
 jobs:
   migrate:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v3
