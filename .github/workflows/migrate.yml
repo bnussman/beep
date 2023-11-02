@@ -20,15 +20,12 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        with:
-          version: latest
-          run_install: false
       - name: 📦 install packages
         run: bun install
+        working-directory: ./api/
       - name: 💿 run migration
-        run: pnpm --filter @beep/api db:migrate
+        run: bun run db:migrate
+        working-directory: ./api/
         env:
           DB_URL: ${{ secrets.DB_URL_PUBLIC }}
           DB_USER: ${{ secrets.DB_USER }}
