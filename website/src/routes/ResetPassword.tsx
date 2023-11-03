@@ -22,12 +22,12 @@ const Reset = gql`
 
 export function ResetPassword() {
   const { id } = useParams();
-  const [resetPassword, { data, error }] = useMutation<ResetPasswordMutation>(Reset);
+  const [resetPassword, { data, error, loading }] = useMutation<ResetPasswordMutation>(Reset);
 
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isValid },
   } = useForm<ResetPasswordInput>({ mode: 'onChange' });
 
   const validationErrors = useValidationErrors<ResetPasswordInput>(error);
@@ -62,7 +62,7 @@ export function ResetPassword() {
             w="full"
             mt={4}
             type="submit"
-            isLoading={isSubmitting}
+            isLoading={loading}
             isDisabled={!isValid}
           >
             Reset Password
