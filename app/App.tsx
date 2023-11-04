@@ -1,7 +1,6 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
-import * as Updates from "expo-updates";
 import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
@@ -32,7 +31,8 @@ import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
-import { Logger } from "./utils/Logger";
+import Purchases, { LOG_LEVEL } from "react-native-purchases";
+import { Platform } from "react-native";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -45,6 +45,16 @@ Sentry.init({
   enableAutoSessionTracking: true,
   enableAutoPerformanceTracing: true,
 });
+
+if (Platform.OS !== 'web') {
+  Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+}
+
+if (Platform.OS === 'ios') {
+  Purchases.configure({ apiKey: "appl_dqtIBTnfwElgSEMkBpwmpjMrgNj" });
+} else if (Platform.OS === 'android') {
+  Purchases.configure({ apiKey: "goog_LdhRLvXtGjDlpznOgEIWWUdsokX" });
+}
 
 function Beep() {
   const { colorMode } = useColorMode();
