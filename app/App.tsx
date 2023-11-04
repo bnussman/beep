@@ -31,8 +31,8 @@ import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
-import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import { Platform } from "react-native";
+
 
 let unsubscribe: (() => void) | null = null;
 
@@ -46,16 +46,19 @@ Sentry.init({
   enableAutoPerformanceTracing: true,
 });
 
-if (Platform.OS !== 'web') {
-  Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
-}
+if (!__DEV__) {
+  import("react-native-purchases").then((module) => {
+    if (Platform.OS !== 'web') {
+      module.default.setLogLevel(module.LOG_LEVEL.VERBOSE);
+    }
 
-if (Platform.OS === 'ios') {
-  Purchases.configure({ apiKey: "appl_dqtIBTnfwElgSEMkBpwmpjMrgNj" });
-} else if (Platform.OS === 'android') {
-  Purchases.configure({ apiKey: "goog_LdhRLvXtGjDlpznOgEIWWUdsokX" });
+    if (Platform.OS === 'ios') {
+      module.default.configure({ apiKey: "appl_dqtIBTnfwElgSEMkBpwmpjMrgNj" });
+    } else if (Platform.OS === 'android') {
+      module.default.configure({ apiKey: "goog_LdhRLvXtGjDlpznOgEIWWUdsokX" });
+    }
+  });
 }
-
 function Beep() {
   const { colorMode } = useColorMode();
   const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
