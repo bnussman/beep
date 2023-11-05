@@ -41,7 +41,7 @@ import {
 } from "native-base";
 import { useAutoUpdate } from "../utils/updates";
 
-const Premium = __DEV__ ? () => null : require("../routes/Premium");
+const Premium = __DEV__ ? () => null : require("../routes/Premium").Premium;
 
 const Logout = gql`
   mutation Logout {
