@@ -22,15 +22,15 @@ const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage })
         alert(`Error purchasing package ${e.message}`);
       }
     };
-
-    return (
-      <Card pressable onPress={onSelection}>
-        <Text>{title}</Text>
-        <Text>{description}</Text>
-        <Text>{priceString}</Text>
-      </Card>
-    );
   };
+  
+  return (
+    <Card pressable onPress={onSelection}>
+      <Text>{title}</Text>
+      <Text>{description}</Text>
+      <Text>{priceString}</Text>
+    </Card>
+  );
 }
 
 export function Premium() {
@@ -55,7 +55,7 @@ export function Premium() {
     <Container>
       <FlatList
         data={packages}
-        renderItem={({ item }) => (<Text>{JSON.stringify(item)}</Text>)}
+        renderItem={({ item }) => <PackageItem purchasePackage={item} />}
         keyExtractor={(item) => item.identifier}
       />
     </Container>
