@@ -40,7 +40,8 @@ import {
   Spacer,
 } from "native-base";
 import { useAutoUpdate } from "../utils/updates";
-import { Premium } from "../routes/Premium";
+
+const Premium = __DEV__ ? () => null : require("../routes/Premium");
 
 const Logout = gql`
   mutation Logout {

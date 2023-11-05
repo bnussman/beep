@@ -1,7 +1,37 @@
+import React from 'react';
 import { useEffect, useState } from "react";
-import Purchases, { PurchasesPackage } from "react-native-purchases";
 import { Container } from "../components/Container";
 import { FlatList, Text } from "native-base";
+import { Card } from "../components/Card";
+import Purchases, { PurchasesPackage } from "react-native-purchases";
+
+const ENTITLEMENT_ID = "premium";
+
+const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage }) => {
+  const {
+    product: { title, description, priceString },
+  } = purchasePackage;
+
+  const onSelection = async () => {
+    try {
+      const p = await Purchases.purchasePackage(purchasePackage);
+
+      alert(JSON.stringify(p));
+    } catch (e: any) {
+      if (!e.userCancelled) {
+        alert(`Error purchasing package ${e.message}`);
+      }
+    };
+
+    return (
+      <Card pressable onPress={onSelection}>
+        <Text>{title}</Text>
+        <Text>{description}</Text>
+        <Text>{priceString}</Text>
+      </Card>
+    );
+  };
+}
 
 export function Premium() {
   const [packages, setPackages] = useState<PurchasesPackage[]>([]);
