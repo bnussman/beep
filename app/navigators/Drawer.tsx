@@ -40,6 +40,7 @@ import {
   Spacer,
 } from "native-base";
 import { useAutoUpdate } from "../utils/updates";
+import { Premium } from "../routes/Premium";
 
 const Logout = gql`
   mutation Logout {
@@ -241,6 +242,7 @@ export function BeepDrawer() {
       <Drawer.Screen name="Cars" component={Cars} />
       <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
       <Drawer.Screen name="Beeps" component={BeepsScreen} />
+      {!__DEV__ && <Drawer.Screen name="Premium" component={Premium} />}
       <Drawer.Screen name="Ratings" component={RatingsScreen} />
       <Drawer.Screen name="Feedback" component={Feedback} />
     </Drawer.Navigator>
