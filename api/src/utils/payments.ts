@@ -7,14 +7,14 @@ import { pubSub } from "../index";
 export async function paymentHandler(req: Request, res: Response, orm: MikroORM<IDatabaseDriver<Connection>>) {
   const em = orm.em.fork();
 
+  const payload = req.body as Webhook;
+
+  console.log(payload);
+
   if (req.headers.authorization !== PAYMENT_SECRET) {
     console.error("Invalid payment credentials", req.headers);
     return res.status(403).json("Invalid credentials");
   }
-
-  const payload = req.body as Webhook;
-
-  console.log(payload);
 
   const user = await em.findOneOrFail(User, payload.event.app_user_id);
 
