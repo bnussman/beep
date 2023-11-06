@@ -23,9 +23,9 @@ const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage })
       }
     };
   };
-  
+
   return (
-    <Card pressable onPress={onSelection}>
+    <Card pressable onPress={onSelection} mx={2} my={2}>
       <Text>{title}</Text>
       <Text>{description}</Text>
       <Text>{priceString}</Text>

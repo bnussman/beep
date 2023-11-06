@@ -46,7 +46,6 @@ Sentry.init({
   enableAutoPerformanceTracing: true,
 });
 
-if (!__DEV__) {
   import("react-native-purchases").then((module) => {
     if (Platform.OS !== 'web') {
       module.default.setLogLevel(module.LOG_LEVEL.VERBOSE);
@@ -58,7 +57,7 @@ if (!__DEV__) {
       module.default.configure({ apiKey: "goog_LdhRLvXtGjDlpznOgEIWWUdsokX" });
     }
   });
-}
+
 function Beep() {
   const { colorMode } = useColorMode();
   const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
