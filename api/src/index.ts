@@ -116,7 +116,7 @@ async function start() {
     }),
   );
 
-  app.use(
+  app.post(
     '/payment',
     cors<cors.CorsRequest>(),
     json(),
