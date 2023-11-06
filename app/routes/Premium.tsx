@@ -1,18 +1,19 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { FlatList, Text } from "native-base";
+import { FlatList, Spacer, Spinner, Stack, Text } from "native-base";
 import { Card } from "../components/Card";
 import Purchases, { PurchasesPackage } from "react-native-purchases";
-
-const ENTITLEMENT_ID = "premium";
 
 const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage }) => {
   const {
     product: { title, description, priceString },
   } = purchasePackage;
 
+  const [isPurchasing, setIsPurchasing] = useState(false);
+
   const onSelection = async () => {
+    setIsPurchasing(true);
     try {
       const p = await Purchases.purchasePackage(purchasePackage);
 
@@ -21,14 +22,29 @@ const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage })
       if (!e.userCancelled) {
         alert(`Error purchasing package ${e.message}`);
       }
-    };
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
   return (
     <Card pressable onPress={onSelection} mx={2} my={2}>
-      <Text>{title}</Text>
-      <Text>{description}</Text>
-      <Text>{priceString}</Text>
+      <Stack direction="row">
+        <Stack>
+          <Text
+            fontSize="xl"
+            letterSpacing="sm"
+            fontWeight="extrabold"
+            isTruncated
+          >
+            {title}
+          </Text>
+          <Text isTruncated>{description}</Text>
+          <Text isTruncated>{priceString}/week</Text>
+        </Stack>
+        <Spacer />
+        {isPurchasing && <Spinner />}
+      </Stack>
     </Card>
   );
 }

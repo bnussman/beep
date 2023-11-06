@@ -38,6 +38,7 @@ import {
   Button,
   Stack,
   Spacer,
+  Badge,
 } from "native-base";
 import { useAutoUpdate } from "../utils/updates";
 
@@ -71,6 +72,8 @@ const getIcon = (screenName: string) => {
       return "playlist-plus";
     case "Feedback":
       return "help-circle-outline";
+    case "Premium":
+      return "shield-star-outline";
     default:
       return "car";
   }
@@ -143,7 +146,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               </Text>
             </Stack>
             <Spacer />
-            <Text fontSize="3xl" px={2}>👻</Text>
+            <Text fontSize="3xl" px={2}>🚕</Text>
           </HStack>
         </Pressable>
         <VStack divider={<Divider />} space={4}>
@@ -189,6 +192,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                     name={getIcon(name)}
                   />
                   <Text fontWeight={500}>{name}</Text>
+                  {name === "Premium" && <Badge borderRadius="xl" colorScheme="yellow">New</Badge>}
                 </HStack>
               </Pressable>
             ))}
