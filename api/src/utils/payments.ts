@@ -7,6 +7,7 @@ import { pubSub } from "../index";
 export async function paymentHandler(req: Request, res: Response, orm: MikroORM<IDatabaseDriver<Connection>>) {
   const em = orm.em.fork();
 
+
   const payload = req.body as Webhook;
 
   console.log(payload);
