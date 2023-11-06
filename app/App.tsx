@@ -32,7 +32,8 @@ import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
 import { Platform } from "react-native";
-
+import Purchase, { LOG_LEVEL } from 'react-native-purchases';
+import { setPurchaseUser } from "./utils/purchase";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -46,17 +47,13 @@ Sentry.init({
   enableAutoPerformanceTracing: true,
 });
 
-  import("react-native-purchases").then((module) => {
-    if (Platform.OS !== 'web') {
-      module.default.setLogLevel(module.LOG_LEVEL.VERBOSE);
-    }
+Purchase.setLogLevel(LOG_LEVEL.DEBUG);
 
-    if (Platform.OS === 'ios') {
-      module.default.configure({ apiKey: "appl_dqtIBTnfwElgSEMkBpwmpjMrgNj" });
-    } else if (Platform.OS === 'android') {
-      module.default.configure({ apiKey: "goog_LdhRLvXtGjDlpznOgEIWWUdsokX" });
-    }
-  });
+if (Platform.OS === 'ios') {
+  Purchase.configure({ apiKey: "appl_dqtIBTnfwElgSEMkBpwmpjMrgNj" });
+} else if (Platform.OS === 'android') {
+  Purchase.configure({ apiKey: "goog_LdhRLvXtGjDlpznOgEIWWUdsokX" });
+}
 
 function Beep() {
   const { colorMode } = useColorMode();
@@ -83,7 +80,7 @@ function Beep() {
           },
         });
       }
-
+      setPurchaseUser(user.id);
       setUserContext(user);
     }
   }, [user]);
