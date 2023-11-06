@@ -16,7 +16,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  DateTime: { input: any; output: any; }
+  DateTimeISO: { input: any; output: any; }
   Upload: { input: any; output: any; }
 };
 
@@ -37,13 +37,13 @@ export type Beep = {
   __typename?: 'Beep';
   beeper: User;
   destination: Scalars['String']['output'];
-  end?: Maybe<Scalars['DateTime']['output']>;
+  end?: Maybe<Scalars['DateTimeISO']['output']>;
   groupSize: Scalars['Float']['output'];
   id: Scalars['String']['output'];
   origin: Scalars['String']['output'];
   position: Scalars['Float']['output'];
   rider: User;
-  start: Scalars['DateTime']['output'];
+  start: Scalars['DateTimeISO']['output'];
   status: Scalars['String']['output'];
 };
 
@@ -65,13 +65,13 @@ export type BeepsResponse = {
 export type Car = {
   __typename?: 'Car';
   color: Scalars['String']['output'];
-  created: Scalars['DateTime']['output'];
+  created: Scalars['DateTimeISO']['output'];
   default: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   make: Scalars['String']['output'];
   model: Scalars['String']['output'];
   photo: Scalars['String']['output'];
-  updated: Scalars['DateTime']['output'];
+  updated: Scalars['DateTimeISO']['output'];
   user: User;
   year: Scalars['Float']['output'];
 };
@@ -108,7 +108,7 @@ export type EditUserInput = {
 
 export type Feedback = {
   __typename?: 'Feedback';
-  created: Scalars['DateTime']['output'];
+  created: Scalars['DateTimeISO']['output'];
   id: Scalars['String']['output'];
   message: Scalars['String']['output'];
   user: User;
@@ -504,7 +504,7 @@ export type Rating = {
   rated: User;
   rater: User;
   stars: Scalars['Float']['output'];
-  timestamp: Scalars['DateTime']['output'];
+  timestamp: Scalars['DateTimeISO']['output'];
 };
 
 export type RatingInput = {
@@ -530,7 +530,7 @@ export type Report = {
   reason: Scalars['String']['output'];
   reported: User;
   reporter: User;
-  timestamp: Scalars['DateTime']['output'];
+  timestamp: Scalars['DateTimeISO']['output'];
 };
 
 export type ReportInput = {
@@ -616,13 +616,14 @@ export type User = {
   capacity: Scalars['Float']['output'];
   cars?: Maybe<Array<Car>>;
   cashapp?: Maybe<Scalars['String']['output']>;
-  created?: Maybe<Scalars['DateTime']['output']>;
+  created?: Maybe<Scalars['DateTimeISO']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   first: Scalars['String']['output'];
   groupRate: Scalars['Float']['output'];
   id: Scalars['String']['output'];
   isBeeping: Scalars['Boolean']['output'];
   isEmailVerified: Scalars['Boolean']['output'];
+  isPremium: Scalars['Boolean']['output'];
   isStudent: Scalars['Boolean']['output'];
   last: Scalars['String']['output'];
   location?: Maybe<Point>;
@@ -697,13 +698,6 @@ export type GetRateDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetRateDataQuery = { __typename?: 'Query', getLastBeepToRate?: { __typename?: 'Beep', id: string, beeper: { __typename?: 'User', id: string, name: string, username: string, photo?: string | null, isBeeping: boolean } } | null };
-
-export type DeleteRatingMutationVariables = Exact<{
-  id: Scalars['String']['input'];
-}>;
-
-
-export type DeleteRatingMutation = { __typename?: 'Mutation', deleteRating: boolean };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -959,12 +953,12 @@ export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePic
 export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
+export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, isPremium: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
 
 export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
+export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, isPremium: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
 
 
 export const UpdateBeeperQueueDocument = gql`
@@ -1089,37 +1083,6 @@ export function useGetRateDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQuery
 export type GetRateDataQueryHookResult = ReturnType<typeof useGetRateDataQuery>;
 export type GetRateDataLazyQueryHookResult = ReturnType<typeof useGetRateDataLazyQuery>;
 export type GetRateDataQueryResult = ApolloReactCommon.QueryResult<GetRateDataQuery, GetRateDataQueryVariables>;
-export const DeleteRatingDocument = gql`
-    mutation DeleteRating($id: String!) {
-  deleteRating(id: $id)
-}
-    `;
-export type DeleteRatingMutationFn = ApolloReactCommon.MutationFunction<DeleteRatingMutation, DeleteRatingMutationVariables>;
-
-/**
- * __useDeleteRatingMutation__
- *
- * To run a mutation, you first call `useDeleteRatingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteRatingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteRatingMutation, { data, loading, error }] = useDeleteRatingMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteRatingMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteRatingMutation, DeleteRatingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<DeleteRatingMutation, DeleteRatingMutationVariables>(DeleteRatingDocument, options);
-      }
-export type DeleteRatingMutationHookResult = ReturnType<typeof useDeleteRatingMutation>;
-export type DeleteRatingMutationResult = ApolloReactCommon.MutationResult<DeleteRatingMutation>;
-export type DeleteRatingMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteRatingMutation, DeleteRatingMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout(isApp: true)
@@ -2540,6 +2503,7 @@ export const UserDataDocument = gql`
     isBeeping
     isEmailVerified
     isStudent
+    isPremium
     groupRate
     singlesRate
     photo
@@ -2589,6 +2553,7 @@ export const UserUpdatesDocument = gql`
     isBeeping
     isEmailVerified
     isStudent
+    isPremium
     groupRate
     singlesRate
     photo

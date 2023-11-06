@@ -72,6 +72,12 @@ export class EditUserInput implements Partial<User> {
   public isStudent?: boolean;
 
   @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  @Authorized(UserRole.ADMIN)
+  public isPremium?: boolean;
+
+  @Field({ nullable: true })
   @IsNumber()
   @Min(0)
   @Max(100)

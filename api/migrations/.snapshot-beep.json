@@ -131,6 +131,16 @@
           "default": "false",
           "mappedType": "boolean"
         },
+        "is_premium": {
+          "name": "is_premium",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "boolean"
+        },
         "group_rate": {
           "name": "group_rate",
           "type": "int",

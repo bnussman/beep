@@ -15,7 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  DateTime: { input: any; output: any; }
+  DateTimeISO: { input: any; output: any; }
   Upload: { input: any; output: any; }
 };
 
@@ -36,13 +36,13 @@ export type Beep = {
   __typename?: 'Beep';
   beeper: User;
   destination: Scalars['String']['output'];
-  end?: Maybe<Scalars['DateTime']['output']>;
+  end?: Maybe<Scalars['DateTimeISO']['output']>;
   groupSize: Scalars['Float']['output'];
   id: Scalars['String']['output'];
   origin: Scalars['String']['output'];
   position: Scalars['Float']['output'];
   rider: User;
-  start: Scalars['DateTime']['output'];
+  start: Scalars['DateTimeISO']['output'];
   status: Scalars['String']['output'];
 };
 
@@ -64,13 +64,13 @@ export type BeepsResponse = {
 export type Car = {
   __typename?: 'Car';
   color: Scalars['String']['output'];
-  created: Scalars['DateTime']['output'];
+  created: Scalars['DateTimeISO']['output'];
   default: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   make: Scalars['String']['output'];
   model: Scalars['String']['output'];
   photo: Scalars['String']['output'];
-  updated: Scalars['DateTime']['output'];
+  updated: Scalars['DateTimeISO']['output'];
   user: User;
   year: Scalars['Float']['output'];
 };
@@ -107,7 +107,7 @@ export type EditUserInput = {
 
 export type Feedback = {
   __typename?: 'Feedback';
-  created: Scalars['DateTime']['output'];
+  created: Scalars['DateTimeISO']['output'];
   id: Scalars['String']['output'];
   message: Scalars['String']['output'];
   user: User;
@@ -503,7 +503,7 @@ export type Rating = {
   rated: User;
   rater: User;
   stars: Scalars['Float']['output'];
-  timestamp: Scalars['DateTime']['output'];
+  timestamp: Scalars['DateTimeISO']['output'];
 };
 
 export type RatingInput = {
@@ -529,7 +529,7 @@ export type Report = {
   reason: Scalars['String']['output'];
   reported: User;
   reporter: User;
-  timestamp: Scalars['DateTime']['output'];
+  timestamp: Scalars['DateTimeISO']['output'];
 };
 
 export type ReportInput = {
@@ -615,13 +615,14 @@ export type User = {
   capacity: Scalars['Float']['output'];
   cars?: Maybe<Array<Car>>;
   cashapp?: Maybe<Scalars['String']['output']>;
-  created?: Maybe<Scalars['DateTime']['output']>;
+  created?: Maybe<Scalars['DateTimeISO']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   first: Scalars['String']['output'];
   groupRate: Scalars['Float']['output'];
   id: Scalars['String']['output'];
   isBeeping: Scalars['Boolean']['output'];
   isEmailVerified: Scalars['Boolean']['output'];
+  isPremium: Scalars['Boolean']['output'];
   isStudent: Scalars['Boolean']['output'];
   last: Scalars['String']['output'];
   location?: Maybe<Point>;

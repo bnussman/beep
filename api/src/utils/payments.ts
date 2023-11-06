@@ -1,7 +1,8 @@
 import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { Request, Response } from "express";
 import { PAYMENT_SECRET } from "./constants";
-import { User } from "src/entities/User";
+import { User } from "../entities/User";
+import { pubSub } from "../index";
 
 export async function paymentHandler(req: Request, res: Response, orm: MikroORM<IDatabaseDriver<Connection>>) {
   const em = orm.em.fork();
@@ -12,9 +13,10 @@ export async function paymentHandler(req: Request, res: Response, orm: MikroORM<
   }
 
   const payload = req.body as Webhook;
-  const user = em.getReference(User, payload.event.app_user_id);
 
   console.log(payload);
+
+  const user = await em.findOneOrFail(User, payload.event.app_user_id);
 
   if (payload.event.type === "INITIAL_PURCHASE") {
     user.isPremium = true;
@@ -23,6 +25,8 @@ export async function paymentHandler(req: Request, res: Response, orm: MikroORM<
   if (payload.event.type === "EXPIRATION") {
     user.isPremium = false;
   }
+
+  pubSub.publish("User" + user.id, user);
 
   await em.persistAndFlush(user);
 

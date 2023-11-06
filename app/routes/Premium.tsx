@@ -1,9 +1,10 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { FlatList, Spacer, Spinner, Stack, Text } from "native-base";
+import { CheckIcon, FlatList, Spacer, Spinner, Stack, Text } from "native-base";
 import { Card } from "../components/Card";
 import Purchases, { PurchasesPackage } from "react-native-purchases";
+import { useUser } from '../utils/useUser';
 
 const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage }) => {
   const {
@@ -12,12 +13,12 @@ const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage })
 
   const [isPurchasing, setIsPurchasing] = useState(false);
 
+  const { user } = useUser();
+
   const onSelection = async () => {
     setIsPurchasing(true);
     try {
       const p = await Purchases.purchasePackage(purchasePackage);
-
-      alert(JSON.stringify(p));
     } catch (e: any) {
       if (!e.userCancelled) {
         alert(`Error purchasing package ${e.message}`);
@@ -29,7 +30,7 @@ const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage })
 
   return (
     <Card pressable onPress={onSelection} mx={2} my={2}>
-      <Stack direction="row">
+      <Stack direction="row" alignItems="center">
         <Stack>
           <Text
             fontSize="xl"
@@ -43,6 +44,7 @@ const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage })
           <Text isTruncated>{priceString}/week</Text>
         </Stack>
         <Spacer />
+        {user?.isPremium && <CheckIcon size="5" mt="0.5" color="emerald.500" />}
         {isPurchasing && <Spinner />}
       </Stack>
     </Card>

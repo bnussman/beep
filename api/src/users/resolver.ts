@@ -336,7 +336,7 @@ export class UserResolver {
 
     for (const object of objects) {
       const userId = getUserFromObjectKey(object.Key);
-      
+
       const user = await em.findOne(User, { id: userId });
 
       if (user === null) {

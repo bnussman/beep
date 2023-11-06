@@ -15,6 +15,7 @@ export const UserData = gql`
       isBeeping
       isEmailVerified
       isStudent
+      isPremium
       groupRate
       singlesRate
       photo
@@ -38,6 +39,7 @@ export const UserSubscription = gql`
       isBeeping
       isEmailVerified
       isStudent
+      isPremium
       groupRate
       singlesRate
       photo
