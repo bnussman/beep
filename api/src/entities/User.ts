@@ -88,6 +88,10 @@ export class User {
 
   @Field()
   @Property()
+  isPremium: boolean = false;
+
+  @Field()
+  @Property()
   groupRate: number = 4.0;
 
   @Field()

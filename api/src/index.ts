@@ -36,6 +36,7 @@ import { CarResolver } from "./cars/resolver";
 import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
+import { paymentHandler } from "./utils/payments";
 
 async function start() {
   const orm = await MikroORM.init(config);
@@ -114,6 +115,13 @@ async function start() {
     expressMiddleware(server, {
       context: (ctx) => getContext(ctx, orm),
     }),
+  );
+
+  app.use(
+    '/payment',
+    cors<cors.CorsRequest>(),
+    json(),
+    (req, res) => paymentHandler(req, res, orm),
   );
 
   app.use(RealSentry.Handlers.errorHandler());
