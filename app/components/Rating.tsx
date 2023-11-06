@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { HStack, Spacer, Stack, Text } from "native-base";
-import { GetRatingsQuery, useDeleteRatingMutation } from "../generated/graphql";
+import { GetRatingsQuery } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
@@ -9,6 +9,7 @@ import { printStars } from "./Stars";
 import { Unpacked, isMobile } from "../utils/constants";
 import { Card } from "./Card";
 import { Alert } from "react-native";
+import { gql, useMutation } from "@apollo/client";
 
 type Rating = Unpacked<GetRatingsQuery["getRatings"]["items"]>;
 
@@ -16,6 +17,12 @@ interface Props {
   item: Rating;
   index: number;
 }
+
+const DeleteRating = gql`
+  mutation DeleteRating($id: String!) {
+    deleteRating(id: $id)
+  }
+`;
 
 export function Rating(props: Props) {
   const { item } = props;
@@ -25,7 +32,7 @@ export function Rating(props: Props) {
 
   const isRater = user?.id === item.rater.id;
 
-  const [deleteRating] = useDeleteRatingMutation({
+  const [deleteRating] = useMutation(DeleteRating, {
     variables: {
       id: item.id
     },

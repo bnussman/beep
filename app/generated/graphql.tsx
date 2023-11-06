@@ -94,6 +94,7 @@ export type EditUserInput = {
   groupRate?: InputMaybe<Scalars['Float']['input']>;
   isBeeping?: InputMaybe<Scalars['Boolean']['input']>;
   isEmailVerified?: InputMaybe<Scalars['Boolean']['input']>;
+  isPremium?: InputMaybe<Scalars['Boolean']['input']>;
   isStudent?: InputMaybe<Scalars['Boolean']['input']>;
   last?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
@@ -699,6 +700,13 @@ export type GetRateDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetRateDataQuery = { __typename?: 'Query', getLastBeepToRate?: { __typename?: 'Beep', id: string, beeper: { __typename?: 'User', id: string, name: string, username: string, photo?: string | null, isBeeping: boolean } } | null };
 
+export type DeleteRatingMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type DeleteRatingMutation = { __typename?: 'Mutation', deleteRating: boolean };
+
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1083,6 +1091,37 @@ export function useGetRateDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQuery
 export type GetRateDataQueryHookResult = ReturnType<typeof useGetRateDataQuery>;
 export type GetRateDataLazyQueryHookResult = ReturnType<typeof useGetRateDataLazyQuery>;
 export type GetRateDataQueryResult = ApolloReactCommon.QueryResult<GetRateDataQuery, GetRateDataQueryVariables>;
+export const DeleteRatingDocument = gql`
+    mutation DeleteRating($id: String!) {
+  deleteRating(id: $id)
+}
+    `;
+export type DeleteRatingMutationFn = ApolloReactCommon.MutationFunction<DeleteRatingMutation, DeleteRatingMutationVariables>;
+
+/**
+ * __useDeleteRatingMutation__
+ *
+ * To run a mutation, you first call `useDeleteRatingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRatingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRatingMutation, { data, loading, error }] = useDeleteRatingMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteRatingMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteRatingMutation, DeleteRatingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<DeleteRatingMutation, DeleteRatingMutationVariables>(DeleteRatingDocument, options);
+      }
+export type DeleteRatingMutationHookResult = ReturnType<typeof useDeleteRatingMutation>;
+export type DeleteRatingMutationResult = ApolloReactCommon.MutationResult<DeleteRatingMutation>;
+export type DeleteRatingMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteRatingMutation, DeleteRatingMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout(isApp: true)

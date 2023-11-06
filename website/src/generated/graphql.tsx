@@ -93,6 +93,7 @@ export type EditUserInput = {
   groupRate?: InputMaybe<Scalars['Float']['input']>;
   isBeeping?: InputMaybe<Scalars['Boolean']['input']>;
   isEmailVerified?: InputMaybe<Scalars['Boolean']['input']>;
+  isPremium?: InputMaybe<Scalars['Boolean']['input']>;
   isStudent?: InputMaybe<Scalars['Boolean']['input']>;
   last?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
@@ -1001,7 +1002,7 @@ export type GetUserQueryVariables = Exact<{
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, rating?: number | null, email?: string | null, created?: any | null, pushToken?: string | null, location?: { __typename?: 'Point', latitude: number, longitude: number } | null, queue: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, groupSize: number, status: string, rider: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string } }> } };
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, isPremium: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, rating?: number | null, email?: string | null, created?: any | null, pushToken?: string | null, location?: { __typename?: 'Point', latitude: number, longitude: number } | null, queue: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, groupSize: number, status: string, rider: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string } }> } };
 
 export type RemoveUserMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -1032,7 +1033,7 @@ export type EditUserMutationVariables = Exact<{
 }>;
 
 
-export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, email?: string | null, cashapp?: string | null, pushToken?: string | null } };
+export type EditUserMutation = { __typename?: 'Mutation', editUser: { __typename?: 'User', id: string, first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, isPremium: boolean, role: string, venmo?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, email?: string | null, cashapp?: string | null, pushToken?: string | null } };
 
 export type UserLocationQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -2896,6 +2897,7 @@ export const GetUserDocument = gql`
     isBeeping
     isStudent
     isEmailVerified
+    isPremium
     role
     venmo
     cashapp
@@ -3069,6 +3071,7 @@ export const EditUserDocument = gql`
     isBeeping
     isStudent
     isEmailVerified
+    isPremium
     role
     venmo
     singlesRate
