@@ -48,7 +48,7 @@ export function Premium() {
   if (!packages[0]) {
     return (
       <Container center>
-        <Spinner />
+        <Spinner size="lg" />
       </Container>
     );
   }
