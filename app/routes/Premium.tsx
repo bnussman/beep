@@ -1,60 +1,18 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { CheckIcon, FlatList, Spacer, Spinner, Stack, Text } from "native-base";
-import { Card } from "../components/Card";
+import { CheckIcon, Spacer, Image, Spinner, Stack, Text, Button } from "native-base";
 import type { PurchasesPackage } from "react-native-purchases";
 import { useUser } from '../utils/useUser';
+import PremiumImage from '../assets/premium.png';
+import { GradientButton } from '../components/GradientButton';
 
-const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage }) => {
-  const {
-    product: { title, description, priceString },
-  } = purchasePackage;
+export function Premium() {
+  const [packages, setPackages] = useState<PurchasesPackage[]>([]);
 
   const [isPurchasing, setIsPurchasing] = useState(false);
 
   const { user } = useUser();
-
-  const onSelection = async () => {
-    setIsPurchasing(true);
-
-    try {
-      const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
-      const p = await Purchases.purchasePackage(purchasePackage);
-    } catch (e: any) {
-      if (!e.userCancelled) {
-        alert(`Error purchasing package ${e.message}`);
-      }
-    } finally {
-      setIsPurchasing(false);
-    }
-  };
-
-  return (
-    <Card pressable onPress={onSelection} mx={2} my={2}>
-      <Stack direction="row" alignItems="center">
-        <Stack>
-          <Text
-            fontSize="xl"
-            letterSpacing="sm"
-            fontWeight="extrabold"
-            isTruncated
-          >
-            {title}
-          </Text>
-          <Text isTruncated>{description}</Text>
-          <Text isTruncated>{priceString}/week</Text>
-        </Stack>
-        <Spacer />
-        {user?.isPremium && <CheckIcon size="5" mt="0.5" color="emerald.500" />}
-        {isPurchasing && <Spinner />}
-      </Stack>
-    </Card>
-  );
-}
-
-export function Premium() {
-  const [packages, setPackages] = useState<PurchasesPackage[]>([]);
 
   useEffect(() => {
     const getPackages = async () => {
@@ -72,13 +30,47 @@ export function Premium() {
     getPackages();
   }, []);
 
+  const onBuy = async () => {
+    setIsPurchasing(true);
+
+    try {
+      const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
+      const p = await Purchases.purchasePackage(packages[0]);
+    } catch (e: any) {
+      if (!e.userCancelled) {
+        alert(`Error purchasing package ${e.message}`);
+      }
+    } finally {
+      setIsPurchasing(false);
+    }
+  };
+
+  if (!packages[0]) {
+    return (
+      <Container center>
+        <Spinner />
+      </Container>
+    );
+  }
+
   return (
-    <Container>
-      <FlatList
-        data={packages}
-        renderItem={({ item }) => <PackageItem purchasePackage={item} />}
-        keyExtractor={(item) => item.identifier}
-      />
+    <Container center>
+      <Stack alignItems="center" justifyContent="center" space={4} pt={4}>
+        <Text
+          fontSize="2xl"
+          letterSpacing="sm"
+          fontWeight="extrabold"
+          isTruncated
+        >
+          {packages[0].product.title}
+        </Text>
+        <Text isTruncated>{packages[0].product.description}</Text>
+        <Text isTruncated>{packages[0].product.priceString}/week</Text>
+        {!user?.isPremium && <Button onPress={onBuy} isLoading={isPurchasing}>Subscribe</Button>}
+        {user?.isPremium && <CheckIcon size="5" mt="0.5" color="emerald.500" />}
+        <Image source={PremiumImage} height="500px" resizeMode="contain" alt="beep screenshot of premium" />
+      </Stack>
+      <Spacer />
     </Container>
   );
 }

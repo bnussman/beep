@@ -137,15 +137,15 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               online={user?.isBeeping}
             />
             <Stack flexShrink={1}>
-              <Text fontWeight="extrabold" letterSpacing="sm" fontSize="md">
+              <Text fontWeight="extrabold" letterSpacing="xs" fontSize="lg">
                 {user?.name}
               </Text>
-              <Text color="gray.500" _dark={{ color: "gray.300" }}>
+              <Text color="gray.500" lineHeight="xs" _dark={{ color: "gray.300" }}>
                 @{user?.username}
               </Text>
             </Stack>
             <Spacer />
-            <Text fontSize="3xl" px={2}>🚕</Text>
+            {/*<Text fontSize="3xl" px={2}>🚕</Text>*/}
           </HStack>
         </Pressable>
         <VStack divider={<Divider />} space={4}>
@@ -244,9 +244,9 @@ export function BeepDrawer() {
       )}
       <Drawer.Screen name="Beep" component={StartBeepingScreen} />
       <Drawer.Screen name="Cars" component={Cars} />
+      <Drawer.Screen name="Premium" component={Premium} />
       <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
       <Drawer.Screen name="Beeps" component={BeepsScreen} />
-      <Drawer.Screen name="Premium" component={Premium} />
       <Drawer.Screen name="Ratings" component={RatingsScreen} />
       <Drawer.Screen name="Feedback" component={Feedback} />
     </Drawer.Navigator>
