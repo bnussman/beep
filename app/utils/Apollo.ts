@@ -168,6 +168,15 @@ export const wsLink = new WebSocketLink({
             isBeeping() {
               return payload.user.isBeeping;
             },
+            isPremium() {
+              return payload.user.isPremium;
+            },
+            isStudent() {
+              return payload.user.isStudent;
+            },
+            isEmailVerified() {
+              return payload.user.isEmailVerified;
+            },
             first() {
               return payload.user.first;
             },

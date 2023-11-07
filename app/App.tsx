@@ -150,6 +150,11 @@ function App() {
       <NativeBaseProvider
         theme={NATIVE_BASE_THEME}
         colorModeManager={colorModeManager}
+        config={{
+          dependencies: {
+            "linear-gradient": require("expo-linear-gradient").LinearGradient,
+          },
+        }}
       >
         <ApolloProvider client={client}>
           <Beep />

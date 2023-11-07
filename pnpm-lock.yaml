@@ -190,6 +190,9 @@ importers:
       expo-image-picker:
         specifier: ~14.3.2
         version: 14.3.2(expo@49.0.13)
+      expo-linear-gradient:
+        specifier: ^12.5.0
+        version: 12.5.0(expo@49.0.13)
       expo-linking:
         specifier: ~5.0.2
         version: 5.0.2(expo@49.0.13)
@@ -10369,6 +10372,14 @@ packages:
 
   /expo-keep-awake@12.3.0(expo@49.0.13):
     resolution: {integrity: sha512-ujiJg1p9EdCOYS05jh5PtUrfiZnK0yyLy+UewzqrjUqIT8eAGMQbkfOn3C3fHE7AKd5AefSMzJnS3lYZcZYHDw==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.13(@babel/core@7.22.9)
+    dev: false
+
+  /expo-linear-gradient@12.5.0(expo@49.0.13):
+    resolution: {integrity: sha512-GOV2wODawr2biRCtF2Yb5+wLzvnwXS8dAblfQO7qjyh4f7TDTJn7X0TlVSDMNhIdbAcZBrdxvGFeE2iXdzQ6ow==}
     peerDependencies:
       expo: '*'
     dependencies:

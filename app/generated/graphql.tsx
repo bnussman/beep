@@ -930,7 +930,7 @@ export type GetBeepersQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
+export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, isPremium: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String']['input'];
@@ -2351,6 +2351,7 @@ export const GetBeepersDocument = gql`
     name
     first
     isStudent
+    isPremium
     singlesRate
     groupRate
     capacity
