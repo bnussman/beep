@@ -5,7 +5,6 @@ import { CheckIcon, Spacer, Image, Spinner, Stack, Text, Button } from "native-b
 import type { PurchasesPackage } from "react-native-purchases";
 import { useUser } from '../utils/useUser';
 import PremiumImage from '../assets/premium.png';
-import { GradientButton } from '../components/GradientButton';
 
 export function Premium() {
   const [packages, setPackages] = useState<PurchasesPackage[]>([]);
