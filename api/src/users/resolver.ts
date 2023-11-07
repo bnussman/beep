@@ -65,10 +65,10 @@ export class UserResolver {
     return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
   }
 
-  
+
   @Mutation(() => User)
   @Authorized('No Verification Self')
-  public async checkUserSubscriptions(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async checkUserSubscriptions(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg("id", { nullable: true }) id?: string): Promise<User> {
     const options = { method: 'GET', headers: { accept: 'application/json', Authorization: `Bearer ${REVENUE_CAT_SECRET}` } };
 
     const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${id ?? ctx.user.id}`, options);
