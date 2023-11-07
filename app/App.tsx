@@ -31,9 +31,7 @@ import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
-import { Platform } from "react-native";
-import Purchase, { LOG_LEVEL } from 'react-native-purchases';
-import { setPurchaseUser } from "./utils/purchase";
+import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -47,13 +45,7 @@ Sentry.init({
   enableAutoPerformanceTracing: true,
 });
 
-Purchase.setLogLevel(LOG_LEVEL.DEBUG);
-
-if (Platform.OS === 'ios') {
-  Purchase.configure({ apiKey: "appl_dqtIBTnfwElgSEMkBpwmpjMrgNj" });
-} else if (Platform.OS === 'android') {
-  Purchase.configure({ apiKey: "goog_LdhRLvXtGjDlpznOgEIWWUdsokX" });
-}
+setupPurchase();
 
 function Beep() {
   const { colorMode } = useColorMode();

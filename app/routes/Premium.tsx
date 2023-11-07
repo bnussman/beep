@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
 import { CheckIcon, FlatList, Spacer, Spinner, Stack, Text } from "native-base";
 import { Card } from "../components/Card";
-import Purchases, { PurchasesPackage } from "react-native-purchases";
+import type { PurchasesPackage } from "react-native-purchases";
 import { useUser } from '../utils/useUser';
 
 const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage }) => {
@@ -17,8 +17,10 @@ const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage })
 
   const onSelection = async () => {
     setIsPurchasing(true);
+
     try {
-      const p = await Purchases.purchasePackage(purchasePackage);
+      const Purachases: typeof import('react-native-purchases').default = require("react-native-purchases");
+      const p = await Purachases.purchasePackage(purchasePackage);
     } catch (e: any) {
       if (!e.userCancelled) {
         alert(`Error purchasing package ${e.message}`);
@@ -57,7 +59,8 @@ export function Premium() {
   useEffect(() => {
     const getPackages = async () => {
       try {
-        const offerings = await Purchases.getOfferings();
+        const Purchase = (await import("react-native-purchases")).default;
+        const offerings = await Purchase.getOfferings();
         if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
           setPackages(offerings.current.availablePackages);
         }

@@ -41,8 +41,7 @@ import {
   Badge,
 } from "native-base";
 import { useAutoUpdate } from "../utils/updates";
-
-const Premium = require("../routes/Premium").Premium;
+import { Premium } from "../routes/Premium";
 
 const Logout = gql`
   mutation Logout {
