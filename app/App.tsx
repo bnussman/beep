@@ -72,7 +72,7 @@ function Beep() {
           },
         });
       }
-      setPurchaseUser(user.id);
+      setPurchaseUser(user);
       setUserContext(user);
     }
   }, [user]);
