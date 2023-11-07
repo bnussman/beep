@@ -19,8 +19,8 @@ const PackageItem = ({ purchasePackage }: { purchasePackage: PurchasesPackage })
     setIsPurchasing(true);
 
     try {
-      const Purachases: typeof import('react-native-purchases').default = require("react-native-purchases");
-      const p = await Purachases.purchasePackage(purchasePackage);
+      const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
+      const p = await Purchases.purchasePackage(purchasePackage);
     } catch (e: any) {
       if (!e.userCancelled) {
         alert(`Error purchasing package ${e.message}`);
@@ -59,8 +59,8 @@ export function Premium() {
   useEffect(() => {
     const getPackages = async () => {
       try {
-        const Purchase = (await import("react-native-purchases")).default;
-        const offerings = await Purchase.getOfferings();
+        const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
+        const offerings = await Purchases.getOfferings();
         if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
           setPackages(offerings.current.availablePackages);
         }

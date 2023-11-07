@@ -12,8 +12,9 @@ export async function setPurchaseUser(user: UserDataQuery['getUser']) {
     const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
     await Purchases.logIn(user.id);
     await Purchases.setAttributes({
-      full_name: `${user.first} ${user.last}`,
-      email: user.email ?? "unknown",
+      '$displayName': `${user.first} ${user.last}`,
+      '$email': user.email ?? "unknown",
+      '$phoneNumber': user.phone ?? "unknown",
       username: user.username,
     });
   } catch (error) {
