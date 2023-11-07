@@ -57,7 +57,7 @@ const getIcon = (screenName: string) => {
       return "car";
     case "Beep":
       return "steering";
-    case "Edit Profile":
+    case "Profile":
       return "account-edit";
     case "Change Password":
       return "form-textbox-password";
@@ -245,7 +245,7 @@ export function BeepDrawer() {
       <Drawer.Screen name="Beep" component={StartBeepingScreen} />
       <Drawer.Screen name="Cars" component={Cars} />
       <Drawer.Screen name="Premium" component={Premium} />
-      <Drawer.Screen name="Edit Profile" component={EditProfileScreen} />
+      <Drawer.Screen name="Profile" component={EditProfileScreen} />
       <Drawer.Screen name="Beeps" component={BeepsScreen} />
       <Drawer.Screen name="Ratings" component={RatingsScreen} />
       <Drawer.Screen name="Feedback" component={Feedback} />
