@@ -148,6 +148,7 @@ export type Mutation = {
   addProfilePicture: User;
   cancelBeep: Scalars['Boolean']['output'];
   changePassword: Scalars['Boolean']['output'];
+  checkUserSubscriptions?: Maybe<Payment>;
   chooseBeep: Beep;
   cleanObjectStorageBucket: Scalars['Float']['output'];
   clearQueue: Scalars['Boolean']['output'];
@@ -193,6 +194,11 @@ export type MutationCancelBeepArgs = {
 
 export type MutationChangePasswordArgs = {
   input: ChangePasswordInput;
+};
+
+
+export type MutationCheckUserSubscriptionsArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -346,6 +352,23 @@ export type MutationVerifyAccountArgs = {
   id: Scalars['String']['input'];
 };
 
+export type Payment = {
+  __typename?: 'Payment';
+  created: Scalars['DateTimeISO']['output'];
+  expires: Scalars['DateTimeISO']['output'];
+  id: Scalars['String']['output'];
+  productId: Scalars['String']['output'];
+  store: Scalars['String']['output'];
+  storeId: Scalars['String']['output'];
+  user: User;
+};
+
+export type PaymentResponse = {
+  __typename?: 'PaymentResponse';
+  count: Scalars['Int']['output'];
+  items: Array<Payment>;
+};
+
 export type Point = {
   __typename?: 'Point';
   latitude: Scalars['Float']['output'];
@@ -364,6 +387,7 @@ export type Query = {
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
+  getPayments: PaymentResponse;
   getQueue: Array<Beep>;
   getRating: Rating;
   getRatings: RatingsResponse;
@@ -371,6 +395,7 @@ export type Query = {
   getReport: Report;
   getReports: ReportsResponse;
   getRiderStatus?: Maybe<Beep>;
+  getTopOfQueueStatus?: Maybe<Payment>;
   getUser: User;
   getUsers: UsersResponse;
   getUsersPerDomain: Array<UsersPerDomain>;
@@ -437,6 +462,13 @@ export type QueryGetInProgressBeepsArgs = {
 export type QueryGetLocationSuggestionsArgs = {
   location: Scalars['String']['input'];
   sessiontoken: Scalars['String']['input'];
+};
+
+
+export type QueryGetPaymentsArgs = {
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -725,6 +757,16 @@ export type GetBeepHistoryQueryVariables = Exact<{
 
 
 export type GetBeepHistoryQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, start: any, end?: any | null, groupSize: number, origin: string, destination: string, status: string, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, photo?: string | null }, beeper: { __typename?: 'User', id: string, name: string, first: string, last: string, photo?: string | null } }> } };
+
+export type CheckUserSubscriptionsMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CheckUserSubscriptionsMutation = { __typename?: 'Mutation', checkUserSubscriptions?: { __typename?: 'Payment', id: string, expires: any } | null };
+
+export type TopOfQueueStatusQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TopOfQueueStatusQuery = { __typename?: 'Query', getTopOfQueueStatus?: { __typename?: 'Payment', id: string, expires: any } | null };
 
 export type GetRatingsQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
@@ -1242,6 +1284,74 @@ export function useGetBeepHistoryLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type GetBeepHistoryQueryHookResult = ReturnType<typeof useGetBeepHistoryQuery>;
 export type GetBeepHistoryLazyQueryHookResult = ReturnType<typeof useGetBeepHistoryLazyQuery>;
 export type GetBeepHistoryQueryResult = ApolloReactCommon.QueryResult<GetBeepHistoryQuery, GetBeepHistoryQueryVariables>;
+export const CheckUserSubscriptionsDocument = gql`
+    mutation checkUserSubscriptions {
+  checkUserSubscriptions {
+    id
+    expires
+  }
+}
+    `;
+export type CheckUserSubscriptionsMutationFn = ApolloReactCommon.MutationFunction<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>;
+
+/**
+ * __useCheckUserSubscriptionsMutation__
+ *
+ * To run a mutation, you first call `useCheckUserSubscriptionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckUserSubscriptionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkUserSubscriptionsMutation, { data, loading, error }] = useCheckUserSubscriptionsMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCheckUserSubscriptionsMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>(CheckUserSubscriptionsDocument, options);
+      }
+export type CheckUserSubscriptionsMutationHookResult = ReturnType<typeof useCheckUserSubscriptionsMutation>;
+export type CheckUserSubscriptionsMutationResult = ApolloReactCommon.MutationResult<CheckUserSubscriptionsMutation>;
+export type CheckUserSubscriptionsMutationOptions = ApolloReactCommon.BaseMutationOptions<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>;
+export const TopOfQueueStatusDocument = gql`
+    query TopOfQueueStatus {
+  getTopOfQueueStatus {
+    id
+    expires
+  }
+}
+    `;
+
+/**
+ * __useTopOfQueueStatusQuery__
+ *
+ * To run a query within a React component, call `useTopOfQueueStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopOfQueueStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopOfQueueStatusQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTopOfQueueStatusQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>(TopOfQueueStatusDocument, options);
+      }
+export function useTopOfQueueStatusLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>(TopOfQueueStatusDocument, options);
+        }
+export type TopOfQueueStatusQueryHookResult = ReturnType<typeof useTopOfQueueStatusQuery>;
+export type TopOfQueueStatusLazyQueryHookResult = ReturnType<typeof useTopOfQueueStatusLazyQuery>;
+export type TopOfQueueStatusQueryResult = ApolloReactCommon.QueryResult<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>;
 export const GetRatingsDocument = gql`
     query GetRatings($id: String, $offset: Int, $show: Int) {
   getRatings(id: $id, offset: $offset, show: $show) {

@@ -37,6 +37,7 @@ import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
 import { paymentHandler } from "./utils/payments";
+import { PaymentsResolver } from "./payments/resolver";
 
 const options = {
   host: REDIS_HOST,
@@ -75,6 +76,7 @@ async function start() {
       RiderResolver,
       AdminResolver,
       DirectionsResolver,
+      PaymentsResolver
     ],
     authChecker,
     pubSub,

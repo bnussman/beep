@@ -28,7 +28,12 @@ export interface ProCat {
 }
 
 export interface NonSubscriptions {
-  onetime: Onetime[]
+  [key: string]: {
+    id: string;
+    purchase_date: string;
+    store: string;
+    store_transaction_id: string;
+  }[];
 }
 
 export interface Onetime {

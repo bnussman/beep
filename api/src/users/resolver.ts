@@ -1,7 +1,7 @@
 import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser, isEduEmail, Upload, search } from './helpers';
-import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
+import { LoadStrategy, QueryOrder, QueryOrderNumeric, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
@@ -17,6 +17,7 @@ import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
 import { REVENUE_CAT_SECRET, S3_BUCKET_URL } from '../utils/constants';
 import type { SubscriberResponse } from './types';
+import { Payment, Store } from '../entities/Payments';
 
 @ObjectType()
 class UsersPerDomain {
@@ -63,32 +64,6 @@ export class UserResolver {
     const populate = fieldsToRelations(info) as Array<keyof User>;
 
     return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
-  }
-
-
-  @Mutation(() => User)
-  @Authorized('No Verification Self')
-  public async checkUserSubscriptions(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg("id", { nullable: true }) id?: string): Promise<User> {
-    const options = { method: 'GET', headers: { accept: 'application/json', Authorization: `Bearer ${REVENUE_CAT_SECRET}` } };
-
-    const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${id ?? ctx.user.id}`, options);
-    const response: SubscriberResponse = await request.json();
-
-    const user = await ctx.em.findOneOrFail(User, id ?? ctx.user.id);
-
-    console.log(response)
-
-    if (response.subscriber.subscriptions['premium_0']) {
-      user.isPremium = true;
-    } else {
-      user.isPremium = false;
-    }
-
-    pubSub.publish("User" + user.id, user);
-
-    await ctx.em.persistAndFlush(user);
-
-    return user;
   }
 
   @Mutation(() => Boolean)

@@ -8,7 +8,7 @@ class _Logger {
     } else {
       Sentry.Browser.captureMessage(data);
     }
-    console.log(data);
+    console.info(data);
   }
 
   public error(e: any) {
@@ -17,7 +17,7 @@ class _Logger {
     } else {
       Sentry.Browser.captureException(e);
     }
-    console.warn(e);
+    console.error(e);
   }
 }
 

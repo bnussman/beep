@@ -58,6 +58,9 @@ export function AdminMenu() {
           <MenuItem icon={<Icon fontSize="2xl" as={VscFeedback} />}  as={Link} to="/admin/feedback">
             Feedback
           </MenuItem>
+          <MenuItem icon={<Icon fontSize="2xl" as={VscFeedback} />}  as={Link} to="/admin/payments">
+            Payments
+          </MenuItem>
         </MenuGroup>
         <MenuDivider />
         <MenuGroup title='Technical'>
