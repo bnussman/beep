@@ -35,13 +35,17 @@ const TopOfQueueStatus = gql`
 
 function Package({ item }: Props) {
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const { user } = useUser();
 
   const [checkVerificationStatus] = useMutation<CheckUserSubscriptionsMutation>(CheckVerificationStatus);
   const { data: status, refetch } = useQuery<TopOfQueueStatusQuery>(TopOfQueueStatus);
 
+  const expires = status?.getTopOfQueueStatus?.expires;
+  const countdown = expires ? <Countdown date={new Date(expires)} /> : null;
+
+  const hasActiveSub = expires ? new Date(expires) >= new Date() : true;
+
   const onBuy = async (item: PurchasesPackage) => {
-    if (status?.getTopOfQueueStatus?.expires) {
+    if (hasActiveSub) {
       return alert("You are already promoted on the beeper list.");
     }
 
@@ -62,11 +66,9 @@ function Package({ item }: Props) {
     }
   };
 
-  const expires = status?.getTopOfQueueStatus?.expires;
-
   return (
     <Card m={2} pb={0} pressable onPress={() => onBuy(item)}>
-      <Stack direction="row" alignItems="center" mb={2}>
+      <Stack direction="row" alignItems="center" mb={2} space={2}>
         <Stack space={1} flexShrink={1}>
           <Text fontSize="xl" letterSpacing="sm" fontWeight="extrabold">
             {item.product.title}
@@ -74,10 +76,10 @@ function Package({ item }: Props) {
           {/* <Text>{item.product.description}</Text> */}
           <Text>Promotes you to the top of the beeper list so you get more riders joining your queue.</Text>
           <Text italic>{item.product.priceString}</Text>
-          <Text>{expires ? <Countdown date={new Date(expires)} /> : ''}</Text>
+          <Text>{countdown}</Text>
         </Stack>
         <Spacer />
-        {!isPurchasing && user?.isPremium && <CheckIcon size="6" color="emerald.500" />}
+        {hasActiveSub && <CheckIcon size="6" color="emerald.500" />}
         {isPurchasing && <Spinner />}
       </Stack>
       <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" />

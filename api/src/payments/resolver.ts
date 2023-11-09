@@ -61,8 +61,10 @@ export class PaymentsResolver {
         const payment = ctx.em.findOne(
           Payment,
           { user: id ?? ctx.user.id, expires: { '$lte': new Date() } },
-          { orderBy: { created: QueryOrder.DESC }
-          });
+          {
+            orderBy: { created: QueryOrder.DESC }
+          }
+        );
 
         return payment;
       }

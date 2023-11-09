@@ -154,7 +154,16 @@ export class RiderResolver {
     const connection = ctx.em.getConnection();
 
     const raw: User[] = await connection.execute(`
-      SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY is_premium desc, ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}));
+      SELECT u.*,
+        CASE
+          WHEN p.expires >= CURRENT_TIMESTAMP THEN 1
+          ELSE 0
+        END AS is_payment_active
+      FROM public."user" u
+      LEFT JOIN payment p ON u.id = p.user_id
+      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34
+        AND u.is_beeping = true
+      ORDER BY is_payment_active DESC, ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}));
     `);
 
     return raw.map(user => ctx.em.map(User, user));
