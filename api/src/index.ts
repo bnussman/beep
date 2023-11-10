@@ -38,6 +38,7 @@ import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
 import { paymentHandler } from "./utils/payments";
 import { PaymentsResolver } from "./payments/resolver";
+import type { PostgreSqlDriver } from '@mikro-orm/postgresql'; // or any other driver package
 
 const options = {
   host: REDIS_HOST,
@@ -50,7 +51,7 @@ export const pubSub = new RedisPubSub({
 });
 
 async function start() {
-  const orm = await MikroORM.init(config);
+  const orm = await MikroORM.init<PostgreSqlDriver>(config);
 
   const app = express();
 

@@ -1,17 +1,18 @@
 import * as Sentry from "@sentry/node";
 import { Context as WSContext } from "graphql-ws";
 import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
-import { EntityManager } from "@mikro-orm/postgresql";
+import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { TokenEntry } from "../entities/TokenEntry";
 import { User } from "../entities/User";
+import { ExpressContextFunctionArgument } from "@apollo/server/dist/esm/express4";
 
 export interface Context {
-    em: EntityManager;
+    em: MikroORM<PostgreSqlDriver>['em'];
     user: User;
     token: TokenEntry;
 }
 
-export async function getContext(data: any, orm: MikroORM<IDatabaseDriver<Connection>>): Promise<Context> {
+export async function getContext(data: ExpressContextFunctionArgument, orm: MikroORM<PostgreSqlDriver>): Promise<Context> {
   Sentry.configureScope(scope => scope.setTransactionName(data.req.body?.operationName));
 
   const em = orm.em.fork();
