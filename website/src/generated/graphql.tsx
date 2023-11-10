@@ -378,6 +378,7 @@ export type Query = {
   getAllBeepersLocation: Array<AnonymousBeeper>;
   getBeep: Beep;
   getBeepers: Array<User>;
+  getBeepersNew: Array<User>;
   getBeeps: BeepsResponse;
   getCars: CarsResponse;
   getETA: Scalars['String']['output'];
@@ -415,6 +416,13 @@ export type QueryGetBeepArgs = {
 
 
 export type QueryGetBeepersArgs = {
+  latitude: Scalars['Float']['input'];
+  longitude: Scalars['Float']['input'];
+  radius?: InputMaybe<Scalars['Float']['input']>;
+};
+
+
+export type QueryGetBeepersNewArgs = {
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
   radius?: InputMaybe<Scalars['Float']['input']>;

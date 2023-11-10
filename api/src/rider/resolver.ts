@@ -147,7 +147,7 @@ export class RiderResolver {
 
   @Query(() => [User])
   @Authorized()
-  public async getBeepers(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
+  public async getBeepersNew(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
     if (radius === 0) {
       return await ctx.em.find(User, { isBeeping: true });
     }
@@ -191,6 +191,22 @@ export class RiderResolver {
     console.log(paymentsRaw)
 
     return users;
+  }
+
+  @Query(() => [User])
+  @Authorized()
+  public async getBeepers(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
+    if (radius === 0) {
+      return await ctx.em.find(User, { isBeeping: true });
+    }
+
+    const connection = ctx.em.getConnection();
+
+    const raw: User[] = await connection.execute(`
+SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))
+`);
+
+    return raw.map(user => ctx.em.map(User, user));
   }
 
   @Query(() => Beep, { nullable: true })
