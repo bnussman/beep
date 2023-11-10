@@ -36,6 +36,18 @@ import { CarResolver } from "./cars/resolver";
 import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
+import { paymentHandler } from "./utils/payments";
+import { PaymentsResolver } from "./payments/resolver";
+
+const options = {
+  host: REDIS_HOST,
+  password: REDIS_PASSWROD,
+  port: 6379,
+};
+
+export const pubSub = new RedisPubSub({
+  publisher: new Redis(options), subscriber: new Redis(options)
+});
 
 async function start() {
   const orm = await MikroORM.init(config);
@@ -48,17 +60,6 @@ async function start() {
 
   app.use(RealSentry.Handlers.requestHandler());
   app.use(RealSentry.Handlers.tracingHandler());
-
-  const options = {
-    host: REDIS_HOST,
-    password: REDIS_PASSWROD,
-    port: 6379,
-  };
-
-  const pubSub = new RedisPubSub({
-    publisher: new Redis(options),
-    subscriber: new Redis(options)
-  });
 
   const schema = await buildSchema({
     resolvers: [
@@ -75,6 +76,7 @@ async function start() {
       RiderResolver,
       AdminResolver,
       DirectionsResolver,
+      PaymentsResolver
     ],
     authChecker,
     pubSub,
@@ -114,6 +116,13 @@ async function start() {
     expressMiddleware(server, {
       context: (ctx) => getContext(ctx, orm),
     }),
+  );
+
+  app.post(
+    '/payment',
+    cors<cors.CorsRequest>(),
+    json(),
+    (req, res) => paymentHandler(req, res, orm),
   );
 
   app.use(RealSentry.Handlers.errorHandler());

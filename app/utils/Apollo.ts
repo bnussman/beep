@@ -23,18 +23,19 @@ function getLocalIP() {
   }
 }
 
+// const ip = "192.168.1.65";
 const ip = getLocalIP();
 
 export const cache = new InMemoryCache();
-
 const wsUrl = __DEV__
   ? `ws://${ip}:3000/subscriptions`
   : "wss://api.ridebeep.app/subscriptions";
 const url = __DEV__
   ? `http://${ip}:3000/graphql`
   : "https://api.ridebeep.app/graphql";
-// const wsUrl = "wss://staging.ridebeep.app/subscriptions";
-// const url = "https://staging.ridebeep.app/graphql";
+
+// const wsUrl = "wss://api.staging.ridebeep.app/subscriptions";
+// const url = "https://api.staging.ridebeep.app/graphql";
 
 // const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
 // const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
@@ -166,6 +167,12 @@ export const wsLink = new WebSocketLink({
           fields: {
             isBeeping() {
               return payload.user.isBeeping;
+            },
+            isStudent() {
+              return payload.user.isStudent;
+            },
+            isEmailVerified() {
+              return payload.user.isEmailVerified;
             },
             first() {
               return payload.user.first;

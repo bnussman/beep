@@ -43,6 +43,7 @@ import {
   Flex,
   FlatList as NativeFlatList,
   InfoIcon,
+  Button,
 } from "native-base";
 import { Status } from "../../utils/types";
 
@@ -375,12 +376,19 @@ export function StartBeepingScreen() {
   if (isBeeping && queue?.length === 0) {
     return (
       <Container center>
-        <Stack space={2} p={4} alignItems="center">
+        <Stack space={2} p={4} alignItems="center" mb={12}>
           <Heading fontWeight="extrabold">Your queue is empty</Heading>
           <Text textAlign="center">
             If someone wants you to beep them, it will appear here. If your app
             is closed, you will recieve a push notification.
           </Text>
+        </Stack>
+        <Stack alignItems="center" space={2}>
+          <Heading fontWeight="extrabold" fontSize="md">Want more riders?</Heading>
+          <Text textAlign="center">
+            Jump to the top of the beeper list for just $1.99
+          </Text>
+          <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
         </Stack>
       </Container>
     );

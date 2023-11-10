@@ -7,6 +7,7 @@ import { Context } from '../utils/context';
 import { Beep, Status } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
+import { Payment } from '../entities/Payments';
 
 @Resolver()
 export class RiderResolver {
@@ -146,6 +147,54 @@ export class RiderResolver {
 
   @Query(() => [User])
   @Authorized()
+  public async getBeepersNew(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
+    if (radius === 0) {
+      return await ctx.em.find(User, { isBeeping: true });
+    }
+
+    const connection = ctx.em.getConnection();
+
+    const raw: User[] = await connection.execute(`
+      SELECT u.*,
+          CASE
+              WHEN p.expires >= CURRENT_TIMESTAMP THEN 1
+              ELSE 0
+          END AS is_payment_active
+      FROM public."user" u
+      LEFT JOIN (
+          SELECT DISTINCT ON (user_id) *
+          FROM payment
+          WHERE expires >= CURRENT_TIMESTAMP
+          ORDER BY user_id, expires
+      ) p ON u.id = p.user_id
+      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34
+          AND u.is_beeping = true
+      ORDER BY is_payment_active DESC, ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}));
+    `);
+
+    const paymentsRaw: Payment[] = await connection.execute(`
+      SELECT p.*
+      FROM public."payment" p
+      LEFT JOIN public."user" u ON p.user_id = u.id
+      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND u.is_beeping = true AND p.expires >= CURRENT_TIMESTAMP;
+    `);
+
+    const payments = paymentsRaw.map(p => ctx.em.map(Payment, p));
+
+    const users = raw.map((user) => {
+      const u = ctx.em.map(User, user)
+      const paymentsForUser = payments.filter(p => p.user.id === u.id);
+      u.payments.set(paymentsForUser);
+      return u;
+    });
+
+    console.log(paymentsRaw)
+
+    return users;
+  }
+
+  @Query(() => [User])
+  @Authorized()
   public async getBeepers(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
     if (radius === 0) {
       return await ctx.em.find(User, { isBeeping: true });
@@ -154,8 +203,8 @@ export class RiderResolver {
     const connection = ctx.em.getConnection();
 
     const raw: User[] = await connection.execute(`
-      SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))
-    `);
+SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))
+`);
 
     return raw.map(user => ctx.em.map(User, user));
   }
