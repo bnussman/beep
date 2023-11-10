@@ -74,13 +74,11 @@ export function PickBeepScreen() {
     navigation.goBack();
   }
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-      item: Unpacked<GetBeepersQuery["getBeepers"]>;
-      index: number;
-    }) => (
+
+  const renderItem = ({ item, index }: { item: Unpacked<GetBeepersQuery["getBeepers"]>; index: number; }) => {
+    const isPremium = item.payments?.some(p => p.productId === "top_of_beeper_list_1_hour") ?? false;
+
+    return (
       <Box
         bg={{
           linearGradient: {
@@ -92,12 +90,12 @@ export function PickBeepScreen() {
         rounded="xl"
         mx={2.5}
         mt={index === 0 ? 3 : 2.5}
-        p={item.isPremium ? 0.5 : 0}
+        p={isPremium ? 0.5 : 0}
       >
         <Card
           pressable
           onPress={() => goBack(item.id)}
-          borderWidth={item.isPremium ? 0 : "2px"}
+          borderWidth={isPremium ? 0 : "2px"}
         >
           <HStack alignItems="center">
             <Stack flexShrink={1}>
@@ -136,16 +134,6 @@ export function PickBeepScreen() {
             </Stack>
             <Spacer />
             <Stack space={2} flexShrink={1}>
-              {item.isPremium && (
-                <Badge
-                  bg="black"
-                  _text={{ color: "white" }}
-                  rounded="xl"
-                  _dark={{ bg: "white", _text: { color: "gray.600" } }}
-                >
-                  Premium
-                </Badge>
-              )}
               {item.venmo && (
                 <Badge
                   bg="black"
@@ -170,7 +158,8 @@ export function PickBeepScreen() {
           </HStack>
         </Card>
       </Box>
-    );
+    )
+  };
 
   if ((!data && loading) || location === undefined) {
     return (

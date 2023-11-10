@@ -661,6 +661,7 @@ export type User = {
   name: Scalars['String']['output'];
   password: Scalars['String']['output'];
   passwordType: Scalars['String']['output'];
+  payments?: Maybe<Array<Payment>>;
   phone?: Maybe<Scalars['String']['output']>;
   photo?: Maybe<Scalars['String']['output']>;
   pushToken?: Maybe<Scalars['String']['output']>;
@@ -970,7 +971,7 @@ export type GetBeepersQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
+export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null, payments?: Array<{ __typename?: 'Payment', id: string, productId: string }> | null }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String']['input'];
@@ -2468,6 +2469,10 @@ export const GetBeepersDocument = gql`
     rating
     venmo
     cashapp
+    payments {
+      id
+      productId
+    }
   }
 }
     `;

@@ -154,23 +154,41 @@ export class RiderResolver {
 
     const connection = ctx.em.getConnection();
 
-    const raw: (User & { product_id: string, pid: string })[] = await connection.execute(`
-      SELECT u.*, p.product_id, p.id as pid
+    const raw: User[] = await connection.execute(`
+      SELECT u.*,
+          CASE
+              WHEN p.expires >= CURRENT_TIMESTAMP THEN 1
+              ELSE 0
+          END AS is_payment_active
       FROM public."user" u
-      LEFT JOIN payment p ON u.id = p.user_id
-      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND u.is_beeping = true
-      ORDER BY p.product_id DESC, ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}));
+      LEFT JOIN (
+          SELECT DISTINCT ON (user_id) *
+          FROM payment
+          WHERE expires >= CURRENT_TIMESTAMP
+          ORDER BY user_id, expires
+      ) p ON u.id = p.user_id
+      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34
+          AND u.is_beeping = true
+      ORDER BY is_payment_active DESC, ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}));
     `);
 
-    console.log(raw)
+    const paymentsRaw: Payment[] = await connection.execute(`
+      SELECT p.*
+      FROM public."payment" p
+      LEFT JOIN public."user" u ON p.user_id = u.id
+      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND u.is_beeping = true AND p.expires >= CURRENT_TIMESTAMP;
+    `);
+
+    const payments = paymentsRaw.map(p => ctx.em.map(Payment, p));
 
     const users = raw.map((user) => {
-      const u = ctx.em.map(User, user);
-      if (user.pid) {
-        u.payments.set([ctx.em.map(Payment, { id: user.pid, product_id: user.product_id })]);
-      }
+      const u = ctx.em.map(User, user)
+      const paymentsForUser = payments.filter(p => p.user.id === u.id);
+      u.payments.set(paymentsForUser);
       return u;
-    })
+    });
+
+    console.log(paymentsRaw)
 
     return users;
   }

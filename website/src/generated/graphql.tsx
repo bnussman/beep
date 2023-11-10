@@ -660,6 +660,7 @@ export type User = {
   name: Scalars['String']['output'];
   password: Scalars['String']['output'];
   passwordType: Scalars['String']['output'];
+  payments?: Maybe<Array<Payment>>;
   phone?: Maybe<Scalars['String']['output']>;
   photo?: Maybe<Scalars['String']['output']>;
   pushToken?: Maybe<Scalars['String']['output']>;
