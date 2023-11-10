@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { Context as WSContext } from "graphql-ws";
-import { Connection, EntityManager, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
+import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
+import { EntityManager } from "@mikro-orm/postgresql";
 import { TokenEntry } from "../entities/TokenEntry";
 import { User } from "../entities/User";
 

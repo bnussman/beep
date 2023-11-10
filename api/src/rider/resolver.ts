@@ -152,43 +152,18 @@ export class RiderResolver {
       return await ctx.em.find(User, { isBeeping: true });
     }
 
-    const connection = ctx.em.getConnection();
+    const users = await ctx.em.createQueryBuilder(User, 'u')
+      .select("*")
+      .joinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } }, "leftJoin")
+      .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
+      .andWhere({ isBeeping: true })
+      .orderBy({
+        ["CASE WHEN p.product_id = 'top_of_beeper_list_1_hour' THEN 1 ELSE 0 END"]: "DESC",
+        [`ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}))`]: 'ASC'
+      })
+      .getResultList();
 
-    const raw: User[] = await connection.execute(`
-      SELECT u.*,
-          CASE
-              WHEN p.expires >= CURRENT_TIMESTAMP THEN 1
-              ELSE 0
-          END AS is_payment_active
-      FROM public."user" u
-      LEFT JOIN (
-          SELECT DISTINCT ON (user_id) *
-          FROM payment
-          WHERE expires >= CURRENT_TIMESTAMP
-          ORDER BY user_id, expires
-      ) p ON u.id = p.user_id
-      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34
-          AND u.is_beeping = true
-      ORDER BY is_payment_active DESC, ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}));
-    `);
-
-    const paymentsRaw: Payment[] = await connection.execute(`
-      SELECT p.*
-      FROM public."payment" p
-      LEFT JOIN public."user" u ON p.user_id = u.id
-      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND u.is_beeping = true AND p.expires >= CURRENT_TIMESTAMP;
-    `);
-
-    const payments = paymentsRaw.map(p => ctx.em.map(Payment, p));
-
-    const users = raw.map((user) => {
-      const u = ctx.em.map(User, user)
-      const paymentsForUser = payments.filter(p => p.user.id === u.id);
-      u.payments.set(paymentsForUser);
-      return u;
-    });
-
-    console.log(paymentsRaw)
+    console.log(users);
 
     return users;
   }
