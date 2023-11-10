@@ -20,8 +20,8 @@ export class Payment {
   @Field()
   id!: string;
 
-  @Field()
-  @ManyToOne()
+  @Field(() => User)
+  @ManyToOne(() => User)
   user!: User;
 
   @Field()

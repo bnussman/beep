@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
 import { Image, CheckIcon, Spacer, Spinner, Stack, Text, FlatList } from "native-base";
 import type { PurchasesPackage } from "react-native-purchases";
-import { useUser } from '../utils/useUser';
 import PremiumImage from '../assets/premium.png';
 import { Card } from '../components/Card';
 import { Logger } from '../utils/Logger';
@@ -42,7 +41,7 @@ function Package({ item }: Props) {
   const expires = status?.getTopOfQueueStatus?.expires;
   const countdown = expires ? <Countdown date={new Date(expires)} /> : null;
 
-  const hasActiveSub = expires ? new Date(expires) >= new Date() : true;
+  const hasActiveSub = expires ? new Date(expires) >= new Date() : false;
 
   const onBuy = async (item: PurchasesPackage) => {
     if (hasActiveSub) {

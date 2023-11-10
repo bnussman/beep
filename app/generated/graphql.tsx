@@ -94,7 +94,6 @@ export type EditUserInput = {
   groupRate?: InputMaybe<Scalars['Float']['input']>;
   isBeeping?: InputMaybe<Scalars['Boolean']['input']>;
   isEmailVerified?: InputMaybe<Scalars['Boolean']['input']>;
-  isPremium?: InputMaybe<Scalars['Boolean']['input']>;
   isStudent?: InputMaybe<Scalars['Boolean']['input']>;
   last?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
@@ -656,7 +655,6 @@ export type User = {
   id: Scalars['String']['output'];
   isBeeping: Scalars['Boolean']['output'];
   isEmailVerified: Scalars['Boolean']['output'];
-  isPremium: Scalars['Boolean']['output'];
   isStudent: Scalars['Boolean']['output'];
   last: Scalars['String']['output'];
   location?: Maybe<Point>;
@@ -972,7 +970,7 @@ export type GetBeepersQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, isPremium: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
+export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String']['input'];
@@ -1003,12 +1001,12 @@ export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePic
 export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, isPremium: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
+export type UserDataQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
 
 export type UserUpdatesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, isPremium: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
+export type UserUpdatesSubscription = { __typename?: 'Subscription', getUserUpdates: { __typename?: 'User', id: string, username: string, name: string, first: string, last: string, email?: string | null, phone?: string | null, venmo?: string | null, isBeeping: boolean, isEmailVerified: boolean, isStudent: boolean, groupRate: number, singlesRate: number, photo?: string | null, capacity: number, cashapp?: string | null } };
 
 
 export const UpdateBeeperQueueDocument = gql`
@@ -2461,7 +2459,6 @@ export const GetBeepersDocument = gql`
     name
     first
     isStudent
-    isPremium
     singlesRate
     groupRate
     capacity
@@ -2653,7 +2650,6 @@ export const UserDataDocument = gql`
     isBeeping
     isEmailVerified
     isStudent
-    isPremium
     groupRate
     singlesRate
     photo
@@ -2703,7 +2699,6 @@ export const UserUpdatesDocument = gql`
     isBeeping
     isEmailVerified
     isStudent
-    isPremium
     groupRate
     singlesRate
     photo

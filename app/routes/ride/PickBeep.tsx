@@ -30,7 +30,6 @@ const GetBeepers = gql`
       name
       first
       isStudent
-      isPremium
       singlesRate
       groupRate
       capacity
@@ -40,6 +39,10 @@ const GetBeepers = gql`
       rating
       venmo
       cashapp
+      payments {
+        id
+        productId
+      }
     }
   }
 `;

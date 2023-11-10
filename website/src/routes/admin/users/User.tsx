@@ -52,7 +52,6 @@ export const GetUser = gql`
       isBeeping
       isStudent
       isEmailVerified
-      isPremium
       role
       venmo
       cashapp

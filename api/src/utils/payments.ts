@@ -20,11 +20,11 @@ export async function paymentHandler(req: Request, res: Response, orm: MikroORM<
   const user = await em.findOneOrFail(User, payload.event.app_user_id);
 
   if (["INITIAL_PURCHASE", "RENEWAL", "NON_RENEWING_PURCHASE"].includes(payload.event.type)) {
-    user.isPremium = true;
+    // user.isPremium = true;
   }
 
   if (payload.event.type === "EXPIRATION") {
-    user.isPremium = false;
+    // user.isPremium = false;
   }
 
   pubSub.publish("User" + user.id, user);

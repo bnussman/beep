@@ -20,7 +20,6 @@ const EditUser = gql`
       isBeeping
       isStudent
       isEmailVerified
-      isPremium
       role
       venmo
       singlesRate

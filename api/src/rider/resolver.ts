@@ -7,6 +7,7 @@ import { Context } from '../utils/context';
 import { Beep, Status } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
+import { Payment } from '../entities/Payments';
 
 @Resolver()
 export class RiderResolver {
@@ -153,20 +154,25 @@ export class RiderResolver {
 
     const connection = ctx.em.getConnection();
 
-    const raw: User[] = await connection.execute(`
-      SELECT u.*,
-        CASE
-          WHEN p.expires >= CURRENT_TIMESTAMP THEN 1
-          ELSE 0
-        END AS is_payment_active
+    const raw: (User & { product_id: string, pid: string })[] = await connection.execute(`
+      SELECT u.*, p.product_id, p.id as pid
       FROM public."user" u
       LEFT JOIN payment p ON u.id = p.user_id
-      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34
-        AND u.is_beeping = true
-      ORDER BY is_payment_active DESC, ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}));
+      WHERE ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND u.is_beeping = true
+      ORDER BY p.product_id DESC, ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}));
     `);
 
-    return raw.map(user => ctx.em.map(User, user));
+    console.log(raw)
+
+    const users = raw.map((user) => {
+      const u = ctx.em.map(User, user);
+      if (user.pid) {
+        u.payments.set([ctx.em.map(Payment, { id: user.pid, product_id: user.product_id })]);
+      }
+      return u;
+    })
+
+    return users;
   }
 
   @Query(() => Beep, { nullable: true })
