@@ -1,17 +1,19 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { Image, CheckIcon, Spacer, Spinner, Stack, Text, FlatList } from "native-base";
-import type { PurchasesPackage } from "react-native-purchases";
+import { Image, CheckIcon, Spacer, Spinner, Stack, Text, FlatList, useColorMode, Button, Heading } from "native-base";
+import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
 import PremiumImage from '../assets/premium.png';
 import { Card } from '../components/Card';
 import { Logger } from '../utils/Logger';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { CheckUserSubscriptionsMutation, TopOfQueueStatusQuery } from '../generated/graphql';
+import { CheckUserSubscriptionsMutation, PaymentsQueryQuery } from '../generated/graphql';
 import { Countdown } from '../components/CountDown';
+import { RefreshControl } from 'react-native';
+import { useUser } from '../utils/useUser';
 
 interface Props {
-  item: PurchasesPackage;
+  item: PurchasesOffering;
 }
 
 const CheckVerificationStatus = gql`
@@ -23,28 +25,49 @@ const CheckVerificationStatus = gql`
   }
 `;
 
-const TopOfQueueStatus = gql`
-  query TopOfQueueStatus  {
-    getTopOfQueueStatus {
-      id
-      expires
+const PaymentsQuery = gql`
+  query PaymentsQuery($id: String) {
+    getPayments(id: $id) {
+      items {
+        id
+        productId
+        expires
+      }
     }
   }
 `;
 
-function Package({ item }: Props) {
+function Offering({ item }: Props) {
+  const packages = item.availablePackages;
+
+
+  return (
+    <Card m={2} pb={0}>
+      <Heading fontSize="xl" letterSpacing="sm" fontWeight="extrabold">
+        {item.identifier}
+      </Heading>
+      <Text>Promotes you to the top of the beeper list so you get more riders joining your queue.</Text>
+      <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" />
+      <Stack space={2} mt={4} mb={4}>
+        {packages.map((p) => <Package p={p} />)}
+      </Stack>
+    </Card>
+  );
+};
+
+function Package({ p }: { p: PurchasesPackage }) {
   const [isPurchasing, setIsPurchasing] = useState(false);
-
   const [checkVerificationStatus] = useMutation<CheckUserSubscriptionsMutation>(CheckVerificationStatus);
-  const { data: status, refetch } = useQuery<TopOfQueueStatusQuery>(TopOfQueueStatus);
+  const { user } = useUser();
 
-  const expires = status?.getTopOfQueueStatus?.expires;
-  const countdown = expires ? <Countdown date={new Date(expires)} /> : null;
+  const { data, refetch } = useQuery<PaymentsQueryQuery>(PaymentsQuery, { variables: { id: user?.id ?? "" } });
 
-  const hasActiveSub = expires ? new Date(expires) >= new Date() : false;
+  const payment = data?.getPayments.items.find(sub => sub.productId === p.product.identifier);
+
+  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires)} /> : null;
 
   const onBuy = async (item: PurchasesPackage) => {
-    if (hasActiveSub) {
+    if (Boolean(payment)) {
       return alert("You are already promoted on the beeper list.");
     }
 
@@ -66,34 +89,26 @@ function Package({ item }: Props) {
   };
 
   return (
-    <Card m={2} pb={0} pressable onPress={() => onBuy(item)}>
-      <Stack direction="row" alignItems="center" mb={2} space={2}>
-        <Stack space={1} flexShrink={1}>
-          <Text fontSize="xl" letterSpacing="sm" fontWeight="extrabold">
-            {item.product.title}
-          </Text>
-          {/* <Text>{item.product.description}</Text> */}
-          <Text>Promotes you to the top of the beeper list so you get more riders joining your queue.</Text>
-          <Text italic>{item.product.priceString}</Text>
-          <Text>{countdown}</Text>
-        </Stack>
+    <Card p={3}>
+      <Stack direction="row" alignItems="center" space={2}>
+        <Heading fontSize="lg">{p.identifier}</Heading>
+        <Text>{countdown}</Text>
         <Spacer />
-        {hasActiveSub && <CheckIcon size="6" color="emerald.500" />}
-        {isPurchasing && <Spinner />}
+        {Boolean(payment) && <CheckIcon size="6" color="emerald.500" />}
+        <Button isLoading={isPurchasing} onPress={() => onBuy(p)}>{p.product.priceString}</Button>
       </Stack>
-      <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" />
     </Card>
   );
-};
+}
 
 function usePackages() {
-  const [packages, setPackages] = useState<PurchasesPackage[]>();
+  const [offerings, setOfferings] = useState<PurchasesOffering[]>();
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
 
-  const isRefreshing = Boolean(packages) && isLoading;
+  const isRefreshing = Boolean(offerings) && isLoading;
 
-  const getPackages = async () => {
+  const getOfferings = async () => {
     if (!isLoading) {
       setIsLoading(true);
     }
@@ -101,7 +116,8 @@ function usePackages() {
       const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
       const offerings = await Purchases.getOfferings();
       if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
-        setPackages(offerings.current.availablePackages);
+        const topOfBeeperListPackages: PurchasesOffering[] = Object.values(offerings.all);
+        setOfferings(topOfBeeperListPackages);
       }
     } catch (e) {
       Logger.error(e);
@@ -112,16 +128,18 @@ function usePackages() {
   };
 
   useEffect(() => {
-    getPackages();
+    getOfferings();
   }, []);
 
-  return { packages, error, isLoading, refetch: getPackages, isRefreshing };
+  return { offerings, error, isLoading, refetch: getOfferings, isRefreshing };
 }
 
 export function Premium() {
-  const { packages, error, isLoading, refetch, isRefreshing } = usePackages();
+  const { offerings, error, isLoading, refetch, isRefreshing } = usePackages();
 
-  if (isLoading && !packages) {
+  const { colorMode } = useColorMode();
+
+  if (isLoading && !offerings) {
     return (
       <Container center>
         <Spinner size="lg" />
@@ -140,11 +158,18 @@ export function Premium() {
   return (
     <Container center>
       <FlatList
-        data={packages}
+        data={offerings}
         w="100%"
-        renderItem={({ item }) => <Package item={item} />}
+        renderItem={({ item }) => <Offering item={item} />}
         onRefresh={refetch}
         refreshing={isRefreshing}
+        refreshControl={
+          <RefreshControl
+            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+            refreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        }
       />
     </Container>
   );

@@ -395,7 +395,6 @@ export type Query = {
   getReport: Report;
   getReports: ReportsResponse;
   getRiderStatus?: Maybe<Beep>;
-  getTopOfQueueStatus?: Maybe<Payment>;
   getUser: User;
   getUsers: UsersResponse;
   getUsersPerDomain: Array<UsersPerDomain>;
@@ -473,6 +472,7 @@ export type QueryGetLocationSuggestionsArgs = {
 
 
 export type QueryGetPaymentsArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   query?: InputMaybe<Scalars['String']['input']>;
   show?: InputMaybe<Scalars['Int']['input']>;
@@ -770,10 +770,12 @@ export type CheckUserSubscriptionsMutationVariables = Exact<{ [key: string]: nev
 
 export type CheckUserSubscriptionsMutation = { __typename?: 'Mutation', checkUserSubscriptions?: { __typename?: 'Payment', id: string, expires: any } | null };
 
-export type TopOfQueueStatusQueryVariables = Exact<{ [key: string]: never; }>;
+export type PaymentsQueryQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 
-export type TopOfQueueStatusQuery = { __typename?: 'Query', getTopOfQueueStatus?: { __typename?: 'Payment', id: string, expires: any } | null };
+export type PaymentsQueryQuery = { __typename?: 'Query', getPayments: { __typename?: 'PaymentResponse', items: Array<{ __typename?: 'Payment', id: string, productId: string, expires: any }> } };
 
 export type GetRatingsQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
@@ -1324,41 +1326,45 @@ export function useCheckUserSubscriptionsMutation(baseOptions?: ApolloReactHooks
 export type CheckUserSubscriptionsMutationHookResult = ReturnType<typeof useCheckUserSubscriptionsMutation>;
 export type CheckUserSubscriptionsMutationResult = ApolloReactCommon.MutationResult<CheckUserSubscriptionsMutation>;
 export type CheckUserSubscriptionsMutationOptions = ApolloReactCommon.BaseMutationOptions<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>;
-export const TopOfQueueStatusDocument = gql`
-    query TopOfQueueStatus {
-  getTopOfQueueStatus {
-    id
-    expires
+export const PaymentsQueryDocument = gql`
+    query PaymentsQuery($id: String) {
+  getPayments(id: $id) {
+    items {
+      id
+      productId
+      expires
+    }
   }
 }
     `;
 
 /**
- * __useTopOfQueueStatusQuery__
+ * __usePaymentsQueryQuery__
  *
- * To run a query within a React component, call `useTopOfQueueStatusQuery` and pass it any options that fit your needs.
- * When your component renders, `useTopOfQueueStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `usePaymentsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePaymentsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useTopOfQueueStatusQuery({
+ * const { data, loading, error } = usePaymentsQueryQuery({
  *   variables: {
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useTopOfQueueStatusQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>) {
+export function usePaymentsQueryQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PaymentsQueryQuery, PaymentsQueryQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>(TopOfQueueStatusDocument, options);
+        return ApolloReactHooks.useQuery<PaymentsQueryQuery, PaymentsQueryQueryVariables>(PaymentsQueryDocument, options);
       }
-export function useTopOfQueueStatusLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>) {
+export function usePaymentsQueryLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PaymentsQueryQuery, PaymentsQueryQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>(TopOfQueueStatusDocument, options);
+          return ApolloReactHooks.useLazyQuery<PaymentsQueryQuery, PaymentsQueryQueryVariables>(PaymentsQueryDocument, options);
         }
-export type TopOfQueueStatusQueryHookResult = ReturnType<typeof useTopOfQueueStatusQuery>;
-export type TopOfQueueStatusLazyQueryHookResult = ReturnType<typeof useTopOfQueueStatusLazyQuery>;
-export type TopOfQueueStatusQueryResult = ApolloReactCommon.QueryResult<TopOfQueueStatusQuery, TopOfQueueStatusQueryVariables>;
+export type PaymentsQueryQueryHookResult = ReturnType<typeof usePaymentsQueryQuery>;
+export type PaymentsQueryLazyQueryHookResult = ReturnType<typeof usePaymentsQueryLazyQuery>;
+export type PaymentsQueryQueryResult = ApolloReactCommon.QueryResult<PaymentsQueryQuery, PaymentsQueryQueryVariables>;
 export const GetRatingsDocument = gql`
     query GetRatings($id: String, $offset: Int, $show: Int) {
   getRatings(id: $id, offset: $offset, show: $show) {

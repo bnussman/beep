@@ -394,7 +394,6 @@ export type Query = {
   getReport: Report;
   getReports: ReportsResponse;
   getRiderStatus?: Maybe<Beep>;
-  getTopOfQueueStatus?: Maybe<Payment>;
   getUser: User;
   getUsers: UsersResponse;
   getUsersPerDomain: Array<UsersPerDomain>;
@@ -472,6 +471,7 @@ export type QueryGetLocationSuggestionsArgs = {
 
 
 export type QueryGetPaymentsArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   query?: InputMaybe<Scalars['String']['input']>;
   show?: InputMaybe<Scalars['Int']['input']>;

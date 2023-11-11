@@ -1,4 +1,4 @@
-import { Entity, Enum, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, Enum, Filter, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 
@@ -9,6 +9,14 @@ export enum Store {
 
 @ObjectType()
 @Entity()
+@Filter({
+  name: 'in',
+  cond: (args) => ({ user: args.id })
+})
+@Filter({
+  name: 'active',
+  cond: () => ({ expires: { '$gte': new Date() } })
+})
 export class Payment {
   constructor(values: Payment) {
     if (values) {
