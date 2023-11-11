@@ -76,7 +76,7 @@ export function PickBeepScreen() {
 
 
   const renderItem = ({ item, index }: { item: Unpacked<GetBeepersQuery["getBeepersNew"]>; index: number; }) => {
-    const isPremium = item.payments?.some(p => p.productId === "top_of_beeper_list_1_hour") ?? false;
+    const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
 
     return (
       <Box
