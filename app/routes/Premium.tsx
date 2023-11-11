@@ -40,15 +40,14 @@ const PaymentsQuery = gql`
 function Offering({ item }: Props) {
   const packages = item.availablePackages;
 
-
   return (
-    <Card m={2} pb={0}>
-      <Heading fontSize="xl" letterSpacing="sm" fontWeight="extrabold">
-        {item.identifier}
-      </Heading>
-      <Text>Promotes you to the top of the beeper list so you get more riders joining your queue.</Text>
-      <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" />
-      <Stack space={2} mt={4} mb={4}>
+    <Card m={2}>
+      <Stack space={2}>
+        <Heading fontSize="xl" letterSpacing="sm" fontWeight="extrabold">
+          {item.identifier}
+        </Heading>
+        <Text>Promotes you to the top of the beeper list so you get more riders joining your queue.</Text>
+        <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" mb={1} />
         {packages.map((p) => <Package p={p} />)}
       </Stack>
     </Card>
@@ -89,7 +88,7 @@ function Package({ p }: { p: PurchasesPackage }) {
   };
 
   return (
-    <Card p={3}>
+    <Card p={3} py={2}>
       <Stack direction="row" alignItems="center" space={2}>
         <Heading fontSize="lg">{p.identifier}</Heading>
         <Text>{countdown}</Text>
