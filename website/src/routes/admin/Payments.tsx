@@ -19,6 +19,9 @@ const PaymentsGQL = gql`
         id
         created
         expires
+        price
+        store
+        productId
         user {
           id
           photo
@@ -67,6 +70,9 @@ export function Payments() {
           <Thead>
             <Tr>
               <Th>User</Th>
+              <Th>Product</Th>
+              <Th>Price</Th>
+              <Th>Store</Th>
               <Th>Created</Th>
               <Th>Expires</Th>
             </Tr>
@@ -75,6 +81,9 @@ export function Payments() {
             {payments?.map((payment) => (
               <Tr key={payment.id}>
                 <TdUser user={payment.user} />
+                <Td>{payment.productId}</Td>
+                <Td>${payment.price}</Td>
+                <Td>{payment.store}</Td>
                 <Td>{new Date(payment.created).toLocaleString()}</Td>
                 <Td>{new Date(payment.expires).toLocaleString()}</Td>
               </Tr>

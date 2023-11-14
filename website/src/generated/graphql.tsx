@@ -146,7 +146,7 @@ export type Mutation = {
   addProfilePicture: User;
   cancelBeep: Scalars['Boolean']['output'];
   changePassword: Scalars['Boolean']['output'];
-  checkUserSubscriptions?: Maybe<Payment>;
+  checkUserSubscriptions?: Maybe<Array<Payment>>;
   chooseBeep: Beep;
   cleanObjectStorageBucket: Scalars['Float']['output'];
   clearQueue: Scalars['Boolean']['output'];
@@ -355,6 +355,7 @@ export type Payment = {
   created: Scalars['DateTimeISO']['output'];
   expires: Scalars['DateTimeISO']['output'];
   id: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
   productId: Scalars['String']['output'];
   store: Scalars['String']['output'];
   storeId: Scalars['String']['output'];
@@ -877,7 +878,7 @@ export type PaymentsQueryVariables = Exact<{
 }>;
 
 
-export type PaymentsQuery = { __typename?: 'Query', getPayments: { __typename?: 'PaymentResponse', count: number, items: Array<{ __typename?: 'Payment', id: string, created: any, expires: any, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
+export type PaymentsQuery = { __typename?: 'Query', getPayments: { __typename?: 'PaymentResponse', count: number, items: Array<{ __typename?: 'Payment', id: string, created: any, expires: any, price: number, store: string, productId: string, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
 
 export type GetUsersPerDomainQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1981,6 +1982,9 @@ export const PaymentsDocument = gql`
       id
       created
       expires
+      price
+      store
+      productId
       user {
         id
         photo

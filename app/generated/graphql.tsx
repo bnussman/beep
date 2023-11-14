@@ -147,7 +147,7 @@ export type Mutation = {
   addProfilePicture: User;
   cancelBeep: Scalars['Boolean']['output'];
   changePassword: Scalars['Boolean']['output'];
-  checkUserSubscriptions?: Maybe<Payment>;
+  checkUserSubscriptions?: Maybe<Array<Payment>>;
   chooseBeep: Beep;
   cleanObjectStorageBucket: Scalars['Float']['output'];
   clearQueue: Scalars['Boolean']['output'];
@@ -356,6 +356,7 @@ export type Payment = {
   created: Scalars['DateTimeISO']['output'];
   expires: Scalars['DateTimeISO']['output'];
   id: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
   productId: Scalars['String']['output'];
   store: Scalars['String']['output'];
   storeId: Scalars['String']['output'];
@@ -768,7 +769,7 @@ export type GetBeepHistoryQuery = { __typename?: 'Query', getBeeps: { __typename
 export type CheckUserSubscriptionsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CheckUserSubscriptionsMutation = { __typename?: 'Mutation', checkUserSubscriptions?: { __typename?: 'Payment', id: string, expires: any } | null };
+export type CheckUserSubscriptionsMutation = { __typename?: 'Mutation', checkUserSubscriptions?: Array<{ __typename?: 'Payment', id: string, expires: any }> | null };
 
 export type PaymentsQueryQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
