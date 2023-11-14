@@ -7,6 +7,24 @@ export enum Store {
   APP_STORE = 'app_store'
 }
 
+export enum Product {
+  TOP_OF_BEEPER_LIST_1_HOUR = 'top_of_beeper_list_1_hour',
+  TOP_OF_BEEPER_LIST_2_HOURS = 'top_of_beeper_list_2_hours',
+  TOP_OF_BEEPER_LIST_3_HOURS = 'top_of_beeper_list_3_hours',
+}
+
+export const productExpireTimes: Record<Product, number> = {
+  [Product.TOP_OF_BEEPER_LIST_1_HOUR]: (1 * 60 * 60 * 1000),
+  [Product.TOP_OF_BEEPER_LIST_2_HOURS]: (2 * 60 * 60 * 1000),
+  [Product.TOP_OF_BEEPER_LIST_3_HOURS]: (3 * 60 * 60 * 1000),
+}
+
+export const productPrice: Record<Product, number> = {
+  [Product.TOP_OF_BEEPER_LIST_1_HOUR]: 0.99,
+  [Product.TOP_OF_BEEPER_LIST_2_HOURS]: 1.99,
+  [Product.TOP_OF_BEEPER_LIST_3_HOURS]: 2.99,
+}
+
 @ObjectType()
 @Entity()
 @Filter({
@@ -37,8 +55,12 @@ export class Payment {
   storeId!: string;
 
   @Field()
-  @Property()
-  productId!: string;
+  @Enum(() => Product)
+  productId!: Product;
+
+  @Field()
+  @Property({ columnType: "numeric" })
+  price!: number;
 
   @Field()
   @Enum(() => Store)

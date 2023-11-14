@@ -36,7 +36,6 @@ import { CarResolver } from "./cars/resolver";
 import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
-import { paymentHandler } from "./utils/payments";
 import { PaymentsResolver } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql'; // or any other driver package
 
@@ -117,13 +116,6 @@ async function start() {
     expressMiddleware(server, {
       context: (ctx) => getContext(ctx, orm),
     }),
-  );
-
-  app.post(
-    '/payment',
-    cors<cors.CorsRequest>(),
-    json(),
-    (req, res) => paymentHandler(req, res, orm),
   );
 
   app.use(RealSentry.Handlers.errorHandler());

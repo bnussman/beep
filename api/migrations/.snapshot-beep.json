@@ -356,12 +356,26 @@
         },
         "product_id": {
           "name": "product_id",
-          "type": "varchar(255)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "string"
+          "enumItems": [
+            "top_of_beeper_list_1_hour",
+            "top_of_beeper_list_2_hours",
+            "top_of_beeper_list_3_hours"
+          ],
+          "mappedType": "enum"
+        },
+        "price": {
+          "name": "price",
+          "type": "numeric",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "decimal"
         },
         "store": {
           "name": "store",

@@ -2,7 +2,7 @@ import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } fro
 import { Context } from "../utils/context";
 import { Paginated, PaginationArgs } from "../utils/pagination";
 import { QueryOrder } from "@mikro-orm/core";
-import { Payment, Store } from '../entities/Payments';
+import { Payment, Product, Store, productExpireTimes, productPrice } from '../entities/Payments';
 import { User } from "../entities/User";
 import { REVENUE_CAT_SECRET } from "../utils/constants";
 import { SubscriberResponse } from "../users/types";
@@ -30,51 +30,44 @@ export class PaymentsResolver {
     return { items, count };
   }
 
-  @Mutation(() => Payment, { nullable: true })
+  @Mutation(() => [Payment], { nullable: true })
   @Authorized('No Verification Self')
-  public async checkUserSubscriptions(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Payment | null> {
+  public async checkUserSubscriptions(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Payment[]> {
     const options = { method: 'GET', headers: { accept: 'application/json', Authorization: `Bearer ${REVENUE_CAT_SECRET}` } };
 
     const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${id ?? ctx.user.id}`, options);
     const response: SubscriberResponse = await request.json();
 
     const user = await ctx.em.findOneOrFail(User, id ?? ctx.user.id);
+    const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
 
-    const purchases = response.subscriber.non_subscriptions['top_of_beeper_list_1_hour'].reverse();
+    for (const product of products) {
+      for (const payment of response.subscriber.non_subscriptions[product].reverse()) {
+        const created = new Date(payment.purchase_date);
 
-    for (const p of purchases) {
-      const created = new Date(p.purchase_date);
-
-      try {
-        await ctx.em.insert(new Payment({
-          id: p.id,
-          store: p.store as Store,
+        const p = new Payment({
+          id: payment.id,
+          store: payment.store as Store,
           user,
-          storeId: p.store_transaction_id,
-          productId: "top_of_beeper_list_1_hour",
+          storeId: payment.store_transaction_id,
+          price: productPrice[product],
+          productId: product,
           created,
-          expires: new Date(created.getTime() + (1 * 60 * 60 * 1000))
-        }));
-      } catch (e) {
-        const payment = ctx.em.findOne(
-          Payment,
-          { user: id ?? ctx.user.id, expires: { '$lte': new Date() } },
-          {
-            orderBy: { created: QueryOrder.DESC }
-          }
-        );
+          expires: new Date(created.getTime() + productExpireTimes[product])
+        })
 
-        return payment;
+        try {
+          await ctx.em.insert(p);
+        } catch (e) {
+          await user.payments.init({ where: { expires: { '$gte': new Date() }}});
+
+          return user.payments.getItems();
+        }
       }
     }
 
-    const payment = ctx.em.findOne(
-      Payment,
-      { user: id ?? ctx.user.id, expires: { '$lte': new Date() } },
-      { orderBy: { created: QueryOrder.DESC }
-    });
+    await user.payments.init({ where: { expires: { '$gte': new Date() }}});
 
-    return payment;
+    return user.payments.getItems();
   }
-
 }
