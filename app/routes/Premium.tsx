@@ -46,9 +46,10 @@ function Offering({ item }: Props) {
         <Heading fontSize="xl" letterSpacing="sm" fontWeight="extrabold">
           {item.identifier}
         </Heading>
-        <Text>Promotes you to the top of the beeper list so you get more riders joining your queue.</Text>
+        <Text>Promotes you to the top of the beeper list so you get more riders joining your queue</Text>
+        <Text fontSize="xs">Goes into effect immediately upon purchase</Text>
         <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" mb={1} />
-        {packages.map((p) => <Package p={p} />)}
+        {packages.map((p) => <Package key={p.identifier} p={p} />)}
       </Stack>
     </Card>
   );
@@ -94,7 +95,7 @@ function Package({ p }: { p: PurchasesPackage }) {
         <Text>{countdown}</Text>
         <Spacer />
         {Boolean(payment) && <CheckIcon size="6" color="emerald.500" />}
-        <Button isLoading={isPurchasing} onPress={() => onBuy(p)}>{p.product.priceString}</Button>
+        <Button isLoading={isPurchasing} onPress={() => onBuy(p)} isDisabled={Boolean(payment)}>{p.product.priceString}</Button>
       </Stack>
     </Card>
   );

@@ -46,6 +46,7 @@ import {
   Button,
 } from "native-base";
 import { Status } from "../../utils/types";
+import { Card } from "../../components/Card";
 
 let unsubscribe: any = null;
 
@@ -383,13 +384,15 @@ export function StartBeepingScreen() {
             is closed, you will recieve a push notification.
           </Text>
         </Stack>
-        <Stack alignItems="center" space={2}>
-          <Heading fontWeight="extrabold" fontSize="md">Want more riders?</Heading>
-          <Text textAlign="center">
-            Jump to the top of the beeper list for just $1.99
-          </Text>
-          <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
-        </Stack>
+        <Card>
+          <Stack alignItems="center" space={2}>
+            <Heading fontWeight="extrabold" fontSize="md">Want more riders?</Heading>
+            <Text textAlign="center">
+              Jump to the top of the beeper list
+            </Text>
+            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
+          </Stack>
+        </Card>
       </Container>
     );
   }
