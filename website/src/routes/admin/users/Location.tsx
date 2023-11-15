@@ -62,24 +62,22 @@ export function LocationView(props: Props) {
   }
 
   return (
-    <Box>
-      <div style={{ height: 550, width: '100%' }}>
-        <Map
-          initialRegion={{
-            centerLatitude: user.location.latitude,
-            centerLongitude: user.location.longitude,
-            latitudeDelta: 1,
-            longitudeDelta: 1,
-          }}
-        >
-          <Marker
-            latitude={user.location.latitude}
-            longitude={user.location.longitude}
-            username={user.username}
-            name={user.name}
-          />
-        </Map>
-      </div>
+    <Box height="550px" borderRadius="20px" overflow="hidden">
+      <Map
+        initialRegion={{
+          centerLatitude: user.location.latitude,
+          centerLongitude: user.location.longitude,
+          latitudeDelta: 1,
+          longitudeDelta: 1,
+        }}
+      >
+        <Marker
+          latitude={user.location.latitude}
+          longitude={user.location.longitude}
+          username={user.username}
+          name={user.name}
+        />
+      </Map>
     </Box>
   );
 }

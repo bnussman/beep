@@ -10,12 +10,12 @@ export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' |
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string | number; output: string; }
+  ID: { input: string; output: string; }
   String: { input: string; output: string; }
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  DateTime: { input: any; output: any; }
+  DateTimeISO: { input: any; output: any; }
   Upload: { input: any; output: any; }
 };
 
@@ -36,13 +36,13 @@ export type Beep = {
   __typename?: 'Beep';
   beeper: User;
   destination: Scalars['String']['output'];
-  end?: Maybe<Scalars['DateTime']['output']>;
+  end?: Maybe<Scalars['DateTimeISO']['output']>;
   groupSize: Scalars['Float']['output'];
   id: Scalars['String']['output'];
   origin: Scalars['String']['output'];
   position: Scalars['Float']['output'];
   rider: User;
-  start: Scalars['DateTime']['output'];
+  start: Scalars['DateTimeISO']['output'];
   status: Scalars['String']['output'];
 };
 
@@ -64,13 +64,13 @@ export type BeepsResponse = {
 export type Car = {
   __typename?: 'Car';
   color: Scalars['String']['output'];
-  created: Scalars['DateTime']['output'];
+  created: Scalars['DateTimeISO']['output'];
   default: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   make: Scalars['String']['output'];
   model: Scalars['String']['output'];
   photo: Scalars['String']['output'];
-  updated: Scalars['DateTime']['output'];
+  updated: Scalars['DateTimeISO']['output'];
   user: User;
   year: Scalars['Float']['output'];
 };
@@ -107,7 +107,7 @@ export type EditUserInput = {
 
 export type Feedback = {
   __typename?: 'Feedback';
-  created: Scalars['DateTime']['output'];
+  created: Scalars['DateTimeISO']['output'];
   id: Scalars['String']['output'];
   message: Scalars['String']['output'];
   user: User;
@@ -146,6 +146,7 @@ export type Mutation = {
   addProfilePicture: User;
   cancelBeep: Scalars['Boolean']['output'];
   changePassword: Scalars['Boolean']['output'];
+  checkUserSubscriptions?: Maybe<Array<Payment>>;
   chooseBeep: Beep;
   cleanObjectStorageBucket: Scalars['Float']['output'];
   clearQueue: Scalars['Boolean']['output'];
@@ -191,6 +192,11 @@ export type MutationCancelBeepArgs = {
 
 export type MutationChangePasswordArgs = {
   input: ChangePasswordInput;
+};
+
+
+export type MutationCheckUserSubscriptionsArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -344,6 +350,24 @@ export type MutationVerifyAccountArgs = {
   id: Scalars['String']['input'];
 };
 
+export type Payment = {
+  __typename?: 'Payment';
+  created: Scalars['DateTimeISO']['output'];
+  expires: Scalars['DateTimeISO']['output'];
+  id: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  productId: Scalars['String']['output'];
+  store: Scalars['String']['output'];
+  storeId: Scalars['String']['output'];
+  user: User;
+};
+
+export type PaymentResponse = {
+  __typename?: 'PaymentResponse';
+  count: Scalars['Int']['output'];
+  items: Array<Payment>;
+};
+
 export type Point = {
   __typename?: 'Point';
   latitude: Scalars['Float']['output'];
@@ -355,6 +379,7 @@ export type Query = {
   getAllBeepersLocation: Array<AnonymousBeeper>;
   getBeep: Beep;
   getBeepers: Array<User>;
+  getBeepersNew: Array<User>;
   getBeeps: BeepsResponse;
   getCars: CarsResponse;
   getETA: Scalars['String']['output'];
@@ -362,6 +387,7 @@ export type Query = {
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
+  getPayments: PaymentResponse;
   getQueue: Array<Beep>;
   getRating: Rating;
   getRatings: RatingsResponse;
@@ -390,6 +416,13 @@ export type QueryGetBeepArgs = {
 
 
 export type QueryGetBeepersArgs = {
+  latitude: Scalars['Float']['input'];
+  longitude: Scalars['Float']['input'];
+  radius?: InputMaybe<Scalars['Float']['input']>;
+};
+
+
+export type QueryGetBeepersNewArgs = {
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
   radius?: InputMaybe<Scalars['Float']['input']>;
@@ -435,6 +468,14 @@ export type QueryGetInProgressBeepsArgs = {
 export type QueryGetLocationSuggestionsArgs = {
   location: Scalars['String']['input'];
   sessiontoken: Scalars['String']['input'];
+};
+
+
+export type QueryGetPaymentsArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -503,7 +544,7 @@ export type Rating = {
   rated: User;
   rater: User;
   stars: Scalars['Float']['output'];
-  timestamp: Scalars['DateTime']['output'];
+  timestamp: Scalars['DateTimeISO']['output'];
 };
 
 export type RatingInput = {
@@ -529,7 +570,7 @@ export type Report = {
   reason: Scalars['String']['output'];
   reported: User;
   reporter: User;
-  timestamp: Scalars['DateTime']['output'];
+  timestamp: Scalars['DateTimeISO']['output'];
 };
 
 export type ReportInput = {
@@ -615,7 +656,7 @@ export type User = {
   capacity: Scalars['Float']['output'];
   cars?: Maybe<Array<Car>>;
   cashapp?: Maybe<Scalars['String']['output']>;
-  created?: Maybe<Scalars['DateTime']['output']>;
+  created?: Maybe<Scalars['DateTimeISO']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   first: Scalars['String']['output'];
   groupRate: Scalars['Float']['output'];
@@ -628,6 +669,7 @@ export type User = {
   name: Scalars['String']['output'];
   password: Scalars['String']['output'];
   passwordType: Scalars['String']['output'];
+  payments?: Maybe<Array<Payment>>;
   phone?: Maybe<Scalars['String']['output']>;
   photo?: Maybe<Scalars['String']['output']>;
   pushToken?: Maybe<Scalars['String']['output']>;
@@ -822,6 +864,22 @@ export type VerifyAccountMutationVariables = Exact<{
 
 export type VerifyAccountMutation = { __typename?: 'Mutation', verifyAccount: boolean };
 
+export type FeedbackQueryVariables = Exact<{
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type FeedbackQuery = { __typename?: 'Query', getFeedback: { __typename?: 'FeedbackResonse', count: number, items: Array<{ __typename?: 'Feedback', id: string, message: string, created: any, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
+
+export type PaymentsQueryVariables = Exact<{
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type PaymentsQuery = { __typename?: 'Query', getPayments: { __typename?: 'PaymentResponse', count: number, items: Array<{ __typename?: 'Payment', id: string, created: any, expires: any, price: number, store: string, productId: string, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
+
 export type GetUsersPerDomainQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -831,14 +889,6 @@ export type RedisChannelsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type RedisChannelsQueryQuery = { __typename?: 'Query', getRedisChannels: Array<string> };
-
-export type FeedbackQueryVariables = Exact<{
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  show?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type FeedbackQuery = { __typename?: 'Query', getFeedback: { __typename?: 'FeedbackResonse', count: number, items: Array<{ __typename?: 'Feedback', id: string, message: string, created: any, user: { __typename?: 'User', id: string, photo?: string | null, name: string } }> } };
 
 export type GetBeepersQueryVariables = Exact<{
   latitude: Scalars['Float']['input'];
@@ -1879,6 +1929,101 @@ export function useVerifyAccountMutation(baseOptions?: Apollo.MutationHookOption
 export type VerifyAccountMutationHookResult = ReturnType<typeof useVerifyAccountMutation>;
 export type VerifyAccountMutationResult = Apollo.MutationResult<VerifyAccountMutation>;
 export type VerifyAccountMutationOptions = Apollo.BaseMutationOptions<VerifyAccountMutation, VerifyAccountMutationVariables>;
+export const FeedbackDocument = gql`
+    query Feedback($offset: Int, $show: Int) {
+  getFeedback(offset: $offset, show: $show) {
+    items {
+      id
+      message
+      created
+      user {
+        id
+        photo
+        name
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useFeedbackQuery__
+ *
+ * To run a query within a React component, call `useFeedbackQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFeedbackQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFeedbackQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
+ *   },
+ * });
+ */
+export function useFeedbackQuery(baseOptions?: Apollo.QueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
+      }
+export function useFeedbackLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
+        }
+export type FeedbackQueryHookResult = ReturnType<typeof useFeedbackQuery>;
+export type FeedbackLazyQueryHookResult = ReturnType<typeof useFeedbackLazyQuery>;
+export type FeedbackQueryResult = Apollo.QueryResult<FeedbackQuery, FeedbackQueryVariables>;
+export const PaymentsDocument = gql`
+    query Payments($offset: Int, $show: Int) {
+  getPayments(offset: $offset, show: $show) {
+    items {
+      id
+      created
+      expires
+      price
+      store
+      productId
+      user {
+        id
+        photo
+        name
+      }
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __usePaymentsQuery__
+ *
+ * To run a query within a React component, call `usePaymentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePaymentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePaymentsQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
+ *   },
+ * });
+ */
+export function usePaymentsQuery(baseOptions?: Apollo.QueryHookOptions<PaymentsQuery, PaymentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PaymentsQuery, PaymentsQueryVariables>(PaymentsDocument, options);
+      }
+export function usePaymentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PaymentsQuery, PaymentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PaymentsQuery, PaymentsQueryVariables>(PaymentsDocument, options);
+        }
+export type PaymentsQueryHookResult = ReturnType<typeof usePaymentsQuery>;
+export type PaymentsLazyQueryHookResult = ReturnType<typeof usePaymentsLazyQuery>;
+export type PaymentsQueryResult = Apollo.QueryResult<PaymentsQuery, PaymentsQueryVariables>;
 export const GetUsersPerDomainDocument = gql`
     query GetUsersPerDomain {
   getUsersPerDomain {
@@ -1946,52 +2091,6 @@ export function useRedisChannelsQueryLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type RedisChannelsQueryQueryHookResult = ReturnType<typeof useRedisChannelsQueryQuery>;
 export type RedisChannelsQueryLazyQueryHookResult = ReturnType<typeof useRedisChannelsQueryLazyQuery>;
 export type RedisChannelsQueryQueryResult = Apollo.QueryResult<RedisChannelsQueryQuery, RedisChannelsQueryQueryVariables>;
-export const FeedbackDocument = gql`
-    query Feedback($offset: Int, $show: Int) {
-  getFeedback(offset: $offset, show: $show) {
-    items {
-      id
-      message
-      created
-      user {
-        id
-        photo
-        name
-      }
-    }
-    count
-  }
-}
-    `;
-
-/**
- * __useFeedbackQuery__
- *
- * To run a query within a React component, call `useFeedbackQuery` and pass it any options that fit your needs.
- * When your component renders, `useFeedbackQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFeedbackQuery({
- *   variables: {
- *      offset: // value for 'offset'
- *      show: // value for 'show'
- *   },
- * });
- */
-export function useFeedbackQuery(baseOptions?: Apollo.QueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
-      }
-export function useFeedbackLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FeedbackQuery, FeedbackQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FeedbackQuery, FeedbackQueryVariables>(FeedbackDocument, options);
-        }
-export type FeedbackQueryHookResult = ReturnType<typeof useFeedbackQuery>;
-export type FeedbackLazyQueryHookResult = ReturnType<typeof useFeedbackLazyQuery>;
-export type FeedbackQueryResult = Apollo.QueryResult<FeedbackQuery, FeedbackQueryVariables>;
 export const GetBeepersDocument = gql`
     query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
   getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {

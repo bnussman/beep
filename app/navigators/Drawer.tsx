@@ -35,7 +35,11 @@ import {
   Spinner,
   Button,
   Stack,
+  Spacer,
+  Badge,
 } from "native-base";
+import { useAutoUpdate } from "../utils/updates";
+import { Premium } from "../routes/Premium";
 
 const Logout = gql`
   mutation Logout {
@@ -59,7 +63,8 @@ export const Drawer = createDrawerNavigator({
     },
     Beep: StartBeepingScreen,
     Cars: Cars,
-    'Edit Profile': EditProfileScreen,
+    Premium: Premium,
+    Profile: EditProfileScreen,
     Beeps: BeepsScreen,
     Ratings: RatingsScreen,
     Feedback: Feedback,
@@ -72,7 +77,7 @@ const getIcon = (screenName: string) => {
       return "car";
     case "Beep":
       return "steering";
-    case "Edit Profile":
+    case "Profile":
       return "account-edit";
     case "Change Password":
       return "form-textbox-password";
@@ -86,6 +91,8 @@ const getIcon = (screenName: string) => {
       return "playlist-plus";
     case "Feedback":
       return "help-circle-outline";
+    case "Premium":
+      return "shield-star-outline";
     default:
       return "car";
   }
@@ -104,6 +111,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
     useMutation<ResendMutation>(Resend);
+
+  useAutoUpdate();
 
   const handleLogout = async () => {
     await logout({
@@ -151,14 +160,16 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               url={user?.photo}
               online={user?.isBeeping}
             />
-            <Stack>
-              <Text fontWeight="extrabold" letterSpacing="sm" fontSize="md">
+            <Stack flexShrink={1}>
+              <Text fontWeight="extrabold" letterSpacing="xs" fontSize="lg">
                 {user?.name}
               </Text>
-              <Text color="gray.500" _dark={{ color: "gray.300" }}>
+              <Text color="gray.500" lineHeight="xs" _dark={{ color: "gray.300" }}>
                 @{user?.username}
               </Text>
             </Stack>
+            <Spacer />
+            <Text fontSize="3xl" px={2}>🦃</Text>
           </HStack>
         </Pressable>
         <VStack divider={<Divider />} space={4}>
@@ -204,6 +215,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                     name={getIcon(name)}
                   />
                   <Text fontWeight={500}>{name}</Text>
+                  {name === "Premium" && <Badge borderRadius="xl" colorScheme="yellow">New</Badge>}
                 </HStack>
               </Pressable>
             ))}

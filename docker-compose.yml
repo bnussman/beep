@@ -15,6 +15,27 @@ services:
       POSTGRES_USER: beep
       POSTGRES_PASSWORD: beep
       TZ: America/New_York
+  s3:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: beep
+      MINIO_SECRET_KEY: beepbeepbeep
+      MINIO_ROOT_USER: beep
+      MINIO_ROOT_PASSWORD: beepbeepbeep
+    command: server ./data
+  bucket:
+    image: minio/mc
+    depends_on:
+      - s3
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set beep http://s3:9000 beep beepbeepbeep;
+      /usr/bin/mc mb beep/beep;
+      /usr/bin/mc anonymous set public beep/beep;
+      exit 0;
+      "
 
 volumes:
   data:

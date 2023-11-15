@@ -1,4 +1,4 @@
-import { Entity, Enum, Filter, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, Enum, Filter, Index, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { v4 } from 'uuid';
@@ -26,10 +26,11 @@ export enum Status {
     $and: [
       { status: { $ne: Status.DENIED } },
       { status: { $ne: Status.COMPLETE } },
-      { status: { $ne: Status.CANCELED } }, 
+      { status: { $ne: Status.CANCELED } },
     ]
   }
 })
+@Index({ properties: ["beeper", "rider"] })
 export class Beep {
   constructor(values?: Partial<Beep>) {
     if (values) {
@@ -43,10 +44,12 @@ export class Beep {
 
   @Field(() => User)
   @ManyToOne(() => User)
+  @Index()
   beeper!: User;
 
   @Field(() => User)
   @ManyToOne(() => User)
+  @Index()
   rider!: User;
 
   @Field()
@@ -63,6 +66,7 @@ export class Beep {
 
   @Field()
   @Property()
+  @Index()
   start!: Date;
 
   @Field(() => Date, { nullable: true })
@@ -71,6 +75,7 @@ export class Beep {
 
   @Field()
   @Enum(() => Status)
+  @Index()
   status: Status = Status.COMPLETE;
 
   @Field()

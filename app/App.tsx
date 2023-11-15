@@ -20,6 +20,7 @@ import {
   DarkTheme,
   DefaultTheme,
 } from "@react-navigation/native";
+import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -32,6 +33,8 @@ Sentry.init({
   enableAutoSessionTracking: true,
   enableAutoPerformanceTracing: true,
 });
+
+setupPurchase();
 
 function Beep() {
   const { colorMode } = useColorMode();
@@ -58,7 +61,7 @@ function Beep() {
           },
         });
       }
-
+      setPurchaseUser(user);
       setUserContext(user);
     }
   }, [user]);
@@ -81,24 +84,23 @@ function Beep() {
   );
 }
 
-function App2() {
+function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NativeBaseProvider
         theme={NATIVE_BASE_THEME}
         colorModeManager={colorModeManager}
+        config={{
+          dependencies: {
+            "linear-gradient": require("expo-linear-gradient").LinearGradient,
+          },
+        }}
       >
-        <Beep />
+        <ApolloProvider client={client}>
+          <Beep />
+        </ApolloProvider>
       </NativeBaseProvider>
     </GestureHandlerRootView>
-  );
-}
-
-function App() {
-  return (
-    <ApolloProvider client={client}>
-      <App2 />
-    </ApolloProvider>
   );
 }
 

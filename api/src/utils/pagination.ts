@@ -1,7 +1,7 @@
 import { ClassType, Field, Int, ObjectType, ArgsType } from 'type-graphql';
 import { IsNumber, Max, Min } from 'class-validator';
 
-export function Paginated<T>(TItemClass: ClassType<T>) {
+export function Paginated<T extends object>(TItemClass: ClassType<T>) {
   @ObjectType()
   abstract class PaginatedResponseClass {
     @Field(() => [TItemClass])

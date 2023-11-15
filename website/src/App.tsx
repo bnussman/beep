@@ -1,27 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { GetUserDataQuery } from './generated/graphql';
+import { GetUserDataQuery, UserUpdatesSubscription } from './generated/graphql';
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
 import { client } from './utils/Apollo';
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
-import { Download } from './routes/Download';
-import { Home } from './routes/Home';
-import { Login } from './routes/Login';
-import { SignUp } from './routes/SignUp';
-import { EditProfile } from './routes/EditProfile';
-import { ForgotPassword  } from './routes/ForgotPassword';
-import { ResetPassword  } from './routes/ResetPassword';
-import { ChangePassword } from './routes/ChangePassword';
-import { VerifyAccount } from './routes/VerifyAccount';
-import { Admin } from './routes/admin';
-import { Privacy } from './routes/Privacy';
-import { Terms } from './routes/Terms';
 import { Header } from './components/Header';
 import { Banners } from './components/Banners';
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
-import { NotFound } from './components/NotFound';
+
+const Home = lazy(() => import('./routes/Home').then(module => ({ default: module.Home })))
+const Download = lazy(() => import('./routes/Download').then(module => ({ default: module.Download })))
+const Login = lazy(() => import('./routes/Login').then(module => ({ default: module.Login })))
+const SignUp = lazy(() => import('./routes/SignUp').then(module => ({ default: module.SignUp })))
+const EditProfile = lazy(() => import('./routes/EditProfile').then(module => ({ default: module.EditProfile })))
+const ForgotPassword = lazy(() => import('./routes/ForgotPassword').then(module => ({ default: module.ForgotPassword })))
+const ResetPassword = lazy(() => import('./routes/ResetPassword').then(module => ({ default: module.ResetPassword })))
+const ChangePassword = lazy(() => import('./routes/ChangePassword').then(module => ({ default: module.ChangePassword })))
+const VerifyAccount = lazy(() => import('./routes/VerifyAccount').then(module => ({ default: module.VerifyAccount })))
+const Admin = lazy(() => import('./routes/admin').then(module => ({ default: module.Admin })))
+const Privacy = lazy(() => import('./routes/Privacy').then(module => ({ default: module.Privacy })))
+const Terms = lazy(() => import('./routes/Terms').then(module => ({ default: module.Terms })))
+const NotFound = lazy(() => import('./components/NotFound').then(module => ({ default: module.NotFound })))
 
 export const GetUserData = gql`
   query GetUserData {
@@ -78,10 +79,9 @@ function Beep() {
 
   useEffect(() => {
     if (data?.getUser?.id) {
-      subscribeToMore({
+      subscribeToMore<UserUpdatesSubscription>({
         document: UserUpdates,
         updateQuery: (prev, { subscriptionData }) => {
-          //@ts-ignore
           const newFeedItem = subscriptionData.data.getUserUpdates;
           return Object.assign({}, prev, {
             getUser: newFeedItem
@@ -102,29 +102,31 @@ function Beep() {
   return (
     <Router>
       <Header />
-      <Container maxW="container.xl" pt={20}>
+      <Container as="main" maxW="container.xl" pt={20}>
         <Banners />
-        <Routes>
-          <Route path="/password/forgot" element={<ForgotPassword />} />
-          <Route path="/password/reset/:id" element={<ResetPassword />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/profile/edit" element={<EditProfile />} />
-          <Route path="/password/change" element={<ChangePassword />} />
-          <Route path="/account/verify/:id" element={<VerifyAccount />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/admin/*" element={<Admin />} />
-          <Route path='/download' element={<Download />} />
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense>
+          <Routes>
+            <Route path="/password/forgot" element={<ForgotPassword />} />
+            <Route path="/password/reset/:id" element={<ResetPassword />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/password/change" element={<ChangePassword />} />
+            <Route path="/account/verify/:id" element={<VerifyAccount />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/admin/*" element={<Admin />} />
+            <Route path='/download' element={<Download />} />
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </Container>
     </Router>
   );
 }
 
-function App() {
+export function App() {
   return (
     <ChakraProvider theme={theme}>
       <ApolloProvider client={client}>
@@ -133,5 +135,3 @@ function App() {
     </ChakraProvider>
   );
 }
-
-export default App;

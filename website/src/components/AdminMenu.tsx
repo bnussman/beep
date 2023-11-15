@@ -10,7 +10,7 @@ import {
   MenuDivider,
   Icon,
 } from "@chakra-ui/react"
-import { LiaCarAltSolid, LiaCarSideSolid, LiaExclamationCircleSolid, LiaStar, LiaTaxiSolid, LiaUser, LiaUsersSolid } from "react-icons/lia";
+import { LiaCarAltSolid, LiaCarSideSolid, LiaExclamationCircleSolid, LiaStar, LiaTaxiSolid, LiaUser, LiaUsersSolid, LiaMoneyBillAlt } from "react-icons/lia";
 import { DiRedis } from "react-icons/di";
 import { AiOutlineNotification } from 'react-icons/ai'
 import { VscFeedback } from 'react-icons/vsc'
@@ -57,6 +57,9 @@ export function AdminMenu() {
           </MenuItem>
           <MenuItem icon={<Icon fontSize="2xl" as={VscFeedback} />}  as={Link} to="/admin/feedback">
             Feedback
+          </MenuItem>
+          <MenuItem icon={<Icon fontSize="2xl" as={LiaMoneyBillAlt} />}  as={Link} to="/admin/payments">
+            Payments
           </MenuItem>
         </MenuGroup>
         <MenuDivider />

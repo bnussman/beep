@@ -89,15 +89,25 @@ export class RatingResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized(UserRole.ADMIN)
+  @Authorized()
   public async deleteRating(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const rating = await ctx.em.findOneOrFail(Rating, id, { populate: ['rated'] });
 
-    if (!rating.rated.rating) throw new Error("You are trying to delete a rating for a user who's rating value is undefined");
+    if (ctx.user.role === UserRole.USER && rating.rater.id !== ctx.user.id) {
+      throw new Error("You can't delete a rating that you didn't create.");
+    }
+
+    if (!rating.rated.rating) {
+      throw new Error("You are trying to delete a rating for a user who's rating value is undefined");
+    }
 
     const numberOfRatings = await ctx.em.count(Rating, { rated: rating.rated.id });
 
-    rating.rated.rating = numberOfRatings <= 1 ? undefined : rating.rated.rating = (rating.rated.rating * numberOfRatings - rating.stars) / (numberOfRatings - 1);
+    if (numberOfRatings <= 1) {
+      rating.rated.rating = undefined;
+    } else {
+      rating.rated.rating = (rating.rated.rating * numberOfRatings - rating.stars) / (numberOfRatings - 1);
+    }
 
     ctx.em.persist(rating.rated);
 
