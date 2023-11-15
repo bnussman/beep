@@ -11,7 +11,7 @@ test('a user can sign up', async ({ page }) => {
 test('client side validation works', async ({ page }) => {
   await page.goto('/', { timeout: 200_000 });
 
-  await page.getByRole('button', { name: 'Sign Up' }).click();
+  await page.getByRole('link', { name: 'Sign Up' }).click();
 
   await page.getByRole('button', { name: 'Sign Up' }).click();
 
@@ -27,7 +27,7 @@ test('server side validation works', async ({ page }) => {
 
   const name = getRandomString();
 
-  await page.getByRole('button', { name: 'Sign Up' }).click();
+  await page.getByRole('link', { name: 'Sign Up' }).click();
 
   await page.getByLabel('First Name').click();
   await page.getByLabel('First Name').fill('User');

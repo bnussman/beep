@@ -62,59 +62,7 @@ import {
 import { GetBeepHistory } from "./beeps";
 import { router } from "expo-router";
 
-const ChooseBeep = gql`
-  mutation ChooseBeep(
-    $beeperId: String!
-    $origin: String!
-    $destination: String!
-    $groupSize: Float!
-  ) {
-    chooseBeep(
-      beeperId: $beeperId
-      input: {
-        origin: $origin
-        destination: $destination
-        groupSize: $groupSize
-      }
-    ) {
-      id
-      position
-      origin
-      destination
-      status
-      groupSize
-      beeper {
-        id
-        first
-        name
-        singlesRate
-        groupRate
-        isStudent
-        role
-        venmo
-        cashapp
-        username
-        phone
-        photo
-        capacity
-        queueSize
-        location {
-          longitude
-          latitude
-        }
-        cars {
-          id
-          photo
-          make
-          color
-          model
-        }
-      }
-    }
-  }
-`;
-
-const InitialRiderStatus = gql`
+export const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
     getRiderStatus {
       id
@@ -265,18 +213,16 @@ export default function MainFindBeepScreen() {
   const [getETA, { data: eta, error: etaError }] =
     useLazyQuery<GetEtaQuery>(GetETA);
 
-  const [getBeep, { loading: isGetBeepLoading, error: getBeepError }] =
-    useMutation<ChooseBeepMutation>(ChooseBeep);
 
   const {
     control,
-    handleSubmit,
     setFocus,
+    getValues,
     formState: { errors },
   } = useForm<ChooseBeepMutationVariables>();
 
   const validationErrors =
-    useValidationErrors<ChooseBeepMutationVariables>(getBeepError);
+    useValidationErrors<ChooseBeepMutationVariables>(undefined);
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === "active") {
@@ -318,30 +264,8 @@ export default function MainFindBeepScreen() {
   }, [beep]);
 
   const findBeep = () => {
-    router.push("/pick");
-  };
-
-  const chooseBeep = async (
-    id: string,
-    values: ChooseBeepMutationVariables
-  ) => {
-    try {
-      const { data } = await getBeep({
-        variables: {
-          ...values,
-          beeperId: id,
-        },
-      });
-
-      if (data) {
-        client.writeQuery({
-          query: InitialRiderStatus,
-          data: { getRiderStatus: { ...data.chooseBeep } },
-        });
-      }
-    } catch (error) {
-      Alert(error as ApolloError);
-    }
+    const values = getValues();
+    router.push({ pathname: "/pick", params: values });
   };
 
   function getCurrentStatusMessage(): string {
@@ -470,7 +394,6 @@ export default function MainFindBeepScreen() {
           <Button
             _text={{ fontWeight: "extrabold" }}
             onPress={() => findBeep()}
-            isLoading={isGetBeepLoading}
             size="lg"
           >
             Find Beep

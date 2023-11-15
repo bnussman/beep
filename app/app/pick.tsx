@@ -1,10 +1,10 @@
 import React from "react";
 import { useRoute } from "@react-navigation/native";
-import { gql, useQuery } from "@apollo/client";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../components/Stars";
 import { Unpacked } from "../utils/constants";
 import { RefreshControl } from "react-native";
-import { GetBeepersQuery } from "../generated/graphql";
+import { ChooseBeepMutation, ChooseBeepMutationVariables, GetBeepersQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Avatar } from "../components/Avatar";
 import { Card } from "../components/Card";
@@ -21,7 +21,10 @@ import {
   useColorMode,
   Stack,
 } from "native-base";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { client } from "../utils/Apollo";
+import { InitialRiderStatus } from "./(app)/ride";
+import { Alert } from "../utils/Alert";
 
 const GetBeepers = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -47,10 +50,63 @@ const GetBeepers = gql`
   }
 `;
 
+const ChooseBeep = gql`
+  mutation ChooseBeep(
+    $beeperId: String!
+    $origin: String!
+    $destination: String!
+    $groupSize: Float!
+  ) {
+    chooseBeep(
+      beeperId: $beeperId
+      input: {
+        origin: $origin
+        destination: $destination
+        groupSize: $groupSize
+      }
+    ) {
+      id
+      position
+      origin
+      destination
+      status
+      groupSize
+      beeper {
+        id
+        first
+        name
+        singlesRate
+        groupRate
+        isStudent
+        role
+        venmo
+        cashapp
+        username
+        phone
+        photo
+        capacity
+        queueSize
+        location {
+          longitude
+          latitude
+        }
+        cars {
+          id
+          photo
+          make
+          color
+          model
+        }
+      }
+    }
+  }
+`;
+
+
 export default function PickBeepScreen() {
   const { colorMode } = useColorMode();
   const { location } = useLocation();
-  const { params } = useRoute<any>();
+  const params = useLocalSearchParams();
 
   const { data, loading, error, refetch } = useQuery<GetBeepersQuery>(
     GetBeepers,
@@ -68,11 +124,33 @@ export default function PickBeepScreen() {
   const beepers = data?.getBeepersNew;
   const isRefreshing = Boolean(data) && loading;
 
-  function goBack(id: string): void {
-    params.handlePick(id);
-    router.back();
-  }
+  const [getBeep, { loading: isGetBeepLoading, error: getBeepError }] =
+    useMutation<ChooseBeepMutation>(ChooseBeep);
 
+  const chooseBeep = async (beeperId: string) => {
+
+    try {
+      const { data } = await getBeep({
+        variables: {
+          groupSize: +params.groupSize,
+          origin: params.origin,
+          destination: params.destination,
+          beeperId,
+        },
+      });
+
+      if (data) {
+        client.writeQuery({
+          query: InitialRiderStatus,
+          data: { getRiderStatus: { ...data.chooseBeep } },
+        });
+
+        router.back();
+      }
+    } catch (error) {
+      Alert(error as ApolloError);
+    }
+  };
 
   const renderItem = ({ item, index }: { item: Unpacked<GetBeepersQuery["getBeepersNew"]>; index: number; }) => {
     const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
@@ -93,7 +171,7 @@ export default function PickBeepScreen() {
       >
         <Card
           pressable
-          onPress={() => goBack(item.id)}
+          onPress={() => chooseBeep(item.id)}
           borderWidth={isPremium ? 0 : "2px"}
         >
           <HStack alignItems="center">
