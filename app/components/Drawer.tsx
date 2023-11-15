@@ -151,6 +151,7 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
             <NavigationItem name="Ride" navigate={() => router.push("/(app)/ride")} />
             <NavigationItem name="Beep" navigate={() => router.push("/(app)/beep")} />
             <NavigationItem name="Cars" navigate={() => router.push("/(app)/cars")} />
+            <NavigationItem name="Premium" navigate={() => router.push("/(app)/premium")} isNew />
             <NavigationItem name="Profile" navigate={() => router.push("/(app)/profile")} />
             <NavigationItem name="Beeps" navigate={() => router.push("/(app)/beeps")} />
             <NavigationItem name="Ratings" navigate={() => router.push("/(app)/ratings")} />
@@ -190,9 +191,10 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
 interface NavigationItemProps {
   name: string;
   navigate: () => void;
+  isNew?: boolean;
 }
 
-function NavigationItem({ name, navigate }: NavigationItemProps) {
+function NavigationItem({ name, isNew, navigate }: NavigationItemProps) {
   const navigation = useRootNavigation();
   const currentRouteName = navigation?.getCurrentRoute()?.name;
   const isActive =  currentRouteName === name.toLowerCase();
@@ -214,6 +216,7 @@ function NavigationItem({ name, navigate }: NavigationItemProps) {
           name={getIcon(name.toLowerCase())}
         />
         <Text fontWeight={500}>{name}</Text>
+        {isNew && <Badge borderRadius="xl" colorScheme="yellow">New</Badge>}
       </HStack>
     </Pressable>
   );

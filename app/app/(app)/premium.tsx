@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Container } from "../../components/Container";
 import { Image, CheckIcon, Spacer, Spinner, Stack, Text, FlatList, useColorMode, Button, Heading } from "native-base";
 import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
-import PremiumImage from '../assets/premium.png';
+import PremiumImage from '../../assets/premium.png';
 import { Card } from '../../components/Card';
 import { Logger } from '../../utils/Logger';
 import { gql, useMutation, useQuery } from '@apollo/client';
@@ -134,7 +134,7 @@ function usePackages() {
   return { offerings, error, isLoading, refetch: getOfferings, isRefreshing };
 }
 
-export function Premium() {
+export default function Premium() {
   const { offerings, error, isLoading, refetch, isRefreshing } = usePackages();
 
   const { colorMode } = useColorMode();
