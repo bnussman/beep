@@ -36,9 +36,21 @@ import { CarResolver } from "./cars/resolver";
 import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
+import { PaymentsResolver } from "./payments/resolver";
+import type { PostgreSqlDriver } from '@mikro-orm/postgresql'; // or any other driver package
+
+const options = {
+  host: REDIS_HOST,
+  password: REDIS_PASSWROD,
+  port: 6379,
+};
+
+export const pubSub = new RedisPubSub({
+  publisher: new Redis(options), subscriber: new Redis(options)
+});
 
 async function start() {
-  const orm = await MikroORM.init(config);
+  const orm = await MikroORM.init<PostgreSqlDriver>(config);
 
   const app = express();
 
@@ -48,17 +60,6 @@ async function start() {
 
   app.use(RealSentry.Handlers.requestHandler());
   app.use(RealSentry.Handlers.tracingHandler());
-
-  const options = {
-    host: REDIS_HOST,
-    password: REDIS_PASSWROD,
-    port: 6379,
-  };
-
-  const pubSub = new RedisPubSub({
-    publisher: new Redis(options),
-    subscriber: new Redis(options)
-  });
 
   const schema = await buildSchema({
     resolvers: [
@@ -75,6 +76,7 @@ async function start() {
       RiderResolver,
       AdminResolver,
       DirectionsResolver,
+      PaymentsResolver
     ],
     authChecker,
     pubSub,

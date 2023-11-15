@@ -178,12 +178,18 @@ importers:
       expo-constants:
         specifier: ^14.4.2
         version: 14.4.2(expo@49.0.13)
+      expo-dev-client:
+        specifier: ^2.4.11
+        version: 2.4.11(expo@49.0.13)
       expo-device:
         specifier: ~5.4.0
         version: 5.4.0(expo@49.0.13)
       expo-image-picker:
         specifier: ~14.3.2
         version: 14.3.2(expo@49.0.13)
+      expo-linear-gradient:
+        specifier: ^12.5.0
+        version: 12.5.0(expo@49.0.13)
       expo-linking:
         specifier: ~5.0.2
         version: 5.0.2(expo@49.0.13)
@@ -238,6 +244,9 @@ importers:
       react-native-mime-types:
         specifier: ^2.4.0
         version: 2.4.0
+      react-native-purchases:
+        specifier: ^7.2.0
+        version: 7.2.0(react-native@0.72.5)(react@18.2.0)
       react-native-reanimated:
         specifier: ~3.3.0
         version: 3.3.0(@babel/core@7.22.9)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.22.5)(@babel/plugin-transform-shorthand-properties@7.22.5)(@babel/plugin-transform-template-literals@7.22.5)(react-native@0.72.5)(react@18.2.0)
@@ -7537,6 +7546,10 @@ packages:
     resolution: {integrity: sha512-AW8PKd6iX3vAZ0vA43nOUOnbq/X5ihgU+mSXXqunMkeQADGiqw/PY0JNeYtD5sr0PAy51YPgAPbDoeapv9r8WA==}
     dev: true
 
+  /@revenuecat/purchases-typescript-internal@7.2.0:
+    resolution: {integrity: sha512-sdcM7f60WktMJui+4LmQUurrjF/XXYNSaBd6PyY6k2U3D4BCKSdnF1lKizN2PjzMP7II20YnZ2+hgkRnnBdwAQ==}
+    dev: false
+
   /@rushstack/ts-command-line@4.16.1:
     resolution: {integrity: sha512-+OCsD553GYVLEmz12yiFjMOzuPeCiZ3f8wTiFHL30ZVXexTyPmgjwXEhg2K2P0a2lVf+8YBy7WtPoflB2Fp8/A==}
     dependencies:
@@ -10194,6 +10207,48 @@ packages:
       - supports-color
     dev: false
 
+  /expo-dev-client@2.4.11(expo@49.0.13):
+    resolution: {integrity: sha512-A7aKQZeEYG0YJ51GnjOFkMNe118jD1cbU+v5iM3E+H1Co5aVtnlGZWcv8Dtw3uGuWxRgbWGds5TGNbcDmJ1hDg==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.13(@babel/core@7.22.9)
+      expo-dev-launcher: 2.4.13(expo@49.0.13)
+      expo-dev-menu: 3.2.1(expo@49.0.13)
+      expo-dev-menu-interface: 1.3.0(expo@49.0.13)
+      expo-manifests: 0.7.1
+      expo-updates-interface: 0.10.1(expo@49.0.13)
+    dev: false
+
+  /expo-dev-launcher@2.4.13(expo@49.0.13):
+    resolution: {integrity: sha512-afszaREyGnhWJMmcOuDGs83r0UWeRvZrOHlKQxxst/UhAeFQqlDmkEjwtDWfTUy7BoXuuw2CuQtUFH+vTyjEGA==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.13(@babel/core@7.22.9)
+      expo-dev-menu: 3.2.1(expo@49.0.13)
+      resolve-from: 5.0.0
+      semver: 7.5.4
+    dev: false
+
+  /expo-dev-menu-interface@1.3.0(expo@49.0.13):
+    resolution: {integrity: sha512-WtRP7trQ2lizJJTTFXUSGGn1deIeHaYej0sUynvu/uC69VrSP4EeSnYOxbmEO29kuT/MsQBMGu0P/AkMQOqCOg==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.13(@babel/core@7.22.9)
+    dev: false
+
+  /expo-dev-menu@3.2.1(expo@49.0.13):
+    resolution: {integrity: sha512-SxH/ZUIYZliMBjJTpiECVSDkP7e81mbGNLH8ZD69iCAfLeH7P1OPXFycEdcvN33I7tVqzFgARGLK/W/8JV+U9w==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.13(@babel/core@7.22.9)
+      expo-dev-menu-interface: 1.3.0(expo@49.0.13)
+      semver: 7.5.4
+    dev: false
+
   /expo-device@5.4.0(expo@49.0.13):
     resolution: {integrity: sha512-TQxSVPrC6njCbzZ9Cqpc1lGLIjPmO1zBIbqW7CTqBPD1dOIMrgQvt7lZZhkHh3pWzoZznH283sSYqCvy3XcURw==}
     peerDependencies:
@@ -10248,6 +10303,14 @@ packages:
 
   /expo-keep-awake@12.3.0(expo@49.0.13):
     resolution: {integrity: sha512-ujiJg1p9EdCOYS05jh5PtUrfiZnK0yyLy+UewzqrjUqIT8eAGMQbkfOn3C3fHE7AKd5AefSMzJnS3lYZcZYHDw==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.13(@babel/core@7.22.9)
+    dev: false
+
+  /expo-linear-gradient@12.5.0(expo@49.0.13):
+    resolution: {integrity: sha512-GOV2wODawr2biRCtF2Yb5+wLzvnwXS8dAblfQO7qjyh4f7TDTJn7X0TlVSDMNhIdbAcZBrdxvGFeE2iXdzQ6ow==}
     peerDependencies:
       expo: '*'
     dependencies:
@@ -13814,6 +13877,17 @@ packages:
     engines: {node: '>= 0.6'}
     dependencies:
       mime-db: 1.37.0
+    dev: false
+
+  /react-native-purchases@7.2.0(react-native@0.72.5)(react@18.2.0):
+    resolution: {integrity: sha512-pjM0Mz+qLoUyHt14cbWexwLqzWZk3X0gEIYEBXCFX0Io8/42MzDxf97boUuKiVzxZ4uIDn8tQi96xezBP6qgLA==}
+    peerDependencies:
+      react: ^18.1.0
+      react-native: '>= 0.58.2'
+    dependencies:
+      '@revenuecat/purchases-typescript-internal': 7.2.0
+      react: 18.2.0
+      react-native: 0.72.5(@babel/core@7.22.9)(@babel/preset-env@7.23.2)(react@18.2.0)
     dev: false
 
   /react-native-reanimated@3.3.0(@babel/core@7.22.9)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.22.5)(@babel/plugin-transform-shorthand-properties@7.22.5)(@babel/plugin-transform-template-literals@7.22.5)(react-native@0.72.5)(react@18.2.0):

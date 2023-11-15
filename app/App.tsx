@@ -1,7 +1,6 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
-import * as Updates from "expo-updates";
 import { LoginScreen } from "./routes/auth/Login";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
@@ -32,7 +31,7 @@ import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
-import { Logger } from "./utils/Logger";
+import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -45,6 +44,8 @@ Sentry.init({
   enableAutoSessionTracking: true,
   enableAutoPerformanceTracing: true,
 });
+
+setupPurchase();
 
 function Beep() {
   const { colorMode } = useColorMode();
@@ -71,7 +72,7 @@ function Beep() {
           },
         });
       }
-
+      setPurchaseUser(user);
       setUserContext(user);
     }
   }, [user]);
@@ -149,6 +150,11 @@ function App() {
       <NativeBaseProvider
         theme={NATIVE_BASE_THEME}
         colorModeManager={colorModeManager}
+        config={{
+          dependencies: {
+            "linear-gradient": require("expo-linear-gradient").LinearGradient,
+          },
+        }}
       >
         <ApolloProvider client={client}>
           <Beep />

@@ -34,6 +34,10 @@ export const MAIL_USER = process.env.MAIL_USER;
 
 export const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
 
+export const PAYMENT_SECRET = process.env.PAYMENT_SECRET;
+
+export const REVENUE_CAT_SECRET = process.env.REVENUE_CAT_SECRET;
+
 export const isProduction = process.env.NODE_ENV === "production";
 
 export const ENVIRONMENT: 'staging' | 'production' | 'development' = process.env.ENVIRONMENT_NAME as 'staging' | 'production' ?? "development";

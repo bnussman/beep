@@ -19,6 +19,7 @@ import { Cars } from './cars';
 import { Leaderboards } from './leaderboards';
 import { UsersByDomain } from './UsersByDomain';
 import { NotFound } from '../../components/NotFound';
+import { Payments } from './Payments';
 
 export function Admin() {
   return (
@@ -32,6 +33,7 @@ export function Admin() {
         <Route path="beeps" element={<Beeps />} />
         <Route path="cars" element={<Cars />} />
         <Route path="feedback" element={<Feedback />} />
+        <Route path="payments" element={<Payments />} />
         <Route path="beeps/active" element={<ActiveBeeps />} />
         <Route path="beeps/:id" element={<Beep />} />
         <Route path="users/:id/edit" element={<Edit />} />

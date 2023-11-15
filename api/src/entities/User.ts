@@ -7,6 +7,7 @@ import { Point } from "../location/resolver";
 import { Car } from "./Car";
 import { Beep } from "./Beep";
 import { MustBeInAcceptedBeep } from "../utils/decorators";
+import { Payment } from "./Payments";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -146,6 +147,10 @@ export class User {
   @OneToMany(() => Car, r => r.user, { lazy: true, eager: false, orphanRemoval: true })
   @UseMiddleware(MustBeInAcceptedBeep)
   cars = new Collection<Car>(this);
+
+  @Field(() => [Payment], { nullable: true })
+  @OneToMany(() => Payment, r => r.user, { lazy: true, eager: false, orphanRemoval: true })
+  payments = new Collection<Payment>(this);
 
   @Field({ nullable: true })
   @Property({ nullable: true })
