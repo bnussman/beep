@@ -389,7 +389,7 @@ export function StartBeepingScreen() {
             <Text textAlign="center">
               Jump to the top of the beeper list
             </Text>
-            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
+            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
           </Stack>
         </Card>
       </Container>
