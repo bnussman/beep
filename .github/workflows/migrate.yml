@@ -1,44 +1,31 @@
 name: migrate
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       environment:
         type: choice
         description: what environment's db should we migrate
-        options: 
+        options:
         - staging
         - production
 
 jobs:
   migrate:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - uses: pnpm/action-setup@v2.2.4
-        name: Install pnpm
-        id: pnpm-install
+      - uses: oven-sh/setup-bun@v1
         with:
-          version: latest
-          run_install: false
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          bun-version: latest
       - name: 📦 install packages
-        run: pnpm i --frozen-lockfile
+        run: bun install
+        working-directory: ./api/
       - name: 💿 run migration
-        run: pnpm --filter @beep/api db:migrate
+        run: bun run db:migrate
+        working-directory: ./api/
         env:
           DB_URL: ${{ secrets.DB_URL_PUBLIC }}
           DB_USER: ${{ secrets.DB_USER }}

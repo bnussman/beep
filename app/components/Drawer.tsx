@@ -23,10 +23,13 @@ import {
   Spinner,
   Button,
   Stack,
+  Spacer,
+  Badge,
 } from "native-base";
 import { LOCATION_TRACKING } from "../app/(app)/beep";
 import { router, useRootNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useAutoUpdate } from "../utils/updates";
 
 const Logout = gql`
   mutation Logout {
@@ -50,6 +53,8 @@ const getIcon = (screenName: string) => {
       return "car";
     case "feedback":
       return "help-circle-outline";
+    case "Premium":
+      return "shield-star-outline";
     default:
       return "car";
   }
@@ -67,6 +72,8 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
     useMutation<ResendMutation>(Resend);
+
+  useAutoUpdate();
 
   const handleLogout = async () => {
     await logout({
@@ -111,14 +118,16 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
               url={user?.photo}
               online={user?.isBeeping}
             />
-            <Stack>
-              <Text fontWeight="extrabold" letterSpacing="sm" fontSize="md">
+            <Stack flexShrink={1}>
+              <Text fontWeight="extrabold" letterSpacing="xs" fontSize="lg">
                 {user?.name}
               </Text>
-              <Text color="gray.500" _dark={{ color: "gray.300" }}>
+              <Text color="gray.500" lineHeight="xs" _dark={{ color: "gray.300" }}>
                 @{user?.username}
               </Text>
             </Stack>
+            <Spacer />
+            <Text fontSize="3xl" px={2}>🦃</Text>
           </HStack>
         </Pressable>
         <VStack divider={<Divider />} space={4}>

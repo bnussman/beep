@@ -11,12 +11,12 @@ export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' |
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string | number; output: string; }
+  ID: { input: string; output: string; }
   String: { input: string; output: string; }
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  DateTime: { input: any; output: any; }
+  DateTimeISO: { input: any; output: any; }
   Upload: { input: any; output: any; }
 };
 
@@ -37,13 +37,13 @@ export type Beep = {
   __typename?: 'Beep';
   beeper: User;
   destination: Scalars['String']['output'];
-  end?: Maybe<Scalars['DateTime']['output']>;
+  end?: Maybe<Scalars['DateTimeISO']['output']>;
   groupSize: Scalars['Float']['output'];
   id: Scalars['String']['output'];
   origin: Scalars['String']['output'];
   position: Scalars['Float']['output'];
   rider: User;
-  start: Scalars['DateTime']['output'];
+  start: Scalars['DateTimeISO']['output'];
   status: Scalars['String']['output'];
 };
 
@@ -65,13 +65,13 @@ export type BeepsResponse = {
 export type Car = {
   __typename?: 'Car';
   color: Scalars['String']['output'];
-  created: Scalars['DateTime']['output'];
+  created: Scalars['DateTimeISO']['output'];
   default: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   make: Scalars['String']['output'];
   model: Scalars['String']['output'];
   photo: Scalars['String']['output'];
-  updated: Scalars['DateTime']['output'];
+  updated: Scalars['DateTimeISO']['output'];
   user: User;
   year: Scalars['Float']['output'];
 };
@@ -108,7 +108,7 @@ export type EditUserInput = {
 
 export type Feedback = {
   __typename?: 'Feedback';
-  created: Scalars['DateTime']['output'];
+  created: Scalars['DateTimeISO']['output'];
   id: Scalars['String']['output'];
   message: Scalars['String']['output'];
   user: User;
@@ -147,6 +147,7 @@ export type Mutation = {
   addProfilePicture: User;
   cancelBeep: Scalars['Boolean']['output'];
   changePassword: Scalars['Boolean']['output'];
+  checkUserSubscriptions?: Maybe<Array<Payment>>;
   chooseBeep: Beep;
   cleanObjectStorageBucket: Scalars['Float']['output'];
   clearQueue: Scalars['Boolean']['output'];
@@ -192,6 +193,11 @@ export type MutationCancelBeepArgs = {
 
 export type MutationChangePasswordArgs = {
   input: ChangePasswordInput;
+};
+
+
+export type MutationCheckUserSubscriptionsArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -345,6 +351,24 @@ export type MutationVerifyAccountArgs = {
   id: Scalars['String']['input'];
 };
 
+export type Payment = {
+  __typename?: 'Payment';
+  created: Scalars['DateTimeISO']['output'];
+  expires: Scalars['DateTimeISO']['output'];
+  id: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  productId: Scalars['String']['output'];
+  store: Scalars['String']['output'];
+  storeId: Scalars['String']['output'];
+  user: User;
+};
+
+export type PaymentResponse = {
+  __typename?: 'PaymentResponse';
+  count: Scalars['Int']['output'];
+  items: Array<Payment>;
+};
+
 export type Point = {
   __typename?: 'Point';
   latitude: Scalars['Float']['output'];
@@ -356,6 +380,7 @@ export type Query = {
   getAllBeepersLocation: Array<AnonymousBeeper>;
   getBeep: Beep;
   getBeepers: Array<User>;
+  getBeepersNew: Array<User>;
   getBeeps: BeepsResponse;
   getCars: CarsResponse;
   getETA: Scalars['String']['output'];
@@ -363,6 +388,7 @@ export type Query = {
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
+  getPayments: PaymentResponse;
   getQueue: Array<Beep>;
   getRating: Rating;
   getRatings: RatingsResponse;
@@ -391,6 +417,13 @@ export type QueryGetBeepArgs = {
 
 
 export type QueryGetBeepersArgs = {
+  latitude: Scalars['Float']['input'];
+  longitude: Scalars['Float']['input'];
+  radius?: InputMaybe<Scalars['Float']['input']>;
+};
+
+
+export type QueryGetBeepersNewArgs = {
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
   radius?: InputMaybe<Scalars['Float']['input']>;
@@ -436,6 +469,14 @@ export type QueryGetInProgressBeepsArgs = {
 export type QueryGetLocationSuggestionsArgs = {
   location: Scalars['String']['input'];
   sessiontoken: Scalars['String']['input'];
+};
+
+
+export type QueryGetPaymentsArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -504,7 +545,7 @@ export type Rating = {
   rated: User;
   rater: User;
   stars: Scalars['Float']['output'];
-  timestamp: Scalars['DateTime']['output'];
+  timestamp: Scalars['DateTimeISO']['output'];
 };
 
 export type RatingInput = {
@@ -530,7 +571,7 @@ export type Report = {
   reason: Scalars['String']['output'];
   reported: User;
   reporter: User;
-  timestamp: Scalars['DateTime']['output'];
+  timestamp: Scalars['DateTimeISO']['output'];
 };
 
 export type ReportInput = {
@@ -616,7 +657,7 @@ export type User = {
   capacity: Scalars['Float']['output'];
   cars?: Maybe<Array<Car>>;
   cashapp?: Maybe<Scalars['String']['output']>;
-  created?: Maybe<Scalars['DateTime']['output']>;
+  created?: Maybe<Scalars['DateTimeISO']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   first: Scalars['String']['output'];
   groupRate: Scalars['Float']['output'];
@@ -629,6 +670,7 @@ export type User = {
   name: Scalars['String']['output'];
   password: Scalars['String']['output'];
   passwordType: Scalars['String']['output'];
+  payments?: Maybe<Array<Payment>>;
   phone?: Maybe<Scalars['String']['output']>;
   photo?: Maybe<Scalars['String']['output']>;
   pushToken?: Maybe<Scalars['String']['output']>;
@@ -698,6 +740,13 @@ export type GetRateDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetRateDataQuery = { __typename?: 'Query', getLastBeepToRate?: { __typename?: 'Beep', id: string, beeper: { __typename?: 'User', id: string, name: string, username: string, photo?: string | null, isBeeping: boolean } } | null };
 
+export type DeleteRatingMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type DeleteRatingMutation = { __typename?: 'Mutation', deleteRating: boolean };
+
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -716,6 +765,18 @@ export type GetBeepHistoryQueryVariables = Exact<{
 
 
 export type GetBeepHistoryQuery = { __typename?: 'Query', getBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, start: any, end?: any | null, groupSize: number, origin: string, destination: string, status: string, rider: { __typename?: 'User', id: string, name: string, first: string, last: string, photo?: string | null }, beeper: { __typename?: 'User', id: string, name: string, first: string, last: string, photo?: string | null } }> } };
+
+export type CheckUserSubscriptionsMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CheckUserSubscriptionsMutation = { __typename?: 'Mutation', checkUserSubscriptions?: Array<{ __typename?: 'Payment', id: string, expires: any }> | null };
+
+export type PaymentsQueryQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type PaymentsQueryQuery = { __typename?: 'Query', getPayments: { __typename?: 'PaymentResponse', items: Array<{ __typename?: 'Payment', id: string, productId: string, expires: any }> } };
 
 export type GetRatingsQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
@@ -921,7 +982,7 @@ export type GetBeepersQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null }> };
+export type GetBeepersQuery = { __typename?: 'Query', getBeepersNew: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null, payments?: Array<{ __typename?: 'Payment', id: string, productId: string }> | null }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String']['input'];
@@ -948,13 +1009,6 @@ export type AddProfilePictureMutationVariables = Exact<{
 
 
 export type AddProfilePictureMutation = { __typename?: 'Mutation', addProfilePicture: { __typename?: 'User', id: string, photo?: string | null } };
-
-export type RemoveTokenMutationVariables = Exact<{
-  token: Scalars['String']['input'];
-}>;
-
-
-export type RemoveTokenMutation = { __typename?: 'Mutation', removeToken: boolean };
 
 export type UserDataQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1089,6 +1143,37 @@ export function useGetRateDataLazyQuery(baseOptions?: ApolloReactHooks.LazyQuery
 export type GetRateDataQueryHookResult = ReturnType<typeof useGetRateDataQuery>;
 export type GetRateDataLazyQueryHookResult = ReturnType<typeof useGetRateDataLazyQuery>;
 export type GetRateDataQueryResult = ApolloReactCommon.QueryResult<GetRateDataQuery, GetRateDataQueryVariables>;
+export const DeleteRatingDocument = gql`
+    mutation DeleteRating($id: String!) {
+  deleteRating(id: $id)
+}
+    `;
+export type DeleteRatingMutationFn = ApolloReactCommon.MutationFunction<DeleteRatingMutation, DeleteRatingMutationVariables>;
+
+/**
+ * __useDeleteRatingMutation__
+ *
+ * To run a mutation, you first call `useDeleteRatingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteRatingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteRatingMutation, { data, loading, error }] = useDeleteRatingMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteRatingMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteRatingMutation, DeleteRatingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<DeleteRatingMutation, DeleteRatingMutationVariables>(DeleteRatingDocument, options);
+      }
+export type DeleteRatingMutationHookResult = ReturnType<typeof useDeleteRatingMutation>;
+export type DeleteRatingMutationResult = ApolloReactCommon.MutationResult<DeleteRatingMutation>;
+export type DeleteRatingMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteRatingMutation, DeleteRatingMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout(isApp: true)
@@ -1209,6 +1294,78 @@ export function useGetBeepHistoryLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type GetBeepHistoryQueryHookResult = ReturnType<typeof useGetBeepHistoryQuery>;
 export type GetBeepHistoryLazyQueryHookResult = ReturnType<typeof useGetBeepHistoryLazyQuery>;
 export type GetBeepHistoryQueryResult = ApolloReactCommon.QueryResult<GetBeepHistoryQuery, GetBeepHistoryQueryVariables>;
+export const CheckUserSubscriptionsDocument = gql`
+    mutation checkUserSubscriptions {
+  checkUserSubscriptions {
+    id
+    expires
+  }
+}
+    `;
+export type CheckUserSubscriptionsMutationFn = ApolloReactCommon.MutationFunction<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>;
+
+/**
+ * __useCheckUserSubscriptionsMutation__
+ *
+ * To run a mutation, you first call `useCheckUserSubscriptionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckUserSubscriptionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkUserSubscriptionsMutation, { data, loading, error }] = useCheckUserSubscriptionsMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCheckUserSubscriptionsMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>(CheckUserSubscriptionsDocument, options);
+      }
+export type CheckUserSubscriptionsMutationHookResult = ReturnType<typeof useCheckUserSubscriptionsMutation>;
+export type CheckUserSubscriptionsMutationResult = ApolloReactCommon.MutationResult<CheckUserSubscriptionsMutation>;
+export type CheckUserSubscriptionsMutationOptions = ApolloReactCommon.BaseMutationOptions<CheckUserSubscriptionsMutation, CheckUserSubscriptionsMutationVariables>;
+export const PaymentsQueryDocument = gql`
+    query PaymentsQuery($id: String) {
+  getPayments(id: $id) {
+    items {
+      id
+      productId
+      expires
+    }
+  }
+}
+    `;
+
+/**
+ * __usePaymentsQueryQuery__
+ *
+ * To run a query within a React component, call `usePaymentsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePaymentsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePaymentsQueryQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function usePaymentsQueryQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PaymentsQueryQuery, PaymentsQueryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<PaymentsQueryQuery, PaymentsQueryQueryVariables>(PaymentsQueryDocument, options);
+      }
+export function usePaymentsQueryLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PaymentsQueryQuery, PaymentsQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<PaymentsQueryQuery, PaymentsQueryQueryVariables>(PaymentsQueryDocument, options);
+        }
+export type PaymentsQueryQueryHookResult = ReturnType<typeof usePaymentsQueryQuery>;
+export type PaymentsQueryLazyQueryHookResult = ReturnType<typeof usePaymentsQueryLazyQuery>;
+export type PaymentsQueryQueryResult = ApolloReactCommon.QueryResult<PaymentsQueryQuery, PaymentsQueryQueryVariables>;
 export const GetRatingsDocument = gql`
     query GetRatings($id: String, $offset: Int, $show: Int) {
   getRatings(id: $id, offset: $offset, show: $show) {
@@ -2313,7 +2470,7 @@ export type LeaveQueueMutationResult = ApolloReactCommon.MutationResult<LeaveQue
 export type LeaveQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<LeaveQueueMutation, LeaveQueueMutationVariables>;
 export const GetBeepersDocument = gql`
     query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
-  getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
+  getBeepersNew(latitude: $latitude, longitude: $longitude, radius: $radius) {
     id
     name
     first
@@ -2327,6 +2484,10 @@ export const GetBeepersDocument = gql`
     rating
     venmo
     cashapp
+    payments {
+      id
+      productId
+    }
   }
 }
     `;
@@ -2495,37 +2656,6 @@ export function useAddProfilePictureMutation(baseOptions?: ApolloReactHooks.Muta
 export type AddProfilePictureMutationHookResult = ReturnType<typeof useAddProfilePictureMutation>;
 export type AddProfilePictureMutationResult = ApolloReactCommon.MutationResult<AddProfilePictureMutation>;
 export type AddProfilePictureMutationOptions = ApolloReactCommon.BaseMutationOptions<AddProfilePictureMutation, AddProfilePictureMutationVariables>;
-export const RemoveTokenDocument = gql`
-    mutation RemoveToken($token: String!) {
-  removeToken(token: $token)
-}
-    `;
-export type RemoveTokenMutationFn = ApolloReactCommon.MutationFunction<RemoveTokenMutation, RemoveTokenMutationVariables>;
-
-/**
- * __useRemoveTokenMutation__
- *
- * To run a mutation, you first call `useRemoveTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeTokenMutation, { data, loading, error }] = useRemoveTokenMutation({
- *   variables: {
- *      token: // value for 'token'
- *   },
- * });
- */
-export function useRemoveTokenMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveTokenMutation, RemoveTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<RemoveTokenMutation, RemoveTokenMutationVariables>(RemoveTokenDocument, options);
-      }
-export type RemoveTokenMutationHookResult = ReturnType<typeof useRemoveTokenMutation>;
-export type RemoveTokenMutationResult = ApolloReactCommon.MutationResult<RemoveTokenMutation>;
-export type RemoveTokenMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveTokenMutation, RemoveTokenMutationVariables>;
 export const UserDataDocument = gql`
     query UserData {
   getUser {

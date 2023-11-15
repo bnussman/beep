@@ -5,7 +5,7 @@ const config: ExpoConfig = {
   slug: "Beep",
   scheme: "beep",
   owner: "bnussman",
-  version: "2.8.2",
+  version: "2.9.0",
   githubUrl: "https://github.com/bnussman/Beep",
   primaryColor: "#575A62",
   icon: "./assets/icon.png",
@@ -17,7 +17,8 @@ const config: ExpoConfig = {
     typedRoutes: true
   },
   updates: {
-    url: "https://u.expo.dev/2c7a6adb-2579-43f1-962e-b23c7e541ec4"
+    url: "https://u.expo.dev/2c7a6adb-2579-43f1-962e-b23c7e541ec4",
+    fallbackToCacheTimeout: 10_000,
   },
   runtimeVersion: {
     policy: "sdkVersion"
@@ -48,7 +49,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.ridebeep.App",
-    buildNumber: "21",
+    buildNumber: "22",
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
         "The Beep App uses your location to pick origins, destinations, and predict ride times",
@@ -64,7 +65,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: "app.ridebeep.App",
-    versionCode: 39,
+    versionCode: 41,
     googleServicesFile: "./google-services.json",
     permissions: [
       "ACCESS_COARSE_LOCATION",

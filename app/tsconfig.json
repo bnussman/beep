@@ -6,6 +6,7 @@
       "dom",
       "esnext"
     ],
+    "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": true,

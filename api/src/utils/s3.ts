@@ -1,11 +1,12 @@
 import * as Sentry from "@sentry/node";
 import { S3 } from "aws-sdk";
-import { S3_ACCESS_KEY_ID, S3_ACCESS_KEY_SECRET, S3_ENDPOINT_URL } from "./constants";
+import { S3_ACCESS_KEY_ID, S3_ACCESS_KEY_SECRET, S3_ENDPOINT_URL, isLocalS3 } from "./constants";
 
 export const s3 = new S3({
   accessKeyId: S3_ACCESS_KEY_ID,
   secretAccessKey: S3_ACCESS_KEY_SECRET,
-  endpoint: S3_ENDPOINT_URL
+  endpoint: S3_ENDPOINT_URL,
+  s3ForcePathStyle: isLocalS3,
 });
 
 export async function getAllObjects(params: S3.ListObjectsV2Request): Promise<S3.ObjectList> {

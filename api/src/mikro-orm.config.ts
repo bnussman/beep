@@ -1,4 +1,5 @@
-import { Options, LoadStrategy } from "@mikro-orm/core";
+import { LoadStrategy } from "@mikro-orm/core";
+import type { Options } from '@mikro-orm/postgresql';
 import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isDevelopment } from "./utils/constants";
 
 const config: Options = {

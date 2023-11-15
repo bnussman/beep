@@ -1,10 +1,10 @@
 name: production
- 
+
 on:
   push:
     branches:
       - production
- 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -53,6 +53,7 @@ jobs:
         run: |
           helm upgrade --install --atomic --timeout 5m api ./.github/helm/ -f ./.github/helm/values-production.yaml --namespace beep --create-namespace
   publish:
+     if: false
      runs-on: ubuntu-latest
      steps:
        - name: 🏗 Setup repo

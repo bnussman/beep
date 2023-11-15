@@ -1,7 +1,7 @@
 import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser, isEduEmail, Upload, search } from './helpers';
-import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
+import { LoadStrategy, QueryOrder, QueryOrderNumeric, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
@@ -15,6 +15,9 @@ import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
+import { REVENUE_CAT_SECRET, S3_BUCKET_URL } from '../utils/constants';
+import type { SubscriberResponse } from './types';
+import { Payment, Store } from '../entities/Payments';
 
 @ObjectType()
 class UsersPerDomain {
@@ -189,7 +192,7 @@ export class UserResolver {
     const result = await s3.upload(uploadParams).promise();
 
     if (ctx.user.photo) {
-      const key = ctx.user.photo.split("https://beep.us-east-1.linodeobjects.com/")[1];
+      const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
       deleteObject(key);
     }
@@ -335,7 +338,7 @@ export class UserResolver {
 
     for (const object of objects) {
       const userId = getUserFromObjectKey(object.Key);
-      
+
       const user = await em.findOne(User, { id: userId });
 
       if (user === null) {

@@ -15,7 +15,6 @@ import { Alert } from "../../utils/Alert";
 import { QueueItem } from "../../components/QueueItem";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { useNavigation } from "@react-navigation/native";
 import {
   Alert as NativeAlert,
   AppState,
@@ -41,9 +40,12 @@ import {
   Flex,
   FlatList as NativeFlatList,
   InfoIcon,
+  Button,
 } from "native-base";
 import { Status } from "../../utils/types";
 import { InProgressBeep } from "../../components/InProgressBeep";
+import { Card } from "../../components/Card";
+import { router, useNavigation } from "expo-router";
 
 let unsubscribe: any = null;
 
@@ -374,13 +376,22 @@ export default function StartBeepingScreen() {
   if (isBeeping && queue?.length === 0) {
     return (
       <Container center>
-        <Stack space={2} p={4} alignItems="center">
+        <Stack space={2} p={4} alignItems="center" mb={12}>
           <Heading fontWeight="extrabold">Your queue is empty</Heading>
           <Text textAlign="center">
             If someone wants you to beep them, it will appear here. If your app
             is closed, you will recieve a push notification.
           </Text>
         </Stack>
+        <Card>
+          <Stack alignItems="center" space={2}>
+            <Heading fontWeight="extrabold" fontSize="md">Want more riders?</Heading>
+            <Text textAlign="center">
+              Jump to the top of the beeper list
+            </Text>
+            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => router.push("/(app)/premium")}>Get Promoted</Button>
+          </Stack>
+        </Card>
       </Container>
     );
   }
