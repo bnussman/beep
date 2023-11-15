@@ -106,7 +106,7 @@ const ChooseBeep = gql`
 export default function PickBeepScreen() {
   const { colorMode } = useColorMode();
   const { location } = useLocation();
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams<{ groupSize: string; origin: string; destination: string }>();
 
   const { data, loading, error, refetch } = useQuery<GetBeepersQuery>(
     GetBeepers,
@@ -132,7 +132,7 @@ export default function PickBeepScreen() {
     try {
       const { data } = await getBeep({
         variables: {
-          groupSize: +params.groupSize,
+          groupSize: Number(params.groupSize),
           origin: params.origin,
           destination: params.destination,
           beeperId,
