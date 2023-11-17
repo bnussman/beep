@@ -36,6 +36,7 @@ export class PaymentsResolver {
     const options = { method: 'GET', headers: { accept: 'application/json', Authorization: `Bearer ${REVENUE_CAT_SECRET}` } };
 
     const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${id ?? ctx.user.id}`, options);
+
     const response: SubscriberResponse = await request.json();
 
     const user = await ctx.em.findOneOrFail(User, id ?? ctx.user.id);
