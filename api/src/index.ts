@@ -37,7 +37,8 @@ import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver } from "./payments/resolver";
-import type { PostgreSqlDriver } from '@mikro-orm/postgresql'; // or any other driver package
+import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { ApolloServerPluginUsageReporting } from '@apollo/server/plugin/usageReporting';
 
 const options = {
   host: REDIS_HOST,
@@ -85,11 +86,22 @@ async function start() {
 
   app.use(graphqlUploadExpress({ maxFiles: 1 }));
 
+  const plugins = [
+    ApolloServerPluginDrainHttpServer({ httpServer })
+  ];
+
+  if (process.env.APOLLO_KEY) {
+    plugins.push(ApolloServerPluginUsageReporting({
+      sendVariableValues: { all: true },
+      sendErrors: { unmodified: true },
+    }));
+  }
+
   const server = new ApolloServer<APIContext>({
     schema,
     formatError,
     csrfPrevention: true,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins,
   });
 
   const wsServer = new ws.Server({
