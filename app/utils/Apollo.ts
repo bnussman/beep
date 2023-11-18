@@ -140,7 +140,7 @@ const authLink = setContext(async (_, { headers }) => {
 
 export const wsLink = new WebSocketLink({
   url: wsUrl,
-  lazy: false,
+  lazy: true,
   retryAttempts: Infinity,
   isFatalConnectionProblem: () => false,
   shouldRetry: () => true,
