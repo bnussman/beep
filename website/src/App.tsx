@@ -1,8 +1,8 @@
-import React, { useEffect, lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { GetUserDataQuery, UserUpdatesSubscription } from './generated/graphql';
-import { ApolloProvider, gql, useQuery } from '@apollo/client';
-import { client } from './utils/Apollo';
+import { ApolloProvider, gql, useQuery, useSubscription } from '@apollo/client';
+import { cache, client } from './utils/Apollo';
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
 import { Header } from './components/Header';
@@ -75,21 +75,16 @@ const UserUpdates = gql`
 `;
 
 function Beep() {
-  const { data, subscribeToMore, loading } = useQuery<GetUserDataQuery>(GetUserData);
+  const { data, loading } = useQuery<GetUserDataQuery>(GetUserData);
 
-  useEffect(() => {
-    if (data?.getUser?.id) {
-      subscribeToMore<UserUpdatesSubscription>({
-        document: UserUpdates,
-        updateQuery: (prev, { subscriptionData }) => {
-          const newFeedItem = subscriptionData.data.getUserUpdates;
-          return Object.assign({}, prev, {
-            getUser: newFeedItem
-          });
-        }
-      });
-    }
-  }, [data?.getUser?.id]);
+  const user = data?.getUser;
+
+  useSubscription<UserUpdatesSubscription>(UserUpdates, {
+    onData({ data }) {
+      cache.updateQuery<GetUserDataQuery>({ query: GetUserData }, () => ({ getUser: data.data!.getUserUpdates }));
+    },
+    skip: !user,
+  });
 
   if (loading) {
     return (
