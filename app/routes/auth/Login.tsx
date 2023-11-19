@@ -6,7 +6,7 @@ import { Alert } from "../../utils/Alert";
 import { isSimulator } from "../../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../../generated/graphql";
-import { client, wsLink } from "../../utils/Apollo";
+import { client } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
@@ -101,8 +101,6 @@ export function LoginScreen() {
         query: UserData,
         data: { getUser: { ...data?.login.user, pushToken } },
       });
-
-      wsLink.client.restart();
     } catch (error) {
       Alert(error as ApolloError);
     }

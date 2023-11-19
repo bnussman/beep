@@ -7,9 +7,9 @@ import { ForgotPasswordScreen } from "./routes/auth/ForgotPassword";
 import { ProfileScreen } from "./routes/global/Profile";
 import { ReportScreen } from "./routes/global/Report";
 import { RateScreen } from "./routes/global/Rate";
-import { client } from "./utils/Apollo";
-import { ApolloProvider, useQuery } from "@apollo/client";
-import { UserDataQuery } from "./generated/graphql";
+import { cache, client } from "./utils/Apollo";
+import { ApolloProvider, useQuery, useSubscription } from "@apollo/client";
+import { UserDataQuery, UserUpdatesSubscription } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
@@ -33,8 +33,6 @@ import config from "./package.json";
 import * as Sentry from "sentry-expo";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 
-let unsubscribe: (() => void) | null = null;
-
 SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
 Sentry.init({
@@ -49,7 +47,7 @@ setupPurchase();
 
 function Beep() {
   const { colorMode } = useColorMode();
-  const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
+  const { data, loading } = useQuery<UserDataQuery>(UserData, {
     errorPolicy: "none",
     onCompleted: () => {
       updatePushToken();
@@ -58,20 +56,15 @@ function Beep() {
 
   const user = data?.getUser;
 
+  useSubscription<UserUpdatesSubscription>(UserSubscription, {
+    onData({ data }) {
+      cache.updateQuery<UserDataQuery>({ query: UserData }, () => ({ getUser: data.data!.getUserUpdates }));
+    },
+    skip: !user,
+  });
+
   useEffect(() => {
     if (user) {
-      if (unsubscribe === null) {
-        unsubscribe = subscribeToMore({
-          document: UserSubscription,
-          updateQuery: (prev, { subscriptionData }) => {
-            // @ts-expect-error apollo dumb
-            const newFeedItem = subscriptionData.data.getUserUpdates;
-            return Object.assign({}, prev, {
-              getUser: newFeedItem,
-            });
-          },
-        });
-      }
       setPurchaseUser(user);
       setUserContext(user);
     }
