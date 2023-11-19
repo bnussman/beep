@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { Heading, Text, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Flex, Textarea, Box, Checkbox, Stack, HStack } from '@chakra-ui/react';
-import { DeleteReport, GetReport, UpdateReport } from './Report';
+import { Heading, Text, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, useDisclosure, Textarea, Box, Checkbox, Stack, HStack } from '@chakra-ui/react';
+import { GetReport, UpdateReport } from './Report';
 import { useQuery, useMutation } from '@apollo/client';
-import { DeleteReportMutation, GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
+import { GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
 import { DeleteIcon, ExternalLinkIcon} from '@chakra-ui/icons';
-import { DeleteDialog } from '../../../components/DeleteDialog';
 import { Error } from '../../../components/Error';
 import { BasicUser } from '../../../components/BasicUser';
 import { Indicator } from '../../../components/Indicator';
 import { NavLink } from 'react-router-dom';
 import { Loading } from '../../../components/Loading';
+import { DeleteReportDialog } from './DeleteReportDialog';
 
 interface Props {
   isOpen: boolean;
@@ -23,21 +23,11 @@ export function ReportDrawer(props: Props) {
   const { isOpen, onClose, id } = props;
   const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id }, skip: !id });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
-  const [deleteReport, { loading: deleteLoading, error: deleteError }] = useMutation<DeleteReportMutation>(DeleteReport);
 
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const deleteRef = React.useRef();
 
   const [notes, setNotes] = useState<string | undefined>();
   const [isHandled, setIsHandled] = useState<boolean | undefined>();
-
-  async function doDelete() {
-    await deleteReport({
-      variables: { id },
-      refetchQueries: () => ['getReports']
-    });
-    onClose();
-  }
 
   function updateReport() {
     update({
@@ -70,9 +60,7 @@ export function ReportDrawer(props: Props) {
         <DrawerBody>
           {error && <Error error={error} />}
           {updateError && <Error error={updateError} />}
-          {deleteError && <Error error={deleteError} />}
           {loading && <Loading />}
-
           {data?.getReport &&
             <Stack spacing={2}>
               <Heading size="md">Reporter</Heading>
@@ -119,7 +107,6 @@ export function ReportDrawer(props: Props) {
             </Stack>
           }
         </DrawerBody>
-
         <DrawerFooter>
           <Box mr={4}>
             <NavLink to={`/admin/reports/${data?.getReport.id}`}>
@@ -131,20 +118,16 @@ export function ReportDrawer(props: Props) {
             leftIcon={<DeleteIcon />}
             onClick={onDeleteOpen}
             mr={2}
-            isLoading={deleteLoading}
           >
             Delete
           </Button>
           <Button isLoading={updateLoading} colorScheme="blue" onClick={() => updateReport()}>Update</Button>
         </DrawerFooter>
       </DrawerContent>
-      <DeleteDialog
-        title="Report"
-        isOpen={isDeleteOpen}
+      <DeleteReportDialog
+        id={data?.getReport.id ?? ""}
         onClose={onDeleteClose}
-        doDelete={doDelete}
-        deleteLoading={deleteLoading}
-        cancelRef={deleteRef}
+        isOpen={isDeleteOpen}
       />
     </Drawer>
   )

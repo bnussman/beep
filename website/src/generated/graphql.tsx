@@ -387,6 +387,7 @@ export type Query = {
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
+  getPaymentHistory: PaymentResponse;
   getPayments: PaymentResponse;
   getQueue: Array<Beep>;
   getRating: Rating;
@@ -468,6 +469,14 @@ export type QueryGetInProgressBeepsArgs = {
 export type QueryGetLocationSuggestionsArgs = {
   location: Scalars['String']['input'];
   sessiontoken: Scalars['String']['input'];
+};
+
+
+export type QueryGetPaymentHistoryArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -752,6 +761,15 @@ export type GetCarsForUserQueryVariables = Exact<{
 
 export type GetCarsForUserQuery = { __typename?: 'Query', getCars: { __typename?: 'CarsResponse', count: number, items: Array<{ __typename?: 'Car', id: string, make: string, model: string, year: number, color: string, photo: string, created: any, default: boolean }> } };
 
+export type UserPaymentsQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['String']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type UserPaymentsQuery = { __typename?: 'Query', getPaymentHistory: { __typename?: 'PaymentResponse', count: number, items: Array<{ __typename?: 'Payment', id: string, productId: string, price: number, created: any, expires: any }> } };
+
 export type UsersQueueQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
 }>;
@@ -917,19 +935,19 @@ export type GetInProgressBeepsQueryVariables = Exact<{
 
 export type GetInProgressBeepsQuery = { __typename?: 'Query', getInProgressBeeps: { __typename?: 'BeepsResponse', count: number, items: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, groupSize: number, status: string, beeper: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } }> } };
 
-export type DeleteBeepMutationVariables = Exact<{
-  id: Scalars['String']['input'];
-}>;
-
-
-export type DeleteBeepMutation = { __typename?: 'Mutation', deleteBeep: boolean };
-
 export type GetBeepQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
 
 
 export type GetBeepQuery = { __typename?: 'Query', getBeep: { __typename?: 'Beep', id: string, origin: string, destination: string, start: any, end?: any | null, groupSize: number, beeper: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rider: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } } };
+
+export type DeleteBeepMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type DeleteBeepMutation = { __typename?: 'Mutation', deleteBeep: boolean };
 
 export type GetBeepsQueryVariables = Exact<{
   show?: InputMaybe<Scalars['Int']['input']>;
@@ -1038,6 +1056,13 @@ export type GetReportsQueryVariables = Exact<{
 
 export type GetReportsQuery = { __typename?: 'Query', getReports: { __typename?: 'ReportsResponse', count: number, items: Array<{ __typename?: 'Report', id: string, timestamp: any, reason: string, notes?: string | null, handled: boolean, reporter: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, reported: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } }> } };
 
+export type RemoveUserMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type RemoveUserMutation = { __typename?: 'Mutation', removeUser: boolean };
+
 export type BeepersLocationSubscriptionVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
@@ -1051,13 +1076,6 @@ export type GetUserQueryVariables = Exact<{
 
 
 export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, name: string, first: string, last: string, isBeeping: boolean, isStudent: boolean, isEmailVerified: boolean, role: string, venmo?: string | null, cashapp?: string | null, singlesRate: number, groupRate: number, capacity: number, photo?: string | null, queueSize: number, phone?: string | null, username: string, rating?: number | null, email?: string | null, created?: any | null, pushToken?: string | null, location?: { __typename?: 'Point', latitude: number, longitude: number } | null, queue: Array<{ __typename?: 'Beep', id: string, origin: string, destination: string, start: any, groupSize: number, status: string, rider: { __typename?: 'User', id: string, photo?: string | null, username: string, first: string, last: string, name: string } }> } };
-
-export type RemoveUserMutationVariables = Exact<{
-  id: Scalars['String']['input'];
-}>;
-
-
-export type RemoveUserMutation = { __typename?: 'Mutation', removeUser: boolean };
 
 export type VerifyUserMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -1345,6 +1363,50 @@ export function useGetCarsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCarsForUserQueryHookResult = ReturnType<typeof useGetCarsForUserQuery>;
 export type GetCarsForUserLazyQueryHookResult = ReturnType<typeof useGetCarsForUserLazyQuery>;
 export type GetCarsForUserQueryResult = Apollo.QueryResult<GetCarsForUserQuery, GetCarsForUserQueryVariables>;
+export const UserPaymentsDocument = gql`
+    query UserPayments($id: String, $offset: Int, $show: Int) {
+  getPaymentHistory(id: $id, offset: $offset, show: $show) {
+    items {
+      id
+      productId
+      price
+      created
+      expires
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useUserPaymentsQuery__
+ *
+ * To run a query within a React component, call `useUserPaymentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserPaymentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserPaymentsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      offset: // value for 'offset'
+ *      show: // value for 'show'
+ *   },
+ * });
+ */
+export function useUserPaymentsQuery(baseOptions?: Apollo.QueryHookOptions<UserPaymentsQuery, UserPaymentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserPaymentsQuery, UserPaymentsQueryVariables>(UserPaymentsDocument, options);
+      }
+export function useUserPaymentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserPaymentsQuery, UserPaymentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserPaymentsQuery, UserPaymentsQueryVariables>(UserPaymentsDocument, options);
+        }
+export type UserPaymentsQueryHookResult = ReturnType<typeof useUserPaymentsQuery>;
+export type UserPaymentsLazyQueryHookResult = ReturnType<typeof useUserPaymentsLazyQuery>;
+export type UserPaymentsQueryResult = Apollo.QueryResult<UserPaymentsQuery, UserPaymentsQueryVariables>;
 export const UsersQueueDocument = gql`
     query UsersQueue($id: String) {
   getQueue(id: $id) {
@@ -2236,37 +2298,6 @@ export function useGetInProgressBeepsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetInProgressBeepsQueryHookResult = ReturnType<typeof useGetInProgressBeepsQuery>;
 export type GetInProgressBeepsLazyQueryHookResult = ReturnType<typeof useGetInProgressBeepsLazyQuery>;
 export type GetInProgressBeepsQueryResult = Apollo.QueryResult<GetInProgressBeepsQuery, GetInProgressBeepsQueryVariables>;
-export const DeleteBeepDocument = gql`
-    mutation DeleteBeep($id: String!) {
-  deleteBeep(id: $id)
-}
-    `;
-export type DeleteBeepMutationFn = Apollo.MutationFunction<DeleteBeepMutation, DeleteBeepMutationVariables>;
-
-/**
- * __useDeleteBeepMutation__
- *
- * To run a mutation, you first call `useDeleteBeepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteBeepMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteBeepMutation, { data, loading, error }] = useDeleteBeepMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteBeepMutation(baseOptions?: Apollo.MutationHookOptions<DeleteBeepMutation, DeleteBeepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteBeepMutation, DeleteBeepMutationVariables>(DeleteBeepDocument, options);
-      }
-export type DeleteBeepMutationHookResult = ReturnType<typeof useDeleteBeepMutation>;
-export type DeleteBeepMutationResult = Apollo.MutationResult<DeleteBeepMutation>;
-export type DeleteBeepMutationOptions = Apollo.BaseMutationOptions<DeleteBeepMutation, DeleteBeepMutationVariables>;
 export const GetBeepDocument = gql`
     query GetBeep($id: String!) {
   getBeep(id: $id) {
@@ -2319,6 +2350,37 @@ export function useGetBeepLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetBeepQueryHookResult = ReturnType<typeof useGetBeepQuery>;
 export type GetBeepLazyQueryHookResult = ReturnType<typeof useGetBeepLazyQuery>;
 export type GetBeepQueryResult = Apollo.QueryResult<GetBeepQuery, GetBeepQueryVariables>;
+export const DeleteBeepDocument = gql`
+    mutation DeleteBeep($id: String!) {
+  deleteBeep(id: $id)
+}
+    `;
+export type DeleteBeepMutationFn = Apollo.MutationFunction<DeleteBeepMutation, DeleteBeepMutationVariables>;
+
+/**
+ * __useDeleteBeepMutation__
+ *
+ * To run a mutation, you first call `useDeleteBeepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteBeepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteBeepMutation, { data, loading, error }] = useDeleteBeepMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteBeepMutation(baseOptions?: Apollo.MutationHookOptions<DeleteBeepMutation, DeleteBeepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteBeepMutation, DeleteBeepMutationVariables>(DeleteBeepDocument, options);
+      }
+export type DeleteBeepMutationHookResult = ReturnType<typeof useDeleteBeepMutation>;
+export type DeleteBeepMutationResult = Apollo.MutationResult<DeleteBeepMutation>;
+export type DeleteBeepMutationOptions = Apollo.BaseMutationOptions<DeleteBeepMutation, DeleteBeepMutationVariables>;
 export const GetBeepsDocument = gql`
     query getBeeps($show: Int, $offset: Int) {
   getBeeps(show: $show, offset: $offset) {
@@ -2953,6 +3015,37 @@ export function useGetReportsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetReportsQueryHookResult = ReturnType<typeof useGetReportsQuery>;
 export type GetReportsLazyQueryHookResult = ReturnType<typeof useGetReportsLazyQuery>;
 export type GetReportsQueryResult = Apollo.QueryResult<GetReportsQuery, GetReportsQueryVariables>;
+export const RemoveUserDocument = gql`
+    mutation RemoveUser($id: String!) {
+  removeUser(id: $id)
+}
+    `;
+export type RemoveUserMutationFn = Apollo.MutationFunction<RemoveUserMutation, RemoveUserMutationVariables>;
+
+/**
+ * __useRemoveUserMutation__
+ *
+ * To run a mutation, you first call `useRemoveUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeUserMutation, { data, loading, error }] = useRemoveUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveUserMutation(baseOptions?: Apollo.MutationHookOptions<RemoveUserMutation, RemoveUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveUserMutation, RemoveUserMutationVariables>(RemoveUserDocument, options);
+      }
+export type RemoveUserMutationHookResult = ReturnType<typeof useRemoveUserMutation>;
+export type RemoveUserMutationResult = Apollo.MutationResult<RemoveUserMutation>;
+export type RemoveUserMutationOptions = Apollo.BaseMutationOptions<RemoveUserMutation, RemoveUserMutationVariables>;
 export const BeepersLocationDocument = gql`
     subscription BeepersLocation($id: String!) {
   getLocationUpdates(id: $id) {
@@ -3059,37 +3152,6 @@ export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
-export const RemoveUserDocument = gql`
-    mutation RemoveUser($id: String!) {
-  removeUser(id: $id)
-}
-    `;
-export type RemoveUserMutationFn = Apollo.MutationFunction<RemoveUserMutation, RemoveUserMutationVariables>;
-
-/**
- * __useRemoveUserMutation__
- *
- * To run a mutation, you first call `useRemoveUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeUserMutation, { data, loading, error }] = useRemoveUserMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useRemoveUserMutation(baseOptions?: Apollo.MutationHookOptions<RemoveUserMutation, RemoveUserMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveUserMutation, RemoveUserMutationVariables>(RemoveUserDocument, options);
-      }
-export type RemoveUserMutationHookResult = ReturnType<typeof useRemoveUserMutation>;
-export type RemoveUserMutationResult = Apollo.MutationResult<RemoveUserMutation>;
-export type RemoveUserMutationOptions = Apollo.BaseMutationOptions<RemoveUserMutation, RemoveUserMutationVariables>;
 export const VerifyUserDocument = gql`
     mutation VerifyUser($id: String!, $data: EditUserInput!) {
   editUser(id: $id, data: $data) {
