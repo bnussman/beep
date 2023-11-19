@@ -14,7 +14,7 @@ import { NativeBaseProvider, useColorMode } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
-import { handleNotification, updatePushToken } from "./utils/Notifications";
+import { updatePushToken } from "./utils/Notifications";
 import { SignUpScreen } from "./routes/auth/SignUp";
 import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -69,12 +69,6 @@ function Beep() {
       setUserContext(user);
     }
   }, [user]);
-
-  React.useEffect(() => {
-    const subscription =
-      Notifications.addNotificationReceivedListener(handleNotification);
-    return () => subscription.remove();
-  }, []);
 
   if (loading) {
     return null;
