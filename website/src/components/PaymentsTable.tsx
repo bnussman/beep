@@ -71,13 +71,11 @@ export function PaymentsTable(props: Props) {
         <Table>
           <Thead>
             <Tr>
-              <Th>Make</Th>
-              <Th>Model</Th>
-              <Th>Year</Th>
-              <Th>Color</Th>
-              <Th>Created</Th>
-              <Th>Photo</Th>
-              <Th>Default</Th>
+              <Th>RevenuCat ID</Th>
+              <Th>Product ID</Th>
+              <Th>Price</Th>
+              <Th>Purchased</Th>
+              <Th>Expires</Th>
             </Tr>
           </Thead>
           <Tbody>
