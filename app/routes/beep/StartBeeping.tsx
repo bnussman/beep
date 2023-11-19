@@ -149,7 +149,7 @@ export function StartBeepingScreen() {
   useSubscription<GetQueueSubscription>(GetQueue, {
     variables: { id: user?.id },
     onData({ data }) {
-      cache.updateQuery<GetInitialQueueQuery>({ query: GetInitialQueue }, (prev) => {
+      cache.updateQuery<GetInitialQueueQuery>({ query: GetInitialQueue, variables: { id: user?.id } }, (prev) => {
         const newQueue = { getQueue: data.data!.getBeeperUpdates };
         if (prev && (prev.getQueue.length < newQueue.getQueue.length)) {
           bottomSheetRef.current?.expand();
