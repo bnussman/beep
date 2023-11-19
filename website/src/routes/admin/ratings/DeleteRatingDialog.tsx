@@ -21,7 +21,7 @@ const DeleteRating = gql`
 export function DeleteRatingDialog({ isOpen, onClose, id }: Props) {
   const navigate = useNavigate();
   
-  const [deleteBeep, { loading, error }] = useMutation<DeleteRatingMutation>(DeleteRating, {
+  const [deleteRating, { loading, error }] = useMutation<DeleteRatingMutation>(DeleteRating, {
     variables: { id },
     update: (cache) => {
       const cacheId = cache.identify({ __typename: "Rating", id });
@@ -32,7 +32,7 @@ export function DeleteRatingDialog({ isOpen, onClose, id }: Props) {
   });
 
   const onDelete = async () => {
-    await deleteBeep();
+    await deleteRating();
     onClose();
     navigate(-1);
   };
