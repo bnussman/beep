@@ -14,7 +14,7 @@ import { Details } from '../../../routes/admin/users/Details';
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
 import { UserRole } from '../../../types/User';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { GetUserQuery, RemoveUserMutation, VerifyUserMutation } from '../../../generated/graphql';
+import { GetUserQuery, VerifyUserMutation } from '../../../generated/graphql';
 import { DeleteIcon, CheckIcon } from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { PhotoDialog } from '../../../components/PhotoDialog';
@@ -39,6 +39,7 @@ import {
   useMediaQuery
 } from '@chakra-ui/react';
 import { CarsTable } from '../../../components/CarsTable';
+import { DeleteUserDialog } from './DeleteUserDialog';
 
 dayjs.extend(relativeTime);
 
@@ -90,12 +91,6 @@ export const GetUser = gql`
   }
 `;
 
-const RemoveUser = gql`
-  mutation RemoveUser($id: String!) {
-    removeUser(id: $id)
-  }
-`;
-
 const VerifyUser = gql`
   mutation VerifyUser($id: String!, $data: EditUserInput!) {
     editUser(id: $id, data: $data) {
@@ -133,14 +128,12 @@ export function User() {
   const navigate = useNavigate();
   const { tab } = useParams();
 
-  const [remove, { loading: isDeleteLoading, error: deleteError }] = useMutation<RemoveUserMutation>(RemoveUser);
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
   const [verify, { loading: isVerifyLoading, error: verifyError }] = useMutation<VerifyUserMutation>(VerifyUser);
 
   const [stopBeeping, setStopBeeping] = useState<boolean>(true);
 
   const cancelRefClear = React.useRef();
-  const cancelRefDelete = React.useRef();
 
   const {
     isOpen: isDeleteOpen,
@@ -165,15 +158,6 @@ export function User() {
     onOpen: onPhotoOpen,
     onClose: onPhotoClose
   } = useDisclosure();
-
-  async function doDelete() {
-    await remove({
-      variables: { id },
-      refetchQueries: () => ["getUsers"],
-      awaitRefetchQueries: true
-    });
-    navigate(-1);
-  }
 
   async function doClear() {
     try {
@@ -212,7 +196,6 @@ export function User() {
   return (
     <>
       <Box>
-        {deleteError && <Error error={deleteError} />}
         {clearError && <Error error={clearError} />}
         {verifyError && <Error error={verifyError} />}
         <Flex alignItems="center" flexWrap="wrap">
@@ -319,13 +302,10 @@ export function User() {
           </TabPanels>
         </Tabs>
       </Box>
-      <DeleteDialog
-        title="User"
-        isOpen={isDeleteOpen}
+      <DeleteUserDialog
+        userId={user.id}
         onClose={onDeleteClose}
-        doDelete={doDelete}
-        deleteLoading={isDeleteLoading}
-        cancelRef={cancelRefDelete}
+        isOpen={isDeleteOpen}
       />
       <ClearQueueDialog
         isOpen={isClearOpen}
