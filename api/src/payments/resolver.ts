@@ -30,6 +30,24 @@ export class PaymentsResolver {
     return { items, count };
   }
 
+  @Query(() => PaymentResponse)
+  @Authorized('self')
+  public async getPaymentHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<PaymentResponse> {
+    const [items, count] = await ctx.em.findAndCount(
+      Payment,
+      {},
+      {
+        populate: ['user'],
+        offset,
+        limit: show,
+        orderBy: { created: QueryOrder.DESC },
+        filters: id ? { in: { id } } : undefined
+      }
+    );
+
+    return { items, count };
+  }
+
   @Mutation(() => [Payment], { nullable: true })
   @Authorized('No Verification Self')
   public async checkUserSubscriptions(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Payment[]> {

@@ -388,6 +388,7 @@ export type Query = {
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
+  getPaymentHistory: PaymentResponse;
   getPayments: PaymentResponse;
   getQueue: Array<Beep>;
   getRating: Rating;
@@ -469,6 +470,14 @@ export type QueryGetInProgressBeepsArgs = {
 export type QueryGetLocationSuggestionsArgs = {
   location: Scalars['String']['input'];
   sessiontoken: Scalars['String']['input'];
+};
+
+
+export type QueryGetPaymentHistoryArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
 };
 
 

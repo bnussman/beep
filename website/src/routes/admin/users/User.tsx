@@ -40,6 +40,7 @@ import {
 } from '@chakra-ui/react';
 import { CarsTable } from '../../../components/CarsTable';
 import { DeleteUserDialog } from './DeleteUserDialog';
+import { PaymentsTable } from '../../../components/PaymentsTable';
 
 dayjs.extend(relativeTime);
 
@@ -115,6 +116,7 @@ const tabs = [
   'ratings',
   'reports',
   'cars',
+  'payments',
 ]
 
 export function User() {
@@ -298,6 +300,9 @@ export function User() {
             </TabPanel>
             <TabPanel>
               <CarsTable userId={user.id} />
+            </TabPanel>
+            <TabPanel>
+              <PaymentsTable userId={user.id} />
             </TabPanel>
           </TabPanels>
         </Tabs>
