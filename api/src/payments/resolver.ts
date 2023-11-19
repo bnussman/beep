@@ -43,7 +43,7 @@ export class PaymentsResolver {
     const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
 
     for (const product of products) {
-      for (const payment of response.subscriber.non_subscriptions[product].reverse()) {
+      for (const payment of response.subscriber.non_subscriptions[product]) {
         const created = new Date(payment.purchase_date);
 
         const p = new Payment({
@@ -60,9 +60,7 @@ export class PaymentsResolver {
         try {
           await ctx.em.insert(p);
         } catch (e) {
-          await user.payments.init({ where: { expires: { '$gte': new Date() }}});
-
-          return user.payments.getItems();
+          // ...
         }
       }
     }
