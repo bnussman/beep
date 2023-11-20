@@ -20,6 +20,8 @@
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/stack": "^6.3.18",
     "@sentry/react-native": "5.5.0",
+    "@tamagui/config": "^1.77.1",
+    "@tamagui/core": "^1.77.1",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.5",
     "expo": "^49.0.13",
@@ -55,7 +57,8 @@
     "react-native-web": "~0.19.7",
     "sentry-expo": "~7.0.1",
     "styled-components": "^6.1.0",
-    "styled-system": "^5.1.5"
+    "styled-system": "^5.1.5",
+    "tamagui": "^1.77.1"
   },
   "devDependencies": {
     "@babel/core": "^7.22.9",

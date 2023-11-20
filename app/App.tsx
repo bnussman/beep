@@ -29,14 +29,17 @@ import {
 } from "@react-navigation/native";
 import { ChangePasswordScreen } from "./routes/settings/ChangePassword";
 import * as SplashScreen from "expo-splash-screen";
-import config from "./package.json";
+import packageJson from "./package.json";
 import * as Sentry from "sentry-expo";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
+// import '@tamagui/core/reset.css'
+import { TamaguiProvider } from 'tamagui'
+import config from './tamagui.config'
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
 Sentry.init({
-  release: config.version,
+  release: packageJson.version,
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
   enableInExpoDevelopment: true,
   enableAutoSessionTracking: true,
@@ -134,19 +137,21 @@ function Beep() {
 function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NativeBaseProvider
-        theme={NATIVE_BASE_THEME}
-        colorModeManager={colorModeManager}
-        config={{
-          dependencies: {
-            "linear-gradient": require("expo-linear-gradient").LinearGradient,
-          },
-        }}
-      >
-        <ApolloProvider client={client}>
-          <Beep />
-        </ApolloProvider>
-      </NativeBaseProvider>
+      <TamaguiProvider config={config}>
+        <NativeBaseProvider
+          theme={NATIVE_BASE_THEME}
+          colorModeManager={colorModeManager}
+          config={{
+            dependencies: {
+              "linear-gradient": require("expo-linear-gradient").LinearGradient,
+            },
+          }}
+        >
+          <ApolloProvider client={client}>
+            <Beep />
+          </ApolloProvider>
+        </NativeBaseProvider>
+      </TamaguiProvider>
     </GestureHandlerRootView>
   );
 }

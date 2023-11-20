@@ -17,7 +17,6 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import {
   Stack,
-  Button,
   Input,
   Heading,
   Spacer,
@@ -26,6 +25,7 @@ import {
   WarningOutlineIcon,
   HStack,
 } from "native-base";
+import { Button } from "tamagui";
 
 const Login = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -187,25 +187,19 @@ export function LoginScreen() {
           </FormControl>
           <Button
             mt={3}
-            isLoading={isSubmitting}
             onPress={onLogin}
-            _text={{ fontWeight: "extrabold" }}
           >
             Login
           </Button>
         </Stack>
         <HStack>
           <Button
-            variant="link"
-            _text={{ fontWeight: "extrabold" }}
             onPress={() => navigation.navigate("Sign Up")}
           >
             Sign Up
           </Button>
           <Spacer />
           <Button
-            variant="link"
-            _text={{ fontWeight: "extrabold" }}
             onPress={() => navigation.navigate("Forgot Password")}
           >
             Forgot Password
