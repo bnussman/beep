@@ -130,6 +130,13 @@ async function start() {
     }),
   );
 
+  app.use(
+    '/healthcheck',
+    (_, res) => {
+      return res.json({ ok: true });
+    }
+  );
+
   app.use(RealSentry.Handlers.errorHandler());
 
   await new Promise<void>(resolve => httpServer.listen({ port: 3000 }, resolve));
