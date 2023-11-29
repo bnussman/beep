@@ -41,14 +41,14 @@ export async function deleteUser(user: User, em: EntityManager): Promise<boolean
 
   await em.nativeDelete(VerifyEmail, { user: user });
 
-  await em.nativeDelete(Beep, { beeper: user });
-  await em.nativeDelete(Beep, { rider: user });
+  await em.nativeDelete(Rating, { rater: user });
+  await em.nativeDelete(Rating, { rated: user });
 
   await em.nativeDelete(Report, { reporter: user });
   await em.nativeDelete(Report, { reported: user });
 
-  await em.nativeDelete(Rating, { rater: user });
-  await em.nativeDelete(Rating, { rated: user });
+  await em.nativeDelete(Beep, { beeper: user });
+  await em.nativeDelete(Beep, { rider: user });
 
   await em.nativeDelete(TokenEntry, { user });
 
