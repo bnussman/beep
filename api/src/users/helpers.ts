@@ -9,7 +9,7 @@ import { ForgotPassword } from "../entities/ForgotPassword";
 import { VerifyEmail } from "../entities/VerifyEmail";
 import { TokenEntry } from "../entities/TokenEntry";
 import { Car } from "../entities/Car";
-import { Feedback } from "src/entities/Feedback";
+import { Feedback } from "../entities/Feedback";
 
 /**
  * Used for handling GraphQL Uploads
