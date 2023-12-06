@@ -172,13 +172,18 @@ export class RiderResolver {
       return await ctx.em.find(User, { isBeeping: true });
     }
 
-    const connection = ctx.em.getConnection();
+    const users = await ctx.em.createQueryBuilder(User, 'u')
+      .select("*")
+      .joinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } }, "leftJoin")
+      .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
+      .andWhere({ isBeeping: true })
+      .orderBy({
+        ["CASE WHEN p.product_id LIKE 'top_of_beeper_list_%' THEN 1 ELSE 0 END"]: QueryOrder.DESC,
+        [`ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}))`]: QueryOrder.ASC
+      })
+      .getResultList();
 
-    const raw: User[] = await connection.execute(`
-SELECT * FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))
-`);
-
-    return raw.map(user => ctx.em.map(User, user));
+    return users;
   }
 
   @Query(() => Beep, { nullable: true })
