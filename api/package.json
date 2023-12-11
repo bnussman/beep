@@ -27,9 +27,9 @@
     "@banksnussman/graphql-fields-to-relations": "^2.0.0",
     "@mikro-orm/core": "5.9.4",
     "@mikro-orm/postgresql": "5.9.4",
-    "@sentry/integrations": "^7.85.0",
-    "@sentry/node": "^7.85.0",
-    "aws-sdk": "^2.1513.0",
+    "@sentry/integrations": "^7.86.0",
+    "@sentry/node": "^7.86.0",
+    "aws-sdk": "^2.1515.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "car-info": "^0.1.5",
@@ -46,11 +46,11 @@
     "ioredis": "^5.3.2",
     "js-sha256": "^0.10.1",
     "nodemailer": "^6.9.7",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.1.14",
     "type-graphql": "2.0.0-beta.3",
     "uuid": "^9.0.1",
     "wkx": "^0.5.0",
-    "ws": "^8.14.2"
+    "ws": "^8.15.0"
   },
   "devDependencies": {
     "@mikro-orm/cli": "5.9.4",
@@ -59,12 +59,12 @@
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
-    "@types/node": "^20.10.3",
+    "@types/node": "^20.10.4",
     "@types/nodemailer": "^6.4.14",
     "@types/uuid": "^9.0.7",
     "@types/ws": "^8.5.10",
     "concurrently": "^8.2.2",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "volta": {
