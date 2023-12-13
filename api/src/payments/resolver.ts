@@ -30,6 +30,24 @@ export class PaymentsResolver {
     return { items, count };
   }
 
+  @Query(() => PaymentResponse)
+  @Authorized('self')
+  public async getPaymentHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<PaymentResponse> {
+    const [items, count] = await ctx.em.findAndCount(
+      Payment,
+      {},
+      {
+        populate: ['user'],
+        offset,
+        limit: show,
+        orderBy: { created: QueryOrder.DESC },
+        filters: id ? { in: { id } } : undefined
+      }
+    );
+
+    return { items, count };
+  }
+
   @Mutation(() => [Payment], { nullable: true })
   @Authorized('No Verification Self')
   public async checkUserSubscriptions(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Payment[]> {
@@ -43,7 +61,7 @@ export class PaymentsResolver {
     const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
 
     for (const product of products) {
-      for (const payment of response.subscriber.non_subscriptions[product].reverse()) {
+      for (const payment of response.subscriber.non_subscriptions[product]) {
         const created = new Date(payment.purchase_date);
 
         const p = new Payment({
@@ -60,9 +78,7 @@ export class PaymentsResolver {
         try {
           await ctx.em.insert(p);
         } catch (e) {
-          await user.payments.init({ where: { expires: { '$gte': new Date() }}});
-
-          return user.payments.getItems();
+          // ...
         }
       }
     }

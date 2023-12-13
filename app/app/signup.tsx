@@ -104,8 +104,6 @@ export default function SignUpScreen() {
       });
 
       router.replace("/(app)/ride");
-
-      wsLink.client.restart();
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         Alert(error as ApolloError);

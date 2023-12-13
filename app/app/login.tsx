@@ -105,8 +105,6 @@ export default function Login() {
       });
 
       router.replace("/(app)/ride");
-
-      wsLink.client.restart();
     } catch (error) {
       Alert(error as ApolloError);
     }

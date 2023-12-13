@@ -28,7 +28,7 @@ import { Alert } from "../utils/Alert";
 
 const GetBeepers = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
-    getBeepersNew(latitude: $latitude, longitude: $longitude, radius: $radius) {
+    getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
       id
       name
       first
@@ -121,7 +121,7 @@ export default function PickBeepScreen() {
     }
   );
 
-  const beepers = data?.getBeepersNew;
+  const beepers = data?.getBeepers;
   const isRefreshing = Boolean(data) && loading;
 
   const [getBeep, { loading: isGetBeepLoading, error: getBeepError }] =
@@ -152,7 +152,7 @@ export default function PickBeepScreen() {
     }
   };
 
-  const renderItem = ({ item, index }: { item: Unpacked<GetBeepersQuery["getBeepersNew"]>; index: number; }) => {
+  const renderItem = ({ item, index }: { item: Unpacked<GetBeepersQuery["getBeepers"]>; index: number; }) => {
     const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
 
     return (

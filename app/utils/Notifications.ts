@@ -68,9 +68,3 @@ export async function updatePushToken(): Promise<void> {
     }
   }
 }
-
-export function handleNotification(
-  notification: Notifications.Notification
-): void {
-  // Vibration.vibrate();
-}

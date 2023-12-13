@@ -388,6 +388,7 @@ export type Query = {
   getInProgressBeeps: BeepsResponse;
   getLastBeepToRate?: Maybe<Beep>;
   getLocationSuggestions: Array<Suggestion>;
+  getPaymentHistory: PaymentResponse;
   getPayments: PaymentResponse;
   getQueue: Array<Beep>;
   getRating: Rating;
@@ -469,6 +470,14 @@ export type QueryGetInProgressBeepsArgs = {
 export type QueryGetLocationSuggestionsArgs = {
   location: Scalars['String']['input'];
   sessiontoken: Scalars['String']['input'];
+};
+
+
+export type QueryGetPaymentHistoryArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  show?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -982,7 +991,7 @@ export type GetBeepersQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepersQuery = { __typename?: 'Query', getBeepersNew: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null, payments?: Array<{ __typename?: 'Payment', id: string, productId: string }> | null }> };
+export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null, payments?: Array<{ __typename?: 'Payment', id: string, productId: string }> | null }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String']['input'];
@@ -2470,7 +2479,7 @@ export type LeaveQueueMutationResult = ApolloReactCommon.MutationResult<LeaveQue
 export type LeaveQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<LeaveQueueMutation, LeaveQueueMutationVariables>;
 export const GetBeepersDocument = gql`
     query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
-  getBeepersNew(latitude: $latitude, longitude: $longitude, radius: $radius) {
+  getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
     id
     name
     first

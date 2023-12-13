@@ -8,6 +8,8 @@ import { Beep } from "../entities/Beep";
 import { ForgotPassword } from "../entities/ForgotPassword";
 import { VerifyEmail } from "../entities/VerifyEmail";
 import { TokenEntry } from "../entities/TokenEntry";
+import { Car } from "../entities/Car";
+import { Feedback } from "../entities/Feedback";
 
 /**
  * Used for handling GraphQL Uploads
@@ -34,18 +36,22 @@ export function isEduEmail(email: string): boolean {
  * @returns boolean true if delete was successful
  */
 export async function deleteUser(user: User, em: EntityManager): Promise<boolean> {
+  await em.nativeDelete(Car, { user });
+
   await em.nativeDelete(ForgotPassword, { user: user });
 
   await em.nativeDelete(VerifyEmail, { user: user });
 
-  await em.nativeDelete(Beep, { beeper: user });
-  await em.nativeDelete(Beep, { rider: user });
+  await em.nativeDelete(Feedback, { user: user });
+
+  await em.nativeDelete(Rating, { rater: user });
+  await em.nativeDelete(Rating, { rated: user });
 
   await em.nativeDelete(Report, { reporter: user });
   await em.nativeDelete(Report, { reported: user });
 
-  await em.nativeDelete(Rating, { rater: user });
-  await em.nativeDelete(Rating, { rated: user });
+  await em.nativeDelete(Beep, { beeper: user });
+  await em.nativeDelete(Beep, { rider: user });
 
   await em.nativeDelete(TokenEntry, { user });
 
@@ -55,26 +61,24 @@ export async function deleteUser(user: User, em: EntityManager): Promise<boolean
 }
 
 export async function search(
-    em: EntityManager,
-    offset: number = 0,
-    show: number = 500,
-    query: string
+  em: EntityManager,
+  offset: number = 0,
+  show: number = 500,
+  query: string
 ): Promise<UsersResponse> {
-    const connection = em.getConnection();
+  const connection = em.getConnection();
 
-    if (!query.endsWith(' ')) {
-      query = query.replace(" ", " & ");
-    }
+  if (!query.endsWith(' ')) {
+    query = query.replace(" ", " & ");
+  }
 
-    const raw: User[] = await connection.execute(`select * from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last || ' ' || email || ' ' || phone) @@ to_tsquery('${query}') limit ${show} offset ${offset};`);
-    const count = await connection.execute(`select count(*) from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last || ' ' || email || ' ' || phone) @@ to_tsquery('${query}')`);
+  const raw: User[] = await connection.execute(`select * from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last || ' ' || email || ' ' || phone) @@ to_tsquery('${query}') limit ${show} offset ${offset};`);
+  const count = await connection.execute(`select count(*) from public.user where to_tsvector(id || ' ' || first|| ' '  || username || ' ' || last || ' ' || email || ' ' || phone) @@ to_tsquery('${query}')`);
 
-    const users = raw.map(user => em.map(User, user));
+  const users = raw.map(user => em.map(User, user));
 
-    return {
-        items: users,
-        count: count[0].count
-    };
+  return {
+    items: users,
+    count: count[0].count
+  };
 }
-
-

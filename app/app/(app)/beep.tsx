@@ -7,8 +7,8 @@ import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid, isMobile } from "../../utils/constants";
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { client } from "../../utils/Apollo";
+import { ApolloError, gql, useMutation, useQuery, useSubscription } from "@apollo/client";
+import { cache, client } from "../../utils/Apollo";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import {
   GetInitialQueueQuery,
+  GetQueueSubscription,
   UpdateBeepSettingsMutation,
 } from "../../generated/graphql";
 import {
@@ -138,11 +139,25 @@ export default function StartBeepingScreen() {
   const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
-  const { subscribeToMore, data, refetch, loading } =
+  const { data, refetch, loading } =
     useQuery<GetInitialQueueQuery>(GetInitialQueue, {
       notifyOnNetworkStatusChange: true,
       variables: { id: user?.id },
     });
+
+  useSubscription<GetQueueSubscription>(GetQueue, {
+    variables: { id: user?.id },
+    onData({ data }) {
+      cache.updateQuery<GetInitialQueueQuery>({ query: GetInitialQueue, variables: { id: user?.id } }, (prev) => {
+        const newQueue = { getQueue: data.data!.getBeeperUpdates };
+        if (prev && (prev.getQueue.length < newQueue.getQueue.length)) {
+          bottomSheetRef.current?.expand();
+        }
+        return newQueue;
+      });
+    },
+    skip: !user?.isBeeping
+  });
 
   const [updateBeepSettings] =
     useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
@@ -263,7 +278,6 @@ export default function StartBeepingScreen() {
     })
       .then(() => {
         if (willBeBeeping) {
-          sub();
           startLocationTracking();
         } else {
           if (unsubscribe) unsubscribe();
@@ -314,7 +328,6 @@ export default function StartBeepingScreen() {
           return;
         }
         startLocationTracking();
-        sub();
       }
     };
 
@@ -337,7 +350,6 @@ export default function StartBeepingScreen() {
           return;
         }
         startLocationTracking();
-        sub();
         setIsBeeping(true);
       }
       if (!user.isBeeping && isBeeping) {
@@ -349,25 +361,6 @@ export default function StartBeepingScreen() {
 
     handleIsBeepingChange();
   }, [user]);
-
-  function sub(): void {
-    unsubscribe = subscribeToMore({
-      document: GetQueue,
-      variables: {
-        id: user?.id,
-      },
-      updateQuery: (prev, { subscriptionData }) => {
-        // @ts-expect-error This works so I'm leaving it as is
-        const newQueue = subscriptionData.data.getBeeperUpdates;
-        if (prev.getQueue.length < newQueue.length) {
-          bottomSheetRef.current?.expand();
-        }
-        return Object.assign({}, prev, {
-          getQueue: newQueue,
-        });
-      },
-    });
-  }
 
   const isRefreshing = Boolean(data) && loading;
 
