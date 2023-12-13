@@ -2,8 +2,6 @@ import {
   ThemeProvider,
   DarkTheme,
   DefaultTheme,
-  useTheme,
-  NavigationContainer,
 } from "@react-navigation/native";
 
 import { Stack } from 'expo-router';

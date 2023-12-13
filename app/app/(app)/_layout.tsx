@@ -4,10 +4,9 @@ import { Text } from 'react-native';
 import { UserData, UserSubscription } from '../../utils/useUser';
 import { useQuery } from '@apollo/client';
 import { UserDataQuery } from '../../generated/graphql';
-import { handleNotification, updatePushToken } from '../../utils/Notifications';
+import { updatePushToken } from '../../utils/Notifications';
 import { useEffect } from 'react';
 import { setUserContext } from '../../utils/sentry';
-import * as Notifications from "expo-notifications";
 import { CustomDrawerContent } from '../../components/Drawer';
 import { useColorMode } from 'native-base';
 
@@ -42,12 +41,6 @@ export default function AppLayout() {
       setUserContext(user);
     }
   }, [user]);
-
-  useEffect(() => {
-    const subscription =
-      Notifications.addNotificationReceivedListener(handleNotification);
-    return () => subscription.remove();
-  }, []);
 
   if (loading) {
     return null;
