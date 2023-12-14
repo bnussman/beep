@@ -69,17 +69,9 @@ export class UserResolver {
   @Mutation(() => Boolean)
   @Authorized(UserRole.ADMIN)
   public async removeUser(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
-    const user = ctx.em.getReference(User, id);
+    const user = await ctx.em.findOneOrFail(User, id);
 
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    if (await deleteUser(user, ctx.em)) {
-      return true;
-    }
-
-    return false;
+    return await deleteUser(user, ctx.em);
   }
 
   @Mutation(() => User)

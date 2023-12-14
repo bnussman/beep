@@ -1,14 +1,13 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "sentry-expo";
-import { client } from "./utils/Apollo";
-import { ApolloProvider, useQuery } from "@apollo/client";
-import { UserDataQuery } from "./generated/graphql";
+import { cache, client } from "./utils/Apollo";
+import { ApolloProvider, useQuery, useSubscription } from "@apollo/client";
+import { UserDataQuery, UserUpdatesSubscription } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { colorModeManager } from "./utils/theme";
-import { handleNotification, updatePushToken } from "./utils/Notifications";
+import { updatePushToken } from "./utils/Notifications";
 import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
@@ -21,8 +20,6 @@ import {
   DefaultTheme,
 } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
-
-let unsubscribe: (() => void) | null = null;
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,7 +35,7 @@ setupPurchase();
 
 function Beep() {
   const { colorMode } = useColorMode();
-  const { data, loading, subscribeToMore } = useQuery<UserDataQuery>(UserData, {
+  const { data, loading } = useQuery<UserDataQuery>(UserData, {
     errorPolicy: "none",
     onCompleted: () => {
       updatePushToken();
@@ -47,30 +44,19 @@ function Beep() {
 
   const user = data?.getUser;
 
+  useSubscription<UserUpdatesSubscription>(UserSubscription, {
+    onData({ data }) {
+      cache.updateQuery<UserDataQuery>({ query: UserData }, () => ({ getUser: data.data!.getUserUpdates }));
+    },
+    skip: !user,
+  });
+
   useEffect(() => {
     if (user) {
-      if (unsubscribe === null) {
-        unsubscribe = subscribeToMore({
-          document: UserSubscription,
-          updateQuery: (prev, { subscriptionData }) => {
-            // @ts-expect-error apollo dumb
-            const newFeedItem = subscriptionData.data.getUserUpdates;
-            return Object.assign({}, prev, {
-              getUser: newFeedItem,
-            });
-          },
-        });
-      }
       setPurchaseUser(user);
       setUserContext(user);
     }
   }, [user]);
-
-  React.useEffect(() => {
-    const subscription =
-      Notifications.addNotificationReceivedListener(handleNotification);
-    return () => subscription.remove();
-  }, []);
 
   if (loading) {
     return null;

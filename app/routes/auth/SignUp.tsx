@@ -12,7 +12,7 @@ import {
 } from "../../generated/graphql";
 import { isMobile, isSimulator } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
-import { client, wsLink } from "../../utils/Apollo";
+import { client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { UserData } from "../../utils/useUser";
@@ -101,8 +101,6 @@ export function SignUpScreen() {
         query: UserData,
         data: { getUser: { ...data?.signup.user, pushToken } },
       });
-
-      wsLink.client.restart();
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         Alert(error as ApolloError);

@@ -1,25 +1,18 @@
 import React from "react";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { DeleteRatingMutation, GetRatingQuery } from '../../../generated/graphql';
+import { gql, useQuery } from '@apollo/client';
+import { GetRatingQuery } from '../../../generated/graphql';
 import { NavLink, useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { Heading, Text, Box, Button, Flex, Spacer, Stack } from "@chakra-ui/react";
+import { Heading, Text, Box, Button, Flex, Spacer, Stack, useDisclosure } from "@chakra-ui/react";
 import { printStars } from ".";
 import { Error } from '../../../components/Error';
 import { BasicUser } from "../../../components/BasicUser";
-import { DeleteDialog } from "../../../components/DeleteDialog";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Loading } from "../../../components/Loading";
+import { DeleteRatingDialog } from "./DeleteRatingDialog";
 
 dayjs.extend(relativeTime);
-
-const DeleteRating = gql`
-  mutation DeleteRating($id: String!) {
-    deleteRating(id: $id)
-  }
-`;
 
 const GetRating = gql`
   query GetRating($id: String!) {
@@ -49,36 +42,26 @@ const GetRating = gql`
 
 export function Rating() {
   const { id } = useParams();
+  
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   const { data, loading, error } = useQuery<GetRatingQuery>(GetRating, { variables: { id: id } });
-  const [deleteRating, { loading: deleteLoading }] = useMutation<DeleteRatingMutation>(DeleteRating);
-  const navigate = useNavigate();
-
-  const [isOpen, setIsOpen] = React.useState(false);
-  const onClose = () => setIsOpen(false);
-  const cancelRef = React.useRef();
-
-  async function doDelete() {
-    await deleteRating({ variables: { id: id } });
-    navigate(-1);
-  }
 
   return (
     <Box>
-      <Flex align='center'>
+      <Flex align='center' mb={4}>
         <Heading>Rating</Heading>
         <Spacer />
         <Button
           colorScheme="red"
           leftIcon={<DeleteIcon />}
-          onClick={() => setIsOpen(true)}
+          onClick={onOpen}
         >
           Delete
         </Button>
       </Flex>
-
       {error && <Error error={error} />}
       {loading && <Loading />}
-
       {data?.getRating &&
         <Stack spacing={6}>
           <Box>
@@ -109,16 +92,13 @@ export function Rating() {
               </NavLink>
             </Box>
           }
+          <DeleteRatingDialog
+            id={data.getRating.id}
+            isOpen={isOpen}
+            onClose={onClose}
+          />
         </Stack>
       }
-      <DeleteDialog
-        title="Rating"
-        isOpen={isOpen}
-        onClose={onClose}
-        doDelete={doDelete}
-        deleteLoading={deleteLoading}
-        cancelRef={cancelRef}
-      />
     </Box>
   );
 }

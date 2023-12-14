@@ -5,21 +5,16 @@ import { NavLink, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Indicator } from '../../../components/Indicator';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { DeleteReportMutation, GetReportQuery, UpdateReportMutation, User } from '../../../generated/graphql';
+import { GetReportQuery, UpdateReportMutation, User } from '../../../generated/graphql';
 import { Box, Button, Checkbox, Flex, Heading, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
 import { DeleteIcon } from "@chakra-ui/icons";
-import { DeleteDialog } from "../../../components/DeleteDialog";
 import { Error } from '../../../components/Error';
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
+import { DeleteReportDialog } from "./DeleteReportDialog";
 
 dayjs.extend(relativeTime);
 
-export const DeleteReport = gql`
-  mutation DeleteReport($id: String!) {
-    deleteReport(id: $id)
-  }
-`;
 
 export const UpdateReport = gql`
   mutation UpdateReport($id: String!, $notes: String, $handled: Boolean) {
@@ -91,7 +86,6 @@ export function Report() {
   const { id } = useParams();
   const { data, loading, error } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
-  const [deleteReport, { loading: deleteLoading }] = useMutation<DeleteReportMutation>(DeleteReport);
   const navigate = useNavigate();
 
   const [notes, setNotes] = useState<string>();
@@ -116,15 +110,6 @@ export function Report() {
       setNotes(data?.getReport.notes)
     }
   }, [data?.getReport]);
-
-  async function doDelete() {
-    await deleteReport({
-      variables: { id },
-      refetchQueries: () => ['getReports']
-    });
-
-    navigate(-1);
-  }
 
   return (
     <Box>
@@ -210,13 +195,10 @@ export function Report() {
             >
                 Update Report
             </Button>
-          <DeleteDialog
-            title="Report"
-            isOpen={isOpen}
+          <DeleteReportDialog
+            id={data.getReport.id}
             onClose={onClose}
-            doDelete={doDelete}
-            deleteLoading={deleteLoading}
-            cancelRef={cancelRef}
+            isOpen={isOpen}
           />
         </React.Fragment>
       : null}

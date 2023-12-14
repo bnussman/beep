@@ -1,18 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getMainDefinition, Observable } from "@apollo/client/utilities";
+import { getMainDefinition } from "@apollo/client/utilities";
 import { createUploadLink } from "apollo-upload-client";
-import { Client, ClientOptions, createClient } from "graphql-ws";
-import { print } from "graphql";
+import { createClient } from "graphql-ws";
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { setContext } from "@apollo/client/link/context";
 import { Logger } from "./Logger";
-import {
-  ApolloClient,
-  ApolloLink,
-  FetchResult,
-  InMemoryCache,
-  Operation,
-  split,
-} from "@apollo/client";
+import { ApolloClient, ApolloLink, InMemoryCache, split } from "@apollo/client";
 import Constants from "expo-constants";
 
 function getLocalIP() {
@@ -43,86 +36,6 @@ const url = __DEV__
 // const wsUrl = "wss://api.ridebeep.app/subscriptions";
 // const url = "https://api.ridebeep.app/graphql";
 
-interface RestartableClient extends Client {
-  restart(): void;
-}
-
-function createRestartableClient(options: ClientOptions): RestartableClient {
-  let restartRequested = false;
-  let restart = () => {
-    restartRequested = true;
-  };
-
-  const client = createClient({
-    ...options,
-    on: {
-      ...options.on,
-      opened: (socket: any) => {
-        options.on?.opened?.(socket);
-
-        restart = () => {
-          if (socket.readyState === WebSocket.OPEN) {
-            // if the socket is still open for the restart, do the restart
-            socket.close(4205, "Client Restart");
-          } else {
-            // otherwise the socket might've closed, indicate that you want
-            // a restart on the next opened event
-            restartRequested = true;
-          }
-        };
-
-        // just in case you were eager to restart
-        if (restartRequested) {
-          restartRequested = false;
-          restart();
-        }
-      },
-    },
-  });
-
-  return {
-    ...client,
-    restart: () => restart(),
-  };
-}
-
-class WebSocketLink extends ApolloLink {
-  public client: RestartableClient;
-
-  constructor(options: ClientOptions) {
-    super();
-    this.client = createRestartableClient(options);
-  }
-
-  public request(operation: Operation): Observable<FetchResult> {
-    return new Observable((sink) => {
-      return this.client.subscribe<FetchResult>(
-        { ...operation, query: print(operation.query) },
-        {
-          next: sink.next.bind(sink),
-          complete: sink.complete.bind(sink),
-          error: (err) => {
-            if (Array.isArray(err))
-              // GraphQLError[]
-              return sink.error(
-                new Error(err.map(({ message }) => message).join(", ")),
-              );
-
-            if (err instanceof CloseEvent)
-              return sink.error(
-                new Error(
-                  `Socket closed with event ${err.code} ${err.reason || ""}`, // reason will be available on clean closes only
-                ),
-              );
-
-            return sink.error(err);
-          },
-        },
-      );
-    });
-  }
-}
-
 const authLink = setContext(async (_, { headers }) => {
   const tokens = await AsyncStorage.getItem("auth");
   if (tokens) {
@@ -138,9 +51,9 @@ const authLink = setContext(async (_, { headers }) => {
   }
 });
 
-export const wsLink = new WebSocketLink({
+const wsClient = createClient({
   url: wsUrl,
-  lazy: false,
+  lazy: true,
   retryAttempts: Infinity,
   isFatalConnectionProblem: () => false,
   shouldRetry: () => true,
@@ -210,6 +123,8 @@ export const wsLink = new WebSocketLink({
     closed: () => console.log("[Websocket] Closed"),
   },
 });
+
+export const wsLink = new GraphQLWsLink(wsClient);
 
 const splitLink = split(({ query }) => {
   const definition = getMainDefinition(query);
