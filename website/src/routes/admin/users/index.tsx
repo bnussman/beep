@@ -35,7 +35,7 @@ export function Users() {
   const [query, setQuery] = useState<string>();
   const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
 
-  const { loading, error, data } = useQuery<GetUsersQuery>(UsersGraphQL, {
+  const { loading, error, data, previousData } = useQuery<GetUsersQuery>(UsersGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit,
@@ -47,7 +47,7 @@ export function Users() {
     setSearchParams({ page: String(page) });
   };
 
-  const users = data?.getUsers;
+  const users = data?.getUsers ?? previousData?.getUsers;
 
   if (error) {
     return <Error error={error} />;
