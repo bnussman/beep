@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input } from "@chakra-ui/react"
 import { Indicator } from '../../../components/Indicator';
 import { Pagination } from '../../../components/Pagination';
@@ -97,7 +97,7 @@ export function Users() {
             </Tr>
           </Thead>
           <Tbody>
-            {users && (users?.items).map(user => (
+            {users?.items.map(user => (
               <Tr key={user.id}>
                 <TdUser user={user} />
                 <Td>{user.email}</Td>
