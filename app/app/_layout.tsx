@@ -4,7 +4,7 @@ import {
   DefaultTheme,
 } from "@react-navigation/native";
 
-import { Stack } from 'expo-router';
+import { SplashScreen, Stack } from 'expo-router';
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NATIVE_BASE_THEME } from "../utils/constants";
@@ -12,7 +12,6 @@ import { colorModeManager } from "../utils/theme";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../utils/Apollo";
 import { StatusBar } from "expo-status-bar";
-import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
