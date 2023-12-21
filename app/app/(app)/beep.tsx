@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import * as SplashScreen from "expo-splash-screen";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
@@ -332,10 +331,6 @@ export default function StartBeepingScreen() {
     };
 
     init();
-  }, []);
-
-  useEffect(() => {
-    SplashScreen.hideAsync();
   }, []);
 
   useEffect(() => {

@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { setUserContext } from '../../utils/sentry';
 import { CustomDrawerContent } from '../../components/Drawer';
 import { useColorMode } from 'native-base';
+import * as Splashscreen from 'expo-splash-screen';
 
 let unsubscribe: (() => void) | null = null;
 
@@ -18,6 +19,7 @@ export default function AppLayout() {
     errorPolicy: "none",
     onCompleted: () => {
       updatePushToken();
+      // Splashscreen.hideAsync();
     },
   });
 
@@ -41,10 +43,6 @@ export default function AppLayout() {
       setUserContext(user);
     }
   }, [user]);
-
-  if (loading) {
-    return null;
-  }
 
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (loading) {

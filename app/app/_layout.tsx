@@ -12,19 +12,23 @@ import { colorModeManager } from "../utils/theme";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../utils/Apollo";
 import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 export function Beep() {
   const { colorMode } = useColorMode();
   return (
     <ThemeProvider value={colorMode === "dark" ? DarkTheme: DefaultTheme}>
       <StatusBar style={colorMode === "light" ? "dark" : "light"} />
-      <Stack initialRouteName="drawer" />
+      <Stack />
     </ThemeProvider >
   );
 }
 
-function App2() {
+export default function App2() {
   return (
+    <ApolloProvider client={client}>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NativeBaseProvider
         theme={NATIVE_BASE_THEME}
@@ -33,13 +37,6 @@ function App2() {
         <Beep />
       </NativeBaseProvider>
     </GestureHandlerRootView>
-  );
-}
-
-export default function App() {
-  return (
-    <ApolloProvider client={client}>
-      <App2 />
     </ApolloProvider>
   );
 }

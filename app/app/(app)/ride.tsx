@@ -1,19 +1,16 @@
 import React, { useEffect } from "react";
 import LocationInput from "../../components/LocationInput";
-import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
 import { useValidationErrors } from "../../utils/useValidationErrors";
 import { BeeperMarker, BeepersMap } from "../../components/BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
-import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "../../components/LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Status } from "../../utils/types";
@@ -22,7 +19,6 @@ import { Rates } from "../../components/Rates";
 import { Card } from "../../components/Card";
 import { PlaceInQueue } from "../../components/PlaceInQueue";
 import {
-  ChooseBeepMutation,
   ChooseBeepMutationVariables,
   GetEtaQuery,
   GetInitialRiderStatusQuery,
@@ -36,10 +32,8 @@ import {
   shareVenmoInformation,
 } from "../../utils/links";
 import {
-  ApolloError,
   gql,
   useLazyQuery,
-  useMutation,
   useQuery,
   useSubscription,
 } from "@apollo/client";
@@ -242,8 +236,6 @@ export default function MainFindBeepScreen() {
   });
 
   useEffect(() => {
-    SplashScreen.hideAsync();
-
     const listener = AppState.addEventListener("change", handleAppStateChange);
 
     return () => {

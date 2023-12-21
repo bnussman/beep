@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
-import * as SplashScreen from "expo-splash-screen";
+import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PasswordInput from "../components/PasswordInput";
 import { Alert } from "../utils/Alert";
 import { isSimulator } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../generated/graphql";
-import { client, wsLink } from "../utils/Apollo";
+import { client } from "../utils/Apollo";
 import { getPushToken } from "../utils/Notifications";
 import { Container } from "../components/Container";
 import { UserData } from "../utils/useUser";
@@ -73,14 +72,6 @@ export default function Login() {
     setFocus,
     formState: { errors, isSubmitting },
   } = useForm<Omit<LoginMutationVariables, "pushToken">>();
-
-  useEffect(() => {
-    try {
-      SplashScreen.hideAsync();
-    } catch (error) {
-      // ...
-    }
-  }, []);
 
   const onLogin = handleSubmit(async (variables) => {
     let pushToken: string | null;

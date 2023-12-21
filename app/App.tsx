@@ -17,12 +17,10 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
-import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
 import * as Sentry from "sentry-expo";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 
-SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
 Sentry.init({
   release: config.version,
