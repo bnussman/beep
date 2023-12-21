@@ -62,59 +62,7 @@ import {
   Image,
 } from "native-base";
 
-const ChooseBeep = gql`
-  mutation ChooseBeep(
-    $beeperId: String!
-    $origin: String!
-    $destination: String!
-    $groupSize: Float!
-  ) {
-    chooseBeep(
-      beeperId: $beeperId
-      input: {
-        origin: $origin
-        destination: $destination
-        groupSize: $groupSize
-      }
-    ) {
-      id
-      position
-      origin
-      destination
-      status
-      groupSize
-      beeper {
-        id
-        first
-        name
-        singlesRate
-        groupRate
-        isStudent
-        role
-        venmo
-        cashapp
-        username
-        phone
-        photo
-        capacity
-        queueSize
-        location {
-          longitude
-          latitude
-        }
-        cars {
-          id
-          photo
-          make
-          color
-          model
-        }
-      }
-    }
-  }
-`;
-
-const InitialRiderStatus = gql`
+export const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
     getRiderStatus {
       id
@@ -266,18 +214,19 @@ export function MainFindBeepScreen() {
   const [getETA, { data: eta, error: etaError }] =
     useLazyQuery<GetEtaQuery>(GetETA);
 
-  const [getBeep, { loading: isGetBeepLoading, error: getBeepError }] =
-    useMutation<ChooseBeepMutation>(ChooseBeep);
 
   const {
     control,
     handleSubmit,
     setFocus,
     formState: { errors },
-  } = useForm<ChooseBeepMutationVariables>();
-
-  const validationErrors =
-    useValidationErrors<ChooseBeepMutationVariables>(getBeepError);
+  } = useForm<Omit<ChooseBeepMutationVariables, 'beeperId'>>({
+    defaultValues: {
+      groupSize: undefined,
+      origin: '',
+      destination: '',
+    },
+  });
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === "active") {
@@ -318,35 +267,9 @@ export function MainFindBeepScreen() {
     }
   }, [beep]);
 
-  const findBeep = () => {
-    navigate("Choose Beeper", {
-      handlePick: (id: string) =>
-        handleSubmit((values) => chooseBeep(id, values))(),
-    });
-  };
-
-  const chooseBeep = async (
-    id: string,
-    values: ChooseBeepMutationVariables
-  ) => {
-    try {
-      const { data } = await getBeep({
-        variables: {
-          ...values,
-          beeperId: id,
-        },
-      });
-
-      if (data) {
-        client.writeQuery({
-          query: InitialRiderStatus,
-          data: { getRiderStatus: { ...data.chooseBeep } },
-        });
-      }
-    } catch (error) {
-      Alert(error as ApolloError);
-    }
-  };
+  const findBeep = handleSubmit((values) => {
+    navigate("Choose Beeper", values);
+  });
 
   function getCurrentStatusMessage(): string {
     switch (beep?.status) {
@@ -378,11 +301,7 @@ export function MainFindBeepScreen() {
     return (
       <Container keyboard alignItems="center" pt={2} h="100%" px={4}>
         <Stack space={4} w="100%">
-          <FormControl
-            isInvalid={
-              Boolean(errors.groupSize) || Boolean(validationErrors?.groupSize)
-            }
-          >
+          <FormControl isInvalid={Boolean(errors.groupSize)}>
             <FormControl.Label>Group Size</FormControl.Label>
             <Controller
               name="groupSize"
@@ -392,8 +311,8 @@ export function MainFindBeepScreen() {
                 <Input
                   keyboardType="numeric"
                   onBlur={onBlur}
-                  onChangeText={(val) => onChange(val === "" ? 0 : Number(val))}
-                  value={value === undefined ? undefined : String(value)}
+                  onChangeText={(val) => onChange(val === "" ? "" : Number(val))}
+                  value={value === undefined ? "" : String(value)}
                   ref={ref}
                   returnKeyLabel="next"
                   returnKeyType="next"
@@ -406,14 +325,9 @@ export function MainFindBeepScreen() {
               leftIcon={<WarningOutlineIcon size="xs" />}
             >
               {errors.groupSize?.message}
-              {validationErrors?.groupSize?.[0]}
             </FormControl.ErrorMessage>
           </FormControl>
-          <FormControl
-            isInvalid={
-              Boolean(errors.origin) || Boolean(validationErrors?.origin)
-            }
-          >
+          <FormControl isInvalid={Boolean(errors.origin)}>
             <FormControl.Label>Pick Up Location</FormControl.Label>
             <Controller
               name="origin"
@@ -437,13 +351,11 @@ export function MainFindBeepScreen() {
               leftIcon={<WarningOutlineIcon size="xs" />}
             >
               {errors.origin?.message}
-              {validationErrors?.origin?.[0]}
             </FormControl.ErrorMessage>
           </FormControl>
           <FormControl
             isInvalid={
-              Boolean(errors.destination) ||
-              Boolean(validationErrors?.destination)
+              Boolean(errors.destination)
             }
           >
             <FormControl.Label>Destination Location</FormControl.Label>
@@ -468,13 +380,11 @@ export function MainFindBeepScreen() {
               leftIcon={<WarningOutlineIcon size="xs" />}
             >
               {errors.destination?.message}
-              {validationErrors?.destination?.[0]}
             </FormControl.ErrorMessage>
           </FormControl>
           <Button
             _text={{ fontWeight: "extrabold" }}
             onPress={() => findBeep()}
-            isLoading={isGetBeepLoading}
             size="lg"
           >
             Find Beep
