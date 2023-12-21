@@ -78,6 +78,7 @@ function Beep() {
     <>
       <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
       <NavigationContainer
+        linking={{ enabled: true, prefixes: ["beep://", "https://app.ridebeep.app"] }}
         theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
       >
         <Stack.Navigator
