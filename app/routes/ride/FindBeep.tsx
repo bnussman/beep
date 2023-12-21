@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
-import { useValidationErrors } from "../../utils/useValidationErrors";
 import { BeeperMarker, BeepersMap } from "./BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
@@ -14,7 +13,6 @@ import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
-import { Alert } from "../../utils/Alert";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Status } from "../../utils/types";
@@ -24,7 +22,6 @@ import { Card } from "../../components/Card";
 import { PlaceInQueue } from "./PlaceInQueue";
 import { GetBeepHistory } from "../Beeps";
 import {
-  ChooseBeepMutation,
   ChooseBeepMutationVariables,
   GetEtaQuery,
   GetInitialRiderStatusQuery,
@@ -403,7 +400,7 @@ export function MainFindBeepScreen() {
           <Pressable
             w="100%"
             onPress={() =>
-              navigate("Profile", { id: beep.beeper.id, beep: beep.id })
+              navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
             }
           >
             <HStack alignItems="center" space={4} w="100%">

@@ -1,6 +1,6 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsQuery } from "../../generated/graphql";
+import { GetRatingsForUserQuery, GetRatingsQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { printStars } from "../../components/Stars";
 import { Card } from "../../components/Card";
@@ -17,7 +17,6 @@ import {
   FlatList,
   useColorMode,
   Spacer,
-  Box,
 } from "native-base";
 
 const Ratings = gql`
@@ -40,6 +39,9 @@ const Ratings = gql`
           photo
           username
         }
+        beep {
+          id
+        }
       }
       count
     }
@@ -56,7 +58,7 @@ export function RatePreview({ id }: Props) {
   const { colorMode } = useColorMode();
   const { push } = useNavigation<Navigation>();
   const { data, loading, error, fetchMore, refetch } =
-    useQuery<GetRatingsQuery>(Ratings, {
+    useQuery<GetRatingsForUserQuery>(Ratings, {
       variables: { id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
     });
@@ -137,7 +139,7 @@ export function RatePreview({ id }: Props) {
             p={1}
             mt={2}
             pressable
-            onPress={() => push("Profile", { id: rating.rater.id })}
+            onPress={() => push("Profile", { id: rating.rater.id, beepId: rating.beep.id })}
           >
             <HStack alignItems="center" p={2}>
               <Avatar size="md" mr={4} url={rating.rater.photo} />

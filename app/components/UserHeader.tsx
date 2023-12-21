@@ -4,7 +4,7 @@ import { Avatar } from "./Avatar";
 
 interface Props {
   name: string;
-  picture: string;
+  picture: string | null | undefined;
   username: string;
 }
 
