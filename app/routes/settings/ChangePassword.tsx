@@ -11,7 +11,7 @@ const ChangePassword = gql`
   }
 `;
 
-export function ChangePasswordScreen(): JSX.Element {
+export function ChangePasswordScreen() {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [changePassword, { loading }] =
@@ -35,8 +35,8 @@ export function ChangePasswordScreen(): JSX.Element {
   }
 
   return (
-    <Container keyboard alignItems="center">
-      <Stack alignSelf="center" space={4} mt={4} w="90%">
+    <Container keyboard alignItems="center" p={4}>
+      <Stack alignSelf="center" space={4} w="100%">
         <Input
           size="lg"
           secureTextEntry={true}
