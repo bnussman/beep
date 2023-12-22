@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
-import { ReportUserMutation } from "../../generated/graphql";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { GetUserProfileQuery, ReportUserMutation } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Input, Button, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { UserHeader } from "../../components/UserHeader";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { GetUser } from "./Profile";
 
 const ReportUser = gql`
   mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
@@ -19,12 +20,20 @@ export function ReportScreen() {
   const { params } = useRoute<any>();
   const { goBack } = useNavigation<Navigation>();
 
+  const { data } = useQuery<GetUserProfileQuery>(GetUser, {
+    variables: {
+      id: params.userId
+    }
+  });
+
+  const user = data?.getUser;
+
   async function reportUser() {
     try {
       await report({
         variables: {
-          userId: params.user.id,
-          beepId: params.beep,
+          userId: params.userId,
+          beepId: params.beepId,
           reason: reason,
         },
       });
@@ -37,11 +46,13 @@ export function ReportScreen() {
   return (
     <Container keyboard p={4}>
       <Stack space={4} w="full">
-        <UserHeader
-          username={params.user.username}
-          name={params.user.name}
-          picture={params.user.photo}
-        />
+        {user &&
+          <UserHeader
+            username={user.username}
+            name={user.name}
+            picture={user.photo}
+          />
+        }
         <Input
           size="lg"
           h={100}

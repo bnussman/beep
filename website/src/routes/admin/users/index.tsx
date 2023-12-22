@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input } from "@chakra-ui/react"
 import { Indicator } from '../../../components/Indicator';
 import { Pagination } from '../../../components/Pagination';
@@ -32,10 +32,10 @@ export const UsersGraphQL = gql`
 export function Users() {
   const pageLimit = 20;
   const [searchParams, setSearchParams] = useSearchParams();
-  const [query, setQuery] = useState<string>();
   const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+  const query = searchParams.get('query');
 
-  const { loading, error, data } = useQuery<GetUsersQuery>(UsersGraphQL, {
+  const { loading, error, data, previousData } = useQuery<GetUsersQuery>(UsersGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit,
@@ -44,10 +44,21 @@ export function Users() {
   });
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    searchParams.set('page', String(page));
+    setSearchParams(searchParams);
   };
 
-  const users = data?.getUsers;
+  const setQuery = (query: string) => {
+    if (!query) {
+      searchParams.delete('query');
+      setSearchParams(searchParams);
+    } else {
+      searchParams.set('query', query);
+      setSearchParams(searchParams);
+    }
+  };
+
+  const users = data?.getUsers ?? previousData?.getUsers;
 
   if (error) {
     return <Error error={error} />;
@@ -70,7 +81,7 @@ export function Users() {
         <Input
           type="text"
           placeholder="Search"
-          value={query}
+          value={query ?? ""}
           onChange={(e) => setQuery(e.target.value)}
         />
       </InputGroup>
@@ -86,7 +97,7 @@ export function Users() {
             </Tr>
           </Thead>
           <Tbody>
-            {users && (users?.items).map(user => (
+            {users?.items.map(user => (
               <Tr key={user.id}>
                 <TdUser user={user} />
                 <Td>{user.email}</Td>

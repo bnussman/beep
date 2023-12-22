@@ -73,7 +73,7 @@ export function Rating(props: Props) {
       mt={2}
       mx={1}
       pressable
-      onPress={() => navigation.push("Profile", { id: otherUser.id })}
+      onPress={() => navigation.push("Profile", { id: otherUser.id, beepId: item.beep.id })}
       onLongPress={onLongPress}
     >
       <Stack space={2}>

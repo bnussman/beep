@@ -4,7 +4,7 @@ import { Card } from "../../components/Card";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
-import { GetUserProfileQuery, User } from "../../generated/graphql";
+import { GetUserProfileQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -22,7 +22,7 @@ import {
   Icon,
 } from "native-base";
 
-const GetUser = gql`
+export const GetUser = gql`
   query GetUserProfile($id: String!) {
     getUser(id: $id) {
       id
@@ -55,15 +55,15 @@ export function ProfileScreen() {
 
   const handleReport = () => {
     navigation.navigate("Report", {
-      user: data?.getUser as User,
-      beep: params.beep,
+      userId: params.id,
+      beepId: params.beepId,
     });
   };
 
   const handleRate = () => {
     navigation.navigate("Rate", {
-      user: data?.getUser as User,
-      beep: params.beep,
+      userId: params.id,
+      beepId: params.beepId,
     });
   };
 

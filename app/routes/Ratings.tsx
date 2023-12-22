@@ -33,6 +33,9 @@ export const Ratings = gql`
           name
           photo
         }
+        beep {
+          id
+        }
       }
       count
     }
