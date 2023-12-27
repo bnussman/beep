@@ -57,7 +57,7 @@ export function Beep(props: Props) {
         onPress={() =>
           navigate("Profile", {
             id: beep.rider.id,
-            beep: beep.id,
+            beepId: beep.id,
           })
         }
       >

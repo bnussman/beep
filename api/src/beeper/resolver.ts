@@ -36,13 +36,13 @@ export class BeeperResolver {
       return beepers.map(({ id, location }) => ({ id: sha256(id).substring(0, 9), latitude: location?.latitude, longitude: location?.longitude }));
     }
 
-    const connection = ctx.em.getConnection();
+    const users = await ctx.em.createQueryBuilder(User, 'u')
+      .select(["id", "location"])
+      .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
+      .andWhere({ isBeeping: true })
+      .getResultList();
 
-    const raw: User[] = await connection.execute(`SELECT location, id FROM public."user" WHERE ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude})) <= ${radius} * 1609.34 AND is_beeping = true ORDER BY ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))`);
-
-    const data = raw.map(user => ctx.em.map(User, user));
-
-    return data.map(({ id, location }) => ({ id: sha256(id).substring(0, 9), latitude: location?.latitude, longitude: location?.longitude }));
+    return users.map(({ id, location }) => ({ id: sha256(id).substring(0, 9), latitude: location?.latitude, longitude: location?.longitude }));
   }
 
   @Mutation(() => User)

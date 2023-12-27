@@ -69,7 +69,7 @@ export function QueueItem({ item }: Props) {
             onPress={() =>
               navigate("Profile", {
                 id: item.rider.id,
-                beep: item.id,
+                beepId: item.id,
               })
             }
           >
@@ -165,7 +165,7 @@ export function QueueItem({ item }: Props) {
           onPress={() =>
             navigate("Profile", {
               id: item.rider.id,
-              beep: item.id,
+              beepId: item.id,
             })
           }
         >

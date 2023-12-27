@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import { RateUserMutation } from "../../generated/graphql";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { GetUserProfileQuery, RateUserMutation } from "../../generated/graphql";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
 import { Navigation } from "../../utils/Navigation";
@@ -8,6 +8,7 @@ import { Button, Input, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { GetUser } from "./Profile";
 
 export const RateUser = gql`
   mutation RateUser(
@@ -31,16 +32,24 @@ export function RateScreen() {
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
   const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
-
   const { params } = useRoute<any>();
+
+  const { data } = useQuery<GetUserProfileQuery>(GetUser, {
+    variables: {
+      id: params.userId
+    }
+  });
+
   const { goBack } = useNavigation<Navigation>();
+
+  const user = data?.getUser;
 
   const onSubmit = () => {
     rate({
       refetchQueries: () => ["GetRatings"],
       variables: {
-        userId: params.user.id,
-        beepId: params.beep,
+        userId: params.userId,
+        beepId: params.beepId,
         message: message,
         stars: stars,
       },
@@ -56,11 +65,13 @@ export function RateScreen() {
   return (
     <Container keyboard p={4}>
       <Stack space={4} w="full">
-        <UserHeader
-          username={params.user.username}
-          name={params.user.name}
-          picture={params.user.photo}
-        />
+        {user &&
+          <UserHeader
+            username={user.username}
+            name={user.name}
+            picture={user.photo}
+          />
+        }
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Input
           size="lg"

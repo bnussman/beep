@@ -11,7 +11,7 @@ export function Home() {
     <Container maxW="container.xl">
       <Hero
         title="Ride Beep App"
-        subtitle="Your ultimate ride-share app. A simple way to get a ride around college campuses. A product by students for students."
+        subtitle="A rideshare app for students. Ride or drive at your college or university today."
         image={colorMode === 'dark' ? iPhoneLight : iPhoneDark}
         buttonLink="/download"
         buttonText="Download"

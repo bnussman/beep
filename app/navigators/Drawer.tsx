@@ -128,7 +128,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props}>
       <VStack space={6} my={2} mx={2}>
-        <Pressable onPress={() => navigate("Profile", { id: user?.id })}>
+        <Pressable onPress={() => navigate("Profile", { id: user?.id ?? "" })}>
           <HStack alignItems="center">
             <Avatar
               mr={2}
@@ -145,7 +145,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               </Text>
             </Stack>
             <Spacer />
-            <Text fontSize="3xl" px={2}>🦃</Text>
+            <Text fontSize="3xl" px={2}>🎄</Text>
           </HStack>
         </Pressable>
         <VStack divider={<Divider />} space={4}>

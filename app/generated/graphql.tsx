@@ -794,7 +794,7 @@ export type GetRatingsQueryVariables = Exact<{
 }>;
 
 
-export type GetRatingsQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, stars: number, timestamp: any, message?: string | null, rater: { __typename?: 'User', id: string, name: string, photo?: string | null }, rated: { __typename?: 'User', id: string, name: string, photo?: string | null } }> } };
+export type GetRatingsQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, stars: number, timestamp: any, message?: string | null, rater: { __typename?: 'User', id: string, name: string, photo?: string | null }, rated: { __typename?: 'User', id: string, name: string, photo?: string | null }, beep: { __typename?: 'Beep', id: string } }> } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -913,7 +913,7 @@ export type GetRatingsForUserQueryVariables = Exact<{
 }>;
 
 
-export type GetRatingsForUserQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: string | null, stars: number, rater: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rated: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string } }> } };
+export type GetRatingsForUserQuery = { __typename?: 'Query', getRatings: { __typename?: 'RatingsResponse', count: number, items: Array<{ __typename?: 'Rating', id: string, timestamp: any, message?: string | null, stars: number, rater: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, rated: { __typename?: 'User', id: string, name: string, photo?: string | null, username: string }, beep: { __typename?: 'Beep', id: string } }> } };
 
 export type ReportUserMutationVariables = Exact<{
   userId: Scalars['String']['input'];
@@ -941,16 +941,6 @@ export type GetBeeperLocationUpdatesSubscriptionVariables = Exact<{
 
 
 export type GetBeeperLocationUpdatesSubscription = { __typename?: 'Subscription', getBeeperLocationUpdates: { __typename?: 'AnonymousBeeper', id: string, latitude?: number | null, longitude?: number | null } };
-
-export type ChooseBeepMutationVariables = Exact<{
-  beeperId: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
-  destination: Scalars['String']['input'];
-  groupSize: Scalars['Float']['input'];
-}>;
-
-
-export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars?: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> | null } } };
 
 export type GetInitialRiderStatusQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -991,7 +981,17 @@ export type GetBeepersQueryVariables = Exact<{
 }>;
 
 
-export type GetBeepersQuery = { __typename?: 'Query', getBeepersNew: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null, payments?: Array<{ __typename?: 'Payment', id: string, productId: string }> | null }> };
+export type GetBeepersQuery = { __typename?: 'Query', getBeepers: Array<{ __typename?: 'User', id: string, name: string, first: string, isStudent: boolean, singlesRate: number, groupRate: number, capacity: number, queueSize: number, photo?: string | null, role: string, rating?: number | null, venmo?: string | null, cashapp?: string | null, payments?: Array<{ __typename?: 'Payment', id: string, productId: string }> | null }> };
+
+export type ChooseBeepMutationVariables = Exact<{
+  beeperId: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
+  destination: Scalars['String']['input'];
+  groupSize: Scalars['Float']['input'];
+}>;
+
+
+export type ChooseBeepMutation = { __typename?: 'Mutation', chooseBeep: { __typename?: 'Beep', id: string, position: number, origin: string, destination: string, status: string, groupSize: number, beeper: { __typename?: 'User', id: string, first: string, name: string, singlesRate: number, groupRate: number, isStudent: boolean, role: string, venmo?: string | null, cashapp?: string | null, username: string, phone?: string | null, photo?: string | null, capacity: number, queueSize: number, location?: { __typename?: 'Point', longitude: number, latitude: number } | null, cars?: Array<{ __typename?: 'Car', id: string, photo: string, make: string, color: string, model: string }> | null } } };
 
 export type ChangePasswordMutationVariables = Exact<{
   password: Scalars['String']['input'];
@@ -1392,6 +1392,9 @@ export const GetRatingsDocument = gql`
         id
         name
         photo
+      }
+      beep {
+        id
       }
     }
     count
@@ -2034,6 +2037,9 @@ export const GetRatingsForUserDocument = gql`
         photo
         username
       }
+      beep {
+        id
+      }
     }
     count
   }
@@ -2183,77 +2189,6 @@ export function useGetBeeperLocationUpdatesSubscription(baseOptions: ApolloReact
       }
 export type GetBeeperLocationUpdatesSubscriptionHookResult = ReturnType<typeof useGetBeeperLocationUpdatesSubscription>;
 export type GetBeeperLocationUpdatesSubscriptionResult = ApolloReactCommon.SubscriptionResult<GetBeeperLocationUpdatesSubscription>;
-export const ChooseBeepDocument = gql`
-    mutation ChooseBeep($beeperId: String!, $origin: String!, $destination: String!, $groupSize: Float!) {
-  chooseBeep(
-    beeperId: $beeperId
-    input: {origin: $origin, destination: $destination, groupSize: $groupSize}
-  ) {
-    id
-    position
-    origin
-    destination
-    status
-    groupSize
-    beeper {
-      id
-      first
-      name
-      singlesRate
-      groupRate
-      isStudent
-      role
-      venmo
-      cashapp
-      username
-      phone
-      photo
-      capacity
-      queueSize
-      location {
-        longitude
-        latitude
-      }
-      cars {
-        id
-        photo
-        make
-        color
-        model
-      }
-    }
-  }
-}
-    `;
-export type ChooseBeepMutationFn = ApolloReactCommon.MutationFunction<ChooseBeepMutation, ChooseBeepMutationVariables>;
-
-/**
- * __useChooseBeepMutation__
- *
- * To run a mutation, you first call `useChooseBeepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useChooseBeepMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [chooseBeepMutation, { data, loading, error }] = useChooseBeepMutation({
- *   variables: {
- *      beeperId: // value for 'beeperId'
- *      origin: // value for 'origin'
- *      destination: // value for 'destination'
- *      groupSize: // value for 'groupSize'
- *   },
- * });
- */
-export function useChooseBeepMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ChooseBeepMutation, ChooseBeepMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<ChooseBeepMutation, ChooseBeepMutationVariables>(ChooseBeepDocument, options);
-      }
-export type ChooseBeepMutationHookResult = ReturnType<typeof useChooseBeepMutation>;
-export type ChooseBeepMutationResult = ApolloReactCommon.MutationResult<ChooseBeepMutation>;
-export type ChooseBeepMutationOptions = ApolloReactCommon.BaseMutationOptions<ChooseBeepMutation, ChooseBeepMutationVariables>;
 export const GetInitialRiderStatusDocument = gql`
     query GetInitialRiderStatus {
   getRiderStatus {
@@ -2479,7 +2414,7 @@ export type LeaveQueueMutationResult = ApolloReactCommon.MutationResult<LeaveQue
 export type LeaveQueueMutationOptions = ApolloReactCommon.BaseMutationOptions<LeaveQueueMutation, LeaveQueueMutationVariables>;
 export const GetBeepersDocument = gql`
     query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
-  getBeepersNew(latitude: $latitude, longitude: $longitude, radius: $radius) {
+  getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
     id
     name
     first
@@ -2530,6 +2465,77 @@ export function useGetBeepersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryH
 export type GetBeepersQueryHookResult = ReturnType<typeof useGetBeepersQuery>;
 export type GetBeepersLazyQueryHookResult = ReturnType<typeof useGetBeepersLazyQuery>;
 export type GetBeepersQueryResult = ApolloReactCommon.QueryResult<GetBeepersQuery, GetBeepersQueryVariables>;
+export const ChooseBeepDocument = gql`
+    mutation ChooseBeep($beeperId: String!, $origin: String!, $destination: String!, $groupSize: Float!) {
+  chooseBeep(
+    beeperId: $beeperId
+    input: {origin: $origin, destination: $destination, groupSize: $groupSize}
+  ) {
+    id
+    position
+    origin
+    destination
+    status
+    groupSize
+    beeper {
+      id
+      first
+      name
+      singlesRate
+      groupRate
+      isStudent
+      role
+      venmo
+      cashapp
+      username
+      phone
+      photo
+      capacity
+      queueSize
+      location {
+        longitude
+        latitude
+      }
+      cars {
+        id
+        photo
+        make
+        color
+        model
+      }
+    }
+  }
+}
+    `;
+export type ChooseBeepMutationFn = ApolloReactCommon.MutationFunction<ChooseBeepMutation, ChooseBeepMutationVariables>;
+
+/**
+ * __useChooseBeepMutation__
+ *
+ * To run a mutation, you first call `useChooseBeepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChooseBeepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [chooseBeepMutation, { data, loading, error }] = useChooseBeepMutation({
+ *   variables: {
+ *      beeperId: // value for 'beeperId'
+ *      origin: // value for 'origin'
+ *      destination: // value for 'destination'
+ *      groupSize: // value for 'groupSize'
+ *   },
+ * });
+ */
+export function useChooseBeepMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ChooseBeepMutation, ChooseBeepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<ChooseBeepMutation, ChooseBeepMutationVariables>(ChooseBeepDocument, options);
+      }
+export type ChooseBeepMutationHookResult = ReturnType<typeof useChooseBeepMutation>;
+export type ChooseBeepMutationResult = ApolloReactCommon.MutationResult<ChooseBeepMutation>;
+export type ChooseBeepMutationOptions = ApolloReactCommon.BaseMutationOptions<ChooseBeepMutation, ChooseBeepMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($password: String!) {
   changePassword(input: {password: $password})
