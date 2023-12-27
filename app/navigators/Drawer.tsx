@@ -125,7 +125,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
           <XStack alignItems="center">
             <Avatar
               mr="$4"
-              size="md"
+              size="$4"
               url={user?.photo}
             />
             <Stack flexGrow={1} my="$4">
@@ -136,9 +136,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 @{user?.username}
               </SizableText>
             </Stack>
-            <Stack>
-              <SizableText fontSize="$8">🎄</SizableText>
-            </Stack>
+            <SizableText fontSize="$8" mr="$4">🎄</SizableText>
           </XStack>
         </Pressable>
         <Stack space={4}>
