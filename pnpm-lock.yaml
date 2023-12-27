@@ -1325,7 +1325,6 @@ packages:
   /@babel/helper-string-parser@7.23.4:
     resolution: {integrity: sha512-803gmbQdqwdf4olxrX4AJyFBV/RTr3rSmOj0rKwesmzlfhYNDEs+/iOcznzpNWlJlIlTJC2QfPFcHB6DlzdVLQ==}
     engines: {node: '>=6.9.0'}
-    dev: true
 
   /@babel/helper-validator-identifier@7.22.15:
     resolution: {integrity: sha512-4E/F9IIEi8WR94324mbDUMo074YTheJmd7eZF5vITTeYchqAi6sYXRLHUVsmkdmY4QjfKTcB2jB7dVP3NaBElQ==}
@@ -3640,7 +3639,7 @@ packages:
       '@babel/plugin-transform-unicode-regex': 7.22.5(@babel/core@7.22.9)
       '@babel/plugin-transform-unicode-sets-regex': 7.22.5(@babel/core@7.22.9)
       '@babel/preset-modules': 0.1.6-no-external-plugins(@babel/core@7.22.9)
-      '@babel/types': 7.23.0
+      '@babel/types': 7.23.5
       babel-plugin-polyfill-corejs2: 0.4.6(@babel/core@7.22.9)
       babel-plugin-polyfill-corejs3: 0.8.6(@babel/core@7.22.9)
       babel-plugin-polyfill-regenerator: 0.5.3(@babel/core@7.22.9)
@@ -3926,7 +3925,6 @@ packages:
       '@babel/helper-string-parser': 7.23.4
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
-    dev: true
 
   /@banksnussman/graphql-fields-to-relations@2.0.0:
     resolution: {integrity: sha512-tNhm7byGNIEsTGd+/zPClUEMzOVo1CSURWPHuYafTCZg/CGO49fG7XRjFl5OkhHE6T6LZGszn6vc4rwFyVfoVg==}
@@ -9557,7 +9555,7 @@ packages:
       react: ^18.1.0
     dependencies:
       react: 18.2.0
-      react-remove-scroll: 2.5.6(@types/react@18.2.18)(react@18.2.0)
+      react-remove-scroll: 2.5.7(@types/react@18.2.18)(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
     dev: false
