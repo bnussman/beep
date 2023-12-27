@@ -6,7 +6,6 @@ import { Container } from "../../components/Container";
 import { Navigation } from "../../utils/Navigation";
 import { GetUserProfileQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { RatePreview } from "./RatePreview";
 import { useUser } from "../../utils/useUser";
@@ -17,9 +16,10 @@ import {
   XStack,
   Heading,
   Spacer,
+  Popover,
+  Button,
+  YStack,
 } from "tamagui";
-import { Menu } from "native-base";
-import { Pressable } from "react-native";
 
 export const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -70,31 +70,55 @@ export function ProfileScreen() {
     if (user?.id !== params.id) {
       navigation.setOptions({
         headerRight: () => (
-          <Menu
-            w="190"
-            trigger={(triggerProps) => {
-              return (
-                <Pressable
-                  accessibilityLabel="More options menu"
-                  {...triggerProps}
+          <Popover size="$5" allowFlip>
+            <Popover.Trigger asChild>
+              <Button>...</Button>
+            </Popover.Trigger>
+
+            <Popover.Content
+              borderWidth={1}
+              borderColor="$borderColor"
+              enterStyle={{ y: -10, opacity: 0 }}
+              exitStyle={{ y: -10, opacity: 0 }}
+              elevate
+              animation={[
+                'quick',
+                {
+                  opacity: {
+                    overshootClamping: true,
+                  },
+                },
+              ]}
+            >
+              <Popover.Arrow borderWidth={1} borderColor="$borderColor" />
+
+              <YStack space="$3">
+                <Popover.Close asChild>
+                  <Button
+                    size="$3"
+                    onPress={() => {
+                      handleRate();
+                    }}
+                  >
+                    Rate
+                  </Button>
+                </Popover.Close>
+                <Popover.Close>
+                <Button
+                  size="$3"
+                  onPress={() => {
+                    handleReport();
+                  }}
                 >
-                  <Ionicons
-                    mr={3}
-                    size="xl"
-                    name="ios-ellipsis-horizontal-circle"
-                  />
-                </Pressable>
-              );
-            }}
-          >
-            {Boolean(params.beep) && (
-              <Menu.Item onPress={handleRate}>Rate</Menu.Item>
-            )}
-            <Menu.Item onPress={handleReport}>Report</Menu.Item>
-          </Menu>
+                  Report
+                </Button>
+              </Popover.Close>
+            </YStack>
+          </Popover.Content>
+          </Popover>
         ),
       });
-    }
+}
   }, [navigation, params, data]);
 
   if (loading) {

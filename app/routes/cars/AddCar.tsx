@@ -27,7 +27,6 @@ import {
   Button,
 } from "tamagui";
 import { Pressable } from "react-native";
-import { CheckIcon } from "native-base";
 
 const makes = getMakes();
 
@@ -223,7 +222,6 @@ export function AddCar() {
                 onValueChange={(value) => onChange(value)}
                 _selectedItem={{
                   bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
                 }}
               >
                 {colors.map((color) => (

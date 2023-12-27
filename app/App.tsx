@@ -9,9 +9,7 @@ import { RateScreen } from "./routes/global/Rate";
 import { cache, client } from "./utils/Apollo";
 import { ApolloProvider, useQuery, useSubscription } from "@apollo/client";
 import { UserDataQuery, UserUpdatesSubscription } from "./generated/graphql";
-import { NativeBaseProvider } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
-import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
 import { updatePushToken } from "./utils/Notifications";
 import { SignUpScreen } from "./routes/auth/SignUp";
@@ -138,17 +136,9 @@ function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TamaguiProvider config={config}>
-        <NativeBaseProvider
-          config={{
-            dependencies: {
-              "linear-gradient": require("expo-linear-gradient").LinearGradient,
-            },
-          }}
-        >
-          <ApolloProvider client={client}>
-            <Beep />
-          </ApolloProvider>
-        </NativeBaseProvider>
+        <ApolloProvider client={client}>
+          <Beep />
+        </ApolloProvider>
       </TamaguiProvider>
     </GestureHandlerRootView>
   );

@@ -35,9 +35,7 @@ import {
 } from "tamagui";
 import { useAutoUpdate } from "../utils/updates";
 import { Premium } from "../routes/Premium";
-import { isMobile } from "../utils/constants";
-import { Pressable } from "native-base";
-import { useColorScheme } from "react-native";
+import { Pressable, useColorScheme } from "react-native";
 
 const Logout = gql`
   mutation Logout {

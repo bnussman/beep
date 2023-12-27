@@ -34,8 +34,9 @@ import {
   XStack,
   Text,
   Label,
+  Popover,
+  YStack,
 } from "tamagui";
-import { Menu } from "native-base";
 
 const DeleteAccount = gql`
   mutation DeleteAccount {
@@ -125,7 +126,7 @@ export function EditProfileScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Menu
+       /*  <Menu
           w="190"
           trigger={(triggerProps) => {
             return (
@@ -148,7 +149,53 @@ export function EditProfileScreen() {
           <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>
             Delete Account
           </Menu.Item>
-        </Menu>
+        </Menu> */
+        <Popover size="$5" allowFlip>
+            <Popover.Trigger asChild>
+              <Button>...</Button>
+            </Popover.Trigger>
+
+            <Popover.Content
+              borderWidth={1}
+              borderColor="$borderColor"
+              enterStyle={{ y: -10, opacity: 0 }}
+              exitStyle={{ y: -10, opacity: 0 }}
+              elevate
+              animation={[
+                'quick',
+                {
+                  opacity: {
+                    overshootClamping: true,
+                  },
+                },
+              ]}
+            >
+              <Popover.Arrow borderWidth={1} borderColor="$borderColor" />
+
+              <YStack space="$3">
+                <Popover.Close asChild>
+                  <Button
+                    size="$3"
+                    onPress={() => {
+                      navigation.push("Change Password");
+                    }}
+                  >
+                    Change Password
+                  </Button>
+                </Popover.Close>
+                <Popover.Close>
+                <Button
+                  size="$3"
+                  onPress={() => {
+                    handleDeleteWrapper();
+                  }}
+                >
+                  Delete Account
+                </Button>
+              </Popover.Close>
+            </YStack>
+          </Popover.Content>
+          </Popover>
       ),
     });
   }, [navigation]);

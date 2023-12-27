@@ -1,33 +1,20 @@
 import React from "react";
-import { AvatarProps, Stack, Avatar as _Avatar } from "tamagui";
-import { ImageSourcePropType } from "react-native";
-import AvatarImage from "../assets/avatarDark.png";
-import { IAvatarBadgeProps } from "native-base/lib/typescript/components/composites/Avatar";
+import { Avatar as _Avatar } from "tamagui";
 
 interface Props {
   url: string | null | undefined;
-  online?: boolean;
-  badgeSize?: IAvatarBadgeProps["size"];
 }
 
-export function __Avatar(props: Props & AvatarProps) {
-  const { url, online, badgeSize, ...rest } = props;
-
-  const source: ImageSourcePropType = url ? { uri: url } : AvatarImage;
-
-  const key = url ? url : "default";
+export function __Avatar(props: Props) {
+  const { url } = props;
 
   return (
     <_Avatar
-      _image={{
-        defaultSource: AvatarImage,
-        fallbackSource: AvatarImage,
-      }}
-      {...rest}
-      key={key}
-      source={source}
+      size={42}
+      circular
     >
-      {online && <Stack size={badgeSize ?? "4"} bg="green.400" />}
+      {url && <_Avatar.Image src={url} />}
+      <_Avatar.Fallback />
     </_Avatar>
   );
 }
