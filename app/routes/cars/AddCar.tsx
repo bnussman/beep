@@ -145,7 +145,6 @@ export function AddCar() {
                 onValueChange={(value) => onChange(value)}
                 _selectedItem={{
                   bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
                 }}
               >
                 {makes.map((make) => (
@@ -170,7 +169,6 @@ export function AddCar() {
                 onValueChange={(value) => onChange(value)}
                 _selectedItem={{
                   bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
                 }}
               >
                 {!make
@@ -197,7 +195,6 @@ export function AddCar() {
                 onValueChange={(value) => onChange(value)}
                 _selectedItem={{
                   bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
                 }}
               >
                 {years.map((year) => (
