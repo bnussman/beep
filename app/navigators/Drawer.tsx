@@ -35,8 +35,9 @@ import {
 } from "tamagui";
 import { useAutoUpdate } from "../utils/updates";
 import { Premium } from "../routes/Premium";
-import { Pressable, useColorMode } from "native-base";
 import { isMobile } from "../utils/constants";
+import { Pressable } from "native-base";
+import { useColorScheme } from "react-native";
 
 const Logout = gql`
   mutation Logout {
@@ -82,7 +83,6 @@ const Resend = gql`
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
   const { navigate } = useNavigation<Navigation>();
-  const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
     useMutation<ResendMutation>(Resend);
@@ -183,15 +183,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 </Text>
               </XStack>
             </Pressable>
-            <XStack px={5} py={3} space={5} alignItems="center">
-              <Text>☀️</Text>
-              <Switch
-                native={isMobile}
-                checked={colorMode === "dark"}
-                onCheckedChange={toggleColorMode}
-              />
-              <Text>️🌑</Text>
-            </XStack>
           </Stack>
         </Stack>
       </Stack>
@@ -200,7 +191,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 }
 
 export function BeepDrawer() {
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
   const { user } = useUser();
 
   return (

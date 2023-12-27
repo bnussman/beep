@@ -24,6 +24,8 @@ import {
   AppStateStatus,
   Pressable,
   RefreshControl,
+  useColorScheme,
+  FlatList,
 } from "react-native";
 import {
   GetInitialQueueQuery,
@@ -43,7 +45,6 @@ import {
 } from "tamagui";
 import { Status } from "../../utils/types";
 import { Card } from "../../components/Card";
-import { useColorMode, FlatList as NativeFlatList, InfoIcon } from "native-base";
 
 let unsubscribe: any = null;
 
@@ -126,7 +127,7 @@ export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
   const { user } = useUser();
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
   const navigation = useNavigation<Navigation>();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
@@ -204,6 +205,7 @@ export function StartBeepingScreen() {
         <Switch
           mr={3}
           checked={isBeeping}
+          native={isMobile}
           onCheckedChange={() => toggleSwitchWrapper()}
         />
       ),
@@ -361,7 +363,7 @@ export function StartBeepingScreen() {
 
   const isRefreshing = Boolean(data) && loading;
 
-  const FlatList = isMobile ? BottomSheetFlatList : NativeFlatList;
+  const FL = isMobile ? BottomSheetFlatList : FlatList;
 
   if (isBeeping && queue?.length === 0) {
     return (
@@ -426,7 +428,6 @@ export function StartBeepingScreen() {
         </Stack>
         <Spacer />
         <XStack alignItems="center" mb={10} space={2}>
-          <InfoIcon />
           <Text fontSize="xs" color="gray.500">
             Use the toggle in the top right to start beeping
           </Text>
@@ -437,29 +438,29 @@ export function StartBeepingScreen() {
 
   return (
     <Container alignItems="center">
-      <Flex
+      <Stack
         w="100%"
         height={queue.length > 1 ? "85%" : "100%"}
         p={3}
         pb={queue.length > 1 ? 4 : 16}
       >
         {queue[0] && <Beep beep={queue[0]} />}
-      </Flex>
+      </Stack>
       {queue.length > 1 ? (
         <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
           <Pressable onPress={() => bottomSheetRef.current?.expand()}>
-            <HStack alignItems="center" mb={2} pt={1} px={4}>
+            <XStack alignItems="center" mb={2} pt={1} px={4}>
               <Heading fontWeight="extrabold" size="2xl">
                 Queue
               </Heading>
               <Spacer />
               {queue.length > 0 &&
                 queue.some((entry) => entry.status === Status.WAITING) && (
-                  <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
+                  <Stack rounded="full" bg="blue.400" w={4} h={4} mr={2} />
                 )}
-            </HStack>
+            </XStack>
           </Pressable>
-          <FlatList
+          <FL
             refreshing={loading && data?.getQueue !== undefined}
             onRefresh={refetch}
             data={queue.filter((entry) => entry.id !== queue[0]?.id)}

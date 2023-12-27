@@ -4,13 +4,13 @@ import {
   default as _BottomSheet,
 } from "@gorhom/bottom-sheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { useColorMode } from 'native-base'
+import { useColorScheme } from "react-native";
 
 export const BottomSheet = React.forwardRef<
   BottomSheetMethods,
   BottomSheetProps & { shadow?: 'normal' | 'light' }
 >((props, ref) => {
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
 
   const { shadow = 'normal', ...rest } = props;
 

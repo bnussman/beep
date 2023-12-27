@@ -4,7 +4,7 @@ import { GetRatingsForUserQuery, GetRatingsQuery } from "../../generated/graphql
 import { Avatar } from "../../components/Avatar";
 import { printStars } from "../../components/Stars";
 import { Card } from "../../components/Card";
-import { RefreshControl } from "react-native";
+import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import {
@@ -16,7 +16,6 @@ import {
   Spacer,
 } from "tamagui";
 import { Container } from "../../components/Container";
-import { FlatList, useColorMode } from "native-base";
 
 const Ratings = gql`
   query GetRatingsForUser($id: String, $offset: Int, $show: Int) {
@@ -54,7 +53,7 @@ interface Props {
 const PAGE_SIZE = 5;
 
 export function RatePreview({ id }: Props) {
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
   const { push } = useNavigation<Navigation>();
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetRatingsForUserQuery>(Ratings, {

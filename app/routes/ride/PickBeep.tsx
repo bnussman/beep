@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
-import { RefreshControl } from "react-native";
+import { RefreshControl, useColorScheme } from "react-native";
 import { ChooseBeepMutation, GetBeepersQuery } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
@@ -21,6 +21,7 @@ import {
 } from "tamagui";
 import { client } from "../../utils/Apollo";
 import { InitialRiderStatus } from "./FindBeep";
+import { FlatList } from "react-native";
 
 const GetBeepers = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -99,7 +100,7 @@ const ChooseBeep = gql`
 `;
 
 export function PickBeepScreen() {
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
   const { location } = useLocation();
   const { params } = useRoute<any>();
   const navigation = useNavigation<Navigation>();
@@ -148,7 +149,7 @@ export function PickBeepScreen() {
     const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
 
     return (
-      <Box
+      <Stack
         bg={{
           linearGradient: {
             colors: ['#ff930f', '#fff95b'],
@@ -226,7 +227,7 @@ export function PickBeepScreen() {
             </Stack>
           </XStack>
         </Card>
-      </Box>
+      </Stack>
     )
   };
 

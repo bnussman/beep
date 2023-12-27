@@ -1,5 +1,5 @@
 import React from "react";
-import { RefreshControl } from "react-native";
+import { RefreshControl, useColorScheme } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
@@ -11,7 +11,7 @@ import {
   Text,
   Heading,
 } from "tamagui";
-import { useColorMode, FlatList } from 'native-base'
+import { FlatList } from "react-native";
 
 export const GetBeepHistory = gql`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -46,7 +46,7 @@ export const GetBeepHistory = gql`
 
 export function BeepsScreen() {
   const { user } = useUser();
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetBeepHistoryQuery>(GetBeepHistory, {
@@ -122,7 +122,7 @@ export function BeepsScreen() {
   return (
     <Container>
       <FlatList
-        w="100%"
+        contentContainerStyle={colorMode === "dark" ? { backgroundColor: 'black' } : {}}
         data={beeps}
         renderItem={(data) => <Beep {...data} />}
         keyExtractor={(beep) => beep.id}

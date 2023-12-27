@@ -9,7 +9,7 @@ import { Logger } from '../utils/Logger';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { CheckUserSubscriptionsMutation, PaymentsQueryQuery } from '../generated/graphql';
 import { Countdown } from '../components/CountDown';
-import { FlatList, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl, useColorScheme } from 'react-native';
 import { useUser } from '../utils/useUser';
 
 interface Props {
@@ -137,7 +137,7 @@ function usePackages() {
 export function Premium() {
   const { offerings, error, isLoading, refetch, isRefreshing } = usePackages();
 
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
 
   if (isLoading && !offerings) {
     return (

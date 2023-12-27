@@ -9,7 +9,7 @@ import { RateScreen } from "./routes/global/Rate";
 import { cache, client } from "./utils/Apollo";
 import { ApolloProvider, useQuery, useSubscription } from "@apollo/client";
 import { UserDataQuery, UserUpdatesSubscription } from "./generated/graphql";
-import { NativeBaseProvider, useColorMode } from "native-base";
+import { NativeBaseProvider } from "native-base";
 import { BeepDrawer } from "./navigators/Drawer";
 import { colorModeManager } from "./utils/theme";
 import { PickBeepScreen } from "./routes/ride/PickBeep";
@@ -31,8 +31,9 @@ import packageJson from "./package.json";
 import * as Sentry from "sentry-expo";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 // import '@tamagui/core/reset.css'
-import { TamaguiProvider } from 'tamagui'
+import { TamaguiProvider, Theme } from 'tamagui'
 import config from './tamagui.config'
+import { useColorScheme } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
@@ -47,7 +48,7 @@ Sentry.init({
 setupPurchase();
 
 function Beep() {
-  const { colorMode } = useColorMode();
+  const colorScheme = useColorScheme();
   const { data, loading } = useQuery<UserDataQuery>(UserData, {
     errorPolicy: "none",
     onCompleted: () => {
@@ -76,16 +77,16 @@ function Beep() {
   }
 
   return (
-    <>
-      <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
+    <Theme name={colorScheme}>
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       <NavigationContainer
         linking={{ enabled: true, prefixes: ["beep://", "https://app.ridebeep.app"] }}
-        theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
+        theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       >
         <Stack.Navigator
           initialRouteName={user ? "Main" : "Login"}
           screenOptions={{
-            headerTintColor: colorMode === "dark" ? "white" : "black",
+            headerTintColor: colorScheme === "dark" ? "white" : "black",
           }}
         >
           {!user ? (
@@ -129,7 +130,7 @@ function Beep() {
           )}
         </Stack.Navigator>
       </NavigationContainer>
-    </>
+    </Theme>
   );
 }
 
@@ -138,7 +139,6 @@ function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TamaguiProvider config={config}>
         <NativeBaseProvider
-          colorModeManager={colorModeManager}
           config={{
             dependencies: {
               "linear-gradient": require("expo-linear-gradient").LinearGradient,

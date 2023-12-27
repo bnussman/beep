@@ -112,7 +112,7 @@ export function LoginScreen() {
       scrollViewProps={{ scrollEnabled: true, bounces: false }}
     >
       <Stack space="$4" width="90%">
-        <H1>Ride Beep App 🚕</H1>
+        <H1 animation="slow" fontWeight="bold">Ride Beep App 🚕</H1>
         <Stack space={2}>
             <Label>Username or Email</Label>
             <Controller
@@ -135,7 +135,7 @@ export function LoginScreen() {
                 />
               )}
             />
-            <Text>
+            <Text color="$red9">
               {errors.username?.message}
               {validationErrors?.username?.[0]}
             </Text>
@@ -160,8 +160,7 @@ export function LoginScreen() {
                 />
               )}
             />
-            <Text
-            >
+            <Text color="$red9">
               {errors.password?.message}
               {validationErrors?.password?.[0]}
               </Text>

@@ -291,7 +291,7 @@ export function MainFindBeepScreen() {
 
   if (!beep) {
     return (
-      <Container keyboard alignItems="center" pt={2} h="100%" px={4}>
+      <Container keyboard alignItems="center" pt="$2" h="100%" px="$4">
         <Stack space={4} w="100%">
             <Label>Group Size</Label>
             <Controller

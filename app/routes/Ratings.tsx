@@ -1,5 +1,5 @@
 import React from "react";
-import { RefreshControl } from "react-native";
+import { RefreshControl, useColorScheme } from "react-native";
 import { useUser } from "../utils/useUser";
 import { gql, useQuery } from "@apollo/client";
 import { GetRatingsQuery } from "../generated/graphql";
@@ -11,7 +11,7 @@ import {
   Spinner,
   Heading,
 } from "tamagui";
-import { FlatList, useColorMode } from "native-base";
+import { FlatList } from "react-native";
 
 export const Ratings = gql`
   query GetRatings($id: String, $offset: Int, $show: Int) {
@@ -42,7 +42,7 @@ export const Ratings = gql`
 
 export function RatingsScreen() {
   const { user } = useUser();
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetRatingsQuery>(Ratings, {
@@ -121,7 +121,7 @@ export function RatingsScreen() {
   return (
     <Container>
       <FlatList
-        w="100%"
+        contentContainerStyle={colorMode ? { backgroundColor: 'black' } : {}}
         data={ratings}
         renderItem={(data) => <Rating {...data} />}
         keyExtractor={(rating) => rating.id}

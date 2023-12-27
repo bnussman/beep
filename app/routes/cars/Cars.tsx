@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { RefreshControl } from "react-native";
+import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
 import { Card } from "../../components/Card";
 import { Image } from "../../components/Image";
@@ -25,7 +25,6 @@ import {
   Spacer,
   Button,
 } from "tamagui";
-import { FlatList, useColorMode } from "native-base";
 
 export const DeleteCar = gql`
   mutation DeleteCar($id: String!) {
@@ -61,7 +60,7 @@ export const CarsQuery = gql`
 
 export function Cars() {
   const navigation = useNavigation<Navigation>();
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
   const { user } = useUser();
 
   const { data, loading, error, refetch, fetchMore } = useQuery<GetCarsQuery>(

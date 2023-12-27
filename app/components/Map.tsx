@@ -1,9 +1,8 @@
-import { useColorMode } from "native-base";
-import { Platform } from "react-native";
+import { Platform, useColorScheme } from "react-native";
 import MapView, { MapViewProps } from "react-native-maps";
 
 export function Map({ children, ...props }: MapViewProps) {
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
 
   const userInterfaceStyle = colorMode ? colorMode : undefined;
 
