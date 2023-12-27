@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { XStack, Spacer, Stack, Text } from "tamagui";
+import { XStack, Spacer, Stack, SizableText } from "tamagui";
 import { GetRatingsQuery } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
@@ -70,34 +70,28 @@ export function Rating(props: Props) {
 
   return (
     <Card
-      mt={2}
-      mx={1}
       pressable
       onPress={() => navigation.push("Profile", { id: otherUser.id, beepId: item.beep.id })}
       onLongPress={onLongPress}
+      mx="$2"
+      my={4}
     >
       <Stack space={2}>
-        <XStack alignItems="center" space={2}>
-          <Avatar size={12} url={otherUser.photo} />
-          <Stack flexShrink={1}>
-            <Text
-              fontSize="xl"
-              letterSpacing="sm"
-              fontWeight="extrabold"
-              isTruncated
-            >
+        <XStack alignItems="center" space="$2">
+          <Avatar size="$4" url={otherUser.photo} />
+          <Stack flexGrow={1}>
+            <SizableText fontWeight="bold" letterSpacing={0.1}>
               {otherUser.name}
-            </Text>
-            <Text color="gray.400" fontSize="xs" isTruncated>
+            </SizableText>
+            <SizableText fontSize="$2">
               {`${isRater ? "You rated" : "Rated you"} - ${new Date(
                 item.timestamp
               ).toLocaleString(undefined, { dateStyle: 'short', timeStyle: "short" })}`}
-            </Text>
+            </SizableText>
           </Stack>
-          <Spacer />
-          <Text>{printStars(item.stars)}</Text>
+          <SizableText>{printStars(item.stars)}</SizableText>
         </XStack>
-        {item.message && <Text>{item.message}</Text>}
+        {item.message && <SizableText>{item.message}</SizableText>}
       </Stack>
     </Card>
   );

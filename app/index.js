@@ -1,4 +1,5 @@
 import { registerRootComponent } from "expo";
+import "@expo/metro-runtime";
 
 import App from "./App";
 

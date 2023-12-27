@@ -124,7 +124,7 @@ export function ProfileScreen() {
   if (loading) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner size="small" />
       </Container>
     );
   }

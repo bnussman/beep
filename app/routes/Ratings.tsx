@@ -6,12 +6,7 @@ import { GetRatingsQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
-import {
-  Text,
-  Spinner,
-  Heading,
-  H1,
-} from "tamagui";
+import { Text, Spinner, H1 } from "tamagui";
 import { FlatList } from "react-native";
 
 export const Ratings = gql`

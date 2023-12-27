@@ -11,7 +11,6 @@ import { UserData, useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
-import { Ionicons } from "@expo/vector-icons";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { client } from "../../utils/Apollo";
 import { ApolloError, gql, useMutation } from "@apollo/client";
@@ -296,7 +295,7 @@ export function EditProfileScreen() {
     >
       <Stack space={2} w="100%">
         <XStack alignItems="center" space={8}>
-          <Stack space={2} flexGrow={1}>
+          <Stack flexGrow={1} space={2}>
               <Label>First Name</Label>
               <Controller
                 name="first"
@@ -345,7 +344,7 @@ export function EditProfileScreen() {
               </Text>
           </Stack>
           <Pressable onPress={() => handleUpdatePhoto()}>
-            <Avatar url={photo?.uri ?? user?.photo} size="xl" />
+            <Avatar url={photo?.uri ?? user?.photo} size="$10" />
             {uploadLoading ? <Spinner /> : null}
           </Pressable>
         </XStack>

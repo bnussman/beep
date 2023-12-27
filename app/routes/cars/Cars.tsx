@@ -17,13 +17,13 @@ import {
   GetCarsQuery,
 } from "../../generated/graphql";
 import {
-  Heading,
   Spinner,
   Text,
   Stack,
   XStack,
-  Spacer,
   Button,
+  H1,
+  SizableText,
 } from "tamagui";
 
 export const DeleteCar = gql`
@@ -207,7 +207,6 @@ export function Cars() {
   return (
     <Container>
       <FlatList
-        height="100%"
         data={cars}
         renderItem={({ item: car }) => (
           <Card
@@ -217,31 +216,22 @@ export function Cars() {
             onLongPress={() => onLongPress(car)}
             onPress={car.default ? undefined : () => setDefault(car.id)}
           >
-            <XStack alignItems="center">
+            <XStack alignItems="center" justifyContent="space-between">
               <Stack space={2}>
-                <Heading
-                  fontSize="md"
-                  fontWeight="extrabold"
-                  letterSpacing="sm"
-                  textTransform="capitalize"
-                >
+                <SizableText textTransform="capitalize">
                   {car.make} {car.model} {car.year}
-                </Heading>
+                </SizableText>
                 <XStack space={3}>
-                  {car.default && <Text borderRadius="lg">Default</Text>}
-                  <Text
-                    borderRadius="lg"
-                    _text={{ textTransform: "capitalize" }}
-                  >
+                  {car.default && <SizableText>Default</SizableText>}
+                  <SizableText textTransform="capitalize">
                     {car.color}
-                  </Text>
+                  </SizableText>
                 </XStack>
               </Stack>
-              <Spacer />
               <Image
-                borderRadius="xl"
-                w={24}
-                h={16}
+                borderRadius="$5"
+                width={84}
+                h={64}
                 source={{ uri: car.photo }}
                 alt={`car-${car.id}`}
               />
@@ -256,10 +246,10 @@ export function Cars() {
         }
         ListEmptyComponent={
           <>
-            <Heading fontWeight="extrabold" letterSpacing="sm" key="title">
+            <H1>
               No Cars
-            </Heading>
-            <Text key="message">You have no cars on your account!</Text>
+            </H1>
+            <SizableText key="message">You have no cars on your account!</SizableText>
           </>
         }
         onEndReached={getMore}

@@ -26,7 +26,6 @@ import {
 } from "@react-navigation/drawer";
 import {
   Stack,
-  Text,
   XStack,
   Switch,
   Spinner,
@@ -161,12 +160,13 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 <XStack space="$4" alignItems="center" backgroundColor={index === props.state.index ? "$gray3" : undefined} p="$2" mx="$2" borderRadius="$4" px="$3">
                   <MaterialCommunityIcons name={getIcon(name)} size={18} color="white" />
                   <SizableText>{name}</SizableText>
-                  {name === "Premium" && <Stack bg="$yellow8" borderRadius="$2" px="$2" py="$1"><Text>New</Text></Stack>}
+                  {name === "Premium" && <Stack bg="$yellow8" borderRadius="$2" px="$2" py="$1"><SizableText>New</SizableText></Stack>}
                 </XStack>
               </Pressable>
             ))}
             <Pressable onPress={handleLogout}>
-              <XStack px={5} py={3} space={7} alignItems="center">
+              <XStack space="$4" alignItems="center" mx="$2" borderRadius="$4" px="$3">
+                <MaterialCommunityIcons name="logout-variant" size={18} color="white" />
                 {loading ? (
                   <Spinner size="small" />
                 ) : null}

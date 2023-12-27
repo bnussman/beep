@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { XStack, Spacer, Stack, Text } from "tamagui";
+import { XStack, SizableText, Stack, SizableTextProps } from "tamagui";
 import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
@@ -14,15 +14,15 @@ interface Props {
   index: number;
 }
 
-export const beepStatusMap: Record<Status, string> = {
-  [Status.WAITING]: "orange.400",
-  [Status.ON_THE_WAY]: "orange.400",
-  [Status.ACCEPTED]: "green.500",
-  [Status.IN_PROGRESS]: "green.500",
-  [Status.HERE]: "green.500",
-  [Status.DENIED]: "red.400",
-  [Status.CANCELED]: "red.400",
-  [Status.COMPLETE]: "green.500",
+export const beepStatusMap: Record<Status, SizableTextProps['color']> = {
+  [Status.WAITING]: "$orange4",
+  [Status.ON_THE_WAY]: "$orange4",
+  [Status.ACCEPTED]: "$green5",
+  [Status.IN_PROGRESS]: "$green5",
+  [Status.HERE]: "$green5",
+  [Status.DENIED]: "$red5",
+  [Status.CANCELED]: "$red9",
+  [Status.COMPLETE]: "$green5",
 };
 
 export function Beep({ item }: Props) {
@@ -37,52 +37,48 @@ export function Beep({ item }: Props) {
 
   return (
     <Card
-      mt={2}
-      mx={1}
       pressable
       onPress={() =>
         navigation.push("Profile", { id: otherUser.id, beepId: item.id })
       }
+      mx="$2"
+      my={1}
+      mt={6}
     >
-      <XStack alignItems="center" mb={2}>
-        <Avatar size={12} mr={2} url={otherUser.photo} />
-        <Stack flexShrink={1}>
-          <Text
-            fontSize="xl"
-            letterSpacing="sm"
-            fontWeight="extrabold"
-            isTruncated
-          >
+      <XStack alignItems="center" mb={2} space="$2">
+        <Avatar size="$4" url={otherUser.photo} />
+        <Stack flexGrow={1} space={0}>
+          <SizableText fontWeight="bold">
             {otherUser.name}
-          </Text>
-          <Text color="gray.400" fontSize="xs" isTruncated>
+          </SizableText>
+          <SizableText>
             {`${isRider ? "Ride" : "Beep"} - ${new Date(
               item.start
             ).toLocaleString()}`}
-          </Text>
+          </SizableText>
         </Stack>
-        <Spacer />
         {showBadge && (
-          <Text
-            variant="solid"
+          <Stack
             bg={beepStatusMap[item.status as Status]}
-            borderRadius="lg"
-            _text={{ textTransform: "capitalize", fontWeight: "bold" }}
+            borderRadius="$3"
+            px="$2"
           >
-            {item.status}
-          </Text>
+            <SizableText color="white" fontSize="$1" textTransform="capitalize">
+              {item.status}
+            </SizableText>
+          </Stack>
         )}
       </XStack>
       <Stack>
-        <Text>
-          <Text bold>Group size</Text> <Text>{item.groupSize}</Text>
-        </Text>
-        <Text>
-          <Text bold>Pick Up</Text> <Text>{item.origin}</Text>
-        </Text>
-        <Text>
-          <Text bold>Drop Off</Text> <Text>{item.destination}</Text>
-        </Text>
+        <SizableText>
+          <SizableText fontWeight="bold">Group size</SizableText> <SizableText>{item.groupSize}</SizableText>
+        </SizableText>
+        <SizableText>
+          <SizableText fontWeight="bold">Pick Up</SizableText> <SizableText>{item.origin}</SizableText>
+        </SizableText>
+        <SizableText>
+          <SizableText fontWeight="bold">Drop Off</SizableText> <SizableText>{item.destination}</SizableText>
+        </SizableText>
       </Stack>
     </Card>
   );

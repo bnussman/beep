@@ -10,6 +10,7 @@ import {
   Spinner,
   Text,
   Heading,
+  H1,
 } from "tamagui";
 import { FlatList } from "react-native";
 
@@ -97,7 +98,7 @@ export function BeepsScreen() {
   if (loading && !beeps) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner size="small" />
       </Container>
     );
   }
@@ -113,7 +114,7 @@ export function BeepsScreen() {
   if (beeps?.length === 0) {
     return (
       <Container center>
-        <Heading fontWeight="extrabold">No Beeps</Heading>
+        <H1>No Beeps</H1>
         <Text>You have no previous beeps to display</Text>
       </Container>
     );

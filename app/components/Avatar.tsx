@@ -10,7 +10,7 @@ export function __Avatar(props: Props & AvatarProps) {
 
   return (
     <_Avatar
-      size={42}
+      size="$8"
       circular
       {...rest}
     >

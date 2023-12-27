@@ -7,14 +7,14 @@ interface Props extends StackProps {
 }
 
 export function Card(props: Props) {
-  const { pressable, children } = props;
+  const { pressable, children, ...rest } = props;
 
   const colorMode = useColorScheme();
 
   if (pressable) {
     return (
       <Pressable onPress={props.onPress}>
-        <Stack p="$4" backgroundColor={colorMode === "dark" ? "black" : "white"} borderRadius="$4" borderWidth="$1" borderColor="$gray3" pressStyle={{ backgroundColor: "$gray5" }}>
+        <Stack p="$4" backgroundColor={colorMode === "dark" ? "black" : "white"} borderRadius="$4" borderWidth="$1" borderColor="$gray3" pressStyle={{ backgroundColor: "$gray5" }} {...rest}>
           {children}
         </Stack>
       </Pressable>
@@ -22,7 +22,7 @@ export function Card(props: Props) {
   }
 
   return (
-    <Stack p="$4" backgroundColor={colorMode === "dark" ? "black" : "white"} borderRadius="$4" borderWidth="$1" borderColor="$gray3" pressStyle={{ backgroundColor: "$gray5" }}>
+    <Stack p="$4" backgroundColor={colorMode === "dark" ? "black" : "white"} borderRadius="$4" borderWidth="$1" borderColor="$gray3" pressStyle={{ backgroundColor: "$gray5" }} {...rest}>
       {children}
     </Stack>
   );
