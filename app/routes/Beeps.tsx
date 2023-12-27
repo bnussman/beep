@@ -9,11 +9,9 @@ import { PAGE_SIZE } from "../utils/constants";
 import {
   Spinner,
   Text,
-  FlatList,
   Heading,
-  Center,
-  useColorMode,
-} from "native-base";
+} from "tamagui";
+import { useColorMode, FlatList } from 'native-base'
 
 export const GetBeepHistory = gql`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -90,9 +88,9 @@ export function BeepsScreen() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Center>
+      <Container center>
         <Spinner mt={4} mb={9} color="gray.400" />
-      </Center>
+      </Container>
     );
   };
 

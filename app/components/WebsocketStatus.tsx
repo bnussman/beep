@@ -1,6 +1,6 @@
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { HStack, Icon, Text } from "native-base";
+import { HStack, Icon, Text } from "tamagui";
 import {
   useWebsocketStatus,
   WebsocketStatus as WebsocketStatusType,

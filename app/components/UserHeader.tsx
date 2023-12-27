@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Box, Heading, HStack } from "native-base";
+import { Text, Box, Heading, HStack } from "tamagui";
 import { Avatar } from "./Avatar";
 
 interface Props {

@@ -17,19 +17,15 @@ import {
   GetCarsQuery,
 } from "../../generated/graphql";
 import {
-  FlatList,
   Heading,
-  Icon,
-  IconButton,
   Spinner,
   Text,
-  useColorMode,
   Stack,
-  HStack,
+  XStack,
   Spacer,
-  Badge,
-  Center,
-} from "native-base";
+  Button,
+} from "tamagui";
+import { FlatList, useColorMode } from "native-base";
 
 export const DeleteCar = gql`
   mutation DeleteCar($id: String!) {
@@ -177,12 +173,11 @@ export function Cars() {
     navigation.setOptions({
       headerRight: () => {
         return (
-          <IconButton
+          <Button
             onPress={() => navigation.navigate("Add Car")}
             mr={2}
             icon={
-              <Icon
-                as={Ionicons}
+              <Ionicons
                 name="ios-add-sharp"
                 size="xl"
                 color={colorMode === "dark" ? "white" : "black"}
@@ -223,7 +218,7 @@ export function Cars() {
             onLongPress={() => onLongPress(car)}
             onPress={car.default ? undefined : () => setDefault(car.id)}
           >
-            <HStack alignItems="center">
+            <XStack alignItems="center">
               <Stack space={2}>
                 <Heading
                   fontSize="md"
@@ -233,20 +228,15 @@ export function Cars() {
                 >
                   {car.make} {car.model} {car.year}
                 </Heading>
-                <HStack space={3}>
-                  {car.default && <Badge borderRadius="lg">Default</Badge>}
-                  <Badge
+                <XStack space={3}>
+                  {car.default && <Text borderRadius="lg">Default</Text>}
+                  <Text
                     borderRadius="lg"
                     _text={{ textTransform: "capitalize" }}
-                    colorScheme={
-                      ["black", "white"].includes(car.color)
-                        ? undefined
-                        : car.color
-                    }
                   >
                     {car.color}
-                  </Badge>
-                </HStack>
+                  </Text>
+                </XStack>
               </Stack>
               <Spacer />
               <Image
@@ -256,7 +246,7 @@ export function Cars() {
                 source={{ uri: car.photo }}
                 alt={`car-${car.id}`}
               />
-            </HStack>
+            </XStack>
           </Card>
         )}
         keyExtractor={(car) => car.id}

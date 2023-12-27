@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GetUserProfileQuery, ReportUserMutation } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
-import { Input, Button, Stack } from "native-base";
+import { Input, Button, Stack } from "tamagui";
 import { Container } from "../../components/Container";
 import { UserHeader } from "../../components/UserHeader";
 import { useNavigation, useRoute } from "@react-navigation/native";

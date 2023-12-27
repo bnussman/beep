@@ -35,19 +35,15 @@ import {
   Switch,
   Text,
   Heading,
-  FormControl,
   Stack,
-  Box,
   Spacer,
-  HStack,
-  useColorMode,
-  Flex,
-  FlatList as NativeFlatList,
-  InfoIcon,
+  XStack,
   Button,
-} from "native-base";
+  Label,
+} from "tamagui";
 import { Status } from "../../utils/types";
 import { Card } from "../../components/Card";
+import { useColorMode, FlatList as NativeFlatList, InfoIcon } from "native-base";
 
 let unsubscribe: any = null;
 
@@ -207,8 +203,8 @@ export function StartBeepingScreen() {
       headerRight: () => (
         <Switch
           mr={3}
-          isChecked={isBeeping}
-          onToggle={() => toggleSwitchWrapper()}
+          checked={isBeeping}
+          onCheckedChange={() => toggleSwitchWrapper()}
         />
       ),
     });
@@ -394,8 +390,7 @@ export function StartBeepingScreen() {
     return (
       <Container keyboard alignItems="center" height="100%">
         <Stack space={2} w="100%" p={4}>
-          <FormControl>
-            <FormControl.Label>Max Rider Capacity</FormControl.Label>
+            <Label>Max Rider Capacity</Label>
             <Input
               size="lg"
               placeholder="Max Capcity"
@@ -403,54 +398,39 @@ export function StartBeepingScreen() {
               value={String(capacity)}
               onChangeText={(value) => setCapacity(value)}
             />
-            <FormControl.HelperText>
+            <Text>
               Maximum number of riders you can safely fit in your car
-            </FormControl.HelperText>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Singles Rate</FormControl.Label>
+            </Text>
+            <Label>Singles Rate</Label>
             <Input
               size="lg"
               placeholder="Singles Rate"
               keyboardType="numeric"
               value={String(singlesRate)}
               onChangeText={(value) => setSinglesRate(value)}
-              InputLeftElement={
-                <Text pl={3} pr={1}>
-                  $
-                </Text>
-              }
             />
-            <FormControl.HelperText>
+            <Text>
               Price for a single person riding alone
-            </FormControl.HelperText>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Group Rate</FormControl.Label>
+            </Text>
+            <Label>Group Rate</Label>
             <Input
               size="lg"
               placeholder="Group Rate"
               keyboardType="numeric"
               value={String(groupRate)}
               onChangeText={(value) => setGroupRate(value)}
-              InputLeftElement={
-                <Text pl={3} pr={1}>
-                  $
-                </Text>
-              }
             />
-            <FormControl.HelperText>
+            <Text>
               Price per person in a group
-            </FormControl.HelperText>
-          </FormControl>
+            </Text>
         </Stack>
         <Spacer />
-        <HStack alignItems="center" mb={10} space={2}>
+        <XStack alignItems="center" mb={10} space={2}>
           <InfoIcon />
           <Text fontSize="xs" color="gray.500">
             Use the toggle in the top right to start beeping
           </Text>
-        </HStack>
+        </XStack>
       </Container>
     );
   }

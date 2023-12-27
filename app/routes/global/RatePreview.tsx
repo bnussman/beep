@@ -9,15 +9,14 @@ import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import {
   Text,
-  HStack,
+  XStack,
   Stack,
   Heading,
-  Center,
   Spinner,
-  FlatList,
-  useColorMode,
   Spacer,
-} from "native-base";
+} from "tamagui";
+import { Container } from "../../components/Container";
+import { FlatList, useColorMode } from "native-base";
 
 const Ratings = gql`
   query GetRatingsForUser($id: String, $offset: Int, $show: Int) {
@@ -100,37 +99,37 @@ export function RatePreview({ id }: Props) {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Center>
+      <Container center>
         <Spinner mt={4} mb={9} color="gray.400" />
-      </Center>
+      </Container>
     );
   };
 
   if (loading && !ratings) {
     return (
-      <Center>
+      <Container center>
         <Spinner />
-      </Center>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <Center>
+      <Container center>
         <Text>{error.message}</Text>
-      </Center>
+      </Container>
     );
   }
 
   return (
     <Card flexShrink={1}>
-      <HStack alignItems="center">
+      <XStack alignItems="center">
         <Heading fontWeight="extrabold">Ratings</Heading>
         <Spacer />
         <Heading size="xs" color="gray.400">
           {count} ratings
         </Heading>
-      </HStack>
+      </XStack>
       <FlatList
         data={ratings}
         renderItem={({ item: rating }) => (
@@ -141,7 +140,7 @@ export function RatePreview({ id }: Props) {
             pressable
             onPress={() => push("Profile", { id: rating.rater.id, beepId: rating.beep.id })}
           >
-            <HStack alignItems="center" p={2}>
+            <XStack alignItems="center" p={2}>
               <Avatar size="md" mr={4} url={rating.rater.photo} />
               <Stack>
                 <Text fontWeight="extrabold" fontSize="lg" letterSpacing="xs">
@@ -155,7 +154,7 @@ export function RatePreview({ id }: Props) {
                   <Text fontSize="xs">{rating.message}</Text>
                 ) : null}
               </Stack>
-            </HStack>
+            </XStack>
           </Card>
         )}
         keyExtractor={(beep) => beep.id}

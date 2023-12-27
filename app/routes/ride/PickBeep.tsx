@@ -4,7 +4,7 @@ import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
 import { RefreshControl } from "react-native";
-import { ChooseBeepMutation, ChooseBeepMutationVariables, GetBeepersQuery } from "../../generated/graphql";
+import { ChooseBeepMutation, GetBeepersQuery } from "../../generated/graphql";
 import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
@@ -13,15 +13,12 @@ import { useLocation } from "../../utils/useLocation";
 import {
   Text,
   Spinner,
-  FlatList,
-  Badge,
   Box,
-  HStack,
+  XStack,
   Spacer,
   Heading,
-  useColorMode,
   Stack,
-} from "native-base";
+} from "tamagui";
 import { client } from "../../utils/Apollo";
 import { InitialRiderStatus } from "./FindBeep";
 
@@ -169,9 +166,9 @@ export function PickBeepScreen() {
           onPress={() => chooseBeep(item.id)}
           borderWidth={isPremium ? 0 : "2px"}
         >
-          <HStack alignItems="center">
+          <XStack alignItems="center">
             <Stack flexShrink={1}>
-              <HStack alignItems="center" mb={2}>
+              <XStack alignItems="center" mb={2}>
                 <Avatar mr={2} size="45px" url={item.photo} />
                 <Stack>
                   <Text
@@ -186,14 +183,14 @@ export function PickBeepScreen() {
                     <Text fontSize="xs">{printStars(item.rating)}</Text>
                   )}
                 </Stack>
-              </HStack>
-              <Box>
+              </XStack>
+              <Stack>
                 <Text>
-                  <Text bold>Queue Size </Text>
+                  <Text>Queue Size </Text>
                   <Text>{item.queueSize}</Text>
                 </Text>
                 <Text>
-                  <Text bold>Capacity </Text>
+                  <Text>Capacity </Text>
                   <Text>{item.capacity}</Text>
                 </Text>
                 <Text>
@@ -202,32 +199,32 @@ export function PickBeepScreen() {
                     ${item.singlesRate} singles / ${item.groupRate} group
                   </Text>
                 </Text>
-              </Box>
+              </Stack>
             </Stack>
             <Spacer />
             <Stack space={2} flexShrink={1}>
               {item.venmo && (
-                <Badge
+                <Text
                   bg="black"
                   _text={{ color: "white" }}
                   rounded="xl"
                   _dark={{ bg: "white", _text: { color: "gray.600" } }}
                 >
                   Venmo
-                </Badge>
+                </Text>
               )}
               {item.cashapp && (
-                <Badge
+                <Text
                   bg="black"
                   _text={{ color: "white" }}
                   rounded="xl"
                   _dark={{ bg: "white", _text: { color: "gray.600" } }}
                 >
                   Cash App
-                </Badge>
+                </Text>
               )}
             </Stack>
-          </HStack>
+          </XStack>
         </Card>
       </Box>
     )

@@ -19,7 +19,6 @@ import { UserData, UserSubscription } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
-import { NATIVE_BASE_THEME } from "./utils/constants";
 import { AddCar } from "./routes/cars/AddCar";
 import {
   DarkTheme,
@@ -139,7 +138,6 @@ function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TamaguiProvider config={config}>
         <NativeBaseProvider
-          theme={NATIVE_BASE_THEME}
           colorModeManager={colorModeManager}
           config={{
             dependencies: {

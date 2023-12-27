@@ -21,16 +21,13 @@ import {
 } from "../../utils/useValidationErrors";
 import {
   Image,
-  CheckIcon,
   Select,
   Stack,
+  Text,
   Button,
-  Flex,
-  Pressable,
-  Icon,
-  FormControl,
-  WarningOutlineIcon,
-} from "native-base";
+} from "tamagui";
+import { Pressable } from "react-native";
+import { CheckIcon } from "native-base";
 
 const makes = getMakes();
 
@@ -137,9 +134,6 @@ export function AddCar() {
   return (
     <Container p={4}>
       <Stack space={4}>
-        <FormControl
-          isInvalid={Boolean(errors.make) || Boolean(validationErrors?.make)}
-        >
           <Controller
             name="make"
             rules={{ required: "Make is required" }}
@@ -161,14 +155,10 @@ export function AddCar() {
               </Select>
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.make?.message}
             {validationErrors?.make?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.model) || Boolean(validationErrors?.model)}
-        >
+          </Text>
           <Controller
             name="model"
             rules={{ required: "Model is required" }}
@@ -192,14 +182,10 @@ export function AddCar() {
               </Select>
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.model?.message}
             {validationErrors?.model?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.year) || Boolean(validationErrors?.year)}
-        >
+          </Text>
           <Controller
             name="year"
             rules={{ required: "Year is required" }}
@@ -221,14 +207,10 @@ export function AddCar() {
               </Select>
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.year?.message}
             {validationErrors?.year?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.color) || Boolean(validationErrors?.color)}
-        >
+          </Text>
           <Controller
             name="color"
             rules={{ required: "Color is required" }}
@@ -254,14 +236,10 @@ export function AddCar() {
               </Select>
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.color?.message}
             {validationErrors?.color?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.photo) || Boolean(validationErrors?.photo)}
-        >
+          </Text>
           <Controller
             name="photo"
             rules={{ required: "Photo is required" }}
@@ -278,7 +256,7 @@ export function AddCar() {
                     alt="uploaded car image"
                   />
                 ) : (
-                  <Flex
+                  <Stack
                     height="48"
                     bgColor="gray.100"
                     borderRadius="2xl"
@@ -287,25 +265,23 @@ export function AddCar() {
                     _text={{ fontWeight: "extrabold" }}
                     _dark={{ bgColor: "gray.800" }}
                   >
-                    Attach a Photo
-                    <Icon
+                    <Text>Attach a Photo</Text>
+                    <Ionicons
                       mt={2}
-                      as={Ionicons}
                       name="ios-add-sharp"
                       size="xl"
                       color="black"
                       _dark={{ color: "white" }}
                     />
-                  </Flex>
+                  </Stack>
                 )}
               </Pressable>
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.photo?.message}
             {validationErrors?.photo?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
+          </Text>
         <Button
           _text={{ fontWeight: "extrabold" }}
           isLoading={isSubmitting || loading}

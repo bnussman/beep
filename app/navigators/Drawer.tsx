@@ -169,7 +169,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               >
                 <XStack space={7} alignItems="center">
                   <Text fontWeight={500}>{name}</Text>
-                  {name === "Premium" && <Stack borderRadius="xl" colorScheme="yellow"><Text>New</Text></Stack>}
+                  {name === "Premium" && <Stack borderRadius="xl"><Text>New</Text></Stack>}
                 </XStack>
               </Pressable>
             ))}

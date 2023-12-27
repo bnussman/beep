@@ -14,13 +14,12 @@ import {
   Spinner,
   Text,
   Stack,
-  HStack,
+  XStack,
   Heading,
   Spacer,
-  Menu,
-  Pressable,
-  Icon,
-} from "native-base";
+} from "tamagui";
+import { Menu } from "native-base";
+import { Pressable } from "react-native";
 
 export const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -79,10 +78,9 @@ export function ProfileScreen() {
                   accessibilityLabel="More options menu"
                   {...triggerProps}
                 >
-                  <Icon
+                  <Ionicons
                     mr={3}
                     size="xl"
-                    as={Ionicons}
                     name="ios-ellipsis-horizontal-circle"
                   />
                 </Pressable>
@@ -127,7 +125,7 @@ export function ProfileScreen() {
     <Container p={2}>
       <Stack space={2} flexShrink={1}>
         <Card>
-          <HStack alignItems="center">
+          <XStack alignItems="center">
             <Stack>
               <Heading
                 size="lg"
@@ -148,7 +146,7 @@ export function ProfileScreen() {
               online={data.getUser.isBeeping}
               badgeSize="6"
             />
-          </HStack>
+          </XStack>
         </Card>
         <Card>
           <Stack space={2}>

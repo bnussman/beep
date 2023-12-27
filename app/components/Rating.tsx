@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { HStack, Spacer, Stack, Text } from "native-base";
+import { XStack, Spacer, Stack, Text } from "tamagui";
 import { GetRatingsQuery } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
@@ -77,7 +77,7 @@ export function Rating(props: Props) {
       onLongPress={onLongPress}
     >
       <Stack space={2}>
-        <HStack alignItems="center" space={2}>
+        <XStack alignItems="center" space={2}>
           <Avatar size={12} url={otherUser.photo} />
           <Stack flexShrink={1}>
             <Text
@@ -96,7 +96,7 @@ export function Rating(props: Props) {
           </Stack>
           <Spacer />
           <Text>{printStars(item.stars)}</Text>
-        </HStack>
+        </XStack>
         {item.message && <Text>{item.message}</Text>}
       </Stack>
     </Card>

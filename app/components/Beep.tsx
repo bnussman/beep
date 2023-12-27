@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Badge, HStack, Spacer, Stack, Text } from "native-base";
+import { XStack, Spacer, Stack, Text } from "tamagui";
 import { GetBeepHistoryQuery } from "../generated/graphql";
 import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
@@ -44,7 +44,7 @@ export function Beep({ item }: Props) {
         navigation.push("Profile", { id: otherUser.id, beepId: item.id })
       }
     >
-      <HStack alignItems="center" mb={2}>
+      <XStack alignItems="center" mb={2}>
         <Avatar size={12} mr={2} url={otherUser.photo} />
         <Stack flexShrink={1}>
           <Text
@@ -63,16 +63,16 @@ export function Beep({ item }: Props) {
         </Stack>
         <Spacer />
         {showBadge && (
-          <Badge
+          <Text
             variant="solid"
             bg={beepStatusMap[item.status as Status]}
             borderRadius="lg"
             _text={{ textTransform: "capitalize", fontWeight: "bold" }}
           >
             {item.status}
-          </Badge>
+          </Text>
         )}
-      </HStack>
+      </XStack>
       <Stack>
         <Text>
           <Text bold>Group size</Text> <Text>{item.groupSize}</Text>

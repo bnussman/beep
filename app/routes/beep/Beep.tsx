@@ -29,7 +29,7 @@ import {
   Text,
   useClipboard,
   useToast,
-} from "native-base";
+} from "tamagui";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
@@ -163,7 +163,6 @@ export function Beep(props: Props) {
               <>
                 {beep.rider.cashapp ? (
                   <Button
-                    colorScheme="green"
                     onPress={() =>
                       openCashApp(
                         beep.rider.cashapp,
@@ -178,7 +177,6 @@ export function Beep(props: Props) {
                 ) : null}
                 {beep.rider?.venmo ? (
                   <Button
-                    colorScheme="lightBlue"
                     onPress={() =>
                       openVenmo(
                         beep.rider.venmo,

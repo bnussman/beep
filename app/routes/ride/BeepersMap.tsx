@@ -3,7 +3,7 @@ import { useLocation } from "../../utils/useLocation";
 import { AnimatedRegion, MarkerAnimated, Region } from "react-native-maps";
 import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
-import { Text } from "native-base";
+import { Text } from "tamagui";
 import { Platform } from "react-native";
 import { cache } from "../../utils/Apollo";
 import {

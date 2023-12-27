@@ -21,7 +21,7 @@ import {
   Icon,
   Menu,
   Divider,
-} from "native-base";
+} from "tamagui";
 import { Status } from "../../utils/types";
 
 interface Props {

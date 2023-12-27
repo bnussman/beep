@@ -3,7 +3,7 @@ import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { gql, useMutation } from "@apollo/client";
 import { LeaveQueueMutation } from "../../generated/graphql";
-import { Button, IButtonProps, Icon } from "native-base";
+import { Button, IButtonProps, Icon } from "tamagui";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../../utils/Alert";
 

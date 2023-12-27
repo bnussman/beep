@@ -1,9 +1,10 @@
 import React from "react";
-import { Pressable, Box, IBoxProps, IPressableProps } from "native-base";
+import { Pressable } from "react-native";
+import { Stack, StackProps } from "tamagui";
 
-type Props =
-  | ({ pressable?: true } & IPressableProps)
-  | ({ pressable?: false } & IBoxProps);
+interface Props extends StackProps {
+  pressable?: boolean;
+}
 
 export function Card(props: Props) {
   const { pressable, children, ...rest } = props;
@@ -18,19 +19,15 @@ export function Card(props: Props) {
 
   if (pressable) {
     return (
-      <Pressable
-        _pressed={{ _light: { bg: "gray.100" }, _dark: { bg: "gray.800" } }}
-        {...common}
-        {...(rest as IPressableProps)}
-      >
+      <Pressable onPress={props.onPress}>
         {children}
       </Pressable>
     );
   }
 
   return (
-    <Box {...common} {...(rest as IBoxProps)}>
+    <Stack>
       {children}
-    </Box>
+    </Stack>
   );
 }

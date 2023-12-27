@@ -31,14 +31,11 @@ import {
   Input,
   Button,
   Stack,
-  FormControl,
-  WarningOutlineIcon,
-  InputGroup,
-  InputLeftAddon,
-  HStack,
-  Menu,
-  Icon,
-} from "native-base";
+  XStack,
+  Text,
+  Label,
+} from "tamagui";
+import { Menu } from "native-base";
 
 const DeleteAccount = gql`
   mutation DeleteAccount {
@@ -136,10 +133,9 @@ export function EditProfileScreen() {
                 accessibilityLabel="More options menu"
                 {...triggerProps}
               >
-                <Icon
+                <Ionicons
                   mr={3}
                   size="xl"
-                  as={Ionicons}
                   name="ios-ellipsis-horizontal-circle"
                 />
               </Pressable>
@@ -252,14 +248,9 @@ export function EditProfileScreen() {
       pt={2}
     >
       <Stack space={2} w="100%">
-        <HStack alignItems="center" space={8}>
+        <XStack alignItems="center" space={8}>
           <Stack space={2} flexGrow={1}>
-            <FormControl
-              isInvalid={
-                Boolean(errors.first) || Boolean(validationErrors?.first)
-              }
-            >
-              <FormControl.Label>First Name</FormControl.Label>
+              <Label>First Name</Label>
               <Controller
                 name="first"
                 rules={{ required: "First name is required" }}
@@ -278,19 +269,11 @@ export function EditProfileScreen() {
                   />
                 )}
               />
-              <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
-              >
+              <Text >
                 {errors.first?.message}
                 {validationErrors?.first?.[0]}
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.last) || Boolean(validationErrors?.last)
-              }
-            >
-              <FormControl.Label>Last Name</FormControl.Label>
+              </Text>
+              <Label>Last Name</Label>
               <Controller
                 name="last"
                 rules={{ required: "Last name is required" }}
@@ -309,23 +292,17 @@ export function EditProfileScreen() {
                   />
                 )}
               />
-              <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
-              >
+              <Text>
                 {errors.last?.message}
                 {validationErrors?.last?.[0]}
-              </FormControl.ErrorMessage>
-            </FormControl>
+              </Text>
           </Stack>
           <Pressable onPress={() => handleUpdatePhoto()}>
             <Avatar url={photo?.uri ?? user?.photo} size="xl" />
             {uploadLoading ? <Spinner /> : null}
           </Pressable>
-        </HStack>
-        <FormControl
-          isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}
-        >
-          <FormControl.Label>Email</FormControl.Label>
+        </XStack>
+          <Label>Email</Label>
           <Controller
             name="email"
             rules={{ required: "Email is required" }}
@@ -344,15 +321,11 @@ export function EditProfileScreen() {
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.email?.message}
             {validationErrors?.email?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}
-        >
-          <FormControl.Label>Phone Number</FormControl.Label>
+          </Text>
+          <Label>Phone Number</Label>
           <Controller
             name="phone"
             rules={{ required: "Phone number is required" }}
@@ -371,21 +344,15 @@ export function EditProfileScreen() {
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.phone?.message}
             {validationErrors?.phone?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}
-        >
-          <FormControl.Label>Venmo Username</FormControl.Label>
+          </Text>
+          <Label>Venmo Username</Label>
           <Controller
             name="venmo"
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
-              <InputGroup>
-                <InputLeftAddon children="@" />
                 <Input
                   flexGrow={1}
                   onBlur={onBlur}
@@ -399,26 +366,17 @@ export function EditProfileScreen() {
                   autoCapitalize="none"
                   size="lg"
                 />
-              </InputGroup>
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.venmo?.message}
             {validationErrors?.venmo?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={
-            Boolean(errors.cashapp) || Boolean(validationErrors?.cashapp)
-          }
-        >
-          <FormControl.Label>Cash App Username</FormControl.Label>
+          </Text>
+          <Label>Cash App Username</Label>
           <Controller
             name="cashapp"
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
-              <InputGroup>
-                <InputLeftAddon children="$" />
                 <Input
                   flexGrow={1}
                   onBlur={onBlur}
@@ -432,14 +390,12 @@ export function EditProfileScreen() {
                   autoCapitalize="none"
                   size="lg"
                 />
-              </InputGroup>
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.cashapp?.message}
             {validationErrors?.cashapp?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
+          </Text>
         <Button
           onPress={onSubmit}
           isLoading={loading}

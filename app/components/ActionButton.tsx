@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
-import { Button } from "native-base";
+import { Button } from "tamagui";
 import { Status } from "../utils/types";
 import {
   GetInitialQueueQuery,

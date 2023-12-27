@@ -35,29 +35,24 @@ import {
   shareVenmoInformation,
 } from "../../utils/links";
 import {
-  ApolloError,
   gql,
   useLazyQuery,
-  useMutation,
   useQuery,
   useSubscription,
 } from "@apollo/client";
 import {
-  Button,
   Text,
   Input,
   Heading,
   Stack,
-  FormControl,
-  HStack,
-  Center,
-  Icon,
+  XStack,
   Spacer,
   Spinner,
-  Pressable,
-  WarningOutlineIcon,
   Image,
-} from "native-base";
+  Button,
+  Label,
+} from "tamagui";
+import { Pressable } from "react-native";
 
 export const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -298,8 +293,7 @@ export function MainFindBeepScreen() {
     return (
       <Container keyboard alignItems="center" pt={2} h="100%" px={4}>
         <Stack space={4} w="100%">
-          <FormControl isInvalid={Boolean(errors.groupSize)}>
-            <FormControl.Label>Group Size</FormControl.Label>
+            <Label>Group Size</Label>
             <Controller
               name="groupSize"
               rules={{ required: "Group size is required" }}
@@ -318,14 +312,11 @@ export function MainFindBeepScreen() {
                 />
               )}
             />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
+            <Text
             >
               {errors.groupSize?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={Boolean(errors.origin)}>
-            <FormControl.Label>Pick Up Location</FormControl.Label>
+            </Text>
+            <Label>Pick Up Location</Label>
             <Controller
               name="origin"
               rules={{ required: "Pick up location is required" }}
@@ -344,18 +335,11 @@ export function MainFindBeepScreen() {
                 />
               )}
             />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
+            <Text
             >
               {errors.origin?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <FormControl
-            isInvalid={
-              Boolean(errors.destination)
-            }
-          >
-            <FormControl.Label>Destination Location</FormControl.Label>
+            </Text>
+            <Label>Destination Location</Label>
             <Controller
               name="destination"
               rules={{ required: "Destination location is required" }}
@@ -373,12 +357,10 @@ export function MainFindBeepScreen() {
                 />
               )}
             />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
+            <Text
             >
               {errors.destination?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
+            </Text>
           <Button
             _text={{ fontWeight: "extrabold" }}
             onPress={() => findBeep()}
@@ -398,12 +380,11 @@ export function MainFindBeepScreen() {
       <Container p={2} px={4} alignItems="center">
         <Stack alignItems="center" space={4} w="100%" h="94%">
           <Pressable
-            w="100%"
             onPress={() =>
               navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
             }
           >
-            <HStack alignItems="center" space={4} w="100%">
+            <XStack alignItems="center" space={4} w="100%">
               <Stack flexShrink={1}>
                 <Heading
                   size="xl"
@@ -424,7 +405,7 @@ export function MainFindBeepScreen() {
               </Stack>
               <Spacer />
               <Avatar size="xl" url={beep.beeper.photo} />
-            </HStack>
+            </XStack>
           </Pressable>
           <Rates
             singles={beep.beeper.singlesRate}
@@ -445,7 +426,7 @@ export function MainFindBeepScreen() {
           )}
           {beep.status === Status.ON_THE_WAY && (
             <Card w="100%">
-              <HStack>
+              <XStack>
                 <Heading fontWeight="extrabold" size="sm">
                   ETA
                 </Heading>
@@ -457,7 +438,7 @@ export function MainFindBeepScreen() {
                 ) : (
                   <Spinner size="sm" />
                 )}
-              </HStack>
+              </XStack>
             </Card>
           )}
           {beep.position > 0 && (
@@ -499,14 +480,14 @@ export function MainFindBeepScreen() {
             </Map>
           )}
           <Stack space={2} w="100%" alignSelf="flex-end">
-            <HStack space={2} w="100%">
+            <XStack space={2} w="100%">
               <Button
                 flexGrow={1}
                 onPress={() =>
                   Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
                 }
-                endIcon={
-                  <Icon as={Ionicons} name="ios-call" color="white" size="md" />
+                icon={
+                  <Ionicons name="ios-call" color="white" size="md" />
                 }
               >
                 Call Beeper
@@ -516,9 +497,8 @@ export function MainFindBeepScreen() {
                 onPress={() =>
                   Linking.openURL(`sms:${getRawPhoneNumber(beep.beeper.phone)}`)
                 }
-                endIcon={
-                  <Icon
-                    as={Ionicons}
+                icon={
+                  <Ionicons
                     name="ios-chatbox"
                     color="white"
                     size="md"
@@ -527,7 +507,7 @@ export function MainFindBeepScreen() {
               >
                 Text Beeper
               </Button>
-            </HStack>
+            </XStack>
 
             {beep.beeper.cashapp ? (
               <Button
@@ -543,13 +523,12 @@ export function MainFindBeepScreen() {
                 Pay Beeper with Cash App
               </Button>
             ) : null}
-            <HStack w="100%" space={2}>
+            <XStack w="100%" space={2}>
               {beep.beeper.venmo ? (
                 <Button
                   flexGrow={1}
-                  colorScheme="lightBlue"
-                  rightIcon={
-                    <Icon as={Ionicons} size="md" name="ios-card-outline" />
+                  icon={
+                    <Ionicons size="md" name="ios-card-outline" />
                   }
                   onPress={() =>
                     openVenmo(
@@ -566,8 +545,8 @@ export function MainFindBeepScreen() {
               ) : null}
               {beep.beeper.venmo && beep.groupSize > 1 ? (
                 <Button
-                  rightIcon={
-                    <Icon as={Ionicons} name="ios-share-outline" size="md" />
+                  icon={
+                    <IonIcons name="ios-share-outline" size="md" />
                   }
                   onPress={() =>
                     shareVenmoInformation(
@@ -581,7 +560,7 @@ export function MainFindBeepScreen() {
                   Share Venmo
                 </Button>
               ) : null}
-            </HStack>
+            </XStack>
             {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
           </Stack>
         </Stack>

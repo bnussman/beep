@@ -1,26 +1,26 @@
-import { Box, IImageProps, Spinner, Image as _Image, Flex } from "native-base";
+import { Image as _Image, ImageProps, Spinner, Stack } from "tamagui";
 import React, { useState } from "react";
 
-export function Image(props: IImageProps) {
+export function Image(props: ImageProps) {
   const [loading, setLoading] = useState(true);
 
   return (
-    <Box>
+    <Stack>
       {loading ? (
-        <Flex
+        <Stack
           w={props.w}
           h={props.h}
           alignItems="center"
           justifyContent="center"
         >
           <Spinner />
-        </Flex>
+        </Stack>
       ) : null}
       <_Image
         {...props}
         onLoadEnd={() => setLoading(false)}
         position={loading ? "absolute" : undefined}
       />
-    </Box>
+    </Stack>
   );
 }

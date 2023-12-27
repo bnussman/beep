@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { Image, CheckIcon, Spacer, Spinner, Stack, Text, FlatList, useColorMode, Button, Heading } from "native-base";
+import { Image, Spacer, Spinner, Stack, Text, Button, Heading } from "tamagui";
 import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
 import PremiumImage from '../assets/premium.png';
 import { Card } from '../components/Card';
@@ -9,7 +9,7 @@ import { Logger } from '../utils/Logger';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { CheckUserSubscriptionsMutation, PaymentsQueryQuery } from '../generated/graphql';
 import { Countdown } from '../components/CountDown';
-import { RefreshControl } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { useUser } from '../utils/useUser';
 
 interface Props {
@@ -159,7 +159,6 @@ export function Premium() {
     <Container center>
       <FlatList
         data={offerings}
-        w="100%"
         renderItem={({ item }) => <Offering item={item} />}
         onRefresh={refetch}
         refreshing={isRefreshing}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar as _Avatar, IAvatarProps } from "native-base";
+import { AvatarProps, Stack, Avatar as _Avatar } from "tamagui";
 import { ImageSourcePropType } from "react-native";
 import AvatarImage from "../assets/avatarDark.png";
 import { IAvatarBadgeProps } from "native-base/lib/typescript/components/composites/Avatar";
@@ -10,7 +10,7 @@ interface Props {
   badgeSize?: IAvatarBadgeProps["size"];
 }
 
-export function __Avatar(props: Props & IAvatarProps) {
+export function __Avatar(props: Props & AvatarProps) {
   const { url, online, badgeSize, ...rest } = props;
 
   const source: ImageSourcePropType = url ? { uri: url } : AvatarImage;
@@ -27,7 +27,7 @@ export function __Avatar(props: Props & IAvatarProps) {
       key={key}
       source={source}
     >
-      {online && <_Avatar.Badge size={badgeSize ?? "4"} bg="green.400" />}
+      {online && <Stack size={badgeSize ?? "4"} bg="green.400" />}
     </_Avatar>
   );
 }

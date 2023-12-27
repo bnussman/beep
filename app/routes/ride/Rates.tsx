@@ -1,5 +1,5 @@
 import React from "react";
-import { HStack, Text, Box, Spacer } from "native-base";
+import { HStack, Text, Box, Spacer } from "tamagui";
 import { Card } from "../../components/Card";
 
 interface Props {

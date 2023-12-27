@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Icon, IconButton } from "native-base";
+import { Flex, Icon, IconButton } from "tamagui";
 import { AntDesign } from "@expo/vector-icons";
 
 export interface RateBarProps {

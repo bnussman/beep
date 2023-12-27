@@ -4,7 +4,7 @@ import { GetUserProfileQuery, RateUserMutation } from "../../generated/graphql";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
 import { Navigation } from "../../utils/Navigation";
-import { Button, Input, Stack } from "native-base";
+import { Button, Input, Stack } from "tamagui";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { useNavigation, useRoute } from "@react-navigation/native";

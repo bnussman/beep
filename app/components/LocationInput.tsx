@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Logger } from "../utils/Logger";
 import { TouchableWithoutFeedback } from "react-native";
-import { Box, Icon, IInputProps, Input, Spinner } from "native-base";
+import { Box, Icon, IInputProps, Input, Spinner } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 
 function LocationInput(props: IInputProps, ref: any) {

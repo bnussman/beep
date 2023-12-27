@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StorageManager, ColorMode } from "native-base";
+import { StorageManager, ColorMode } from "tamagui";
 
 export const colorModeManager: StorageManager = {
   get: async () => {

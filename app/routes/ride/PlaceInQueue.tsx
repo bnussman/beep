@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, Text } from "native-base";
+import { Heading, Text } from "tamagui";
 import { Card } from "../../components/Card";
 
 interface Props {

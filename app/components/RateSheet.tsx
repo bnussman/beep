@@ -10,7 +10,7 @@ import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../routes/Ratings";
-import { Button, Center, Heading, Pressable, Spacer } from "native-base";
+import { Button, Center, Heading, Pressable, Spacer } from "tamagui";
 
 export const GetRateData = gql`
   query GetRateData {

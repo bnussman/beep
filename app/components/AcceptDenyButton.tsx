@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Icon } from "native-base";
+import { Button } from "tamagui";
 import { useMutation } from "@apollo/client";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../utils/Alert";
@@ -43,15 +43,10 @@ export function AcceptDenyButton(props: Props) {
   return (
     <Button
       flexGrow={isAccept ? 1 : undefined}
-      colorScheme={isAccept ? "green" : "red"}
-      _text={{ color: "white" }}
-      isLoading={loading}
       onPress={onPress}
       bg={isAccept ? "green.500" : "red.500"}
-      _pressed={{ bg: isAccept ? "green.600" : "red.600" }}
-      endIcon={
-        <Icon
-          as={MaterialCommunityIcons}
+      icon={
+        <MaterialCommunityIcons
           name={isAccept ? "check" : "close"}
           size={22}
           color="white"

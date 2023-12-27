@@ -8,12 +8,10 @@ import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
 import {
   Text,
-  FlatList,
   Spinner,
   Heading,
-  Center,
-  useColorMode,
-} from "native-base";
+} from "tamagui";
+import { FlatList, useColorMode } from "native-base";
 
 export const Ratings = gql`
   query GetRatings($id: String, $offset: Int, $show: Int) {
@@ -89,9 +87,9 @@ export function RatingsScreen() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Center>
+      <Container center>
         <Spinner mt={4} mb={9} color="gray.400" />
-      </Center>
+      </Container>
     );
   };
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { GetInitialQueueQuery } from "../generated/graphql";
 import { isMobile, Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { Button as _Button } from "native-base";
+import { Button as _Button } from "tamagui";
 import { useEffect } from "react";
 import { Alert } from "react-native";
 
@@ -62,10 +62,8 @@ function Button(props: Props) {
   return (
     <_Button
       isLoading={isLoading}
-      colorScheme="red"
       onPress={onPress}
       backgroundColor="red.400"
-      _pressed={{ backgroundColor: "red.500" }}
     >
       Cancel Beep
     </_Button>
