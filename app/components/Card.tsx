@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable } from "react-native";
+import { Pressable, useColorScheme } from "react-native";
 import { Stack, StackProps } from "tamagui";
 
 interface Props extends StackProps {
@@ -7,26 +7,22 @@ interface Props extends StackProps {
 }
 
 export function Card(props: Props) {
-  const { pressable, children, ...rest } = props;
+  const { pressable, children } = props;
 
-  const common = {
-    p: 4,
-    rounded: "xl",
-    borderWidth: 2,
-    _light: { bg: "white", borderColor: "gray.100" },
-    _dark: { bg: "gray.900", borderColor: "gray.800" },
-  };
+  const colorMode = useColorScheme();
 
   if (pressable) {
     return (
       <Pressable onPress={props.onPress}>
-        {children}
+        <Stack p="$4" backgroundColor={colorMode === "dark" ? "black" : "white"} borderRadius="$4" borderWidth="$1" borderColor="$gray3" pressStyle={{ backgroundColor: "$gray5" }}>
+          {children}
+        </Stack>
       </Pressable>
     );
   }
 
   return (
-    <Stack>
+    <Stack p="$4" backgroundColor={colorMode === "dark" ? "black" : "white"} borderRadius="$4" borderWidth="$1" borderColor="$gray3" pressStyle={{ backgroundColor: "$gray5" }}>
       {children}
     </Stack>
   );

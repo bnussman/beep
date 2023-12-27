@@ -10,6 +10,7 @@ import {
   Text,
   Spinner,
   Heading,
+  H1,
 } from "tamagui";
 import { FlatList } from "react-native";
 
@@ -96,7 +97,7 @@ export function RatingsScreen() {
   if (loading && !ratings) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner size="large" />
       </Container>
     );
   }
@@ -112,7 +113,7 @@ export function RatingsScreen() {
   if (ratings?.length === 0) {
     return (
       <Container center>
-        <Heading fontWeight="extrabold">No Ratings</Heading>
+        <H1>No Ratings</H1>
         <Text>You have no ratings to display</Text>
       </Container>
     );
@@ -121,7 +122,7 @@ export function RatingsScreen() {
   return (
     <Container>
       <FlatList
-        contentContainerStyle={colorMode ? { backgroundColor: 'black' } : {}}
+        contentContainerStyle={colorMode === "dark" ? { backgroundColor: 'black' } : {}}
         data={ratings}
         renderItem={(data) => <Rating {...data} />}
         keyExtractor={(rating) => rating.id}
