@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { ForgotPasswordMutation } from "../../generated/graphql";
-import { Input, Button, Stack } from "native-base";
+import { Input, Button, Stack } from "tamagui";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 
@@ -36,8 +36,7 @@ export function ForgotPasswordScreen(): JSX.Element {
           onSubmitEditing={handleForgotPassword}
         />
         <Button
-          isLoading={loading}
-          isDisabled={!email}
+          disabled={!email}
           onPress={handleForgotPassword}
         >
           Send Password Reset Email

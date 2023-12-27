@@ -1,33 +1,20 @@
 import React, { useState } from "react";
-import { TouchableWithoutFeedback } from "react-native";
-import { Icon, IInputProps, Input } from "native-base";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { InputProps, Input } from "tamagui";
 
-function PasswordInput(props: IInputProps, ref: any) {
+interface Props extends InputProps {
+  inputRef: any;
+}
+
+export function PasswordInput({ inputRef, ...props }: Props) {
   const [show, setShow] = useState(false);
 
   const toggleShow = () => setShow((prev) => !prev);
 
-  const ShowIcon = (
-    <TouchableWithoutFeedback onPress={toggleShow}>
-      <Icon
-        mr={3}
-        size="lg"
-        name={show ? "eye-outline" : "eye-off"}
-        as={MaterialCommunityIcons}
-        _dark={{ color: "white" }}
-      />
-    </TouchableWithoutFeedback>
-  );
-
   return (
     <Input
       {...props}
-      InputRightElement={ShowIcon}
       secureTextEntry={!show}
-      ref={ref}
+      ref={inputRef}
     />
   );
 }
-
-export default React.forwardRef(PasswordInput);

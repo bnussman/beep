@@ -26,15 +26,10 @@ import {
   Button,
   Input,
   Text,
-  Flex,
-  Center,
-  FormControl,
-  HStack,
+  XStack,
   Stack,
-  WarningOutlineIcon,
-  InputGroup,
-  InputLeftAddon,
-} from "native-base";
+  Label,
+} from "tamagui";
 
 const SignUp = gql`
   mutation SignUp($input: SignUpInput!) {
@@ -145,17 +140,12 @@ export function SignUpScreen() {
       keyboard
       alignItems="center"
       scrollViewProps={{ bounces: false, scrollEnabled: true }}
-      px={4}
+      px="$4"
     >
-      <Stack space={2} w="full" mt={4}>
-        <HStack space={4} alignItems="center">
+      <Stack space={2} w="100%" mt={4}>
+        <XStack space={4} alignItems="center">
           <Stack space={2} flexGrow={1}>
-            <FormControl
-              isInvalid={
-                Boolean(errors.first) || Boolean(validationErrors?.first)
-              }
-            >
-              <FormControl.Label>First Name</FormControl.Label>
+              <Label>First Name</Label>
               <Controller
                 name="first"
                 rules={{ required: "First name is required" }}
@@ -175,19 +165,12 @@ export function SignUpScreen() {
                   />
                 )}
               />
-              <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
+              <Text
               >
                 {errors.first?.message}
                 {validationErrors?.first?.[0]}
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.last) || Boolean(validationErrors?.last)
-              }
-            >
-              <FormControl.Label>Last Name</FormControl.Label>
+              </Text>
+              <Label>Last Name</Label>
               <Controller
                 name="last"
                 rules={{ required: "Last name is required" }}
@@ -207,33 +190,21 @@ export function SignUpScreen() {
                   />
                 )}
               />
-              <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
+              <Text
               >
                 {errors.last?.message}
                 {validationErrors?.last?.[0]}
-              </FormControl.ErrorMessage>
-            </FormControl>
+              </Text>
           </Stack>
-          <FormControl
-            w="100px"
-            isInvalid={
-              Boolean(errors.picture) || Boolean(validationErrors?.picture)
-            }
-          >
-            <TouchableOpacity onPress={chooseProfilePhoto}>
-              <Avatar url={photo?.uri} size="xl" />
-            </TouchableOpacity>
-            <FormControl.ErrorMessage>
-              {errors.picture?.message}
-              {validationErrors?.picture?.[0]}
-            </FormControl.ErrorMessage>
-          </FormControl>
-        </HStack>
-        <FormControl
-          isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}
-        >
-          <FormControl.Label>Email</FormControl.Label>
+          <TouchableOpacity onPress={chooseProfilePhoto}>
+            <Avatar url={photo?.uri} size="xl" />
+          </TouchableOpacity>
+          <Text>
+            {errors.picture?.message}
+            {validationErrors?.picture?.[0]}
+          </Text>
+        </XStack>
+          <Label>Email</Label>
           <Controller
             name="email"
             rules={{ required: "Email is required" }}
@@ -254,18 +225,12 @@ export function SignUpScreen() {
               />
             )}
           />
-          <FormControl.HelperText>
+          <Text>
             You must a .edu email address
-          </FormControl.HelperText>
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
             {errors.email?.message}
             {validationErrors?.email?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}
-        >
-          <FormControl.Label>Phone</FormControl.Label>
+          </Text>
+          <Label>Phone</Label>
           <Controller
             name="phone"
             rules={{ required: "Phone number is required" }}
@@ -285,23 +250,17 @@ export function SignUpScreen() {
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.phone?.message}
             {validationErrors?.phone?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}
-        >
-          <FormControl.Label>Venmo Username</FormControl.Label>
+          </Text>
+          <Label>Venmo Username</Label>
           <Controller
             name="venmo"
             rules={{ required: "Venmo username is required" }}
             defaultValue=""
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
-              <InputGroup>
-                <InputLeftAddon children="@" />
                 <Input
                   flexGrow={1}
                   onBlur={onBlur}
@@ -315,20 +274,13 @@ export function SignUpScreen() {
                   autoCapitalize="none"
                   size="lg"
                 />
-              </InputGroup>
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.venmo?.message}
             {validationErrors?.venmo?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={
-            Boolean(errors.username) || Boolean(validationErrors?.username)
-          }
-        >
-          <FormControl.Label>Username</FormControl.Label>
+          </Text>
+          <Label>Username</Label>
           <Controller
             name="username"
             rules={{ required: "Username is required" }}
@@ -349,17 +301,11 @@ export function SignUpScreen() {
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.username?.message}
             {validationErrors?.username?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={
-            Boolean(errors.password) || Boolean(validationErrors?.password)
-          }
-        >
-          <FormControl.Label>Password</FormControl.Label>
+          </Text>
+          <Label>Password</Label>
           <Controller
             name="password"
             rules={{
@@ -386,32 +332,29 @@ export function SignUpScreen() {
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text>
             {errors.password?.message}
             {validationErrors?.password?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <Button isLoading={isSubmitting} onPress={onSubmit} mt={2}>
+          </Text>
+        <Button onPress={onSubmit} mt={2}>
           Sign Up
         </Button>
-        <Center>
+        <Stack>
           <Text>By signing up, you agree to our </Text>
-          <Flex direction="row" mb={8}>
+          <Stack mb={8}>
             <Text
-              bold
               onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
             >
               Privacy Policy
             </Text>
             <Text> and </Text>
             <Text
-              bold
               onPress={() => Linking.openURL("https://ridebeep.app/terms")}
             >
               Terms of Service
             </Text>
-          </Flex>
-        </Center>
+          </Stack>
+        </Stack>
       </Stack>
     </Container>
   );

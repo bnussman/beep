@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import PasswordInput from "../../components/PasswordInput";
+import { PasswordInput } from "../../components/PasswordInput";
 import { Alert } from "../../utils/Alert";
 import { isSimulator } from "../../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
@@ -18,13 +18,12 @@ import { useNavigation } from "@react-navigation/native";
 import {
   Stack,
   Input,
-  Heading,
   Spacer,
-  Box,
-  FormControl,
-  WarningOutlineIcon,
-  HStack,
-} from "native-base";
+  Text,
+  Label,
+  XStack,
+  H1,
+} from "tamagui";
 import { Button } from "tamagui";
 
 const Login = gql`
@@ -112,19 +111,10 @@ export function LoginScreen() {
       center
       scrollViewProps={{ scrollEnabled: true, bounces: false }}
     >
-      <Stack space={4} w="90%">
-        <Box>
-          <Heading size="2xl" mr={4} fontWeight="extrabold" letterSpacing="xs">
-            Ride Beep App 🚕
-          </Heading>
-        </Box>
+      <Stack space="$4" width="90%">
+        <H1>Ride Beep App 🚕</H1>
         <Stack space={2}>
-          <FormControl
-            isInvalid={
-              Boolean(errors.username) || Boolean(validationErrors?.username)
-            }
-          >
-            <FormControl.Label>Username or Email</FormControl.Label>
+            <Label>Username or Email</Label>
             <Controller
               name="username"
               rules={{ required: "Username or Email is required" }}
@@ -145,19 +135,11 @@ export function LoginScreen() {
                 />
               )}
             />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
+            <Text>
               {errors.username?.message}
               {validationErrors?.username?.[0]}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <FormControl
-            isInvalid={
-              Boolean(errors.password) || Boolean(validationErrors?.password)
-            }
-          >
-            <FormControl.Label>Password</FormControl.Label>
+            </Text>
+            <Label>Password</Label>
             <Controller
               name="password"
               rules={{ required: "Password is required" }}
@@ -169,7 +151,7 @@ export function LoginScreen() {
                   onBlur={onBlur}
                   onChangeText={(val: string) => onChange(val)}
                   value={value}
-                  ref={ref}
+                  inputRef={ref}
                   returnKeyLabel="login"
                   returnKeyType="go"
                   onSubmitEditing={onLogin}
@@ -178,13 +160,11 @@ export function LoginScreen() {
                 />
               )}
             />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
+            <Text
             >
               {errors.password?.message}
               {validationErrors?.password?.[0]}
-            </FormControl.ErrorMessage>
-          </FormControl>
+              </Text>
           <Button
             mt={3}
             onPress={onLogin}
@@ -192,7 +172,7 @@ export function LoginScreen() {
             Login
           </Button>
         </Stack>
-        <HStack>
+        <XStack justifyContent="space-between">
           <Button
             onPress={() => navigation.navigate("Sign Up")}
           >
@@ -204,7 +184,7 @@ export function LoginScreen() {
           >
             Forgot Password
           </Button>
-        </HStack>
+        </XStack>
       </Stack>
     </Container>
   );

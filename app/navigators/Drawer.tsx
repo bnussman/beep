@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MainFindBeepScreen } from "../routes/ride/FindBeep";
 import { Feedback } from "../routes/feedback/Feedback";
 import { RatingsScreen } from "../routes/Ratings";
@@ -26,22 +25,18 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import {
-  Pressable,
-  VStack,
+  Stack,
   Text,
-  HStack,
-  Divider,
-  Icon,
+  XStack,
   Switch,
-  useColorMode,
   Spinner,
   Button,
-  Stack,
   Spacer,
-  Badge,
-} from "native-base";
+} from "tamagui";
 import { useAutoUpdate } from "../utils/updates";
 import { Premium } from "../routes/Premium";
+import { Pressable, useColorMode } from "native-base";
+import { isMobile } from "../utils/constants";
 
 const Logout = gql`
   mutation Logout {
@@ -127,9 +122,9 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <VStack space={6} my={2} mx={2}>
+      <Stack space={6} my={2} mx={2}>
         <Pressable onPress={() => navigate("Profile", { id: user?.id ?? "" })}>
-          <HStack alignItems="center">
+          <XStack alignItems="center">
             <Avatar
               mr={2}
               size="md"
@@ -146,22 +141,13 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             </Stack>
             <Spacer />
             <Text fontSize="3xl" px={2}>🎄</Text>
-          </HStack>
+          </XStack>
         </Pressable>
-        <VStack divider={<Divider />} space={4}>
-          <VStack space={3}>
+        <Stack space={4}>
+          <Stack space={3}>
             {!user?.isEmailVerified ? (
               <Button
-                colorScheme="red"
-                isLoading={resendLoading}
                 onPress={handleResendVerification}
-                leftIcon={
-                  <Icon
-                    name="alert-circle-outline"
-                    size={6}
-                    as={MaterialCommunityIcons}
-                  />
-                }
               >
                 Resend Verification Email
               </Button>
@@ -181,48 +167,34 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                   props.navigation.navigate(name);
                 }}
               >
-                <HStack space={7} alignItems="center">
-                  <Icon
-                    color={
-                      index === props.state.index ? "primary.500" : "gray.500"
-                    }
-                    size={5}
-                    as={MaterialCommunityIcons}
-                    name={getIcon(name)}
-                  />
+                <XStack space={7} alignItems="center">
                   <Text fontWeight={500}>{name}</Text>
-                  {name === "Premium" && <Badge borderRadius="xl" colorScheme="yellow">New</Badge>}
-                </HStack>
+                  {name === "Premium" && <Stack borderRadius="xl" colorScheme="yellow"><Text>New</Text></Stack>}
+                </XStack>
               </Pressable>
             ))}
             <Pressable onPress={handleLogout}>
-              <HStack px={5} py={3} space={7} alignItems="center">
+              <XStack px={5} py={3} space={7} alignItems="center">
                 {loading ? (
                   <Spinner size="sm" />
-                ) : (
-                  <Icon
-                    color="gray.500"
-                    size={5}
-                    as={MaterialCommunityIcons}
-                    name="logout-variant"
-                  />
-                )}
+                ) : null}
                 <Text mr={4} fontWeight={500}>
                   Logout
                 </Text>
-              </HStack>
+              </XStack>
             </Pressable>
-            <HStack px={5} py={3} space={5} alignItems="center">
+            <XStack px={5} py={3} space={5} alignItems="center">
               <Text>☀️</Text>
               <Switch
-                isChecked={colorMode === "dark"}
-                onToggle={toggleColorMode}
+                native={isMobile}
+                checked={colorMode === "dark"}
+                onCheckedChange={toggleColorMode}
               />
               <Text>️🌑</Text>
-            </HStack>
-          </VStack>
-        </VStack>
-      </VStack>
+            </XStack>
+          </Stack>
+        </Stack>
+      </Stack>
     </DrawerContentScrollView>
   );
 }
