@@ -92,7 +92,7 @@ function Package({ p }: { p: PurchasesPackage }) {
       <XStack alignItems="center" space={2}>
         <H4>{p.identifier}</H4>
         <SizableText>{countdown}</SizableText>
-        <Spacer />
+        <Stack flexGrow={1} />
         {Boolean(payment) && <Feather name="check" size={20} color="green" />}
         <Button isLoading={isPurchasing} onPress={() => onBuy(p)} isDisabled={Boolean(payment)}>{p.product.priceString}</Button>
       </XStack>

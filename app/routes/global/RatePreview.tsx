@@ -118,7 +118,7 @@ export function RatePreview({ id }: Props) {
   if (error) {
     return (
       <Container center>
-        <Text>{error.message}</Text>
+        <SizableText>{error.message}</SizableText>
       </Container>
     );
   }

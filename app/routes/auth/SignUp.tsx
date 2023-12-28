@@ -29,6 +29,7 @@ import {
   XStack,
   Stack,
   Label,
+  SizableText,
 } from "tamagui";
 
 const SignUp = gql`
@@ -165,11 +166,10 @@ export function SignUpScreen() {
                   />
                 )}
               />
-              <Text
-              >
+              <SizableText>
                 {errors.first?.message}
                 {validationErrors?.first?.[0]}
-              </Text>
+              </SizableText>
               <Label>Last Name</Label>
               <Controller
                 name="last"
@@ -190,19 +190,18 @@ export function SignUpScreen() {
                   />
                 )}
               />
-              <Text
-              >
+              <SizableText>
                 {errors.last?.message}
                 {validationErrors?.last?.[0]}
-              </Text>
+              </SizableText>
           </Stack>
           <TouchableOpacity onPress={chooseProfilePhoto}>
             <Avatar url={photo?.uri} size="xl" />
           </TouchableOpacity>
-          <Text>
+          <SizableText>
             {errors.picture?.message}
             {validationErrors?.picture?.[0]}
-          </Text>
+          </SizableText>
         </XStack>
           <Label>Email</Label>
           <Controller
@@ -225,11 +224,11 @@ export function SignUpScreen() {
               />
             )}
           />
-          <Text>
+          <SizableText>
             You must a .edu email address
             {errors.email?.message}
             {validationErrors?.email?.[0]}
-          </Text>
+          </SizableText>
           <Label>Phone</Label>
           <Controller
             name="phone"
@@ -250,10 +249,10 @@ export function SignUpScreen() {
               />
             )}
           />
-          <Text>
+          <SizableText>
             {errors.phone?.message}
             {validationErrors?.phone?.[0]}
-          </Text>
+          </SizableText>
           <Label>Venmo Username</Label>
           <Controller
             name="venmo"
@@ -276,10 +275,10 @@ export function SignUpScreen() {
                 />
             )}
           />
-          <Text>
+          <SizableText>
             {errors.venmo?.message}
             {validationErrors?.venmo?.[0]}
-          </Text>
+          </SizableText>
           <Label>Username</Label>
           <Controller
             name="username"
@@ -301,10 +300,10 @@ export function SignUpScreen() {
               />
             )}
           />
-          <Text>
+          <SizableText>
             {errors.username?.message}
             {validationErrors?.username?.[0]}
-          </Text>
+          </SizableText>
           <Label>Password</Label>
           <Controller
             name="password"
@@ -332,27 +331,27 @@ export function SignUpScreen() {
               />
             )}
           />
-          <Text>
+          <SizableText>
             {errors.password?.message}
             {validationErrors?.password?.[0]}
-          </Text>
+          </SizableText>
         <Button onPress={onSubmit} mt={2}>
           Sign Up
         </Button>
         <Stack>
-          <Text>By signing up, you agree to our </Text>
+          <SizableText>By signing up, you agree to our </SizableText>
           <Stack mb={8}>
-            <Text
+            <SizableText
               onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
             >
               Privacy Policy
-            </Text>
-            <Text> and </Text>
-            <Text
+            </SizableText>
+            <SizableText> and </SizableText>
+            <SizableText
               onPress={() => Linking.openURL("https://ridebeep.app/terms")}
             >
               Terms of Service
-            </Text>
+            </SizableText>
           </Stack>
         </Stack>
       </Stack>

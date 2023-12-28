@@ -135,10 +135,10 @@ export function LoginScreen() {
                 />
               )}
             />
-            <Text color="$red9">
+            <SizableText color="$red9">
               {errors.username?.message}
               {validationErrors?.username?.[0]}
-            </Text>
+            </SizableText>
             <Label>Password</Label>
             <Controller
               name="password"
@@ -160,10 +160,10 @@ export function LoginScreen() {
                 />
               )}
             />
-            <Text color="$red9">
+            <SizableText color="$red9">
               {errors.password?.message}
               {validationErrors?.password?.[0]}
-              </Text>
+              </SizableText>
           <Button
             mt={3}
             onPress={onLogin}
@@ -177,7 +177,7 @@ export function LoginScreen() {
           >
             Sign Up
           </Button>
-          <Spacer />
+          <Stack flexGrow={1} />
           <Button
             onPress={() => navigation.navigate("Forgot Password")}
           >

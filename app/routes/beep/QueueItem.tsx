@@ -14,13 +14,11 @@ import { useNavigation } from "@react-navigation/native";
 import { Card } from "../../components/Card";
 import {
   Box,
-  HStack,
+  XStack,
   Text,
   Spacer,
   Stack,
-  Icon,
-  Menu,
-  Divider,
+  SizableText,
 } from "tamagui";
 import { Status } from "../../utils/types";
 
@@ -64,7 +62,7 @@ export function QueueItem({ item }: Props) {
   if (item.status !== Status.WAITING) {
     return (
       <Card mb={2}>
-        <Box>
+        <Stack>
           <Pressable
             onPress={() =>
               navigate("Profile", {
@@ -73,19 +71,19 @@ export function QueueItem({ item }: Props) {
               })
             }
           >
-            <HStack space={2} alignItems="center">
+            <XStack space={2} alignItems="center">
               <Avatar size={50} url={item.rider.photo} />
               <Stack>
-                <Text fontWeight="extrabold" letterSpacing="xs" fontSize="xl">
+                <SizableText fontWeight="bold">
                   {item.rider.name}
-                </Text>
+                </SizableText>
                 {item.rider.rating !== null &&
                 item.rider.rating !== undefined ? (
-                  <Text fontSize="xs">{printStars(item.rider.rating)}</Text>
+                  <SizableText fontSize="$1">{printStars(item.rider.rating)}</SizableText>
                 ) : null}
               </Stack>
-              <Spacer />
-              <Menu
+              <Stack flexGrow={1} />
+             {/*  <Menu
                 key={`menu-${item.id}`}
                 w="190"
                 trigger={(triggerProps) => (
@@ -132,28 +130,28 @@ export function QueueItem({ item }: Props) {
                 <Menu.Item onPress={onCancelPress} _text={{ color: "red.400" }}>
                   Cancel Beep
                 </Menu.Item>
-              </Menu>
-            </HStack>
+              </Menu> */}
+            </XStack>
           </Pressable>
-          <Text>
-            <Text bold mr={2}>
+          <SizableText>
+            <SizableText fontWeight="bold" mr={2}>
               Group Size
-            </Text>{" "}
-            <Text>{item.groupSize}</Text>
-          </Text>
-          <Text>
-            <Text bold mr={2}>
+            </SizableText>{" "}
+            <SizableText>{item.groupSize}</SizableText>
+          </SizableText>
+          <SizableText>
+            <SizableText fontWeight="bold" mr={2}>
               Pick Up
-            </Text>{" "}
-            <Text>{item.origin}</Text>
-          </Text>
-          <Text>
-            <Text bold mr={2}>
+            </SizableText>{" "}
+            <SizableText>{item.origin}</SizableText>
+          </SizableText>
+          <SizableText>
+            <SizableText fontWeight="bold" mr={2}>
               Drop Off
-            </Text>{" "}
-            <Text>{item.destination}</Text>
-          </Text>
-        </Box>
+            </SizableText>{" "}
+            <SizableText>{item.destination}</SizableText>
+          </SizableText>
+        </Stack>
       </Card>
     );
   }
@@ -169,41 +167,41 @@ export function QueueItem({ item }: Props) {
             })
           }
         >
-          <HStack alignItems="center">
+          <XStack alignItems="center">
             <Stack>
-              <Text fontWeight="extrabold" fontSize="xl">
+              <SizableText fontWeight="bold">
                 {item.rider.name}
-              </Text>
-              <Text fontSize="xs">
+              </SizableText>
+              <SizableText fontSize="$1">
                 {item.rider.rating !== null && item.rider.rating !== undefined
                   ? printStars(item.rider.rating)
                   : null}
-              </Text>
+              </SizableText>
             </Stack>
-            <Spacer />
+            <Stack flexGrow={1} />
             <Avatar mr={2} size={45} url={item.rider.photo} />
-          </HStack>
+          </XStack>
         </Pressable>
-        <Text>
-          <Text bold>Group Size</Text> <Text>{item.groupSize}</Text>
-        </Text>
-        <Text>
-          <Text bold mr={2}>
+        <SizableText>
+          <SizableText fontWeight="bold">Group Size</SizableText> <SizableText>{item.groupSize}</SizableText>
+        </SizableText>
+        <SizableText>
+          <SizableText fontWeight="bold" mr={2}>
             Pick Up
-          </Text>{" "}
-          <Text>{item.origin}</Text>
-        </Text>
-        <Text>
-          <Text bold mr={2}>
+          </SizableText>{" "}
+          <SizableText>{item.origin}</SizableText>
+        </SizableText>
+        <SizableText>
+          <SizableText fontWeight="bold" mr={2}>
             Drop Off
-          </Text>{" "}
-          <Text>{item.destination}</Text>
-        </Text>
+          </SizableText>{" "}
+          <SizableText>{item.destination}</SizableText>
+        </SizableText>
       </Stack>
-      <HStack space={2} mt={2}>
+      <XStack space={2} mt={2}>
         <AcceptDenyButton type="deny" item={item} />
         <AcceptDenyButton type="accept" item={item} />
-      </HStack>
+      </XStack>
     </Card>
   );
 }

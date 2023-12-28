@@ -72,10 +72,10 @@ export function Beep(props: Props) {
               {beep.rider.name}
             </Heading>
             {beep.rider.rating !== null && beep.rider.rating !== undefined ? (
-              <Text fontSize="xs">{printStars(beep.rider.rating)}</Text>
+              <SizableText fontSize="xs">{printStars(beep.rider.rating)}</SizableText>
             ) : null}
           </Stack>
-          <Spacer />
+          <Stack flexGrow={1} />
           <Avatar size="xl" url={beep.rider.photo} />
         </HStack>
       </Pressable>
@@ -85,7 +85,7 @@ export function Beep(props: Props) {
             <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
               Group Size
             </Heading>
-            <Text>{beep.groupSize}</Text>
+            <SizableText>{beep.groupSize}</SizableText>
           </Box>
           <Pressable onPress={() => copy(beep.origin)}>
             <Box>
@@ -93,8 +93,8 @@ export function Beep(props: Props) {
                 Pick Up
               </Heading>
               <HStack alignItems="center" space={2}>
-                <Text flexShrink={1}>{beep.origin}</Text>
-                <Spacer />
+                <SizableText flexShrink={1}>{beep.origin}</SizableText>
+                <Stack flexGrow={1} />
                 <Icon
                   as={MaterialCommunityIcons}
                   name="content-copy"
@@ -109,8 +109,8 @@ export function Beep(props: Props) {
                 Destination
               </Heading>
               <HStack alignItems="center" space={2}>
-                <Text flexShrink={1}>{beep.destination}</Text>
-                <Spacer />
+                <SizableText flexShrink={1}>{beep.destination}</SizableText>
+                <Stack flexGrow={1} />
                 <Icon
                   as={MaterialCommunityIcons}
                   name="content-copy"
@@ -121,7 +121,7 @@ export function Beep(props: Props) {
           </Pressable>
         </Stack>
       </Card>
-      <Spacer />
+      <Stack flexGrow={1} />
       <Stack space={3}>
         {beep.status === Status.WAITING ? (
           <>

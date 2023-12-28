@@ -195,7 +195,7 @@ export function Cars() {
   if (error) {
     return (
       <Container center>
-        <Text>{error.message}</Text>
+        <SizableText>{error.message}</SizableText>
       </Container>
     );
   }

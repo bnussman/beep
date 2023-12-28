@@ -24,9 +24,9 @@ export function WebsocketStatus() {
         name="checkbox-blank-circle"
         as={MaterialCommunityIcons}
       />
-      <Text mr={4} fontWeight={500}>
+      <SizableText mr={4} fontWeight={500}>
         {status}
-      </Text>
+      </SizableText>
     </HStack>
   );
 }

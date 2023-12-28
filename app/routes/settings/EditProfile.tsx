@@ -293,10 +293,10 @@ export function EditProfileScreen() {
                   />
                 )}
               />
-              <Text >
+              <SizableText >
                 {errors.first?.message}
                 {validationErrors?.first?.[0]}
-              </Text>
+              </SizableText>
               <Label>Last Name</Label>
               <Controller
                 name="last"
@@ -316,10 +316,10 @@ export function EditProfileScreen() {
                   />
                 )}
               />
-              <Text>
+              <SizableText>
                 {errors.last?.message}
                 {validationErrors?.last?.[0]}
-              </Text>
+              </SizableText>
           </Stack>
           <Pressable onPress={() => handleUpdatePhoto()}>
             <Avatar url={photo?.uri ?? user?.photo} size="$10" />
@@ -345,10 +345,10 @@ export function EditProfileScreen() {
               />
             )}
           />
-          <Text>
+          <SizableText>
             {errors.email?.message}
             {validationErrors?.email?.[0]}
-          </Text>
+          </SizableText>
           <Label>Phone Number</Label>
           <Controller
             name="phone"
@@ -368,10 +368,10 @@ export function EditProfileScreen() {
               />
             )}
           />
-          <Text>
+          <SizableText>
             {errors.phone?.message}
             {validationErrors?.phone?.[0]}
-          </Text>
+          </SizableText>
           <Label>Venmo Username</Label>
           <Controller
             name="venmo"
@@ -392,10 +392,10 @@ export function EditProfileScreen() {
                 />
             )}
           />
-          <Text>
+          <SizableText>
             {errors.venmo?.message}
             {validationErrors?.venmo?.[0]}
-          </Text>
+          </SizableText>
           <Label>Cash App Username</Label>
           <Controller
             name="cashapp"
@@ -416,10 +416,10 @@ export function EditProfileScreen() {
                 />
             )}
           />
-          <Text>
+          <SizableText>
             {errors.cashapp?.message}
             {validationErrors?.cashapp?.[0]}
-          </Text>
+          </SizableText>
         <Button
           onPress={onSubmit}
           isLoading={loading}

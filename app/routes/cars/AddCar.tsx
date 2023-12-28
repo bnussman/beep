@@ -269,10 +269,10 @@ export function AddCar() {
               </Select>
             )}
           />
-          <Text>
+          <SizableText>
             {errors.make?.message}
             {validationErrors?.make?.[0]}
-          </Text>
+          </SizableText>
           <Controller
             name="model"
             rules={{ required: "Model is required" }}
@@ -396,10 +396,10 @@ export function AddCar() {
               </Select>
             )}
           />
-          <Text>
+          <SizableText>
             {errors.model?.message}
             {validationErrors?.model?.[0]}
-          </Text>
+          </SizableText>
           <Controller
             name="year"
             rules={{ required: "Year is required" }}
@@ -528,10 +528,10 @@ export function AddCar() {
               </Select>
             )}
           />
-          <Text>
+          <SizableText>
             {errors.year?.message}
             {validationErrors?.year?.[0]}
-          </Text>
+          </SizableText>
           <Controller
             name="color"
             rules={{ required: "Color is required" }}
@@ -660,10 +660,10 @@ export function AddCar() {
               </Select>
             )}
           />
-          <Text>
+          <SizableText>
             {errors.make?.message}
             {validationErrors?.make?.[0]}
-          </Text>
+          </SizableText>
           <Controller
             name="photo"
             rules={{ required: "Photo is required" }}

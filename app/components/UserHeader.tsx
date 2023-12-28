@@ -16,9 +16,9 @@ export function UserHeader({ picture, name, username }: Props) {
         <Heading size="md" letterSpacing="xs" fontWeight="extrabold">
           {name}
         </Heading>
-        <Text color="gray.500" letterSpacing="sm">
+        <SizableText color="gray.500" letterSpacing="sm">
           @{username}
-        </Text>
+        </SizableText>
       </Box>
     </HStack>
   );

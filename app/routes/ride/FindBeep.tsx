@@ -397,7 +397,7 @@ export function MainFindBeepScreen() {
                   <Paragraph>{beep.destination}</Paragraph>
                 </SizableText>
               </Stack>
-              <Spacer />
+              <Stack flexGrow={1} />
               <Avatar size="xl" url={beep.beeper.photo} />
             </XStack>
           </Pressable>
@@ -422,7 +422,7 @@ export function MainFindBeepScreen() {
                 <H4 fontWeight="bold">
                   ETA
                 </H4>
-                <Spacer />
+                <Stack flexGrow={1} />
                 {etaError ? (
                   <SizableText>{etaError.message}</SizableText>
                 ) : eta?.getETA ? (

@@ -168,7 +168,7 @@ export function BeeperMarker({ id, latitude, longitude }: AnonymousBeeper) {
 
   return (
     <MarkerAnimated ref={ref} coordinate={coordinate}>
-      <Text fontSize="2xl">{BEEPER_ICON}</Text>
+      <SizableText fontSize="2xl">{BEEPER_ICON}</SizableText>
     </MarkerAnimated>
   );
 }

@@ -100,7 +100,7 @@ export function RatingsScreen() {
   if (error) {
     return (
       <Container center>
-        <Text>{error.message}</Text>
+        <SizableText>{error.message}</SizableText>
       </Container>
     );
   }
@@ -109,7 +109,7 @@ export function RatingsScreen() {
     return (
       <Container center>
         <H1>No Ratings</H1>
-        <Text>You have no ratings to display</Text>
+        <SizableText>You have no ratings to display</SizableText>
       </Container>
     );
   }

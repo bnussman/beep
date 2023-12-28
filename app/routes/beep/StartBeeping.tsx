@@ -431,7 +431,7 @@ export function StartBeepingScreen() {
               Price per person in a group
             </SizableText>
         </Stack>
-        <Spacer />
+        <Stack flexGrow={1} />
         <XStack alignItems="center" mb={10} space={2}>
           <SizableText fontSize="$2">
             Use the toggle in the top right to start beeping
@@ -458,7 +458,7 @@ export function StartBeepingScreen() {
               <Heading fontWeight="extrabold" size="2xl">
                 Queue
               </Heading>
-              <Spacer />
+              <Stack flexGrow={1} />
               {queue.length > 0 &&
                 queue.some((entry) => entry.status === Status.WAITING) && (
                   <Stack rounded="full" bg="blue.400" w={4} h={4} mr={2} />

@@ -106,7 +106,7 @@ export function BeepsScreen() {
   if (error) {
     return (
       <Container center>
-        <Text>{error.message}</Text>
+        <SizableText>{error.message}</SizableText>
       </Container>
     );
   }
@@ -115,7 +115,7 @@ export function BeepsScreen() {
     return (
       <Container center>
         <H1>No Beeps</H1>
-        <Text>You have no previous beeps to display</Text>
+        <SizableText>You have no previous beeps to display</SizableText>
       </Container>
     );
   }
