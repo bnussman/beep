@@ -15,7 +15,7 @@ export function __Avatar(props: Props & AvatarProps) {
       {...rest}
     >
       {url && <_Avatar.Image src={url} />}
-      <_Avatar.Fallback />
+      <_Avatar.Fallback bg="$gray5" />
     </_Avatar>
   );
 }

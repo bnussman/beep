@@ -3,7 +3,6 @@ import { useLocation } from "../../utils/useLocation";
 import { AnimatedRegion, MarkerAnimated, Region } from "react-native-maps";
 import { gql, useQuery, useSubscription } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
-import { Text } from "tamagui";
 import { Platform } from "react-native";
 import { cache } from "../../utils/Apollo";
 import {
@@ -12,6 +11,7 @@ import {
   GetBeeperLocationUpdatesSubscription,
 } from "../../generated/graphql";
 import { BEEPER_ICON } from "../../utils/constants";
+import { SizableText } from "tamagui";
 
 const BeepersLocations = gql`
   query GetAllBeepersLocation(
@@ -168,7 +168,7 @@ export function BeeperMarker({ id, latitude, longitude }: AnonymousBeeper) {
 
   return (
     <MarkerAnimated ref={ref} coordinate={coordinate}>
-      <SizableText fontSize="2xl">{BEEPER_ICON}</SizableText>
+      <SizableText fontSize="$8">{BEEPER_ICON}</SizableText>
     </MarkerAnimated>
   );
 }

@@ -110,9 +110,9 @@ export function Cars() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Center>
+      <Stack alignItems="center">
         <Spinner mt={4} mb={9} color="gray.400" />
-      </Center>
+      </Stack>
     );
   };
 
@@ -174,6 +174,7 @@ export function Cars() {
       headerRight: () => {
         return (
           <Pressable
+            aria-label="add a car"
             style={{ marginRight: 16 }}
             onPress={() => navigation.navigate("Add Car")}
           >

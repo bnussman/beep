@@ -198,7 +198,7 @@ export function SignUpScreen() {
               </SizableText>
           </Stack>
           <TouchableOpacity onPress={chooseProfilePhoto}>
-            <Avatar url={photo?.uri} size="xl" />
+            <Avatar id="avatar" url={photo?.uri} size="$10" />
           </TouchableOpacity>
           <SizableText>
             {errors.picture?.message}

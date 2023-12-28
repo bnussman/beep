@@ -16,11 +16,11 @@ test('a beep can happen between a rider and driver', async ({ browser }) => {
 
   await beeperPage.getByRole('button').nth(1).click();
   await beeperPage.getByText('Cars').click();
-  await beeperPage.getByRole('button', { name: '' }).click();
-  await beeperPage.getByLabel('Make').selectOption('Ford');
-  await beeperPage.getByLabel('Model').selectOption('F250');
-  await beeperPage.getByLabel('Year').selectOption('2023');
-  await beeperPage.getByLabel('Color').selectOption('white');
+  await beeperPage.getByLabel('add a car').click();
+  await beeperPage.getByPlaceholder('Make').selectOption('Ford');
+  await beeperPage.getByPlaceholder('Model').selectOption('F250');
+  await beeperPage.getByPlaceholder('Year').selectOption('2023');
+  await beeperPage.getByPlaceholder('Color').selectOption('white');
 
   const fileChooserPromise = beeperPage.waitForEvent('filechooser');
   await beeperPage.getByText('Attach a Photo').click();

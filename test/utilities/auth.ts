@@ -22,7 +22,7 @@ export async function signup(page: Page) {
   await page.getByRole('textbox', { name: 'Password' }).fill('test12345');
 
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.getByLabel('--').locator('img').click();
+  await page.locator("[id='avatar']").click();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles('../app/assets/icon.png');
 

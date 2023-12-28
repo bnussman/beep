@@ -143,7 +143,7 @@ export function AddCar() {
           <Controller
             name="make"
             rules={{ required: "Make is required" }}
-            defaultValue=""
+            defaultValue={null}
             control={control}
             render={({ field: { onChange, value } }) => (
               <Select
@@ -151,6 +151,7 @@ export function AddCar() {
                 value={value}
                 onValueChange={onChange}
                 disablePreventBodyScroll
+                native
               >
                 <Select.Trigger width="100%" iconAfter={ChevronDown}>
                   <Select.Value placeholder="Make" />
@@ -284,6 +285,7 @@ export function AddCar() {
                 value={value}
                 onValueChange={onChange}
                 disablePreventBodyScroll
+                native
               >
                 <Select.Trigger width="100%" iconAfter={ChevronDown}>
                   <Select.Value placeholder="Model" />
@@ -411,6 +413,7 @@ export function AddCar() {
                 value={value}
                 onValueChange={onChange}
                 disablePreventBodyScroll
+                native
               >
                 <Select.Trigger width="100%" iconAfter={ChevronDown}>
                   <Select.Value placeholder="Year" />
@@ -543,6 +546,7 @@ export function AddCar() {
                 value={value}
                 onValueChange={onChange}
                 disablePreventBodyScroll
+                native
               >
                 <Select.Trigger width="100%" iconAfter={ChevronDown}>
                   <Select.Value placeholder="Color" />
