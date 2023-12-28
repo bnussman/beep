@@ -35,7 +35,6 @@ import {
 import {
   Input,
   Switch,
-  Text,
   Heading,
   Stack,
   Spacer,
@@ -205,12 +204,15 @@ export function StartBeepingScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Switch
-          mr={3}
-          checked={isBeeping}
-          native={isMobile}
-          onCheckedChange={() => toggleSwitchWrapper()}
-        />
+        <Stack mr="$3">
+          <Switch
+            checked={isBeeping}
+            native={true}
+            onCheckedChange={() => toggleSwitchWrapper()}
+          >
+            <Switch.Thumb />
+          </Switch>
+        </Stack>
       ),
     });
   }, [navigation, isBeeping, capacity, singlesRate, groupRate]);

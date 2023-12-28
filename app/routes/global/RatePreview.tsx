@@ -14,6 +14,9 @@ import {
   Heading,
   Spinner,
   Spacer,
+  H2,
+  SizableText,
+  H3,
 } from "tamagui";
 import { Container } from "../../components/Container";
 
@@ -122,36 +125,35 @@ export function RatePreview({ id }: Props) {
 
   return (
     <Card flexShrink={1}>
-      <XStack alignItems="center">
-        <Heading fontWeight="extrabold">Ratings</Heading>
-        <Spacer />
-        <Heading size="xs" color="gray.400">
+      <XStack alignItems="center" justifyContent="space-between">
+        <H3 fontWeight="bold">Ratings</H3>
+        <SizableText>
           {count} ratings
-        </Heading>
+        </SizableText>
       </XStack>
       <FlatList
         data={ratings}
         renderItem={({ item: rating }) => (
           <Card
             key={rating.id}
-            p={1}
-            mt={2}
+            p="$2"
+            mt="$2"
             pressable
             onPress={() => push("Profile", { id: rating.rater.id, beepId: rating.beep.id })}
           >
-            <XStack alignItems="center" p={2}>
-              <Avatar size="md" mr={4} url={rating.rater.photo} />
+            <XStack alignItems="center">
+              <Avatar size="$6" mr="$2" url={rating.rater.photo} />
               <Stack>
-                <Text fontWeight="extrabold" fontSize="lg" letterSpacing="xs">
+                <SizableText fontWeight="bold" fontSize="$4">
                   {rating.rater.name}
-                </Text>
-                <Text color="gray.400" fontSize="xs" mb={1}>
+                </SizableText>
+                <SizableText color="$gray9" fontSize="$1">
                   {new Date(rating.timestamp).toLocaleString()}
-                </Text>
-                <Text fontSize="xs">{printStars(rating.stars)}</Text>
-                {rating.message ? (
-                  <Text fontSize="xs">{rating.message}</Text>
-                ) : null}
+                </SizableText>
+                <SizableText fontSize="$1">{printStars(rating.stars)}</SizableText>
+                {rating.message && (
+                  <SizableText size="$2">{rating.message}</SizableText>
+                )}
               </Stack>
             </XStack>
           </Card>

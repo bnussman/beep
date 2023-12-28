@@ -56,8 +56,6 @@
     "react-native-svg": "13.9.0",
     "react-native-web": "~0.19.7",
     "sentry-expo": "~7.1.0",
-    "styled-components": "^6.1.0",
-    "styled-system": "^5.1.5",
     "tamagui": "^1.77.1"
   },
   "devDependencies": {

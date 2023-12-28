@@ -27,7 +27,6 @@ import {
 import {
   Stack,
   XStack,
-  Switch,
   Spinner,
   Button,
   SizableText,
@@ -35,7 +34,7 @@ import {
 import { useAutoUpdate } from "../utils/updates";
 import { Premium } from "../routes/Premium";
 import { Pressable, useColorScheme } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { BadgeCheck, Car, LogOut as LogOutIcon, CarTaxiFront, MessageSquare, Star, User } from "@tamagui/lucide-icons";
 
 const Logout = gql`
   mutation Logout {
@@ -48,27 +47,23 @@ const Drawer = createDrawerNavigator<MainNavParamList>();
 const getIcon = (screenName: string) => {
   switch (screenName) {
     case "Ride":
-      return "car";
+      return Car;
     case "Beep":
-      return "steering";
+      return CarTaxiFront;
     case "Profile":
-      return "account-edit";
-    case "Change Password":
-      return "form-textbox-password";
+      return User;
     case "Beeps":
-      return "car-multiple";
+      return Car;
     case "Ratings":
-      return "account-star";
+      return Star;
     case "My Cars":
-      return "car";
-    case "Changelog":
-      return "playlist-plus";
+      return Car;
     case "Feedback":
-      return "help-circle-outline";
+      return MessageSquare;
     case "Premium":
-      return "shield-star-outline";
+      return BadgeCheck;
     default:
-      return "car";
+      return Car;
   }
 };
 
@@ -136,7 +131,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 @{user?.username}
               </SizableText>
             </Stack>
-            <SizableText fontSize="$8">🎄</SizableText>
+            <SizableText fontSize="$8"></SizableText>
           </XStack>
         </Pressable>
         <Stack space={4}>
@@ -148,23 +143,26 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 Resend Verification Email
               </Button>
             ) : null}
-            {props.state.routeNames.map((name: string, index: number) => (
-              <Pressable
-                key={index}
-                onPress={() => {
-                  props.navigation.navigate(name);
-                }}
-              >
-                <XStack space="$4" alignItems="center" backgroundColor={index === props.state.index ? "$gray3" : undefined} py={8} mx="$3" borderRadius="$4" px="$3">
-                  <MaterialCommunityIcons name={getIcon(name)} size={18} color="white" />
-                  <SizableText>{name}</SizableText>
-                  {name === "Premium" && <Stack bg="$yellow8" borderRadius="$2" px="$2" py="$1"><SizableText>New</SizableText></Stack>}
-                </XStack>
-              </Pressable>
-            ))}
+            {props.state.routeNames.map((name: string, index: number) => {
+              const Icon = getIcon(name);
+              return (
+                <Pressable
+                  key={index}
+                  onPress={() => {
+                    props.navigation.navigate(name);
+                  }}
+                >
+                  <XStack space="$4" alignItems="center" backgroundColor={index === props.state.index ? "$gray3" : undefined} py={8} mx="$3" borderRadius="$4" px="$3">
+                    <Icon size={18} />
+                    <SizableText>{name}</SizableText>
+                    {name === "Premium" && <Stack bg="$yellow9" borderRadius="$2" px="$2" py="$1"><SizableText size="$1" color="white">New</SizableText></Stack>}
+                  </XStack>
+                </Pressable>
+              )
+            })}
             <Pressable onPress={handleLogout}>
               <XStack space="$4" alignItems="center" mx="$2" borderRadius="$4" px="$4">
-                <MaterialCommunityIcons name="logout-variant" size={18} color="white" />
+                <LogOutIcon size={18} />
                 {loading ? (
                   <Spinner size="small" />
                 ) : null}

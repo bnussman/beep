@@ -41,9 +41,7 @@ import {
   useSubscription,
 } from "@apollo/client";
 import {
-  Text,
   Input,
-  Heading,
   Stack,
   XStack,
   Spacer,
@@ -53,6 +51,9 @@ import {
   Label,
   H1,
   SizableText,
+  H3,
+  Paragraph,
+  H4,
 } from "tamagui";
 import { Pressable } from "react-native";
 
@@ -384,22 +385,17 @@ export function MainFindBeepScreen() {
           >
             <XStack alignItems="center" space={4} w="100%">
               <Stack flexShrink={1}>
-                <Heading
-                  size="xl"
-                  fontWeight="extrabold"
-                  letterSpacing="sm"
-                  isTruncated
-                >
+                <H3 fontWeight="bold">
                   {beep.beeper.name}
-                </Heading>
-                <Text isTruncated fontSize="xs">
-                  <Text fontWeight="extrabold">Pick Up </Text>
-                  <Text>{beep.origin}</Text>
-                </Text>
-                <Text isTruncated fontSize="xs">
-                  <Text fontWeight="extrabold">Destination </Text>
-                  <Text>{beep.destination}</Text>
-                </Text>
+                </H3>
+                <SizableText>
+                  <SizableText fontWeight="bold">Pick Up </SizableText>
+                  <Paragraph>{beep.origin}</Paragraph>
+                </SizableText>
+                <SizableText>
+                  <SizableText fontWeight="bold">Destination </SizableText>
+                  <Paragraph>{beep.destination}</Paragraph>
+                </SizableText>
               </Stack>
               <Spacer />
               <Avatar size="xl" url={beep.beeper.photo} />
@@ -411,30 +407,28 @@ export function MainFindBeepScreen() {
           />
           {beep.position <= 0 && (
             <Card w="100%">
-              <Heading
-                size="md"
-                letterSpacing="sm"
-                fontWeight="extrabold"
-                mb={1}
+              <H3
+                fontWeight="bold"
+                mb="$1"
               >
                 Current Status
-              </Heading>
-              <Text>{getCurrentStatusMessage()}</Text>
+              </H3>
+              <SizableText>{getCurrentStatusMessage()}</SizableText>
             </Card>
           )}
           {beep.status === Status.ON_THE_WAY && (
             <Card w="100%">
               <XStack>
-                <Heading fontWeight="extrabold" size="sm">
+                <H4 fontWeight="bold">
                   ETA
-                </Heading>
+                </H4>
                 <Spacer />
                 {etaError ? (
-                  <Text>{etaError.message}</Text>
+                  <SizableText>{etaError.message}</SizableText>
                 ) : eta?.getETA ? (
-                  <Text>{eta.getETA}</Text>
+                  <SizableText>{eta.getETA}</SizableText>
                 ) : (
-                  <Spinner size="sm" />
+                  <Spinner size="small" />
                 )}
               </XStack>
             </Card>
@@ -447,9 +441,9 @@ export function MainFindBeepScreen() {
           )}
           {beep.status === Status.HERE ? (
             <Image
-              borderRadius="xl"
+              borderRadius="$4"
               w="100%"
-              h={48}
+              h="$14"
               flexGrow={1}
               source={{ uri: beep.beeper.cars?.[0].photo }}
               alt={`car-${beep.beeper.cars?.[0].id}`}
@@ -485,7 +479,7 @@ export function MainFindBeepScreen() {
                   Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
                 }
                 icon={
-                  <Ionicons name="ios-call" color="white" size="md" />
+                  <Ionicons name="ios-call" color="white" size={24} />
                 }
               >
                 Call Beeper
@@ -499,7 +493,7 @@ export function MainFindBeepScreen() {
                   <Ionicons
                     name="ios-chatbox"
                     color="white"
-                    size="md"
+                    size={24}
                   />
                 }
               >
@@ -526,7 +520,7 @@ export function MainFindBeepScreen() {
                 <Button
                   flexGrow={1}
                   icon={
-                    <Ionicons size="md" name="ios-card-outline" />
+                    <Ionicons size={24} name="ios-card-outline" />
                   }
                   onPress={() =>
                     openVenmo(
@@ -544,7 +538,7 @@ export function MainFindBeepScreen() {
               {beep.beeper.venmo && beep.groupSize > 1 ? (
                 <Button
                   icon={
-                    <IonIcons name="ios-share-outline" size="md" />
+                    <Ionicons name="ios-share-outline" size={24} />
                   }
                   onPress={() =>
                     shareVenmoInformation(
@@ -570,33 +564,33 @@ export function MainFindBeepScreen() {
     <Container alignItems="center" p={2}>
       <Stack space={4} w="100%" alignItems="center" h="94%">
         <Avatar size={100} url={beep.beeper.photo} />
-        <Center>
-          <Text>Waiting on</Text>
-          <Heading letterSpacing="xs" fontWeight="extrabold">
+        <Stack alignItems="center">
+          <SizableText>Waiting on</SizableText>
+          <H3 fontWeight="bold">
             {beep.beeper.name}
-          </Heading>
-          <Text>to accept your request.</Text>
-        </Center>
+          </H3>
+          <SizableText>to accept your request.</SizableText>
+        </Stack>
         <Card w="100%">
-          <Text>
-            <Text fontWeight="extrabold">Pick Up </Text>
-            <Text>{beep.origin}</Text>
-          </Text>
-          <Text>
-            <Text fontWeight="extrabold">Destination </Text>
-            <Text>{beep.destination}</Text>
-          </Text>
-          <Text>
-            <Text fontWeight="extrabold">Number of Riders </Text>
-            <Text>{beep.groupSize}</Text>
-          </Text>
+          <SizableText>
+            <SizableText fontWeight="bold">Pick Up </SizableText>
+            <Paragraph>{beep.origin}</Paragraph>
+          </SizableText>
+          <SizableText>
+            <SizableText fontWeight="bold">Destination </SizableText>
+            <Paragraph>{beep.destination}</Paragraph>
+          </SizableText>
+          <SizableText>
+            <SizableText fontWeight="bold">Number of Riders </SizableText>
+            <SizableText>{beep.groupSize}</SizableText>
+          </SizableText>
         </Card>
         <Rates
           singles={beep.beeper.singlesRate}
           group={beep.beeper.groupRate}
         />
         <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
-        <Spacer />
+        <Stack flexGrow={1} />
         <LeaveButton beepersId={beep.beeper.id} w="100%" size="lg" />
       </Stack>
     </Container>

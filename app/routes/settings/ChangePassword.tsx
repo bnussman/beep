@@ -35,8 +35,8 @@ export function ChangePasswordScreen() {
   }
 
   return (
-    <Container keyboard alignItems="center" p={4}>
-      <Stack alignSelf="center" space={4} w="100%">
+    <Container keyboard alignItems="center" p="$4">
+      <Stack alignSelf="center" space="$4" w="100%">
         <Input
           size="lg"
           secureTextEntry={true}
@@ -58,7 +58,7 @@ export function ChangePasswordScreen() {
         />
         <Button
           onPress={() => handleChangePassword()}
-          isDisabled={!password || password !== confirmPassword}
+          disabled={!password || password !== confirmPassword}
           isLoading={loading}
         >
           Change Password

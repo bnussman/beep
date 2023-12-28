@@ -20,6 +20,8 @@ import {
   Spacer,
   Heading,
   Stack,
+  H1,
+  H3,
 } from "tamagui";
 
 const GetBeepers = gql`
@@ -260,7 +262,7 @@ export function PickBeepScreen() {
         }
         ListEmptyComponent={
           <>
-            <Heading key="title">Nobody is beeping</Heading>
+            <H3 fontWeight="bold" key="title">Nobody is beeping</H3>
             <Text key="message">
               There are no drivers within 20 miles of you
             </Text>

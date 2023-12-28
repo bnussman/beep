@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
-import { Logger } from "../utils/Logger";
 import { TouchableWithoutFeedback } from "react-native";
-import { Box, Icon, IInputProps, Input, Spinner } from "tamagui";
+import { Input, InputProps, Spinner, Stack } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 
-function LocationInput(props: IInputProps, ref: any) {
+function LocationInput(props: InputProps, ref: any) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function useCurrentLocation(): Promise<void> {
@@ -49,20 +48,18 @@ function LocationInput(props: IInputProps, ref: any) {
 
   const CurrentLocationIcon = (
     <TouchableWithoutFeedback onPress={() => useCurrentLocation()}>
-      <Icon
+      <Ionicons
         mr={3}
-        size="lg"
+        size={24}
         name="ios-location-sharp"
-        as={Ionicons}
-        _dark={{ color: "gray.200" }}
       />
     </TouchableWithoutFeedback>
   );
 
   const SpinnerIcon = (
-    <Box mr={3}>
-      <Spinner size="sm" />
-    </Box>
+    <Stack mr={3}>
+      <Spinner size="small" />
+    </Stack>
   );
 
   return (

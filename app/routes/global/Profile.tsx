@@ -11,17 +11,15 @@ import { RatePreview } from "./RatePreview";
 import { useUser } from "../../utils/useUser";
 import {
   Spinner,
-  Text,
   Stack,
   XStack,
-  Heading,
-  Spacer,
   Popover,
   Button,
   YStack,
-  H3,
   SizableText,
+  H2,
 } from "tamagui";
+import { MoreHorizontal } from "@tamagui/lucide-icons";
 
 export const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -74,7 +72,7 @@ export function ProfileScreen() {
         headerRight: () => (
           <Popover size="$5" allowFlip>
             <Popover.Trigger asChild>
-              <Button>...</Button>
+              <MoreHorizontal />
             </Popover.Trigger>
 
             <Popover.Content
@@ -148,19 +146,18 @@ export function ProfileScreen() {
   }
 
   return (
-    <Container p={2}>
-      <Stack space={2} flexShrink={1}>
+    <Container p="$2">
+      <Stack space="$2" flexShrink={1}>
         <Card>
-          <XStack alignItems="center">
+          <XStack alignItems="center" justifyContent="space-between">
             <Stack>
-              <H3>
+              <H2 fontWeight="bold">
                 {data.getUser.name}
-              </H3>
+              </H2>
               <SizableText>
                 @{data.getUser.username}
               </SizableText>
             </Stack>
-            <Spacer />
             <Avatar
               size="$8"
               url={data.getUser.photo}
@@ -176,34 +173,34 @@ export function ProfileScreen() {
               </SizableText>
             ) : null}
             {data?.getUser.venmo ? (
-              <Text>
-                <Text fontWeight="extrabold">Venmo </Text>
-                <Text>@{data.getUser.venmo}</Text>
-              </Text>
+              <SizableText>
+                <SizableText fontWeight="bold">Venmo </SizableText>
+                <SizableText>@{data.getUser.venmo}</SizableText>
+              </SizableText>
             ) : null}
             {data?.getUser.cashapp ? (
-              <Text>
-                <Text fontWeight="extrabold">Cash App </Text>
-                <Text>@{data.getUser.cashapp}</Text>
-              </Text>
+              <SizableText>
+                <SizableText fontWeight="bold">Cash App </SizableText>
+                <SizableText>@{data.getUser.cashapp}</SizableText>
+              </SizableText>
             ) : null}
-            <Text>
-              <Text fontWeight="extrabold">Capacity </Text>
-              <Text>{data.getUser.capacity}</Text>
-            </Text>
-            <Text>
-              <Text fontWeight="extrabold">Singles Rate </Text>
-              <Text>${data.getUser.singlesRate}</Text>
-            </Text>
-            <Text>
-              <Text fontWeight="extrabold">Group Rate </Text>
-              <Text>${data.getUser.groupRate}</Text>
-            </Text>
+            <SizableText>
+              <SizableText fontWeight="bold">Capacity </SizableText>
+              <SizableText>{data.getUser.capacity}</SizableText>
+            </SizableText>
+            <SizableText>
+              <SizableText fontWeight="bold">Singles Rate </SizableText>
+              <SizableText>${data.getUser.singlesRate}</SizableText>
+            </SizableText>
+            <SizableText>
+              <SizableText fontWeight="bold">Group Rate </SizableText>
+              <SizableText>${data.getUser.groupRate}</SizableText>
+            </SizableText>
             {data.getUser.rating ? (
-              <Text>
-                <Text fontWeight="extrabold">Rating </Text>
-                <Text>{printStars(data.getUser.rating)}</Text>
-              </Text>
+              <SizableText>
+                <SizableText fontWeight="bold">Rating </SizableText>
+                <SizableText>{printStars(data.getUser.rating)}</SizableText>
+              </SizableText>
             ) : null}
           </Stack>
         </Card>

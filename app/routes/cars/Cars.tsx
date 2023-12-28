@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { FlatList, RefreshControl, useColorScheme } from "react-native";
+import { FlatList, Pressable, RefreshControl, useColorScheme } from "react-native";
 import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
 import { Card } from "../../components/Card";
 import { Image } from "../../components/Image";
@@ -25,6 +25,7 @@ import {
   H1,
   SizableText,
 } from "tamagui";
+import { Plus } from "@tamagui/lucide-icons";
 
 export const DeleteCar = gql`
   mutation DeleteCar($id: String!) {
@@ -172,17 +173,12 @@ export function Cars() {
     navigation.setOptions({
       headerRight: () => {
         return (
-          <Button
+          <Pressable
+            style={{ marginRight: 16 }}
             onPress={() => navigation.navigate("Add Car")}
-            mr={2}
-            icon={
-              <Ionicons
-                name="ios-add-sharp"
-                size="xl"
-                color={colorMode === "dark" ? "white" : "black"}
-              />
-            }
-          />
+          >
+            <Plus />
+          </Pressable>
         );
       },
     });
@@ -191,7 +187,7 @@ export function Cars() {
   if (!data && loading) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner size="small" />
       </Container>
     );
   }

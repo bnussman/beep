@@ -36,6 +36,7 @@ import {
   Popover,
   YStack,
 } from "tamagui";
+import { MoreHorizontal } from "@tamagui/lucide-icons";
 
 const DeleteAccount = gql`
   mutation DeleteAccount {
@@ -125,33 +126,11 @@ export function EditProfileScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-       /*  <Menu
-          w="190"
-          trigger={(triggerProps) => {
-            return (
-              <Pressable
-                accessibilityLabel="More options menu"
-                {...triggerProps}
-              >
-                <Ionicons
-                  mr={3}
-                  size="xl"
-                  name="ios-ellipsis-horizontal-circle"
-                />
-              </Pressable>
-            );
-          }}
-        >
-          <Menu.Item onPress={() => navigation.push("Change Password")}>
-            Change Password
-          </Menu.Item>
-          <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>
-            Delete Account
-          </Menu.Item>
-        </Menu> */
         <Popover size="$5" allowFlip>
             <Popover.Trigger asChild>
-              <Button>...</Button>
+              <Pressable style={{ marginRight: 8 }}>
+                <MoreHorizontal />
+              </Pressable>
             </Popover.Trigger>
 
             <Popover.Content
