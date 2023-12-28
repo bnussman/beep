@@ -42,7 +42,6 @@ import {
   Image,
   Button,
   Label,
-  H1,
   SizableText,
   H3,
   Paragraph,
@@ -279,11 +278,11 @@ export function MainFindBeepScreen() {
   if (user?.isBeeping) {
     return (
       <Container justifyContent="center" alignItems="center">
-        <H1>You are beeping!</H1>
+        <H3 fontWeight="bold"}>You are beeping!</H3>
         <SizableText>
           You can&apos;t find a ride when you are beeping
         </SizableText>
-      </Container>
+      </Container >
     );
   }
 
@@ -359,7 +358,11 @@ export function MainFindBeepScreen() {
             )}
           />
           <SizableText>{errors.destination?.message}</SizableText>
-          <Button onPress={() => findBeep()} textProps={{ fontWeight: "bold" }}>
+          <Button
+            mt="$2"
+            onPress={() => findBeep()}
+            textProps={{ fontWeight: "bold" }}
+          >
             Find Beep
           </Button>
           <BeepersMap />
