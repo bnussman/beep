@@ -6,7 +6,7 @@ import { GetRatingsQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
-import { SizableText, Spinner, H1 } from "tamagui";
+import { SizableText, Spinner, H2 } from "tamagui";
 import { FlatList } from "react-native";
 
 export const Ratings = gql`
@@ -108,7 +108,7 @@ export function RatingsScreen() {
   if (ratings?.length === 0) {
     return (
       <Container center>
-        <H1>No Ratings</H1>
+        <H2 fontWeight="bold">No Ratings</H2>
         <SizableText>You have no ratings to display</SizableText>
       </Container>
     );

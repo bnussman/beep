@@ -2,9 +2,13 @@ import React, { useLayoutEffect } from "react";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../../utils/Navigation";
-import { Ionicons } from "@expo/vector-icons";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { FlatList, Pressable, RefreshControl, useColorScheme } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  useColorScheme,
+} from "react-native";
 import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
 import { Card } from "../../components/Card";
 import { Image } from "../../components/Image";
@@ -16,15 +20,7 @@ import {
   EditCarMutation,
   GetCarsQuery,
 } from "../../generated/graphql";
-import {
-  Spinner,
-  Text,
-  Stack,
-  XStack,
-  Button,
-  H1,
-  SizableText,
-} from "tamagui";
+import { Spinner, Text, Stack, XStack, Button, H2, SizableText } from "tamagui";
 import { Plus } from "@tamagui/lucide-icons";
 
 export const DeleteCar = gql`
@@ -69,7 +65,7 @@ export function Cars() {
     {
       variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
-    }
+    },
   );
 
   const [_deleteCar] = useMutation<DeleteCarMutation>(DeleteCar);
@@ -128,7 +124,7 @@ export function Cars() {
           },
           { text: "Yes", onPress: () => deleteCar(car) },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       deleteCar(car);
@@ -224,7 +220,12 @@ export function Cars() {
                       <SizableText size="$2">Default</SizableText>
                     </Stack>
                   )}
-                  <Stack bg={car.color} px="$2" borderRadius="$2" alignItems="center">
+                  <Stack
+                    bg={car.color}
+                    px="$2"
+                    borderRadius="$2"
+                    alignItems="center"
+                  >
                     <SizableText size="$2" textTransform="capitalize">
                       {car.color}
                     </SizableText>
@@ -249,10 +250,12 @@ export function Cars() {
         }
         ListEmptyComponent={
           <>
-            <H1 key="heading">
+            <H2 fontWeight="bold" key="heading">
               No Cars
-            </H1>
-            <SizableText key="message">You have no cars on your account!</SizableText>
+            </H2>
+            <SizableText key="message">
+              You have no cars on your account!
+            </SizableText>
           </>
         }
         onEndReached={getMore}

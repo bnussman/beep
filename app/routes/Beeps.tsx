@@ -6,7 +6,7 @@ import { Container } from "../components/Container";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
-import { Spinner, SizableText, H1 } from "tamagui";
+import { Spinner, SizableText, H2 } from "tamagui";
 import { FlatList } from "react-native";
 
 export const GetBeepHistory = gql`
@@ -109,7 +109,7 @@ export function BeepsScreen() {
   if (beeps?.length === 0) {
     return (
       <Container center>
-        <H1>No Beeps</H1>
+        <H2 fontWeight="bold">No Beeps</H2>
         <SizableText>You have no previous beeps to display</SizableText>
       </Container>
     );
