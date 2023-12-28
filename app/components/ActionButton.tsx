@@ -95,7 +95,7 @@ function _Button(props: Props) {
       size="lg"
       isLoading={isLoading}
       onPress={onPress}
-      _text={{ fontWeight: "extrabold" }}
+      textProps={{ fontWeight: "bold" }}
     >
       {getMessage()}
     </Button>

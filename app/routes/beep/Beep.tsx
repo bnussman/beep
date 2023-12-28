@@ -11,24 +11,19 @@ import { ActionButton } from "../../components/ActionButton";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Linking } from "react-native";
+import { Linking, Pressable } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "../../components/Card";
 import {
-  Box,
-  Button,
-  Heading,
-  HStack,
-  Icon,
-  IconButton,
-  Pressable,
-  Spacer,
   Stack,
-  Text,
-  useClipboard,
-  useToast,
+  Button,
+  XStack,
+  SizableText,
+  Paragraph,
+  H5,
+  H3,
 } from "tamagui";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printStars } from "../../components/Stars";
@@ -43,13 +38,6 @@ export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
   const { navigate } = useNavigation<Navigation>();
-  const { onCopy } = useClipboard();
-  const { show } = useToast();
-
-  const copy = (value: string) => {
-    show({ description: "Copied to Clipboard 📋" });
-    onCopy(value);
-  };
 
   return (
     <>
@@ -61,64 +49,50 @@ export function Beep(props: Props) {
           })
         }
       >
-        <HStack alignItems="center" space={4}>
+        <XStack alignItems="center" space={4}>
           <Stack>
-            <Heading
+            <H3
               flexShrink={1}
-              fontWeight="extrabold"
-              letterSpacing="sm"
-              size="xl"
+              fontWeight="bold"
             >
               {beep.rider.name}
-            </Heading>
+            </H3>
             {beep.rider.rating !== null && beep.rider.rating !== undefined ? (
-              <SizableText fontSize="xs">{printStars(beep.rider.rating)}</SizableText>
+              <SizableText fontSize="$1">{printStars(beep.rider.rating)}</SizableText>
             ) : null}
           </Stack>
           <Stack flexGrow={1} />
           <Avatar size="xl" url={beep.rider.photo} />
-        </HStack>
+        </XStack>
       </Pressable>
       <Card mt={4}>
         <Stack space={2}>
-          <Box>
-            <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
+          <Stack>
+            <H5 fontWeight="bold">
               Group Size
-            </Heading>
+            </H5>
             <SizableText>{beep.groupSize}</SizableText>
-          </Box>
-          <Pressable onPress={() => copy(beep.origin)}>
-            <Box>
-              <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
-                Pick Up
-              </Heading>
-              <HStack alignItems="center" space={2}>
-                <SizableText flexShrink={1}>{beep.origin}</SizableText>
-                <Stack flexGrow={1} />
-                <Icon
-                  as={MaterialCommunityIcons}
-                  name="content-copy"
-                  size="sm"
-                />
-              </HStack>
-            </Box>
-          </Pressable>
-          <Pressable onPress={() => copy(beep.destination)}>
-            <Box>
-              <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
-                Destination
-              </Heading>
-              <HStack alignItems="center" space={2}>
-                <SizableText flexShrink={1}>{beep.destination}</SizableText>
-                <Stack flexGrow={1} />
-                <Icon
-                  as={MaterialCommunityIcons}
-                  name="content-copy"
-                  size="sm"
-                />
-              </HStack>
-            </Box>
-          </Pressable>
+          </Stack>
+          <H5 fontWeight="bold">
+            Pick Up
+          </H5>
+          <XStack alignItems="center" space={2}>
+            <Paragraph flexShrink={1}>{beep.origin}</Paragraph>
+            <Stack flexGrow={1} />
+            <MaterialCommunityIcons
+              name="content-copy"
+            />
+          </XStack>
+          <H5 fontWeight="bold">
+            Destination
+          </H5>
+          <XStack alignItems="center" space={2}>
+            <Paragraph flexShrink={1}>{beep.destination}</Paragraph>
+            <Stack flexGrow={1} />
+            <MaterialCommunityIcons
+              name="content-copy"
+            />
+          </XStack>
         </Stack>
       </Card>
       <Stack flexGrow={1} />
@@ -130,33 +104,29 @@ export function Beep(props: Props) {
           </>
         ) : (
           <>
-            <HStack space={2}>
-              <IconButton
+            <XStack space={2}>
+              <Button
                 flexGrow={1}
-                variant="solid"
                 onPress={() => {
                   Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
                 }}
                 icon={
-                  <Icon as={Ionicons} color="white" name="ios-call" size="md" />
+                  <Ionicons color="white" name="ios-call" />
                 }
               />
-              <IconButton
+              <Button
                 flexGrow={1}
-                variant="solid"
                 onPress={() => {
                   Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
                 }}
                 icon={
-                  <Icon
-                    as={Ionicons}
+                  <Ionicons
                     name="ios-chatbox"
                     color="white"
-                    size="md"
                   />
                 }
               />
-            </HStack>
+            </XStack>
             {[Status.HERE, Status.IN_PROGRESS].includes(
               beep.status as Status
             ) && (
