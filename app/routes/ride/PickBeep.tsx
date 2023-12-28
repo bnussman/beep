@@ -20,9 +20,10 @@ import {
   Spacer,
   Heading,
   Stack,
-  H1,
   H3,
+  SizableText,
 } from "tamagui";
+import { LinearGradient } from "tamagui/linear-gradient";
 
 const GetBeepers = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -150,18 +151,14 @@ export function PickBeepScreen() {
     const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
 
     return (
-      <Stack
-        bg={{
-          linearGradient: {
-            colors: ['#ff930f', '#fff95b'],
-            start: [0, 0],
-            end: [1, 0]
-          }
-        }}
-        rounded="xl"
-        mx={2.5}
-        mt={index === 0 ? 3 : 2.5}
-        p={isPremium ? 0.5 : 0}
+      <LinearGradient
+        borderRadius="$4"
+        mx="$2"
+        mt={index === 0 ? "$2" : undefined}
+        p={isPremium ? "$1" : 0}
+        colors={['#ff930f', '#fff95b']}
+        start={[0, 0]}
+        end={[1, 0]}
       >
         <Card
           pressable
@@ -171,64 +168,59 @@ export function PickBeepScreen() {
           <XStack alignItems="center">
             <Stack flexShrink={1}>
               <XStack alignItems="center" mb={2}>
-                <Avatar mr={2} size="45px" url={item.photo} />
+                <Avatar mr="$2" size="$4" url={item.photo} />
                 <Stack>
-                  <Text
-                    fontWeight="extrabold"
-                    fontSize="lg"
-                    letterSpacing="sm"
-                    isTruncated
-                  >
+                  <SizableText fontWeight="bold">
                     {item.name}
-                  </Text>
+                  </SizableText>
                   {item.rating && (
-                    <Text fontSize="xs">{printStars(item.rating)}</Text>
+                    <SizableText fontSize="$1">{printStars(item.rating)}</SizableText>
                   )}
                 </Stack>
               </XStack>
               <Stack>
-                <Text>
-                  <Text>Queue Size </Text>
-                  <Text>{item.queueSize}</Text>
-                </Text>
-                <Text>
-                  <Text>Capacity </Text>
-                  <Text>{item.capacity}</Text>
-                </Text>
-                <Text>
-                  <Text bold>Rates </Text>
-                  <Text>
+                <SizableText>
+                  <SizableText fontWeight="bold">Queue Size </SizableText>
+                  <SizableText>{item.queueSize}</SizableText>
+                </SizableText>
+                <SizableText>
+                  <SizableText fontWeight="bold">Capacity </SizableText>
+                  <SizableText>{item.capacity}</SizableText>
+                </SizableText>
+                <SizableText>
+                  <SizableText fontWeight="bold">Rates </SizableText>
+                  <SizableText>
                     ${item.singlesRate} singles / ${item.groupRate} group
-                  </Text>
-                </Text>
+                  </SizableText>
+                </SizableText>
               </Stack>
             </Stack>
-            <Spacer />
+            <Stack flexGrow={1} />
             <Stack space={2} flexShrink={1}>
               {item.venmo && (
-                <Text
+                <SizableText
                   bg="black"
-                  _text={{ color: "white" }}
-                  rounded="xl"
-                  _dark={{ bg: "white", _text: { color: "gray.600" } }}
+                  color="white"
+                  px="$2"
+                  borderRadius="$4"
                 >
                   Venmo
-                </Text>
+                </SizableText>
               )}
               {item.cashapp && (
-                <Text
+                <SizableText
                   bg="black"
-                  _text={{ color: "white" }}
-                  rounded="xl"
-                  _dark={{ bg: "white", _text: { color: "gray.600" } }}
+                  color="white"
+                  px="$2"
+                  borderRadius="$4"
                 >
                   Cash App
-                </Text>
+                </SizableText>
               )}
             </Stack>
           </XStack>
         </Card>
-      </Stack>
+      </LinearGradient>
     )
   };
 
@@ -244,7 +236,7 @@ export function PickBeepScreen() {
     return (
       <Container alignItems="center" justifyContent="center">
         <Heading>Error</Heading>
-        <Text>{error.message}</Text>
+        <SizableText>{error.message}</SizableText>
       </Container>
     );
   }
@@ -263,9 +255,9 @@ export function PickBeepScreen() {
         ListEmptyComponent={
           <>
             <H3 fontWeight="bold" key="title">Nobody is beeping</H3>
-            <Text key="message">
+            <SizableText key="message">
               There are no drivers within 20 miles of you
-            </Text>
+            </SizableText>
           </>
         }
         refreshControl={
