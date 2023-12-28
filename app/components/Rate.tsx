@@ -1,5 +1,5 @@
+import { Star } from "@tamagui/lucide-icons";
 import React from "react";
-import { AntDesign } from "@expo/vector-icons";
 import { Button, XStack } from "tamagui";
 
 export interface RateBarProps {
@@ -14,7 +14,7 @@ export const RateBar = (props: RateBarProps) => {
 
     return (
       <Button
-        icon={<AntDesign name="star" color={color} />}
+        icon={<Star color={color} />}
         key={value}
         onPress={() => props.onValueChange(value)}
       />

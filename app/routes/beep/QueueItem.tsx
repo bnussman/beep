@@ -1,25 +1,16 @@
 import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Ionicons } from "@expo/vector-icons";
-import { Alert, Linking, Pressable } from "react-native";
+import { Alert, Pressable } from "react-native";
 import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { isMobile, Unpacked } from "../../utils/constants";
-import { getRawPhoneNumber, openDirections } from "../../utils/links";
 import { CancelBeep } from "../../components/CancelButton";
 import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "../../components/Card";
-import {
-  Box,
-  XStack,
-  Text,
-  Spacer,
-  Stack,
-  SizableText,
-} from "tamagui";
+import { XStack, Stack, SizableText } from "tamagui";
 import { Status } from "../../utils/types";
 
 interface Props {
@@ -46,7 +37,7 @@ export function QueueItem({ item }: Props) {
             onPress: onCancel,
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       onCancel();
@@ -74,16 +65,16 @@ export function QueueItem({ item }: Props) {
             <XStack space={2} alignItems="center">
               <Avatar size={50} url={item.rider.photo} />
               <Stack>
-                <SizableText fontWeight="bold">
-                  {item.rider.name}
-                </SizableText>
+                <SizableText fontWeight="bold">{item.rider.name}</SizableText>
                 {item.rider.rating !== null &&
                 item.rider.rating !== undefined ? (
-                  <SizableText fontSize="$1">{printStars(item.rider.rating)}</SizableText>
+                  <SizableText fontSize="$1">
+                    {printStars(item.rider.rating)}
+                  </SizableText>
                 ) : null}
               </Stack>
               <Stack flexGrow={1} />
-             {/*  <Menu
+              {/*  <Menu
                 key={`menu-${item.id}`}
                 w="190"
                 trigger={(triggerProps) => (
@@ -169,9 +160,7 @@ export function QueueItem({ item }: Props) {
         >
           <XStack alignItems="center">
             <Stack>
-              <SizableText fontWeight="bold">
-                {item.rider.name}
-              </SizableText>
+              <SizableText fontWeight="bold">{item.rider.name}</SizableText>
               <SizableText fontSize="$1">
                 {item.rider.rating !== null && item.rider.rating !== undefined
                   ? printStars(item.rider.rating)
@@ -183,7 +172,8 @@ export function QueueItem({ item }: Props) {
           </XStack>
         </Pressable>
         <SizableText>
-          <SizableText fontWeight="bold">Group Size</SizableText> <SizableText>{item.groupSize}</SizableText>
+          <SizableText fontWeight="bold">Group Size</SizableText>{" "}
+          <SizableText>{item.groupSize}</SizableText>
         </SizableText>
         <SizableText>
           <SizableText fontWeight="bold" mr={2}>

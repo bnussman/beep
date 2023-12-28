@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "tamagui";
+import { Button, Spinner } from "tamagui";
 import { useMutation } from "@apollo/client";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../utils/Alert";
 import { Unpacked } from "../utils/constants";
 import {
@@ -10,6 +9,7 @@ import {
 } from "../generated/graphql";
 import { UpdateBeeperQueue } from "./ActionButton";
 import { Status } from "../utils/types";
+import { Check, X } from "@tamagui/lucide-icons";
 
 interface Props {
   type: "accept" | "deny";
@@ -40,18 +40,14 @@ export function AcceptDenyButton(props: Props) {
     });
   };
 
+  const Icon = isAccept ? Check : X;
+
   return (
     <Button
       flexGrow={isAccept ? 1 : undefined}
       onPress={onPress}
-      bg={isAccept ? "green.500" : "red.500"}
-      icon={
-        <MaterialCommunityIcons
-          name={isAccept ? "check" : "close"}
-          size={22}
-          color="white"
-        />
-      }
+      theme={isAccept ? "green" : "red"}
+      iconAfter={loading ? <Spinner /> : <Icon size={22} color="white" />}
     >
       {isAccept ? "Accept" : "Deny"}
     </Button>

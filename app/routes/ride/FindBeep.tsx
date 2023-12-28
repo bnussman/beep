@@ -8,7 +8,6 @@ import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
-import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
@@ -39,7 +38,6 @@ import {
   Input,
   Stack,
   XStack,
-  Spacer,
   Spinner,
   Image,
   Button,
@@ -51,6 +49,7 @@ import {
   H4,
 } from "tamagui";
 import { Pressable } from "react-native";
+import { Phone, MessageSquare, Share, CreditCard } from "@tamagui/lucide-icons";
 
 export const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -467,7 +466,7 @@ export function MainFindBeepScreen() {
                 onPress={() =>
                   Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
                 }
-                icon={<Ionicons name="ios-call" color="white" size={24} />}
+                iconAfter={<Phone />}
               >
                 Call Beeper
               </Button>
@@ -476,7 +475,7 @@ export function MainFindBeepScreen() {
                 onPress={() =>
                   Linking.openURL(`sms:${getRawPhoneNumber(beep.beeper.phone)}`)
                 }
-                icon={<Ionicons name="ios-chatbox" color="white" size={24} />}
+                icon={<MessageSquare />}
               >
                 Text Beeper
               </Button>
@@ -500,7 +499,7 @@ export function MainFindBeepScreen() {
               {beep.beeper.venmo ? (
                 <Button
                   flexGrow={1}
-                  icon={<Ionicons size={24} name="ios-card-outline" />}
+                  icon={<CreditCard />}
                   onPress={() =>
                     openVenmo(
                       beep.beeper.venmo,
@@ -516,7 +515,7 @@ export function MainFindBeepScreen() {
               ) : null}
               {beep.beeper.venmo && beep.groupSize > 1 ? (
                 <Button
-                  icon={<Ionicons name="ios-share-outline" size={24} />}
+                  iconAfter={<Share />}
                   onPress={() =>
                     shareVenmoInformation(
                       beep.beeper.venmo,

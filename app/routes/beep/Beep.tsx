@@ -16,19 +16,10 @@ import { Navigation } from "../../utils/Navigation";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "../../components/Card";
-import {
-  Stack,
-  Button,
-  XStack,
-  SizableText,
-  Paragraph,
-  H5,
-  H3,
-} from "tamagui";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Stack, Button, XStack, SizableText, Paragraph, H5, H3 } from "tamagui";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
-import { Logger } from "../../utils/Logger";
+import { Phone, MessageSquare } from "@tamagui/lucide-icons";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -51,14 +42,13 @@ export function Beep(props: Props) {
       >
         <XStack alignItems="center" space={4}>
           <Stack>
-            <H3
-              flexShrink={1}
-              fontWeight="bold"
-            >
+            <H3 flexShrink={1} fontWeight="bold">
               {beep.rider.name}
             </H3>
             {beep.rider.rating !== null && beep.rider.rating !== undefined ? (
-              <SizableText fontSize="$1">{printStars(beep.rider.rating)}</SizableText>
+              <SizableText fontSize="$1">
+                {printStars(beep.rider.rating)}
+              </SizableText>
             ) : null}
           </Stack>
           <Stack flexGrow={1} />
@@ -68,31 +58,13 @@ export function Beep(props: Props) {
       <Card mt={4}>
         <Stack space={2}>
           <Stack>
-            <H5 fontWeight="bold">
-              Group Size
-            </H5>
+            <H5 fontWeight="bold">Group Size</H5>
             <SizableText>{beep.groupSize}</SizableText>
           </Stack>
-          <H5 fontWeight="bold">
-            Pick Up
-          </H5>
-          <XStack alignItems="center" space={2}>
-            <Paragraph flexShrink={1}>{beep.origin}</Paragraph>
-            <Stack flexGrow={1} />
-            <MaterialCommunityIcons
-              name="content-copy"
-            />
-          </XStack>
-          <H5 fontWeight="bold">
-            Destination
-          </H5>
-          <XStack alignItems="center" space={2}>
-            <Paragraph flexShrink={1}>{beep.destination}</Paragraph>
-            <Stack flexGrow={1} />
-            <MaterialCommunityIcons
-              name="content-copy"
-            />
-          </XStack>
+          <H5 fontWeight="bold">Pick Up</H5>
+          <Paragraph flexShrink={1}>{beep.origin}</Paragraph>
+          <H5 fontWeight="bold">Destination</H5>
+          <Paragraph flexShrink={1}>{beep.destination}</Paragraph>
         </Stack>
       </Card>
       <Stack flexGrow={1} />
@@ -110,25 +82,18 @@ export function Beep(props: Props) {
                 onPress={() => {
                   Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
                 }}
-                icon={
-                  <Ionicons color="white" name="ios-call" />
-                }
+                iconAfter={<Phone />}
               />
               <Button
                 flexGrow={1}
                 onPress={() => {
                   Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
                 }}
-                icon={
-                  <Ionicons
-                    name="ios-chatbox"
-                    color="white"
-                  />
-                }
+                iconAfter={<MessageSquare />}
               />
             </XStack>
             {[Status.HERE, Status.IN_PROGRESS].includes(
-              beep.status as Status
+              beep.status as Status,
             ) && (
               <>
                 {beep.rider.cashapp ? (
@@ -138,7 +103,7 @@ export function Beep(props: Props) {
                         beep.rider.cashapp,
                         beep.groupSize,
                         user?.groupRate,
-                        user?.singlesRate
+                        user?.singlesRate,
                       )
                     }
                   >
@@ -153,7 +118,7 @@ export function Beep(props: Props) {
                         beep.groupSize,
                         user?.groupRate,
                         user?.singlesRate,
-                        "charge"
+                        "charge",
                       )
                     }
                   >
@@ -163,7 +128,7 @@ export function Beep(props: Props) {
               </>
             )}
             {[Status.ON_THE_WAY, Status.ACCEPTED].includes(
-              beep.status as Status
+              beep.status as Status,
             ) ? (
               <Button
                 onPress={() => openDirections("Current+Location", beep.origin)}
@@ -178,7 +143,7 @@ export function Beep(props: Props) {
               </Button>
             )}
             {[Status.ON_THE_WAY, Status.WAITING, Status.ACCEPTED].includes(
-              beep.status as Status
+              beep.status as Status,
             ) && <CancelButton beep={beep} />}
             <ActionButton beep={beep} />
           </>
