@@ -42,6 +42,9 @@ import {
   XStack,
   Button,
   Label,
+  SizableText,
+  H3,
+  H2,
 } from "tamagui";
 import { Status } from "../../utils/types";
 import { Card } from "../../components/Card";
@@ -369,19 +372,19 @@ export function StartBeepingScreen() {
     return (
       <Container center>
         <Stack space={2} p={4} alignItems="center" mb={12}>
-          <Heading fontWeight="extrabold">Your queue is empty</Heading>
-          <Text textAlign="center">
+          <H2>Your queue is empty</H2>
+          <SizableText textAlign="center">
             If someone wants you to beep them, it will appear here. If your app
             is closed, you will recieve a push notification.
-          </Text>
+          </SizableText>
         </Stack>
         <Card>
           <Stack alignItems="center" space={2}>
-            <Heading fontWeight="extrabold" fontSize="md">Want more riders?</Heading>
-            <Text textAlign="center">
+            <H3>Want more riders?</H3>
+            <SizableText>
               Jump to the top of the beeper list
-            </Text>
-            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
+            </SizableText>
+            <Button size="lg" onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
           </Stack>
         </Card>
       </Container>
@@ -391,8 +394,8 @@ export function StartBeepingScreen() {
   if (!isBeeping || !queue) {
     return (
       <Container keyboard alignItems="center" height="100%">
-        <Stack space={2} w="100%" p={4}>
-            <Label>Max Rider Capacity</Label>
+        <Stack space={2} w="100%" p="$4">
+            <Label fontWeight="bold">Max Rider Capacity</Label>
             <Input
               size="lg"
               placeholder="Max Capcity"
@@ -400,10 +403,10 @@ export function StartBeepingScreen() {
               value={String(capacity)}
               onChangeText={(value) => setCapacity(value)}
             />
-            <Text>
+            <SizableText>
               Maximum number of riders you can safely fit in your car
-            </Text>
-            <Label>Singles Rate</Label>
+            </SizableText>
+            <Label fontWeight="bold">Singles Rate</Label>
             <Input
               size="lg"
               placeholder="Singles Rate"
@@ -411,10 +414,10 @@ export function StartBeepingScreen() {
               value={String(singlesRate)}
               onChangeText={(value) => setSinglesRate(value)}
             />
-            <Text>
+            <SizableText>
               Price for a single person riding alone
-            </Text>
-            <Label>Group Rate</Label>
+            </SizableText>
+            <Label fontWeight="bold">Group Rate</Label>
             <Input
               size="lg"
               placeholder="Group Rate"
@@ -422,15 +425,15 @@ export function StartBeepingScreen() {
               value={String(groupRate)}
               onChangeText={(value) => setGroupRate(value)}
             />
-            <Text>
+            <SizableText>
               Price per person in a group
-            </Text>
+            </SizableText>
         </Stack>
         <Spacer />
         <XStack alignItems="center" mb={10} space={2}>
-          <Text fontSize="xs" color="gray.500">
+          <SizableText fontSize="$2">
             Use the toggle in the top right to start beeping
-          </Text>
+          </SizableText>
         </XStack>
       </Container>
     );

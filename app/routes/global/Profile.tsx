@@ -19,6 +19,8 @@ import {
   Popover,
   Button,
   YStack,
+  H3,
+  SizableText,
 } from "tamagui";
 
 export const GetUser = gql`
@@ -132,7 +134,7 @@ export function ProfileScreen() {
   if (error) {
     return (
       <Container center>
-        <Text>{error.message}</Text>
+        <SizableText>{error.message}</SizableText>
       </Container>
     );
   }
@@ -140,7 +142,7 @@ export function ProfileScreen() {
   if (!data?.getUser) {
     return (
       <Container center>
-        <Text>User does not exist</Text>
+        <SizableText>User does not exist</SizableText>
       </Container>
     );
   }
@@ -151,34 +153,27 @@ export function ProfileScreen() {
         <Card>
           <XStack alignItems="center">
             <Stack>
-              <Heading
-                size="lg"
-                letterSpacing="xs"
-                fontWeight="extrabold"
-                isTruncated
-              >
+              <H3>
                 {data.getUser.name}
-              </Heading>
-              <Heading size="sm" color="gray.500">
+              </H3>
+              <SizableText>
                 @{data.getUser.username}
-              </Heading>
+              </SizableText>
             </Stack>
             <Spacer />
             <Avatar
-              size="lg"
+              size="$8"
               url={data.getUser.photo}
-              online={data.getUser.isBeeping}
-              badgeSize="6"
             />
           </XStack>
         </Card>
         <Card>
           <Stack space={2}>
             {data.getUser.isBeeping ? (
-              <Text>
-                <Text fontWeight="extrabold">Queue Size </Text>
-                <Text>{data.getUser.queueSize}</Text>
-              </Text>
+              <SizableText>
+                <SizableText fontWeight="bold">Queue Size </SizableText>
+                <SizableText>{data.getUser.queueSize}</SizableText>
+              </SizableText>
             ) : null}
             {data?.getUser.venmo ? (
               <Text>

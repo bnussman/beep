@@ -22,6 +22,7 @@
     "@sentry/react-native": "5.10.0",
     "@tamagui/config": "^1.77.1",
     "@tamagui/core": "^1.77.1",
+    "@tamagui/lucide-icons": "^1.80.4",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.5",
     "expo": "^49.0.13",

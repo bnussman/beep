@@ -290,8 +290,7 @@ export function EditProfileScreen() {
       keyboard
       alignItems="center"
       scrollViewProps={{ bounces: false, scrollEnabled: true }}
-      px={4}
-      pt={2}
+      p="$4"
     >
       <Stack space={2} w="100%">
         <XStack alignItems="center" space={8}>

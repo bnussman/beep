@@ -1,6 +1,6 @@
 import React from "react";
-import { Flex, Icon, IconButton } from "tamagui";
 import { AntDesign } from "@expo/vector-icons";
+import { Button, XStack } from "tamagui";
 
 export interface RateBarProps {
   hint: string;
@@ -10,14 +10,12 @@ export interface RateBarProps {
 
 export const RateBar = (props: RateBarProps) => {
   const renderRateButtonElement = (value: number) => {
-    const color: string = value <= props.value ? "gold" : "gray.400";
+    const color: string = value <= props.value ? "gold" : "gray";
 
     return (
-      <IconButton
-        icon={<Icon as={AntDesign} name="star" />}
+      <Button
+        icon={<AntDesign name="star" color={color} />}
         key={value}
-        size="lg"
-        _icon={{ color }}
         onPress={() => props.onValueChange(value)}
       />
     );
@@ -26,8 +24,8 @@ export const RateBar = (props: RateBarProps) => {
   const { ...restProps } = props;
 
   return (
-    <Flex {...restProps} direction="row">
+    <XStack {...restProps}>
       {[1, 2, 3, 4, 5].map(renderRateButtonElement)}
-    </Flex>
+    </XStack>
   );
 };

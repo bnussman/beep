@@ -10,18 +10,17 @@ import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { Card } from "../../components/Card";
 import { useLocation } from "../../utils/useLocation";
+import { client } from "../../utils/Apollo";
+import { InitialRiderStatus } from "./FindBeep";
+import { FlatList } from "react-native";
 import {
   Text,
   Spinner,
-  Box,
   XStack,
   Spacer,
   Heading,
   Stack,
 } from "tamagui";
-import { client } from "../../utils/Apollo";
-import { InitialRiderStatus } from "./FindBeep";
-import { FlatList } from "react-native";
 
 const GetBeepers = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -234,7 +233,7 @@ export function PickBeepScreen() {
   if ((!data && loading) || location === undefined) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Spinner size="lg" />
+        <Spinner size="small" />
       </Container>
     );
   }
@@ -251,7 +250,6 @@ export function PickBeepScreen() {
   return (
     <Container h="100%">
       <FlatList
-        height="100%"
         data={beepers}
         renderItem={renderItem}
         keyExtractor={(beeper) => beeper.id}

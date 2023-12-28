@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { Image, Spacer, Spinner, Stack, Text, Button, Heading } from "tamagui";
+import { Image, Spacer, Spinner, Stack, Text, Button, SizableText, H3, XStack, H4 } from "tamagui";
 import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
 import PremiumImage from '../assets/premium.png';
 import { Card } from '../components/Card';
@@ -11,6 +11,7 @@ import { CheckUserSubscriptionsMutation, PaymentsQueryQuery } from '../generated
 import { Countdown } from '../components/CountDown';
 import { FlatList, RefreshControl, useColorScheme } from 'react-native';
 import { useUser } from '../utils/useUser';
+import { Feather } from '@expo/vector-icons';
 
 interface Props {
   item: PurchasesOffering;
@@ -43,11 +44,9 @@ function Offering({ item }: Props) {
   return (
     <Card m={2}>
       <Stack space={2}>
-        <Heading fontSize="xl" letterSpacing="sm" fontWeight="extrabold">
-          {item.identifier}
-        </Heading>
-        <Text>Promotes you to the top of the beeper list so you get more riders joining your queue</Text>
-        <Text fontSize="xs">Goes into effect immediately upon purchase</Text>
+        <H3>{item.identifier}</H3>
+        <SizableText>Promotes you to the top of the beeper list so you get more riders joining your queue</SizableText>
+        <SizableText fontSize="$2">Goes into effect immediately upon purchase</SizableText>
         <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" mb={1} />
         {packages.map((p) => <Package key={p.identifier} p={p} />)}
       </Stack>
@@ -90,13 +89,13 @@ function Package({ p }: { p: PurchasesPackage }) {
 
   return (
     <Card p={3} py={2}>
-      <Stack direction="row" alignItems="center" space={2}>
-        <Heading fontSize="lg">{p.identifier}</Heading>
-        <Text>{countdown}</Text>
+      <XStack alignItems="center" space={2}>
+        <H4>{p.identifier}</H4>
+        <SizableText>{countdown}</SizableText>
         <Spacer />
-        {Boolean(payment) && <CheckIcon size="6" color="emerald.500" />}
+        {Boolean(payment) && <Feather name="check" size={20} color="green" />}
         <Button isLoading={isPurchasing} onPress={() => onBuy(p)} isDisabled={Boolean(payment)}>{p.product.priceString}</Button>
-      </Stack>
+      </XStack>
     </Card>
   );
 }
@@ -142,7 +141,7 @@ export function Premium() {
   if (isLoading && !offerings) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner size="small" />
       </Container>
     );
   }
@@ -150,7 +149,7 @@ export function Premium() {
   if (error) {
     return (
       <Container center>
-        <Text>{error}</Text>
+        <SizableText>{error}</SizableText>
       </Container>
     );
   }

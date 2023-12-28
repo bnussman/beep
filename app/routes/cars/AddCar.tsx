@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
@@ -25,8 +25,15 @@ import {
   Stack,
   Text,
   Button,
+  Adapt,
+  Sheet,
+  YStack,
+  getFontSize,
+  SizableText,
 } from "tamagui";
 import { Pressable } from "react-native";
+import { Check, ChevronDown, ChevronUp, Plus } from "@tamagui/lucide-icons";
+import { LinearGradient } from 'tamagui/linear-gradient'
 
 const makes = getMakes();
 
@@ -68,7 +75,7 @@ export function AddCar() {
   } = useForm();
 
   const photo = watch("photo");
-  const make = watch("make");
+  const make: string = watch("make", "");
 
   const [addCar, { error, loading }] = useMutation<CreateCarMutation>(
     AddCarMutation,
@@ -131,25 +138,134 @@ export function AddCar() {
   });
 
   return (
-    <Container p={4}>
+    <Container p="$4">
       <Stack space={4}>
           <Controller
             name="make"
             rules={{ required: "Make is required" }}
             defaultValue=""
             control={control}
-            render={({ field: { onChange } }) => (
+            render={({ field: { onChange, value } }) => (
               <Select
-                accessibilityLabel="Choose Make"
-                placeholder="Make"
-                onValueChange={(value) => onChange(value)}
-                _selectedItem={{
-                  bg: "teal.600",
-                }}
+                id="make"
+                value={value}
+                onValueChange={onChange}
+                disablePreventBodyScroll
               >
-                {makes.map((make) => (
-                  <Select.Item key={make} label={make} value={make} />
-                ))}
+                <Select.Trigger width="100%" iconAfter={ChevronDown}>
+                  <Select.Value placeholder="Make" />
+                </Select.Trigger>
+                <Adapt when="sm" platform="touch">
+                  <Sheet
+                    native
+                    modal
+                    dismissOnSnapToBottom
+                    animationConfig={{
+                      type: 'spring',
+                      damping: 20,
+                      mass: 1.2,
+                      stiffness: 250,
+                    }}
+                  >
+                    <Sheet.Frame>
+                      <Sheet.ScrollView>
+                        <Adapt.Contents />
+                      </Sheet.ScrollView>
+                    </Sheet.Frame>
+                    <Sheet.Overlay
+                      animation="lazy"
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+                  </Sheet>
+                </Adapt>
+
+                <Select.Content zIndex={200000}>
+                  <Select.ScrollUpButton
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    width="100%"
+                    height="$3"
+                  >
+                    <YStack zIndex={10}>
+                      <ChevronUp size={20} />
+                    </YStack>
+                    <LinearGradient
+                      start={[0, 0]}
+                      end={[0, 1]}
+                      fullscreen
+                      colors={['$background', 'transparent']}
+                      borderRadius="$4"
+                    />
+                  </Select.ScrollUpButton>
+
+                  <Select.Viewport
+                    // to do animations:
+                    // animation="quick"
+                    // animateOnly={['transform', 'opacity']}
+                    // enterStyle={{ o: 0, y: -10 }}
+                    // exitStyle={{ o: 0, y: 10 }}
+                    minWidth={200}
+                  >
+                    <Select.Group>
+                      <Select.Label>Fruits</Select.Label>
+                      {/* for longer lists memoizing these is useful */}
+                      {useMemo(
+                        () =>
+                          makes.map((make, i) => {
+                            return (
+                              <Select.Item
+                                index={i}
+                                key={make}
+                                value={make}
+                              >
+                                <Select.ItemText>{make}</Select.ItemText>
+                                <Select.ItemIndicator marginLeft="auto">
+                                  <Check size={16} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
+                            )
+                          }),
+                        [makes]
+                      )}
+                    </Select.Group>
+                    {/* Native gets an extra icon */}
+                    <YStack
+                      position="absolute"
+                      right={0}
+                      top={0}
+                      bottom={0}
+                      alignItems="center"
+                      justifyContent="center"
+                      width={'$4'}
+                      pointerEvents="none"
+                    >
+                      <ChevronDown
+                        size="$2"
+                      />
+                    </YStack>
+                  </Select.Viewport>
+
+                  <Select.ScrollDownButton
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    width="100%"
+                    height="$3"
+                  >
+                    <YStack zIndex={10}>
+                      <ChevronDown size={20} />
+                    </YStack>
+                    <LinearGradient
+                      start={[0, 0]}
+                      end={[0, 1]}
+                      fullscreen
+                      colors={['transparent', '$background']}
+                      borderRadius="$4"
+                    />
+                  </Select.ScrollDownButton>
+                </Select.Content>
               </Select>
             )}
           />
@@ -162,20 +278,121 @@ export function AddCar() {
             rules={{ required: "Model is required" }}
             defaultValue=""
             control={control}
-            render={({ field: { onChange } }) => (
+            render={({ field: { onChange, value } }) => (
               <Select
-                accessibilityLabel="Choose Model"
-                placeholder="Model"
-                onValueChange={(value) => onChange(value)}
-                _selectedItem={{
-                  bg: "teal.600",
-                }}
+                id="model"
+                value={value}
+                onValueChange={onChange}
+                disablePreventBodyScroll
               >
-                {!make
-                  ? []
-                  : getModels(make).map((make: string) => (
-                      <Select.Item key={make} label={make} value={make} />
-                    ))}
+                <Select.Trigger width="100%" iconAfter={ChevronDown}>
+                  <Select.Value placeholder="Model" />
+                </Select.Trigger>
+                <Adapt when="sm" platform="touch">
+                  <Sheet
+                    native
+                    modal
+                    dismissOnSnapToBottom
+                    animationConfig={{
+                      type: 'spring',
+                      damping: 20,
+                      mass: 1.2,
+                      stiffness: 250,
+                    }}
+                  >
+                    <Sheet.Frame>
+                      <Sheet.ScrollView>
+                        <Adapt.Contents />
+                      </Sheet.ScrollView>
+                    </Sheet.Frame>
+                    <Sheet.Overlay
+                      animation="lazy"
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+                  </Sheet>
+                </Adapt>
+
+                <Select.Content zIndex={200000}>
+                  <Select.ScrollUpButton
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    width="100%"
+                    height="$3"
+                  >
+                    <YStack zIndex={10}>
+                      <ChevronUp size={20} />
+                    </YStack>
+                    <LinearGradient
+                      start={[0, 0]}
+                      end={[0, 1]}
+                      fullscreen
+                      colors={['$background', 'transparent']}
+                      borderRadius="$4"
+                    />
+                  </Select.ScrollUpButton>
+
+                  <Select.Viewport
+                    // to do animations:
+                    // animation="quick"
+                    // animateOnly={['transform', 'opacity']}
+                    // enterStyle={{ o: 0, y: -10 }}
+                    // exitStyle={{ o: 0, y: 10 }}
+                    minWidth={200}
+                  >
+                    <Select.Group>
+                      <Select.Label>Model</Select.Label>
+                      {/* for longer lists memoizing these is useful */}
+                      {getModels(make)?.map((model, i) => (
+                        <Select.Item
+                          index={i}
+                          key={model}
+                          value={model}
+                        >
+                          <Select.ItemText>{model}</Select.ItemText>
+                          <Select.ItemIndicator marginLeft="auto">
+                            <Check size={16} />
+                          </Select.ItemIndicator>
+                        </Select.Item>
+                      ))}
+                    </Select.Group>
+                    {/* Native gets an extra icon */}
+                    <YStack
+                      position="absolute"
+                      right={0}
+                      top={0}
+                      bottom={0}
+                      alignItems="center"
+                      justifyContent="center"
+                      width={'$4'}
+                      pointerEvents="none"
+                    >
+                      <ChevronDown
+                        size="$2"
+                      />
+                    </YStack>
+                  </Select.Viewport>
+
+                  <Select.ScrollDownButton
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    width="100%"
+                    height="$3"
+                  >
+                    <YStack zIndex={10}>
+                      <ChevronDown size={20} />
+                    </YStack>
+                    <LinearGradient
+                      start={[0, 0]}
+                      end={[0, 1]}
+                      fullscreen
+                      colors={['transparent', '$background']}
+                      borderRadius="$4"
+                    />
+                  </Select.ScrollDownButton>
+                </Select.Content>
               </Select>
             )}
           />
@@ -188,18 +405,126 @@ export function AddCar() {
             rules={{ required: "Year is required" }}
             defaultValue=""
             control={control}
-            render={({ field: { onChange } }) => (
+            render={({ field: { onChange, value } }) => (
               <Select
-                accessibilityLabel="Choose Year"
-                placeholder="Year"
-                onValueChange={(value) => onChange(value)}
-                _selectedItem={{
-                  bg: "teal.600",
-                }}
+                id="year"
+                value={value}
+                onValueChange={onChange}
+                disablePreventBodyScroll
               >
-                {years.map((year) => (
-                  <Select.Item key={year} label={year} value={year} />
-                ))}
+                <Select.Trigger width="100%" iconAfter={ChevronDown}>
+                  <Select.Value placeholder="Year" />
+                </Select.Trigger>
+                <Adapt when="sm" platform="touch">
+                  <Sheet
+                    native
+                    modal
+                    dismissOnSnapToBottom
+                    animationConfig={{
+                      type: 'spring',
+                      damping: 20,
+                      mass: 1.2,
+                      stiffness: 250,
+                    }}
+                  >
+                    <Sheet.Frame>
+                      <Sheet.ScrollView>
+                        <Adapt.Contents />
+                      </Sheet.ScrollView>
+                    </Sheet.Frame>
+                    <Sheet.Overlay
+                      animation="lazy"
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+                  </Sheet>
+                </Adapt>
+
+                <Select.Content zIndex={200000}>
+                  <Select.ScrollUpButton
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    width="100%"
+                    height="$3"
+                  >
+                    <YStack zIndex={10}>
+                      <ChevronUp size={20} />
+                    </YStack>
+                    <LinearGradient
+                      start={[0, 0]}
+                      end={[0, 1]}
+                      fullscreen
+                      colors={['$background', 'transparent']}
+                      borderRadius="$4"
+                    />
+                  </Select.ScrollUpButton>
+
+                  <Select.Viewport
+                    // to do animations:
+                    // animation="quick"
+                    // animateOnly={['transform', 'opacity']}
+                    // enterStyle={{ o: 0, y: -10 }}
+                    // exitStyle={{ o: 0, y: 10 }}
+                    minWidth={200}
+                  >
+                    <Select.Group>
+                      <Select.Label>Year</Select.Label>
+                      {useMemo(
+                        () =>
+                          years.map((year, i) => {
+                            return (
+                              <Select.Item
+                                index={i}
+                                key={year}
+                                value={year}
+                              >
+                                <Select.ItemText>{year}</Select.ItemText>
+                                <Select.ItemIndicator marginLeft="auto">
+                                  <Check size={16} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
+                            )
+                          }),
+                        [years]
+                      )}
+                    </Select.Group>
+                    {/* Native gets an extra icon */}
+                    <YStack
+                      position="absolute"
+                      right={0}
+                      top={0}
+                      bottom={0}
+                      alignItems="center"
+                      justifyContent="center"
+                      width={'$4'}
+                      pointerEvents="none"
+                    >
+                      <ChevronDown
+                        size="$2"
+                      />
+                    </YStack>
+                  </Select.Viewport>
+
+                  <Select.ScrollDownButton
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    width="100%"
+                    height="$3"
+                  >
+                    <YStack zIndex={10}>
+                      <ChevronDown size={20} />
+                    </YStack>
+                    <LinearGradient
+                      start={[0, 0]}
+                      end={[0, 1]}
+                      fullscreen
+                      colors={['transparent', '$background']}
+                      borderRadius="$4"
+                    />
+                  </Select.ScrollDownButton>
+                </Select.Content>
               </Select>
             )}
           />
@@ -212,28 +537,132 @@ export function AddCar() {
             rules={{ required: "Color is required" }}
             defaultValue=""
             control={control}
-            render={({ field: { onChange } }) => (
+            render={({ field: { onChange, value } }) => (
               <Select
-                accessibilityLabel="Choose Color"
-                placeholder="Color"
-                onValueChange={(value) => onChange(value)}
-                _selectedItem={{
-                  bg: "teal.600",
-                }}
+                id="color"
+                value={value}
+                onValueChange={onChange}
+                disablePreventBodyScroll
               >
-                {colors.map((color) => (
-                  <Select.Item
-                    key={color}
-                    label={capitalize(color)}
-                    value={color}
-                  />
-                ))}
+                <Select.Trigger width="100%" iconAfter={ChevronDown}>
+                  <Select.Value placeholder="Color" />
+                </Select.Trigger>
+                <Adapt when="sm" platform="touch">
+                  <Sheet
+                    native
+                    modal
+                    dismissOnSnapToBottom
+                    animationConfig={{
+                      type: 'spring',
+                      damping: 20,
+                      mass: 1.2,
+                      stiffness: 250,
+                    }}
+                  >
+                    <Sheet.Frame>
+                      <Sheet.ScrollView>
+                        <Adapt.Contents />
+                      </Sheet.ScrollView>
+                    </Sheet.Frame>
+                    <Sheet.Overlay
+                      animation="lazy"
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+                  </Sheet>
+                </Adapt>
+
+                <Select.Content zIndex={200000}>
+                  <Select.ScrollUpButton
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    width="100%"
+                    height="$3"
+                  >
+                    <YStack zIndex={10}>
+                      <ChevronUp size={20} />
+                    </YStack>
+                    <LinearGradient
+                      start={[0, 0]}
+                      end={[0, 1]}
+                      fullscreen
+                      colors={['$background', 'transparent']}
+                      borderRadius="$4"
+                    />
+                  </Select.ScrollUpButton>
+
+                  <Select.Viewport
+                    // to do animations:
+                    // animation="quick"
+                    // animateOnly={['transform', 'opacity']}
+                    // enterStyle={{ o: 0, y: -10 }}
+                    // exitStyle={{ o: 0, y: 10 }}
+                    minWidth={200}
+                  >
+                    <Select.Group>
+                      <Select.Label>Colors</Select.Label>
+                      {useMemo(
+                        () =>
+                          colors.map((color, i) => {
+                            return (
+                              <Select.Item
+                                index={i}
+                                key={color}
+                                value={color}
+                              >
+                                <Select.ItemText>{color}</Select.ItemText>
+                                <Select.ItemIndicator marginLeft="auto">
+                                  <Check size={16} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
+                            )
+                          }),
+                        [makes]
+                      )}
+                    </Select.Group>
+                    {/* Native gets an extra icon */}
+                    <YStack
+                      position="absolute"
+                      right={0}
+                      top={0}
+                      bottom={0}
+                      alignItems="center"
+                      justifyContent="center"
+                      width={'$4'}
+                      pointerEvents="none"
+                    >
+                      <ChevronDown
+                        size="$2"
+                      />
+                    </YStack>
+                  </Select.Viewport>
+
+                  <Select.ScrollDownButton
+                    alignItems="center"
+                    justifyContent="center"
+                    position="relative"
+                    width="100%"
+                    height="$3"
+                  >
+                    <YStack zIndex={10}>
+                      <ChevronDown size={20} />
+                    </YStack>
+                    <LinearGradient
+                      start={[0, 0]}
+                      end={[0, 1]}
+                      fullscreen
+                      colors={['transparent', '$background']}
+                      borderRadius="$4"
+                    />
+                  </Select.ScrollDownButton>
+                </Select.Content>
               </Select>
             )}
           />
           <Text>
-            {errors.color?.message}
-            {validationErrors?.color?.[0]}
+            {errors.make?.message}
+            {validationErrors?.make?.[0]}
           </Text>
           <Controller
             name="photo"
@@ -244,47 +673,42 @@ export function AddCar() {
               <Pressable onPress={choosePhoto}>
                 {photo ? (
                   <Image
-                    height="48"
+                    height="$14"
                     width="100%"
-                    borderRadius="2xl"
+                    borderRadius="$4"
                     source={{ uri: photo.uri }}
                     alt="uploaded car image"
                   />
                 ) : (
-                  <Stack
-                    height="48"
-                    bgColor="gray.100"
-                    borderRadius="2xl"
-                    alignItems="center"
-                    justifyContent="center"
-                    _text={{ fontWeight: "extrabold" }}
-                    _dark={{ bgColor: "gray.800" }}
-                  >
-                    <Text>Attach a Photo</Text>
-                    <Ionicons
-                      mt={2}
-                      name="ios-add-sharp"
-                      size="xl"
-                      color="black"
-                      _dark={{ color: "white" }}
-                    />
-                  </Stack>
-                )}
-              </Pressable>
-            )}
-          />
-          <Text>
-            {errors.photo?.message}
-            {validationErrors?.photo?.[0]}
-          </Text>
+                <Stack
+                  height="$14"
+                  bg="$gray3"
+                  borderRadius="$4"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <SizableText>Attach a Photo</SizableText>
+                  <Plus
+                    mt="$2"
+                    name="ios-add-sharp"
+                    size={24}
+                  />
+                </Stack>
+              )}
+            </Pressable>
+          )}
+        />
+        <SizableText>
+          {errors.photo?.message}
+          {validationErrors?.photo?.[0]}
+        </SizableText>
         <Button
-          _text={{ fontWeight: "extrabold" }}
           isLoading={isSubmitting || loading}
           onPress={onSubmit}
         >
           Add Car
         </Button>
       </Stack>
-    </Container>
+    </Container >
   );
 }

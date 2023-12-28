@@ -3,11 +3,11 @@ import { Container } from "../../components/Container";
 import { gql, useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
 import {
-  Text,
   Button,
   Input,
   Stack,
   Label,
+  SizableText,
 } from "tamagui";
 import {
   isValidationError,
@@ -63,7 +63,7 @@ export function Feedback() {
   });
 
   return (
-    <Container p={3} keyboard>
+    <Container p="$4" keyboard>
       <Stack space={2}>
         <Card
           pressable
@@ -73,11 +73,11 @@ export function Feedback() {
             )
           }
         >
-          <Text>
+          <SizableText>
             Please submit your ideas, bugs, and feature requests here! If you
             like the app, pleae consider clicking here to leave us an App Store
             rating.
-          </Text>
+          </SizableText>
         </Card>
           <Label>Feedback</Label>
           <Controller
@@ -96,10 +96,10 @@ export function Feedback() {
               />
             )}
           />
-          <Text>
+          <SizableText color="$red10">
             {errors.message?.message}
             {validationErrors?.message?.[0]}
-          </Text>
+          </SizableText>
         <Button
           onPress={onSubmit}
           isLoading={loading}

@@ -51,6 +51,8 @@ import {
   Image,
   Button,
   Label,
+  H1,
+  SizableText,
 } from "tamagui";
 import { Pressable } from "react-native";
 
@@ -283,8 +285,8 @@ export function MainFindBeepScreen() {
   if (user?.isBeeping) {
     return (
       <Container justifyContent="center" alignItems="center">
-        <Heading fontWeight="extrabold">You are beeping!</Heading>
-        <Text>You can&apos;t find a ride when you are beeping</Text>
+        <H1>You are beeping!</H1>
+        <SizableText>You can&apos;t find a ride when you are beeping</SizableText>
       </Container>
     );
   }
@@ -293,7 +295,7 @@ export function MainFindBeepScreen() {
     return (
       <Container keyboard alignItems="center" pt="$2" h="100%" px="$4">
         <Stack space={4} w="100%">
-            <Label>Group Size</Label>
+            <Label fontWeight="bold">Group Size</Label>
             <Controller
               name="groupSize"
               rules={{ required: "Group size is required" }}
@@ -312,11 +314,10 @@ export function MainFindBeepScreen() {
                 />
               )}
             />
-            <Text
-            >
+            <SizableText>
               {errors.groupSize?.message}
-            </Text>
-            <Label>Pick Up Location</Label>
+            </SizableText>
+            <Label fontWeight="bold">Pick Up Location</Label>
             <Controller
               name="origin"
               rules={{ required: "Pick up location is required" }}
@@ -335,11 +336,10 @@ export function MainFindBeepScreen() {
                 />
               )}
             />
-            <Text
-            >
+            <SizableText>
               {errors.origin?.message}
-            </Text>
-            <Label>Destination Location</Label>
+            </SizableText>
+            <Label fontWeight="bold">Destination Location</Label>
             <Controller
               name="destination"
               rules={{ required: "Destination location is required" }}
@@ -357,14 +357,12 @@ export function MainFindBeepScreen() {
                 />
               )}
             />
-            <Text
-            >
+            <SizableText>
               {errors.destination?.message}
-            </Text>
+            </SizableText>
           <Button
-            _text={{ fontWeight: "extrabold" }}
             onPress={() => findBeep()}
-            size="lg"
+            textProps={{ fontWeight: "bold" }}
           >
             Find Beep
           </Button>

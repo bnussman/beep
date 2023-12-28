@@ -122,7 +122,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     <DrawerContentScrollView {...props}>
       <Stack>
         <Pressable onPress={() => navigate("Profile", { id: user?.id ?? "" })}>
-          <XStack alignItems="center">
+          <XStack alignItems="center" px="$3">
             <Avatar
               mr="$4"
               size="$4"
@@ -132,11 +132,11 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               <SizableText fontWeight="bold" fontSize="$4">
                 {user?.name}
               </SizableText>
-              <SizableText color="$gray5">
+              <SizableText color="$gray10">
                 @{user?.username}
               </SizableText>
             </Stack>
-            <SizableText fontSize="$8" mr="$4">🎄</SizableText>
+            <SizableText fontSize="$8">🎄</SizableText>
           </XStack>
         </Pressable>
         <Stack space={4}>
@@ -155,7 +155,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                   props.navigation.navigate(name);
                 }}
               >
-                <XStack space="$4" alignItems="center" backgroundColor={index === props.state.index ? "$gray3" : undefined} p="$2" mx="$2" borderRadius="$4" px="$3">
+                <XStack space="$4" alignItems="center" backgroundColor={index === props.state.index ? "$gray3" : undefined} py={8} mx="$3" borderRadius="$4" px="$3">
                   <MaterialCommunityIcons name={getIcon(name)} size={18} color="white" />
                   <SizableText>{name}</SizableText>
                   {name === "Premium" && <Stack bg="$yellow8" borderRadius="$2" px="$2" py="$1"><SizableText>New</SizableText></Stack>}
@@ -163,7 +163,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               </Pressable>
             ))}
             <Pressable onPress={handleLogout}>
-              <XStack space="$4" alignItems="center" mx="$2" borderRadius="$4" px="$3">
+              <XStack space="$4" alignItems="center" mx="$2" borderRadius="$4" px="$4">
                 <MaterialCommunityIcons name="logout-variant" size={18} color="white" />
                 {loading ? (
                   <Spinner size="small" />

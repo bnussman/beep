@@ -10,7 +10,8 @@ import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../routes/Ratings";
-import { Button, Center, Heading, Pressable, Spacer } from "tamagui";
+import { Button, H2, Heading, Stack } from "tamagui";
+import { Pressable } from "react-native";
 
 export const GetRateData = gql`
   query GetRateData {
@@ -68,42 +69,30 @@ export function RateSheet() {
       enablePanDownToClose
       shadow="light"
     >
-      <Center padding={4} height="100%">
+      <Stack alignItems="center">
         <Pressable
-          w="100%"
-          alignItems="center"
           onPress={() =>
             navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
           }
         >
           <Avatar
             url={beep.beeper.photo}
-            size="xl"
-            online={beep.beeper.isBeeping}
-            badgeSize="6"
+            size="$8"
           />
-          <Heading
-            fontSize="3xl"
-            fontWeight="extrabold"
-            letterSpacing="sm"
-            isTruncated
-          >
+          <H2>
             {beep.beeper.name}
-          </Heading>
-          <Spacer />
+          </H2>
         </Pressable>
-        <Spacer />
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-        <Spacer />
         <Button
           w="100%"
           onPress={onSubmit}
-          isDisabled={stars < 1}
+          disabled={stars < 1}
           isLoading={loading}
         >
           Rate User
         </Button>
-      </Center>
+      </Stack>
     </BottomSheet>
   );
 }

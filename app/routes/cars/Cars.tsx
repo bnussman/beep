@@ -210,22 +210,28 @@ export function Cars() {
         data={cars}
         renderItem={({ item: car }) => (
           <Card
-            mt={2}
-            mx={1}
+            mx="$2"
+            my="$2"
             pressable
             onLongPress={() => onLongPress(car)}
             onPress={car.default ? undefined : () => setDefault(car.id)}
           >
             <XStack alignItems="center" justifyContent="space-between">
               <Stack space={2}>
-                <SizableText textTransform="capitalize">
+                <SizableText textTransform="capitalize" fontWeight="bold">
                   {car.make} {car.model} {car.year}
                 </SizableText>
-                <XStack space={3}>
-                  {car.default && <SizableText>Default</SizableText>}
-                  <SizableText textTransform="capitalize">
-                    {car.color}
-                  </SizableText>
+                <XStack space="$2">
+                  {car.default && (
+                    <Stack bg="$gray5" p="$1" borderRadius="$2">
+                      <SizableText size="$2">Default</SizableText>
+                    </Stack>
+                  )}
+                  <Stack bg={car.color} px="$2" borderRadius="$2" alignItems="center">
+                    <SizableText size="$2" textTransform="capitalize">
+                      {car.color}
+                    </SizableText>
+                  </Stack>
                 </XStack>
               </Stack>
               <Image
@@ -246,7 +252,7 @@ export function Cars() {
         }
         ListEmptyComponent={
           <>
-            <H1>
+            <H1 key="heading">
               No Cars
             </H1>
             <SizableText key="message">You have no cars on your account!</SizableText>
