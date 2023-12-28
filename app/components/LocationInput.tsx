@@ -56,6 +56,7 @@ export function LocationInput({ inputRef, ...props }: Props) {
         {...props}
         placeholder={isLoading ? "Loading" : undefined}
         ref={inputRef}
+        flex={1}
         flexGrow={1}
       />
       <Button

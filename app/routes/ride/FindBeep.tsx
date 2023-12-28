@@ -278,11 +278,11 @@ export function MainFindBeepScreen() {
   if (user?.isBeeping) {
     return (
       <Container justifyContent="center" alignItems="center">
-        <H3 fontWeight="bold"}>You are beeping!</H3>
+        <H3 fontWeight="bold">You are beeping!</H3>
         <SizableText>
           You can&apos;t find a ride when you are beeping
         </SizableText>
-      </Container >
+      </Container>
     );
   }
 

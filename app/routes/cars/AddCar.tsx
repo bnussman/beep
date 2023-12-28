@@ -28,6 +28,7 @@ import {
   Sheet,
   YStack,
   SizableText,
+  Label,
 } from "tamagui";
 import { Pressable } from "react-native";
 import { Check, ChevronDown, ChevronUp, Plus } from "@tamagui/lucide-icons";
@@ -138,10 +139,11 @@ export function AddCar() {
   return (
     <Container p="$4">
       <Stack space={4}>
+        <Label htmlFor="make">Make</Label>
         <Controller
           name="make"
           rules={{ required: "Make is required" }}
-          defaultValue={null}
+          defaultValue=""
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
@@ -208,13 +210,16 @@ export function AddCar() {
                   minWidth={200}
                 >
                   <Select.Group>
-                    <Select.Label>Fruits</Select.Label>
+                    <Select.Label>Make</Select.Label>
+                    <Select.Item index={0} value="" disabled>
+                      <Select.ItemText>Select a Make</Select.ItemText>
+                    </Select.Item>
                     {/* for longer lists memoizing these is useful */}
                     {useMemo(
                       () =>
                         makes.map((make, i) => {
                           return (
-                            <Select.Item index={i} key={make} value={make}>
+                            <Select.Item index={i + 1} key={make} value={make}>
                               <Select.ItemText>{make}</Select.ItemText>
                               <Select.ItemIndicator marginLeft="auto">
                                 <Check size={16} />
@@ -266,6 +271,7 @@ export function AddCar() {
           {errors.make?.message}
           {validationErrors?.make?.[0]}
         </SizableText>
+        <Label htmlFor="model">Model</Label>
         <Controller
           name="model"
           rules={{ required: "Model is required" }}
@@ -388,6 +394,7 @@ export function AddCar() {
           {errors.model?.message}
           {validationErrors?.model?.[0]}
         </SizableText>
+        <Label htmlFor="year">Year</Label>
         <Controller
           name="year"
           rules={{ required: "Year is required" }}
@@ -515,6 +522,7 @@ export function AddCar() {
           {errors.year?.message}
           {validationErrors?.year?.[0]}
         </SizableText>
+        <Label htmlFor="color">Color</Label>
         <Controller
           name="color"
           rules={{ required: "Color is required" }}
@@ -598,7 +606,7 @@ export function AddCar() {
                             </Select.Item>
                           );
                         }),
-                      [makes],
+                      [colors],
                     )}
                   </Select.Group>
                   {/* Native gets an extra icon */}
@@ -639,8 +647,8 @@ export function AddCar() {
           )}
         />
         <SizableText>
-          {errors.make?.message}
-          {validationErrors?.make?.[0]}
+          {errors.color?.message}
+          {validationErrors?.color?.[0]}
         </SizableText>
         <Controller
           name="photo"
