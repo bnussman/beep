@@ -2,13 +2,7 @@ import React from "react";
 import { Container } from "../../components/Container";
 import { gql, useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Button,
-  Input,
-  Stack,
-  Label,
-  SizableText,
-} from "tamagui";
+import { Button, Input, Stack, Label, SizableText } from "tamagui";
 import {
   isValidationError,
   useValidationErrors,
@@ -51,7 +45,7 @@ export function Feedback() {
       .then(() => {
         Alert.alert(
           "Thank you for your feedback!",
-          "We will contact you if we have any further questions"
+          "We will contact you if we have any further questions",
         );
         reset();
       })
@@ -64,12 +58,12 @@ export function Feedback() {
 
   return (
     <Container p="$4" keyboard>
-      <Stack space={2}>
+      <Stack space="$2">
         <Card
           pressable
           onPress={() =>
             Linking.openURL(
-              "https://apps.apple.com/us/app/ride-beep-app/id1528601773"
+              "https://apps.apple.com/us/app/ride-beep-app/id1528601773",
             )
           }
         >
@@ -79,31 +73,31 @@ export function Feedback() {
             rating.
           </SizableText>
         </Card>
-          <Label>Feedback</Label>
-          <Controller
-            name="message"
-            rules={{ required: "Message is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                minHeight={170}
-                multiline
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                ref={ref}
-                size="lg"
-              />
-            )}
-          />
-          <SizableText color="$red10">
-            {errors.message?.message}
-            {validationErrors?.message?.[0]}
-          </SizableText>
+        <Label>Feedback</Label>
+        <Controller
+          name="message"
+          rules={{ required: "Message is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              minHeight={170}
+              multiline
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value}
+              ref={ref}
+              size="lg"
+            />
+          )}
+        />
+        <SizableText color="$red10">
+          {errors.message?.message}
+          {validationErrors?.message?.[0]}
+        </SizableText>
         <Button
           onPress={onSubmit}
           isLoading={loading}
-          _text={{ fontWeight: "extrabold" }}
+          textProps={{ fontWeight: "bold" }}
         >
           Submit
         </Button>

@@ -31,7 +31,7 @@ import {
   Button,
   Stack,
   XStack,
-  Text,
+  SizableText,
   Label,
   Popover,
   YStack,
@@ -91,7 +91,7 @@ export function EditProfileScreen() {
       venmo: user?.venmo,
       cashapp: user?.cashapp,
     }),
-    [user]
+    [user],
   );
 
   const [edit, { loading, error }] =
@@ -127,41 +127,41 @@ export function EditProfileScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Popover size="$5" allowFlip>
-            <Popover.Trigger asChild>
-              <Pressable style={{ marginRight: 8 }}>
-                <MoreHorizontal />
-              </Pressable>
-            </Popover.Trigger>
+          <Popover.Trigger asChild>
+            <Pressable style={{ marginRight: 8 }}>
+              <MoreHorizontal />
+            </Pressable>
+          </Popover.Trigger>
 
-            <Popover.Content
-              borderWidth={1}
-              borderColor="$borderColor"
-              enterStyle={{ y: -10, opacity: 0 }}
-              exitStyle={{ y: -10, opacity: 0 }}
-              elevate
-              animation={[
-                'quick',
-                {
-                  opacity: {
-                    overshootClamping: true,
-                  },
+          <Popover.Content
+            borderWidth={1}
+            borderColor="$borderColor"
+            enterStyle={{ y: -10, opacity: 0 }}
+            exitStyle={{ y: -10, opacity: 0 }}
+            elevate
+            animation={[
+              "quick",
+              {
+                opacity: {
+                  overshootClamping: true,
                 },
-              ]}
-            >
-              <Popover.Arrow borderWidth={1} borderColor="$borderColor" />
+              },
+            ]}
+          >
+            <Popover.Arrow borderWidth={1} borderColor="$borderColor" />
 
-              <YStack space="$3">
-                <Popover.Close asChild>
-                  <Button
-                    size="$3"
-                    onPress={() => {
-                      navigation.push("Change Password");
-                    }}
-                  >
-                    Change Password
-                  </Button>
-                </Popover.Close>
-                <Popover.Close>
+            <YStack space="$3">
+              <Popover.Close asChild>
+                <Button
+                  size="$3"
+                  onPress={() => {
+                    navigation.push("Change Password");
+                  }}
+                >
+                  Change Password
+                </Button>
+              </Popover.Close>
+              <Popover.Close>
                 <Button
                   size="$3"
                   onPress={() => {
@@ -173,7 +173,7 @@ export function EditProfileScreen() {
               </Popover.Close>
             </YStack>
           </Popover.Content>
-          </Popover>
+        </Popover>
       ),
     });
   }, [navigation]);
@@ -190,7 +190,7 @@ export function EditProfileScreen() {
           },
           { text: "Delete", onPress: handleDelete, style: "destructive" },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       handleDelete();
@@ -274,157 +274,157 @@ export function EditProfileScreen() {
       <Stack space={2} w="100%">
         <XStack alignItems="center" space={8}>
           <Stack flexGrow={1} space={2}>
-              <Label>First Name</Label>
-              <Controller
-                name="first"
-                rules={{ required: "First name is required" }}
-                control={control}
-                render={({ field: { onChange, onBlur, value, ref } }) => (
-                  <Input
-                    onBlur={onBlur}
-                    onChangeText={(val) => onChange(val)}
-                    value={value ? value : undefined}
-                    ref={ref}
-                    returnKeyLabel="next"
-                    returnKeyType="next"
-                    onSubmitEditing={() => setFocus("last")}
-                    textContentType="givenName"
-                    size="lg"
-                  />
-                )}
-              />
-              <SizableText >
-                {errors.first?.message}
-                {validationErrors?.first?.[0]}
-              </SizableText>
-              <Label>Last Name</Label>
-              <Controller
-                name="last"
-                rules={{ required: "Last name is required" }}
-                control={control}
-                render={({ field: { onChange, onBlur, value, ref } }) => (
-                  <Input
-                    onBlur={onBlur}
-                    onChangeText={(val) => onChange(val)}
-                    value={value ? value : undefined}
-                    ref={ref}
-                    returnKeyLabel="next"
-                    returnKeyType="next"
-                    onSubmitEditing={() => setFocus("email")}
-                    textContentType="familyName"
-                    size="lg"
-                  />
-                )}
-              />
-              <SizableText>
-                {errors.last?.message}
-                {validationErrors?.last?.[0]}
-              </SizableText>
+            <Label>First Name</Label>
+            <Controller
+              name="first"
+              rules={{ required: "First name is required" }}
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value ? value : undefined}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("last")}
+                  textContentType="givenName"
+                  size="lg"
+                />
+              )}
+            />
+            <SizableText>
+              {errors.first?.message}
+              {validationErrors?.first?.[0]}
+            </SizableText>
+            <Label>Last Name</Label>
+            <Controller
+              name="last"
+              rules={{ required: "Last name is required" }}
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value ? value : undefined}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("email")}
+                  textContentType="familyName"
+                  size="lg"
+                />
+              )}
+            />
+            <SizableText>
+              {errors.last?.message}
+              {validationErrors?.last?.[0]}
+            </SizableText>
           </Stack>
           <Pressable onPress={() => handleUpdatePhoto()}>
             <Avatar url={photo?.uri ?? user?.photo} size="$10" />
             {uploadLoading ? <Spinner /> : null}
           </Pressable>
         </XStack>
-          <Label>Email</Label>
-          <Controller
-            name="email"
-            rules={{ required: "Email is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value ? value : undefined}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("phone")}
-                textContentType="emailAddress"
-                size="lg"
-              />
-            )}
-          />
-          <SizableText>
-            {errors.email?.message}
-            {validationErrors?.email?.[0]}
-          </SizableText>
-          <Label>Phone Number</Label>
-          <Controller
-            name="phone"
-            rules={{ required: "Phone number is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value ? value : undefined}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("phone")}
-                textContentType="telephoneNumber"
-                size="lg"
-              />
-            )}
-          />
-          <SizableText>
-            {errors.phone?.message}
-            {validationErrors?.phone?.[0]}
-          </SizableText>
-          <Label>Venmo Username</Label>
-          <Controller
-            name="venmo"
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  flexGrow={1}
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value as string | undefined}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  textContentType="username"
-                  onSubmitEditing={() => setFocus("cashapp")}
-                  autoCapitalize="none"
-                  size="lg"
-                />
-            )}
-          />
-          <SizableText>
-            {errors.venmo?.message}
-            {validationErrors?.venmo?.[0]}
-          </SizableText>
-          <Label>Cash App Username</Label>
-          <Controller
-            name="cashapp"
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  flexGrow={1}
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value as string | undefined}
-                  ref={ref}
-                  returnKeyLabel="update"
-                  returnKeyType="go"
-                  textContentType="username"
-                  onSubmitEditing={isDirty ? onSubmit : undefined}
-                  autoCapitalize="none"
-                  size="lg"
-                />
-            )}
-          />
-          <SizableText>
-            {errors.cashapp?.message}
-            {validationErrors?.cashapp?.[0]}
-          </SizableText>
+        <Label>Email</Label>
+        <Controller
+          name="email"
+          rules={{ required: "Email is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value ? value : undefined}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("phone")}
+              textContentType="emailAddress"
+              size="lg"
+            />
+          )}
+        />
+        <SizableText>
+          {errors.email?.message}
+          {validationErrors?.email?.[0]}
+        </SizableText>
+        <Label>Phone Number</Label>
+        <Controller
+          name="phone"
+          rules={{ required: "Phone number is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value ? value : undefined}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("phone")}
+              textContentType="telephoneNumber"
+              size="lg"
+            />
+          )}
+        />
+        <SizableText>
+          {errors.phone?.message}
+          {validationErrors?.phone?.[0]}
+        </SizableText>
+        <Label>Venmo Username</Label>
+        <Controller
+          name="venmo"
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              flexGrow={1}
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value as string | undefined}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              textContentType="username"
+              onSubmitEditing={() => setFocus("cashapp")}
+              autoCapitalize="none"
+              size="lg"
+            />
+          )}
+        />
+        <SizableText>
+          {errors.venmo?.message}
+          {validationErrors?.venmo?.[0]}
+        </SizableText>
+        <Label>Cash App Username</Label>
+        <Controller
+          name="cashapp"
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              flexGrow={1}
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value as string | undefined}
+              ref={ref}
+              returnKeyLabel="update"
+              returnKeyType="go"
+              textContentType="username"
+              onSubmitEditing={isDirty ? onSubmit : undefined}
+              autoCapitalize="none"
+              size="lg"
+            />
+          )}
+        />
+        <SizableText>
+          {errors.cashapp?.message}
+          {validationErrors?.cashapp?.[0]}
+        </SizableText>
         <Button
           onPress={onSubmit}
           isLoading={loading}
           isDisabled={!isDirty}
-          mt={2}
+          mt="$2"
         >
           Update Profile
         </Button>

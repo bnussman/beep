@@ -6,12 +6,7 @@ import { Container } from "../components/Container";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
-import {
-  Spinner,
-  Text,
-  Heading,
-  H1,
-} from "tamagui";
+import { Spinner, SizableText, H1 } from "tamagui";
 import { FlatList } from "react-native";
 
 export const GetBeepHistory = gql`
@@ -123,7 +118,9 @@ export function BeepsScreen() {
   return (
     <Container>
       <FlatList
-        contentContainerStyle={colorMode === "dark" ? { backgroundColor: 'black' } : {}}
+        contentContainerStyle={
+          colorMode === "dark" ? { backgroundColor: "black" } : {}
+        }
         data={beeps}
         renderItem={(data) => <Beep {...data} />}
         keyExtractor={(beep) => beep.id}

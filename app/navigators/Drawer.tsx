@@ -24,17 +24,19 @@ import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import {
-  Stack,
-  XStack,
-  Spinner,
-  Button,
-  SizableText,
-} from "tamagui";
+import { Stack, XStack, Spinner, Button, SizableText } from "tamagui";
 import { useAutoUpdate } from "../utils/updates";
 import { Premium } from "../routes/Premium";
 import { Pressable, useColorScheme } from "react-native";
-import { BadgeCheck, Car, LogOut as LogOutIcon, CarTaxiFront, MessageSquare, Star, User } from "@tamagui/lucide-icons";
+import {
+  BadgeCheck,
+  Car,
+  LogOut as LogOutIcon,
+  CarTaxiFront,
+  MessageSquare,
+  Star,
+  User,
+} from "@tamagui/lucide-icons";
 
 const Logout = gql`
   mutation Logout {
@@ -107,8 +109,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     resend()
       .then(() =>
         alert(
-          "Successfully resent verification email. Please check your email for further instructions."
-        )
+          "Successfully resent verification email. Please check your email for further instructions.",
+        ),
       )
       .catch((error) => alert(error.message));
   };
@@ -118,18 +120,12 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       <Stack>
         <Pressable onPress={() => navigate("Profile", { id: user?.id ?? "" })}>
           <XStack alignItems="center" px="$3">
-            <Avatar
-              mr="$4"
-              size="$4"
-              url={user?.photo}
-            />
+            <Avatar mr="$4" size="$4" url={user?.photo} />
             <Stack flexGrow={1} my="$4">
               <SizableText fontWeight="bold" fontSize="$4">
                 {user?.name}
               </SizableText>
-              <SizableText color="$gray10">
-                @{user?.username}
-              </SizableText>
+              <SizableText color="$gray10">@{user?.username}</SizableText>
             </Stack>
             <SizableText fontSize="$8"></SizableText>
           </XStack>
@@ -137,9 +133,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         <Stack space={4}>
           <Stack space="$3">
             {!user?.isEmailVerified ? (
-              <Button
-                onPress={handleResendVerification}
-              >
+              <Button onPress={handleResendVerification}>
                 Resend Verification Email
               </Button>
             ) : null}
@@ -152,23 +146,42 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                     props.navigation.navigate(name);
                   }}
                 >
-                  <XStack space="$4" alignItems="center" backgroundColor={index === props.state.index ? "$gray3" : undefined} py={8} mx="$3" borderRadius="$4" px="$3">
+                  <XStack
+                    space="$4"
+                    alignItems="center"
+                    backgroundColor={
+                      index === props.state.index ? "$gray3" : undefined
+                    }
+                    py={8}
+                    mx="$3"
+                    borderRadius="$4"
+                    px="$3"
+                  >
                     <Icon size={18} />
                     <SizableText>{name}</SizableText>
-                    {name === "Premium" && <Stack bg="$yellow9" borderRadius="$2" px="$2" py="$1"><SizableText size="$1" color="white">New</SizableText></Stack>}
+                    {name === "Premium" && (
+                      <Stack bg="$yellow9" borderRadius="$2" px="$2" py="$1">
+                        <SizableText size="$1" color="white">
+                          New
+                        </SizableText>
+                      </Stack>
+                    )}
                   </XStack>
                 </Pressable>
-              )
+              );
             })}
             <Pressable onPress={handleLogout}>
-              <XStack space="$4" alignItems="center" mx="$2" borderRadius="$4" px="$4">
+              <XStack
+                space="$4"
+                alignItems="center"
+                mx="$2"
+                borderRadius="$4"
+                px="$4"
+                py={8}
+              >
                 <LogOutIcon size={18} />
-                {loading ? (
-                  <Spinner size="small" />
-                ) : null}
-                <SizableText mr={4}>
-                  Logout
-                </SizableText>
+                {loading ? <Spinner size="small" /> : null}
+                <SizableText mr={4}>Logout</SizableText>
               </XStack>
             </Pressable>
           </Stack>

@@ -6,7 +6,7 @@ import { GetRatingsQuery } from "../generated/graphql";
 import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
-import { Text, Spinner, H1 } from "tamagui";
+import { SizableText, Spinner, H1 } from "tamagui";
 import { FlatList } from "react-native";
 
 export const Ratings = gql`
@@ -117,7 +117,9 @@ export function RatingsScreen() {
   return (
     <Container>
       <FlatList
-        contentContainerStyle={colorMode === "dark" ? { backgroundColor: 'black' } : {}}
+        contentContainerStyle={
+          colorMode === "dark" ? { backgroundColor: "black" } : {}
+        }
         data={ratings}
         renderItem={(data) => <Rating {...data} />}
         keyExtractor={(rating) => rating.id}
