@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "../../components/Container";
 import { gql, useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
-import { Button, Input, Stack, Label, SizableText } from "tamagui";
+import { Button, Input, Stack, Spinner, Label, SizableText } from "tamagui";
 import {
   isValidationError,
   useValidationErrors,
@@ -96,7 +96,7 @@ export function Feedback() {
         </SizableText>
         <Button
           onPress={onSubmit}
-          isLoading={loading}
+          iconAfter={loading ? <Spinner /> : undefined}
           textProps={{ fontWeight: "bold" }}
         >
           Submit

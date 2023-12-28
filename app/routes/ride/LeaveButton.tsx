@@ -3,9 +3,9 @@ import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { gql, useMutation } from "@apollo/client";
 import { LeaveQueueMutation } from "../../generated/graphql";
-import { Button, ButtonProps } from "tamagui";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Button, ButtonProps, Spinner } from "tamagui";
 import { Alert } from "../../utils/Alert";
+import { LogOut } from "@tamagui/lucide-icons";
 
 const LeaveQueue = gql`
   mutation LeaveQueue($id: String!) {
@@ -36,7 +36,7 @@ export function LeaveButton(props: Props) {
           },
           { text: "Yes", onPress: () => leaveQueue() },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       leaveQueue();
@@ -53,17 +53,9 @@ export function LeaveButton(props: Props) {
 
   return (
     <Button
-      isLoading={isLoading}
+      iconAfter={isLoading ? <Spinner /> : <LogOut />}
       onPress={() => leaveQueueWrapper()}
-      colorScheme="red"
-      _text={{ color: "#fff" }}
-      endIcon={
-        <MaterialCommunityIcons
-          name="exit-to-app"
-          size={22}
-          color="white"
-        />
-      }
+      theme="red"
       {...rest}
     >
       Leave Queue

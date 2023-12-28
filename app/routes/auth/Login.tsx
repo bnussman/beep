@@ -15,16 +15,7 @@ import { Logger } from "../../utils/Logger";
 import { useValidationErrors } from "../../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Stack,
-  Input,
-  Spacer,
-  Text,
-  Label,
-  XStack,
-  H1,
-  SizableText,
-} from "tamagui";
+import { Stack, Input, Label, XStack, H1, SizableText, Spinner } from "tamagui";
 import { Button } from "tamagui";
 
 const Login = gql`
@@ -113,75 +104,74 @@ export function LoginScreen() {
       scrollViewProps={{ scrollEnabled: true, bounces: false }}
     >
       <Stack space="$4" width="90%">
-        <H1 animation="slow" fontWeight="bold">Ride Beep App 🚕</H1>
+        <H1 animation="slow" fontWeight="bold">
+          Ride Beep App 🚕
+        </H1>
         <Stack space={2}>
-            <Label>Username or Email</Label>
-            <Controller
-              name="username"
-              rules={{ required: "Username or Email is required" }}
-              defaultValue=""
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  autoCapitalize="none"
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("password")}
-                  textContentType="username"
-                  size="lg"
-                />
-              )}
-            />
-            <SizableText color="$red9">
-              {errors.username?.message}
-              {validationErrors?.username?.[0]}
-            </SizableText>
-            <Label>Password</Label>
-            <Controller
-              name="password"
-              rules={{ required: "Password is required" }}
-              defaultValue=""
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <PasswordInput
-                  autoCapitalize="none"
-                  onBlur={onBlur}
-                  onChangeText={(val: string) => onChange(val)}
-                  value={value}
-                  inputRef={ref}
-                  returnKeyLabel="login"
-                  returnKeyType="go"
-                  onSubmitEditing={onLogin}
-                  textContentType="password"
-                  size="lg"
-                />
-              )}
-            />
-            <SizableText color="$red9">
-              {errors.password?.message}
-              {validationErrors?.password?.[0]}
-              </SizableText>
+          <Label>Username or Email</Label>
+          <Controller
+            name="username"
+            rules={{ required: "Username or Email is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                autoCapitalize="none"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("password")}
+                textContentType="username"
+                size="lg"
+              />
+            )}
+          />
+          <SizableText color="$red9">
+            {errors.username?.message}
+            {validationErrors?.username?.[0]}
+          </SizableText>
+          <Label>Password</Label>
+          <Controller
+            name="password"
+            rules={{ required: "Password is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <PasswordInput
+                autoCapitalize="none"
+                onBlur={onBlur}
+                onChangeText={(val: string) => onChange(val)}
+                value={value}
+                inputRef={ref}
+                returnKeyLabel="login"
+                returnKeyType="go"
+                onSubmitEditing={onLogin}
+                textContentType="password"
+                size="lg"
+              />
+            )}
+          />
+          <SizableText color="$red9">
+            {errors.password?.message}
+            {validationErrors?.password?.[0]}
+          </SizableText>
           <Button
-            mt={3}
+            mt="$3"
             onPress={onLogin}
+            iconAfter={isSubmitting ? <Spinner /> : undefined}
           >
             Login
           </Button>
         </Stack>
         <XStack justifyContent="space-between">
-          <Button
-            onPress={() => navigation.navigate("Sign Up")}
-          >
+          <Button onPress={() => navigation.navigate("Sign Up")}>
             Sign Up
           </Button>
           <Stack flexGrow={1} />
-          <Button
-            onPress={() => navigation.navigate("Forgot Password")}
-          >
+          <Button onPress={() => navigation.navigate("Forgot Password")}>
             Forgot Password
           </Button>
         </XStack>

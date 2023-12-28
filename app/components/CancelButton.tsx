@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { GetInitialQueueQuery } from "../generated/graphql";
 import { isMobile, Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { Button as _Button } from "tamagui";
+import { Button as _Button, Spinner } from "tamagui";
 import { useEffect } from "react";
 import { Alert } from "react-native";
 
@@ -44,7 +44,7 @@ function Button(props: Props) {
             onPress: onCancel,
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       onCancel();
@@ -61,9 +61,9 @@ function Button(props: Props) {
 
   return (
     <_Button
-      isLoading={isLoading}
+      iconAfter={isLoading ? <Spinner /> : undefined}
       onPress={onPress}
-      backgroundColor="red.400"
+      theme="red"
     >
       Cancel Beep
     </_Button>

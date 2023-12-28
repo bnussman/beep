@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useEffect } from "react";
-import { Button } from "tamagui";
+import { Button, Spinner } from "tamagui";
 import { Status } from "../utils/types";
 import {
   GetInitialQueueQuery,
@@ -93,7 +93,7 @@ function _Button(props: Props) {
   return (
     <Button
       size="lg"
-      isLoading={isLoading}
+      iconAfter={isLoading ? <Spinner /> : undefined}
       onPress={onPress}
       textProps={{ fontWeight: "bold" }}
     >

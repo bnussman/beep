@@ -10,7 +10,7 @@ import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../routes/Ratings";
-import { Button, H2, Heading, Stack } from "tamagui";
+import { Button, H2, Stack, Spinner } from "tamagui";
 import { Pressable } from "react-native";
 
 export const GetRateData = gql`
@@ -75,20 +75,15 @@ export function RateSheet() {
             navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
           }
         >
-          <Avatar
-            url={beep.beeper.photo}
-            size="$8"
-          />
-          <H2>
-            {beep.beeper.name}
-          </H2>
+          <Avatar url={beep.beeper.photo} size="$8" />
+          <H2>{beep.beeper.name}</H2>
         </Pressable>
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Button
           w="100%"
           onPress={onSubmit}
           disabled={stars < 1}
-          isLoading={loading}
+          iconAfter={loading ? <Spinner /> : undefined}
         >
           Rate User
         </Button>

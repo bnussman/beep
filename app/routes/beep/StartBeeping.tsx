@@ -7,7 +7,13 @@ import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid, isMobile } from "../../utils/constants";
-import { ApolloError, gql, useMutation, useQuery, useSubscription } from "@apollo/client";
+import {
+  ApolloError,
+  gql,
+  useMutation,
+  useQuery,
+  useSubscription,
+} from "@apollo/client";
 import { cache, client } from "../../utils/Apollo";
 import { Navigation } from "../../utils/Navigation";
 import { LocationActivityType } from "expo-location";
@@ -134,29 +140,34 @@ export function StartBeepingScreen() {
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [singlesRate, setSinglesRate] = useState<string>(
-    String(user?.singlesRate)
+    String(user?.singlesRate),
   );
   const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
-  const { data, refetch, loading } =
-    useQuery<GetInitialQueueQuery>(GetInitialQueue, {
+  const { data, refetch, loading } = useQuery<GetInitialQueueQuery>(
+    GetInitialQueue,
+    {
       notifyOnNetworkStatusChange: true,
       variables: { id: user?.id },
-    });
+    },
+  );
 
   useSubscription<GetQueueSubscription>(GetQueue, {
     variables: { id: user?.id },
     onData({ data }) {
-      cache.updateQuery<GetInitialQueueQuery>({ query: GetInitialQueue, variables: { id: user?.id } }, (prev) => {
-        const newQueue = { getQueue: data.data!.getBeeperUpdates };
-        if (prev && (prev.getQueue.length < newQueue.getQueue.length)) {
-          bottomSheetRef.current?.expand();
-        }
-        return newQueue;
-      });
+      cache.updateQuery<GetInitialQueueQuery>(
+        { query: GetInitialQueue, variables: { id: user?.id } },
+        (prev) => {
+          const newQueue = { getQueue: data.data!.getBeeperUpdates };
+          if (prev && prev.getQueue.length < newQueue.getQueue.length) {
+            bottomSheetRef.current?.expand();
+          }
+          return newQueue;
+        },
+      );
     },
-    skip: !user?.isBeeping
+    skip: !user?.isBeeping,
   });
 
   const [updateBeepSettings] =
@@ -194,7 +205,7 @@ export function StartBeepingScreen() {
           },
           { text: "OK", onPress: () => toggleSwitch() },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       toggleSwitch();
@@ -309,9 +320,8 @@ export function StartBeepingScreen() {
         },
       });
 
-      const hasStarted = await Location.hasStartedLocationUpdatesAsync(
-        LOCATION_TRACKING
-      );
+      const hasStarted =
+        await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
 
       if (!hasStarted)
         Logger.error("User was unable to start location tracking");
@@ -383,10 +393,10 @@ export function StartBeepingScreen() {
         <Card>
           <Stack alignItems="center" space={2}>
             <H3>Want more riders?</H3>
-            <SizableText>
-              Jump to the top of the beeper list
-            </SizableText>
-            <Button size="lg" onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
+            <SizableText>Jump to the top of the beeper list</SizableText>
+            <Button size="lg" onPress={() => navigation.navigate("Premium")}>
+              Get Promoted
+            </Button>
           </Stack>
         </Card>
       </Container>
@@ -397,39 +407,35 @@ export function StartBeepingScreen() {
     return (
       <Container keyboard alignItems="center" height="100%">
         <Stack space={2} w="100%" p="$4">
-            <Label fontWeight="bold">Max Rider Capacity</Label>
-            <Input
-              size="lg"
-              placeholder="Max Capcity"
-              keyboardType="numeric"
-              value={String(capacity)}
-              onChangeText={(value) => setCapacity(value)}
-            />
-            <SizableText>
-              Maximum number of riders you can safely fit in your car
-            </SizableText>
-            <Label fontWeight="bold">Singles Rate</Label>
-            <Input
-              size="lg"
-              placeholder="Singles Rate"
-              keyboardType="numeric"
-              value={String(singlesRate)}
-              onChangeText={(value) => setSinglesRate(value)}
-            />
-            <SizableText>
-              Price for a single person riding alone
-            </SizableText>
-            <Label fontWeight="bold">Group Rate</Label>
-            <Input
-              size="lg"
-              placeholder="Group Rate"
-              keyboardType="numeric"
-              value={String(groupRate)}
-              onChangeText={(value) => setGroupRate(value)}
-            />
-            <SizableText>
-              Price per person in a group
-            </SizableText>
+          <Label fontWeight="bold">Max Rider Capacity</Label>
+          <Input
+            size="lg"
+            placeholder="Max Capcity"
+            keyboardType="numeric"
+            value={String(capacity)}
+            onChangeText={(value) => setCapacity(value)}
+          />
+          <SizableText>
+            Maximum number of riders you can safely fit in your car
+          </SizableText>
+          <Label fontWeight="bold">Singles Rate</Label>
+          <Input
+            size="lg"
+            placeholder="Singles Rate"
+            keyboardType="numeric"
+            value={String(singlesRate)}
+            onChangeText={(value) => setSinglesRate(value)}
+          />
+          <SizableText>Price for a single person riding alone</SizableText>
+          <Label fontWeight="bold">Group Rate</Label>
+          <Input
+            size="lg"
+            placeholder="Group Rate"
+            keyboardType="numeric"
+            value={String(groupRate)}
+            onChangeText={(value) => setGroupRate(value)}
+          />
+          <SizableText>Price per person in a group</SizableText>
         </Stack>
         <Stack flexGrow={1} />
         <XStack alignItems="center" mb={10} space={2}>
@@ -455,13 +461,11 @@ export function StartBeepingScreen() {
         <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
           <Pressable onPress={() => bottomSheetRef.current?.expand()}>
             <XStack alignItems="center" mb={2} pt={1} px={4}>
-              <Heading fontWeight="extrabold" size="2xl">
-                Queue
-              </Heading>
+              <H3 fontWeight="bold">Queue</H3>
               <Stack flexGrow={1} />
               {queue.length > 0 &&
                 queue.some((entry) => entry.status === Status.WAITING) && (
-                  <Stack rounded="full" bg="blue.400" w={4} h={4} mr={2} />
+                  <Stack borderRadius="$10" bg="$blue5" w={4} h={4} mr={2} />
                 )}
             </XStack>
           </Pressable>

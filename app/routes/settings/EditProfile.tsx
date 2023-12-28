@@ -422,8 +422,8 @@ export function EditProfileScreen() {
         </SizableText>
         <Button
           onPress={onSubmit}
-          isLoading={loading}
-          isDisabled={!isDirty}
+          iconAfter={loading ? <Spinner /> : undefined}
+          disabled={!isDirty}
           mt="$2"
         >
           Update Profile

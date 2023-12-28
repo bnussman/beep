@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
 import { TouchableWithoutFeedback } from "react-native";
-import { Input, InputProps, Spinner, Stack } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
+import { Input, InputProps, Spinner, Stack, XStack, Button } from "tamagui";
+import { MapPin } from "@tamagui/lucide-icons";
 
-function LocationInput(props: InputProps, ref: any) {
+interface Props extends InputProps {
+  inputRef: any;
+}
+
+export function LocationInput({ inputRef, ...props }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function useCurrentLocation(): Promise<void> {
@@ -46,30 +50,18 @@ function LocationInput(props: InputProps, ref: any) {
     setIsLoading(false);
   }
 
-  const CurrentLocationIcon = (
-    <TouchableWithoutFeedback onPress={() => useCurrentLocation()}>
-      <Ionicons
-        mr={3}
-        size={24}
-        name="ios-location-sharp"
-      />
-    </TouchableWithoutFeedback>
-  );
-
-  const SpinnerIcon = (
-    <Stack mr={3}>
-      <Spinner size="small" />
-    </Stack>
-  );
-
   return (
-    <Input
-      {...props}
-      placeholder={isLoading ? "Loading" : undefined}
-      InputRightElement={isLoading ? SpinnerIcon : CurrentLocationIcon}
-      ref={ref}
-    />
+    <XStack space="$2">
+      <Input
+        {...props}
+        placeholder={isLoading ? "Loading" : undefined}
+        ref={inputRef}
+        flexGrow={1}
+      />
+      <Button
+        onPress={() => useCurrentLocation()}
+        icon={isLoading ? <Spinner size="small" /> : <MapPin />}
+      />
+    </XStack>
   );
 }
-
-export default React.forwardRef(LocationInput);

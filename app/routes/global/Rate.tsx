@@ -4,7 +4,7 @@ import { GetUserProfileQuery, RateUserMutation } from "../../generated/graphql";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
 import { Navigation } from "../../utils/Navigation";
-import { Button, Input, Stack } from "tamagui";
+import { Button, Input, Stack, Spinner } from "tamagui";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -36,8 +36,8 @@ export function RateScreen() {
 
   const { data } = useQuery<GetUserProfileQuery>(GetUser, {
     variables: {
-      id: params.userId
-    }
+      id: params.userId,
+    },
   });
 
   const { goBack } = useNavigation<Navigation>();
@@ -63,15 +63,15 @@ export function RateScreen() {
   };
 
   return (
-    <Container keyboard p={4}>
-      <Stack space={4} w="full">
-        {user &&
+    <Container keyboard p="$4">
+      <Stack space="$2" w="full">
+        {user && (
           <UserHeader
             username={user.username}
             name={user.name}
             picture={user.photo}
           />
-        }
+        )}
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Input
           size="lg"
@@ -83,7 +83,11 @@ export function RateScreen() {
           onSubmitEditing={onSubmit}
           blurOnSubmit={true}
         />
-        <Button onPress={onSubmit} isDisabled={stars < 1} isLoading={loading}>
+        <Button
+          onPress={onSubmit}
+          disabled={stars < 1}
+          iconAfter={loading ? <Spinner /> : undefined}
+        >
           Rate User
         </Button>
       </Stack>

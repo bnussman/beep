@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { ChangePasswordMutation } from "../../generated/graphql";
-import { Input, Button, Stack } from "tamagui";
+import { Input, Button, Stack, Spinner } from "tamagui";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 
@@ -59,7 +59,7 @@ export function ChangePasswordScreen() {
         <Button
           onPress={() => handleChangePassword()}
           disabled={!password || password !== confirmPassword}
-          isLoading={loading}
+          iconAfter={loading ? <Spinner /> : undefined}
         >
           Change Password
         </Button>

@@ -1,6 +1,5 @@
 import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { HStack, Icon, Text } from "tamagui";
+import { XStack, SizableText, Stack } from "tamagui";
 import {
   useWebsocketStatus,
   WebsocketStatus as WebsocketStatusType,
@@ -10,23 +9,16 @@ export function WebsocketStatus() {
   const status = useWebsocketStatus();
 
   const colorMap: Record<WebsocketStatusType, string> = {
-    Closed: "red.400",
-    Opened: "orange.300",
-    Connecting: "orange.300",
-    Connected: "green.400",
+    Closed: "red",
+    Opened: "orange",
+    Connecting: "orange",
+    Connected: "green",
   };
 
   return (
-    <HStack px={5} py={3} space={7} alignItems="center">
-      <Icon
-        color={colorMap[status]}
-        size={6}
-        name="checkbox-blank-circle"
-        as={MaterialCommunityIcons}
-      />
-      <SizableText mr={4} fontWeight={500}>
-        {status}
-      </SizableText>
-    </HStack>
+    <XStack px={5} py={3} space={7} alignItems="center">
+      <Stack bg={colorMap[status]} width="$2" height="$2" borderRadius="$4" />
+      <SizableText fontWeight="bold">{status}</SizableText>
+    </XStack>
   );
 }

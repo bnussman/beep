@@ -13,8 +13,7 @@ import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
 import { getMakes, getModels } from "car-info";
-import { capitalize, colors, years } from "./utils";
-import { Ionicons } from "@expo/vector-icons";
+import { colors, years } from "./utils";
 import {
   isValidationError,
   useValidationErrors,
@@ -23,17 +22,16 @@ import {
   Image,
   Select,
   Stack,
-  Text,
   Button,
   Adapt,
+  Spinner,
   Sheet,
   YStack,
-  getFontSize,
   SizableText,
 } from "tamagui";
 import { Pressable } from "react-native";
 import { Check, ChevronDown, ChevronUp, Plus } from "@tamagui/lucide-icons";
-import { LinearGradient } from 'tamagui/linear-gradient'
+import { LinearGradient } from "tamagui/linear-gradient";
 
 const makes = getMakes();
 
@@ -85,7 +83,7 @@ export function AddCar() {
           "apollo-require-preflight": true,
         },
       },
-    }
+    },
   );
 
   const validationErrors =
@@ -140,550 +138,526 @@ export function AddCar() {
   return (
     <Container p="$4">
       <Stack space={4}>
-          <Controller
-            name="make"
-            rules={{ required: "Make is required" }}
-            defaultValue={null}
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                id="make"
-                value={value}
-                onValueChange={onChange}
-                disablePreventBodyScroll
-                native
-              >
-                <Select.Trigger width="100%" iconAfter={ChevronDown}>
-                  <Select.Value placeholder="Make" />
-                </Select.Trigger>
-                <Adapt when="sm" platform="touch">
-                  <Sheet
-                    native
-                    modal
-                    dismissOnSnapToBottom
-                    animationConfig={{
-                      type: 'spring',
-                      damping: 20,
-                      mass: 1.2,
-                      stiffness: 250,
-                    }}
-                  >
-                    <Sheet.Frame>
-                      <Sheet.ScrollView>
-                        <Adapt.Contents />
-                      </Sheet.ScrollView>
-                    </Sheet.Frame>
-                    <Sheet.Overlay
-                      animation="lazy"
-                      enterStyle={{ opacity: 0 }}
-                      exitStyle={{ opacity: 0 }}
-                    />
-                  </Sheet>
-                </Adapt>
-
-                <Select.Content zIndex={200000}>
-                  <Select.ScrollUpButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$3"
-                  >
-                    <YStack zIndex={10}>
-                      <ChevronUp size={20} />
-                    </YStack>
-                    <LinearGradient
-                      start={[0, 0]}
-                      end={[0, 1]}
-                      fullscreen
-                      colors={['$background', 'transparent']}
-                      borderRadius="$4"
-                    />
-                  </Select.ScrollUpButton>
-
-                  <Select.Viewport
-                    // to do animations:
-                    // animation="quick"
-                    // animateOnly={['transform', 'opacity']}
-                    // enterStyle={{ o: 0, y: -10 }}
-                    // exitStyle={{ o: 0, y: 10 }}
-                    minWidth={200}
-                  >
-                    <Select.Group>
-                      <Select.Label>Fruits</Select.Label>
-                      {/* for longer lists memoizing these is useful */}
-                      {useMemo(
-                        () =>
-                          makes.map((make, i) => {
-                            return (
-                              <Select.Item
-                                index={i}
-                                key={make}
-                                value={make}
-                              >
-                                <Select.ItemText>{make}</Select.ItemText>
-                                <Select.ItemIndicator marginLeft="auto">
-                                  <Check size={16} />
-                                </Select.ItemIndicator>
-                              </Select.Item>
-                            )
-                          }),
-                        [makes]
-                      )}
-                    </Select.Group>
-                    {/* Native gets an extra icon */}
-                    <YStack
-                      position="absolute"
-                      right={0}
-                      top={0}
-                      bottom={0}
-                      alignItems="center"
-                      justifyContent="center"
-                      width={'$4'}
-                      pointerEvents="none"
-                    >
-                      <ChevronDown
-                        size="$2"
-                      />
-                    </YStack>
-                  </Select.Viewport>
-
-                  <Select.ScrollDownButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$3"
-                  >
-                    <YStack zIndex={10}>
-                      <ChevronDown size={20} />
-                    </YStack>
-                    <LinearGradient
-                      start={[0, 0]}
-                      end={[0, 1]}
-                      fullscreen
-                      colors={['transparent', '$background']}
-                      borderRadius="$4"
-                    />
-                  </Select.ScrollDownButton>
-                </Select.Content>
-              </Select>
-            )}
-          />
-          <SizableText>
-            {errors.make?.message}
-            {validationErrors?.make?.[0]}
-          </SizableText>
-          <Controller
-            name="model"
-            rules={{ required: "Model is required" }}
-            defaultValue=""
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                id="model"
-                value={value}
-                onValueChange={onChange}
-                disablePreventBodyScroll
-                native
-              >
-                <Select.Trigger width="100%" iconAfter={ChevronDown}>
-                  <Select.Value placeholder="Model" />
-                </Select.Trigger>
-                <Adapt when="sm" platform="touch">
-                  <Sheet
-                    native
-                    modal
-                    dismissOnSnapToBottom
-                    animationConfig={{
-                      type: 'spring',
-                      damping: 20,
-                      mass: 1.2,
-                      stiffness: 250,
-                    }}
-                  >
-                    <Sheet.Frame>
-                      <Sheet.ScrollView>
-                        <Adapt.Contents />
-                      </Sheet.ScrollView>
-                    </Sheet.Frame>
-                    <Sheet.Overlay
-                      animation="lazy"
-                      enterStyle={{ opacity: 0 }}
-                      exitStyle={{ opacity: 0 }}
-                    />
-                  </Sheet>
-                </Adapt>
-
-                <Select.Content zIndex={200000}>
-                  <Select.ScrollUpButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$3"
-                  >
-                    <YStack zIndex={10}>
-                      <ChevronUp size={20} />
-                    </YStack>
-                    <LinearGradient
-                      start={[0, 0]}
-                      end={[0, 1]}
-                      fullscreen
-                      colors={['$background', 'transparent']}
-                      borderRadius="$4"
-                    />
-                  </Select.ScrollUpButton>
-
-                  <Select.Viewport
-                    // to do animations:
-                    // animation="quick"
-                    // animateOnly={['transform', 'opacity']}
-                    // enterStyle={{ o: 0, y: -10 }}
-                    // exitStyle={{ o: 0, y: 10 }}
-                    minWidth={200}
-                  >
-                    <Select.Group>
-                      <Select.Label>Model</Select.Label>
-                      {/* for longer lists memoizing these is useful */}
-                      {getModels(make)?.map((model, i) => (
-                        <Select.Item
-                          index={i}
-                          key={model}
-                          value={model}
-                        >
-                          <Select.ItemText>{model}</Select.ItemText>
-                          <Select.ItemIndicator marginLeft="auto">
-                            <Check size={16} />
-                          </Select.ItemIndicator>
-                        </Select.Item>
-                      ))}
-                    </Select.Group>
-                    {/* Native gets an extra icon */}
-                    <YStack
-                      position="absolute"
-                      right={0}
-                      top={0}
-                      bottom={0}
-                      alignItems="center"
-                      justifyContent="center"
-                      width={'$4'}
-                      pointerEvents="none"
-                    >
-                      <ChevronDown
-                        size="$2"
-                      />
-                    </YStack>
-                  </Select.Viewport>
-
-                  <Select.ScrollDownButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$3"
-                  >
-                    <YStack zIndex={10}>
-                      <ChevronDown size={20} />
-                    </YStack>
-                    <LinearGradient
-                      start={[0, 0]}
-                      end={[0, 1]}
-                      fullscreen
-                      colors={['transparent', '$background']}
-                      borderRadius="$4"
-                    />
-                  </Select.ScrollDownButton>
-                </Select.Content>
-              </Select>
-            )}
-          />
-          <SizableText>
-            {errors.model?.message}
-            {validationErrors?.model?.[0]}
-          </SizableText>
-          <Controller
-            name="year"
-            rules={{ required: "Year is required" }}
-            defaultValue=""
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                id="year"
-                value={value}
-                onValueChange={onChange}
-                disablePreventBodyScroll
-                native
-              >
-                <Select.Trigger width="100%" iconAfter={ChevronDown}>
-                  <Select.Value placeholder="Year" />
-                </Select.Trigger>
-                <Adapt when="sm" platform="touch">
-                  <Sheet
-                    native
-                    modal
-                    dismissOnSnapToBottom
-                    animationConfig={{
-                      type: 'spring',
-                      damping: 20,
-                      mass: 1.2,
-                      stiffness: 250,
-                    }}
-                  >
-                    <Sheet.Frame>
-                      <Sheet.ScrollView>
-                        <Adapt.Contents />
-                      </Sheet.ScrollView>
-                    </Sheet.Frame>
-                    <Sheet.Overlay
-                      animation="lazy"
-                      enterStyle={{ opacity: 0 }}
-                      exitStyle={{ opacity: 0 }}
-                    />
-                  </Sheet>
-                </Adapt>
-
-                <Select.Content zIndex={200000}>
-                  <Select.ScrollUpButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$3"
-                  >
-                    <YStack zIndex={10}>
-                      <ChevronUp size={20} />
-                    </YStack>
-                    <LinearGradient
-                      start={[0, 0]}
-                      end={[0, 1]}
-                      fullscreen
-                      colors={['$background', 'transparent']}
-                      borderRadius="$4"
-                    />
-                  </Select.ScrollUpButton>
-
-                  <Select.Viewport
-                    // to do animations:
-                    // animation="quick"
-                    // animateOnly={['transform', 'opacity']}
-                    // enterStyle={{ o: 0, y: -10 }}
-                    // exitStyle={{ o: 0, y: 10 }}
-                    minWidth={200}
-                  >
-                    <Select.Group>
-                      <Select.Label>Year</Select.Label>
-                      {useMemo(
-                        () =>
-                          years.map((year, i) => {
-                            return (
-                              <Select.Item
-                                index={i}
-                                key={year}
-                                value={year}
-                              >
-                                <Select.ItemText>{year}</Select.ItemText>
-                                <Select.ItemIndicator marginLeft="auto">
-                                  <Check size={16} />
-                                </Select.ItemIndicator>
-                              </Select.Item>
-                            )
-                          }),
-                        [years]
-                      )}
-                    </Select.Group>
-                    {/* Native gets an extra icon */}
-                    <YStack
-                      position="absolute"
-                      right={0}
-                      top={0}
-                      bottom={0}
-                      alignItems="center"
-                      justifyContent="center"
-                      width={'$4'}
-                      pointerEvents="none"
-                    >
-                      <ChevronDown
-                        size="$2"
-                      />
-                    </YStack>
-                  </Select.Viewport>
-
-                  <Select.ScrollDownButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$3"
-                  >
-                    <YStack zIndex={10}>
-                      <ChevronDown size={20} />
-                    </YStack>
-                    <LinearGradient
-                      start={[0, 0]}
-                      end={[0, 1]}
-                      fullscreen
-                      colors={['transparent', '$background']}
-                      borderRadius="$4"
-                    />
-                  </Select.ScrollDownButton>
-                </Select.Content>
-              </Select>
-            )}
-          />
-          <SizableText>
-            {errors.year?.message}
-            {validationErrors?.year?.[0]}
-          </SizableText>
-          <Controller
-            name="color"
-            rules={{ required: "Color is required" }}
-            defaultValue=""
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                id="color"
-                value={value}
-                onValueChange={onChange}
-                disablePreventBodyScroll
-                native
-              >
-                <Select.Trigger width="100%" iconAfter={ChevronDown}>
-                  <Select.Value placeholder="Color" />
-                </Select.Trigger>
-                <Adapt when="sm" platform="touch">
-                  <Sheet
-                    native
-                    modal
-                    dismissOnSnapToBottom
-                    animationConfig={{
-                      type: 'spring',
-                      damping: 20,
-                      mass: 1.2,
-                      stiffness: 250,
-                    }}
-                  >
-                    <Sheet.Frame>
-                      <Sheet.ScrollView>
-                        <Adapt.Contents />
-                      </Sheet.ScrollView>
-                    </Sheet.Frame>
-                    <Sheet.Overlay
-                      animation="lazy"
-                      enterStyle={{ opacity: 0 }}
-                      exitStyle={{ opacity: 0 }}
-                    />
-                  </Sheet>
-                </Adapt>
-
-                <Select.Content zIndex={200000}>
-                  <Select.ScrollUpButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$3"
-                  >
-                    <YStack zIndex={10}>
-                      <ChevronUp size={20} />
-                    </YStack>
-                    <LinearGradient
-                      start={[0, 0]}
-                      end={[0, 1]}
-                      fullscreen
-                      colors={['$background', 'transparent']}
-                      borderRadius="$4"
-                    />
-                  </Select.ScrollUpButton>
-
-                  <Select.Viewport
-                    // to do animations:
-                    // animation="quick"
-                    // animateOnly={['transform', 'opacity']}
-                    // enterStyle={{ o: 0, y: -10 }}
-                    // exitStyle={{ o: 0, y: 10 }}
-                    minWidth={200}
-                  >
-                    <Select.Group>
-                      <Select.Label>Colors</Select.Label>
-                      {useMemo(
-                        () =>
-                          colors.map((color, i) => {
-                            return (
-                              <Select.Item
-                                index={i}
-                                key={color}
-                                value={color}
-                              >
-                                <Select.ItemText>{color}</Select.ItemText>
-                                <Select.ItemIndicator marginLeft="auto">
-                                  <Check size={16} />
-                                </Select.ItemIndicator>
-                              </Select.Item>
-                            )
-                          }),
-                        [makes]
-                      )}
-                    </Select.Group>
-                    {/* Native gets an extra icon */}
-                    <YStack
-                      position="absolute"
-                      right={0}
-                      top={0}
-                      bottom={0}
-                      alignItems="center"
-                      justifyContent="center"
-                      width={'$4'}
-                      pointerEvents="none"
-                    >
-                      <ChevronDown
-                        size="$2"
-                      />
-                    </YStack>
-                  </Select.Viewport>
-
-                  <Select.ScrollDownButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$3"
-                  >
-                    <YStack zIndex={10}>
-                      <ChevronDown size={20} />
-                    </YStack>
-                    <LinearGradient
-                      start={[0, 0]}
-                      end={[0, 1]}
-                      fullscreen
-                      colors={['transparent', '$background']}
-                      borderRadius="$4"
-                    />
-                  </Select.ScrollDownButton>
-                </Select.Content>
-              </Select>
-            )}
-          />
-          <SizableText>
-            {errors.make?.message}
-            {validationErrors?.make?.[0]}
-          </SizableText>
-          <Controller
-            name="photo"
-            rules={{ required: "Photo is required" }}
-            defaultValue=""
-            control={control}
-            render={() => (
-              <Pressable onPress={choosePhoto}>
-                {photo ? (
-                  <Image
-                    height="$14"
-                    width="100%"
-                    borderRadius="$4"
-                    source={{ uri: photo.uri }}
-                    alt="uploaded car image"
+        <Controller
+          name="make"
+          rules={{ required: "Make is required" }}
+          defaultValue={null}
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              id="make"
+              value={value}
+              onValueChange={onChange}
+              disablePreventBodyScroll
+              native
+            >
+              <Select.Trigger width="100%" iconAfter={ChevronDown}>
+                <Select.Value placeholder="Make" />
+              </Select.Trigger>
+              <Adapt when="sm" platform="touch">
+                <Sheet
+                  native
+                  modal
+                  dismissOnSnapToBottom
+                  animationConfig={{
+                    type: "spring",
+                    damping: 20,
+                    mass: 1.2,
+                    stiffness: 250,
+                  }}
+                >
+                  <Sheet.Frame>
+                    <Sheet.ScrollView>
+                      <Adapt.Contents />
+                    </Sheet.ScrollView>
+                  </Sheet.Frame>
+                  <Sheet.Overlay
+                    animation="lazy"
+                    enterStyle={{ opacity: 0 }}
+                    exitStyle={{ opacity: 0 }}
                   />
-                ) : (
+                </Sheet>
+              </Adapt>
+
+              <Select.Content zIndex={200000}>
+                <Select.ScrollUpButton
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  width="100%"
+                  height="$3"
+                >
+                  <YStack zIndex={10}>
+                    <ChevronUp size={20} />
+                  </YStack>
+                  <LinearGradient
+                    start={[0, 0]}
+                    end={[0, 1]}
+                    fullscreen
+                    colors={["$background", "transparent"]}
+                    borderRadius="$4"
+                  />
+                </Select.ScrollUpButton>
+
+                <Select.Viewport
+                  // to do animations:
+                  // animation="quick"
+                  // animateOnly={['transform', 'opacity']}
+                  // enterStyle={{ o: 0, y: -10 }}
+                  // exitStyle={{ o: 0, y: 10 }}
+                  minWidth={200}
+                >
+                  <Select.Group>
+                    <Select.Label>Fruits</Select.Label>
+                    {/* for longer lists memoizing these is useful */}
+                    {useMemo(
+                      () =>
+                        makes.map((make, i) => {
+                          return (
+                            <Select.Item index={i} key={make} value={make}>
+                              <Select.ItemText>{make}</Select.ItemText>
+                              <Select.ItemIndicator marginLeft="auto">
+                                <Check size={16} />
+                              </Select.ItemIndicator>
+                            </Select.Item>
+                          );
+                        }),
+                      [makes],
+                    )}
+                  </Select.Group>
+                  {/* Native gets an extra icon */}
+                  <YStack
+                    position="absolute"
+                    right={0}
+                    top={0}
+                    bottom={0}
+                    alignItems="center"
+                    justifyContent="center"
+                    width={"$4"}
+                    pointerEvents="none"
+                  >
+                    <ChevronDown size="$2" />
+                  </YStack>
+                </Select.Viewport>
+
+                <Select.ScrollDownButton
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  width="100%"
+                  height="$3"
+                >
+                  <YStack zIndex={10}>
+                    <ChevronDown size={20} />
+                  </YStack>
+                  <LinearGradient
+                    start={[0, 0]}
+                    end={[0, 1]}
+                    fullscreen
+                    colors={["transparent", "$background"]}
+                    borderRadius="$4"
+                  />
+                </Select.ScrollDownButton>
+              </Select.Content>
+            </Select>
+          )}
+        />
+        <SizableText>
+          {errors.make?.message}
+          {validationErrors?.make?.[0]}
+        </SizableText>
+        <Controller
+          name="model"
+          rules={{ required: "Model is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              id="model"
+              value={value}
+              onValueChange={onChange}
+              disablePreventBodyScroll
+              native
+            >
+              <Select.Trigger width="100%" iconAfter={ChevronDown}>
+                <Select.Value placeholder="Model" />
+              </Select.Trigger>
+              <Adapt when="sm" platform="touch">
+                <Sheet
+                  native
+                  modal
+                  dismissOnSnapToBottom
+                  animationConfig={{
+                    type: "spring",
+                    damping: 20,
+                    mass: 1.2,
+                    stiffness: 250,
+                  }}
+                >
+                  <Sheet.Frame>
+                    <Sheet.ScrollView>
+                      <Adapt.Contents />
+                    </Sheet.ScrollView>
+                  </Sheet.Frame>
+                  <Sheet.Overlay
+                    animation="lazy"
+                    enterStyle={{ opacity: 0 }}
+                    exitStyle={{ opacity: 0 }}
+                  />
+                </Sheet>
+              </Adapt>
+
+              <Select.Content zIndex={200000}>
+                <Select.ScrollUpButton
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  width="100%"
+                  height="$3"
+                >
+                  <YStack zIndex={10}>
+                    <ChevronUp size={20} />
+                  </YStack>
+                  <LinearGradient
+                    start={[0, 0]}
+                    end={[0, 1]}
+                    fullscreen
+                    colors={["$background", "transparent"]}
+                    borderRadius="$4"
+                  />
+                </Select.ScrollUpButton>
+
+                <Select.Viewport
+                  // to do animations:
+                  // animation="quick"
+                  // animateOnly={['transform', 'opacity']}
+                  // enterStyle={{ o: 0, y: -10 }}
+                  // exitStyle={{ o: 0, y: 10 }}
+                  minWidth={200}
+                >
+                  <Select.Group>
+                    <Select.Label>Model</Select.Label>
+                    {/* for longer lists memoizing these is useful */}
+                    {getModels(make)?.map((model, i) => (
+                      <Select.Item index={i} key={model} value={model}>
+                        <Select.ItemText>{model}</Select.ItemText>
+                        <Select.ItemIndicator marginLeft="auto">
+                          <Check size={16} />
+                        </Select.ItemIndicator>
+                      </Select.Item>
+                    ))}
+                  </Select.Group>
+                  {/* Native gets an extra icon */}
+                  <YStack
+                    position="absolute"
+                    right={0}
+                    top={0}
+                    bottom={0}
+                    alignItems="center"
+                    justifyContent="center"
+                    width={"$4"}
+                    pointerEvents="none"
+                  >
+                    <ChevronDown size="$2" />
+                  </YStack>
+                </Select.Viewport>
+
+                <Select.ScrollDownButton
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  width="100%"
+                  height="$3"
+                >
+                  <YStack zIndex={10}>
+                    <ChevronDown size={20} />
+                  </YStack>
+                  <LinearGradient
+                    start={[0, 0]}
+                    end={[0, 1]}
+                    fullscreen
+                    colors={["transparent", "$background"]}
+                    borderRadius="$4"
+                  />
+                </Select.ScrollDownButton>
+              </Select.Content>
+            </Select>
+          )}
+        />
+        <SizableText>
+          {errors.model?.message}
+          {validationErrors?.model?.[0]}
+        </SizableText>
+        <Controller
+          name="year"
+          rules={{ required: "Year is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              id="year"
+              value={value}
+              onValueChange={onChange}
+              disablePreventBodyScroll
+              native
+            >
+              <Select.Trigger width="100%" iconAfter={ChevronDown}>
+                <Select.Value placeholder="Year" />
+              </Select.Trigger>
+              <Adapt when="sm" platform="touch">
+                <Sheet
+                  native
+                  modal
+                  dismissOnSnapToBottom
+                  animationConfig={{
+                    type: "spring",
+                    damping: 20,
+                    mass: 1.2,
+                    stiffness: 250,
+                  }}
+                >
+                  <Sheet.Frame>
+                    <Sheet.ScrollView>
+                      <Adapt.Contents />
+                    </Sheet.ScrollView>
+                  </Sheet.Frame>
+                  <Sheet.Overlay
+                    animation="lazy"
+                    enterStyle={{ opacity: 0 }}
+                    exitStyle={{ opacity: 0 }}
+                  />
+                </Sheet>
+              </Adapt>
+
+              <Select.Content zIndex={200000}>
+                <Select.ScrollUpButton
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  width="100%"
+                  height="$3"
+                >
+                  <YStack zIndex={10}>
+                    <ChevronUp size={20} />
+                  </YStack>
+                  <LinearGradient
+                    start={[0, 0]}
+                    end={[0, 1]}
+                    fullscreen
+                    colors={["$background", "transparent"]}
+                    borderRadius="$4"
+                  />
+                </Select.ScrollUpButton>
+
+                <Select.Viewport
+                  // to do animations:
+                  // animation="quick"
+                  // animateOnly={['transform', 'opacity']}
+                  // enterStyle={{ o: 0, y: -10 }}
+                  // exitStyle={{ o: 0, y: 10 }}
+                  minWidth={200}
+                >
+                  <Select.Group>
+                    <Select.Label>Year</Select.Label>
+                    {useMemo(
+                      () =>
+                        years.map((year, i) => {
+                          return (
+                            <Select.Item index={i} key={year} value={year}>
+                              <Select.ItemText>{year}</Select.ItemText>
+                              <Select.ItemIndicator marginLeft="auto">
+                                <Check size={16} />
+                              </Select.ItemIndicator>
+                            </Select.Item>
+                          );
+                        }),
+                      [years],
+                    )}
+                  </Select.Group>
+                  {/* Native gets an extra icon */}
+                  <YStack
+                    position="absolute"
+                    right={0}
+                    top={0}
+                    bottom={0}
+                    alignItems="center"
+                    justifyContent="center"
+                    width={"$4"}
+                    pointerEvents="none"
+                  >
+                    <ChevronDown size="$2" />
+                  </YStack>
+                </Select.Viewport>
+
+                <Select.ScrollDownButton
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  width="100%"
+                  height="$3"
+                >
+                  <YStack zIndex={10}>
+                    <ChevronDown size={20} />
+                  </YStack>
+                  <LinearGradient
+                    start={[0, 0]}
+                    end={[0, 1]}
+                    fullscreen
+                    colors={["transparent", "$background"]}
+                    borderRadius="$4"
+                  />
+                </Select.ScrollDownButton>
+              </Select.Content>
+            </Select>
+          )}
+        />
+        <SizableText>
+          {errors.year?.message}
+          {validationErrors?.year?.[0]}
+        </SizableText>
+        <Controller
+          name="color"
+          rules={{ required: "Color is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              id="color"
+              value={value}
+              onValueChange={onChange}
+              disablePreventBodyScroll
+              native
+            >
+              <Select.Trigger width="100%" iconAfter={ChevronDown}>
+                <Select.Value placeholder="Color" />
+              </Select.Trigger>
+              <Adapt when="sm" platform="touch">
+                <Sheet
+                  native
+                  modal
+                  dismissOnSnapToBottom
+                  animationConfig={{
+                    type: "spring",
+                    damping: 20,
+                    mass: 1.2,
+                    stiffness: 250,
+                  }}
+                >
+                  <Sheet.Frame>
+                    <Sheet.ScrollView>
+                      <Adapt.Contents />
+                    </Sheet.ScrollView>
+                  </Sheet.Frame>
+                  <Sheet.Overlay
+                    animation="lazy"
+                    enterStyle={{ opacity: 0 }}
+                    exitStyle={{ opacity: 0 }}
+                  />
+                </Sheet>
+              </Adapt>
+
+              <Select.Content zIndex={200000}>
+                <Select.ScrollUpButton
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  width="100%"
+                  height="$3"
+                >
+                  <YStack zIndex={10}>
+                    <ChevronUp size={20} />
+                  </YStack>
+                  <LinearGradient
+                    start={[0, 0]}
+                    end={[0, 1]}
+                    fullscreen
+                    colors={["$background", "transparent"]}
+                    borderRadius="$4"
+                  />
+                </Select.ScrollUpButton>
+
+                <Select.Viewport
+                  // to do animations:
+                  // animation="quick"
+                  // animateOnly={['transform', 'opacity']}
+                  // enterStyle={{ o: 0, y: -10 }}
+                  // exitStyle={{ o: 0, y: 10 }}
+                  minWidth={200}
+                >
+                  <Select.Group>
+                    <Select.Label>Colors</Select.Label>
+                    {useMemo(
+                      () =>
+                        colors.map((color, i) => {
+                          return (
+                            <Select.Item index={i} key={color} value={color}>
+                              <Select.ItemText>{color}</Select.ItemText>
+                              <Select.ItemIndicator marginLeft="auto">
+                                <Check size={16} />
+                              </Select.ItemIndicator>
+                            </Select.Item>
+                          );
+                        }),
+                      [makes],
+                    )}
+                  </Select.Group>
+                  {/* Native gets an extra icon */}
+                  <YStack
+                    position="absolute"
+                    right={0}
+                    top={0}
+                    bottom={0}
+                    alignItems="center"
+                    justifyContent="center"
+                    width={"$4"}
+                    pointerEvents="none"
+                  >
+                    <ChevronDown size="$2" />
+                  </YStack>
+                </Select.Viewport>
+
+                <Select.ScrollDownButton
+                  alignItems="center"
+                  justifyContent="center"
+                  position="relative"
+                  width="100%"
+                  height="$3"
+                >
+                  <YStack zIndex={10}>
+                    <ChevronDown size={20} />
+                  </YStack>
+                  <LinearGradient
+                    start={[0, 0]}
+                    end={[0, 1]}
+                    fullscreen
+                    colors={["transparent", "$background"]}
+                    borderRadius="$4"
+                  />
+                </Select.ScrollDownButton>
+              </Select.Content>
+            </Select>
+          )}
+        />
+        <SizableText>
+          {errors.make?.message}
+          {validationErrors?.make?.[0]}
+        </SizableText>
+        <Controller
+          name="photo"
+          rules={{ required: "Photo is required" }}
+          defaultValue=""
+          control={control}
+          render={() => (
+            <Pressable onPress={choosePhoto}>
+              {photo ? (
+                <Image
+                  height="$14"
+                  width="100%"
+                  borderRadius="$4"
+                  source={{ uri: photo.uri }}
+                  alt="uploaded car image"
+                />
+              ) : (
                 <Stack
                   height="$14"
                   bg="$gray3"
@@ -691,12 +665,8 @@ export function AddCar() {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <SizableText>Attach a Photo</SizableText>
-                  <Plus
-                    mt="$2"
-                    name="ios-add-sharp"
-                    size={24}
-                  />
+                  <SizableText mb="$2">Attach a Photo</SizableText>
+                  <Plus size={24} />
                 </Stack>
               )}
             </Pressable>
@@ -707,12 +677,12 @@ export function AddCar() {
           {validationErrors?.photo?.[0]}
         </SizableText>
         <Button
-          isLoading={isSubmitting || loading}
+          iconAfter={isSubmitting || loading ? <Spinner /> : undefined}
           onPress={onSubmit}
         >
           Add Car
         </Button>
       </Stack>
-    </Container >
+    </Container>
   );
 }

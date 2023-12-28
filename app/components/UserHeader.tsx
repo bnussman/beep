@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Box, Heading, HStack } from "tamagui";
+import { SizableText, H3, XStack, Stack } from "tamagui";
 import { Avatar } from "./Avatar";
 
 interface Props {
@@ -10,16 +10,12 @@ interface Props {
 
 export function UserHeader({ picture, name, username }: Props) {
   return (
-    <HStack alignItems="center">
+    <XStack alignItems="center">
       <Avatar mr={2} size="md" url={picture} />
-      <Box>
-        <Heading size="md" letterSpacing="xs" fontWeight="extrabold">
-          {name}
-        </Heading>
-        <SizableText color="gray.500" letterSpacing="sm">
-          @{username}
-        </SizableText>
-      </Box>
-    </HStack>
+      <Stack>
+        <H3 fontWeight="bold">{name}</H3>
+        <SizableText>@{username}</SizableText>
+      </Stack>
+    </XStack>
   );
 }
