@@ -23,6 +23,7 @@ import {
   Label,
   XStack,
   H1,
+  SizableText,
 } from "tamagui";
 import { Button } from "tamagui";
 

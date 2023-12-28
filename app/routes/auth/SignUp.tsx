@@ -146,7 +146,7 @@ export function SignUpScreen() {
       <Stack space={2} w="100%" mt={4}>
         <XStack space={4} alignItems="center">
           <Stack space={2} flexGrow={1}>
-              <Label>First Name</Label>
+              <Label htmlFor="first">First Name</Label>
               <Controller
                 name="first"
                 rules={{ required: "First name is required" }}
@@ -154,6 +154,7 @@ export function SignUpScreen() {
                 control={control}
                 render={({ field: { onChange, onBlur, value, ref } }) => (
                   <Input
+                    id="first"
                     onBlur={onBlur}
                     onChangeText={(val) => onChange(val)}
                     value={value}
@@ -170,7 +171,7 @@ export function SignUpScreen() {
                 {errors.first?.message}
                 {validationErrors?.first?.[0]}
               </SizableText>
-              <Label>Last Name</Label>
+              <Label htmlFor="last">Last Name</Label>
               <Controller
                 name="last"
                 rules={{ required: "Last name is required" }}
@@ -178,6 +179,7 @@ export function SignUpScreen() {
                 control={control}
                 render={({ field: { onChange, onBlur, value, ref } }) => (
                   <Input
+                    id="last"
                     onBlur={onBlur}
                     textContentType="familyName"
                     onChangeText={(val) => onChange(val)}
@@ -203,7 +205,7 @@ export function SignUpScreen() {
             {validationErrors?.picture?.[0]}
           </SizableText>
         </XStack>
-          <Label>Email</Label>
+          <Label htmlFor="email">Email</Label>
           <Controller
             name="email"
             rules={{ required: "Email is required" }}
@@ -211,6 +213,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="email"
                 onBlur={onBlur}
                 textContentType="emailAddress"
                 onChangeText={(val) => onChange(val)}
@@ -229,7 +232,7 @@ export function SignUpScreen() {
             {errors.email?.message}
             {validationErrors?.email?.[0]}
           </SizableText>
-          <Label>Phone</Label>
+          <Label htmlFor="phone">Phone</Label>
           <Controller
             name="phone"
             rules={{ required: "Phone number is required" }}
@@ -237,6 +240,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="phone"
                 onBlur={onBlur}
                 textContentType="telephoneNumber"
                 onChangeText={(val) => onChange(val)}
@@ -253,33 +257,34 @@ export function SignUpScreen() {
             {errors.phone?.message}
             {validationErrors?.phone?.[0]}
           </SizableText>
-          <Label>Venmo Username</Label>
+          <Label htmlFor="venmo">Venmo Username</Label>
           <Controller
             name="venmo"
             rules={{ required: "Venmo username is required" }}
             defaultValue=""
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  flexGrow={1}
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value as string | undefined}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  textContentType="username"
-                  onSubmitEditing={() => setFocus("username")}
-                  autoCapitalize="none"
-                  size="lg"
-                />
+              <Input
+                id="venmo"
+                flexGrow={1}
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value as string | undefined}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                textContentType="username"
+                onSubmitEditing={() => setFocus("username")}
+                autoCapitalize="none"
+                size="lg"
+              />
             )}
           />
           <SizableText>
             {errors.venmo?.message}
             {validationErrors?.venmo?.[0]}
           </SizableText>
-          <Label>Username</Label>
+          <Label htmlFor="username">Username</Label>
           <Controller
             name="username"
             rules={{ required: "Username is required" }}
@@ -287,6 +292,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="username"
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
                 value={value}
@@ -304,7 +310,7 @@ export function SignUpScreen() {
             {errors.username?.message}
             {validationErrors?.username?.[0]}
           </SizableText>
-          <Label>Password</Label>
+          <Label htmlFor="password">Password</Label>
           <Controller
             name="password"
             rules={{
@@ -318,6 +324,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="password"
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
                 value={value}

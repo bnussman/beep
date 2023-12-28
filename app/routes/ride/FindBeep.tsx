@@ -296,13 +296,14 @@ export function MainFindBeepScreen() {
     return (
       <Container keyboard alignItems="center" pt="$2" h="100%" px="$4">
         <Stack space={4} w="100%">
-            <Label fontWeight="bold">Group Size</Label>
+            <Label htmlFor="groupSize" fontWeight="bold">Group Size</Label>
             <Controller
               name="groupSize"
               rules={{ required: "Group size is required" }}
               control={control}
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Input
+                  id="groupSize"
                   keyboardType="numeric"
                   onBlur={onBlur}
                   onChangeText={(val) => onChange(val === "" ? "" : Number(val))}
@@ -318,13 +319,14 @@ export function MainFindBeepScreen() {
             <SizableText>
               {errors.groupSize?.message}
             </SizableText>
-            <Label fontWeight="bold">Pick Up Location</Label>
+            <Label htmlFor="origin" fontWeight="bold">Pick Up Location</Label>
             <Controller
               name="origin"
               rules={{ required: "Pick up location is required" }}
               control={control}
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <LocationInput
+                  id="origin"
                   onBlur={onBlur}
                   onChangeText={(val) => onChange(val)}
                   value={value}
@@ -340,13 +342,14 @@ export function MainFindBeepScreen() {
             <SizableText>
               {errors.origin?.message}
             </SizableText>
-            <Label fontWeight="bold">Destination Location</Label>
+            <Label htmlFor="destination" fontWeight="bold">Destination Location</Label>
             <Controller
               name="destination"
               rules={{ required: "Destination location is required" }}
               control={control}
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Input
+                  id="destination"
                   onBlur={onBlur}
                   onChangeText={(val) => onChange(val)}
                   value={value}
