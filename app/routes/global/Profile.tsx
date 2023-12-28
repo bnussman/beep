@@ -20,6 +20,7 @@ import {
   H2,
 } from "tamagui";
 import { MoreHorizontal } from "@tamagui/lucide-icons";
+import { Pressable } from "react-native";
 
 export const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -72,7 +73,9 @@ export function ProfileScreen() {
         headerRight: () => (
           <Popover size="$5" allowFlip>
             <Popover.Trigger asChild>
-              <MoreHorizontal />
+              <Pressable style={{ marginRight: 8 }}>
+                <MoreHorizontal />
+              </Pressable>
             </Popover.Trigger>
 
             <Popover.Content

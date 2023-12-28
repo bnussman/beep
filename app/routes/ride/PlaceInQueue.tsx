@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, Text } from "tamagui";
+import { Heading, SizableText } from "tamagui";
 import { Card } from "../../components/Card";
 
 interface Props {
@@ -11,10 +11,10 @@ export function PlaceInQueue({ position, firstName }: Props) {
   return (
     <Card w="100%" alignItems="center" justifyContent="center">
       <Heading>{position}</Heading>
-      <Text>
+      <SizableText>
         {position === 1 ? "person is" : "people are"} ahead of you in{" "}
         {firstName}&apos;s queue.
-      </Text>
+      </SizableText>
     </Card>
   );
 }
