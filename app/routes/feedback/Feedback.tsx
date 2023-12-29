@@ -86,7 +86,6 @@ export function Feedback() {
               onChangeText={(val) => onChange(val)}
               value={value}
               ref={ref}
-              size="lg"
             />
           )}
         />

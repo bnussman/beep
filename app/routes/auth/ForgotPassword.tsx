@@ -28,7 +28,6 @@ export function ForgotPasswordScreen(): JSX.Element {
     <Container alignItems="center" keyboard padding="$4">
       <Stack space="$4" w="100%">
         <Input
-          size="lg"
           textContentType="emailAddress"
           placeholder="example@ridebeep.app"
           returnKeyType="go"

@@ -163,7 +163,6 @@ export function SignUpScreen() {
                     returnKeyType="next"
                     onSubmitEditing={() => setFocus("last")}
                     textContentType="givenName"
-                    size="lg"
                   />
                 )}
               />
@@ -188,7 +187,6 @@ export function SignUpScreen() {
                     returnKeyLabel="next"
                     returnKeyType="next"
                     onSubmitEditing={() => setFocus("email")}
-                    size="lg"
                   />
                 )}
               />
@@ -223,7 +221,6 @@ export function SignUpScreen() {
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("phone")}
                 autoCapitalize="none"
-                size="lg"
               />
             )}
           />
@@ -249,7 +246,6 @@ export function SignUpScreen() {
                 returnKeyLabel="next"
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("venmo")}
-                size="lg"
               />
             )}
           />
@@ -276,7 +272,6 @@ export function SignUpScreen() {
                 textContentType="username"
                 onSubmitEditing={() => setFocus("username")}
                 autoCapitalize="none"
-                size="lg"
               />
             )}
           />
@@ -302,7 +297,6 @@ export function SignUpScreen() {
                 autoCapitalize="none"
                 textContentType="username"
                 onSubmitEditing={() => setFocus("password")}
-                size="lg"
               />
             )}
           />
@@ -334,7 +328,6 @@ export function SignUpScreen() {
                 secureTextEntry={true}
                 onSubmitEditing={onSubmit}
                 textContentType="password"
-                size="lg"
               />
             )}
           />
@@ -345,9 +338,9 @@ export function SignUpScreen() {
         <Button onPress={onSubmit} mt={2}>
           Sign Up
         </Button>
-        <Stack>
+        <Stack alignItems="center">
           <SizableText>By signing up, you agree to our </SizableText>
-          <Stack mb={8}>
+          <SizableText>
             <SizableText
               onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
             >
@@ -359,7 +352,7 @@ export function SignUpScreen() {
             >
               Terms of Service
             </SizableText>
-          </Stack>
+          </SizableText>
         </Stack>
       </Stack>
     </Container>

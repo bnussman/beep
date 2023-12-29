@@ -289,7 +289,6 @@ export function EditProfileScreen() {
                   returnKeyType="next"
                   onSubmitEditing={() => setFocus("last")}
                   textContentType="givenName"
-                  size="lg"
                 />
               )}
             />
@@ -312,7 +311,6 @@ export function EditProfileScreen() {
                   returnKeyType="next"
                   onSubmitEditing={() => setFocus("email")}
                   textContentType="familyName"
-                  size="lg"
                 />
               )}
             />
@@ -341,7 +339,6 @@ export function EditProfileScreen() {
               returnKeyType="next"
               onSubmitEditing={() => setFocus("phone")}
               textContentType="emailAddress"
-              size="lg"
             />
           )}
         />
@@ -364,7 +361,6 @@ export function EditProfileScreen() {
               returnKeyType="next"
               onSubmitEditing={() => setFocus("phone")}
               textContentType="telephoneNumber"
-              size="lg"
             />
           )}
         />
@@ -388,7 +384,6 @@ export function EditProfileScreen() {
               textContentType="username"
               onSubmitEditing={() => setFocus("cashapp")}
               autoCapitalize="none"
-              size="lg"
             />
           )}
         />
@@ -412,7 +407,6 @@ export function EditProfileScreen() {
               textContentType="username"
               onSubmitEditing={isDirty ? onSubmit : undefined}
               autoCapitalize="none"
-              size="lg"
             />
           )}
         />

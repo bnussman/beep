@@ -389,7 +389,7 @@ export function StartBeepingScreen() {
           <Stack alignItems="center" space={2}>
             <H3 fontWeight="bold">Want more riders?</H3>
             <SizableText>Jump to the top of the beeper list</SizableText>
-            <Button size="lg" onPress={() => navigation.navigate("Premium")}>
+            <Button onPress={() => navigation.navigate("Premium")}>
               Get Promoted
             </Button>
           </Stack>
@@ -404,7 +404,6 @@ export function StartBeepingScreen() {
         <Stack space={2} w="100%" p="$4">
           <Label fontWeight="bold">Max Rider Capacity</Label>
           <Input
-            size="lg"
             placeholder="Max Capcity"
             keyboardType="numeric"
             value={String(capacity)}
@@ -415,7 +414,6 @@ export function StartBeepingScreen() {
           </SizableText>
           <Label fontWeight="bold">Singles Rate</Label>
           <Input
-            size="lg"
             placeholder="Singles Rate"
             keyboardType="numeric"
             value={String(singlesRate)}
@@ -424,7 +422,6 @@ export function StartBeepingScreen() {
           <SizableText>Price for a single person riding alone</SizableText>
           <Label fontWeight="bold">Group Rate</Label>
           <Input
-            size="lg"
             placeholder="Group Rate"
             keyboardType="numeric"
             value={String(groupRate)}

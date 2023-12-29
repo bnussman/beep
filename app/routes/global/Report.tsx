@@ -57,7 +57,6 @@ export function ReportScreen() {
           />
         )}
         <Input
-          size="lg"
           h={100}
           multiline={true}
           placeholder="Your reason for reporting here"

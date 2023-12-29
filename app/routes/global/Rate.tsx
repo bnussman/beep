@@ -74,7 +74,6 @@ export function RateScreen() {
         )}
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Input
-          size="lg"
           h={100}
           multiline={true}
           placeholder="Your rating message goes here"

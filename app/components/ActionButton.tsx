@@ -92,7 +92,6 @@ function _Button(props: Props) {
 
   return (
     <Button
-      size="lg"
       iconAfter={isLoading ? <Spinner /> : undefined}
       onPress={onPress}
       textProps={{ fontWeight: "bold" }}

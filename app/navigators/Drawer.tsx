@@ -119,8 +119,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     <DrawerContentScrollView {...props}>
       <Stack>
         <Pressable onPress={() => navigate("Profile", { id: user?.id ?? "" })}>
-          <XStack alignItems="center" px="$3">
-            <Avatar mr="$4" size="$4" url={user?.photo} />
+          <XStack alignItems="center" px="$3" space="$3">
+            <Avatar size="$4" url={user?.photo} />
             <Stack flexGrow={1} my="$4">
               <SizableText fontWeight="bold" fontSize="$4">
                 {user?.name}
@@ -132,11 +132,11 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         </Pressable>
         <Stack space={4}>
           <Stack space="$3">
-            {!user?.isEmailVerified ? (
+            {!user?.isEmailVerified && (
               <Button onPress={handleResendVerification}>
                 Resend Verification Email
               </Button>
-            ) : null}
+            )}
             {props.state.routeNames.map((name: string, index: number) => {
               const Icon = getIcon(name);
               return (

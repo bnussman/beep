@@ -308,7 +308,6 @@ export function MainFindBeepScreen() {
                 returnKeyLabel="next"
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("origin")}
-                size="lg"
               />
             )}
           />
@@ -331,7 +330,6 @@ export function MainFindBeepScreen() {
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("destination")}
                 textContentType="location"
-                size="lg"
               />
             )}
           />
@@ -353,7 +351,6 @@ export function MainFindBeepScreen() {
                 returnKeyType="go"
                 onSubmitEditing={() => findBeep()}
                 textContentType="location"
-                size="lg"
               />
             )}
           />
@@ -568,7 +565,7 @@ export function MainFindBeepScreen() {
         />
         <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
         <Stack flexGrow={1} />
-        <LeaveButton beepersId={beep.beeper.id} w="100%" size="lg" />
+        <LeaveButton beepersId={beep.beeper.id} w="100%" />
       </Stack>
     </Container>
   );

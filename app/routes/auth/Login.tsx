@@ -125,7 +125,6 @@ export function LoginScreen() {
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("password")}
                 textContentType="username"
-                size="lg"
               />
             )}
           />
@@ -150,7 +149,6 @@ export function LoginScreen() {
                 returnKeyType="go"
                 onSubmitEditing={onLogin}
                 textContentType="password"
-                size="lg"
               />
             )}
           />

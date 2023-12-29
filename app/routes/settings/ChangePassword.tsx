@@ -38,7 +38,6 @@ export function ChangePasswordScreen() {
     <Container keyboard alignItems="center" p="$4">
       <Stack alignSelf="center" space="$4" w="100%">
         <Input
-          size="lg"
           secureTextEntry={true}
           textContentType="password"
           placeholder="New Password"
@@ -47,7 +46,6 @@ export function ChangePasswordScreen() {
           returnKeyType="next"
         />
         <Input
-          size="lg"
           ref={confirmPasswordRef}
           secureTextEntry={true}
           textContentType="password"
