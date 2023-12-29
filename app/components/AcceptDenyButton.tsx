@@ -47,7 +47,7 @@ export function AcceptDenyButton(props: Props) {
       flexGrow={isAccept ? 1 : undefined}
       onPress={onPress}
       theme={isAccept ? "green" : "red"}
-      iconAfter={loading ? <Spinner /> : <Icon size={22} color="white" />}
+      iconAfter={loading ? <Spinner /> : <Icon />}
     >
       {isAccept ? "Accept" : "Deny"}
     </Button>

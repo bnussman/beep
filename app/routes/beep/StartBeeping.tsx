@@ -3,7 +3,6 @@ import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
-import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid, isMobile } from "../../utils/constants";
@@ -21,8 +20,6 @@ import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
 import { Beep } from "./Beep";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import {
   Alert as NativeAlert,
@@ -50,6 +47,8 @@ import {
   SizableText,
   H3,
   H2,
+  Sheet,
+  Circle,
 } from "tamagui";
 import { Status } from "../../utils/types";
 import { Card } from "../../components/Card";
@@ -161,7 +160,7 @@ export function StartBeepingScreen() {
         (prev) => {
           const newQueue = { getQueue: data.data!.getBeeperUpdates };
           if (prev && prev.getQueue.length < newQueue.getQueue.length) {
-            bottomSheetRef.current?.expand();
+            // bottomSheetRef.current?.expand();
           }
           return newQueue;
         },
@@ -175,9 +174,7 @@ export function StartBeepingScreen() {
 
   const queue = data?.getQueue;
 
-  const bottomSheetRef = useRef<BottomSheetMethods>(null);
-
-  const snapPoints = useMemo(() => ["15%", "85%", "100%"], []);
+  const snapPoints = useMemo(() => [95, 85, 15], []);
 
   useEffect(() => {
     const listener = AppState.addEventListener("change", handleAppStateChange);
@@ -378,21 +375,19 @@ export function StartBeepingScreen() {
 
   const isRefreshing = Boolean(data) && loading;
 
-  const FL = isMobile ? BottomSheetFlatList : FlatList;
-
   if (isBeeping && queue?.length === 0) {
     return (
       <Container center>
         <Stack space={2} p={4} alignItems="center" mb={12}>
-          <H2>Your queue is empty</H2>
+          <H2 fontWeight="bold">Your queue is empty</H2>
           <SizableText textAlign="center">
             If someone wants you to beep them, it will appear here. If your app
             is closed, you will recieve a push notification.
           </SizableText>
         </Stack>
-        <Card>
+        <Card mt="$2">
           <Stack alignItems="center" space={2}>
-            <H3>Want more riders?</H3>
+            <H3 fontWeight="bold">Want more riders?</H3>
             <SizableText>Jump to the top of the beeper list</SizableText>
             <Button size="lg" onPress={() => navigation.navigate("Premium")}>
               Get Promoted
@@ -458,35 +453,24 @@ export function StartBeepingScreen() {
         {queue[0] && <Beep beep={queue[0]} />}
       </Stack>
       {queue.length > 1 ? (
-        <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
-          <Pressable onPress={() => bottomSheetRef.current?.expand()}>
-            <XStack alignItems="center" mb={2} pt={1} px={4}>
-              <H3 fontWeight="bold">Queue</H3>
-              <Stack flexGrow={1} />
-              {queue.length > 0 &&
-                queue.some((entry) => entry.status === Status.WAITING) && (
-                  <Stack borderRadius="$10" bg="$blue5" w={4} h={4} mr={2} />
-                )}
-            </XStack>
-          </Pressable>
-          <FL
-            refreshing={loading && data?.getQueue !== undefined}
-            onRefresh={refetch}
-            data={queue.filter((entry) => entry.id !== queue[0]?.id)}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => (
-              <QueueItem item={item} index={index} />
-            )}
-            contentContainerStyle={{ paddingLeft: 8, paddingRight: 8 }}
-            refreshControl={
-              <RefreshControl
-                tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-                refreshing={isRefreshing}
-                onRefresh={refetch}
-              />
-            }
-          />
-        </BottomSheet>
+        <Sheet snapPoints={snapPoints} open modal>
+          <Sheet.Handle />
+          <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" space="$5">
+            <Stack w="100%" height="100%">
+              <XStack justifyContent="space-between">
+                <H3 fontWeight="bold">Queue</H3>
+                <Stack flexGrow={1} />
+                {queue.length > 0 &&
+                  queue.some((entry) => entry.status === Status.WAITING) && (
+                    <Circle bg="$blue5" w={24} h={24} />
+                  )}
+              </XStack>
+              {queue.filter((entry) => entry.id !== queue[0]?.id).map((item, index) => (
+                <QueueItem item={item} index={index} />
+              ))}
+            </Stack>
+          </Sheet.Frame>
+        </Sheet>
       ) : null}
     </Container>
   );

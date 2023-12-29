@@ -1,7 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
 import { GetRateDataQuery, RateUserMutation } from "../generated/graphql";
-import { BottomSheet } from "./BottomSheet";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { RateUser } from "../routes/global/Rate";
 import { Alert } from "../utils/Alert";
@@ -10,7 +8,7 @@ import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../routes/Ratings";
-import { Button, H2, Stack, Spinner } from "tamagui";
+import { Button, H2, Stack, Spinner, Sheet } from "tamagui";
 import { Pressable } from "react-native";
 
 export const GetRateData = gql`
@@ -36,22 +34,17 @@ export function RateSheet() {
 
   const beep = data?.getLastBeepToRate;
 
-  const bottomSheetRef = useRef<BottomSheetMethods>(null);
-
-  const snapPoints = useMemo(() => ["42%"], []);
+  const snapPoints = useMemo(() => [42], []);
 
   const onSubmit = () => {
     rate({
-      refetchQueries: [Ratings],
+      refetchQueries: [Ratings, GetRateData],
       variables: {
         userId: beep?.beeper.id,
         beepId: beep?.id,
         stars: stars,
       },
     })
-      .then(() => {
-        bottomSheetRef.current?.close();
-      })
       .catch((error: ApolloError) => {
         Alert(error);
       });
@@ -60,23 +53,22 @@ export function RateSheet() {
   if (!beep) return null;
 
   return (
-    <BottomSheet
-      ref={bottomSheetRef}
+    <Sheet
       snapPoints={snapPoints}
-      bottomInset={45}
-      detached={true}
-      containerStyle={{ marginLeft: 20, marginRight: 20 }}
-      enablePanDownToClose
-      shadow="light"
+      open={Boolean(beep)}
+      dismissOnSnapToBottom
     >
-      <Stack alignItems="center">
+      <Sheet.Handle />
+      <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" space="$5">
         <Pressable
           onPress={() =>
             navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
           }
         >
-          <Avatar url={beep.beeper.photo} size="$8" />
-          <H2>{beep.beeper.name}</H2>
+          <Stack alignItems="center">
+            <Avatar url={beep.beeper.photo} size="$8" />
+            <H2>{beep.beeper.name}</H2>
+          </Stack>
         </Pressable>
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Button
@@ -87,7 +79,7 @@ export function RateSheet() {
         >
           Rate User
         </Button>
-      </Stack>
-    </BottomSheet>
+      </Sheet.Frame>
+    </Sheet>
   );
 }

@@ -377,12 +377,13 @@ export function MainFindBeepScreen() {
       <Container p={2} px={4} alignItems="center">
         <Stack alignItems="center" space={4} w="100%" h="94%">
           <Pressable
+            style={{ width: "100%" }}
             onPress={() =>
               navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
             }
           >
-            <XStack alignItems="center" space={4} w="100%">
-              <Stack flexShrink={1}>
+            <XStack alignItems="center" space={4} w="100%" justifyContent="space-between">
+              <Stack>
                 <H3 fontWeight="bold">{beep.beeper.name}</H3>
                 <SizableText>
                   <SizableText fontWeight="bold">Pick Up </SizableText>
@@ -393,8 +394,7 @@ export function MainFindBeepScreen() {
                   <Paragraph>{beep.destination}</Paragraph>
                 </SizableText>
               </Stack>
-              <Stack flexGrow={1} />
-              <Avatar size="xl" url={beep.beeper.photo} />
+              <Avatar size="$10" url={beep.beeper.photo} />
             </XStack>
           </Pressable>
           <Rates

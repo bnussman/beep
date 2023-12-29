@@ -16,7 +16,7 @@ import { Navigation } from "../../utils/Navigation";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "../../components/Card";
-import { Stack, Button, XStack, SizableText, Paragraph, H5, H3 } from "tamagui";
+import { Stack, Button, XStack, SizableText, Paragraph, H3, H4 } from "tamagui";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
 import { Phone, MessageSquare } from "@tamagui/lucide-icons";
@@ -52,28 +52,28 @@ export function Beep(props: Props) {
             ) : null}
           </Stack>
           <Stack flexGrow={1} />
-          <Avatar size="xl" url={beep.rider.photo} />
+          <Avatar size="$8" url={beep.rider.photo} />
         </XStack>
       </Pressable>
       <Card mt={4}>
         <Stack space={2}>
           <Stack>
-            <H5 fontWeight="bold">Group Size</H5>
+            <H4 fontWeight="bold">Group Size</H4>
             <SizableText>{beep.groupSize}</SizableText>
           </Stack>
-          <H5 fontWeight="bold">Pick Up</H5>
+          <H4 fontWeight="bold">Pick Up</H4>
           <Paragraph flexShrink={1}>{beep.origin}</Paragraph>
-          <H5 fontWeight="bold">Destination</H5>
+          <H4 fontWeight="bold">Destination</H4>
           <Paragraph flexShrink={1}>{beep.destination}</Paragraph>
         </Stack>
       </Card>
       <Stack flexGrow={1} />
       <Stack space={3}>
         {beep.status === Status.WAITING ? (
-          <>
+          <Stack space="$2" mb="$4">
             <AcceptDenyButton item={beep} type="deny" />
             <AcceptDenyButton item={beep} type="accept" />
-          </>
+          </Stack>
         ) : (
           <>
             <XStack space={2}>
