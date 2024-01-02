@@ -13,6 +13,9 @@ const config: ExpoConfig = {
   notification: {
     iosDisplayInForeground: true,
   },
+  experiments: {
+    typedRoutes: true
+  },
   updates: {
     url: "https://u.expo.dev/2c7a6adb-2579-43f1-962e-b23c7e541ec4",
     fallbackToCacheTimeout: 10_000,
@@ -30,7 +33,7 @@ const config: ExpoConfig = {
     favicon: "./assets/favicon.png",
     bundler: "metro",
   },
-  plugins: ["sentry-expo"],
+  plugins: ["sentry-expo", "expo-router"],
   hooks: {
     postPublish: [
       {

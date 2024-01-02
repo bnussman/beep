@@ -3,13 +3,13 @@ import { GetRateDataQuery, RateUserMutation } from "../generated/graphql";
 import { BottomSheet } from "./BottomSheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { RateUser } from "../routes/global/Rate";
+import { RateUser } from "../app/(app)/rate";
 import { Alert } from "../utils/Alert";
 import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Navigation } from "../utils/Navigation";
-import { Ratings } from "../routes/Ratings";
+import { Ratings } from "../app/(app)/ratings";
 import { Button, Center, Heading, Pressable, Spacer } from "native-base";
 
 export const GetRateData = gql`
