@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GetUserProfileQuery, ReportUserMutation } from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
 import { Input, Button, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { UserHeader } from "../../components/UserHeader";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { GetUser } from "./profile";
+import { router, useLocalSearchParams } from "expo-router";
 
 const ReportUser = gql`
   mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
@@ -17,8 +16,7 @@ const ReportUser = gql`
 export default function ReportScreen() {
   const [reason, setReason] = useState<string>();
   const [report, { loading }] = useMutation<ReportUserMutation>(ReportUser);
-  const { params } = useRoute<any>();
-  const { goBack } = useNavigation<Navigation>();
+  const params = useLocalSearchParams<{ userId: string, beepId: string }>();
 
   const { data } = useQuery<GetUserProfileQuery>(GetUser, {
     variables: {
@@ -37,7 +35,7 @@ export default function ReportScreen() {
           reason: reason,
         },
       });
-      goBack();
+      router.back();
     } catch (error) {
       alert(error);
     }

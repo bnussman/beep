@@ -4,8 +4,7 @@ import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
 import { RefreshControl } from "react-native";
-import { ChooseBeepMutation, ChooseBeepMutationVariables, GetBeepersQuery } from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
+import { ChooseBeepMutation, GetBeepersQuery } from "../../generated/graphql";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { Card } from "../../components/Card";
@@ -24,6 +23,7 @@ import {
 } from "native-base";
 import { client } from "../../utils/Apollo";
 import { InitialRiderStatus } from "./ride";
+import { router } from "expo-router";
 
 const GetBeepers = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -105,7 +105,6 @@ export default function PickBeepScreen() {
   const { colorMode } = useColorMode();
   const { location } = useLocation();
   const { params } = useRoute<any>();
-  const navigation = useNavigation<Navigation>();
 
   const { data, loading, error, refetch } = useQuery<GetBeepersQuery>(
     GetBeepers,
@@ -137,7 +136,7 @@ export default function PickBeepScreen() {
           query: InitialRiderStatus,
           data: { getRiderStatus: { ...data.chooseBeep } },
         });
-        navigation.goBack();
+        router.back();
       }
     } catch (error) {
       alert((error as ApolloError).message);

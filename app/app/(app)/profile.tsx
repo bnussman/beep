@@ -3,11 +3,10 @@ import { gql, useQuery } from "@apollo/client";
 import { Card } from "../../components/Card";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
-import { Navigation } from "../../utils/Navigation";
 import { GetUserProfileQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { RatePreview } from "../../components/RatePreview";
 import { useUser } from "../../utils/useUser";
 import {
@@ -21,6 +20,7 @@ import {
   Pressable,
   Icon,
 } from "native-base";
+import { router, useLocalSearchParams } from "expo-router";
 
 export const GetUser = gql`
   query GetUserProfile($id: String!) {
@@ -45,26 +45,20 @@ export const GetUser = gql`
 `;
 
 export default function ProfileScreen() {
-  const { params } = useRoute<any>();
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const params = useLocalSearchParams<{ id: string, beepId: string }>();
+  const navigation = useNavigation();
 
   const { data, loading, error } = useQuery<GetUserProfileQuery>(GetUser, {
     variables: { id: params.id },
   });
 
   const handleReport = () => {
-    navigation.navigate("Report", {
-      userId: params.id,
-      beepId: params.beepId,
-    });
+    router.push({ pathname: "/(app)/report", params: { userId: params.id, beepId: params.beepId } });
   };
 
   const handleRate = () => {
-    navigation.navigate("Rate", {
-      userId: params.id,
-      beepId: params.beepId,
-    });
+    router.push({ pathname: "/(app)/report", params: { userId: params.id, beepId: params.beepId } });
   };
 
   React.useLayoutEffect(() => {
@@ -89,7 +83,7 @@ export default function ProfileScreen() {
               );
             }}
           >
-            {Boolean(params.beep) && (
+            {Boolean(params.beepId) && (
               <Menu.Item onPress={handleRate}>Rate</Menu.Item>
             )}
             <Menu.Item onPress={handleReport}>Report</Menu.Item>

@@ -8,12 +8,10 @@ import { client } from "../utils/Apollo";
 import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../utils/Navigation";
 import {
   LOCATION_TRACKING,
 } from "../app/(app)/beep";
 import {
-  createDrawerNavigator,
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
@@ -33,6 +31,7 @@ import {
   Badge,
 } from "native-base";
 import { useAutoUpdate } from "../utils/updates";
+import { router } from "expo-router";
 
 const Logout = gql`
   mutation Logout {
@@ -42,25 +41,23 @@ const Logout = gql`
 
 const getIcon = (screenName: string) => {
   switch (screenName) {
-    case "Ride":
+    case "ride":
       return "car";
-    case "Beep":
+    case "beep":
       return "steering";
-    case "Profile":
+    case "edit-profile":
       return "account-edit";
-    case "Change Password":
+    case "change-password":
       return "form-textbox-password";
-    case "Beeps":
+    case "beeps":
       return "car-multiple";
-    case "Ratings":
+    case "ratings":
       return "account-star";
-    case "My Cars":
+    case "cars":
       return "car";
-    case "Changelog":
-      return "playlist-plus";
-    case "Feedback":
+    case "feedback":
       return "help-circle-outline";
-    case "Premium":
+    case "premium":
       return "shield-star-outline";
     default:
       return "car";
@@ -75,7 +72,6 @@ const Resend = gql`
 
 export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
-  const { navigate } = useNavigation<Navigation>();
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
@@ -117,7 +113,7 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props}>
       <VStack space={6} my={2} mx={2}>
-        <Pressable onPress={() => navigate("Profile", { id: user?.id ?? "" })}>
+        <Pressable onPress={() => router.push({ pathname: "/(app)/profile", params: { id: user?.id ?? "" } })}>
           <HStack alignItems="center">
             <Avatar
               mr={2}

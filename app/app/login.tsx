@@ -8,13 +8,11 @@ import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import { getPushToken } from "../utils/Notifications";
-import { Navigation } from "../utils/Navigation";
 import { Container } from "../components/Container";
 import { UserData } from "../utils/useUser";
 import { Logger } from "../utils/Logger";
 import { useValidationErrors } from "../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigation } from "@react-navigation/native";
 import {
   Stack,
   Button,
@@ -26,6 +24,7 @@ import {
   WarningOutlineIcon,
   HStack,
 } from "native-base";
+import { router } from "expo-router";
 
 const Login = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -63,8 +62,6 @@ export default function LoginScreen() {
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
 
-  const navigation = useNavigation<Navigation>();
-
   const {
     control,
     handleSubmit,
@@ -101,6 +98,8 @@ export default function LoginScreen() {
         query: UserData,
         data: { getUser: { ...data?.login.user, pushToken } },
       });
+
+      router.replace('/(app)/ride');
     } catch (error) {
       Alert(error as ApolloError);
     }
@@ -198,7 +197,7 @@ export default function LoginScreen() {
           <Button
             variant="link"
             _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Sign Up")}
+            onPress={() => router.push("/signup")}
           >
             Sign Up
           </Button>
@@ -206,7 +205,7 @@ export default function LoginScreen() {
           <Button
             variant="link"
             _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Forgot Password")}
+            onPress={() => router.push('/forgot-password')}
           >
             Forgot Password
           </Button>

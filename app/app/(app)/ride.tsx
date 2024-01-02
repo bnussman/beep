@@ -12,7 +12,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
-import { Navigation } from "../../utils/Navigation";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Status } from "../../utils/types";
@@ -58,6 +57,7 @@ import {
   WarningOutlineIcon,
   Image,
 } from "native-base";
+import { router } from "expo-router";
 
 export const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -157,7 +157,6 @@ const GetETA = gql`
 export default function MainFindBeepScreen() {
   const { user } = useUser();
   const { getLocation } = useLocation(false);
-  const { navigate } = useNavigation<Navigation>();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
     InitialRiderStatus,
@@ -265,7 +264,7 @@ export default function MainFindBeepScreen() {
   }, [beep]);
 
   const findBeep = handleSubmit((values) => {
-    navigate("Choose Beeper", values);
+    router.push({ pathname: "pick", params: values });
   });
 
   function getCurrentStatusMessage(): string {
@@ -400,7 +399,7 @@ export default function MainFindBeepScreen() {
           <Pressable
             w="100%"
             onPress={() =>
-              navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
+              router.push({ pathname: "profile", params: { id: beep.beeper.id, beepId: beep.id } })
             }
           >
             <HStack alignItems="center" space={4} w="100%">

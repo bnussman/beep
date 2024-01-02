@@ -2,7 +2,6 @@ import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -31,6 +30,7 @@ import {
   FormControl,
   WarningOutlineIcon,
 } from "native-base";
+import { router } from "expo-router";
 
 const makes = getMakes();
 
@@ -61,8 +61,6 @@ const AddCarMutation = gql`
 let picture: CreateCarMutationVariables["photo"];
 
 export default function AddCar() {
-  const navigation = useNavigation<Navigation>();
-
   const {
     control,
     handleSubmit,
@@ -126,7 +124,7 @@ export default function AddCar() {
         refetchQueries: [CarsQuery],
       });
 
-      navigation.goBack();
+      router.back();
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         alert((error as ApolloError).message);
