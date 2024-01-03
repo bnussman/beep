@@ -1,3 +1,6 @@
+// Enable hot reloading in web
+import "@expo/metro-runtime";
+
 import { registerRootComponent } from "expo";
 
 import App from "./App";
