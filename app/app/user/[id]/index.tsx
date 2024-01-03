@@ -54,11 +54,11 @@ export default function ProfileScreen() {
   });
 
   const handleReport = () => {
-    router.push({ pathname: "/user/[id]/report", params: { userId: params.id, beepId: params.beepId } });
+    router.push({ pathname: "/user/[id]/report", params: { id: params.id, userId: params.id, beepId: params.beepId } });
   };
 
   const handleRate = () => {
-    router.push({ pathname: "/user/[id]/rate", params: { userId: params.id, beepId: params.beepId } });
+    router.push({ pathname: "/user/[id]/rate", params: { id: params.id, userId: params.id, beepId: params.beepId } });
   };
 
   React.useLayoutEffect(() => {

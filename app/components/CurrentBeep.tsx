@@ -12,7 +12,6 @@ import { GetInitialQueueQuery } from "../generated/graphql";
 import { CancelButton } from "./CancelButton";
 import { AcceptDenyButton } from "./AcceptDenyButton";
 import { Linking } from "react-native";
-import { Navigation } from "../utils/Navigation";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "./Card";
@@ -34,6 +33,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printStars } from "./Stars";
 import { Status } from "../utils/types";
 import { Logger } from "../utils/Logger";
+import { router } from "expo-router";
 
 interface Props {
   beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -42,7 +42,7 @@ interface Props {
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
   const { onCopy } = useClipboard();
   const { show } = useToast();
 
@@ -55,10 +55,10 @@ export function Beep(props: Props) {
     <>
       <Pressable
         onPress={() =>
-          navigate("Profile", {
+          router.push({ pathname: "/user/[id]/",  params: {
             id: beep.rider.id,
             beepId: beep.id,
-          })
+          }})
         }
       >
         <HStack alignItems="center" space={4}>

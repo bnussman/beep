@@ -2,7 +2,6 @@ import React from "react";
 import { AcceptDenyButton } from "./AcceptDenyButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Alert, Linking, Pressable } from "react-native";
-import { Navigation } from "../utils/Navigation";
 import { GetInitialQueueQuery } from "../generated/graphql";
 import { isMobile, Unpacked } from "../utils/constants";
 import { getRawPhoneNumber, openDirections } from "../utils/links";
@@ -10,7 +9,6 @@ import { CancelBeep } from "./CancelButton";
 import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "./Stars";
 import { Avatar } from "./Avatar";
-import { useNavigation } from "@react-navigation/native";
 import { Card } from "./Card";
 import {
   Box,
@@ -23,6 +21,7 @@ import {
   Divider,
 } from "native-base";
 import { Status } from "../utils/types";
+import { router } from "expo-router";
 
 interface Props {
   item: Unpacked<GetInitialQueueQuery["getQueue"]>;
@@ -31,7 +30,6 @@ interface Props {
 
 export function QueueItem({ item }: Props) {
   const [cancel] = useMutation(CancelBeep);
-  const { navigate } = useNavigation<Navigation>();
 
   const onCancelPress = () => {
     if (isMobile) {
@@ -67,10 +65,10 @@ export function QueueItem({ item }: Props) {
         <Box>
           <Pressable
             onPress={() =>
-              navigate("Profile", {
+              router.push({ pathname: "/user/[id]/", params: {
                 id: item.rider.id,
                 beepId: item.id,
-              })
+              }})
             }
           >
             <HStack space={2} alignItems="center">
@@ -163,10 +161,10 @@ export function QueueItem({ item }: Props) {
       <Stack space={1}>
         <Pressable
           onPress={() =>
-            navigate("Profile", {
+            router.push({ pathname: "/user/[id]/", params: {
               id: item.rider.id,
               beepId: item.id,
-            })
+            }})
           }
         >
           <HStack alignItems="center">
