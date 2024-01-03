@@ -40,7 +40,7 @@ export function Beep({ item }: Props) {
       mx={1}
       pressable
       onPress={() =>
-        navigation.navigate("Profile", { id: otherUser.id, beepId: item.id })
+        navigation.navigate("User", { id: otherUser.id, beepId: item.id })
       }
     >
       <HStack alignItems="center" mb={2}>

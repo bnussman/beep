@@ -124,7 +124,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props}>
       <VStack space={6} my={2} mx={2}>
-        <Pressable onPress={() => navigate("Profile", { id: user?.id ?? "" })}>
+        <Pressable onPress={() => navigate("User", { id: user?.id ?? "" })}>
           <HStack alignItems="center">
             <Avatar
               mr={2}

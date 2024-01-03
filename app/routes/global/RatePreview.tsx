@@ -138,7 +138,7 @@ export function RatePreview({ id }: Props) {
             p={1}
             mt={2}
             pressable
-            onPress={() => navigate("Profile", { id: rating.rater.id, beepId: rating.beep.id })}
+            onPress={() => navigate("User", { id: rating.rater.id, beepId: rating.beep.id })}
           >
             <HStack alignItems="center" p={2}>
               <Avatar size="md" mr={4} url={rating.rater.photo} />

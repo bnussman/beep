@@ -41,7 +41,7 @@ const RootStack = createNativeStackNavigator({
             headerShown: false,
           },
         },
-        Profile: ProfileScreen,
+        User: ProfileScreen,
         Report: {
           screen: ReportScreen,
           options: {

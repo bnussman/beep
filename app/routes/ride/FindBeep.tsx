@@ -399,7 +399,7 @@ export function MainFindBeepScreen() {
           <Pressable
             w="100%"
             onPress={() =>
-              navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
+              navigate("User", { id: beep.beeper.id, beepId: beep.id })
             }
           >
             <HStack alignItems="center" space={4} w="100%">

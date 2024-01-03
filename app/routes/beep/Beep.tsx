@@ -53,7 +53,7 @@ export function Beep(props: Props) {
     <>
       <Pressable
         onPress={() =>
-          navigate("Profile", {
+          navigate("User", {
             id: beep.rider.id,
             beepId: beep.id,
           })

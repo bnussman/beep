@@ -66,7 +66,7 @@ export function QueueItem({ item }: Props) {
         <Box>
           <Pressable
             onPress={() =>
-              navigate("Profile", {
+              navigate("User", {
                 id: item.rider.id,
                 beepId: item.id,
               })
@@ -162,7 +162,7 @@ export function QueueItem({ item }: Props) {
       <Stack space={1}>
         <Pressable
           onPress={() =>
-            navigate("Profile", {
+            navigate("User", {
               id: item.rider.id,
               beepId: item.id,
             })

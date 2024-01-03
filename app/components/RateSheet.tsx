@@ -72,7 +72,7 @@ export function RateSheet() {
           w="100%"
           alignItems="center"
           onPress={() =>
-            navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
+            navigate("User", { id: beep.beeper.id, beepId: beep.id })
           }
         >
           <Avatar
