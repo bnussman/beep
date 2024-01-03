@@ -7,7 +7,6 @@ import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
-import { useNavigation } from "@react-navigation/native";
 import {
   LOCATION_TRACKING,
 } from "../app/(app)/beep";
@@ -32,6 +31,7 @@ import {
 } from "native-base";
 import { useAutoUpdate } from "../utils/updates";
 import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 const Logout = gql`
   mutation Logout {
@@ -112,8 +112,9 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props}>
+      <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
       <VStack space={6} my={2} mx={2}>
-        <Pressable onPress={() => router.push({ pathname: "/(app)/profile", params: { id: user?.id ?? "" } })}>
+        <Pressable onPress={() => router.push({ pathname: "/user/[id]/", params: { id: user?.id ?? "" } })}>
           <HStack alignItems="center">
             <Avatar
               mr={2}

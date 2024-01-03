@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { GetUserProfileQuery, ReportUserMutation } from "../../generated/graphql";
+import { GetUserProfileQuery, ReportUserMutation } from "../../../generated/graphql";
 import { Input, Button, Stack } from "native-base";
-import { Container } from "../../components/Container";
-import { UserHeader } from "../../components/UserHeader";
-import { GetUser } from "./profile";
+import { Container } from "../../../components/Container";
+import { UserHeader } from "../../../components/UserHeader";
 import { router, useLocalSearchParams } from "expo-router";
+import { GetUser } from ".";
 
 const ReportUser = gql`
   mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {

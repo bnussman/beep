@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { GetUserProfileQuery, RateUserMutation } from "../../generated/graphql";
-import { RateBar } from "../../components/Rate";
-import { UserHeader } from "../../components/UserHeader";
+import { GetUserProfileQuery, RateUserMutation } from "../../../generated/graphql";
+import { RateBar } from "../../../components/Rate";
+import { UserHeader } from "../../../components/UserHeader";
 import { Button, Input, Stack } from "native-base";
-import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
-import { GetUser } from "./profile";
+import { Container } from "../../../components/Container";
+import { Alert } from "../../../utils/Alert";
 import { router, useLocalSearchParams } from "expo-router";
+import { GetUser } from ".";
 
 export const RateUser = gql`
   mutation RateUser(

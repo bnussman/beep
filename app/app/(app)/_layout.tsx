@@ -6,10 +6,12 @@ import { cache } from "../../utils/Apollo";
 import { useEffect } from "react";
 import { setPurchaseUser } from "../../utils/purchase";
 import { setUserContext } from "../../utils/sentry";
-import { Redirect, Stack } from "expo-router";
+import { Redirect } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { Text, useColorMode } from "native-base";
 import { CustomDrawerContent } from "../../components/Drawer";
+import { SplashScreen } from "expo-router";
+import { Logger } from "../../utils/Logger";
 
 export default function AppLayout() {
   const { colorMode } = useColorMode();
@@ -17,6 +19,11 @@ export default function AppLayout() {
     errorPolicy: "none",
     onCompleted: () => {
       updatePushToken();
+      try {
+        SplashScreen.hideAsync();
+      } catch (error) {
+        Logger.error(error);
+      }
     },
   });
 
@@ -51,16 +58,13 @@ export default function AppLayout() {
 
   // This layout can be deferred because it's not the root layout.
   return (
-    <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <Drawer
-        initialRouteName="ride"
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-        screenOptions={{
-          drawerType: "front",
-          headerTintColor: colorMode === "dark" ? "white" : "black",
-        }}
-      />
-    </>
+    <Drawer
+      initialRouteName="ride"
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      screenOptions={{
+        drawerType: "front",
+        headerTintColor: colorMode === "dark" ? "white" : "black",
+      }}
+    />
   );
 }

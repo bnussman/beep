@@ -1,11 +1,9 @@
 import React, { useEffect } from "react";
 import LocationInput from "../../components/LocationInput";
-import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
 import { BeeperMarker, BeepersMap } from "../../components/BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
-import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "../../components/LeaveButton";
 import { Ionicons } from "@expo/vector-icons";
@@ -34,10 +32,8 @@ import {
   shareVenmoInformation,
 } from "../../utils/links";
 import {
-  ApolloError,
   gql,
   useLazyQuery,
-  useMutation,
   useQuery,
   useSubscription,
 } from "@apollo/client";
@@ -58,6 +54,7 @@ import {
   Image,
 } from "native-base";
 import { router } from "expo-router";
+import { SplashScreen } from "expo-router";
 
 export const InitialRiderStatus = gql`
   query GetInitialRiderStatus {
@@ -242,8 +239,6 @@ export default function MainFindBeepScreen() {
   });
 
   useEffect(() => {
-    SplashScreen.hideAsync();
-
     const listener = AppState.addEventListener("change", handleAppStateChange);
 
     return () => {
@@ -264,7 +259,7 @@ export default function MainFindBeepScreen() {
   }, [beep]);
 
   const findBeep = handleSubmit((values) => {
-    router.push({ pathname: "pick", params: values });
+    router.push({ pathname: "/pick", params: values });
   });
 
   function getCurrentStatusMessage(): string {
@@ -399,7 +394,7 @@ export default function MainFindBeepScreen() {
           <Pressable
             w="100%"
             onPress={() =>
-              router.push({ pathname: "profile", params: { id: beep.beeper.id, beepId: beep.id } })
+              router.push({ pathname: "/profile", params: { id: beep.beeper.id, beepId: beep.id } })
             }
           >
             <HStack alignItems="center" space={4} w="100%">

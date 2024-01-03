@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import * as SplashScreen from "expo-splash-screen";
+import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PasswordInput from "../components/PasswordInput";
 import { Alert } from "../utils/Alert";
@@ -23,8 +22,10 @@ import {
   FormControl,
   WarningOutlineIcon,
   HStack,
+  useColorMode,
 } from "native-base";
 import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 const Login = gql`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -59,6 +60,7 @@ const Login = gql`
 
 export default function LoginScreen() {
   const [login, { error }] = useMutation<LoginMutation>(Login);
+  const { colorMode } = useColorMode();
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
 
@@ -68,14 +70,6 @@ export default function LoginScreen() {
     setFocus,
     formState: { errors, isSubmitting },
   } = useForm<Omit<LoginMutationVariables, "pushToken">>();
-
-  useEffect(() => {
-    try {
-      SplashScreen.hideAsync();
-    } catch (error) {
-      // ...
-    }
-  }, []);
 
   const onLogin = handleSubmit(async (variables) => {
     let pushToken: string | null;
@@ -111,6 +105,7 @@ export default function LoginScreen() {
       center
       scrollViewProps={{ scrollEnabled: true, bounces: false }}
     >
+      <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
       <Stack space={4} w="90%">
         <Box>
           <Heading size="2xl" mr={4} fontWeight="extrabold" letterSpacing="xs">

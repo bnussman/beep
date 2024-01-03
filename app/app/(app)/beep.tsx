@@ -2,14 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import * as SplashScreen from "expo-splash-screen";
 import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid, isMobile } from "../../utils/constants";
 import { ApolloError, gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { cache, client } from "../../utils/Apollo";
-import { Navigation } from "../../utils/Navigation";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
@@ -48,6 +46,7 @@ import {
 } from "native-base";
 import { Status } from "../../utils/types";
 import { Card } from "../../components/Card";
+import { router } from "expo-router";
 
 let unsubscribe: any = null;
 
@@ -131,7 +130,7 @@ export const LOCATION_TRACKING = "location-tracking";
 export default function StartBeepingScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [singlesRate, setSinglesRate] = useState<string>(
@@ -336,10 +335,6 @@ export default function StartBeepingScreen() {
   }, []);
 
   useEffect(() => {
-    SplashScreen.hideAsync();
-  }, []);
-
-  useEffect(() => {
     if (!user) {
       return;
     }
@@ -383,7 +378,7 @@ export default function StartBeepingScreen() {
             <Text textAlign="center">
               Jump to the top of the beeper list
             </Text>
-            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
+            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => router.push("/premium")}>Get Promoted</Button>
           </Stack>
         </Card>
       </Container>

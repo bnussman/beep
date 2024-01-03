@@ -1,14 +1,14 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Card } from "../../components/Card";
-import { printStars } from "../../components/Stars";
-import { Container } from "../../components/Container";
-import { GetUserProfileQuery } from "../../generated/graphql";
-import { Avatar } from "../../components/Avatar";
+import { Card } from "../../../components/Card";
+import { printStars } from "../../../components/Stars";
+import { Container } from "../../../components/Container";
+import { GetUserProfileQuery } from "../../../generated/graphql";
+import { Avatar } from "../../../components/Avatar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { RatePreview } from "../../components/RatePreview";
-import { useUser } from "../../utils/useUser";
+import { RatePreview } from "../../../components/RatePreview";
+import { useUser } from "../../../utils/useUser";
 import {
   Spinner,
   Text,
@@ -54,11 +54,11 @@ export default function ProfileScreen() {
   });
 
   const handleReport = () => {
-    router.push({ pathname: "/(app)/report", params: { userId: params.id, beepId: params.beepId } });
+    router.push({ pathname: "/user/[id]/report", params: { userId: params.id, beepId: params.beepId } });
   };
 
   const handleRate = () => {
-    router.push({ pathname: "/(app)/report", params: { userId: params.id, beepId: params.beepId } });
+    router.push({ pathname: "/user/[id]/rate", params: { userId: params.id, beepId: params.beepId } });
   };
 
   React.useLayoutEffect(() => {

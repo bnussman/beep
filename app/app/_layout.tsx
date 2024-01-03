@@ -4,19 +4,18 @@ import { ApolloProvider } from "@apollo/client";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { colorModeManager } from "../utils/theme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StatusBar } from "expo-status-bar";
 import { NATIVE_BASE_THEME } from "../utils/constants";
-import * as SplashScreen from "expo-splash-screen";
 import config from "../package.json";
 import * as Sentry from "sentry-expo";
 import { setupPurchase } from "../utils/purchase";
-import { Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { client } from "../utils/Apollo";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({
@@ -35,7 +34,10 @@ function Beep() {
   return (
     <ThemeProvider value={colorMode === "dark" ? DarkTheme: DefaultTheme}>
       <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
-      <Stack />
+      <Stack>
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      </Stack>
     </ThemeProvider>
   );
 }

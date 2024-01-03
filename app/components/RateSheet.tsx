@@ -3,7 +3,7 @@ import { GetRateDataQuery, RateUserMutation } from "../generated/graphql";
 import { BottomSheet } from "./BottomSheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { RateUser } from "../app/(app)/rate";
+import { RateUser } from "../app/user/[id]/rate";
 import { Alert } from "../utils/Alert";
 import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";

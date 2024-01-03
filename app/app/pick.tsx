@@ -1,14 +1,14 @@
 import React from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { printStars } from "../../components/Stars";
-import { Unpacked } from "../../utils/constants";
+import { printStars } from "../components/Stars";
+import { Unpacked } from "../utils/constants";
 import { RefreshControl } from "react-native";
-import { ChooseBeepMutation, GetBeepersQuery } from "../../generated/graphql";
-import { Container } from "../../components/Container";
-import { Avatar } from "../../components/Avatar";
-import { Card } from "../../components/Card";
-import { useLocation } from "../../utils/useLocation";
+import { ChooseBeepMutation, GetBeepersQuery } from "../generated/graphql";
+import { Container } from "../components/Container";
+import { Avatar } from "../components/Avatar";
+import { Card } from "../components/Card";
+import { useLocation } from "../utils/useLocation";
 import {
   Text,
   Spinner,
@@ -21,8 +21,8 @@ import {
   useColorMode,
   Stack,
 } from "native-base";
-import { client } from "../../utils/Apollo";
-import { InitialRiderStatus } from "./ride";
+import { client } from "../utils/Apollo";
+import { InitialRiderStatus } from "./(app)/ride";
 import { router } from "expo-router";
 
 const GetBeepers = gql`
