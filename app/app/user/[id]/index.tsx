@@ -184,7 +184,9 @@ export default function ProfileScreen() {
             ) : null}
           </Stack>
         </Card>
-        <RatePreview id={params.id} />
+        {params?.id && (
+          <RatePreview id={params.id} />
+        )}
       </Stack>
     </Container>
   );
