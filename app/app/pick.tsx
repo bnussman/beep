@@ -127,6 +127,7 @@ export default function PickBeepScreen() {
       const { data } = await getBeep({
         variables: {
           ...params,
+          groupSize: Number(params.groupSize),
           beeperId,
         },
       });
