@@ -8,7 +8,6 @@ import { ApolloError, gql, useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "../../generated/graphql";
 import { client } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
-import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { UserData } from "../../utils/useUser";
 import { Logger } from "../../utils/Logger";
@@ -63,7 +62,7 @@ export function LoginScreen() {
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
 
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const {
     control,

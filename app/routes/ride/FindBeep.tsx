@@ -12,7 +12,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
-import { Navigation } from "../../utils/Navigation";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Status } from "../../utils/types";
@@ -157,7 +156,7 @@ const GetETA = gql`
 export function MainFindBeepScreen() {
   const { user } = useUser();
   const { getLocation } = useLocation(false);
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
     InitialRiderStatus,

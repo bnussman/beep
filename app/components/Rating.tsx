@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { HStack, Spacer, Stack, Text } from "native-base";
 import { GetRatingsQuery } from "../generated/graphql";
-import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { printStars } from "./Stars";
@@ -27,7 +26,7 @@ const DeleteRating = gql`
 export function Rating(props: Props) {
   const { item } = props;
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
   const isRater = user?.id === item.rater.id;
@@ -73,7 +72,7 @@ export function Rating(props: Props) {
       mt={2}
       mx={1}
       pressable
-      onPress={() => navigation.push("Profile", { id: otherUser.id, beepId: item.beep.id })}
+      onPress={() => navigation.navigate("Profile", { id: otherUser.id, beepId: item.beep.id })}
       onLongPress={onLongPress}
     >
       <Stack space={2}>
