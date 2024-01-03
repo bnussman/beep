@@ -3,11 +3,10 @@ import { gql, useQuery } from "@apollo/client";
 import { Card } from "../../components/Card";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
-import { Navigation } from "../../utils/Navigation";
 import { GetUserProfileQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RatePreview } from "./RatePreview";
 import { useUser } from "../../utils/useUser";
 import {
@@ -44,31 +43,32 @@ export const GetUser = gql`
   }
 `;
 
-export function ProfileScreen() {
-  const { params } = useRoute<any>();
+type Props = StaticScreenProps<{ id: string, beepId?: string }>;
+
+export function ProfileScreen({ route }: Props) {
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const { data, loading, error } = useQuery<GetUserProfileQuery>(GetUser, {
-    variables: { id: params.id },
+    variables: { id: route.params.id },
   });
 
   const handleReport = () => {
     navigation.navigate("Report", {
-      userId: params.id,
-      beepId: params.beepId,
+      userId: route.params.id,
+      beepId: route.params.beepId,
     });
   };
 
   const handleRate = () => {
     navigation.navigate("Rate", {
-      userId: params.id,
-      beepId: params.beepId,
+      userId: route.params.id,
+      beepId: route.params.beepId,
     });
   };
 
   React.useLayoutEffect(() => {
-    if (user?.id !== params.id) {
+    if (user?.id !== route.params.id) {
       navigation.setOptions({
         headerRight: () => (
           <Menu
@@ -89,7 +89,7 @@ export function ProfileScreen() {
               );
             }}
           >
-            {Boolean(params.beep) && (
+            {Boolean(route.params.beepId) && (
               <Menu.Item onPress={handleRate}>Rate</Menu.Item>
             )}
             <Menu.Item onPress={handleReport}>Report</Menu.Item>
@@ -97,7 +97,7 @@ export function ProfileScreen() {
         ),
       });
     }
-  }, [navigation, params, data]);
+  }, [navigation, route.params, data]);
 
   if (loading) {
     return (
@@ -190,7 +190,7 @@ export function ProfileScreen() {
             ) : null}
           </Stack>
         </Card>
-        <RatePreview id={params.id} />
+        <RatePreview id={route.params.id} />
       </Stack>
     </Container>
   );
