@@ -10,7 +10,7 @@ import { Container } from "../../components/Container";
 import { UserData, useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { Ionicons } from "@expo/vector-icons";
-import { LOCATION_TRACKING } from "./beep";
+import { LOCATION_TRACKING } from "./Beep";
 import { client } from "../../utils/Apollo";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";

@@ -394,7 +394,7 @@ export default function MainFindBeepScreen() {
           <Pressable
             w="100%"
             onPress={() =>
-              router.push({ pathname: "/profile", params: { id: beep.beeper.id, beepId: beep.id } })
+              router.push({ pathname: "/user/[id]/", params: { id: beep.beeper.id, beepId: beep.id } })
             }
           >
             <HStack alignItems="center" space={4} w="100%">

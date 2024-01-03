@@ -35,6 +35,7 @@ import {
   InputGroup,
   InputLeftAddon,
 } from "native-base";
+import { router } from "expo-router";
 
 const SignUp = gql`
   mutation SignUp($input: SignUpInput!) {
@@ -101,6 +102,8 @@ export default function SignUpScreen() {
         query: UserData,
         data: { getUser: { ...data?.signup.user, pushToken } },
       });
+
+      router.replace("/ride");
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         Alert(error as ApolloError);

@@ -9,7 +9,7 @@ import { UserData, useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import {
   LOCATION_TRACKING,
-} from "../app/(app)/beep";
+} from "../app/(app)/Beep";
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
