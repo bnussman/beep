@@ -4,14 +4,12 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { Loading } from '../../../components/Loading';
 import { BeepsTable } from '../../../components/BeepsTable';
 import { QueueTable } from '../../../components/QueueTable';
-import { DeleteDialog } from '../../../components/DeleteDialog';
 import { LocationView } from '../../../routes/admin/users/Location';
 import { RatingsTable } from '../../../components/RatingsTable';
 import { ReportsTable } from '../../../components/ReportsTable';
 import { ClearQueueDialog } from '../../../components/ClearQueueDialog';
 import { SendNotificationDialog } from '../../../components/SendNotificationDialog';
 import { Details } from '../../../routes/admin/users/Details';
-import { NavLink, useParams, useNavigate } from 'react-router-dom';
 import { UserRole } from '../../../types/User';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetUserQuery, VerifyUserMutation } from '../../../generated/graphql';
@@ -41,6 +39,8 @@ import {
 import { CarsTable } from '../../../components/CarsTable';
 import { DeleteUserDialog } from './DeleteUserDialog';
 import { PaymentsTable } from '../../../components/PaymentsTable';
+import { Link, Outlet, Route, useNavigate } from '@tanstack/react-router';
+import { usersRoute } from '.';
 
 dayjs.extend(relativeTime);
 
@@ -117,18 +117,23 @@ const tabs = [
   'reports',
   'cars',
   'payments',
-]
+] as const;
+
+export const userRoute = new Route({
+  component: User,
+  path: "$userId",
+  getParentRoute: () => usersRoute,
+});
 
 export function User() {
-  const { id } = useParams();
-  const { data, loading, error, refetch } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
+  const { userId } = userRoute.useParams();
+  const { data, loading, error, refetch } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
   const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   const user = data?.getUser;
 
   const toast = useToast();
   const navigate = useNavigate();
-  const { tab } = useParams();
 
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
   const [verify, { loading: isVerifyLoading, error: verifyError }] = useMutation<VerifyUserMutation>(VerifyUser);
@@ -164,7 +169,7 @@ export function User() {
   async function doClear() {
     try {
       await clear({
-        variables: { id, stopBeeping }
+        variables: { id: userId, stopBeeping }
       });
       if (refetch) refetch();
       onClearClose();
@@ -181,7 +186,7 @@ export function User() {
 
   const onVerify = () => {
     verify({
-      variables: { id, data: { isEmailVerified: true, isStudent: true } },
+      variables: { id: userId, data: { isEmailVerified: true, isStudent: true } },
     }).then(() => {
       toast({ title: "User verified", status: "success" });
     });
@@ -194,6 +199,12 @@ export function User() {
   if (loading || !user) {
     return <Loading />;
   }
+
+  const path = window.location.pathname;
+
+  const foundTabIndex = tabs.findIndex(tab => path.endsWith(tab));
+
+  const currentTabIndex = foundTabIndex === -1 ? 0 : foundTabIndex;
 
   return (
     <>
@@ -225,11 +236,11 @@ export function User() {
           </Flex>
           <Spacer />
           <Box py={4}>
-            <NavLink to={`/admin/users/${user.id}/edit`}>
+            <Link to="/admin/users/$userId/edit" params={{ userId }}>
               <Button m='1'>
                 Edit
               </Button>
-            </NavLink>
+            </Link>
             {!user.isEmailVerified &&
               <Button
                 m={1}
@@ -271,41 +282,16 @@ export function User() {
           mt="4"
           colorScheme="brand"
           lazyBehavior="keepMounted"
-          index={tab && tabs.indexOf(tab) !== -1 ? tabs.indexOf(tab) : 0}
-          onChange={(index: number) => navigate(`/admin/users/${user.id}/${tabs[index].toLocaleLowerCase()}`)}
+          index={currentTabIndex}
+          onChange={(i) => navigate({ to: `/admin/users/$userId/${tabs[i]}` })}
         >
           <Box overflowX="auto">
             <TabList>
               {tabs.map((tab: string, idx) => <Tab key={idx} style={{ textTransform: 'capitalize' }}>{tab}</Tab>)}
             </TabList>
           </Box>
-          <TabPanels>
-            <TabPanel>
-              <Details user={user} />
-            </TabPanel>
-            <TabPanel>
-              <LocationView user={user} />
-            </TabPanel>
-            <TabPanel>
-              <QueueTable user={user} />
-            </TabPanel>
-            <TabPanel>
-              <BeepsTable userId={user.id} />
-            </TabPanel>
-            <TabPanel>
-              <RatingsTable userId={user.id} />
-            </TabPanel>
-            <TabPanel>
-              <ReportsTable userId={user.id} />
-            </TabPanel>
-            <TabPanel>
-              <CarsTable userId={user.id} />
-            </TabPanel>
-            <TabPanel>
-              <PaymentsTable userId={user.id} />
-            </TabPanel>
-          </TabPanels>
         </Tabs>
+        <Outlet />
       </Box>
       <DeleteUserDialog
         userId={user.id}

@@ -1,14 +1,27 @@
 import React from "react";
 import { GetUserQuery } from "../../../generated/graphql";
-import { Box, Text, Flex, Stack, Tooltip } from "@chakra-ui/react";
+import { Box, Text, Stack, Tooltip } from "@chakra-ui/react";
 import { Indicator } from "../../../components/Indicator";
 import { printStars } from "../ratings";
+import { Route } from "@tanstack/react-router";
+import { GetUser, userRoute } from "./User";
+import { useQuery } from "@apollo/client";
 
-interface Props {
-  user: GetUserQuery['getUser'];
-}
+export const userDetailsRoute = new Route({
+  component: Details,
+  path: 'details',
+  getParentRoute: () => userRoute,
+});
 
-export function Details({ user }: Props) {
+export function Details() {
+  const { userId } = userDetailsRoute.useParams();
+
+  const { data } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+
+  const user = data?.getUser;
+
+  if (!user) return null;
+
   return (
     <Stack spacing={2}>
       <Box>

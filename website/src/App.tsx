@@ -19,6 +19,12 @@ import { notFoundRoute } from './components/NotFound';
 import { forgotPasswordRoute } from './routes/ForgotPassword';
 import { privacyRoute } from './routes/Privacy';
 import { termsRoute } from './routes/Terms';
+import { adminRoute } from './routes/admin';
+import { usersListRoute, usersRoute } from './routes/admin/users';
+import { userRoute } from './routes/admin/users/User';
+import { userDetailsRoute } from './routes/admin/users/Details';
+import { editUserRoute } from './routes/admin/users/edit';
+import { locationRoute } from './routes/admin/users/Location';
 
 export const GetUserData = gql`
   query GetUserData {
@@ -114,7 +120,17 @@ const routeTree = rootRoute.addChildren([
   signupRoute,
   forgotPasswordRoute,
   privacyRoute,
-  termsRoute
+  termsRoute,
+  adminRoute.addChildren([
+    usersRoute.addChildren([
+      usersListRoute,
+      userRoute.addChildren([
+        userDetailsRoute,
+        editUserRoute,
+        locationRoute,
+      ])
+    ]),
+  ]),
 ]);
 
 const router = new Router({ routeTree, notFoundRoute });

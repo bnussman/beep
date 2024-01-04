@@ -11,15 +11,21 @@ import {
   Heading,
   Spinner
 } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GetUserQuery } from "../../../../generated/graphql";
-import { GetUser } from "../User";
+import { GetUser, userRoute } from "../User";
 import { Error } from '../../../../components/Error';
+import { Route } from "@tanstack/react-router";
+
+export const editUserRoute = new Route({
+  component: Edit,
+  path: 'edit',
+  getParentRoute: () => userRoute,
+});
 
 export function Edit() {
-  const { id } = useParams();
-  const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id } });
+  const { userId } = editUserRoute.useParams();
+  const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
 
   const user = data?.getUser;
 
