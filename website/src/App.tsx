@@ -10,7 +10,6 @@ import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
 import { Outlet, RootRoute, Router, RouterProvider } from '@tanstack/react-router';
 import { indexRoute } from './routes/Home';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { editProfileRoute } from './routes/EditProfile';
 import { changePasswordRoute } from './routes/ChangePassword';
 import { loginRoute } from './routes/Login';
@@ -125,7 +124,6 @@ function Beep() {
       <Container as="main" maxW="container.xl" pt={20}>
         <Banners />
         <Outlet />
-        <TanStackRouterDevtools />
       </Container>
     </>
   );
