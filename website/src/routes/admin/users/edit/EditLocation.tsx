@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, FormControl, FormLabel, HStack, Input } from "@chakra-ui/react";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useParams } from "react-router-dom";
-import { LocationUpdateMutation, User, UserLocationQuery } from "../../../../generated/graphql";
+import { LocationUpdateMutation, UserLocationQuery } from "../../../../generated/graphql";
 import { Marker } from "../../../../components/Marker";
 import { Loading } from "../../../../components/Loading";
 import { Error } from '../../../../components/Error';
 import { Map } from '../../../../components/Map';
 import { MapProps } from 'mapkit-react';
+import { editUserRoute } from ".";
 
 export const UserLocation = gql`
   query UserLocation($id: String!) {
@@ -45,7 +45,7 @@ const LocationUpdate = gql`
 
 
 export function EditLocation() {
-  const { id } = useParams();
+  const { userId: id } = editUserRoute.useParams();
   const { data, loading, error, refetch } = useQuery<UserLocationQuery>(UserLocation, { variables: { id } });
   const [update, { error: mutateError, loading: mutateLoading }] = useMutation<LocationUpdateMutation>(LocationUpdate);
 
@@ -65,7 +65,7 @@ export function EditLocation() {
     await update({
       variables: {
         id,
-        longitude, 
+        longitude,
         latitude
       }
     });

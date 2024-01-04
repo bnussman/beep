@@ -1,7 +1,7 @@
 import React from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetUserDataQuery, ResendEmailMutation } from '../generated/graphql';
-import { Alert, AlertIcon, Box, Button, Code, Spacer, useToast } from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Button, Spacer, useToast } from '@chakra-ui/react';
 import { GetUserData } from '../App';
 
 const Resend = gql`

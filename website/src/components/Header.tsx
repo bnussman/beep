@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from "react-router-dom";
 import { UserMenu } from './UserMenu';
 import { AdminMenu } from './AdminMenu';
 import { UserRole } from '../types/User';
@@ -14,6 +13,7 @@ import {
   Heading,
   useColorModeValue
 } from '@chakra-ui/react';
+import { Link } from '@tanstack/react-router';
 
 export function Header() {
   const { colorMode, toggleColorMode } = useColorMode();

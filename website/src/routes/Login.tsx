@@ -1,13 +1,13 @@
 import React, { FormEvent, useState } from 'react';
-import { Link, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { LoginMutation } from '../generated/graphql';
 import { Error } from '../components/Error';
-import { GetUserData } from '../App';
+import { GetUserData, rootRoute } from '../App';
 import { client } from '../utils/Apollo';
 import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack, Center, Heading } from "@chakra-ui/react"
 import { Card } from '../components/Card';
 import { PasswordInput } from '../components/PasswordInput';
+import { Link, Route, useNavigate } from '@tanstack/react-router';
 
 const LoginGraphQL = gql`
   mutation Login($username: String!, $password: String!) {
@@ -40,6 +40,12 @@ const LoginGraphQL = gql`
   }
 `;
 
+export const loginRoute = new Route({
+  component: Login,
+  path: "/login",
+  getParentRoute: () => rootRoute,
+});
+
 export function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -64,7 +70,7 @@ export function Login() {
         data: { getUser: { ...result.data?.login.user } }
       });
 
-      navigate('/');
+      navigate({ to: '/' });
     }
   }
 

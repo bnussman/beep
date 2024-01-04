@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import { Navigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { AddProfilePictureMutation, EditAccountMutation, EditAccountMutationVariables, EditUserInput, EditUserMutation, GetUserDataQuery } from '../generated/graphql';
+import { AddProfilePictureMutation, EditUserInput, EditUserMutation, GetUserDataQuery } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
-import { GetUserData } from '../App';
+import { GetUserData, rootRoute } from '../App';
 import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
 import { useValidationErrors } from '../utils/useValidationErrors';
+import { Route } from '@tanstack/react-router';
 
 const pick = (obj: any, keys: string[]) => Object.fromEntries(
   keys
@@ -38,6 +38,12 @@ export const UploadPhoto = gql`
   }
 `;
 
+export const editProfileRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: '/profile/edit',
+  component: EditProfile,
+})
+
 export function EditProfile() {
   const [edit, { error, loading }] = useMutation<EditUserMutation>(EditAccount);
   const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto, {
@@ -57,7 +63,7 @@ export function EditProfile() {
   const defaultValues = pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp']);
 
   const { handleSubmit, register, reset, formState: { errors, isValid, isDirty } } = useForm<EditUserInput>({
-     defaultValues 
+     defaultValues
   });
 
   const onSubmit = handleSubmit(async (variables) => {
@@ -81,7 +87,7 @@ export function EditProfile() {
   }, [user]);
 
   if (!user) {
-    return <Navigate to={{ pathname: "/login" }} />;
+    return null;
   }
 
   return (

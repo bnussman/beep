@@ -4,20 +4,17 @@ import { GetBeepsQuery } from '../generated/graphql';
 import { Pagination } from './Pagination';
 import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
-import { Loading } from './Loading';
 import { Indicator } from './Indicator';
 import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Route } from '@tanstack/react-router';
+import { userRoute } from '../routes/admin/users/User';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
-
-interface Props {
-  userId: string;
-}
 
 const Hisory = gql`
   query GetBeepsForUser($id: String, $show: Int, $offset: Int) {
@@ -52,16 +49,24 @@ const Hisory = gql`
   }
 `;
 
-export function BeepsTable(props: Props) {
+export const beepsTableRoute = new Route({
+  component: BeepsTable,
+  path: 'beeps',
+  getParentRoute: () => userRoute,
+});
+
+export function BeepsTable() {
   const pageLimit = 5;
 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data, loading } = useQuery<GetBeepsQuery>(
+  const { userId } = beepsTableRoute.useParams();
+
+  const { data } = useQuery<GetBeepsQuery>(
     Hisory,
     {
       variables: {
-        id: props.userId,
+        id: userId,
         offset: (currentPage - 1) * pageLimit,
         show: pageLimit
       }

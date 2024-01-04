@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { NavLink, useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { Indicator } from '../../../components/Indicator';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetReportQuery, UpdateReportMutation, User } from '../../../generated/graphql';
@@ -12,6 +10,8 @@ import { Error } from '../../../components/Error';
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
+import { Link, Route } from "@tanstack/react-router";
+import { reportsRoute } from ".";
 
 dayjs.extend(relativeTime);
 
@@ -82,17 +82,22 @@ export const GetReport = gql`
   }
 `;
 
+export const reportRoute = new Route({
+  component: Report,
+  path: "$reportId",
+  getParentRoute: () => reportsRoute,
+});
+
 export function Report() {
-  const { id } = useParams();
+  const { reportId: id } = reportRoute.useParams();
+
   const { data, loading, error } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
-  const navigate = useNavigate();
 
   const [notes, setNotes] = useState<string>();
   const [isHandled, setIsHandled] = useState<boolean>();
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
-  const cancelRef = React.useRef();
 
   function updateReport() {
     update({
@@ -150,9 +155,9 @@ export function Report() {
             {data?.getReport.beep &&
               <Box>
                 <Heading size="lg">Beep</Heading>
-                <NavLink to={`/admin/beeps/${data?.getReport.beep.id}`}>
+                <Link to="/admin/beeps/$beepId" params={{ beepId: data.getReport.beep.id }}>
                   {data?.getReport.beep.id}
-                </NavLink>
+                </Link>
               </Box>
             }
             <Box>

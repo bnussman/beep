@@ -2,6 +2,19 @@ import React from 'react'
 import { Heading, Tabs, TabList, Tab, TabPanel, TabPanels, Stack } from "@chakra-ui/react"
 import { Beeps } from './beeps';
 import { Rides } from './rides';
+import { Route } from '@tanstack/react-router';
+import { adminRoute } from '..';
+
+export const leaderboardsRoute = new Route({
+  component: Leaderboards,
+  path: 'leaderboards',
+  getParentRoute: () => adminRoute,
+  validateSearch: (search: Record<string, string>) => {
+    return {
+      page: Number(search?.page ?? 1),
+    }
+  },
+});
 
 export function Leaderboards() {
   return (

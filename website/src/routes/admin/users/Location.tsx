@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
-import { gql } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import { Box, Center } from '@chakra-ui/react';
 import { GetUserQuery } from '../../../generated/graphql';
 import { cache, client } from '../../../utils/Apollo';
 import { Marker } from '../../../components/Marker';
 import { Map } from '../../../components/Map';
-
-interface Props {
-  user: GetUserQuery['getUser'];
-}
+import { Route } from '@tanstack/react-router';
+import { GetUser, userRoute } from './User';
 
 const BeepersLocation = gql`
   subscription BeepersLocation($id: String!) {
@@ -21,17 +19,28 @@ const BeepersLocation = gql`
 
 let sub: any;
 
-export function LocationView(props: Props) {
-  const { user } = props;
+export const locationRoute = new Route({
+  component: LocationView,
+  path: 'location',
+  getParentRoute: () => userRoute,
+});
+
+
+export function LocationView() {
+  const { userId } = locationRoute.useParams();
+
+  const { data } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+
+  const user = data?.getUser;
 
   async function subscribe() {
-    const a = client.subscribe({ query: BeepersLocation, variables: { id: user.id } });
+    const a = client.subscribe({ query: BeepersLocation, variables: { id: userId } });
 
     sub = a.subscribe(({ data }) => {
       cache.modify({
         id: cache.identify({
           __typename: "User",
-          id: user.id,
+          id: userId,
         }),
         fields: {
           location() {
@@ -53,7 +62,7 @@ export function LocationView(props: Props) {
     };
   }, []);
 
-  if (!user.location) {
+  if (!user?.location) {
     return (
       <Center h="100px">
         This user has no Location data.

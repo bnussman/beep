@@ -4,9 +4,10 @@ import { gql, useQuery } from '@apollo/client';
 import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { Loading } from '../../../components/Loading';
-import { useSearchParams } from 'react-router-dom';
 import { Pagination } from '../../../components/Pagination';
 import { GetUsersWithRidesQuery } from '../../../generated/graphql';
+import { leaderboardsRoute } from '.';
+import { useNavigate } from '@tanstack/react-router';
 
 export const UsersWithRides = gql`
   query getUsersWithRides($show: Int, $offset: Int) {
@@ -27,8 +28,9 @@ export const UsersWithRides = gql`
 const pageLimit = 20;
 
 export function Rides() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+  const { page } = leaderboardsRoute.useSearch();
+  const navigate = useNavigate({ from: leaderboardsRoute.id });
+
   const { loading, error, data } = useQuery<GetUsersWithRidesQuery>(UsersWithRides, {
     variables: {
       show: pageLimit,
@@ -37,7 +39,7 @@ export function Rides() {
   });
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page } });
   };
 
   if (error) {

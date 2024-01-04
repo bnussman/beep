@@ -4,9 +4,10 @@ import { gql, useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { VerifyAccountMutation } from '../generated/graphql';
-import { useParams } from 'react-router-dom';
 import { Loading } from '../components/Loading';
 import { Box } from '@chakra-ui/react';
+import { Route } from '@tanstack/react-router';
+import { rootRoute } from '../App';
 
 const VerifyAccountGraphQL = gql`
   mutation VerifyAccount($id: String!) {
@@ -14,8 +15,14 @@ const VerifyAccountGraphQL = gql`
   }
 `;
 
+export const verifyAccountRoute = new Route({
+  component: VerifyAccount,
+  path: "/account/verify/$id",
+  getParentRoute: () => rootRoute,
+});
+
 export function VerifyAccount() {
-  const { id } = useParams();
+  const { id } = verifyAccountRoute.useParams();
   const [verify, { data, loading, error }] = useMutation<VerifyAccountMutation>(VerifyAccountGraphQL);
 
   async function handleVerify(): Promise<void> {
