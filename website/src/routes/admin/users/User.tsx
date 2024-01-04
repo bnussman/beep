@@ -30,7 +30,6 @@ import {
   Tab,
   TabList,
   useMediaQuery,
-  TabPanels
 } from '@chakra-ui/react';
 
 dayjs.extend(relativeTime);

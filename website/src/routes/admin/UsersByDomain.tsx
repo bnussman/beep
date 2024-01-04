@@ -4,8 +4,8 @@ import { gql, useQuery } from "@apollo/client";
 import { GetUsersPerDomainQuery } from "../../generated/graphql";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
-import { adminRoute } from ".";
 import { Route } from "@tanstack/react-router";
+import { usersRoute } from "./users";
 
 const UsersByDomainQuery = gql`
   query GetUsersPerDomain {
@@ -19,7 +19,7 @@ const UsersByDomainQuery = gql`
 export const usersByDomainRoute = new Route({
   component: UsersByDomain,
   path: 'domain',
-  getParentRoute: () => adminRoute,
+  getParentRoute: () => usersRoute,
 });
 
 export function UsersByDomain() {

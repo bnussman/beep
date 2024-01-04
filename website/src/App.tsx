@@ -21,7 +21,7 @@ import { termsRoute } from './routes/Terms';
 import { adminRoute } from './routes/admin';
 import { usersListRoute, usersRoute } from './routes/admin/users';
 import { userRoute } from './routes/admin/users/User';
-import { userDetailsRoute } from './routes/admin/users/Details';
+import { userDetailsInitalRoute, userDetailsRoute } from './routes/admin/users/Details';
 import { editUserRoute } from './routes/admin/users/edit';
 import { locationRoute } from './routes/admin/users/Location';
 import { leaderboardsRoute } from './routes/admin/leaderboards';
@@ -168,8 +168,10 @@ const routeTree = rootRoute.addChildren([
     ]),
     usersRoute.addChildren([
       usersListRoute,
+      usersByDomainRoute,
       userRoute.addChildren([
         userDetailsRoute,
+        userDetailsInitalRoute,
         editUserRoute,
         locationRoute,
         queueRoute,

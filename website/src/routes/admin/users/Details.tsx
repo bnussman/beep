@@ -13,6 +13,12 @@ export const userDetailsRoute = new Route({
   getParentRoute: () => userRoute,
 });
 
+export const userDetailsInitalRoute = new Route({
+  component: Details,
+  path: '/',
+  getParentRoute: () => userRoute,
+});
+
 export function Details() {
   const { userId } = userDetailsRoute.useParams();
 
