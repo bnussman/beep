@@ -8,13 +8,10 @@ import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-u
 import { TdUser } from './TdUser';
 import { printStars } from '../routes/admin/ratings';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Link } from '@tanstack/react-router';
+import { Link, Route } from '@tanstack/react-router';
+import { userRoute } from '../routes/admin/users/User';
 
 dayjs.extend(duration);
-
-interface Props {
-  userId: string;
-}
 
 const Ratings = gql`
   query GetRatingsForUser($id: String, $show: Int, $offset: Int) {
@@ -42,13 +39,23 @@ const Ratings = gql`
   }
 `;
 
-export function RatingsTable(props: Props) {
+export const ratingsTableRoute = new Route({
+  component: RatingsTable,
+  path: 'ratings',
+  getParentRoute: () => userRoute,
+});
+
+
+export function RatingsTable() {
   const pageLimit = 5;
+
+  const { userId } = ratingsTableRoute.useParams();
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, loading } = useQuery<GetRatingsQuery>(
     Ratings, {
       variables: {
-        id: props.userId,
+        id: userId,
         offset: (currentPage - 1) * pageLimit,
         show: pageLimit
       }

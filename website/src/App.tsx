@@ -42,6 +42,12 @@ import { redisRoute } from './routes/admin/Redis';
 import { verifyAccountRoute } from './routes/VerifyAccount';
 import { resetPasswordRoute } from './routes/ResetPassword';
 import { beepRoute } from './routes/admin/beeps/Beep';
+import { queueRoute } from './components/QueueTable';
+import { beepsTableRoute } from './components/BeepsTable';
+import { reportsTableRoute } from './components/ReportsTable';
+import { ratingsTableRoute } from './components/RatingsTable';
+import { carsTableRoute } from './components/CarsTable';
+import { paymentsTableRoute } from './components/PaymentsTable';
 
 export const GetUserData = gql`
   query GetUserData {
@@ -168,6 +174,12 @@ const routeTree = rootRoute.addChildren([
         userDetailsRoute,
         editUserRoute,
         locationRoute,
+        queueRoute,
+        beepsTableRoute,
+        reportsTableRoute,
+        ratingsTableRoute,
+        carsTableRoute,
+        paymentsTableRoute,
       ])
     ]),
   ]),

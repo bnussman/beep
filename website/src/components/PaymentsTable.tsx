@@ -7,13 +7,11 @@ import { UserPaymentsQuery } from '../generated/graphql';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Route } from '@tanstack/react-router';
+import { userRoute } from '../routes/admin/users/User';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
-
-interface Props {
-  userId: string;
-}
 
 const PaymentsQuery = gql`
   query UserPayments($id: String, $offset: Int, $show: Int) {
@@ -30,14 +28,22 @@ const PaymentsQuery = gql`
   }
 `;
 
-export function PaymentsTable(props: Props) {
+export const paymentsTableRoute = new Route({
+  component: PaymentsTable,
+  path: 'payments',
+  getParentRoute: () => userRoute,
+});
+
+
+export function PaymentsTable() {
   const pageLimit = 5;
+  const { userId } = paymentsTableRoute.useParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, loading } = useQuery<UserPaymentsQuery>(
     PaymentsQuery,
     {
       variables: {
-        id: props.userId,
+        id: userId,
         offset: (currentPage - 1) * pageLimit,
         show: pageLimit
       }

@@ -2,20 +2,17 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Loading } from '../../../components/Loading';
-import { BeepsTable } from '../../../components/BeepsTable';
-import { QueueTable } from '../../../components/QueueTable';
-import { LocationView } from '../../../routes/admin/users/Location';
-import { RatingsTable } from '../../../components/RatingsTable';
-import { ReportsTable } from '../../../components/ReportsTable';
 import { ClearQueueDialog } from '../../../components/ClearQueueDialog';
 import { SendNotificationDialog } from '../../../components/SendNotificationDialog';
-import { Details } from '../../../routes/admin/users/Details';
 import { UserRole } from '../../../types/User';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { GetUserQuery, VerifyUserMutation } from '../../../generated/graphql';
 import { DeleteIcon, CheckIcon } from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { PhotoDialog } from '../../../components/PhotoDialog';
+import { DeleteUserDialog } from './DeleteUserDialog';
+import { Link, Outlet, Route, useNavigate, useRouterState } from '@tanstack/react-router';
+import { usersRoute } from '.';
 import {
   useToast,
   useDisclosure,
@@ -32,15 +29,9 @@ import {
   Tabs,
   Tab,
   TabList,
-  TabPanel,
-  TabPanels,
-  useMediaQuery
+  useMediaQuery,
+  TabPanels
 } from '@chakra-ui/react';
-import { CarsTable } from '../../../components/CarsTable';
-import { DeleteUserDialog } from './DeleteUserDialog';
-import { PaymentsTable } from '../../../components/PaymentsTable';
-import { Link, Outlet, Route, useNavigate } from '@tanstack/react-router';
-import { usersRoute } from '.';
 
 dayjs.extend(relativeTime);
 
@@ -133,7 +124,8 @@ export function User() {
   const user = data?.getUser;
 
   const toast = useToast();
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: userRoute.id });
+  const routerState = useRouterState();
 
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
   const [verify, { loading: isVerifyLoading, error: verifyError }] = useMutation<VerifyUserMutation>(VerifyUser);
@@ -192,6 +184,16 @@ export function User() {
     });
   };
 
+  const path = routerState.location.pathname;
+
+  const foundTabIndex = tabs.findIndex(tab => path.endsWith(tab));
+
+  const currentTabIndex = foundTabIndex === -1 ? 0 : foundTabIndex;
+
+  if (path.endsWith("/edit")) {
+    return <Outlet />;
+  }
+
   if (error) {
     return <Error error={error} />;
   }
@@ -199,12 +201,6 @@ export function User() {
   if (loading || !user) {
     return <Loading />;
   }
-
-  const path = window.location.pathname;
-
-  const foundTabIndex = tabs.findIndex(tab => path.endsWith(tab));
-
-  const currentTabIndex = foundTabIndex === -1 ? 0 : foundTabIndex;
 
   return (
     <>
@@ -283,7 +279,7 @@ export function User() {
           colorScheme="brand"
           lazyBehavior="keepMounted"
           index={currentTabIndex}
-          onChange={(i) => navigate({ to: `/admin/users/$userId/${tabs[i]}` })}
+          onChange={(i) => navigate({ to: `/admin/users/$userId/${tabs[i]}`, params: { userId } })}
         >
           <Box overflowX="auto">
             <TabList>
@@ -291,7 +287,9 @@ export function User() {
             </TabList>
           </Box>
         </Tabs>
-        <Outlet />
+        <Box mt={4}>
+          <Outlet />
+        </Box>
       </Box>
       <DeleteUserDialog
         userId={user.id}

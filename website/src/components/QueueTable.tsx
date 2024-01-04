@@ -6,10 +6,11 @@ import { Indicator } from './Indicator';
 import { GetUserQuery } from '../generated/graphql';
 import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { client } from '../utils/Apollo';
-import { gql } from '@apollo/client';
-import { GetUser } from '../routes/admin/users/User';
+import { gql, useQuery } from '@apollo/client';
+import { GetUser, userRoute } from '../routes/admin/users/User';
 import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
+import { Route } from '@tanstack/react-router';
 
 dayjs.extend(duration);
 
@@ -34,17 +35,23 @@ export const QueueSubscription = gql`
   }
 `;
 
-interface Props {
-  user: GetUserQuery['getUser'];
-}
-
 let sub: any;
 
-export function QueueTable(props: Props) {
-  const { user } = props;
+export const queueRoute = new Route({
+  component: QueueTable,
+  path: 'queue',
+  getParentRoute: () => userRoute,
+});
+
+export function QueueTable() {
+  const { userId } = queueRoute.useParams();
+
+  const { data } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+
+  const user = data?.getUser;
 
   async function subscribe() {
-    const a = client.subscribe({ query: QueueSubscription, variables: { id: user.id } });
+    const a = client.subscribe({ query: QueueSubscription, variables: { id: userId } });
 
     sub = a.subscribe(({ data }) => {
       client.writeQuery({
@@ -56,7 +63,7 @@ export function QueueTable(props: Props) {
           }
         },
         variables: {
-          id: user.id
+          id: userId
         }
       });
     });
@@ -71,7 +78,7 @@ export function QueueTable(props: Props) {
   }, []);
 
 
-  if (!user.queue || user.queue.length === 0) {
+  if (!user?.queue || user.queue.length === 0) {
     return (
       <Center h="100px">
         This user's queue is empty.
@@ -93,7 +100,7 @@ export function QueueTable(props: Props) {
           </Tr>
         </Thead>
         <Tbody>
-          {user.queue.map((beep) => (
+          {user?.queue.map((beep) => (
             <Tr key={beep.id}>
               <TdUser user={beep.rider} />
               <Td>{beep.origin}</Td>

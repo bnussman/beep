@@ -8,13 +8,11 @@ import { Indicator } from './Indicator';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Route } from '@tanstack/react-router';
+import { userRoute } from '../routes/admin/users/User';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
-
-interface Props {
-  userId: string;
-}
 
 const GetCarsForUser = gql`
   query GetCarsForUser($id: String, $offset: Int, $show: Int) {
@@ -34,16 +32,23 @@ const GetCarsForUser = gql`
   }
 `;
 
-export function CarsTable(props: Props) {
+export const carsTableRoute = new Route({
+  component: CarsTable,
+  path: 'cars',
+  getParentRoute: () => userRoute,
+});
+
+export function CarsTable() {
   const pageLimit = 5;
+  const { userId } = carsTableRoute.useParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, loading } = useQuery<GetCarsForUserQuery>(
     GetCarsForUser,
     {
       variables: {
-        id: props.userId,
+        id: userId,
         offset: (currentPage - 1) * pageLimit,
-        show: pageLimit 
+        show: pageLimit
       }
     }
   );
