@@ -11,8 +11,10 @@ import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
 import { PhotoDialog } from '../../../components/PhotoDialog';
-import { DeleteIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from '@chakra-ui/icons';
 import { DeleteCarDialog } from './DeleteCarDialog';
+import { Route, useNavigate } from '@tanstack/react-router';
+import { adminRoute } from '..';
 
 dayjs.extend(relativeTime);
 
@@ -38,10 +40,19 @@ export const CarsQuery = gql`
   }
 `;
 
+export const carsRoute = new Route({
+  component: Cars,
+  path: '/cars',
+  getParentRoute: () => adminRoute,
+  validateSearch: (search: Record<string, string>) => ({ page: Number(search?.page ?? 1)})
+});
+
 export function Cars() {
   const pageLimit = 20;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+
+  const { page } = carsRoute.useSearch();
+
+  const navigate = useNavigate({ from: carsRoute.id });
 
   const {
     isOpen: isPhotoOpen,
@@ -70,7 +81,7 @@ export function Cars() {
   const selectedCar = cars?.find(car => car.id === selectedCarId);
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page: page } });
   };
 
 

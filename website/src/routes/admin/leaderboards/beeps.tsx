@@ -5,8 +5,9 @@ import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { Loading } from '../../../components/Loading';
 import { GetUsersWithBeepsQuery } from '../../../generated/graphql';
-import { useSearchParams } from 'react-router-dom';
 import { Pagination } from '../../../components/Pagination';
+import { leaderboardsRoute } from '.';
+import { useNavigate } from '@tanstack/react-router';
 
 export const UsersWithBeeps = gql`
   query getUsersWithBeeps($show: Int, $offset: Int) {
@@ -27,8 +28,8 @@ export const UsersWithBeeps = gql`
 const pageLimit = 20;
 
 export function Beeps() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+  const { page } = leaderboardsRoute.useSearch();
+  const navigate = useNavigate();
   const { loading, error, data } = useQuery<GetUsersWithBeepsQuery>(UsersWithBeeps, {
     variables: {
       show: pageLimit,
@@ -37,7 +38,7 @@ export function Beeps() {
   });
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page }, params: {} });
   };
 
   if (error) {

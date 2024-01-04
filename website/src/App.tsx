@@ -25,6 +25,12 @@ import { userRoute } from './routes/admin/users/User';
 import { userDetailsRoute } from './routes/admin/users/Details';
 import { editUserRoute } from './routes/admin/users/edit';
 import { locationRoute } from './routes/admin/users/Location';
+import { leaderboardsRoute } from './routes/admin/leaderboards';
+import { usersByDomainRoute } from './routes/admin/UsersByDomain';
+import { beepersRoute } from './routes/admin/beepers/Beepers';
+import { activeBeepsRoute } from './routes/admin/beeps/ActiveBeeps';
+import { beepsListRoute, beepsRoute } from './routes/admin/beeps';
+import { carsRoute } from './routes/admin/cars';
 
 export const GetUserData = gql`
   query GetUserData {
@@ -122,6 +128,14 @@ const routeTree = rootRoute.addChildren([
   privacyRoute,
   termsRoute,
   adminRoute.addChildren([
+    leaderboardsRoute,
+    usersByDomainRoute,
+    beepersRoute,
+    activeBeepsRoute,
+    carsRoute,
+    beepsRoute.addChildren([
+      beepsListRoute,
+    ]),
     usersRoute.addChildren([
       usersListRoute,
       userRoute.addChildren([

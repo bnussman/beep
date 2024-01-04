@@ -8,6 +8,8 @@ import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
 import { cache } from '../../../utils/Apollo';
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { Route } from '@tanstack/react-router';
+import { adminRoute } from '..';
 
 const BeepersGraphQL = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -48,6 +50,12 @@ const BeeperLocationUpdates = gql`
     }
   }
 `;
+
+export const beepersRoute = new Route({
+  component: Beepers,
+  path: 'beepers',
+  getParentRoute: () => adminRoute,
+});
 
 export function Beepers() {
   const {
