@@ -1,16 +1,15 @@
 import React, { useMemo } from 'react';
-import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { SignUpMutation, SignUpMutationVariables } from '../generated/graphql';
 import { Error } from '../components/Error';
 import { client } from '../utils/Apollo';
-import { GetUserData } from '../App';
+import { GetUserData, rootRoute } from '../App';
 import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from "react-hook-form";
 import { PasswordInput } from '../components/PasswordInput';
 import {
-  Link,
+  Link as ChakraLink,
   Text,
   Avatar,
   Box,
@@ -31,6 +30,7 @@ import {
   FormErrorMessage,
   useBreakpointValue
 } from '@chakra-ui/react';
+import { Link, Route, useNavigate } from '@tanstack/react-router';
 
 const SignUpGraphQL = gql`
   mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload) {
@@ -74,6 +74,13 @@ const SignUpGraphQL = gql`
   }
 `;
 
+export const signupRoute = new Route({
+  component: SignUp,
+  path: "/signup",
+  getParentRoute: () => rootRoute,
+});
+
+
 export function SignUp() {
   const navigate = useNavigate();
   const avatarSize = useBreakpointValue({ base: 'xl', md: '2xl' });
@@ -110,7 +117,7 @@ export function SignUp() {
         data: { getUser: { ...data?.signup?.user } }
       });
 
-      navigate('/');
+      navigate({ to: '/' });
     }
   });
 
@@ -129,9 +136,9 @@ export function SignUp() {
           <AlertIcon />
           <Text>
             By signing up, you agree to our{' '}
-            <Link as={RouterLink} to="/terms">Terms of Service</Link>
+            <ChakraLink as={Link} to="/terms">Terms of Service</ChakraLink>
             {' '}and{' '}
-            <Link as={RouterLink} to="/privacy">Privacy Policy</Link>
+            <ChakraLink as={Link} to="/privacy">Privacy Policy</ChakraLink>
           </Text>
         </Alert>
         <form onSubmit={onSubmit}>

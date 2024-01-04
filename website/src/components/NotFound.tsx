@@ -1,5 +1,12 @@
 import React from 'react';
 import { Alert, AlertDescription, AlertIcon, AlertTitle } from "@chakra-ui/react";
+import { NotFoundRoute } from '@tanstack/react-router';
+import { rootRoute } from '../App';
+
+export const notFoundRoute = new NotFoundRoute({
+  component: NotFound,
+  getParentRoute: () => rootRoute
+});
 
 export function NotFound() {
   return (

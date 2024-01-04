@@ -6,12 +6,20 @@ import { Success } from '../components/Success';
 import { Button, Center, Container, FormControl, FormHelperText, FormLabel, Heading, Input } from '@chakra-ui/react';
 import { EmailIcon } from '@chakra-ui/icons';
 import { Card } from '../components/Card';
+import { Route } from '@tanstack/react-router';
+import { rootRoute } from '../App';
 
 const ForgotPasswordGraphQL = gql`
   mutation ForgotPassword($email: String!) {
     forgotPassword(email: $email)
   }
 `;
+
+export const forgotPasswordRoute = new Route({
+  component: ForgotPassword,
+  path: "/password/forgot",
+  getParentRoute: () => rootRoute,
+});
 
 export function ForgotPassword() {
   const [forgot, { data, loading, error }] = useMutation<ForgotPasswordMutation>(ForgotPasswordGraphQL);
