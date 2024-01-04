@@ -4,10 +4,11 @@ import { ResetPasswordInput, ResetPasswordMutation } from '../generated/graphql'
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { Button, Center, Container, FormControl, FormErrorMessage, FormLabel, Heading, Input } from '@chakra-ui/react';
-import { useParams } from 'react-router-dom';
 import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from 'react-hook-form';
+import { rootRoute } from '../App';
+import { Route } from '@tanstack/react-router';
 
 const Reset = gql`
   mutation ResetPassword($id: String!, $password: String!) {
@@ -20,8 +21,15 @@ const Reset = gql`
   }
 `;
 
+export const resetPasswordRoute = new Route({
+  component: ResetPassword,
+  path: "/password/reset/$id",
+  getParentRoute: () => rootRoute,
+});
+
+
 export function ResetPassword() {
-  const { id } = useParams();
+  const { id } = resetPasswordRoute.useParams();
   const [resetPassword, { data, error, loading }] = useMutation<ResetPasswordMutation>(Reset);
 
   const {

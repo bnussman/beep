@@ -5,10 +5,11 @@ import { Pagination } from '../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../components/TdUser';
-import { useSearchParams } from 'react-router-dom';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { FeedbackQuery } from '../../generated/graphql';
+import { Route, useNavigate } from '@tanstack/react-router';
+import { adminRoute } from '.';
 
 dayjs.extend(relativeTime);
 
@@ -30,10 +31,17 @@ const FeedbackGQL = gql`
   }
 `;
 
+export const feedbackRoute = new Route({
+  component: Feedback,
+  path: "feedback",
+  getParentRoute: () => adminRoute,
+  validateSearch: (search: Record<string, string>) => ({ page: Number(search?.page ?? 1)})
+});
+
 export function Feedback() {
   const pageLimit = 20;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+  const { page } = feedbackRoute.useSearch();
+  const navigate = useNavigate({ from: feedbackRoute.id });
 
   const { data, loading, error } = useQuery<FeedbackQuery>(FeedbackGQL, {
     variables: {
@@ -46,7 +54,7 @@ export function Feedback() {
   const count = data?.getFeedback.count;
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page } });
   };
 
   if (error) {

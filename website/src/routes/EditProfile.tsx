@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Navigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { AddProfilePictureMutation, EditUserInput, EditUserMutation, GetUserDataQuery } from '../generated/graphql';
 import { Error } from '../components/Error';
@@ -88,7 +87,7 @@ export function EditProfile() {
   }, [user]);
 
   if (!user) {
-    return <Navigate to={{ pathname: "/login" }} />;
+    return null;
   }
 
   return (

@@ -7,8 +7,8 @@ import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
 import { printStars } from '../routes/admin/ratings';
-import { NavLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Link } from '@tanstack/react-router';
 
 dayjs.extend(duration);
 
@@ -100,9 +100,9 @@ export function RatingsTable(props: Props) {
                 <Td>{printStars(rating.stars)}</Td>
                 <Td>{dayjs().to(rating.timestamp)}</Td>
                 <Td>
-                  <NavLink to={`/admin/ratings/${rating.id}`}>
+                  <Link to="/admin/ratings/$ratingId" params={{ ratingId: rating.id }}>
                     <ExternalLinkIcon />
-                  </NavLink>
+                  </Link>
                 </Td>
               </Tr>
             ))}

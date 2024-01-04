@@ -6,7 +6,6 @@ import { gql, useQuery } from '@apollo/client';
 import { GetCarsQuery } from '../../../generated/graphql';
 import { Box, Heading, IconButton, Image, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
-import { useSearchParams } from 'react-router-dom';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
@@ -155,7 +154,7 @@ export function Cars() {
         isOpen={isPhotoOpen}
         onClose={onPhotoClose}
       />
-      <DeleteCarDialog 
+      <DeleteCarDialog
         car={selectedCar}
         onClose={onDeleteClose}
         isOpen={isDeleteOpen}

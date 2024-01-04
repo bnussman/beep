@@ -4,11 +4,11 @@ import { GetReportsQuery } from '../generated/graphql';
 import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
-import { NavLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Indicator } from './Indicator';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { Link } from '@tanstack/react-router';
 
 dayjs.extend(duration);
 
@@ -107,9 +107,9 @@ export function ReportsTable(props: Props) {
                 <Td>{dayjs().to(report.timestamp)}</Td>
                 <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
                 <Td>
-                  <NavLink to={`/admin/reports/${report.id}`}>
+                  <Link to="/admin/reports/$reportId" params={{ reportId: report.id }}>
                     <ExternalLinkIcon />
-                  </NavLink>
+                  </Link>
                 </Td>
               </Tr>
             ))}

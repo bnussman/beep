@@ -31,6 +31,17 @@ import { beepersRoute } from './routes/admin/beepers/Beepers';
 import { activeBeepsRoute } from './routes/admin/beeps/ActiveBeeps';
 import { beepsListRoute, beepsRoute } from './routes/admin/beeps';
 import { carsRoute } from './routes/admin/cars';
+import { reportsListRoute, reportsRoute } from './routes/admin/reports';
+import { reportRoute } from './routes/admin/reports/Report';
+import { ratingRoute } from './routes/admin/ratings/Rating';
+import { ratingsListRoute, ratingsRoute } from './routes/admin/ratings';
+import { notificationsRoute } from './routes/admin/notifications';
+import { feedbackRoute } from './routes/admin/Feedback';
+import { paymentsRoute } from './routes/admin/Payments';
+import { redisRoute } from './routes/admin/Redis';
+import { verifyAccountRoute } from './routes/VerifyAccount';
+import { resetPasswordRoute } from './routes/ResetPassword';
+import { beepRoute } from './routes/admin/beeps/Beep';
 
 export const GetUserData = gql`
   query GetUserData {
@@ -127,14 +138,29 @@ const routeTree = rootRoute.addChildren([
   forgotPasswordRoute,
   privacyRoute,
   termsRoute,
+  verifyAccountRoute,
+  resetPasswordRoute,
   adminRoute.addChildren([
     leaderboardsRoute,
     usersByDomainRoute,
     beepersRoute,
     activeBeepsRoute,
     carsRoute,
+    notificationsRoute,
+    feedbackRoute,
+    paymentsRoute,
+    redisRoute,
+    ratingsRoute.addChildren([
+      ratingsListRoute,
+      ratingRoute
+    ]),
+    reportsRoute.addChildren([
+      reportsListRoute,
+      reportRoute,
+    ]),
     beepsRoute.addChildren([
       beepsListRoute,
+      beepRoute,
     ]),
     usersRoute.addChildren([
       usersListRoute,

@@ -6,10 +6,11 @@ import { gql, useQuery } from '@apollo/client';
 import { GetRatingsQuery } from '../../../generated/graphql';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
-import { NavLink, useSearchParams } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
+import { Link, Route, useNavigate } from '@tanstack/react-router';
+import { adminRoute } from '..';
 
 dayjs.extend(relativeTime);
 
@@ -49,10 +50,26 @@ export function printStars(rating: number): string {
   return stars;
 }
 
+export const ratingsRoute = new Route({
+  path: "ratings",
+  getParentRoute: () => adminRoute,
+});
+
+export const ratingsListRoute = new Route({
+  path: "/",
+  component: Ratings,
+  getParentRoute: () => ratingsRoute,
+  validateSearch: (search: Record<string, string>) => ({
+    page: Number(search?.page ?? 1)
+  })
+});
+
 export function Ratings() {
   const pageLimit = 20;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+
+  const { page } = ratingsListRoute.useSearch();
+
+  const navigate = useNavigate({ from: ratingsListRoute.id });
 
   const { data, loading, error } = useQuery<GetRatingsQuery>(RatesGraphQL, {
     variables: {
@@ -62,7 +79,7 @@ export function Ratings() {
   });
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page } });
   };
 
   if (error) {
@@ -91,7 +108,7 @@ export function Ratings() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getRatings && (data.getRatings.items).map(rating => (
+            {data?.getRatings.items.map((rating) => (
               <Tr key={rating.id}>
                 <TdUser user={rating.rater} />
                 <TdUser user={rating.rated} />
@@ -99,9 +116,9 @@ export function Ratings() {
                 <Td>{printStars(rating.stars)}</Td>
                 <Td>{dayjs().to(rating.timestamp)}</Td>
                 <Td>
-                  <NavLink to={`/admin/ratings/${rating.id}`}>
+                  <Link to="/admin/ratings/$ratingId" params={{ ratingId: rating.id }}>
                     <ExternalLinkIcon />
-                  </NavLink>
+                  </Link>
                 </Td>
               </Tr>
             ))}
