@@ -1,4 +1,3 @@
-import { useColorMode } from "native-base";
 import { useIsSignedIn, useIsSignedOut } from "../utils/useUser";
 import { ProfileScreen } from "../routes/global/Profile";
 import { ReportScreen } from "../routes/global/Report";
@@ -12,6 +11,7 @@ import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
 import { StaticParamList, createStaticNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
+import { useColorScheme } from "react-native";
 
 const RootStack = createNativeStackNavigator({
   screens: {
@@ -25,9 +25,9 @@ const RootStack = createNativeStackNavigator({
     },
   },
   screenOptions: () => {
-    const { colorMode } = useColorMode();
+    const colorScheme = useColorScheme();
     return {
-      headerTintColor: colorMode === "dark" ? "white" : "black",
+      headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
     }
   },

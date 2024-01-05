@@ -13,7 +13,7 @@ import * as SplashScreen from "expo-splash-screen";
 import packageJson from "./package.json";
 import * as Sentry from "sentry-expo";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
-import { TamaguiProvider } from 'tamagui'
+import { TamaguiProvider, Theme } from 'tamagui'
 import config from './tamagui.config'
 import { useColorScheme } from "react-native";
 import { Navigation } from "./utils/Navigation";
@@ -59,13 +59,13 @@ function Beep() {
   }
 
   return (
-    <>
+    <Theme name={colorScheme}>
       <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       <Navigation
         linking={{ enabled: true, prefixes: ["beep://", "https://app.ridebeep.app"] }}
         theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       />
-    </>
+    </Theme>
   );
 }
 
