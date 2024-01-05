@@ -1,11 +1,11 @@
 import React from "react";
 import { Box, Button, Checkbox, FormControl, FormLabel, Input, useToast, FormErrorMessage, Stack } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client';
 import { EditUserInput, EditUserMutation, GetUserQuery } from '../../../../generated/graphql';
 import { Error } from '../../../../components/Error';
 import { useValidationErrors } from "../../../../utils/useValidationErrors";
 import { useForm } from "react-hook-form";
+import { editUserRoute } from ".";
 
 interface Props {
   user: GetUserQuery['getUser'];
@@ -57,7 +57,7 @@ const omit: Omit = (obj, ...keys) => {
 };
 
 export function EditDetails({ user }: Props) {
-  const { id } = useParams();
+  const { userId: id } = editUserRoute.useParams();
   const toast = useToast();
 
   const defaultValues = omit(user, 'id', '__typename', 'name', 'location', 'queue', 'created', 'rating');

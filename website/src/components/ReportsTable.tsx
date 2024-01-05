@@ -4,17 +4,14 @@ import { GetReportsQuery } from '../generated/graphql';
 import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
-import { NavLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Indicator } from './Indicator';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { Link, Route } from '@tanstack/react-router';
+import { userRoute } from '../routes/admin/users/User';
 
 dayjs.extend(duration);
-
-interface Props {
-  userId: string;
-}
 
 const Reports = gql`
   query GetReportsForUser($id: String, $show: Int, $offset: Int) {
@@ -48,14 +45,21 @@ const Reports = gql`
   }
 `;
 
-export function ReportsTable(props: Props) {
+export const reportsTableRoute = new Route({
+  component: ReportsTable,
+  path: 'reports',
+  getParentRoute: () => userRoute,
+});
+
+export function ReportsTable() {
+  const { userId } = reportsTableRoute.useParams();
   const pageLimit = 5;
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, loading } = useQuery<GetReportsQuery>(
     Reports,
     {
       variables: {
-        id: props.userId,
+        id: userId,
         offset: (currentPage - 1) * pageLimit,
         show: pageLimit
       }
@@ -107,9 +111,9 @@ export function ReportsTable(props: Props) {
                 <Td>{dayjs().to(report.timestamp)}</Td>
                 <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
                 <Td>
-                  <NavLink to={`/admin/reports/${report.id}`}>
+                  <Link to="/admin/reports/$reportId" params={{ reportId: report.id }}>
                     <ExternalLinkIcon />
-                  </NavLink>
+                  </Link>
                 </Td>
               </Tr>
             ))}

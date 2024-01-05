@@ -4,7 +4,6 @@ import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { gql, useMutation } from "@apollo/client";
 import { RemoveUserMutation } from "../../../generated/graphql";
-import { useNavigate } from "react-router-dom";
 
 interface Props {
   userId: string;
@@ -20,8 +19,6 @@ const RemoveUser = gql`
 `;
 
 export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
-  const navigate = useNavigate();
-
   const [deleteUser, { loading, error }] = useMutation<RemoveUserMutation>(RemoveUser, {
     variables: { id: userId },
     update: (cache) => {
@@ -35,7 +32,6 @@ export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
   const onDelete = async () => {
     await deleteUser();
     onClose();
-    navigate(-1);
   };
 
   return (

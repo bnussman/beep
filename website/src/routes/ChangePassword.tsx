@@ -5,12 +5,20 @@ import { ChangePasswordMutation } from '../generated/graphql';
 import { Success } from '../components/Success';
 import { Input, Button, FormControl, FormLabel, Center, Heading, Container, Flex, Stack } from '@chakra-ui/react';
 import { Card } from '../components/Card';
+import { Route } from '@tanstack/react-router';
+import { rootRoute } from '../App';
 
 const ChangePasswordGraphQL = gql`
   mutation ChangePassword($password: String!) {
     changePassword (input: {password: $password})
   }
 `;
+
+export const changePasswordRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: '/password/change',
+  component: ChangePassword,
+})
 
 export function ChangePassword() {
   const [changePassword, { data, loading, error }] = useMutation<ChangePasswordMutation>(ChangePasswordGraphQL);

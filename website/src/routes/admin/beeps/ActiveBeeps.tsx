@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
@@ -11,8 +11,9 @@ import { GetInProgressBeepsQuery } from '../../../generated/graphql';
 import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
 import { beepStatusMap } from '.';
-import { useSearchParams } from 'react-router-dom';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { Route, useNavigate } from '@tanstack/react-router';
+import { adminRoute } from '..';
 
 dayjs.extend(duration);
 
@@ -44,10 +45,22 @@ export const ActiveBeepsGraphQL = gql`
   }
 `;
 
+export const activeBeepsRoute = new Route({
+  component: ActiveBeeps,
+  path: 'beeps/active',
+  getParentRoute: () => adminRoute,
+  validateSearch: (search: Record<string, string>)  => {
+    return {
+      page: Number(search?.page ?? 1),
+    }
+  },
+});
+
 export function ActiveBeeps() {
   const pageLimit = 25;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+  const { page } = activeBeepsRoute.useSearch();
+  const navigate = useNavigate({ from: activeBeepsRoute.id });
+
   const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetInProgressBeepsQuery>(ActiveBeepsGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
@@ -68,7 +81,7 @@ export function ActiveBeeps() {
   }, []);
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page } });
   };
 
   if (error) {

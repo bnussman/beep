@@ -4,7 +4,6 @@ import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { DeleteRatingMutation } from "../../../generated/graphql";
-import { useNavigate } from "react-router-dom";
 
 interface Props {
   isOpen: boolean;
@@ -19,8 +18,6 @@ const DeleteRating = gql`
 `
 
 export function DeleteRatingDialog({ isOpen, onClose, id }: Props) {
-  const navigate = useNavigate();
-  
   const [deleteRating, { loading, error }] = useMutation<DeleteRatingMutation>(DeleteRating, {
     variables: { id },
     update: (cache) => {
@@ -34,7 +31,6 @@ export function DeleteRatingDialog({ isOpen, onClose, id }: Props) {
   const onDelete = async () => {
     await deleteRating();
     onClose();
-    navigate(-1);
   };
 
   return (
@@ -44,8 +40,8 @@ export function DeleteRatingDialog({ isOpen, onClose, id }: Props) {
         Are you sure you want to delete this rating?
       </AlertDialogBody>
       <AlertDialogFooter>
-        <Button onClick={onClose} mr={2}>Cancel</Button> 
-        <Button isLoading={loading} onClick={onDelete} colorScheme="red">Delete</Button> 
+        <Button onClick={onClose} mr={2}>Cancel</Button>
+        <Button isLoading={loading} onClick={onDelete} colorScheme="red">Delete</Button>
       </AlertDialogFooter>
     </Dialog>
   );

@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -63,7 +62,7 @@ const AddCarMutation = gql`
 let picture: CreateCarMutationVariables["photo"];
 
 export function AddCar() {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const {
     control,

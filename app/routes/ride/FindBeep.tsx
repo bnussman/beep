@@ -11,7 +11,6 @@ import { LeaveButton } from "./LeaveButton";
 import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
-import { Navigation } from "../../utils/Navigation";
 import { useUser } from "../../utils/useUser";
 import { throttle } from "../../utils/throttle";
 import { Status } from "../../utils/types";
@@ -148,7 +147,7 @@ const GetETA = gql`
 export function MainFindBeepScreen() {
   const { user } = useUser();
   const { getLocation } = useLocation(false);
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
 
   const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
     InitialRiderStatus,
@@ -376,7 +375,7 @@ export function MainFindBeepScreen() {
           <Pressable
             style={{ width: "100%" }}
             onPress={() =>
-              navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
+              navigate("User", { id: beep.beeper.id, beepId: beep.id })
             }
           >
             <XStack alignItems="center" space={4} w="100%" justifyContent="space-between">

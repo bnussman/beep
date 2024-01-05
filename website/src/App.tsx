@@ -1,5 +1,4 @@
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React from 'react';
 import { GetUserDataQuery, UserUpdatesSubscription } from './generated/graphql';
 import { ApolloProvider, gql, useQuery, useSubscription } from '@apollo/client';
 import { cache, client } from './utils/Apollo';
@@ -9,20 +8,45 @@ import { Header } from './components/Header';
 import { Banners } from './components/Banners';
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
-
-const Home = lazy(() => import('./routes/Home').then(module => ({ default: module.Home })))
-const Download = lazy(() => import('./routes/Download').then(module => ({ default: module.Download })))
-const Login = lazy(() => import('./routes/Login').then(module => ({ default: module.Login })))
-const SignUp = lazy(() => import('./routes/SignUp').then(module => ({ default: module.SignUp })))
-const EditProfile = lazy(() => import('./routes/EditProfile').then(module => ({ default: module.EditProfile })))
-const ForgotPassword = lazy(() => import('./routes/ForgotPassword').then(module => ({ default: module.ForgotPassword })))
-const ResetPassword = lazy(() => import('./routes/ResetPassword').then(module => ({ default: module.ResetPassword })))
-const ChangePassword = lazy(() => import('./routes/ChangePassword').then(module => ({ default: module.ChangePassword })))
-const VerifyAccount = lazy(() => import('./routes/VerifyAccount').then(module => ({ default: module.VerifyAccount })))
-const Admin = lazy(() => import('./routes/admin').then(module => ({ default: module.Admin })))
-const Privacy = lazy(() => import('./routes/Privacy').then(module => ({ default: module.Privacy })))
-const Terms = lazy(() => import('./routes/Terms').then(module => ({ default: module.Terms })))
-const NotFound = lazy(() => import('./components/NotFound').then(module => ({ default: module.NotFound })))
+import { Outlet, RootRoute, Router, RouterProvider } from '@tanstack/react-router';
+import { indexRoute } from './routes/Home';
+import { editProfileRoute } from './routes/EditProfile';
+import { changePasswordRoute } from './routes/ChangePassword';
+import { loginRoute } from './routes/Login';
+import { signupRoute } from './routes/SignUp';
+import { notFoundRoute } from './components/NotFound';
+import { forgotPasswordRoute } from './routes/ForgotPassword';
+import { privacyRoute } from './routes/Privacy';
+import { termsRoute } from './routes/Terms';
+import { adminRoute } from './routes/admin';
+import { usersListRoute, usersRoute } from './routes/admin/users';
+import { userRoute } from './routes/admin/users/User';
+import { userDetailsInitalRoute, userDetailsRoute } from './routes/admin/users/Details';
+import { editUserRoute } from './routes/admin/users/edit';
+import { locationRoute } from './routes/admin/users/Location';
+import { leaderboardsRoute } from './routes/admin/leaderboards';
+import { usersByDomainRoute } from './routes/admin/UsersByDomain';
+import { beepersRoute } from './routes/admin/beepers/Beepers';
+import { activeBeepsRoute } from './routes/admin/beeps/ActiveBeeps';
+import { beepsListRoute, beepsRoute } from './routes/admin/beeps';
+import { carsRoute } from './routes/admin/cars';
+import { reportsListRoute, reportsRoute } from './routes/admin/reports';
+import { reportRoute } from './routes/admin/reports/Report';
+import { ratingRoute } from './routes/admin/ratings/Rating';
+import { ratingsListRoute, ratingsRoute } from './routes/admin/ratings';
+import { notificationsRoute } from './routes/admin/notifications';
+import { feedbackRoute } from './routes/admin/Feedback';
+import { paymentsRoute } from './routes/admin/Payments';
+import { redisRoute } from './routes/admin/Redis';
+import { verifyAccountRoute } from './routes/VerifyAccount';
+import { resetPasswordRoute } from './routes/ResetPassword';
+import { beepRoute } from './routes/admin/beeps/Beep';
+import { queueRoute } from './components/QueueTable';
+import { beepsTableRoute } from './components/BeepsTable';
+import { reportsTableRoute } from './components/ReportsTable';
+import { ratingsTableRoute } from './components/RatingsTable';
+import { carsTableRoute } from './components/CarsTable';
+import { paymentsTableRoute } from './components/PaymentsTable';
 
 export const GetUserData = gql`
   query GetUserData {
@@ -95,37 +119,85 @@ function Beep() {
   }
 
   return (
-    <Router>
+    <>
       <Header />
       <Container as="main" maxW="container.xl" pt={20}>
         <Banners />
-        <Suspense>
-          <Routes>
-            <Route path="/password/forgot" element={<ForgotPassword />} />
-            <Route path="/password/reset/:id" element={<ResetPassword />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile/edit" element={<EditProfile />} />
-            <Route path="/password/change" element={<ChangePassword />} />
-            <Route path="/account/verify/:id" element={<VerifyAccount />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/admin/*" element={<Admin />} />
-            <Route path='/download' element={<Download />} />
-            <Route path="/" element={<Home />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+        <Outlet />
       </Container>
-    </Router>
+    </>
   );
+}
+
+export const rootRoute = new RootRoute({
+  component: Beep,
+});
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  editProfileRoute,
+  changePasswordRoute,
+  loginRoute,
+  signupRoute,
+  forgotPasswordRoute,
+  privacyRoute,
+  termsRoute,
+  verifyAccountRoute,
+  resetPasswordRoute,
+  adminRoute.addChildren([
+    leaderboardsRoute,
+    usersByDomainRoute,
+    beepersRoute,
+    activeBeepsRoute,
+    carsRoute,
+    notificationsRoute,
+    feedbackRoute,
+    paymentsRoute,
+    redisRoute,
+    ratingsRoute.addChildren([
+      ratingsListRoute,
+      ratingRoute
+    ]),
+    reportsRoute.addChildren([
+      reportsListRoute,
+      reportRoute,
+    ]),
+    beepsRoute.addChildren([
+      beepsListRoute,
+      beepRoute,
+    ]),
+    usersRoute.addChildren([
+      usersListRoute,
+      usersByDomainRoute,
+      userRoute.addChildren([
+        userDetailsRoute,
+        userDetailsInitalRoute,
+        editUserRoute,
+        locationRoute,
+        queueRoute,
+        beepsTableRoute,
+        reportsTableRoute,
+        ratingsTableRoute,
+        carsTableRoute,
+        paymentsTableRoute,
+      ])
+    ]),
+  ]),
+]);
+
+const router = new Router({ routeTree, notFoundRoute });
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
 }
 
 export function App() {
   return (
     <ChakraProvider theme={theme}>
       <ApolloProvider client={client}>
-        <Beep />
+        <RouterProvider router={router} />
       </ApolloProvider>
     </ChakraProvider>
   );

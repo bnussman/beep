@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { XStack, Spacer, Stack, SizableText } from "tamagui";
 import { GetRatingsQuery } from "../generated/graphql";
-import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { printStars } from "./Stars";
@@ -27,7 +26,7 @@ const DeleteRating = gql`
 export function Rating(props: Props) {
   const { item } = props;
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
   const isRater = user?.id === item.rater.id;
@@ -71,7 +70,7 @@ export function Rating(props: Props) {
   return (
     <Card
       pressable
-      onPress={() => navigation.push("Profile", { id: otherUser.id, beepId: item.beep.id })}
+      onPress={() => navigation.navigate("User", { id: otherUser.id, beepId: item.beep.id })}
       onLongPress={onLongPress}
       mx="$2"
       my={4}

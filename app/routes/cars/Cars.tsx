@@ -1,7 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import {
   FlatList,
@@ -20,7 +19,7 @@ import {
   EditCarMutation,
   GetCarsQuery,
 } from "../../generated/graphql";
-import { Spinner, Text, Stack, XStack, Button, H2, SizableText } from "tamagui";
+import { Spinner, Stack, XStack, H2, SizableText } from "tamagui";
 import { Plus } from "@tamagui/lucide-icons";
 
 export const DeleteCar = gql`
@@ -56,8 +55,9 @@ export const CarsQuery = gql`
 `;
 
 export function Cars() {
-  const navigation = useNavigation<Navigation>();
   const colorMode = useColorScheme();
+  const navigation = useNavigation();
+
   const { user } = useUser();
 
   const { data, loading, error, refetch, fetchMore } = useQuery<GetCarsQuery>(

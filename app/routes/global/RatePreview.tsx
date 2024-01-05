@@ -1,12 +1,11 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsForUserQuery, GetRatingsQuery } from "../../generated/graphql";
+import { GetRatingsForUserQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { printStars } from "../../components/Stars";
 import { Card } from "../../components/Card";
 import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 import {
   Text,
   XStack,
@@ -57,7 +56,8 @@ const PAGE_SIZE = 5;
 
 export function RatePreview({ id }: Props) {
   const colorMode = useColorScheme();
-  const { push } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
+  
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetRatingsForUserQuery>(Ratings, {
       variables: { id, offset: 0, show: PAGE_SIZE },
@@ -139,7 +139,7 @@ export function RatePreview({ id }: Props) {
             p="$2"
             mt="$2"
             pressable
-            onPress={() => push("Profile", { id: rating.rater.id, beepId: rating.beep.id })}
+            onPress={() => navigate("User", { id: rating.rater.id, beepId: rating.beep.id })}
           >
             <XStack alignItems="center">
               <Avatar size="$6" mr="$2" url={rating.rater.photo} />

@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { XStack, SizableText, Stack, SizableTextProps } from "tamagui";
 import { GetBeepHistoryQuery } from "../generated/graphql";
-import { Navigation } from "../utils/Navigation";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { Unpacked } from "../utils/constants";
@@ -27,7 +26,7 @@ export const beepStatusMap: Record<Status, SizableTextProps['color']> = {
 
 export function Beep({ item }: Props) {
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
   const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
   const isRider = user?.id === item.rider.id;
 
@@ -39,7 +38,7 @@ export function Beep({ item }: Props) {
     <Card
       pressable
       onPress={() =>
-        navigation.push("Profile", { id: otherUser.id, beepId: item.id })
+        navigation.navigate("User", { id: otherUser.id, beepId: item.id })
       }
       mx="$2"
       my={1}

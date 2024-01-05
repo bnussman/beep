@@ -3,12 +3,13 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
-import { useParams } from "react-router-dom";
 import { gql, useQuery } from '@apollo/client';
 import { GetBeepQuery } from '../../../generated/graphql';
 import { Heading, Text, Box, Button, Flex, Spacer, Stack, useDisclosure } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
+import { Route } from "@tanstack/react-router";
+import { beepsRoute } from ".";
 
 dayjs.extend(duration);
 
@@ -37,8 +38,14 @@ const GetBeep = gql`
   }
 `;
 
+export const beepRoute = new Route({
+  component: Beep,
+  path: "$beepId",
+  getParentRoute: () => beepsRoute,
+});
+
 export function Beep() {
-  const { id } = useParams();
+  const { beepId: id } = beepRoute.useParams();
   const { data, loading } = useQuery<GetBeepQuery>(GetBeep, { variables: { id } });
 
   const { isOpen, onClose, onOpen } = useDisclosure();

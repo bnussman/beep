@@ -1,6 +1,5 @@
 import React from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Link, useNavigate } from "react-router-dom";
 import { GetUserData } from "../App";
 import { GetUserDataQuery, LogoutMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
@@ -16,6 +15,7 @@ import {
   MenuDivider,
   Icon,
 } from "@chakra-ui/react"
+import { Link, useNavigate } from "@tanstack/react-router";
 
 const Logout = gql`
   mutation Logout {
@@ -41,7 +41,7 @@ export function UserMenu() {
         }
       });
 
-      navigate("/");
+      navigate({ to: "/" });
 
       localStorage.removeItem('user');
 

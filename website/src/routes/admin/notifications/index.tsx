@@ -25,6 +25,8 @@ import {
   useDisclosure,
   useToast
 } from "@chakra-ui/react";
+import { Route } from "@tanstack/react-router";
+import { adminRoute } from "..";
 
 const SendNotifications = gql`
     mutation SendNotifications($title: String!, $body: String!, $match: String) {
@@ -37,6 +39,12 @@ const CleanObjectStorageBucket = gql`
     cleanObjectStorageBucket
   }
 `;
+
+export const notificationsRoute = new Route({
+  component: Notifications,
+  path: "/notifications",
+  getParentRoute: () => adminRoute,
+});
 
 export function Notifications() {
   const { isOpen, onClose, onOpen } = useDisclosure();

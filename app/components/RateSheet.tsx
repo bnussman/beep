@@ -6,7 +6,6 @@ import { Alert } from "../utils/Alert";
 import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../utils/Navigation";
 import { Ratings } from "../routes/Ratings";
 import { Button, H2, Stack, Spinner, Sheet } from "tamagui";
 import { Pressable } from "react-native";
@@ -30,7 +29,7 @@ export function RateSheet() {
   const { data } = useQuery<GetRateDataQuery>(GetRateData);
   const [stars, setStars] = useState<number>(0);
   const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
 
   const beep = data?.getLastBeepToRate;
 
@@ -62,7 +61,7 @@ export function RateSheet() {
       <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" space="$5">
         <Pressable
           onPress={() =>
-            navigate("Profile", { id: beep.beeper.id, beepId: beep.id })
+            navigate("User", { id: beep.beeper.id, beepId: beep.id })
           }
         >
           <Stack alignItems="center">

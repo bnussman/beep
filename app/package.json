@@ -14,9 +14,9 @@
   "dependencies": {
     "@apollo/client": "^3.8.6",
     "@react-native-async-storage/async-storage": "~1.18.2",
-    "@react-navigation/drawer": "^6.6.4",
-    "@react-navigation/native": "^6.1.8",
-    "@react-navigation/stack": "^6.3.18",
+    "@react-navigation/drawer": "next",
+    "@react-navigation/native": "next",
+    "@react-navigation/native-stack": "next",
     "@sentry/react-native": "5.10.0",
     "@tamagui/config": "^1.77.1",
     "@tamagui/core": "^1.77.1",

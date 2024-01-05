@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import {
-  GetUserProfileQuery,
-  ReportUserMutation,
-} from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
 import { Input, Button, Spinner, Stack } from "tamagui";
+import { GetUserProfileQuery, ReportUserMutation } from "../../generated/graphql";
 import { Container } from "../../components/Container";
 import { UserHeader } from "../../components/UserHeader";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { GetUser } from "./Profile";
 
 const ReportUser = gql`
@@ -17,16 +13,18 @@ const ReportUser = gql`
   }
 `;
 
-export function ReportScreen() {
+
+type Props = StaticScreenProps<{ userId: string, beepId?: string }>;
+
+export function ReportScreen({ route }: Props) {
   const [reason, setReason] = useState<string>();
   const [report, { loading }] = useMutation<ReportUserMutation>(ReportUser);
-  const { params } = useRoute<any>();
-  const { goBack } = useNavigation<Navigation>();
+  const { goBack } = useNavigation();
 
   const { data } = useQuery<GetUserProfileQuery>(GetUser, {
     variables: {
-      id: params.userId,
-    },
+      id: route.params.userId
+    }
   });
 
   const user = data?.getUser;
@@ -35,8 +33,8 @@ export function ReportScreen() {
     try {
       await report({
         variables: {
-          userId: params.userId,
-          beepId: params.beepId,
+          userId: route.params.userId,
+          beepId: route.params.beepId,
           reason: reason,
         },
       });

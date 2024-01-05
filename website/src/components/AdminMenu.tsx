@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from 'react-router-dom';
 import {
   Menu,
   MenuButton,
@@ -16,6 +15,7 @@ import { AiOutlineNotification } from 'react-icons/ai'
 import { VscFeedback } from 'react-icons/vsc'
 import { MdAlternateEmail } from 'react-icons/md'
 import { TbMapPins } from 'react-icons/tb'
+import { Link } from "@tanstack/react-router";
 
 export function AdminMenu() {
   return (

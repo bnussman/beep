@@ -10,7 +10,7 @@ import { Container } from "../../components/Container";
 import { UserData, useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
+import { Ionicons } from "@expo/vector-icons";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { client } from "../../utils/Apollo";
 import { ApolloError, gql, useMutation } from "@apollo/client";
@@ -80,7 +80,7 @@ export function generateRNFile(uri: string, name: string) {
 
 export function EditProfileScreen() {
   const { user } = useUser();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const defaultValues = useMemo(
     () => ({
@@ -155,7 +155,7 @@ export function EditProfileScreen() {
                 <Button
                   size="$3"
                   onPress={() => {
-                    navigation.push("Change Password");
+                    navigation.navigate("Change Password");
                   }}
                 >
                   Change Password

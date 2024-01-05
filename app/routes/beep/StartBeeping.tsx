@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
-import { isAndroid, isMobile } from "../../utils/constants";
+import { isAndroid } from "../../utils/constants";
 import {
   ApolloError,
   gql,
@@ -14,7 +14,6 @@ import {
   useSubscription,
 } from "@apollo/client";
 import { cache, client } from "../../utils/Apollo";
-import { Navigation } from "../../utils/Navigation";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
@@ -25,10 +24,7 @@ import {
   Alert as NativeAlert,
   AppState,
   AppStateStatus,
-  Pressable,
-  RefreshControl,
   useColorScheme,
-  FlatList,
 } from "react-native";
 import {
   GetInitialQueueQuery,
@@ -38,9 +34,7 @@ import {
 import {
   Input,
   Switch,
-  Heading,
   Stack,
-  Spacer,
   XStack,
   Button,
   Label,
@@ -135,7 +129,7 @@ export const LOCATION_TRACKING = "location-tracking";
 export function StartBeepingScreen() {
   const { user } = useUser();
   const colorMode = useColorScheme();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [singlesRate, setSinglesRate] = useState<string>(
@@ -389,7 +383,7 @@ export function StartBeepingScreen() {
           <Stack alignItems="center" space={2}>
             <H3 fontWeight="bold">Want more riders?</H3>
             <SizableText>Jump to the top of the beeper list</SizableText>
-            <Button onPress={() => navigation.navigate("Premium")}>
+            <Button onPress={() => navigation.navigate("Main", { screen: "Premium" })}>
               Get Promoted
             </Button>
           </Stack>

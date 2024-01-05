@@ -1,7 +1,6 @@
 import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Alert, Pressable } from "react-native";
-import { Navigation } from "../../utils/Navigation";
 import { GetInitialQueueQuery } from "../../generated/graphql";
 import { isMobile, Unpacked } from "../../utils/constants";
 import { CancelBeep } from "../../components/CancelButton";
@@ -20,7 +19,7 @@ interface Props {
 
 export function QueueItem({ item }: Props) {
   const [cancel] = useMutation(CancelBeep);
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
 
   const onCancelPress = () => {
     if (isMobile) {
@@ -56,7 +55,7 @@ export function QueueItem({ item }: Props) {
         <Stack>
           <Pressable
             onPress={() =>
-              navigate("Profile", {
+              navigate("User", {
                 id: item.rider.id,
                 beepId: item.id,
               })
@@ -152,7 +151,7 @@ export function QueueItem({ item }: Props) {
       <Stack space={1}>
         <Pressable
           onPress={() =>
-            navigate("Profile", {
+            navigate("User", {
               id: item.rider.id,
               beepId: item.id,
             })
