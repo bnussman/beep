@@ -189,9 +189,9 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
 export const Drawer = createDrawerNavigator({
   screenOptions: () => {
-    const colorScheme = useColorScheme();
+    // const colorScheme = useColorScheme();
     return {
-      headerTintColor: colorScheme === "dark" ? "white" : "black",
+      // headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
     }
   },

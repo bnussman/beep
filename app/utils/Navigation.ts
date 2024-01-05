@@ -11,7 +11,6 @@ import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
 import { StaticParamList, createStaticNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
-import { useColorScheme } from "react-native";
 
 const RootStack = createNativeStackNavigator({
   screens: {
@@ -23,13 +22,6 @@ const RootStack = createNativeStackNavigator({
         headerShown: false,
       },
     },
-  },
-  screenOptions: () => {
-    const colorScheme = useColorScheme();
-    return {
-      headerTintColor: colorScheme === "dark" ? "white" : "black",
-      drawerType: "front",
-    }
   },
   groups: {
     SignedIn: {
