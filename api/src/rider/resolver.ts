@@ -153,7 +153,7 @@ export class RiderResolver {
 
     const users = await ctx.em.createQueryBuilder(User, 'u')
       .select("*")
-      .joinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } }, "leftJoin")
+      .leftJoinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } })
       .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
       .andWhere({ isBeeping: true })
       .orderBy({
@@ -174,7 +174,7 @@ export class RiderResolver {
 
     const users = await ctx.em.createQueryBuilder(User, 'u')
       .select("*")
-      .joinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } }, "leftJoin")
+      .leftJoinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } })
       .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
       .andWhere({ isBeeping: true })
       .orderBy({
