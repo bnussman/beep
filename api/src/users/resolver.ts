@@ -1,7 +1,7 @@
 import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser, isEduEmail, Upload, search } from './helpers';
-import { LoadStrategy, QueryOrder, QueryOrderNumeric, wrap } from '@mikro-orm/core';
+import { LoadStrategy, Populate, QueryOrder, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
@@ -15,9 +15,7 @@ import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
 import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
-import { REVENUE_CAT_SECRET, S3_BUCKET_URL } from '../utils/constants';
-import type { SubscriberResponse } from './types';
-import { Payment, Store } from '../entities/Payments';
+import { S3_BUCKET_URL } from '../utils/constants';
 
 @ObjectType()
 class UsersPerDomain {
@@ -61,7 +59,7 @@ export class UserResolver {
   @Query(() => User)
   @Authorized('No Verification')
   public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
-    const populate = fieldsToRelations(info) as Array<keyof User>;
+    const populate = fieldsToRelations(info) as unknown as Populate<User, string>;
 
     return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
   }

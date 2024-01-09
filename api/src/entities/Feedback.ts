@@ -16,8 +16,8 @@ export class Feedback {
   @Field()
   id: string = v4();
 
-  @Field()
-  @ManyToOne()
+  @Field(() => User)
+  @ManyToOne(() => User)
   user!: User;
 
   @Field()

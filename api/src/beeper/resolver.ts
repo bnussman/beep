@@ -11,6 +11,7 @@ import { sha256 } from 'js-sha256';
 import { BeeperLocationArgs } from '../location/args';
 import { Car } from '../entities/Car';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
+import { omit } from '../auth/resolver';
 
 @ObjectType()
 export class AnonymousBeeper {
@@ -63,7 +64,7 @@ export class BeeperResolver {
     }
 
     if (!!input.latitude && !!input.longitude) {
-      wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
+      wrap(ctx.user).assign({ ...omit(input, 'longitude', 'latitude'), location: new Point(input.latitude, input.longitude) });
     }
     else {
       wrap(ctx.user).assign({

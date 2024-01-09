@@ -13,12 +13,12 @@ export class Report {
   @Field()
   id: string = v4();
 
-  @Field()
-  @ManyToOne()
+  @Field(() => User)
+  @ManyToOne(() => User)
   reporter!: User;
 
-  @Field()
-  @ManyToOne()
+  @Field(() => User)
+  @ManyToOne(() => User)
   reported!: User;
 
   @Field(() => User, { nullable: true })
