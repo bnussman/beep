@@ -84,9 +84,6 @@ importers:
       nodemailer:
         specifier: ^6.9.7
         version: 6.9.7
-      reflect-metadata:
-        specifier: ^0.1.13
-        version: 0.1.13
       type-graphql:
         specifier: 2.0.0-beta.3
         version: 2.0.0-beta.3(class-validator@0.14.0)(graphql-scalars@1.22.4)(graphql@16.8.1)

@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import "dotenv/config";
 import Redis from 'ioredis';
 import express from "express";
