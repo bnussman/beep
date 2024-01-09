@@ -41,8 +41,8 @@ export class Report {
   @Property({ default: false })
   handled: boolean = false;
 
-  @Field({ nullable: true })
-  @ManyToOne({ nullable: true })
+  @Field(() => Beep, { nullable: true })
+  @ManyToOne(() => Beep, { nullable: true })
   beep?: Beep;
 
   constructor(reporter: User, reported: User, reason: string, beep?: string) {
