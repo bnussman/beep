@@ -35,7 +35,7 @@
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "expo-task-manager": "~11.3.0",
-    "expo-updates": "~0.18.18",
+    "expo-updates": "~0.18.19",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.14.2",
     "native-base": "3.4.12-alpha.1",

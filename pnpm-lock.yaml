@@ -212,8 +212,8 @@ importers:
         specifier: ~11.3.0
         version: 11.3.0(expo@49.0.13)
       expo-updates:
-        specifier: ~0.18.18
-        version: 0.18.18(expo@49.0.13)
+        specifier: ~0.18.19
+        version: 0.18.19(expo@49.0.13)
       graphql:
         specifier: ^16.8.1
         version: 16.8.1
@@ -11184,8 +11184,8 @@ packages:
       expo: 49.0.13(@babel/core@7.22.9)
     dev: false
 
-  /expo-updates@0.18.18(expo@49.0.13):
-    resolution: {integrity: sha512-j9I/vCepUwJ2ZfXsqy5wG+IxXAR05+uiiPABDP9fd++09zt/r2H97abyl5sWaR1h4/0Z9wxXtI0ZssVdDXPE8A==}
+  /expo-updates@0.18.19(expo@49.0.13):
+    resolution: {integrity: sha512-dakYQ7XhZtBKMLcim08wum108ZUQcNigurijb/6PKdg3QHn21IzOr/27n6x54DctcoW8w1B8w8y1Xw2svVsx4w==}
     hasBin: true
     peerDependencies:
       expo: '*'
