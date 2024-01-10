@@ -52,7 +52,7 @@ export function Marker(props: Props) {
               <Center>
                 <Avatar src={photo || ''} size="xs" />
               </Center>
-              <Text>{name}</Text>
+              <Text fontWeight="bold">{name}</Text>
             </Box>
           </PopoverTrigger>
           <Portal>
@@ -89,7 +89,7 @@ export function Marker(props: Props) {
             <Center>
               <Avatar src={photo || ''} size="xs" />
             </Center>
-            <Text>{name}</Text>
+            <Text fontWeight="bold">{name}</Text>
           </Box>
         </Tooltip>
       </Box>

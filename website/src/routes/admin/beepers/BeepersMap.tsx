@@ -12,7 +12,7 @@ interface Props {
 export function BeepersMap({ beepers }: Props) {
 
   return (
-    <Box mb={4} mt={4} height={450} width='100%'>
+    <Box mb={4} mt={4} height="575px" width="100%">
       <Map
         initialViewState={{
           latitude: 36.215735,
