@@ -71,22 +71,26 @@ export function LocationView() {
   }
 
   return (
-    <Box height="550px" borderRadius="20px" overflow="hidden">
-      <Map
-        initialRegion={{
-          centerLatitude: user.location.latitude,
-          centerLongitude: user.location.longitude,
-          latitudeDelta: 1,
-          longitudeDelta: 1,
-        }}
-      >
-        <Marker
-          latitude={user.location.latitude}
-          longitude={user.location.longitude}
-          username={user.username}
-          name={user.name}
-        />
-      </Map>
+    <Box>
+      <div style={{ height: 550, width: '100%' }}>
+        <Map
+          initialViewState={{
+            latitude: user.location.latitude,
+            longitude: user.location.longitude,
+            zoom: 13,
+          }}
+        >
+          <Marker
+            latitude={user.location.latitude}
+            longitude={user.location.longitude}
+            userId={user.id}
+            username={user.username}
+            photo={user.photo}
+            name={user.name}
+            variant="default"
+          />
+        </Map>
+      </div>
     </Box>
   );
 }

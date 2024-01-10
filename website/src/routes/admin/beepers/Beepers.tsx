@@ -74,25 +74,6 @@ export function Beepers() {
 
   const beepers = data?.getBeepers;
 
-  const options = [
-    {
-      label: "Boone",
-      value: {
-        latitude: 36.215735,
-        longitude: -81.674205,
-        zoom: 12,
-      },
-    },
-    {
-      label: "North Carolina",
-      value: {
-        latitude: 35.683560,
-        longitude: -80.071723,
-        zoom: 6,
-      }
-    },
-  ];
-
   const [animationParent] = useAutoAnimate();
 
   useEffect(() => {

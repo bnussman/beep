@@ -6,8 +6,8 @@ import { Marker } from "../../../../components/Marker";
 import { Loading } from "../../../../components/Loading";
 import { Error } from '../../../../components/Error';
 import { Map } from '../../../../components/Map';
-import { MapProps } from 'mapkit-react';
 import { editUserRoute } from ".";
+import type { MapLayerMouseEvent } from 'react-map-gl';
 
 export const UserLocation = gql`
   query UserLocation($id: String!) {
@@ -73,10 +73,9 @@ export function EditLocation() {
     refetch();
   };
 
-  const onMapClick: MapProps['onClick'] = (data) => {
-    const cords = data.toCoordinates()
-    setLongitude(cords.longitude);
-    setLatitude(cords.latitude);
+  const onMapClick = (data: MapLayerMouseEvent) => {
+    setLongitude(data.lngLat.lng);
+    setLatitude(data.lngLat.lat);
   };
 
   if (loading) {
@@ -123,17 +122,18 @@ export function EditLocation() {
         <div style={{ height: 450, width: '100%' }}>
           <Map
             onClick={onMapClick}
-            initialRegion={{
-              centerLatitude: user.location.latitude,
-              centerLongitude: user.location.longitude,
-              latitudeDelta: 3,
-              longitudeDelta: 3,
+            initialViewState={{
+              latitude: user.location.latitude,
+              longitude: user.location.longitude,
+              zoom: 13,
             }}
           >
             <Marker
               latitude={user.location.latitude}
               longitude={user.location.longitude}
+              userId={user.id}
               username={user.username}
+              photo={user.photo}
               name={user.name}
             />
           </Map>
