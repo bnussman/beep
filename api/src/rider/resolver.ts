@@ -146,27 +146,6 @@ export class RiderResolver {
 
   @Query(() => [User])
   @Authorized()
-  public async getBeepersNew(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
-    if (radius === 0) {
-      return await ctx.em.find(User, { isBeeping: true });
-    }
-
-    const users = await ctx.em.createQueryBuilder(User, 'u')
-      .select("*")
-      .joinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } }, "leftJoin")
-      .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
-      .andWhere({ isBeeping: true })
-      .orderBy({
-        ["CASE WHEN p.product_id LIKE 'top_of_beeper_list_%' THEN 1 ELSE 0 END"]: QueryOrder.DESC,
-        [`ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}))`]: QueryOrder.ASC
-      })
-      .getResultList();
-
-    return users;
-  }
-
-  @Query(() => [User])
-  @Authorized()
   public async getBeepers(@Ctx() ctx: Context, @Args() { latitude, longitude, radius }: GetBeepersArgs): Promise<User[]> {
     if (radius === 0) {
       return await ctx.em.find(User, { isBeeping: true });
