@@ -11,7 +11,6 @@ import { GetInProgressBeepsQuery } from '../../../generated/graphql';
 import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
 import { beepStatusMap } from '.';
-import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 
@@ -68,8 +67,6 @@ export function ActiveBeeps() {
     }
   });
 
-  const [animationParent] = useAutoAnimate();
-
   useEffect(() => {
     startPolling(2000);
     if (data) {
@@ -117,7 +114,7 @@ export function ActiveBeeps() {
               <Th>Status</Th>
             </Tr>
           </Thead>
-          <Tbody ref={animationParent}>
+          <Tbody>
             {beeps?.items.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />

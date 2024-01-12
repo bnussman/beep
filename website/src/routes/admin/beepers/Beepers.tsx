@@ -7,7 +7,6 @@ import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
 import { cache } from '../../../utils/Apollo';
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Route } from '@tanstack/react-router';
 import { adminRoute } from '..';
 
@@ -73,8 +72,6 @@ export function Beepers() {
   });
 
   const beepers = data?.getBeepers;
-
-  const [animationParent] = useAutoAnimate();
 
   useEffect(() => {
     startPolling(15000);
@@ -145,7 +142,7 @@ export function Beepers() {
               <Th>Rate</Th>
             </Tr>
           </Thead>
-          <Tbody ref={animationParent}>
+          <Tbody>
             {beepers.map((beeper) => (
               <Tr key={beeper.id}>
                 <TdUser user={beeper} />

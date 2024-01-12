@@ -10,7 +10,6 @@ import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
-import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 
@@ -77,8 +76,6 @@ export function Beeps() {
   const pageLimit = 20;
   const { page } = beepsListRoute.useSearch();
   const navigate = useNavigate({ from: beepsListRoute.id });
-  
-  const [animationParent] = useAutoAnimate();
 
   const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetBeepsQuery>(BeepsGraphQL, {
     variables: {
@@ -93,7 +90,7 @@ export function Beeps() {
     if (data) {
       refetch();
     }
-    
+
     return () => {
       stopPolling();
     }
@@ -131,7 +128,7 @@ export function Beeps() {
               <Th>Duration</Th>
             </Tr>
           </Thead>
-          <Tbody ref={animationParent}>
+          <Tbody>
             {data?.getBeeps.items.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />
