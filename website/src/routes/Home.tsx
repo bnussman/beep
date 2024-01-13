@@ -3,6 +3,14 @@ import iPhoneDark from '../assets/dark-square.png';
 import iPhoneLight from '../assets/light-square.png';
 import { Container, useColorMode } from "@chakra-ui/react";
 import { Hero } from "../components/Hero";
+import { Route } from '@tanstack/react-router';
+import { rootRoute } from '../App';
+
+export const indexRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: Home,
+})
 
 export function Home() {
   const { colorMode } = useColorMode();

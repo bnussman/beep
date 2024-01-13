@@ -34,7 +34,7 @@ export class AuthResolver {
       case (PasswordType.SHA256):
         isPasswordCorrect = sha256(password) === user.password;
         break;
-      case (PasswordType.BCRYPT): 
+      case (PasswordType.BCRYPT):
         isPasswordCorrect = await bunPassword.verify(password, user.password, "bcrypt");
         break;
       default:
@@ -80,7 +80,14 @@ export class AuthResolver {
     const password = await bunPassword.hash(input.password, "bcrypt");
 
     wrap(user).assign({
-      ...input,
+      username: input.username,
+      first: input.first,
+      last: input.last,
+      phone: input.phone,
+      email: input.email,
+      venmo: input.venmo,
+      cashapp: input.cashapp,
+      pushToken: input.pushToken,
       photo: result.Location,
       password,
       passwordType: PasswordType.BCRYPT,
@@ -138,7 +145,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   public async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string): Promise<boolean> {
-    const user = await ctx.em.findOne(User, { email }); 
+    const user = await ctx.em.findOne(User, { email });
 
     if (!user) {
       throw new Error("User does not exist");

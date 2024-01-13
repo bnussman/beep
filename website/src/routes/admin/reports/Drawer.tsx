@@ -8,9 +8,9 @@ import { DeleteIcon, ExternalLinkIcon} from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { BasicUser } from '../../../components/BasicUser';
 import { Indicator } from '../../../components/Indicator';
-import { NavLink } from 'react-router-dom';
 import { Loading } from '../../../components/Loading';
 import { DeleteReportDialog } from './DeleteReportDialog';
+import { Link } from '@tanstack/react-router';
 
 interface Props {
   isOpen: boolean;
@@ -21,7 +21,7 @@ interface Props {
 
 export function ReportDrawer(props: Props) {
   const { isOpen, onClose, id } = props;
-  const { data, loading, error, refetch } = useQuery<GetReportQuery>(GetReport, { variables: { id }, skip: !id });
+  const { data, loading, error } = useQuery<GetReportQuery>(GetReport, { variables: { id }, skip: !id });
   const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
 
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
@@ -74,9 +74,9 @@ export function ReportDrawer(props: Props) {
               {data.getReport.beep &&
                 <Box>
                   <Heading size="md">Associated Beep</Heading>
-                  <NavLink to={`/admin/beeps/${data.getReport.beep.id}`}>
+                  <Link to="/admin/beeps/$beepId" params={{ beepId: data.getReport.beep.id }}>
                     {data.getReport.beep.id}
-                  </NavLink>
+                  </Link>
                 </Box>
               }
               <Box>
@@ -109,9 +109,11 @@ export function ReportDrawer(props: Props) {
         </DrawerBody>
         <DrawerFooter>
           <Box mr={4}>
-            <NavLink to={`/admin/reports/${data?.getReport.id}`}>
-              <ExternalLinkIcon />
-            </NavLink>
+            {data && (
+              <Link to="/admin/reports/$reportId" params={{ reportId: data.getReport.id }}>
+                <ExternalLinkIcon />
+              </Link>
+            )}
           </Box>
           <Button
             colorScheme="red"

@@ -9,7 +9,6 @@ import { useUser } from "../../utils/useUser";
 import { isAndroid, isMobile } from "../../utils/constants";
 import { ApolloError, gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { cache, client } from "../../utils/Apollo";
-import { Navigation } from "../../utils/Navigation";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
@@ -131,7 +130,7 @@ export const LOCATION_TRACKING = "location-tracking";
 export function StartBeepingScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [singlesRate, setSinglesRate] = useState<string>(
@@ -383,7 +382,7 @@ export function StartBeepingScreen() {
             <Text textAlign="center">
               Jump to the top of the beeper list
             </Text>
-            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Premium")}>Get Promoted</Button>
+            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
           </Stack>
         </Card>
       </Container>

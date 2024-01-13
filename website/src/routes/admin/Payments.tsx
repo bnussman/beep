@@ -5,10 +5,11 @@ import { Pagination } from '../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../components/TdUser';
-import { useSearchParams } from 'react-router-dom';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { PaymentsQuery } from '../../generated/graphql';
+import { Route, useNavigate } from '@tanstack/react-router';
+import { adminRoute } from '.';
 
 dayjs.extend(relativeTime);
 
@@ -33,10 +34,20 @@ const PaymentsGQL = gql`
   }
 `;
 
+export const paymentsRoute = new Route({
+  component: Payments,
+  path: '/payments',
+  getParentRoute: () => adminRoute,
+  validateSearch: (search: Record<string, string>) => ({ page: Number(search?.page ?? 1)})
+});
+
+
 export function Payments() {
   const pageLimit = 20;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
+
+  const { page } = paymentsRoute.useSearch();
+
+  const navigate = useNavigate({ from: paymentsRoute.id });
 
   const { data, loading, error } = useQuery<PaymentsQuery>(PaymentsGQL, {
     variables: {
@@ -49,7 +60,7 @@ export function Payments() {
   const count = data?.getPayments.count;
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page } });
   };
 
   if (error) {

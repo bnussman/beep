@@ -7,7 +7,8 @@ import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
 import { cache } from '../../../utils/Apollo';
-import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { Route } from '@tanstack/react-router';
+import { adminRoute } from '..';
 
 const BeepersGraphQL = gql`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -49,6 +50,12 @@ const BeeperLocationUpdates = gql`
   }
 `;
 
+export const beepersRoute = new Route({
+  component: Beepers,
+  path: 'beepers',
+  getParentRoute: () => adminRoute,
+});
+
 export function Beepers() {
   const {
     data,
@@ -65,27 +72,6 @@ export function Beepers() {
   });
 
   const beepers = data?.getBeepers;
-
-  const options = [
-    {
-      label: "Boone",
-      value: {
-        latitude: 36.215735,
-        longitude: -81.674205,
-        zoom: 12,
-      },
-    },
-    {
-      label: "North Carolina",
-      value: {
-        latitude: 35.683560,
-        longitude: -80.071723,
-        zoom: 6,
-      }
-    },
-  ];
-
-  const [animationParent] = useAutoAnimate();
 
   useEffect(() => {
     startPolling(15000);
@@ -156,7 +142,7 @@ export function Beepers() {
               <Th>Rate</Th>
             </Tr>
           </Thead>
-          <Tbody ref={animationParent}>
+          <Tbody>
             {beepers.map((beeper) => (
               <Tr key={beeper.id}>
                 <TdUser user={beeper} />

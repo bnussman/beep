@@ -63,7 +63,13 @@ export class BeeperResolver {
     }
 
     if (!!input.latitude && !!input.longitude) {
-      wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
+      wrap(ctx.user).assign({
+        singlesRate: input.singlesRate,
+        groupRate: input.groupRate,
+        capacity: input.capacity,
+        isBeeping: input.isBeeping,
+        location: new Point(input.latitude, input.longitude)
+      });
     }
     else {
       wrap(ctx.user).assign({
@@ -83,7 +89,7 @@ export class BeeperResolver {
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<Beep[]> {
     await ctx.em.populate(
       ctx.user,
-      ['queue', 'queue.rider', 'cars'],
+      ['queue', 'queue.rider', 'queue.beeper', 'queue.beeper.cars'],
       {
         where: { cars: { default: true } },
         filters: ['inProgress'],

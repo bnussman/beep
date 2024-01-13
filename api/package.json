@@ -25,13 +25,13 @@
   "dependencies": {
     "@apollo/server": "^4.9.5",
     "@banksnussman/graphql-fields-to-relations": "^2.0.0",
-    "@mikro-orm/core": "5.9.0",
-    "@mikro-orm/postgresql": "5.9.0",
+    "@mikro-orm/core": "6.0.3",
+    "@mikro-orm/postgresql": "6.0.3",
     "@sentry/integrations": "^7.77.0",
     "@sentry/node": "^7.77.0",
     "aws-sdk": "^2.1485.0",
     "body-parser": "^1.20.2",
-    "car-info": "^0.1.5",
+    "car-info": "^0.1.6",
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -51,8 +51,8 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "5.9.0",
-    "@mikro-orm/migrations": "5.9.0",
+    "@mikro-orm/cli": "6.0.3",
+    "@mikro-orm/migrations": "6.0.3",
     "@types/bcrypt": "^5.0.1",
     "@types/body-parser": "^1.19.4",
     "@types/cors": "^2.8.15",

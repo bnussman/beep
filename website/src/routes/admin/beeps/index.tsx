@@ -6,12 +6,12 @@ import { gql, useQuery } from '@apollo/client';
 import { GetBeepsQuery } from '../../../generated/graphql';
 import { Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
-import { useSearchParams } from 'react-router-dom';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
-import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { Route, useNavigate } from '@tanstack/react-router';
+import { adminRoute } from '..';
 
 dayjs.extend(duration);
 
@@ -55,12 +55,27 @@ export const beepStatusMap: Record<Status, string> = {
   [Status.COMPLETE]: 'green',
 };
 
+export const beepsRoute = new Route({
+  path: "beeps",
+  getParentRoute: () => adminRoute,
+});
+
+
+export const beepsListRoute = new Route({
+  path: "/",
+  getParentRoute: () => beepsRoute,
+  component: Beeps,
+  validateSearch: (search: Record<string, string>) => {
+    return {
+      page: Number(search?.page ?? 1),
+    }
+  },
+});
+
 export function Beeps() {
   const pageLimit = 20;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
-  
-  const [animationParent] = useAutoAnimate();
+  const { page } = beepsListRoute.useSearch();
+  const navigate = useNavigate({ from: beepsListRoute.id });
 
   const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetBeepsQuery>(BeepsGraphQL, {
     variables: {
@@ -75,14 +90,14 @@ export function Beeps() {
     if (data) {
       refetch();
     }
-    
+
     return () => {
       stopPolling();
     }
   }, []);
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page } });
   };
 
   if (error) {
@@ -113,7 +128,7 @@ export function Beeps() {
               <Th>Duration</Th>
             </Tr>
           </Thead>
-          <Tbody ref={animationParent}>
+          <Tbody>
             {data?.getBeeps.items.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />

@@ -1,11 +1,10 @@
 import React from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
 import { RefreshControl } from "react-native";
 import { ChooseBeepMutation, ChooseBeepMutationVariables, GetBeepersQuery } from "../../generated/graphql";
-import { Navigation } from "../../utils/Navigation";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { Card } from "../../components/Card";
@@ -101,11 +100,12 @@ const ChooseBeep = gql`
   }
 `;
 
-export function PickBeepScreen() {
+type Props = StaticScreenProps<Omit<ChooseBeepMutationVariables, 'beeperId'>>;
+
+export function PickBeepScreen({ route }: Props) {
   const { colorMode } = useColorMode();
   const { location } = useLocation();
-  const { params } = useRoute<any>();
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
 
   const { data, loading, error, refetch } = useQuery<GetBeepersQuery>(
     GetBeepers,
@@ -120,14 +120,13 @@ export function PickBeepScreen() {
     }
   );
 
-  const [getBeep, { loading: isGetBeepLoading, error: getBeepError }] =
-    useMutation<ChooseBeepMutation>(ChooseBeep);
+  const [getBeep] = useMutation<ChooseBeepMutation>(ChooseBeep);
 
   const chooseBeep = async ( beeperId: string,) => {
     try {
       const { data } = await getBeep({
         variables: {
-          ...params,
+          ...route.params,
           beeperId,
         },
       });

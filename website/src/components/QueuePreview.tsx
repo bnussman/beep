@@ -7,8 +7,8 @@ import { Text, Avatar, Box, Center, HStack, Spacer, Spinner } from '@chakra-ui/r
 import { client } from '../utils/Apollo';
 import { gql, useQuery } from '@apollo/client';
 import { QueueSubscription } from './QueueTable';
-import { Link } from 'react-router-dom';
 import { Status } from '../types/User';
+import { Link } from '@tanstack/react-router';
 
 dayjs.extend(duration);
 
@@ -87,10 +87,10 @@ export function QueuePreview({ userId }: Props) {
     <Box>
       {queue?.map((entry) => (
         <HStack key={entry.id}>
-          <Link to={`/admin/users/${entry.rider.id}`}>
+          <Link to="/admin/users/$userId" params={{ userId: entry.rider.id }}>
             <Avatar src={entry.rider.photo || ''} size="xs" />
           </Link>
-          <Link to={`/admin/users/${entry.rider.id}`}>
+          <Link to="/admin/users/$userId" params={{ userId: entry.rider.id }}>
             <Box fontWeight="bold" whiteSpace="nowrap">{entry.rider.name}</Box>
           </Link>
           <Text noOfLines={1}>

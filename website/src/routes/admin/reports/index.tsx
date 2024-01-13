@@ -10,7 +10,8 @@ import { gql, useQuery } from '@apollo/client';
 import { GetReportsQuery } from '../../../generated/graphql';
 import { Error } from '../../../components/Error';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue, useDisclosure } from '@chakra-ui/react';
-import { useSearchParams } from 'react-router-dom';
+import { Route, useNavigate } from '@tanstack/react-router';
+import { adminRoute } from '..';
 
 dayjs.extend(relativeTime);
 
@@ -41,13 +42,27 @@ export const ReportsGraphQL = gql`
   }
 `;
 
+export const reportsRoute = new Route({
+  path: 'reports',
+  getParentRoute: () => adminRoute,
+});
+
+export const reportsListRoute = new Route({
+  component: Reports,
+  path: "/",
+  getParentRoute: () => reportsRoute,
+  validateSearch: (search: Record<string, string>) => ({
+    page: Number(search?.page ?? 1),
+  }),
+});
+
 export function Reports() {
   const pageLimit = 20;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { page } = reportsListRoute.useSearch();
   const bg = useColorModeValue('gray.50', 'rgb(20, 24, 28)');
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
   const [id, setId] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate({ from: reportsListRoute.id });
 
   const { data, loading, error } = useQuery<GetReportsQuery>(ReportsGraphQL, {
     variables: {
@@ -57,7 +72,7 @@ export function Reports() {
   });
 
   const setCurrentPage = (page: number) => {
-    setSearchParams({ page: String(page) });
+    navigate({ search: { page } });
   };
 
   const reports = data?.getReports.items;

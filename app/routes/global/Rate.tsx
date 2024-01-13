@@ -3,11 +3,10 @@ import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { GetUserProfileQuery, RateUserMutation } from "../../generated/graphql";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
-import { Navigation } from "../../utils/Navigation";
 import { Button, Input, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { GetUser } from "./Profile";
 
 export const RateUser = gql`
@@ -28,19 +27,20 @@ export const RateUser = gql`
   }
 `;
 
-export function RateScreen() {
+type Props = StaticScreenProps<{ userId: string, beepId?: string }>;
+
+export function RateScreen({ route }: Props) {
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
   const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
-  const { params } = useRoute<any>();
 
   const { data } = useQuery<GetUserProfileQuery>(GetUser, {
     variables: {
-      id: params.userId
+      id: route.params.userId
     }
   });
 
-  const { goBack } = useNavigation<Navigation>();
+  const { goBack } = useNavigation();
 
   const user = data?.getUser;
 
@@ -48,8 +48,8 @@ export function RateScreen() {
     rate({
       refetchQueries: () => ["GetRatings"],
       variables: {
-        userId: params.userId,
-        beepId: params.beepId,
+        userId: route.params.userId,
+        beepId: route.params.beepId,
         message: message,
         stars: stars,
       },

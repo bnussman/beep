@@ -7,14 +7,11 @@ import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
 import { printStars } from '../routes/admin/ratings';
-import { NavLink } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Link, Route } from '@tanstack/react-router';
+import { userRoute } from '../routes/admin/users/User';
 
 dayjs.extend(duration);
-
-interface Props {
-  userId: string;
-}
 
 const Ratings = gql`
   query GetRatingsForUser($id: String, $show: Int, $offset: Int) {
@@ -42,13 +39,23 @@ const Ratings = gql`
   }
 `;
 
-export function RatingsTable(props: Props) {
+export const ratingsTableRoute = new Route({
+  component: RatingsTable,
+  path: 'ratings',
+  getParentRoute: () => userRoute,
+});
+
+
+export function RatingsTable() {
   const pageLimit = 5;
+
+  const { userId } = ratingsTableRoute.useParams();
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, loading } = useQuery<GetRatingsQuery>(
     Ratings, {
       variables: {
-        id: props.userId,
+        id: userId,
         offset: (currentPage - 1) * pageLimit,
         show: pageLimit
       }
@@ -100,9 +107,9 @@ export function RatingsTable(props: Props) {
                 <Td>{printStars(rating.stars)}</Td>
                 <Td>{dayjs().to(rating.timestamp)}</Td>
                 <Td>
-                  <NavLink to={`/admin/ratings/${rating.id}`}>
+                  <Link to="/admin/ratings/$ratingId" params={{ ratingId: rating.id }}>
                     <ExternalLinkIcon />
-                  </NavLink>
+                  </Link>
                 </Td>
               </Tr>
             ))}

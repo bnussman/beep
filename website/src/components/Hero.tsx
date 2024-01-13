@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from "react-router-dom"
 import { DownloadIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -9,6 +8,7 @@ import {
   Heading,
   Stack,
 } from "@chakra-ui/react"
+import { Link } from '@tanstack/react-router';
 
 interface Props {
   title: string;

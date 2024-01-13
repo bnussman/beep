@@ -8,7 +8,8 @@ import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { SearchIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
-import { useSearchParams } from "react-router-dom";
+import { Route, useNavigate } from '@tanstack/react-router';
+import { adminRoute } from '..';
 
 export const UsersGraphQL = gql`
   query getUsers($show: Int, $offset: Int, $query: String) {
@@ -29,11 +30,32 @@ export const UsersGraphQL = gql`
   }
 `;
 
+export interface PaginationSearchParams {
+  page: number;
+  query?: string;
+}
+
+export const usersRoute = new Route({
+  path: 'users',
+  getParentRoute: () => adminRoute,
+});
+
+export const usersListRoute = new Route({
+  component: Users,
+  path: '/',
+  getParentRoute: () => usersRoute,
+  validateSearch: (search: Record<string, string>): PaginationSearchParams => {
+    return {
+      page: Number(search?.page ?? 1),
+      query: search.query ? search.query : undefined,
+    }
+  },
+});
+
 export function Users() {
   const pageLimit = 20;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.has('page') ? Number(searchParams.get('page')) : 1;
-  const query = searchParams.get('query');
+  const { page, query } = usersListRoute.useSearch();
+  const navigate = useNavigate({ from: usersListRoute.id });
 
   const { loading, error, data, previousData } = useQuery<GetUsersQuery>(UsersGraphQL, {
     variables: {
@@ -44,17 +66,20 @@ export function Users() {
   });
 
   const setCurrentPage = (page: number) => {
-    searchParams.set('page', String(page));
-    setSearchParams(searchParams);
+    navigate({
+      search: { page }
+    })
   };
 
   const setQuery = (query: string) => {
     if (!query) {
-      searchParams.delete('query');
-      setSearchParams(searchParams);
+      navigate({
+        search: (prev) => ({ ...prev, query: undefined })
+      })
     } else {
-      searchParams.set('query', query);
-      setSearchParams(searchParams);
+      navigate({
+        search: (prev) => ({ ...prev, query })
+      })
     }
   };
 

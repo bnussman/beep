@@ -10,11 +10,9 @@ import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
-import { UserData, useUser } from "../utils/useUser";
+import { UserData, useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
-import { MainNavParamList } from "./MainTabs";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../utils/Navigation";
 import { Cars } from "../routes/cars/Cars";
 import {
   LOCATION_TRACKING,
@@ -48,8 +46,6 @@ const Logout = gql`
     logout(isApp: true)
   }
 `;
-
-const Drawer = createDrawerNavigator<MainNavParamList>();
 
 const getIcon = (screenName: string) => {
   switch (screenName) {
@@ -86,7 +82,7 @@ const Resend = gql`
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
-  const { navigate } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const [resend, { loading: resendLoading }] =
@@ -128,7 +124,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props}>
       <VStack space={6} my={2} mx={2}>
-        <Pressable onPress={() => navigate("Profile", { id: user?.id ?? "" })}>
+        <Pressable onPress={() => navigate("User", { id: user?.id ?? "" })}>
           <HStack alignItems="center">
             <Avatar
               mr={2}
@@ -144,8 +140,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 @{user?.username}
               </Text>
             </Stack>
+            {/*
             <Spacer />
             <Text fontSize="3xl" px={2}>🎄</Text>
+            */}
           </HStack>
         </Pressable>
         <VStack divider={<Divider />} space={4}>
@@ -227,28 +225,26 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   );
 }
 
-export function BeepDrawer() {
-  const { colorMode } = useColorMode();
-  const { user } = useUser();
-
-  return (
-    <Drawer.Navigator
-      screenOptions={{
-        drawerType: "front",
-        headerTintColor: colorMode === "dark" ? "white" : "black",
-      }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
-      {!user?.isBeeping && (
-        <Drawer.Screen name="Ride" component={MainFindBeepScreen} />
-      )}
-      <Drawer.Screen name="Beep" component={StartBeepingScreen} />
-      <Drawer.Screen name="Cars" component={Cars} />
-      <Drawer.Screen name="Premium" component={Premium} />
-      <Drawer.Screen name="Profile" component={EditProfileScreen} />
-      <Drawer.Screen name="Beeps" component={BeepsScreen} />
-      <Drawer.Screen name="Ratings" component={RatingsScreen} />
-      <Drawer.Screen name="Feedback" component={Feedback} />
-    </Drawer.Navigator>
-  );
-}
+export const Drawer = createDrawerNavigator({
+  screenOptions: () => {
+    const { colorMode } = useColorMode();
+    return {
+      headerTintColor: colorMode === "dark" ? "white" : "black",
+      drawerType: "front",
+    }
+  },
+  drawerContent: (props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />,
+  screens: {
+    Ride: {
+      screen: MainFindBeepScreen,
+      if: useIsUserNotBeeping,
+    },
+    Beep: StartBeepingScreen,
+    Cars: Cars,
+    Premium: Premium,
+    Profile: EditProfileScreen,
+    Beeps: BeepsScreen,
+    Ratings: RatingsScreen,
+    Feedback: Feedback,
+  },
+});

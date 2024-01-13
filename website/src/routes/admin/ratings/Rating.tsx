@@ -3,14 +3,14 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { gql, useQuery } from '@apollo/client';
 import { GetRatingQuery } from '../../../generated/graphql';
-import { NavLink, useParams } from "react-router-dom";
 import { Heading, Text, Box, Button, Flex, Spacer, Stack, useDisclosure } from "@chakra-ui/react";
-import { printStars } from ".";
+import { printStars, ratingsRoute } from ".";
 import { Error } from '../../../components/Error';
 import { BasicUser } from "../../../components/BasicUser";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
+import { Link, Route } from "@tanstack/react-router";
 
 dayjs.extend(relativeTime);
 
@@ -40,9 +40,15 @@ const GetRating = gql`
   }
 `;
 
+export const ratingRoute = new Route({
+  component: Rating,
+  path: "$ratingId",
+  getParentRoute: () => ratingsRoute,
+});
+
 export function Rating() {
-  const { id } = useParams();
-  
+  const { ratingId: id } = ratingRoute.useParams();
+
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { data, loading, error } = useQuery<GetRatingQuery>(GetRating, { variables: { id: id } });
@@ -87,9 +93,9 @@ export function Rating() {
           {data.getRating.beep &&
             <Box>
               <Heading size="lg">Beep</Heading>
-              <NavLink to={`/admin/beeps/${data.getRating.beep.id}`}>
+              <Link to="/admin/beeps/$beepId" params={{ beepId: data.getRating.beep.id }}>
                 {data.getRating.beep.id}
-              </NavLink>
+              </Link>
             </Box>
           }
           <DeleteRatingDialog

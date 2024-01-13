@@ -1,12 +1,11 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsForUserQuery, GetRatingsQuery } from "../../generated/graphql";
+import { GetRatingsForUserQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { printStars } from "../../components/Stars";
 import { Card } from "../../components/Card";
 import { RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Navigation } from "../../utils/Navigation";
 import {
   Text,
   HStack,
@@ -56,7 +55,7 @@ const PAGE_SIZE = 5;
 
 export function RatePreview({ id }: Props) {
   const { colorMode } = useColorMode();
-  const { push } = useNavigation<Navigation>();
+  const { navigate } = useNavigation();
   const { data, loading, error, fetchMore, refetch } =
     useQuery<GetRatingsForUserQuery>(Ratings, {
       variables: { id, offset: 0, show: PAGE_SIZE },
@@ -139,7 +138,7 @@ export function RatePreview({ id }: Props) {
             p={1}
             mt={2}
             pressable
-            onPress={() => push("Profile", { id: rating.rater.id, beepId: rating.beep.id })}
+            onPress={() => navigate("User", { id: rating.rater.id, beepId: rating.beep.id })}
           >
             <HStack alignItems="center" p={2}>
               <Avatar size="md" mr={4} url={rating.rater.photo} />
@@ -151,9 +150,9 @@ export function RatePreview({ id }: Props) {
                   {new Date(rating.timestamp).toLocaleString()}
                 </Text>
                 <Text fontSize="xs">{printStars(rating.stars)}</Text>
-                {rating.message ? (
+                {rating.message && (
                   <Text fontSize="xs">{rating.message}</Text>
-                ) : null}
+                )}
               </Stack>
             </HStack>
           </Card>
