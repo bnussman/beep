@@ -63,7 +63,13 @@ export class BeeperResolver {
     }
 
     if (!!input.latitude && !!input.longitude) {
-      wrap(ctx.user).assign({ ...input, location: new Point(input.latitude, input.longitude) });
+      wrap(ctx.user).assign({
+        singlesRate: input.singlesRate,
+        groupRate: input.groupRate,
+        capacity: input.capacity,
+        isBeeping: input.isBeeping,
+        location: new Point(input.latitude, input.longitude)
+      });
     }
     else {
       wrap(ctx.user).assign({

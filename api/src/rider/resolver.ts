@@ -1,5 +1,5 @@
 import { sendNotification } from '../utils/notifications';
-import { LoadStrategy, QueryOrder } from '@mikro-orm/core';
+import { LoadStrategy, QueryOrder, raw } from '@mikro-orm/core';
 import { User } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { GetBeepInput, GetBeepersArgs } from './args';
@@ -153,12 +153,12 @@ export class RiderResolver {
 
     const users = await ctx.em.createQueryBuilder(User, 'u')
       .select("*")
-      .joinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } }, "leftJoin")
+      .leftJoinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } })
       .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
       .andWhere({ isBeeping: true })
       .orderBy({
-        ["CASE WHEN p.product_id LIKE 'top_of_beeper_list_%' THEN 1 ELSE 0 END"]: QueryOrder.DESC,
-        [`ST_DistanceSphere(u.location, ST_MakePoint(${latitude},${longitude}))`]: QueryOrder.ASC
+        [raw("CASE WHEN p.product_id LIKE 'top_of_beeper_list_%' THEN 1 ELSE 0 END")]: QueryOrder.DESC,
+        [raw(`ST_DistanceSphere(u.location, ST_MakePoint(?,?))`, [latitude, longitude])]: QueryOrder.ASC
       })
       .getResultList();
 
