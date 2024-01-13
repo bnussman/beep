@@ -89,7 +89,7 @@ export class BeeperResolver {
   public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<Beep[]> {
     await ctx.em.populate(
       ctx.user,
-      ['queue', 'queue.rider', 'cars'],
+      ['queue', 'queue.rider', 'queue.beeper', 'queue.beeper.cars'],
       {
         where: { cars: { default: true } },
         filters: ['inProgress'],
