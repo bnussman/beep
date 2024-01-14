@@ -1,3 +1,5 @@
+import type { Product } from "../entities/Payments"
+
 export interface SubscriberResponse {
   request_date: string
   request_date_ms: number
@@ -27,14 +29,12 @@ export interface ProCat {
   purchase_date: string
 }
 
-export interface NonSubscriptions {
-  [key: string]: {
-    id: string;
-    purchase_date: string;
-    store: string;
-    store_transaction_id: string;
-  }[];
-}
+export type NonSubscriptions = Record<Product, {
+  id: string;
+  purchase_date: string;
+  store: string;
+  store_transaction_id: string;
+}[]>;
 
 export interface Onetime {
   id: string

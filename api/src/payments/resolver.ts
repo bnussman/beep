@@ -51,20 +51,32 @@ export class PaymentsResolver {
   @Mutation(() => [Payment], { nullable: true })
   @Authorized('No Verification Self')
   public async checkUserSubscriptions(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Payment[]> {
-    const options = { method: 'GET', headers: { accept: 'application/json', Authorization: `Bearer ${REVENUE_CAT_SECRET}` } };
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${REVENUE_CAT_SECRET}`
+      }
+    };
 
     const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${id ?? ctx.user.id}`, options);
 
     const response: SubscriberResponse = await request.json();
 
-    const user = await ctx.em.findOneOrFail(User, id ?? ctx.user.id);
+    const user = await ctx.em.findOneOrFail(User, id ?? ctx.user.id, { populate: ['payments.id'] });
+
     const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
 
     for (const product of products) {
       for (const payment of response.subscriber.non_subscriptions[product]) {
+
+        if (user.payments.exists(p => p.id === payment.id)) {
+          continue;
+        }
+
         const created = new Date(payment.purchase_date);
 
-        const p = new Payment({
+        user.payments.add(new Payment({
           id: payment.id,
           store: payment.store as Store,
           user,
@@ -73,18 +85,14 @@ export class PaymentsResolver {
           productId: product,
           created,
           expires: new Date(created.getTime() + productExpireTimes[product])
-        })
-
-        try {
-          await ctx.em.insert(p);
-        } catch (e) {
-          // ...
-        }
+        }));
       }
     }
 
-    await user.payments.init({ where: { expires: { '$gte': new Date() }}});
+    await ctx.em.persistAndFlush(user);
 
-    return user.payments.getItems();
+    const activePayments = user.payments.filter(payment => payment.expires >= new Date());
+
+    return activePayments;
   }
 }
