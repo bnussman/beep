@@ -38,7 +38,6 @@ import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { ApolloServerPluginUsageReporting } from '@apollo/server/plugin/usageReporting';
 
 const options = {
   host: REDIS_HOST,
@@ -89,13 +88,6 @@ async function start() {
   const plugins = [
     ApolloServerPluginDrainHttpServer({ httpServer })
   ];
-
-  if (process.env.APOLLO_KEY) {
-    plugins.push(ApolloServerPluginUsageReporting({
-      sendVariableValues: { all: true },
-      sendErrors: { unmodified: true },
-    }));
-  }
 
   const server = new ApolloServer<APIContext>({
     schema,
