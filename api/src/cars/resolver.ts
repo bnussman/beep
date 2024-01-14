@@ -24,7 +24,10 @@ export class CarResolver {
 
     const extention = filename.substring(filename.lastIndexOf("."), filename.length);
 
-    const car = new Car();
+    const car = new Car({
+      user: ctx.user,
+      default: true,
+    });
 
     const uploadParams = {
       Body: createReadStream(),
@@ -37,12 +40,10 @@ export class CarResolver {
 
     wrap(car).assign({
       ...input,
-      user: ctx.user,
       photo: upload.Location,
-      default: true,
-    }, { em: ctx.em });
+    });
 
-    ctx.em.nativeUpdate(Car, { user: ctx.user.id }, { default: false });
+    await ctx.em.nativeUpdate(Car, { user: ctx.user.id }, { default: false });
 
     await ctx.em.persistAndFlush(car);
 
@@ -73,9 +74,9 @@ export class CarResolver {
     const car = await ctx.em.findOneOrFail(Car, id);
 
     if (ctx.user.role !== UserRole.ADMIN && car.user.id !== ctx.user.id) {
-      throw new Error("you can't do that"); 
+      throw new Error("you can't do that");
     }
-    
+
     ctx.em.nativeUpdate(Car, { user: ctx.user.id, id: { $ne: id } }, { default: false });
 
     wrap(car).assign(data);
