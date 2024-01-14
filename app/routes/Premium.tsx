@@ -135,9 +135,16 @@ function usePackages() {
 }
 
 export function Premium() {
-  const { offerings, error, isLoading, refetch, isRefreshing } = usePackages();
+  const { user } = useUser();
+  const { refetch: refetchUserPayments, loading } = useQuery<PaymentsQueryQuery>(PaymentsQuery, { variables: { id: user?.id ?? "" }, notifyOnNetworkStatusChange: true });
+  const { offerings, error, isLoading, refetch: refetchAppPackages, isRefreshing } = usePackages();
 
   const { colorMode } = useColorMode();
+
+  const refetch = () => {
+    refetchUserPayments();
+    refetchAppPackages();
+  };
 
   if (isLoading && !offerings) {
     return (
@@ -162,11 +169,11 @@ export function Premium() {
         w="100%"
         renderItem={({ item }) => <Offering item={item} />}
         onRefresh={refetch}
-        refreshing={isRefreshing}
+        refreshing={isRefreshing || loading}
         refreshControl={
           <RefreshControl
             tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={isRefreshing}
+            refreshing={isRefreshing || loading}
             onRefresh={refetch}
           />
         }

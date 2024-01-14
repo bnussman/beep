@@ -7,6 +7,7 @@ import { User } from "../entities/User";
 import { REVENUE_CAT_SECRET } from "../utils/constants";
 import { SubscriberResponse } from "../users/types";
 import { EntityManager } from "@mikro-orm/postgresql";
+import * as Sentry from '@sentry/node';
 
 @ObjectType()
 class PaymentResponse extends Paginated(Payment) {}
@@ -57,47 +58,53 @@ export class PaymentsResolver {
 }
 
 export async function syncUserPayments(em: EntityManager, userId: string): Promise<Payment[]> {
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: `Bearer ${REVENUE_CAT_SECRET}`
-    }
-  };
-
-  const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${userId}`, options);
-
-  const response: SubscriberResponse = await request.json();
-
-  const user = await em.findOneOrFail(User, userId, { populate: ['payments.id'] });
-
-  const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
-
-  for (const product of products) {
-    for (const payment of response.subscriber.non_subscriptions[product]) {
-
-      if (user.payments.exists(p => p.id === payment.id)) {
-        continue;
+  try {
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${REVENUE_CAT_SECRET}`
       }
+    };
 
-      const created = new Date(payment.purchase_date);
+    const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${userId}`, options);
 
-      user.payments.add(new Payment({
-        id: payment.id,
-        store: payment.store as Store,
-        user,
-        storeId: payment.store_transaction_id,
-        price: productPrice[product],
-        productId: product,
-        created,
-        expires: new Date(created.getTime() + productExpireTimes[product])
-      }));
+    const response: SubscriberResponse = await request.json();
+
+    const user = await em.findOneOrFail(User, userId, { populate: ['payments.id'] });
+
+    const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
+
+    for (const product of products) {
+      for (const payment of response.subscriber.non_subscriptions[product]) {
+
+        if (user.payments.exists(p => p.id === payment.id)) {
+          continue;
+        }
+
+        const created = new Date(payment.purchase_date);
+
+        user.payments.add(new Payment({
+          id: payment.id,
+          store: payment.store as Store,
+          user,
+          storeId: payment.store_transaction_id,
+          price: productPrice[product],
+          productId: product,
+          created,
+          expires: new Date(created.getTime() + productExpireTimes[product])
+        }));
+      }
     }
+
+    await em.persistAndFlush(user);
+
+    const activePayments = user.payments.filter(payment => payment.expires >= new Date());
+
+    return activePayments;
+  } catch (error) {
+    Sentry.captureException(error);
+
+    throw error;
   }
-
-  await em.persistAndFlush(user);
-
-  const activePayments = user.payments.filter(payment => payment.expires >= new Date());
-
-  return activePayments;
 }
