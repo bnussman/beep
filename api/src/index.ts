@@ -38,6 +38,7 @@ import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
+import type { Webhook } from "./payments/utils";
 
 const options = {
   host: REDIS_HOST,
@@ -120,6 +121,18 @@ async function start() {
     expressMiddleware(server, {
       context: (ctx) => getContext(ctx, orm),
     }),
+  );
+
+  app.use(
+    '/payments/webhook',
+    cors<cors.CorsRequest>(),
+    json(),
+    (req, res) => {
+      const data: Webhook = req.body;
+      console.log(data);
+      res.status(200);
+      res.json({ ok: true });
+    }
   );
 
   app.use(RealSentry.Handlers.errorHandler());
