@@ -22,7 +22,7 @@
     "dayjs": "^1.11.10",
     "framer-motion": "^10.18.0",
     "graphql": "^16.8.1",
-    "graphql-ws": "^5.14.3",
+    "graphql-ws": "^5.14.2",
     "mapbox-gl": "^3.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -36,11 +36,11 @@
     "@graphql-codegen/typescript-operations": "4.0.1",
     "@graphql-codegen/typescript-react-apollo": "4.0.0",
     "@types/apollo-upload-client": "^17.0.3",
-    "@types/node": "^20.11.1",
+    "@types/node": "^20.8.10",
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.8",
     "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "^5.3.3",
+    "typescript": "^5.1.6",
     "vite": "^5.0.11"
   }
 }
