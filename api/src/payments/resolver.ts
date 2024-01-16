@@ -7,7 +7,6 @@ import { User } from "../entities/User";
 import { REVENUE_CAT_SECRET } from "../utils/constants";
 import { SubscriberResponse } from "../users/types";
 import { EntityManager } from "@mikro-orm/postgresql";
-import * as Sentry from '@sentry/node';
 
 @ObjectType()
 class PaymentResponse extends Paginated(Payment) {}
@@ -58,6 +57,10 @@ export class PaymentsResolver {
 }
 
 export async function syncUserPayments(em: EntityManager, userId: string): Promise<Payment[]> {
+  if (!userId) {
+    throw new Error("No user id provided when syncing payments.");
+  }
+
   const options = {
     method: 'GET',
     headers: {
