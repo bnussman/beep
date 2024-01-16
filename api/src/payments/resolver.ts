@@ -58,53 +58,47 @@ export class PaymentsResolver {
 }
 
 export async function syncUserPayments(em: EntityManager, userId: string): Promise<Payment[]> {
-  try {
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: `Bearer ${REVENUE_CAT_SECRET}`
-      }
-    };
-
-    const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${userId}`, options);
-
-    const response: SubscriberResponse = await request.json();
-
-    const user = await em.findOneOrFail(User, userId, { populate: ['payments.id'] });
-
-    const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
-
-    for (const product of products) {
-      for (const payment of response.subscriber.non_subscriptions[product]) {
-
-        if (user.payments.exists(p => p.id === payment.id)) {
-          continue;
-        }
-
-        const created = new Date(payment.purchase_date);
-
-        user.payments.add(new Payment({
-          id: payment.id,
-          store: payment.store as Store,
-          user,
-          storeId: payment.store_transaction_id,
-          price: productPrice[product],
-          productId: product,
-          created,
-          expires: new Date(created.getTime() + productExpireTimes[product])
-        }));
-      }
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${REVENUE_CAT_SECRET}`
     }
+  };
 
-    await em.persistAndFlush(user);
+  const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${userId}`, options);
 
-    const activePayments = user.payments.filter(payment => payment.expires >= new Date());
+  const response: SubscriberResponse = await request.json();
 
-    return activePayments;
-  } catch (error) {
-    Sentry.captureException(error);
+  const user = await em.findOneOrFail(User, userId, { populate: ['payments.id'] });
 
-    throw error;
+  const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
+
+  for (const product of products) {
+    for (const payment of response.subscriber.non_subscriptions[product]) {
+
+      if (user.payments.exists(p => p.id === payment.id)) {
+        continue;
+      }
+
+      const created = new Date(payment.purchase_date);
+
+      user.payments.add(new Payment({
+        id: payment.id,
+        store: payment.store as Store,
+        user,
+        storeId: payment.store_transaction_id,
+        price: productPrice[product],
+        productId: product,
+        created,
+        expires: new Date(created.getTime() + productExpireTimes[product])
+      }));
+    }
   }
+
+  await em.persistAndFlush(user);
+
+  const activePayments = user.payments.filter(payment => payment.expires >= new Date());
+
+  return activePayments;
 }

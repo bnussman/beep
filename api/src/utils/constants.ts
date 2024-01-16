@@ -34,7 +34,7 @@ export const MAIL_USER = process.env.MAIL_USER;
 
 export const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
 
-export const PAYMENT_SECRET = process.env.PAYMENT_SECRET;
+export const REVENUE_CAT_WEBHOOK_TOKEN = process.env.REVENUE_CAT_WEBHOOK_TOKEN;
 
 export const REVENUE_CAT_SECRET = process.env.REVENUE_CAT_SECRET;
 

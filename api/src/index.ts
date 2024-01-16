@@ -19,7 +19,7 @@ import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { Context } from "graphql-ws";
-import { REDIS_HOST, REDIS_PASSWROD } from "./utils/constants";
+import { REDIS_HOST, REDIS_PASSWROD, REVENUE_CAT_WEBHOOK_TOKEN } from "./utils/constants";
 import { getContext, onConnect } from "./utils/context";
 import { formatError } from "./utils/errors";
 import { Context as APIContext } from "./utils/context";
@@ -132,10 +132,18 @@ async function start() {
     async (req, res) => {
       const data: Webhook = req.body;
 
-      await syncUserPayments(orm.em.fork(), data.event.app_user_id);
+      if (req.headers.authorization !== `Bearer ${REVENUE_CAT_WEBHOOK_TOKEN}`) {
+        return res.status(403).json({ error: "Unable to authorize webhook call" });
+      }
 
-      res.status(200);
-      res.json({ ok: true });
+      try {
+        await syncUserPayments(orm.em.fork(), data.event.app_user_id);
+      } catch (error) {
+        RealSentry.captureException(error);
+        return res.status(500).json({ error: error });
+      }
+
+      return res.status(200).json({ ok: true });
     }
   );
 
