@@ -19,7 +19,7 @@ import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { Context } from "graphql-ws";
-import { REDIS_HOST, REDIS_PASSWROD } from "./utils/constants";
+import { REDIS_HOST, REDIS_PASSWROD, REVENUE_CAT_WEBHOOK_TOKEN } from "./utils/constants";
 import { getContext, onConnect } from "./utils/context";
 import { formatError } from "./utils/errors";
 import { Context as APIContext } from "./utils/context";
@@ -36,9 +36,11 @@ import { CarResolver } from "./cars/resolver";
 import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
-import { PaymentsResolver } from "./payments/resolver";
+import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { ApolloServerPluginUsageReporting } from '@apollo/server/plugin/usageReporting';
+import type { Webhook } from "./payments/utils";
+import { User } from "./entities/User";
+import { Payment, Product, Store, productExpireTimes } from "./entities/Payments";
 
 const options = {
   host: REDIS_HOST,
@@ -90,13 +92,6 @@ async function start() {
     ApolloServerPluginDrainHttpServer({ httpServer })
   ];
 
-  if (process.env.APOLLO_KEY) {
-    plugins.push(ApolloServerPluginUsageReporting({
-      sendVariableValues: { all: true },
-      sendErrors: { unmodified: true },
-    }));
-  }
-
   const server = new ApolloServer<APIContext>({
     schema,
     formatError,
@@ -131,9 +126,24 @@ async function start() {
   );
 
   app.use(
-    '/healthcheck',
-    (_, res) => {
-      return res.json({ ok: true });
+    '/payments/webhook',
+    cors<cors.CorsRequest>(),
+    json(),
+    async (req, res) => {
+      const data: Webhook = req.body;
+
+      if (req.headers.authorization !== `Bearer ${REVENUE_CAT_WEBHOOK_TOKEN}`) {
+        return res.status(403).json({ error: "Unable to authorize webhook call" });
+      }
+
+      try {
+        await syncUserPayments(orm.em.fork(), data.event.app_user_id);
+      } catch (error) {
+        RealSentry.captureException(error);
+        return res.status(500).json({ error: error });
+      }
+
+      return res.status(200).json({ ok: true });
     }
   );
 

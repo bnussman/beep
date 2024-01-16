@@ -98,6 +98,17 @@ const ClearQueue = gql`
   }
 `;
 
+const SyncPayments = gql`
+  mutation SyncPayments($id: String) {
+    checkUserSubscriptions(id: $id) {
+      id
+      productId
+      price
+    }
+  }
+`;
+
+
 const tabs = [
   'details',
   'location',
@@ -128,6 +139,7 @@ export function User() {
 
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
   const [verify, { loading: isVerifyLoading, error: verifyError }] = useMutation<VerifyUserMutation>(VerifyUser);
+  const [syncPayments, { loading: isSyncingPayments }] = useMutation(SyncPayments);
 
   const [stopBeeping, setStopBeeping] = useState<boolean>(true);
 
@@ -180,6 +192,16 @@ export function User() {
       variables: { id: userId, data: { isEmailVerified: true, isStudent: true } },
     }).then(() => {
       toast({ title: "User verified", status: "success" });
+    });
+  };
+
+  const onSyncPayments = () => {
+    syncPayments({
+      variables: { id: userId },
+    }).then(() => {
+      toast({ title: "Payments synced", status: "success" });
+    }).catch((error) => {
+      toast({ title: "Error", description: error.message, status: "error" });
     });
   };
 
@@ -254,6 +276,14 @@ export function User() {
               isDisabled={!user?.pushToken}
             >
               Send Notification
+            </Button>
+            <Button
+              m={1}
+              colorScheme="yellow"
+              onClick={onSyncPayments}
+              isLoading={isSyncingPayments}
+            >
+              Sync Payments
             </Button>
             <Button
               m='1'
