@@ -103,12 +103,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
 
-    client.writeQuery({
-      query: UserData,
-      data: {
-        getUser: null,
-      },
-    });
+    client.resetStore();
   };
 
   const handleResendVerification = () => {
