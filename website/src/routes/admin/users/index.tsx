@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input } from "@chakra-ui/react"
+import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input, InputRightElement, Spinner } from "@chakra-ui/react"
 import { Indicator } from '../../../components/Indicator';
 import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
@@ -99,16 +99,20 @@ export function Users() {
         setCurrentPage={setCurrentPage}
       />
       <InputGroup mb={4}>
-        <InputLeftElement
-          pointerEvents="none"
-          children={<SearchIcon color="gray.300" />}
-        />
+        <InputLeftElement>
+          <SearchIcon color="gray.300" />
+        </InputLeftElement>
         <Input
           type="text"
           placeholder="Search"
           value={query ?? ""}
           onChange={(e) => setQuery(e.target.value)}
         />
+        {(query && loading) && (
+          <InputRightElement>
+            <Spinner />
+          </InputRightElement>
+        )}
       </InputGroup>
       <Box overflowX="auto">
         <Table>
