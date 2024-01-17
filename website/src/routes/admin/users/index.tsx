@@ -66,9 +66,7 @@ export function Users() {
   });
 
   const setCurrentPage = (page: number) => {
-    navigate({
-      search: { page }
-    })
+    navigate({ search: (prev) => ({ ...prev, page }) })
   };
 
   const setQuery = (query: string) => {
