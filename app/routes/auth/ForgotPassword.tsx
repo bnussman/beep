@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import { ForgotPasswordMutation } from "../../generated/graphql";
+import { ApolloError, useMutation } from "@apollo/client";
 import { Input, Button, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
+import { graphql } from "gql.tada";
 
-const ForgotPassword = gql`
+const ForgotPassword = graphql(`
   mutation ForgotPassword($email: String!) {
     forgotPassword(email: $email)
   }
-`;
+`);
 
-export function ForgotPasswordScreen(): JSX.Element {
-  const [forgot, { loading }] =
-    useMutation<ForgotPasswordMutation>(ForgotPassword);
+export function ForgotPasswordScreen() {
+  const [forgot, { loading }] = useMutation(ForgotPassword);
+
   const [email, setEmail] = useState<string>("");
 
   const handleForgotPassword = () => {

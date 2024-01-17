@@ -4,8 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import PasswordInput from "../../components/PasswordInput";
 import { Alert } from "../../utils/Alert";
 import { isSimulator } from "../../utils/constants";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import { LoginMutation, LoginMutationVariables } from "../../generated/graphql";
+import { ApolloError, useMutation } from "@apollo/client";
+import { LoginMutationVariables } from "../../generated/graphql";
 import { client } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Container } from "../../components/Container";
@@ -25,8 +25,9 @@ import {
   WarningOutlineIcon,
   HStack,
 } from "native-base";
+import { graphql } from "gql.tada";
 
-const Login = gql`
+const Login = graphql(`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
     login(
       input: { username: $username, password: $password, pushToken: $pushToken }
@@ -55,10 +56,10 @@ const Login = gql`
       }
     }
   }
-`;
+`);
 
 export function LoginScreen() {
-  const [login, { error }] = useMutation<LoginMutation>(Login);
+  const [login, { error }] = useMutation(Login);
 
   const validationErrors = useValidationErrors<LoginMutationVariables>(error);
 
@@ -98,7 +99,7 @@ export function LoginScreen() {
 
       client.writeQuery({
         query: UserData,
-        data: { getUser: { ...data?.login.user, pushToken } },
+        data: { getUser: { ...data?.login.user } },
       });
     } catch (error) {
       Alert(error as ApolloError);

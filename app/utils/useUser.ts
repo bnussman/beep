@@ -1,7 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import { UserDataQuery } from "../generated/graphql";
+import { graphql } from "gql.tada";
 
-export const UserData = gql`
+export const UserData = graphql(`
   query UserData {
     getUser {
       id
@@ -22,9 +23,9 @@ export const UserData = gql`
       cashapp
     }
   }
-`;
+`);
 
-export const UserSubscription = gql`
+export const UserSubscription = graphql(`
   subscription UserUpdates {
     getUserUpdates {
       id
@@ -45,10 +46,10 @@ export const UserSubscription = gql`
       cashapp
     }
   }
-`;
+`);
 
 export function useUser() {
-  const { data, ...rest } = useQuery<UserDataQuery>(UserData, {
+  const { data, ...rest } = useQuery(UserData, {
     fetchPolicy: "cache-only",
   });
 
@@ -56,7 +57,7 @@ export function useUser() {
 }
 
 export function useIsSignedIn() {
-  const { data } = useQuery<UserDataQuery>(UserData, {
+  const { data } = useQuery(UserData, {
     fetchPolicy: "cache-only",
   });
 
@@ -64,7 +65,7 @@ export function useIsSignedIn() {
 }
 
 export function useIsSignedOut() {
-  const { data } = useQuery<UserDataQuery>(UserData, {
+  const { data } = useQuery(UserData, {
     fetchPolicy: "cache-only",
   });
 
@@ -72,7 +73,7 @@ export function useIsSignedOut() {
 }
 
 export function useIsUserNotBeeping() {
-  const { data } = useQuery<UserDataQuery>(UserData, {
+  const { data } = useQuery(UserData, {
     fetchPolicy: "cache-only",
   });
 
