@@ -184,12 +184,7 @@ export function EditProfileScreen() {
           Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
         }
 
-        client.writeQuery({
-          query: UserData,
-          data: {
-            getUser: null,
-          },
-        });
+        client.resetStore();
       })
       .catch((error: ApolloError) => alert(error.message));
   };
