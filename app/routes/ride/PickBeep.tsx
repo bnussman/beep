@@ -111,8 +111,8 @@ export function PickBeepScreen({ route }: Props) {
     GetBeepers,
     {
       variables: {
-        latitude: location!.coords.latitude,
-        longitude: location!.coords.longitude,
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
         radius: 20,
       },
       skip: !location,

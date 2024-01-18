@@ -179,7 +179,7 @@ export function MainFindBeepScreen() {
   });
 
   useSubscription(BeepersLocation, {
-    variables: { id: beep!.beeper.id },
+    variables: { id: beep?.beeper.id },
     onData({ data }) {
       if (!data?.data?.getLocationUpdates?.latitude) return;
 
