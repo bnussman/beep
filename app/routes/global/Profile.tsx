@@ -61,9 +61,13 @@ export function ProfileScreen({ route }: Props) {
   };
 
   const handleRate = () => {
+    if (!route.params.beepId) {
+      alert("No beep to rate.");
+    }
+
     navigation.navigate("Rate", {
       userId: route.params.id,
-      beepId: route.params.beepId,
+      beepId: route.params.beepId!,
     });
   };
 

@@ -137,11 +137,11 @@ export function StartBeepingScreen() {
 
   const { data, refetch, loading } = useQuery(GetInitialQueue, {
     notifyOnNetworkStatusChange: true,
-    variables: { id: user?.id },
+    variables: { id: user!.id },
   });
 
   useSubscription(GetQueue, {
-    variables: { id: user?.id },
+    variables: { id: user!.id },
     onData({ data }) {
       cache.updateQuery({ query: GetInitialQueue, variables: { id: user?.id } }, (prev) => {
         const newQueue = { getQueue: data.data!.getBeeperUpdates };

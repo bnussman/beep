@@ -42,8 +42,8 @@ export function RateSheet() {
     rate({
       refetchQueries: [Ratings],
       variables: {
-        userId: beep?.beeper.id,
-        beepId: beep?.id,
+        userId: beep!.beeper.id,
+        beepId: beep!.id,
         stars: stars,
       },
     })

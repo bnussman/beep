@@ -64,7 +64,7 @@ function Package({ p }: { p: PurchasesPackage }) {
 
   const payment = data?.getPayments.items.find(sub => sub.productId === p.product.identifier);
 
-  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires)} /> : null;
+  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires as string)} /> : null;
 
   const onBuy = async (item: PurchasesPackage) => {
     if (Boolean(payment)) {
