@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
-import { UserDataQuery } from "../generated/graphql";
-import { graphql } from "gql.tada";
+import { graphql, ResultOf } from "gql.tada";
+
+export type User = ResultOf<typeof UserData>['getUser'];
 
 export const UserData = graphql(`
   query UserData {

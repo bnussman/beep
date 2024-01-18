@@ -5,7 +5,6 @@ import PasswordInput from "../../components/PasswordInput";
 import { Alert } from "../../utils/Alert";
 import { isSimulator } from "../../utils/constants";
 import { ApolloError, useMutation } from "@apollo/client";
-import { LoginMutationVariables } from "../../generated/graphql";
 import { client } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Container } from "../../components/Container";
@@ -25,7 +24,7 @@ import {
   WarningOutlineIcon,
   HStack,
 } from "native-base";
-import { graphql } from "gql.tada";
+import { VariablesOf, graphql } from "gql.tada";
 
 const Login = graphql(`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -58,10 +57,12 @@ const Login = graphql(`
   }
 `);
 
+type Values = VariablesOf<typeof Login>;
+
 export function LoginScreen() {
   const [login, { error }] = useMutation(Login);
 
-  const validationErrors = useValidationErrors<LoginMutationVariables>(error);
+  const validationErrors = useValidationErrors<Values>(error);
 
   const navigation = useNavigation();
 
@@ -70,7 +71,7 @@ export function LoginScreen() {
     handleSubmit,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<Omit<LoginMutationVariables, "pushToken">>();
+  } = useForm<Omit<Values, "pushToken">>();
 
   useEffect(() => {
     try {

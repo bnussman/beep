@@ -5,10 +5,6 @@ import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity } from "react-native";
 import { getPushToken } from "../../utils/Notifications";
 import { ApolloError, useMutation } from "@apollo/client";
-import {
-  SignUpInput,
-  SignUpMutationVariables,
-} from "../../generated/graphql";
 import { isMobile, isSimulator } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { client } from "../../utils/Apollo";
@@ -34,7 +30,7 @@ import {
   InputGroup,
   InputLeftAddon,
 } from "native-base";
-import { graphql } from "gql.tada";
+import { VariablesOf, graphql } from "gql.tada";
 
 const SignUp = graphql(`
   mutation SignUp($input: SignUpInput!) {
@@ -65,7 +61,9 @@ const SignUp = graphql(`
   }
 `);
 
-let picture: SignUpMutationVariables["input"]["picture"];
+let picture: any;
+
+type Values = VariablesOf<typeof SignUp>['input'];
 
 export function SignUpScreen() {
   const [signup, { error }] = useMutation(SignUp, {
@@ -81,9 +79,9 @@ export function SignUpScreen() {
     handleSubmit,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<SignUpInput>();
+  } = useForm<Values>();
 
-  const validationErrors = useValidationErrors<SignUpInput>(error);
+  const validationErrors = useValidationErrors<Values>(error);
 
   const [photo, setPhoto] = useState<any>();
 

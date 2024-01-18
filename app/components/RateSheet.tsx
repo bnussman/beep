@@ -1,5 +1,4 @@
 import React, { useMemo, useRef, useState } from "react";
-import { GetRateDataQuery, RateUserMutation } from "../generated/graphql";
 import { BottomSheet } from "./BottomSheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
@@ -10,8 +9,9 @@ import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Ratings } from "../routes/Ratings";
 import { Button, Center, Heading, Pressable, Spacer } from "native-base";
+import { graphql } from "gql.tada";
 
-export const GetRateData = gql`
+export const GetRateData = graphql(`
   query GetRateData {
     getLastBeepToRate {
       id
@@ -24,12 +24,12 @@ export const GetRateData = gql`
       }
     }
   }
-`;
+`);
 
 export function RateSheet() {
-  const { data } = useQuery<GetRateDataQuery>(GetRateData);
+  const { data } = useQuery(GetRateData);
   const [stars, setStars] = useState<number>(0);
-  const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
+  const [rate, { loading }] = useMutation(RateUser);
   const { navigate } = useNavigation();
 
   const beep = data?.getLastBeepToRate;

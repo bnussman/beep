@@ -215,8 +215,8 @@ importers:
         specifier: ~0.18.19
         version: 0.18.19(expo@49.0.13)
       gql.tada:
-        specifier: ^1.0.1
-        version: 1.0.1(graphql@16.8.1)
+        specifier: ^1.0.2
+        version: 1.0.2(graphql@16.8.1)
       graphql:
         specifier: ^16.8.1
         version: 16.8.1
@@ -279,26 +279,14 @@ importers:
         version: 5.1.5
     devDependencies:
       '@0no-co/graphqlsp':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.3
+        version: 1.0.3
       '@babel/core':
         specifier: ^7.22.9
         version: 7.22.9
       '@expo/metro-runtime':
         specifier: ^2.2.16
         version: 2.2.16(react-native@0.72.6)
-      '@graphql-codegen/cli':
-        specifier: ^5.0.0
-        version: 5.0.0(@types/node@20.8.10)(graphql@16.8.1)
-      '@graphql-codegen/typescript':
-        specifier: ^4.0.1
-        version: 4.0.1(graphql@16.8.1)
-      '@graphql-codegen/typescript-operations':
-        specifier: ^4.0.1
-        version: 4.0.1(graphql@16.8.1)
-      '@graphql-codegen/typescript-react-apollo':
-        specifier: ^4.0.0
-        version: 4.0.0(graphql-tag@2.12.6)(graphql@16.8.1)
       '@types/apollo-upload-client':
         specifier: ^17.0.3
         version: 17.0.3(graphql-ws@5.14.2)(react-dom@18.2.0)(react@18.2.0)
@@ -431,8 +419,8 @@ packages:
       graphql: 16.8.1
     dev: false
 
-  /@0no-co/graphqlsp@1.0.2:
-    resolution: {integrity: sha512-fUrhTBWiSCvpGERwJep498Ws+wWzo7XmsUg+OWE1EgtDazfAMcNMyzWi+13T5aEPyY7Khl1YRupINh7XWTjFNw==}
+  /@0no-co/graphqlsp@1.0.3:
+    resolution: {integrity: sha512-sy1LhvhugDYQxZyDVcGekE5wx02yyD/YAN9ggVBohqo0Ou7W8Pt8ehAJEbWbJeHp+T1JBoI2X5lBy/ReXHPjNg==}
     dependencies:
       node-fetch: 2.7.0
     transitivePeerDependencies:
@@ -12444,8 +12432,8 @@ packages:
       get-intrinsic: 1.2.2
     dev: false
 
-  /gql.tada@1.0.1(graphql@16.8.1):
-    resolution: {integrity: sha512-OZ6+O3eIOwGG4xXpoVKK1TWMEitFWK5QLd4sUMrPZMlLJdd7zGD6hE3YkM6AatriJYX45wE0QD4SYHOVn9ySXA==}
+  /gql.tada@1.0.2(graphql@16.8.1):
+    resolution: {integrity: sha512-l+HXsQLOvG34otG+a17jgzKbOk0K5fhoI+Ml/bZv6yGcRgMB/IqV7QlB9GrwIjikZHHRmDbWE7hqPXU9Z7dk2Q==}
     dependencies:
       '@0no-co/graphql.web': 1.0.4(graphql@16.8.1)
     transitivePeerDependencies:

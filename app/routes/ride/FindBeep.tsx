@@ -21,13 +21,6 @@ import { Card } from "../../components/Card";
 import { PlaceInQueue } from "./PlaceInQueue";
 import { GetBeepHistory } from "../Beeps";
 import {
-  ChooseBeepMutationVariables,
-  GetEtaQuery,
-  GetInitialRiderStatusQuery,
-  RiderStatusSubscription,
-  BeepersLocationSubscription,
-} from "../../generated/graphql";
-import {
   getRawPhoneNumber,
   openCashApp,
   openVenmo,
@@ -35,7 +28,6 @@ import {
 } from "../../utils/links";
 import {
   ApolloError,
-  gql,
   useLazyQuery,
   useMutation,
   useQuery,
@@ -57,8 +49,10 @@ import {
   WarningOutlineIcon,
   Image,
 } from "native-base";
+import { VariablesOf, graphql } from "gql.tada";
+import { ChooseBeep } from '../ride/PickBeep';
 
-export const InitialRiderStatus = gql`
+export const InitialRiderStatus = graphql(`
   query GetInitialRiderStatus {
     getRiderStatus {
       id
@@ -96,9 +90,9 @@ export const InitialRiderStatus = gql`
       }
     }
   }
-`;
+`);
 
-const RiderStatus = gql`
+const RiderStatus = graphql(`
   subscription RiderStatus {
     getRiderUpdates {
       id
@@ -136,29 +130,29 @@ const RiderStatus = gql`
       }
     }
   }
-`;
+`);
 
-const BeepersLocation = gql`
+const BeepersLocation = graphql(`
   subscription BeepersLocation($id: String!) {
     getLocationUpdates(id: $id) {
       latitude
       longitude
     }
   }
-`;
+`);
 
-const GetETA = gql`
+const GetETA = graphql(`
   query GetETA($start: String!, $end: String!) {
     getETA(start: $start, end: $end)
   }
-`;
+`);
 
 export function MainFindBeepScreen() {
   const { user } = useUser();
   const { getLocation } = useLocation(false);
   const { navigate } = useNavigation();
 
-  const { data, previousData, refetch } = useQuery<GetInitialRiderStatusQuery>(
+  const { data, previousData, refetch } = useQuery(
     InitialRiderStatus,
     {
       notifyOnNetworkStatusChange: true,
@@ -174,7 +168,7 @@ export function MainFindBeepScreen() {
     Status.ON_THE_WAY,
   ].includes(beep?.status as Status);
 
-  useSubscription<RiderStatusSubscription>(RiderStatus, {
+  useSubscription(RiderStatus, {
     onData({ data }) {
       client.writeQuery({
         query: InitialRiderStatus,
@@ -184,8 +178,8 @@ export function MainFindBeepScreen() {
     skip: !beep,
   });
 
-  useSubscription<BeepersLocationSubscription>(BeepersLocation, {
-    variables: { id: beep?.beeper.id },
+  useSubscription(BeepersLocation, {
+    variables: { id: beep!.beeper.id },
     onData({ data }) {
       if (!data?.data?.getLocationUpdates?.latitude) return;
 
@@ -207,16 +201,14 @@ export function MainFindBeepScreen() {
     skip: !isAcceptedBeep,
   });
 
-  const [getETA, { data: eta, error: etaError }] =
-    useLazyQuery<GetEtaQuery>(GetETA);
-
+  const [getETA, { data: eta, error: etaError }] = useLazyQuery(GetETA);
 
   const {
     control,
     handleSubmit,
     setFocus,
     formState: { errors },
-  } = useForm<Omit<ChooseBeepMutationVariables, 'beeperId'>>({
+  } = useForm<Omit<VariablesOf<typeof ChooseBeep>, 'beeperId'>>({
     defaultValues: {
       groupSize: undefined,
       origin: '',
