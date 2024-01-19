@@ -31,7 +31,7 @@ export class ReportsResolver {
       orderBy: { timestamp: QueryOrder.DESC },
       limit: show,
       offset: offset,
-      populate: ['reported', 'reporter'],
+      populate: ['reported', 'reporter', 'handledBy'],
       filters: id ? { in: { id } } : undefined
     });
 
