@@ -83,7 +83,7 @@ export function ProfileScreen({ route }: Props) {
                     mr={3}
                     size="xl"
                     as={Ionicons}
-                    name="ios-ellipsis-horizontal-circle"
+                    name="ellipsis-horizontal-circle"
                   />
                 </Pressable>
               );

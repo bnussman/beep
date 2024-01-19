@@ -52,7 +52,7 @@ function LocationInput(props: IInputProps, ref: any) {
       <Icon
         mr={3}
         size="lg"
-        name="ios-location-sharp"
+        name="location-sharp"
         as={Ionicons}
         _dark={{ color: "gray.200" }}
       />

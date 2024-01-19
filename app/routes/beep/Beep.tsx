@@ -136,7 +136,7 @@ export function Beep(props: Props) {
                   Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
                 }}
                 icon={
-                  <Icon as={Ionicons} color="white" name="ios-call" size="md" />
+                  <Icon as={Ionicons} color="white" name="call" size="md" />
                 }
               />
               <IconButton
@@ -148,7 +148,7 @@ export function Beep(props: Props) {
                 icon={
                   <Icon
                     as={Ionicons}
-                    name="ios-chatbox"
+                    name="chatbox"
                     color="white"
                     size="md"
                   />

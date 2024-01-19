@@ -182,7 +182,7 @@ export function Cars() {
             icon={
               <Icon
                 as={Ionicons}
-                name="ios-add-sharp"
+                name="add-sharp"
                 size="xl"
                 color={colorMode === "dark" ? "white" : "black"}
               />
