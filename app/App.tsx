@@ -14,7 +14,7 @@ import { NATIVE_BASE_THEME } from "./utils/constants";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
-import * as Sentry from "sentry-expo";
+import * as Sentry from "@sentry/react-native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/Navigation";
 
@@ -22,7 +22,6 @@ SplashScreen.preventAutoHideAsync();
 Sentry.init({
   release: config.version,
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
-  enableInExpoDevelopment: true,
   enableAutoSessionTracking: true,
   enableAutoPerformanceTracing: true,
 });

@@ -30,19 +30,17 @@ const config: ExpoConfig = {
     favicon: "./assets/favicon.png",
     bundler: "metro",
   },
-  plugins: ["sentry-expo"],
-  hooks: {
-    postPublish: [
+  plugins: [
+    [
+      "@sentry/react-native/expo",
       {
-        file: "sentry-expo/upload-sourcemaps",
-        config: {
-          setCommits: true,
-          organization: "ian-banks-llc",
-          project: "app",
-        },
-      },
-    ],
-  },
+        url: "https://sentry.io/",
+        authToken: "idk",
+        project: "app",
+        organization: "ian-banks-llc"
+      }
+    ]
+  ],
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.ridebeep.App",
