@@ -71,7 +71,7 @@ export async function syncUserPayments(em: EntityManager, userId: string): Promi
 
   const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${userId}`, options);
 
-  const response: SubscriberResponse = await request.json();
+  const response = await request.json() as SubscriberResponse;
 
   const user = await em.findOneOrFail(User, userId, { populate: ['payments.id'] });
 
