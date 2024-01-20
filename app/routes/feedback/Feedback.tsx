@@ -1,6 +1,6 @@
 import React from "react";
 import { Container } from "../../components/Container";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
 import {
   Text,
@@ -14,24 +14,20 @@ import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import {
-  CreateFeedbackMutation,
-  CreateFeedbackMutationVariables,
-} from "../../generated/graphql";
 import { Alert, Linking } from "react-native";
 import { Card } from "../../components/Card";
+import { VariablesOf, graphql } from "gql.tada";
 
-const CreateFeedback = gql`
+const CreateFeedback = graphql(`
   mutation CreateFeedback($message: String!) {
     createFeedback(message: $message) {
       id
     }
   }
-`;
+`);
 
 export function Feedback() {
-  const [createFeedback, { loading, error }] =
-    useMutation<CreateFeedbackMutation>(CreateFeedback);
+  const [createFeedback, { loading, error }] = useMutation(CreateFeedback);
 
   const {
     control,
@@ -44,8 +40,7 @@ export function Feedback() {
     },
   });
 
-  const validationErrors =
-    useValidationErrors<CreateFeedbackMutationVariables>(error);
+  const validationErrors = useValidationErrors<VariablesOf<typeof CreateFeedback>>(error);
 
   const onSubmit = handleSubmit((variables) => {
     createFeedback({ variables })

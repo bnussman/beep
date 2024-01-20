@@ -7,24 +7,18 @@ import { Avatar } from "../../components/Avatar";
 import { Alert, Pressable } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { Container } from "../../components/Container";
-import { UserData, useUser } from "../../utils/useUser";
+import { useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { client } from "../../utils/Apollo";
-import { ApolloError, gql, useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import {
-  AddProfilePictureMutation,
-  DeleteAccountMutation,
-  EditAccountMutation,
-  EditUserInput,
-} from "../../generated/graphql";
 import {
   Spinner,
   Input,
@@ -38,14 +32,15 @@ import {
   Menu,
   Icon,
 } from "native-base";
+import { VariablesOf, graphql } from "gql.tada";
 
-const DeleteAccount = gql`
+const DeleteAccount = graphql(`
   mutation DeleteAccount {
     deleteAccount
   }
-`;
+`);
 
-export const EditAccount = gql`
+export const EditAccount = graphql(`
   mutation EditAccount($input: EditUserInput!) {
     editUser(data: $input) {
       id
@@ -58,16 +53,16 @@ export const EditAccount = gql`
       cashapp
     }
   }
-`;
+`);
 
-export const UploadPhoto = gql`
+export const UploadPhoto = graphql(`
   mutation AddProfilePicture($picture: Upload!) {
     addProfilePicture(picture: $picture) {
       id
       photo
     }
   }
-`;
+`);
 
 export function generateRNFile(uri: string, name: string) {
   return uri
@@ -78,6 +73,8 @@ export function generateRNFile(uri: string, name: string) {
       })
     : null;
 }
+
+type Values = VariablesOf<typeof EditAccount>['input']
 
 export function EditProfileScreen() {
   const { user } = useUser();
@@ -95,9 +92,8 @@ export function EditProfileScreen() {
     [user]
   );
 
-  const [edit, { loading, error }] =
-    useMutation<EditAccountMutation>(EditAccount);
-  const [deleteAccount] = useMutation<DeleteAccountMutation>(DeleteAccount);
+  const [edit, { loading, error }] = useMutation(EditAccount);
+  const [deleteAccount] = useMutation(DeleteAccount);
 
   const {
     control,
@@ -105,16 +101,15 @@ export function EditProfileScreen() {
     setFocus,
     reset,
     formState: { errors, isDirty },
-  } = useForm<EditUserInput>({ defaultValues });
+  } = useForm<Values>({ defaultValues });
 
   useEffect(() => {
     reset(defaultValues);
   }, [defaultValues]);
 
-  const validationErrors = useValidationErrors<EditUserInput>(error);
+  const validationErrors = useValidationErrors<Values>(error);
 
-  const [upload, { loading: uploadLoading }] =
-    useMutation<AddProfilePictureMutation>(UploadPhoto, {
+  const [upload, { loading: uploadLoading }] = useMutation(UploadPhoto, {
       context: {
         headers: {
           "apollo-require-preflight": true,
@@ -184,12 +179,7 @@ export function EditProfileScreen() {
           Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
         }
 
-        client.writeQuery({
-          query: UserData,
-          data: {
-            getUser: null,
-          },
-        });
+        client.resetStore();
       })
       .catch((error: ApolloError) => alert(error.message));
   };

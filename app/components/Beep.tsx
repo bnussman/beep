@@ -1,15 +1,16 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Badge, HStack, Spacer, Stack, Text } from "native-base";
-import { GetBeepHistoryQuery } from "../generated/graphql";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { Unpacked } from "../utils/constants";
 import { Card } from "./Card";
 import { Status } from "../utils/types";
+import { ResultOf } from "gql.tada";
+import { GetBeepHistory } from "../routes/Beeps";
 
 interface Props {
-  item: Unpacked<GetBeepHistoryQuery["getBeeps"]["items"]>;
+  item: Unpacked<ResultOf<typeof GetBeepHistory>['getBeeps']['items']>;
   index: number;
 }
 
@@ -56,7 +57,7 @@ export function Beep({ item }: Props) {
           </Text>
           <Text color="gray.400" fontSize="xs" isTruncated>
             {`${isRider ? "Ride" : "Beep"} - ${new Date(
-              item.start
+              item.start as string
             ).toLocaleString()}`}
           </Text>
         </Stack>

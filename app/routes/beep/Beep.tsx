@@ -8,7 +8,6 @@ import {
 } from "../../utils/links";
 import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
-import { GetInitialQueueQuery } from "../../generated/graphql";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Linking } from "react-native";
@@ -32,9 +31,11 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
+import { ResultOf } from "gql.tada";
+import { GetInitialQueue } from "./StartBeeping";
 
 interface Props {
-  beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  beep: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
 }
 
 export function Beep(props: Props) {

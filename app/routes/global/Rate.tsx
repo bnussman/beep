@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { GetUserProfileQuery, RateUserMutation } from "../../generated/graphql";
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
 import { Button, Input, Stack } from "native-base";
@@ -8,8 +7,9 @@ import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { GetUser } from "./Profile";
+import { graphql } from 'gql.tada';
 
-export const RateUser = gql`
+export const RateUser = graphql(`
   mutation RateUser(
     $userId: String!
     $stars: Float!
@@ -25,16 +25,16 @@ export const RateUser = gql`
       }
     )
   }
-`;
+`);
 
-type Props = StaticScreenProps<{ userId: string, beepId?: string }>;
+type Props = StaticScreenProps<{ userId: string, beepId: string }>;
 
 export function RateScreen({ route }: Props) {
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
-  const [rate, { loading }] = useMutation<RateUserMutation>(RateUser);
+  const [rate, { loading }] = useMutation(RateUser);
 
-  const { data } = useQuery<GetUserProfileQuery>(GetUser, {
+  const { data } = useQuery(GetUser, {
     variables: {
       id: route.params.userId
     }

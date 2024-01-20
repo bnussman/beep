@@ -2,12 +2,8 @@ import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
-import { ApolloError, gql, useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import { useForm, Controller } from "react-hook-form";
-import {
-  CreateCarMutation,
-  CreateCarMutationVariables,
-} from "../../generated/graphql";
 import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
@@ -30,10 +26,11 @@ import {
   FormControl,
   WarningOutlineIcon,
 } from "native-base";
+import { VariablesOf, graphql } from "gql.tada";
 
 const makes = getMakes();
 
-const AddCarMutation = gql`
+const AddCarMutation = graphql(`
   mutation CreateCar(
     $make: String!
     $model: String!
@@ -55,9 +52,11 @@ const AddCarMutation = gql`
       color
     }
   }
-`;
+`);
 
-let picture: CreateCarMutationVariables["photo"];
+let picture: any;
+
+type Values = VariablesOf<typeof AddCarMutation>
 
 export function AddCar() {
   const navigation = useNavigation();
@@ -68,12 +67,12 @@ export function AddCar() {
     setValue,
     watch,
     formState: { isSubmitting, errors },
-  } = useForm();
+  } = useForm<Values>();
 
-  const photo = watch("photo");
+  const photo: any = watch("photo");
   const make = watch("make");
 
-  const [addCar, { error, loading }] = useMutation<CreateCarMutation>(
+  const [addCar, { error, loading }] = useMutation(
     AddCarMutation,
     {
       context: {
@@ -85,7 +84,7 @@ export function AddCar() {
   );
 
   const validationErrors =
-    useValidationErrors<CreateCarMutationVariables>(error);
+    useValidationErrors<Values>(error);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -202,7 +201,6 @@ export function AddCar() {
           <Controller
             name="year"
             rules={{ required: "Year is required" }}
-            defaultValue=""
             control={control}
             render={({ field: { onChange } }) => (
               <Select

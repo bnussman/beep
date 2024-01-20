@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { GetInitialQueueQuery } from "../generated/graphql";
 import { isMobile, Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import { Button as _Button } from "native-base";
 import { useEffect } from "react";
 import { Alert } from "react-native";
+import { ResultOf } from "gql.tada";
+import { GetInitialQueue } from "../routes/beep/StartBeeping";
 
 interface Props {
-  beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  beep: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
 }
 
 export const CancelBeep = gql`

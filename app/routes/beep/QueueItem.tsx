@@ -2,7 +2,6 @@ import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Alert, Linking, Pressable } from "react-native";
-import { GetInitialQueueQuery } from "../../generated/graphql";
 import { isMobile, Unpacked } from "../../utils/constants";
 import { getRawPhoneNumber, openDirections } from "../../utils/links";
 import { CancelBeep } from "../../components/CancelButton";
@@ -22,9 +21,11 @@ import {
   Divider,
 } from "native-base";
 import { Status } from "../../utils/types";
+import { ResultOf } from "gql.tada";
+import { GetInitialQueue } from "./StartBeeping";
 
 interface Props {
-  item: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  item: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
   index: number;
 }
 

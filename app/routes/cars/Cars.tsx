@@ -10,11 +10,7 @@ import { Image } from "../../components/Image";
 import { useUser } from "../../utils/useUser";
 import { Alert } from "react-native";
 import { cache } from "../../utils/Apollo";
-import {
-  DeleteCarMutation,
-  EditCarMutation,
-  GetCarsQuery,
-} from "../../generated/graphql";
+import { ResultOf, graphql } from "gql.tada";
 import {
   FlatList,
   Heading,
@@ -30,22 +26,22 @@ import {
   Center,
 } from "native-base";
 
-export const DeleteCar = gql`
+export const DeleteCar = graphql(`
   mutation DeleteCar($id: String!) {
     deleteCar(id: $id)
   }
-`;
+`);
 
-export const EditCar = gql`
+export const EditCar = graphql(`
   mutation EditCar($default: Boolean!, $id: String!) {
     editCar(default: $default, id: $id) {
       id
       default
     }
   }
-`;
+`);
 
-export const CarsQuery = gql`
+export const CarsQuery = graphql(`
   query GetCars($id: String, $offset: Int, $show: Int) {
     getCars(id: $id, offset: $offset, show: $show) {
       items {
@@ -60,14 +56,14 @@ export const CarsQuery = gql`
       count
     }
   }
-`;
+`);
 
 export function Cars() {
   const navigation = useNavigation();
   const { colorMode } = useColorMode();
   const { user } = useUser();
 
-  const { data, loading, error, refetch, fetchMore } = useQuery<GetCarsQuery>(
+  const { data, loading, error, refetch, fetchMore } = useQuery(
     CarsQuery,
     {
       variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
@@ -75,9 +71,9 @@ export function Cars() {
     }
   );
 
-  const [_deleteCar] = useMutation<DeleteCarMutation>(DeleteCar);
+  const [_deleteCar] = useMutation(DeleteCar);
 
-  const [editCar] = useMutation<EditCarMutation>(EditCar);
+  const [editCar] = useMutation(EditCar);
 
   const cars = data?.getCars.items;
   const count = data?.getCars.count ?? 0;
@@ -119,7 +115,7 @@ export function Cars() {
     );
   };
 
-  const onLongPress = (car: Unpacked<GetCarsQuery["getCars"]["items"]>) => {
+  const onLongPress = (car: Unpacked<ResultOf<typeof CarsQuery>['getCars']['items']>) => {
     if (isMobile) {
       Alert.alert(
         "Delete Car?",
@@ -138,7 +134,7 @@ export function Cars() {
     }
   };
 
-  const deleteCar = (car: Unpacked<GetCarsQuery["getCars"]["items"]>) => {
+  const deleteCar = (car: Unpacked<ResultOf<typeof CarsQuery>['getCars']['items']>) => {
     _deleteCar({
       variables: { id: car.id },
       update: (cache) => {
