@@ -6,7 +6,7 @@
  * If you need to reuse this data or update your `scalars`, update `tadaOutputLocation` to
  * instead save to a .ts instead of a .d.ts file.
  */
-declare const introspection: {
+export type introspection = {
   "__schema": {
     "queryType": {
       "name": "Query"
@@ -4080,10 +4080,6 @@ declare const introspection: {
           }
         ],
         "interfaces": []
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Any"
       }
     ],
     "directives": []
@@ -4094,6 +4090,6 @@ import * as gqlTada from 'gql.tada';
 
 declare module 'gql.tada' {
   interface setupSchema {
-    introspection: typeof introspection
+    introspection: introspection
   }
 }

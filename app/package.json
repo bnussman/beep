@@ -35,7 +35,7 @@
     "expo-status-bar": "~1.6.0",
     "expo-task-manager": "~11.3.0",
     "expo-updates": "~0.18.19",
-    "gql.tada": "^1.0.2",
+    "gql.tada": "^1.0.3",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.14.2",
     "native-base": "3.4.12-alpha.1",
@@ -58,7 +58,7 @@
     "styled-system": "^5.1.5"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.0.3",
+    "@0no-co/graphqlsp": "^1.0.7",
     "@babel/core": "^7.22.9",
     "@expo/metro-runtime": "^2.2.16",
     "@types/apollo-upload-client": "^17.0.3",
