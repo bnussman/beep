@@ -25,11 +25,6 @@ import {
   RefreshControl,
 } from "react-native";
 import {
-  GetInitialQueueQuery,
-  GetQueueSubscription,
-  UpdateBeepSettingsMutation,
-} from "../../generated/graphql";
-import {
   Input,
   Switch,
   Text,
@@ -47,10 +42,11 @@ import {
 } from "native-base";
 import { Status } from "../../utils/types";
 import { Card } from "../../components/Card";
+import { graphql } from "gql.tada";
 
 let unsubscribe: any = null;
 
-const LocationUpdate = gql`
+const LocationUpdate = graphql(`
   mutation LocationUpdate($location: LocationInput!) {
     setLocation(location: $location) {
       id
@@ -60,9 +56,9 @@ const LocationUpdate = gql`
       }
     }
   }
-`;
+`);
 
-const GetInitialQueue = gql`
+export const GetInitialQueue = graphql(`
   query GetInitialQueue($id: String) {
     getQueue(id: $id) {
       id
@@ -83,9 +79,9 @@ const GetInitialQueue = gql`
       }
     }
   }
-`;
+`);
 
-const GetQueue = gql`
+const GetQueue = graphql(`
   subscription GetQueue($id: String!) {
     getBeeperUpdates(id: $id) {
       id
@@ -106,9 +102,9 @@ const GetQueue = gql`
       }
     }
   }
-`;
+`);
 
-const UpdateBeepSettings = gql`
+const UpdateBeepSettings = graphql(`
   mutation UpdateBeepSettings($input: BeeperSettingsInput!) {
     setBeeperStatus(input: $input) {
       id
@@ -123,7 +119,7 @@ const UpdateBeepSettings = gql`
       }
     }
   }
-`;
+`);
 
 export const LOCATION_TRACKING = "location-tracking";
 
@@ -139,16 +135,15 @@ export function StartBeepingScreen() {
   const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
-  const { data, refetch, loading } =
-    useQuery<GetInitialQueueQuery>(GetInitialQueue, {
-      notifyOnNetworkStatusChange: true,
-      variables: { id: user?.id },
-    });
+  const { data, refetch, loading } = useQuery(GetInitialQueue, {
+    notifyOnNetworkStatusChange: true,
+    variables: { id: user!.id },
+  });
 
-  useSubscription<GetQueueSubscription>(GetQueue, {
-    variables: { id: user?.id },
+  useSubscription(GetQueue, {
+    variables: { id: user!.id },
     onData({ data }) {
-      cache.updateQuery<GetInitialQueueQuery>({ query: GetInitialQueue, variables: { id: user?.id } }, (prev) => {
+      cache.updateQuery({ query: GetInitialQueue, variables: { id: user?.id } }, (prev) => {
         const newQueue = { getQueue: data.data!.getBeeperUpdates };
         if (prev && (prev.getQueue.length < newQueue.getQueue.length)) {
           bottomSheetRef.current?.expand();
@@ -159,8 +154,7 @@ export function StartBeepingScreen() {
     skip: !user?.isBeeping
   });
 
-  const [updateBeepSettings] =
-    useMutation<UpdateBeepSettingsMutation>(UpdateBeepSettings);
+  const [updateBeepSettings] = useMutation(UpdateBeepSettings);
 
   const queue = data?.getQueue;
 

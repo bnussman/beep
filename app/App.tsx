@@ -2,7 +2,6 @@ import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import { cache, client } from "./utils/Apollo";
 import { ApolloProvider, useQuery, useSubscription } from "@apollo/client";
-import { UserDataQuery, UserUpdatesSubscription } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { colorModeManager } from "./utils/theme";
 import { updatePushToken } from "./utils/Notifications";
@@ -31,7 +30,7 @@ setupPurchase();
 
 function Beep() {
   const { colorMode } = useColorMode();
-  const { data, loading } = useQuery<UserDataQuery>(UserData, {
+  const { data, loading } = useQuery(UserData, {
     errorPolicy: "none",
     onCompleted: () => {
       updatePushToken();
@@ -40,9 +39,9 @@ function Beep() {
 
   const user = data?.getUser;
 
-  useSubscription<UserUpdatesSubscription>(UserSubscription, {
+  useSubscription(UserSubscription, {
     onData({ data }) {
-      cache.updateQuery<UserDataQuery>({ query: UserData }, () => ({ getUser: data.data!.getUserUpdates }));
+      cache.updateQuery({ query: UserData }, () => ({ getUser: data.data!.getUserUpdates }));
     },
     skip: !user,
   });

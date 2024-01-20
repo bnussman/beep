@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { Unpacked } from "../utils/constants";
-import { ApolloError, gql, useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import { useEffect } from "react";
 import { Button } from "native-base";
 import { Status } from "../utils/types";
-import {
-  GetInitialQueueQuery,
-  UpdateBeeperQueueMutation,
-} from "../generated/graphql";
+import { ResultOf, graphql } from "gql.tada";
+import { GetInitialQueue } from "../routes/beep/StartBeeping";
 
 type InProgressStatuses = Exclude<
   Status,
@@ -23,10 +21,10 @@ const nextStatusMap: Record<InProgressStatuses, Status> = {
 };
 
 interface Props {
-  beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  beep: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
 }
 
-export const UpdateBeeperQueue = gql`
+export const UpdateBeeperQueue = graphql(`
   mutation UpdateBeeperQueue($id: String!, $status: String!) {
     setBeeperQueue(input: { id: $id, status: $status }) {
       id
@@ -48,13 +46,13 @@ export const UpdateBeeperQueue = gql`
       }
     }
   }
-`;
+`);
 
 function _Button(props: Props) {
   const { beep } = props;
 
   const [isLoading, setIsLoading] = useState(false);
-  const [update] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
+  const [update] = useMutation(UpdateBeeperQueue);
 
   const getMessage = () => {
     switch (beep.status) {

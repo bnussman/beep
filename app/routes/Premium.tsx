@@ -7,25 +7,25 @@ import PremiumImage from '../assets/premium.png';
 import { Card } from '../components/Card';
 import { Logger } from '../utils/Logger';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { CheckUserSubscriptionsMutation, PaymentsQueryQuery } from '../generated/graphql';
 import { Countdown } from '../components/CountDown';
 import { RefreshControl } from 'react-native';
 import { useUser } from '../utils/useUser';
+import { graphql } from 'gql.tada';
 
 interface Props {
   item: PurchasesOffering;
 }
 
-const CheckVerificationStatus = gql`
+const CheckVerificationStatus = graphql(`
   mutation checkUserSubscriptions {
     checkUserSubscriptions {
       id
       expires
     }
   }
-`;
+`);
 
-const PaymentsQuery = gql`
+const PaymentsQuery = graphql(`
   query PaymentsQuery($id: String) {
     getPayments(id: $id) {
       items {
@@ -35,7 +35,7 @@ const PaymentsQuery = gql`
       }
     }
   }
-`;
+`);
 
 function Offering({ item }: Props) {
   const packages = item.availablePackages;
@@ -57,14 +57,14 @@ function Offering({ item }: Props) {
 
 function Package({ p }: { p: PurchasesPackage }) {
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [checkVerificationStatus] = useMutation<CheckUserSubscriptionsMutation>(CheckVerificationStatus);
+  const [checkVerificationStatus] = useMutation(CheckVerificationStatus);
   const { user } = useUser();
 
-  const { data, refetch } = useQuery<PaymentsQueryQuery>(PaymentsQuery, { variables: { id: user?.id ?? "" } });
+  const { data, refetch } = useQuery(PaymentsQuery, { variables: { id: user?.id ?? "" } });
 
   const payment = data?.getPayments.items.find(sub => sub.productId === p.product.identifier);
 
-  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires)} /> : null;
+  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires as string)} /> : null;
 
   const onBuy = async (item: PurchasesPackage) => {
     if (Boolean(payment)) {
@@ -136,7 +136,7 @@ function usePackages() {
 
 export function Premium() {
   const { user } = useUser();
-  const { refetch: refetchUserPayments, loading } = useQuery<PaymentsQueryQuery>(PaymentsQuery, { variables: { id: user?.id ?? "" }, notifyOnNetworkStatusChange: true });
+  const { refetch: refetchUserPayments, loading } = useQuery(PaymentsQuery, { variables: { id: user?.id ?? "" }, notifyOnNetworkStatusChange: true });
   const { offerings, error, isLoading, refetch: refetchAppPackages, isRefreshing } = usePackages();
 
   const { colorMode } = useColorMode();

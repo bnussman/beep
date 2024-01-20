@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/constants";
-import { gql, useMutation } from "@apollo/client";
-import { LeaveQueueMutation } from "../../generated/graphql";
+import { useMutation } from "@apollo/client";
 import { Button, IButtonProps, Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../../utils/Alert";
+import { graphql } from "gql.tada";
 
-const LeaveQueue = gql`
+const LeaveQueue = graphql(`
   mutation LeaveQueue($id: String!) {
     leaveQueue(id: $id)
   }
-`;
+`);
 
 interface Props extends IButtonProps {
   beepersId: string;
@@ -19,7 +19,7 @@ interface Props extends IButtonProps {
 
 export function LeaveButton(props: Props) {
   const { beepersId, ...rest } = props;
-  const [leave] = useMutation<LeaveQueueMutation>(LeaveQueue, {
+  const [leave] = useMutation(LeaveQueue, {
     variables: { id: beepersId },
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);

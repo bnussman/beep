@@ -1,14 +1,14 @@
 import React from "react";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Card } from "../../components/Card";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
-import { GetUserProfileQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { Ionicons } from "@expo/vector-icons";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RatePreview } from "./RatePreview";
 import { useUser } from "../../utils/useUser";
+import { graphql } from "gql.tada";
 import {
   Spinner,
   Text,
@@ -21,7 +21,7 @@ import {
   Icon,
 } from "native-base";
 
-export const GetUser = gql`
+export const GetUser = graphql(`
   query GetUserProfile($id: String!) {
     getUser(id: $id) {
       id
@@ -41,7 +41,7 @@ export const GetUser = gql`
       rating
     }
   }
-`;
+`);
 
 type Props = StaticScreenProps<{ id: string, beepId?: string }>;
 
@@ -49,7 +49,7 @@ export function ProfileScreen({ route }: Props) {
   const { user } = useUser();
   const navigation = useNavigation();
 
-  const { data, loading, error } = useQuery<GetUserProfileQuery>(GetUser, {
+  const { data, loading, error } = useQuery(GetUser, {
     variables: { id: route.params.id },
   });
 
@@ -61,9 +61,13 @@ export function ProfileScreen({ route }: Props) {
   };
 
   const handleRate = () => {
+    if (!route.params.beepId) {
+      alert("No beep to rate.");
+    }
+
     navigation.navigate("Rate", {
       userId: route.params.id,
-      beepId: route.params.beepId,
+      beepId: route.params.beepId!,
     });
   };
 
