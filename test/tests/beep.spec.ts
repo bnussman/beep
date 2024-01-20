@@ -16,7 +16,7 @@ test('a beep can happen between a rider and driver', async ({ browser }) => {
 
   await beeperPage.getByRole('button').nth(1).click();
   await beeperPage.getByText('Cars').click();
-  await beeperPage.getByRole('button', { name: '' }).click();
+  await beeperPage.getByLabel("Add a car").click();
   await beeperPage.getByLabel('Make').selectOption('Ford');
   await beeperPage.getByLabel('Model').selectOption('F250');
   await beeperPage.getByLabel('Year').selectOption('2023');

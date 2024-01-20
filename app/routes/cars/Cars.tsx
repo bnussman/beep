@@ -175,6 +175,7 @@ export function Cars() {
           <IconButton
             onPress={() => navigation.navigate("Add Car")}
             mr={2}
+            aria-label="Add a car"
             icon={
               <Icon
                 as={Ionicons}
