@@ -175,10 +175,11 @@ export function Cars() {
           <IconButton
             onPress={() => navigation.navigate("Add Car")}
             mr={2}
+            aria-label="Add a car"
             icon={
               <Icon
                 as={Ionicons}
-                name="ios-add-sharp"
+                name="add-sharp"
                 size="xl"
                 color={colorMode === "dark" ? "white" : "black"}
               />

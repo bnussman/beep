@@ -495,7 +495,7 @@ export function MainFindBeepScreen() {
                   Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
                 }
                 endIcon={
-                  <Icon as={Ionicons} name="ios-call" color="white" size="md" />
+                  <Icon as={Ionicons} name="call" color="white" size="md" />
                 }
               >
                 Call Beeper
@@ -508,7 +508,7 @@ export function MainFindBeepScreen() {
                 endIcon={
                   <Icon
                     as={Ionicons}
-                    name="ios-chatbox"
+                    name="chatbox"
                     color="white"
                     size="md"
                   />
@@ -538,7 +538,7 @@ export function MainFindBeepScreen() {
                   flexGrow={1}
                   colorScheme="lightBlue"
                   rightIcon={
-                    <Icon as={Ionicons} size="md" name="ios-card-outline" />
+                    <Icon as={Ionicons} size="md" name="card-outline" />
                   }
                   onPress={() =>
                     openVenmo(
@@ -556,7 +556,7 @@ export function MainFindBeepScreen() {
               {beep.beeper.venmo && beep.groupSize > 1 ? (
                 <Button
                   rightIcon={
-                    <Icon as={Ionicons} name="ios-share-outline" size="md" />
+                    <Icon as={Ionicons} name="share-outline" size="md" />
                   }
                   onPress={() =>
                     shareVenmoInformation(

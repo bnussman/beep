@@ -288,7 +288,7 @@ export function AddCar() {
                     <Icon
                       mt={2}
                       as={Ionicons}
-                      name="ios-add-sharp"
+                      name="add-sharp"
                       size="xl"
                       color="black"
                       _dark={{ color: "white" }}

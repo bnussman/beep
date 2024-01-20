@@ -95,7 +95,7 @@ export function QueueItem({ item }: Props) {
                   >
                     <Icon
                       as={Ionicons}
-                      name="ios-ellipsis-horizontal-circle"
+                      name="ellipsis-horizontal-circle"
                       color="gray.400"
                       size="xl"
                       mr={4}
