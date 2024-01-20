@@ -77,7 +77,7 @@ export function Beeps() {
   const { page } = beepsListRoute.useSearch();
   const navigate = useNavigate({ from: beepsListRoute.id });
 
-  const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetBeepsQuery>(BeepsGraphQL, {
+  const { data, loading, error, refetch, startPolling, stopPolling, previousData } = useQuery<GetBeepsQuery>(BeepsGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -104,6 +104,8 @@ export function Beeps() {
     return <Error error={error} />;
   }
 
+  const beeps = data?.getBeeps.items ?? previousData?.getBeeps.items;
+
   return (
     <Box>
       <Heading>Beeps</Heading>
@@ -129,7 +131,7 @@ export function Beeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getBeeps.items.map((beep) => (
+            {beeps?.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />
                 <TdUser user={beep.rider} />
