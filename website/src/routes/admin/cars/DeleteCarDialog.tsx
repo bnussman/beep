@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { DeleteCarMutation, GetCarsQuery } from '../../../generated/graphql';
 import { client } from '../../../utils/Apollo';
 import { Unpacked } from '../../../utils/utils';
 import { CarsQuery } from '.';
 import { Error } from '../../../components/Error';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+import { ResultOf, graphql } from 'gql.tada';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -22,26 +22,26 @@ import {
 
 interface Props {
   isOpen: boolean;
-  car: Unpacked<GetCarsQuery['getCars']['items']> | undefined;
+  car: Unpacked<ResultOf<typeof CarsQuery>['getCars']['items']> | undefined;
   onClose: () => void;
 }
 
-const DeleteCar = gql`
+const DeleteCar = graphql(`
   mutation DeleteCar($id: String!, $notification: String) {
     deleteCar(id: $id, notification: $notification)
   }
-`;
+`);
 
 export function DeleteCarDialog(props: Props) {
   const { isOpen, onClose, car } = props;
   const cancelRef = React.useRef(null);
   const toast = useToast();
 
-  const [deleteCar, { loading, error }] = useMutation<DeleteCarMutation>(DeleteCar);
+  const [deleteCar, { loading, error }] = useMutation(DeleteCar);
   const [notification, setNotification] = useState("");
 
   const doDelete = () => {
-    deleteCar({ variables: { id: car?.id, notification } }).then(() => {
+    deleteCar({ variables: { id: car?.id ?? "", notification } }).then(() => {
       toast({ title: 'Successfully deleted car', status: 'success' });
       onClose()
       client.refetchQueries({ include: [CarsQuery] });

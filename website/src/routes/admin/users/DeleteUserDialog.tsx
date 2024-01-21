@@ -2,8 +2,8 @@ import React from "react";
 import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
-import { gql, useMutation } from "@apollo/client";
-import { RemoveUserMutation } from "../../../generated/graphql";
+import { useMutation } from "@apollo/client";
+import { graphql } from "gql.tada";
 
 interface Props {
   userId: string;
@@ -12,14 +12,14 @@ interface Props {
 }
 
 
-const RemoveUser = gql`
+const RemoveUser = graphql(`
   mutation RemoveUser($id: String!) {
     removeUser(id: $id)
   }
-`;
+`);
 
 export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
-  const [deleteUser, { loading, error }] = useMutation<RemoveUserMutation>(RemoveUser, {
+  const [deleteUser, { loading, error }] = useMutation(RemoveUser, {
     variables: { id: userId },
     update: (cache) => {
       const id = cache.identify({ __typename: "User", id: userId });

@@ -1,6 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { LoginMutation } from '../generated/graphql';
+import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { GetUserData, rootRoute } from '../App';
 import { client } from '../utils/Apollo';
@@ -8,8 +7,9 @@ import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack
 import { Card } from '../components/Card';
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, Route, useNavigate } from '@tanstack/react-router';
+import { graphql } from 'gql.tada';
 
-const LoginGraphQL = gql`
+const LoginGraphQL = graphql(`
   mutation Login($username: String!, $password: String!) {
     login(input: { username: $username, password: $password }) {
       tokens {
@@ -38,7 +38,7 @@ const LoginGraphQL = gql`
       }
     }
   }
-`;
+`);
 
 export const loginRoute = new Route({
   component: Login,
@@ -50,7 +50,7 @@ export function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [login, { loading, error }] = useMutation<LoginMutation>(LoginGraphQL);
+  const [login, { loading, error }] = useMutation(LoginGraphQL);
 
   async function handleLogin(e: FormEvent) {
     e.preventDefault();

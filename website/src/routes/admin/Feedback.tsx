@@ -7,13 +7,13 @@ import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { TdUser } from '../../components/TdUser';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
-import { FeedbackQuery } from '../../generated/graphql';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(relativeTime);
 
-const FeedbackGQL = gql`
+const FeedbackGQL = graphql(`
   query Feedback($offset: Int, $show: Int) {
     getFeedback(offset: $offset, show: $show) {
       items {
@@ -29,7 +29,7 @@ const FeedbackGQL = gql`
       count
     }
   }
-`;
+`);
 
 export const feedbackRoute = new Route({
   component: Feedback,
@@ -43,8 +43,7 @@ export function Feedback() {
   const { page } = feedbackRoute.useSearch();
   const navigate = useNavigate({ from: feedbackRoute.id });
 
-  const { data, loading, error } = useQuery<FeedbackQuery>(FeedbackGQL, {
-    variables: {
+  const { data, loading, error } = useQuery(FeedbackGQL, { variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
     }
@@ -84,7 +83,7 @@ export function Feedback() {
               <Tr key={feedback.id}>
                 <TdUser user={feedback.user} />
                 <Td>{feedback.message}</Td>
-                <Td>{dayjs().to(feedback.created)}</Td>
+                <Td>{dayjs().to(feedback.created as string)}</Td>
               </Tr>
             ))}
           </Tbody>

@@ -1,21 +1,21 @@
 import React, { useEffect } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Box, Center } from '@chakra-ui/react';
-import { GetUserQuery } from '../../../generated/graphql';
 import { cache, client } from '../../../utils/Apollo';
 import { Marker } from '../../../components/Marker';
 import { Map } from '../../../components/Map';
 import { Route } from '@tanstack/react-router';
 import { GetUser, userRoute } from './User';
+import { graphql } from 'gql.tada';
 
-const BeepersLocation = gql`
+const BeepersLocation = graphql(`
   subscription BeepersLocation($id: String!) {
     getLocationUpdates(id: $id) {
       latitude
       longitude
     }
   }
-`;
+`);
 
 let sub: any;
 
@@ -29,7 +29,7 @@ export const locationRoute = new Route({
 export function LocationView() {
   const { userId } = locationRoute.useParams();
 
-  const { data } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+  const { data } = useQuery(GetUser, { variables: { id: userId } });
 
   const user = data?.getUser;
 
@@ -45,8 +45,8 @@ export function LocationView() {
         fields: {
           location() {
             return {
-              latitude: data.getLocationUpdates.latitude,
-              longitude: data.getLocationUpdates.longitude,
+              latitude: data?.getLocationUpdates?.latitude ?? 0,
+              longitude: data?.getLocationUpdates?.longitude ?? 0,
             };
           },
         },

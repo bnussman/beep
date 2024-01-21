@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Indicator } from '../../../components/Indicator';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { GetReportQuery, UpdateReportMutation, User } from '../../../generated/graphql';
 import { Box, Button, Checkbox, Flex, Heading, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Error } from '../../../components/Error';
@@ -12,11 +11,13 @@ import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
 import { Link, Route } from "@tanstack/react-router";
 import { reportsRoute } from ".";
+import { graphql } from 'gql.tada';
+import { User } from "../../../App";
 
 dayjs.extend(relativeTime);
 
 
-export const UpdateReport = gql`
+export const UpdateReport = graphql(`
   mutation UpdateReport($id: String!, $notes: String, $handled: Boolean) {
     updateReport(id: $id, input: { notes: $notes, handled: $handled }) {
       id
@@ -47,7 +48,7 @@ export const UpdateReport = gql`
       }
     }
   }
-`;
+`);
 
 export const GetReport = gql`
   query GetReport($id: String!) {
@@ -91,8 +92,8 @@ export const reportRoute = new Route({
 export function Report() {
   const { reportId: id } = reportRoute.useParams();
 
-  const { data, loading, error } = useQuery<GetReportQuery>(GetReport, { variables: { id } });
-  const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
+  const { data, loading, error } = useQuery(GetReport, { variables: { id } });
+  const [update, { loading: updateLoading, error: updateError }] = useMutation(UpdateReport);
 
   const [notes, setNotes] = useState<string>();
   const [isHandled, setIsHandled] = useState<boolean>();

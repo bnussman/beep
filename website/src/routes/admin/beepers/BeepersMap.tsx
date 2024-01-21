@@ -1,11 +1,12 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
-import { GetBeepersQuery } from "../../../generated/graphql";
 import { Marker } from "../../../components/Marker";
 import { Map } from "../../../components/Map";
+import { ResultOf } from "gql.tada";
+import { BeepersGraphQL } from "./Beepers";
 
 interface Props {
-  beepers: GetBeepersQuery['getBeepers'];
+  beepers: ResultOf<typeof BeepersGraphQL>['getBeepers'];
   viewState?: { latitude: number, longitude: number, zoom: number };
 }
 

@@ -1,6 +1,10 @@
 import React from "react";
 import { EditDetails } from "./EditDetails";
 import { EditLocation } from "./EditLocation";
+import { useQuery } from "@apollo/client";
+import { GetUser, userRoute } from "../User";
+import { Error } from '../../../../components/Error';
+import { Route } from "@tanstack/react-router";
 import {
   Tabs,
   TabList,
@@ -11,11 +15,6 @@ import {
   Heading,
   Spinner
 } from "@chakra-ui/react";
-import { useQuery } from "@apollo/client";
-import { GetUserQuery } from "../../../../generated/graphql";
-import { GetUser, userRoute } from "../User";
-import { Error } from '../../../../components/Error';
-import { Route } from "@tanstack/react-router";
 
 export const editUserRoute = new Route({
   component: Edit,
@@ -25,14 +24,14 @@ export const editUserRoute = new Route({
 
 export function Edit() {
   const { userId } = editUserRoute.useParams();
-  const { data, loading, error } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+  const { data, loading, error } = useQuery(GetUser, { variables: { id: userId } });
 
   const user = data?.getUser;
 
   if (loading || !user) {
     return <Spinner />;
   }
-  
+
   if (error) {
     return <Error error={error} />;
   }
@@ -47,7 +46,7 @@ export function Edit() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <EditDetails user={user} />
+            <EditDetails userId={userId} />
           </TabPanel>
           <TabPanel>
             <EditLocation />

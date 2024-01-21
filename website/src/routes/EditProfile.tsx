@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { AddProfilePictureMutation, EditUserInput, EditUserMutation, GetUserDataQuery } from '../generated/graphql';
+import { useMutation, useQuery } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
 import { GetUserData, rootRoute } from '../App';
@@ -8,6 +7,7 @@ import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { Route } from '@tanstack/react-router';
+import { VariablesOf, graphql } from 'gql.tada';
 
 const pick = (obj: any, keys: string[]) => Object.fromEntries(
   keys
@@ -15,7 +15,7 @@ const pick = (obj: any, keys: string[]) => Object.fromEntries(
   .map(key => [key, obj[key]])
 );
 
-const EditAccount = gql`
+const EditAccount = graphql(`
   mutation EditAccount($data: EditUserInput!) {
     editUser (data: $data) {
       id
@@ -27,16 +27,18 @@ const EditAccount = gql`
       cashapp
     }
   }
-`;
+`);
 
-export const UploadPhoto = gql`
+type Values = VariablesOf<typeof EditAccount>['data'];
+
+export const UploadPhoto = graphql(`
   mutation AddProfilePicture ($picture: Upload!){
     addProfilePicture (picture: $picture) {
       id
       photo
     }
   }
-`;
+`);
 
 export const editProfileRoute = new Route({
   getParentRoute: () => rootRoute,
@@ -45,24 +47,24 @@ export const editProfileRoute = new Route({
 })
 
 export function EditProfile() {
-  const [edit, { error, loading }] = useMutation<EditUserMutation>(EditAccount);
-  const [upload, { loading: uploadLoading, error: uploadError }] = useMutation<AddProfilePictureMutation>(UploadPhoto, {
+  const [edit, { error, loading }] = useMutation(EditAccount);
+  const [upload, { loading: uploadLoading, error: uploadError }] = useMutation(UploadPhoto, {
    context: {
       headers: {
         'apollo-require-preflight': true,
       },
     },
   });
-  const { data: userData } = useQuery<GetUserDataQuery>(GetUserData);
+  const { data: userData } = useQuery(GetUserData);
   const toast = useToast();
 
   const user = userData?.getUser;
 
-  const validationErrors = useValidationErrors<EditUserInput>(error);
+  const validationErrors = useValidationErrors<Values>(error);
 
   const defaultValues = pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp']);
 
-  const { handleSubmit, register, reset, formState: { errors, isValid, isDirty } } = useForm<EditUserInput>({
+  const { handleSubmit, register, reset, formState: { errors, isValid, isDirty } } = useForm<Values>({
      defaultValues
   });
 

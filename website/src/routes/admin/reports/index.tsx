@@ -6,16 +6,16 @@ import { ReportDrawer } from './Drawer';
 import { Loading } from '../../../components/Loading';
 import { Pagination } from '../../../components/Pagination';
 import { Indicator } from '../../../components/Indicator';
-import { gql, useQuery } from '@apollo/client';
-import { GetReportsQuery } from '../../../generated/graphql';
+import { useQuery } from '@apollo/client';
 import { Error } from '../../../components/Error';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(relativeTime);
 
-export const ReportsGraphQL = gql`
+export const ReportsGraphQL = graphql(`
   query getReports($show: Int, $offset: Int) {
     getReports(show: $show, offset: $offset) {
       items {
@@ -40,7 +40,7 @@ export const ReportsGraphQL = gql`
       count
     }
   }
-`;
+`);
 
 export const reportsRoute = new Route({
   path: 'reports',
@@ -64,7 +64,7 @@ export function Reports() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate({ from: reportsListRoute.id });
 
-  const { data, loading, error } = useQuery<GetReportsQuery>(ReportsGraphQL, {
+  const { data, loading, error } = useQuery(ReportsGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -105,7 +105,7 @@ export function Reports() {
             </Tr>
           </Thead>
           <Tbody>
-            {reports?.map(report => (
+            {reports?.map((report) => (
               <Tr
                 key={report.id}
                 onClick={() => openReport(report.id)}
@@ -117,7 +117,7 @@ export function Reports() {
                 <TdUser user={report.reporter} />
                 <TdUser user={report.reported} />
                 <Td>{report.reason}</Td>
-                <Td>{dayjs().to(report.timestamp)}</Td>
+                <Td>{dayjs().to(report.timestamp as string)}</Td>
                 <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
               </Tr>
             ))}

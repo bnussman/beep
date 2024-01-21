@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../../components/Pagination';
-import { gql, useQuery } from '@apollo/client';
-import { GetCarsQuery } from '../../../generated/graphql';
+import { useQuery } from '@apollo/client';
 import { Box, Heading, IconButton, Image, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
@@ -14,10 +13,11 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { DeleteCarDialog } from './DeleteCarDialog';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(relativeTime);
 
-export const CarsQuery = gql`
+export const CarsQuery = graphql(`
   query GetCars($offset: Int, $show: Int) {
     getCars(offset: $offset, show: $show) {
       items {
@@ -37,7 +37,7 @@ export const CarsQuery = gql`
       count
     }
   }
-`;
+`);
 
 export const carsRoute = new Route({
   component: Cars,
@@ -67,7 +67,7 @@ export function Cars() {
 
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
-  const { data, loading, error } = useQuery<GetCarsQuery>(CarsQuery, {
+  const { data, loading, error } = useQuery(CarsQuery, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -130,7 +130,7 @@ export function Cars() {
                 <Td>
                   <Indicator color={car.color} tooltip={car.color} />
                 </Td>
-                <Td>{dayjs().to(car.created)}</Td>
+                <Td>{dayjs().to(car.created as string)}</Td>
                 <Td onClick={() => onPhotoClick(car.id)}>
                   <Image src={car.photo} borderRadius="lg" maxH="56px" />
                 </Td>

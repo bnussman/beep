@@ -3,17 +3,17 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
-import { gql, useQuery } from '@apollo/client';
-import { GetBeepQuery } from '../../../generated/graphql';
+import { useQuery } from '@apollo/client';
 import { Heading, Text, Box, Button, Flex, Spacer, Stack, useDisclosure } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { Route } from "@tanstack/react-router";
 import { beepsRoute } from ".";
+import { graphql } from "gql.tada";
 
 dayjs.extend(duration);
 
-const GetBeep = gql`
+const GetBeep = graphql(`
   query GetBeep($id: String!) {
     getBeep(id: $id) {
       id
@@ -36,7 +36,7 @@ const GetBeep = gql`
       }
     }
   }
-`;
+`);
 
 export const beepRoute = new Route({
   component: Beep,
@@ -46,7 +46,7 @@ export const beepRoute = new Route({
 
 export function Beep() {
   const { beepId: id } = beepRoute.useParams();
-  const { data, loading } = useQuery<GetBeepQuery>(GetBeep, { variables: { id } });
+  const { data, loading } = useQuery(GetBeep, { variables: { id } });
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -94,11 +94,11 @@ export function Beep() {
           </Box>
           <Box>
             <Heading>Beep Started</Heading>
-            <Text>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Text>
+            <Text>{new Date(data.getBeep.start as string).toLocaleString()} - {dayjs().to(data.getBeep.start as string)}</Text>
           </Box>
           <Box>
             <Heading>Beep Ended</Heading>
-            <Text>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Text>
+            <Text>{new Date(data.getBeep.end as string).toLocaleString()} - {dayjs().to(data.getBeep.end as string)}</Text>
           </Box>
           <DeleteBeepDialog
             id={data.getBeep.id}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Box, Flex, Td, Text } from "@chakra-ui/react";
-import { User } from "../generated/graphql";
 import { Link } from '@tanstack/react-router';
+import { User } from '../App';
 
 interface Props {
   user: Partial<User>;

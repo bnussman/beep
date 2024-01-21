@@ -1,6 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { ForgotPasswordMutation } from '../generated/graphql';
+import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { Button, Center, Container, FormControl, FormHelperText, FormLabel, Heading, Input } from '@chakra-ui/react';
@@ -8,12 +7,13 @@ import { EmailIcon } from '@chakra-ui/icons';
 import { Card } from '../components/Card';
 import { Route } from '@tanstack/react-router';
 import { rootRoute } from '../App';
+import { graphql } from 'gql.tada';
 
-const ForgotPasswordGraphQL = gql`
+const ForgotPasswordGraphQL = graphql(`
   mutation ForgotPassword($email: String!) {
     forgotPassword(email: $email)
   }
-`;
+`);
 
 export const forgotPasswordRoute = new Route({
   component: ForgotPassword,
@@ -22,7 +22,7 @@ export const forgotPasswordRoute = new Route({
 });
 
 export function ForgotPassword() {
-  const [forgot, { data, loading, error }] = useMutation<ForgotPasswordMutation>(ForgotPasswordGraphQL);
+  const [forgot, { data, loading, error }] = useMutation(ForgotPasswordGraphQL);
   const [email, setEmail] = useState("");
 
   async function handleForgotPassword(e: FormEvent): Promise<void> {

@@ -1,17 +1,17 @@
 import React from "react";
 import { Heading, ListItem, Stack, UnorderedList } from "@chakra-ui/react";
-import { gql, useQuery } from "@apollo/client";
-import { RedisChannelsQueryQuery } from "../../generated/graphql";
+import { useQuery } from "@apollo/client";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
 import { Route } from "@tanstack/react-router";
 import { adminRoute } from ".";
+import { graphql } from "gql.tada";
 
-const RedisChannelsQuery = gql`
+const RedisChannelsQuery = graphql(`
   query RedisChannelsQuery {
     getRedisChannels
   }
-`;
+`);
 
 export const redisRoute = new Route({
   component: Redis,
@@ -20,7 +20,7 @@ export const redisRoute = new Route({
 });
 
 export function Redis() {
-  const { data, loading, error } = useQuery<RedisChannelsQueryQuery>(RedisChannelsQuery);
+  const { data, loading, error } = useQuery(RedisChannelsQuery);
 
 
   if (loading) {
