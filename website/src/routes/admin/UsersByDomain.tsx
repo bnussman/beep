@@ -1,20 +1,20 @@
 import React from "react";
 import { Heading, Stack, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
-import { gql, useQuery } from "@apollo/client";
-import { GetUsersPerDomainQuery } from "../../generated/graphql";
+import { useQuery } from "@apollo/client";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
 import { Route } from "@tanstack/react-router";
 import { usersRoute } from "./users";
+import { graphql } from "gql.tada";
 
-const UsersByDomainQuery = gql`
+const UsersByDomainQuery = graphql(`
   query GetUsersPerDomain {
     getUsersPerDomain {
       domain
       count
     }
   }
-`;
+`);
 
 export const usersByDomainRoute = new Route({
   component: UsersByDomain,
@@ -23,7 +23,7 @@ export const usersByDomainRoute = new Route({
 });
 
 export function UsersByDomain() {
-  const { data, loading, error } = useQuery<GetUsersPerDomainQuery>(UsersByDomainQuery);
+  const { data, loading, error } = useQuery(UsersByDomainQuery);
 
   const usersPerDomain = data?.getUsersPerDomain ?? [];
 

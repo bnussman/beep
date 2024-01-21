@@ -4,7 +4,6 @@ import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
 import { RefreshControl } from "react-native";
-import { ChooseBeepMutation, ChooseBeepMutationVariables, GetBeepersQuery } from "../../generated/graphql";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { Card } from "../../components/Card";
@@ -23,8 +22,9 @@ import {
 } from "native-base";
 import { client } from "../../utils/Apollo";
 import { InitialRiderStatus } from "./FindBeep";
+import { ResultOf, VariablesOf, graphql } from "gql.tada";
 
-const GetBeepers = gql`
+const GetBeepers = graphql(`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
     getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
       id
@@ -46,9 +46,9 @@ const GetBeepers = gql`
       }
     }
   }
-`;
+`);
 
-const ChooseBeep = gql`
+export const ChooseBeep = graphql(`
   mutation ChooseBeep(
     $beeperId: String!
     $origin: String!
@@ -98,21 +98,21 @@ const ChooseBeep = gql`
       }
     }
   }
-`;
+`);
 
-type Props = StaticScreenProps<Omit<ChooseBeepMutationVariables, 'beeperId'>>;
+type Props = StaticScreenProps<Omit<VariablesOf<typeof ChooseBeep>, 'beeperId'>>;
 
 export function PickBeepScreen({ route }: Props) {
   const { colorMode } = useColorMode();
   const { location } = useLocation();
   const navigation = useNavigation();
 
-  const { data, loading, error, refetch } = useQuery<GetBeepersQuery>(
+  const { data, loading, error, refetch } = useQuery(
     GetBeepers,
     {
       variables: {
-        latitude: location?.coords.latitude,
-        longitude: location?.coords.longitude,
+        latitude: location?.coords.latitude ?? 0,
+        longitude: location?.coords.longitude ?? 0,
         radius: 20,
       },
       skip: !location,
@@ -120,7 +120,7 @@ export function PickBeepScreen({ route }: Props) {
     }
   );
 
-  const [getBeep] = useMutation<ChooseBeepMutation>(ChooseBeep);
+  const [getBeep] = useMutation(ChooseBeep);
 
   const chooseBeep = async ( beeperId: string,) => {
     try {
@@ -146,7 +146,7 @@ export function PickBeepScreen({ route }: Props) {
   const beepers = data?.getBeepers;
   const isRefreshing = Boolean(data) && loading;
 
-  const renderItem = ({ item, index }: { item: Unpacked<GetBeepersQuery["getBeepers"]>; index: number; }) => {
+  const renderItem = ({ item, index }: { item: Unpacked<ResultOf<typeof GetBeepers>['getBeepers']>; index: number; }) => {
     const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
 
     return (

@@ -1,6 +1,5 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { GetRatingsForUserQuery } from "../../generated/graphql";
 import { Avatar } from "../../components/Avatar";
 import { printStars } from "../../components/Stars";
 import { Card } from "../../components/Card";
@@ -17,8 +16,9 @@ import {
   useColorMode,
   Spacer,
 } from "native-base";
+import { graphql } from "gql.tada";
 
-const Ratings = gql`
+const Ratings = graphql(`
   query GetRatingsForUser($id: String, $offset: Int, $show: Int) {
     getRatings(id: $id, show: $show, offset: $offset, filter: "recieved") {
       items {
@@ -45,7 +45,7 @@ const Ratings = gql`
       count
     }
   }
-`;
+`);
 
 interface Props {
   id: string;
@@ -56,11 +56,13 @@ const PAGE_SIZE = 5;
 export function RatePreview({ id }: Props) {
   const { colorMode } = useColorMode();
   const { navigate } = useNavigation();
-  const { data, loading, error, fetchMore, refetch } =
-    useQuery<GetRatingsForUserQuery>(Ratings, {
+  const { data, loading, error, fetchMore, refetch } = useQuery(
+    Ratings,
+    {
       variables: { id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
-    });
+    }
+  );
 
   const ratings = data?.getRatings.items;
   const count = data?.getRatings.count || 0;
@@ -147,7 +149,7 @@ export function RatePreview({ id }: Props) {
                   {rating.rater.name}
                 </Text>
                 <Text color="gray.400" fontSize="xs" mb={1}>
-                  {new Date(rating.timestamp).toLocaleString()}
+                  {new Date(rating.timestamp as string).toLocaleString()}
                 </Text>
                 <Text fontSize="xs">{printStars(rating.stars)}</Text>
                 {rating.message && (

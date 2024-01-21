@@ -2,21 +2,21 @@ import React, { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Badge, Box, Flex, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
-import { GetInProgressBeepsQuery } from '../../../generated/graphql';
 import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
 import { beepStatusMap } from '.';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 
-export const ActiveBeepsGraphQL = gql`
+export const ActiveBeepsGraphQL = graphql(`
   query getInProgressBeeps($show: Int, $offset: Int) {
     getInProgressBeeps (show: $show, offset: $offset) {
       items {
@@ -42,7 +42,7 @@ export const ActiveBeepsGraphQL = gql`
       count
     }
   }
-`;
+`);
 
 export const activeBeepsRoute = new Route({
   component: ActiveBeeps,
@@ -60,7 +60,7 @@ export function ActiveBeeps() {
   const { page } = activeBeepsRoute.useSearch();
   const navigate = useNavigate({ from: activeBeepsRoute.id });
 
-  const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetInProgressBeepsQuery>(ActiveBeepsGraphQL, {
+  const { data, loading, error, refetch, startPolling, stopPolling } = useQuery(ActiveBeepsGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -122,7 +122,7 @@ export function ActiveBeeps() {
                 <Td>{beep.origin}</Td>
                 <Td>{beep.destination}</Td>
                 <Td>{beep.groupSize}</Td>
-                <Td>{dayjs().to(beep.start)}</Td>
+                <Td>{dayjs().to(beep.start as string)}</Td>
                 <Td>
                   <HStack>
                     <Indicator color={beepStatusMap[beep.status as Status]} />

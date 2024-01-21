@@ -6,14 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import { Text } from "native-base";
 import { Platform } from "react-native";
 import { cache } from "../../utils/Apollo";
-import {
-  AnonymousBeeper,
-  GetAllBeepersLocationQuery,
-  GetBeeperLocationUpdatesSubscription,
-} from "../../generated/graphql";
 import { BEEPER_ICON } from "../../utils/constants";
+import { ResultOf, graphql } from "gql.tada";
+import { Unpacked } from "../../utils/constants";
 
-const BeepersLocations = gql`
+const BeepersLocations = graphql(`
   query GetAllBeepersLocation(
     $radius: Float!
     $longitude: Float!
@@ -29,9 +26,9 @@ const BeepersLocations = gql`
       longitude
     }
   }
-`;
+`);
 
-const BeeperLocationUpdates = gql`
+const BeeperLocationUpdates = graphql(`
   subscription GetBeeperLocationUpdates(
     $radius: Float!
     $longitude: Float!
@@ -47,19 +44,21 @@ const BeeperLocationUpdates = gql`
       longitude
     }
   }
-`;
+`);
 
 export function BeepersMap() {
   const { location } = useLocation();
-  const { data, startPolling, stopPolling } =
-    useQuery<GetAllBeepersLocationQuery>(BeepersLocations, {
+  const { data, startPolling, stopPolling } = useQuery(
+    BeepersLocations,
+    {
       variables: {
         radius: 20,
         latitude: location?.coords.latitude ?? 0,
         longitude: location?.coords.longitude ?? 0,
       },
       skip: !location,
-    });
+    }
+  );
 
   const beepers = data?.getAllBeepersLocation;
 
@@ -70,7 +69,7 @@ export function BeepersMap() {
     };
   }, []);
 
-  useSubscription<GetBeeperLocationUpdatesSubscription>(BeeperLocationUpdates, {
+  useSubscription(BeeperLocationUpdates, {
     variables: {
       radius: 20,
       latitude: location?.coords.latitude ?? 0,
@@ -135,7 +134,7 @@ export function BeepersMap() {
 const LATITUDE_DELTA = 0.01;
 const LONGITUDE_DELTA = 0.01;
 
-export function BeeperMarker({ id, latitude, longitude }: AnonymousBeeper) {
+export function BeeperMarker({ id, latitude, longitude }: Unpacked<ResultOf<typeof BeepersLocations>['getAllBeepersLocation']>) {
   const ref = useRef<MarkerAnimated>(null);
   const [coordinate] = useState(
     new AnimatedRegion({

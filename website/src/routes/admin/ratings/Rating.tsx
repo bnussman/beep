@@ -1,8 +1,7 @@
 import React from "react";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { gql, useQuery } from '@apollo/client';
-import { GetRatingQuery } from '../../../generated/graphql';
+import { useQuery } from '@apollo/client';
 import { Heading, Text, Box, Button, Flex, Spacer, Stack, useDisclosure } from "@chakra-ui/react";
 import { printStars, ratingsRoute } from ".";
 import { Error } from '../../../components/Error';
@@ -11,10 +10,11 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
 import { Link, Route } from "@tanstack/react-router";
+import { graphql } from "gql.tada";
 
 dayjs.extend(relativeTime);
 
-const GetRating = gql`
+const GetRating = graphql(`
   query GetRating($id: String!) {
     getRating(id: $id) {
       id
@@ -38,7 +38,7 @@ const GetRating = gql`
       }
     }
   }
-`;
+`);
 
 export const ratingRoute = new Route({
   component: Rating,
@@ -51,7 +51,7 @@ export function Rating() {
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const { data, loading, error } = useQuery<GetRatingQuery>(GetRating, { variables: { id: id } });
+  const { data, loading, error } = useQuery(GetRating, { variables: { id: id } });
 
   return (
     <Box>
@@ -88,7 +88,7 @@ export function Rating() {
           </Box>
           <Box>
             <Heading size="lg">Created</Heading>
-            <Text>{dayjs().to(data.getRating.timestamp)}</Text>
+            <Text>{dayjs().to(data.getRating.timestamp as string)}</Text>
           </Box>
           {data.getRating.beep &&
             <Box>

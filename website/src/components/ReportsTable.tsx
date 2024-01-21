@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { GetReportsQuery } from '../generated/graphql';
+import { useQuery } from '@apollo/client';
 import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
@@ -10,10 +9,11 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Link, Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 
-const Reports = gql`
+const Reports = graphql(`
   query GetReportsForUser($id: String, $show: Int, $offset: Int) {
     getReports(id: $id, show: $show, offset: $offset) {
       items {
@@ -43,7 +43,7 @@ const Reports = gql`
       count
     }
   }
-`;
+`);
 
 export const reportsTableRoute = new Route({
   component: ReportsTable,
@@ -55,7 +55,7 @@ export function ReportsTable() {
   const { userId } = reportsTableRoute.useParams();
   const pageLimit = 5;
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, loading } = useQuery<GetReportsQuery>(
+  const { data, loading } = useQuery(
     Reports,
     {
       variables: {
@@ -108,7 +108,7 @@ export function ReportsTable() {
                 <TdUser user={report.reporter} />
                 <TdUser user={report.reported} />
                 <Td>{report.reason}</Td>
-                <Td>{dayjs().to(report.timestamp)}</Td>
+                <Td>{dayjs().to(report.timestamp as string)}</Td>
                 <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
                 <Td>
                   <Link to="/admin/reports/$reportId" params={{ reportId: report.id }}>

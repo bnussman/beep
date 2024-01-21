@@ -4,8 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import PasswordInput from "../../components/PasswordInput";
 import { Alert } from "../../utils/Alert";
 import { isSimulator } from "../../utils/constants";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import { LoginMutation, LoginMutationVariables } from "../../generated/graphql";
+import { ApolloError, useMutation } from "@apollo/client";
 import { client } from "../../utils/Apollo";
 import { getPushToken } from "../../utils/Notifications";
 import { Container } from "../../components/Container";
@@ -25,8 +24,9 @@ import {
   WarningOutlineIcon,
   HStack,
 } from "native-base";
+import { VariablesOf, graphql } from "gql.tada";
 
-const Login = gql`
+const Login = graphql(`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
     login(
       input: { username: $username, password: $password, pushToken: $pushToken }
@@ -55,12 +55,14 @@ const Login = gql`
       }
     }
   }
-`;
+`);
+
+type Values = VariablesOf<typeof Login>;
 
 export function LoginScreen() {
-  const [login, { error }] = useMutation<LoginMutation>(Login);
+  const [login, { error }] = useMutation(Login);
 
-  const validationErrors = useValidationErrors<LoginMutationVariables>(error);
+  const validationErrors = useValidationErrors<Values>(error);
 
   const navigation = useNavigation();
 
@@ -69,7 +71,7 @@ export function LoginScreen() {
     handleSubmit,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<Omit<LoginMutationVariables, "pushToken">>();
+  } = useForm<Omit<Values, "pushToken">>();
 
   useEffect(() => {
     try {
@@ -98,7 +100,7 @@ export function LoginScreen() {
 
       client.writeQuery({
         query: UserData,
-        data: { getUser: { ...data?.login.user, pushToken } },
+        data: { getUser: { ...data?.login.user } },
       });
     } catch (error) {
       Alert(error as ApolloError);

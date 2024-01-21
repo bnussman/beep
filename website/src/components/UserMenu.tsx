@@ -1,7 +1,6 @@
 import React from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GetUserData } from "../App";
-import { GetUserDataQuery, LogoutMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import { LiaKeySolid, LiaSignOutAltSolid, LiaUserEditSolid } from 'react-icons/lia';
 import {
@@ -16,16 +15,17 @@ import {
   Icon,
 } from "@chakra-ui/react"
 import { Link, useNavigate } from "@tanstack/react-router";
+import { graphql } from "gql.tada";
 
-const Logout = gql`
+const Logout = graphql(`
   mutation Logout {
     logout (isApp: false)
   }
-`;
+`);
 
 export function UserMenu() {
-  const { data } = useQuery<GetUserDataQuery>(GetUserData);
-  const [logout] = useMutation<LogoutMutation>(Logout);
+  const { data } = useQuery(GetUserData);
+  const [logout] = useMutation(Logout);
   const navigate = useNavigate();
 
   const user = data?.getUser;
@@ -34,12 +34,7 @@ export function UserMenu() {
     try {
       await logout();
 
-      client.writeQuery({
-        query: GetUserData,
-        data: {
-          getUser: null
-        }
-      });
+      client.resetStore();
 
       navigate({ to: "/" });
 

@@ -1,27 +1,28 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { HStack, Spacer, Stack, Text } from "native-base";
-import { GetRatingsQuery } from "../generated/graphql";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { printStars } from "./Stars";
 import { Unpacked, isMobile } from "../utils/constants";
 import { Card } from "./Card";
 import { Alert } from "react-native";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
+import { ResultOf, graphql } from "gql.tada";
+import { Ratings } from "../routes/Ratings";
 
-type Rating = Unpacked<GetRatingsQuery["getRatings"]["items"]>;
+type Rating = Unpacked<ResultOf<typeof Ratings>['getRatings']['items']>;
 
 interface Props {
   item: Rating;
   index: number;
 }
 
-const DeleteRating = gql`
+const DeleteRating = graphql(`
   mutation DeleteRating($id: String!) {
     deleteRating(id: $id)
   }
-`;
+`);
 
 export function Rating(props: Props) {
   const { item } = props;
@@ -89,7 +90,7 @@ export function Rating(props: Props) {
             </Text>
             <Text color="gray.400" fontSize="xs" isTruncated>
               {`${isRater ? "You rated" : "Rated you"} - ${new Date(
-                item.timestamp
+                item.timestamp as string
               ).toLocaleString(undefined, { dateStyle: 'short', timeStyle: "short" })}`}
             </Text>
           </Stack>

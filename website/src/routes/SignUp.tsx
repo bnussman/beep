@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { SignUpMutation, SignUpMutationVariables } from '../generated/graphql';
+import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { client } from '../utils/Apollo';
 import { GetUserData, rootRoute } from '../App';
@@ -31,8 +30,9 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react';
 import { Link, Route, useNavigate } from '@tanstack/react-router';
+import { VariablesOf, graphql } from 'gql.tada';
 
-const SignUpGraphQL = gql`
+const SignUpGraphQL = graphql(`
   mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload) {
     signup(
       input: {
@@ -72,7 +72,9 @@ const SignUpGraphQL = gql`
       }
     }
   }
-`;
+`);
+
+type Values = VariablesOf<typeof SignUpGraphQL> & { picture: any };
 
 export const signupRoute = new Route({
   component: SignUp,
@@ -85,7 +87,7 @@ export function SignUp() {
   const navigate = useNavigate();
   const avatarSize = useBreakpointValue({ base: 'xl', md: '2xl' });
 
-  const [signup, { error, loading }] = useMutation<SignUpMutation>(SignUpGraphQL, {
+  const [signup, { error, loading }] = useMutation(SignUpGraphQL, {
     context: {
       headers: {
         'apollo-require-preflight': true,
@@ -98,11 +100,11 @@ export function SignUp() {
     register,
     watch,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<SignUpMutationVariables>({ mode: "onChange" });
+  } = useForm<Values>({ mode: "onChange" });
 
   const picture = watch("picture");
 
-  const validationErrors = useValidationErrors<SignUpMutationVariables>(error);
+  const validationErrors = useValidationErrors<Values>(error);
 
   const onSubmit = handleSubmit(async (variables) => {
     const { data } = await signup({

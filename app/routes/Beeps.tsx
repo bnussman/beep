@@ -1,11 +1,11 @@
 import React from "react";
 import { RefreshControl } from "react-native";
-import { gql, useQuery } from "@apollo/client";
-import { GetBeepHistoryQuery } from "../generated/graphql";
+import { useQuery } from "@apollo/client";
 import { Container } from "../components/Container";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
+import { graphql } from "gql.tada";
 import {
   Spinner,
   Text,
@@ -15,7 +15,7 @@ import {
   useColorMode,
 } from "native-base";
 
-export const GetBeepHistory = gql`
+export const GetBeepHistory = graphql(`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
     getBeeps(id: $id, offset: $offset, show: $show) {
       items {
@@ -44,14 +44,14 @@ export const GetBeepHistory = gql`
       count
     }
   }
-`;
+`);
 
 export function BeepsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
 
   const { data, loading, error, fetchMore, refetch } =
-    useQuery<GetBeepHistoryQuery>(GetBeepHistory, {
+    useQuery(GetBeepHistory, {
       variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
     });

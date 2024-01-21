@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { gql, useQuery, useSubscription } from '@apollo/client';
-import { GetBeeperLocationUpdatesSubscription, GetBeepersQuery } from '../../../generated/graphql';
 import { Badge, Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
@@ -9,8 +8,9 @@ import { BeepersMap } from './BeepersMap';
 import { cache } from '../../../utils/Apollo';
 import { Route } from '@tanstack/react-router';
 import { adminRoute } from '..';
+import { graphql } from 'gql.tada';
 
-const BeepersGraphQL = gql`
+export const BeepersGraphQL = graphql(`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
     getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
       id
@@ -28,7 +28,7 @@ const BeepersGraphQL = gql`
       }
     }
   }
-`;
+`);
 
 const BeeperLocationUpdates = gql`
   subscription GetBeeperLocationUpdates(
@@ -63,7 +63,7 @@ export function Beepers() {
     error,
     startPolling,
     stopPolling
-  } = useQuery<GetBeepersQuery>(BeepersGraphQL, {
+  } = useQuery(BeepersGraphQL, {
     variables: {
       latitude: 0,
       longitude: 0,
@@ -80,7 +80,7 @@ export function Beepers() {
     };
   }, []);
 
-  useSubscription<GetBeeperLocationUpdatesSubscription>(BeeperLocationUpdates, {
+  useSubscription(BeeperLocationUpdates, {
     variables: {
       radius: 0,
       latitude: 0,

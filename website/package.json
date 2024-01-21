@@ -29,16 +29,18 @@
     "react-dom": "^18.1.0",
     "react-hook-form": "^7.47.0",
     "react-icons": "^5.0.1",
-    "react-map-gl": "^7.0.21"
+    "react-map-gl": "^7.0.21",
+    "gql.tada": "^1.0.3"
   },
   "devDependencies": {
+    "@0no-co/graphqlsp": "^1.0.7",
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/typescript": "4.0.1",
     "@graphql-codegen/typescript-operations": "4.0.1",
     "@graphql-codegen/typescript-react-apollo": "4.0.0",
     "@types/apollo-upload-client": "^17.0.3",
     "@types/node": "^20.8.10",
-    "@types/react": "^18.2.18",
+    "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.8",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "^5.1.6",

@@ -1,11 +1,6 @@
-import * as Sentry from "sentry-expo";
-import { isMobile } from "./constants";
-import { User } from "../generated/graphql";
+import * as Sentry from "@sentry/react-native";
+import type { User } from "./useUser";
 
 export function setUserContext(user: Partial<User>): void {
-  if (isMobile) {
-    Sentry.Native.setUser({ ...user } as Sentry.Native.User);
-  } else {
-    Sentry.Browser.setUser({ ...user } as Sentry.Native.User);
-  }
+  Sentry.setUser({ ...user } as Sentry.User);
 }

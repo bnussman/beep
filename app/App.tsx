@@ -2,7 +2,6 @@ import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import { cache, client } from "./utils/Apollo";
 import { ApolloProvider, useQuery, useSubscription } from "@apollo/client";
-import { UserDataQuery, UserUpdatesSubscription } from "./generated/graphql";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { colorModeManager } from "./utils/theme";
 import { updatePushToken } from "./utils/Notifications";
@@ -14,7 +13,7 @@ import { NATIVE_BASE_THEME } from "./utils/constants";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 import config from "./package.json";
-import * as Sentry from "sentry-expo";
+import * as Sentry from "@sentry/react-native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/Navigation";
 
@@ -22,7 +21,6 @@ SplashScreen.preventAutoHideAsync();
 Sentry.init({
   release: config.version,
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
-  enableInExpoDevelopment: true,
   enableAutoSessionTracking: true,
   enableAutoPerformanceTracing: true,
 });
@@ -31,7 +29,7 @@ setupPurchase();
 
 function Beep() {
   const { colorMode } = useColorMode();
-  const { data, loading } = useQuery<UserDataQuery>(UserData, {
+  const { data, loading } = useQuery(UserData, {
     errorPolicy: "none",
     onCompleted: () => {
       updatePushToken();
@@ -40,9 +38,9 @@ function Beep() {
 
   const user = data?.getUser;
 
-  useSubscription<UserUpdatesSubscription>(UserSubscription, {
+  useSubscription(UserSubscription, {
     onData({ data }) {
-      cache.updateQuery<UserDataQuery>({ query: UserData }, () => ({ getUser: data.data!.getUserUpdates }));
+      cache.updateQuery({ query: UserData }, () => ({ getUser: data.data!.getUserUpdates }));
     },
     skip: !user,
   });

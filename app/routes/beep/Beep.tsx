@@ -8,7 +8,6 @@ import {
 } from "../../utils/links";
 import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
-import { GetInitialQueueQuery } from "../../generated/graphql";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Linking } from "react-native";
@@ -32,9 +31,11 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
+import { ResultOf } from "gql.tada";
+import { GetInitialQueue } from "./StartBeeping";
 
 interface Props {
-  beep: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  beep: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
 }
 
 export function Beep(props: Props) {
@@ -136,7 +137,7 @@ export function Beep(props: Props) {
                   Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
                 }}
                 icon={
-                  <Icon as={Ionicons} color="white" name="ios-call" size="md" />
+                  <Icon as={Ionicons} color="white" name="call" size="md" />
                 }
               />
               <IconButton
@@ -148,7 +149,7 @@ export function Beep(props: Props) {
                 icon={
                   <Icon
                     as={Ionicons}
-                    name="ios-chatbox"
+                    name="chatbox"
                     color="white"
                     size="md"
                   />

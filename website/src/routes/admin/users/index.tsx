@@ -2,16 +2,16 @@ import React from 'react'
 import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input, InputRightElement, Spinner } from "@chakra-ui/react"
 import { Indicator } from '../../../components/Indicator';
 import { Pagination } from '../../../components/Pagination';
-import { gql, useQuery } from '@apollo/client';
-import { GetUsersQuery } from '../../../generated/graphql';
+import { useQuery } from '@apollo/client';
 import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { SearchIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
+import { graphql } from 'gql.tada';
 
-export const UsersGraphQL = gql`
+export const UsersGraphQL = graphql(`
   query getUsers($show: Int, $offset: Int, $query: String) {
     getUsers(show: $show, offset: $offset, query: $query) {
       items {
@@ -28,7 +28,7 @@ export const UsersGraphQL = gql`
       count
     }
   }
-`;
+`);
 
 export interface PaginationSearchParams {
   page: number;
@@ -57,7 +57,7 @@ export function Users() {
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
 
-  const { loading, error, data, previousData } = useQuery<GetUsersQuery>(UsersGraphQL, {
+  const { loading, error, data, previousData } = useQuery(UsersGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit,
@@ -124,7 +124,7 @@ export function Users() {
             </Tr>
           </Thead>
           <Tbody>
-            {users?.items.map(user => (
+            {users?.items.map((user) => (
               <Tr key={user.id}>
                 <TdUser user={user} />
                 <Td>{user.email}</Td>

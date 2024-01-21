@@ -1,8 +1,7 @@
 import React from "react";
 import { RefreshControl } from "react-native";
 import { useUser } from "../utils/useUser";
-import { gql, useQuery } from "@apollo/client";
-import { GetRatingsQuery } from "../generated/graphql";
+import { useQuery } from "@apollo/client";
 import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
@@ -14,8 +13,9 @@ import {
   Center,
   useColorMode,
 } from "native-base";
+import { graphql } from "gql.tada";
 
-export const Ratings = gql`
+export const Ratings = graphql(`
   query GetRatings($id: String, $offset: Int, $show: Int) {
     getRatings(id: $id, offset: $offset, show: $show) {
       items {
@@ -40,14 +40,14 @@ export const Ratings = gql`
       count
     }
   }
-`;
+`);
 
 export function RatingsScreen() {
   const { user } = useUser();
   const { colorMode } = useColorMode();
 
   const { data, loading, error, fetchMore, refetch } =
-    useQuery<GetRatingsQuery>(Ratings, {
+    useQuery(Ratings, {
       variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
     });

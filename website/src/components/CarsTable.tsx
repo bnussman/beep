@@ -3,18 +3,18 @@ import { gql, useQuery } from '@apollo/client';
 import { Pagination } from './Pagination';
 import { Box, Center, Image, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { Loading } from './Loading';
-import { GetCarsForUserQuery } from '../generated/graphql';
 import { Indicator } from './Indicator';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-const GetCarsForUser = gql`
+const GetCarsForUser = graphql(`
   query GetCarsForUser($id: String, $offset: Int, $show: Int) {
     getCars(id: $id, offset: $offset, show: $show) {
       items {
@@ -30,7 +30,7 @@ const GetCarsForUser = gql`
       count
     }
   }
-`;
+`);
 
 export const carsTableRoute = new Route({
   component: CarsTable,
@@ -42,7 +42,7 @@ export function CarsTable() {
   const pageLimit = 5;
   const { userId } = carsTableRoute.useParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, loading } = useQuery<GetCarsForUserQuery>(
+  const { data, loading } = useQuery(
     GetCarsForUser,
     {
       variables: {
@@ -98,7 +98,7 @@ export function CarsTable() {
                 <Td>
                   <Indicator color={car.color} tooltip={car.color} />
                 </Td>
-                <Td>{dayjs().to(car.created)}</Td>
+                <Td>{dayjs().to(car.created as string)}</Td>
                 <Td>
                   <Image src={car.photo} w="24" borderRadius="2xl" />
                 </Td>

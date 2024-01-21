@@ -1,21 +1,20 @@
 import React, { useRef, useState } from "react";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import { ChangePasswordMutation } from "../../generated/graphql";
+import { ApolloError, useMutation } from "@apollo/client";
 import { Input, Button, Stack } from "native-base";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
+import { graphql } from 'gql.tada';
 
-const ChangePassword = gql`
+const ChangePassword = graphql(`
   mutation ChangePassword($password: String!) {
     changePassword(input: { password: $password })
   }
-`;
+`);
 
 export function ChangePasswordScreen() {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [changePassword, { loading }] =
-    useMutation<ChangePasswordMutation>(ChangePassword);
+  const [changePassword, { loading }] = useMutation(ChangePassword);
   const confirmPasswordRef = useRef<any>();
 
   async function handleChangePassword() {

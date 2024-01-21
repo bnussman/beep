@@ -8,7 +8,6 @@ import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
-import { LogoutMutation, ResendMutation } from "../generated/graphql";
 import { client } from "../utils/Apollo";
 import { UserData, useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
@@ -84,9 +83,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
   const { navigate } = useNavigation();
   const { colorMode, toggleColorMode } = useColorMode();
-  const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
-  const [resend, { loading: resendLoading }] =
-    useMutation<ResendMutation>(Resend);
+  const [logout, { loading }] = useMutation(Logout);
+  const [resend, { loading: resendLoading }] = useMutation(Resend);
 
   useAutoUpdate();
 
@@ -103,12 +101,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
 
-    client.writeQuery({
-      query: UserData,
-      data: {
-        getUser: null,
-      },
-    });
+    client.resetStore();
   };
 
   const handleResendVerification = () => {

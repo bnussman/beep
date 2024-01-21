@@ -4,21 +4,19 @@ import { useMutation } from "@apollo/client";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../utils/Alert";
 import { Unpacked } from "../utils/constants";
-import {
-  GetInitialQueueQuery,
-  UpdateBeeperQueueMutation,
-} from "../generated/graphql";
 import { UpdateBeeperQueue } from "./ActionButton";
 import { Status } from "../utils/types";
+import { ResultOf } from "gql.tada";
+import { GetInitialQueue } from "../routes/beep/StartBeeping";
 
 interface Props {
   type: "accept" | "deny";
-  item: Unpacked<GetInitialQueueQuery["getQueue"]>;
+  item: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
 }
 
 export function AcceptDenyButton(props: Props) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [update] = useMutation<UpdateBeeperQueueMutation>(UpdateBeeperQueue);
+  const [update] = useMutation(UpdateBeeperQueue);
 
   const isAccept = props.type === "accept";
 

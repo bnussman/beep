@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
 import { gql, useQuery } from '@apollo/client';
-import { GetBeepsQuery } from '../../../generated/graphql';
 import { Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
@@ -12,10 +11,11 @@ import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 
-export const BeepsGraphQL = gql`
+export const BeepsGraphQL = graphql(`
   query getBeeps($show: Int, $offset: Int) {
     getBeeps(show: $show, offset: $offset) {
       items {
@@ -42,7 +42,7 @@ export const BeepsGraphQL = gql`
       count
     }
   }
-`;
+`);
 
 export const beepStatusMap: Record<Status, string> = {
   [Status.WAITING]: 'orange',
@@ -77,7 +77,7 @@ export function Beeps() {
   const { page } = beepsListRoute.useSearch();
   const navigate = useNavigate({ from: beepsListRoute.id });
 
-  const { data, loading, error, refetch, startPolling, stopPolling } = useQuery<GetBeepsQuery>(BeepsGraphQL, {
+  const { data, loading, error, refetch, startPolling, stopPolling, previousData } = useQuery(BeepsGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -104,6 +104,8 @@ export function Beeps() {
     return <Error error={error} />;
   }
 
+  const beeps = data?.getBeeps.items ?? previousData?.getBeeps.items;
+
   return (
     <Box>
       <Heading>Beeps</Heading>
@@ -129,7 +131,7 @@ export function Beeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getBeeps.items.map((beep) => (
+            {beeps?.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />
                 <TdUser user={beep.rider} />
@@ -142,9 +144,9 @@ export function Beeps() {
                     <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
                   </HStack>
                 </Td>
-                <Td>{dayjs().to(beep.start)}</Td>
-                <Td>{beep.end ? dayjs().to(beep.end) : "N/A"}</Td>
-                <Td>{beep.end ? dayjs.duration(new Date(beep.end).getTime() - new Date(beep.start).getTime()).humanize() : "N/A"}</Td>
+                <Td>{dayjs().to(beep.start as string)}</Td>
+                <Td>{beep.end ? dayjs().to(beep.end as string) : "N/A"}</Td>
+                <Td>{beep.end ? dayjs.duration(new Date(beep.end as string).getTime() - new Date(beep.start as string).getTime()).humanize() : "N/A"}</Td>
               </Tr>
             ))}
           </Tbody>

@@ -4,12 +4,7 @@ import * as Linking from "expo-linking";
 import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity } from "react-native";
 import { getPushToken } from "../../utils/Notifications";
-import { ApolloError, gql, useMutation } from "@apollo/client";
-import {
-  SignUpInput,
-  SignUpMutation,
-  SignUpMutationVariables,
-} from "../../generated/graphql";
+import { ApolloError, useMutation } from "@apollo/client";
 import { isMobile, isSimulator } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { client } from "../../utils/Apollo";
@@ -35,8 +30,9 @@ import {
   InputGroup,
   InputLeftAddon,
 } from "native-base";
+import { VariablesOf, graphql } from "gql.tada";
 
-const SignUp = gql`
+const SignUp = graphql(`
   mutation SignUp($input: SignUpInput!) {
     signup(input: $input) {
       tokens {
@@ -63,12 +59,14 @@ const SignUp = gql`
       }
     }
   }
-`;
+`);
 
-let picture: SignUpMutationVariables["input"]["picture"];
+let picture: any;
+
+type Values = VariablesOf<typeof SignUp>['input'];
 
 export function SignUpScreen() {
-  const [signup, { error }] = useMutation<SignUpMutation>(SignUp, {
+  const [signup, { error }] = useMutation(SignUp, {
     context: {
       headers: {
         "apollo-require-preflight": true,
@@ -81,9 +79,9 @@ export function SignUpScreen() {
     handleSubmit,
     setFocus,
     formState: { errors, isSubmitting },
-  } = useForm<SignUpInput>();
+  } = useForm<Values>();
 
-  const validationErrors = useValidationErrors<SignUpInput>(error);
+  const validationErrors = useValidationErrors<Values>(error);
 
   const [photo, setPhoto] = useState<any>();
 
@@ -99,7 +97,7 @@ export function SignUpScreen() {
 
       client.writeQuery({
         query: UserData,
-        data: { getUser: { ...data?.signup.user, pushToken } },
+        data: { getUser: { ...data?.signup.user } },
       });
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {

@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import { Heading, Text, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, useDisclosure, Textarea, Box, Checkbox, Stack, HStack } from '@chakra-ui/react';
 import { GetReport, UpdateReport } from './Report';
 import { useQuery, useMutation } from '@apollo/client';
-import { GetReportQuery, UpdateReportMutation } from '../../../generated/graphql';
 import { DeleteIcon, ExternalLinkIcon} from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { BasicUser } from '../../../components/BasicUser';
@@ -21,8 +20,8 @@ interface Props {
 
 export function ReportDrawer(props: Props) {
   const { isOpen, onClose, id } = props;
-  const { data, loading, error } = useQuery<GetReportQuery>(GetReport, { variables: { id }, skip: !id });
-  const [update, { loading: updateLoading, error: updateError }] = useMutation<UpdateReportMutation>(UpdateReport);
+  const { data, loading, error } = useQuery(GetReport, { variables: { id }, skip: !id });
+  const [update, { loading: updateLoading, error: updateError }] = useMutation(UpdateReport);
 
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
@@ -32,7 +31,7 @@ export function ReportDrawer(props: Props) {
   function updateReport() {
     update({
       variables: {
-        id,
+        id: id ?? "",
         handled: isHandled,
         notes
       },

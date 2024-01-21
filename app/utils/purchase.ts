@@ -1,9 +1,9 @@
 import { Logger } from './Logger';
 import { Platform } from "react-native";
 import { isRunningInExpoGo, isWeb } from './constants';
-import { UserDataQuery } from '../generated/graphql';
+import type { User } from './useUser';
 
-export async function setPurchaseUser(user: UserDataQuery['getUser']) {
+export async function setPurchaseUser(user: User) {
   if (isRunningInExpoGo || isWeb) {
     return;
   }
