@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Error } from './Error';
 import { gql, useMutation } from '@apollo/client';
-import { SendNotificationMutation } from '../generated/graphql';
 import {
   Button,
   FormControl,
@@ -17,12 +16,13 @@ import {
   Textarea,
   useToast
 } from "@chakra-ui/react";
+import { graphql } from 'gql.tada';
 
-const SendNotification = gql`
+const SendNotification = graphql(`
   mutation SendNotification($title: String!, $body: String!, $id: String!) {
     sendNotification(title: $title, body: $body, id: $id)
   }
-`;
+`);
 
 interface Props {
   isOpen: boolean;
@@ -37,10 +37,10 @@ export function SendNotificationDialog(props: Props) {
   const [title, setTitle] = useState<string>();
   const [body, setBody] = useState<string>();
 
-  const [send, { loading, error }] = useMutation<SendNotificationMutation>(SendNotification);
+  const [send, { loading, error }] = useMutation(SendNotification);
 
   const onClick = async () => {
-    await send({ variables: { title, body, id } });
+    await send({ variables: { title: title ?? "", body: body ?? "", id } });
     toast({ title: "Successfully sent notification!", status: "success" });
     onClose();
   };

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import { GetBeepsQuery } from '../generated/graphql';
+import { useQuery } from '@apollo/client';
 import { Pagination } from './Pagination';
 import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
@@ -12,11 +11,12 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-const Hisory = gql`
+const Hisory = graphql(`
   query GetBeepsForUser($id: String, $show: Int, $offset: Int) {
     getBeeps(id: $id, show: $show, offset: $offset) {
       items {
@@ -47,7 +47,7 @@ const Hisory = gql`
       count
     }
   }
-`;
+`);
 
 export const beepsTableRoute = new Route({
   component: BeepsTable,
@@ -62,7 +62,7 @@ export function BeepsTable() {
 
   const { userId } = beepsTableRoute.useParams();
 
-  const { data } = useQuery<GetBeepsQuery>(
+  const { data } = useQuery(
     Hisory,
     {
       variables: {
@@ -117,8 +117,8 @@ export function BeepsTable() {
                     <Text textTransform="capitalize">{ride.status.replaceAll("_", " ")}</Text>
                   </HStack>
                 </Td>
-                <Td>{dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize()}</Td>
-                <Td>{dayjs().to(ride.end)}</Td>
+                <Td>{dayjs.duration(new Date(ride.end as string).getTime() - new Date(ride.start as string).getTime()).humanize()}</Td>
+                <Td>{dayjs().to(ride.end as string)}</Td>
               </Tr>
             ))}
           </Tbody>

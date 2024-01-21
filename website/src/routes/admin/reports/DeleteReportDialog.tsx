@@ -3,7 +3,6 @@ import { gql, useMutation } from "@apollo/client";
 import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
-import { DeleteReportMutation } from "../../../generated/graphql";
 
 interface Props {
   isOpen: boolean;
@@ -19,7 +18,7 @@ export const DeleteReport = gql`
 `;
 
 export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
-  const [deleteReport, { loading, error }] = useMutation<DeleteReportMutation>(DeleteReport, {
+  const [deleteReport, { loading, error }] = useMutation(DeleteReport, {
     variables: { id },
     update: (cache) => {
       const cacheId = cache.identify({ __typename: "Report", id });
@@ -45,8 +44,8 @@ export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
         Are you sure you want to delete this report?
       </AlertDialogBody>
       <AlertDialogFooter>
-        <Button onClick={onClose} mr={2}>Cancel</Button> 
-        <Button isLoading={loading} onClick={onDelete} colorScheme="red">Delete</Button> 
+        <Button onClick={onClose} mr={2}>Cancel</Button>
+        <Button isLoading={loading} onClick={onDelete} colorScheme="red">Delete</Button>
       </AlertDialogFooter>
     </Dialog>
   );

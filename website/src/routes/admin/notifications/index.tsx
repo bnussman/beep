@@ -1,8 +1,7 @@
 import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { EmailIcon } from "@chakra-ui/icons";
-import { gql, useMutation } from "@apollo/client";
-import { CleanObjectStorageBucketMutation, SendNotificationsMutation, SendNotificationsMutationVariables } from "../../../generated/graphql";
+import { useMutation } from "@apollo/client";
 import { Error } from '../../../components/Error';
 import { useValidationErrors } from "../../../utils/useValidationErrors";
 import {
@@ -27,18 +26,21 @@ import {
 } from "@chakra-ui/react";
 import { Route } from "@tanstack/react-router";
 import { adminRoute } from "..";
+import { VariablesOf, graphql } from "gql.tada";
 
-const SendNotifications = gql`
+const SendNotifications = graphql(`
     mutation SendNotifications($title: String!, $body: String!, $match: String) {
       sendNotifications(title: $title, body: $body, match: $match)
     }
-`;
+`);
 
-const CleanObjectStorageBucket = gql`
+type SendNotifictionVariables = VariablesOf<typeof SendNotifications>;
+
+const CleanObjectStorageBucket = graphql(`
   mutation CleanObjectStorageBucket {
     cleanObjectStorageBucket
   }
-`;
+`);
 
 export const notificationsRoute = new Route({
   component: Notifications,
@@ -51,8 +53,8 @@ export function Notifications() {
   const cancelRef = useRef<any>();
   const toast = useToast();
 
-  const [send, { error, loading: notificationLoading }] = useMutation<SendNotificationsMutation>(SendNotifications);
-  const [clean, { loading }] = useMutation<CleanObjectStorageBucketMutation>(CleanObjectStorageBucket);
+  const [send, { error, loading: notificationLoading }] = useMutation(SendNotifications);
+  const [clean, { loading }] = useMutation(CleanObjectStorageBucket);
 
   const {
     handleSubmit,
@@ -60,9 +62,9 @@ export function Notifications() {
     watch,
     reset,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<SendNotificationsMutationVariables>({ mode: 'onChange' });
+  } = useForm<SendNotifictionVariables>({ mode: 'onChange' });
 
-  const validationErrors = useValidationErrors<SendNotificationsMutationVariables>(error);
+  const validationErrors = useValidationErrors<SendNotifictionVariables>(error);
 
   const match = watch('match');
 

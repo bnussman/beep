@@ -1,17 +1,18 @@
 import React from "react";
 import { Box, Button, Checkbox, FormControl, FormLabel, Input, useToast, FormErrorMessage, Stack } from "@chakra-ui/react";
-import { gql, useMutation } from '@apollo/client';
-import { EditUserInput, EditUserMutation, GetUserQuery } from '../../../../generated/graphql';
+import { useMutation } from '@apollo/client';
 import { Error } from '../../../../components/Error';
 import { useValidationErrors } from "../../../../utils/useValidationErrors";
 import { useForm } from "react-hook-form";
 import { editUserRoute } from ".";
+import { VariablesOf, graphql } from "gql.tada";
+import type { User } from "../../../../App";
 
 interface Props {
-  user: GetUserQuery['getUser'];
+  user: User;
 }
 
-const EditUser = gql`
+const EditUser = graphql(`
   mutation EditUser($id: String!, $data: EditUserInput!) {
     editUser(id: $id, data: $data) {
       id
@@ -34,7 +35,7 @@ const EditUser = gql`
       pushToken
     }
   }
-`;
+`);
 
 interface Omit {
   <T extends object, K extends [...(keyof T)[]]>
@@ -56,19 +57,21 @@ const omit: Omit = (obj, ...keys) => {
   return ret;
 };
 
+type Values = VariablesOf<typeof EditUser>;
+
 export function EditDetails({ user }: Props) {
   const { userId: id } = editUserRoute.useParams();
   const toast = useToast();
 
   const defaultValues = omit(user, 'id', '__typename', 'name', 'location', 'queue', 'created', 'rating');
 
-  const [edit, { error: editError }] = useMutation<EditUserMutation>(EditUser);
+  const [edit, { error: editError }] = useMutation(EditUser);
 
-  const { handleSubmit, register, reset, formState: { errors, isSubmitting } } = useForm<EditUserInput>({
+  const { handleSubmit, register, reset, formState: { errors, isSubmitting } } = useForm<Values>({
     defaultValues
   });
 
-  const validationErrors = useValidationErrors<EditUserInput>(editError);
+  const validationErrors = useValidationErrors<Values>(editError);
 
   const onSubmit = handleSubmit(async (data) => {
     const result = await edit({ variables: { id, data } });
@@ -86,7 +89,7 @@ export function EditDetails({ user }: Props) {
       <form onSubmit={onSubmit}>
         <Stack spacing={4}>
           {keys.map((_key) => {
-            const key = _key as keyof EditUserInput;
+            const key = _key as keyof Values;
             const type = typeof defaultValues[key];
             return (
               <FormControl key={key} isInvalid={Boolean(errors[key]) || Boolean(validationErrors?.[key])}>

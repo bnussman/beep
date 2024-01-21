@@ -2,18 +2,18 @@ import React from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../components/Pagination';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../components/TdUser';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
-import { PaymentsQuery } from '../../generated/graphql';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(relativeTime);
 
-const PaymentsGQL = gql`
+const PaymentsGQL = graphql(`
   query Payments($offset: Int, $show: Int) {
     getPayments(offset: $offset, show: $show) {
       items {
@@ -32,7 +32,7 @@ const PaymentsGQL = gql`
       count
     }
   }
-`;
+`);
 
 export const paymentsRoute = new Route({
   component: Payments,
@@ -49,7 +49,7 @@ export function Payments() {
 
   const navigate = useNavigate({ from: paymentsRoute.id });
 
-  const { data, loading, error } = useQuery<PaymentsQuery>(PaymentsGQL, {
+  const { data, loading, error } = useQuery(PaymentsGQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -95,8 +95,8 @@ export function Payments() {
                 <Td>{payment.productId}</Td>
                 <Td>${payment.price}</Td>
                 <Td>{payment.store}</Td>
-                <Td>{new Date(payment.created).toLocaleString()}</Td>
-                <Td>{new Date(payment.expires).toLocaleString()}</Td>
+                <Td>{new Date(payment.created as string).toLocaleString()}</Td>
+                <Td>{new Date(payment.expires as string).toLocaleString()}</Td>
               </Tr>
             ))}
           </Tbody>

@@ -3,18 +3,18 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
-import { GetUserQuery } from '../generated/graphql';
 import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { client } from '../utils/Apollo';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { GetUser, userRoute } from '../routes/admin/users/User';
 import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
 import { Route } from '@tanstack/react-router';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 
-export const QueueSubscription = gql`
+export const QueueSubscription = graphql(`
   subscription GetQueue($id: String!) {
     getBeeperUpdates(id: $id) {
       id
@@ -33,7 +33,7 @@ export const QueueSubscription = gql`
       }
     }
   }
-`;
+`);
 
 let sub: any;
 
@@ -46,7 +46,7 @@ export const queueRoute = new Route({
 export function QueueTable() {
   const { userId } = queueRoute.useParams();
 
-  const { data } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+  const { data } = useQuery(GetUser, { variables: { id: userId } });
 
   const user = data?.getUser;
 
@@ -59,7 +59,7 @@ export function QueueTable() {
         data: {
           getUser: {
             ...user,
-            queue: data.getBeeperUpdates
+            queue: data?.getBeeperUpdates
           }
         },
         variables: {
@@ -106,7 +106,7 @@ export function QueueTable() {
               <Td>{beep.origin}</Td>
               <Td>{beep.destination}</Td>
               <Td>{beep.groupSize}</Td>
-              <Td>{dayjs().to(beep.start)}</Td>
+              <Td>{dayjs().to(beep.start as string)}</Td>
               <Td>
                 <HStack>
                   <Indicator color={beepStatusMap[beep.status as Status]} />

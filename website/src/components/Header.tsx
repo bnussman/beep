@@ -3,7 +3,6 @@ import { UserMenu } from './UserMenu';
 import { AdminMenu } from './AdminMenu';
 import { UserRole } from '../types/User';
 import { useQuery } from '@apollo/client';
-import { GetUserDataQuery } from '../generated/graphql';
 import { GetUserData } from '../App';
 import {
   Flex,
@@ -17,7 +16,7 @@ import { Link } from '@tanstack/react-router';
 
 export function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { data } = useQuery<GetUserDataQuery>(GetUserData);
+  const { data } = useQuery(GetUserData);
 
   const user = data?.getUser;
 

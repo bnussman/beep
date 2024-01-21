@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Error } from '../components/Error';
-import { gql, useMutation } from '@apollo/client';
-import { ChangePasswordMutation } from '../generated/graphql';
+import { useMutation } from '@apollo/client';
 import { Success } from '../components/Success';
 import { Input, Button, FormControl, FormLabel, Center, Heading, Container, Flex, Stack } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 import { Route } from '@tanstack/react-router';
 import { rootRoute } from '../App';
+import { graphql } from 'gql.tada';
 
-const ChangePasswordGraphQL = gql`
+const ChangePasswordGraphQL = graphql(`
   mutation ChangePassword($password: String!) {
     changePassword (input: {password: $password})
   }
-`;
+`);
 
 export const changePasswordRoute = new Route({
   getParentRoute: () => rootRoute,
@@ -21,7 +21,7 @@ export const changePasswordRoute = new Route({
 })
 
 export function ChangePassword() {
-  const [changePassword, { data, loading, error }] = useMutation<ChangePasswordMutation>(ChangePasswordGraphQL);
+  const [changePassword, { data, loading, error }] = useMutation(ChangePasswordGraphQL);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 

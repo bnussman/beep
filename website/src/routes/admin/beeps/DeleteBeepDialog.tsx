@@ -1,9 +1,9 @@
 import React from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
-import { DeleteBeepMutation } from "../../../generated/graphql";
+import { graphql } from "gql.tada";
 
 interface Props {
   isOpen: boolean;
@@ -11,14 +11,14 @@ interface Props {
   id: string;
 }
 
-const DeleteBeep = gql`
+const DeleteBeep = graphql(`
   mutation DeleteBeep($id: String!) {
     deleteBeep(id: $id)
   }
-`
+`);
 
 export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
-  const [deleteBeep, { loading, error }] = useMutation<DeleteBeepMutation>(DeleteBeep, {
+  const [deleteBeep, { loading, error }] = useMutation(DeleteBeep, {
     variables: { id },
     update: (cache) => {
       const cacheId = cache.identify({ __typename: "Beep", id });
@@ -40,8 +40,8 @@ export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
         Are you sure you want to delete this beep?
       </AlertDialogBody>
       <AlertDialogFooter>
-        <Button onClick={onClose}>Cancel</Button> 
-        <Button isLoading={loading} onClick={onDelete} colorScheme="red">Delete</Button> 
+        <Button onClick={onClose}>Cancel</Button>
+        <Button isLoading={loading} onClick={onDelete} colorScheme="red">Delete</Button>
       </AlertDialogFooter>
     </Dialog>
   );

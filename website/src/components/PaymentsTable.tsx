@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Pagination } from './Pagination';
 import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { Loading } from './Loading';
-import { UserPaymentsQuery } from '../generated/graphql';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
-const PaymentsQuery = gql`
+const PaymentsQuery = graphql(`
   query UserPayments($id: String, $offset: Int, $show: Int) {
     getPaymentHistory(id: $id, offset: $offset, show: $show) {
       items {
@@ -26,7 +26,7 @@ const PaymentsQuery = gql`
       count
     }
   }
-`;
+`);
 
 export const paymentsTableRoute = new Route({
   component: PaymentsTable,
@@ -39,7 +39,7 @@ export function PaymentsTable() {
   const pageLimit = 5;
   const { userId } = paymentsTableRoute.useParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, loading } = useQuery<UserPaymentsQuery>(
+  const { data, loading } = useQuery(
     PaymentsQuery,
     {
       variables: {
@@ -90,8 +90,8 @@ export function PaymentsTable() {
                 <Td>{payment.id}</Td>
                 <Td>{payment.productId}</Td>
                 <Td>{payment.price}</Td>
-                <Td>{payment.created}</Td>
-                <Td>{payment.expires}</Td>
+                <Td>{payment.created as string}</Td>
+                <Td>{payment.expires as string}</Td>
               </Tr>
             ))}
           </Tbody>

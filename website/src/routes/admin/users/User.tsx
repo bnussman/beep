@@ -5,14 +5,14 @@ import { Loading } from '../../../components/Loading';
 import { ClearQueueDialog } from '../../../components/ClearQueueDialog';
 import { SendNotificationDialog } from '../../../components/SendNotificationDialog';
 import { UserRole } from '../../../types/User';
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { GetUserQuery, VerifyUserMutation } from '../../../generated/graphql';
+import { useMutation, useQuery } from '@apollo/client';
 import { DeleteIcon, CheckIcon } from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { PhotoDialog } from '../../../components/PhotoDialog';
 import { DeleteUserDialog } from './DeleteUserDialog';
 import { Link, Outlet, Route, useNavigate, useRouterState } from '@tanstack/react-router';
 import { usersRoute } from '.';
+import { graphql } from 'gql.tada';
 import {
   useToast,
   useDisclosure,
@@ -34,7 +34,7 @@ import {
 
 dayjs.extend(relativeTime);
 
-export const GetUser = gql`
+export const GetUser = graphql(`
   query GetUser($id: String!) {
     getUser(id: $id) {
       id
@@ -80,9 +80,9 @@ export const GetUser = gql`
       }
     }
   }
-`;
+`);
 
-const VerifyUser = gql`
+const VerifyUser = graphql(`
   mutation VerifyUser($id: String!, $data: EditUserInput!) {
     editUser(id: $id, data: $data) {
       id
@@ -90,15 +90,15 @@ const VerifyUser = gql`
       isStudent
     }
   }
-`;
+`);
 
-const ClearQueue = gql`
+const ClearQueue = graphql(`
   mutation ClearQueue($id: String!, $stopBeeping: Boolean!) {
     clearQueue(id: $id, stopBeeping: $stopBeeping)
   }
-`;
+`);
 
-const SyncPayments = gql`
+const SyncPayments = graphql(`
   mutation SyncPayments($id: String) {
     checkUserSubscriptions(id: $id) {
       id
@@ -106,7 +106,7 @@ const SyncPayments = gql`
       price
     }
   }
-`;
+`);
 
 
 const tabs = [
@@ -128,7 +128,7 @@ export const userRoute = new Route({
 
 export function User() {
   const { userId } = userRoute.useParams();
-  const { data, loading, error, refetch } = useQuery<GetUserQuery>(GetUser, { variables: { id: userId } });
+  const { data, loading, error, refetch } = useQuery(GetUser, { variables: { id: userId } });
   const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   const user = data?.getUser;
@@ -138,7 +138,7 @@ export function User() {
   const routerState = useRouterState();
 
   const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
-  const [verify, { loading: isVerifyLoading, error: verifyError }] = useMutation<VerifyUserMutation>(VerifyUser);
+  const [verify, { loading: isVerifyLoading, error: verifyError }] = useMutation(VerifyUser);
   const [syncPayments, { loading: isSyncingPayments }] = useMutation(SyncPayments);
 
   const [stopBeeping, setStopBeeping] = useState<boolean>(true);
@@ -244,7 +244,7 @@ export function User() {
               <Heading size="md">{user.name}</Heading>
               <Text>@{user.username}</Text>
               <Text fontSize="xs" textOverflow="ellipsis">{user.id}</Text>
-              {user.created && (<Text fontSize="xs">Joined {dayjs().to(user.created)}</Text>)}
+              {(user.created as string) && (<Text fontSize="xs">Joined {dayjs().to(user.created as string)}</Text>)}
               <Stack direction="row" mt="2" mb="2">
                 {user.role === UserRole.ADMIN && <Badge variant="solid" colorScheme="red">admin</Badge>}
                 {user.isStudent && <Badge variant="solid" colorScheme="blue">student</Badge>}

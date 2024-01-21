@@ -1,6 +1,5 @@
 import React from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { ResetPasswordInput, ResetPasswordMutation } from '../generated/graphql';
+import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { Button, Center, Container, FormControl, FormErrorMessage, FormLabel, Heading, Input } from '@chakra-ui/react';
@@ -9,8 +8,9 @@ import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from 'react-hook-form';
 import { rootRoute } from '../App';
 import { Route } from '@tanstack/react-router';
+import { VariablesOf, graphql } from 'gql.tada';
 
-const Reset = gql`
+const Reset = graphql(`
   mutation ResetPassword($id: String!, $password: String!) {
     resetPassword(
       id: $id,
@@ -19,7 +19,9 @@ const Reset = gql`
       }
     )
   }
-`;
+`);
+
+type ResetPasswordValues = VariablesOf<typeof Reset>;
 
 export const resetPasswordRoute = new Route({
   component: ResetPassword,
@@ -30,18 +32,18 @@ export const resetPasswordRoute = new Route({
 
 export function ResetPassword() {
   const { id } = resetPasswordRoute.useParams();
-  const [resetPassword, { data, error, loading }] = useMutation<ResetPasswordMutation>(Reset);
+  const [resetPassword, { data, error, loading }] = useMutation(Reset);
 
   const {
     handleSubmit,
     register,
     formState: { errors, isValid },
-  } = useForm<ResetPasswordInput>({ mode: 'onChange' });
+  } = useForm<ResetPasswordValues>({ mode: 'onChange' });
 
-  const validationErrors = useValidationErrors<ResetPasswordInput>(error);
+  const validationErrors = useValidationErrors<ResetPasswordValues>(error);
 
   const onSubmit = handleSubmit(async (variables) => {
-    await resetPassword({ variables: { id, ...variables} });
+    await resetPassword({ variables: { ...variables, id } });
   });
 
   return (

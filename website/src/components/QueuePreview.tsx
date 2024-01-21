@@ -2,19 +2,19 @@ import React, { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Indicator } from './Indicator';
-import { UsersQueueQuery } from '../generated/graphql';
 import { Text, Avatar, Box, Center, HStack, Spacer, Spinner } from '@chakra-ui/react';
 import { client } from '../utils/Apollo';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { QueueSubscription } from './QueueTable';
 import { Status } from '../types/User';
 import { Link } from '@tanstack/react-router';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 
 let sub: any;
 
-const QueueQuery = gql`
+const QueueQuery = graphql(`
   query UsersQueue($id: String) {
     getQueue(id: $id) {
       id
@@ -26,14 +26,14 @@ const QueueQuery = gql`
       }
     }
   }
-`;
+`);
 
 interface Props {
   userId: string;
 }
 
 export function QueuePreview({ userId }: Props) {
-  const { data, loading, error } = useQuery<UsersQueueQuery>(QueueQuery, { variables: { id: userId } });
+  const { data, loading, error } = useQuery(QueueQuery, { variables: { id: userId } });
 
   const queue = data?.getQueue;
 
@@ -44,7 +44,7 @@ export function QueuePreview({ userId }: Props) {
       client.writeQuery({
         query: QueueQuery,
         data: {
-          getQueue: data.getBeeperUpdates
+          getQueue: data?.getBeeperUpdates
         },
         variables: { id: userId }
       });

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { gql, useQuery } from '@apollo/client';
-import { GetRatingsQuery } from '../generated/graphql';
 import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
@@ -10,10 +9,11 @@ import { printStars } from '../routes/admin/ratings';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Link, Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
+import { graphql } from 'gql.tada';
 
 dayjs.extend(duration);
 
-const Ratings = gql`
+const Ratings = graphql(`
   query GetRatingsForUser($id: String, $show: Int, $offset: Int) {
     getRatings(id: $id, show: $show, offset: $offset) {
       items {
@@ -37,7 +37,7 @@ const Ratings = gql`
       count
     }
   }
-`;
+`);
 
 export const ratingsTableRoute = new Route({
   component: RatingsTable,
@@ -52,7 +52,7 @@ export function RatingsTable() {
   const { userId } = ratingsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, loading } = useQuery<GetRatingsQuery>(
+  const { data, loading } = useQuery(
     Ratings, {
       variables: {
         id: userId,
@@ -105,7 +105,7 @@ export function RatingsTable() {
                 <TdUser user={rating.rated} />
                 <Td>{rating.message || "N/A"}</Td>
                 <Td>{printStars(rating.stars)}</Td>
-                <Td>{dayjs().to(rating.timestamp)}</Td>
+                <Td>{dayjs().to(rating.timestamp as string)}</Td>
                 <Td>
                   <Link to="/admin/ratings/$ratingId" params={{ ratingId: rating.id }}>
                     <ExternalLinkIcon />

@@ -1,6 +1,5 @@
 import React from 'react';
-import { GetUserDataQuery, UserUpdatesSubscription } from './generated/graphql';
-import { ApolloProvider, gql, useQuery, useSubscription } from '@apollo/client';
+import { ApolloProvider, useQuery, useSubscription } from '@apollo/client';
 import { cache, client } from './utils/Apollo';
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
@@ -47,8 +46,11 @@ import { reportsTableRoute } from './components/ReportsTable';
 import { ratingsTableRoute } from './components/RatingsTable';
 import { carsTableRoute } from './components/CarsTable';
 import { paymentsTableRoute } from './components/PaymentsTable';
+import { ResultOf, graphql } from 'gql.tada';
 
-export const GetUserData = gql`
+export type User = ResultOf<typeof GetUserData>['getUser'];
+
+export const GetUserData = graphql(`
   query GetUserData {
     getUser {
       id
@@ -71,9 +73,9 @@ export const GetUserData = gql`
       queueSize
     }
   }
-`;
+`);
 
-const UserUpdates = gql`
+const UserUpdates = graphql(`
   subscription UserUpdates {
     getUserUpdates {
       id
@@ -96,16 +98,16 @@ const UserUpdates = gql`
       queueSize
     }
   }
-`;
+`);
 
 function Beep() {
-  const { data, loading } = useQuery<GetUserDataQuery>(GetUserData);
+  const { data, loading } = useQuery(GetUserData);
 
   const user = data?.getUser;
 
-  useSubscription<UserUpdatesSubscription>(UserUpdates, {
+  useSubscription(UserUpdates, {
     onData({ data }) {
-      cache.updateQuery<GetUserDataQuery>({ query: GetUserData }, () => ({ getUser: data.data!.getUserUpdates }));
+      cache.updateQuery({ query: GetUserData }, () => ({ getUser: data.data!.getUserUpdates }));
     },
     skip: !user,
   });

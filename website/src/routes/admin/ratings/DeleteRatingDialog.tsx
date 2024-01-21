@@ -1,9 +1,9 @@
 import React from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
-import { DeleteRatingMutation } from "../../../generated/graphql";
+import { graphql } from "gql.tada";
 
 interface Props {
   isOpen: boolean;
@@ -11,14 +11,14 @@ interface Props {
   id: string;
 }
 
-const DeleteRating = gql`
+const DeleteRating = graphql(`
   mutation DeleteRating($id: String!) {
     deleteRating(id: $id)
   }
-`
+`);
 
 export function DeleteRatingDialog({ isOpen, onClose, id }: Props) {
-  const [deleteRating, { loading, error }] = useMutation<DeleteRatingMutation>(DeleteRating, {
+  const [deleteRating, { loading, error }] = useMutation(DeleteRating, {
     variables: { id },
     update: (cache) => {
       const cacheId = cache.identify({ __typename: "Rating", id });
