@@ -12,7 +12,7 @@ import { PhotoDialog } from '../../../components/PhotoDialog';
 import { DeleteUserDialog } from './DeleteUserDialog';
 import { Link, Outlet, Route, useNavigate, useRouterState } from '@tanstack/react-router';
 import { usersRoute } from '.';
-import { graphql } from 'gql.tada';
+import { graphql } from '../../../graphql';
 import {
   useToast,
   useDisclosure,
@@ -244,7 +244,7 @@ export function User() {
               <Heading size="md">{user.name}</Heading>
               <Text>@{user.username}</Text>
               <Text fontSize="xs" textOverflow="ellipsis">{user.id}</Text>
-              {(user.created as string) && (<Text fontSize="xs">Joined {dayjs().to(user.created as string)}</Text>)}
+              {user.created && (<Text fontSize="xs">Joined {dayjs().to(user.created)}</Text>)}
               <Stack direction="row" mt="2" mb="2">
                 {user.role === UserRole.ADMIN && <Badge variant="solid" colorScheme="red">admin</Badge>}
                 {user.isStudent && <Badge variant="solid" colorScheme="blue">student</Badge>}
