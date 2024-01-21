@@ -11,7 +11,7 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
-import { graphql } from 'gql.tada';
+import { graphql } from '../graphql';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -117,7 +117,7 @@ export function BeepsTable() {
                     <Text textTransform="capitalize">{ride.status.replaceAll("_", " ")}</Text>
                   </HStack>
                 </Td>
-                <Td>{dayjs.duration(new Date(ride.end as string).getTime() - new Date(ride.start as string).getTime()).humanize()}</Td>
+                <Td>{ride.end ? dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize() : "Still in progress"}</Td>
                 <Td>{dayjs().to(ride.end as string)}</Td>
               </Tr>
             ))}
