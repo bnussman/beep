@@ -41,13 +41,15 @@ export function QueuePreview({ userId }: Props) {
     const a = client.subscribe({ query: QueueSubscription, variables: { id: userId } });
 
     sub = a.subscribe(({ data }) => {
-      client.writeQuery({
-        query: QueueQuery,
-        data: {
-          getQueue: data?.getBeeperUpdates
-        },
-        variables: { id: userId }
-      });
+      if (data) {
+        client.writeQuery({
+          query: QueueQuery,
+          data: {
+            getQueue: data.getBeeperUpdates
+          },
+          variables: { id: userId }
+        });
+      }
     });
   }
 

@@ -46,7 +46,7 @@ export function Edit() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <EditDetails user={user} />
+            <EditDetails userId={userId} />
           </TabPanel>
           <TabPanel>
             <EditLocation />

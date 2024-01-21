@@ -74,7 +74,7 @@ const SignUpGraphQL = graphql(`
   }
 `);
 
-type Values = VariablesOf<typeof SignUpGraphQL>;
+type Values = VariablesOf<typeof SignUpGraphQL> & { picture: any };
 
 export const signupRoute = new Route({
   component: SignUp,

@@ -1,15 +1,15 @@
 import React from "react";
 import { Box, Button, Checkbox, FormControl, FormLabel, Input, useToast, FormErrorMessage, Stack } from "@chakra-ui/react";
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Error } from '../../../../components/Error';
 import { useValidationErrors } from "../../../../utils/useValidationErrors";
 import { useForm } from "react-hook-form";
 import { editUserRoute } from ".";
-import { VariablesOf, graphql } from "gql.tada";
-import type { User } from "../../../../App";
+import { ResultOf, VariablesOf, graphql } from "gql.tada";
+import { GetUser } from "../User";
 
 interface Props {
-  user: User;
+  userId: string;
 }
 
 const EditUser = graphql(`
@@ -57,13 +57,17 @@ const omit: Omit = (obj, ...keys) => {
   return ret;
 };
 
-type Values = VariablesOf<typeof EditUser>;
+type Values = VariablesOf<typeof EditUser>['data'];
 
-export function EditDetails({ user }: Props) {
+export function EditDetails({ userId }: Props) {
   const { userId: id } = editUserRoute.useParams();
   const toast = useToast();
+  
+  const { data, loading, error } = useQuery(GetUser, { variables: { id: userId } });
 
-  const defaultValues = omit(user, 'id', '__typename', 'name', 'location', 'queue', 'created', 'rating');
+  const user = data?.getUser;
+
+  const defaultValues = user ? omit(user, 'id', 'name', 'location', 'queue', 'created', 'rating') : undefined;
 
   const [edit, { error: editError }] = useMutation(EditUser);
 
@@ -77,11 +81,11 @@ export function EditDetails({ user }: Props) {
     const result = await edit({ variables: { id, data } });
 
     if (result.data) {
-      toast({ status: 'success', title: "Success", description: `Successfully edited ${user.first}'s profile` });
+      toast({ status: 'success', title: "Success", description: `Successfully edited ${user?.first}'s profile` });
     }
   });
 
-  const keys = Object.keys(defaultValues);
+  const keys = defaultValues ? Object.keys(defaultValues) : [];
 
   return (
     <Box>
@@ -90,7 +94,7 @@ export function EditDetails({ user }: Props) {
         <Stack spacing={4}>
           {keys.map((_key) => {
             const key = _key as keyof Values;
-            const type = typeof defaultValues[key];
+            const type = typeof defaultValues?.[key];
             return (
               <FormControl key={key} isInvalid={Boolean(errors[key]) || Boolean(validationErrors?.[key])}>
                 <FormLabel>{key}</FormLabel>
