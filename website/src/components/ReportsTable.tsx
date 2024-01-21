@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Link, Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
-import { graphql } from 'gql.tada';
+import { graphql } from '../graphql';
 
 dayjs.extend(duration);
 
@@ -108,7 +108,7 @@ export function ReportsTable() {
                 <TdUser user={report.reporter} />
                 <TdUser user={report.reported} />
                 <Td>{report.reason}</Td>
-                <Td>{dayjs().to(report.timestamp as string)}</Td>
+                <Td>{dayjs().to(report.timestamp)}</Td>
                 <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
                 <Td>
                   <Link to="/admin/reports/$reportId" params={{ reportId: report.id }}>

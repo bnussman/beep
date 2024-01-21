@@ -12,7 +12,7 @@ import { Status } from '../../../types/User';
 import { beepStatusMap } from '.';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from 'gql.tada';
+import { graphql } from '../../../graphql';
 
 dayjs.extend(duration);
 
@@ -122,7 +122,7 @@ export function ActiveBeeps() {
                 <Td>{beep.origin}</Td>
                 <Td>{beep.destination}</Td>
                 <Td>{beep.groupSize}</Td>
-                <Td>{dayjs().to(beep.start as string)}</Td>
+                <Td>{dayjs().to(beep.start)}</Td>
                 <Td>
                   <HStack>
                     <Indicator color={beepStatusMap[beep.status as Status]} />

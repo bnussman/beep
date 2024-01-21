@@ -8,7 +8,7 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
-import { graphql } from 'gql.tada';
+import { graphql } from '../graphql';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -90,8 +90,8 @@ export function PaymentsTable() {
                 <Td>{payment.id}</Td>
                 <Td>{payment.productId}</Td>
                 <Td>{payment.price}</Td>
-                <Td>{payment.created as string}</Td>
-                <Td>{payment.expires as string}</Td>
+                <Td>{payment.created}</Td>
+                <Td>{payment.expires}</Td>
               </Tr>
             ))}
           </Tbody>

@@ -9,7 +9,7 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { Route } from "@tanstack/react-router";
 import { beepsRoute } from ".";
-import { graphql } from "gql.tada";
+import { graphql } from "../../../graphql";
 
 dayjs.extend(duration);
 
@@ -94,11 +94,15 @@ export function Beep() {
           </Box>
           <Box>
             <Heading>Beep Started</Heading>
-            <Text>{new Date(data.getBeep.start as string).toLocaleString()} - {dayjs().to(data.getBeep.start as string)}</Text>
+            <Text>{new Date(data.getBeep.start).toLocaleString()} - {dayjs().to(data.getBeep.start)}</Text>
           </Box>
           <Box>
             <Heading>Beep Ended</Heading>
-            <Text>{new Date(data.getBeep.end as string).toLocaleString()} - {dayjs().to(data.getBeep.end as string)}</Text>
+            {data.getBeep.end ? (
+              <Text>{new Date(data.getBeep.end).toLocaleString()} - {dayjs().to(data.getBeep.end)}</Text>
+            ) : (
+            <Text>Beep is still in progress</Text>
+          )}
           </Box>
           <DeleteBeepDialog
             id={data.getBeep.id}

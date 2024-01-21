@@ -118,7 +118,7 @@ export function BeepsTable() {
                   </HStack>
                 </Td>
                 <Td>{ride.end ? dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize() : "Still in progress"}</Td>
-                <Td>{dayjs().to(ride.end as string)}</Td>
+                <Td>{dayjs().to(ride.end)}</Td>
               </Tr>
             ))}
           </Tbody>

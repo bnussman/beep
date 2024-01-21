@@ -10,7 +10,7 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
 import { Link, Route } from "@tanstack/react-router";
-import { graphql } from "gql.tada";
+import { graphql } from "../../../graphql";
 
 dayjs.extend(relativeTime);
 
@@ -88,7 +88,7 @@ export function Rating() {
           </Box>
           <Box>
             <Heading size="lg">Created</Heading>
-            <Text>{dayjs().to(data.getRating.timestamp as string)}</Text>
+            <Text>{dayjs().to(data.getRating.timestamp)}</Text>
           </Box>
           {data.getRating.beep &&
             <Box>

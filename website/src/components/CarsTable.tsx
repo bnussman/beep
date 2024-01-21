@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Pagination } from './Pagination';
 import { Box, Center, Image, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { Loading } from './Loading';
@@ -9,7 +9,7 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Route } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
-import { graphql } from 'gql.tada';
+import { graphql } from '../graphql';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -98,7 +98,7 @@ export function CarsTable() {
                 <Td>
                   <Indicator color={car.color} tooltip={car.color} />
                 </Td>
-                <Td>{dayjs().to(car.created as string)}</Td>
+                <Td>{dayjs().to(car.created)}</Td>
                 <Td>
                   <Image src={car.photo} w="24" borderRadius="2xl" />
                 </Td>

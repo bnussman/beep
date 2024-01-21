@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
@@ -11,7 +11,7 @@ import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from 'gql.tada';
+import { graphql } from '../../../graphql';
 
 dayjs.extend(duration);
 
@@ -144,9 +144,9 @@ export function Beeps() {
                     <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
                   </HStack>
                 </Td>
-                <Td>{dayjs().to(beep.start as string)}</Td>
-                <Td>{beep.end ? dayjs().to(beep.end as string) : "N/A"}</Td>
-                <Td>{beep.end ? dayjs.duration(new Date(beep.end as string).getTime() - new Date(beep.start as string).getTime()).humanize() : "N/A"}</Td>
+                <Td>{dayjs().to(beep.start)}</Td>
+                <Td>{beep.end ? dayjs().to(beep.end) : "N/A"}</Td>
+                <Td>{beep.end ? dayjs.duration(new Date(beep.end).getTime() - new Date(beep.start).getTime()).humanize() : "N/A"}</Td>
               </Tr>
             ))}
           </Tbody>
