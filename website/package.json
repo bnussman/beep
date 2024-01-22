@@ -7,8 +7,7 @@
     "dev": "vite --open",
     "build": "vite build",
     "serve": "vite preview",
-    "typecheck": "tsc",
-    "codegen": "graphql-codegen"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@apollo/client": "^3.8.6",
@@ -34,10 +33,6 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.0.7",
-    "@graphql-codegen/cli": "^5.0.0",
-    "@graphql-codegen/typescript": "4.0.1",
-    "@graphql-codegen/typescript-operations": "4.0.1",
-    "@graphql-codegen/typescript-react-apollo": "4.0.0",
     "@types/apollo-upload-client": "^17.0.3",
     "@types/node": "^20.8.10",
     "@types/react": "^18.2.48",
