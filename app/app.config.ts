@@ -34,8 +34,6 @@ const config: ExpoConfig = {
     [
       "@sentry/react-native/expo",
       {
-        url: "https://sentry.io/",
-        authToken: "idk",
         project: "app",
         organization: "ian-banks-llc"
       }
