@@ -85,8 +85,8 @@ importers:
         specifier: ^6.9.8
         version: 6.9.8
       reflect-metadata:
-        specifier: ^0.1.13
-        version: 0.1.13
+        specifier: ^0.2.1
+        version: 0.2.1
       type-graphql:
         specifier: 2.0.0-beta.3
         version: 2.0.0-beta.3(class-validator@0.14.1)(graphql-scalars@1.22.4)(graphql@16.8.1)
@@ -12422,10 +12422,6 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       redis-errors: 1.2.0
-    dev: false
-
-  /reflect-metadata@0.1.13:
-    resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
     dev: false
 
   /reflect-metadata@0.2.1:
