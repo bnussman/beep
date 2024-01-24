@@ -58,13 +58,13 @@
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.0.7",
+    "@0no-co/graphqlsp": "^1.2.0",
     "@babel/core": "^7.22.9",
     "@expo/metro-runtime": "~3.1.1",
     "@types/apollo-upload-client": "^17.0.3",
     "@types/react": "~18.2.48",
     "@types/react-dom": "~18.0.10",
-    "@types/uuid": "^9.0.6",
+    "@types/uuid": "^9.0.7",
     "babel-preset-expo": "^10.0.1",
     "typescript": "^5.3.3"
   },
