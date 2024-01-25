@@ -164,8 +164,8 @@ importers:
         specifier: next
         version: 7.0.0-alpha.7(@react-navigation/native@7.0.0-alpha.6)(react-native-safe-area-context@4.8.2)(react-native-screens@3.29.0)(react-native@0.73.2)(react@18.2.0)
       '@sentry/react-native':
-        specifier: 5.16.0
-        version: 5.16.0(expo@50.0.3)(react-native@0.73.2)(react@18.2.0)
+        specifier: 5.17.0
+        version: 5.17.0(expo@50.0.3)(react-native@0.73.2)(react@18.2.0)
       apollo-upload-client:
         specifier: ^17.0.0
         version: 17.0.0(@apollo/client@3.8.10)(graphql@16.8.1)
@@ -182,8 +182,8 @@ importers:
         specifier: ^15.4.5
         version: 15.4.5(expo@50.0.3)
       expo-dev-client:
-        specifier: ~3.3.6
-        version: 3.3.6(expo@50.0.3)
+        specifier: ~3.3.7
+        version: 3.3.7(expo@50.0.3)
       expo-device:
         specifier: ~5.9.3
         version: 5.9.3(expo@50.0.3)
@@ -203,8 +203,8 @@ importers:
         specifier: ~0.27.4
         version: 0.27.4(expo@50.0.3)
       expo-splash-screen:
-        specifier: ~0.26.3
-        version: 0.26.3(expo-modules-autolinking@1.10.2)(expo@50.0.3)
+        specifier: ~0.26.4
+        version: 0.26.4(expo-modules-autolinking@1.10.2)(expo@50.0.3)
       expo-status-bar:
         specifier: ~1.11.1
         version: 1.11.1
@@ -4391,27 +4391,6 @@ packages:
       xmlbuilder: 14.0.0
     dev: false
 
-  /@expo/prebuild-config@6.7.3(expo-modules-autolinking@1.10.2):
-    resolution: {integrity: sha512-jZIHzlnvdg4Gnln06XR9tvirL3hSp/Jh48COhLKs51vb3THCWumUytZBS4DSMdvGwf8btnaB01Zg00xQhSDBsA==}
-    peerDependencies:
-      expo-modules-autolinking: '>=0.8.1'
-    dependencies:
-      '@expo/config': 8.5.4
-      '@expo/config-plugins': 7.8.4
-      '@expo/config-types': 50.0.0
-      '@expo/image-utils': 0.4.1
-      '@expo/json-file': 8.3.0
-      debug: 4.3.4
-      expo-modules-autolinking: 1.10.2
-      fs-extra: 9.1.0
-      resolve-from: 5.0.0
-      semver: 7.5.3
-      xml2js: 0.6.0
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-    dev: false
-
   /@expo/prebuild-config@6.7.4(expo-modules-autolinking@1.10.2):
     resolution: {integrity: sha512-x8EUdCa8DTMZ/dtEXjHAdlP+ljf6oSeSKNzhycXiHhpMSMG9jEhV28ocCwc6cKsjK5GziweEiHwvrj6+vsBlhA==}
     peerDependencies:
@@ -6563,16 +6542,16 @@ packages:
       '@sentry/utils': 7.81.1
     dev: false
 
-  /@sentry/cli-darwin@2.23.0:
-    resolution: {integrity: sha512-tWuTxvb6P5pA0E+O1/7jKQ6AP45DOOW+BAd7mwBMHZ+5xG3nsvvrRS9hOIzBNPTeB2RyIEXgpQ2Mb6NdD21DBQ==}
+  /@sentry/cli-darwin@2.25.2:
+    resolution: {integrity: sha512-o1d5NnVUrc1dxDm56k7Co8tSTcOuxbApdxweVXXsiq20HblZCyIi7WxxRkAg4RfKx594sKGiw9uCVvECi+9UpA==}
     engines: {node: '>=10'}
     os: [darwin]
     requiresBuild: true
     dev: false
     optional: true
 
-  /@sentry/cli-linux-arm64@2.23.0:
-    resolution: {integrity: sha512-KsOckP+b0xAzrRuoP4eiqJ6ASD6SqIplL8BCHOAODQfvWn9rgNwsJWOgKlWwfrJnkJYkpWVYvYeyx0oeUx3N0g==}
+  /@sentry/cli-linux-arm64@2.25.2:
+    resolution: {integrity: sha512-lm5jaigV6xu9Gwo0wNk+bX6yVkl5k3gNXcSXcKCISFo+Teb7Zhf9IyXANPm4VY2DdiZAjPJt8gS1bu+Mn7irtQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux, freebsd]
@@ -6580,8 +6559,8 @@ packages:
     dev: false
     optional: true
 
-  /@sentry/cli-linux-arm@2.23.0:
-    resolution: {integrity: sha512-1R8ngBDKtPw++Km6VnVTx76ndrBL9BuBBNpF9TUCGftK3ArdaifqoIx8cZ8aKu8sWXLAKO7lHzxL4BNPZvlDiw==}
+  /@sentry/cli-linux-arm@2.25.2:
+    resolution: {integrity: sha512-n398jd87Ymejt5k/6RjCEjXAvntOWuqhBDANxzhgr5/9FzbODJ844g1mOpcxiIlduzKSzWlPbTEKQulMp2Mt4w==}
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux, freebsd]
@@ -6589,8 +6568,8 @@ packages:
     dev: false
     optional: true
 
-  /@sentry/cli-linux-i686@2.23.0:
-    resolution: {integrity: sha512-KRqB98KstBkKh33ZqUq+q8O0U4c01aTWCNPpVrqAX7zikSk0AAJTG8eAtqwDSx949IkKUl8xa6PFLfz+Nb2EMQ==}
+  /@sentry/cli-linux-i686@2.25.2:
+    resolution: {integrity: sha512-/YYx2gfqO5mkxyBgFcnDbZzkZ2+2xNarwrqWcqq3Qw0XlO9DWAQB2G+twV1RW/UfSU6fFIWErn94efh2EWmyzQ==}
     engines: {node: '>=10'}
     cpu: [x86, ia32]
     os: [linux, freebsd]
@@ -6598,8 +6577,8 @@ packages:
     dev: false
     optional: true
 
-  /@sentry/cli-linux-x64@2.23.0:
-    resolution: {integrity: sha512-USHZ0zzg9qujGYAyRjLeUfLDZOMgNjCr82m0BSBMmlFs4oKwHmO6bSvdi9UzNNcpmkOavNAdUM4jnZWk11i46Q==}
+  /@sentry/cli-linux-x64@2.25.2:
+    resolution: {integrity: sha512-rRafqy84R5mYA4JEfNsUeN10af5euJnK7fgqYM0mJIaplHC2YEXT9aUYWoryWPZiYqmdNUhsA6lX7iynSW9pZw==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux, freebsd]
@@ -6607,8 +6586,8 @@ packages:
     dev: false
     optional: true
 
-  /@sentry/cli-win32-i686@2.23.0:
-    resolution: {integrity: sha512-lS/B3pONDl18IEu/I//3vcMnosThobyXpqfAm4WYUtFTiw/wwDHgwGgaIjZWm5wMRkPFzYoRFpZfPlUrJd/4cQ==}
+  /@sentry/cli-win32-i686@2.25.2:
+    resolution: {integrity: sha512-plT/gi41F+67g9AwrEm4avRXnjCtHCcnRnJ6zPu/iINGap8mvYQJSU/qM0oGwV6hRGg3JJN66XIvJPIuIs8P8w==}
     engines: {node: '>=10'}
     cpu: [x86, ia32]
     os: [win32]
@@ -6616,8 +6595,8 @@ packages:
     dev: false
     optional: true
 
-  /@sentry/cli-win32-x64@2.23.0:
-    resolution: {integrity: sha512-7LP6wA3w93ViYKQR8tMN2i/SfpQzaXqM2SAHI3yfJ3bdREHOV3+/N0mNiWVRvgL0TKNQJS42v2IILLhiDxufHQ==}
+  /@sentry/cli-win32-x64@2.25.2:
+    resolution: {integrity: sha512-Mb6mAyPi9gIfpzF5MTk0JXgFP9nxka3Fb7JYn6AY4RW++sOjapkTrcXL2Gp3ZfQkWj5rFTgln4+eNmZPsD2gzA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
@@ -6625,10 +6604,11 @@ packages:
     dev: false
     optional: true
 
-  /@sentry/cli@2.23.0:
-    resolution: {integrity: sha512-xFTv7YOaKWMCSPgN8A1jZpxJQhwdES89pqMTWjJOgjmkwFvziuaTM7O7kazps/cACDhJp2lK2j6AT6imhr4t9w==}
+  /@sentry/cli@2.25.2:
+    resolution: {integrity: sha512-lgt1QPaCfs/QZNXwyw3gvuBR2/CLwFSdU/oT7Bpxwizz8XVXhlKS98zJF1UVCy7SecsDSoOI0Z+B+X658cpquQ==}
     engines: {node: '>= 10'}
     hasBin: true
+    requiresBuild: true
     dependencies:
       https-proxy-agent: 5.0.1
       node-fetch: 2.7.0
@@ -6636,13 +6616,13 @@ packages:
       proxy-from-env: 1.1.0
       which: 2.0.2
     optionalDependencies:
-      '@sentry/cli-darwin': 2.23.0
-      '@sentry/cli-linux-arm': 2.23.0
-      '@sentry/cli-linux-arm64': 2.23.0
-      '@sentry/cli-linux-i686': 2.23.0
-      '@sentry/cli-linux-x64': 2.23.0
-      '@sentry/cli-win32-i686': 2.23.0
-      '@sentry/cli-win32-x64': 2.23.0
+      '@sentry/cli-darwin': 2.25.2
+      '@sentry/cli-linux-arm': 2.25.2
+      '@sentry/cli-linux-arm64': 2.25.2
+      '@sentry/cli-linux-i686': 2.25.2
+      '@sentry/cli-linux-x64': 2.25.2
+      '@sentry/cli-win32-i686': 2.25.2
+      '@sentry/cli-win32-x64': 2.25.2
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -6706,8 +6686,8 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/react-native@5.16.0(expo@50.0.3)(react-native@0.73.2)(react@18.2.0):
-    resolution: {integrity: sha512-Tc67g4UJO7nFJWrbsTGP/zrsTErXWvL8YNOR9pNvGPcsNdP2HcLrYfuHE7B29EQZeH6psEGVJuWeWbdlqRuKzA==}
+  /@sentry/react-native@5.17.0(expo@50.0.3)(react-native@0.73.2)(react@18.2.0):
+    resolution: {integrity: sha512-d0TLASMcpUtvw0A8zNznRyCskfH0kwfb3GzqMXXpfPJAG8vsBnY15EFOIc+czOLt6FbV9o3567bHYWhSW51Ssg==}
     hasBin: true
     peerDependencies:
       expo: '>=49.0.0'
@@ -6718,7 +6698,7 @@ packages:
         optional: true
     dependencies:
       '@sentry/browser': 7.81.1
-      '@sentry/cli': 2.23.0
+      '@sentry/cli': 2.25.2
       '@sentry/core': 7.81.1
       '@sentry/hub': 7.81.1
       '@sentry/integrations': 7.81.1
@@ -8883,14 +8863,14 @@ packages:
       - supports-color
     dev: false
 
-  /expo-dev-client@3.3.6(expo@50.0.3):
-    resolution: {integrity: sha512-0MceeNbci/ioncesLscLyH5hIBbsF/zrCo3e3Tn5qoa/Np5XZU4V+2dJ9eqgHjD7R0BTF93Em7diYOJVqzWutg==}
+  /expo-dev-client@3.3.7(expo@50.0.3):
+    resolution: {integrity: sha512-dsucMzezNuP7zxSxYi1EbIA16j491tD9joUlGlpvBW1IylxUmbPraOqUqdXsDxRIAJh5HgJx/8X03Xoo1j7YKw==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 50.0.3(@babel/core@7.22.9)(@react-native/babel-preset@0.73.19)
-      expo-dev-launcher: 3.6.3(expo@50.0.3)
-      expo-dev-menu: 4.5.4(expo@50.0.3)
+      expo-dev-launcher: 3.6.4(expo@50.0.3)
+      expo-dev-menu: 4.5.5(expo@50.0.3)
       expo-dev-menu-interface: 1.7.2(expo@50.0.3)
       expo-manifests: 0.13.2(expo@50.0.3)
       expo-updates-interface: 0.15.3(expo@50.0.3)
@@ -8898,8 +8878,8 @@ packages:
       - supports-color
     dev: false
 
-  /expo-dev-launcher@3.6.3(expo@50.0.3):
-    resolution: {integrity: sha512-mXg38bXq9BzDG67TwmG7RbUwplzVVRWzY6wTK8ckFdpPv8woWo6PJ+iDaLaSAgVTAP8I4oouv9vcX6fjV5WMwg==}
+  /expo-dev-launcher@3.6.4(expo@50.0.3):
+    resolution: {integrity: sha512-i5NGm2QeVl7ePk9nyvW1hAEg29FRMltNNEkRiK/AF77ObrD0YG/FhhidQL8C/SIIm/3RcsjAiw4buF5QRoieKg==}
     peerDependencies:
       expo: '*'
     dependencies:
@@ -8923,6 +8903,16 @@ packages:
 
   /expo-dev-menu@4.5.4(expo@50.0.3):
     resolution: {integrity: sha512-TLCfXKI7r5PJpMKUcslKz9J7tChdYdm6DmOEYwFQC3OLcegXzCT/H92WfTdVXU+xz5XYTcyvnIZQa7/d2Ig90g==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 50.0.3(@babel/core@7.22.9)(@react-native/babel-preset@0.73.19)
+      expo-dev-menu-interface: 1.7.2(expo@50.0.3)
+      semver: 7.5.4
+    dev: false
+
+  /expo-dev-menu@4.5.5(expo@50.0.3):
+    resolution: {integrity: sha512-PcbI/SqAvueOIEtR1O0s+WvVD7yizQSqXisDSkBrTym3u8XZSN+K730kz2Z64ukY9YIPG4qWR4sd+9rcjsbMWw==}
     peerDependencies:
       expo: '*'
     dependencies:
@@ -9067,12 +9057,12 @@ packages:
       - supports-color
     dev: false
 
-  /expo-splash-screen@0.26.3(expo-modules-autolinking@1.10.2)(expo@50.0.3):
-    resolution: {integrity: sha512-zV+2J/stwdirINrcs/d0BTVjKGUoZyN2j5vTp4H4dwWWU/gA0yAkzzh5eGHySg+yTqMSr7sPJkiyZh2Hek2vBQ==}
+  /expo-splash-screen@0.26.4(expo-modules-autolinking@1.10.2)(expo@50.0.3):
+    resolution: {integrity: sha512-2DwofTQ0FFQCsvDysm/msENsbyNsJiAJwK3qK/oXeizECAPqD7bK19J4z9kuEbr7ORPX9MLnTQYKl6kmX3keUg==}
     peerDependencies:
       expo: '*'
     dependencies:
-      '@expo/prebuild-config': 6.7.3(expo-modules-autolinking@1.10.2)
+      '@expo/prebuild-config': 6.7.4(expo-modules-autolinking@1.10.2)
       expo: 50.0.3(@babel/core@7.22.9)(@react-native/babel-preset@0.73.19)
     transitivePeerDependencies:
       - encoding
