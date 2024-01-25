@@ -1,5 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
+import config from "./package.json";
+import * as SplashScreen from "expo-splash-screen";
+import * as Sentry from "@sentry/react-native";
 import { cache, client } from "./utils/Apollo";
 import { ApolloProvider, useQuery, useSubscription } from "@apollo/client";
 import { NativeBaseProvider, useColorMode } from "native-base";
@@ -11,9 +14,6 @@ import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
 import { NATIVE_BASE_THEME } from "./utils/constants";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
-import * as SplashScreen from "expo-splash-screen";
-import config from "./package.json";
-import * as Sentry from "@sentry/react-native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/Navigation";
 
