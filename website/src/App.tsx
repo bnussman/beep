@@ -47,6 +47,7 @@ import { ratingsTableRoute } from './components/RatingsTable';
 import { carsTableRoute } from './components/CarsTable';
 import { paymentsTableRoute } from './components/PaymentsTable';
 import { ResultOf, graphql } from 'gql.tada';
+import { deleteAccountRoute } from './routes/DeleteAccount';
 
 export type User = ResultOf<typeof GetUserData>['getUser'];
 
@@ -138,6 +139,7 @@ export const rootRoute = new RootRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   editProfileRoute,
+  deleteAccountRoute,
   changePasswordRoute,
   loginRoute,
   signupRoute,
