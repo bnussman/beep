@@ -28,7 +28,6 @@ const RootStack = createNativeStackNavigator({
     const { colorMode } = useColorMode();
     return {
       headerTintColor: colorMode === "dark" ? "white" : "black",
-      drawerType: "front",
     }
   },
   groups: {
