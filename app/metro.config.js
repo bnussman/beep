@@ -1,8 +1,8 @@
-const { getSentryExpoConfig } = require('@sentry/react-native/metro');
+const { getExpoConfig } = require('@expo/metro-config');
 
 const path = require('path');
 
-const config = getSentryExpoConfig(__dirname);
+const config = getExpoConfig(__dirname);
 
 const workspaceRoot = path.resolve(__dirname, '..');
 const projectRoot = __dirname;
