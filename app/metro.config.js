@@ -17,6 +17,6 @@ config.resolver.nodeModulesPaths = [
 config.resolver.sourceExts.push("cjs");
 config.resolver.sourceExts.push("mjs");
 
-// config.resolver.disableHierarchicalLookup = true;
+config.resolver.disableHierarchicalLookup = true;
 
 module.exports = config;
