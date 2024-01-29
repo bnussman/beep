@@ -296,9 +296,6 @@ importers:
       '@types/react-dom':
         specifier: ~18.0.10
         version: 18.0.11
-      '@types/uuid':
-        specifier: ^9.0.8
-        version: 9.0.8
       babel-preset-expo:
         specifier: ^10.0.1
         version: 10.0.1(@babel/core@7.22.9)
