@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { graphql, ResultOf } from "gql.tada";
 
 export type User = ResultOf<typeof UserData>['getUser'];
