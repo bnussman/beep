@@ -5,7 +5,7 @@ import { Error } from '../../../../components/Error';
 import { useValidationErrors } from "../../../../utils/useValidationErrors";
 import { useForm } from "react-hook-form";
 import { editUserRoute } from ".";
-import { ResultOf, VariablesOf, graphql } from "gql.tada";
+import { VariablesOf, graphql } from "gql.tada";
 import { GetUser } from "../User";
 
 interface Props {
@@ -38,7 +38,7 @@ const EditUser = graphql(`
 `);
 
 interface Omit {
-  <T extends object, K extends [...(keyof T)[]]>
+  <T extends object, K extends [...(keyof T | string)[]]>
   (obj: T, ...keys: K): {
       [K2 in Exclude<keyof T, K[number]>]: T[K2]
   }
@@ -63,23 +63,21 @@ export function EditDetails({ userId }: Props) {
   const { userId: id } = editUserRoute.useParams();
   const toast = useToast();
 
-  const { data, loading, error } = useQuery(GetUser, { variables: { id: userId } });
+  const { data } = useQuery(GetUser, { variables: { id: userId } });
 
   const user = data?.getUser;
 
-  const defaultValues = user ? omit(user, 'id', 'name', 'location', 'queue', 'created', 'rating') : undefined;
+  const defaultValues = user ? omit(user, 'id', 'name', 'location', 'queue', 'created', 'rating', '__typename') : undefined;
 
   const [edit, { error: editError }] = useMutation(EditUser);
 
-  const { handleSubmit, register, reset, formState: { errors, isSubmitting } } = useForm<Values>({
+  const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm<Values>({
     defaultValues
   });
 
   const validationErrors = useValidationErrors<Values>(editError);
 
   const onSubmit = handleSubmit(async (data) => {
-    delete data.__typename;
-
     const result = await edit({ variables: { id, data } });
 
     if (result.data) {
