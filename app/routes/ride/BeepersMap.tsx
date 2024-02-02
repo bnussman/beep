@@ -1,14 +1,14 @@
 import { Map } from "../../components/Map";
 import { useLocation } from "../../utils/useLocation";
-import { AnimatedRegion, MarkerAnimated, Region } from "react-native-maps";
-import { gql, useQuery, useSubscription } from "@apollo/client";
-import { useEffect, useRef, useState } from "react";
+import { type Region } from "react-native-maps";
+import { useQuery, useSubscription } from "@apollo/client";
+import { useEffect } from "react";
 import { Text } from "native-base";
-import { Platform } from "react-native";
 import { cache } from "../../utils/Apollo";
 import { BEEPER_ICON } from "../../utils/constants";
-import { ResultOf, graphql } from "gql.tada";
-import { Unpacked } from "../../utils/constants";
+import { graphql } from "gql.tada";
+import { Easing } from "react-native-reanimated"
+import { AnimatedMarker, useAnimatedRegion } from "../../components/Marker";
 
 const BeepersLocations = graphql(`
   query GetAllBeepersLocation(
@@ -124,50 +124,40 @@ export function BeepersMap() {
       }}
       initialRegion={initialRegion}
     >
-      {beepers?.map((beeper) => (
-        <BeeperMarker key={beeper.id} {...beeper} />
-      ))}
+      {beepers?.map((beeper) => {
+        if (beeper.latitude === null || beeper.longitude === null) {
+          return null;
+        }
+
+        return (
+          <BeeperMarker key={beeper.id} latitude={beeper.latitude} longitude={beeper.longitude} />
+        );
+      })}
     </Map>
   );
 }
 
-const LATITUDE_DELTA = 0.01;
-const LONGITUDE_DELTA = 0.01;
 
-export function BeeperMarker({ id, latitude, longitude }: Unpacked<ResultOf<typeof BeepersLocations>['getAllBeepersLocation']>) {
-  const ref = useRef<MarkerAnimated>(null);
-  const [coordinate] = useState(
-    new AnimatedRegion({
-      latitude: latitude ?? 0,
-      longitude: longitude ?? 0,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA,
-    })
-  );
+interface BeeperMakerProps {
+  longitude: number;
+  latitude: number;
+}
+
+export const BeeperMarker = (props: BeeperMakerProps) => {
+  const animatedRegion = useAnimatedRegion(props);
 
   useEffect(() => {
-    if (Platform.OS === "android") {
-      if (ref?.current) {
-        ref.current.animateMarkerToCoordinate(
-          { latitude: latitude ?? 0, longitude: longitude ?? 0 },
-          1000
-        );
-      }
-    } else {
-      coordinate
-        .timing({
-          latitude: latitude ?? 0,
-          longitude: longitude ?? 0,
-          duration: 1000,
-          useNativeDriver: false,
-        })
-        .start();
-    }
-  }, [latitude, longitude]);
+    animatedRegion.animate({
+      latitude: props.latitude,
+      longitude: props.longitude,
+      duration: 1000,
+      easing: Easing.linear
+    });
+  }, [props])
 
   return (
-    <MarkerAnimated ref={ref} coordinate={coordinate}>
+    <AnimatedMarker animatedProps={animatedRegion.props}>
       <Text fontSize="2xl">{BEEPER_ICON}</Text>
-    </MarkerAnimated>
+    </AnimatedMarker>
   );
-}
+};

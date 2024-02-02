@@ -62,7 +62,7 @@ type Values = VariablesOf<typeof EditUser>['data'];
 export function EditDetails({ userId }: Props) {
   const { userId: id } = editUserRoute.useParams();
   const toast = useToast();
-  
+
   const { data, loading, error } = useQuery(GetUser, { variables: { id: userId } });
 
   const user = data?.getUser;
@@ -78,6 +78,8 @@ export function EditDetails({ userId }: Props) {
   const validationErrors = useValidationErrors<Values>(editError);
 
   const onSubmit = handleSubmit(async (data) => {
+    delete data.__typename;
+
     const result = await edit({ variables: { id, data } });
 
     if (result.data) {
