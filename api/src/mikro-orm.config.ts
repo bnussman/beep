@@ -1,5 +1,5 @@
 import { LoadStrategy } from "@mikro-orm/core";
-import { defineConfig } from '@mikro-orm/postgresql';
+import { defineConfig } from '@mikro-orm/mysql';
 import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isDevelopment } from "./utils/constants";
 
 export default defineConfig({
