@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
 import { Controller, useForm } from "react-hook-form";
-import { BeeperMarker, BeepersMap } from "./BeepersMap";
+import { BeepersMap } from "./BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
@@ -49,6 +49,7 @@ import {
 } from "native-base";
 import { VariablesOf, graphql } from "gql.tada";
 import { ChooseBeep } from '../ride/PickBeep';
+import { BeeperMarker } from "../../components/Marker";
 
 export const InitialRiderStatus = graphql(`
   query GetInitialRiderStatus {
@@ -481,7 +482,6 @@ export function MainFindBeepScreen() {
               }}
             >
               <BeeperMarker
-                id={beep.beeper.id}
                 latitude={beep.beeper.location?.latitude ?? 0}
                 longitude={beep.beeper.location?.longitude ?? 0}
               />

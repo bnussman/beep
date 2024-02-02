@@ -3,12 +3,9 @@ import { useLocation } from "../../utils/useLocation";
 import { type Region } from "react-native-maps";
 import { useQuery, useSubscription } from "@apollo/client";
 import { useEffect } from "react";
-import { Text } from "native-base";
 import { cache } from "../../utils/Apollo";
-import { BEEPER_ICON } from "../../utils/constants";
 import { graphql } from "gql.tada";
-import { Easing } from "react-native-reanimated"
-import { AnimatedMarker, useAnimatedRegion } from "../../components/Marker";
+import { BeeperMarker } from "../../components/Marker";
 
 const BeepersLocations = graphql(`
   query GetAllBeepersLocation(
@@ -138,26 +135,3 @@ export function BeepersMap() {
 }
 
 
-interface BeeperMakerProps {
-  longitude: number;
-  latitude: number;
-}
-
-export const BeeperMarker = (props: BeeperMakerProps) => {
-  const animatedRegion = useAnimatedRegion(props);
-
-  useEffect(() => {
-    animatedRegion.animate({
-      latitude: props.latitude,
-      longitude: props.longitude,
-      duration: 1000,
-      easing: Easing.linear
-    });
-  }, [props])
-
-  return (
-    <AnimatedMarker animatedProps={animatedRegion.props}>
-      <Text fontSize="2xl">{BEEPER_ICON}</Text>
-    </AnimatedMarker>
-  );
-};
