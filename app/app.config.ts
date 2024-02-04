@@ -5,7 +5,7 @@ const config: ExpoConfig = {
   slug: "Beep",
   scheme: "beep",
   owner: "bnussman",
-  version: "2.9.0",
+  version: "2.11.0",
   githubUrl: "https://github.com/bnussman/Beep",
   primaryColor: "#575A62",
   icon: "./assets/icon.png",
@@ -34,8 +34,6 @@ const config: ExpoConfig = {
     [
       "@sentry/react-native/expo",
       {
-        url: "https://sentry.io/",
-        authToken: "idk",
         project: "app",
         organization: "ian-banks-llc"
       }
@@ -44,7 +42,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.ridebeep.App",
-    buildNumber: "22",
+    buildNumber: "24",
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
         "The Beep App uses your location to pick origins, destinations, and predict ride times",
@@ -60,7 +58,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: "app.ridebeep.App",
-    versionCode: 41,
+    versionCode: 43,
     googleServicesFile: "./google-services.json",
     permissions: [
       "ACCESS_COARSE_LOCATION",

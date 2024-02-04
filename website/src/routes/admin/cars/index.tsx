@@ -13,7 +13,7 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { DeleteCarDialog } from './DeleteCarDialog';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from 'gql.tada';
+import { graphql } from '../../../graphql';
 
 dayjs.extend(relativeTime);
 
@@ -130,7 +130,7 @@ export function Cars() {
                 <Td>
                   <Indicator color={car.color} tooltip={car.color} />
                 </Td>
-                <Td>{dayjs().to(car.created as string)}</Td>
+                <Td>{dayjs().to(car.created)}</Td>
                 <Td onClick={() => onPhotoClick(car.id)}>
                   <Image src={car.photo} borderRadius="lg" maxH="56px" />
                 </Td>

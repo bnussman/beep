@@ -11,7 +11,7 @@ import { Error } from '../../../components/Error';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from 'gql.tada';
+import { graphql } from '../../../graphql';
 
 dayjs.extend(relativeTime);
 
@@ -117,7 +117,7 @@ export function Reports() {
                 <TdUser user={report.reporter} />
                 <TdUser user={report.reported} />
                 <Td>{report.reason}</Td>
-                <Td>{dayjs().to(report.timestamp as string)}</Td>
+                <Td>{dayjs().to(report.timestamp)}</Td>
                 <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
               </Tr>
             ))}

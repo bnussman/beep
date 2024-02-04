@@ -2,14 +2,14 @@ import React from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../components/Pagination';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../components/TdUser';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
-import { graphql } from 'gql.tada';
+import { graphql } from '../../graphql';
 
 dayjs.extend(relativeTime);
 
@@ -83,7 +83,7 @@ export function Feedback() {
               <Tr key={feedback.id}>
                 <TdUser user={feedback.user} />
                 <Td>{feedback.message}</Td>
-                <Td>{dayjs().to(feedback.created as string)}</Td>
+                <Td>{dayjs().to(feedback.created)}</Td>
               </Tr>
             ))}
           </Tbody>

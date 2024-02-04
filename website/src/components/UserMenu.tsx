@@ -34,12 +34,11 @@ export function UserMenu() {
     try {
       await logout();
 
+      localStorage.removeItem('user');
+
       client.resetStore();
 
       navigate({ to: "/" });
-
-      localStorage.removeItem('user');
-
     }
     catch (error) {
       console.error(error);

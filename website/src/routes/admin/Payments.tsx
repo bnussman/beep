@@ -9,7 +9,7 @@ import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
-import { graphql } from 'gql.tada';
+import { graphql } from '../../graphql';
 
 dayjs.extend(relativeTime);
 
@@ -95,8 +95,8 @@ export function Payments() {
                 <Td>{payment.productId}</Td>
                 <Td>${payment.price}</Td>
                 <Td>{payment.store}</Td>
-                <Td>{new Date(payment.created as string).toLocaleString()}</Td>
-                <Td>{new Date(payment.expires as string).toLocaleString()}</Td>
+                <Td>{new Date(payment.created).toLocaleString()}</Td>
+                <Td>{new Date(payment.expires).toLocaleString()}</Td>
               </Tr>
             ))}
           </Tbody>

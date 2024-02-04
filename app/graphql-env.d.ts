@@ -1,3 +1,6 @@
+/* eslint-disable */
+/* prettier-ignore */
+
 /** An IntrospectionQuery representation of your schema.
  *
  * @remarks

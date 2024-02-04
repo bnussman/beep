@@ -2,7 +2,7 @@ import React from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../../components/Pagination';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
@@ -10,7 +10,7 @@ import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Link, Route, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from 'gql.tada';
+import { graphql } from '../../../graphql';
 
 dayjs.extend(relativeTime);
 
@@ -114,7 +114,7 @@ export function Ratings() {
                 <TdUser user={rating.rated} />
                 <Td>{rating.message || "N/A"}</Td>
                 <Td>{printStars(rating.stars)}</Td>
-                <Td>{dayjs().to(rating.timestamp as string)}</Td>
+                <Td>{dayjs().to(rating.timestamp)}</Td>
                 <Td>
                   <Link to="/admin/ratings/$ratingId" params={{ ratingId: rating.id }}>
                     <ExternalLinkIcon />

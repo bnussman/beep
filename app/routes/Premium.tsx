@@ -77,13 +77,14 @@ function Package({ p }: { p: PurchasesPackage }) {
       const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
       await Purchases.purchasePackage(item);
       await checkVerificationStatus();
-      refetch();
     } catch (e: any) {
       if (!e.userCancelled) {
         Logger.error(e);
         alert(`Error purchasing package ${e.message}`);
       }
     } finally {
+      // always refetch. The webhook to the server may beat `checkVerificationStatus`, and it might throw.
+      refetch();
       setIsPurchasing(false);
     }
   };

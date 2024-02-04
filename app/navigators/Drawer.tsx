@@ -9,7 +9,7 @@ import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { client } from "../utils/Apollo";
-import { UserData, useIsUserNotBeeping, useUser } from "../utils/useUser";
+import { useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Cars } from "../routes/cars/Cars";
@@ -34,10 +34,8 @@ import {
   Spinner,
   Button,
   Stack,
-  Spacer,
   Badge,
 } from "native-base";
-import { useAutoUpdate } from "../utils/updates";
 import { Premium } from "../routes/Premium";
 
 const Logout = gql`
@@ -85,8 +83,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { colorMode, toggleColorMode } = useColorMode();
   const [logout, { loading }] = useMutation(Logout);
   const [resend, { loading: resendLoading }] = useMutation(Resend);
-
-  useAutoUpdate();
 
   const handleLogout = async () => {
     await logout({
