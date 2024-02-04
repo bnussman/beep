@@ -22,7 +22,7 @@
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "types": [
-      "bun-types" // add Bun global
+      "@types/bun" // add Bun global
     ]
   },
   "compileOnSave": true,
