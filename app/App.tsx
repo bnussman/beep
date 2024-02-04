@@ -16,6 +16,7 @@ import { NATIVE_BASE_THEME } from "./utils/constants";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/Navigation";
+import { useAutoUpdate } from "./utils/updates";
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({
@@ -35,6 +36,8 @@ function Beep() {
       updatePushToken();
     },
   });
+
+  useAutoUpdate();
 
   const user = data?.getUser;
 
