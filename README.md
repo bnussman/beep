@@ -62,6 +62,3 @@ pnpm dev
 | API        | http://localhost:3000/graphql |
 | Website    | http://localhost:5173         |
 | App        | http://localhost:8081         |
-
-## 📈 Stats
-![Alt](https://repobeats.axiom.co/api/embed/1b46a8057ec1f00f48ce7a9fbe9353c7cbe4ff83.svg "Repobeats analytics image")
