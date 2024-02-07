@@ -7,7 +7,7 @@ import { Report } from "../entities/Report";
 import { Beep } from "../entities/Beep";
 import { ForgotPassword } from "../entities/ForgotPassword";
 import { VerifyEmail } from "../entities/VerifyEmail";
-import { TokenEntry } from "../entities/TokenEntry";
+import { Token } from "../entities/Token";
 import { Car } from "../entities/Car";
 import { Feedback } from "../entities/Feedback";
 
@@ -53,7 +53,7 @@ export async function deleteUser(user: User, em: EntityManager): Promise<boolean
   await em.nativeDelete(Beep, { beeper: user });
   await em.nativeDelete(Beep, { rider: user });
 
-  await em.nativeDelete(TokenEntry, { user });
+  await em.nativeDelete(Token, { user });
 
   await em.nativeDelete(User, user);
 
