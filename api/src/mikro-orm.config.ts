@@ -19,4 +19,7 @@ export default defineConfig({
     }
   } : {},
   extensions: [Migrator],
+  migrations: {
+    disableForeignKeys: false,
+  }
 });
