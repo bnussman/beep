@@ -300,11 +300,11 @@
           "mappedType": "string"
         }
       },
-      "name": "token_entry",
+      "name": "token",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "token_entry_pkey",
+          "keyName": "token_pkey",
           "columnNames": [
             "id"
           ],
@@ -316,12 +316,12 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "token_entry_user_id_foreign": {
-          "constraintName": "token_entry_user_id_foreign",
+        "token_user_id_foreign": {
+          "constraintName": "token_user_id_foreign",
           "columnNames": [
             "user_id"
           ],
-          "localTableName": "public.token_entry",
+          "localTableName": "public.token",
           "referencedColumnNames": [
             "id"
           ],

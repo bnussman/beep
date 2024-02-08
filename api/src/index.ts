@@ -9,7 +9,7 @@ import * as Sentry from "./utils/sentry";
 import * as RealSentry from "@sentry/node";
 import { json } from 'body-parser';
 import { MikroORM } from "@mikro-orm/core";
-import { TokenEntry } from "./entities/TokenEntry";
+import { Token } from "./entities/Token";
 import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
@@ -106,7 +106,7 @@ async function start() {
 
   useServer({
     schema,
-    onConnect: (ctx: Context<{ token?: string }, { token?: TokenEntry }>) => onConnect(ctx, orm),
+    onConnect: (ctx: Context<{ token?: string }, { token?: Token }>) => onConnect(ctx, orm),
     context: (ctx) => ({
        user: ctx.extra.token?.user,
        token: ctx.extra.token,
