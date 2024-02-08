@@ -21,9 +21,9 @@ importers:
       '@apollo/server':
         specifier: ^4.10.0
         version: 4.10.0(graphql@16.8.1)
-      '@banksnussman/graphql-fields-to-relations':
-        specifier: ^2.0.0
-        version: 2.0.0
+      '@bnussman/graphql-fields-to-relations':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@mikro-orm/core':
         specifier: 6.0.7
         version: 6.0.7
@@ -3137,8 +3137,8 @@ packages:
       to-fast-properties: 2.0.0
     dev: false
 
-  /@banksnussman/graphql-fields-to-relations@2.0.0:
-    resolution: {integrity: sha512-tNhm7byGNIEsTGd+/zPClUEMzOVo1CSURWPHuYafTCZg/CGO49fG7XRjFl5OkhHE6T6LZGszn6vc4rwFyVfoVg==}
+  /@bnussman/graphql-fields-to-relations@2.1.0:
+    resolution: {integrity: sha512-T3gxiq0VucTW74/ZOUAOiu2RS8siHF5VZpmKqUucmFS2/jyaHdNBTHEB28FP44bpi/kgIbRXvT2m3v67mHpvhw==}
     dependencies:
       graphql: 16.8.1
     dev: false

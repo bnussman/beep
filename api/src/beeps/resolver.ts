@@ -5,7 +5,7 @@ import { Paginated, PaginationArgs } from '../utils/pagination';
 import { User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
-import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
+import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
 import { PushNotification, sendNotifications } from '../utils/notifications';
 
 @ObjectType()
@@ -16,7 +16,9 @@ export class BeepResolver {
 
   @Query(() => BeepsResponse)
   @Authorized('self')
-  public async getBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<BeepsResponse> {
+  public async getBeeps(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<BeepsResponse> {
+    const populate = fieldsToRelations<Beep>(info, { root: 'items' });
+
     const [beeps, count] = await ctx.em.findAndCount(
       Beep,
       {},
@@ -24,7 +26,7 @@ export class BeepResolver {
         orderBy: { start: QueryOrder.DESC },
         limit: show,
         offset: offset,
-        populate: ['beeper', 'rider'],
+        populate,
         filters: id ? { in: { id } } : undefined
       }
     );
@@ -60,7 +62,7 @@ export class BeepResolver {
   @Query(() => [Beep])
   @Authorized("self")
   public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<Beep[]> {
-    const populate = fieldsToRelations(info) as Array<keyof Beep>;
+    const populate = fieldsToRelations<Beep>(info);
 
     return await ctx.em.find(
       Beep,
