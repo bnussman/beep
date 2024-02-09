@@ -13,7 +13,7 @@ import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { useUser } from "../../utils/useUser";
-import { throttle } from "../../utils/throttle";
+import { useThrottle } from "../../utils/throttle";
 import { Status } from "../../utils/types";
 import { Avatar } from "../../components/Avatar";
 import { Rates } from "./Rates";
@@ -221,16 +221,18 @@ export function MainFindBeepScreen() {
     }
   };
 
-  const updateETA = throttle(25000, async (lat: number, long: number) => {
+  const updateETA = async () => {
     const location = await getLocation();
 
-    getETA({
-      variables: {
-        start: `${lat},${long}`,
-        end: `${location.coords.latitude},${location.coords.longitude}`,
-      },
-    });
-  });
+    if (beep?.beeper.location) {
+      getETA({
+        variables: {
+          start: `${beep.beeper.location.longitude},${beep.beeper.location.latitude}`,
+          end: `${location.coords.longitude},${location.coords.latitude}`,
+        },
+      });
+    }
+  };
 
   useEffect(() => {
     SplashScreen.hideAsync();
@@ -245,7 +247,7 @@ export function MainFindBeepScreen() {
   useEffect(() => {
     // If no ETA has been gotten, try to get it
     if (beep?.beeper.location && beep?.status === Status.ON_THE_WAY) {
-      updateETA(beep.beeper.location.latitude, beep.beeper.location.longitude);
+      updateETA();
     }
 
     // Run some code when a beep completes

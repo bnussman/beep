@@ -3703,7 +3703,7 @@ export type introspection = {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "TokenEntry",
+                "name": "Token",
                 "ofType": null
               }
             },
@@ -3714,7 +3714,7 @@ export type introspection = {
       },
       {
         "kind": "OBJECT",
-        "name": "TokenEntry",
+        "name": "Token",
         "fields": [
           {
             "name": "id",
