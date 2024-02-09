@@ -13,7 +13,6 @@ import { Linking, AppState, AppStateStatus } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { useUser } from "../../utils/useUser";
-import { useThrottle } from "../../utils/throttle";
 import { Status } from "../../utils/types";
 import { Avatar } from "../../components/Avatar";
 import { Rates } from "./Rates";
