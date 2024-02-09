@@ -1,6 +1,6 @@
 import { GOOGLE_API_KEYS, OSRM_SECRET } from '../utils/constants';
 import { Arg, Field, ObjectType, Query, Resolver } from "type-graphql";
-import * as Sentry from '@sentry/node';
+// import * as Sentry from '@sentry/node';
 
 @ObjectType()
 class Suggestion {
@@ -37,7 +37,7 @@ export class DirectionsResolver {
     const eta = data?.routes?.[0]?.duration as number | undefined;
 
     if (!eta) {
-      Sentry.captureMessage("ETA from https://osrm.ridebeep.app was undefined");
+      // Sentry.captureMessage("ETA from https://osrm.ridebeep.app was undefined");
       throw new Error("ETA Unavailable");
     }
 
