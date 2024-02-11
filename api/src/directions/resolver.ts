@@ -1,23 +1,11 @@
-import { GOOGLE_API_KEYS, OSRM_SECRET } from '../utils/constants';
-import { Arg, Field, ObjectType, Query, Resolver } from "type-graphql";
-// import * as Sentry from '@sentry/node';
-
-@ObjectType()
-class Suggestion {
-  @Field()
-  public title!: string;
-}
-
-const keys: string[] = JSON.parse(GOOGLE_API_KEYS || '[]');
-
-function getRandom<T>(data: T[]): T {
-  return data[Math.floor(Math.random() * data.length)];
-}
+import { OSRM_SECRET } from '../utils/constants';
+import { Arg, Authorized, Query, Resolver } from "type-graphql";
 
 @Resolver()
 export class DirectionsResolver {
 
   @Query(() => String)
+  @Authorized()
   public async getETA(@Arg('start') start: string, @Arg('end') end: string): Promise<string> {
     const username = "Admin";
     const password = OSRM_SECRET;
@@ -44,21 +32,5 @@ export class DirectionsResolver {
     const etaMinutes = Math.round(eta / 60);
 
     return `${etaMinutes} min`;
-  }
-
-  @Query(() => [Suggestion])
-  public async getLocationSuggestions(@Arg('location') location: string, @Arg('sessiontoken') sessiontoken: string): Promise<Suggestion[]> {
-    return [];
-    const result = await fetch(encodeURI(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${location}&key=${getRandom(keys)}&sessiontoken=${sessiontoken}`));
-
-    const data = await result.json();
-
-    const output: Suggestion[] = [];
-
-    for (const prediction of data.predictions) {
-      output.push({ title: prediction.description });
-    }
-
-    return output;
   }
 }
