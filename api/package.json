@@ -7,13 +7,14 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "node build/index.js",
-    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"node --watch build/index.js\"",
+    "start": "node build/src/index.js",
+    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"node --watch build/src/index.js\"",
     "db:create": "mikro-orm schema:create --run",
     "db:update": "mikro-orm schema:update --run",
     "db:drop": "mikro-orm schema:drop --run",
     "db:migrate": "mikro-orm migration:up",
-    "db:migration:create": "mikro-orm migration:create"
+    "db:migration:create": "mikro-orm migration:create",
+    "studio": "drizzle-kit studio"
   },
   "mikro-orm": {
     "useTsNode": true,
@@ -36,6 +37,7 @@
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
+    "drizzle-orm": "^0.29.3",
     "express": "^4.18.2",
     "graphql": "^16.8.1",
     "graphql-redis-subscriptions": "^2.6.0",
@@ -45,6 +47,7 @@
     "ioredis": "^5.3.2",
     "js-sha256": "^0.11.0",
     "nodemailer": "^6.9.9",
+    "postgres": "^3.4.3",
     "reflect-metadata": "^0.2.1",
     "type-graphql": "2.0.0-beta.3",
     "uuid": "^9.0.1",
@@ -63,6 +66,7 @@
     "@types/uuid": "^9.0.8",
     "@types/ws": "^8.5.10",
     "concurrently": "^8.2.2",
+    "drizzle-kit": "^0.20.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },

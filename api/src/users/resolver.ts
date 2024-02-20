@@ -16,6 +16,9 @@ import { VerifyEmail } from '../entities/VerifyEmail';
 import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
 import { S3_BUCKET_URL } from '../utils/constants';
+import { db } from '../index';
+import { user } from '../../drizzle/schema';
+import { eq } from 'drizzle-orm';
 
 @ObjectType()
 class UsersPerDomain {
@@ -60,6 +63,10 @@ export class UserResolver {
   @Authorized('No Verification')
   public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
     const populate = fieldsToRelations<User>(info);
+
+    const userFromDizzle = await db.query.user.findFirst({ where: eq(user.id, id ?? ctx.user.id) });
+
+    console.log(userFromDizzle?.location?.latitude)
 
     return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
   }
