@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { QueryHookOptions, useQuery } from "@apollo/client";
 import { graphql, ResultOf } from "gql.tada";
 
 export type User = ResultOf<typeof UserData>['getUser'];
@@ -49,12 +49,15 @@ export const UserSubscription = graphql(`
   }
 `);
 
-export function useUser() {
-  const { data, ...rest } = useQuery(UserData, {
-    fetchPolicy: "cache-only",
+export function useUser(options?: QueryHookOptions) {
+  const query = useQuery(UserData, {
+    nextFetchPolicy: "cache-only",
+    ...options,
   });
 
-  return { user: data?.getUser, ...rest };
+  const user = query.data?.getUser;
+
+  return { user, ...query };
 }
 
 export function useIsSignedIn() {
