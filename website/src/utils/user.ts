@@ -52,7 +52,7 @@ export const UserSubscription = graphql(`
 `);
 
 export function useUser() {
-  const { data } = useQuery(UserQuery, { fetchPolicy: "cache-only" });
-  const user = data?.getUser;
-  return { user };
+  const query = useQuery(UserQuery, { nextFetchPolicy: "cache-only" });
+  const user = query.data?.getUser;
+  return { user, ...query };
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApolloProvider, useQuery, useSubscription } from '@apollo/client';
+import { ApolloProvider, useSubscription } from '@apollo/client';
 import { cache, client } from './utils/Apollo';
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
@@ -49,14 +49,12 @@ import { paymentsTableRoute } from './components/PaymentsTable';
 import { ResultOf } from 'gql.tada';
 import { deleteAccountRoute } from './routes/DeleteAccount';
 import { downloadRoute } from './routes/Download';
-import { UserQuery, UserSubscription } from './utils/user';
+import { UserQuery, UserSubscription, useUser } from './utils/user';
 
 export type User = ResultOf<typeof UserQuery>['getUser'];
 
 function Beep() {
-  const { data, loading } = useQuery(UserQuery);
-
-  const user = data?.getUser;
+  const { user, loading } = useUser();
 
   useSubscription(UserSubscription, {
     onData({ data }) {
