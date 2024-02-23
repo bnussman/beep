@@ -4,11 +4,11 @@ import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
 import { cache, client } from "./utils/Apollo";
-import { ApolloProvider, useQuery, useSubscription } from "@apollo/client";
+import { ApolloProvider, useSubscription } from "@apollo/client";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import { colorModeManager } from "./utils/theme";
 import { updatePushToken } from "./utils/Notifications";
-import { UserData, UserSubscription } from "./utils/useUser";
+import { UserData, UserSubscription, useUser } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
@@ -30,7 +30,7 @@ setupPurchase();
 
 function Beep() {
   const { colorMode } = useColorMode();
-  const { data, loading } = useQuery(UserData, {
+  const { data, loading } = useUser({
     errorPolicy: "none",
     onCompleted: () => {
       updatePushToken();

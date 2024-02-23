@@ -1,5 +1,6 @@
 import { LoadStrategy } from "@mikro-orm/core";
 import { defineConfig } from '@mikro-orm/postgresql';
+import { Migrator } from '@mikro-orm/migrations';
 import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isDevelopment } from "./utils/constants";
 
 export default defineConfig({
@@ -17,6 +18,7 @@ export default defineConfig({
       }
     }
   } : {},
+  extensions: [Migrator],
   migrations: {
     disableForeignKeys: false,
   }

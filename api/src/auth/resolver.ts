@@ -5,7 +5,7 @@ import { PasswordType, User } from '../entities/User';
 import { ForgotPassword } from '../entities/ForgotPassword';
 import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
 import { LoginInput, ResetPasswordInput, SignUpInput } from './args';
-import { TokenEntry } from '../entities/TokenEntry';
+import { Token } from '../entities/Token';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { FileUpload } from 'graphql-upload-minimal';
@@ -17,8 +17,8 @@ class Auth {
   @Field()
   public user!: User;
 
-  @Field(() => TokenEntry)
-  public tokens!: TokenEntry;
+  @Field(() => Token)
+  public tokens!: Token;
 }
 
 @Resolver()
@@ -45,7 +45,7 @@ export class AuthResolver {
       throw new Error("Password is incorrect.");
     }
 
-    const tokens = new TokenEntry(user);
+    const tokens = new Token(user);
 
     if (pushToken) {
       user.pushToken = pushToken;
@@ -100,7 +100,7 @@ export class AuthResolver {
       });
     }
 
-    const tokens = new TokenEntry(user);
+    const tokens = new Token(user);
 
     // How do I make this not so ugly @Mikro-ORM
     try {
@@ -188,7 +188,7 @@ export class AuthResolver {
     entry.user.password = await bunPassword.hash(input.password, "bcrypt");
     entry.user.passwordType = PasswordType.BCRYPT;
 
-    await ctx.em.nativeDelete(TokenEntry, { user: entry.user });
+    await ctx.em.nativeDelete(Token, { user: entry.user });
 
     ctx.em.remove(entry);
 

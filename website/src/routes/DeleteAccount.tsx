@@ -1,13 +1,14 @@
 import React from "react";
-import { Link as RouterLink, Route, useNavigate } from "@tanstack/react-router";
-import { GetUserData, rootRoute } from "../App";
+import { Link as RouterLink, createRoute, useNavigate } from "@tanstack/react-router";
+import { rootRoute } from "../App";
 import { useMutation, useQuery } from "@apollo/client";
 import { Link, Button, Text, Stack, Heading, Alert, AlertIcon, useDisclosure, Box, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, AlertDialogFooter, useToast } from "@chakra-ui/react";
 import { graphql } from 'gql.tada';
 import { Error } from "../components/Error";
 import { client } from "../utils/Apollo";
+import { UserQuery } from "../utils/user";
 
-export const deleteAccountRoute = new Route({
+export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/account/delete',
   component: DeleteAccount,
@@ -20,7 +21,7 @@ const DeleteAccountMutation = graphql(`
 `);
 
 function DeleteAccount() {
-  const { data } = useQuery(GetUserData);
+  const { data } = useQuery(UserQuery);
   const [deleteAccount, { loading, error }] = useMutation(DeleteAccountMutation);
   const cancelRef = React.useRef(null);
   const toast = useToast();
@@ -77,7 +78,7 @@ function DeleteAccount() {
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme='red' ml={3} isLoading={loading}>
+            <Button colorScheme='red' ml={3} isLoading={loading} onClick={onDelete}>
               Delete Account
             </Button>
           </AlertDialogFooter>

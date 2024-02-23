@@ -1,4 +1,4 @@
-import fieldsToRelations from '@banksnussman/graphql-fields-to-relations';
+import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Context } from '../utils/context';
 import { RatingInput } from './args';
@@ -85,7 +85,7 @@ export class RatingResolver {
   @Query(() => Rating)
   @Authorized(UserRole.ADMIN)
   public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
-    return await ctx.em.findOneOrFail(Rating, id, { populate: fieldsToRelations(info) as Array<keyof Rating> });
+    return await ctx.em.findOneOrFail(Rating, id, { populate: fieldsToRelations<Rating>(info) });
   }
 
   @Mutation(() => Boolean)
