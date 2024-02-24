@@ -104,13 +104,13 @@ export function Beeps() {
     return <Error error={error} />;
   }
 
-  const beeps = data?.getBeeps.items ?? previousData?.getBeeps.items;
+  const beepData = data?.getBeeps ?? previousData?.getBeeps;
 
   return (
     <Box>
       <Heading>Beeps</Heading>
       <Pagination
-        resultCount={data?.getBeeps.count}
+        resultCount={beepData?.count ?? 0}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -131,7 +131,7 @@ export function Beeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {beeps?.map((beep) => (
+            {beepData?.items.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />
                 <TdUser user={beep.rider} />
@@ -154,7 +154,7 @@ export function Beeps() {
       </Box>
       {loading && <Loading />}
       <Pagination
-        resultCount={data?.getBeeps.count}
+        resultCount={beepData?.count ?? 0}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
