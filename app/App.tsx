@@ -17,6 +17,7 @@ import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/Navigation";
 import { useAutoUpdate } from "./utils/updates";
+import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({
@@ -73,19 +74,21 @@ function Beep() {
 function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NativeBaseProvider
-        theme={NATIVE_BASE_THEME}
-        colorModeManager={colorModeManager}
-        config={{
-          dependencies: {
-            "linear-gradient": require("expo-linear-gradient").LinearGradient,
-          },
-        }}
-      >
-        <ApolloProvider client={client}>
-          <Beep />
-        </ApolloProvider>
-      </NativeBaseProvider>
+      <TamaguiProvider config={tamaguiConfig}>
+        <NativeBaseProvider
+          theme={NATIVE_BASE_THEME}
+          colorModeManager={colorModeManager}
+          config={{
+            dependencies: {
+              "linear-gradient": require("expo-linear-gradient").LinearGradient,
+            },
+          }}
+        >
+          <ApolloProvider client={client}>
+            <Beep />
+          </ApolloProvider>
+        </NativeBaseProvider>
+      </TamaguiProvider>
     </GestureHandlerRootView>
   );
 }

@@ -3,7 +3,7 @@ import { createTamagui } from 'tamagui';
 
 export * from 'tamagui';
 
-const tamaguiConfig = createTamagui(config);
+export const tamaguiConfig = createTamagui(config);
 
 type Conf = typeof tamaguiConfig;
 
