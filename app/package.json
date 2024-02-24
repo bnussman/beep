@@ -11,8 +11,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@beep/ui": "workspace:*",
     "@apollo/client": "^3.9.5",
+    "@beep/ui": "workspace:*",
     "@expo/vector-icons": "^14.0.0",
     "@gorhom/bottom-sheet": "^4.6.1",
     "@react-native-async-storage/async-storage": "~1.21.0",
