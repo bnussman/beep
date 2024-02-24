@@ -1,0 +1,11 @@
+{
+  "name": "ui",
+  "version": "0.0.0",
+  "description": "A UI component library for the Beep App based on Tamagui",
+  "main": "src/index.ts",
+  "author": "Banks Nussman",
+  "dependencies": {
+    "@tamagui/config": "^1.90.6",
+    "tamagui": "^1.90.6"
+  }
+}
