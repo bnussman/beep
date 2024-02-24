@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
 import { RefreshControl } from "react-native";
@@ -8,6 +8,9 @@ import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { Card } from "../../components/Card";
 import { useLocation } from "../../utils/useLocation";
+import { client } from "../../utils/Apollo";
+import { InitialRiderStatus } from "./FindBeep";
+import { ResultOf, VariablesOf, graphql } from "gql.tada";
 import {
   Text,
   Spinner,
@@ -20,9 +23,6 @@ import {
   useColorMode,
   Stack,
 } from "native-base";
-import { client } from "../../utils/Apollo";
-import { InitialRiderStatus } from "./FindBeep";
-import { ResultOf, VariablesOf, graphql } from "gql.tada";
 
 const GetBeepers = graphql(`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -120,9 +120,19 @@ export function PickBeepScreen({ route }: Props) {
     }
   );
 
-  const [getBeep] = useMutation(ChooseBeep);
 
-  const chooseBeep = async ( beeperId: string,) => {
+  const [getBeep, { loading: isPickBeeperLoading }] = useMutation(ChooseBeep);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => isPickBeeperLoading ? <Spinner /> : null
+    });
+  }, [isPickBeeperLoading]);
+
+  const chooseBeep = async (beeperId: string) => {
+    if (isPickBeeperLoading) {
+      return;
+    }
     try {
       const { data } = await getBeep({
         variables: {
