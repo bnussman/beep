@@ -2,6 +2,7 @@ import { config } from '@tamagui/config/v3'
 import { createTamagui } from 'tamagui';
 
 export * from 'tamagui';
+export { Text } from './Text';
 
 export const tamaguiConfig = createTamagui(config);
 

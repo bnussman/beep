@@ -22,7 +22,7 @@ import {
   XStack,
   Spinner,
   Label,
-  SizableText
+  Text
 } from "@beep/ui";
 
 const Login = graphql(`
@@ -116,55 +116,60 @@ export function LoginScreen() {
         <Heading size="$10" fontWeight="bold">
           Ride Beep App 🚕
         </Heading>
-        <Label htmlFor="username" fontWeight="bold">Username or Email</Label>
-        <Controller
-          name="username"
-          rules={{ required: "Username or Email is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <Input
-              id="username"
-              autoCapitalize="none"
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value}
-              ref={ref}
-              returnKeyLabel="next"
-              returnKeyType="next"
-              onSubmitEditing={() => setFocus("password")}
-              textContentType="username"
-            />
-          )}
-        />
-        <SizableText color="red">
-          {errors.username?.message}
-          {validationErrors?.username?.[0]}
-        </SizableText>
-        <Label htmlFor="password" fontWeight="bold">Password</Label>
-        <Controller
-          name="password"
-          rules={{ required: "Password is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <PasswordInput
-              autoCapitalize="none"
-              onBlur={onBlur}
-              onChangeText={(val: string) => onChange(val)}
-              value={value}
-              inputRef={ref}
-              returnKeyLabel="login"
-              returnKeyType="go"
-              onSubmitEditing={onLogin}
-              textContentType="password"
-            />
-          )}
-        />
-        <SizableText color="red">
-          {errors.password?.message}
-          {validationErrors?.password?.[0]}
-        </SizableText>
+        <Stack>
+          <Label htmlFor="username" fontWeight="bold">Username or Email</Label>
+          <Controller
+            name="username"
+            rules={{ required: "Username or Email is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                id="username"
+                autoCapitalize="none"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("password")}
+                textContentType="username"
+              />
+            )}
+          />
+          <Text color="red">
+            {errors.username?.message}
+            {validationErrors?.username?.[0]}
+          </Text>
+        </Stack>
+        <Stack>
+          <Label htmlFor="password" fontWeight="bold">Password</Label>
+          <Controller
+            name="password"
+            rules={{ required: "Password is required" }}
+            defaultValue=""
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <PasswordInput
+                id="password"
+                autoCapitalize="none"
+                onBlur={onBlur}
+                onChangeText={(val: string) => onChange(val)}
+                value={value}
+                inputRef={ref}
+                returnKeyLabel="login"
+                returnKeyType="go"
+                onSubmitEditing={onLogin}
+                textContentType="password"
+              />
+            )}
+          />
+          <Text color="red">
+            {errors.password?.message}
+            {validationErrors?.password?.[0]}
+          </Text>
+        </Stack>
         <Button
           iconAfter={isSubmitting ? <Spinner /> : undefined}
           onPress={onLogin}
