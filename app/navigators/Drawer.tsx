@@ -28,9 +28,8 @@ import {
   XStack,
   Spinner,
   Button,
-  Card,
 } from "@beep/ui";
-import { Pressable, useColorScheme } from "react-native";
+import { Pressable, Appearance } from "react-native";
 import { Car, CarTaxiFront, Crown, HelpCircle, LogOut, Star, User } from "@tamagui/lucide-icons";
 import { LinearGradient } from 'tamagui/linear-gradient'
 
@@ -196,7 +195,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
 export const Drawer = createDrawerNavigator({
   screenOptions: () => {
-    const colorScheme = useColorScheme();
+    const colorScheme = Appearance.getColorScheme();
     return {
       headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
