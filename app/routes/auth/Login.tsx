@@ -13,18 +13,17 @@ import { Logger } from "../../utils/Logger";
 import { useValidationErrors } from "../../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
+import { VariablesOf, graphql } from "gql.tada";
 import {
-  Stack,
   Button,
   Input,
   Heading,
-  Spacer,
-  Box,
-  FormControl,
-  WarningOutlineIcon,
-  HStack,
-} from "native-base";
-import { VariablesOf, graphql } from "gql.tada";
+  Stack,
+  XStack,
+  Spinner,
+  Label,
+  SizableText
+} from "@beep/ui";
 
 const Login = graphql(`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -113,105 +112,73 @@ export function LoginScreen() {
       center
       scrollViewProps={{ scrollEnabled: true, bounces: false }}
     >
-      <Stack space={4} w="90%">
-        <Box>
-          <Heading size="2xl" mr={4} fontWeight="extrabold" letterSpacing="xs">
-            Ride Beep App 🚕
-          </Heading>
-        </Box>
-        <Stack space={2}>
-          <FormControl
-            isInvalid={
-              Boolean(errors.username) || Boolean(validationErrors?.username)
-            }
-          >
-            <FormControl.Label>Username or Email</FormControl.Label>
-            <Controller
-              name="username"
-              rules={{ required: "Username or Email is required" }}
-              defaultValue=""
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  autoCapitalize="none"
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("password")}
-                  textContentType="username"
-                  size="lg"
-                />
-              )}
+      <Stack w="90%" gap="$2">
+        <Heading size="$10" fontWeight="bold">
+          Ride Beep App 🚕
+        </Heading>
+        <Label htmlFor="username">Username or Email</Label>
+        <Controller
+          name="username"
+          rules={{ required: "Username or Email is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="username"
+              autoCapitalize="none"
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("password")}
+              textContentType="username"
             />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-              {errors.username?.message}
-              {validationErrors?.username?.[0]}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <FormControl
-            isInvalid={
-              Boolean(errors.password) || Boolean(validationErrors?.password)
-            }
-          >
-            <FormControl.Label>Password</FormControl.Label>
-            <Controller
-              name="password"
-              rules={{ required: "Password is required" }}
-              defaultValue=""
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <PasswordInput
-                  autoCapitalize="none"
-                  onBlur={onBlur}
-                  onChangeText={(val: string) => onChange(val)}
-                  value={value}
-                  ref={ref}
-                  returnKeyLabel="login"
-                  returnKeyType="go"
-                  onSubmitEditing={onLogin}
-                  textContentType="password"
-                  size="lg"
-                />
-              )}
+          )}
+        />
+        <SizableText>
+          {errors.username?.message}
+          {validationErrors?.username?.[0]}
+        </SizableText>
+        <Label htmlFor="password">Password</Label>
+        <Controller
+          name="password"
+          rules={{ required: "Password is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <PasswordInput
+              autoCapitalize="none"
+              onBlur={onBlur}
+              onChangeText={(val: string) => onChange(val)}
+              value={value}
+              ref={ref}
+              returnKeyLabel="login"
+              returnKeyType="go"
+              onSubmitEditing={onLogin}
+              textContentType="password"
             />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-              {errors.password?.message}
-              {validationErrors?.password?.[0]}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <Button
-            mt={3}
-            isLoading={isSubmitting}
-            onPress={onLogin}
-            _text={{ fontWeight: "extrabold" }}
-          >
-            Login
-          </Button>
-        </Stack>
-        <HStack>
-          <Button
-            variant="link"
-            _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Sign Up")}
-          >
+          )}
+        />
+        <SizableText>
+          {errors.password?.message}
+          {validationErrors?.password?.[0]}
+        </SizableText>
+        <Button
+          icon={isSubmitting ? <Spinner /> : undefined}
+          onPress={onLogin}
+        >
+          Login
+        </Button>
+        <XStack justifyContent="space-between">
+          <Button onPress={() => navigation.navigate("Sign Up")}>
             Sign Up
           </Button>
-          <Spacer />
-          <Button
-            variant="link"
-            _text={{ fontWeight: "extrabold" }}
-            onPress={() => navigation.navigate("Forgot Password")}
-          >
+          <Button onPress={() => navigation.navigate("Forgot Password")}>
             Forgot Password
           </Button>
-        </HStack>
+        </XStack>
       </Stack>
     </Container>
   );
