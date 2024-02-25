@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import PasswordInput from "../../components/PasswordInput";
+import { PasswordInput } from "../../components/PasswordInput";
 import { Alert } from "../../utils/Alert";
 import { isSimulator } from "../../utils/constants";
 import { ApolloError, useMutation } from "@apollo/client";
@@ -116,7 +116,7 @@ export function LoginScreen() {
         <Heading size="$10" fontWeight="bold">
           Ride Beep App 🚕
         </Heading>
-        <Label htmlFor="username">Username or Email</Label>
+        <Label htmlFor="username" fontWeight="bold">Username or Email</Label>
         <Controller
           name="username"
           rules={{ required: "Username or Email is required" }}
@@ -137,11 +137,11 @@ export function LoginScreen() {
             />
           )}
         />
-        <SizableText>
+        <SizableText color="red">
           {errors.username?.message}
           {validationErrors?.username?.[0]}
         </SizableText>
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password" fontWeight="bold">Password</Label>
         <Controller
           name="password"
           rules={{ required: "Password is required" }}
@@ -153,7 +153,7 @@ export function LoginScreen() {
               onBlur={onBlur}
               onChangeText={(val: string) => onChange(val)}
               value={value}
-              ref={ref}
+              inputRef={ref}
               returnKeyLabel="login"
               returnKeyType="go"
               onSubmitEditing={onLogin}
@@ -161,12 +161,12 @@ export function LoginScreen() {
             />
           )}
         />
-        <SizableText>
+        <SizableText color="red">
           {errors.password?.message}
           {validationErrors?.password?.[0]}
         </SizableText>
         <Button
-          icon={isSubmitting ? <Spinner /> : undefined}
+          iconAfter={isSubmitting ? <Spinner /> : undefined}
           onPress={onLogin}
         >
           Login
