@@ -31,7 +31,7 @@ Sentry.init({
 setupPurchase();
 
 function Beep() {
-  const { colorMode } = useColorMode();
+  const colorScheme = useColorScheme();
   const { data, loading } = useUser({
     errorPolicy: "none",
     onCompleted: () => {
@@ -63,10 +63,10 @@ function Beep() {
 
   return (
     <>
-      <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       <Navigation
         linking={{ enabled: true, prefixes: ["beep://", "https://app.ridebeep.app"] }}
-        theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
+        theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       />
     </>
   );

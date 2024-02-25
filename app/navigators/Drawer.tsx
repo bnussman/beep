@@ -32,6 +32,7 @@ import {
 } from "@beep/ui";
 import { Pressable, useColorScheme } from "react-native";
 import { Car, CarTaxiFront, Crown, HelpCircle, LogOut, Star, User } from "@tamagui/lucide-icons";
+import { LinearGradient } from 'tamagui/linear-gradient'
 
 const Logout = gql`
   mutation Logout {
@@ -154,13 +155,20 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                       props.navigation.navigate(name);
                     }}
                   >
-                    <XStack gap="$7" alignItems="center">
+                    <XStack gap="$4" alignItems="center">
                       <Icon />
                       <Text>{name}</Text>
                       {name === "Premium" && (
-                        <Card borderRadius="$4" backgroundColor="$yellow8" px="$2">
-                          <Text>New</Text>
-                        </Card>
+                        <LinearGradient
+                          borderRadius="$4"
+                          backgroundColor="$yellow9"
+                          px="$2"
+                          colors={['$pink10', '$yellow10']}
+                          start={[0, 1]}
+                          end={[1, 0]}
+                        >
+                          <Text fontSize="$2" fontWeight="bold" color="white">New</Text>
+                        </LinearGradient>
                       )}
                     </XStack>
                   </Stack>
@@ -168,7 +176,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               );
             })}
             <Pressable onPress={handleLogout}>
-              <XStack px="$5" py="$3" gap="$7" alignItems="center">
+              <XStack px="$5" py="$3" gap="$4" alignItems="center">
                 {loading ? (
                   <Spinner />
                 ) : (

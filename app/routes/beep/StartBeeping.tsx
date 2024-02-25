@@ -7,7 +7,7 @@ import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid, isMobile } from "../../utils/constants";
-import { ApolloError, gql, useMutation, useQuery, useSubscription } from "@apollo/client";
+import { ApolloError, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { cache, client } from "../../utils/Apollo";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
