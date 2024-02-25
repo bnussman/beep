@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import LocationInput from "../../components/LocationInput";
 import * as SplashScreen from "expo-splash-screen";
+import { LocationInput } from "../../components/LocationInput";
 import { Controller, useForm } from "react-hook-form";
 import { BeepersMap } from "./BeepersMap";
 import { useLocation } from "../../utils/useLocation";
@@ -8,15 +8,13 @@ import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
-import { Ionicons } from "@expo/vector-icons";
-import { Linking, AppState, AppStateStatus } from "react-native";
+import { Linking, AppState, AppStateStatus, Pressable } from "react-native";
 import { cache, client } from "../../utils/Apollo";
 import { Container } from "../../components/Container";
 import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";
 import { Avatar } from "../../components/Avatar";
 import { Rates } from "./Rates";
-import { Card } from "../../components/Card";
 import { PlaceInQueue } from "./PlaceInQueue";
 import { GetBeepHistory } from "../Beeps";
 import {
@@ -30,25 +28,11 @@ import {
   useQuery,
   useSubscription,
 } from "@apollo/client";
-import {
-  Button,
-  Text,
-  Input,
-  Heading,
-  Stack,
-  FormControl,
-  HStack,
-  Center,
-  Icon,
-  Spacer,
-  Spinner,
-  Pressable,
-  WarningOutlineIcon,
-  Image,
-} from "native-base";
 import { VariablesOf, graphql } from "gql.tada";
 import { ChooseBeep } from '../ride/PickBeep';
 import { BeeperMarker } from "../../components/Marker";
+import { Card, Label, Image, Input, Text, Button, Heading, XStack, Stack, Spinner } from "@beep/ui";
+import { CreditCard, MessageCircle, PhoneCall, Share } from "@tamagui/lucide-icons";
 
 export const InitialRiderStatus = graphql(`
   query GetInitialRiderStatus {
@@ -279,7 +263,7 @@ export function MainFindBeepScreen() {
   if (user?.isBeeping) {
     return (
       <Container justifyContent="center" alignItems="center">
-        <Heading fontWeight="extrabold">You are beeping!</Heading>
+        <Heading fontWeight="bold">You are beeping!</Heading>
         <Text>You can&apos;t find a ride when you are beeping</Text>
       </Container>
     );
@@ -287,94 +271,74 @@ export function MainFindBeepScreen() {
 
   if (!beep) {
     return (
-      <Container keyboard alignItems="center" pt={2} h="100%" px={4}>
-        <Stack space={4} w="100%">
-          <FormControl isInvalid={Boolean(errors.groupSize)}>
-            <FormControl.Label>Group Size</FormControl.Label>
-            <Controller
-              name="groupSize"
-              rules={{ required: "Group size is required" }}
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  keyboardType="numeric"
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val === "" ? "" : Number(val))}
-                  value={value === undefined ? "" : String(value)}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("origin")}
-                  size="lg"
-                />
-              )}
-            />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-              {errors.groupSize?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={Boolean(errors.origin)}>
-            <FormControl.Label>Pick Up Location</FormControl.Label>
-            <Controller
-              name="origin"
-              rules={{ required: "Pick up location is required" }}
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <LocationInput
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("destination")}
-                  textContentType="location"
-                  size="lg"
-                />
-              )}
-            />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-              {errors.origin?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <FormControl
-            isInvalid={
-              Boolean(errors.destination)
-            }
-          >
-            <FormControl.Label>Destination Location</FormControl.Label>
-            <Controller
-              name="destination"
-              rules={{ required: "Destination location is required" }}
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value}
-                  ref={ref}
-                  returnKeyType="go"
-                  onSubmitEditing={() => findBeep()}
-                  textContentType="location"
-                  size="lg"
-                />
-              )}
-            />
-            <FormControl.ErrorMessage
-              leftIcon={<WarningOutlineIcon size="xs" />}
-            >
-              {errors.destination?.message}
-            </FormControl.ErrorMessage>
-          </FormControl>
-          <Button
-            _text={{ fontWeight: "extrabold" }}
-            onPress={() => findBeep()}
-            size="lg"
-          >
+      <Container keyboard alignItems="center" px="$4">
+        <Stack w="100%">
+          <Label htmlFor="groupSize" fontWeight="bold">Group Size</Label>
+          <Controller
+            name="groupSize"
+            rules={{ required: "Group size is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                id="groupSize"
+                keyboardType="numeric"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val === "" ? "" : Number(val))}
+                value={value === undefined ? "" : String(value)}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("origin")}
+              />
+            )}
+          />
+          <Text color="red">
+            {errors.groupSize?.message}
+          </Text>
+          <Label htmlFor="origin" fontWeight="bold">Pick Up Location</Label>
+          <Controller
+            name="origin"
+            rules={{ required: "Pick up location is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <LocationInput
+                id="origin"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                inputRef={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("destination")}
+                textContentType="location"
+              />
+            )}
+          />
+          <Text color="red">
+            {errors.origin?.message}
+          </Text>
+          <Label htmlFor="destination" fontWeight="bold">Destination Location</Label>
+          <Controller
+            name="destination"
+            rules={{ required: "Destination location is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                id="destination"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyType="go"
+                onSubmitEditing={() => findBeep()}
+                textContentType="location"
+              />
+            )}
+          />
+          <Text color="red">
+            {errors.destination?.message}
+          </Text>
+          <Button onPress={() => findBeep()} mt="$4">
             Find Beep
           </Button>
           <BeepersMap />
@@ -387,35 +351,25 @@ export function MainFindBeepScreen() {
   if (isAcceptedBeep) {
     return (
       <Container p={2} px={4} alignItems="center">
-        <Stack alignItems="center" space={4} w="100%" h="94%">
-          <Pressable
-            w="100%"
-            onPress={() =>
-              navigate("User", { id: beep.beeper.id, beepId: beep.id })
-            }
-          >
-            <HStack alignItems="center" space={4} w="100%">
+        <Stack alignItems="center" gap="$4" w="100%" h="94%">
+          <Pressable onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id }) }>
+            <XStack alignItems="center" gap="$4" w="100%">
               <Stack flexShrink={1}>
-                <Heading
-                  size="xl"
-                  fontWeight="extrabold"
-                  letterSpacing="sm"
-                  isTruncated
-                >
+                <Heading fontWeight="bold">
                   {beep.beeper.name}
                 </Heading>
-                <Text isTruncated fontSize="xs">
-                  <Text fontWeight="extrabold">Pick Up </Text>
+                <Text>
+                  <Text fontWeight="bold">Pick Up </Text>
                   <Text>{beep.origin}</Text>
                 </Text>
-                <Text isTruncated fontSize="xs">
-                  <Text fontWeight="extrabold">Destination </Text>
+                <Text>
+                  <Text fontWeight="bold">Destination </Text>
                   <Text>{beep.destination}</Text>
                 </Text>
               </Stack>
-              <Spacer />
+              <Stack flexGrow={1} />
               <Avatar size="xl" url={beep.beeper.photo} />
-            </HStack>
+            </XStack>
           </Pressable>
           <Rates
             singles={beep.beeper.singlesRate}
@@ -423,12 +377,7 @@ export function MainFindBeepScreen() {
           />
           {beep.position <= 0 && (
             <Card w="100%">
-              <Heading
-                size="md"
-                letterSpacing="sm"
-                fontWeight="extrabold"
-                mb={1}
-              >
+              <Heading fontWeight="bold" mb={1}>
                 Current Status
               </Heading>
               <Text>{getCurrentStatusMessage()}</Text>
@@ -436,19 +385,19 @@ export function MainFindBeepScreen() {
           )}
           {beep.status === Status.ON_THE_WAY && (
             <Card w="100%">
-              <HStack>
-                <Heading fontWeight="extrabold" size="sm">
+              <XStack>
+                <Heading fontWeight="bold">
                   ETA
                 </Heading>
-                <Spacer />
+                <Stack flexGrow={1} />
                 {etaError ? (
                   <Text>{etaError.message}</Text>
                 ) : eta?.getETA ? (
                   <Text>{eta.getETA}</Text>
                 ) : (
-                  <Spinner size="sm" />
+                  <Spinner />
                 )}
-              </HStack>
+              </XStack>
             </Card>
           )}
           {beep.position > 0 && (
@@ -459,7 +408,7 @@ export function MainFindBeepScreen() {
           )}
           {beep.status === Status.HERE ? (
             <Image
-              borderRadius="xl"
+              borderRadius="$4"
               w="100%"
               h={48}
               flexGrow={1}
@@ -488,15 +437,13 @@ export function MainFindBeepScreen() {
               />
             </Map>
           )}
-          <Stack space={2} w="100%" alignSelf="flex-end">
-            <HStack space={2} w="100%">
+          <Stack gap="$2" w="100%" alignSelf="flex-end">
+            <XStack gap="$2" w="100%">
               <Button
                 flexGrow={1}
+                iconAfter={<PhoneCall />}
                 onPress={() =>
                   Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
-                }
-                endIcon={
-                  <Icon as={Ionicons} name="call" color="white" size="md" />
                 }
               >
                 Call Beeper
@@ -506,18 +453,11 @@ export function MainFindBeepScreen() {
                 onPress={() =>
                   Linking.openURL(`sms:${getRawPhoneNumber(beep.beeper.phone)}`)
                 }
-                endIcon={
-                  <Icon
-                    as={Ionicons}
-                    name="chatbox"
-                    color="white"
-                    size="md"
-                  />
-                }
+                iconAfter={<MessageCircle />}
               >
                 Text Beeper
               </Button>
-            </HStack>
+            </XStack>
 
             {beep.beeper.cashapp ? (
               <Button
@@ -533,14 +473,12 @@ export function MainFindBeepScreen() {
                 Pay Beeper with Cash App
               </Button>
             ) : null}
-            <HStack w="100%" space={2}>
+            <XStack w="100%" gap="$2">
               {beep.beeper.venmo ? (
                 <Button
                   flexGrow={1}
-                  colorScheme="lightBlue"
-                  rightIcon={
-                    <Icon as={Ionicons} size="md" name="card-outline" />
-                  }
+                  theme="blue"
+                  iconAfter={<CreditCard />}
                   onPress={() =>
                     openVenmo(
                       beep.beeper.venmo,
@@ -554,11 +492,9 @@ export function MainFindBeepScreen() {
                   Pay with Venmo
                 </Button>
               ) : null}
-              {beep.beeper.venmo && beep.groupSize > 1 ? (
+              {beep.beeper.venmo && beep.groupSize > 1 && (
                 <Button
-                  rightIcon={
-                    <Icon as={Ionicons} name="share-outline" size="md" />
-                  }
+                  iconAfter={<Share />}
                   onPress={() =>
                     shareVenmoInformation(
                       beep.beeper.venmo,
@@ -570,8 +506,8 @@ export function MainFindBeepScreen() {
                 >
                   Share Venmo
                 </Button>
-              ) : null}
-            </HStack>
+              )}
+            </XStack>
             {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
           </Stack>
         </Stack>
@@ -581,26 +517,26 @@ export function MainFindBeepScreen() {
 
   return (
     <Container alignItems="center" p={2}>
-      <Stack space={4} w="100%" alignItems="center" h="94%">
+      <Stack gap="$4" w="100%" alignItems="center" h="94%">
         <Avatar size={100} url={beep.beeper.photo} />
-        <Center>
+        <Stack justifyContent="center">
           <Text>Waiting on</Text>
-          <Heading letterSpacing="xs" fontWeight="extrabold">
+          <Heading fontWeight="bold">
             {beep.beeper.name}
           </Heading>
           <Text>to accept your request.</Text>
-        </Center>
+        </Stack>
         <Card w="100%">
           <Text>
-            <Text fontWeight="extrabold">Pick Up </Text>
+            <Text fontWeight="bold">Pick Up </Text>
             <Text>{beep.origin}</Text>
           </Text>
           <Text>
-            <Text fontWeight="extrabold">Destination </Text>
+            <Text fontWeight="bold">Destination </Text>
             <Text>{beep.destination}</Text>
           </Text>
           <Text>
-            <Text fontWeight="extrabold">Number of Riders </Text>
+            <Text fontWeight="bold">Number of Riders </Text>
             <Text>{beep.groupSize}</Text>
           </Text>
         </Card>
@@ -609,7 +545,7 @@ export function MainFindBeepScreen() {
           group={beep.beeper.groupRate}
         />
         <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
-        <Spacer />
+        <Stack flexGrow={1} />
         <LeaveButton beepersId={beep.beeper.id} w="100%" size="lg" />
       </Stack>
     </Container>

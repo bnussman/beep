@@ -1,24 +1,25 @@
 import React from "react";
-import { Box, IBoxProps } from "native-base";
+import { Stack, StackProps } from "@beep/ui";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { ScrollViewProps } from "react-native";
+import { ScrollViewProps, useColorScheme } from "react-native";
 
-interface Props {
+interface Props extends StackProps {
   keyboard?: boolean;
   center?: boolean;
   scrollViewProps?: ScrollViewProps;
 }
 
-export const Container = (props: Props & IBoxProps): JSX.Element => {
+export const Container = (props: Props) => {
   const { children, keyboard, center, scrollViewProps, ...rest } = props;
+  const colorScheme = useColorScheme();
 
   const centerProps = center
-    ? { alignItems: "center", justifyContent: "center" }
+    ? { alignItems: "center", justifyContent: "center" } as const
     : {};
 
   if (keyboard) {
     return (
-      <Box h="100%" bg="white" _dark={{ bg: "black" }}>
+      <Stack h="100%" bg="white" $theme-dark={{ bg: "black" }}>
         <KeyboardAwareScrollView
           scrollEnabled={false}
           extraHeight={150}
@@ -29,17 +30,17 @@ export const Container = (props: Props & IBoxProps): JSX.Element => {
           }
           {...scrollViewProps}
         >
-          <Box flex={1} h="100%" {...centerProps} {...rest}>
+          <Stack flex={1} h="100%" {...centerProps} {...rest}>
             {children}
-          </Box>
+          </Stack>
         </KeyboardAwareScrollView>
-      </Box>
+      </Stack>
     );
   }
 
   return (
-    <Box flex={1} bg="white" _dark={{ bg: "black" }} {...rest} {...centerProps}>
+    <Stack flex={1} bg="white" $theme-dark={{ bg: "black" }} {...rest} {...centerProps}>
       {children}
-    </Box>
+    </Stack>
   );
 };

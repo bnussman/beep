@@ -1,6 +1,7 @@
-import { Text } from 'native-base';
 import React, { useCallback, useEffect } from 'react';
+import { Text } from '@beep/ui';
 import { Marker, MapMarkerProps } from 'react-native-maps';
+import { BEEPER_ICON } from '../utils/constants';
 import Animated, {
   Easing,
   EasingFn,
@@ -9,7 +10,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { BEEPER_ICON } from '../utils/constants';
 
 interface LatLng {
   latitude: number;
@@ -100,7 +100,7 @@ export const BeeperMarker = ({ latitude, longitude }: BeeperMakerProps) => {
 
   return (
     <AnimatedMarker animatedProps={animatedRegion.props}>
-      <Text fontSize="2xl">{BEEPER_ICON}</Text>
+      <Text fontSize="$8">{BEEPER_ICON}</Text>
     </AnimatedMarker>
   );
 };

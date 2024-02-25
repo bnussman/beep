@@ -18,6 +18,7 @@ import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/Navigation";
 import { useAutoUpdate } from "./utils/updates";
 import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
+import { useColorScheme } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({
@@ -72,9 +73,10 @@ function Beep() {
 }
 
 function App() {
+  const colorScheme = useColorScheme();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TamaguiProvider config={tamaguiConfig}>
+      <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme  ?? "light"}>
         <NativeBaseProvider
           theme={NATIVE_BASE_THEME}
           colorModeManager={colorModeManager}
