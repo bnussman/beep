@@ -1,12 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
-import { BottomSheet } from "../../components/BottomSheet";
 import { Logger } from "../../utils/Logger";
 import { useUser } from "../../utils/useUser";
-import { isAndroid, isMobile } from "../../utils/constants";
+import { isAndroid } from "../../utils/constants";
 import { ApolloError, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { cache, client } from "../../utils/Apollo";
 import { LocationActivityType } from "expo-location";
@@ -14,8 +13,6 @@ import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
 import { Beep } from "./Beep";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import {
   Alert as NativeAlert,
@@ -23,23 +20,21 @@ import {
   AppStateStatus,
   Pressable,
   RefreshControl,
+  useColorScheme,
+  FlatList,
 } from "react-native";
 import {
   Input,
   Switch,
   Text,
   Heading,
-  FormControl,
   Stack,
-  Box,
-  Spacer,
-  HStack,
-  useColorMode,
-  Flex,
-  FlatList as NativeFlatList,
-  InfoIcon,
+  XStack,
   Button,
-} from "native-base";
+  Label,
+  Circle,
+  Sheet,
+} from "@beep/ui";
 import { Status } from "../../utils/types";
 import { Card } from "../../components/Card";
 import { graphql } from "gql.tada";
@@ -125,7 +120,7 @@ export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
   const { user } = useUser();
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
   const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
@@ -146,7 +141,7 @@ export function StartBeepingScreen() {
       cache.updateQuery({ query: GetInitialQueue, variables: { id: user?.id } }, (prev) => {
         const newQueue = { getQueue: data.data!.getBeeperUpdates };
         if (prev && (prev.getQueue.length < newQueue.getQueue.length)) {
-          bottomSheetRef.current?.expand();
+          setPosition(100);
         }
         return newQueue;
       });
@@ -154,13 +149,13 @@ export function StartBeepingScreen() {
     skip: !user?.isBeeping
   });
 
+  const [position, setPosition] = useState(0);
+
   const [updateBeepSettings] = useMutation(UpdateBeepSettings);
 
   const queue = data?.getQueue;
 
-  const bottomSheetRef = useRef<BottomSheetMethods>(null);
-
-  const snapPoints = useMemo(() => ["15%", "85%", "100%"], []);
+  const snapPoints = useMemo(() => [100, 85, 15], []);
 
   useEffect(() => {
     const listener = AppState.addEventListener("change", handleAppStateChange);
@@ -199,10 +194,12 @@ export function StartBeepingScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Switch
-          mr={3}
-          isChecked={isBeeping}
-          onToggle={() => toggleSwitchWrapper()}
-        />
+          mr="$2"
+          checked={isBeeping}
+          onCheckedChange={() => toggleSwitchWrapper()}
+        >
+          <Switch.Thumb />
+        </Switch>
       ),
     });
   }, [navigation, isBeeping, capacity, singlesRate, groupRate]);
@@ -358,25 +355,23 @@ export function StartBeepingScreen() {
 
   const isRefreshing = Boolean(data) && loading;
 
-  const FlatList = isMobile ? BottomSheetFlatList : NativeFlatList;
-
   if (isBeeping && queue?.length === 0) {
     return (
       <Container center>
-        <Stack space={2} p={4} alignItems="center" mb={12}>
-          <Heading fontWeight="extrabold">Your queue is empty</Heading>
+        <Stack gap="$2" p="$4" alignItems="center" mb="$12">
+          <Heading fontWeight="bold">Your queue is empty</Heading>
           <Text textAlign="center">
             If someone wants you to beep them, it will appear here. If your app
             is closed, you will recieve a push notification.
           </Text>
         </Stack>
         <Card>
-          <Stack alignItems="center" space={2}>
-            <Heading fontWeight="extrabold" fontSize="md">Want more riders?</Heading>
+          <Stack alignItems="center" gap="$2">
+            <Heading fontWeight="bold">Want more riders?</Heading>
             <Text textAlign="center">
               Jump to the top of the beeper list
             </Text>
-            <Button size="lg" _text={{ fontWeight: "extrabold" }} onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
+            <Button size="lg" onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
           </Stack>
         </Card>
       </Container>
@@ -386,91 +381,79 @@ export function StartBeepingScreen() {
   if (!isBeeping || !queue) {
     return (
       <Container keyboard alignItems="center" height="100%">
-        <Stack space={2} w="100%" p={4}>
-          <FormControl>
-            <FormControl.Label>Max Rider Capacity</FormControl.Label>
+        <Stack gap="$2" w="100%" p="$4">
+          <Stack>
+            <Label htmlFor="capacity">Max Rider Capacity</Label>
             <Input
-              size="lg"
+              id="capacity"
               placeholder="Max Capcity"
               keyboardType="numeric"
               value={String(capacity)}
               onChangeText={(value) => setCapacity(value)}
             />
-            <FormControl.HelperText>
+            <Text>
               Maximum number of riders you can safely fit in your car
-            </FormControl.HelperText>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Singles Rate</FormControl.Label>
+            </Text>
+          </Stack>
+          <Stack>
+            <Label htmlFor="singles">Singles Rate</Label>
             <Input
-              size="lg"
+              id="singles"
               placeholder="Singles Rate"
               keyboardType="numeric"
               value={String(singlesRate)}
               onChangeText={(value) => setSinglesRate(value)}
-              InputLeftElement={
-                <Text pl={3} pr={1}>
-                  $
-                </Text>
-              }
             />
-            <FormControl.HelperText>
+            <Text>
               Price for a single person riding alone
-            </FormControl.HelperText>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Group Rate</FormControl.Label>
+            </Text>
+          </Stack>
+          <Stack>
+            <Label htmlFor="groups">Group Rate</Label>
             <Input
-              size="lg"
+              id="groups"
               placeholder="Group Rate"
               keyboardType="numeric"
               value={String(groupRate)}
               onChangeText={(value) => setGroupRate(value)}
-              InputLeftElement={
-                <Text pl={3} pr={1}>
-                  $
-                </Text>
-              }
             />
-            <FormControl.HelperText>
+            <Text>
               Price per person in a group
-            </FormControl.HelperText>
-          </FormControl>
+            </Text>
+          </Stack>
         </Stack>
-        <Spacer />
-        <HStack alignItems="center" mb={10} space={2}>
-          <InfoIcon />
-          <Text fontSize="xs" color="gray.500">
-            Use the toggle in the top right to start beeping
-          </Text>
-        </HStack>
+        <Stack flexGrow={1} />
+        <Text fontSize="$3">
+          Use the toggle in the top right to start beeping
+        </Text>
       </Container>
     );
   }
 
   return (
     <Container alignItems="center">
-      <Flex
+      <Stack
         w="100%"
         height={queue.length > 1 ? "85%" : "100%"}
         p={3}
         pb={queue.length > 1 ? 4 : 16}
       >
         {queue[0] && <Beep beep={queue[0]} />}
-      </Flex>
-      {queue.length > 1 ? (
-        <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
-          <Pressable onPress={() => bottomSheetRef.current?.expand()}>
-            <HStack alignItems="center" mb={2} pt={1} px={4}>
-              <Heading fontWeight="extrabold" size="2xl">
+      </Stack>
+      <Sheet snapPoints={snapPoints} position={position} onPositionChange={setPosition} snapPointsMode="percent" open={queue.length > 1}>
+        <Sheet.Handle />
+        <Sheet.Frame padding="$4">
+          <Pressable onPress={() => setPosition(100)}>
+            <XStack alignItems="center" mb={2} pt={1} px={4}>
+              <Heading fontWeight="bold">
                 Queue
               </Heading>
-              <Spacer />
+              <Stack flexGrow={1} />
               {queue.length > 0 &&
                 queue.some((entry) => entry.status === Status.WAITING) && (
-                  <Box rounded="full" bg="blue.400" w={4} h={4} mr={2} />
+                  <Circle bg="$blue4" size="$4" />
                 )}
-            </HStack>
+            </XStack>
           </Pressable>
           <FlatList
             refreshing={loading && data?.getQueue !== undefined}
@@ -489,8 +472,8 @@ export function StartBeepingScreen() {
               />
             }
           />
-        </BottomSheet>
-      ) : null}
+        </Sheet.Frame>
+      </Sheet>
     </Container>
   );
 }

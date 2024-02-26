@@ -139,9 +139,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             {props.state.routeNames.map((name: string, index: number) => {
               const Icon = getIcon(name);
               return (
-                <Pressable>
+                <Pressable key={name}>
                   <Stack
-                    key={index}
                     px="$5"
                     py="$3"
                     borderRadius="$4"
