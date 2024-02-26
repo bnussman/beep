@@ -338,7 +338,7 @@ export function MainFindBeepScreen() {
           <Text color="red">
             {errors.destination?.message}
           </Text>
-          <Button onPress={() => findBeep()} mt="$4">
+          <Button onPress={() => findBeep()} mt="$4" mb="$4">
             Find Beep
           </Button>
           <BeepersMap />

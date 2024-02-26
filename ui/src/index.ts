@@ -3,6 +3,7 @@ import { createTamagui } from 'tamagui';
 
 export * from 'tamagui';
 export { Text } from './Text';
+export { Select } from './Select';
 
 export const tamaguiConfig = createTamagui(config);
 

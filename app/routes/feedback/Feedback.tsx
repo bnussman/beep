@@ -5,11 +5,11 @@ import { Controller, useForm } from "react-hook-form";
 import {
   Text,
   Button,
-  FormControl,
   Input,
   Stack,
-  WarningOutlineIcon,
-} from "native-base";
+  Label,
+  Spinner,
+} from "@beep/ui";
 import {
   isValidationError,
   useValidationErrors,
@@ -59,8 +59,8 @@ export function Feedback() {
   });
 
   return (
-    <Container p={3} keyboard>
-      <Stack space={2}>
+    <Container p="$3" keyboard>
+      <Stack gap="$2">
         <Card
           pressable
           onPress={() =>
@@ -75,18 +75,15 @@ export function Feedback() {
             rating.
           </Text>
         </Card>
-        <FormControl
-          isInvalid={
-            Boolean(errors.message) || Boolean(validationErrors?.message)
-          }
-        >
-          <FormControl.Label>Feedback</FormControl.Label>
+        <Stack>
+          <Label htmlFor="message" fontWeight="bold">Feedback</Label>
           <Controller
             name="message"
             rules={{ required: "Message is required" }}
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="message"
                 minHeight={170}
                 multiline
                 onBlur={onBlur}
@@ -97,15 +94,14 @@ export function Feedback() {
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text color="$red10">
             {errors.message?.message}
             {validationErrors?.message?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
+          </Text>
+        </Stack>
         <Button
           onPress={onSubmit}
-          isLoading={loading}
-          _text={{ fontWeight: "extrabold" }}
+          iconAfter={loading ? <Spinner /> : undefined}
         >
           Submit
         </Button>

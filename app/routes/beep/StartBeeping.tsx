@@ -193,13 +193,15 @@ export function StartBeepingScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Switch
-          mr="$2"
-          checked={isBeeping}
-          onCheckedChange={() => toggleSwitchWrapper()}
-        >
-          <Switch.Thumb />
-        </Switch>
+        <Stack mr="$2">
+          <Switch
+            checked={isBeeping}
+            native
+            onCheckedChange={() => toggleSwitchWrapper()}
+          >
+            <Switch.Thumb />
+          </Switch>
+        </Stack>
       ),
     });
   }, [navigation, isBeeping, capacity, singlesRate, groupRate]);
@@ -381,9 +383,9 @@ export function StartBeepingScreen() {
   if (!isBeeping || !queue) {
     return (
       <Container keyboard alignItems="center" height="100%">
-        <Stack gap="$2" w="100%" p="$4">
+        <Stack gap="$2" w="100%" px="$4">
           <Stack>
-            <Label htmlFor="capacity">Max Rider Capacity</Label>
+            <Label htmlFor="capacity" fontWeight="bold">Max Rider Capacity</Label>
             <Input
               id="capacity"
               placeholder="Max Capcity"
@@ -396,7 +398,7 @@ export function StartBeepingScreen() {
             </Text>
           </Stack>
           <Stack>
-            <Label htmlFor="singles">Singles Rate</Label>
+            <Label htmlFor="singles" fontWeight="bold">Singles Rate</Label>
             <Input
               id="singles"
               placeholder="Singles Rate"
@@ -409,7 +411,7 @@ export function StartBeepingScreen() {
             </Text>
           </Stack>
           <Stack>
-            <Label htmlFor="groups">Group Rate</Label>
+            <Label htmlFor="groups" fontWeight="bold">Group Rate</Label>
             <Input
               id="groups"
               placeholder="Group Rate"
@@ -423,7 +425,7 @@ export function StartBeepingScreen() {
           </Stack>
         </Stack>
         <Stack flexGrow={1} />
-        <Text fontSize="$3">
+        <Text fontSize="$3" mb="$8">
           Use the toggle in the top right to start beeping
         </Text>
       </Container>
@@ -435,8 +437,8 @@ export function StartBeepingScreen() {
       <Stack
         w="100%"
         height={queue.length > 1 ? "85%" : "100%"}
-        p={3}
-        pb={queue.length > 1 ? 4 : 16}
+        p="$3"
+        pb={queue.length > 1 ? "$4" : "$16"}
       >
         {queue[0] && <Beep beep={queue[0]} />}
       </Stack>
