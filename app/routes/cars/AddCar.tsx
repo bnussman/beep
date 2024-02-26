@@ -21,6 +21,7 @@ import {
   Text,
   Select,
   Spinner,
+  Label,
 } from "@beep/ui";
 import { Pressable } from "react-native";
 import { Plus } from "@tamagui/lucide-icons";
@@ -130,8 +131,9 @@ export function AddCar() {
   });
 
   return (
-    <Container p="$4">
-      <Stack gap="$4">
+    <Container px="$4">
+      <Stack>
+        <Label htmlFor="make" fontWeight="bold">Make</Label>
         <Controller
           name="make"
           rules={{ required: "Make is required" }}
@@ -139,6 +141,7 @@ export function AddCar() {
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
+              id="make"
               value={value}
               onValueChange={onChange}
               items={makes.map((make) => ({ label: make, value: make }))}
@@ -150,6 +153,7 @@ export function AddCar() {
           {errors.make?.message}
           {validationErrors?.make?.[0]}
         </Text>
+        <Label htmlFor="model" fontWeight="bold">Model</Label>
         <Controller
           name="model"
           rules={{ required: "Model is required" }}
@@ -157,6 +161,7 @@ export function AddCar() {
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
+              id="model"
               items={getModels(make).map(model => ({ label: model, value: model }))}
               onValueChange={onChange}
               value={value}
@@ -168,12 +173,14 @@ export function AddCar() {
           {errors.model?.message}
           {validationErrors?.model?.[0]}
         </Text>
+        <Label htmlFor="year" fontWeight="bold">Year</Label>
         <Controller
           name="year"
           rules={{ required: "Year is required" }}
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
+              id="year"
               items={years.map(year => ({ label: year, value: year }))}
               onValueChange={onChange}
               placeholder="Year"
@@ -184,6 +191,7 @@ export function AddCar() {
           {errors.year?.message}
           {validationErrors?.year?.[0]}
         </Text>
+        <Label htmlFor="color" fontWeight="bold">Color</Label>
         <Controller
           name="color"
           rules={{ required: "Color is required" }}
@@ -191,6 +199,7 @@ export function AddCar() {
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
+              id="color"
               items={colors.map(color => ({ label: color, value: color }))}
               onValueChange={onChange}
               value={value}
@@ -202,43 +211,46 @@ export function AddCar() {
           {errors.color?.message}
           {validationErrors?.color?.[0]}
         </Text>
-        <Controller
-          name="photo"
-          rules={{ required: "Photo is required" }}
-          defaultValue=""
-          control={control}
-          render={() => (
-            <Pressable onPress={choosePhoto}>
-              {photo ? (
-                <Image
-                  height="48"
-                  width="100%"
-                  borderRadius="$4"
-                  source={{ uri: photo.uri }}
-                  alt="uploaded car image"
-                />
-              ) : (
-                  <Stack
-                    height={150}
-                    bg="$gray8"
+        <Stack mt="$4">
+          <Controller
+            name="photo"
+            rules={{ required: "Photo is required" }}
+            defaultValue=""
+            control={control}
+            render={() => (
+              <Pressable onPress={choosePhoto}>
+                {photo ? (
+                  <Image
+                    height="$14"
+                    width="100%"
                     borderRadius="$4"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Text>Attach a Photo</Text>
-                    <Plus />
-                  </Stack>
-                )}
-            </Pressable>
-          )}
-        />
-        <Text>
-          {errors.photo?.message}
-          {validationErrors?.photo?.[0]}
-        </Text>
+                    source={{ uri: photo.uri, width: 300, height: 164 }}
+                    alt="uploaded car image"
+                  />
+                ) : (
+                    <Stack
+                      height="$14"
+                      bg="$gray3"
+                      borderRadius="$4"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Text>Attach a Photo</Text>
+                      <Plus />
+                    </Stack>
+                  )}
+              </Pressable>
+            )}
+          />
+          <Text>
+            {errors.photo?.message}
+            {validationErrors?.photo?.[0]}
+          </Text>
+        </Stack>
         <Button
           iconAfter={isSubmitting || loading ? <Spinner /> : undefined}
           onPress={onSubmit}
+          mt="$4"
         >
           Add Car
         </Button>

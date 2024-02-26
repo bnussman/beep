@@ -15,7 +15,6 @@ import {
   Text,
   Stack,
   XStack,
-  Button,
   Card,
   ThemeName,
 } from "@beep/ui";
@@ -234,9 +233,9 @@ export function Cars() {
               </Stack>
               <Stack flexGrow={1} />
               <Image
-                borderRadius="xl"
-                w={24}
-                h={16}
+                borderRadius="$4"
+                w="$12"
+                h="$8"
                 source={{ uri: car.photo }}
                 alt={`car-${car.id}`}
               />
