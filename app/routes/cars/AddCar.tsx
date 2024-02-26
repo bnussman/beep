@@ -141,7 +141,8 @@ export function AddCar() {
             <Select
               value={value}
               onValueChange={onChange}
-              items={makes.map((make) => ({ label: make }))}
+              items={makes.map((make) => ({ label: make, value: make }))}
+              placeholder="Make"
             />
           )}
         />
@@ -156,9 +157,10 @@ export function AddCar() {
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
-              items={getModels(make).map(model => ({ label: model }))}
+              items={getModels(make).map(model => ({ label: model, value: model }))}
               onValueChange={onChange}
               value={value}
+              placeholder="Model"
             />
           )}
         />
@@ -170,10 +172,11 @@ export function AddCar() {
           name="year"
           rules={{ required: "Year is required" }}
           control={control}
-          render={({ field: { onChange } }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
-              items={years.map(year => ({ label: year }))}
+              items={years.map(year => ({ label: year, value: year }))}
               onValueChange={onChange}
+              placeholder="Year"
             />
           )}
         />
@@ -186,10 +189,12 @@ export function AddCar() {
           rules={{ required: "Color is required" }}
           defaultValue=""
           control={control}
-          render={({ field: { onChange } }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
-              items={colors.map(color => ({ label: color }))}
+              items={colors.map(color => ({ label: color, value: color }))}
               onValueChange={onChange}
+              value={value}
+              placeholder="Color"
             />
           )}
         />
@@ -214,7 +219,7 @@ export function AddCar() {
                 />
               ) : (
                   <Stack
-                    height={64}
+                    height={150}
                     bg="$gray8"
                     borderRadius="$4"
                     alignItems="center"

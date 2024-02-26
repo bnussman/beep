@@ -1,17 +1,18 @@
 import { Check, ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import { LinearGradient } from 'tamagui/linear-gradient';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Select as _Select, Adapt, SelectProps, Sheet, YStack } from 'tamagui';
 
-interface Props<T extends { label: string }> extends SelectProps {
+interface Props<T extends { label: string, value: string }> extends SelectProps {
   items: T[];
+  placeholder?: string;
 }
 
-export function Select<T extends { label: string }>({ items, ...props }: Props<T>) {
+export function Select<T extends { label: string, value: string }>({ items, placeholder, ...props }: Props<T>) {
   return (
     <_Select {...props}>
-      <_Select.Trigger width={220} iconAfter={ChevronDown}>
-        <_Select.Value placeholder="Something" />
+      <_Select.Trigger width="100%" iconAfter={ChevronDown}>
+        <_Select.Value placeholder={placeholder} />
       </_Select.Trigger>
 
       <Adapt platform="touch">
@@ -26,6 +27,7 @@ export function Select<T extends { label: string }>({ items, ...props }: Props<T
             stiffness: 250,
           }}
         >
+          <Sheet.Handle />
           <Sheet.Frame>
             <Sheet.ScrollView>
               <Adapt.Contents />
@@ -70,24 +72,20 @@ export function Select<T extends { label: string }>({ items, ...props }: Props<T
           <_Select.Group>
             {/* <_Select.Label>Fruits</_Select.Label> */}
             {/* for longer lists memoizing these is useful */}
-            {useMemo(
-              () =>
-                items.map((item, i) => {
-                  return (
-                    <_Select.Item
-                      index={i}
-                      key={item.label}
-                      value={item.label.toLowerCase()}
-                    >
-                      <_Select.ItemText>{item.label}</_Select.ItemText>
-                      <_Select.ItemIndicator marginLeft="auto">
-                        <Check size={16} />
-                      </_Select.ItemIndicator>
-                    </_Select.Item>
-                  )
-                }),
-              [items]
-            )}
+            {items.map((item, i) => {
+              return (
+                <_Select.Item
+                  index={i}
+                  key={item.label}
+                  value={item.value}
+                >
+                  <_Select.ItemText>{item.label}</_Select.ItemText>
+                  <_Select.ItemIndicator marginLeft="auto">
+                    <Check size={16} />
+                  </_Select.ItemIndicator>
+                </_Select.Item>
+              )
+            })}
           </_Select.Group>
           {/* Native gets an extra icon */}
           {props.native && (
