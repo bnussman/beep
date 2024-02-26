@@ -9,15 +9,16 @@ interface Props<T extends { label: string, value: string }> extends SelectProps 
 }
 
 export function Select<T extends { label: string, value: string }>({ items, placeholder, ...props }: Props<T>) {
+  const native = true;
   return (
-    <_Select {...props}>
+    <_Select native {...props}>
       <_Select.Trigger width="100%" iconAfter={ChevronDown}>
         <_Select.Value placeholder={placeholder} />
       </_Select.Trigger>
 
       <Adapt platform="touch">
         <Sheet
-          native={!!props.native}
+          native={!!native}
           modal
           dismissOnSnapToBottom
           animationConfig={{
@@ -88,7 +89,7 @@ export function Select<T extends { label: string, value: string }>({ items, plac
             })}
           </_Select.Group>
           {/* Native gets an extra icon */}
-          {props.native && (
+          {native && (
             <YStack
               position="absolute"
               right={0}
