@@ -218,6 +218,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="email"
                 onBlur={onBlur}
                 textContentType="emailAddress"
                 onChangeText={(val) => onChange(val)}
