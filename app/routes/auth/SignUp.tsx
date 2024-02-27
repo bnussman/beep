@@ -219,8 +219,8 @@ export function SignUpScreen() {
               Boolean(errors.picture) || Boolean(validationErrors?.picture)
             }
           >
-            <TouchableOpacity onPress={chooseProfilePhoto}>
-              <Avatar url={photo?.uri} size="xl" />
+            <TouchableOpacity onPress={chooseProfilePhoto} aria-label="profile photo">
+              <Avatar url={photo?.uri} size="$10"  />
             </TouchableOpacity>
             <FormControl.ErrorMessage>
               {errors.picture?.message}
