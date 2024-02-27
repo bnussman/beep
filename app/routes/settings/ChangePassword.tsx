@@ -36,7 +36,7 @@ export function ChangePasswordScreen() {
   return (
     <Container keyboard alignItems="center" px="$4">
       <Stack alignSelf="center" w="100%">
-        <Label htmlFor="password1">New Password</Label>
+        <Label htmlFor="password1" fontWeight="bold">New Password</Label>
         <Input
           id="password1"
           secureTextEntry={true}
@@ -46,7 +46,7 @@ export function ChangePasswordScreen() {
           onSubmitEditing={() => confirmPasswordRef.current.focus()}
           returnKeyType="next"
         />
-        <Label htmlFor="password1">Repeat Password</Label>
+        <Label htmlFor="password1" fontWeight="bold">Repeat Password</Label>
         <Input
           id="password2"
           ref={confirmPasswordRef}

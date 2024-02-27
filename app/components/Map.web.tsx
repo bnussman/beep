@@ -1,18 +1,20 @@
-import { Box } from "native-base";
+import { Stack, Text } from "@beep/ui";
 import React from "react";
 
 export function Map() {
   return (
-    <Box
-      bgColor="gray.500"
-      p={4}
-      borderRadius="10px"
+    <Stack
+      backgroundColor="$gray6"
+      p="$4"
+      borderRadius="$4"
       minHeight="200px"
       display="flex"
       alignItems="center"
       justifyContent="center"
     >
-      Map not supported in web
-    </Box>
+      <Text>
+        Map not supported in web
+      </Text>
+    </Stack>
   );
 }

@@ -149,7 +149,7 @@ export function AddCar() {
             />
           )}
         />
-        <Text>
+        <Text color="red">
           {errors.make?.message}
           {validationErrors?.make?.[0]}
         </Text>
@@ -169,7 +169,7 @@ export function AddCar() {
             />
           )}
         />
-        <Text>
+        <Text color="red">
           {errors.model?.message}
           {validationErrors?.model?.[0]}
         </Text>
@@ -187,7 +187,7 @@ export function AddCar() {
             />
           )}
         />
-        <Text>
+        <Text color="red">
           {errors.year?.message}
           {validationErrors?.year?.[0]}
         </Text>
@@ -207,7 +207,7 @@ export function AddCar() {
             />
           )}
         />
-        <Text>
+        <Text color="red">
           {errors.color?.message}
           {validationErrors?.color?.[0]}
         </Text>
@@ -242,7 +242,7 @@ export function AddCar() {
               </Pressable>
             )}
           />
-          <Text>
+          <Text color="red">
             {errors.photo?.message}
             {validationErrors?.photo?.[0]}
           </Text>

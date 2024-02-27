@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Icon } from "native-base";
+import { Button, Spinner } from "@beep/ui";
 import { useMutation } from "@apollo/client";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert } from "../utils/Alert";
 import { Unpacked } from "../utils/constants";
 import { UpdateBeeperQueue } from "./ActionButton";
 import { Status } from "../utils/types";
 import { ResultOf } from "gql.tada";
 import { GetInitialQueue } from "../routes/beep/StartBeeping";
+import { Check, X } from "@tamagui/lucide-icons";
 
 interface Props {
   type: "accept" | "deny";
@@ -41,20 +41,10 @@ export function AcceptDenyButton(props: Props) {
   return (
     <Button
       flexGrow={isAccept ? 1 : undefined}
-      colorScheme={isAccept ? "green" : "red"}
-      _text={{ color: "white" }}
-      isLoading={loading}
+      theme={isAccept ? "green" : "red"}
+      iconAfter={loading ? <Spinner /> : undefined}
       onPress={onPress}
-      bg={isAccept ? "green.500" : "red.500"}
-      _pressed={{ bg: isAccept ? "green.600" : "red.600" }}
-      endIcon={
-        <Icon
-          as={MaterialCommunityIcons}
-          name={isAccept ? "check" : "close"}
-          size={22}
-          color="white"
-        />
-      }
+      icon={isAccept ? <Check /> : <X />}
     >
       {isAccept ? "Accept" : "Deny"}
     </Button>
