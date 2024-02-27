@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { BottomSheet } from "./BottomSheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { RateUser } from "../routes/global/Rate";
 import { Alert } from "../utils/Alert";
 import { RateBar } from "./Rate";
@@ -77,9 +77,6 @@ export function RateSheet() {
         >
           <Avatar
             url={beep.beeper.photo}
-            size="xl"
-            online={beep.beeper.isBeeping}
-            badgeSize="6"
           />
           <Heading
             fontSize="3xl"

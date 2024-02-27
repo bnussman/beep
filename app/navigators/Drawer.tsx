@@ -106,10 +106,9 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         <Pressable onPress={() => navigate("User", { id: user?.id ?? "" })}>
           <XStack alignItems="center">
             <Avatar
-              mr={2}
-              size="md"
+              mr="$3"
+              size="$4.5"
               url={user?.photo}
-              online={user?.isBeeping}
             />
             <Stack flexShrink={1}>
               <Text fontWeight="bold">

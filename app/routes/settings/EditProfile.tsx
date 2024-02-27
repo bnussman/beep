@@ -29,10 +29,10 @@ import {
   InputGroup,
   InputLeftAddon,
   HStack,
-  Menu,
   Icon,
 } from "native-base";
 import { VariablesOf, graphql } from "gql.tada";
+import { Menu } from "@beep/ui";
 
 const DeleteAccount = graphql(`
   mutation DeleteAccount {
@@ -123,30 +123,12 @@ export function EditProfileScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Menu
-          w="190"
-          trigger={(triggerProps) => {
-            return (
-              <Pressable
-                accessibilityLabel="More options menu"
-                {...triggerProps}
-              >
-                <Icon
-                  mr={3}
-                  size="xl"
-                  as={Ionicons}
-                  name="ellipsis-horizontal-circle"
-                />
-              </Pressable>
-            );
-          }}
-        >
-          <Menu.Item onPress={() => navigation.navigate("Change Password")}>
-            Change Password
-          </Menu.Item>
-          <Menu.Item _text={{ color: "red.400" }} onPress={handleDeleteWrapper}>
-            Delete Account
-          </Menu.Item>
-        </Menu>
+          Trigger={<Button>Menu</Button>}
+          items={[
+            { title: "Change Password", onPress: () => navigation.navigate("Change Password") },
+            { title: "Delete Account", onPress: handleDeleteWrapper },
+          ]}
+        />
       ),
     });
   }, [navigation]);
