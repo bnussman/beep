@@ -295,7 +295,7 @@ export function SignUpScreen() {
           </Text>
         </Stack>
         <Stack>
-          <Label htmlFor="username" fontWeight="bold">Username</Label>
+          <Label htmlFor="username-input" fontWeight="bold">Username</Label>
           <Controller
             name="username"
             rules={{ required: "Username is required" }}
@@ -303,7 +303,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
-                id="username"
+                id="username-input"
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
                 value={value}
@@ -322,7 +322,7 @@ export function SignUpScreen() {
           </Text>
         </Stack>
         <Stack>
-          <Label htmlFor="password" fontWeight="bold">Password</Label>
+          <Label htmlFor="password-input" fontWeight="bold">Password</Label>
           <Controller
             name="password"
             rules={{
@@ -336,7 +336,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <PasswordInput
-                id="password"
+                id="password-input"
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
                 value={value}
