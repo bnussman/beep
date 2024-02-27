@@ -209,23 +209,24 @@ export function Cars() {
           >
             <XStack alignItems="center">
               <Stack gap="$2">
-                <Heading
+                <Text
                   fontWeight="bold"
                   textTransform="capitalize"
                 >
                   {car.make} {car.model} {car.year}
-                </Heading>
-                <XStack gap="$3">
+                </Text>
+                <XStack gap="$2">
                   {car.default && (
-                    <Card borderRadius="$4">
-                      <Text>Default</Text>
+                    <Card borderRadius="$4" backgroundColor="$gray10" px="$2">
+                      <Text fontWeight="bold" color="white">Default</Text>
                     </Card>
                   )}
                   <Card
                     borderRadius="$4"
-                    theme={car.color as ThemeName}
+                    px="$2"
+                    backgroundColor={`$${car.color}10`}
                   >
-                    <Text textTransform="capitalize">
+                    <Text textTransform="capitalize" fontWeight="bold" color="white">
                       {car.color}
                     </Text>
                   </Card>

@@ -10,11 +10,12 @@ import { Container } from "../../components/Container";
 import { useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { client } from "../../utils/Apollo";
 import { ApolloError, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
+import { VariablesOf, graphql } from "gql.tada";
+import { Label, Menu } from "@beep/ui";
 import {
   isValidationError,
   useValidationErrors,
@@ -24,15 +25,9 @@ import {
   Input,
   Button,
   Stack,
-  FormControl,
-  WarningOutlineIcon,
-  InputGroup,
-  InputLeftAddon,
-  HStack,
-  Icon,
-} from "native-base";
-import { VariablesOf, graphql } from "gql.tada";
-import { Menu } from "@beep/ui";
+  XStack,
+  Text,
+} from "@beep/ui";
 
 const DeleteAccount = graphql(`
   mutation DeleteAccount {
@@ -219,203 +214,162 @@ export function EditProfileScreen() {
       keyboard
       alignItems="center"
       scrollViewProps={{ bounces: false, scrollEnabled: true }}
-      px={4}
-      pt={2}
+      px="$4"
     >
-      <Stack space={2} w="100%">
-        <HStack alignItems="center" space={8}>
-          <Stack space={2} flexGrow={1}>
-            <FormControl
-              isInvalid={
-                Boolean(errors.first) || Boolean(validationErrors?.first)
-              }
-            >
-              <FormControl.Label>First Name</FormControl.Label>
-              <Controller
-                name="first"
-                rules={{ required: "First name is required" }}
-                control={control}
-                render={({ field: { onChange, onBlur, value, ref } }) => (
-                  <Input
-                    onBlur={onBlur}
-                    onChangeText={(val) => onChange(val)}
-                    value={value ? value : undefined}
-                    ref={ref}
-                    returnKeyLabel="next"
-                    returnKeyType="next"
-                    onSubmitEditing={() => setFocus("last")}
-                    textContentType="givenName"
-                    size="lg"
-                  />
-                )}
-              />
-              <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
-              >
-                {errors.first?.message}
-                {validationErrors?.first?.[0]}
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.last) || Boolean(validationErrors?.last)
-              }
-            >
-              <FormControl.Label>Last Name</FormControl.Label>
-              <Controller
-                name="last"
-                rules={{ required: "Last name is required" }}
-                control={control}
-                render={({ field: { onChange, onBlur, value, ref } }) => (
-                  <Input
-                    onBlur={onBlur}
-                    onChangeText={(val) => onChange(val)}
-                    value={value ? value : undefined}
-                    ref={ref}
-                    returnKeyLabel="next"
-                    returnKeyType="next"
-                    onSubmitEditing={() => setFocus("email")}
-                    textContentType="familyName"
-                    size="lg"
-                  />
-                )}
-              />
-              <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
-              >
-                {errors.last?.message}
-                {validationErrors?.last?.[0]}
-              </FormControl.ErrorMessage>
-            </FormControl>
-          </Stack>
-          <Pressable onPress={() => handleUpdatePhoto()}>
-            <Avatar url={photo?.uri ?? user?.photo} size="xl" />
-            {uploadLoading ? <Spinner /> : null}
-          </Pressable>
-        </HStack>
-        <FormControl
-          isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}
-        >
-          <FormControl.Label>Email</FormControl.Label>
-          <Controller
-            name="email"
-            rules={{ required: "Email is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value ? value : undefined}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("phone")}
-                textContentType="emailAddress"
-                size="lg"
-              />
-            )}
-          />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            {errors.email?.message}
-            {validationErrors?.email?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}
-        >
-          <FormControl.Label>Phone Number</FormControl.Label>
-          <Controller
-            name="phone"
-            rules={{ required: "Phone number is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value ? value : undefined}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("phone")}
-                textContentType="telephoneNumber"
-                size="lg"
-              />
-            )}
-          />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            {errors.phone?.message}
-            {validationErrors?.phone?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}
-        >
-          <FormControl.Label>Venmo Username</FormControl.Label>
-          <Controller
-            name="venmo"
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <InputGroup>
-                <InputLeftAddon children="@" />
+      <Stack w="100%">
+        <XStack alignItems="center" gap="$4">
+          <Stack gap="$2" flexGrow={1}>
+            <Label htmlFor="first" fontWeight="bold">First Name</Label>
+            <Controller
+              name="first"
+              rules={{ required: "First name is required" }}
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Input
-                  flexGrow={1}
+                  id="first"
                   onBlur={onBlur}
                   onChangeText={(val) => onChange(val)}
-                  value={value as string | undefined}
+                  value={value ? value : undefined}
                   ref={ref}
                   returnKeyLabel="next"
                   returnKeyType="next"
-                  textContentType="username"
-                  onSubmitEditing={() => setFocus("cashapp")}
-                  autoCapitalize="none"
-                  size="lg"
+                  onSubmitEditing={() => setFocus("last")}
+                  textContentType="givenName"
                 />
-              </InputGroup>
-            )}
-          />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            {errors.venmo?.message}
-            {validationErrors?.venmo?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={
-            Boolean(errors.cashapp) || Boolean(validationErrors?.cashapp)
-          }
-        >
-          <FormControl.Label>Cash App Username</FormControl.Label>
-          <Controller
-            name="cashapp"
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <InputGroup>
-                <InputLeftAddon children="$" />
+              )}
+            />
+            <Text color="red">
+              {errors.first?.message}
+              {validationErrors?.first?.[0]}
+            </Text>
+            <Label htmlFor="last" fontWeight="bold">Last Name</Label>
+            <Controller
+              name="last"
+              rules={{ required: "Last name is required" }}
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Input
-                  flexGrow={1}
+                  id="last"
                   onBlur={onBlur}
                   onChangeText={(val) => onChange(val)}
-                  value={value as string | undefined}
+                  value={value ? value : undefined}
                   ref={ref}
-                  returnKeyLabel="update"
-                  returnKeyType="go"
-                  textContentType="username"
-                  onSubmitEditing={isDirty ? onSubmit : undefined}
-                  autoCapitalize="none"
-                  size="lg"
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("email")}
+                  textContentType="familyName"
                 />
-              </InputGroup>
-            )}
-          />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            {errors.cashapp?.message}
-            {validationErrors?.cashapp?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
+              )}
+            />
+            <Text>
+              {errors.last?.message}
+              {validationErrors?.last?.[0]}
+            </Text>
+          </Stack>
+          <Pressable onPress={() => handleUpdatePhoto()}>
+            <Avatar url={photo?.uri ?? user?.photo} size="$10" />
+            {uploadLoading ? <Spinner /> : null}
+          </Pressable>
+        </XStack>
+        <Label htmlFor="email" fontWeight="bold">Email</Label>
+        <Controller
+          name="email"
+          rules={{ required: "Email is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="email"
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value ? value : undefined}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("phone")}
+              textContentType="emailAddress"
+            />
+          )}
+        />
+        <Text color="red">
+          {errors.email?.message}
+          {validationErrors?.email?.[0]}
+        </Text>
+        <Label htmlFor="bold" fontWeight="bold">Phone Number</Label>
+        <Controller
+          name="phone"
+          rules={{ required: "Phone number is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="phone"
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value ? value : undefined}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("phone")}
+              textContentType="telephoneNumber"
+              size="lg"
+            />
+          )}
+        />
+        <Text color="red">
+          {errors.phone?.message}
+          {validationErrors?.phone?.[0]}
+        </Text>
+        <Label htmlFor="venmo" fontWeight="bold">Venmo Username</Label>
+        <Controller
+          name="venmo"
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              flexGrow={1}
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value as string | undefined}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              textContentType="username"
+              onSubmitEditing={() => setFocus("cashapp")}
+              autoCapitalize="none"
+            />
+          )}
+        />
+        <Text color="red">
+          {errors.venmo?.message}
+          {validationErrors?.venmo?.[0]}
+        </Text>
+        <Label htmlFor="cashapp" fontWeight="bold">Cash App Username</Label>
+        <Controller
+          name="cashapp"
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="cashapp"
+              flexGrow={1}
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value as string | undefined}
+              ref={ref}
+              returnKeyLabel="update"
+              returnKeyType="go"
+              textContentType="username"
+              onSubmitEditing={isDirty ? onSubmit : undefined}
+              autoCapitalize="none"
+            />
+          )}
+        />
+        <Text color="red">
+          {errors.cashapp?.message}
+          {validationErrors?.cashapp?.[0]}
+        </Text>
         <Button
           onPress={onSubmit}
-          isLoading={loading}
-          isDisabled={!isDirty}
-          mt={2}
+          iconAfter={loading ? <Spinner /> : undefined}
+          disabled={!isDirty}
+          mt="$4"
         >
           Update Profile
         </Button>
