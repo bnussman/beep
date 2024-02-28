@@ -352,7 +352,7 @@ export function MainFindBeepScreen() {
     return (
       <Container p="$3" alignItems="center">
         <Stack alignItems="center" gap="$4" w="100%">
-          <Pressable style={{ width: "100% "}} onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id }) }>
+          <Pressable style={{ width: "100%" }} onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id }) }>
             <XStack alignItems="center" gap="$4" w="100%">
               <Stack flexShrink={1}>
                 <Heading fontWeight="bold">
