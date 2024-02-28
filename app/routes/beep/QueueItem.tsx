@@ -9,9 +9,9 @@ import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { Card } from "../../components/Card";
 import {
   Box,
+  Card,
   HStack,
   Text,
   Spacer,

@@ -1,6 +1,5 @@
 import React from "react";
 import { useQuery } from "@apollo/client";
-import { Card } from "../../components/Card";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
@@ -9,6 +8,7 @@ import { RatePreview } from "./RatePreview";
 import { useUser } from "../../utils/useUser";
 import { graphql } from "gql.tada";
 import {
+  Card,
   Spinner,
   Text,
   Stack,

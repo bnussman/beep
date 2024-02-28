@@ -13,8 +13,8 @@ import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Linking } from "react-native";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { Card } from "../../components/Card";
 import {
+  Card,
   Box,
   Button,
   Heading,

@@ -2,7 +2,14 @@ import React from "react";
 import { Container } from "../../components/Container";
 import { useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
+import { Alert, Linking } from "react-native";
+import { VariablesOf, graphql } from "gql.tada";
 import {
+  isValidationError,
+  useValidationErrors,
+} from "../../utils/useValidationErrors";
+import {
+  Card,
   Text,
   Button,
   Input,
@@ -10,13 +17,6 @@ import {
   Label,
   Spinner,
 } from "@beep/ui";
-import {
-  isValidationError,
-  useValidationErrors,
-} from "../../utils/useValidationErrors";
-import { Alert, Linking } from "react-native";
-import { Card } from "../../components/Card";
-import { VariablesOf, graphql } from "gql.tada";
 
 const CreateFeedback = graphql(`
   mutation CreateFeedback($message: String!) {
@@ -62,7 +62,9 @@ export function Feedback() {
     <Container p="$3" keyboard>
       <Stack gap="$2">
         <Card
-          pressable
+          p="$3"
+          hoverTheme
+          pressTheme
           onPress={() =>
             Linking.openURL(
               "https://apps.apple.com/us/app/ride-beep-app/id1528601773"

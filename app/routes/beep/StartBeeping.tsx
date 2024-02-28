@@ -14,6 +14,8 @@ import { Alert } from "../../utils/Alert";
 import { QueueItem } from "./QueueItem";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
+import { Status } from "../../utils/types";
+import { graphql } from "gql.tada";
 import {
   Alert as NativeAlert,
   AppState,
@@ -34,10 +36,8 @@ import {
   Label,
   Circle,
   Sheet,
+  Card,
 } from "@beep/ui";
-import { Status } from "../../utils/types";
-import { Card } from "../../components/Card";
-import { graphql } from "gql.tada";
 
 let unsubscribe: any = null;
 
