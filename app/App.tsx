@@ -5,14 +5,11 @@ import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
 import { cache, client } from "./utils/Apollo";
 import { ApolloProvider, useSubscription } from "@apollo/client";
-import { NativeBaseProvider, useColorMode } from "native-base";
-import { colorModeManager } from "./utils/theme";
 import { updatePushToken } from "./utils/Notifications";
 import { UserData, UserSubscription, useUser } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
-import { NATIVE_BASE_THEME } from "./utils/constants";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/Navigation";
@@ -77,19 +74,9 @@ function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme  ?? "light"}>
-        <NativeBaseProvider
-          theme={NATIVE_BASE_THEME}
-          colorModeManager={colorModeManager}
-          config={{
-            dependencies: {
-              "linear-gradient": require("expo-linear-gradient").LinearGradient,
-            },
-          }}
-        >
-          <ApolloProvider client={client}>
-            <Beep />
-          </ApolloProvider>
-        </NativeBaseProvider>
+        <ApolloProvider client={client}>
+          <Beep />
+        </ApolloProvider>
       </TamaguiProvider>
     </GestureHandlerRootView>
   );
