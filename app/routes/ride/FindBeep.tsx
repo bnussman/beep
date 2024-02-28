@@ -368,7 +368,7 @@ export function MainFindBeepScreen() {
                 </Text>
               </Stack>
               <Stack flexGrow={1} />
-              <Avatar size="xl" url={beep.beeper.photo} />
+              <Avatar size="$8" url={beep.beeper.photo} />
             </XStack>
           </Pressable>
           <Rates
@@ -546,7 +546,7 @@ export function MainFindBeepScreen() {
         />
         <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
         <Stack flexGrow={1} />
-        <LeaveButton beepersId={beep.beeper.id} w="100%" size="lg" />
+        <LeaveButton beepersId={beep.beeper.id} w="100%" />
       </Stack>
     </Container>
   );

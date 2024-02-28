@@ -189,7 +189,6 @@ export function SignUpScreen() {
                     returnKeyLabel="next"
                     returnKeyType="next"
                     onSubmitEditing={() => setFocus("email")}
-                    size="lg"
                   />
                 )}
               />
@@ -228,7 +227,6 @@ export function SignUpScreen() {
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("phone")}
                 autoCapitalize="none"
-                size="lg"
               />
             )}
           />
@@ -258,7 +256,6 @@ export function SignUpScreen() {
                 returnKeyLabel="next"
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("venmo")}
-                size="lg"
               />
             )}
           />

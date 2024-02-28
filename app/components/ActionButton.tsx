@@ -90,7 +90,6 @@ export function ActionButton(props: Props) {
 
   return (
     <Button
-      size="lg"
       iconAfter={isLoading ? <Spinner /> : undefined}
       onPress={onPress}
     >

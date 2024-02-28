@@ -18,7 +18,7 @@
     "@react-navigation/native": "next",
     "@react-navigation/native-stack": "next",
     "@sentry/react-native": "5.17.0",
-    "@tamagui/lucide-icons": "^1.90.8",
+    "@tamagui/lucide-icons": "^1.90.11",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.6",
     "expo": "^50.0.7",
@@ -52,7 +52,7 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "14.1.0",
     "react-native-web": "~0.19.7",
-    "tamagui": "^1.90.8",
+    "tamagui": "^1.90.11",
     "url-parse": "^1.5.10"
   },
   "devDependencies": {

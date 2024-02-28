@@ -373,7 +373,7 @@ export function StartBeepingScreen() {
             <Text textAlign="center">
               Jump to the top of the beeper list
             </Text>
-            <Button size="lg" onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
+            <Button onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
           </Stack>
         </Card>
       </Container>

@@ -310,7 +310,6 @@ export function EditProfileScreen() {
               returnKeyType="next"
               onSubmitEditing={() => setFocus("phone")}
               textContentType="telephoneNumber"
-              size="lg"
             />
           )}
         />

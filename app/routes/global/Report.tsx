@@ -55,7 +55,6 @@ export function ReportScreen({ route }: Props) {
           />
         }
         <Input
-          size="lg"
           h={100}
           multiline={true}
           placeholder="Your reason for reporting here"
