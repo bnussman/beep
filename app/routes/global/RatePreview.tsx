@@ -123,9 +123,9 @@ export function RatePreview({ id }: Props) {
     <Card flexShrink={1} p="$3">
       <XStack alignItems="center" jc="space-between">
         <Heading fontWeight="bold">Ratings</Heading>
-        <Heading>
+        <Text>
           {count} ratings
-        </Heading>
+        </Text>
       </XStack>
       <FlatList
         data={ratings}
@@ -144,7 +144,7 @@ export function RatePreview({ id }: Props) {
                 <Text fontWeight="bold">
                   {rating.rater.name}
                 </Text>
-                <Text color="gray.400" fontSize="$2" mb="$1">
+                <Text color="$gray10" fontSize="$2" mb="$1">
                   {new Date(rating.timestamp as string).toLocaleString()}
                 </Text>
                 <Text fontSize="$1">{printStars(rating.stars)}</Text>

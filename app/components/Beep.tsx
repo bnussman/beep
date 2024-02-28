@@ -32,7 +32,7 @@ export function Beep({ item }: Props) {
 
   return (
     <Card
-      mt="$3"
+      mt="$2"
       mx="$2"
       p="$4"
       pressTheme

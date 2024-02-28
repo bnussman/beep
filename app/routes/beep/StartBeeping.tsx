@@ -367,7 +367,7 @@ export function StartBeepingScreen() {
             is closed, you will recieve a push notification.
           </Text>
         </Stack>
-        <Card>
+        <Card p="$3">
           <Stack alignItems="center" gap="$2">
             <Heading fontWeight="bold">Want more riders?</Heading>
             <Text textAlign="center">

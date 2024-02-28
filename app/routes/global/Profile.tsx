@@ -138,15 +138,15 @@ export function ProfileScreen({ route }: Props) {
   return (
     <Container p="$2">
       <Stack gap="$2" flexShrink={1}>
-        <Card>
+        <Card p="$3">
           <XStack alignItems="center">
             <Stack>
               <Heading fontWeight="bold">
                 {data.getUser.name}
               </Heading>
-              <Heading color="$gray6">
+              <Text color="$gray10">
                 @{data.getUser.username}
-              </Heading>
+              </Text>
             </Stack>
             <Stack flexGrow={1} />
             <Avatar
@@ -154,7 +154,7 @@ export function ProfileScreen({ route }: Props) {
             />
           </XStack>
         </Card>
-        <Card>
+        <Card p="$3">
           <Stack gap="$2">
             {data.getUser.isBeeping && (
               <Text>
