@@ -1,6 +1,5 @@
 import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Ionicons } from "@expo/vector-icons";
 import { Alert, Linking, Pressable } from "react-native";
 import { isMobile, Unpacked } from "../../utils/constants";
 import { getRawPhoneNumber, openDirections } from "../../utils/links";
@@ -9,20 +8,18 @@ import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Box,
-  Card,
-  HStack,
-  Text,
-  Spacer,
-  Stack,
-  Icon,
-  Menu,
-  Divider,
-} from "native-base";
 import { Status } from "../../utils/types";
 import { ResultOf } from "gql.tada";
 import { GetInitialQueue } from "./StartBeeping";
+import {
+  Card,
+  XStack,
+  Text,
+  Spacer,
+  Stack,
+  Menu,
+  Button,
+} from "@beep/ui";
 
 interface Props {
   item: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
@@ -63,8 +60,8 @@ export function QueueItem({ item }: Props) {
 
   if (item.status !== Status.WAITING) {
     return (
-      <Card mb={2}>
-        <Box>
+      <Card mb="$2">
+        <Stack>
           <Pressable
             onPress={() =>
               navigate("User", {
@@ -73,94 +70,57 @@ export function QueueItem({ item }: Props) {
               })
             }
           >
-            <HStack space={2} alignItems="center">
-              <Avatar size={50} url={item.rider.photo} />
+            <XStack gap="$2" alignItems="center">
+              <Avatar size="$6" url={item.rider.photo} />
               <Stack>
-                <Text fontWeight="extrabold" letterSpacing="xs" fontSize="xl">
+                <Text fontWeight="bold">
                   {item.rider.name}
                 </Text>
-                {item.rider.rating !== null &&
-                item.rider.rating !== undefined ? (
-                  <Text fontSize="xs">{printStars(item.rider.rating)}</Text>
-                ) : null}
+                {item.rider.rating && (
+                  <Text fontSize="$1">{printStars(item.rider.rating)}</Text>
+                )}
               </Stack>
               <Spacer />
               <Menu
-                key={`menu-${item.id}`}
-                w="190"
-                trigger={(triggerProps) => (
-                  <Pressable
-                    accessibilityLabel="More options menu"
-                    {...triggerProps}
-                  >
-                    <Icon
-                      as={Ionicons}
-                      name="ellipsis-horizontal-circle"
-                      color="gray.400"
-                      size="xl"
-                      mr={4}
-                    />
-                  </Pressable>
-                )}
-              >
-                <Menu.Item
-                  onPress={() =>
-                    Linking.openURL(
-                      "tel:" + getRawPhoneNumber(item.rider.phone)
-                    )
-                  }
-                >
-                  Call
-                </Menu.Item>
-                <Menu.Item
-                  onPress={() =>
-                    Linking.openURL(
-                      "sms:" + getRawPhoneNumber(item.rider.phone)
-                    )
-                  }
-                >
-                  Text
-                </Menu.Item>
-                <Menu.Item
-                  onPress={() =>
-                    openDirections("Current+Location", item.origin)
-                  }
-                >
-                  Directions to Rider
-                </Menu.Item>
-                <Divider my={1} w="100%" />
-                <Menu.Item onPress={onCancelPress} _text={{ color: "red.400" }}>
-                  Cancel Beep
-                </Menu.Item>
-              </Menu>
-            </HStack>
+                Trigger={<Button>Menu</Button>}
+                items={[
+                  { title: "Call", onPress: () => Linking.openURL("tel:" + getRawPhoneNumber(item.rider.phone)) },
+                  { title: "Text", onPress: () => Linking.openURL("sms:" + getRawPhoneNumber(item.rider.phone)) },
+                  {
+                    title: "Directions to Rider",
+                    onPress: () => openDirections("Current+Location", item.origin)
+                  },
+                  { title: "Cancel Beep", onPress: onCancelPress },
+                ]}
+              />
+            </XStack>
           </Pressable>
           <Text>
-            <Text bold mr={2}>
+            <Text fontWeight="bold" mr="$2">
               Group Size
             </Text>{" "}
             <Text>{item.groupSize}</Text>
           </Text>
           <Text>
-            <Text bold mr={2}>
+            <Text fontWeight="bold" mr="$2">
               Pick Up
             </Text>{" "}
             <Text>{item.origin}</Text>
           </Text>
           <Text>
-            <Text bold mr={2}>
+            <Text fontWeight="bold" mr="$2">
               Drop Off
             </Text>{" "}
             <Text>{item.destination}</Text>
           </Text>
-        </Box>
+        </Stack>
       </Card>
     );
   }
 
   return (
-    <Card mb={2}>
-      <Stack space={1}>
+    <Card mb="$2">
+      <Stack gap="$1">
         <Pressable
           onPress={() =>
             navigate("User", {
@@ -169,41 +129,39 @@ export function QueueItem({ item }: Props) {
             })
           }
         >
-          <HStack alignItems="center">
+          <XStack alignItems="center">
             <Stack>
-              <Text fontWeight="extrabold" fontSize="xl">
+              <Text fontWeight="bold">
                 {item.rider.name}
               </Text>
-              <Text fontSize="xs">
-                {item.rider.rating !== null && item.rider.rating !== undefined
-                  ? printStars(item.rider.rating)
-                  : null}
+              <Text fontSize="$1">
+                {item.rider.rating && printStars(item.rider.rating)}
               </Text>
             </Stack>
             <Spacer />
             <Avatar mr={2} size={45} url={item.rider.photo} />
-          </HStack>
+          </XStack>
         </Pressable>
         <Text>
-          <Text bold>Group Size</Text> <Text>{item.groupSize}</Text>
+          <Text fontWeight="bold">Group Size</Text> <Text>{item.groupSize}</Text>
         </Text>
         <Text>
-          <Text bold mr={2}>
+          <Text fontWeight="bold" mr="$2">
             Pick Up
           </Text>{" "}
           <Text>{item.origin}</Text>
         </Text>
         <Text>
-          <Text bold mr={2}>
+          <Text fontWeight="bold" mr="$2">
             Drop Off
           </Text>{" "}
           <Text>{item.destination}</Text>
         </Text>
       </Stack>
-      <HStack space={2} mt={2}>
+      <XStack gap="$2" mt="$2">
         <AcceptDenyButton type="deny" item={item} />
         <AcceptDenyButton type="accept" item={item} />
-      </HStack>
+      </XStack>
     </Card>
   );
 }

@@ -1,15 +1,16 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { Card, Image, CheckIcon, Spacer, Spinner, Stack, Text, FlatList, useColorMode, Button, Heading } from "native-base";
+import { Card, Image, Spacer, Spinner, Stack, Text, Button, Heading, XStack } from "@beep/ui";
 import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
 import PremiumImage from '../assets/premium.png';
 import { Logger } from '../utils/Logger';
 import { useMutation, useQuery } from '@apollo/client';
 import { Countdown } from '../components/CountDown';
-import { RefreshControl } from 'react-native';
+import { FlatList, RefreshControl, useColorScheme } from 'react-native';
 import { useUser } from '../utils/useUser';
 import { graphql } from 'gql.tada';
+import { Check } from '@tamagui/lucide-icons';
 
 interface Props {
   item: PurchasesOffering;
@@ -40,13 +41,13 @@ function Offering({ item }: Props) {
   const packages = item.availablePackages;
 
   return (
-    <Card m={2}>
-      <Stack space={2}>
-        <Heading fontSize="xl" letterSpacing="sm" fontWeight="extrabold">
+    <Card m="$2">
+      <Stack gap="$2">
+        <Heading fontWeight="bold">
           {item.identifier}
         </Heading>
         <Text>Promotes you to the top of the beeper list so you get more riders joining your queue</Text>
-        <Text fontSize="xs">Goes into effect immediately upon purchase</Text>
+        <Text fontSize="$1">Goes into effect immediately upon purchase</Text>
         <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" mb={1} />
         {packages.map((p) => <Package key={p.identifier} p={p} />)}
       </Stack>
@@ -90,13 +91,13 @@ function Package({ p }: { p: PurchasesPackage }) {
 
   return (
     <Card p={3} py={2}>
-      <Stack direction="row" alignItems="center" space={2}>
-        <Heading fontSize="lg">{p.identifier}</Heading>
+      <XStack alignItems="center" gap="$2">
+        <Heading>{p.identifier}</Heading>
         <Text>{countdown}</Text>
         <Spacer />
-        {Boolean(payment) && <CheckIcon size="6" color="emerald.500" />}
-        <Button isLoading={isPurchasing} onPress={() => onBuy(p)} isDisabled={Boolean(payment)}>{p.product.priceString}</Button>
-      </Stack>
+        {Boolean(payment) && <Check size="4" color="$green9" />}
+        <Button iconAfter={isPurchasing ? <Spinner /> : undefined} onPress={() => onBuy(p)} disabled={Boolean(payment)}>{p.product.priceString}</Button>
+      </XStack>
     </Card>
   );
 }
@@ -139,7 +140,7 @@ export function Premium() {
   const { refetch: refetchUserPayments, loading } = useQuery(PaymentsQuery, { variables: { id: user?.id ?? "" }, notifyOnNetworkStatusChange: true });
   const { offerings, error, isLoading, refetch: refetchAppPackages, isRefreshing } = usePackages();
 
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
 
   const refetch = () => {
     refetchUserPayments();
@@ -149,7 +150,7 @@ export function Premium() {
   if (isLoading && !offerings) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner />
       </Container>
     );
   }
@@ -166,7 +167,6 @@ export function Premium() {
     <Container center>
       <FlatList
         data={offerings}
-        w="100%"
         renderItem={({ item }) => <Offering item={item} />}
         onRefresh={refetch}
         refreshing={isRefreshing || loading}
