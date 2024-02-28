@@ -10,8 +10,8 @@ interface Props {
 
 export function UserHeader({ picture, name, username }: Props) {
   return (
-    <XStack alignItems="center">
-      <Avatar mr={2} size="md" url={picture} />
+    <XStack alignItems="center" gap="$4">
+      <Avatar size="$6" url={picture} />
       <Stack>
         <Heading fontWeight="bold">
           {name}

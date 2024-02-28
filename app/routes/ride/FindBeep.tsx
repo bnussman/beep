@@ -519,14 +519,14 @@ export function MainFindBeepScreen() {
     <Container alignItems="center" p={2}>
       <Stack gap="$4" w="100%" alignItems="center" h="94%">
         <Avatar size={100} url={beep.beeper.photo} />
-        <Stack justifyContent="center">
+        <Stack justifyContent="center" ai="center">
           <Text>Waiting on</Text>
           <Heading fontWeight="bold">
             {beep.beeper.name}
           </Heading>
           <Text>to accept your request.</Text>
         </Stack>
-        <Card w="100%">
+        <Card w="100%" p="$3">
           <Text>
             <Text fontWeight="bold">Pick Up </Text>
             <Text>{beep.origin}</Text>
