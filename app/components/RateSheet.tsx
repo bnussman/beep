@@ -58,12 +58,10 @@ export function RateSheet() {
     >
       <Sheet.Handle backgroundColor="$gray8" />
       <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" elevation="$8" gap="$2">
-        <Pressable onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id })}>
-          <Avatar url={beep.beeper.photo} size="$10" />
-          <Heading fontWeight="bold">
-            {beep.beeper.name}
-          </Heading>
-        </Pressable>
+        <Avatar url={beep.beeper.photo} size="$10" />
+        <Heading fontWeight="bold">
+          {beep.beeper.name}
+        </Heading>
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Button
           w="100%"

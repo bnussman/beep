@@ -40,7 +40,7 @@ export function Beep(props: Props) {
   return (
     <>
       <Pressable onPress={() => navigate("User", { id: beep.rider.id, beepId: beep.id, })}>
-        <XStack alignItems="center" gap="$4">
+        <Card flexDirection="row" alignItems="center" p="$3" gap="$4">
           <Stack>
             <Heading flexShrink={1} fontWeight="bold">
               {beep.rider.name}
@@ -51,9 +51,9 @@ export function Beep(props: Props) {
           </Stack>
           <Spacer />
           <Avatar size="$4" url={beep.rider.photo} />
-        </XStack>
+        </Card>
       </Pressable>
-      <Card mt="$4">
+      <Card mt="$4" p="$3">
         <Stack gap="$2">
           <Stack>
             <Heading fontWeight="bold">
@@ -75,7 +75,7 @@ export function Beep(props: Props) {
           </Stack>
         </Stack>
       </Card>
-      <Spacer />
+      <Stack flexGrow={1} />
       <Stack gap="$3">
         {beep.status === Status.WAITING ? (
           <>

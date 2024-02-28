@@ -164,7 +164,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                           start={[0, 1]}
                           end={[1, 0]}
                         >
-                          <Text fontSize="$2" fontWeight="bold" color="white">New</Text>
+                          <Text fontSize="$2" fontWeight="bold" color="white" zIndex={2}>New</Text>
                         </LinearGradient>
                       )}
                     </XStack>

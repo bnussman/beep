@@ -6,6 +6,7 @@ export function Map() {
     <Stack
       backgroundColor="$gray6"
       p="$4"
+      w="100%"
       borderRadius="$4"
       minHeight="200px"
       display="flex"

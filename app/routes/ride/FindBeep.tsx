@@ -350,9 +350,9 @@ export function MainFindBeepScreen() {
 
   if (isAcceptedBeep) {
     return (
-      <Container p={2} px={4} alignItems="center">
-        <Stack alignItems="center" gap="$4" w="100%" h="94%">
-          <Pressable onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id }) }>
+      <Container p="$3" alignItems="center">
+        <Stack alignItems="center" gap="$4" w="100%">
+          <Pressable style={{ width: "100% "}} onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id }) }>
             <XStack alignItems="center" gap="$4" w="100%">
               <Stack flexShrink={1}>
                 <Heading fontWeight="bold">
@@ -376,7 +376,7 @@ export function MainFindBeepScreen() {
             group={beep.beeper.groupRate}
           />
           {beep.position <= 0 && (
-            <Card w="100%">
+            <Card w="100%" p="$3">
               <Heading fontWeight="bold" mb={1}>
                 Current Status
               </Heading>
@@ -384,8 +384,8 @@ export function MainFindBeepScreen() {
             </Card>
           )}
           {beep.status === Status.ON_THE_WAY && (
-            <Card w="100%">
-              <XStack>
+            <Card w="100%" p="$3">
+              <XStack alignItems="center">
                 <Heading fontWeight="bold">
                   ETA
                 </Heading>
@@ -410,7 +410,7 @@ export function MainFindBeepScreen() {
             <Image
               borderRadius="$4"
               w="100%"
-              h={48}
+              h="$16"
               flexGrow={1}
               source={{ uri: beep.beeper.cars?.[0].photo }}
               alt={`car-${beep.beeper.cars?.[0].id}`}

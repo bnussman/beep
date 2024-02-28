@@ -11,7 +11,7 @@ export function Avatar(props: Props) {
 
   return (
     <_Avatar circular size="$6" {...rest}>
-      <_Avatar.Image src={url ?? undefined} defaultSource={AvatarImage} />
+      <_Avatar.Image src={url ?? AvatarImage} defaultSource={AvatarImage} />
       <_Avatar.Fallback bc="red" />
     </_Avatar>
   );

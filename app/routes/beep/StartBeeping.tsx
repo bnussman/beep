@@ -436,9 +436,8 @@ export function StartBeepingScreen() {
     <Container alignItems="center">
       <Stack
         w="100%"
-        height={queue.length > 1 ? "85%" : "100%"}
+        height={queue.length > 1 ? "85%" : "95%"}
         p="$3"
-        pb={queue.length > 1 ? "$4" : "$16"}
       >
         {queue[0] && <Beep beep={queue[0]} />}
       </Stack>
