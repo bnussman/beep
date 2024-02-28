@@ -340,9 +340,7 @@ export function SignUpScreen() {
                 inputRef={ref}
                 returnKeyLabel="sign up"
                 returnKeyType="go"
-                secureTextEntry={true}
                 onSubmitEditing={onSubmit}
-                textContentType="password"
               />
             )}
           />
