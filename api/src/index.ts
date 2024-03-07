@@ -39,8 +39,31 @@ import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { Webhook } from "./payments/utils";
-import { User } from "./entities/User";
-import { Payment, Product, Store, productExpireTimes } from "./entities/Payments";
+import * as trpcExpress from '@trpc/server/adapters/express';
+import { initTRPC } from "@trpc/server";
+import { applyWSSHandler } from '@trpc/server/adapters/ws';
+import type { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
+import type { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
+
+export type AppRouter = typeof appRouter;
+
+// created for each request
+function createContext(
+  opts: CreateHTTPContextOptions | CreateWSSContextFnOptions,
+) {
+  return {};
+}
+
+type TRPCContext = Awaited<ReturnType<typeof createContext>>;
+const t = initTRPC.context<TRPCContext>().create();
+const appRouter = t.router({
+  userList: t.procedure.query(async () => {
+    return [{ id: 1 }];
+  }),
+  updateUser: t.procedure.input({}).mutation(({ input }) => {
+    return "OMG!";
+  })
+});
 
 const options = {
   host: REDIS_HOST,
@@ -104,6 +127,13 @@ async function start() {
     path: '/subscriptions',
   });
 
+  /*
+  const trpcWSServer = new ws.Server({
+    server: httpServer,
+    path: '/ws',
+  });
+  */
+
   useServer({
     schema,
     onConnect: (ctx: Context<{ token?: string }, { token?: Token }>) => onConnect(ctx, orm),
@@ -114,6 +144,14 @@ async function start() {
     }),
   }, wsServer);
 
+  /*
+  applyWSSHandler<AppRouter>({
+    wss: trpcWSServer,
+    router: appRouter,
+    createContext,
+  });
+  */
+
   await server.start();
 
   app.use(
@@ -122,6 +160,15 @@ async function start() {
     json(),
     expressMiddleware(server, {
       context: (ctx) => getContext(ctx, orm),
+    }),
+  );
+
+  app.use(
+    '/trpc',
+    cors<cors.CorsRequest>(),
+    trpcExpress.createExpressMiddleware({
+      router: appRouter,
+      createContext,
     }),
   );
 

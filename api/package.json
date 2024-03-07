@@ -29,6 +29,7 @@
     "@mikro-orm/postgresql": "6.1.5",
     "@sentry/integrations": "7.77.0",
     "@sentry/node": "7.77.0",
+    "@trpc/server": "^10.45.1",
     "aws-sdk": "^2.1563.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",

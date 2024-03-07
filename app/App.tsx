@@ -16,6 +16,9 @@ import { Navigation } from "./utils/Navigation";
 import { useAutoUpdate } from "./utils/updates";
 import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
 import { useColorScheme } from "react-native";
+import { queryClient, trpc, trpcClient } from "./utils/trpc";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({
@@ -35,6 +38,11 @@ function Beep() {
       updatePushToken();
     },
   });
+
+  const { data: d } = trpc.userList.useQuery();
+  const { mutateAsync } = trpc.updateUser.useMutation();
+
+  const utils = trpc.useUtils();
 
   useAutoUpdate();
 
@@ -75,7 +83,11 @@ function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme  ?? "light"}>
         <ApolloProvider client={client}>
-          <Beep />
+          <trpc.Provider client={trpcClient} queryClient={queryClient}>
+            <QueryClientProvider client={queryClient}>
+              <Beep />
+            </QueryClientProvider>
+          </trpc.Provider>
         </ApolloProvider>
       </TamaguiProvider>
     </GestureHandlerRootView>

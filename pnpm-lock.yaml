@@ -36,6 +36,9 @@ importers:
       '@sentry/node':
         specifier: 7.77.0
         version: 7.77.0
+      '@trpc/server':
+        specifier: ^10.45.1
+        version: 10.45.1
       aws-sdk:
         specifier: ^2.1563.0
         version: 2.1563.0
@@ -166,6 +169,15 @@ importers:
       '@tamagui/lucide-icons':
         specifier: ^1.90.11
         version: 1.90.11(react-native-svg@14.1.0)(react@18.2.0)
+      '@tanstack/react-query':
+        specifier: ^5.25.0
+        version: 5.25.0(react@18.2.0)
+      '@trpc/client':
+        specifier: ^10.45.1
+        version: 10.45.1(@trpc/server@10.45.1)
+      '@trpc/react-query':
+        specifier: ^10.45.1
+        version: 10.45.1(@tanstack/react-query@5.25.0)(@trpc/client@10.45.1)(@trpc/server@10.45.1)(react-dom@18.2.0)(react@18.2.0)
       apollo-upload-client:
         specifier: ^17.0.0
         version: 17.0.0(@apollo/client@3.9.5)(graphql@16.8.1)
@@ -8191,6 +8203,19 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
+  /@tanstack/query-core@5.25.0:
+    resolution: {integrity: sha512-vlobHP64HTuSE68lWF1mEhwSRC5Q7gaT+a/m9S+ItuN+ruSOxe1rFnR9j0ACWQ314BPhBEVKfBQ6mHL0OWfdbQ==}
+    dev: false
+
+  /@tanstack/react-query@5.25.0(react@18.2.0):
+    resolution: {integrity: sha512-u+n5R7mLO7RmeiIonpaCRVXNRWtZEef/aVZ/XGWRPa7trBIvGtzlfo0Ah7ZtnTYfrKEVwnZ/tzRCBcoiqJ/tFw==}
+    peerDependencies:
+      react: ^18.1.0
+    dependencies:
+      '@tanstack/query-core': 5.25.0
+      react: 18.2.0
+    dev: false
+
   /@tanstack/react-router@1.16.6(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-d1Kjs38IF3bH7jKwihMBrdnh7BMVOHSNhJ9sltCiP4gLHcZkG7V9BwwJn5yL4V7YHIPNxdrJ3v4yrkvdrPJ0Ww==}
     engines: {node: '>=12'}
@@ -8220,6 +8245,34 @@ packages:
 
   /@tanstack/store@0.1.3:
     resolution: {integrity: sha512-GnolmC8Fr4mvsHE1fGQmR3Nm0eBO3KnZjDU0a+P3TeQNM/dDscFGxtA7p31NplQNW3KwBw4t1RVFmz0VeKLxcw==}
+    dev: false
+
+  /@trpc/client@10.45.1(@trpc/server@10.45.1):
+    resolution: {integrity: sha512-nVbAk1xpIiI64WgzXGgfxPOGgHoYvffn1IsjV1D/Ri7DL4BKuo2qtZ7UQ+OuHkzH2M8j4ikSVBDpk545fOdvpw==}
+    peerDependencies:
+      '@trpc/server': 10.45.1
+    dependencies:
+      '@trpc/server': 10.45.1
+    dev: false
+
+  /@trpc/react-query@10.45.1(@tanstack/react-query@5.25.0)(@trpc/client@10.45.1)(@trpc/server@10.45.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-48OOMpwVjQFUQJqlp9/tW1lqESZg9YEqB5iVci7mYaDzZPEs/YUcV85XKvYzgeW+7K9oShX/JMVce8muON/6uQ==}
+    peerDependencies:
+      '@tanstack/react-query': ^4.18.0
+      '@trpc/client': 10.45.1
+      '@trpc/server': 10.45.1
+      react: ^18.1.0
+      react-dom: ^18.1.0
+    dependencies:
+      '@tanstack/react-query': 5.25.0(react@18.2.0)
+      '@trpc/client': 10.45.1(@trpc/server@10.45.1)
+      '@trpc/server': 10.45.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@trpc/server@10.45.1:
+    resolution: {integrity: sha512-KOzBEVaHW9IxEedUP9E50y0tYxAuvlzyjn80Bpemw4rcNbT4WtJnhkFPUY+qDJl7Crt3B/oY2qMgSxVWi9toLg==}
     dev: false
 
   /@tsconfig/node10@1.0.9:
