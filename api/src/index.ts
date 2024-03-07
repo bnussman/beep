@@ -44,6 +44,7 @@ import { initTRPC } from "@trpc/server";
 import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import type { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
 import type { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
+import { z } from "zod";
 
 export type AppRouter = typeof appRouter;
 
@@ -60,7 +61,11 @@ const appRouter = t.router({
   userList: t.procedure.query(async () => {
     return [{ id: 1 }];
   }),
-  updateUser: t.procedure.input({}).mutation(({ input }) => {
+  updateUser: t.procedure.input(
+    z.object({
+      name: z.string(),
+    })
+  ).mutation(({ input }) => {
     return "OMG!";
   })
 });
@@ -131,6 +136,7 @@ async function start() {
   const trpcWSServer = new ws.Server({
     server: httpServer,
     path: '/ws',
+    noServer: true,
   });
   */
 
