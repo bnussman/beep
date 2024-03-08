@@ -2,21 +2,21 @@ import React from "react";
 import { Container } from "../../components/Container";
 import { useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Text,
-  Button,
-  FormControl,
-  Input,
-  Stack,
-  WarningOutlineIcon,
-} from "native-base";
+import { Alert, Linking } from "react-native";
+import { VariablesOf, graphql } from "gql.tada";
 import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import { Alert, Linking } from "react-native";
-import { Card } from "../../components/Card";
-import { VariablesOf, graphql } from "gql.tada";
+import {
+  Card,
+  Text,
+  Button,
+  Input,
+  Stack,
+  Label,
+  Spinner,
+} from "@beep/ui";
 
 const CreateFeedback = graphql(`
   mutation CreateFeedback($message: String!) {
@@ -59,10 +59,12 @@ export function Feedback() {
   });
 
   return (
-    <Container p={3} keyboard>
-      <Stack space={2}>
+    <Container p="$3" keyboard>
+      <Stack gap="$2">
         <Card
-          pressable
+          p="$3"
+          hoverTheme
+          pressTheme
           onPress={() =>
             Linking.openURL(
               "https://apps.apple.com/us/app/ride-beep-app/id1528601773"
@@ -75,37 +77,32 @@ export function Feedback() {
             rating.
           </Text>
         </Card>
-        <FormControl
-          isInvalid={
-            Boolean(errors.message) || Boolean(validationErrors?.message)
-          }
-        >
-          <FormControl.Label>Feedback</FormControl.Label>
+        <Stack>
+          <Label htmlFor="message" fontWeight="bold">Feedback</Label>
           <Controller
             name="message"
             rules={{ required: "Message is required" }}
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="message"
                 minHeight={170}
                 multiline
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
                 value={value}
                 ref={ref}
-                size="lg"
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text color="$red10">
             {errors.message?.message}
             {validationErrors?.message?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
+          </Text>
+        </Stack>
         <Button
           onPress={onSubmit}
-          isLoading={loading}
-          _text={{ fontWeight: "extrabold" }}
+          iconAfter={loading ? <Spinner /> : undefined}
         >
           Submit
         </Button>

@@ -2,11 +2,13 @@ import React, { useMemo } from 'react';
 import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { client } from '../utils/Apollo';
-import { GetUserData, rootRoute } from '../App';
+import { rootRoute } from '../App';
 import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from "react-hook-form";
 import { PasswordInput } from '../components/PasswordInput';
+import { Link, createRoute, useNavigate } from '@tanstack/react-router';
+import { VariablesOf, graphql } from 'gql.tada';
 import {
   Link as ChakraLink,
   Text,
@@ -29,8 +31,7 @@ import {
   FormErrorMessage,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { Link, Route, useNavigate } from '@tanstack/react-router';
-import { VariablesOf, graphql } from 'gql.tada';
+import { UserQuery } from '../utils/user';
 
 const SignUpGraphQL = graphql(`
   mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload) {
@@ -76,7 +77,7 @@ const SignUpGraphQL = graphql(`
 
 type Values = VariablesOf<typeof SignUpGraphQL> & { picture: any };
 
-export const signupRoute = new Route({
+export const signupRoute = createRoute({
   component: SignUp,
   path: "/signup",
   getParentRoute: () => rootRoute,
@@ -115,7 +116,7 @@ export function SignUp() {
       localStorage.setItem('user', JSON.stringify(data?.signup));
 
       client.writeQuery({
-        query: GetUserData,
+        query: UserQuery,
         data: { getUser: { ...data?.signup?.user } }
       });
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Box, Heading, HStack } from "native-base";
+import { Text, Heading, XStack, Stack } from "@beep/ui";
 import { Avatar } from "./Avatar";
 
 interface Props {
@@ -10,16 +10,16 @@ interface Props {
 
 export function UserHeader({ picture, name, username }: Props) {
   return (
-    <HStack alignItems="center">
-      <Avatar mr={2} size="md" url={picture} />
-      <Box>
-        <Heading size="md" letterSpacing="xs" fontWeight="extrabold">
+    <XStack alignItems="center" gap="$4">
+      <Avatar size="$6" url={picture} />
+      <Stack>
+        <Heading fontWeight="bold">
           {name}
         </Heading>
-        <Text color="gray.500" letterSpacing="sm">
+        <Text color="$gray8">
           @{username}
         </Text>
-      </Box>
-    </HStack>
+      </Stack>
+    </XStack>
   );
 }

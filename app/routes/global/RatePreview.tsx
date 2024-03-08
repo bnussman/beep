@@ -1,22 +1,18 @@
 import React from "react";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Avatar } from "../../components/Avatar";
 import { printStars } from "../../components/Stars";
-import { Card } from "../../components/Card";
-import { RefreshControl } from "react-native";
+import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { graphql } from "gql.tada";
 import {
   Text,
-  HStack,
+  Card,
+  XStack,
   Stack,
   Heading,
-  Center,
   Spinner,
-  FlatList,
-  useColorMode,
-  Spacer,
-} from "native-base";
-import { graphql } from "gql.tada";
+} from "@beep/ui";
 
 const Ratings = graphql(`
   query GetRatingsForUser($id: String, $offset: Int, $show: Int) {
@@ -54,7 +50,7 @@ interface Props {
 const PAGE_SIZE = 5;
 
 export function RatePreview({ id }: Props) {
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
   const { navigate } = useNavigation();
   const { data, loading, error, fetchMore, refetch } = useQuery(
     Ratings,
@@ -101,62 +97,62 @@ export function RatePreview({ id }: Props) {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Center>
-        <Spinner mt={4} mb={9} color="gray.400" />
-      </Center>
+      <Stack ai="center" jc="center">
+        <Spinner />
+      </Stack>
     );
   };
 
   if (loading && !ratings) {
     return (
-      <Center>
+      <Stack ai="center" jc="center">
         <Spinner />
-      </Center>
+      </Stack>
     );
   }
 
   if (error) {
     return (
-      <Center>
+      <Stack ai="center" jc="center">
         <Text>{error.message}</Text>
-      </Center>
+      </Stack>
     );
   }
 
   return (
-    <Card flexShrink={1}>
-      <HStack alignItems="center">
-        <Heading fontWeight="extrabold">Ratings</Heading>
-        <Spacer />
-        <Heading size="xs" color="gray.400">
+    <Card flexShrink={1} p="$3">
+      <XStack alignItems="center" jc="space-between">
+        <Heading fontWeight="bold">Ratings</Heading>
+        <Text>
           {count} ratings
-        </Heading>
-      </HStack>
+        </Text>
+      </XStack>
       <FlatList
         data={ratings}
         renderItem={({ item: rating }) => (
           <Card
             key={rating.id}
-            p={1}
-            mt={2}
-            pressable
+            p="$1"
+            mt="$2"
+            pressTheme
+            hoverTheme
             onPress={() => navigate("User", { id: rating.rater.id, beepId: rating.beep.id })}
           >
-            <HStack alignItems="center" p={2}>
-              <Avatar size="md" mr={4} url={rating.rater.photo} />
+            <XStack alignItems="center" p={2}>
+              <Avatar size="$4" mr="$4" url={rating.rater.photo} />
               <Stack>
-                <Text fontWeight="extrabold" fontSize="lg" letterSpacing="xs">
+                <Text fontWeight="bold">
                   {rating.rater.name}
                 </Text>
-                <Text color="gray.400" fontSize="xs" mb={1}>
+                <Text color="$gray10" fontSize="$2" mb="$1">
                   {new Date(rating.timestamp as string).toLocaleString()}
                 </Text>
-                <Text fontSize="xs">{printStars(rating.stars)}</Text>
+                <Text fontSize="$1">{printStars(rating.stars)}</Text>
                 {rating.message && (
-                  <Text fontSize="xs">{rating.message}</Text>
+                  <Text fontSize="$1">{rating.message}</Text>
                 )}
               </Stack>
-            </HStack>
+            </XStack>
           </Card>
         )}
         keyExtractor={(beep) => beep.id}

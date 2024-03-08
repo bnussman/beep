@@ -1,6 +1,5 @@
 import React from "react";
-import { HStack, Text, Box, Spacer } from "native-base";
-import { Card } from "../../components/Card";
+import { Card, XStack, Text, Stack } from "@beep/ui";
 
 interface Props {
   singles: number;
@@ -9,22 +8,23 @@ interface Props {
 
 export function Rates({ singles, group }: Props) {
   return (
-    <Card py={2} w="100%" alignItems="center">
-      <HStack space={4} alignItems="center" w="100%">
+    <Card p="$3" w="100%" alignItems="center">
+      <XStack gap="$4" alignItems="center" w="100%" jc="space-between">
         <Text>
-          <Text fontWeight="extrabold">Rates </Text>
+          <Text fontWeight="bold">Rates </Text>
           <Text>per person</Text>
         </Text>
-        <Spacer />
-        <Box alignItems="center">
-          <Text fontWeight="extrabold">Single</Text>
-          <Text>${singles}</Text>
-        </Box>
-        <Box alignItems="center">
-          <Text fontWeight="extrabold">Group</Text>
-          <Text>${group}</Text>
-        </Box>
-      </HStack>
+        <XStack>
+          <Stack alignItems="center">
+            <Text fontWeight="bold">Single</Text>
+            <Text>${singles}</Text>
+          </Stack>
+          <Stack alignItems="center">
+            <Text fontWeight="bold">Group</Text>
+            <Text>${group}</Text>
+          </Stack>
+        </XStack>
+      </XStack>
     </Card>
   );
 }
