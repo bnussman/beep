@@ -1,38 +1,32 @@
 import React from "react";
 import { Unpacked } from "../../utils/constants";
+import { useUser } from "../../utils/useUser";
+import { ActionButton } from "../../components/ActionButton";
+import { CancelButton } from "../../components/CancelButton";
+import { AcceptDenyButton } from "../../components/AcceptDenyButton";
+import { Linking, Pressable } from "react-native";
+import { Avatar } from "../../components/Avatar";
+import { useNavigation } from "@react-navigation/native";
+import { printStars } from "../../components/Stars";
+import { Status } from "../../utils/types";
+import { ResultOf } from "gql.tada";
+import { GetInitialQueue } from "./StartBeeping";
+import { MessageCircle, PhoneCall } from "@tamagui/lucide-icons";
 import {
   getRawPhoneNumber,
   openCashApp,
   openDirections,
   openVenmo,
 } from "../../utils/links";
-import { useUser } from "../../utils/useUser";
-import { ActionButton } from "../../components/ActionButton";
-import { CancelButton } from "../../components/CancelButton";
-import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Linking } from "react-native";
-import { Avatar } from "../../components/Avatar";
-import { useNavigation } from "@react-navigation/native";
-import { Card } from "../../components/Card";
 import {
-  Box,
+  Card,
+  Stack,
   Button,
   Heading,
-  HStack,
-  Icon,
-  IconButton,
-  Pressable,
+  XStack,
   Spacer,
-  Stack,
   Text,
-  useClipboard,
-  useToast,
-} from "native-base";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { printStars } from "../../components/Stars";
-import { Status } from "../../utils/types";
-import { ResultOf } from "gql.tada";
-import { GetInitialQueue } from "./StartBeeping";
+} from "@beep/ui";
 
 interface Props {
   beep: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
@@ -42,86 +36,47 @@ export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
   const { navigate } = useNavigation();
-  const { onCopy } = useClipboard();
-  const { show } = useToast();
-
-  const copy = (value: string) => {
-    show({ description: "Copied to Clipboard 📋" });
-    onCopy(value);
-  };
 
   return (
     <>
-      <Pressable
-        onPress={() =>
-          navigate("User", {
-            id: beep.rider.id,
-            beepId: beep.id,
-          })
-        }
-      >
-        <HStack alignItems="center" space={4}>
+      <Pressable onPress={() => navigate("User", { id: beep.rider.id, beepId: beep.id, })}>
+        <Card flexDirection="row" alignItems="center" p="$3" gap="$4">
           <Stack>
-            <Heading
-              flexShrink={1}
-              fontWeight="extrabold"
-              letterSpacing="sm"
-              size="xl"
-            >
+            <Heading flexShrink={1} fontWeight="bold">
               {beep.rider.name}
             </Heading>
-            {beep.rider.rating !== null && beep.rider.rating !== undefined ? (
-              <Text fontSize="xs">{printStars(beep.rider.rating)}</Text>
-            ) : null}
+            {beep.rider.rating && (
+              <Text fontSize="$1">{printStars(beep.rider.rating)}</Text>
+            )}
           </Stack>
           <Spacer />
-          <Avatar size="xl" url={beep.rider.photo} />
-        </HStack>
+          <Avatar size="$4" url={beep.rider.photo} />
+        </Card>
       </Pressable>
-      <Card mt={4}>
-        <Stack space={2}>
-          <Box>
-            <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
+      <Card mt="$4" p="$3">
+        <Stack gap="$2">
+          <Stack>
+            <Heading fontWeight="bold">
               Group Size
             </Heading>
             <Text>{beep.groupSize}</Text>
-          </Box>
-          <Pressable onPress={() => copy(beep.origin)}>
-            <Box>
-              <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
-                Pick Up
-              </Heading>
-              <HStack alignItems="center" space={2}>
-                <Text flexShrink={1}>{beep.origin}</Text>
-                <Spacer />
-                <Icon
-                  as={MaterialCommunityIcons}
-                  name="content-copy"
-                  size="sm"
-                />
-              </HStack>
-            </Box>
-          </Pressable>
-          <Pressable onPress={() => copy(beep.destination)}>
-            <Box>
-              <Heading size="sm" fontWeight="extrabold" letterSpacing="sm">
-                Destination
-              </Heading>
-              <HStack alignItems="center" space={2}>
-                <Text flexShrink={1}>{beep.destination}</Text>
-                <Spacer />
-                <Icon
-                  as={MaterialCommunityIcons}
-                  name="content-copy"
-                  size="sm"
-                />
-              </HStack>
-            </Box>
-          </Pressable>
+          </Stack>
+          <Stack>
+            <Heading fontWeight="bold">
+              Pick Up
+            </Heading>
+            <Text flexShrink={1}>{beep.origin}</Text>
+          </Stack>
+          <Stack>
+            <Heading fontWeight="bold">
+              Destination
+            </Heading>
+            <Text flexShrink={1}>{beep.destination}</Text>
+          </Stack>
         </Stack>
       </Card>
-      <Spacer />
-      <Stack space={3}>
+      <Stack flexGrow={1} />
+      <Stack gap="$3">
         {beep.status === Status.WAITING ? (
           <>
             <AcceptDenyButton item={beep} type="deny" />
@@ -129,40 +84,29 @@ export function Beep(props: Props) {
           </>
         ) : (
           <>
-            <HStack space={2}>
-              <IconButton
+            <XStack gap="$2">
+              <Button
                 flexGrow={1}
-                variant="solid"
                 onPress={() => {
                   Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
                 }}
-                icon={
-                  <Icon as={Ionicons} color="white" name="call" size="md" />
-                }
+                icon={<PhoneCall />}
               />
-              <IconButton
+              <Button
                 flexGrow={1}
-                variant="solid"
                 onPress={() => {
                   Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
                 }}
-                icon={
-                  <Icon
-                    as={Ionicons}
-                    name="chatbox"
-                    color="white"
-                    size="md"
-                  />
-                }
+                icon={<MessageCircle />}
               />
-            </HStack>
+            </XStack>
             {[Status.HERE, Status.IN_PROGRESS].includes(
               beep.status as Status
             ) && (
               <>
-                {beep.rider.cashapp ? (
+                {beep.rider.cashapp && (
                   <Button
-                    colorScheme="green"
+                    theme="green"
                     onPress={() =>
                       openCashApp(
                         beep.rider.cashapp,
@@ -174,10 +118,10 @@ export function Beep(props: Props) {
                   >
                     Request Money from Rider with Cash App
                   </Button>
-                ) : null}
-                {beep.rider?.venmo ? (
+                )}
+                {beep.rider?.venmo && (
                   <Button
-                    colorScheme="lightBlue"
+                    theme="blue"
                     onPress={() =>
                       openVenmo(
                         beep.rider.venmo,
@@ -190,7 +134,7 @@ export function Beep(props: Props) {
                   >
                     Request Money from Rider with Venmo
                   </Button>
-                ) : null}
+                )}
               </>
             )}
             {[Status.ON_THE_WAY, Status.ACCEPTED].includes(

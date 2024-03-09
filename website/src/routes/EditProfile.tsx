@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
-import { GetUserData, rootRoute } from '../App';
+import { rootRoute } from '../App';
 import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
 import { useValidationErrors } from '../utils/useValidationErrors';
-import { Route } from '@tanstack/react-router';
 import { VariablesOf, graphql } from 'gql.tada';
+import { createRoute } from '@tanstack/react-router';
+import { useUser } from '../utils/user';
 
 const pick = (obj: any, keys: string[]) => Object.fromEntries(
   keys
@@ -40,7 +41,7 @@ export const UploadPhoto = graphql(`
   }
 `);
 
-export const editProfileRoute = new Route({
+export const editProfileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/profile/edit',
   component: EditProfile,
@@ -55,10 +56,9 @@ export function EditProfile() {
       },
     },
   });
-  const { data: userData } = useQuery(GetUserData);
-  const toast = useToast();
 
-  const user = userData?.getUser;
+  const { user } = useUser();
+  const toast = useToast();
 
   const validationErrors = useValidationErrors<Values>(error);
 

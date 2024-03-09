@@ -1,30 +1,24 @@
 import React, { useLayoutEffect } from "react";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
-import { RefreshControl } from "react-native";
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
+import { FlatList, Pressable, RefreshControl, useColorScheme } from "react-native";
 import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
-import { Card } from "../../components/Card";
 import { Image } from "../../components/Image";
 import { useUser } from "../../utils/useUser";
 import { Alert } from "react-native";
 import { cache } from "../../utils/Apollo";
 import { ResultOf, graphql } from "gql.tada";
 import {
-  FlatList,
   Heading,
-  Icon,
-  IconButton,
   Spinner,
   Text,
-  useColorMode,
   Stack,
-  HStack,
-  Spacer,
-  Badge,
-  Center,
-} from "native-base";
+  XStack,
+  Card,
+  ThemeName,
+} from "@beep/ui";
+import { Plus } from "@tamagui/lucide-icons";
 
 export const DeleteCar = graphql(`
   mutation DeleteCar($id: String!) {
@@ -60,7 +54,7 @@ export const CarsQuery = graphql(`
 
 export function Cars() {
   const navigation = useNavigation();
-  const { colorMode } = useColorMode();
+  const colorScheme = useColorScheme();
   const { user } = useUser();
 
   const { data, loading, error, refetch, fetchMore } = useQuery(
@@ -109,9 +103,9 @@ export function Cars() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Center>
-        <Spinner mt={4} mb={9} color="gray.400" />
-      </Center>
+      <Stack ai="center" jc="center" p="$4">
+        <Spinner/>
+      </Stack>
     );
   };
 
@@ -172,28 +166,20 @@ export function Cars() {
     navigation.setOptions({
       headerRight: () => {
         return (
-          <IconButton
-            onPress={() => navigation.navigate("Add Car")}
-            mr={2}
-            aria-label="Add a car"
-            icon={
-              <Icon
-                as={Ionicons}
-                name="add-sharp"
-                size="xl"
-                color={colorMode === "dark" ? "white" : "black"}
-              />
-            }
-          />
+          <Pressable onPress={() => navigation.navigate("Add Car")} aria-label="Add a car">
+            <Stack mx="$3">
+              <Plus />
+            </Stack>
+          </Pressable>
         );
       },
     });
-  }, [navigation, colorMode]);
+  }, [navigation]);
 
   if (!data && loading) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner />
       </Container>
     );
   }
@@ -209,50 +195,52 @@ export function Cars() {
   return (
     <Container>
       <FlatList
-        height="100%"
         data={cars}
         renderItem={({ item: car }) => (
           <Card
-            mt={2}
-            mx={1}
-            pressable
+            mt="$2"
+            mx="$2"
+            px="$4"
+            py="$3"
+            pressTheme
+            hoverTheme
             onLongPress={() => onLongPress(car)}
             onPress={car.default ? undefined : () => setDefault(car.id)}
           >
-            <HStack alignItems="center">
-              <Stack space={2}>
-                <Heading
-                  fontSize="md"
-                  fontWeight="extrabold"
-                  letterSpacing="sm"
+            <XStack alignItems="center">
+              <Stack gap="$2">
+                <Text
+                  fontWeight="bold"
                   textTransform="capitalize"
                 >
                   {car.make} {car.model} {car.year}
-                </Heading>
-                <HStack space={3}>
-                  {car.default && <Badge borderRadius="lg">Default</Badge>}
-                  <Badge
-                    borderRadius="lg"
-                    _text={{ textTransform: "capitalize" }}
-                    colorScheme={
-                      ["black", "white"].includes(car.color)
-                        ? undefined
-                        : car.color
-                    }
+                </Text>
+                <XStack gap="$2">
+                  {car.default && (
+                    <Card borderRadius="$4" backgroundColor="$gray10" px="$2">
+                      <Text fontWeight="bold" color="white">Default</Text>
+                    </Card>
+                  )}
+                  <Card
+                    borderRadius="$4"
+                    px="$2"
+                    backgroundColor={`$${car.color}10`}
                   >
-                    {car.color}
-                  </Badge>
-                </HStack>
+                    <Text textTransform="capitalize" fontWeight="bold" color="white">
+                      {car.color}
+                    </Text>
+                  </Card>
+                </XStack>
               </Stack>
-              <Spacer />
+              <Stack flexGrow={1} />
               <Image
-                borderRadius="xl"
-                w={24}
-                h={16}
+                borderRadius="$4"
+                w="$12"
+                h="$8"
                 source={{ uri: car.photo }}
                 alt={`car-${car.id}`}
               />
-            </HStack>
+            </XStack>
           </Card>
         )}
         keyExtractor={(car) => car.id}
@@ -263,7 +251,7 @@ export function Cars() {
         }
         ListEmptyComponent={
           <>
-            <Heading fontWeight="extrabold" letterSpacing="sm" key="title">
+            <Heading fontWeight="bold" key="title">
               No Cars
             </Heading>
             <Text key="message">You have no cars on your account!</Text>
@@ -274,7 +262,7 @@ export function Cars() {
         ListFooterComponent={renderFooter()}
         refreshControl={
           <RefreshControl
-            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+            // tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
             refreshing={isRefreshing}
             onRefresh={refetch}
           />

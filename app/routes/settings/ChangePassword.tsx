@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { ApolloError, useMutation } from "@apollo/client";
-import { Input, Button, Stack } from "native-base";
+import { Input, Button, Stack, Label, Spinner } from "@beep/ui";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { graphql } from 'gql.tada';
@@ -34,10 +34,11 @@ export function ChangePasswordScreen() {
   }
 
   return (
-    <Container keyboard alignItems="center" p={4}>
-      <Stack alignSelf="center" space={4} w="100%">
+    <Container keyboard alignItems="center" px="$4">
+      <Stack alignSelf="center" w="100%">
+        <Label htmlFor="password1" fontWeight="bold">New Password</Label>
         <Input
-          size="lg"
+          id="password1"
           secureTextEntry={true}
           textContentType="password"
           placeholder="New Password"
@@ -45,8 +46,9 @@ export function ChangePasswordScreen() {
           onSubmitEditing={() => confirmPasswordRef.current.focus()}
           returnKeyType="next"
         />
+        <Label htmlFor="password1" fontWeight="bold">Repeat Password</Label>
         <Input
-          size="lg"
+          id="password2"
           ref={confirmPasswordRef}
           secureTextEntry={true}
           textContentType="password"
@@ -57,8 +59,9 @@ export function ChangePasswordScreen() {
         />
         <Button
           onPress={() => handleChangePassword()}
-          isDisabled={!password || password !== confirmPassword}
-          isLoading={loading}
+          disabled={!password || password !== confirmPassword}
+          iconAfter={loading ? <Spinner /> : undefined}
+          mt="$4"
         >
           Change Password
         </Button>

@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
-import { Logger } from "../utils/Logger";
-import { TouchableWithoutFeedback } from "react-native";
-import { Box, Icon, IInputProps, Input, Spinner } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
+import { XStack, InputProps, Input, Spinner, Button } from "@beep/ui";
+import { MapPin } from "@tamagui/lucide-icons";
 
-function LocationInput(props: IInputProps, ref: any) {
+interface Props extends InputProps {
+  inputRef: any;
+}
+
+export function LocationInput({ inputRef, ...props }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
-  async function useCurrentLocation(): Promise<void> {
+   const handleGetCurrentLocation = async () => {
     setIsLoading(true);
     props.onChangeText?.("");
 
@@ -47,32 +49,19 @@ function LocationInput(props: IInputProps, ref: any) {
     setIsLoading(false);
   }
 
-  const CurrentLocationIcon = (
-    <TouchableWithoutFeedback onPress={() => useCurrentLocation()}>
-      <Icon
-        mr={3}
-        size="lg"
-        name="location-sharp"
-        as={Ionicons}
-        _dark={{ color: "gray.200" }}
-      />
-    </TouchableWithoutFeedback>
-  );
-
-  const SpinnerIcon = (
-    <Box mr={3}>
-      <Spinner size="sm" />
-    </Box>
-  );
-
   return (
-    <Input
-      {...props}
-      placeholder={isLoading ? "Loading" : undefined}
-      InputRightElement={isLoading ? SpinnerIcon : CurrentLocationIcon}
-      ref={ref}
-    />
+    <XStack gap="$2">
+      <Input
+        placeholder={isLoading ? "Loading" : undefined}
+        ref={inputRef}
+        flexGrow={1}
+        flex={1}
+        {...props}
+      />
+      <Button
+        icon={isLoading ? <Spinner /> : <MapPin />}
+        onPress={handleGetCurrentLocation}
+      />
+    </XStack>
   );
 }
-
-export default React.forwardRef(LocationInput);

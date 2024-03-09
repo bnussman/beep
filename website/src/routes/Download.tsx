@@ -1,9 +1,16 @@
 import React, { useEffect } from 'react';
 import { VStack, Spinner, Center, Text } from '@chakra-ui/react';
 import { getMobileOperatingSystem } from '../utils/utils';
+import { createRoute } from '@tanstack/react-router';
+import { rootRoute } from '../App';
+
+export const downloadRoute = createRoute({
+  path: "/download",
+  getParentRoute: () => rootRoute,
+  component: Download,
+});
 
 export function Download() {
-
   useEffect(() => {
     if (getMobileOperatingSystem() === 'Android') {
       window.location.href = 'https://play.google.com/store/apps/details?id=app.ridebeep.App';

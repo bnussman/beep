@@ -1,19 +1,17 @@
 import React from "react";
-import { RefreshControl } from "react-native";
+import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { useUser } from "../utils/useUser";
 import { useQuery } from "@apollo/client";
 import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
+import { graphql } from "gql.tada";
 import {
   Text,
-  FlatList,
   Spinner,
   Heading,
-  Center,
-  useColorMode,
-} from "native-base";
-import { graphql } from "gql.tada";
+  Stack,
+} from "@beep/ui";
 
 export const Ratings = graphql(`
   query GetRatings($id: String, $offset: Int, $show: Int) {
@@ -44,7 +42,7 @@ export const Ratings = graphql(`
 
 export function RatingsScreen() {
   const { user } = useUser();
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery(Ratings, {
@@ -89,16 +87,16 @@ export function RatingsScreen() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Center>
-        <Spinner mt={4} mb={9} color="gray.400" />
-      </Center>
+      <Stack ai="center" jc="center">
+        <Spinner />
+      </Stack>
     );
   };
 
   if (loading && !ratings) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner />
       </Container>
     );
   }
@@ -114,7 +112,7 @@ export function RatingsScreen() {
   if (ratings?.length === 0) {
     return (
       <Container center>
-        <Heading fontWeight="extrabold">No Ratings</Heading>
+        <Heading fontWeight="bold">No Ratings</Heading>
         <Text>You have no ratings to display</Text>
       </Container>
     );
@@ -123,7 +121,6 @@ export function RatingsScreen() {
   return (
     <Container>
       <FlatList
-        w="100%"
         data={ratings}
         renderItem={(data) => <Rating {...data} />}
         keyExtractor={(rating) => rating.id}

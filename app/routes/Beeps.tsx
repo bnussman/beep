@@ -1,19 +1,12 @@
 import React from "react";
-import { RefreshControl } from "react-native";
+import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { useQuery } from "@apollo/client";
 import { Container } from "../components/Container";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
-import {
-  Spinner,
-  Text,
-  FlatList,
-  Heading,
-  Center,
-  useColorMode,
-} from "native-base";
+import { Spinner, Text, Heading, Stack } from "@beep/ui";
 
 export const GetBeepHistory = graphql(`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -48,7 +41,7 @@ export const GetBeepHistory = graphql(`
 
 export function BeepsScreen() {
   const { user } = useUser();
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
 
   const { data, loading, error, fetchMore, refetch } =
     useQuery(GetBeepHistory, {
@@ -90,16 +83,16 @@ export function BeepsScreen() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Center>
-        <Spinner mt={4} mb={9} color="gray.400" />
-      </Center>
+      <Stack ai="center" jc="center">
+        <Spinner  />
+      </Stack>
     );
   };
 
   if (loading && !beeps) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner />
       </Container>
     );
   }
@@ -115,7 +108,7 @@ export function BeepsScreen() {
   if (beeps?.length === 0) {
     return (
       <Container center>
-        <Heading fontWeight="extrabold">No Beeps</Heading>
+        <Heading fontWeight="bold">No Beeps</Heading>
         <Text>You have no previous beeps to display</Text>
       </Container>
     );
@@ -124,7 +117,6 @@ export function BeepsScreen() {
   return (
     <Container>
       <FlatList
-        w="100%"
         data={beeps}
         renderItem={(data) => <Beep {...data} />}
         keyExtractor={(beep) => beep.id}

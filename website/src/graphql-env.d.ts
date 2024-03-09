@@ -709,47 +709,6 @@ export type introspection = {
             ]
           },
           {
-            "name": "getLocationSuggestions",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Suggestion",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "args": [
-              {
-                "name": "sessiontoken",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                }
-              },
-              {
-                "name": "location",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                }
-              }
-            ]
-          },
-          {
             "name": "getPayments",
             "type": {
               "kind": "NON_NULL",
@@ -2258,25 +2217,6 @@ export type introspection = {
       },
       {
         "kind": "OBJECT",
-        "name": "Suggestion",
-        "fields": [
-          {
-            "name": "title",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
         "name": "PaymentResponse",
         "fields": [
           {
@@ -3703,7 +3643,7 @@ export type introspection = {
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "TokenEntry",
+                "name": "Token",
                 "ofType": null
               }
             },
@@ -3714,7 +3654,7 @@ export type introspection = {
       },
       {
         "kind": "OBJECT",
-        "name": "TokenEntry",
+        "name": "Token",
         "fields": [
           {
             "name": "id",

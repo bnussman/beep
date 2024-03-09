@@ -9,7 +9,7 @@ import * as Sentry from "./utils/sentry";
 import * as RealSentry from "@sentry/node";
 import { json } from 'body-parser';
 import { MikroORM } from "@mikro-orm/core";
-import { TokenEntry } from "./entities/TokenEntry";
+import { Token } from "./entities/Token";
 import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
 import { RedisPubSub } from 'graphql-redis-subscriptions';
@@ -37,10 +37,8 @@ import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
-import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { Webhook } from "./payments/utils";
-import { User } from "./entities/User";
-import { Payment, Product, Store, productExpireTimes } from "./entities/Payments";
+import type { MySqlDriver } from "@mikro-orm/mysql";
 
 const options = {
   host: REDIS_HOST,
@@ -53,7 +51,7 @@ export const pubSub = new RedisPubSub({
 });
 
 async function start() {
-  const orm = await MikroORM.init<PostgreSqlDriver>(config);
+  const orm = await MikroORM.init<MySqlDriver>(config);
 
   const app = express();
 
@@ -106,7 +104,7 @@ async function start() {
 
   useServer({
     schema,
-    onConnect: (ctx: Context<{ token?: string }, { token?: TokenEntry }>) => onConnect(ctx, orm),
+    onConnect: (ctx: Context<{ token?: string }, { token?: Token }>) => onConnect(ctx, orm),
     context: (ctx) => ({
        user: ctx.extra.token?.user,
        token: ctx.extra.token,

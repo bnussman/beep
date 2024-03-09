@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ApolloError, useMutation } from "@apollo/client";
-import { Input, Button, Stack } from "native-base";
+import { Input, Button, Stack, Spinner, Label } from "@beep/ui";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { graphql } from "gql.tada";
@@ -26,18 +26,20 @@ export function ForgotPasswordScreen() {
 
   return (
     <Container alignItems="center" keyboard>
-      <Stack mt={4} space={4} w="90%">
-        <Input
-          size="lg"
-          textContentType="emailAddress"
-          placeholder="example@ridebeep.app"
-          returnKeyType="go"
-          onChangeText={(text) => setEmail(text)}
-          onSubmitEditing={handleForgotPassword}
-        />
+      <Stack w="100%" px="$4" gap="$4">
+        <Stack>
+          <Label fontWeight="bold">Email</Label>
+          <Input
+            textContentType="emailAddress"
+            placeholder="example@ridebeep.app"
+            returnKeyType="go"
+            onChangeText={(text) => setEmail(text)}
+            onSubmitEditing={handleForgotPassword}
+          />
+        </Stack>
         <Button
-          isLoading={loading}
-          isDisabled={!email}
+          iconAfter={loading ? <Spinner /> : undefined}
+          disabled={!email}
           onPress={handleForgotPassword}
         >
           Send Password Reset Email

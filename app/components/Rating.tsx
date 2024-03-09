@@ -1,11 +1,10 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { HStack, Spacer, Stack, Text } from "native-base";
+import { Card, XStack, Stack, Text } from "@beep/ui";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { printStars } from "./Stars";
 import { Unpacked, isMobile } from "../utils/constants";
-import { Card } from "./Card";
 import { Alert } from "react-native";
 import { useMutation } from "@apollo/client";
 import { ResultOf, graphql } from "gql.tada";
@@ -70,33 +69,30 @@ export function Rating(props: Props) {
 
   return (
     <Card
-      mt={2}
-      mx={1}
-      pressable
+      mt="$2"
+      mx="$2"
+      p="$3"
+      pressTheme
+      hoverTheme
       onPress={() => navigation.navigate("User", { id: otherUser.id, beepId: item.beep.id })}
       onLongPress={onLongPress}
     >
-      <Stack space={2}>
-        <HStack alignItems="center" space={2}>
-          <Avatar size={12} url={otherUser.photo} />
+      <Stack gap="$2">
+        <XStack alignItems="center" gap="$2">
+          <Avatar size="$4" url={otherUser.photo} />
           <Stack flexShrink={1}>
-            <Text
-              fontSize="xl"
-              letterSpacing="sm"
-              fontWeight="extrabold"
-              isTruncated
-            >
+            <Text fontWeight="bold">
               {otherUser.name}
             </Text>
-            <Text color="gray.400" fontSize="xs" isTruncated>
+            <Text color="$gray8">
               {`${isRater ? "You rated" : "Rated you"} - ${new Date(
                 item.timestamp as string
               ).toLocaleString(undefined, { dateStyle: 'short', timeStyle: "short" })}`}
             </Text>
           </Stack>
-          <Spacer />
+          <Stack flexGrow={1} />
           <Text>{printStars(item.stars)}</Text>
-        </HStack>
+        </XStack>
         {item.message && <Text>{item.message}</Text>}
       </Stack>
     </Card>

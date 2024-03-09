@@ -10,7 +10,7 @@
     "build:api": "pnpm --filter @beep/api build",
     "build:website": "pnpm --filter @beep/website build",
     "build": "pnpm build:api",
-    "dev": "concurrently -n app,api,website -c blue,magenta,green \"pnpm --filter @beep/app start\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
+    "dev": "concurrently -n app,api,website -c blue,magenta,green --raw \"pnpm --filter @beep/app start\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
     "start:api": "pnpm --filter @beep/api start",

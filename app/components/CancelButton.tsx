@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { isMobile, Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { Button as _Button } from "native-base";
+import { Button, Spinner } from "@beep/ui";
 import { useEffect } from "react";
 import { Alert } from "react-native";
 import { ResultOf } from "gql.tada";
@@ -17,9 +17,7 @@ export const CancelBeep = gql`
   }
 `;
 
-function Button(props: Props) {
-  const { beep } = props;
-
+export function CancelButton({ beep }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [cancel] = useMutation(CancelBeep);
 
@@ -61,16 +59,12 @@ function Button(props: Props) {
   };
 
   return (
-    <_Button
-      isLoading={isLoading}
-      colorScheme="red"
+    <Button
+      iconAfter={isLoading ? <Spinner /> : undefined}
+      theme="red"
       onPress={onPress}
-      backgroundColor="red.400"
-      _pressed={{ backgroundColor: "red.500" }}
     >
       Cancel Beep
-    </_Button>
+    </Button>
   );
 }
-
-export const CancelButton = React.memo(Button);

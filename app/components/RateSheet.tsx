@@ -1,15 +1,14 @@
-import React, { useMemo, useRef, useState } from "react";
-import { BottomSheet } from "./BottomSheet";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import React, { useState } from "react";
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { RateUser } from "../routes/global/Rate";
 import { Alert } from "../utils/Alert";
 import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Ratings } from "../routes/Ratings";
-import { Button, Center, Heading, Pressable, Spacer } from "native-base";
+import { Button, Heading, Sheet, Spinner } from "@beep/ui";
 import { graphql } from "gql.tada";
+import { Pressable } from "react-native";
 
 export const GetRateData = graphql(`
   query GetRateData {
@@ -34,22 +33,15 @@ export function RateSheet() {
 
   const beep = data?.getLastBeepToRate;
 
-  const bottomSheetRef = useRef<BottomSheetMethods>(null);
-
-  const snapPoints = useMemo(() => ["42%"], []);
-
   const onSubmit = () => {
     rate({
-      refetchQueries: [Ratings],
+      refetchQueries: [Ratings, GetRateData],
       variables: {
         userId: beep!.beeper.id,
         beepId: beep!.id,
         stars: stars,
       },
     })
-      .then(() => {
-        bottomSheetRef.current?.close();
-      })
       .catch((error: ApolloError) => {
         Alert(error);
       });
@@ -58,51 +50,28 @@ export function RateSheet() {
   if (!beep) return null;
 
   return (
-    <BottomSheet
-      ref={bottomSheetRef}
-      snapPoints={snapPoints}
-      bottomInset={45}
-      detached={true}
-      containerStyle={{ marginLeft: 20, marginRight: 20 }}
-      enablePanDownToClose
-      shadow="light"
+    <Sheet
+      snapPoints={[325]}
+      snapPointsMode="constant"
+      open
+      dismissOnSnapToBottom
     >
-      <Center padding={4} height="100%">
-        <Pressable
-          w="100%"
-          alignItems="center"
-          onPress={() =>
-            navigate("User", { id: beep.beeper.id, beepId: beep.id })
-          }
-        >
-          <Avatar
-            url={beep.beeper.photo}
-            size="xl"
-            online={beep.beeper.isBeeping}
-            badgeSize="6"
-          />
-          <Heading
-            fontSize="3xl"
-            fontWeight="extrabold"
-            letterSpacing="sm"
-            isTruncated
-          >
-            {beep.beeper.name}
-          </Heading>
-          <Spacer />
-        </Pressable>
-        <Spacer />
+      <Sheet.Handle backgroundColor="$gray8" />
+      <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" elevation="$8" gap="$2">
+        <Avatar url={beep.beeper.photo} size="$10" />
+        <Heading fontWeight="bold">
+          {beep.beeper.name}
+        </Heading>
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-        <Spacer />
         <Button
           w="100%"
           onPress={onSubmit}
-          isDisabled={stars < 1}
-          isLoading={loading}
+          disabled={stars < 1}
+          iconAfter={loading ? <Spinner /> : undefined}
         >
           Rate User
         </Button>
-      </Center>
-    </BottomSheet>
+      </Sheet.Frame>
+    </Sheet>
   );
 }

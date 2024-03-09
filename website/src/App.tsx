@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApolloProvider, useQuery, useSubscription } from '@apollo/client';
+import { ApolloProvider, useSubscription } from '@apollo/client';
 import { cache, client } from './utils/Apollo';
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
@@ -7,7 +7,7 @@ import { Header } from './components/Header';
 import { Banners } from './components/Banners';
 import "@fontsource/poppins/400.css"
 import "@fontsource/poppins/700.css"
-import { Outlet, RootRoute, Router, RouterProvider } from '@tanstack/react-router';
+import { Outlet, RouterProvider, createRootRoute, createRouter } from '@tanstack/react-router';
 import { indexRoute } from './routes/Home';
 import { editProfileRoute } from './routes/EditProfile';
 import { changePasswordRoute } from './routes/ChangePassword';
@@ -46,69 +46,19 @@ import { reportsTableRoute } from './components/ReportsTable';
 import { ratingsTableRoute } from './components/RatingsTable';
 import { carsTableRoute } from './components/CarsTable';
 import { paymentsTableRoute } from './components/PaymentsTable';
-import { ResultOf, graphql } from 'gql.tada';
+import { ResultOf } from 'gql.tada';
 import { deleteAccountRoute } from './routes/DeleteAccount';
+import { downloadRoute } from './routes/Download';
+import { UserQuery, UserSubscription, useUser } from './utils/user';
 
-export type User = ResultOf<typeof GetUserData>['getUser'];
-
-export const GetUserData = graphql(`
-  query GetUserData {
-    getUser {
-      id
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      photo
-      capacity
-      username
-      role
-      cashapp
-      queueSize
-    }
-  }
-`);
-
-const UserUpdates = graphql(`
-  subscription UserUpdates {
-    getUserUpdates {
-      id
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      photo
-      capacity
-      username
-      role
-      cashapp
-      queueSize
-    }
-  }
-`);
+export type User = ResultOf<typeof UserQuery>['getUser'];
 
 function Beep() {
-  const { data, loading } = useQuery(GetUserData);
+  const { user, loading } = useUser();
 
-  const user = data?.getUser;
-
-  useSubscription(UserUpdates, {
+  useSubscription(UserSubscription, {
     onData({ data }) {
-      cache.updateQuery({ query: GetUserData }, () => ({ getUser: data.data!.getUserUpdates }));
+      cache.updateQuery({ query: UserQuery }, () => ({ getUser: data.data!.getUserUpdates }));
     },
     skip: !user,
   });
@@ -132,12 +82,13 @@ function Beep() {
   );
 }
 
-export const rootRoute = new RootRoute({
+export const rootRoute = createRootRoute({
   component: Beep,
 });
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  downloadRoute,
   editProfileRoute,
   deleteAccountRoute,
   changePasswordRoute,
@@ -189,7 +140,7 @@ const routeTree = rootRoute.addChildren([
   ]),
 ]);
 
-const router = new Router({ routeTree, notFoundRoute });
+const router = createRouter({ routeTree, notFoundRoute });
 
 declare module '@tanstack/react-router' {
   interface Register {

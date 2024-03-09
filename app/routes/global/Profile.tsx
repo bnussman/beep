@@ -1,25 +1,22 @@
 import React from "react";
 import { useQuery } from "@apollo/client";
-import { Card } from "../../components/Card";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
-import { Ionicons } from "@expo/vector-icons";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RatePreview } from "./RatePreview";
 import { useUser } from "../../utils/useUser";
 import { graphql } from "gql.tada";
 import {
+  Card,
   Spinner,
   Text,
   Stack,
-  HStack,
+  XStack,
   Heading,
-  Spacer,
   Menu,
-  Pressable,
-  Icon,
-} from "native-base";
+  Button,
+} from "@beep/ui";
 
 export const GetUser = graphql(`
   query GetUserProfile($id: String!) {
@@ -74,6 +71,7 @@ export function ProfileScreen({ route }: Props) {
   React.useLayoutEffect(() => {
     if (user?.id !== route.params.id) {
       navigation.setOptions({
+        /*
         headerRight: () => (
           <Menu
             w="190"
@@ -99,6 +97,16 @@ export function ProfileScreen({ route }: Props) {
             <Menu.Item onPress={handleReport}>Report</Menu.Item>
           </Menu>
         ),
+        */
+        headerRight: () => (
+          <Menu
+            items={[
+              { title: "Rate", onPress: handleRate },
+              { title: "Report", onPress: handleReport },
+            ]}
+            Trigger={<Button>Menu</Button>}
+          />
+        ),
       });
     }
   }, [navigation, route.params, data]);
@@ -106,7 +114,7 @@ export function ProfileScreen({ route }: Props) {
   if (loading) {
     return (
       <Container center>
-        <Spinner size="lg" />
+        <Spinner />
       </Container>
     );
   }
@@ -128,70 +136,62 @@ export function ProfileScreen({ route }: Props) {
   }
 
   return (
-    <Container p={2}>
-      <Stack space={2} flexShrink={1}>
-        <Card>
-          <HStack alignItems="center">
+    <Container p="$2">
+      <Stack gap="$2" flexShrink={1}>
+        <Card p="$3">
+          <XStack alignItems="center">
             <Stack>
-              <Heading
-                size="lg"
-                letterSpacing="xs"
-                fontWeight="extrabold"
-                isTruncated
-              >
+              <Heading fontWeight="bold">
                 {data.getUser.name}
               </Heading>
-              <Heading size="sm" color="gray.500">
+              <Text color="$gray10">
                 @{data.getUser.username}
-              </Heading>
+              </Text>
             </Stack>
-            <Spacer />
+            <Stack flexGrow={1} />
             <Avatar
-              size="lg"
               url={data.getUser.photo}
-              online={data.getUser.isBeeping}
-              badgeSize="6"
             />
-          </HStack>
+          </XStack>
         </Card>
-        <Card>
-          <Stack space={2}>
-            {data.getUser.isBeeping ? (
+        <Card p="$3">
+          <Stack gap="$2">
+            {data.getUser.isBeeping && (
               <Text>
-                <Text fontWeight="extrabold">Queue Size </Text>
+                <Text fontWeight="bold">Queue Size </Text>
                 <Text>{data.getUser.queueSize}</Text>
               </Text>
-            ) : null}
-            {data?.getUser.venmo ? (
+            )}
+            {data?.getUser.venmo && (
               <Text>
-                <Text fontWeight="extrabold">Venmo </Text>
+                <Text fontWeight="bold">Venmo </Text>
                 <Text>@{data.getUser.venmo}</Text>
               </Text>
-            ) : null}
-            {data?.getUser.cashapp ? (
+            )}
+            {data?.getUser.cashapp && (
               <Text>
-                <Text fontWeight="extrabold">Cash App </Text>
+                <Text fontWeight="bold">Cash App </Text>
                 <Text>@{data.getUser.cashapp}</Text>
               </Text>
-            ) : null}
+            )}
             <Text>
-              <Text fontWeight="extrabold">Capacity </Text>
+              <Text fontWeight="bold">Capacity </Text>
               <Text>{data.getUser.capacity}</Text>
             </Text>
             <Text>
-              <Text fontWeight="extrabold">Singles Rate </Text>
+              <Text fontWeight="bold">Singles Rate </Text>
               <Text>${data.getUser.singlesRate}</Text>
             </Text>
             <Text>
-              <Text fontWeight="extrabold">Group Rate </Text>
+              <Text fontWeight="bold">Group Rate </Text>
               <Text>${data.getUser.groupRate}</Text>
             </Text>
-            {data.getUser.rating ? (
+            {data.getUser.rating && (
               <Text>
-                <Text fontWeight="extrabold">Rating </Text>
+                <Text fontWeight="bold">Rating </Text>
                 <Text>{printStars(data.getUser.rating)}</Text>
               </Text>
-            ) : null}
+            )}
           </Stack>
         </Card>
         <RatePreview id={route.params.id} />
