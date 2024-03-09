@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
-import { Button, Input, Stack } from "native-base";
+import { Button, Input, Label, Spinner, Stack } from "@beep/ui";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/Alert";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
@@ -63,8 +63,8 @@ export function RateScreen({ route }: Props) {
   };
 
   return (
-    <Container keyboard p={4}>
-      <Stack space={4} w="full">
+    <Container keyboard p="$4">
+      <Stack gap="$4" w="full">
         {user &&
           <UserHeader
             username={user.username}
@@ -73,17 +73,19 @@ export function RateScreen({ route }: Props) {
           />
         }
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-        <Input
-          size="lg"
-          h={100}
-          multiline={true}
-          placeholder="Your rating message goes here"
-          returnKeyType="go"
-          onChangeText={(text) => setMessage(text)}
-          onSubmitEditing={onSubmit}
-          blurOnSubmit={true}
-        />
-        <Button onPress={onSubmit} isDisabled={stars < 1} isLoading={loading}>
+        <Stack>
+          <Label htmlFor="message" fontWeight="bold">Message (optional)</Label>
+          <Input
+            h={100}
+            multiline={true}
+            placeholder="Your rating message goes here"
+            returnKeyType="go"
+            onChangeText={(text) => setMessage(text)}
+            onSubmitEditing={onSubmit}
+            blurOnSubmit={true}
+          />
+        </Stack>
+        <Button onPress={onSubmit} disabled={stars < 1} iconAfter={loading ? <Spinner /> : undefined}>
           Rate User
         </Button>
       </Stack>

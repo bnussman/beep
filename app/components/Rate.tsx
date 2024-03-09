@@ -1,8 +1,9 @@
 import React from "react";
-import { Flex, Icon, IconButton } from "native-base";
-import { AntDesign } from "@expo/vector-icons";
+import { XStack, XStackProps } from "@beep/ui";
+import { Button } from "@beep/ui";
+import { Star, StarFull } from "@tamagui/lucide-icons";
 
-export interface RateBarProps {
+export interface RateBarProps extends XStackProps {
   hint: string;
   value: number;
   onValueChange: (value: number) => void;
@@ -10,14 +11,18 @@ export interface RateBarProps {
 
 export const RateBar = (props: RateBarProps) => {
   const renderRateButtonElement = (value: number) => {
-    const color: string = value <= props.value ? "gold" : "gray.400";
+    const isSelected = value <= props.value
+
+    const color = isSelected ? "gold" : "$gray8";
+    const Icon = isSelected ? <StarFull size="$2" /> : <Star size="$2" />;
 
     return (
-      <IconButton
-        icon={<Icon as={AntDesign} name="star" />}
+      <Button
+        backgroundColor="$colorTransparent"
+        px="$2"
+        icon={Icon}
+        color={color}
         key={value}
-        size="lg"
-        _icon={{ color }}
         onPress={() => props.onValueChange(value)}
       />
     );
@@ -26,8 +31,8 @@ export const RateBar = (props: RateBarProps) => {
   const { ...restProps } = props;
 
   return (
-    <Flex {...restProps} direction="row">
+    <XStack {...restProps}>
       {[1, 2, 3, 4, 5].map(renderRateButtonElement)}
-    </Flex>
+    </XStack>
   );
 };

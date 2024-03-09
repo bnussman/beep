@@ -5,18 +5,17 @@ import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
 import { cache, client } from "./utils/Apollo";
 import { ApolloProvider, useSubscription } from "@apollo/client";
-import { NativeBaseProvider, useColorMode } from "native-base";
-import { colorModeManager } from "./utils/theme";
 import { updatePushToken } from "./utils/Notifications";
 import { UserData, UserSubscription, useUser } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
-import { NATIVE_BASE_THEME } from "./utils/constants";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/Navigation";
 import { useAutoUpdate } from "./utils/updates";
+import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
+import { useColorScheme } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({
@@ -29,7 +28,7 @@ Sentry.init({
 setupPurchase();
 
 function Beep() {
-  const { colorMode } = useColorMode();
+  const colorScheme = useColorScheme();
   const { data, loading } = useUser({
     errorPolicy: "none",
     onCompleted: () => {
@@ -61,31 +60,24 @@ function Beep() {
 
   return (
     <>
-      <StatusBar style={colorMode === "dark" ? "light" : "dark"} />
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       <Navigation
         linking={{ enabled: true, prefixes: ["beep://", "https://app.ridebeep.app"] }}
-        theme={colorMode === "dark" ? DarkTheme : DefaultTheme}
+        theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       />
     </>
   );
 }
 
 function App() {
+  const colorScheme = useColorScheme();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NativeBaseProvider
-        theme={NATIVE_BASE_THEME}
-        colorModeManager={colorModeManager}
-        config={{
-          dependencies: {
-            "linear-gradient": require("expo-linear-gradient").LinearGradient,
-          },
-        }}
-      >
+      <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme  ?? "light"}>
         <ApolloProvider client={client}>
           <Beep />
         </ApolloProvider>
-      </NativeBaseProvider>
+      </TamaguiProvider>
     </GestureHandlerRootView>
   );
 }

@@ -13,6 +13,7 @@ import { Alert } from "../../utils/Alert";
 import { UserData } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "../../components/Avatar";
+import { VariablesOf, graphql } from "gql.tada";
 import {
   isValidationError,
   useValidationErrors,
@@ -21,16 +22,12 @@ import {
   Button,
   Input,
   Text,
-  Flex,
-  Center,
-  FormControl,
-  HStack,
+  XStack,
   Stack,
-  WarningOutlineIcon,
-  InputGroup,
-  InputLeftAddon,
-} from "native-base";
-import { VariablesOf, graphql } from "gql.tada";
+  Label,
+  Spinner,
+} from "@beep/ui";
+import { PasswordInput } from "../../components/PasswordInput";
 
 const SignUp = graphql(`
   mutation SignUp($input: SignUpInput!) {
@@ -143,17 +140,13 @@ export function SignUpScreen() {
       keyboard
       alignItems="center"
       scrollViewProps={{ bounces: false, scrollEnabled: true }}
-      px={4}
+      px="$4"
     >
-      <Stack space={2} w="full" mt={4}>
-        <HStack space={4} alignItems="center">
-          <Stack space={2} flexGrow={1}>
-            <FormControl
-              isInvalid={
-                Boolean(errors.first) || Boolean(validationErrors?.first)
-              }
-            >
-              <FormControl.Label>First Name</FormControl.Label>
+      <Stack w="100%">
+        <XStack gap="$4" alignItems="center">
+          <Stack gap="$2" flexGrow={1}>
+            <Stack>
+              <Label htmlFor="first" fontWeight="bold">First Name</Label>
               <Controller
                 name="first"
                 rules={{ required: "First name is required" }}
@@ -161,6 +154,7 @@ export function SignUpScreen() {
                 control={control}
                 render={({ field: { onChange, onBlur, value, ref } }) => (
                   <Input
+                    id="first"
                     onBlur={onBlur}
                     onChangeText={(val) => onChange(val)}
                     value={value}
@@ -169,23 +163,16 @@ export function SignUpScreen() {
                     returnKeyType="next"
                     onSubmitEditing={() => setFocus("last")}
                     textContentType="givenName"
-                    size="lg"
                   />
                 )}
               />
-              <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
-              >
+              <Text color="red">
                 {errors.first?.message}
                 {validationErrors?.first?.[0]}
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.last) || Boolean(validationErrors?.last)
-              }
-            >
-              <FormControl.Label>Last Name</FormControl.Label>
+              </Text>
+            </Stack>
+            <Stack>
+              <Label htmlFor="last" fontWeight="bold">Last Name</Label>
               <Controller
                 name="last"
                 rules={{ required: "Last name is required" }}
@@ -193,6 +180,7 @@ export function SignUpScreen() {
                 control={control}
                 render={({ field: { onChange, onBlur, value, ref } }) => (
                   <Input
+                    id="last"
                     onBlur={onBlur}
                     textContentType="familyName"
                     onChangeText={(val) => onChange(val)}
@@ -201,37 +189,27 @@ export function SignUpScreen() {
                     returnKeyLabel="next"
                     returnKeyType="next"
                     onSubmitEditing={() => setFocus("email")}
-                    size="lg"
                   />
                 )}
               />
-              <FormControl.ErrorMessage
-                leftIcon={<WarningOutlineIcon size="xs" />}
-              >
+              <Text color="red">
                 {errors.last?.message}
                 {validationErrors?.last?.[0]}
-              </FormControl.ErrorMessage>
-            </FormControl>
+              </Text>
+            </Stack>
           </Stack>
-          <FormControl
-            w="100px"
-            isInvalid={
-              Boolean(errors.picture) || Boolean(validationErrors?.picture)
-            }
-          >
-            <TouchableOpacity onPress={chooseProfilePhoto}>
-              <Avatar url={photo?.uri} size="xl" />
+          <Stack w="100px">
+            <TouchableOpacity onPress={chooseProfilePhoto} aria-label="profile photo">
+              <Avatar url={photo?.uri} size="$10"  />
             </TouchableOpacity>
-            <FormControl.ErrorMessage>
+            <Text color="red">
               {errors.picture?.message}
               {validationErrors?.picture?.[0]}
-            </FormControl.ErrorMessage>
-          </FormControl>
-        </HStack>
-        <FormControl
-          isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}
-        >
-          <FormControl.Label>Email</FormControl.Label>
+            </Text>
+          </Stack>
+        </XStack>
+        <Stack>
+          <Label htmlFor="email" fontWeight="bold">Email</Label>
           <Controller
             name="email"
             rules={{ required: "Email is required" }}
@@ -239,6 +217,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="email"
                 onBlur={onBlur}
                 textContentType="emailAddress"
                 onChangeText={(val) => onChange(val)}
@@ -248,22 +227,19 @@ export function SignUpScreen() {
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("phone")}
                 autoCapitalize="none"
-                size="lg"
               />
             )}
           />
-          <FormControl.HelperText>
+          <Text>
             You must a .edu email address
-          </FormControl.HelperText>
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          </Text>
+          <Text color="red">
             {errors.email?.message}
             {validationErrors?.email?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}
-        >
-          <FormControl.Label>Phone</FormControl.Label>
+          </Text>
+        </Stack>
+        <Stack>
+          <Label htmlFor="phone" fontWeight="bold">Phone</Label>
           <Controller
             name="phone"
             rules={{ required: "Phone number is required" }}
@@ -271,6 +247,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="phone"
                 onBlur={onBlur}
                 textContentType="telephoneNumber"
                 onChangeText={(val) => onChange(val)}
@@ -279,54 +256,43 @@ export function SignUpScreen() {
                 returnKeyLabel="next"
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("venmo")}
-                size="lg"
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text color="red">
             {errors.phone?.message}
             {validationErrors?.phone?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}
-        >
-          <FormControl.Label>Venmo Username</FormControl.Label>
+          </Text>
+        </Stack>
+        <Stack>
+          <Label htmlFor="venmo" fontWeight="bold">Venmo Username</Label>
           <Controller
             name="venmo"
             rules={{ required: "Venmo username is required" }}
             defaultValue=""
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
-              <InputGroup>
-                <InputLeftAddon children="@" />
-                <Input
-                  flexGrow={1}
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value as string | undefined}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  textContentType="username"
-                  onSubmitEditing={() => setFocus("username")}
-                  autoCapitalize="none"
-                  size="lg"
-                />
-              </InputGroup>
+              <Input
+                id="venmo"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value as string | undefined}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                textContentType="username"
+                onSubmitEditing={() => setFocus("username")}
+                autoCapitalize="none"
+              />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text color="red">
             {errors.venmo?.message}
             {validationErrors?.venmo?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={
-            Boolean(errors.username) || Boolean(validationErrors?.username)
-          }
-        >
-          <FormControl.Label>Username</FormControl.Label>
+          </Text>
+        </Stack>
+        <Stack>
+          <Label htmlFor="username-input" fontWeight="bold">Username</Label>
           <Controller
             name="username"
             rules={{ required: "Username is required" }}
@@ -334,6 +300,7 @@ export function SignUpScreen() {
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
+                id="username-input"
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
                 value={value}
@@ -343,21 +310,16 @@ export function SignUpScreen() {
                 autoCapitalize="none"
                 textContentType="username"
                 onSubmitEditing={() => setFocus("password")}
-                size="lg"
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text color="red">
             {errors.username?.message}
             {validationErrors?.username?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <FormControl
-          isInvalid={
-            Boolean(errors.password) || Boolean(validationErrors?.password)
-          }
-        >
-          <FormControl.Label>Password</FormControl.Label>
+          </Text>
+        </Stack>
+        <Stack>
+          <Label htmlFor="password-input" fontWeight="bold">Password</Label>
           <Controller
             name="password"
             rules={{
@@ -370,46 +332,36 @@ export function SignUpScreen() {
             defaultValue=""
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
+              <PasswordInput
+                id="password-input"
                 onBlur={onBlur}
                 onChangeText={(val) => onChange(val)}
                 value={value}
-                ref={ref}
+                inputRef={ref}
                 returnKeyLabel="sign up"
                 returnKeyType="go"
-                secureTextEntry={true}
                 onSubmitEditing={onSubmit}
-                textContentType="password"
-                size="lg"
               />
             )}
           />
-          <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          <Text color="red">
             {errors.password?.message}
             {validationErrors?.password?.[0]}
-          </FormControl.ErrorMessage>
-        </FormControl>
-        <Button isLoading={isSubmitting} onPress={onSubmit} mt={2}>
+          </Text>
+        </Stack>
+        <Button iconAfter={isSubmitting ? <Spinner /> : undefined} onPress={onSubmit} mt="$4">
           Sign Up
         </Button>
-        <Center>
+        <Text>
           <Text>By signing up, you agree to our </Text>
-          <Flex direction="row" mb={8}>
-            <Text
-              bold
-              onPress={() => Linking.openURL("https://ridebeep.app/privacy")}
-            >
-              Privacy Policy
-            </Text>
-            <Text> and </Text>
-            <Text
-              bold
-              onPress={() => Linking.openURL("https://ridebeep.app/terms")}
-            >
-              Terms of Service
-            </Text>
-          </Flex>
-        </Center>
+          <Text onPress={() => Linking.openURL("https://ridebeep.app/privacy")}>
+            Privacy Policy
+          </Text>
+          <Text> and </Text>
+          <Text onPress={() => Linking.openURL("https://ridebeep.app/terms")}>
+            Terms of Service
+          </Text>
+        </Text>
       </Stack>
     </Container>
   );

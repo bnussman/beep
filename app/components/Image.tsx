@@ -1,26 +1,28 @@
-import { Box, IImageProps, Spinner, Image as _Image, Flex } from "native-base";
 import React, { useState } from "react";
+import { Image as _Image, ImageProps, Spinner, Stack } from "@beep/ui";
 
-export function Image(props: IImageProps) {
+export function Image(props: ImageProps) {
   const [loading, setLoading] = useState(true);
 
   return (
-    <Box>
-      {loading ? (
-        <Flex
-          w={props.w}
-          h={props.h}
+    <Stack>
+      {loading && (
+        <Stack
+          w={props.w ?? props.width}
+          h={props.h ?? props.height}
+          borderRadius={props.borderRadius}
           alignItems="center"
           justifyContent="center"
+          backgroundColor="$gray4"
         >
           <Spinner />
-        </Flex>
-      ) : null}
+        </Stack>
+      )}
       <_Image
         {...props}
-        onLoadEnd={() => setLoading(false)}
+        onLoad={() => setLoading(false)}
         position={loading ? "absolute" : undefined}
       />
-    </Box>
+    </Stack>
   );
 }

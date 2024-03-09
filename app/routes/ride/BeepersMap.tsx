@@ -116,7 +116,6 @@ export function BeepersMap() {
         width: "100%",
         height: 250,
         borderRadius: 15,
-        marginTop: 16,
         overflow: "hidden",
       }}
       initialRegion={initialRegion}

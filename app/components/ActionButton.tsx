@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Unpacked } from "../utils/constants";
 import { ApolloError, useMutation } from "@apollo/client";
 import { useEffect } from "react";
-import { Button } from "native-base";
+import { Button, Spinner } from "@beep/ui";
 import { Status } from "../utils/types";
 import { ResultOf, graphql } from "gql.tada";
 import { GetInitialQueue } from "../routes/beep/StartBeeping";
@@ -48,7 +48,7 @@ export const UpdateBeeperQueue = graphql(`
   }
 `);
 
-function _Button(props: Props) {
+export function ActionButton(props: Props) {
   const { beep } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -90,14 +90,10 @@ function _Button(props: Props) {
 
   return (
     <Button
-      size="lg"
-      isLoading={isLoading}
+      iconAfter={isLoading ? <Spinner /> : undefined}
       onPress={onPress}
-      _text={{ fontWeight: "extrabold" }}
     >
       {getMessage()}
     </Button>
   );
 }
-
-export const ActionButton = React.memo(_Button);

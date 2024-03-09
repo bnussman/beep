@@ -1,28 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
-import { RefreshControl } from "react-native";
+import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
-import { Card } from "../../components/Card";
 import { useLocation } from "../../utils/useLocation";
-import {
-  Text,
-  Spinner,
-  FlatList,
-  Badge,
-  Box,
-  HStack,
-  Spacer,
-  Heading,
-  useColorMode,
-  Stack,
-} from "native-base";
 import { client } from "../../utils/Apollo";
 import { InitialRiderStatus } from "./FindBeep";
 import { ResultOf, VariablesOf, graphql } from "gql.tada";
+import { LinearGradient } from "tamagui/linear-gradient";
+import {
+  Text,
+  Spinner,
+  XStack,
+  Spacer,
+  Heading,
+  Stack,
+  Card
+} from "@beep/ui";
 
 const GetBeepers = graphql(`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -103,7 +100,7 @@ export const ChooseBeep = graphql(`
 type Props = StaticScreenProps<Omit<VariablesOf<typeof ChooseBeep>, 'beeperId'>>;
 
 export function PickBeepScreen({ route }: Props) {
-  const { colorMode } = useColorMode();
+  const colorMode = useColorScheme();
   const { location } = useLocation();
   const navigation = useNavigation();
 
@@ -120,9 +117,19 @@ export function PickBeepScreen({ route }: Props) {
     }
   );
 
-  const [getBeep] = useMutation(ChooseBeep);
 
-  const chooseBeep = async ( beeperId: string,) => {
+  const [getBeep, { loading: isPickBeeperLoading }] = useMutation(ChooseBeep);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => isPickBeeperLoading ? <Spinner /> : null
+    });
+  }, [isPickBeeperLoading]);
+
+  const chooseBeep = async (beeperId: string) => {
+    if (isPickBeeperLoading) {
+      return;
+    }
     try {
       const { data } = await getBeep({
         variables: {
@@ -150,92 +157,74 @@ export function PickBeepScreen({ route }: Props) {
     const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
 
     return (
-      <Box
-        bg={{
-          linearGradient: {
-            colors: ['#ff930f', '#fff95b'],
-            start: [0, 0],
-            end: [1, 0]
-          }
-        }}
-        rounded="xl"
-        mx={2.5}
-        mt={index === 0 ? 3 : 2.5}
-        p={isPremium ? 0.5 : 0}
+      <LinearGradient
+        colors={['#ff930f', '#fff95b']}
+        start={[0, 0]}
+        end={[1, 0]}
+        mx="$2.5"
+        borderRadius="$4"
+        mt={index === 0 ? "$3" : "$2.5"}
+        p={isPremium ? "$1.5" : "$0"}
       >
         <Card
-          pressable
           onPress={() => chooseBeep(item.id)}
-          borderWidth={isPremium ? 0 : "2px"}
+          hoverTheme
+          pressTheme
+          borderRadius="$4"
+          p="$3"
         >
-          <HStack alignItems="center">
+          <XStack alignItems="center" jc="space-between">
             <Stack flexShrink={1}>
-              <HStack alignItems="center" mb={2}>
-                <Avatar mr={2} size="45px" url={item.photo} />
+              <XStack alignItems="center" mb="$2">
+                <Avatar size="$4" mr="$2" url={item.photo} />
                 <Stack>
-                  <Text
-                    fontWeight="extrabold"
-                    fontSize="lg"
-                    letterSpacing="sm"
-                    isTruncated
-                  >
+                  <Text fontWeight="bold">
                     {item.name}
                   </Text>
                   {item.rating && (
-                    <Text fontSize="xs">{printStars(item.rating)}</Text>
+                    <Text fontSize="$2">{printStars(item.rating)}</Text>
                   )}
                 </Stack>
-              </HStack>
-              <Box>
+              </XStack>
+              <Stack>
                 <Text>
-                  <Text bold>Queue Size </Text>
+                  <Text fontWeight="bold">Queue Size </Text>
                   <Text>{item.queueSize}</Text>
                 </Text>
                 <Text>
-                  <Text bold>Capacity </Text>
+                  <Text fontWeight="bold">Capacity </Text>
                   <Text>{item.capacity}</Text>
                 </Text>
                 <Text>
-                  <Text bold>Rates </Text>
+                  <Text fontWeight="bold">Rates </Text>
                   <Text>
                     ${item.singlesRate} singles / ${item.groupRate} group
                   </Text>
                 </Text>
-              </Box>
+              </Stack>
             </Stack>
-            <Spacer />
-            <Stack space={2} flexShrink={1}>
+            <Stack gap="$2" flexShrink={1}>
               {item.venmo && (
-                <Badge
-                  bg="black"
-                  _text={{ color: "white" }}
-                  rounded="xl"
-                  _dark={{ bg: "white", _text: { color: "gray.600" } }}
-                >
-                  Venmo
-                </Badge>
+                <Card>
+                  <Text>Venmo</Text>
+                </Card>
               )}
               {item.cashapp && (
-                <Badge
-                  bg="black"
-                  _text={{ color: "white" }}
-                  rounded="xl"
-                  _dark={{ bg: "white", _text: { color: "gray.600" } }}
-                >
-                  Cash App
-                </Badge>
+                <Card>
+                  <Text>Cash App</Text>
+                </Card>
               )}
             </Stack>
-          </HStack>
+          </XStack>
         </Card>
-      </Box>
+      </LinearGradient>
     )
   };
 
   if ((!data && loading) || location === undefined) {
     return (
       <Container alignItems="center" justifyContent="center">
-        <Spinner size="lg" />
+        <Spinner />
       </Container>
     );
   }
@@ -252,7 +241,6 @@ export function PickBeepScreen({ route }: Props) {
   return (
     <Container h="100%">
       <FlatList
-        height="100%"
         data={beepers}
         renderItem={renderItem}
         keyExtractor={(beeper) => beeper.id}

@@ -1,6 +1,5 @@
 import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { HStack, Icon, Text } from "native-base";
+import { XStack, Text, Circle, CircleProps } from "@beep/ui";
 import {
   useWebsocketStatus,
   WebsocketStatus as WebsocketStatusType,
@@ -9,24 +8,19 @@ import {
 export function WebsocketStatus() {
   const status = useWebsocketStatus();
 
-  const colorMap: Record<WebsocketStatusType, string> = {
-    Closed: "red.400",
-    Opened: "orange.300",
-    Connecting: "orange.300",
-    Connected: "green.400",
+  const colorMap: Record<WebsocketStatusType, CircleProps["backgroundColor"]> = {
+    Closed: "$red8",
+    Opened: "$orange8",
+    Connecting: "$orange8",
+    Connected: "$green8",
   };
 
   return (
-    <HStack px={5} py={3} space={7} alignItems="center">
-      <Icon
-        color={colorMap[status]}
-        size={6}
-        name="checkbox-blank-circle"
-        as={MaterialCommunityIcons}
-      />
-      <Text mr={4} fontWeight={500}>
+    <XStack gap="$2" alignItems="center">
+      <Circle backgroundColor={colorMap[status]} size="$4" />
+      <Text>
         {status}
       </Text>
-    </HStack>
+    </XStack>
   );
 }

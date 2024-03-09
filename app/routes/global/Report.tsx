@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { Input, Button, Stack } from "native-base";
+import { Input, Button, Stack, Spinner } from "@beep/ui";
 import { Container } from "../../components/Container";
 import { UserHeader } from "../../components/UserHeader";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
@@ -45,8 +45,8 @@ export function ReportScreen({ route }: Props) {
   }
 
   return (
-    <Container keyboard p={4}>
-      <Stack space={4} w="full">
+    <Container keyboard p="$4">
+      <Stack gap="$4" w="full">
         {user &&
           <UserHeader
             username={user.username}
@@ -55,7 +55,6 @@ export function ReportScreen({ route }: Props) {
           />
         }
         <Input
-          size="lg"
           h={100}
           multiline={true}
           placeholder="Your reason for reporting here"
@@ -66,8 +65,8 @@ export function ReportScreen({ route }: Props) {
         />
         <Button
           onPress={() => reportUser()}
-          isDisabled={!reason}
-          isLoading={loading}
+          disabled={!reason}
+          iconAfter={loading ? <Spinner /> : undefined}
         >
           Report User
         </Button>
