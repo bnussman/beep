@@ -47,7 +47,8 @@ const options = {
 };
 
 export const pubSub = new RedisPubSub({
-  publisher: new Redis(options), subscriber: new Redis(options)
+  publisher: new Redis(options),
+  subscriber: new Redis(options)
 });
 
 async function start() {
