@@ -59,6 +59,6 @@ export async function onConnect(ctx: WSContext<{ token?: string }, { token?: Tok
 
   if (token) {
     ctx.extra.token = token;
-    return { user: token.user };
+    return { user: token.user as User };
   }
 }

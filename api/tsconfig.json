@@ -6,6 +6,7 @@
     "outDir": "build",
     "strict": true,
     "skipLibCheck": true,
+    "composite": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
