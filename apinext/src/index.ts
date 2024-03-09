@@ -1,15 +1,9 @@
-import { createContext } from './context';
 import { t } from './trpc';
 import { z } from 'zod';
 import { observable } from '@trpc/server/observable';
+import { createBunHttpHandler, createBunWSHandler } from 'trpc-bun-adapter';
+import { createContext } from './context';
 
-import { EventEmitter } from 'stream';
-import { createHTTPServer } from '@trpc/server/adapters/standalone';
-import { WebSocketServer } from 'ws';
-import { applyWSSHandler } from '@trpc/server/adapters/ws';
-import cors from 'cors';
-
-const ee = new EventEmitter()
 
 const appRouter = t.router({
   user: t.procedure.query(({ ctx }) => {
@@ -31,25 +25,54 @@ const appRouter = t.router({
 
 export type AppRouter = typeof appRouter;
 
-const server = createHTTPServer({
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETET, OPTIONS, POST',
+  'Access-Control-Allow-Headers': '*',
+};
+
+const websocket = createBunWSHandler({
   router: appRouter,
-  createContext,
-  middleware: cors()
+  onError: console.error,
 });
 
-const wss = new WebSocketServer({ server, path: '/ws' });
-
-applyWSSHandler<AppRouter>({
-  wss,
+const bunHandler = createBunHttpHandler({
   router: appRouter,
+  endpoint: '/trpc',
   createContext,
+  batching: {
+      enabled: true,
+  },
+  responseMeta: () => ({
+    headers: CORS_HEADERS
+  }),
+  emitWsUpgrades: false,
 });
 
-wss.on('connection', (ws) => {
-  console.log(`➕➕ Connection (${wss.clients.size})`);
-  ws.once('close', () => {
-    console.log(`➖➖ Connection (${wss.clients.size})`);
-  });
-});
+Bun.serve({
+  async fetch(request, server) {
+		const headers = new Headers(CORS_HEADERS);
+    
+    if (request.method === "OPTIONS") {
+			// This is the preflight request. It should only return the CORS headers
+			return new Response(null, {
+				status: 200,
+				headers,
+			});
+		}
 
-server.listen(3001);
+    console.log(request.url)    
+    if (request.url.endsWith('/ws') && server.upgrade(request, { data: { req: request } })) {
+      return;
+    }
+
+    const response = await bunHandler(request, server);
+
+    // for (const header of Object.keys(CORS_HEADERS)) {
+    //   response?.headers.set(header, CORS_HEADERS[header]);
+    // }
+    return bunHandler(request, server);
+  },
+  port: 3001,
+  websocket,
+});

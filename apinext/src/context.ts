@@ -2,11 +2,10 @@
 import { db } from "./db";
 import { token } from "./schema";
 import { eq } from 'drizzle-orm';
-import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
-import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
+import type { CreateBunContextOptions } from "trpc-bun-adapter";
 
-export async function createContext(opts: CreateHTTPContextOptions | CreateWSSContextFnOptions) {
-  const bearer = opts.req.headers.authorization?.split(" ")[1];
+export async function createContext(opts: CreateBunContextOptions) {
+  const bearer = opts.req.headers.get("authorization")?.split(" ")[1];
 
   if (!bearer) {
     return {};

@@ -21,7 +21,7 @@ export const trpcClient = trpc.createClient({
         client: wsClient
       }),
       false: httpBatchLink({
-        url: 'http://localhost:3001',
+        url: 'http://localhost:3001/trpc',
         headers: getHeaders,
       }),
     }),

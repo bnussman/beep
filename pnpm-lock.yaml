@@ -154,6 +154,9 @@ importers:
       postgres:
         specifier: ^3.4.3
         version: 3.4.3
+      trpc-bun-adapter:
+        specifier: ^1.1.0
+        version: 1.1.0(@trpc/server@11.0.0-next-beta.316)
       typescript:
         specifier: ^5.0.0
         version: 5.3.3
@@ -15648,6 +15651,14 @@ packages:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
     dev: true
+
+  /trpc-bun-adapter@1.1.0(@trpc/server@11.0.0-next-beta.316):
+    resolution: {integrity: sha512-ECcRxgCGnyCdxjW3MTvQEjAOgrL7XFrJfOzvIf5WZlKOgsrFNW3ZZhMBeXGrirwr+gGjOyw92peRC4e4wpU/HA==}
+    peerDependencies:
+      '@trpc/server': ^11.0.0-next-beta.228
+    dependencies:
+      '@trpc/server': 11.0.0-next-beta.316
+    dev: false
 
   /ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
