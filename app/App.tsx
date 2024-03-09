@@ -41,6 +41,12 @@ function Beep() {
   const { data: d } = trpc.user.useQuery();
   const { mutateAsync } = trpc.updateUser.useMutation();
 
+  trpc.listen.useSubscription(undefined, {
+    onData(data) {
+      console.log("WS", data)
+    }
+  })
+
   const utils = trpc.useUtils();
 
   console.log("trpc user context", d);
