@@ -2,7 +2,7 @@ export const GOOGLE_API_KEYS = process.env.GOOGLE_API_KEYS;
 
 export const SENTRY_URL = process.env.SENTRY_URL;
 
-export const DB_URL = process.env.DB_URL || "postgresql://localhost:5432";
+export const DB_URL = process.env.DB_URL || "mysql://localhost:3306";
 
 export const DB_DATABASE = process.env.DB_DATABASE || "beep";
 

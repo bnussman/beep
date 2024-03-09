@@ -6,7 +6,7 @@ import { Payment, Product, Store, productExpireTimes, productPrice } from '../en
 import { User } from "../entities/User";
 import { REVENUE_CAT_SECRET } from "../utils/constants";
 import { SubscriberResponse } from "../users/types";
-import { EntityManager } from "@mikro-orm/postgresql";
+import { EntityManager } from "@mikro-orm/mysql";
 
 @ObjectType()
 class PaymentResponse extends Paginated(Payment) {}

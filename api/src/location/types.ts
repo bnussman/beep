@@ -10,7 +10,7 @@ export class PointType extends Type<Point | undefined, string | undefined> {
       return value;
     }
 
-    return `point(${value.latitude} ${value.longitude})`;
+    return `POINT(${value.latitude} ${value.longitude})`;
   }
 
   convertToJSValue(value: string | undefined): Point | undefined {

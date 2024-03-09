@@ -37,10 +37,8 @@ import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
-import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { Webhook } from "./payments/utils";
-import { User } from "./entities/User";
-import { Payment, Product, Store, productExpireTimes } from "./entities/Payments";
+import type { MySqlDriver } from "@mikro-orm/mysql";
 
 const options = {
   host: REDIS_HOST,
@@ -53,7 +51,7 @@ export const pubSub = new RedisPubSub({
 });
 
 async function start() {
-  const orm = await MikroORM.init<PostgreSqlDriver>(config);
+  const orm = await MikroORM.init<MySqlDriver>(config);
 
   const app = express();
 

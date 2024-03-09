@@ -15,6 +15,17 @@ services:
       POSTGRES_USER: beep
       POSTGRES_PASSWORD: beep
       TZ: America/New_York
+  mysql-db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: 'beep'
+      MYSQL_USER: 'beep'
+      MYSQL_PASSWORD: 'beep'
+      MYSQL_ROOT_PASSWORD: 'beep'
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-volume:/var/lib/mysql
   s3:
     image: minio/minio
     ports:
@@ -39,3 +50,4 @@ services:
 
 volumes:
   data:
+  mysql-volume:
