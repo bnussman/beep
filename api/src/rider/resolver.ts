@@ -154,11 +154,11 @@ export class RiderResolver {
     const users = await ctx.em.createQueryBuilder(User, 'u')
       .select("*")
       .leftJoinAndSelect("u.payments", 'p', { "p.expires": { '$gte': new Date() } })
-      .where('ST_Distance_Sphere(u.location, ST_SRID(POINT(?,?), 4326)) <= ? * 1609.34', [latitude, longitude, radius])
+      .where('ST_Distance_Sphere(ST_SRID(u.location, 4326), ST_SRID(POINT(?,?), 4326)) <= ? * 1609.34', [latitude, longitude, radius])
       .andWhere({ isBeeping: true })
       .orderBy({
         [raw("CASE WHEN p.product_id LIKE 'top_of_beeper_list_%' THEN 1 ELSE 0 END")]: QueryOrder.DESC,
-        [raw(`ST_Distance_Sphere(u.location, ST_SRID(POINT(?,?), 4326))`, [latitude, longitude])]: QueryOrder.ASC
+        [raw(`ST_Distance_Sphere(ST_SRID(u.location, 4326), ST_SRID(POINT(?,?), 4326))`, [latitude, longitude])]: QueryOrder.ASC
       })
       .getResultList();
 
