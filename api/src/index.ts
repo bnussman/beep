@@ -39,8 +39,6 @@ import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { Webhook } from "./payments/utils";
-import { User } from "./entities/User";
-import { Payment, Product, Store, productExpireTimes } from "./entities/Payments";
 
 const options = {
   host: REDIS_HOST,
@@ -49,7 +47,8 @@ const options = {
 };
 
 export const pubSub = new RedisPubSub({
-  publisher: new Redis(options), subscriber: new Redis(options)
+  publisher: new Redis(options),
+  subscriber: new Redis(options)
 });
 
 async function start() {
