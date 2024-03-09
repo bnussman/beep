@@ -23,8 +23,5 @@
       }
     ]
   },
-  "extends": "expo/tsconfig.base",
-  "references": [
-    { "path": "../api" }
-  ]
+  "extends": "expo/tsconfig.base"
 }
