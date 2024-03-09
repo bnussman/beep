@@ -18,7 +18,6 @@ import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
 import { useColorScheme } from "react-native";
 import { queryClient, trpc, trpcClient } from "./utils/trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({

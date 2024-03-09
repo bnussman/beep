@@ -1,5 +1,5 @@
 import { HTTPHeaders, createTRPCReact, httpBatchLink } from '@trpc/react-query';
-import type { AppRouter } from '../../api/src/index';
+import type { AppRouter } from '../../apinext/src/index';
 import { QueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
  
@@ -10,7 +10,7 @@ export const queryClient = new QueryClient();
 export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: 'http://localhost:3000/trpc',
+      url: 'http://localhost:3001/trpc',
       headers: getHeaders,
     }),
   ],
