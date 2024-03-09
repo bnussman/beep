@@ -4,3 +4,4 @@ packages:
   - 'api'
   - 'test'
   - 'ui'
+  - 'apinext'
