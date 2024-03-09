@@ -4,7 +4,7 @@ import { Migrator } from '@mikro-orm/migrations';
 import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER, isDevelopment } from "./utils/constants";
 
 export default defineConfig({
-  entities: ['./build/entities/*.js'],
+  entities: ['./build/src/entities/*.js'],
   entitiesTs: ['./src/entities/*.ts'],
   user: DB_USER,
   password: DB_PASSWORD,
