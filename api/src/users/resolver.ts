@@ -17,8 +17,8 @@ import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
 import { S3_BUCKET_URL } from '../utils/constants';
 import { db } from '../index';
-import { user } from '../../drizzle/schema';
-import { eq } from 'drizzle-orm';
+import { beep, user } from '../../drizzle/schema';
+import { and, eq } from 'drizzle-orm';
 
 @ObjectType()
 class UsersPerDomain {
@@ -64,9 +64,13 @@ export class UserResolver {
   public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
     const populate = fieldsToRelations<User>(info);
 
-    const userFromDizzle = await db.query.user.findFirst({ where: eq(user.id, id ?? ctx.user.id) });
+    // const userFromDizzle = await db.query.user.findFirst({ where: eq(user.id, id ?? ctx.user.id), with: { beepsAsBeeper: true } });
 
-    console.log(userFromDizzle?.location?.latitude)
+    const userFromDizzle = await db.query.user.findFirst({
+      where: eq(user.id, id ?? ctx.user.id),
+    });
+
+    console.log(userFromDizzle)
 
     return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
   }

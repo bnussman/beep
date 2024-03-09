@@ -1,6 +1,7 @@
 import { pgTable, integer, text, varchar, timestamp, unique, boolean, numeric, index } from "drizzle-orm/pg-core";
 import { Geometry } from 'wkx';
 import { customType } from 'drizzle-orm/pg-core';
+import { relations } from "drizzle-orm";
 
 interface Point {
   latitude: number;
@@ -57,6 +58,11 @@ export const user = pgTable("user", {
 		userEmailUnique: unique("user_email_unique").on(table.email),
 	}
 });
+
+export const userRelations = relations(user, ({ many }) => ({
+  beepsAsRider: many(beep, { relationName: "rider" }),
+  beepsAsBeeper: many(beep, { relationName: "beeper" }),
+}));
 
 export const payment = pgTable("payment", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
@@ -115,6 +121,19 @@ export const beep = pgTable("beep", {
 		startIdx: index().on(table.start),
 	}
 });
+
+export const beepRelations = relations(beep, ({ one }) => ({
+  beeper: one(user, {
+    fields: [beep.beeperId],
+    references: [user.id],
+    relationName: "beeper",
+  }),
+  rider: one(user, {
+    fields: [beep.riderId],
+    references: [user.id],
+    relationName: "rider",
+  }),
+}));
 
 export const report = pgTable("report", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),

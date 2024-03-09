@@ -56,10 +56,11 @@ const client = postgres({
   username: DB_USER
 });
 
-export const db = drizzle(client, { schema });
+export const db = drizzle(client, { schema, logger: true  });
 
 export const pubSub = new RedisPubSub({
-  publisher: new Redis(options), subscriber: new Redis(options)
+  publisher: new Redis(options),
+  subscriber: new Redis(options)
 });
 
 async function start() {
