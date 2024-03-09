@@ -39,10 +39,12 @@ function Beep() {
     },
   });
 
-  const { data: d } = trpc.userList.useQuery();
+  const { data: d } = trpc.user.useQuery();
   const { mutateAsync } = trpc.updateUser.useMutation();
 
   const utils = trpc.useUtils();
+
+  console.log("trpc user context", d);
 
   useAutoUpdate();
 

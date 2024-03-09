@@ -40,7 +40,7 @@ import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { Webhook } from "./payments/utils";
 import * as trpcExpress from '@trpc/server/adapters/express';
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import type { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
 import type { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
@@ -49,17 +49,40 @@ import { z } from "zod";
 export type AppRouter = typeof appRouter;
 
 // created for each request
-function createContext(
+async function createContext(
   opts: CreateHTTPContextOptions | CreateWSSContextFnOptions,
+  orm: MikroORM<PostgreSqlDriver>
 ) {
-  return {};
+  const em = orm.em.fork();
+  const bearer = opts.req.headers.authorization?.split(" ")[1];
+
+  console.log(opts.req.headers);
+
+  if (!bearer) {
+    return { em };
+  }
+
+  const token = await em.findOne(
+    Token,
+    bearer,
+    {
+      populate: ['user'],
+    }
+  );
+
+  if (!token) {
+    return { em };
+  }
+
+
+  return { user: token.user, token: token, em };
 }
 
 type TRPCContext = Awaited<ReturnType<typeof createContext>>;
 const t = initTRPC.context<TRPCContext>().create();
 const appRouter = t.router({
-  userList: t.procedure.query(async () => {
-    return [{ id: 1 }];
+  user: t.procedure.query(({ ctx }) => {
+    return ctx.user;
   }),
   updateUser: t.procedure.input(
     z.object({
@@ -174,7 +197,7 @@ async function start() {
     cors<cors.CorsRequest>(),
     trpcExpress.createExpressMiddleware({
       router: appRouter,
-      createContext,
+      createContext: (options) => createContext(options, orm),
     }),
   );
 
