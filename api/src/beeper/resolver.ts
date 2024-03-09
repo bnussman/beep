@@ -38,7 +38,7 @@ export class BeeperResolver {
 
     const users = await ctx.em.createQueryBuilder(User, 'u')
       .select(["id", "location"])
-      .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
+      .where('ST_Distance_Sphere(u.location, ST_SRID(POINT(?,?), 4326)) <= ? * 1609.34', [latitude, longitude, radius])
       .andWhere({ isBeeping: true })
       .getResultList();
 
