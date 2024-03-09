@@ -10,11 +10,7 @@ overrides:
 
 importers:
 
-  .:
-    devDependencies:
-      concurrently:
-        specifier: ^8.2.2
-        version: 8.2.2
+  .: {}
 
   api:
     dependencies:

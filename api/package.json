@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "start": "node build/index.js",
     "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"node --watch build/index.js\"",
     "db:create": "mikro-orm schema:create --run",

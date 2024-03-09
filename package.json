@@ -6,21 +6,16 @@
   },
   "author": "Banks Nussman",
   "scripts": {
-    "clean": "rm -rf node_modules/ && rm -rf app/node_modules/ && rm -rf website/node_modules && rm -rf api/node_modules && rm pnpm-lock.yaml",
-    "build:api": "pnpm --filter @beep/api build",
-    "build:website": "pnpm --filter @beep/website build",
-    "build": "pnpm build:api",
-    "dev": "concurrently -n app,api,website -c blue,magenta,green --raw \"pnpm --filter @beep/app start\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
+    "dev": "pnpm run --parallel dev",
+    "start:api": "pnpm --filter @beep/api start",
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
-    "start:api": "pnpm --filter @beep/api start",
-    "codegen": "concurrently -n app,website -c blue,green \"pnpm --filter @beep/app codegen\" \"pnpm --filter @beep/website codegen\"",
-    "typecheck": "concurrently -n app,website,api -c blue,green,yellow \"pnpm --filter @beep/app typecheck\" \"pnpm --filter @beep/website typecheck\" \"pnpm --filter @beep/api build\""
+    "build:api": "pnpm --filter @beep/api build",
+    "build:api": "pnpm --filter @beep/api build",
+    "build:website": "pnpm --filter @beep/website build",
+    "typecheck": "pnpm run --parallel typecheck"
   },
   "private": true,
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  },
   "resolutions": {
     "react": "^18.1.0",
     "react-dom": "^18.1.0"

@@ -3,6 +3,7 @@
   "version": "2.11.0",
   "main": "index.js",
   "scripts": {
+    "dev": "expo start --go --web",
     "start": "expo start --go --web",
     "android": "expo start --android",
     "ios": "expo start --ios",
