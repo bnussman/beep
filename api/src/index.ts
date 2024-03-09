@@ -39,7 +39,6 @@ import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { Webhook } from "./payments/utils";
-import * as trpcExpress from '@trpc/server/adapters/express';
 
 const options = {
   host: REDIS_HOST,

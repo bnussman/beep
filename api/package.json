@@ -29,7 +29,6 @@
     "@mikro-orm/postgresql": "6.1.5",
     "@sentry/integrations": "7.77.0",
     "@sentry/node": "7.77.0",
-    "@trpc/server": "11.0.0-next-beta.316",
     "aws-sdk": "^2.1563.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
@@ -50,8 +49,7 @@
     "type-graphql": "2.0.0-beta.3",
     "uuid": "^9.0.1",
     "wkx": "^0.5.0",
-    "ws": "^8.16.0",
-    "zod": "^3.22.4"
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@mikro-orm/cli": "6.1.5",
