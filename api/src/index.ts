@@ -22,8 +22,7 @@ import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { pubSub } from "./utils/pubsub";
 import { createYoga } from "graphql-yoga";
 import { getContext, onConnect } from "./utils/context";
-import { GraphQLUpload } from "graphql-upload-minimal";
-import { GraphQLScalarType, Kind } from "graphql";
+import { GraphQLScalarType} from "graphql";
 
 export const FileScaler = new GraphQLScalarType({
   name: "File",
@@ -65,7 +64,10 @@ async function start() {
     scalarsMap: [{ type: File, scalar: FileScaler }],
   });
 
-  const yoga = createYoga({ schema, context: (data) => getContext(data, orm) });
+  const yoga = createYoga({
+    schema,
+    context: (data) => getContext(data, orm),
+  });
 
   const websocketHandler = makeHandler({
     schema,

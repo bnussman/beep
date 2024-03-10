@@ -10,6 +10,7 @@ import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { compare, hash } from 'bcrypt';
 import { isDevelopment } from '../utils/constants';
+import { GraphQLError } from 'graphql';
 
 @ObjectType()
 class Auth {
@@ -112,7 +113,7 @@ export class AuthResolver {
     } catch (error: any) {
       const msg = error.message as string;
       if (msg.includes("unique constraint")) {
-        throw new Error("That username or email is taken");
+        throw new GraphQLError("That username or email is taken");
       }
       throw error;
     }
