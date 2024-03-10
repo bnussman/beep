@@ -1,27 +1,10 @@
 import "reflect-metadata";
 import "dotenv/config";
-import express from "express";
 import config from './mikro-orm.config';
-import ws from 'ws';
-import cors from 'cors';
-import * as Sentry from "./utils/sentry";
-import * as RealSentry from "@sentry/node";
-import { json } from 'body-parser';
+import { makeHandler } from "graphql-ws/lib/use/bun";
 import { MikroORM } from "@mikro-orm/core";
-import { Token } from "./entities/Token";
 import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
-import { createServer } from 'http';
-import { graphqlUploadExpress } from "graphql-upload-minimal";
-import { ApolloServer } from "@apollo/server";
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import { useServer } from 'graphql-ws/lib/use/ws';
-import { Context } from "graphql-ws";
-import { REVENUE_CAT_WEBHOOK_TOKEN } from "./utils/constants";
-import { getContext, onConnect } from "./utils/context";
-import { formatError } from "./utils/errors";
-import { Context as APIContext } from "./utils/context";
-import { expressMiddleware } from '@apollo/server/express4';
 import { BeepResolver } from "./beeps/resolver";
 import { BeeperResolver } from "./beeper/resolver";
 import { RatingResolver } from "./rating/resolver";
@@ -34,22 +17,14 @@ import { CarResolver } from "./cars/resolver";
 import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
-import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
+import { PaymentsResolver } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import type { Webhook } from "./payments/utils";
 import { pubSub } from "./utils/pubsub";
+import { createYoga } from "graphql-yoga";
+import { getContext, onConnect } from "./utils/context";
 
 async function start() {
   const orm = await MikroORM.init<PostgreSqlDriver>(config);
-
-  const app = express();
-
-  const httpServer = createServer(app);
-
-  Sentry.init(app);
-
-  app.use(RealSentry.Handlers.requestHandler());
-  app.use(RealSentry.Handlers.tracingHandler());
 
   const schema = await buildSchema({
     resolvers: [
@@ -73,70 +48,50 @@ async function start() {
     validate: true,
   });
 
-  app.use(graphqlUploadExpress({ maxFiles: 1 }));
+  const yoga = createYoga({ schema, context: (data) => getContext(data, orm) });
 
-  const plugins = [
-    ApolloServerPluginDrainHttpServer({ httpServer })
-  ];
-
-  const server = new ApolloServer<APIContext>({
+  const websocketHandler = makeHandler({
     schema,
-    formatError,
-    csrfPrevention: true,
-    plugins,
-  });
+    execute: (args: any) => args.rootValue.execute(args),
+    subscribe: (args: any) => args.rootValue.subscribe(args),
+    onConnect: (ctx) => onConnect(ctx, orm),
+    onSubscribe: async (ctx, msg) => {
+      const {schema, execute, subscribe, contextFactory, parse, validate} = yoga.getEnveloped({
+        ...ctx,
+        req: ctx.extra.request,
+        socket: ctx.extra.socket,
+        params: msg.payload
+      })
 
-  const wsServer = new ws.Server({
-    server: httpServer,
-    path: '/subscriptions',
-  });
-
-  useServer({
-    schema,
-    onConnect: (ctx: Context<{ token?: string }, { token?: Token }>) => onConnect(ctx, orm),
-    context: (ctx) => ({
-       user: ctx.extra.token?.user,
-       token: ctx.extra.token,
-       em: orm.em.fork()
-    }),
-  }, wsServer);
-
-  await server.start();
-
-  app.use(
-    '/graphql',
-    cors<cors.CorsRequest>(),
-    json(),
-    expressMiddleware(server, {
-      context: (ctx) => getContext(ctx, orm),
-    }),
-  );
-
-  app.use(
-    '/payments/webhook',
-    cors<cors.CorsRequest>(),
-    json(),
-    async (req, res) => {
-      const data: Webhook = req.body;
-
-      if (req.headers.authorization !== `Bearer ${REVENUE_CAT_WEBHOOK_TOKEN}`) {
-        return res.status(403).json({ error: "Unable to authorize webhook call" });
+      const args = {
+        schema,
+        operationName: msg.payload.operationName,
+        document: parse(msg.payload.query),
+        variableValues: msg.payload.variables,
+        contextValue: await contextFactory(),
+        rootValue: {
+          execute,
+          subscribe
+        }
       }
 
-      try {
-        await syncUserPayments(orm.em.fork(), data.event.app_user_id);
-      } catch (error) {
-        RealSentry.captureException(error);
-        return res.status(500).json({ error: error });
+      const errors = validate(args.schema, args.document)
+      if (errors.length) return errors
+      return args
+    },
+  })
+
+  const server = Bun.serve({
+    fetch: (request, server) => {
+      // Upgrade the request to a WebSocket
+      if (server.upgrade(request)) {
+        return new Response();
       }
-
-      return res.status(200).json({ ok: true });
-    }
-  );
-
-  app.use(RealSentry.Handlers.errorHandler());
-
-  await new Promise<void>(resolve => httpServer.listen({ port: 3000 }, resolve));
+      return yoga.fetch(request, server);
+    },
+    port: 3000,
+    websocket: websocketHandler,
+  });
 
   console.info(`🚕 Beep GraphQL Server Started at \x1b[36mhttp://0.0.0.0:3000/graphql\x1b[0m`);
 }
