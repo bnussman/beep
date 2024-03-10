@@ -50,7 +50,7 @@ export async function getContext(data: YogaInitialContext, orm: MikroORM<Postgre
   return context as Context;
 }
 
-export async function onConnect(ctx: WSContext<{ token?: string }, { token?: Token }>, orm: MikroORM<IDatabaseDriver<Connection>>) {
+export async function onConnect(ctx: WSContext<any, any>, orm: MikroORM<IDatabaseDriver<Connection>>) {
   const bearer = ctx.connectionParams?.token;
 
   if (!bearer) {
