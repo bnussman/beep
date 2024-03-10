@@ -10,15 +10,13 @@ const options = {
   host: REDIS_HOST,
   password: REDIS_PASSWROD,
   port: 6379,
+  lazyConnect: true,
 };
 
-const publishClient = new Redis(options);
-const subscribeClient = new Redis(options)
-
 const eventTarget = createRedisEventTarget({
-  publishClient,
-  subscribeClient
-})
+  publishClient: new Redis(options),
+  subscribeClient: new Redis(options)
+});
 
 type Subscriptions = {
   user: [userId: string, payload: User];
@@ -29,3 +27,10 @@ type Subscriptions = {
 };
 
 export const pubSub = createPubSub<Subscriptions>({ eventTarget });
+
+/*
+export const pubSub = {
+  publish: (...args: any) => null,
+  subscribe: (...args: any) => null,
+};
+*/
