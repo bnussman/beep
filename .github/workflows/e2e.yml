@@ -9,13 +9,16 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 15
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
         node-version: 16
+    - uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
     - uses: pnpm/action-setup@v2.2.4
       name: Install pnpm
       id: pnpm-install
