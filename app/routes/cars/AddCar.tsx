@@ -34,7 +34,7 @@ const AddCarMutation = graphql(`
     $model: String!
     $year: Float!
     $color: String!
-    $photo: Upload!
+    $photo: File!
   ) {
     createCar(
       make: $make

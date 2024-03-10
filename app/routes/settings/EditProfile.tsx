@@ -51,7 +51,7 @@ export const EditAccount = graphql(`
 `);
 
 export const UploadPhoto = graphql(`
-  mutation AddProfilePicture($picture: Upload!) {
+  mutation AddProfilePicture($picture: File!) {
     addProfilePicture(picture: $picture) {
       id
       photo

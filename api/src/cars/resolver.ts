@@ -5,7 +5,6 @@ import { Paginated, PaginationArgs } from '../utils/pagination';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { CarArgs, DeleteCarArgs, EditCarArgs } from './args';
 import { s3 } from '../utils/s3';
-import { FileUpload } from 'graphql-upload-minimal';
 import { UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
 
@@ -20,9 +19,11 @@ export class CarResolver {
   public async createCar(@Ctx() ctx: Context, @Args() data: CarArgs): Promise<Car> {
     const { photo, ...input } = data;
 
-    const { createReadStream, filename } = await (photo as unknown as Promise<FileUpload>);
+    if (!photo) {
+      throw new Error("You must upload a photo of your car");
+    }
 
-    const extention = filename.substring(filename.lastIndexOf("."), filename.length);
+    const extention = photo.name.substring(photo.name.lastIndexOf("."), photo.name.length);
 
     const car = new Car({
       user: ctx.user,
@@ -30,7 +31,7 @@ export class CarResolver {
     });
 
     const uploadParams = {
-      Body: createReadStream(),
+      Body: Buffer.from(await photo.arrayBuffer()),
       Key: `cars/${car.id}${extention}`,
       Bucket: "beep",
       ACL: "public-read"

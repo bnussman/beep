@@ -8,7 +8,6 @@ import { LoginInput, ResetPasswordInput, SignUpInput } from './args';
 import { Token } from '../entities/Token';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
-import { FileUpload } from 'graphql-upload-minimal';
 import { compare, hash } from 'bcrypt';
 import { isDevelopment } from '../utils/constants';
 
@@ -58,14 +57,19 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
-    const { createReadStream, filename } = await (input.picture as unknown as Promise<FileUpload>);
+
+    const picture = input.picture;
+
+    if (!picture) {
+      throw new Error("You must upload a profile photo to sign up");
+    }
 
     const user = new User();
 
-    const extention = filename.substring(filename.lastIndexOf("."), filename.length);
+    const extention = picture.name.substring(picture.name.lastIndexOf("."), picture.name.length);
 
     const uploadParams = {
-      Body: createReadStream(),
+      Body: Buffer.from(await picture.arrayBuffer()),
       Key: `images/${user.id}-${Date.now()}${extention}`,
       Bucket: "beep",
       ACL: "public-read"
