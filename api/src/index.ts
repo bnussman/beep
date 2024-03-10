@@ -37,6 +37,7 @@ import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { Webhook } from "./payments/utils";
+import { pubSub } from "./utils/pubsub";
 
 async function start() {
   const orm = await MikroORM.init<PostgreSqlDriver>(config);
@@ -68,6 +69,7 @@ async function start() {
       PaymentsResolver
     ],
     authChecker,
+    pubSub,
     validate: true,
   });
 
