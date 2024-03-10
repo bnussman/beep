@@ -354,7 +354,8 @@ export class UserResolver {
   }
 
   @Subscription(() => User, {
-    topics: ({ context }) => "User" + context.user.id,
+    topics: "user",
+    topicId: ({ context }) => context.user.id,
   })
   @Authorized('No Verification')
   public getUserUpdates(@Ctx() ctx: Context, @Root() user: User): User {

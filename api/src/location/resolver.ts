@@ -63,7 +63,8 @@ export class LocationResolver {
 
   @Subscription(() => Point, {
     nullable: true,
-    topics: ({ args }) => "Location" + args.id,
+    topics: "location",
+    topicId: ({ args }) => args.id,
   })
   public getLocationUpdates(@Arg("id") id: string, @Root() entry: LocationInput): Point {
     return {
@@ -73,7 +74,7 @@ export class LocationResolver {
   }
 
   @Subscription(() => AnonymousBeeper, {
-    topics: "Beepers",
+    topics: "beeperLocation",
     filter: ({ args, payload }) => {
       if (args.radius === 0) {
         return true;

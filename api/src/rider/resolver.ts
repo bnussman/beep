@@ -203,7 +203,8 @@ export class RiderResolver {
 
   @Subscription(() => Beep, {
     nullable: true,
-    topics: ({ context }) => "Rider" + context.user.id,
+    topics: "currentRide",
+    topicId: ({ context }) => context.user.id,
   })
   public getRiderUpdates(@Root() entry: Beep): Beep | null {
     return entry;
