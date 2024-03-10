@@ -1,5 +1,5 @@
 import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
-import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { deleteUser, isEduEmail, Upload, search } from './helpers';
 import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
@@ -16,6 +16,7 @@ import { VerifyEmail } from '../entities/VerifyEmail';
 import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
 import { S3_BUCKET_URL } from '../utils/constants';
+import { pubSub } from '../utils/pubsub';
 
 @ObjectType()
 class UsersPerDomain {
@@ -74,7 +75,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification Self')
-  public async editUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id: string, @Arg('data') data: EditUserInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async editUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id: string, @Arg('data') data: EditUserInput): Promise<User> {
     const user = !id ? ctx.user : await ctx.em.findOneOrFail(User, id);
 
     const oldEmail = ctx.user.email;
@@ -99,7 +100,7 @@ export class UserResolver {
       createVerifyEmailEntryAndSendEmail(ctx.user, ctx.em);
     }
 
-    pubSub.publish("User" + user.id, user);
+    pubSub.publish("user", user.id, user);
 
     await ctx.em.flush();
 
@@ -118,7 +119,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  public async verifyAccount(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
+  public async verifyAccount(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const verification = await ctx.em.findOneOrFail(VerifyEmail, id, { populate: ['user'] });
 
     if ((verification.time.getTime() + (18000 * 1000)) < Date.now()) {
@@ -135,7 +136,7 @@ export class UserResolver {
 
     wrap(verification.user).assign(update);
 
-    pubSub.publish("User" + verification.user.id, verification.user);
+    pubSub.publish("user", verification.user.id, verification.user);
 
     await ctx.em.removeAndFlush(verification);
 
@@ -164,7 +165,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification')
-  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload): Promise<User> {
 
     const extention = filename.substring(filename.lastIndexOf("."), filename.length);
 
@@ -189,7 +190,7 @@ export class UserResolver {
 
     ctx.user.photo = result.Location;
 
-    pubSub.publish("User" + ctx.user.id, ctx.user);
+    pubSub.publish("user", ctx.user.id, ctx.user);
 
     await ctx.em.flush();
 

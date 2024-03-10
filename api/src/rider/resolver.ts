@@ -1,18 +1,19 @@
 import { sendNotification } from '../utils/notifications';
 import { LoadStrategy, QueryOrder, raw } from '@mikro-orm/core';
 import { User } from '../entities/User';
-import { Arg, Args, Authorized, Ctx, Mutation, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Mutation, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { GetBeepInput, GetBeepersArgs } from './args';
 import { Context } from '../utils/context';
 import { Beep, Status } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
+import { pubSub } from '../utils/pubsub';
 
 @Resolver()
 export class RiderResolver {
   @Mutation(() => Beep)
   @Authorized()
-  public async chooseBeep(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<Beep> {
+  public async chooseBeep(@Ctx() ctx: Context, @Arg('beeperId') beeperId: string, @Arg('input') input: GetBeepInput): Promise<Beep> {
     const beeper = await ctx.em.findOneOrFail(
       User,
       beeperId,
@@ -54,7 +55,7 @@ export class RiderResolver {
 
     sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue 🚕`, "Please open your app to accept or deny this rider.");
 
-    pubSub.publish("Beeper" + beeper.id, queue);
+    pubSub.publish("beeperQueue", beeper.id, queue);
 
     return entry;
   }
@@ -101,7 +102,7 @@ export class RiderResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async leaveQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('id') id: string): Promise<boolean> {
+  public async leaveQueue(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const beeper = await ctx.em.findOneOrFail(
       User,
       { id, cars: { default: true } },
@@ -128,13 +129,13 @@ export class RiderResolver {
 
     queue = queue.filter(beep => beep.status !== Status.CANCELED);
 
-    pubSub.publish("Rider" + ctx.user.id, null);
-    pubSub.publish("Beeper" + beeper.id, queue);
+    pubSub.publish("currentRide", ctx.user.id, null);
+    pubSub.publish("beeperQueue", beeper.id, queue);
 
     for (const entry of queue) {
       entry.position = getPositionInQueue(queue, entry);
 
-      pubSub.publish("Rider" + entry.rider.id, { ...entry, beeper });
+      pubSub.publish("currentRide", entry.rider.id, { ...entry, beeper });
     }
 
     beeper.queueSize = getQueueSize(queue);

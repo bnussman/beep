@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import "dotenv/config";
-import Redis from 'ioredis';
 import express from "express";
 import config from './mikro-orm.config';
 import ws from 'ws';
@@ -12,14 +11,13 @@ import { MikroORM } from "@mikro-orm/core";
 import { Token } from "./entities/Token";
 import { buildSchema } from 'type-graphql';
 import { authChecker } from "./utils/authentication";
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { createServer } from 'http';
 import { graphqlUploadExpress } from "graphql-upload-minimal";
 import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { Context } from "graphql-ws";
-import { REDIS_HOST, REDIS_PASSWROD, REVENUE_CAT_WEBHOOK_TOKEN } from "./utils/constants";
+import { REVENUE_CAT_WEBHOOK_TOKEN } from "./utils/constants";
 import { getContext, onConnect } from "./utils/context";
 import { formatError } from "./utils/errors";
 import { Context as APIContext } from "./utils/context";
@@ -39,17 +37,6 @@ import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver, syncUserPayments } from "./payments/resolver";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { Webhook } from "./payments/utils";
-
-const options = {
-  host: REDIS_HOST,
-  password: REDIS_PASSWROD,
-  port: 6379,
-};
-
-export const pubSub = new RedisPubSub({
-  publisher: new Redis(options),
-  subscriber: new Redis(options)
-});
 
 async function start() {
   const orm = await MikroORM.init<PostgreSqlDriver>(config);
@@ -81,7 +68,6 @@ async function start() {
       PaymentsResolver
     ],
     authChecker,
-    pubSub,
     validate: true,
   });
 

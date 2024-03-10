@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/node';
 import { sendNotification } from '../utils/notifications';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep, Status } from '../entities/Beep';
-import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from './args';
 import { User } from '../entities/User';
@@ -11,6 +11,7 @@ import { sha256 } from 'js-sha256';
 import { BeeperLocationArgs } from '../location/args';
 import { Car } from '../entities/Car';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
+import { pubSub } from '../utils/pubsub';
 
 @ObjectType()
 export class AnonymousBeeper {
@@ -47,7 +48,7 @@ export class BeeperResolver {
 
   @Mutation(() => User)
   @Authorized()
-  public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput): Promise<User> {
     if (input.isBeeping) {
       const car = await ctx.em.findOne(Car, { user: ctx.user.id, default: true });
 
@@ -77,7 +78,7 @@ export class BeeperResolver {
       });
     }
 
-    pubSub.publish("User" + ctx.user.id, ctx.user);
+    pubSub.publish("user", ctx.user.id, ctx.user);
 
     await ctx.em.persistAndFlush(ctx.user);
 
@@ -86,7 +87,7 @@ export class BeeperResolver {
 
   @Mutation(() => [Beep])
   @Authorized()
-  public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<Beep[]> {
+  public async setBeeperQueue(@Ctx() ctx: Context, @Arg('input') input: UpdateQueueEntryInput): Promise<Beep[]> {
     await ctx.em.populate(
       ctx.user,
       ['queue', 'queue.rider', 'queue.beeper', 'queue.beeper.cars'],
@@ -118,7 +119,7 @@ export class BeeperResolver {
     }
 
     if (input.status === Status.DENIED || input.status === Status.COMPLETE) {
-      pubSub.publish("Rider" + queueEntry.rider.id, null);
+      pubSub.publish("currentRide", queueEntry.rider.id, null);
 
       ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
 
@@ -154,44 +155,44 @@ export class BeeperResolver {
 
     await ctx.em.persistAndFlush(queueEntry);
 
-    this.sendRiderUpdates(ctx.user, queueNew, pubSub);
+    this.sendRiderUpdates(ctx.user, queueNew);
 
     return queueNew;
   }
 
-  private async sendRiderUpdates(beeper: User, queue: Beep[], pubSub: PubSubEngine) {
-    pubSub.publish("Beeper" + beeper.id, queue);
+  private async sendRiderUpdates(beeper: User, queue: Beep[]) {
+    pubSub.publish("beeperQueue", beeper.id, queue);
 
     for (const entry of queue) {
       entry.position = getPositionInQueue(queue, entry);
 
-      pubSub.publish("Rider" + entry.rider.id, entry);
+      pubSub.publish("currentRide", entry.rider.id, entry);
     }
   }
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
+  public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const entry = ctx.em.getReference(Beep, id);
 
     await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, filters: ['inProgress'], orderBy: { queue: { start: QueryOrder.ASC } } });
 
     const newQueue = ctx.user.queue.getItems().filter(entry => entry.id !== id);
 
-    pubSub.publish("Beeper" + ctx.user.id, newQueue);
+    pubSub.publish("beeperQueue", ctx.user.id, newQueue);
 
     for (const entry of ctx.user.queue) {
       if (entry.id === id) {
         sendNotification(entry.rider.pushToken, "Beep Canceled 🚫", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
-        pubSub.publish("Rider" + entry.rider.id, null);
+        pubSub.publish("currentRide", entry.rider.id, null);
       }
       else {
         entry.position = getPositionInQueue(newQueue, entry);
-        pubSub.publish("Rider" + entry.rider.id, entry);
+        pubSub.publish("currentRide", entry.rider.id, entry);
       }
     }
 
-    entry.status = Status.CANCELED
+    entry.status = Status.CANCELED;
     entry.end = new Date();
 
     ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
