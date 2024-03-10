@@ -206,7 +206,11 @@ export class RiderResolver {
     topics: "currentRide",
     topicId: ({ context }) => context.user.id,
   })
-  public getRiderUpdates(@Root() entry: Beep): Beep | null {
+  public getRiderUpdates(@Root() entry: Beep | null): Beep | null {
+    // This is a bug with current pubsub
+    if (typeof entry === 'string') {
+      return null;
+    }
     return entry;
   }
 }
