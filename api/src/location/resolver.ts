@@ -6,7 +6,7 @@ import { BeeperLocationArgs, LocationInput } from './args';
 import { AnonymousBeeper } from '../beeper/resolver';
 import { getDistance } from '../utils/dist';
 import { sha256 } from 'js-sha256';
-import { pubSub } from 'src/utils/pubsub';
+import { pubSub } from '../utils/pubsub';
 
 @ObjectType()
 export class Point {
