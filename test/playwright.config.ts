@@ -26,9 +26,11 @@ export default defineConfig({
     trace: 'on-first-retry',
     permissions: ['geolocation'],
     geolocation: { latitude: 36.215735, longitude: -81.674205 },
+    video: "on",
+    screenshot: "only-on-failure"
   },
   /* Use a big timeout */
-  timeout: 180_000,
+  // timeout: 180_000,
   /* Configure projects for major browsers */
   projects: [
     {
