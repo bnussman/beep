@@ -17,6 +17,7 @@ import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
 import { S3_BUCKET_URL } from '../utils/constants';
 import { pubSub } from '../utils/pubsub';
+import { FileScaler } from '..';
 
 @ObjectType()
 class UsersPerDomain {
@@ -165,14 +166,14 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification')
-  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload): Promise<User> {
+  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => FileScaler) file: File): Promise<User> {
 
-    const extention = filename.substring(filename.lastIndexOf("."), filename.length);
+    const extention = file.name.substring(file.name.lastIndexOf("."), file.name.length);
 
-    filename = ctx.user.id + "-" + Date.now() + extention;
+    const filename = ctx.user.id + "-" + Date.now() + extention;
 
     const uploadParams = {
-      Body: createReadStream(),
+      Body: Buffer.from(await file.arrayBuffer()),
       Key: "images/" + filename,
       Bucket: "beep",
       ACL: "public-read"

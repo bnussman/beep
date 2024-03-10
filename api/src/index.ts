@@ -22,6 +22,22 @@ import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { pubSub } from "./utils/pubsub";
 import { createYoga } from "graphql-yoga";
 import { getContext, onConnect } from "./utils/context";
+import { GraphQLUpload } from "graphql-upload-minimal";
+import { GraphQLScalarType, Kind } from "graphql";
+
+export const FileScaler = new GraphQLScalarType({
+  name: "File",
+  description: "Mongo object id scalar type",
+  serialize(value: unknown): string {
+    throw new Error("File scaler not fully implemented");
+  },
+  parseValue(value: unknown): File {
+    return value as File;
+  },
+  parseLiteral(ast) {
+    throw new Error("File scaler not fully implemented");
+  },
+});
 
 async function start() {
   const orm = await MikroORM.init<PostgreSqlDriver>(config);
@@ -46,6 +62,7 @@ async function start() {
     authChecker,
     pubSub,
     validate: true,
+    scalarsMap: [{ type: File, scalar: FileScaler }],
   });
 
   const yoga = createYoga({ schema, context: (data) => getContext(data, orm) });
