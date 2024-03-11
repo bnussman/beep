@@ -9,7 +9,7 @@ import { Token } from '../entities/Token';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
 import { compare, hash } from 'bcrypt';
-import { isDevelopment } from '../utils/constants';
+import { S3_BUCKET_URL, isDevelopment } from '../utils/constants';
 import { GraphQLError } from 'graphql';
 
 @ObjectType()
@@ -69,18 +69,9 @@ export class AuthResolver {
 
     const extention = picture.name.substring(picture.name.lastIndexOf("."), picture.name.length);
 
-    const uploadParams = {
-      Body: Buffer.from(await picture.arrayBuffer()),
-      Key: `images/${user.id}-${Date.now()}${extention}`,
-      Bucket: "beep",
-      ACL: "public-read"
-    };
+    const objectKey = `images/${user.id}-${Date.now()}${extention}`;
 
-    const result = await s3.upload(uploadParams).promise();
-
-    if (!result) {
-      throw new Error("No result from AWS");
-    }
+    await s3.putObject(objectKey, picture.stream());
 
     const password = await hash(input.password, 10);
 
@@ -93,7 +84,7 @@ export class AuthResolver {
       venmo: input.venmo,
       cashapp: input.cashapp,
       pushToken: input.pushToken,
-      photo: result.Location,
+      photo: S3_BUCKET_URL + objectKey,
       password,
       passwordType: PasswordType.BCRYPT,
     });

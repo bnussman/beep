@@ -7,6 +7,7 @@ import { CarArgs, DeleteCarArgs, EditCarArgs } from './args';
 import { s3 } from '../utils/s3';
 import { UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
+import { S3_BUCKET_URL } from 'src/utils/constants';
 
 @ObjectType()
 class CarsResponse extends Paginated(Car) {}
@@ -30,18 +31,13 @@ export class CarResolver {
       default: true,
     });
 
-    const uploadParams = {
-      Body: Buffer.from(await photo.arrayBuffer()),
-      Key: `cars/${car.id}${extention}`,
-      Bucket: "beep",
-      ACL: "public-read"
-    };
+    const objectKey = `cars/${car.id}${extention}`;
 
-    const upload = await s3.upload(uploadParams).promise();
+    await s3.putObject(objectKey, photo.stream());
 
     wrap(car).assign({
       ...input,
-      photo: upload.Location,
+      photo: S3_BUCKET_URL + objectKey,
     });
 
     await ctx.em.nativeUpdate(Car, { user: ctx.user.id }, { default: false });

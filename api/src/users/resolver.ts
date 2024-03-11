@@ -7,16 +7,14 @@ import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { sendNotification, sendNotificationsNew } from '../utils/notifications';
-import { S3 } from 'aws-sdk';
-import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject, s3 } from '../utils/s3';
 import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
 import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
 import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
-import { setContext } from "@sentry/node";
 import { S3_BUCKET_URL } from '../utils/constants';
 import { pubSub } from '../utils/pubsub';
 import { FileScaler } from '../utils/scalers';
+import { s3 } from '../utils/s3';
 
 @ObjectType()
 class UsersPerDomain {
@@ -171,24 +169,17 @@ export class UserResolver {
 
     const filename = ctx.user.id + "-" + Date.now() + extention;
 
-    const uploadParams = {
-      Body: Buffer.from(await file.arrayBuffer()),
-      Key: "images/" + filename,
-      Bucket: "beep",
-      ACL: "public-read"
-    };
+    const objectKey = "images/" + filename;
 
-    setContext("uploadParams", uploadParams);
-
-    const result = await s3.upload(uploadParams).promise();
+    await s3.putObject(objectKey, file.stream());
 
     if (ctx.user.photo) {
       const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
-      deleteObject(key);
+      s3.deleteObject(key);
     }
 
-    ctx.user.photo = result.Location;
+    ctx.user.photo = S3_BUCKET_URL + objectKey;
 
     pubSub.publish("user", ctx.user.id, ctx.user);
 
@@ -315,42 +306,6 @@ export class UserResolver {
     sendNotification(user.pushToken, title, body);
 
     return true;
-  }
-
-  @Mutation(() => Number)
-  @Authorized(UserRole.ADMIN)
-  public async cleanObjectStorageBucket(@Ctx() { em }: Context): Promise<number> {
-    const objects = await getAllObjects({
-      Bucket: 'beep',
-      Prefix: 'images/',
-    });
-
-    const objectsToDelete: S3.ObjectList = [];
-
-    for (const object of objects) {
-      const userId = getUserFromObjectKey(object.Key);
-
-      const user = await em.findOne(User, { id: userId });
-
-      if (user === null) {
-        objectsToDelete.push(object);
-      }
-
-      const objectsWithSameUser = objects.filter(object => object.Key?.startsWith(`images/${userId}`));
-
-      if (objectsWithSameUser.length > 1) {
-        objectsToDelete.concat(getOlderObjectsToDelete(objectsWithSameUser));
-      }
-    }
-
-    for (const object of objectsToDelete) {
-      if (object.Key === undefined) {
-        throw new Error("Key is undefined when trying to delete an old object");
-      }
-      deleteObject(object.Key);
-    }
-
-    return objectsToDelete.length;
   }
 
   @Subscription(() => User, {
