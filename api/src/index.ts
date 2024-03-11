@@ -1,5 +1,7 @@
 import "reflect-metadata";
+import "@sentry/tracing";
 import config from './mikro-orm.config';
+import { useSentry } from '@envelop/sentry'
 import { makeHandler } from "graphql-ws/lib/use/bun";
 import { MikroORM } from "@mikro-orm/core";
 import { buildSchema } from 'type-graphql';
@@ -53,6 +55,7 @@ async function start() {
   const yoga = createYoga({
     schema,
     context: (data) => getContext(data, orm),
+    plugins: [useSentry()]
   });
 
   const websocketHandler = makeHandler({

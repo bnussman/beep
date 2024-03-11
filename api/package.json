@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@bnussman/graphql-fields-to-relations": "^2.1.0",
+    "@envelop/sentry": "^8.0.0",
     "@graphql-yoga/node": "^3.9.1",
     "@graphql-yoga/redis-event-target": "^3.0.0",
     "@mikro-orm/core": "6.1.8",

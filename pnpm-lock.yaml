@@ -17,6 +17,9 @@ importers:
       '@bnussman/graphql-fields-to-relations':
         specifier: ^2.1.0
         version: 2.1.0
+      '@envelop/sentry':
+        specifier: ^8.0.0
+        version: 8.0.0(@envelop/core@5.0.0)(@sentry/node@7.77.0)(graphql@16.8.1)
       '@graphql-yoga/node':
         specifier: ^3.9.1
         version: 3.9.1(graphql@16.8.1)
@@ -4489,6 +4492,20 @@ packages:
     engines: {node: '>=18.0.0'}
     dependencies:
       '@envelop/types': 5.0.0
+      tslib: 2.6.2
+    dev: false
+
+  /@envelop/sentry@8.0.0(@envelop/core@5.0.0)(@sentry/node@7.77.0)(graphql@16.8.1):
+    resolution: {integrity: sha512-y4k6WPROlUoXxgB2h06po5GXKhHE8KXvCepC60GltAitdF1ZYbroAFC3x+CuW4qd29kpmiX9CELtqjXN6D7x6Q==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      '@envelop/core': ^5.0.0
+      '@sentry/node': ^6 || ^7
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      '@envelop/core': 5.0.0
+      '@sentry/node': 7.77.0
+      graphql: 16.8.1
       tslib: 2.6.2
     dev: false
 
