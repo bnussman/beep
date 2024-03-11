@@ -24,7 +24,6 @@
     ]
   },
   "dependencies": {
-    "@apollo/server": "^4.10.0",
     "@bnussman/graphql-fields-to-relations": "^2.1.0",
     "@graphql-yoga/node": "^3.9.1",
     "@graphql-yoga/redis-event-target": "^3.0.0",
@@ -36,7 +35,6 @@
     "bcrypt": "^5.1.1",
     "car-info": "^0.1.6",
     "class-validator": "^0.14.1",
-    "dotenv": "^16.4.5",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.15.0",
     "graphql-yoga": "^5.1.1",
@@ -53,7 +51,6 @@
     "@mikro-orm/cli": "6.1.8",
     "@mikro-orm/migrations": "6.1.8",
     "@types/bcrypt": "^5.0.2",
-    "@types/body-parser": "^1.19.5",
     "@types/bun": "^1.0.8",
     "@types/nodemailer": "^6.4.14",
     "@types/uuid": "^9.0.8",

@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import "dotenv/config";
 import config from './mikro-orm.config';
 import { makeHandler } from "graphql-ws/lib/use/bun";
 import { MikroORM } from "@mikro-orm/core";
