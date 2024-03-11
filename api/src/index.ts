@@ -1,6 +1,7 @@
 import "reflect-metadata";
-import "@sentry/tracing";
+import * as Sentry from '@sentry/node';
 import config from './mikro-orm.config';
+import { SENTRY_URL, ENVIRONMENT } from './utils/constants';
 import { useSentry } from '@envelop/sentry'
 import { makeHandler } from "graphql-ws/lib/use/bun";
 import { MikroORM } from "@mikro-orm/core";
@@ -25,6 +26,28 @@ import { getContext, onConnect } from "./utils/context";
 import { handlePaymentWebook } from "./utils/payments";
 import { FileScaler } from "./utils/scalers";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
+
+Sentry.init({
+  dsn: SENTRY_URL,
+  environment: ENVIRONMENT || "development",
+  tracesSampleRate: 1.0,
+  debug: false,
+  autoSessionTracking: true,
+  integrations: [
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Sentry.Integrations.GraphQL(),
+    new Sentry.Integrations.Postgres(),
+  ],
+  tracesSampler: (samplingContext) => {
+    if (samplingContext.request?.method === 'OPTIONS') {
+      return false;
+    }
+    if (samplingContext?.transactionContext?.name === 'GET /.well-known/apollo/server-health') {
+      return false;
+    }
+    return true;
+  },
+});
 
 async function start() {
   const orm = await MikroORM.init<PostgreSqlDriver>(config);
