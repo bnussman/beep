@@ -7,9 +7,9 @@ import { User } from "../entities/User";
 import { YogaInitialContext } from "graphql-yoga";
 
 export interface Context {
-    em: MikroORM<PostgreSqlDriver>['em'];
-    user: User;
-    token: Token;
+  em: MikroORM<PostgreSqlDriver>['em'];
+  user: User;
+  token: Token;
 }
 
 export async function getContext(data: YogaInitialContext, orm: MikroORM<PostgreSqlDriver>): Promise<Context> {

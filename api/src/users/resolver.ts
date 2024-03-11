@@ -1,6 +1,6 @@
 import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, Query, Resolver, Root, Subscription } from 'type-graphql';
-import { deleteUser, isEduEmail, Upload, search } from './helpers';
+import { deleteUser, isEduEmail, search } from './helpers';
 import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
@@ -13,11 +13,10 @@ import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
 import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
 import { hash } from 'bcrypt';
 import { VerifyEmail } from '../entities/VerifyEmail';
-import { GraphQLUpload } from 'graphql-upload-minimal';
 import { setContext } from "@sentry/node";
 import { S3_BUCKET_URL } from '../utils/constants';
 import { pubSub } from '../utils/pubsub';
-import { FileScaler } from '..';
+import { FileScaler } from '../utils/scalers';
 
 @ObjectType()
 class UsersPerDomain {

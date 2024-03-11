@@ -2,7 +2,7 @@ import { IsAlpha, IsDefined, IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, IsS
 import { Field, InputType } from 'type-graphql';
 import { User } from '../entities/User';
 import { IsStudent } from '../utils/validators';
-import { FileScaler } from '..';
+import { FileScaler } from '../utils/scalers';
 
 @InputType()
 export class LoginInput implements Partial<User> {

@@ -18,25 +18,12 @@ import { AuthResolver } from "./auth/resolver";
 import { RiderResolver } from "./rider/resolver";
 import { DirectionsResolver } from "./directions/resolver";
 import { PaymentsResolver } from "./payments/resolver";
-import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { pubSub } from "./utils/pubsub";
 import { createYoga } from "graphql-yoga";
 import { getContext, onConnect } from "./utils/context";
-import { GraphQLScalarType} from "graphql";
-
-export const FileScaler = new GraphQLScalarType({
-  name: "File",
-  description: "Mongo object id scalar type",
-  serialize(value: unknown): string {
-    throw new Error("File scaler not fully implemented");
-  },
-  parseValue(value: unknown): File {
-    return value as File;
-  },
-  parseLiteral(ast) {
-    throw new Error("File scaler not fully implemented");
-  },
-});
+import { handlePaymentWebook } from "./utils/payments";
+import { FileScaler } from "./utils/scalers";
+import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 
 async function start() {
   const orm = await MikroORM.init<PostgreSqlDriver>(config);
@@ -75,7 +62,7 @@ async function start() {
     subscribe: (args: any) => args.rootValue.subscribe(args),
     onConnect: (ctx) => onConnect(ctx, orm),
     onSubscribe: async (ctx, msg) => {
-      const {schema, execute, subscribe, contextFactory, parse, validate} = yoga.getEnveloped({
+      const { schema, execute, subscribe, contextFactory, parse, validate } = yoga.getEnveloped({
         ...ctx,
         req: ctx.extra.request,
         socket: ctx.extra.socket,
@@ -100,12 +87,17 @@ async function start() {
     },
   })
 
-  const server = Bun.serve({
+  Bun.serve({
     fetch: (request, server) => {
       // Upgrade the request to a WebSocket
       if (server.upgrade(request)) {
         return new Response();
       }
+      // Handle payments webhook
+      if (request.url.endsWith("/payments/webhook")) {
+        return handlePaymentWebook(request, orm);
+      }
+      // Handle GraphQL
       return yoga.fetch(request, server);
     },
     port: 3000,

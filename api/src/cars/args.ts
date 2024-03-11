@@ -2,7 +2,7 @@ import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString } from 'class-vali
 import { UserRole } from '../entities/User';
 import { ArgsType, Authorized, Field } from 'type-graphql';
 import { IsMake, IsModelFor } from '../utils/validators';
-import { FileScaler } from '..';
+import { FileScaler } from '../utils/scalers';
 
 @ArgsType()
 export class CarArgs {
