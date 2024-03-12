@@ -77,9 +77,6 @@ importers:
       wkx:
         specifier: ^0.5.0
         version: 0.5.0
-      ws:
-        specifier: ^8.16.0
-        version: 8.16.0
     devDependencies:
       '@mikro-orm/cli':
         specifier: 6.1.8
@@ -96,9 +93,6 @@ importers:
       '@types/uuid':
         specifier: ^9.0.8
         version: 9.0.8
-      '@types/ws':
-        specifier: ^8.5.10
-        version: 8.5.10
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
