@@ -8,7 +8,7 @@ import { LoginInput, ResetPasswordInput, SignUpInput } from './args';
 import { Token } from '../entities/Token';
 import { Context } from '../utils/context';
 import { s3 } from '../utils/s3';
-import { compare, hash } from 'bcrypt';
+import { password as bunPassword } from 'bun';
 import { S3_BUCKET_URL, isDevelopment } from '../utils/constants';
 import { GraphQLError } from 'graphql';
 
@@ -35,7 +35,7 @@ export class AuthResolver {
         isPasswordCorrect = sha256(password) === user.password;
         break;
       case (PasswordType.BCRYPT):
-        isPasswordCorrect = await compare(password, user.password);
+        isPasswordCorrect = await bunPassword.verify(password, user.password, "bcrypt");
         break;
       default:
         throw new Error(`Unknown password type ${user.passwordType}`);
@@ -73,7 +73,7 @@ export class AuthResolver {
 
     await s3.putObject(objectKey, picture.stream());
 
-    const password = await hash(input.password, 10);
+    const password = await bunPassword.hash(input.password, "bcrypt");
 
     wrap(user).assign({
       username: input.username,
@@ -181,7 +181,7 @@ export class AuthResolver {
       throw new Error("Your reset token has expired. You must re-request to reset your password.");
     }
 
-    entry.user.password = await hash(input.password, 10);
+    entry.user.password = await bunPassword.hash(input.password, "bcrypt");
     entry.user.passwordType = PasswordType.BCRYPT;
 
     await ctx.em.nativeDelete(Token, { user: entry.user });
