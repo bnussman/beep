@@ -1,18 +1,17 @@
-FROM node:current-alpine
-# FROM mcr.microsoft.com/playwright:focal
+FROM oven/bun:alpine
 
 WORKDIR /usr/api
 
 COPY api/package.json ./
 
-RUN npm install -g pnpm
-
-RUN pnpm install
+RUN bun install
 
 COPY api/ .
 
-RUN npx tsc
+RUN bun run build
 
 EXPOSE 3000
 
-CMD [ "node", "build/index.js" ]
+ENV NODE_ENV=production
+
+CMD ["bun", "run", "build/index.js" ]
