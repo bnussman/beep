@@ -33,7 +33,7 @@ export class CarResolver {
 
     const objectKey = `cars/${car.id}${extention}`;
 
-    await s3.putObject(objectKey, photo.stream());
+    await s3.putObject(objectKey, photo.stream(), { metadata: { "x-amz-acl": "public-read" }});
 
     wrap(car).assign({
       ...input,

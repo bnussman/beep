@@ -171,7 +171,7 @@ export class UserResolver {
 
     const objectKey = "images/" + filename;
 
-    await s3.putObject(objectKey, file.stream());
+    await s3.putObject(objectKey, file.stream(), { metadata: { "x-amz-acl": "public-read" }});
 
     if (ctx.user.photo) {
       const key = ctx.user.photo.split(S3_BUCKET_URL)[1];

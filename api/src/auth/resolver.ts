@@ -71,7 +71,7 @@ export class AuthResolver {
 
     const objectKey = `images/${user.id}-${Date.now()}${extention}`;
 
-    await s3.putObject(objectKey, picture.stream());
+    await s3.putObject(objectKey, picture.stream(), { metadata: { "x-amz-acl": "public-read" }});
 
     const password = await bunPassword.hash(input.password, "bcrypt");
 
