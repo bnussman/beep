@@ -5,11 +5,22 @@ export function useValidationErrors<T>(error: ApolloError | undefined) {
     return undefined;
   }
 
-  const errors = error?.graphQLErrors[0]?.extensions as {
-    [k in keyof T]: string[];
-  };
+  const errors = error?.graphQLErrors[0]?.extensions!.validationErrors;
 
-  return errors;
+  const output: { [key: string]: string[] } = {};
+
+  // @ts-expect-error todo
+  for (const error of errors) {
+    if (!error.constraints) continue;
+
+    const items = Object.values<string>(error.constraints);
+
+    output[error.property] = items;
+  }
+
+  console.log(output)
+
+  return output;
 }
 
 export function isValidationError(error: ApolloError | undefined) {
@@ -17,5 +28,5 @@ export function isValidationError(error: ApolloError | undefined) {
     return false;
   }
 
-  return error.message.startsWith("Validation");
+  return error.message.includes("Validation");
 }

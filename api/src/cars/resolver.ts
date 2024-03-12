@@ -5,9 +5,9 @@ import { Paginated, PaginationArgs } from '../utils/pagination';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { CarArgs, DeleteCarArgs, EditCarArgs } from './args';
 import { s3 } from '../utils/s3';
-import { FileUpload } from 'graphql-upload-minimal';
 import { UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
+import { S3_BUCKET_URL } from 'src/utils/constants';
 
 @ObjectType()
 class CarsResponse extends Paginated(Car) {}
@@ -20,27 +20,24 @@ export class CarResolver {
   public async createCar(@Ctx() ctx: Context, @Args() data: CarArgs): Promise<Car> {
     const { photo, ...input } = data;
 
-    const { createReadStream, filename } = await (photo as unknown as Promise<FileUpload>);
+    if (!photo) {
+      throw new Error("You must upload a photo of your car");
+    }
 
-    const extention = filename.substring(filename.lastIndexOf("."), filename.length);
+    const extention = photo.name.substring(photo.name.lastIndexOf("."), photo.name.length);
 
     const car = new Car({
       user: ctx.user,
       default: true,
     });
 
-    const uploadParams = {
-      Body: createReadStream(),
-      Key: `cars/${car.id}${extention}`,
-      Bucket: "beep",
-      ACL: "public-read"
-    };
+    const objectKey = `cars/${car.id}${extention}`;
 
-    const upload = await s3.upload(uploadParams).promise();
+    await s3.putObject(objectKey, photo.stream());
 
     wrap(car).assign({
       ...input,
-      photo: upload.Location,
+      photo: S3_BUCKET_URL + objectKey,
     });
 
     await ctx.em.nativeUpdate(Car, { user: ctx.user.id }, { default: false });

@@ -28,8 +28,8 @@ test('a beep can happen between a rider and driver', async ({ browser }) => {
   await fileChooser.setFiles('../app/assets/icon.png');
 
   await beeperPage.getByRole('button', { name: 'Add Car' }).click();
-  await beeperPage.getByRole('button').first().click();
-  await beeperPage.getByText('Beep', { exact: true }).click();
+  await beeperPage.getByRole('button').first().click(); // click drawer button
+  await beeperPage.getByText('Beep', { exact: true }).dispatchEvent('click'); // what the fuck
   await beeperPage.getByRole('switch').first().check();
 
   await riderPage.getByLabel('Group Size').click();

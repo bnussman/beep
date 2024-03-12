@@ -1,22 +1,20 @@
 import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
 import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, Query, Resolver, Root, Subscription } from 'type-graphql';
-import { deleteUser, isEduEmail, Upload, search } from './helpers';
+import { deleteUser, isEduEmail, search } from './helpers';
 import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
 import { GraphQLResolveInfo } from 'graphql';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { sendNotification, sendNotificationsNew } from '../utils/notifications';
-import { S3 } from 'aws-sdk';
-import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject, s3 } from '../utils/s3';
 import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
 import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
-import { hash } from 'bcrypt';
+import { password as bunPassword } from 'bun';
 import { VerifyEmail } from '../entities/VerifyEmail';
-import { GraphQLUpload } from 'graphql-upload-minimal';
-import { setContext } from "@sentry/node";
 import { S3_BUCKET_URL } from '../utils/constants';
 import { pubSub } from '../utils/pubsub';
+import { FileScaler } from '../utils/scalers';
+import { s3 } from '../utils/s3';
 
 @ObjectType()
 class UsersPerDomain {
@@ -110,7 +108,7 @@ export class UserResolver {
   @Mutation(() => Boolean)
   @Authorized('No Verification')
   public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
-    ctx.user.password = await hash(input.password, 10);
+    ctx.user.password = await bunPassword.hash(input.password, "bcrypt");
     ctx.user.passwordType = PasswordType.BCRYPT;
 
     await ctx.em.flush();
@@ -165,30 +163,23 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification')
-  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload): Promise<User> {
+  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => FileScaler) file: File): Promise<User> {
 
-    const extention = filename.substring(filename.lastIndexOf("."), filename.length);
+    const extention = file.name.substring(file.name.lastIndexOf("."), file.name.length);
 
-    filename = ctx.user.id + "-" + Date.now() + extention;
+    const filename = ctx.user.id + "-" + Date.now() + extention;
 
-    const uploadParams = {
-      Body: createReadStream(),
-      Key: "images/" + filename,
-      Bucket: "beep",
-      ACL: "public-read"
-    };
+    const objectKey = "images/" + filename;
 
-    setContext("uploadParams", uploadParams);
-
-    const result = await s3.upload(uploadParams).promise();
+    await s3.putObject(objectKey, file.stream());
 
     if (ctx.user.photo) {
       const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
-      deleteObject(key);
+      s3.deleteObject(key);
     }
 
-    ctx.user.photo = result.Location;
+    ctx.user.photo = S3_BUCKET_URL + objectKey;
 
     pubSub.publish("user", ctx.user.id, ctx.user);
 
@@ -315,42 +306,6 @@ export class UserResolver {
     sendNotification(user.pushToken, title, body);
 
     return true;
-  }
-
-  @Mutation(() => Number)
-  @Authorized(UserRole.ADMIN)
-  public async cleanObjectStorageBucket(@Ctx() { em }: Context): Promise<number> {
-    const objects = await getAllObjects({
-      Bucket: 'beep',
-      Prefix: 'images/',
-    });
-
-    const objectsToDelete: S3.ObjectList = [];
-
-    for (const object of objects) {
-      const userId = getUserFromObjectKey(object.Key);
-
-      const user = await em.findOne(User, { id: userId });
-
-      if (user === null) {
-        objectsToDelete.push(object);
-      }
-
-      const objectsWithSameUser = objects.filter(object => object.Key?.startsWith(`images/${userId}`));
-
-      if (objectsWithSameUser.length > 1) {
-        objectsToDelete.concat(getOlderObjectsToDelete(objectsWithSameUser));
-      }
-    }
-
-    for (const object of objectsToDelete) {
-      if (object.Key === undefined) {
-        throw new Error("Key is undefined when trying to delete an old object");
-      }
-      deleteObject(object.Key);
-    }
-
-    return objectsToDelete.length;
   }
 
   @Subscription(() => User, {

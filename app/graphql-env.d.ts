@@ -306,6 +306,24 @@ export type introspection = {
             "args": []
           },
           {
+            "name": "getUsersWithDuplicateEmails",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
+          },
+          {
             "name": "getReports",
             "type": {
               "kind": "NON_NULL",
@@ -2725,7 +2743,7 @@ export type introspection = {
                   "kind": "NON_NULL",
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "Upload",
+                    "name": "File",
                     "ofType": null
                   }
                 }
@@ -2892,7 +2910,7 @@ export type introspection = {
                 "name": "photo",
                 "type": {
                   "kind": "SCALAR",
-                  "name": "Upload",
+                  "name": "File",
                   "ofType": null
                 }
               }
@@ -3619,7 +3637,7 @@ export type introspection = {
       },
       {
         "kind": "SCALAR",
-        "name": "Upload"
+        "name": "File"
       },
       {
         "kind": "OBJECT",
@@ -3821,7 +3839,7 @@ export type introspection = {
             "name": "picture",
             "type": {
               "kind": "SCALAR",
-              "name": "Upload",
+              "name": "File",
               "ofType": null
             }
           },

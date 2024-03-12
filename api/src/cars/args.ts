@@ -1,8 +1,8 @@
 import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString } from 'class-validator';
-import { GraphQLUpload, Upload } from 'graphql-upload-minimal';
 import { UserRole } from '../entities/User';
 import { ArgsType, Authorized, Field } from 'type-graphql';
 import { IsMake, IsModelFor } from '../utils/validators';
+import { FileScaler } from '../utils/scalers';
 
 @ArgsType()
 export class CarArgs {
@@ -24,9 +24,9 @@ export class CarArgs {
   @IsString()
   public color!: string;
 
-  @Field(() => GraphQLUpload, { nullable: true })
+  @Field(() => FileScaler, { nullable: true })
   @IsDefined({ message: "You must add a picture of your car" })
-  public photo?: Upload;
+  public photo?: File;
 }
 
 
