@@ -17,7 +17,8 @@ This is the monorepo for the Beep App. The *Beep App* is a full stack ride share
 ### Dependencies
 
 #### Required
-- Node.js
+- Bun (the API runs on Bun)
+- Node.js (still working on migrating to Bun)
 - pnpm
 - Docker Compose
 
