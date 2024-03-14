@@ -2840,18 +2840,6 @@ export type introspection = {
             ]
           },
           {
-            "name": "cleanObjectStorageBucket",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            "args": []
-          },
-          {
             "name": "createCar",
             "type": {
               "kind": "NON_NULL",

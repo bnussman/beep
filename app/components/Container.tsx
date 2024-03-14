@@ -19,7 +19,7 @@ export const Container = (props: Props) => {
 
   if (keyboard) {
     return (
-      <Stack h="100%" bg="white" $theme-dark={{ bg: "black" }}>
+      <Stack h="100%" bg={colorScheme === 'light' ? "white" : "black"}>
         <KeyboardAwareScrollView
           scrollEnabled={false}
           extraHeight={150}
@@ -39,7 +39,7 @@ export const Container = (props: Props) => {
   }
 
   return (
-    <Stack flex={1} bg="white" $theme-dark={{ bg: "black" }} {...rest} {...centerProps}>
+    <Stack flex={1} bg={colorScheme === 'light' ? "white" : "black"} {...rest} {...centerProps}>
       {children}
     </Stack>
   );

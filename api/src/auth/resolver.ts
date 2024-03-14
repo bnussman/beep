@@ -42,7 +42,7 @@ export class AuthResolver {
     }
 
     if (!isPasswordCorrect) {
-      throw new Error("Password is incorrect.");
+      throw new GraphQLError("Password is incorrect.");
     }
 
     const tokens = new Token(user);
@@ -58,11 +58,10 @@ export class AuthResolver {
 
   @Mutation(() => Auth)
   public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
-
     const picture = input.picture;
 
     if (!picture) {
-      throw new Error("You must upload a profile photo to sign up");
+      throw new GraphQLError("You must upload a profile photo to sign up");
     }
 
     const user = new User();
@@ -144,7 +143,7 @@ export class AuthResolver {
     const user = await ctx.em.findOne(User, { email });
 
     if (!user) {
-      throw new Error("User does not exist");
+      throw new GraphQLError("User does not exist");
     }
 
     const existing = await ctx.em.findOne(ForgotPassword, { user });
@@ -156,7 +155,7 @@ export class AuthResolver {
       else {
         sendResetEmail(email, existing.id, user.username);
 
-        throw new Error("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
+        throw new GraphQLError("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
       }
     }
 
@@ -174,11 +173,11 @@ export class AuthResolver {
     const entry = await ctx.em.findOne(ForgotPassword, id, { populate: ['user'] });
 
     if (!entry) {
-      throw new Error("This reset password request does not exist");
+      throw new GraphQLError("This reset password request does not exist");
     }
 
     if ((entry.time.getTime() + (18000 * 1000)) < Date.now()) {
-      throw new Error("Your reset token has expired. You must re-request to reset your password.");
+      throw new GraphQLError("Your reset token has expired. You must re-request to reset your password.");
     }
 
     entry.user.password = await bunPassword.hash(input.password, "bcrypt");
