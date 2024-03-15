@@ -1,6 +1,7 @@
 import { UserRole } from "../entities/User";
 import { AuthChecker } from "type-graphql";
 import { Context } from "../utils/context";
+import { GraphQLError } from "graphql";
 
 export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
   const { user } = context;
@@ -14,7 +15,7 @@ export const authChecker: AuthChecker<Context> = ({ args, context }, roles) => {
 
   if (roles[0] === 'No Verification Self') return args.id === undefined || args.id === user.id;
 
-  if (!user.isEmailVerified) throw new Error("Please verify your email to use the Beep App");
+  if (!user.isEmailVerified) throw new GraphQLError("Please verify your email to use the Beep App");
 
   if (roles.length === 0) return true;
 

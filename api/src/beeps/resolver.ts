@@ -4,7 +4,7 @@ import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
 import { PushNotification, sendNotifications } from '../utils/notifications';
 import { pubSub } from '../utils/pubsub';
@@ -44,7 +44,7 @@ export class BeepResolver {
     const beep = await ctx.em.findOne(Beep, id, { populate: ['beeper', 'rider'] });
 
     if (!beep) {
-      throw new Error("This beep entry does not exist");
+      throw new GraphQLError("This beep entry does not exist");
     }
 
     return beep;
@@ -115,7 +115,7 @@ export class BeepResolver {
     );
 
     if (user.queueSize === 0 && user.queue.length === 0) {
-      throw new Error('Queue is already clear!');
+      throw new GraphQLError('Queue is already clear!');
     }
 
     const entries: Beep[] = user.queue.getItems();

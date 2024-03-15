@@ -8,6 +8,7 @@ import { s3 } from '../utils/s3';
 import { UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
 import { S3_BUCKET_URL } from 'src/utils/constants';
+import { GraphQLError, graphql } from 'graphql';
 
 @ObjectType()
 class CarsResponse extends Paginated(Car) {}
@@ -21,7 +22,7 @@ export class CarResolver {
     const { photo, ...input } = data;
 
     if (!photo) {
-      throw new Error("You must upload a photo of your car");
+      throw new GraphQLError("You must upload a photo of your car");
     }
 
     const extention = photo.name.substring(photo.name.lastIndexOf("."), photo.name.length);
@@ -71,7 +72,7 @@ export class CarResolver {
     const car = await ctx.em.findOneOrFail(Car, id);
 
     if (ctx.user.role !== UserRole.ADMIN && car.user.id !== ctx.user.id) {
-      throw new Error("you can't do that");
+      throw new GraphQLError("You can't edit another user's car");
     }
 
     ctx.em.nativeUpdate(Car, { user: ctx.user.id, id: { $ne: id } }, { default: false });
@@ -88,14 +89,18 @@ export class CarResolver {
   public async deleteCar(@Ctx() ctx: Context, @Args() args: DeleteCarArgs): Promise<boolean> {
     const car = await ctx.em.findOneOrFail(Car, args.id);
 
+    if (car.default && ctx.user.isBeeping) {
+      throw new GraphQLError("You can't delete your default car while you are beeping.");
+    }
+
     if (car.user.id !== ctx.user.id && ctx.user.role !== UserRole.ADMIN) {
-      throw new Error("You can only delete your own cars.");
+      throw new GraphQLError("You can only delete your own cars.");
     }
 
     const count = await ctx.em.count(Car, { user: car.user.id });
 
     if (car.default && count > 1) {
-      throw new Error("You must make another car default before you delete this one.");
+      throw new GraphQLError("You must make another car default before you delete this one.");
     }
 
     await ctx.em.removeAndFlush(car);

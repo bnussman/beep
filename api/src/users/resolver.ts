@@ -4,7 +4,7 @@ import { deleteUser, isEduEmail, search } from './helpers';
 import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLResolveInfo } from 'graphql';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { sendNotification, sendNotificationsNew } from '../utils/notifications';
 import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
@@ -122,12 +122,12 @@ export class UserResolver {
 
     if ((verification.time.getTime() + (18000 * 1000)) < Date.now()) {
       await ctx.em.removeAndFlush(verification);
-      throw new Error("Your verification token has expired");
+      throw new GraphQLError("Your verification token has expired");
     }
 
     if (verification.email !== verification.user.email) {
       await ctx.em.removeAndFlush(verification);
-      throw new Error("You tried to verify an email address that is not the same as your current email.");
+      throw new GraphQLError("You tried to verify an email address that is not the same as your current email.");
     }
 
     const update = isEduEmail(verification.email) ? { isEmailVerified: true, isStudent: true } : { isEmailVerified: true };
@@ -155,7 +155,7 @@ export class UserResolver {
   @Authorized()
   public async deleteAccount(@Ctx() ctx: Context): Promise<boolean> {
     if (ctx.user.role === UserRole.ADMIN) {
-      throw new Error("Admin accounts cannot be deleted.");
+      throw new GraphQLError("Admin accounts cannot be deleted.");
     }
 
     return await deleteUser(ctx.user, ctx.em);

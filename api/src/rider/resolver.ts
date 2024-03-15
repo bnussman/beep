@@ -8,6 +8,7 @@ import { Beep, Status } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
 import { pubSub } from '../utils/pubsub';
+import { GraphQLError } from 'graphql';
 
 @Resolver()
 export class RiderResolver {
@@ -26,11 +27,11 @@ export class RiderResolver {
     );
 
     if (!beeper.isBeeping) {
-      throw new Error("The user you have chosen is no longer beeping at this time.");
+      throw new GraphQLError("The user you have chosen is no longer beeping at this time.");
     }
 
     if (beeper.queue.getItems().some(beep => beep.rider.id === ctx.user.id)) {
-      throw new Error("You are already in an in progress beep.");
+      throw new GraphQLError("You are already in an in progress beep.");
     }
 
     const { groupSize, origin, destination } = input;
@@ -105,9 +106,9 @@ export class RiderResolver {
   public async leaveQueue(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const beeper = await ctx.em.findOneOrFail(
       User,
-      { id, cars: { default: true } },
+      id,
       {
-        strategy: LoadStrategy.SELECT_IN,
+        populateWhere: { cars: { default: true } },
         populate: ['queue', 'queue.rider', 'cars'],
         filters: ['inProgress'],
         orderBy: { queue: { start: QueryOrder.ASC } }
@@ -119,7 +120,7 @@ export class RiderResolver {
     const entry = queue.find((beep) => beep.rider.id === ctx.user.id);
 
     if (!entry) {
-      throw new Error("You are not in that beepers queue.");
+      throw new GraphQLError("You are not in that beepers queue.");
     }
 
     sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue 🥹`, "They decided they did not want a beep from you!");

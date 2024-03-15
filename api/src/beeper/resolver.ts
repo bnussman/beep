@@ -12,6 +12,7 @@ import { BeeperLocationArgs } from '../location/args';
 import { Car } from '../entities/Car';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
 import { pubSub } from '../utils/pubsub';
+import { GraphQLError } from 'graphql';
 
 @ObjectType()
 export class AnonymousBeeper {
@@ -53,13 +54,13 @@ export class BeeperResolver {
       const car = await ctx.em.findOne(Car, { user: ctx.user.id, default: true });
 
       if (!car) {
-        throw new Error("You need to add a car to your account to beep.");
+        throw new GraphQLError("You need to add a car to your account to beep.");
       }
     } else {
       const queueSize = await ctx.em.count(Beep, { beeper: ctx.user.id }, { filters: ['inProgress'] });
 
       if (queueSize > 0) {
-        throw new Error("You can't stop beeping when you still have riders in your queue");
+        throw new GraphQLError("You can't stop beeping when you still have riders in your queue");
       }
     }
 
@@ -100,14 +101,16 @@ export class BeeperResolver {
 
     const queueEntry = ctx.user.queue.getItems().find((entry) => entry.id === input.id);
 
-    if (!queueEntry) throw new Error("Can't find queue entry");
+    if (!queueEntry) {
+      throw new GraphQLError("Can't find queue entry");
+    }
 
     const isAcceptingOrDenying = input.status === Status.ACCEPTED || input.status === Status.DENIED;
 
     const numRidersBefore = isAcceptingOrDenying ? ctx.user.queue.getItems().filter((entry) => entry.start < queueEntry.start && entry.status === Status.WAITING).length : ctx.user.queue.getItems().filter((entry) => entry.start < queueEntry.start && entry.status !== Status.WAITING).length;
 
     if (numRidersBefore !== 0) {
-      throw new Error("You must respond to the rider who first joined your queue.");
+      throw new GraphQLError("You must respond to the rider who first joined your queue.");
     }
 
     queueEntry.status = input.status as Status;
