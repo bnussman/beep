@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from "react";
 import { Container } from "../components/Container";
-import { Card, Image, Spacer, Spinner, Stack, Text, Button, Heading, XStack } from "@beep/ui";
+import { Card, Image, Spinner, Stack, Text, Button, Heading, XStack } from "@beep/ui";
 import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
 import PremiumImage from '../assets/premium.png';
 import { Logger } from '../utils/Logger';
@@ -43,9 +43,9 @@ function Offering({ item }: Props) {
   return (
     <Card m="$2" p="$3">
       <Stack gap="$2">
-        <Heading fontWeight="bold">
+        <Text fontWeight="bold">
           {item.identifier}
-        </Heading>
+        </Text>
         <Text>Promotes you to the top of the beeper list so you get more riders joining your queue</Text>
         <Text fontSize="$1">Goes into effect immediately upon purchase</Text>
         <Image source={PremiumImage} height="$10" resizeMode="contain" alt="beep screenshot of premium" mb="$1" />
@@ -96,7 +96,13 @@ function Package({ p }: { p: PurchasesPackage }) {
         <Text>{countdown}</Text>
         <Stack flexGrow={1} />
         {Boolean(payment) && <Check size="4" color="$green9" />}
-        <Button iconAfter={isPurchasing ? <Spinner /> : undefined} onPress={() => onBuy(p)} disabled={Boolean(payment)}>{p.product.priceString}</Button>
+        <Button
+          iconAfter={isPurchasing ? <Spinner /> : undefined}
+          onPress={() => onBuy(p)}
+          disabled={Boolean(payment)}
+        >
+          {p.product.priceString}
+        </Button>
       </XStack>
     </Card>
   );
@@ -164,7 +170,7 @@ export function Premium() {
   }
 
   return (
-    <Container center>
+    <Container>
       <FlatList
         data={offerings}
         renderItem={({ item }) => <Offering item={item} />}
