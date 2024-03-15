@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/bun';
+import * as Sentry from '@sentry/node';
 import { Beep, Status } from "../entities/Beep";
 import { QueryOrder } from "@mikro-orm/core";
 import { User, UserRole } from "../entities/User";
