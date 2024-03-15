@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import * as Sentry from '@sentry/node';
+import * as Sentry from '@sentry/bun';
 import config from './mikro-orm.config';
 import { SENTRY_URL, ENVIRONMENT } from './utils/constants';
 import { useSentry } from '@envelop/sentry'
@@ -42,9 +42,6 @@ Sentry.init({
     if (samplingContext.request?.method === 'OPTIONS') {
       return false;
     }
-    if (samplingContext?.transactionContext?.name === 'GET /.well-known/apollo/server-health') {
-      return false;
-    }
     return true;
   },
 });
@@ -78,7 +75,7 @@ async function start() {
   const yoga = createYoga({
     schema,
     context: (data) => getContext(data, orm),
-    plugins: [useSentry()]
+    plugins: [useSentry({ startTransaction: false, renameTransaction: true, includeRawResult: true, includeResolverArgs: true })]
   });
 
   const websocketHandler = makeHandler({

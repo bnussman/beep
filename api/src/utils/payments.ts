@@ -1,6 +1,6 @@
 import { REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { syncUserPayments } from "../payments/resolver";
-import * as Sentry from '@sentry/node';
+import * as Sentry from '@sentry/bun';
 import type { MikroORM } from "@mikro-orm/core";
 import type { PostgreSqlDriver } from "@mikro-orm/postgresql";
 import type { Webhook } from "../payments/utils";
