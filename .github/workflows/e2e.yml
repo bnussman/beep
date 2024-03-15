@@ -46,8 +46,7 @@ jobs:
     - name: Build the api
       run: pnpm build:api
     - name: Init the DB
-      working-directory: ./api
-      run: bun run --bun db:create
+      run: pnpm --filter @beep/api db:create
     - name: Run Playwright tests
       run: pnpm --filter @beep/test test
     - uses: actions/upload-artifact@v3
