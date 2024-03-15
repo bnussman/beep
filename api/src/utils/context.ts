@@ -21,7 +21,7 @@ export async function getContext(data: YogaInitialContext, orm: MikroORM<Postgre
 
   if (!data.request) {
     // This is a websocket. Handle auth in the onConnext, and pass context through.
-    console.log("Getting context for websocket connextion")
+    // console.log("Getting context for websocket connextion")
     // @ts-expect-error
     const token = data.extra.token as Token;
     return { em, token, user: token.user };
