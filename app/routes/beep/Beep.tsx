@@ -40,7 +40,7 @@ export function Beep(props: Props) {
   return (
     <>
       <Pressable onPress={() => navigate("User", { id: beep.rider.id, beepId: beep.id, })}>
-        <Card flexDirection="row" alignItems="center" p="$3" gap="$4">
+        <Card flexDirection="row" alignItems="center" p="$3" gap="$4" justifyContent="space-between">
           <Stack>
             <Heading flexShrink={1} fontWeight="bold">
               {beep.rider.name}
@@ -49,8 +49,7 @@ export function Beep(props: Props) {
               <Text fontSize="$1">{printStars(beep.rider.rating)}</Text>
             )}
           </Stack>
-          <Spacer />
-          <Avatar size="$4" url={beep.rider.photo} />
+          <Avatar size="$6" url={beep.rider.photo} />
         </Card>
       </Pressable>
       <Card mt="$4" p="$3">

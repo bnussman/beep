@@ -351,7 +351,7 @@ export function MainFindBeepScreen() {
   if (isAcceptedBeep) {
     return (
       <Container p="$3" alignItems="center">
-        <Stack alignItems="center" gap="$4" w="100%">
+        <Stack alignItems="center" gap="$4" w="100%" height="94%">
           <Pressable style={{ width: "100%" }} onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id }) }>
             <XStack alignItems="center" gap="$4" w="100%">
               <Stack flexShrink={1}>
@@ -437,7 +437,8 @@ export function MainFindBeepScreen() {
               />
             </Map>
           )}
-          <Stack gap="$2" w="100%" alignSelf="flex-end">
+          <Stack flexGrow={1} />
+          <Stack gap="$2" w="100%">
             <XStack gap="$2" w="100%">
               <Button
                 flexGrow={1}
@@ -459,7 +460,7 @@ export function MainFindBeepScreen() {
               </Button>
             </XStack>
 
-            {beep.beeper.cashapp ? (
+            {beep.beeper.cashapp && (
               <Button
                 onPress={() =>
                   openCashApp(
@@ -472,9 +473,9 @@ export function MainFindBeepScreen() {
               >
                 Pay Beeper with Cash App
               </Button>
-            ) : null}
+            )}
             <XStack w="100%" gap="$2">
-              {beep.beeper.venmo ? (
+              {beep.beeper.venmo && (
                 <Button
                   flexGrow={1}
                   theme="blue"
@@ -491,7 +492,7 @@ export function MainFindBeepScreen() {
                 >
                   Pay with Venmo
                 </Button>
-              ) : null}
+              )}
               {beep.beeper.venmo && beep.groupSize > 1 && (
                 <Button
                   iconAfter={<Share />}
@@ -516,7 +517,7 @@ export function MainFindBeepScreen() {
   }
 
   return (
-    <Container alignItems="center" p={2}>
+    <Container alignItems="center" p="$3">
       <Stack gap="$4" w="100%" alignItems="center" h="94%">
         <Avatar size={100} url={beep.beeper.photo} />
         <Stack justifyContent="center" ai="center">

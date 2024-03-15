@@ -153,72 +153,80 @@ export function PickBeepScreen({ route }: Props) {
   const beepers = data?.getBeepers;
   const isRefreshing = Boolean(data) && loading;
 
-  const renderItem = ({ item, index }: { item: Unpacked<ResultOf<typeof GetBeepers>['getBeepers']>; index: number; }) => {
+  const renderItem = ({ item }: { item: Unpacked<ResultOf<typeof GetBeepers>['getBeepers']>; index: number; }) => {
     const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
 
-    return (
-      <LinearGradient
-        colors={['#ff930f', '#fff95b']}
-        start={[0, 0]}
-        end={[1, 0]}
-        mx="$2.5"
+    const InnerCard = (
+      <Card
+        onPress={() => chooseBeep(item.id)}
+        hoverTheme
+        pressTheme
         borderRadius="$4"
-        mt={index === 0 ? "$3" : "$2.5"}
-        p={isPremium ? "$1.5" : "$0"}
+        p="$3"
+        my={!isPremium ? "$2": 0}
       >
-        <Card
-          onPress={() => chooseBeep(item.id)}
-          hoverTheme
-          pressTheme
-          borderRadius="$4"
-          p="$3"
-        >
-          <XStack alignItems="center" jc="space-between">
-            <Stack flexShrink={1}>
-              <XStack alignItems="center" mb="$2">
-                <Avatar size="$4" mr="$2" url={item.photo} />
-                <Stack>
-                  <Text fontWeight="bold">
-                    {item.name}
-                  </Text>
-                  {item.rating && (
-                    <Text fontSize="$2">{printStars(item.rating)}</Text>
-                  )}
-                </Stack>
-              </XStack>
+        <XStack alignItems="center" jc="space-between">
+          <Stack flexShrink={1}>
+            <XStack alignItems="center" mb="$2">
+              <Avatar size="$4" mr="$2" url={item.photo} />
               <Stack>
-                <Text>
-                  <Text fontWeight="bold">Queue Size </Text>
-                  <Text>{item.queueSize}</Text>
+                <Text fontWeight="bold">
+                  {item.name}
                 </Text>
-                <Text>
-                  <Text fontWeight="bold">Capacity </Text>
-                  <Text>{item.capacity}</Text>
-                </Text>
-                <Text>
-                  <Text fontWeight="bold">Rates </Text>
-                  <Text>
-                    ${item.singlesRate} singles / ${item.groupRate} group
-                  </Text>
-                </Text>
+                {item.rating && (
+                  <Text fontSize="$2">{printStars(item.rating)}</Text>
+                )}
               </Stack>
+            </XStack>
+            <Stack>
+              <Text>
+                <Text fontWeight="bold">Queue Size </Text>
+                <Text>{item.queueSize}</Text>
+              </Text>
+              <Text>
+                <Text fontWeight="bold">Capacity </Text>
+                <Text>{item.capacity}</Text>
+              </Text>
+              <Text>
+                <Text fontWeight="bold">Rates </Text>
+                <Text>
+                  ${item.singlesRate} singles / ${item.groupRate} group
+                </Text>
+              </Text>
             </Stack>
-            <Stack gap="$2" flexShrink={1}>
-              {item.venmo && (
-                <Card>
-                  <Text>Venmo</Text>
-                </Card>
-              )}
-              {item.cashapp && (
-                <Card>
-                  <Text>Cash App</Text>
-                </Card>
-              )}
-            </Stack>
-          </XStack>
-        </Card>
-      </LinearGradient>
-    )
+          </Stack>
+          <Stack gap="$2" flexShrink={1}>
+            {item.venmo && (
+              <Card>
+                <Text>Venmo</Text>
+              </Card>
+            )}
+            {item.cashapp && (
+              <Card>
+                <Text>Cash App</Text>
+              </Card>
+            )}
+          </Stack>
+        </XStack>
+      </Card>
+    );
+
+    if (isPremium) {
+      return (
+        <LinearGradient
+          colors={['#ff930f', '#fff95b']}
+          start={[0, 0]}
+          end={[1, 0]}
+          borderRadius="$4"
+          p="$1.5"
+          my="$2"
+        >
+          {InnerCard}
+        </LinearGradient>
+      )
+    }
+
+    return InnerCard;
   };
 
   if ((!data && loading) || location === undefined) {
