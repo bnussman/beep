@@ -41,14 +41,14 @@ function Offering({ item }: Props) {
   const packages = item.availablePackages;
 
   return (
-    <Card m="$2">
+    <Card m="$2" p="$3">
       <Stack gap="$2">
         <Heading fontWeight="bold">
           {item.identifier}
         </Heading>
         <Text>Promotes you to the top of the beeper list so you get more riders joining your queue</Text>
         <Text fontSize="$1">Goes into effect immediately upon purchase</Text>
-        <Image source={PremiumImage} height="300px" resizeMode="contain" alt="beep screenshot of premium" mb={1} />
+        <Image source={PremiumImage} height="$10" resizeMode="contain" alt="beep screenshot of premium" mb="$1" />
         {packages.map((p) => <Package key={p.identifier} p={p} />)}
       </Stack>
     </Card>
@@ -90,11 +90,11 @@ function Package({ p }: { p: PurchasesPackage }) {
   };
 
   return (
-    <Card p={3} py={2}>
+    <Card p="$3" py="$2">
       <XStack alignItems="center" gap="$2">
         <Heading>{p.identifier}</Heading>
         <Text>{countdown}</Text>
-        <Spacer />
+        <Stack flexGrow={1} />
         {Boolean(payment) && <Check size="4" color="$green9" />}
         <Button iconAfter={isPurchasing ? <Spinner /> : undefined} onPress={() => onBuy(p)} disabled={Boolean(payment)}>{p.product.priceString}</Button>
       </XStack>
