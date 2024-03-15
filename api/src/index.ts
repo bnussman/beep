@@ -35,7 +35,9 @@ Sentry.init({
   autoSessionTracking: true,
   integrations: [
     new Sentry.Integrations.Http({ tracing: true }),
+    // @ts-expect-error bun support isnt working yet
     new Sentry.Integrations.GraphQL(),
+    // @ts-expect-error bun support isnt working yet
     new Sentry.Integrations.Postgres(),
   ],
   tracesSampler: (samplingContext) => {
