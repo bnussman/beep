@@ -1,5 +1,5 @@
 import * as nodemailer from "nodemailer";
-import * as Sentry from "@sentry/node";
+import * as Sentry from "@sentry/bun";
 import { transporter } from "../utils/mailer";
 import { User } from '../entities/User';
 import { VerifyEmail } from '../entities/VerifyEmail';

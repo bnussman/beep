@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import * as Sentry from '@sentry/node';
+import * as Sentry from '@sentry/bun';
 import config from './mikro-orm.config';
 import { SENTRY_URL, ENVIRONMENT } from './utils/constants';
 import { useSentry } from '@envelop/sentry'
