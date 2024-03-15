@@ -14,6 +14,7 @@ import { Container } from "../../components/Container";
 import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";
 import { Avatar } from "../../components/Avatar";
+import { Image } from "../../components/Image";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
 import { GetBeepHistory } from "../Beeps";
@@ -31,7 +32,7 @@ import {
 import { VariablesOf, graphql } from "gql.tada";
 import { ChooseBeep } from '../ride/PickBeep';
 import { BeeperMarker } from "../../components/Marker";
-import { Card, Label, Image, Input, Text, Button, Heading, XStack, Stack, Spinner } from "@beep/ui";
+import { Card, Label, Input, Text, Button, Heading, XStack, Stack, Spinner } from "@beep/ui";
 import { CreditCard, MessageCircle, PhoneCall, Share } from "@tamagui/lucide-icons";
 
 export const InitialRiderStatus = graphql(`
@@ -376,7 +377,7 @@ export function MainFindBeepScreen() {
             group={beep.beeper.groupRate}
           />
           {beep.position <= 0 && (
-            <Card w="100%" p="$3">
+            <Card w="100%" p="$3" animation="quick" enterStyle={{ scale: 0.5 }} key={beep.status}>
               <Heading fontWeight="bold" mb={1}>
                 Current Status
               </Heading>
@@ -437,7 +438,6 @@ export function MainFindBeepScreen() {
               />
             </Map>
           )}
-          <Stack flexGrow={1} />
           <Stack gap="$2" w="100%">
             <XStack gap="$2" w="100%">
               <Button

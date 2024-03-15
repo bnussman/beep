@@ -14,7 +14,7 @@ export function Rates({ singles, group }: Props) {
           <Text fontWeight="bold">Rates </Text>
           <Text>per person</Text>
         </Text>
-        <XStack>
+        <XStack gap="$3">
           <Stack alignItems="center">
             <Text fontWeight="bold">Single</Text>
             <Text>${singles}</Text>

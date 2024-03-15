@@ -8,7 +8,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Ratings } from "../routes/Ratings";
 import { Button, Heading, Sheet, Spinner } from "@beep/ui";
 import { graphql } from "gql.tada";
-import { Pressable } from "react-native";
 
 export const GetRateData = graphql(`
   query GetRateData {
@@ -56,7 +55,7 @@ export function RateSheet() {
       open
       dismissOnSnapToBottom
     >
-      <Sheet.Handle backgroundColor="$gray8" />
+      <Sheet.Handle backgroundColor="$gray8" opacity={1}/>
       <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" elevation="$8" gap="$2">
         <Avatar url={beep.beeper.photo} size="$10" />
         <Heading fontWeight="bold">

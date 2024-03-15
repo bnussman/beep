@@ -12,6 +12,7 @@ export function Map() {
       display="flex"
       alignItems="center"
       justifyContent="center"
+      flexGrow={1}
     >
       <Text>
         Map not supported in web

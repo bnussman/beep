@@ -5,6 +5,7 @@ export * from 'tamagui';
 export { Text } from './Text';
 export { Select } from './Select';
 export { Menu } from './Menu';
+export { Card } from './Card';
 
 export const tamaguiConfig = createTamagui(config);
 

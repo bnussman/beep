@@ -60,7 +60,7 @@ export function QueueItem({ item }: Props) {
 
   if (item.status !== Status.WAITING) {
     return (
-      <Card mb="$2">
+      <Card mb="$2" p="$3">
         <Stack>
           <Pressable
             onPress={() =>
@@ -70,17 +70,18 @@ export function QueueItem({ item }: Props) {
               })
             }
           >
-            <XStack gap="$2" alignItems="center">
-              <Avatar size="$6" url={item.rider.photo} />
-              <Stack>
-                <Text fontWeight="bold">
-                  {item.rider.name}
-                </Text>
-                {item.rider.rating && (
-                  <Text fontSize="$1">{printStars(item.rider.rating)}</Text>
-                )}
-              </Stack>
-              <Spacer />
+            <XStack gap="$2" alignItems="center" justifyContent="space-between">
+              <XStack alignItems="center" gap="$2">
+                <Avatar size="$4" url={item.rider.photo} />
+                <Stack>
+                  <Text fontWeight="bold">
+                    {item.rider.name}
+                  </Text>
+                  {item.rider.rating && (
+                    <Text fontSize="$1">{printStars(item.rider.rating)}</Text>
+                  )}
+                </Stack>
+              </XStack>
               <Menu
                 Trigger={<Button>Menu</Button>}
                 items={[
@@ -119,7 +120,7 @@ export function QueueItem({ item }: Props) {
   }
 
   return (
-    <Card mb="$2">
+    <Card my="$2" p="$3">
       <Stack gap="$1">
         <Pressable
           onPress={() =>
@@ -129,16 +130,15 @@ export function QueueItem({ item }: Props) {
             })
           }
         >
-          <XStack alignItems="center">
+          <XStack alignItems="center" justifyContent="space-between">
             <Stack>
-              <Text fontWeight="bold">
+              <Text fontWeight="bold" fontSize="$7">
                 {item.rider.name}
               </Text>
               <Text fontSize="$1">
                 {item.rider.rating && printStars(item.rider.rating)}
               </Text>
             </Stack>
-            <Spacer />
             <Avatar mr={2} size={45} url={item.rider.photo} />
           </XStack>
         </Pressable>

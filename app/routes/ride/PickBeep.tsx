@@ -15,7 +15,6 @@ import {
   Text,
   Spinner,
   XStack,
-  Spacer,
   Heading,
   Stack,
   Card
@@ -163,6 +162,7 @@ export function PickBeepScreen({ route }: Props) {
         pressTheme
         borderRadius="$4"
         p="$3"
+        mx="$2"
         my={!isPremium ? "$2": 0}
       >
         <XStack alignItems="center" jc="space-between">
@@ -197,12 +197,12 @@ export function PickBeepScreen({ route }: Props) {
           </Stack>
           <Stack gap="$2" flexShrink={1}>
             {item.venmo && (
-              <Card>
+              <Card px="$2">
                 <Text>Venmo</Text>
               </Card>
             )}
             {item.cashapp && (
-              <Card>
+              <Card px="$2">
                 <Text>Cash App</Text>
               </Card>
             )}

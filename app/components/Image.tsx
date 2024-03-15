@@ -5,7 +5,7 @@ export function Image(props: ImageProps) {
   const [loading, setLoading] = useState(true);
 
   return (
-    <Stack>
+    <Stack width={props.w ?? props.width}>
       {loading && (
         <Stack
           w={props.w ?? props.width}

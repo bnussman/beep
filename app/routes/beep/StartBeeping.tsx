@@ -442,17 +442,17 @@ export function StartBeepingScreen() {
         {queue[0] && <Beep beep={queue[0]} />}
       </Stack>
       <Sheet snapPoints={snapPoints} position={position} onPositionChange={setPosition} snapPointsMode="percent" open={queue.length > 1}>
-        <Sheet.Handle />
-        <Sheet.Frame padding="$4">
+        <Sheet.Handle opacity={1} backgroundColor="$gray8" />
+        <Sheet.Frame padding="$3" borderColor="$gray5">
           <Pressable onPress={() => setPosition(100)}>
-            <XStack alignItems="center" mb={2} pt={1} px={4}>
-              <Heading fontWeight="bold">
+            <XStack alignItems="center" mb="$2">
+              <Heading fontWeight="bold" fontSize="$8">
                 Queue
               </Heading>
               <Stack flexGrow={1} />
               {queue.length > 0 &&
                 queue.some((entry) => entry.status === Status.WAITING) && (
-                  <Circle bg="$blue4" size="$4" />
+                  <Circle bg="$blue8" size="$1" />
                 )}
             </XStack>
           </Pressable>
