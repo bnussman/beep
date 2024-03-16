@@ -81,6 +81,7 @@ async function start() {
         renameTransaction: true,
         includeRawResult: true,
         includeResolverArgs: true,
+        skipError: () => false,
       })
     ]
   });
