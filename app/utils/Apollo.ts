@@ -33,7 +33,7 @@ const url = __DEV__
 
 // const wsUrl = __DEV__ ? `wss://staging.ridebeep.app/subscriptions` : "wss://ridebeep.app/subscriptions";
 // const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
-// const wsUrl = "wss://api.ridebeep.app/subscriptions";
+//  const wsUrl = "wss://api.ridebeep.app/subscriptions";
 // const url = "https://api.ridebeep.app/graphql";
 
 const authLink = setContext(async (_, { headers }) => {

@@ -176,15 +176,22 @@ export class BeeperResolver {
   @Mutation(() => Boolean)
   @Authorized()
   public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
-    const entry = ctx.em.getReference(Beep, id);
+    const queue = await ctx.em.find(
+      Beep,
+      { beeper: ctx.user.id },
+      {
+        populate: ["beeper", "rider", "beeper.cars"],
+        populateWhere: { beeper: { cars: { default: true } } },
+        filters: ['inProgress'],
+        orderBy: { start: QueryOrder.ASC },
+      },
+    );
 
-    await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, filters: ['inProgress'], orderBy: { queue: { start: QueryOrder.ASC } } });
-
-    const newQueue = ctx.user.queue.getItems().filter(entry => entry.id !== id);
+    const newQueue = queue.filter(entry => entry.id !== id);
 
     pubSub.publish("beeperQueue", ctx.user.id, newQueue);
 
-    for (const entry of ctx.user.queue) {
+    for (const entry of queue) {
       if (entry.id === id) {
         sendNotification(entry.rider.pushToken, "Beep Canceled 🚫", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
         pubSub.publish("currentRide", entry.rider.id, null);
@@ -195,12 +202,14 @@ export class BeeperResolver {
       }
     }
 
-    entry.status = Status.CANCELED;
-    entry.end = new Date();
+    const beep = ctx.em.getReference(Beep, id);
 
-    ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
+    beep.status = Status.CANCELED;
+    beep.end = new Date();
 
-    await ctx.em.persistAndFlush(ctx.user);
+    ctx.user.queueSize = newQueue.length;
+
+    await ctx.em.persistAndFlush([ctx.user, beep]);
 
     return true;
   }
