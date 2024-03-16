@@ -12,7 +12,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@apollo/client": "^3.9.5",
+    "@apollo/client": "^3.9.7",
     "@beep/ui": "workspace:*",
     "@react-native-async-storage/async-storage": "~1.21.0",
     "@react-navigation/drawer": "next",
@@ -36,12 +36,12 @@
     "expo-status-bar": "~1.11.1",
     "expo-task-manager": "~11.7.2",
     "expo-updates": "~0.24.11",
-    "gql.tada": "^1.2.1",
+    "gql.tada": "^1.3.5",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.15.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "react-hook-form": "^7.50.1",
+    "react-hook-form": "^7.51.0",
     "react-native": "0.73.4",
     "react-native-gesture-handler": "~2.14.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
@@ -57,7 +57,7 @@
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.3.4",
+    "@0no-co/graphqlsp": "^1.6.0",
     "@babel/core": "^7.22.9",
     "@expo/metro-runtime": "~3.1.3",
     "@types/apollo-upload-client": "^17.0.3",
