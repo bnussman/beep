@@ -20,7 +20,6 @@ export class RiderResolver {
       beeperId,
       {
         populate: ['queue', 'queue.rider', 'cars'],
-        strategy: LoadStrategy.SELECT_IN,
         orderBy: { queue: { start: QueryOrder.ASC } },
         filters: ['inProgress']
       }
@@ -68,13 +67,9 @@ export class RiderResolver {
       Beep,
       {
         rider: ctx.user,
-        beeper: {
-          cars: {
-            default: true
-          }
-        },
       },
       {
+        populateWhere: { beeper: { cars: { default: true } }},
         populate: ['beeper', 'beeper.cars'],
         filters: ['inProgress']
       }
@@ -109,7 +104,7 @@ export class RiderResolver {
       id,
       {
         populateWhere: { cars: { default: true } },
-        populate: ['queue', 'queue.rider', 'cars'],
+        populate: ['queue', 'queue.rider', 'cars', 'queue.beeper'],
         filters: ['inProgress'],
         orderBy: { queue: { start: QueryOrder.ASC } }
       }
