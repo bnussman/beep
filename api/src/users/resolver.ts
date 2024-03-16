@@ -293,7 +293,7 @@ export class UserResolver {
 
     const tokens = users.map(user => user.pushToken).filter(token => token) as string[];
 
-    sendNotificationsNew(tokens, title, body);
+    await sendNotificationsNew(tokens, title, body);
 
     return tokens.length;
   }
@@ -303,7 +303,7 @@ export class UserResolver {
   public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string, @Arg('id') id: string): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, id);
 
-    sendNotification(user.pushToken, title, body);
+    await sendNotification(user.pushToken, title, body);
 
     return true;
   }

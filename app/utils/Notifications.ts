@@ -59,12 +59,16 @@ async function getNotificationPermission(): Promise<boolean> {
 export async function updatePushToken(): Promise<void> {
   if (isMobile) {
     const token = await getPushToken();
-
     if (token) {
-      await client.mutate({
-        mutation: EditAccount,
-        variables: { input: { pushToken: token } },
-      });
+      try {
+        await client.mutate({
+          mutation: EditAccount,
+          variables: { input: { pushToken: token } },
+        });
+      } catch (error) {
+        alert(error);
+        Logger.error(error);
+      }
     }
   }
 }

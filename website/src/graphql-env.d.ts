@@ -2840,18 +2840,6 @@ export type introspection = {
             ]
           },
           {
-            "name": "cleanObjectStorageBucket",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            "args": []
-          },
-          {
             "name": "createCar",
             "type": {
               "kind": "NON_NULL",
@@ -2910,7 +2898,7 @@ export type introspection = {
                 "name": "photo",
                 "type": {
                   "kind": "SCALAR",
-                  "name": "Upload",
+                  "name": "File",
                   "ofType": null
                 }
               }
@@ -3640,10 +3628,6 @@ export type introspection = {
         "name": "File"
       },
       {
-        "kind": "SCALAR",
-        "name": "Upload"
-      },
-      {
         "kind": "OBJECT",
         "name": "Auth",
         "fields": [
@@ -3843,7 +3827,7 @@ export type introspection = {
             "name": "picture",
             "type": {
               "kind": "SCALAR",
-              "name": "Upload",
+              "name": "File",
               "ofType": null
             }
           },
