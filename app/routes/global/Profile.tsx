@@ -17,6 +17,7 @@ import {
   Menu,
   Button,
 } from "@beep/ui";
+import { MenuSquare, MoreVertical } from "@tamagui/lucide-icons";
 
 export const GetUser = graphql(`
   query GetUserProfile($id: String!) {
@@ -71,40 +72,15 @@ export function ProfileScreen({ route }: Props) {
   React.useLayoutEffect(() => {
     if (user?.id !== route.params.id) {
       navigation.setOptions({
-        /*
-        headerRight: () => (
-          <Menu
-            w="190"
-            trigger={(triggerProps) => {
-              return (
-                <Pressable
-                  accessibilityLabel="More options menu"
-                  {...triggerProps}
-                >
-                  <Icon
-                    mr={3}
-                    size="xl"
-                    as={Ionicons}
-                    name="ellipsis-horizontal-circle"
-                  />
-                </Pressable>
-              );
-            }}
-          >
-            {Boolean(route.params.beepId) && (
-              <Menu.Item onPress={handleRate}>Rate</Menu.Item>
-            )}
-            <Menu.Item onPress={handleReport}>Report</Menu.Item>
-          </Menu>
-        ),
-        */
         headerRight: () => (
           <Menu
             items={[
               { title: "Rate", onPress: handleRate },
               { title: "Report", onPress: handleReport },
             ]}
-            Trigger={<Button>Menu</Button>}
+            Trigger={
+              <Button unstyled icon={<MoreVertical size="$1.5" />} />
+            }
           />
         ),
       });

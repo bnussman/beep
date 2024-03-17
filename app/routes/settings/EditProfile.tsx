@@ -15,7 +15,6 @@ import { client } from "../../utils/Apollo";
 import { ApolloError, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import { VariablesOf, graphql } from "gql.tada";
-import { Label, Menu } from "@beep/ui";
 import {
   isValidationError,
   useValidationErrors,
@@ -27,7 +26,10 @@ import {
   Stack,
   XStack,
   Text,
+  Label,
+  Menu
 } from "@beep/ui";
+import { MoreVertical } from "@tamagui/lucide-icons";
 
 const DeleteAccount = graphql(`
   mutation DeleteAccount {
@@ -118,7 +120,9 @@ export function EditProfileScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Menu
-          Trigger={<Button>Menu</Button>}
+          Trigger={
+            <Button mr="$2" hitSlop={20} unstyled icon={<MoreVertical size="$1.5" />} />
+          }
           items={[
             { title: "Change Password", onPress: () => navigation.navigate("Change Password") },
             { title: "Delete Account", onPress: handleDeleteWrapper },

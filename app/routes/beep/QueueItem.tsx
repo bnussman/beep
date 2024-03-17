@@ -15,11 +15,11 @@ import {
   Card,
   XStack,
   Text,
-  Spacer,
   Stack,
   Menu,
   Button,
 } from "@beep/ui";
+import { MoreVertical } from "@tamagui/lucide-icons";
 
 interface Props {
   item: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
@@ -83,7 +83,7 @@ export function QueueItem({ item }: Props) {
                 </Stack>
               </XStack>
               <Menu
-                Trigger={<Button>Menu</Button>}
+                Trigger={<Button hitSlop={20} unstyled icon={<MoreVertical size="$1.5" />} />}
                 items={[
                   { title: "Call", onPress: () => Linking.openURL("tel:" + getRawPhoneNumber(item.rider.phone)) },
                   { title: "Text", onPress: () => Linking.openURL("sms:" + getRawPhoneNumber(item.rider.phone)) },
