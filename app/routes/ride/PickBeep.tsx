@@ -162,8 +162,7 @@ export function PickBeepScreen({ route }: Props) {
         pressTheme
         borderRadius="$4"
         p="$3"
-        mx="$2"
-        my={!isPremium ? "$2": 0}
+        m={isPremium ? "$1.5" : "$2"}
       >
         <XStack alignItems="center" jc="space-between">
           <Stack flexShrink={1}>
@@ -197,12 +196,12 @@ export function PickBeepScreen({ route }: Props) {
           </Stack>
           <Stack gap="$2" flexShrink={1}>
             {item.venmo && (
-              <Card px="$2">
+              <Card px="$2" alignItems="center">
                 <Text>Venmo</Text>
               </Card>
             )}
             {item.cashapp && (
-              <Card px="$2">
+              <Card px="$2" alignItems="center">
                 <Text>Cash App</Text>
               </Card>
             )}
@@ -218,8 +217,7 @@ export function PickBeepScreen({ route }: Props) {
           start={[0, 0]}
           end={[1, 0]}
           borderRadius="$4"
-          p="$1.5"
-          my="$2"
+          m="$2"
         >
           {InnerCard}
         </LinearGradient>
