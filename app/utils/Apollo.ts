@@ -121,6 +121,9 @@ const wsClient = createClient({
     connecting: () => console.log("[Websocket] Connecting"),
     opened: () => console.log("[Websocket] Opened"),
     closed: () => console.log("[Websocket] Closed"),
+    error: (error) => {
+      Logger.error(error);
+    }
   },
 });
 
