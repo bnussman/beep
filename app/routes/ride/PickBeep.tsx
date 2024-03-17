@@ -15,9 +15,9 @@ import {
   Text,
   Spinner,
   XStack,
-  Heading,
   Stack,
-  Card
+  Card,
+  Heading
 } from "@beep/ui";
 
 const GetBeepers = graphql(`
@@ -259,7 +259,7 @@ export function PickBeepScreen({ route }: Props) {
         }
         ListEmptyComponent={
           <>
-            <Heading key="title">Nobody is beeping</Heading>
+            <Heading fontWeight="bold" key="title">Nobody is beeping</Heading>
             <Text key="message">
               There are no drivers within 20 miles of you
             </Text>

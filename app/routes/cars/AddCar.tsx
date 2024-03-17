@@ -8,8 +8,10 @@ import { isMobile } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
 import { getMakes, getModels } from "car-info";
-import { capitalize, colors, years } from "./utils";
+import { colors, years } from "./utils";
 import { VariablesOf, graphql } from "gql.tada";
+import { Pressable } from "react-native";
+import { Plus } from "@tamagui/lucide-icons";
 import {
   isValidationError,
   useValidationErrors,
@@ -23,8 +25,6 @@ import {
   Spinner,
   Label,
 } from "@beep/ui";
-import { Pressable } from "react-native";
-import { Plus } from "@tamagui/lucide-icons";
 
 const makes = getMakes();
 
@@ -248,8 +248,9 @@ export function AddCar() {
           </Text>
         </Stack>
         <Button
-          iconAfter={isSubmitting || loading ? <Spinner /> : undefined}
+          iconAfter={isSubmitting ? <Spinner /> : undefined}
           onPress={onSubmit}
+          disabled={isSubmitting}
           mt="$4"
         >
           Add Car
