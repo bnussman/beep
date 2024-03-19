@@ -131,7 +131,7 @@ async function start() {
       return yoga.fetch(request, server);
     },
     port: 3000,
-    websocket: { ...websocketHandler, idleTimeout: Infinity },
+    websocket: websocketHandler,
   });
 
   console.info(`🚕 Beep GraphQL Server Started at \x1b[36mhttp://0.0.0.0:3000/graphql\x1b[0m`);
