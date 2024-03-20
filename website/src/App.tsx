@@ -50,6 +50,7 @@ import { ResultOf } from 'gql.tada';
 import { deleteAccountRoute } from './routes/DeleteAccount';
 import { downloadRoute } from './routes/Download';
 import { UserQuery, UserSubscription, useUser } from './utils/user';
+import { duplicateEmailRoute } from './routes/admin/DuplicateEmails';
 
 export type User = ResultOf<typeof UserQuery>['getUser'];
 
@@ -109,6 +110,7 @@ const routeTree = rootRoute.addChildren([
     feedbackRoute,
     paymentsRoute,
     redisRoute,
+    duplicateEmailRoute,
     ratingsRoute.addChildren([
       ratingsListRoute,
       ratingRoute
