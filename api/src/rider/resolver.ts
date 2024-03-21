@@ -56,7 +56,7 @@ export class RiderResolver {
     sendNotification({
       token: beeper.pushToken,
       title: `${ctx.user.name()} has entered your queue 🚕`,
-      message: "Please open your app to accept or deny this rider.",
+      message: "Please accept or deny this rider.",
       categoryId: "newbeep",
       data: { id: entry.id }
     });

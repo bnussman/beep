@@ -45,14 +45,18 @@ Notifications.setNotificationCategoryAsync(
   }
 );
 
-Notifications.addNotificationResponseReceivedListener(response => {
-  client.mutate({
-    mutation: UpdateBeeperQueue,
-    variables: {
-      id: response.notification.request.content.data.id,
-      status: response.actionIdentifier === "accept" ? Status.ACCEPTED : Status.DENIED,
-    },
-  });
+Notifications.addNotificationResponseReceivedListener((response) => {
+  console.log(response.actionIdentifier)
+  // @ts-expect-error expo is lieing
+  if (response.notification.request.content.categoryIdentifier === 'newbeep' && response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER) {
+    client.mutate({
+      mutation: UpdateBeeperQueue,
+      variables: {
+        id: response.notification.request.content.data.id,
+        status: response.actionIdentifier === "accept" ? Status.ACCEPTED : Status.DENIED,
+      },
+    });
+  }
 });
 
 SplashScreen.preventAutoHideAsync();
