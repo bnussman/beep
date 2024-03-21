@@ -16,6 +16,25 @@ import { Navigation } from "./utils/Navigation";
 import { useAutoUpdate } from "./utils/updates";
 import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
 import { useColorScheme } from "react-native";
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationCategoryAsync("newbeep", [
+  {
+    identifier: 'accept',
+    buttonTitle: "Accept",
+  },
+  {
+    identifier: "deny",
+    buttonTitle: "Deny",
+    options: {
+      isDestructive: true
+    },
+  },
+], {
+    allowInCarPlay: true,
+    allowAnnouncement: true,
+  });
+
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({

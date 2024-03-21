@@ -15,7 +15,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * @param {string} title for the notification
  * @param {string} message is the body of the push notification
  */
-export async function sendNotification(token: string | null, title: string, message: string): Promise<void> {
+export async function sendNotification(token: string | null, title: string, message: string, categoryId?: 'newbeep' | undefined): Promise<void> {
   if (!token) {
     return;
   }
@@ -33,7 +33,8 @@ export async function sendNotification(token: string | null, title: string, mess
         title: title,
         body: message,
         sound: 'default',
-        _displayInForeground: true
+        _displayInForeground: true,
+        categoryId,
       })
     });
   } catch (error) {

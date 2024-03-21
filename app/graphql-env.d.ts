@@ -314,8 +314,8 @@ export type introspection = {
                 "ofType": {
                   "kind": "NON_NULL",
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
+                    "kind": "OBJECT",
+                    "name": "User",
                     "ofType": null
                   }
                 }

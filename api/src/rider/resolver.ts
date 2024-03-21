@@ -53,7 +53,11 @@ export class RiderResolver {
 
     await ctx.em.persistAndFlush(beeper);
 
-    sendNotification(beeper.pushToken, `${ctx.user.name()} has entered your queue 🚕`, "Please open your app to accept or deny this rider.");
+    sendNotification(
+      beeper.pushToken,
+      `${ctx.user.name()} has entered your queue 🚕`, "Please open your app to accept or deny this rider.",
+      "newbeep",
+    );
 
     pubSub.publish("beeperQueue", beeper.id, queue);
 
