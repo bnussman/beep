@@ -133,16 +133,32 @@ export class BeeperResolver {
 
     switch (queueEntry.status) {
       case Status.DENIED:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request 🚫`, "Open your app to find a diffrent beeper");
+        sendNotification({
+          token: queueEntry.rider.pushToken,
+          title: `${ctx.user.name()} has denied your beep request 🚫`,
+          message: "Open your app to find a diffrent beeper"
+        });
         break;
       case Status.ACCEPTED:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request ✅`, "You will recieve another notification when they are on their way to pick you up");
+        sendNotification({
+          token: queueEntry.rider.pushToken,
+          title: `${ctx.user.name()} has accepted your beep request ✅`,
+          message: "You will recieve another notification when they are on their way to pick you up"
+        });
         break;
       case Status.ON_THE_WAY:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way 🚕`, `Your beeper is on their way in a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`);
+        sendNotification({
+          token: queueEntry.rider.pushToken,
+          title: `${ctx.user.name()} is on their way 🚕`,
+          message: `Your beeper is on their way in a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`
+        });
         break;
       case Status.HERE:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here 📍`, `Look for a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`);
+        sendNotification({
+          token: queueEntry.rider.pushToken,
+          title: `${ctx.user.name()} is here 📍`,
+          message: `Look for a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`
+        });
         break;
       case Status.IN_PROGRESS:
         // Beep is in progress - no notification needed at this stage.
@@ -193,7 +209,11 @@ export class BeeperResolver {
 
     for (const entry of queue) {
       if (entry.id === id) {
-        sendNotification(entry.rider.pushToken, "Beep Canceled 🚫", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
+        sendNotification({
+          token: entry.rider.pushToken,
+          title: "Beep Canceled 🚫",
+          message: `Your beeper, ${ctx.user.name()}, has canceled the beep`
+        });
         pubSub.publish("currentRide", entry.rider.id, null);
       }
       else {

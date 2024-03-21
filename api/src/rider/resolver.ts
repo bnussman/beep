@@ -1,5 +1,5 @@
 import { sendNotification } from '../utils/notifications';
-import { LoadStrategy, QueryOrder, raw } from '@mikro-orm/core';
+import { QueryOrder, raw } from '@mikro-orm/core';
 import { User } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { GetBeepInput, GetBeepersArgs } from './args';
@@ -53,11 +53,13 @@ export class RiderResolver {
 
     await ctx.em.persistAndFlush(beeper);
 
-    sendNotification(
-      beeper.pushToken,
-      `${ctx.user.name()} has entered your queue 🚕`, "Please open your app to accept or deny this rider.",
-      "newbeep",
-    );
+    sendNotification({
+      token: beeper.pushToken,
+      title: `${ctx.user.name()} has entered your queue 🚕`,
+      message: "Please open your app to accept or deny this rider.",
+      categoryId: "newbeep",
+      data: { id: entry.id }
+    });
 
     pubSub.publish("beeperQueue", beeper.id, queue);
 
@@ -122,7 +124,11 @@ export class RiderResolver {
       throw new GraphQLError("You are not in that beepers queue.");
     }
 
-    sendNotification(beeper.pushToken, `${ctx.user.name()} left your queue 🥹`, "They decided they did not want a beep from you!");
+    sendNotification({
+      token: beeper.pushToken,
+      title: `${ctx.user.name()} left your queue 🥹`,
+      message: "They decided they did not want a beep from you!"
+    });
 
     entry.status = Status.CANCELED;
     entry.end = new Date();

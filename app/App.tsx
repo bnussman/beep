@@ -17,24 +17,43 @@ import { useAutoUpdate } from "./utils/updates";
 import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
 import { useColorScheme } from "react-native";
 import * as Notifications from 'expo-notifications';
+import { UpdateBeeperQueue } from "./components/ActionButton";
+import { Status } from "./utils/types";
 
-Notifications.setNotificationCategoryAsync("newbeep", [
-  {
-    identifier: 'accept',
-    buttonTitle: "Accept",
-  },
-  {
-    identifier: "deny",
-    buttonTitle: "Deny",
-    options: {
-      isDestructive: true
+Notifications.setNotificationCategoryAsync(
+  "newbeep",
+  [
+    {
+      identifier: 'accept',
+      buttonTitle: "Accept",
+      options: {
+        opensAppToForeground: false
+      },
     },
-  },
-], {
+    {
+      identifier: "deny",
+      buttonTitle: "Deny",
+      options: {
+        isDestructive: true,
+        opensAppToForeground: false
+      },
+    },
+  ],
+  {
     allowInCarPlay: true,
     allowAnnouncement: true,
-  });
+  }
+);
 
+Notifications.addNotificationResponseReceivedListener(response => {
+  client.mutate({
+    mutation: UpdateBeeperQueue,
+    variables: {
+      id: response.notification.request.content.data.id,
+      status: response.actionIdentifier === "accept" ? Status.ACCEPTED : Status.DENIED,
+    },
+  });
+});
 
 SplashScreen.preventAutoHideAsync();
 Sentry.init({

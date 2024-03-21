@@ -79,7 +79,11 @@ export class UserResolver {
     const oldEmail = ctx.user.email;
 
     if (user.isEmailVerified === false && data.isEmailVerified === true) {
-      sendNotification(user.pushToken, "Account Verified ✅", "An admin has approved your account.");
+      sendNotification({
+        token: user.pushToken,
+        title: "Account Verified ✅",
+        message: "An admin has approved your account."
+      });
     }
 
     Object.keys(data).forEach(key => {
@@ -303,7 +307,11 @@ export class UserResolver {
   public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string, @Arg('id') id: string): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, id);
 
-    await sendNotification(user.pushToken, title, body);
+    await sendNotification({
+      token: user.pushToken,
+      title,
+      message: body
+    });
 
     return true;
   }

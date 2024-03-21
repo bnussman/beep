@@ -8,7 +8,7 @@ import { s3 } from '../utils/s3';
 import { UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
 import { S3_BUCKET_URL } from 'src/utils/constants';
-import { GraphQLError, graphql } from 'graphql';
+import { GraphQLError } from 'graphql';
 
 @ObjectType()
 class CarsResponse extends Paginated(Car) {}
@@ -106,7 +106,11 @@ export class CarResolver {
     await ctx.em.removeAndFlush(car);
 
     if (args.notification) {
-      sendNotification(car.user.pushToken, `${car.make} ${car.model} deleted`, args.notification);
+      sendNotification({
+        token: car.user.pushToken,
+        title: `${car.make} ${car.model} deleted`,
+        message: args.notification
+      });
     }
 
     return true;
