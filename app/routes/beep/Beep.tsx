@@ -26,6 +26,7 @@ import {
   XStack,
   Spacer,
   Text,
+  Paragraph,
 } from "@beep/ui";
 
 interface Props {
@@ -64,13 +65,13 @@ export function Beep(props: Props) {
             <Heading fontWeight="bold">
               Pick Up
             </Heading>
-            <Text flexShrink={1}>{beep.origin}</Text>
+            <Paragraph flexShrink={1}>{beep.origin}</Paragraph>
           </Stack>
           <Stack>
             <Heading fontWeight="bold">
               Destination
             </Heading>
-            <Text flexShrink={1}>{beep.destination}</Text>
+            <Paragraph flexShrink={1}>{beep.destination}</Paragraph>
           </Stack>
         </Stack>
       </Card>
