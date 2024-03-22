@@ -132,13 +132,14 @@ export function RatePreview({ id }: Props) {
         renderItem={({ item: rating }) => (
           <Card
             key={rating.id}
-            p="$1"
+            px="$3"
+            py="$2"
             mt="$2"
             pressTheme
             hoverTheme
             onPress={() => navigate("User", { id: rating.rater.id, beepId: rating.beep.id })}
           >
-            <XStack alignItems="center" p={2}>
+            <XStack alignItems="center">
               <Avatar size="$4" mr="$4" url={rating.rater.photo} />
               <Stack>
                 <Text fontWeight="bold">
