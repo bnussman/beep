@@ -162,7 +162,7 @@ export function PickBeepScreen({ route }: Props) {
         pressTheme
         borderRadius="$4"
         p="$3"
-        m={isPremium ? "$1.5" : "$2"}
+        m={isPremium ? "$1" : "$2"}
       >
         <XStack alignItems="center" jc="space-between">
           <Stack flexShrink={1}>
@@ -179,11 +179,7 @@ export function PickBeepScreen({ route }: Props) {
             </XStack>
             <Stack>
               <Text>
-                <Text fontWeight="bold">Queue Size </Text>
-                <Text>{item.queueSize}</Text>
-              </Text>
-              <Text>
-                <Text fontWeight="bold">Capacity </Text>
+                <Text fontWeight="bold">Rider Capacity </Text>
                 <Text>{item.capacity}</Text>
               </Text>
               <Text>
@@ -194,18 +190,12 @@ export function PickBeepScreen({ route }: Props) {
               </Text>
             </Stack>
           </Stack>
-          <Stack gap="$2" flexShrink={1}>
-            {item.venmo && (
-              <Card px="$2" alignItems="center">
-                <Text>Venmo</Text>
-              </Card>
-            )}
-            {item.cashapp && (
-              <Card px="$2" alignItems="center">
-                <Text>Cash App</Text>
-              </Card>
-            )}
-          </Stack>
+          <XStack gap="$3" ai="center">
+            <Heading fontSize="$9" lineHeight="$9" fontWeight="bold">
+              {item.queueSize}
+            </Heading>
+            <Text fontWeight="bold">rider{item.queueSize === 1 ? "" : "s"}</Text>
+          </XStack>
         </XStack>
       </Card>
     );
@@ -213,7 +203,7 @@ export function PickBeepScreen({ route }: Props) {
     if (isPremium) {
       return (
         <LinearGradient
-          colors={['#ff930f', '#fff95b']}
+          colors={['$pink10', '$yellow10']}
           start={[0, 0]}
           end={[1, 0]}
           borderRadius="$4"

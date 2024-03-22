@@ -38,6 +38,7 @@ import {
   Sheet,
   Card,
 } from "@beep/ui";
+import { LinearGradient } from "tamagui/linear-gradient";
 
 let unsubscribe: any = null;
 
@@ -198,6 +199,7 @@ export function StartBeepingScreen() {
             checked={isBeeping}
             native
             onCheckedChange={() => toggleSwitchWrapper()}
+            nativeProps={{ trackColor: { true: "#ffcf24" } }}
           >
             <Switch.Thumb />
           </Switch>
@@ -360,22 +362,30 @@ export function StartBeepingScreen() {
   if (isBeeping && queue?.length === 0) {
     return (
       <Container center>
-        <Stack gap="$2" p="$4" alignItems="center" mb="$12">
+        <Stack gap="$2" p="$4" alignItems="center" mb="$8">
           <Heading fontWeight="bold">Your queue is empty</Heading>
           <Text textAlign="center">
             If someone wants you to beep them, it will appear here. If your app
             is closed, you will recieve a push notification.
           </Text>
         </Stack>
-        <Card p="$3">
-          <Stack alignItems="center" gap="$2">
-            <Heading fontWeight="bold">Want more riders?</Heading>
-            <Text textAlign="center">
-              Jump to the top of the beeper list
-            </Text>
-            <Button onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
-          </Stack>
-        </Card>
+        <LinearGradient
+          colors={['$pink10', '$yellow10']}
+          start={[0, 1]}
+          end={[1, 0]}
+          borderRadius="$4"
+          p="$1"
+        >
+          <Card p="$3">
+            <Stack alignItems="center" gap="$2">
+              <Heading fontWeight="bold">Want more riders?</Heading>
+              <Text textAlign="center">
+                Jump to the top of the beeper list
+              </Text>
+              <Button onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
+            </Stack>
+          </Card>
+        </LinearGradient>
       </Container>
     );
   }
