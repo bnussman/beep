@@ -6,8 +6,8 @@ import { Button, Center, Container, FormControl, FormHelperText, FormLabel, Head
 import { EmailIcon } from '@chakra-ui/icons';
 import { Card } from '../components/Card';
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../App';
 import { graphql } from 'gql.tada';
+import { rootRoute } from '../utils/router';
 
 const ForgotPasswordGraphQL = graphql(`
   mutation ForgotPassword($email: String!) {

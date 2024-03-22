@@ -6,9 +6,9 @@ import { Button, Center, Container, FormControl, FormErrorMessage, FormLabel, He
 import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from 'react-hook-form';
-import { rootRoute } from '../App';
 import { createRoute } from '@tanstack/react-router';
 import { VariablesOf, graphql } from 'gql.tada';
+import { rootRoute } from '../utils/router';
 
 const Reset = graphql(`
   mutation ResetPassword($id: String!, $password: String!) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Text, Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Heading, Stack } from '@chakra-ui/react';
 import { Link as RouterLink, createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../App';
+import { rootRoute } from '../utils/router';
 
 export const termsRoute = createRoute({
   component: Terms,

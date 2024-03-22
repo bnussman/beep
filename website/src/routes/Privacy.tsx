@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stack, Heading, Box, Text, Accordion, AccordionItem, AccordionIcon, AccordionButton, AccordionPanel, UnorderedList, ListItem } from "@chakra-ui/react"
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../App';
+import { rootRoute } from '../utils/router';
 
 export const privacyRoute = createRoute({
   component: Privacy,

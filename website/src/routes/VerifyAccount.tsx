@@ -6,8 +6,8 @@ import { Success } from '../components/Success';
 import { Loading } from '../components/Loading';
 import { Box } from '@chakra-ui/react';
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../App';
 import { graphql } from 'gql.tada';
+import { rootRoute } from '../utils/router';
 
 const VerifyAccountGraphQL = graphql(`
   mutation VerifyAccount($id: String!) {

@@ -4,7 +4,7 @@ import iPhoneLight from '../assets/light-square.png';
 import { Container, useColorMode } from "@chakra-ui/react";
 import { Hero } from "../components/Hero";
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../App';
+import { rootRoute } from '../utils/router';
 
 export const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
