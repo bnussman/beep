@@ -3,7 +3,7 @@ import { Heading, ListItem, Stack, UnorderedList } from "@chakra-ui/react";
 import { useQuery } from "@apollo/client";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
-import { Route } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import { adminRoute } from ".";
 import { graphql } from "gql.tada";
 
@@ -13,7 +13,7 @@ const RedisChannelsQuery = graphql(`
   }
 `);
 
-export const redisRoute = new Route({
+export const redisRoute = createRoute({
   component: Redis,
   path: "redis",
   getParentRoute: () => adminRoute,

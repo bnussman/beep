@@ -3,7 +3,7 @@ import { Heading, Stack, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/reac
 import { useQuery } from "@apollo/client";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
-import { Route } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import { usersRoute } from "./users";
 import { graphql } from "gql.tada";
 
@@ -16,7 +16,7 @@ const UsersByDomainQuery = graphql(`
   }
 `);
 
-export const usersByDomainRoute = new Route({
+export const usersByDomainRoute = createRoute({
   component: UsersByDomain,
   path: 'domain',
   getParentRoute: () => usersRoute,

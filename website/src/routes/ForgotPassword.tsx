@@ -5,7 +5,7 @@ import { Success } from '../components/Success';
 import { Button, Center, Container, FormControl, FormHelperText, FormLabel, Heading, Input } from '@chakra-ui/react';
 import { EmailIcon } from '@chakra-ui/icons';
 import { Card } from '../components/Card';
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { rootRoute } from '../App';
 import { graphql } from 'gql.tada';
 
@@ -15,7 +15,7 @@ const ForgotPasswordGraphQL = graphql(`
   }
 `);
 
-export const forgotPasswordRoute = new Route({
+export const forgotPasswordRoute = createRoute({
   component: ForgotPassword,
   path: "/password/forgot",
   getParentRoute: () => rootRoute,

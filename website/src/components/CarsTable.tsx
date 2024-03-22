@@ -7,7 +7,7 @@ import { Indicator } from './Indicator';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
 import { graphql } from '../graphql';
 
@@ -32,7 +32,7 @@ const GetCarsForUser = graphql(`
   }
 `);
 
-export const carsTableRoute = new Route({
+export const carsTableRoute = createRoute({
   component: CarsTable,
   path: 'cars',
   getParentRoute: () => userRoute,

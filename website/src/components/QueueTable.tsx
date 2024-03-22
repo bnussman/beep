@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/client';
 import { GetUser, userRoute } from '../routes/admin/users/User';
 import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { graphql } from '../graphql';
 
 dayjs.extend(duration);
@@ -37,7 +37,7 @@ export const QueueSubscription = graphql(`
 
 let sub: any;
 
-export const queueRoute = new Route({
+export const queueRoute = createRoute({
   component: QueueTable,
   path: 'queue',
   getParentRoute: () => userRoute,

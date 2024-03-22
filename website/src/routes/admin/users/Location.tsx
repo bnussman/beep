@@ -4,7 +4,7 @@ import { Box, Center } from '@chakra-ui/react';
 import { cache, client } from '../../../utils/Apollo';
 import { Marker } from '../../../components/Marker';
 import { Map } from '../../../components/Map';
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { GetUser, userRoute } from './User';
 import { graphql } from 'gql.tada';
 
@@ -19,7 +19,7 @@ const BeepersLocation = graphql(`
 
 let sub: any;
 
-export const locationRoute = new Route({
+export const locationRoute = createRoute({
   component: LocationView,
   path: 'location',
   getParentRoute: () => userRoute,

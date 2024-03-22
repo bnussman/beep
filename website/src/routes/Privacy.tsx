@@ -1,9 +1,9 @@
 import React from 'react';
 import { Stack, Heading, Box, Text, Accordion, AccordionItem, AccordionIcon, AccordionButton, AccordionPanel, UnorderedList, ListItem } from "@chakra-ui/react"
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { rootRoute } from '../App';
 
-export const privacyRoute = new Route({
+export const privacyRoute = createRoute({
   component: Privacy,
   path: "/privacy",
   getParentRoute: () => rootRoute,

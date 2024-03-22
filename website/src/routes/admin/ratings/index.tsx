@@ -8,7 +8,7 @@ import { TdUser } from '../../../components/TdUser';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
-import { Link, Route, useNavigate } from '@tanstack/react-router';
+import { Link, createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from '../../../graphql';
 
@@ -50,12 +50,12 @@ export function printStars(rating: number): string {
   return stars;
 }
 
-export const ratingsRoute = new Route({
+export const ratingsRoute = createRoute({
   path: "ratings",
   getParentRoute: () => adminRoute,
 });
 
-export const ratingsListRoute = new Route({
+export const ratingsListRoute = createRoute({
   path: "/",
   component: Ratings,
   getParentRoute: () => ratingsRoute,

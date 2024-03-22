@@ -9,7 +9,7 @@ import { Indicator } from '../../../components/Indicator';
 import { useQuery } from '@apollo/client';
 import { Error } from '../../../components/Error';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue, useDisclosure } from '@chakra-ui/react';
-import { Route, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from '../../../graphql';
 
@@ -42,12 +42,12 @@ export const ReportsGraphQL = graphql(`
   }
 `);
 
-export const reportsRoute = new Route({
+export const reportsRoute = createRoute({
   path: 'reports',
   getParentRoute: () => adminRoute,
 });
 
-export const reportsListRoute = new Route({
+export const reportsListRoute = createRoute({
   component: Reports,
   path: "/",
   getParentRoute: () => reportsRoute,

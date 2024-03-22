@@ -7,7 +7,7 @@ import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from 'react-hook-form';
 import { rootRoute } from '../App';
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { VariablesOf, graphql } from 'gql.tada';
 
 const Reset = graphql(`
@@ -23,7 +23,7 @@ const Reset = graphql(`
 
 type ResetPasswordValues = VariablesOf<typeof Reset>;
 
-export const resetPasswordRoute = new Route({
+export const resetPasswordRoute = createRoute({
   component: ResetPassword,
   path: "/password/reset/$id",
   getParentRoute: () => rootRoute,

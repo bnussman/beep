@@ -4,7 +4,7 @@ import { EditLocation } from "./EditLocation";
 import { useQuery } from "@apollo/client";
 import { GetUser, userRoute } from "../User";
 import { Error } from '../../../../components/Error';
-import { Route } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import {
   Tabs,
   TabList,
@@ -16,7 +16,7 @@ import {
   Spinner
 } from "@chakra-ui/react";
 
-export const editUserRoute = new Route({
+export const editUserRoute = createRoute({
   component: Edit,
   path: 'edit',
   getParentRoute: () => userRoute,

@@ -9,7 +9,7 @@ import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
-import { Route, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from '../../../graphql';
 
@@ -55,13 +55,13 @@ export const beepStatusMap: Record<Status, string> = {
   [Status.COMPLETE]: 'green',
 };
 
-export const beepsRoute = new Route({
+export const beepsRoute = createRoute({
   path: "beeps",
   getParentRoute: () => adminRoute,
 });
 
 
-export const beepsListRoute = new Route({
+export const beepsListRoute = createRoute({
   path: "/",
   getParentRoute: () => beepsRoute,
   component: Beeps,

@@ -9,7 +9,7 @@ import { beepStatusMap } from '../routes/admin/beeps';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
 import { graphql } from '../graphql';
 
@@ -49,7 +49,7 @@ const Hisory = graphql(`
   }
 `);
 
-export const beepsTableRoute = new Route({
+export const beepsTableRoute = createRoute({
   component: BeepsTable,
   path: 'beeps',
   getParentRoute: () => userRoute,

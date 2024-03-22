@@ -24,7 +24,7 @@ import {
   useDisclosure,
   useToast
 } from "@chakra-ui/react";
-import { Route } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { VariablesOf, graphql } from "gql.tada";
 
@@ -42,7 +42,7 @@ const CleanObjectStorageBucket = graphql(`
   }
 `);
 
-export const notificationsRoute = new Route({
+export const notificationsRoute = createRoute({
   component: Notifications,
   path: "/notifications",
   getParentRoute: () => adminRoute,

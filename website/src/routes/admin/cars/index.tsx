@@ -11,7 +11,7 @@ import { Indicator } from '../../../components/Indicator';
 import { PhotoDialog } from '../../../components/PhotoDialog';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { DeleteCarDialog } from './DeleteCarDialog';
-import { Route, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from '../../../graphql';
 
@@ -39,7 +39,7 @@ export const CarsQuery = graphql(`
   }
 `);
 
-export const carsRoute = new Route({
+export const carsRoute = createRoute({
   component: Cars,
   path: '/cars',
   getParentRoute: () => adminRoute,

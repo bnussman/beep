@@ -10,7 +10,7 @@ import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
 import { beepStatusMap } from '.';
-import { Route, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from '../../../graphql';
 
@@ -44,7 +44,7 @@ export const ActiveBeepsGraphQL = graphql(`
   }
 `);
 
-export const activeBeepsRoute = new Route({
+export const activeBeepsRoute = createRoute({
   component: ActiveBeeps,
   path: 'beeps/active',
   getParentRoute: () => adminRoute,

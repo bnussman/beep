@@ -7,7 +7,7 @@ import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { TdUser } from '../../components/TdUser';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
-import { Route, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
 import { graphql } from '../../graphql';
 
@@ -34,7 +34,7 @@ const PaymentsGQL = graphql(`
   }
 `);
 
-export const paymentsRoute = new Route({
+export const paymentsRoute = createRoute({
   component: Payments,
   path: '/payments',
   getParentRoute: () => adminRoute,
