@@ -4,7 +4,7 @@ import duration from 'dayjs/plugin/duration';
 import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
 import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { client } from '../utils/Apollo';
+import { client } from '../utils/apollo';
 import { useQuery } from '@apollo/client';
 import { GetUser, userRoute } from '../routes/admin/users/User';
 import { Status } from '../types/User';

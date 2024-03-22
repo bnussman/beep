@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
-import { client } from "../utils/Apollo";
+import { client } from "../utils/apollo";
 import { LiaKeySolid, LiaSignOutAltSolid, LiaUserEditSolid } from 'react-icons/lia';
 import { Link, useNavigate } from "@tanstack/react-router";
 import { graphql } from "gql.tada";

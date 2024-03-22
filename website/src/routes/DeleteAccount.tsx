@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { Link, Button, Text, Stack, Heading, Alert, AlertIcon, useDisclosure, Box, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, AlertDialogFooter, useToast } from "@chakra-ui/react";
 import { graphql } from 'gql.tada';
 import { Error } from "../components/Error";
-import { client } from "../utils/Apollo";
+import { client } from "../utils/apollo";
 import { UserQuery } from "../utils/user";
 import { rootRoute } from "../utils/router";
 

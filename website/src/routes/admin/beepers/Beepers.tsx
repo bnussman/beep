@@ -5,7 +5,7 @@ import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
-import { cache } from '../../../utils/Apollo';
+import { cache } from '../../../utils/apollo';
 import { createRoute } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from 'gql.tada';

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { Box, Center } from '@chakra-ui/react';
-import { cache, client } from '../../../utils/Apollo';
+import { cache, client } from '../../../utils/apollo';
 import { Marker } from '../../../components/Marker';
 import { Map } from '../../../components/Map';
 import { createRoute } from '@tanstack/react-router';

@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Indicator } from './Indicator';
 import { Text, Avatar, Box, Center, HStack, Spacer, Spinner } from '@chakra-ui/react';
-import { client } from '../utils/Apollo';
+import { client } from '../utils/apollo';
 import { useQuery } from '@apollo/client';
 import { QueueSubscription } from './QueueTable';
 import { Status } from '../types/User';

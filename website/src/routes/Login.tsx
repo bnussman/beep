@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
-import { client } from '../utils/Apollo';
+import { client } from '../utils/apollo';
 import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack, Center, Heading } from "@chakra-ui/react"
 import { Card } from '../components/Card';
 import { PasswordInput } from '../components/PasswordInput';

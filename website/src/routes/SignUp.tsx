@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
-import { client } from '../utils/Apollo';
+import { client } from '../utils/apollo';
 import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from "react-hook-form";

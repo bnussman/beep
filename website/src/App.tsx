@@ -2,7 +2,7 @@ import React from 'react';
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/700.css";
 import { ApolloProvider, useSubscription } from '@apollo/client';
-import { cache, client } from './utils/Apollo';
+import { cache, client } from './utils/apollo';
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
 import { Header } from './components/Header';
