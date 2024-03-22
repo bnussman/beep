@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { ApolloError, useMutation } from "@apollo/client";
 import { Input, Button, Stack, Label, Spinner } from "@beep/ui";
 import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
+import { Alert } from "../../utils/alert";
 import { graphql } from 'gql.tada';
 
 const ChangePassword = graphql(`

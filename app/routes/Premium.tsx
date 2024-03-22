@@ -4,7 +4,7 @@ import { Container } from "../components/Container";
 import { Card, Image, Spinner, Stack, Text, Button, XStack, Heading } from "@beep/ui";
 import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
 import PremiumImage from '../assets/premium.png';
-import { Logger } from '../utils/Logger';
+import { Logger } from '../utils/logger';
 import { useMutation, useQuery } from '@apollo/client';
 import { Countdown } from '../components/CountDown';
 import { FlatList, RefreshControl, useColorScheme } from 'react-native';

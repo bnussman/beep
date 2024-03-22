@@ -7,7 +7,7 @@ import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
 import { Image } from "../../components/Image";
 import { useUser } from "../../utils/useUser";
 import { Alert } from "react-native";
-import { cache } from "../../utils/Apollo";
+import { cache } from "../../utils/apollo";
 import { ResultOf, graphql } from "gql.tada";
 import {
   Heading,

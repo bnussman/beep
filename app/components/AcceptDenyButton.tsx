@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Spinner } from "@beep/ui";
 import { useMutation } from "@apollo/client";
-import { Alert } from "../utils/Alert";
+import { Alert } from "../utils/alert";
 import { Unpacked } from "../utils/constants";
 import { UpdateBeeperQueue } from "./ActionButton";
 import { Status } from "../utils/types";

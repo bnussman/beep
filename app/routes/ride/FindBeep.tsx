@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
 import { Linking, AppState, AppStateStatus, Pressable } from "react-native";
-import { cache, client } from "../../utils/Apollo";
+import { cache, client } from "../../utils/apollo";
 import { Container } from "../../components/Container";
 import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";

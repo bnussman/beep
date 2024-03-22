@@ -1,4 +1,4 @@
-import { Logger } from './Logger';
+import { Logger } from './logger';
 import { Platform } from "react-native";
 import { isRunningInExpoGo, isWeb } from './constants';
 import type { User } from './useUser';

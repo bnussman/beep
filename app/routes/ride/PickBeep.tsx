@@ -7,7 +7,7 @@ import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { Container } from "../../components/Container";
 import { Avatar } from "../../components/Avatar";
 import { useLocation } from "../../utils/useLocation";
-import { client } from "../../utils/Apollo";
+import { client } from "../../utils/apollo";
 import { InitialRiderStatus } from "./FindBeep";
 import { ResultOf, VariablesOf, graphql } from "gql.tada";
 import { LinearGradient } from "tamagui/linear-gradient";

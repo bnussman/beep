@@ -1,8 +1,8 @@
 import * as Notifications from "expo-notifications";
-import { client } from "../utils/Apollo";
+import { client } from "./apollo";
 import { isMobile } from "./constants";
 import { EditAccount } from "../routes/settings/EditProfile";
-import { Logger } from "./Logger";
+import { Logger } from "./logger";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

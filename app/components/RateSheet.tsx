@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { RateUser } from "../routes/global/Rate";
-import { Alert } from "../utils/Alert";
+import { Alert } from "../utils/alert";
 import { RateBar } from "./Rate";
 import { Avatar } from "./Avatar";
 import { useNavigation } from "@react-navigation/native";

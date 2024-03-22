@@ -4,7 +4,7 @@ import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
 import { Button, Input, Label, Spinner, Stack } from "@beep/ui";
 import { Container } from "../../components/Container";
-import { Alert } from "../../utils/Alert";
+import { Alert } from "../../utils/alert";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { GetUser } from "./Profile";
 import { graphql } from 'gql.tada';

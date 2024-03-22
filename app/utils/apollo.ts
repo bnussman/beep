@@ -4,7 +4,7 @@ import { createUploadLink } from "apollo-upload-client";
 import { createClient } from "graphql-ws";
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { setContext } from "@apollo/client/link/context";
-import { Logger } from "./Logger";
+import { Logger } from "./logger";
 import { ApolloClient, ApolloLink, InMemoryCache, split } from "@apollo/client";
 import Constants from "expo-constants";
 

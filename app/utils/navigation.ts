@@ -1,4 +1,4 @@
-import { useIsSignedIn, useIsSignedOut } from "../utils/useUser";
+import { useIsSignedIn, useIsSignedOut } from "./useUser";
 import { ProfileScreen } from "../routes/global/Profile";
 import { ReportScreen } from "../routes/global/Report";
 import { RateScreen } from "../routes/global/Rate";

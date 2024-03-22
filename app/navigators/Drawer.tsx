@@ -7,7 +7,7 @@ import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
-import { client } from "../utils/Apollo";
+import { client } from "../utils/apollo";
 import { useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";

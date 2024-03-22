@@ -3,7 +3,7 @@ import { useLocation } from "../../utils/useLocation";
 import { type Region } from "react-native-maps";
 import { useQuery, useSubscription } from "@apollo/client";
 import { useEffect } from "react";
-import { cache } from "../../utils/Apollo";
+import { cache } from "../../utils/apollo";
 import { graphql } from "gql.tada";
 import { BeeperMarker } from "../../components/Marker";
 

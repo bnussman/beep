@@ -3,7 +3,7 @@ import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { useMutation } from "@apollo/client";
 import { Button, ButtonProps, Spinner } from "@beep/ui";
-import { Alert } from "../../utils/Alert";
+import { Alert } from "../../utils/alert";
 import { graphql } from "gql.tada";
 
 const LeaveQueue = graphql(`

@@ -11,7 +11,7 @@ import { useUser } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
-import { client } from "../../utils/Apollo";
+import { client } from "../../utils/apollo";
 import { ApolloError, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import { VariablesOf, graphql } from "gql.tada";
