@@ -12,14 +12,14 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@apollo/client": "^3.9.5",
+    "@apollo/client": "^3.9.9",
     "@beep/ui": "workspace:*",
     "@react-native-async-storage/async-storage": "~1.21.0",
     "@react-navigation/drawer": "next",
     "@react-navigation/native": "next",
     "@react-navigation/native-stack": "next",
     "@sentry/react-native": "5.19.1",
-    "@tamagui/lucide-icons": "^1.91.4",
+    "@tamagui/lucide-icons": "^1.93.3",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.6",
     "expo": "50.0.11",
@@ -38,7 +38,7 @@
     "expo-updates": "~0.24.11",
     "gql.tada": "^1.2.1",
     "graphql": "^16.8.1",
-    "graphql-ws": "^5.15.0",
+    "graphql-ws": "^5.16.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-hook-form": "^7.50.1",
@@ -53,7 +53,7 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "14.1.0",
     "react-native-web": "~0.19.7",
-    "tamagui": "^1.91.4",
+    "tamagui": "^1.93.3",
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
@@ -64,7 +64,7 @@
     "@types/react": "~18.2.48",
     "@types/react-dom": "~18.0.10",
     "babel-preset-expo": "^10.0.1",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   },
   "private": true,
   "volta": {

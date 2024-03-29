@@ -6,8 +6,8 @@
   "main": "src/index.ts",
   "author": "Banks Nussman",
   "dependencies": {
-    "@tamagui/config": "^1.91.4",
-    "@tamagui/lucide-icons": "^1.91.4",
-    "tamagui": "^1.91.4"
+    "@tamagui/config": "^1.93.3",
+    "@tamagui/lucide-icons": "^1.93.3",
+    "tamagui": "^1.93.3"
   }
 }
