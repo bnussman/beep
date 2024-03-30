@@ -48,8 +48,8 @@ importers:
         specifier: ^5.16.0
         version: 5.16.0(graphql@16.8.1)
       graphql-yoga:
-        specifier: ^5.2.0
-        version: 5.2.0(graphql@16.8.1)
+        specifier: ^5.3.0
+        version: 5.3.0(graphql@16.8.1)
       ioredis:
         specifier: ^5.3.2
         version: 5.3.2
@@ -77,7 +77,7 @@ importers:
         version: 6.1.12(pg@8.11.3)
       '@mikro-orm/migrations':
         specifier: 6.1.12
-        version: 6.1.12(@mikro-orm/core@6.1.12)(@types/node@20.11.30)(pg@8.11.3)
+        version: 6.1.12(@mikro-orm/core@6.1.12)(@types/node@20.12.2)(pg@8.11.3)
       '@types/bun':
         specifier: ^1.0.11
         version: 1.0.11
@@ -92,7 +92,7 @@ importers:
         version: 8.2.2
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.11.30)(typescript@5.4.3)
+        version: 10.9.2(@types/node@20.12.2)(typescript@5.4.3)
       typescript:
         specifier: ^5.4.3
         version: 5.4.3
@@ -6815,7 +6815,7 @@ packages:
       - supports-color
       - tedious
 
-  /@mikro-orm/migrations@6.1.12(@mikro-orm/core@6.1.12)(@types/node@20.11.30)(pg@8.11.3):
+  /@mikro-orm/migrations@6.1.12(@mikro-orm/core@6.1.12)(@types/node@20.12.2)(pg@8.11.3):
     resolution: {integrity: sha512-CpKXU/3NEIWnuSYR9t+8IRcGpFj4pI8OTmAgnVp2BihgvaIh1JdnKUkQnmLt9i/0VupAIffTIa9J5rYofsgddQ==}
     engines: {node: '>= 18.12.0'}
     peerDependencies:
@@ -6824,7 +6824,7 @@ packages:
       '@mikro-orm/core': 6.1.12
       '@mikro-orm/knex': 6.1.12(@mikro-orm/core@6.1.12)(pg@8.11.3)
       fs-extra: 11.2.0
-      umzug: 3.7.0(@types/node@20.11.30)
+      umzug: 3.7.0(@types/node@20.12.2)
     transitivePeerDependencies:
       - '@types/node'
       - better-sqlite3
@@ -7956,7 +7956,7 @@ packages:
     dev: true
     optional: true
 
-  /@rushstack/node-core-library@4.0.2(@types/node@20.11.30):
+  /@rushstack/node-core-library@4.0.2(@types/node@20.12.2):
     resolution: {integrity: sha512-hyES82QVpkfQMeBMteQUnrhASL/KHPhd7iJ8euduwNJG4mu2GSOKybf0rOEjOm1Wz7CwJEUm9y0yD7jg2C1bfg==}
     peerDependencies:
       '@types/node': '*'
@@ -7964,7 +7964,7 @@ packages:
       '@types/node':
         optional: true
     dependencies:
-      '@types/node': 20.11.30
+      '@types/node': 20.12.2
       fs-extra: 7.0.1
       import-lazy: 4.0.0
       jju: 1.4.0
@@ -7973,7 +7973,7 @@ packages:
       z-schema: 5.0.5
     dev: true
 
-  /@rushstack/terminal@0.10.0(@types/node@20.11.30):
+  /@rushstack/terminal@0.10.0(@types/node@20.12.2):
     resolution: {integrity: sha512-UbELbXnUdc7EKwfH2sb8ChqNgapUOdqcCIdQP4NGxBpTZV2sQyeekuK3zmfQSa/MN+/7b4kBogl2wq0vpkpYGw==}
     peerDependencies:
       '@types/node': '*'
@@ -7981,15 +7981,15 @@ packages:
       '@types/node':
         optional: true
     dependencies:
-      '@rushstack/node-core-library': 4.0.2(@types/node@20.11.30)
-      '@types/node': 20.11.30
+      '@rushstack/node-core-library': 4.0.2(@types/node@20.12.2)
+      '@types/node': 20.12.2
       supports-color: 8.1.1
     dev: true
 
-  /@rushstack/ts-command-line@4.19.1(@types/node@20.11.30):
+  /@rushstack/ts-command-line@4.19.1(@types/node@20.12.2):
     resolution: {integrity: sha512-J7H768dgcpG60d7skZ5uSSwyCZs/S2HrWP1Ds8d1qYAyaaeJmpmmLr9BVw97RjFzmQPOYnoXcKA4GkqDCkduQg==}
     dependencies:
-      '@rushstack/terminal': 0.10.0(@types/node@20.11.30)
+      '@rushstack/terminal': 0.10.0(@types/node@20.12.2)
       '@types/argparse': 1.0.38
       argparse: 1.0.10
       string-argv: 0.3.2
@@ -10314,6 +10314,12 @@ packages:
     resolution: {integrity: sha512-dHM6ZxwlmuZaRmUPfv1p+KrdD1Dci04FbdEm/9wEMouFqxYoFl5aMkt0VMAUtYRQDyYvD41WJLukhq/ha3YuTw==}
     dependencies:
       undici-types: 5.26.5
+
+  /@types/node@20.12.2:
+    resolution: {integrity: sha512-zQ0NYO87hyN6Xrclcqp7f8ZbXNbRfoGWNcMvHTPQp9UUrwI0mI7XBz+cu7/W6/VClYo2g63B0cjull/srU7LgQ==}
+    dependencies:
+      undici-types: 5.26.5
+    dev: true
 
   /@types/nodemailer@6.4.14:
     resolution: {integrity: sha512-fUWthHO9k9DSdPCSPRqcu6TWhYyxTBg382vlNIttSe9M7XfsT06y0f24KHXtbnijPGGRIcVvdKHTNikOI6qiHA==}
@@ -12887,8 +12893,8 @@ packages:
     dependencies:
       graphql: 16.8.1
 
-  /graphql-yoga@5.2.0(graphql@16.8.1):
-    resolution: {integrity: sha512-wazpTEK0B6fSgcGge1EDpP69Oet5Gdp4VmzhqKJD7Uu9S1tP9vUR7AoeuWcrURoCWP2WTv/3dWTQWVt9RxmB1Q==}
+  /graphql-yoga@5.3.0(graphql@16.8.1):
+    resolution: {integrity: sha512-6mXoGE5AMN6YNugJvjBFIQ0dFUiOMloN0dAzLL8GFt4iJ5WlWRgjdzGHod2zZz7yWQokEVD42DHgrc7NY3Dm0w==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       graphql: ^15.2.0 || ^16.0.0
@@ -16908,7 +16914,7 @@ packages:
     dependencies:
       tslib: 2.6.2
 
-  /ts-node@10.9.2(@types/node@20.11.30)(typescript@5.4.3):
+  /ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
     peerDependencies:
@@ -16927,7 +16933,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.11.30
+      '@types/node': 20.12.2
       acorn: 8.11.3
       acorn-walk: 8.3.2
       arg: 4.1.3
@@ -17033,11 +17039,11 @@ packages:
     resolution: {integrity: sha512-fKnGuqmTBnIE+/KXSzCn4db8RTigUzw1AN0DmdU6hJovUTbYJKyqj+8Mt1c4VfRDnOVJnENmfYkIPZ946UrSAA==}
     dev: false
 
-  /umzug@3.7.0(@types/node@20.11.30):
+  /umzug@3.7.0(@types/node@20.12.2):
     resolution: {integrity: sha512-r/L2Zlilgv3SKhmP2nkA9x2Xi1PKtu2K34/i/s7AYJ2mLjEO+IxETJAK7CKf6l3QOvoy5/ChykeX9qt6ykRz6Q==}
     engines: {node: '>=12'}
     dependencies:
-      '@rushstack/ts-command-line': 4.19.1(@types/node@20.11.30)
+      '@rushstack/ts-command-line': 4.19.1(@types/node@20.12.2)
       emittery: 0.13.1
       glob: 8.1.0
       pony-cause: 2.1.10
