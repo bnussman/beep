@@ -14,7 +14,7 @@ import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { client } from "../../utils/apollo";
 import { ApolloError, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
-import { VariablesOf, graphql } from "gql.tada";
+import { VariablesOf, graphql } from "../../graphql";
 import {
   isValidationError,
   useValidationErrors,

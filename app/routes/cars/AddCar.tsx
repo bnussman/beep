@@ -9,7 +9,7 @@ import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
 import { getMakes, getModels } from "car-info";
 import { colors, years } from "./utils";
-import { VariablesOf, graphql } from "gql.tada";
+import { VariablesOf, graphql } from "../../graphql";
 import { Pressable } from "react-native";
 import { Plus } from "@tamagui/lucide-icons";
 import {
@@ -215,7 +215,6 @@ export function AddCar() {
           <Controller
             name="photo"
             rules={{ required: "Photo is required" }}
-            defaultValue=""
             control={control}
             render={() => (
               <Pressable onPress={choosePhoto}>
