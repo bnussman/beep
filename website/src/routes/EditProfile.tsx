@@ -5,7 +5,7 @@ import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMess
 import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
 import { useValidationErrors } from '../utils/useValidationErrors';
-import { VariablesOf, graphql } from 'gql.tada';
+import { VariablesOf, graphql } from '../graphql';
 import { createRoute } from '@tanstack/react-router';
 import { useUser } from '../utils/user';
 import { rootRoute } from '../utils/router';
