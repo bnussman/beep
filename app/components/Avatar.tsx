@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar as _Avatar, AvatarProps } from "@beep/ui";
-import AvatarImage from "../assets/avatarDark.png";
+import AvatarImage from "../assets/avatar.png";
 
 interface Props extends AvatarProps {
   url: string | null | undefined;
