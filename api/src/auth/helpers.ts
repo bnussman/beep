@@ -68,7 +68,7 @@ export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void
 }
 
 /**
- * Helper function for email verfication. This function will create and insert a new email verification entry and 
+ * Helper function for email verfication. This function will create and insert a new email verification entry and
  * it will call the other helper function to actually send the email.
  *
  * @param {User} user is the user entity
