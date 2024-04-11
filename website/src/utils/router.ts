@@ -87,8 +87,8 @@ export const routeTree = rootRoute.addChildren([
       usersListRoute,
       usersByDomainRoute,
       userRoute.addChildren([
-        userDetailsRoute,
         userDetailsInitalRoute,
+        userDetailsRoute,
         editUserRoute,
         locationRoute,
         queueRoute,

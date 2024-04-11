@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Text, Stack, Tooltip } from "@chakra-ui/react";
 import { Indicator } from "../../../components/Indicator";
 import { printStars } from "../ratings";
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, useParams } from "@tanstack/react-router";
 import { GetUser, userRoute } from "./User";
 import { useQuery } from "@apollo/client";
 
@@ -19,7 +19,7 @@ export const userDetailsInitalRoute = createRoute({
 });
 
 export function Details() {
-  const { userId } = userDetailsRoute.useParams();
+  const { userId } = useParams({ from: "/admin/users/$userId" });
 
   const { data } = useQuery(GetUser, { variables: { id: userId } });
 
