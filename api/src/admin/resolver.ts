@@ -1,10 +1,17 @@
 import Redis from "ioredis";
 import { User, UserRole } from "../entities/User";
 import { REDIS_HOST, REDIS_PASSWROD } from "../utils/constants";
-import { Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Authorized, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import { Context } from "../utils/context";
 import { transporter } from "src/utils/mailer";
 import * as Sentry from '@sentry/bun';
+
+@ObjectType()
+class UserWithBeeps extends User {
+  @Field()
+  beeps!: number;
+}
+
 
 @Resolver()
 export class AdminResolver {
@@ -22,30 +29,36 @@ export class AdminResolver {
     return channels;
   }
 
-  @Query(() => [User])
+  @Query(() => [UserWithBeeps])
   @Authorized(UserRole.ADMIN)
-  public async getUsersWithDuplicateEmails(@Ctx() ctx: Context): Promise<User[]> {
+  public async getUsersWithDuplicateEmails(@Ctx() ctx: Context): Promise<UserWithBeeps[]> {
     const usersWithDuplicateEmails = await ctx.em.execute(`
-     SELECT * FROM "user"
-     WHERE UPPER(email) IN
-     (SELECT UPPER(email) FROM "user" GROUP BY UPPER(email) HAVING COUNT(*) > 1)
-     ORDER BY email
+      SELECT "user".*, COUNT("beep".id) AS beeps
+      FROM "user"
+      INNER JOIN "beep" ON "beep".beeper_id = "user".id OR "beep".rider_id = "user".id
+      WHERE UPPER("user".email) IN
+      (SELECT UPPER("user".email) FROM "user" GROUP BY UPPER("user".email) HAVING COUNT(*) > 1)
+      GROUP BY "user".id
+      ORDER BY "user".email
    `);
 
-    return usersWithDuplicateEmails as User[];
+    return usersWithDuplicateEmails as UserWithBeeps[];
   }
 
-  @Mutation(() => [User])
+  @Mutation(() => [UserWithBeeps])
   @Authorized(UserRole.ADMIN)
-  public async sendDuplicateEmailNotification(@Ctx() ctx: Context): Promise<User[]> {
+  public async sendDuplicateEmailNotification(@Ctx() ctx: Context): Promise<UserWithBeeps[]> {
     const usersWithDuplicateEmails = await ctx.em.execute(`
-     SELECT * FROM "user"
-     WHERE UPPER(email) IN
-     (SELECT UPPER(email) FROM "user" GROUP BY UPPER(email) HAVING COUNT(*) > 1)
-     ORDER BY email
-   `) as User[];
+      SELECT "user".*, COUNT("beep".id) AS beeps
+      FROM "user"
+      INNER JOIN "beep" ON "beep".beeper_id = "user".id OR "beep".rider_id = "user".id
+      WHERE UPPER("user".email) IN
+      (SELECT UPPER("user".email) FROM "user" GROUP BY UPPER("user".email) HAVING COUNT(*) > 1)
+      GROUP BY "user".id
+      ORDER BY "user".email
+   `) as UserWithBeeps[];
 
-    const emailUserMap = new Map<string, User[]>();
+    const emailUserMap = new Map<string, UserWithBeeps[]>();
 
     for (const user of usersWithDuplicateEmails) {
       const email = user.email.toLowerCase();
@@ -59,6 +72,8 @@ export class AdminResolver {
     }
 
     for (const [email, users] of emailUserMap) {
+      const indexOfUserToKeep = getUserWithMostBeeps(users);
+ 
       const mailOptions = {
         from: 'Beep App <banks@ridebeep.app>',
         to: email,
@@ -89,7 +104,7 @@ export class AdminResolver {
                <h3>
                  Your accounts are
                </h3>
-              ${users.map(user => `<p>Username: ${user.username} | Email: ${user.email}</p>`).join("\n")}
+              ${users.map((user, index) => `<p>Username: ${user.username} | Email: ${user.email} ${index === indexOfUserToKeep ? '| Currently, this is the user that will be kept.' : ''}</p>`).join("\n")}
                <br>
                <p>We are sorry for any inconvenience this may cause you.</p>
                <br>
@@ -107,4 +122,18 @@ export class AdminResolver {
 
     return usersWithDuplicateEmails;
   }
+}
+
+function getUserWithMostBeeps(users: UserWithBeeps[]) {
+  let index = 0;
+  let mostBeepsCount = users[0].beeps;
+
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].beeps > mostBeepsCount) {
+     mostBeepsCount = users[i] .beeps;
+     index = i;
+    }
+  }
+
+  return index;
 }
