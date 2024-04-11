@@ -13,7 +13,7 @@ import { Alert } from "../../utils/alert";
 import { UserData } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "../../components/Avatar";
-import { VariablesOf, graphql } from "gql.tada";
+import { VariablesOf, graphql } from "../../graphql";
 import {
   isValidationError,
   useValidationErrors,

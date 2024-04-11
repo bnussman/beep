@@ -35,7 +35,7 @@ export class AdminResolver {
     const usersWithDuplicateEmails = await ctx.em.execute(`
       SELECT "user".*, COUNT("beep".id) AS beeps
       FROM "user"
-      INNER JOIN "beep" ON "beep".beeper_id = "user".id OR "beep".rider_id = "user".id
+      LEFT JOIN "beep" ON "beep".beeper_id = "user".id OR "beep".rider_id = "user".id
       WHERE UPPER("user".email) IN
       (SELECT UPPER("user".email) FROM "user" GROUP BY UPPER("user".email) HAVING COUNT(*) > 1)
       GROUP BY "user".id
@@ -51,7 +51,7 @@ export class AdminResolver {
     const usersWithDuplicateEmails = await ctx.em.execute(`
       SELECT "user".*, COUNT("beep".id) AS beeps
       FROM "user"
-      INNER JOIN "beep" ON "beep".beeper_id = "user".id OR "beep".rider_id = "user".id
+      LEFT JOIN "beep" ON "beep".beeper_id = "user".id OR "beep".rider_id = "user".id
       WHERE UPPER("user".email) IN
       (SELECT UPPER("user".email) FROM "user" GROUP BY UPPER("user".email) HAVING COUNT(*) > 1)
       GROUP BY "user".id
