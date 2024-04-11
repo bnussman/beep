@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Heading, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Stack, Text } from "@chakra-ui/react";
 import { graphql } from "../../graphql";
 import { useMutation, useQuery } from "@apollo/client";
 import { Card } from "../../components/Card";
@@ -41,7 +41,9 @@ export function DuplicateEmail() {
   return (
     <Stack>
       <Heading>Duplicate Emails</Heading>
-      <Button onClick={() => mutate()} isLoading={loading}>Send Email Notification</Button>
+      <Box>
+        <Button colorScheme="red" onClick={() => mutate()} isLoading={loading}>Send Email Notification to all {data?.getUsersWithDuplicateEmails.length ?? 0} users</Button>
+      </Box>
       {data?.getUsersWithDuplicateEmails.map((user) => (
         <Card>
           <Text>{user.email}</Text>

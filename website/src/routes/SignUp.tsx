@@ -34,7 +34,7 @@ import {
 } from '@chakra-ui/react';
 
 const SignUpGraphQL = graphql(`
-  mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload) {
+  mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: File) {
     signup(
       input: {
         first: $first,
