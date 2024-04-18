@@ -1,6 +1,6 @@
 import { ApolloError } from "@apollo/client";
 
-export function useValidationErrors(error: ApolloError | undefined) {
+export function useValidationErrors<T>(error: ApolloError | undefined) {
   if (error === undefined || !isValidationError(error)) {
     return undefined;
   }
