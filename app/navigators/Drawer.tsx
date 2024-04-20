@@ -46,7 +46,7 @@ const getIcon = (screenName: string) => {
     case "Profile":
       return <NativeText style={{ fontSize: 18 }}>👤</NativeText>;
     case "Beeps":
-      return <NativeText style={{ fontSize: 18 }}>📃</NativeText>;
+      return <NativeText style={{ fontSize: 18 }}>🚗</NativeText>;
     case "Ratings":
       return <NativeText style={{ fontSize: 18 }}>⭐</NativeText>;
     case "Cars":
@@ -54,7 +54,7 @@ const getIcon = (screenName: string) => {
     case "Feedback":
       return <NativeText style={{ fontSize: 18 }}>💬</NativeText>;
     case "Premium":
-      return <NativeText style={{ fontSize: 18, shadowRadius: 16, shadowColor: "#f5db73", color: "#f5db73", shadowOpacity: 1 }}>👑</NativeText>;
+      return <NativeText style={{ fontSize: 18, shadowRadius: 16, shadowColor: "#f5db73", shadowOpacity: 1 }}>👑</NativeText>;
     default:
       return <NativeText style={{ fontSize: 18 }}>🚗</NativeText>;
   }

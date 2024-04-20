@@ -38,7 +38,6 @@ import {
   Sheet,
   Card,
 } from "@beep/ui";
-import { LinearGradient } from "tamagui/linear-gradient";
 
 let unsubscribe: any = null;
 
@@ -199,7 +198,7 @@ export function StartBeepingScreen() {
             checked={isBeeping}
             native
             onCheckedChange={() => toggleSwitchWrapper()}
-            nativeProps={{ trackColor: { true: "#ffcf24" } }}
+            // nativeProps={{ trackColor: { true: "#ffcf24" } }}
           >
             <Switch.Thumb />
           </Switch>
@@ -369,23 +368,20 @@ export function StartBeepingScreen() {
             is closed, you will recieve a push notification.
           </Text>
         </Stack>
-        <LinearGradient
-          colors={['$pink10', '$yellow10']}
-          start={[0, 1]}
-          end={[1, 0]}
-          borderRadius="$4"
-          p="$1"
-        >
-          <Card p="$3">
+          <Card p="$3" >
             <Stack alignItems="center" gap="$2">
-              <Heading fontWeight="bold">Want more riders?</Heading>
+              <Heading fontWeight="bold" fontSize="$6">Want more riders?</Heading>
               <Text textAlign="center">
                 Jump to the top of the beeper list
               </Text>
-              <Button onPress={() => navigation.navigate("Main", { screen: "Premium" })}>Get Promoted</Button>
+              <Button
+                onPress={() => navigation.navigate("Main", { screen: "Premium" })}
+                iconAfter={<Heading shadowRadius="$2" shadowColor="#f5db73">👑</Heading>}
+            >
+              Get Promoted
+              </Button>
             </Stack>
           </Card>
-        </LinearGradient>
       </Container>
     );
   }

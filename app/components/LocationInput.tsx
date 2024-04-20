@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
-import { XStack, InputProps, Input, Spinner, Button } from "@beep/ui";
-import { MapPin } from "@tamagui/lucide-icons";
+import { XStack, Text, InputProps, Input, Spinner, Button } from "@beep/ui";
 
 interface Props extends InputProps {
   inputRef: any;
@@ -12,7 +11,7 @@ export function LocationInput({ inputRef, ...props }: Props) {
 
    const handleGetCurrentLocation = async () => {
     setIsLoading(true);
-    props.onChangeText?.("");
+    // props.onChangeText?.("");
 
     const { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -59,7 +58,7 @@ export function LocationInput({ inputRef, ...props }: Props) {
         {...props}
       />
       <Button
-        icon={isLoading ? <Spinner /> : <MapPin />}
+        icon={isLoading ? <Spinner /> : <Text>📍</Text>}
         onPress={handleGetCurrentLocation}
       />
     </XStack>
