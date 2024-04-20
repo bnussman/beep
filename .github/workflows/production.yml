@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: 🔑 Login to DockerHub
         uses: docker/login-action@v3
         with:
@@ -39,7 +39,7 @@ jobs:
           tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
           mv linux-amd64/helm /usr/local/bin/helm
           helm version
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: 🔍 Lint helm charts
         run: helm lint ./.github/helm/ -f ./.github/helm/values-production.yaml
       - uses: oven-sh/setup-bun@v1
@@ -56,10 +56,10 @@ jobs:
      runs-on: ubuntu-latest
      steps:
        - name: 🏗 Setup repo
-         uses: actions/checkout@v3
+         uses: actions/checkout@v4
 
        - name: 🏗 Setup Node
-         uses: actions/setup-node@v3
+         uses: actions/setup-node@v4
          with:
            node-version: 18.x
 
@@ -79,7 +79,7 @@ jobs:
          shell: bash
          run: |
            echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-       - uses: actions/cache@v3
+       - uses: actions/cache@v4
          name: Setup pnpm cache
          with:
            path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
