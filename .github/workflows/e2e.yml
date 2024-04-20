@@ -1,4 +1,4 @@
-name: e2ee2e
+name: e2e
 
 on:
   push:
