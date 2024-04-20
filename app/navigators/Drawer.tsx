@@ -30,8 +30,6 @@ import {
   Button,
 } from "@beep/ui";
 import { Pressable, Appearance } from "react-native";
-import { Car, CarTaxiFront, Crown, HelpCircle, LogOut, Star, User } from "@tamagui/lucide-icons";
-import { LinearGradient } from 'tamagui/linear-gradient'
 
 const Logout = gql`
   mutation Logout {
@@ -56,7 +54,7 @@ const getIcon = (screenName: string) => {
     case "Feedback":
       return <Text fontSize="$8">💬</Text>;
     case "Premium":
-      return <Text fontSize="$8">👑</Text>;
+      return <Text fontSize="$8" shadowRadius="$4" shadowColor="#f5db73">👑</Text>;
     default:
       return <Text fontSize="$8">🚗</Text>;
   }
@@ -126,7 +124,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         </Pressable>
         <Stack gap="$4">
           <Stack gap="$3">
-            {!user?.isEmailVerified ? (
+            {!user?.isEmailVerified && (
               <Button
                 theme="red"
                 iconAfter={resendLoading ? <Spinner /> : null}
@@ -134,7 +132,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               >
                 Resend Verification Email
               </Button>
-            ) : null}
+            )}
             {props.state.routeNames.map((name: string, index: number) => {
               const Icon = getIcon(name);
               return (
@@ -155,18 +153,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                     <XStack gap="$4" alignItems="center">
                       {Icon}
                       <Text>{name}</Text>
-                      {name === "Premium" && (
-                        <LinearGradient
-                          borderRadius="$4"
-                          backgroundColor="$yellow9"
-                          px="$2"
-                          colors={['$pink10', '$yellow10']}
-                          start={[0, 1]}
-                          end={[1, 0]}
-                        >
-                          <Text fontSize="$2" fontWeight="bold" color="white" zIndex={2}>New</Text>
-                        </LinearGradient>
-                      )}
                     </XStack>
                   </Stack>
                 </Pressable>
