@@ -42,23 +42,23 @@ const Logout = gql`
 const getIcon = (screenName: string) => {
   switch (screenName) {
     case "Ride":
-      return Car;
+      return <Text fontSize="$8">🚗</Text>;
     case "Beep":
-      return CarTaxiFront;
+      return <Text fontSize="$8">🚕</Text>;
     case "Profile":
-      return User;
+      return <Text fontSize="$8">👤</Text>;
     case "Beeps":
-      return Car;
+      return <Text fontSize="$8">📃</Text>;
     case "Ratings":
-      return Star;
-    case "My Cars":
-      return Car;
+      return <Text fontSize="$8">⭐</Text>;
+    case "Cars":
+      return <Text fontSize="$8">🚙</Text>;
     case "Feedback":
-      return HelpCircle;
+      return <Text fontSize="$8">💬</Text>;
     case "Premium":
-      return Crown;
+      return <Text fontSize="$8">👑</Text>;
     default:
-      return Car;
+      return <Text fontSize="$8">🚗</Text>;
   }
 };
 
@@ -153,7 +153,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                     }}
                   >
                     <XStack gap="$4" alignItems="center">
-                      <Icon />
+                      {Icon}
                       <Text>{name}</Text>
                       {name === "Premium" && (
                         <LinearGradient
@@ -177,7 +177,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 {loading ? (
                   <Spinner />
                 ) : (
-                  <LogOut />
+                  <Text fontSize="$8">↩️</Text>
                 )}
                 <Text mr="$4">
                   Logout
