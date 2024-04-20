@@ -29,7 +29,7 @@ import {
   Spinner,
   Button,
 } from "@beep/ui";
-import { Pressable, Appearance } from "react-native";
+import { Pressable, Appearance, Text as NativeText } from "react-native";
 
 const Logout = gql`
   mutation Logout {
@@ -40,23 +40,23 @@ const Logout = gql`
 const getIcon = (screenName: string) => {
   switch (screenName) {
     case "Ride":
-      return <Text fontSize="$8">🚗</Text>;
+      return <NativeText style={{ fontSize: 18 }}>🚗</NativeText>;
     case "Beep":
-      return <Text fontSize="$8">🚕</Text>;
+      return <NativeText style={{ fontSize: 18 }}>🚕</NativeText>;
     case "Profile":
-      return <Text fontSize="$8">👤</Text>;
+      return <NativeText style={{ fontSize: 18 }}>👤</NativeText>;
     case "Beeps":
-      return <Text fontSize="$8">📃</Text>;
+      return <NativeText style={{ fontSize: 18 }}>📃</NativeText>;
     case "Ratings":
-      return <Text fontSize="$8">⭐</Text>;
+      return <NativeText style={{ fontSize: 18 }}>⭐</NativeText>;
     case "Cars":
-      return <Text fontSize="$8">🚙</Text>;
+      return <NativeText style={{ fontSize: 18 }}>🚙</NativeText>;
     case "Feedback":
-      return <Text fontSize="$8">💬</Text>;
+      return <NativeText style={{ fontSize: 18 }}>💬</NativeText>;
     case "Premium":
-      return <Text fontSize="$8" shadowRadius="$4" shadowColor="#f5db73">👑</Text>;
+      return <NativeText style={{ fontSize: 18, shadowRadius: 16, shadowColor: "#f5db73", color: "#f5db73", shadowOpacity: 1 }}>👑</NativeText>;
     default:
-      return <Text fontSize="$8">🚗</Text>;
+      return <NativeText style={{ fontSize: 18 }}>🚗</NativeText>;
   }
 };
 
@@ -100,14 +100,9 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <Stack gap="$4" my="$2" mx="$2">
+      <Stack gap="$3" my="$2" mx="$2">
         <Pressable onPress={() => navigate("User", { id: user?.id ?? "" })}>
-          <XStack alignItems="center">
-            <Avatar
-              mr="$3"
-              size="$4.5"
-              url={user?.photo}
-            />
+          <XStack alignItems="center" justifyContent="space-between" px="$4">
             <Stack flexShrink={1}>
               <Text fontWeight="bold">
                 {user?.name}
@@ -116,10 +111,11 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 @{user?.username}
               </Text>
             </Stack>
-            {/*
-            <Spacer />
-            <Text fontSize="3xl" px={2}>🎄</Text>
-            */}
+            <Avatar
+              mr="$3"
+              size="$4.5"
+              url={user?.photo}
+            />
           </XStack>
         </Pressable>
         <Stack gap="$4">
@@ -163,7 +159,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 {loading ? (
                   <Spinner />
                 ) : (
-                  <Text fontSize="$8">↩️</Text>
+                  <NativeText style={{ fontSize: 18 }}>↩️</NativeText>
                 )}
                 <Text mr="$4">
                   Logout
