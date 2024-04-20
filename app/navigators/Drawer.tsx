@@ -102,7 +102,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     <DrawerContentScrollView {...props}>
       <Stack gap="$3" my="$2" mx="$2">
         <Pressable onPress={() => navigate("User", { id: user?.id ?? "" })}>
-          <XStack alignItems="center" justifyContent="space-between" px="$4">
+          <XStack alignItems="center" justifyContent="space-between" pl="$4">
             <Stack flexShrink={1}>
               <Text fontWeight="bold">
                 {user?.name}
