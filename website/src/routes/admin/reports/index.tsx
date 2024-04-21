@@ -64,7 +64,7 @@ export function Reports() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate({ from: reportsListRoute.id });
 
-  const { data, loading, error } = useQuery(ReportsGraphQL, {
+  const { data, loading, error, previousData } = useQuery(ReportsGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -75,20 +75,23 @@ export function Reports() {
     navigate({ search: { page } });
   };
 
-  const reports = data?.getReports.items;
+  const reports = data?.getReports.items ?? previousData?.getReports.items;
+  const count = data?.getReports.count ?? previousData?.getReports.count;
 
   function openReport(id: string) {
     setId(id);
     onOpen();
   }
 
-  if (error) return <Error error={error} />;
+  if (error) {
+    return <Error error={error} />;
+  }
 
   return (
     <Box>
       <Heading>Reports</Heading>
       <Pagination
-        resultCount={data?.getReports.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -126,7 +129,7 @@ export function Reports() {
       </Box>
       {loading && <Loading />}
       <Pagination
-        resultCount={data?.getReports.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

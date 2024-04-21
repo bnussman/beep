@@ -49,15 +49,15 @@ export function Payments() {
 
   const navigate = useNavigate({ from: paymentsRoute.id });
 
-  const { data, loading, error } = useQuery(PaymentsGQL, {
+  const { data, loading, error, previousData } = useQuery(PaymentsGQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
     }
   });
 
-  const payments = data?.getPayments.items;
-  const count = data?.getPayments.count;
+  const payments = data?.getPayments.items ?? previousData?.getPayments.items;
+  const count = data?.getPayments.count ?? previousData?.getPayments.count;
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
