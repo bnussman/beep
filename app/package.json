@@ -12,14 +12,14 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@apollo/client": "^3.9.9",
+    "@apollo/client": "^3.9.11",
     "@beep/ui": "workspace:*",
     "@react-native-async-storage/async-storage": "~1.21.0",
     "@react-navigation/drawer": "7.0.0-alpha.21",
     "@react-navigation/native": "7.0.0-alpha.18",
     "@react-navigation/native-stack": "7.0.0-alpha.20",
     "@sentry/react-native": "5.20.0",
-    "@tamagui/lucide-icons": "^1.93.3",
+    "@tamagui/lucide-icons": "^1.94.5",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.7",
     "expo": "50.0.17",
@@ -36,12 +36,12 @@
     "expo-status-bar": "~1.11.1",
     "expo-task-manager": "~11.7.3",
     "expo-updates": "~0.24.12",
-    "gql.tada": "^1.4.1",
+    "gql.tada": "^1.5.5",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.16.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "react-hook-form": "^7.50.1",
+    "react-hook-form": "^7.51.3",
     "react-native": "0.73.6",
     "react-native-gesture-handler": "~2.14.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
@@ -53,18 +53,18 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "14.1.0",
     "react-native-web": "~0.19.7",
-    "tamagui": "^1.93.3",
+    "tamagui": "^1.94.5",
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.7.1",
+    "@0no-co/graphqlsp": "^1.10.3",
     "@babel/core": "^7.22.9",
     "@expo/metro-runtime": "~3.1.3",
     "@types/apollo-upload-client": "^17.0.3",
     "@types/react": "~18.2.48",
     "@types/react-dom": "~18.0.10",
     "babel-preset-expo": "^10.0.1",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.5"
   },
   "private": true,
   "volta": {
