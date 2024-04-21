@@ -1,4 +1,5 @@
 const { getSentryExpoConfig } = require('@sentry/react-native/metro');
+const { withNativeWind } = require('nativewind/metro');
 
 const path = require('path');
 
@@ -19,4 +20,4 @@ config.resolver.sourceExts.push("mjs");
 
 config.resolver.disableHierarchicalLookup = true;
 
-module.exports = config;
+module.exports = withNativeWind(config, { input: path.resolve(__dirname, './global.css') })

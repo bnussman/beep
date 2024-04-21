@@ -1,6 +1,9 @@
 import type { ExpoConfig } from 'expo/config';
 
 const config: ExpoConfig = {
+  experiments: {
+    tsconfigPaths: true
+  },
   name: "Beep",
   slug: "Beep",
   scheme: "beep",

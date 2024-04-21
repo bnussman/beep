@@ -19,6 +19,7 @@ import { useColorScheme } from "react-native";
 import * as Notifications from 'expo-notifications';
 import { UpdateBeeperQueue } from "./components/ActionButton";
 import { Status } from "./utils/types";
+import "./global.css";
 
 Notifications.setNotificationCategoryAsync(
   "newbeep",
