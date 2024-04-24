@@ -161,7 +161,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 ) : (
                   <NativeText style={{ fontSize: 18 }}>↩️</NativeText>
                 )}
-                <Text mr="$4">
+                <Text>
                   Logout
                 </Text>
               </XStack>
