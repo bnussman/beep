@@ -60,12 +60,23 @@ export function ActiveBeeps() {
   const { page } = activeBeepsRoute.useSearch();
   const navigate = useNavigate({ from: activeBeepsRoute.id });
 
-  const { data, loading, error, refetch, startPolling, stopPolling } = useQuery(ActiveBeepsGraphQL, {
-    variables: {
-      offset: (page - 1) * pageLimit,
-      show: pageLimit
+  const {
+    data,
+    loading,
+    error,
+    previousData,
+    refetch,
+    startPolling,
+    stopPolling
+  } = useQuery(
+    ActiveBeepsGraphQL,
+    {
+      variables: {
+        offset: (page - 1) * pageLimit,
+        show: pageLimit
+      }
     }
-  });
+  );
 
   useEffect(() => {
     startPolling(2000);
@@ -85,7 +96,8 @@ export function ActiveBeeps() {
     return <Error error={error} />;
   }
 
-  const beeps = data?.getInProgressBeeps;
+  const beeps = data?.getInProgressBeeps.items ?? previousData?.getInProgressBeeps.items;
+  const count = data?.getInProgressBeeps.count ?? previousData?.getInProgressBeeps.count;
 
   return (
     <Box>
@@ -96,7 +108,7 @@ export function ActiveBeeps() {
         </Badge>
       </Flex>
       <Pagination
-        resultCount={beeps?.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -115,7 +127,7 @@ export function ActiveBeeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {beeps?.items.map((beep) => (
+            {beeps?.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />
                 <TdUser user={beep.rider} />
@@ -136,7 +148,7 @@ export function ActiveBeeps() {
       </Box>
       {loading && <Loading />}
       <Pagination
-        resultCount={beeps?.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

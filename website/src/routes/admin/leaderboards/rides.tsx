@@ -31,7 +31,7 @@ export function Rides() {
   const { page } = leaderboardsRoute.useSearch();
   const navigate = useNavigate({ from: leaderboardsRoute.id });
 
-  const { loading, error, data } = useQuery(UsersWithRides, {
+  const { loading, error, data, previousData } = useQuery(UsersWithRides, {
     variables: {
       show: pageLimit,
       offset: (page - 1) * pageLimit,
@@ -46,10 +46,13 @@ export function Rides() {
     return <Error error={error} />;
   }
 
+  const users = data?.getUsersWithRides.items ?? previousData?.getUsersWithRides.items;
+  const count = data?.getUsersWithRides.count ?? previousData?.getUsersWithRides.count;
+
   return (
     <Box>
       <Pagination
-        resultCount={data?.getUsersWithRides.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -63,7 +66,7 @@ export function Rides() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getUsersWithRides.items.map(({ user, rides }) => (
+            {users?.map(({ user, rides }) => (
               <Tr key={user.id}>
                 <TdUser user={user} />
                 <Td>{rides}</Td>
@@ -74,7 +77,7 @@ export function Rides() {
       </Box>
       {loading && <Loading />}
       <Pagination
-        resultCount={data?.getUsersWithRides.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

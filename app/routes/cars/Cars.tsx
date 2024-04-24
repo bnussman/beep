@@ -1,4 +1,5 @@
 import React, { useLayoutEffect } from "react";
+import { Plus } from "@tamagui/lucide-icons";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
@@ -18,7 +19,6 @@ import {
   Card,
   ThemeName,
 } from "@beep/ui";
-import { Plus } from "@tamagui/lucide-icons";
 
 export const DeleteCar = graphql(`
   mutation DeleteCar($id: String!) {

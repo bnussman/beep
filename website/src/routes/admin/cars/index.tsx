@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../../components/Pagination';
 import { useQuery } from '@apollo/client';
 import { Box, Heading, IconButton, Image, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
@@ -14,6 +12,8 @@ import { DeleteCarDialog } from './DeleteCarDialog';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from '../../../graphql';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
@@ -67,15 +67,15 @@ export function Cars() {
 
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
-  const { data, loading, error } = useQuery(CarsQuery, {
+  const { data, loading, error, previousData } = useQuery(CarsQuery, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
     }
   });
 
-  const cars = data?.getCars.items;
-  const count = data?.getCars.count;
+  const cars = data?.getCars.items ?? previousData?.getCars.items;
+  const count = data?.getCars.count ?? previousData?.getCars.count;
 
   const selectedCar = cars?.find(car => car.id === selectedCarId);
 

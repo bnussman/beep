@@ -4,12 +4,12 @@ import { Pagination } from './Pagination';
 import { Box, Center, Image, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { Loading } from './Loading';
 import { Indicator } from './Indicator';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
 import { graphql } from '../graphql';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -42,7 +42,7 @@ export function CarsTable() {
   const pageLimit = 5;
   const { userId } = carsTableRoute.useParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, loading } = useQuery(
+  const { data, loading, previousData } = useQuery(
     GetCarsForUser,
     {
       variables: {
@@ -53,8 +53,8 @@ export function CarsTable() {
     }
   );
 
-  const cars = data?.getCars.items;
-  const count = data?.getCars.count;
+  const cars = data?.getCars.items ?? previousData?.getCars.items;
+  const count = data?.getCars.count ?? previousData?.getCars.count;
 
   if (count === 0) {
     return (
