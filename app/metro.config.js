@@ -20,4 +20,4 @@ config.resolver.sourceExts.push("mjs");
 
 config.resolver.disableHierarchicalLookup = true;
 
-module.exports = withNativeWind(config, { input: path.resolve(__dirname, './global.css') })
+module.exports = withNativeWind(config, { input: './global.css' })
