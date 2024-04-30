@@ -16,21 +16,12 @@ import { ApolloError, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import { VariablesOf, graphql } from "../../graphql";
 import * as DropdownMenu from "zeego/dropdown-menu";
+import { MoreVertical } from "@tamagui/lucide-icons";
 import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import {
-  Spinner,
-  Input,
-  Button,
-  Stack,
-  XStack,
-  Text,
-  Label,
-  Menu,
-} from "@beep/ui";
-import { MoreVertical } from "@tamagui/lucide-icons";
+import { Spinner, Input, Button, Stack, XStack, Text, Label } from "@beep/ui";
 
 const DeleteAccount = graphql(`
   mutation DeleteAccount {

@@ -8,17 +8,8 @@ import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RatePreview } from "./RatePreview";
 import { useUser } from "../../utils/useUser";
 import { graphql } from "gql.tada";
-import {
-  Card,
-  Spinner,
-  Text,
-  Stack,
-  XStack,
-  Heading,
-  Menu,
-  Button,
-} from "@beep/ui";
-import { MenuSquare, MoreVertical } from "@tamagui/lucide-icons";
+import { MoreVertical } from "@tamagui/lucide-icons";
+import { Card, Spinner, Text, Stack, XStack, Heading, Button } from "@beep/ui";
 
 export const GetUser = graphql(`
   query GetUserProfile($id: String!) {
