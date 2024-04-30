@@ -1,5 +1,6 @@
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
+import * as DropdownMenu from "zeego/dropdown-menu";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
 import { ApolloError, useMutation } from "@apollo/client";
@@ -24,6 +25,7 @@ import {
   Select,
   Spinner,
   Label,
+  Input,
 } from "@beep/ui";
 
 const makes = getMakes();
@@ -54,7 +56,7 @@ const AddCarMutation = graphql(`
 
 let picture: any;
 
-type Values = VariablesOf<typeof AddCarMutation>
+type Values = VariablesOf<typeof AddCarMutation>;
 
 export function AddCar() {
   const navigation = useNavigation();
@@ -70,19 +72,15 @@ export function AddCar() {
   const photo: any = watch("photo");
   const make = watch("make");
 
-  const [addCar, { error, loading }] = useMutation(
-    AddCarMutation,
-    {
-      context: {
-        headers: {
-          "apollo-require-preflight": true,
-        },
+  const [addCar, { error, loading }] = useMutation(AddCarMutation, {
+    context: {
+      headers: {
+        "apollo-require-preflight": true,
       },
-    }
-  );
+    },
+  });
 
-  const validationErrors =
-    useValidationErrors<Values>(error);
+  const validationErrors = useValidationErrors<Values>(error);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -124,6 +122,7 @@ export function AddCar() {
 
       navigation.goBack();
     } catch (error) {
+      alert(JSON.stringify(error));
       if (!isValidationError(error as ApolloError)) {
         alert((error as ApolloError).message);
       }
@@ -133,78 +132,123 @@ export function AddCar() {
   return (
     <Container px="$4">
       <Stack>
-        <Label htmlFor="make" fontWeight="bold">Make</Label>
         <Controller
           name="make"
           rules={{ required: "Make is required" }}
           defaultValue=""
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Select
-              id="make"
-              value={value}
-              onValueChange={onChange}
-              items={makes.map((make) => ({ label: make, value: make }))}
-              placeholder="Make"
-            />
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Stack>
+                  <Label fontWeight="bold">Make</Label>
+                  <Input disabled value={value} placeholder="Select a make" />
+                </Stack>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {getMakes().map((make) => (
+                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           )}
         />
         <Text color="red">
           {errors.make?.message}
           {validationErrors?.make?.[0]}
         </Text>
-        <Label htmlFor="model" fontWeight="bold">Model</Label>
         <Controller
           name="model"
           rules={{ required: "Model is required" }}
           defaultValue=""
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Select
-              id="model"
-              items={getModels(make).map(model => ({ label: model, value: model }))}
-              onValueChange={onChange}
-              value={value}
-              placeholder="Model"
-            />
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Stack>
+                  <Label fontWeight="bold">Model</Label>
+                  <Input disabled value={value} placeholder="Select a model" />
+                </Stack>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {getModels(make).map((make) => (
+                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           )}
         />
         <Text color="red">
           {errors.model?.message}
           {validationErrors?.model?.[0]}
         </Text>
-        <Label htmlFor="year" fontWeight="bold">Year</Label>
         <Controller
           name="year"
           rules={{ required: "Year is required" }}
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Select
-              id="year"
-              items={years.map(year => ({ label: year, value: year }))}
-              onValueChange={onChange}
-              placeholder="Year"
-            />
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Stack>
+                  <Label fontWeight="bold">Year</Label>
+                  <Input
+                    disabled
+                    value={value ? String(value) : ""}
+                    placeholder="Select a year"
+                  />
+                </Stack>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {years.map((make) => (
+                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           )}
         />
         <Text color="red">
           {errors.year?.message}
           {validationErrors?.year?.[0]}
         </Text>
-        <Label htmlFor="color" fontWeight="bold">Color</Label>
         <Controller
           name="color"
           rules={{ required: "Color is required" }}
           defaultValue=""
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Select
-              id="color"
-              items={colors.map(color => ({ label: color, value: color }))}
-              onValueChange={onChange}
-              value={value}
-              placeholder="Color"
-            />
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Stack>
+                  <Label fontWeight="bold">Color</Label>
+                  <Input
+                    disabled
+                    value={value ? String(value) : ""}
+                    placeholder="Select a color"
+                  />
+                </Stack>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {colors.map((make) => (
+                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           )}
         />
         <Text color="red">
@@ -227,17 +271,17 @@ export function AddCar() {
                     alt="uploaded car image"
                   />
                 ) : (
-                    <Stack
-                      height="$14"
-                      bg="$gray3"
-                      borderRadius="$4"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Text>Attach a Photo</Text>
-                      <Plus />
-                    </Stack>
-                  )}
+                  <Stack
+                    height="$14"
+                    bg="$gray3"
+                    borderRadius="$4"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Text>Attach a Photo</Text>
+                    <Plus />
+                  </Stack>
+                )}
               </Pressable>
             )}
           />

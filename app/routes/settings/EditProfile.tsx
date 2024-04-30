@@ -15,21 +15,13 @@ import { client } from "../../utils/apollo";
 import { ApolloError, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import { VariablesOf, graphql } from "../../graphql";
+import * as DropdownMenu from "zeego/dropdown-menu";
+import { MoreVertical } from "@tamagui/lucide-icons";
 import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import {
-  Spinner,
-  Input,
-  Button,
-  Stack,
-  XStack,
-  Text,
-  Label,
-  Menu
-} from "@beep/ui";
-import { MoreVertical } from "@tamagui/lucide-icons";
+import { Spinner, Input, Button, Stack, XStack, Text, Label } from "@beep/ui";
 
 const DeleteAccount = graphql(`
   mutation DeleteAccount {
@@ -71,7 +63,7 @@ export function generateRNFile(uri: string, name: string) {
     : null;
 }
 
-type Values = VariablesOf<typeof EditAccount>['input']
+type Values = VariablesOf<typeof EditAccount>["input"];
 
 export function EditProfileScreen() {
   const { user } = useUser();
@@ -86,7 +78,7 @@ export function EditProfileScreen() {
       venmo: user?.venmo,
       cashapp: user?.cashapp,
     }),
-    [user]
+    [user],
   );
 
   const [edit, { loading, error }] = useMutation(EditAccount);
@@ -107,27 +99,45 @@ export function EditProfileScreen() {
   const validationErrors = useValidationErrors<Values>(error);
 
   const [upload, { loading: uploadLoading }] = useMutation(UploadPhoto, {
-      context: {
-        headers: {
-          "apollo-require-preflight": true,
-        },
+    context: {
+      headers: {
+        "apollo-require-preflight": true,
       },
-    });
+    },
+  });
 
   const [photo, setPhoto] = useState<any>();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Menu
-          Trigger={
-            <Button mr="$2" hitSlop={20} unstyled icon={<MoreVertical size="$1.5" />} />
-          }
-          items={[
-            { title: "Change Password", onPress: () => navigation.navigate("Change Password") },
-            { title: "Delete Account", onPress: handleDeleteWrapper },
-          ]}
-        />
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Button
+              mr="$2"
+              hitSlop={20}
+              icon={<MoreVertical size="$1.5" />}
+              unstyled
+            />
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item
+              key="change-password"
+              onSelect={() => navigation.navigate("Change Password")}
+            >
+              <DropdownMenu.ItemTitle>Change Password</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              destructive
+              key="delete-account"
+              onSelect={handleDeleteWrapper}
+            >
+              <DropdownMenu.ItemTitle>Delete Account</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Arrow />
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       ),
     });
   }, [navigation]);
@@ -144,7 +154,7 @@ export function EditProfileScreen() {
           },
           { text: "Delete", onPress: handleDelete, style: "destructive" },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       handleDelete();
@@ -223,7 +233,9 @@ export function EditProfileScreen() {
       <Stack w="100%">
         <XStack alignItems="center" gap="$4">
           <Stack gap="$2" flexGrow={1}>
-            <Label htmlFor="first" fontWeight="bold">First Name</Label>
+            <Label htmlFor="first" fontWeight="bold">
+              First Name
+            </Label>
             <Controller
               name="first"
               rules={{ required: "First name is required" }}
@@ -246,7 +258,9 @@ export function EditProfileScreen() {
               {errors.first?.message}
               {validationErrors?.first?.[0]}
             </Text>
-            <Label htmlFor="last" fontWeight="bold">Last Name</Label>
+            <Label htmlFor="last" fontWeight="bold">
+              Last Name
+            </Label>
             <Controller
               name="last"
               rules={{ required: "Last name is required" }}
@@ -275,7 +289,9 @@ export function EditProfileScreen() {
             {uploadLoading ? <Spinner /> : null}
           </Pressable>
         </XStack>
-        <Label htmlFor="email" fontWeight="bold">Email</Label>
+        <Label htmlFor="email" fontWeight="bold">
+          Email
+        </Label>
         <Controller
           name="email"
           rules={{ required: "Email is required" }}
@@ -298,7 +314,9 @@ export function EditProfileScreen() {
           {errors.email?.message}
           {validationErrors?.email?.[0]}
         </Text>
-        <Label htmlFor="bold" fontWeight="bold">Phone Number</Label>
+        <Label htmlFor="bold" fontWeight="bold">
+          Phone Number
+        </Label>
         <Controller
           name="phone"
           rules={{ required: "Phone number is required" }}
@@ -321,7 +339,9 @@ export function EditProfileScreen() {
           {errors.phone?.message}
           {validationErrors?.phone?.[0]}
         </Text>
-        <Label htmlFor="venmo" fontWeight="bold">Venmo Username</Label>
+        <Label htmlFor="venmo" fontWeight="bold">
+          Venmo Username
+        </Label>
         <Controller
           name="venmo"
           control={control}
@@ -344,7 +364,9 @@ export function EditProfileScreen() {
           {errors.venmo?.message}
           {validationErrors?.venmo?.[0]}
         </Text>
-        <Label htmlFor="cashapp" fontWeight="bold">Cash App Username</Label>
+        <Label htmlFor="cashapp" fontWeight="bold">
+          Cash App Username
+        </Label>
         <Controller
           name="cashapp"
           control={control}

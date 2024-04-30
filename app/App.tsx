@@ -16,7 +16,7 @@ import { Navigation } from "./utils/navigation";
 import { useAutoUpdate } from "./utils/updates";
 import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
 import { useColorScheme } from "react-native";
-import * as Notifications from 'expo-notifications';
+import * as Notifications from "expo-notifications";
 import { UpdateBeeperQueue } from "./components/ActionButton";
 import { Status } from "./utils/types";
 import "./global.css";
@@ -25,10 +25,10 @@ Notifications.setNotificationCategoryAsync(
   "newbeep",
   [
     {
-      identifier: 'accept',
+      identifier: "accept",
       buttonTitle: "Accept",
       options: {
-        opensAppToForeground: false
+        opensAppToForeground: false,
       },
     },
     {
@@ -36,25 +36,31 @@ Notifications.setNotificationCategoryAsync(
       buttonTitle: "Deny",
       options: {
         isDestructive: true,
-        opensAppToForeground: false
+        opensAppToForeground: false,
       },
     },
   ],
   {
     allowInCarPlay: true,
     allowAnnouncement: true,
-  }
+  },
 );
 
 Notifications.addNotificationResponseReceivedListener((response) => {
-  console.log(response.actionIdentifier)
-  // @ts-expect-error expo is lieing
-  if (response.notification.request.content.categoryIdentifier === 'newbeep' && response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER) {
+  console.log(response.actionIdentifier);
+  if (
+    // @ts-expect-error expo is lieing
+    response.notification.request.content.categoryIdentifier === "newbeep" &&
+    response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER
+  ) {
     client.mutate({
       mutation: UpdateBeeperQueue,
       variables: {
         id: response.notification.request.content.data.id,
-        status: response.actionIdentifier === "accept" ? Status.ACCEPTED : Status.DENIED,
+        status:
+          response.actionIdentifier === "accept"
+            ? Status.ACCEPTED
+            : Status.DENIED,
       },
     });
   }
@@ -85,7 +91,9 @@ function Beep() {
 
   useSubscription(UserSubscription, {
     onData({ data }) {
-      cache.updateQuery({ query: UserData }, () => ({ getUser: data.data!.getUserUpdates }));
+      cache.updateQuery({ query: UserData }, () => ({
+        getUser: data.data!.getUserUpdates,
+      }));
     },
     skip: !user,
   });
@@ -105,7 +113,10 @@ function Beep() {
     <>
       <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       <Navigation
-        linking={{ enabled: 'auto', prefixes: ["beep://", "https://app.ridebeep.app"] }}
+        linking={{
+          enabled: "auto",
+          prefixes: ["beep://", "https://app.ridebeep.app"],
+        }}
         theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       />
     </>
@@ -116,7 +127,10 @@ function App() {
   const colorScheme = useColorScheme();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme  ?? "light"}>
+      <TamaguiProvider
+        config={tamaguiConfig}
+        defaultTheme={colorScheme ?? "light"}
+      >
         <ApolloProvider client={client}>
           <Beep />
         </ApolloProvider>
