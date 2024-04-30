@@ -1,4 +1,5 @@
 import React from "react";
+import * as DropdownMenu from "zeego/dropdown-menu";
 import { useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Container } from "../../components/Container";
@@ -41,7 +42,7 @@ export const GetUser = graphql(`
   }
 `);
 
-type Props = StaticScreenProps<{ id: string, beepId?: string }>;
+type Props = StaticScreenProps<{ id: string; beepId?: string }>;
 
 export function ProfileScreen({ route }: Props) {
   const { user } = useUser();
@@ -73,15 +74,26 @@ export function ProfileScreen({ route }: Props) {
     if (user?.id !== route.params.id) {
       navigation.setOptions({
         headerRight: () => (
-          <Menu
-            items={[
-              { title: "Rate", onPress: handleRate },
-              { title: "Report", onPress: handleReport },
-            ]}
-            Trigger={
-              <Button unstyled icon={<MoreVertical size="$1.5" />} />
-            }
-          />
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <Button
+                mr="$2"
+                hitSlop={20}
+                icon={<MoreVertical size="$1.5" />}
+                unstyled
+              />
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item key="rate" onSelect={handleRate}>
+                <DropdownMenu.ItemTitle>Rate</DropdownMenu.ItemTitle>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item key="report" onSelect={handleReport}>
+                <DropdownMenu.ItemTitle>Report</DropdownMenu.ItemTitle>
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         ),
       });
     }
@@ -117,17 +129,11 @@ export function ProfileScreen({ route }: Props) {
         <Card p="$3">
           <XStack alignItems="center">
             <Stack>
-              <Heading fontWeight="bold">
-                {data.getUser.name}
-              </Heading>
-              <Text color="$gray10">
-                @{data.getUser.username}
-              </Text>
+              <Heading fontWeight="bold">{data.getUser.name}</Heading>
+              <Text color="$gray10">@{data.getUser.username}</Text>
             </Stack>
             <Stack flexGrow={1} />
-            <Avatar
-              url={data.getUser.photo}
-            />
+            <Avatar url={data.getUser.photo} />
           </XStack>
         </Card>
         <Card p="$3">

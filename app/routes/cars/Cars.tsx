@@ -3,7 +3,12 @@ import { Plus } from "@tamagui/lucide-icons";
 import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
-import { FlatList, Pressable, RefreshControl, useColorScheme } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  useColorScheme,
+} from "react-native";
 import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
 import { Image } from "../../components/Image";
 import { useUser } from "../../utils/useUser";
@@ -57,13 +62,10 @@ export function Cars() {
   const colorScheme = useColorScheme();
   const { user } = useUser();
 
-  const { data, loading, error, refetch, fetchMore } = useQuery(
-    CarsQuery,
-    {
-      variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { data, loading, error, refetch, fetchMore } = useQuery(CarsQuery, {
+    variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [_deleteCar] = useMutation(DeleteCar);
 
@@ -104,12 +106,14 @@ export function Cars() {
 
     return (
       <Stack ai="center" jc="center" p="$4">
-        <Spinner/>
+        <Spinner />
       </Stack>
     );
   };
 
-  const onLongPress = (car: Unpacked<ResultOf<typeof CarsQuery>['getCars']['items']>) => {
+  const onLongPress = (
+    car: Unpacked<ResultOf<typeof CarsQuery>["getCars"]["items"]>,
+  ) => {
     if (isMobile) {
       Alert.alert(
         "Delete Car?",
@@ -121,14 +125,16 @@ export function Cars() {
           },
           { text: "Yes", onPress: () => deleteCar(car) },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       deleteCar(car);
     }
   };
 
-  const deleteCar = (car: Unpacked<ResultOf<typeof CarsQuery>['getCars']['items']>) => {
+  const deleteCar = (
+    car: Unpacked<ResultOf<typeof CarsQuery>["getCars"]["items"]>,
+  ) => {
     _deleteCar({
       variables: { id: car.id },
       update: (cache) => {
@@ -166,7 +172,10 @@ export function Cars() {
     navigation.setOptions({
       headerRight: () => {
         return (
-          <Pressable onPress={() => navigation.navigate("Add Car")} aria-label="Add a car">
+          <Pressable
+            onPress={() => navigation.navigate("Add Car")}
+            aria-label="Add a car"
+          >
             <Stack mx="$3">
               <Plus />
             </Stack>
@@ -208,17 +217,20 @@ export function Cars() {
             onPress={car.default ? undefined : () => setDefault(car.id)}
           >
             <XStack alignItems="center">
-              <Stack gap="$2">
+              <Stack gap="$2" flexShrink={1}>
                 <Text
                   fontWeight="bold"
                   textTransform="capitalize"
+                  flexWrap="wrap"
                 >
                   {car.make} {car.model} {car.year}
                 </Text>
                 <XStack gap="$2">
                   {car.default && (
                     <Card borderRadius="$4" backgroundColor="$gray10" px="$2">
-                      <Text fontWeight="bold" color="white">Default</Text>
+                      <Text fontWeight="bold" color="white">
+                        Default
+                      </Text>
                     </Card>
                   )}
                   <Card
@@ -226,7 +238,11 @@ export function Cars() {
                     px="$2"
                     backgroundColor={`$${car.color}10`}
                   >
-                    <Text textTransform="capitalize" fontWeight="bold" color="white">
+                    <Text
+                      textTransform="capitalize"
+                      fontWeight="bold"
+                      color="white"
+                    >
                       {car.color}
                     </Text>
                   </Card>

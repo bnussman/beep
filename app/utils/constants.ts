@@ -1,8 +1,8 @@
 import { Platform } from "react-native";
 import * as Device from "expo-device";
-import Constants from 'expo-constants'
+import Constants from "expo-constants";
 
-export const isRunningInExpoGo = Constants.appOwnership === 'expo'
+export const isRunningInExpoGo = Constants.appOwnership === "expo";
 
 export const isMobile: boolean =
   Platform.OS == "ios" || Platform.OS == "android";

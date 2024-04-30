@@ -16,8 +16,8 @@ function getLocalIP() {
   }
 }
 
-// const ip = "192.168.1.65";
-const ip = getLocalIP();
+const ip = "192.168.1.65";
+// const ip = getLocalIP();
 
 export const cache = new InMemoryCache();
 

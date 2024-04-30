@@ -11,18 +11,12 @@ import { useNavigation } from "@react-navigation/native";
 import { Status } from "../../utils/types";
 import { ResultOf } from "gql.tada";
 import { GetInitialQueue } from "./StartBeeping";
-import {
-  Card,
-  XStack,
-  Text,
-  Stack,
-  Menu,
-  Button,
-} from "@beep/ui";
+import { Card, XStack, Text, Stack, Button } from "@beep/ui";
 import { MoreVertical } from "@tamagui/lucide-icons";
+import * as DropdownMenu from "zeego/dropdown-menu";
 
 interface Props {
-  item: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
+  item: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
   index: number;
 }
 
@@ -45,7 +39,7 @@ export function QueueItem({ item }: Props) {
             onPress: onCancel,
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       onCancel();
@@ -62,40 +56,77 @@ export function QueueItem({ item }: Props) {
     return (
       <Card mb="$2" p="$3">
         <Stack>
-          <Pressable
-            onPress={() =>
-              navigate("User", {
-                id: item.rider.id,
-                beepId: item.id,
-              })
-            }
-          >
-            <XStack gap="$2" alignItems="center" justifyContent="space-between">
+          <XStack gap="$2" alignItems="center" justifyContent="space-between">
+            <Pressable
+              onPress={() =>
+                navigate("User", {
+                  id: item.rider.id,
+                  beepId: item.id,
+                })
+              }
+            >
               <XStack alignItems="center" gap="$2">
                 <Avatar size="$4" url={item.rider.photo} />
                 <Stack>
-                  <Text fontWeight="bold">
-                    {item.rider.name}
-                  </Text>
+                  <Text fontWeight="bold">{item.rider.name}</Text>
                   {item.rider.rating && (
                     <Text fontSize="$1">{printStars(item.rider.rating)}</Text>
                   )}
                 </Stack>
               </XStack>
-              <Menu
-                Trigger={<Button hitSlop={20} unstyled icon={<MoreVertical size="$1.5" />} />}
-                items={[
-                  { title: "Call", onPress: () => Linking.openURL("tel:" + getRawPhoneNumber(item.rider.phone)) },
-                  { title: "Text", onPress: () => Linking.openURL("sms:" + getRawPhoneNumber(item.rider.phone)) },
-                  {
-                    title: "Directions to Rider",
-                    onPress: () => openDirections("Current+Location", item.origin)
-                  },
-                  { title: "Cancel Beep", onPress: onCancelPress },
-                ]}
-              />
-            </XStack>
-          </Pressable>
+            </Pressable>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Button
+                  mr="$2"
+                  hitSlop={20}
+                  icon={<MoreVertical size="$1.5" />}
+                  unstyled
+                />
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item
+                  key="Call"
+                  onSelect={() =>
+                    Linking.openURL(
+                      "tel:" + getRawPhoneNumber(item.rider.phone),
+                    )
+                  }
+                >
+                  <DropdownMenu.ItemTitle>Call</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  key="Text"
+                  onSelect={() =>
+                    Linking.openURL(
+                      "sms:" + getRawPhoneNumber(item.rider.phone),
+                    )
+                  }
+                >
+                  <DropdownMenu.ItemTitle>Text</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  key="directions-to-rider"
+                  onSelect={() =>
+                    openDirections("Current+Location", item.origin)
+                  }
+                >
+                  <DropdownMenu.ItemTitle>
+                    Directions to Rider
+                  </DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  key="cancel"
+                  onSelect={onCancelPress}
+                  destructive
+                >
+                  <DropdownMenu.ItemTitle>Cancel Beep</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </XStack>
           <Text>
             <Text fontWeight="bold" mr="$2">
               Group Size
@@ -143,7 +174,8 @@ export function QueueItem({ item }: Props) {
           </XStack>
         </Pressable>
         <Text>
-          <Text fontWeight="bold">Group Size</Text> <Text>{item.groupSize}</Text>
+          <Text fontWeight="bold">Group Size</Text>{" "}
+          <Text>{item.groupSize}</Text>
         </Text>
         <Text>
           <Text fontWeight="bold" mr="$2">
