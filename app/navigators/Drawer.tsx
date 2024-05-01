@@ -197,7 +197,7 @@ function DrawerItem(props: Props) {
   return (
     <Pressable
       className={cx(
-        "px-5 py-4 rounded-lg flex flex-row items-center gap-6 active:bg-gray-600/5 active:dark:bg-gray-300/5",
+        "px-5 py-3 rounded-lg flex flex-row items-center gap-6 active:bg-gray-600/5 active:dark:bg-gray-300/5",
         {
           "bg-gray-600/5 dark:bg-gray-300/5": isActive,
         },
