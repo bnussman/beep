@@ -24,12 +24,12 @@ import {
 } from "@react-navigation/drawer";
 import {
   Stack,
-  Text,
   XStack,
   Spinner,
   Button,
 } from "@beep/ui";
 import { Pressable, Appearance, Text as NativeText } from "react-native";
+import { Text } from "@/components/Text";
 
 const Logout = gql`
   mutation Logout {
@@ -104,10 +104,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         <Pressable onPress={() => navigate("User", { id: user?.id ?? "" })}>
           <XStack alignItems="center" justifyContent="space-between" pl="$4">
             <Stack flexShrink={1}>
-              <Text fontWeight="bold">
+              <Text size="lg" weight="black">
                 {user?.name}
               </Text>
-              <Text color="$gray10">
+              <Text color="subtle">
                 @{user?.username}
               </Text>
             </Stack>
@@ -161,7 +161,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
                 ) : (
                   <NativeText style={{ fontSize: 18 }}>↩️</NativeText>
                 )}
-                <Text mr="$4">
+                <Text>
                   Logout
                 </Text>
               </XStack>

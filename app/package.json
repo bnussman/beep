@@ -3,8 +3,7 @@
   "version": "2.11.0",
   "main": "index.js",
   "scripts": {
-    "dev": "expo start --dev-client --web",
-    "start": "expo start --go --web",
+    "dev": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css.web.css && expo start --dev-client --web",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -23,6 +22,7 @@
     "@tamagui/lucide-icons": "^1.94.5",
     "apollo-upload-client": "^17.0.0",
     "car-info": "^0.1.7",
+    "class-variance-authority": "^0.7.0",
     "expo": "50.0.17",
     "expo-application": "^5.8.4",
     "expo-constants": "^15.4.6",
@@ -40,6 +40,7 @@
     "gql.tada": "^1.5.5",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.16.0",
+    "nativewind": "4.0.36",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-hook-form": "^7.51.3",
@@ -56,6 +57,7 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "14.1.0",
     "react-native-web": "~0.19.7",
+    "tailwindcss": "^3.4.3",
     "tamagui": "^1.94.5",
     "url-parse": "^1.5.10",
     "zeego": "^1.10.0"
