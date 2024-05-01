@@ -3,8 +3,7 @@
   "version": "2.11.0",
   "main": "index.js",
   "scripts": {
-    "dev": "expo start --dev-client --web",
-    "start": "expo start --go --web",
+    "dev": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css.web.css && expo start --dev-client --web",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
