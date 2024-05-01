@@ -1,11 +1,11 @@
-import { Text as _Text, TextProps as _TextProps } from 'react-native';
-import React from 'react';
+import { Text as _Text, TextProps as _TextProps } from "react-native";
+import React from "react";
 
 import { cva, type VariantProps } from "class-variance-authority";
 
 export type TextVariantProps = VariantProps<typeof text>;
 
-export const text = cva(["text-black" ,"dark:text-white"], {
+export const text = cva(["text-black", "dark:text-white"], {
   variants: {
     size: {
       xs: ["text-xs"],
@@ -13,7 +13,7 @@ export const text = cva(["text-black" ,"dark:text-white"], {
       md: ["text-md"],
       lg: ["text-lg"],
       xl: ["text-xl"],
-      '2xl': ["text-2xl"],
+      "2xl": ["text-2xl"],
     },
     weight: {
       normal: ["font-normal"],
@@ -21,12 +21,13 @@ export const text = cva(["text-black" ,"dark:text-white"], {
       black: ["font-black"],
     },
     color: {
-      subtle: ["text-slate-600", "dark:text-slate-500"]
+      subtle: ["text-slate-600", "dark:text-gray-500"],
+      error: ["text-red-600", "dark:text-red-400"],
     },
   },
   defaultVariants: {
     size: "md",
-    weight: "normal"
+    weight: "normal",
   },
 });
 
@@ -36,9 +37,6 @@ export const Text = (props: TextProps) => {
   const { size, className, weight, color, ...rest } = props;
 
   return (
-    <_Text
-      className={text({ size, className, weight, color })}
-      {...rest}
-    />
+    <_Text className={text({ size, className, weight, color })} {...rest} />
   );
 };

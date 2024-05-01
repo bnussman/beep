@@ -7,16 +7,19 @@ import { setContext } from "@apollo/client/link/context";
 import { Logger } from "./logger";
 import { ApolloClient, ApolloLink, InMemoryCache, split } from "@apollo/client";
 import Constants from "expo-constants";
+import { isWeb } from "./constants";
 
 function getLocalIP() {
+  if (isWeb) {
+    return "localhost";
+  }
   try {
     return Constants.experienceUrl.split("//")[1].split(":")[0];
   } catch (error) {
-    return "localhost";
+    return "192.168.1.65";
   }
 }
 
-// const ip = "192.168.1.65";
 const ip = getLocalIP();
 
 export const cache = new InMemoryCache();
