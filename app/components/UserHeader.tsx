@@ -11,14 +11,10 @@ interface Props {
 export function UserHeader({ picture, name, username }: Props) {
   return (
     <XStack alignItems="center" gap="$4">
-      <Avatar size="$6" url={picture} />
+      <Avatar size="lg" src={picture ?? undefined} />
       <Stack>
-        <Heading fontWeight="bold">
-          {name}
-        </Heading>
-        <Text color="$gray8">
-          @{username}
-        </Text>
+        <Heading fontWeight="bold">{name}</Heading>
+        <Text color="$gray8">@{username}</Text>
       </Stack>
     </XStack>
   );

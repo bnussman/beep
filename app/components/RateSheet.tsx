@@ -40,10 +40,9 @@ export function RateSheet() {
         beepId: beep!.id,
         stars: stars,
       },
-    })
-      .catch((error: ApolloError) => {
-        Alert(error);
-      });
+    }).catch((error: ApolloError) => {
+      Alert(error);
+    });
   };
 
   if (!beep) return null;
@@ -55,12 +54,16 @@ export function RateSheet() {
       open
       dismissOnSnapToBottom
     >
-      <Sheet.Handle backgroundColor="$gray8" opacity={1}/>
-      <Sheet.Frame padding="$4" justifyContent="center" alignItems="center" elevation="$8" gap="$2">
-        <Avatar url={beep.beeper.photo} size="$10" />
-        <Heading fontWeight="bold">
-          {beep.beeper.name}
-        </Heading>
+      <Sheet.Handle backgroundColor="$gray8" opacity={1} />
+      <Sheet.Frame
+        padding="$4"
+        justifyContent="center"
+        alignItems="center"
+        elevation="$8"
+        gap="$2"
+      >
+        <Avatar src={beep.beeper.photo ?? undefined} size="xl" />
+        <Heading fontWeight="bold">{beep.beeper.name}</Heading>
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Button
           w="100%"

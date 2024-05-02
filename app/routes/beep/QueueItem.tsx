@@ -66,7 +66,7 @@ export function QueueItem({ item }: Props) {
               }
             >
               <XStack alignItems="center" gap="$2">
-                <Avatar size="$4" url={item.rider.photo} />
+                <Avatar size="sm" src={item.rider.photo ?? undefined} />
                 <Stack>
                   <Text fontWeight="bold">{item.rider.name}</Text>
                   {item.rider.rating && (
@@ -170,7 +170,11 @@ export function QueueItem({ item }: Props) {
                 {item.rider.rating && printStars(item.rider.rating)}
               </Text>
             </Stack>
-            <Avatar mr={2} size={45} url={item.rider.photo} />
+            <Avatar
+              className="mr-2"
+              size="sm"
+              src={item.rider.photo ?? undefined}
+            />
           </XStack>
         </Pressable>
         <Text>

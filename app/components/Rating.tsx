@@ -10,7 +10,7 @@ import { useMutation } from "@apollo/client";
 import { ResultOf, graphql } from "gql.tada";
 import { Ratings } from "../routes/Ratings";
 
-type Rating = Unpacked<ResultOf<typeof Ratings>['getRatings']['items']>;
+type Rating = Unpacked<ResultOf<typeof Ratings>["getRatings"]["items"]>;
 
 interface Props {
   item: Rating;
@@ -33,7 +33,7 @@ export function Rating(props: Props) {
 
   const [deleteRating] = useMutation(DeleteRating, {
     variables: {
-      id: item.id
+      id: item.id,
     },
     onError(error) {
       alert(error.message);
@@ -45,7 +45,7 @@ export function Rating(props: Props) {
           id: item.id,
         }),
       });
-    }
+    },
   });
 
   const onLongPress = () => {
@@ -60,7 +60,7 @@ export function Rating(props: Props) {
           },
           { text: "Yes", onPress: () => deleteRating() },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       deleteRating();
@@ -74,20 +74,23 @@ export function Rating(props: Props) {
       p="$3"
       pressTheme
       hoverTheme
-      onPress={() => navigation.navigate("User", { id: otherUser.id, beepId: item.beep.id })}
+      onPress={() =>
+        navigation.navigate("User", { id: otherUser.id, beepId: item.beep.id })
+      }
       onLongPress={onLongPress}
     >
       <Stack gap="$2">
         <XStack alignItems="center" gap="$2">
-          <Avatar size="$4" url={otherUser.photo} />
+          <Avatar size="sm" src={otherUser.photo ?? undefined} />
           <Stack flexShrink={1}>
-            <Text fontWeight="bold">
-              {otherUser.name}
-            </Text>
+            <Text fontWeight="bold">{otherUser.name}</Text>
             <Text color="$gray8">
               {`${isRater ? "You rated" : "Rated you"} - ${new Date(
-                item.timestamp as string
-              ).toLocaleString(undefined, { dateStyle: 'short', timeStyle: "short" })}`}
+                item.timestamp as string,
+              ).toLocaleString(undefined, {
+                dateStyle: "short",
+                timeStyle: "short",
+              })}`}
             </Text>
           </Stack>
           <Stack flexGrow={1} />

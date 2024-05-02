@@ -18,15 +18,7 @@ import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import {
-  Button,
-  Input,
-  Text,
-  XStack,
-  Stack,
-  Label,
-  Spinner,
-} from "@beep/ui";
+import { Button, Input, Text, XStack, Stack, Label, Spinner } from "@beep/ui";
 import { PasswordInput } from "../../components/PasswordInput";
 
 const SignUp = graphql(`
@@ -60,7 +52,7 @@ const SignUp = graphql(`
 
 let picture: any;
 
-type Values = VariablesOf<typeof SignUp>['input'];
+type Values = VariablesOf<typeof SignUp>["input"];
 
 export function SignUpScreen() {
   const [signup, { error }] = useMutation(SignUp, {
@@ -146,7 +138,9 @@ export function SignUpScreen() {
         <XStack gap="$4" alignItems="center">
           <Stack gap="$2" flexGrow={1}>
             <Stack>
-              <Label htmlFor="first" fontWeight="bold">First Name</Label>
+              <Label htmlFor="first" fontWeight="bold">
+                First Name
+              </Label>
               <Controller
                 name="first"
                 rules={{ required: "First name is required" }}
@@ -172,7 +166,9 @@ export function SignUpScreen() {
               </Text>
             </Stack>
             <Stack>
-              <Label htmlFor="last" fontWeight="bold">Last Name</Label>
+              <Label htmlFor="last" fontWeight="bold">
+                Last Name
+              </Label>
               <Controller
                 name="last"
                 rules={{ required: "Last name is required" }}
@@ -199,8 +195,11 @@ export function SignUpScreen() {
             </Stack>
           </Stack>
           <Stack w="100px">
-            <TouchableOpacity onPress={chooseProfilePhoto} aria-label="profile photo">
-              <Avatar url={photo?.uri} size="$10"  />
+            <TouchableOpacity
+              onPress={chooseProfilePhoto}
+              aria-label="profile photo"
+            >
+              <Avatar src={photo?.uri} size="xl" />
             </TouchableOpacity>
             <Text color="red">
               {errors.picture?.message}
@@ -209,7 +208,9 @@ export function SignUpScreen() {
           </Stack>
         </XStack>
         <Stack>
-          <Label htmlFor="email" fontWeight="bold">Email</Label>
+          <Label htmlFor="email" fontWeight="bold">
+            Email
+          </Label>
           <Controller
             name="email"
             rules={{ required: "Email is required" }}
@@ -230,16 +231,16 @@ export function SignUpScreen() {
               />
             )}
           />
-          <Text>
-            You must a .edu email address
-          </Text>
+          <Text>You must a .edu email address</Text>
           <Text color="red">
             {errors.email?.message}
             {validationErrors?.email?.[0]}
           </Text>
         </Stack>
         <Stack>
-          <Label htmlFor="phone" fontWeight="bold">Phone</Label>
+          <Label htmlFor="phone" fontWeight="bold">
+            Phone
+          </Label>
           <Controller
             name="phone"
             rules={{ required: "Phone number is required" }}
@@ -265,7 +266,9 @@ export function SignUpScreen() {
           </Text>
         </Stack>
         <Stack>
-          <Label htmlFor="venmo" fontWeight="bold">Venmo Username</Label>
+          <Label htmlFor="venmo" fontWeight="bold">
+            Venmo Username
+          </Label>
           <Controller
             name="venmo"
             rules={{ required: "Venmo username is required" }}
@@ -292,7 +295,9 @@ export function SignUpScreen() {
           </Text>
         </Stack>
         <Stack>
-          <Label htmlFor="username-input" fontWeight="bold">Username</Label>
+          <Label htmlFor="username-input" fontWeight="bold">
+            Username
+          </Label>
           <Controller
             name="username"
             rules={{ required: "Username is required" }}
@@ -319,7 +324,9 @@ export function SignUpScreen() {
           </Text>
         </Stack>
         <Stack>
-          <Label htmlFor="password-input" fontWeight="bold">Password</Label>
+          <Label htmlFor="password-input" fontWeight="bold">
+            Password
+          </Label>
           <Controller
             name="password"
             rules={{
@@ -349,7 +356,11 @@ export function SignUpScreen() {
             {validationErrors?.password?.[0]}
           </Text>
         </Stack>
-        <Button iconAfter={isSubmitting ? <Spinner /> : undefined} onPress={onSubmit} mt="$4">
+        <Button
+          iconAfter={isSubmitting ? <Spinner /> : undefined}
+          onPress={onSubmit}
+          mt="$4"
+        >
           Sign Up
         </Button>
         <Text>

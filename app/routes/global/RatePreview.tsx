@@ -5,14 +5,7 @@ import { printStars } from "../../components/Stars";
 import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { graphql } from "gql.tada";
-import {
-  Text,
-  Card,
-  XStack,
-  Stack,
-  Heading,
-  Spinner,
-} from "@beep/ui";
+import { Text, Card, XStack, Stack, Heading, Spinner } from "@beep/ui";
 
 const Ratings = graphql(`
   query GetRatingsForUser($id: String, $offset: Int, $show: Int) {
@@ -52,13 +45,10 @@ const PAGE_SIZE = 5;
 export function RatePreview({ id }: Props) {
   const colorMode = useColorScheme();
   const { navigate } = useNavigation();
-  const { data, loading, error, fetchMore, refetch } = useQuery(
-    Ratings,
-    {
-      variables: { id, offset: 0, show: PAGE_SIZE },
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { data, loading, error, fetchMore, refetch } = useQuery(Ratings, {
+    variables: { id, offset: 0, show: PAGE_SIZE },
+    notifyOnNetworkStatusChange: true,
+  });
 
   const ratings = data?.getRatings.items;
   const count = data?.getRatings.count || 0;
@@ -123,9 +113,7 @@ export function RatePreview({ id }: Props) {
     <Card flexShrink={1} p="$3">
       <XStack alignItems="center" jc="space-between">
         <Heading fontWeight="bold">Ratings</Heading>
-        <Text>
-          {count} ratings
-        </Text>
+        <Text>{count} ratings</Text>
       </XStack>
       <FlatList
         data={ratings}
@@ -137,21 +125,23 @@ export function RatePreview({ id }: Props) {
             mt="$2"
             pressTheme
             hoverTheme
-            onPress={() => navigate("User", { id: rating.rater.id, beepId: rating.beep.id })}
+            onPress={() =>
+              navigate("User", { id: rating.rater.id, beepId: rating.beep.id })
+            }
           >
             <XStack alignItems="center">
-              <Avatar size="$4" mr="$4" url={rating.rater.photo} />
+              <Avatar
+                size="sm"
+                className="mr-2"
+                src={rating.rater.photo ?? undefined}
+              />
               <Stack>
-                <Text fontWeight="bold">
-                  {rating.rater.name}
-                </Text>
+                <Text fontWeight="bold">{rating.rater.name}</Text>
                 <Text color="$gray10" fontSize="$2" mb="$1">
                   {new Date(rating.timestamp as string).toLocaleString()}
                 </Text>
                 <Text fontSize="$1">{printStars(rating.stars)}</Text>
-                {rating.message && (
-                  <Text fontSize="$1">{rating.message}</Text>
-                )}
+                {rating.message && <Text fontSize="$1">{rating.message}</Text>}
               </Stack>
             </XStack>
           </Card>

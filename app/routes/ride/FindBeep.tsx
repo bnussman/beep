@@ -8,7 +8,13 @@ import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
 import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
-import { View, Linking, AppState, AppStateStatus, Pressable } from "react-native";
+import {
+  View,
+  Linking,
+  AppState,
+  AppStateStatus,
+  Pressable,
+} from "react-native";
 import { cache, client } from "../../utils/apollo";
 import { Container } from "../../components/Container";
 import { useUser } from "../../utils/useUser";
@@ -24,16 +30,27 @@ import {
   openVenmo,
   shareVenmoInformation,
 } from "../../utils/links";
-import {
-  useLazyQuery,
-  useQuery,
-  useSubscription,
-} from "@apollo/client";
+import { useLazyQuery, useQuery, useSubscription } from "@apollo/client";
 import { VariablesOf, graphql } from "gql.tada";
-import { ChooseBeep } from '../ride/PickBeep';
+import { ChooseBeep } from "../ride/PickBeep";
 import { BeeperMarker } from "../../components/Marker";
-import { Card, Label, Input, Text, Button, Heading, XStack, Stack, Spinner } from "@beep/ui";
-import { CreditCard, MessageCircle, PhoneCall, Share } from "@tamagui/lucide-icons";
+import {
+  Card,
+  Label,
+  Input,
+  Text,
+  Button,
+  Heading,
+  XStack,
+  Stack,
+  Spinner,
+} from "@beep/ui";
+import {
+  CreditCard,
+  MessageCircle,
+  PhoneCall,
+  Share,
+} from "@tamagui/lucide-icons";
 
 export const InitialRiderStatus = graphql(`
   query GetInitialRiderStatus {
@@ -135,12 +152,9 @@ export function MainFindBeepScreen() {
   const { getLocation } = useLocation(false);
   const { navigate } = useNavigation();
 
-  const { data, previousData, refetch } = useQuery(
-    InitialRiderStatus,
-    {
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { data, previousData, refetch } = useQuery(InitialRiderStatus, {
+    notifyOnNetworkStatusChange: true,
+  });
 
   const beep = data?.getRiderStatus;
 
@@ -191,11 +205,11 @@ export function MainFindBeepScreen() {
     handleSubmit,
     setFocus,
     formState: { errors },
-  } = useForm<Omit<VariablesOf<typeof ChooseBeep>, 'beeperId'>>({
+  } = useForm<Omit<VariablesOf<typeof ChooseBeep>, "beeperId">>({
     defaultValues: {
       groupSize: undefined,
-      origin: '',
-      destination: '',
+      origin: "",
+      destination: "",
     },
   });
 
@@ -274,7 +288,9 @@ export function MainFindBeepScreen() {
     return (
       <Container keyboard alignItems="center" px="$4">
         <Stack w="100%">
-          <Label htmlFor="groupSize" fontWeight="bold">Group Size</Label>
+          <Label htmlFor="groupSize" fontWeight="bold">
+            Group Size
+          </Label>
           <Controller
             name="groupSize"
             rules={{ required: "Group size is required" }}
@@ -293,10 +309,10 @@ export function MainFindBeepScreen() {
               />
             )}
           />
-          <Text color="red">
-            {errors.groupSize?.message}
-          </Text>
-          <Label htmlFor="origin" fontWeight="bold">Pick Up Location</Label>
+          <Text color="red">{errors.groupSize?.message}</Text>
+          <Label htmlFor="origin" fontWeight="bold">
+            Pick Up Location
+          </Label>
           <Controller
             name="origin"
             rules={{ required: "Pick up location is required" }}
@@ -315,10 +331,10 @@ export function MainFindBeepScreen() {
               />
             )}
           />
-          <Text color="red">
-            {errors.origin?.message}
-          </Text>
-          <Label htmlFor="destination" fontWeight="bold">Destination Location</Label>
+          <Text color="red">{errors.origin?.message}</Text>
+          <Label htmlFor="destination" fontWeight="bold">
+            Destination Location
+          </Label>
           <Controller
             name="destination"
             rules={{ required: "Destination location is required" }}
@@ -336,9 +352,7 @@ export function MainFindBeepScreen() {
               />
             )}
           />
-          <Text color="red">
-            {errors.destination?.message}
-          </Text>
+          <Text color="red">{errors.destination?.message}</Text>
           <Button onPress={() => findBeep()} mt="$4" mb="$4">
             Find Beep
           </Button>
@@ -353,12 +367,15 @@ export function MainFindBeepScreen() {
     return (
       <Container p="$3" alignItems="center">
         <Stack alignItems="center" gap="$4" w="100%" height="94%">
-          <Pressable style={{ width: "100%" }} onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id }) }>
+          <Pressable
+            style={{ width: "100%" }}
+            onPress={() =>
+              navigate("User", { id: beep.beeper.id, beepId: beep.id })
+            }
+          >
             <XStack alignItems="center" gap="$4" w="100%">
               <Stack flexShrink={1}>
-                <Heading fontWeight="bold">
-                  {beep.beeper.name}
-                </Heading>
+                <Heading fontWeight="bold">{beep.beeper.name}</Heading>
                 <Text>
                   <Text fontWeight="bold">Pick Up </Text>
                   <Text>{beep.origin}</Text>
@@ -369,7 +386,7 @@ export function MainFindBeepScreen() {
                 </Text>
               </Stack>
               <Stack flexGrow={1} />
-              <Avatar size="$8" url={beep.beeper.photo} />
+              <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
             </XStack>
           </Pressable>
           <Rates
@@ -377,7 +394,13 @@ export function MainFindBeepScreen() {
             group={beep.beeper.groupRate}
           />
           {beep.position <= 0 && (
-            <Card w="100%" p="$3" animation="quick" enterStyle={{ scale: 0.5 }} key={beep.status}>
+            <Card
+              w="100%"
+              p="$3"
+              animation="quick"
+              enterStyle={{ scale: 0.5 }}
+              key={beep.status}
+            >
               <Heading fontWeight="bold" mb={1}>
                 Current Status
               </Heading>
@@ -387,9 +410,7 @@ export function MainFindBeepScreen() {
           {beep.status === Status.ON_THE_WAY && (
             <Card w="100%" p="$3">
               <XStack alignItems="center">
-                <Heading fontWeight="bold">
-                  ETA
-                </Heading>
+                <Heading fontWeight="bold">ETA</Heading>
                 <Stack flexGrow={1} />
                 {etaError ? (
                   <Text>{etaError.message}</Text>
@@ -467,7 +488,7 @@ export function MainFindBeepScreen() {
                     beep.beeper.cashapp,
                     beep.groupSize,
                     beep.beeper.groupRate,
-                    beep.beeper.singlesRate
+                    beep.beeper.singlesRate,
                   )
                 }
               >
@@ -486,7 +507,7 @@ export function MainFindBeepScreen() {
                       beep.groupSize,
                       beep.beeper.groupRate,
                       beep.beeper.singlesRate,
-                      "pay"
+                      "pay",
                     )
                   }
                 >
@@ -501,7 +522,7 @@ export function MainFindBeepScreen() {
                       beep.beeper.venmo,
                       beep.groupSize,
                       beep.beeper.groupRate,
-                      beep.beeper.singlesRate
+                      beep.beeper.singlesRate,
                     )
                   }
                 >
@@ -519,12 +540,10 @@ export function MainFindBeepScreen() {
   return (
     <Container alignItems="center" p="$3">
       <Stack gap="$4" w="100%" alignItems="center" h="94%">
-        <Avatar size={100} url={beep.beeper.photo} />
+        <Avatar size="xl" src={beep.beeper.photo ?? undefined} />
         <Stack justifyContent="center" ai="center">
           <Text>Waiting on</Text>
-          <Heading fontWeight="bold">
-            {beep.beeper.name}
-          </Heading>
+          <Heading fontWeight="bold">{beep.beeper.name}</Heading>
           <Text>to accept your request.</Text>
         </Stack>
         <Card w="100%" p="$3">

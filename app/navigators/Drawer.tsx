@@ -106,15 +106,16 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               isActive={index === props.state.index}
             />
           ))}
-          <Pressable onPress={handleLogout}>
-            <View className="px-5 py-3 rounded-lg flex flex-row items-center gap-6 active:bg-gray-300/5">
-              {loading ? (
-                <ActivityIndicator />
-              ) : (
-                <Text style={{ fontSize: 18 }}>↩️</Text>
-              )}
-              <Text>Logout</Text>
-            </View>
+          <Pressable
+            onPress={handleLogout}
+            className="px-5 py-3 rounded-lg flex flex-row items-center gap-6 active:bg-gray-300/5"
+          >
+            {loading ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={{ fontSize: 18 }}>↩️</Text>
+            )}
+            <Text>Logout</Text>
           </Pressable>
         </View>
       </View>
