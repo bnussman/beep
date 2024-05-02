@@ -167,7 +167,7 @@ export function PickBeepScreen({ route }: Props) {
         <XStack alignItems="center" jc="space-between">
           <Stack flexShrink={1}>
             <XStack alignItems="center" mb="$2">
-              <Avatar size="$4" mr="$2" url={item.photo} />
+              <Avatar className="mr-2" src={item.photo ?? undefined} />
               <Stack>
                 <Text fontWeight="bold">
                   {item.name}

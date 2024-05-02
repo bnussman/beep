@@ -50,7 +50,7 @@ export function Beep(props: Props) {
               <Text fontSize="$1">{printStars(beep.rider.rating)}</Text>
             )}
           </Stack>
-          <Avatar size="$6" url={beep.rider.photo} />
+          <Avatar src={beep.rider.photo ?? undefined} />
         </Card>
       </Pressable>
       <Card mt="$4" p="$3">
