@@ -285,7 +285,7 @@ export function EditProfileScreen() {
             </Text>
           </Stack>
           <Pressable onPress={() => handleUpdatePhoto()}>
-            <Avatar url={photo?.uri ?? user?.photo} size="$10" />
+            <Avatar size="xl" src={photo?.uri ?? user?.photo} />
             {uploadLoading ? <Spinner /> : null}
           </Pressable>
         </XStack>

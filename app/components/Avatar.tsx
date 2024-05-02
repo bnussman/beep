@@ -1,15 +1,16 @@
 import React from "react";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 import type { ImageProps } from "react-native";
 import AvatarImage from "../assets/avatar.png";
 import { VariantProps, cva } from "class-variance-authority";
 
-export const avatar = cva(["rounded-full", "w-10", "h-10"], {
+export const avatar = cva(["rounded-full"], {
   variants: {
     size: {
-      sm: "size-14",
-      md: "size-16",
-      lg: "size-20",
+      sm: "!size-14",
+      md: "!size-16",
+      lg: "!size-20",
+      xl: "!size-32",
     },
   },
   defaultVariants: {
