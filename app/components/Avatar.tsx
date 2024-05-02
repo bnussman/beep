@@ -1,18 +1,32 @@
 import React from "react";
-import { Avatar as _Avatar, AvatarProps } from "@beep/ui";
+import { Image } from "react-native";
+import type { ImageProps } from "react-native";
 import AvatarImage from "../assets/avatar.png";
+import { VariantProps, cva } from "class-variance-authority";
 
-interface Props extends AvatarProps {
-  url: string | null | undefined;
-}
+export const avatar = cva(["rounded-full", "w-10", "h-10"], {
+  variants: {
+    size: {
+      sm: "size-14",
+      md: "size-16",
+      lg: "size-20",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+interface Props extends ImageProps, VariantProps<typeof avatar> {}
 
 export function Avatar(props: Props) {
-  const { url, ...rest } = props;
-
+  const { className, src, size, ...rest } = props;
   return (
-    <_Avatar circular size="$6" {...rest}>
-      <_Avatar.Image src={url ?? AvatarImage} defaultSource={AvatarImage} />
-      <_Avatar.Fallback bc="red" />
-    </_Avatar>
+    <Image
+      src={src ?? AvatarImage}
+      defaultSource={AvatarImage}
+      className={avatar({ className, size })}
+      {...rest}
+    />
   );
 }

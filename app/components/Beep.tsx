@@ -9,7 +9,7 @@ import { ResultOf } from "gql.tada";
 import { GetBeepHistory } from "../routes/Beeps";
 
 interface Props {
-  item: Unpacked<ResultOf<typeof GetBeepHistory>['getBeeps']['items']>;
+  item: Unpacked<ResultOf<typeof GetBeepHistory>["getBeeps"]["items"]>;
   index: number;
 }
 
@@ -42,14 +42,12 @@ export function Beep({ item }: Props) {
       }
     >
       <XStack alignItems="center" mb="$2">
-        <Avatar size="$4" mr="$2" url={otherUser.photo} />
+        <Avatar size="sm" src={otherUser.photo ?? undefined} className="mr-2" />
         <Stack flexShrink={1}>
-          <Text fontWeight="bold">
-            {otherUser.name}
-          </Text>
+          <Text fontWeight="bold">{otherUser.name}</Text>
           <Text color="$gray10">
             {`${isRider ? "Ride" : "Beep"} - ${new Date(
-              item.start as string
+              item.start as string,
             ).toLocaleString()}`}
           </Text>
         </Stack>
@@ -59,18 +57,27 @@ export function Beep({ item }: Props) {
           borderRadius="$4"
           px="$1.5"
         >
-          <Text textTransform="capitalize" color="white" fontWeight="bold" fontSize="$2">{item.status}</Text>
+          <Text
+            textTransform="capitalize"
+            color="white"
+            fontWeight="bold"
+            fontSize="$2"
+          >
+            {item.status}
+          </Text>
         </Card>
       </XStack>
       <Stack>
         <Text>
-          <Text fontWeight="bold">Group size</Text> <Text>{item.groupSize}</Text>
+          <Text fontWeight="bold">Group size</Text>{" "}
+          <Text>{item.groupSize}</Text>
         </Text>
         <Text>
           <Text fontWeight="bold">Pick Up</Text> <Text>{item.origin}</Text>
         </Text>
         <Text>
-          <Text fontWeight="bold">Drop Off</Text> <Text>{item.destination}</Text>
+          <Text fontWeight="bold">Drop Off</Text>{" "}
+          <Text>{item.destination}</Text>
         </Text>
       </Stack>
     </Card>

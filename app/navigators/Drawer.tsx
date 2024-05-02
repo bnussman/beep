@@ -87,7 +87,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               </Text>
               <Text color="subtle">@{user?.username}</Text>
             </View>
-            <Avatar size="$4.5" url={user?.photo} />
+            <Avatar src={user?.photo ?? undefined} />
           </View>
         </Pressable>
         <View className="flex gap-3">
