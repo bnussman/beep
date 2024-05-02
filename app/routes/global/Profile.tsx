@@ -124,7 +124,7 @@ export function ProfileScreen({ route }: Props) {
               <Text color="$gray10">@{data.getUser.username}</Text>
             </Stack>
             <Stack flexGrow={1} />
-            <Avatar url={data.getUser.photo} />
+            <Avatar src={data.getUser.photo ?? undefined} />
           </XStack>
         </Card>
         <Card p="$3">
