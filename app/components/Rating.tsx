@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Card, XStack, Stack, Text } from "@beep/ui";
+import { Card } from "@/components/Card";
+import { Text } from "@/components/Text";
 import { useUser } from "../utils/useUser";
-import { Avatar } from "./Avatar";
+import { Avatar } from "@/components/Avatar";
 import { printStars } from "./Stars";
 import { Unpacked, isMobile } from "../utils/constants";
-import { Alert } from "react-native";
+import { Alert, View } from "react-native";
 import { useMutation } from "@apollo/client";
 import { ResultOf, graphql } from "gql.tada";
 import { Ratings } from "../routes/Ratings";
@@ -69,22 +70,20 @@ export function Rating(props: Props) {
 
   return (
     <Card
-      mt="$2"
-      mx="$2"
-      p="$3"
-      pressTheme
-      hoverTheme
+      variant="outlined"
+      className="p-4 mb-2"
+      pressable
       onPress={() =>
         navigation.navigate("User", { id: otherUser.id, beepId: item.beep.id })
       }
       onLongPress={onLongPress}
     >
-      <Stack gap="$2">
-        <XStack alignItems="center" gap="$2">
-          <Avatar size="sm" src={otherUser.photo ?? undefined} />
-          <Stack flexShrink={1}>
-            <Text fontWeight="bold">{otherUser.name}</Text>
-            <Text color="$gray8">
+      <View className="flex flex-row items-center justify-between">
+        <View className="flex flex-row items-center gap-2">
+          <Avatar size="xs" src={otherUser.photo ?? undefined} />
+          <View className="flex-shrink">
+            <Text weight="bold">{otherUser.name}</Text>
+            <Text color="subtle" size="sm">
               {`${isRater ? "You rated" : "Rated you"} - ${new Date(
                 item.timestamp as string,
               ).toLocaleString(undefined, {
@@ -92,12 +91,11 @@ export function Rating(props: Props) {
                 timeStyle: "short",
               })}`}
             </Text>
-          </Stack>
-          <Stack flexGrow={1} />
-          <Text>{printStars(item.stars)}</Text>
-        </XStack>
-        {item.message && <Text>{item.message}</Text>}
-      </Stack>
+          </View>
+        </View>
+        <Text>{printStars(item.stars)}</Text>
+      </View>
+      {item.message && <Text>{item.message}</Text>}
     </Card>
   );
 }

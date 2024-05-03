@@ -1,4 +1,4 @@
-import { VariantProps, cva, cx } from "class-variance-authority";
+import { VariantProps, cva } from "class-variance-authority";
 import React from "react";
 import { Pressable, PressableProps } from "react-native";
 

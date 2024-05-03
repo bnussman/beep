@@ -24,7 +24,7 @@ export const beepStatusMap: Record<Status, string> = {
   [Status.HERE]: "bg-green-500 dark:bg-green-500",
   [Status.DENIED]: "bg-red-500 dark:bg-red-400",
   [Status.CANCELED]: "bg-red-500 dark:bg-red-400",
-  [Status.COMPLETE]: "bg-green-500 dark:bg-green-600",
+  [Status.COMPLETE]: "bg-green-500 dark:bg-green-500",
 };
 
 export function Beep({ item }: Props) {

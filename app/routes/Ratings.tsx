@@ -6,12 +6,7 @@ import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
-import {
-  Text,
-  Spinner,
-  Heading,
-  Stack,
-} from "@beep/ui";
+import { Text, Spinner, Heading, Stack } from "@beep/ui";
 
 export const Ratings = graphql(`
   query GetRatings($id: String, $offset: Int, $show: Int) {
@@ -44,11 +39,10 @@ export function RatingsScreen() {
   const { user } = useUser();
   const colorMode = useColorScheme();
 
-  const { data, loading, error, fetchMore, refetch } =
-    useQuery(Ratings, {
-      variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
-      notifyOnNetworkStatusChange: true,
-    });
+  const { data, loading, error, fetchMore, refetch } = useQuery(Ratings, {
+    variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
+    notifyOnNetworkStatusChange: true,
+  });
 
   const ratings = data?.getRatings.items;
   const count = data?.getRatings.count || 0;
@@ -121,6 +115,7 @@ export function RatingsScreen() {
   return (
     <Container>
       <FlatList
+        className="p-2"
         data={ratings}
         renderItem={(data) => <Rating {...data} />}
         keyExtractor={(rating) => rating.id}

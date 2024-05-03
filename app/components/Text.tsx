@@ -23,7 +23,7 @@ export const text = cva(["text-black", "dark:text-white"], {
       black: ["font-black"],
     },
     color: {
-      subtle: ["text-slate-600", "dark:text-gray-500"],
+      subtle: ["text-slate-600", "dark:text-neutral-400"],
       error: ["text-red-600", "dark:text-red-400"],
     },
   },

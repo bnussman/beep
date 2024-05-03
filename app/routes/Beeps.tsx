@@ -128,7 +128,7 @@ export function BeepsScreen() {
     <Container>
       <FlatList
         data={beeps}
-        className="px-2 pt-2"
+        className="p-2"
         renderItem={(data) => <Beep {...data} />}
         keyExtractor={(beep) => beep.id}
         onEndReached={getMore}
