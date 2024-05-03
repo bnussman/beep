@@ -1,12 +1,17 @@
 import React from "react";
-import { FlatList, RefreshControl, useColorScheme } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  useColorScheme,
+  View,
+} from "react-native";
 import { useQuery } from "@apollo/client";
-import { Container } from "../components/Container";
+import { Text } from "@/components/Text";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
-import { Spinner, Text, Heading, Stack } from "@beep/ui";
 
 export const GetBeepHistory = graphql(`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -85,41 +90,43 @@ export function BeepsScreen() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Stack ai="center" jc="center">
-        <Spinner />
-      </Stack>
+      <View className="flex items-center justify-center p-4">
+        <ActivityIndicator />
+      </View>
     );
   };
 
   if (loading && !beeps) {
     return (
-      <Container center>
-        <Spinner />
-      </Container>
+      <View className="flex items-center justify-center h-full">
+        <ActivityIndicator size="large" />
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container center>
+      <View className="flex items-center justify-center h-full">
         <Text>{error.message}</Text>
-      </Container>
+      </View>
     );
   }
 
   if (beeps?.length === 0) {
     return (
-      <Container center>
-        <Heading fontWeight="bold">No Beeps</Heading>
+      <View className="flex items-center justify-center h-full">
+        <Text size="3xl" weight="black">
+          No Beeps
+        </Text>
         <Text>You have no previous beeps to display</Text>
-      </Container>
+      </View>
     );
   }
 
   return (
     <FlatList
       data={beeps}
-      className="px-2 pt-3"
+      className="px-2 pt-2"
       renderItem={(data) => <Beep {...data} />}
       keyExtractor={(beep) => beep.id}
       onEndReached={getMore}

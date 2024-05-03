@@ -7,6 +7,7 @@ import { VariantProps, cva } from "class-variance-authority";
 export const avatar = cva(["rounded-full"], {
   variants: {
     size: {
+      xs: "!size-12",
       sm: "!size-14",
       md: "!size-16",
       lg: "!size-20",
