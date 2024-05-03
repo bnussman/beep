@@ -43,11 +43,13 @@ export function BeepsScreen() {
   const { user } = useUser();
   const colorMode = useColorScheme();
 
-  const { data, loading, error, fetchMore, refetch } =
-    useQuery(GetBeepHistory, {
+  const { data, loading, error, fetchMore, refetch } = useQuery(
+    GetBeepHistory,
+    {
       variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
-    });
+    },
+  );
 
   const beeps = data?.getBeeps.items;
   const count = data?.getBeeps.count || 0;
@@ -84,7 +86,7 @@ export function BeepsScreen() {
 
     return (
       <Stack ai="center" jc="center">
-        <Spinner  />
+        <Spinner />
       </Stack>
     );
   };
@@ -115,22 +117,21 @@ export function BeepsScreen() {
   }
 
   return (
-    <Container>
-      <FlatList
-        data={beeps}
-        renderItem={(data) => <Beep {...data} />}
-        keyExtractor={(beep) => beep.id}
-        onEndReached={getMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter()}
-        refreshControl={
-          <RefreshControl
-            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={isRefreshing}
-            onRefresh={refetch}
-          />
-        }
-      />
-    </Container>
+    <FlatList
+      data={beeps}
+      className="px-2 pt-3"
+      renderItem={(data) => <Beep {...data} />}
+      keyExtractor={(beep) => beep.id}
+      onEndReached={getMore}
+      onEndReachedThreshold={0.1}
+      ListFooterComponent={renderFooter()}
+      refreshControl={
+        <RefreshControl
+          tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+          refreshing={isRefreshing}
+          onRefresh={refetch}
+        />
+      }
+    />
   );
 }

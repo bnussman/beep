@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Card, XStack, Stack, Text } from "@beep/ui";
+import { XStack, Stack, Text } from "@beep/ui";
+import { Card } from "@/components/Card";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { Unpacked } from "../utils/constants";
@@ -32,11 +33,7 @@ export function Beep({ item }: Props) {
 
   return (
     <Card
-      mt="$2"
-      mx="$2"
-      p="$4"
-      pressTheme
-      hoverTheme
+      className="mb-2 p-4"
       onPress={() =>
         navigation.navigate("User", { id: otherUser.id, beepId: item.id })
       }
