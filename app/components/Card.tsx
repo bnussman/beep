@@ -1,21 +1,30 @@
-import { cx } from "class-variance-authority";
+import { VariantProps, cva, cx } from "class-variance-authority";
 import React from "react";
 import { Pressable, PressableProps } from "react-native";
 
-export function Card(props: PressableProps) {
-  const { className, ...rest } = props;
+export const card = cva(
+  "rounded-lg dark:bg-neutral-900 dark:border-neutral-800",
+  {
+    variants: {
+      variant: {
+        outlined: "border-[2px] border-gray-100",
+        filled: null,
+      },
+      pressable: {
+        true: "actie:bg-neutral-50 dark:active:bg-neutral-800",
+      },
+    },
+    defaultVariants: {
+      variant: "filled",
+    },
+  },
+);
+
+interface Props extends PressableProps, VariantProps<typeof card> {}
+
+export function Card(props: Props) {
+  const { className, pressable, variant, ...rest } = props;
   return (
-    <Pressable
-      className={cx(
-        "rounded-lg border-[2px] border-gray-100 dark:bg-neutral-900 dark:border-neutral-800",
-        {
-          "active:bg-gray-50 dark:active:bg-neutral-800": Boolean(
-            props.onPress,
-          ),
-        },
-        className,
-      )}
-      {...rest}
-    />
+    <Pressable className={card({ className, pressable, variant })} {...rest} />
   );
 }

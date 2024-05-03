@@ -12,6 +12,7 @@ import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
+import { Container } from "@/components/Container";
 
 export const GetBeepHistory = graphql(`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -98,47 +99,49 @@ export function BeepsScreen() {
 
   if (loading && !beeps) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <Container center>
         <ActivityIndicator size="large" />
-      </View>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <Container center>
         <Text>{error.message}</Text>
-      </View>
+      </Container>
     );
   }
 
   if (beeps?.length === 0) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <Container center>
         <Text size="3xl" weight="black">
           No Beeps
         </Text>
         <Text>You have no previous beeps to display</Text>
-      </View>
+      </Container>
     );
   }
 
   return (
-    <FlatList
-      data={beeps}
-      className="px-2 pt-2"
-      renderItem={(data) => <Beep {...data} />}
-      keyExtractor={(beep) => beep.id}
-      onEndReached={getMore}
-      onEndReachedThreshold={0.1}
-      ListFooterComponent={renderFooter()}
-      refreshControl={
-        <RefreshControl
-          tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-          refreshing={isRefreshing}
-          onRefresh={refetch}
-        />
-      }
-    />
+    <Container>
+      <FlatList
+        data={beeps}
+        className="px-2 pt-2"
+        renderItem={(data) => <Beep {...data} />}
+        keyExtractor={(beep) => beep.id}
+        onEndReached={getMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooter()}
+        refreshControl={
+          <RefreshControl
+            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+            refreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        }
+      />
+    </Container>
   );
 }

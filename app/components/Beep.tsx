@@ -3,8 +3,8 @@ import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
+import { Avatar } from "@/components/Avatar";
 import { useUser } from "../utils/useUser";
-import { Avatar } from "./Avatar";
 import { Unpacked } from "../utils/constants";
 import { Status } from "../utils/types";
 import { ResultOf } from "gql.tada";
@@ -24,7 +24,7 @@ export const beepStatusMap: Record<Status, string> = {
   [Status.HERE]: "bg-green-500 dark:bg-green-500",
   [Status.DENIED]: "bg-red-500 dark:bg-red-400",
   [Status.CANCELED]: "bg-red-500 dark:bg-red-400",
-  [Status.COMPLETE]: "bg-green-500 dark:bg-green-500",
+  [Status.COMPLETE]: "bg-green-500 dark:bg-green-600",
 };
 
 export function Beep({ item }: Props) {
@@ -36,6 +36,8 @@ export function Beep({ item }: Props) {
   return (
     <Card
       className="mb-2 p-4 gap-1"
+      variant="outlined"
+      pressable
       onPress={() =>
         navigation.navigate("User", { id: otherUser.id, beepId: item.id })
       }
