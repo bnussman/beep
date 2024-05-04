@@ -10,6 +10,7 @@ import { Alert, View } from "react-native";
 import { useMutation } from "@apollo/client";
 import { ResultOf, graphql } from "gql.tada";
 import { Ratings } from "../routes/Ratings";
+import * as ContextMenu from "zeego/context-menu";
 
 type Rating = Unpacked<ResultOf<typeof Ratings>["getRatings"]["items"]>;
 
@@ -49,53 +50,45 @@ export function Rating(props: Props) {
     },
   });
 
-  const onLongPress = () => {
-    if (isMobile) {
-      Alert.alert(
-        "Delete Rating?",
-        "Are you sure you want to delete this rating?",
-        [
-          {
-            text: "No",
-            style: "cancel",
-          },
-          { text: "Yes", onPress: () => deleteRating() },
-        ],
-        { cancelable: true },
-      );
-    } else {
-      deleteRating();
-    }
-  };
-
   return (
-    <Card
-      variant="outlined"
-      className="p-4 mb-2"
-      pressable
-      onPress={() =>
-        navigation.navigate("User", { id: otherUser.id, beepId: item.beep.id })
-      }
-      onLongPress={onLongPress}
-    >
-      <View className="flex flex-row items-center justify-between">
-        <View className="flex flex-row items-center gap-2">
-          <Avatar size="xs" src={otherUser.photo ?? undefined} />
-          <View className="flex-shrink">
-            <Text weight="bold">{otherUser.name}</Text>
-            <Text color="subtle" size="sm">
-              {`${isRater ? "You rated" : "Rated you"} - ${new Date(
-                item.timestamp as string,
-              ).toLocaleString(undefined, {
-                dateStyle: "short",
-                timeStyle: "short",
-              })}`}
-            </Text>
+    <ContextMenu.Root>
+      <ContextMenu.Trigger action="press">
+        <Card variant="outlined" pressable className="p-4 mb-2 flex gap-4">
+          <View className="flex flex-row items-center justify-between">
+            <View className="flex flex-row items-center gap-2">
+              <Avatar size="xs" src={otherUser.photo ?? undefined} />
+              <View className="flex-shrink">
+                <Text weight="bold">{otherUser.name}</Text>
+                <Text color="subtle" size="sm">
+                  {`${isRater ? "You rated" : "Rated you"} - ${new Date(
+                    item.timestamp as string,
+                  ).toLocaleString(undefined, {
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  })}`}
+                </Text>
+              </View>
+            </View>
+            <Text>{printStars(item.stars)}</Text>
           </View>
-        </View>
-        <Text>{printStars(item.stars)}</Text>
-      </View>
-      {item.message && <Text>{item.message}</Text>}
-    </Card>
+          {item.message && <Text>{item.message}</Text>}
+        </Card>
+      </ContextMenu.Trigger>
+      <ContextMenu.Content>
+        <ContextMenu.Item
+          key="Profile"
+          onSelect={() => navigation.navigate("User", { id: otherUser.id })}
+        >
+          <ContextMenu.ItemTitle>View Profile</ContextMenu.ItemTitle>
+        </ContextMenu.Item>
+        <ContextMenu.Item
+          key="delete-rating"
+          onSelect={deleteRating}
+          destructive
+        >
+          <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>
+        </ContextMenu.Item>
+      </ContextMenu.Content>
+    </ContextMenu.Root>
   );
 }

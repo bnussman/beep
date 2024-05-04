@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
-import { Button, Input, Label, Spinner, Stack } from "@beep/ui";
+import { Label, Spinner, Stack } from "@beep/ui";
+import { Input } from "@/components/Input";
+import { Button } from "@/components/Button";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/alert";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { GetUser } from "./Profile";
-import { graphql } from 'gql.tada';
+import { graphql } from "gql.tada";
 
 export const RateUser = graphql(`
   mutation RateUser(
@@ -27,7 +29,7 @@ export const RateUser = graphql(`
   }
 `);
 
-type Props = StaticScreenProps<{ userId: string, beepId: string }>;
+type Props = StaticScreenProps<{ userId: string; beepId: string }>;
 
 export function RateScreen({ route }: Props) {
   const [stars, setStars] = useState<number>(0);
@@ -36,8 +38,8 @@ export function RateScreen({ route }: Props) {
 
   const { data } = useQuery(GetUser, {
     variables: {
-      id: route.params.userId
-    }
+      id: route.params.userId,
+    },
   });
 
   const { goBack } = useNavigation();
@@ -65,27 +67,32 @@ export function RateScreen({ route }: Props) {
   return (
     <Container keyboard p="$4">
       <Stack gap="$4" w="full">
-        {user &&
+        {user && (
           <UserHeader
             username={user.username}
             name={user.name}
             picture={user.photo}
           />
-        }
+        )}
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
         <Stack>
-          <Label htmlFor="message" fontWeight="bold">Message (optional)</Label>
+          <Label htmlFor="message" fontWeight="bold">
+            Message (optional)
+          </Label>
           <Input
-            h={100}
-            multiline={true}
-            placeholder="Your rating message goes here"
+            multiline
+            className="h-24"
             returnKeyType="go"
             onChangeText={(text) => setMessage(text)}
             onSubmitEditing={onSubmit}
             blurOnSubmit={true}
           />
         </Stack>
-        <Button onPress={onSubmit} disabled={stars < 1} iconAfter={loading ? <Spinner /> : undefined}>
+        <Button
+          onPress={onSubmit}
+          disabled={stars < 1}
+          iconAfter={loading ? <Spinner /> : undefined}
+        >
           Rate User
         </Button>
       </Stack>
