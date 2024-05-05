@@ -117,6 +117,9 @@ export function RatingsScreen() {
       <FlatList
         className="p-2"
         data={ratings}
+        contentContainerStyle={{
+          gap: 6
+        }}
         renderItem={(data) => <Rating {...data} />}
         keyExtractor={(rating) => rating.id}
         onEndReached={getMore}

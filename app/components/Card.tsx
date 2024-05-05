@@ -3,7 +3,7 @@ import React from "react";
 import { Pressable, PressableProps } from "react-native";
 
 export const card = cva(
-  "rounded-lg dark:bg-neutral-900 dark:border-neutral-800",
+  "rounded-lg bg-white dark:bg-neutral-900 dark:border-neutral-800",
   {
     variants: {
       variant: {

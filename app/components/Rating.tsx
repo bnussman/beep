@@ -53,7 +53,7 @@ export function Rating(props: Props) {
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger action="press">
-        <Card variant="outlined" pressable className="p-4 mb-2 flex gap-4">
+        <Card variant="outlined" pressable className="p-4 flex gap-4">
           <View className="flex flex-row items-center justify-between">
             <View className="flex flex-row items-center gap-2">
               <Avatar size="xs" src={otherUser.photo ?? undefined} />
