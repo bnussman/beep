@@ -98,7 +98,6 @@ export function Login() {
             <HStack>
               <Button
                 type="submit"
-                onClick={handleLogin}
                 isLoading={loading}
                 isDisabled={!username || !password}
                 textColor="white"
