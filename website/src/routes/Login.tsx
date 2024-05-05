@@ -87,7 +87,7 @@ export function Login() {
             <FormControl>
               <FormLabel>Username or Email</FormLabel>
               <Input
-                type="email"
+                type="text"
                 onChange={(value: any) => setUsername(value.target.value)}
               />
             </FormControl>
