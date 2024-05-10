@@ -88,12 +88,12 @@ export function Login() {
               <FormLabel>Username or Email</FormLabel>
               <Input
                 type="text"
-                onChange={(value: any) => setUsername(value.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </FormControl>
             <FormControl mt={2}>
               <FormLabel>Password</FormLabel>
-              <PasswordInput onChange={(value: any) => setPassword(value.target.value)} />
+              <PasswordInput onChange={(e) => setPassword(e.target.value)} />
             </FormControl>
             <HStack>
               <Button
