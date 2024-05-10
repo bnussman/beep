@@ -1,5 +1,5 @@
 import { VariantProps, cva } from "class-variance-authority";
-import { Pressable, PressableProps } from "react-native";
+import { Pressable, PressableProps, ActivityIndicator } from "react-native";
 import { Text } from "./Text";
 
 export const button = cva(
@@ -12,14 +12,16 @@ export const button = cva(
   },
 );
 
-interface Props extends PressableProps, VariantProps<typeof button> {}
+interface Props extends PressableProps, VariantProps<typeof button> {
+  isLoading?: boolean;
+}
 
 export function Button(props: Props) {
-  const { className, children, ...rest } = props;
+  const { className, children, isLoading, ...rest } = props;
 
   return (
     <Pressable className={button({ className })} {...rest}>
-      {typeof children === "string" ? (
+      {isLoading ? <ActivityIndicator /> : typeof children === "string" ? (
         <Text weight="bold">{children}</Text>
       ) : (
         children

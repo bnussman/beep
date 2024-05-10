@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { RateBar } from "../../components/Rate";
 import { UserHeader } from "../../components/UserHeader";
-import { Label, Spinner, Stack } from "@beep/ui";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
+import { Text } from "@/components/Text";
 import { Container } from "../../components/Container";
 import { Alert } from "../../utils/alert";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { View } from 'react-native';
 import { GetUser } from "./Profile";
 import { graphql } from "gql.tada";
 
@@ -66,7 +67,7 @@ export function RateScreen({ route }: Props) {
 
   return (
     <Container keyboard p="$4">
-      <Stack gap="$4" w="full">
+      <View className="gap-4">
         {user && (
           <UserHeader
             username={user.username}
@@ -75,27 +76,25 @@ export function RateScreen({ route }: Props) {
           />
         )}
         <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-        <Stack>
-          <Label htmlFor="message" fontWeight="bold">
-            Message (optional)
-          </Label>
-          <Input
-            multiline
-            className="h-24"
-            returnKeyType="go"
-            onChangeText={(text) => setMessage(text)}
-            onSubmitEditing={onSubmit}
-            blurOnSubmit={true}
-          />
-        </Stack>
+        <Text>
+          Message (optional)
+        </Text>
+        <Input
+          multiline
+          className="h-24"
+          returnKeyType="go"
+          onChangeText={(text) => setMessage(text)}
+          onSubmitEditing={onSubmit}
+          blurOnSubmit={true}
+        />
         <Button
           onPress={onSubmit}
           disabled={stars < 1}
-          iconAfter={loading ? <Spinner /> : undefined}
+          isLoading={loading}
         >
           Rate User
         </Button>
-      </Stack>
+      </View>
     </Container>
   );
 }
