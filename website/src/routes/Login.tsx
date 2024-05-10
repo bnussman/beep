@@ -87,7 +87,7 @@ export function Login() {
             <FormControl>
               <FormLabel>Username or Email</FormLabel>
               <Input
-                type="email"
+                type="text"
                 onChange={(value: any) => setUsername(value.target.value)}
               />
             </FormControl>
@@ -98,7 +98,6 @@ export function Login() {
             <HStack>
               <Button
                 type="submit"
-                onClick={handleLogin}
                 isLoading={loading}
                 isDisabled={!username || !password}
                 textColor="white"
