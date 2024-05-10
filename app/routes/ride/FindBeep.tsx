@@ -293,14 +293,33 @@ export function MainFindBeepScreen() {
           </Label>
           <Controller
             name="groupSize"
-            rules={{ required: "Group size is required" }}
+            rules={{
+              required: "Group size is required",
+              validate: (value) => {
+                if (value > 100) {
+                  return "Too large";
+                }
+                if (value < 1) {
+                  return "Too small";
+                }
+                return true;
+              },
+            }}
             control={control}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <Input
                 id="groupSize"
                 keyboardType="numeric"
                 onBlur={onBlur}
-                onChangeText={(val) => onChange(val === "" ? "" : Number(val))}
+                onChangeText={(value) => {
+                  if (value === "") {
+                    onChange("");
+                  } else if (value.length > 3) {
+                    onChange(Number(value.substring(0, 3)));
+                  } else {
+                    onChange(Number(value));
+                  }
+                }}
                 value={value === undefined ? "" : String(value)}
                 ref={ref}
                 returnKeyLabel="next"
