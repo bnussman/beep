@@ -250,9 +250,7 @@ export function Cars() {
               </Stack>
               <Stack flexGrow={1} />
               <Image
-                borderRadius="$4"
-                w="$12"
-                h="$8"
+                className="rounded-lg w-32 h-20"
                 source={{ uri: car.photo }}
                 alt={`car-${car.id}`}
               />

@@ -69,8 +69,8 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
       "Beeper is getting ready to come get you. They will be on the way soon.",
     ),
   ).toBeVisible();
-  await expect(riderPage.getByText("Call Beeper")).toBeVisible();
-  await expect(riderPage.getByText("Text Beeper")).toBeVisible();
+  await expect(riderPage.getByText("Call")).toBeVisible();
+  await expect(riderPage.getByText("Text")).toBeVisible();
   await expect(riderPage.getByText("Pay with Venmo")).toBeVisible();
   await expect(riderPage.getByText("Share Venmo")).toBeVisible();
 
