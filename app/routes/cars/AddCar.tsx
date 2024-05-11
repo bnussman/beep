@@ -1,32 +1,25 @@
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import * as DropdownMenu from "zeego/dropdown-menu";
-import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
 import { ApolloError, useMutation } from "@apollo/client";
 import { useForm, Controller } from "react-hook-form";
-import { isMobile } from "../../utils/constants";
+import { isMobile } from "@/utils/constants";
+import { Label } from "@/components/Label";
+import { Input } from "@/components/Input";
+import { Image } from "@/components/Image";
+import { Button } from "@/components/Button";
+import { Text } from "@/components/Text";
 import { generateRNFile } from "../settings/EditProfile";
 import { CarsQuery } from "./Cars";
 import { getMakes, getModels } from "car-info";
 import { colors, years } from "./utils";
 import { VariablesOf, graphql } from "../../graphql";
-import { Pressable } from "react-native";
-import { Plus } from "@tamagui/lucide-icons";
+import { Pressable, View } from "react-native";
 import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import {
-  Image,
-  Stack,
-  Button,
-  Text,
-  Select,
-  Spinner,
-  Label,
-  Input,
-} from "@beep/ui";
 
 const makes = getMakes();
 
@@ -130,175 +123,163 @@ export function AddCar() {
   });
 
   return (
-    <Container px="$4">
-      <Stack>
-        <Controller
-          name="make"
-          rules={{ required: "Make is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                <Stack>
-                  <Label fontWeight="bold">Make</Label>
-                  <Input disabled value={value} placeholder="Select a make" />
-                </Stack>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {getMakes().map((make) => (
-                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator />
-                <DropdownMenu.Arrow />
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          )}
-        />
-        <Text color="red">
-          {errors.make?.message}
-          {validationErrors?.make?.[0]}
-        </Text>
-        <Controller
-          name="model"
-          rules={{ required: "Model is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                <Stack>
-                  <Label fontWeight="bold">Model</Label>
-                  <Input disabled value={value} placeholder="Select a model" />
-                </Stack>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {getModels(make).map((make) => (
-                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator />
-                <DropdownMenu.Arrow />
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          )}
-        />
-        <Text color="red">
-          {errors.model?.message}
-          {validationErrors?.model?.[0]}
-        </Text>
-        <Controller
-          name="year"
-          rules={{ required: "Year is required" }}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                <Stack>
-                  <Label fontWeight="bold">Year</Label>
-                  <Input
-                    disabled
-                    value={value ? String(value) : ""}
-                    placeholder="Select a year"
-                  />
-                </Stack>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {years.map((make) => (
-                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator />
-                <DropdownMenu.Arrow />
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          )}
-        />
-        <Text color="red">
-          {errors.year?.message}
-          {validationErrors?.year?.[0]}
-        </Text>
-        <Controller
-          name="color"
-          rules={{ required: "Color is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                <Stack>
-                  <Label fontWeight="bold">Color</Label>
-                  <Input
-                    disabled
-                    value={value ? String(value) : ""}
-                    placeholder="Select a color"
-                  />
-                </Stack>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {colors.map((make) => (
-                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator />
-                <DropdownMenu.Arrow />
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          )}
-        />
-        <Text color="red">
-          {errors.color?.message}
-          {validationErrors?.color?.[0]}
-        </Text>
-        <Stack mt="$4">
-          <Controller
-            name="photo"
-            rules={{ required: "Photo is required" }}
-            control={control}
-            render={() => (
-              <Pressable onPress={choosePhoto}>
-                {photo ? (
-                  <Image
-                    height="$14"
-                    width="100%"
-                    borderRadius="$4"
-                    source={{ uri: photo.uri, width: 300, height: 164 }}
-                    alt="uploaded car image"
-                  />
-                ) : (
-                  <Stack
-                    height="$14"
-                    bg="$gray3"
-                    borderRadius="$4"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Text>Attach a Photo</Text>
-                    <Plus />
-                  </Stack>
-                )}
-              </Pressable>
+    <View className="p-3">
+      <Controller
+        name="make"
+        rules={{ required: "Make is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <View>
+                <Label>Make</Label>
+                <Input readOnly value={value} placeholder="Select a make" />
+              </View>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {makes.map((make) => (
+                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              ))}
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      />
+      <Text color="error">
+        {errors.make?.message}
+        {validationErrors?.make?.[0]}
+      </Text>
+      <Controller
+        name="model"
+        rules={{ required: "Model is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <View>
+                <Label>Model</Label>
+                <Input readOnly value={value} placeholder="Select a model" />
+              </View>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {getModels(make).map((make) => (
+                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              ))}
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      />
+      <Text color="error">
+        {errors.model?.message}
+        {validationErrors?.model?.[0]}
+      </Text>
+      <Controller
+        name="year"
+        rules={{ required: "Year is required" }}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <View>
+                <Label>Year</Label>
+                <Input
+                  readOnly
+                  value={value ? String(value) : ""}
+                  placeholder="Select a year"
+                />
+              </View>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {years.map((make) => (
+                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              ))}
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      />
+      <Text color="error">
+        {errors.year?.message}
+        {validationErrors?.year?.[0]}
+      </Text>
+      <Controller
+        name="color"
+        rules={{ required: "Color is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <View>
+                <Label>Color</Label>
+                <Input
+                  readOnly
+                  value={value ? String(value) : ""}
+                  placeholder="Select a color"
+                />
+              </View>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {colors.map((make) => (
+                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              ))}
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      />
+      <Text color="error">
+        {errors.color?.message}
+        {validationErrors?.color?.[0]}
+      </Text>
+      <Controller
+        name="photo"
+        rules={{ required: "Photo is required" }}
+        control={control}
+        render={() => (
+          <Pressable onPress={choosePhoto} className="mt-4">
+            {photo ? (
+              <Image
+                className="rounded-lg h-48 w-full"
+                source={{ uri: photo.uri }}
+                alt="uploaded car image"
+              />
+            ) : (
+              <View className="rounded-lg h-48 w-full flex items-center justify-center bg-neutral-100 dark:bg-neutral-700">
+                <Text weight="bold">Attach a Photo</Text>
+                <Text size="4xl">📷</Text>
+              </View>
             )}
-          />
-          <Text color="red">
-            {errors.photo?.message}
-            {validationErrors?.photo?.[0]}
-          </Text>
-        </Stack>
-        <Button
-          iconAfter={isSubmitting ? <Spinner /> : undefined}
-          onPress={onSubmit}
-          disabled={isSubmitting}
-          mt="$4"
-        >
-          Add Car
-        </Button>
-      </Stack>
-    </Container>
+          </Pressable>
+        )}
+      />
+      <Text color="error">
+        {errors.photo?.message as string}
+        {validationErrors?.photo?.[0]}
+      </Text>
+      <Button
+        className="my-4"
+        isLoading={isSubmitting}
+        onPress={onSubmit}
+        disabled={isSubmitting}
+      >
+        Add Car
+      </Button>
+    </View>
   );
 }

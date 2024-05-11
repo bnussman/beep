@@ -3,22 +3,19 @@ import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Unpacked } from "../../utils/constants";
-import { FlatList, RefreshControl, useColorScheme } from "react-native";
-import { Container } from "../../components/Container";
-import { Avatar } from "../../components/Avatar";
-import { useLocation } from "../../utils/useLocation";
-import { client } from "../../utils/apollo";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  View,
+} from "react-native";
+import { Avatar } from "@/components/Avatar";
+import { useLocation } from "@/utils/useLocation";
+import { client } from "@/utils/apollo";
 import { InitialRiderStatus } from "./FindBeep";
 import { ResultOf, VariablesOf, graphql } from "gql.tada";
-import { LinearGradient } from "tamagui/linear-gradient";
-import {
-  Text,
-  Spinner,
-  XStack,
-  Stack,
-  Card,
-  Heading
-} from "@beep/ui";
+import { Text } from "@/components/Text";
+import { Card } from "@/components/Card";
 
 const GetBeepers = graphql(`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -96,32 +93,29 @@ export const ChooseBeep = graphql(`
   }
 `);
 
-type Props = StaticScreenProps<Omit<VariablesOf<typeof ChooseBeep>, 'beeperId'>>;
+type Props = StaticScreenProps<
+  Omit<VariablesOf<typeof ChooseBeep>, "beeperId">
+>;
 
 export function PickBeepScreen({ route }: Props) {
-  const colorMode = useColorScheme();
   const { location } = useLocation();
   const navigation = useNavigation();
 
-  const { data, loading, error, refetch } = useQuery(
-    GetBeepers,
-    {
-      variables: {
-        latitude: location?.coords.latitude ?? 0,
-        longitude: location?.coords.longitude ?? 0,
-        radius: 20,
-      },
-      skip: !location,
-      notifyOnNetworkStatusChange: true,
-    }
-  );
-
+  const { data, loading, error, refetch } = useQuery(GetBeepers, {
+    variables: {
+      latitude: location?.coords.latitude ?? 0,
+      longitude: location?.coords.longitude ?? 0,
+      radius: 20,
+    },
+    skip: !location,
+    notifyOnNetworkStatusChange: true,
+  });
 
   const [getBeep, { loading: isPickBeeperLoading }] = useMutation(ChooseBeep);
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => isPickBeeperLoading ? <Spinner /> : null
+      headerRight: () => (isPickBeeperLoading ? <ActivityIndicator /> : null),
     });
   }, [isPickBeeperLoading]);
 
@@ -152,115 +146,103 @@ export function PickBeepScreen({ route }: Props) {
   const beepers = data?.getBeepers;
   const isRefreshing = Boolean(data) && loading;
 
-  const renderItem = ({ item }: { item: Unpacked<ResultOf<typeof GetBeepers>['getBeepers']>; index: number; }) => {
-    const isPremium = item.payments?.some(p => p.productId.startsWith("top_of_beeper_list")) ?? false;
+  const renderItem = ({
+    item,
+  }: {
+    item: Unpacked<ResultOf<typeof GetBeepers>["getBeepers"]>;
+    index: number;
+  }) => {
+    const isPremium =
+      item.payments?.some((p) =>
+        p.productId.startsWith("top_of_beeper_list"),
+      ) ?? false;
 
-    const InnerCard = (
+    return (
       <Card
+        className="p-4"
         onPress={() => chooseBeep(item.id)}
-        hoverTheme
-        pressTheme
-        borderRadius="$4"
-        p="$3"
-        m={isPremium ? "$1" : "$2"}
+        pressable
+        variant="outlined"
       >
-        <XStack alignItems="center" jc="space-between">
-          <Stack flexShrink={1}>
-            <XStack alignItems="center" mb="$2">
-              <Avatar className="mr-2" src={item.photo ?? undefined} />
-              <Stack>
-                <Text fontWeight="bold">
-                  {item.name}
-                </Text>
-                {item.rating && (
-                  <Text fontSize="$2">{printStars(item.rating)}</Text>
-                )}
-              </Stack>
-            </XStack>
-            <Stack>
-              <Text>
-                <Text fontWeight="bold">Rider Capacity </Text>
-                <Text>{item.capacity}</Text>
-              </Text>
-              <Text>
-                <Text fontWeight="bold">Rates </Text>
-                <Text>
-                  ${item.singlesRate} singles / ${item.groupRate} group
-                </Text>
-              </Text>
-            </Stack>
-          </Stack>
-          <XStack gap="$3" ai="center">
-            <Heading fontSize="$9" lineHeight="$9" fontWeight="bold">
-              {item.queueSize}
-            </Heading>
-            <Text fontWeight="bold">rider{item.queueSize === 1 ? "" : "s"}</Text>
-          </XStack>
-        </XStack>
+        <View className="flex flex-row items-center mb-4">
+          <View className="flex-grow flex-wrap">
+            <Text size="2xl" weight="black">
+              {item.name}
+            </Text>
+            {item.rating && <Text size="xs">{printStars(item.rating)}</Text>}
+          </View>
+          <Text
+            size="lg"
+            className="shadow-xl opacity-100 shadow-yellow-400 mr-4"
+            style={{
+              shadowRadius: 10,
+              shadowColor: "#f5db73",
+              shadowOpacity: 1,
+            }}
+          >
+            👑
+          </Text>
+          <Avatar size="sm" className="mr-2" src={item.photo ?? undefined} />
+        </View>
+        <Text>
+          <Text weight="bold">Rider Capacity </Text>
+          <Text>{item.capacity}</Text>
+        </Text>
+        <Text>
+          <Text weight="bold">Rates </Text>
+          <Text>
+            ${item.singlesRate} singles / ${item.groupRate} group
+          </Text>
+        </Text>
+        <Text>
+          <Text weight="bold">Queue Size </Text>
+          <Text>
+            {item.queueSize} rider{item.queueSize === 1 ? "" : "s"}
+          </Text>
+        </Text>
       </Card>
     );
-
-    if (isPremium) {
-      return (
-        <LinearGradient
-          colors={['$pink10', '$yellow10']}
-          start={[0, 0]}
-          end={[1, 0]}
-          borderRadius="$4"
-          m="$2"
-        >
-          {InnerCard}
-        </LinearGradient>
-      )
-    }
-
-    return InnerCard;
   };
 
   if ((!data && loading) || location === undefined) {
     return (
-      <Container alignItems="center" justifyContent="center">
-        <Spinner />
-      </Container>
+      <View className="flex items-center justify-center h-full">
+        <ActivityIndicator />
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container alignItems="center" justifyContent="center">
-        <Heading>Error</Heading>
+      <View className="flex items-center justify-center h-full">
+        <Text weight="black">Error</Text>
         <Text>{error.message}</Text>
-      </Container>
+      </View>
     );
   }
 
   return (
-    <Container h="100%">
-      <FlatList
-        data={beepers}
-        renderItem={renderItem}
-        keyExtractor={(beeper) => beeper.id}
-        contentContainerStyle={
-          beepers?.length === 0
-            ? { flex: 1, alignItems: "center", justifyContent: "center" }
-            : undefined
-        }
-        ListEmptyComponent={
-          <>
-            <Heading fontWeight="bold" key="title">Nobody is beeping</Heading>
-            <Text key="message">
-              There are no drivers within 20 miles of you
-            </Text>
-          </>
-        }
-        refreshControl={
-          <RefreshControl
-            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={isRefreshing}
-            onRefresh={refetch}
-          />
-        }
-      />
-    </Container>
+    <FlatList
+      contentContainerClassName="p-3"
+      data={beepers}
+      renderItem={renderItem}
+      keyExtractor={(beeper) => beeper.id}
+      contentContainerStyle={
+        beepers?.length === 0
+          ? { flex: 1, alignItems: "center", justifyContent: "center" }
+          : undefined
+      }
+      ListEmptyComponent={
+        <>
+          <Text weight="black" size="2xl" key="title">
+            Nobody is beeping
+          </Text>
+          <Text key="message">There are no drivers within 20 miles of you</Text>
+        </>
+      }
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+      }
+    />
   );
 }

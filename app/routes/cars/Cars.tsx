@@ -1,29 +1,22 @@
 import React, { useLayoutEffect } from "react";
 import { Plus } from "@tamagui/lucide-icons";
-import { Container } from "../../components/Container";
 import { useNavigation } from "@react-navigation/native";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
-  useColorScheme,
 } from "react-native";
-import { isMobile, PAGE_SIZE, Unpacked } from "../../utils/constants";
-import { Image } from "../../components/Image";
-import { useUser } from "../../utils/useUser";
-import { Alert } from "react-native";
-import { cache } from "../../utils/apollo";
-import { ResultOf, graphql } from "gql.tada";
-import {
-  Heading,
-  Spinner,
-  Text,
-  Stack,
-  XStack,
-  Card,
-  ThemeName,
-} from "@beep/ui";
+import { PAGE_SIZE } from "@/utils/constants";
+import { useUser } from "@/utils/useUser";
+import { Image } from "@/components/Image";
+import { View } from "react-native";
+import { Text } from "@/components/Text";
+import { Card } from "@/components/Card";
+import { cache } from "@/utils/apollo";
+import { graphql } from "gql.tada";
+import * as ContextMenu from "zeego/context-menu";
 
 export const DeleteCar = graphql(`
   mutation DeleteCar($id: String!) {
@@ -59,7 +52,6 @@ export const CarsQuery = graphql(`
 
 export function Cars() {
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
   const { user } = useUser();
 
   const { data, loading, error, refetch, fetchMore } = useQuery(CarsQuery, {
@@ -67,7 +59,7 @@ export function Cars() {
     notifyOnNetworkStatusChange: true,
   });
 
-  const [_deleteCar] = useMutation(DeleteCar);
+  const [deleteCar] = useMutation(DeleteCar);
 
   const [editCar] = useMutation(EditCar);
 
@@ -105,43 +97,20 @@ export function Cars() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Stack ai="center" jc="center" p="$4">
-        <Spinner />
-      </Stack>
+      <View className="flex items-center p-4">
+        <ActivityIndicator />
+      </View>
     );
   };
 
-  const onLongPress = (
-    car: Unpacked<ResultOf<typeof CarsQuery>["getCars"]["items"]>,
-  ) => {
-    if (isMobile) {
-      Alert.alert(
-        "Delete Car?",
-        "Are you sure you want to delete this car?",
-        [
-          {
-            text: "No",
-            style: "cancel",
-          },
-          { text: "Yes", onPress: () => deleteCar(car) },
-        ],
-        { cancelable: true },
-      );
-    } else {
-      deleteCar(car);
-    }
-  };
-
-  const deleteCar = (
-    car: Unpacked<ResultOf<typeof CarsQuery>["getCars"]["items"]>,
-  ) => {
-    _deleteCar({
-      variables: { id: car.id },
+  const onDelete = (id: string) => {
+    deleteCar({
+      variables: { id },
       update: (cache) => {
         cache.evict({
           id: cache.identify({
             __typename: "Car",
-            id: car.id,
+            id,
           }),
         });
       },
@@ -173,12 +142,11 @@ export function Cars() {
       headerRight: () => {
         return (
           <Pressable
+            className="pr-3"
             onPress={() => navigation.navigate("Add Car")}
             aria-label="Add a car"
           >
-            <Stack mx="$3">
-              <Plus />
-            </Stack>
+            <Plus />
           </Pressable>
         );
       },
@@ -187,101 +155,90 @@ export function Cars() {
 
   if (!data && loading) {
     return (
-      <Container center>
-        <Spinner />
-      </Container>
+      <View className="h-full flex items-center justify-center">
+        <ActivityIndicator />
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container center>
+      <View className="h-full flex items-center justify-center">
         <Text>{error.message}</Text>
-      </Container>
+      </View>
     );
   }
 
   return (
-    <Container>
-      <FlatList
-        data={cars}
-        renderItem={({ item: car }) => (
-          <Card
-            mt="$2"
-            mx="$2"
-            px="$4"
-            py="$3"
-            pressTheme
-            hoverTheme
-            onLongPress={() => onLongPress(car)}
-            onPress={car.default ? undefined : () => setDefault(car.id)}
-          >
-            <XStack alignItems="center">
-              <Stack gap="$2" flexShrink={1}>
-                <Text
-                  fontWeight="bold"
-                  textTransform="capitalize"
-                  flexWrap="wrap"
-                >
-                  {car.make} {car.model} {car.year}
+    <FlatList
+      data={cars}
+      contentContainerClassName="h-full p-3 gap-2"
+      renderItem={({ item: car }) => (
+        <ContextMenu.Root>
+          <ContextMenu.Trigger action="press">
+            <Card
+              pressable
+              variant="outlined"
+              className="p-4 gap-4 flex flex-row items-center justify-between"
+            >
+              <View className="gap-2 flex-shrink">
+                <Text weight="bold" className="capitalize flex-wrap">
+                  {car.color} {car.make} {car.model} {car.year}
                 </Text>
-                <XStack gap="$2">
+                <View className="flex flex-row flex-wrap gap-2">
                   {car.default && (
-                    <Card borderRadius="$4" backgroundColor="$gray10" px="$2">
-                      <Text fontWeight="bold" color="white">
+                    <Card className="px-2 py-1 !bg-neutral-500">
+                      <Text size="xs" weight="black" className="color-white">
                         Default
                       </Text>
                     </Card>
                   )}
-                  <Card
-                    borderRadius="$4"
-                    px="$2"
-                    backgroundColor={`$${car.color}10`}
-                  >
-                    <Text
-                      textTransform="capitalize"
-                      fontWeight="bold"
-                      color="white"
-                    >
-                      {car.color}
-                    </Text>
-                  </Card>
-                </XStack>
-              </Stack>
-              <Stack flexGrow={1} />
+                </View>
+              </View>
               <Image
                 className="rounded-lg w-32 h-20"
                 source={{ uri: car.photo }}
                 alt={`car-${car.id}`}
               />
-            </XStack>
-          </Card>
-        )}
-        keyExtractor={(car) => car.id}
-        contentContainerStyle={
-          cars?.length === 0
-            ? { flex: 1, alignItems: "center", justifyContent: "center" }
-            : undefined
-        }
-        ListEmptyComponent={
-          <>
-            <Heading fontWeight="bold" key="title">
-              No Cars
-            </Heading>
-            <Text key="message">You have no cars on your account!</Text>
-          </>
-        }
-        onEndReached={getMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter()}
-        refreshControl={
-          <RefreshControl
-            // tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={isRefreshing}
-            onRefresh={refetch}
-          />
-        }
-      />
-    </Container>
+            </Card>
+          </ContextMenu.Trigger>
+          <ContextMenu.Content>
+            <ContextMenu.Item
+              key="make-default"
+              onSelect={() => setDefault(car.id)}
+            >
+              <ContextMenu.ItemTitle>Make Default</ContextMenu.ItemTitle>
+            </ContextMenu.Item>
+            <ContextMenu.Item
+              key="delete-car"
+              onSelect={() => onDelete(car.id)}
+              destructive
+            >
+              <ContextMenu.ItemTitle>Delete Car</ContextMenu.ItemTitle>
+            </ContextMenu.Item>
+          </ContextMenu.Content>
+        </ContextMenu.Root>
+      )}
+      keyExtractor={(car) => car.id}
+      contentContainerStyle={
+        cars?.length === 0
+          ? { flex: 1, alignItems: "center", justifyContent: "center" }
+          : undefined
+      }
+      ListEmptyComponent={
+        <>
+          <Text weight="black" key="title">
+            No Cars
+          </Text>
+          <Text key="message">You have no cars on your account!</Text>
+        </>
+      }
+      onEndReached={getMore}
+      onEndReachedThreshold={0.1}
+      ListFooterComponent={renderFooter()}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+      }
+    />
   );
 }
