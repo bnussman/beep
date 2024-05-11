@@ -28,7 +28,11 @@ export function Button(props: Props) {
   const { className, children, isLoading, variant, ...rest } = props;
 
   return (
-    <Pressable className={button({ className, variant })} {...rest}>
+    <Pressable
+      accessibilityRole="button"
+      className={button({ className, variant })}
+      {...rest}
+    >
       {isLoading ? (
         <ActivityIndicator />
       ) : typeof children === "string" ? (

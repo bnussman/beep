@@ -135,7 +135,7 @@ export function LoginScreen() {
         {errors.username?.message}
         {validationErrors?.username?.[0]}
       </Text>
-      <Text weight="bold" className="my-2">
+      <Text weight="bold" className="my-2" accessibilityRole="label">
         Password
       </Text>
       <Controller
