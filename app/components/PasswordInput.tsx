@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Button, InputProps, XStack, Input } from "@beep/ui";
-import { Eye, EyeOff } from "@tamagui/lucide-icons";
+import { Button } from "./Button";
+import { Input } from "./Input";
+import { TextInputProps, View } from "react-native";
 
-interface Props extends InputProps {
+interface Props extends TextInputProps {
   inputRef: any;
 }
 
@@ -12,18 +13,15 @@ export function PasswordInput({ inputRef, ...props }: Props) {
   const toggleShow = () => setShow((prev) => !prev);
 
   return (
-    <XStack gap="$2">
+    <View className="flex flex-row gap-2">
       <Input
-        flexGrow={1}
+        className="flex-grow"
         ref={inputRef}
         textContentType="password"
         secureTextEntry={!show}
         {...props}
       />
-      <Button
-        onPress={toggleShow}
-        icon={show ? <Eye /> : <EyeOff />}
-      />
-    </XStack>
+      <Button onPress={toggleShow}>{show ? "🙈" : "👁️"}</Button>
+    </View>
   );
 }

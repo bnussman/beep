@@ -1,16 +1,24 @@
-import { sha256 } from 'js-sha256';
-import { sendResetEmail, createVerifyEmailEntryAndSendEmail } from './helpers';
-import { wrap } from '@mikro-orm/core';
-import { PasswordType, User } from '../entities/User';
-import { ForgotPassword } from '../entities/ForgotPassword';
-import { Arg, Authorized, Ctx, Field, Mutation, ObjectType, Resolver } from 'type-graphql';
-import { LoginInput, ResetPasswordInput, SignUpInput } from './args';
-import { Token } from '../entities/Token';
-import { Context } from '../utils/context';
-import { s3 } from '../utils/s3';
-import { password as bunPassword } from 'bun';
-import { S3_BUCKET_URL, isDevelopment } from '../utils/constants';
-import { GraphQLError } from 'graphql';
+import { sha256 } from "js-sha256";
+import { sendResetEmail, createVerifyEmailEntryAndSendEmail } from "./helpers";
+import { wrap } from "@mikro-orm/core";
+import { PasswordType, User } from "../entities/User";
+import { ForgotPassword } from "../entities/ForgotPassword";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Resolver,
+} from "type-graphql";
+import { LoginInput, ResetPasswordInput, SignUpInput } from "./args";
+import { Token } from "../entities/Token";
+import { Context } from "../utils/context";
+import { s3 } from "../utils/s3";
+import { password as bunPassword } from "bun";
+import { S3_BUCKET_URL, isDevelopment } from "../utils/constants";
+import { GraphQLError } from "graphql";
 
 @ObjectType()
 class Auth {
@@ -23,26 +31,40 @@ class Auth {
 
 @Resolver()
 export class AuthResolver {
-
   @Mutation(() => Auth)
-  public async login(@Ctx() ctx: Context, @Arg('input') { username, password, pushToken }: LoginInput): Promise<Auth> {
-    const user = await ctx.em.findOneOrFail(User, { $or: [ { username }, { email: username } ] }, { populate: ['password', 'passwordType'] });
+  public async login(
+    @Ctx() ctx: Context,
+    @Arg("input") { username, password, pushToken }: LoginInput,
+  ): Promise<Auth> {
+    const user = await ctx.em.findOne(
+      User,
+      { $or: [{ username }, { email: username }] },
+      { populate: ["password", "passwordType"] },
+    );
+
+    if (!user) {
+      throw new GraphQLError("User not found or credentials incorrect.");
+    }
 
     let isPasswordCorrect = false;
 
     switch (user.passwordType) {
-      case (PasswordType.SHA256):
+      case PasswordType.SHA256:
         isPasswordCorrect = sha256(password) === user.password;
         break;
-      case (PasswordType.BCRYPT):
-        isPasswordCorrect = await bunPassword.verify(password, user.password, "bcrypt");
+      case PasswordType.BCRYPT:
+        isPasswordCorrect = await bunPassword.verify(
+          password,
+          user.password,
+          "bcrypt",
+        );
         break;
       default:
         throw new Error(`Unknown password type ${user.passwordType}`);
     }
 
     if (!isPasswordCorrect) {
-      throw new GraphQLError("Password is incorrect.");
+      throw new GraphQLError("User not found or credentials incorrect.");
     }
 
     const tokens = new Token(user);
@@ -57,7 +79,10 @@ export class AuthResolver {
   }
 
   @Mutation(() => Auth)
-  public async signup(@Ctx() ctx: Context, @Arg('input') input: SignUpInput): Promise<Auth> {
+  public async signup(
+    @Ctx() ctx: Context,
+    @Arg("input") input: SignUpInput,
+  ): Promise<Auth> {
     const picture = input.picture;
 
     if (!picture) {
@@ -66,11 +91,16 @@ export class AuthResolver {
 
     const user = new User();
 
-    const extention = picture.name.substring(picture.name.lastIndexOf("."), picture.name.length);
+    const extention = picture.name.substring(
+      picture.name.lastIndexOf("."),
+      picture.name.length,
+    );
 
     const objectKey = `images/${user.id}-${Date.now()}${extention}`;
 
-    await s3.putObject(objectKey, picture.stream(), { metadata: { "x-amz-acl": "public-read" }});
+    await s3.putObject(objectKey, picture.stream(), {
+      metadata: { "x-amz-acl": "public-read" },
+    });
 
     const password = await bunPassword.hash(input.password, "bcrypt");
 
@@ -116,8 +146,11 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized('No Verification')
-  public async logout(@Ctx() ctx: Context, @Arg('isApp', { nullable: true }) isApp?: boolean): Promise<boolean> {
+  @Authorized("No Verification")
+  public async logout(
+    @Ctx() ctx: Context,
+    @Arg("isApp", { nullable: true }) isApp?: boolean,
+  ): Promise<boolean> {
     ctx.em.remove(ctx.token);
 
     if (isApp) {
@@ -132,14 +165,20 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  public async removeToken(@Ctx() ctx: Context, @Arg('token') tokenid: string): Promise<boolean> {
+  public async removeToken(
+    @Ctx() ctx: Context,
+    @Arg("token") tokenid: string,
+  ): Promise<boolean> {
     await ctx.em.removeAndFlush({ tokenid: tokenid });
 
     return true;
   }
 
   @Mutation(() => Boolean)
-  public async forgotPassword(@Ctx() ctx: Context, @Arg('email') email: string): Promise<boolean> {
+  public async forgotPassword(
+    @Ctx() ctx: Context,
+    @Arg("email") email: string,
+  ): Promise<boolean> {
     const user = await ctx.em.findOne(User, { email });
 
     if (!user) {
@@ -149,13 +188,14 @@ export class AuthResolver {
     const existing = await ctx.em.findOne(ForgotPassword, { user });
 
     if (existing) {
-      if ((existing.time.getTime() + (18000 * 1000)) < Date.now()) {
+      if (existing.time.getTime() + 18000 * 1000 < Date.now()) {
         ctx.em.remove(existing);
-      }
-      else {
+      } else {
         sendResetEmail(email, existing.id, user.username);
 
-        throw new GraphQLError("You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.");
+        throw new GraphQLError(
+          "You have already requested to reset your password. We have re-sent your email. Check your email and follow the instructions.",
+        );
       }
     }
 
@@ -169,15 +209,23 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  public async resetPassword(@Ctx() ctx: Context, @Arg('id') id: string, @Arg('input') input: ResetPasswordInput): Promise<boolean> {
-    const entry = await ctx.em.findOne(ForgotPassword, id, { populate: ['user'] });
+  public async resetPassword(
+    @Ctx() ctx: Context,
+    @Arg("id") id: string,
+    @Arg("input") input: ResetPasswordInput,
+  ): Promise<boolean> {
+    const entry = await ctx.em.findOne(ForgotPassword, id, {
+      populate: ["user"],
+    });
 
     if (!entry) {
       throw new GraphQLError("This reset password request does not exist");
     }
 
-    if ((entry.time.getTime() + (18000 * 1000)) < Date.now()) {
-      throw new GraphQLError("Your reset token has expired. You must re-request to reset your password.");
+    if (entry.time.getTime() + 18000 * 1000 < Date.now()) {
+      throw new GraphQLError(
+        "Your reset token has expired. You must re-request to reset your password.",
+      );
     }
 
     entry.user.password = await bunPassword.hash(input.password, "bcrypt");

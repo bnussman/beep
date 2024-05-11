@@ -16,6 +16,7 @@ export const text = cva(["text-black", "dark:text-white"], {
       "2xl": ["text-2xl"],
       "3xl": ["text-3xl"],
       "4xl": ["text-4xl"],
+      "5xl": ["text-5xl"],
     },
     weight: {
       normal: ["font-normal"],
@@ -37,6 +38,14 @@ export interface TextProps extends _TextProps, TextVariantProps {}
 
 export const Text = (props: TextProps) => {
   const { size, className, weight, color, ...rest } = props;
+
+  if (Array.isArray(rest.children) && rest.children.every((c) => !c)) {
+    return null;
+  }
+
+  if (!rest.children) {
+    return null;
+  }
 
   return (
     <_Text className={text({ size, className, weight, color })} {...rest} />
