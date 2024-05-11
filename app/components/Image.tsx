@@ -1,28 +1,33 @@
+import { cx } from "class-variance-authority";
 import React, { useState } from "react";
-import { Image as _Image, ImageProps, Spinner, Stack } from "@beep/ui";
+import {
+  ImageProps,
+  Image as _Image,
+  View,
+  ActivityIndicator,
+} from "react-native";
 
 export function Image(props: ImageProps) {
+  const { className, ...rest } = props;
   const [loading, setLoading] = useState(true);
 
   return (
-    <Stack width={props.w ?? props.width}>
+    <>
       {loading && (
-        <Stack
-          w={props.w ?? props.width}
-          h={props.h ?? props.height}
-          borderRadius={props.borderRadius}
-          alignItems="center"
-          justifyContent="center"
-          backgroundColor="$gray4"
+        <View
+          className={cx(
+            ["bg-neutral-100 dark:bg-neutral-800 justify-center"],
+            className,
+          )}
         >
-          <Spinner />
-        </Stack>
+          <ActivityIndicator />
+        </View>
       )}
       <_Image
-        {...props}
         onLoad={() => setLoading(false)}
-        position={loading ? "absolute" : undefined}
+        className={cx({ ["absolute"]: loading }, className)}
+        {...rest}
       />
-    </Stack>
+    </>
   );
 }

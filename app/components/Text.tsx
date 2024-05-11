@@ -43,7 +43,7 @@ export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
     return null;
   }
 
-  if (!rest.children) {
+  if (rest.children === null || rest.children === undefined) {
     return null;
   }
 

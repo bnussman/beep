@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { useMutation } from "@apollo/client";
-import { Button, ButtonProps, Spinner } from "@beep/ui";
+import { Button } from "@/components/Button";
 import { Alert } from "../../utils/alert";
 import { graphql } from "gql.tada";
 
@@ -12,7 +12,7 @@ const LeaveQueue = graphql(`
   }
 `);
 
-interface Props extends ButtonProps {
+interface Props {
   beepersId: string;
 }
 
@@ -35,7 +35,7 @@ export function LeaveButton(props: Props) {
           },
           { text: "Yes", onPress: () => leaveQueue() },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       leaveQueue();
@@ -52,9 +52,10 @@ export function LeaveButton(props: Props) {
 
   return (
     <Button
-      iconAfter={isLoading ? <Spinner /> : undefined}
+      isLoading={isLoading}
       onPress={() => leaveQueueWrapper()}
-      theme="red"
+      activityIndicatorProps={{ color: "white" }}
+      className="min-w-48 !bg-red-400 active:!bg-red-500"
       {...rest}
     >
       Leave Queue

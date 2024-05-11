@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
-import { XStack, Text, InputProps, Input, Spinner, Button } from "@beep/ui";
+import { Input } from "@/components/Input";
+import { Text } from "@/components/Text";
+import { Button } from "@/components/Button";
+import { TextInputProps, View } from "react-native";
 
-interface Props extends InputProps {
+interface Props extends TextInputProps {
   inputRef: any;
 }
 
 export function LocationInput({ inputRef, ...props }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
-   const handleGetCurrentLocation = async () => {
+  const handleGetCurrentLocation = async () => {
     setIsLoading(true);
     // props.onChangeText?.("");
 
@@ -46,21 +49,19 @@ export function LocationInput({ inputRef, ...props }: Props) {
 
     props.onChangeText?.(string);
     setIsLoading(false);
-  }
+  };
 
   return (
-    <XStack gap="$2">
+    <View className="flex flex-row gap-2">
       <Input
         placeholder={isLoading ? "Loading" : undefined}
         ref={inputRef}
-        flexGrow={1}
-        flex={1}
+        className="flex-1 flex-grow"
         {...props}
       />
-      <Button
-        icon={isLoading ? <Spinner /> : <Text>📍</Text>}
-        onPress={handleGetCurrentLocation}
-      />
-    </XStack>
+      <Button isLoading={isLoading} onPress={handleGetCurrentLocation}>
+        <Text>📍</Text>
+      </Button>
+    </View>
   );
 }

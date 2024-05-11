@@ -1,5 +1,10 @@
 import { VariantProps, cva } from "class-variance-authority";
-import { Pressable, PressableProps, ActivityIndicator } from "react-native";
+import {
+  Pressable,
+  PressableProps,
+  ActivityIndicator,
+  ActivityIndicatorProps,
+} from "react-native";
 import { Text } from "./Text";
 
 export const button = cva(["p-4 flex cursor-pointer items-center rounded-xl"], {
@@ -22,10 +27,18 @@ export const button = cva(["p-4 flex cursor-pointer items-center rounded-xl"], {
 
 interface Props extends PressableProps, VariantProps<typeof button> {
   isLoading?: boolean;
+  activityIndicatorProps?: ActivityIndicatorProps;
 }
 
 export function Button(props: Props) {
-  const { className, children, isLoading, variant, ...rest } = props;
+  const {
+    className,
+    children,
+    isLoading,
+    variant,
+    activityIndicatorProps,
+    ...rest
+  } = props;
 
   return (
     <Pressable
@@ -34,7 +47,7 @@ export function Button(props: Props) {
       {...rest}
     >
       {isLoading ? (
-        <ActivityIndicator />
+        <ActivityIndicator {...activityIndicatorProps} />
       ) : typeof children === "string" ? (
         <Text weight="black">{children}</Text>
       ) : (
