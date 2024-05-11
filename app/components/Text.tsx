@@ -36,7 +36,7 @@ export const text = cva(["text-black", "dark:text-white"], {
 
 export interface TextProps extends _TextProps, TextVariantProps {}
 
-export const Text = (props: TextProps) => {
+export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
   const { size, className, weight, color, ...rest } = props;
 
   if (Array.isArray(rest.children) && rest.children.every((c) => !c)) {
@@ -48,6 +48,10 @@ export const Text = (props: TextProps) => {
   }
 
   return (
-    <_Text className={text({ size, className, weight, color })} {...rest} />
+    <_Text
+      ref={ref}
+      className={text({ size, className, weight, color })}
+      {...rest}
+    />
   );
-};
+});

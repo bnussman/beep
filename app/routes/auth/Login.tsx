@@ -5,6 +5,7 @@ import { PasswordInput } from "@/components/PasswordInput";
 import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
+import { Label } from "@/components/Label";
 import { Alert } from "../../utils/alert";
 import { isSimulator } from "../../utils/constants";
 import { ApolloError, useMutation } from "@apollo/client";
@@ -108,9 +109,7 @@ export function LoginScreen() {
       <Text size="4xl" weight="black" className="mb-4">
         Ride Beep App 🚕
       </Text>
-      <Text weight="bold" className="my-4">
-        Username or Email
-      </Text>
+      <Label>Username or Email</Label>
       <Controller
         name="username"
         rules={{ required: "Username or Email is required" }}
@@ -135,9 +134,7 @@ export function LoginScreen() {
         {errors.username?.message}
         {validationErrors?.username?.[0]}
       </Text>
-      <Text weight="bold" className="my-2" accessibilityRole="label">
-        Password
-      </Text>
+      <Label htmlFor="password">Password</Label>
       <Controller
         name="password"
         rules={{ required: "Password is required" }}
