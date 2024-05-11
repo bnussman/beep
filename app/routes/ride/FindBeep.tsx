@@ -276,7 +276,10 @@ export function MainFindBeepScreen() {
 
   if (!beep) {
     return (
-      <KeyboardAwareScrollView contentContainerClassName="p-4">
+      <KeyboardAwareScrollView
+        scrollEnabled={false}
+        contentContainerClassName="p-4"
+      >
         <Label htmlFor="groupSize">Group Size</Label>
         <Controller
           name="groupSize"

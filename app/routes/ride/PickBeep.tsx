@@ -171,35 +171,39 @@ export function PickBeepScreen({ route }: Props) {
             </Text>
             {item.rating && <Text size="xs">{printStars(item.rating)}</Text>}
           </View>
-          <Text
-            size="lg"
-            className="shadow-xl opacity-100 shadow-yellow-400 mr-4"
-            style={{
-              shadowRadius: 10,
-              shadowColor: "#f5db73",
-              shadowOpacity: 1,
-            }}
-          >
-            👑
-          </Text>
-          <Avatar size="sm" className="mr-2" src={item.photo ?? undefined} />
+          {isPremium && (
+            <Text
+              size="lg"
+              className="shadow-xl opacity-100 shadow-yellow-400 mr-4"
+              style={{
+                shadowRadius: 10,
+                shadowColor: "#f5db73",
+                shadowOpacity: 1,
+              }}
+            >
+              👑
+            </Text>
+          )}
+          <Avatar size="sm" src={item.photo ?? undefined} />
         </View>
-        <Text>
-          <Text weight="bold">Rider Capacity </Text>
-          <Text>{item.capacity}</Text>
-        </Text>
-        <Text>
-          <Text weight="bold">Rates </Text>
+        <View className="flex flex-row justify-between">
+          <Text weight="bold">💵 Rates</Text>
           <Text>
-            ${item.singlesRate} singles / ${item.groupRate} group
+            ${item.singlesRate} singles / ${item.groupRate} groups
           </Text>
-        </Text>
-        <Text>
-          <Text weight="bold">Queue Size </Text>
+        </View>
+        <View className="flex flex-row justify-between">
+          <Text weight="bold">🚙 Rider Capacity</Text>
+          <Text>
+            {item.capacity} rider{item.queueSize === 1 ? "" : "s"}
+          </Text>
+        </View>
+        <View className="flex flex-row justify-between">
+          <Text weight="bold">⏲️ Queue Length</Text>
           <Text>
             {item.queueSize} rider{item.queueSize === 1 ? "" : "s"}
           </Text>
-        </Text>
+        </View>
       </Card>
     );
   };
