@@ -15,34 +15,25 @@ import {
 import { cache, client } from "../../utils/apollo";
 import { LocationActivityType } from "expo-location";
 import { Container } from "../../components/Container";
-import { Alert } from "../../utils/alert";
 import { QueueItem } from "./QueueItem";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
 import { Status } from "../../utils/types";
 import { graphql } from "gql.tada";
 import {
-  Alert as NativeAlert,
+  Alert,
   AppState,
   AppStateStatus,
   Pressable,
-  RefreshControl,
-  useColorScheme,
-  FlatList,
-} from "react-native";
-import {
-  Input,
+  View,
   Switch,
-  Text,
-  Heading,
-  Stack,
-  XStack,
-  Button,
-  Label,
-  Circle,
-  Sheet,
-  Card,
-} from "@beep/ui";
+} from "react-native";
+import { Input } from "@/components/Input";
+import { Card } from "@/components/Card";
+import { Button } from "@/components/Button";
+import { Label } from "@/components/Label";
+import { Text } from "@/components/Text";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 let unsubscribe: any = null;
 
@@ -125,7 +116,6 @@ export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
   const { user } = useUser();
-  const colorMode = useColorScheme();
   const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
@@ -181,7 +171,7 @@ export function StartBeepingScreen() {
 
   function toggleSwitchWrapper(): void {
     if (isAndroid && !isBeeping) {
-      NativeAlert.alert(
+      Alert.alert(
         "Background Location Notice",
         "Ride Beep App collects location data to enable ETAs for riders when your are beeping and the app is closed or not in use",
         [
@@ -201,16 +191,11 @@ export function StartBeepingScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Stack mr="$2">
-          <Switch
-            checked={isBeeping}
-            native
-            onCheckedChange={() => toggleSwitchWrapper()}
-            // nativeProps={{ trackColor: { true: "#ffcf24" } }}
-          >
-            <Switch.Thumb />
-          </Switch>
-        </Stack>
+        <Switch
+          value={isBeeping}
+          onValueChange={() => toggleSwitchWrapper()}
+          className="mr-2"
+        />
       ),
     });
   }, [navigation, isBeeping, capacity, singlesRate, groupRate]);
@@ -288,7 +273,7 @@ export function StartBeepingScreen() {
       })
       .catch((error: ApolloError) => {
         setIsBeeping((value) => !value);
-        Alert(error);
+        alert(error.message);
       });
   }
 
@@ -367,123 +352,77 @@ export function StartBeepingScreen() {
 
   if (isBeeping && queue?.length === 0) {
     return (
-      <Container center>
-        <Stack gap="$2" p="$4" alignItems="center" mb="$8">
-          <Heading fontWeight="bold">Your queue is empty</Heading>
-          <Text textAlign="center">
-            If someone wants you to beep them, it will appear here. If your app
-            is closed, you will recieve a push notification.
+      <View className="flex items-center justify-center h-full">
+        <Text size="2xl" weight="black">
+          Your queue is empty
+        </Text>
+        <Text className="text-center mb-8">
+          If someone wants you to beep them, it will appear here. If your app is
+          closed, you will recieve a push notification.
+        </Text>
+        <Card variant="outlined" className="p-4 items-center">
+          <Text weight="black" size="xl">
+            Want more riders?
           </Text>
-        </Stack>
-        <Card p="$3">
-          <Stack alignItems="center" gap="$2">
-            <Heading fontWeight="bold" fontSize="$6">
-              Want more riders?
-            </Heading>
-            <Text textAlign="center">Jump to the top of the beeper list</Text>
-            <Button
-              onPress={() => navigation.navigate("Main", { screen: "Premium" })}
-              iconAfter={
-                <Heading shadowRadius="$2" shadowColor="#f5db73">
-                  👑
-                </Heading>
-              }
-            >
-              Get Promoted
-            </Button>
-          </Stack>
+          <Text className="text-center mb-4">
+            Jump to the top of the beeper list
+          </Text>
+          <Button
+            className="flex flex-row gap-2 dark:!bg-neutral-700 active:dark:!bg-neutral-800"
+            onPress={() => navigation.navigate("Main", { screen: "Premium" })}
+          >
+            <Text weight="bold">Get Promoted</Text>
+            <Text>👑</Text>
+          </Button>
         </Card>
-      </Container>
+      </View>
     );
   }
 
   if (!isBeeping || !queue) {
     return (
-      <Container keyboard alignItems="center" height="100%">
-        <Stack gap="$2" w="100%" px="$4">
-          <Stack>
-            <Label htmlFor="capacity" fontWeight="bold">
-              Max Rider Capacity
-            </Label>
-            <Input
-              id="capacity"
-              placeholder="Max Capcity"
-              keyboardType="numeric"
-              value={String(capacity)}
-              onChangeText={(value) => setCapacity(value)}
-            />
-            <Text>Maximum number of riders you can safely fit in your car</Text>
-          </Stack>
-          <Stack>
-            <Label htmlFor="singles" fontWeight="bold">
-              Singles Rate
-            </Label>
-            <Input
-              id="singles"
-              placeholder="Singles Rate"
-              keyboardType="numeric"
-              value={String(singlesRate)}
-              onChangeText={(value) => setSinglesRate(value)}
-            />
-            <Text>Price for a single person riding alone</Text>
-          </Stack>
-          <Stack>
-            <Label htmlFor="groups" fontWeight="bold">
-              Group Rate
-            </Label>
-            <Input
-              id="groups"
-              placeholder="Group Rate"
-              keyboardType="numeric"
-              value={String(groupRate)}
-              onChangeText={(value) => setGroupRate(value)}
-            />
-            <Text>Price per person in a group</Text>
-          </Stack>
-        </Stack>
-        <Stack flexGrow={1} />
-        <Text fontSize="$3" mb="$8">
+      <KeyboardAwareScrollView
+        scrollEnabled={false}
+        contentContainerClassName="p-4 h-full"
+      >
+        <Label htmlFor="capacity">Max Rider Capacity</Label>
+        <Input
+          id="capacity"
+          placeholder="Max Capcity"
+          keyboardType="numeric"
+          value={String(capacity)}
+          onChangeText={(value) => setCapacity(value)}
+        />
+        <Text size="sm">
+          Maximum number of riders you can safely fit in your car
+        </Text>
+        <Label htmlFor="singles">Singles Rate</Label>
+        <Input
+          id="singles"
+          placeholder="Singles Rate"
+          keyboardType="numeric"
+          value={String(singlesRate)}
+          onChangeText={(value) => setSinglesRate(value)}
+        />
+        <Text size="sm">Price for a single person riding alone</Text>
+        <Label htmlFor="groups">Group Rate</Label>
+        <Input
+          id="groups"
+          placeholder="Group Rate"
+          keyboardType="numeric"
+          value={String(groupRate)}
+          onChangeText={(value) => setGroupRate(value)}
+        />
+        <Text size="sm">Price per person in a group</Text>
+        <View className="flex-grow" />
+        <Text size="sm" className="mb-10 text-center">
           Use the toggle in the top right to start beeping
         </Text>
-      </Container>
+      </KeyboardAwareScrollView>
     );
   }
 
-  return (
-    <Container alignItems="center">
-      <Stack w="100%" height={queue.length > 1 ? "85%" : "95%"} p="$3">
-        {queue[0] && <Beep beep={queue[0]} />}
-      </Stack>
-      <Sheet
-        snapPoints={snapPoints}
-        position={position}
-        onPositionChange={setPosition}
-        snapPointsMode="percent"
-        open={queue.length > 1}
-      >
-        <Sheet.Handle opacity={1} backgroundColor="$gray8" />
-        <Sheet.Frame padding="$3" borderColor="$gray5">
-          <Pressable onPress={() => setPosition(100)}>
-            <XStack alignItems="center" mb="$2">
-              <Heading fontWeight="bold" fontSize="$8">
-                Queue
-              </Heading>
-              <Stack flexGrow={1} />
-              {queue.length > 0 &&
-                queue.some((entry) => entry.status === Status.WAITING) && (
-                  <Circle bg="$blue8" size="$1" />
-                )}
-            </XStack>
-          </Pressable>
-          {queue
-            .filter((entry) => entry.id !== queue[0]?.id)
-            .map((item, index) => (
-              <QueueItem item={item} key={item.id} index={index} />
-            ))}
-        </Sheet.Frame>
-      </Sheet>
-    </Container>
-  );
+  return <View>{queue[0] && <Beep beep={queue[0]} />}</View>;
 }
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
