@@ -109,7 +109,7 @@ export function LoginScreen() {
       <Text size="4xl" weight="black" className="mb-4">
         Ride Beep App 🚕
       </Text>
-      <Label>Username or Email</Label>
+      <Label htmlFor="username">Username or Email</Label>
       <Controller
         name="username"
         rules={{ required: "Username or Email is required" }}

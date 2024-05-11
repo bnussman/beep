@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { ApolloError, useMutation } from "@apollo/client";
-import { Input, Button, Stack, Spinner, Label } from "@beep/ui";
-import { Container } from "../../components/Container";
-import { Alert } from "../../utils/alert";
+import { View } from "react-native";
+import { Button } from "@/components/Button";
+import { Input } from "@/components/Input";
+import { Label } from "@/components/Label";
 import { graphql } from "gql.tada";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const ForgotPassword = graphql(`
   mutation ForgotPassword($email: String!) {
@@ -21,30 +23,27 @@ export function ForgotPasswordScreen() {
       variables: { email },
     })
       .then(() => alert("Check your email for a link to reset your password!"))
-      .catch((error: ApolloError) => Alert(error));
+      .catch((error: ApolloError) => alert(error.message));
   };
 
   return (
-    <Container alignItems="center" keyboard>
-      <Stack w="100%" px="$4" gap="$4">
-        <Stack>
-          <Label fontWeight="bold">Email</Label>
-          <Input
-            textContentType="emailAddress"
-            placeholder="example@ridebeep.app"
-            returnKeyType="go"
-            onChangeText={(text) => setEmail(text)}
-            onSubmitEditing={handleForgotPassword}
-          />
-        </Stack>
-        <Button
-          iconAfter={loading ? <Spinner /> : undefined}
-          disabled={!email}
-          onPress={handleForgotPassword}
-        >
-          Send Password Reset Email
-        </Button>
-      </Stack>
-    </Container>
+    <KeyboardAwareScrollView scrollEnabled={false} className="p-4">
+      <Label>Email</Label>
+      <Input
+        textContentType="emailAddress"
+        placeholder="example@ridebeep.app"
+        returnKeyType="go"
+        onChangeText={(text) => setEmail(text)}
+        onSubmitEditing={handleForgotPassword}
+      />
+      <Button
+        isLoading={loading}
+        disabled={!email}
+        onPress={handleForgotPassword}
+        className="mt-4"
+      >
+        Send Password Reset Email
+      </Button>
+    </KeyboardAwareScrollView>
   );
 }

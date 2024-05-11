@@ -19,7 +19,7 @@ export function Label(props: Props) {
 
         label?.setAttribute("for", htmlFor);
       }
-    }, []);
+    }, [htmlFor]);
   }
 
   return (
