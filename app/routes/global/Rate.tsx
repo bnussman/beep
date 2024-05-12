@@ -5,10 +5,9 @@ import { UserHeader } from "../../components/UserHeader";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
-import { Container } from "../../components/Container";
 import { Alert } from "../../utils/alert";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { View } from 'react-native';
+import { View } from "react-native";
 import { GetUser } from "./Profile";
 import { graphql } from "gql.tada";
 
@@ -66,35 +65,27 @@ export function RateScreen({ route }: Props) {
   };
 
   return (
-    <Container keyboard p="$4">
-      <View className="gap-4">
-        {user && (
-          <UserHeader
-            username={user.username}
-            name={user.name}
-            picture={user.photo}
-          />
-        )}
-        <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-        <Text>
-          Message (optional)
-        </Text>
-        <Input
-          multiline
-          className="h-24"
-          returnKeyType="go"
-          onChangeText={(text) => setMessage(text)}
-          onSubmitEditing={onSubmit}
-          blurOnSubmit={true}
+    <View className="p-4 gap-4">
+      {user && (
+        <UserHeader
+          username={user.username}
+          name={user.name}
+          picture={user.photo}
         />
-        <Button
-          onPress={onSubmit}
-          disabled={stars < 1}
-          isLoading={loading}
-        >
-          Rate User
-        </Button>
-      </View>
-    </Container>
+      )}
+      <RateBar hint="Stars" value={stars} onValueChange={setStars} />
+      <Text>Message (optional)</Text>
+      <Input
+        multiline
+        className="h-24"
+        returnKeyType="go"
+        onChangeText={(text) => setMessage(text)}
+        onSubmitEditing={onSubmit}
+        blurOnSubmit={true}
+      />
+      <Button onPress={onSubmit} disabled={stars < 1} isLoading={loading}>
+        Rate User
+      </Button>
+    </View>
   );
 }
