@@ -109,7 +109,7 @@ export function RatingsScreen() {
   if (ratings?.length === 0) {
     return (
       <View>
-        <Text weight="black" size="2xl">
+        <Text weight="black" size="3xl">
           No Ratings
         </Text>
         <Text>You have no ratings to display</Text>
@@ -119,7 +119,7 @@ export function RatingsScreen() {
 
   return (
     <FlatList
-      className="p-4"
+      className="p-2"
       contentContainerClassName="gap-2"
       data={ratings}
       renderItem={(data) => <Rating {...data} />}

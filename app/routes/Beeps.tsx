@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  useColorScheme,
   View,
 } from "react-native";
 import { useQuery } from "@apollo/client";
@@ -12,7 +11,6 @@ import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
-import { Container } from "@/components/Container";
 
 export const GetBeepHistory = graphql(`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -47,7 +45,6 @@ export const GetBeepHistory = graphql(`
 
 export function BeepsScreen() {
   const { user } = useUser();
-  const colorMode = useColorScheme();
 
   const { data, loading, error, fetchMore, refetch } = useQuery(
     GetBeepHistory,
@@ -99,49 +96,44 @@ export function BeepsScreen() {
 
   if (loading && !beeps) {
     return (
-      <Container center>
+      <View>
         <ActivityIndicator size="large" />
-      </Container>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container center>
+      <View>
         <Text>{error.message}</Text>
-      </Container>
+      </View>
     );
   }
 
   if (beeps?.length === 0) {
     return (
-      <Container center>
+      <View>
         <Text size="3xl" weight="black">
           No Beeps
         </Text>
         <Text>You have no previous beeps to display</Text>
-      </Container>
+      </View>
     );
   }
 
   return (
-    <Container>
-      <FlatList
-        data={beeps}
-        className="p-2"
-        renderItem={(data) => <Beep {...data} />}
-        keyExtractor={(beep) => beep.id}
-        onEndReached={getMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter()}
-        refreshControl={
-          <RefreshControl
-            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={isRefreshing}
-            onRefresh={refetch}
-          />
-        }
-      />
-    </Container>
+    <FlatList
+      data={beeps}
+      className="p-2"
+      contentContainerClassName="gap-2"
+      renderItem={(data) => <Beep {...data} />}
+      keyExtractor={(beep) => beep.id}
+      onEndReached={getMore}
+      onEndReachedThreshold={0.1}
+      ListFooterComponent={renderFooter()}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+      }
+    />
   );
 }

@@ -145,7 +145,7 @@ export function Cars() {
             onPress={() => navigation.navigate("Add Car")}
             aria-label="Add a car"
           >
-            <Text>➕</Text>
+            <Text size="3xl">➕</Text>
           </Pressable>
         );
       },

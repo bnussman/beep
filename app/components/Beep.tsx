@@ -35,7 +35,7 @@ export function Beep({ item }: Props) {
 
   return (
     <Card
-      className="mb-2 p-4 gap-1"
+      className="p-4 gap-1"
       variant="outlined"
       pressable
       onPress={() =>
