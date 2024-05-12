@@ -24,7 +24,7 @@
   "dependencies": {
     "@bnussman/graphql-fields-to-relations": "^2.1.0",
     "@capgo/s3-lite-client": "^0.1.8",
-    "@envelop/sentry": "^8.0.0",
+    "@envelop/sentry": "^9.0.0",
     "@graphql-yoga/redis-event-target": "^3.0.0",
     "@mikro-orm/core": "6.2.5",
     "@mikro-orm/postgresql": "6.2.5",

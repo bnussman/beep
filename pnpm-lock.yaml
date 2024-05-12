@@ -21,8 +21,8 @@ importers:
         specifier: ^0.1.8
         version: 0.1.8
       '@envelop/sentry':
-        specifier: ^8.0.0
-        version: 8.0.0(@envelop/core@5.0.1)(@sentry/node@7.114.0)(graphql@16.8.1)
+        specifier: ^9.0.0
+        version: 9.0.0(@envelop/core@5.0.1)(@sentry/node@7.114.0)(graphql@16.8.1)
       '@graphql-yoga/redis-event-target':
         specifier: ^3.0.0
         version: 3.0.0(ioredis@5.4.1)
@@ -1809,8 +1809,8 @@ packages:
     resolution: {integrity: sha512-wxA8EyE1fPnlbP0nC/SFI7uU8wSNf4YjxZhAPu0P63QbgIvqHtHsH4L3/u+rsTruzhk3OvNRgQyLsMfaR9uzAQ==}
     engines: {node: '>=18.0.0'}
 
-  '@envelop/sentry@8.0.0':
-    resolution: {integrity: sha512-y4k6WPROlUoXxgB2h06po5GXKhHE8KXvCepC60GltAitdF1ZYbroAFC3x+CuW4qd29kpmiX9CELtqjXN6D7x6Q==}
+  '@envelop/sentry@9.0.0':
+    resolution: {integrity: sha512-R1qgYKOiaDGc1MXRfJCzNs8z5lVuRK3liHquwR72HxawgXP2wEPzTJgqMo1M7s7pZEHgf2RvO6mYAUExbZNYlg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@envelop/core': ^5.0.0
@@ -9210,7 +9210,7 @@ snapshots:
       '@envelop/types': 5.0.0
       tslib: 2.6.2
 
-  '@envelop/sentry@8.0.0(@envelop/core@5.0.1)(@sentry/node@7.114.0)(graphql@16.8.1)':
+  '@envelop/sentry@9.0.0(@envelop/core@5.0.1)(@sentry/node@7.114.0)(graphql@16.8.1)':
     dependencies:
       '@envelop/core': 5.0.1
       '@sentry/node': 7.114.0
