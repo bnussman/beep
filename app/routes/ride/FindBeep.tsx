@@ -16,7 +16,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { cache, client } from "../../utils/apollo";
-import { Container } from "../../components/Container";
 import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";
 import { Avatar } from "@/components/Avatar";
@@ -239,7 +238,7 @@ export function MainFindBeepScreen() {
 
     // Run some code when a beep completes
     if (previousData && !beep) {
-      client.refetchQueries({ include: [GetRateData, GetBeepHistory] });
+      client.refetchQueries({ include: [GetBeepHistory] });
     }
   }, [beep]);
 

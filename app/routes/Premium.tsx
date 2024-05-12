@@ -46,8 +46,10 @@ function Offering({ item }: Props) {
   const packages = item.availablePackages;
 
   return (
-    <Card className="p-3">
-      <Text weight="bold">{item.identifier}</Text>
+    <Card className="p-4 gap-2" variant="outlined">
+      <Text weight="black" size="2xl">
+        {item.identifier}
+      </Text>
       <Text>
         Promotes you to the top of the beeper list so you get more riders
         joining your queue
@@ -55,7 +57,7 @@ function Offering({ item }: Props) {
       <Text size="sm">Goes into effect immediately upon purchase</Text>
       <Image
         source={PremiumImage}
-        className="h-64"
+        className="h-64 w-full"
         resizeMode="contain"
         alt="beep screenshot of premium"
       />
@@ -108,7 +110,10 @@ function Package({ p }: { p: PurchasesPackage }) {
   };
 
   return (
-    <Card className="p-2 flex flex-row">
+    <Card
+      className="py-2 px-4 flex flex-row items-center gap-2"
+      variant="outlined"
+    >
       <Text weight="bold">{p.identifier}</Text>
       <Text size="sm">{countdown}</Text>
       <View className="flex-grow" />
@@ -117,6 +122,7 @@ function Package({ p }: { p: PurchasesPackage }) {
         isLoading={isPurchasing}
         onPress={() => onBuy(p)}
         disabled={Boolean(payment)}
+        className="dark:bg-stone-800 dark:active:!bg-stone-700"
       >
         {p.product.priceString}
       </Button>
@@ -177,8 +183,6 @@ export function Premium() {
     isRefreshing,
   } = usePackages();
 
-  const colorMode = useColorScheme();
-
   const refetch = () => {
     refetchUserPayments();
     refetchAppPackages();
@@ -203,12 +207,12 @@ export function Premium() {
   return (
     <FlatList
       data={offerings}
+      contentContainerClassName="p-4"
       renderItem={({ item }) => <Offering item={item} />}
       onRefresh={refetch}
       refreshing={isRefreshing || loading}
       refreshControl={
         <RefreshControl
-          tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
           refreshing={isRefreshing || loading}
           onRefresh={refetch}
         />
