@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.10.3",
-    "@types/apollo-upload-client": "^17.0.3",
+    "@types/apollo-upload-client": "17.0.3",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.8",
     "@vitejs/plugin-react": "^4.2.1",
