@@ -9,7 +9,7 @@ import { BasicUser } from "../../../components/BasicUser";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
-import { Link, Route } from "@tanstack/react-router";
+import { Link, createRoute } from "@tanstack/react-router";
 import { graphql } from "../../../graphql";
 
 dayjs.extend(relativeTime);
@@ -40,7 +40,7 @@ const GetRating = graphql(`
   }
 `);
 
-export const ratingRoute = new Route({
+export const ratingRoute = createRoute({
   component: Rating,
   path: "$ratingId",
   getParentRoute: () => ratingsRoute,

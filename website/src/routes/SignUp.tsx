@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react';
 import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
-import { client } from '../utils/Apollo';
-import { rootRoute } from '../App';
+import { client } from '../utils/apollo';
 import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from "react-hook-form";
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
 import { VariablesOf, graphql } from 'gql.tada';
+import { UserQuery } from '../utils/user';
+import { rootRoute } from '../utils/router';
 import {
   Link as ChakraLink,
   Text,
@@ -31,10 +32,9 @@ import {
   FormErrorMessage,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { UserQuery } from '../utils/user';
 
 const SignUpGraphQL = graphql(`
-  mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: Upload) {
+  mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: File) {
     signup(
       input: {
         first: $first,

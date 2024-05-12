@@ -1,5 +1,3 @@
-export const GOOGLE_API_KEYS = process.env.GOOGLE_API_KEYS;
-
 export const SENTRY_URL = process.env.SENTRY_URL;
 
 export const DB_URL = process.env.DB_URL || "postgresql://localhost:5432";
@@ -20,7 +18,7 @@ export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID ?? "beep";
 
 export const S3_ACCESS_KEY_SECRET = process.env.S3_ACCESS_KEY_SECRET ?? "beepbeepbeep";
 
-export const S3_ENDPOINT_URL = process.env.S3_ENDPOINT_URL ?? "http://localhost:9000";
+export const S3_ENDPOINT = process.env.S3_ENDPOINT ?? "localhost";
 
 export const isLocalS3 = S3_ACCESS_KEY_SECRET === "beepbeepbeep";
 

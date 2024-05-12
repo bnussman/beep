@@ -7,7 +7,7 @@ import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-u
 import { TdUser } from './TdUser';
 import { printStars } from '../routes/admin/ratings';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Link, Route } from '@tanstack/react-router';
+import { Link, createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
 import { graphql } from '../graphql';
 
@@ -39,7 +39,7 @@ const Ratings = graphql(`
   }
 `);
 
-export const ratingsTableRoute = new Route({
+export const ratingsTableRoute = createRoute({
   component: RatingsTable,
   path: 'ratings',
   getParentRoute: () => userRoute,

@@ -1,14 +1,14 @@
 import React, { FormEvent, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
-import { rootRoute } from '../App';
-import { client } from '../utils/Apollo';
+import { client } from '../utils/apollo';
 import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack, Center, Heading } from "@chakra-ui/react"
 import { Card } from '../components/Card';
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
 import { graphql } from 'gql.tada';
 import { UserQuery } from '../utils/user';
+import { rootRoute } from '../utils/router';
 
 const LoginGraphQL = graphql(`
   mutation Login($username: String!, $password: String!) {
@@ -87,18 +87,17 @@ export function Login() {
             <FormControl>
               <FormLabel>Username or Email</FormLabel>
               <Input
-                type="email"
-                onChange={(value: any) => setUsername(value.target.value)}
+                type="text"
+                onChange={(e) => setUsername(e.target.value)}
               />
             </FormControl>
             <FormControl mt={2}>
               <FormLabel>Password</FormLabel>
-              <PasswordInput onChange={(value: any) => setPassword(value.target.value)} />
+              <PasswordInput onChange={(e) => setPassword(e.target.value)} />
             </FormControl>
             <HStack>
               <Button
                 type="submit"
-                onClick={handleLogin}
                 isLoading={loading}
                 isDisabled={!username || !password}
                 textColor="white"

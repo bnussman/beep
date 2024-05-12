@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from "@sentry/bun";
 
 export interface PushNotification {
   to: string | string[];
@@ -8,25 +8,35 @@ export interface PushNotification {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/**
- * Use Expo's API to send a push notification
- * 
- * @param {string} token the Expo Push Token of the user
- * @param {string} title for the notification
- * @param {string} message is the body of the push notification
- */
-export async function sendNotification(token: string | null, title: string, message: string): Promise<void> {
-  if (!token) return;
+interface SendNotificationOptions {
+  token: string | null;
+  title: string;
+  message: string;
+  categoryId?: 'newbeep';
+  data?: Record<string, string>;
+}
+
+export async function sendNotification(options: SendNotificationOptions): Promise<void> {
+  if (!options.token) {
+    return;
+  }
 
   try {
     await fetch('https://api.expo.dev/v2/push/send', {
       method: "POST",
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        to: token,
-        title: title,
-        body: message,
+        to: options.token,
+        title: options.title,
+        body: options.message,
         sound: 'default',
-        _displayInForeground: true
+        _displayInForeground: true,
+        categoryId: options.categoryId,
+        data: options.data,
       })
     });
   } catch (error) {
@@ -36,12 +46,20 @@ export async function sendNotification(token: string | null, title: string, mess
 
 /**
  * Use Expo's API to send many push notifications
- * 
+ *
  * @param {PushNotification[]} notifications an array of Expo Notifications
  */
 export async function sendNotifications(notifications: PushNotification[]): Promise<void> {
   try {
-    await fetch('https://api.expo.dev/v2/push/send', { method: "POST", body: JSON.stringify(notifications) });
+    await fetch('https://api.expo.dev/v2/push/send', {
+      method: "POST",
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(notifications)
+    });
   } catch (error) {
     Sentry.captureException(error);
   }
@@ -54,6 +72,11 @@ export async function sendNotificationsNew(to: string[], title: string, body: st
     try {
       await fetch('https://api.expo.dev/v2/push/send', {
         method: "POST",
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           to: batch,
           title,

@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/node';
+import * as Sentry from '@sentry/bun';
 import { Beep, Status } from "../entities/Beep";
 import { QueryOrder } from "@mikro-orm/core";
 import { User, UserRole } from "../entities/User";
@@ -6,10 +6,10 @@ import { MiddlewareFn } from "type-graphql";
 import { Context } from "./context";
 
 export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, info, root }, next) => {
-  if (info.parentType.name !== "User") {
+ /*  if (info.parentType.name !== "User") {
     Sentry.captureException("MustBeInAcceptedBeep middleware was used on a non-user entity");
     throw new Error("You can only use this middleware with the the User entity");
-  }
+  } */
 
   // unauthenticated request so just trust that authorization was handled by our main auth checker
   if (!context.user) {

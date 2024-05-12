@@ -7,7 +7,7 @@ import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { TdUser } from '../../components/TdUser';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
-import { Route, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
 import { graphql } from '../../graphql';
 
@@ -31,7 +31,7 @@ const FeedbackGQL = graphql(`
   }
 `);
 
-export const feedbackRoute = new Route({
+export const feedbackRoute = createRoute({
   component: Feedback,
   path: "feedback",
   getParentRoute: () => adminRoute,
@@ -43,14 +43,15 @@ export function Feedback() {
   const { page } = feedbackRoute.useSearch();
   const navigate = useNavigate({ from: feedbackRoute.id });
 
-  const { data, loading, error } = useQuery(FeedbackGQL, { variables: {
+  const { data, loading, error, previousData } = useQuery(FeedbackGQL, {
+    variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
     }
   });
 
-  const feedback = data?.getFeedback.items;
-  const count = data?.getFeedback.count;
+  const feedback = data?.getFeedback.items ?? previousData?.getFeedback.items;
+  const count = data?.getFeedback.count ?? previousData?.getFeedback.count;
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page } });

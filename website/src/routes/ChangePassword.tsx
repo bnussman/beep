@@ -4,9 +4,9 @@ import { useMutation } from '@apollo/client';
 import { Success } from '../components/Success';
 import { Input, Button, FormControl, FormLabel, Center, Heading, Container, Flex, Stack } from '@chakra-ui/react';
 import { Card } from '../components/Card';
-import { Route } from '@tanstack/react-router';
-import { rootRoute } from '../App';
+import { createRoute } from '@tanstack/react-router';
 import { graphql } from 'gql.tada';
+import { rootRoute } from '../utils/router';
 
 const ChangePasswordGraphQL = graphql(`
   mutation ChangePassword($password: String!) {
@@ -14,7 +14,7 @@ const ChangePasswordGraphQL = graphql(`
   }
 `);
 
-export const changePasswordRoute = new Route({
+export const changePasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/password/change',
   component: ChangePassword,

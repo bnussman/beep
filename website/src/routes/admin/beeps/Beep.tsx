@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client';
 import { Heading, Text, Box, Button, Flex, Spacer, Stack, useDisclosure } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
-import { Route } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import { beepsRoute } from ".";
 import { graphql } from "../../../graphql";
 
@@ -38,7 +38,7 @@ const GetBeep = graphql(`
   }
 `);
 
-export const beepRoute = new Route({
+export const beepRoute = createRoute({
   component: Beep,
   path: "$beepId",
   getParentRoute: () => beepsRoute,

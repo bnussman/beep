@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
-import { rootRoute } from '../App';
 import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
 import { useValidationErrors } from '../utils/useValidationErrors';
-import { VariablesOf, graphql } from 'gql.tada';
+import { VariablesOf, graphql } from '../graphql';
 import { createRoute } from '@tanstack/react-router';
 import { useUser } from '../utils/user';
+import { rootRoute } from '../utils/router';
 
 const pick = (obj: any, keys: string[]) => Object.fromEntries(
   keys
@@ -33,7 +33,7 @@ const EditAccount = graphql(`
 type Values = VariablesOf<typeof EditAccount>['data'];
 
 export const UploadPhoto = graphql(`
-  mutation AddProfilePicture ($picture: Upload!){
+  mutation AddProfilePicture ($picture: File!){
     addProfilePicture (picture: $picture) {
       id
       photo

@@ -9,7 +9,7 @@ import { Error } from '../../../components/Error';
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
-import { Link, Route } from "@tanstack/react-router";
+import { Link, createRoute } from "@tanstack/react-router";
 import { reportsRoute } from ".";
 import { graphql } from 'gql.tada';
 import { User } from "../../../App";
@@ -83,7 +83,7 @@ export const GetReport = gql`
   }
 `;
 
-export const reportRoute = new Route({
+export const reportRoute = createRoute({
   component: Report,
   path: "$reportId",
   getParentRoute: () => reportsRoute,

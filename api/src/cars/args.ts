@@ -1,8 +1,14 @@
-import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString } from 'class-validator';
-import { GraphQLUpload, Upload } from 'graphql-upload-minimal';
-import { UserRole } from '../entities/User';
-import { ArgsType, Authorized, Field } from 'type-graphql';
-import { IsMake, IsModelFor } from '../utils/validators';
+import {
+  IsBoolean,
+  IsDefined,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
+import { UserRole } from "../entities/User";
+import { ArgsType, Authorized, Field } from "type-graphql";
+import { IsMake, IsModelFor } from "../utils/validators";
+import { FileScaler } from "../utils/scalers";
 
 @ArgsType()
 export class CarArgs {
@@ -13,7 +19,9 @@ export class CarArgs {
 
   @Field()
   @IsString()
-  @IsModelFor("make")
+  @IsModelFor("make", {
+    message: "The model you selected is not a model of the selected make.",
+  })
   public model!: string;
 
   @Field()
@@ -24,11 +32,10 @@ export class CarArgs {
   @IsString()
   public color!: string;
 
-  @Field(() => GraphQLUpload, { nullable: true })
+  @Field(() => FileScaler, { nullable: true })
   @IsDefined({ message: "You must add a picture of your car" })
-  public photo?: Upload;
+  public photo?: File;
 }
-
 
 @ArgsType()
 export class EditCarArgs {

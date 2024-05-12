@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { checkForUpdateAsync, fetchUpdateAsync, reloadAsync } from "expo-updates";
-import { Logger } from "./Logger";
+import { Logger } from "./logger";
 
 async function checkForUpdates() {
   if (__DEV__) return;

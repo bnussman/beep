@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { wsLink } from "./Apollo";
+import { wsLink } from "./apollo";
 
 export type WebsocketStatus = "Closed" | "Opened" | "Connecting" | "Connected";
 

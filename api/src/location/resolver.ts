@@ -1,11 +1,13 @@
 import { IsLatitude, IsLongitude } from 'class-validator';
 import { User, UserRole } from '../entities/User';
-import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperLocationArgs, LocationInput } from './args';
 import { AnonymousBeeper } from '../beeper/resolver';
 import { getDistance } from '../utils/dist';
 import { sha256 } from 'js-sha256';
+import { pubSub } from '../utils/pubsub';
+import { GraphQLError } from 'graphql';
 
 @ObjectType()
 export class Point {
@@ -31,20 +33,19 @@ export class LocationResolver {
   public async setLocation(
     @Ctx() ctx: Context,
     @Arg('location') location: LocationInput,
-    @PubSub() pubSub: PubSubEngine,
     @Arg('id', { nullable: true }) id?: string
   ): Promise<User> {
     if (id) {
       if (ctx.user.role !== UserRole.ADMIN) {
-        throw new Error("You can't update another user's location without being an admin.");
+        throw new GraphQLError("You can't update another user's location without being an admin.");
       }
 
       const user = await ctx.em.findOneOrFail(User, id);
 
       user.location = new Point(location.latitude, location.longitude);
 
-      pubSub.publish("Location" + id, location);
-      pubSub.publish("Beepers", { id, ...location });
+      pubSub.publish("location", id, location);
+      pubSub.publish("beeperLocation", { id, ...location });
 
       await ctx.em.persistAndFlush(user);
 
@@ -53,8 +54,8 @@ export class LocationResolver {
 
     ctx.user.location = new Point(location.latitude, location.longitude);
 
-    pubSub.publish("Location" + ctx.user.id, location);
-    pubSub.publish("Beepers", { id: ctx.user.id, ...location });
+    pubSub.publish("location", ctx.user.id, location);
+    pubSub.publish("beeperLocation", { id: ctx.user.id, ...location });
 
     await ctx.em.persistAndFlush(ctx.user);
 
@@ -63,7 +64,8 @@ export class LocationResolver {
 
   @Subscription(() => Point, {
     nullable: true,
-    topics: ({ args }) => "Location" + args.id,
+    topics: "location",
+    topicId: ({ args }) => args.id,
   })
   public getLocationUpdates(@Arg("id") id: string, @Root() entry: LocationInput): Point {
     return {
@@ -73,7 +75,7 @@ export class LocationResolver {
   }
 
   @Subscription(() => AnonymousBeeper, {
-    topics: "Beepers",
+    topics: "beeperLocation",
     filter: ({ args, payload }) => {
       if (args.radius === 0) {
         return true;
@@ -86,7 +88,7 @@ export class LocationResolver {
       return { id: sha256(data.id).substring(0, 9), latitude: data.latitude, longitude: data.longitude };
     }
     if (ctx.user.role !== UserRole.ADMIN) {
-      throw new Error("You can't do that.");
+      throw new GraphQLError("You must be an admin to see un-anonamized beeper locations");
     }
     return data;
   }

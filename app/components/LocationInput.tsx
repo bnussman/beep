@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import * as Location from "expo-location";
-import { XStack, InputProps, Input, Spinner, Button } from "@beep/ui";
-import { MapPin } from "@tamagui/lucide-icons";
+import { Input } from "@/components/Input";
+import { Text } from "@/components/Text";
+import { Button } from "@/components/Button";
+import { TextInputProps, View } from "react-native";
 
-interface Props extends InputProps {
+interface Props extends TextInputProps {
   inputRef: any;
 }
 
 export function LocationInput({ inputRef, ...props }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
-   const handleGetCurrentLocation = async () => {
+  const handleGetCurrentLocation = async () => {
     setIsLoading(true);
-    props.onChangeText?.("");
+    // props.onChangeText?.("");
 
     const { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -47,21 +49,19 @@ export function LocationInput({ inputRef, ...props }: Props) {
 
     props.onChangeText?.(string);
     setIsLoading(false);
-  }
+  };
 
   return (
-    <XStack gap="$2">
+    <View className="flex flex-row gap-2">
       <Input
         placeholder={isLoading ? "Loading" : undefined}
         ref={inputRef}
-        flexGrow={1}
-        flex={1}
+        className="flex-1 flex-grow"
         {...props}
       />
-      <Button
-        icon={isLoading ? <Spinner /> : <MapPin />}
-        onPress={handleGetCurrentLocation}
-      />
-    </XStack>
+      <Button isLoading={isLoading} onPress={handleGetCurrentLocation}>
+        <Text>📍</Text>
+      </Button>
+    </View>
   );
 }

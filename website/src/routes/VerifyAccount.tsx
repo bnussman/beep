@@ -5,9 +5,9 @@ import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { Loading } from '../components/Loading';
 import { Box } from '@chakra-ui/react';
-import { Route } from '@tanstack/react-router';
-import { rootRoute } from '../App';
+import { createRoute } from '@tanstack/react-router';
 import { graphql } from 'gql.tada';
+import { rootRoute } from '../utils/router';
 
 const VerifyAccountGraphQL = graphql(`
   mutation VerifyAccount($id: String!) {
@@ -15,7 +15,7 @@ const VerifyAccountGraphQL = graphql(`
   }
 `);
 
-export const verifyAccountRoute = new Route({
+export const verifyAccountRoute = createRoute({
   component: VerifyAccount,
   path: "/account/verify/$id",
   getParentRoute: () => rootRoute,

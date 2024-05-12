@@ -6,7 +6,7 @@ import { Beep, Status } from '../entities/Beep';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { Rating } from '../entities/Rating';
 import { QueryOrder } from '@mikro-orm/core';
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLResolveInfo } from 'graphql';
 import { User, UserRole } from '../entities/User';
 import { sendNotification } from '../utils/notifications';
 
@@ -30,7 +30,7 @@ export class RatingResolver {
     });
 
     if (!beep) {
-      throw new Error("You can only leave a rating after you have been accepted");
+      throw new GraphQLError("You can only leave a rating after you have been accepted");
     }
 
     const rating = new Rating(ctx.user, user, input.stars, beep, input.message);
@@ -48,7 +48,11 @@ export class RatingResolver {
 
     await ctx.em.persistAndFlush(user);
 
-    sendNotification(user.pushToken, `You got rated ⭐️`, `${ctx.user.name()} rated you ${input.stars} stars!`);
+    sendNotification({
+      token: user.pushToken,
+      title: `You got rated ⭐️`,
+      message: `${ctx.user.name()} rated you ${input.stars} stars!`
+    });
 
     return true;
   }
@@ -94,11 +98,11 @@ export class RatingResolver {
     const rating = await ctx.em.findOneOrFail(Rating, id, { populate: ['rated'] });
 
     if (ctx.user.role === UserRole.USER && rating.rater.id !== ctx.user.id) {
-      throw new Error("You can't delete a rating that you didn't create.");
+      throw new GraphQLError("You can't delete a rating that you didn't create.");
     }
 
     if (!rating.rated.rating) {
-      throw new Error("You are trying to delete a rating for a user who's rating value is undefined");
+      throw new GraphQLError("You are trying to delete a rating for a user who's rating value is undefined");
     }
 
     const numberOfRatings = await ctx.em.count(Rating, { rated: rating.rated.id });

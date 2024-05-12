@@ -6,7 +6,7 @@ import { Loading } from './Loading';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
 import { graphql } from '../graphql';
 
@@ -28,7 +28,7 @@ const PaymentsQuery = graphql(`
   }
 `);
 
-export const paymentsTableRoute = new Route({
+export const paymentsTableRoute = createRoute({
   component: PaymentsTable,
   path: 'payments',
   getParentRoute: () => userRoute,

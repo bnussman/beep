@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, Heading, XStack, Stack } from "@beep/ui";
+import { Text } from "@/components/Text";
+import { View } from "react-native";
 import { Avatar } from "./Avatar";
 
 interface Props {
@@ -10,16 +11,14 @@ interface Props {
 
 export function UserHeader({ picture, name, username }: Props) {
   return (
-    <XStack alignItems="center" gap="$4">
-      <Avatar size="$6" url={picture} />
-      <Stack>
-        <Heading fontWeight="bold">
+    <View className="flex flex-row items-center justify-between">
+      <View>
+        <Text size="3xl" weight="black">
           {name}
-        </Heading>
-        <Text color="$gray8">
-          @{username}
         </Text>
-      </Stack>
-    </XStack>
+        <Text color="subtle">@{username}</Text>
+      </View>
+      <Avatar size="lg" src={picture ?? undefined} />
+    </View>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { client } from '../../../utils/Apollo';
+import { client } from '../../../utils/apollo';
 import { Unpacked } from '../../../utils/utils';
 import { CarsQuery } from '.';
 import { Error } from '../../../components/Error';

@@ -8,7 +8,7 @@ import { TdUser } from '../../../components/TdUser';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
-import { Link, Route, useNavigate } from '@tanstack/react-router';
+import { Link, createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from '../../../graphql';
 
@@ -50,12 +50,12 @@ export function printStars(rating: number): string {
   return stars;
 }
 
-export const ratingsRoute = new Route({
+export const ratingsRoute = createRoute({
   path: "ratings",
   getParentRoute: () => adminRoute,
 });
 
-export const ratingsListRoute = new Route({
+export const ratingsListRoute = createRoute({
   path: "/",
   component: Ratings,
   getParentRoute: () => ratingsRoute,
@@ -71,7 +71,7 @@ export function Ratings() {
 
   const navigate = useNavigate({ from: ratingsListRoute.id });
 
-  const { data, loading, error } = useQuery(RatesGraphQL, {
+  const { data, loading, error, previousData } = useQuery(RatesGraphQL, {
     variables: {
       offset: (page - 1) * pageLimit,
       show: pageLimit
@@ -86,11 +86,14 @@ export function Ratings() {
     return <Error error={error} />;
   }
 
+  const ratings = data?.getRatings.items ?? previousData?.getRatings.items;
+  const count = data?.getRatings.count ?? previousData?.getRatings.count;
+
   return (
     <Box>
       <Heading>Ratings</Heading>
       <Pagination
-        resultCount={data?.getRatings.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -108,11 +111,11 @@ export function Ratings() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getRatings.items.map((rating) => (
+            {ratings?.map((rating) => (
               <Tr key={rating.id}>
                 <TdUser user={rating.rater} />
                 <TdUser user={rating.rated} />
-                <Td>{rating.message || "N/A"}</Td>
+                <Td>{rating.message ?? "N/A"}</Td>
                 <Td>{printStars(rating.stars)}</Td>
                 <Td>{dayjs().to(rating.timestamp)}</Td>
                 <Td>
@@ -127,7 +130,7 @@ export function Ratings() {
       </Box>
       {loading && <Loading />}
       <Pagination
-        resultCount={data?.getRatings.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

@@ -1,16 +1,18 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Card, XStack, Stack, Text } from "@beep/ui";
+import { Card } from "@/components/Card";
+import { Text } from "@/components/Text";
 import { useUser } from "../utils/useUser";
-import { Avatar } from "./Avatar";
+import { Avatar } from "@/components/Avatar";
 import { printStars } from "./Stars";
-import { Unpacked, isMobile } from "../utils/constants";
-import { Alert } from "react-native";
+import { Unpacked } from "@/utils/constants";
+import { View } from "react-native";
 import { useMutation } from "@apollo/client";
 import { ResultOf, graphql } from "gql.tada";
 import { Ratings } from "../routes/Ratings";
+import * as ContextMenu from "zeego/context-menu";
 
-type Rating = Unpacked<ResultOf<typeof Ratings>['getRatings']['items']>;
+type Rating = Unpacked<ResultOf<typeof Ratings>["getRatings"]["items"]>;
 
 interface Props {
   item: Rating;
@@ -33,7 +35,7 @@ export function Rating(props: Props) {
 
   const [deleteRating] = useMutation(DeleteRating, {
     variables: {
-      id: item.id
+      id: item.id,
     },
     onError(error) {
       alert(error.message);
@@ -45,56 +47,48 @@ export function Rating(props: Props) {
           id: item.id,
         }),
       });
-    }
+    },
   });
 
-  const onLongPress = () => {
-    if (isMobile) {
-      Alert.alert(
-        "Delete Rating?",
-        "Are you sure you want to delete this rating?",
-        [
-          {
-            text: "No",
-            style: "cancel",
-          },
-          { text: "Yes", onPress: () => deleteRating() },
-        ],
-        { cancelable: true }
-      );
-    } else {
-      deleteRating();
-    }
-  };
-
   return (
-    <Card
-      mt="$2"
-      mx="$2"
-      p="$3"
-      pressTheme
-      hoverTheme
-      onPress={() => navigation.navigate("User", { id: otherUser.id, beepId: item.beep.id })}
-      onLongPress={onLongPress}
-    >
-      <Stack gap="$2">
-        <XStack alignItems="center" gap="$2">
-          <Avatar size="$4" url={otherUser.photo} />
-          <Stack flexShrink={1}>
-            <Text fontWeight="bold">
-              {otherUser.name}
-            </Text>
-            <Text color="$gray8">
-              {`${isRater ? "You rated" : "Rated you"} - ${new Date(
-                item.timestamp as string
-              ).toLocaleString(undefined, { dateStyle: 'short', timeStyle: "short" })}`}
-            </Text>
-          </Stack>
-          <Stack flexGrow={1} />
-          <Text>{printStars(item.stars)}</Text>
-        </XStack>
-        {item.message && <Text>{item.message}</Text>}
-      </Stack>
-    </Card>
+    <ContextMenu.Root>
+      <ContextMenu.Trigger action="press">
+        <Card variant="outlined" pressable className="p-4 flex gap-4">
+          <View className="flex flex-row items-center justify-between">
+            <View className="flex flex-row items-center gap-2">
+              <Avatar size="xs" src={otherUser.photo ?? undefined} />
+              <View className="flex-shrink">
+                <Text weight="bold">{otherUser.name}</Text>
+                <Text color="subtle" size="sm">
+                  {`${isRater ? "You rated" : "Rated you"} - ${new Date(
+                    item.timestamp as string,
+                  ).toLocaleString(undefined, {
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  })}`}
+                </Text>
+              </View>
+            </View>
+            <Text>{printStars(item.stars)}</Text>
+          </View>
+          {item.message && <Text>{item.message}</Text>}
+        </Card>
+      </ContextMenu.Trigger>
+      <ContextMenu.Content>
+        <ContextMenu.Item
+          key="Profile"
+          onSelect={() => navigation.navigate("User", { id: otherUser.id })}
+        >
+          <ContextMenu.ItemTitle>View Profile</ContextMenu.ItemTitle>
+        </ContextMenu.Item>
+        <ContextMenu.Item
+          key="delete-rating"
+          onSelect={deleteRating}
+          destructive
+        >
+          <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>
+        </ContextMenu.Item>
+      </ContextMenu.Content>
+    </ContextMenu.Root>
   );
 }

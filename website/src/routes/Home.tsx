@@ -3,10 +3,10 @@ import iPhoneDark from '../assets/dark-square.png';
 import iPhoneLight from '../assets/light-square.png';
 import { Container, useColorMode } from "@chakra-ui/react";
 import { Hero } from "../components/Hero";
-import { Route } from '@tanstack/react-router';
-import { rootRoute } from '../App';
+import { createRoute } from '@tanstack/react-router';
+import { rootRoute } from '../utils/router';
 
-export const indexRoute = new Route({
+export const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: Home,

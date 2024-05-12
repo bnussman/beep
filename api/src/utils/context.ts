@@ -1,25 +1,33 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from "@sentry/bun";
 import { Context as WSContext } from "graphql-ws";
 import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { Token } from "../entities/Token";
 import { User } from "../entities/User";
-import { ExpressContextFunctionArgument } from "@apollo/server/dist/esm/express4";
+import { YogaInitialContext } from "graphql-yoga";
 
 export interface Context {
-    em: MikroORM<PostgreSqlDriver>['em'];
-    user: User;
-    token: Token;
+  em: MikroORM<PostgreSqlDriver>['em'];
+  user: User;
+  token: Token;
 }
 
-export async function getContext(data: ExpressContextFunctionArgument, orm: MikroORM<PostgreSqlDriver>): Promise<Context> {
-  Sentry.configureScope(scope => scope.setTransactionName(data.req.body?.operationName));
+export async function getContext(data: YogaInitialContext, orm: MikroORM<PostgreSqlDriver>): Promise<Context> {
+  // Sentry.configureScope(scope => scope.setTransactionName(data.req.body?.operationName));
 
   const em = orm.em.fork();
 
   const context = { em };
 
-  const bearer = data.req.get("Authorization")?.split(" ")[1];
+  if (!data.request) {
+    // This is a websocket. Handle auth in the onConnext, and pass context through.
+    // console.log("Getting context for websocket connextion")
+    // @ts-expect-error
+    const token = data.extra.token as Token;
+    return { em, token, user: token.user };
+  }
+
+  const bearer = data.request.headers.get("Authorization")?.split(" ")[1];
 
   if (!bearer) {
     return context as Context;
@@ -42,7 +50,7 @@ export async function getContext(data: ExpressContextFunctionArgument, orm: Mikr
   return context as Context;
 }
 
-export async function onConnect(ctx: WSContext<{ token?: string }, { token?: Token }>, orm: MikroORM<IDatabaseDriver<Connection>>) {
+export async function onConnect(ctx: WSContext<any, any>, orm: MikroORM<IDatabaseDriver<Connection>>) {
   const bearer = ctx.connectionParams?.token;
 
   if (!bearer) {

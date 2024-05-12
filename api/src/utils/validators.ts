@@ -1,24 +1,28 @@
-import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
-import { isEduEmail } from '../users/helpers';
-import { getMakes, getModels } from 'car-info';
+import {
+  registerDecorator,
+  ValidationArguments,
+  ValidationOptions,
+} from "class-validator";
+import { isEduEmail } from "../users/helpers";
+import { getMakes, getModels } from "car-info";
 
 const makes = getMakes();
 
 export function IsStudent(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string): void {
     registerDecorator({
-      name: 'isStudent',
+      name: "isStudent",
       target: object.constructor,
       propertyName: propertyName,
-      constraints: ['isStudent'],
+      constraints: ["isStudent"],
       options: validationOptions,
       validator: {
         validate(value) {
-          return typeof value === 'string' && isEduEmail(value);
+          return typeof value === "string" && isEduEmail(value);
         },
         defaultMessage() {
-          return 'you must use a .edu email';
-        }
+          return "you must use a .edu email";
+        },
       },
     });
   };
@@ -27,28 +31,31 @@ export function IsStudent(validationOptions?: ValidationOptions) {
 export function IsMake(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string): void {
     registerDecorator({
-      name: 'isMake',
+      name: "isMake",
       target: object.constructor,
       propertyName: propertyName,
-      constraints: ['isMake'],
+      constraints: ["isMake"],
       options: validationOptions,
       validator: {
         validate(value) {
           // @ts-expect-error I need to make car-info types better
-          return typeof value === 'string' && makes.includes(value);
+          return typeof value === "string" && makes.includes(value);
         },
         defaultMessage() {
-          return 'you must use a .edu email';
-        }
+          return "you must use a .edu email";
+        },
       },
     });
   };
 }
 
-export function IsModelFor(property: string, validationOptions?: ValidationOptions) {
+export function IsModelFor(
+  property: string,
+  validationOptions?: ValidationOptions,
+) {
   return function (object: any, propertyName: string) {
     registerDecorator({
-      name: 'isModelFor',
+      name: "isModelFor",
       target: object.constructor,
       propertyName: propertyName,
       constraints: [property],
@@ -58,7 +65,7 @@ export function IsModelFor(property: string, validationOptions?: ValidationOptio
           const [relatedPropertyName] = args.constraints;
           const relatedValue = (args.object as any)[relatedPropertyName];
           const models: string[] = getModels(relatedValue);
-          return typeof value === 'string' && models.includes(value);
+          return typeof value === "string" && models.includes(value);
         },
       },
     });

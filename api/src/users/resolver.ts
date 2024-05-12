@@ -1,21 +1,20 @@
 import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
-import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
-import { deleteUser, isEduEmail, Upload, search } from './helpers';
+import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { deleteUser, isEduEmail, search } from './helpers';
 import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLResolveInfo } from 'graphql';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { sendNotification, sendNotificationsNew } from '../utils/notifications';
-import { S3 } from 'aws-sdk';
-import { getOlderObjectsToDelete, getAllObjects, getUserFromObjectKey, deleteObject, s3 } from '../utils/s3';
 import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
 import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
-import { hash } from 'bcrypt';
+import { password as bunPassword } from 'bun';
 import { VerifyEmail } from '../entities/VerifyEmail';
-import { GraphQLUpload } from 'graphql-upload-minimal';
-import { setContext } from "@sentry/node";
 import { S3_BUCKET_URL } from '../utils/constants';
+import { pubSub } from '../utils/pubsub';
+import { FileScaler } from '../utils/scalers';
+import { s3 } from '../utils/s3';
 
 @ObjectType()
 class UsersPerDomain {
@@ -74,13 +73,17 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification Self')
-  public async editUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id: string, @Arg('data') data: EditUserInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async editUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id: string, @Arg('data') data: EditUserInput): Promise<User> {
     const user = !id ? ctx.user : await ctx.em.findOneOrFail(User, id);
 
     const oldEmail = ctx.user.email;
 
     if (user.isEmailVerified === false && data.isEmailVerified === true) {
-      sendNotification(user.pushToken, "Account Verified ✅", "An admin has approved your account.");
+      sendNotification({
+        token: user.pushToken,
+        title: "Account Verified ✅",
+        message: "An admin has approved your account."
+      });
     }
 
     Object.keys(data).forEach(key => {
@@ -99,7 +102,7 @@ export class UserResolver {
       createVerifyEmailEntryAndSendEmail(ctx.user, ctx.em);
     }
 
-    pubSub.publish("User" + user.id, user);
+    pubSub.publish("user", user.id, user);
 
     await ctx.em.flush();
 
@@ -109,7 +112,7 @@ export class UserResolver {
   @Mutation(() => Boolean)
   @Authorized('No Verification')
   public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
-    ctx.user.password = await hash(input.password, 10);
+    ctx.user.password = await bunPassword.hash(input.password, "bcrypt");
     ctx.user.passwordType = PasswordType.BCRYPT;
 
     await ctx.em.flush();
@@ -118,24 +121,24 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  public async verifyAccount(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
+  public async verifyAccount(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
     const verification = await ctx.em.findOneOrFail(VerifyEmail, id, { populate: ['user'] });
 
     if ((verification.time.getTime() + (18000 * 1000)) < Date.now()) {
       await ctx.em.removeAndFlush(verification);
-      throw new Error("Your verification token has expired");
+      throw new GraphQLError("Your verification token has expired");
     }
 
     if (verification.email !== verification.user.email) {
       await ctx.em.removeAndFlush(verification);
-      throw new Error("You tried to verify an email address that is not the same as your current email.");
+      throw new GraphQLError("You tried to verify an email address that is not the same as your current email.");
     }
 
     const update = isEduEmail(verification.email) ? { isEmailVerified: true, isStudent: true } : { isEmailVerified: true };
 
     wrap(verification.user).assign(update);
 
-    pubSub.publish("User" + verification.user.id, verification.user);
+    pubSub.publish("user", verification.user.id, verification.user);
 
     await ctx.em.removeAndFlush(verification);
 
@@ -156,7 +159,7 @@ export class UserResolver {
   @Authorized()
   public async deleteAccount(@Ctx() ctx: Context): Promise<boolean> {
     if (ctx.user.role === UserRole.ADMIN) {
-      throw new Error("Admin accounts cannot be deleted.");
+      throw new GraphQLError("Admin accounts cannot be deleted.");
     }
 
     return await deleteUser(ctx.user, ctx.em);
@@ -164,32 +167,25 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification')
-  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => GraphQLUpload) { createReadStream, filename }: Upload, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => FileScaler) file: File): Promise<User> {
 
-    const extention = filename.substring(filename.lastIndexOf("."), filename.length);
+    const extention = file.name.substring(file.name.lastIndexOf("."), file.name.length);
 
-    filename = ctx.user.id + "-" + Date.now() + extention;
+    const filename = ctx.user.id + "-" + Date.now() + extention;
 
-    const uploadParams = {
-      Body: createReadStream(),
-      Key: "images/" + filename,
-      Bucket: "beep",
-      ACL: "public-read"
-    };
+    const objectKey = "images/" + filename;
 
-    setContext("uploadParams", uploadParams);
-
-    const result = await s3.upload(uploadParams).promise();
+    await s3.putObject(objectKey, file.stream(), { metadata: { "x-amz-acl": "public-read" }});
 
     if (ctx.user.photo) {
       const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
-      deleteObject(key);
+      s3.deleteObject(key);
     }
 
-    ctx.user.photo = result.Location;
+    ctx.user.photo = S3_BUCKET_URL + objectKey;
 
-    pubSub.publish("User" + ctx.user.id, ctx.user);
+    pubSub.publish("user", ctx.user.id, ctx.user);
 
     await ctx.em.flush();
 
@@ -301,7 +297,7 @@ export class UserResolver {
 
     const tokens = users.map(user => user.pushToken).filter(token => token) as string[];
 
-    sendNotificationsNew(tokens, title, body);
+    await sendNotificationsNew(tokens, title, body);
 
     return tokens.length;
   }
@@ -311,49 +307,18 @@ export class UserResolver {
   public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string, @Arg('id') id: string): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, id);
 
-    sendNotification(user.pushToken, title, body);
+    await sendNotification({
+      token: user.pushToken,
+      title,
+      message: body
+    });
 
     return true;
   }
 
-  @Mutation(() => Number)
-  @Authorized(UserRole.ADMIN)
-  public async cleanObjectStorageBucket(@Ctx() { em }: Context): Promise<number> {
-    const objects = await getAllObjects({
-      Bucket: 'beep',
-      Prefix: 'images/',
-    });
-
-    const objectsToDelete: S3.ObjectList = [];
-
-    for (const object of objects) {
-      const userId = getUserFromObjectKey(object.Key);
-
-      const user = await em.findOne(User, { id: userId });
-
-      if (user === null) {
-        objectsToDelete.push(object);
-      }
-
-      const objectsWithSameUser = objects.filter(object => object.Key?.startsWith(`images/${userId}`));
-
-      if (objectsWithSameUser.length > 1) {
-        objectsToDelete.concat(getOlderObjectsToDelete(objectsWithSameUser));
-      }
-    }
-
-    for (const object of objectsToDelete) {
-      if (object.Key === undefined) {
-        throw new Error("Key is undefined when trying to delete an old object");
-      }
-      deleteObject(object.Key);
-    }
-
-    return objectsToDelete.length;
-  }
-
   @Subscription(() => User, {
-    topics: ({ context }) => "User" + context.user.id,
+    topics: "user",
+    topicId: ({ context }) => context.user.id,
   })
   @Authorized('No Verification')
   public getUserUpdates(@Ctx() ctx: Context, @Root() user: User): User {

@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect } from 'react';
-import { Text } from '@beep/ui';
-import { Marker, MapMarkerProps } from 'react-native-maps';
-import { BEEPER_ICON } from '../utils/constants';
+import React, { useCallback, useEffect } from "react";
+import { Text } from "@/components/Text";
+import { Marker, MapMarkerProps } from "react-native-maps";
+import { BEEPER_ICON } from "../utils/constants";
 import Animated, {
   Easing,
   EasingFn,
@@ -9,7 +9,7 @@ import Animated, {
   useAnimatedProps,
   useSharedValue,
   withTiming,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
 interface LatLng {
   latitude: number;
@@ -70,8 +70,8 @@ export const useAnimatedRegion = (location: Partial<LatLng> = {}) => {
   };
 };
 
-type MarkerProps = Omit<MapMarkerProps, 'coordinate'> & {
-  coordinate?: MapMarkerProps['coordinate'];
+type MarkerProps = Omit<MapMarkerProps, "coordinate"> & {
+  coordinate?: MapMarkerProps["coordinate"];
 };
 
 export const AnimatedMarker = Animated.createAnimatedComponent(
@@ -94,13 +94,13 @@ export const BeeperMarker = ({ latitude, longitude }: BeeperMakerProps) => {
       latitude,
       longitude,
       duration: 1000,
-      easing: Easing.linear
+      easing: Easing.linear,
     });
-  }, [latitude, longitude])
+  }, [latitude, longitude]);
 
   return (
     <AnimatedMarker animatedProps={animatedRegion.props}>
-      <Text fontSize="$8">{BEEPER_ICON}</Text>
+      <Text size="3xl">{BEEPER_ICON}</Text>
     </AnimatedMarker>
   );
 };

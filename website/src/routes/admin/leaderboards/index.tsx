@@ -2,10 +2,10 @@ import React from 'react'
 import { Heading, Tabs, TabList, Tab, TabPanel, TabPanels, Stack } from "@chakra-ui/react"
 import { Beeps } from './beeps';
 import { Rides } from './rides';
-import { Route } from '@tanstack/react-router';
+import { createRoute } from '@tanstack/react-router';
 import { adminRoute } from '..';
 
-export const leaderboardsRoute = new Route({
+export const leaderboardsRoute = createRoute({
   component: Leaderboards,
   path: 'leaderboards',
   getParentRoute: () => adminRoute,

@@ -1,29 +1,24 @@
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { PasswordInput } from "../../components/PasswordInput";
-import { Alert } from "../../utils/Alert";
+import { PasswordInput } from "@/components/PasswordInput";
+import { Text } from "@/components/Text";
+import { Input } from "@/components/Input";
+import { Button } from "@/components/Button";
+import { Label } from "@/components/Label";
+import { Alert } from "../../utils/alert";
 import { isSimulator } from "../../utils/constants";
 import { ApolloError, useMutation } from "@apollo/client";
-import { client } from "../../utils/Apollo";
-import { getPushToken } from "../../utils/Notifications";
-import { Container } from "../../components/Container";
+import { client } from "../../utils/apollo";
+import { getPushToken } from "../../utils/notifications";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { UserData } from "../../utils/useUser";
-import { Logger } from "../../utils/Logger";
+import { Logger } from "../../utils/logger";
 import { useValidationErrors } from "../../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { VariablesOf, graphql } from "gql.tada";
-import {
-  Button,
-  Input,
-  Heading,
-  Stack,
-  XStack,
-  Spinner,
-  Label,
-  Text
-} from "@beep/ui";
+import { View } from "react-native";
 
 const Login = graphql(`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -107,84 +102,80 @@ export function LoginScreen() {
   });
 
   return (
-    <Container
-      keyboard
-      center
-      scrollViewProps={{ scrollEnabled: true, bounces: false }}
+    <KeyboardAwareScrollView
+      scrollEnabled={false}
+      contentContainerClassName="flex h-full justify-center p-4 bg-white dark:bg-black"
     >
-      <Stack w="90%" gap="$2">
-        <Heading size="$10" fontWeight="bold">
-          Ride Beep App 🚕
-        </Heading>
-        <Stack>
-          <Label htmlFor="username" fontWeight="bold">Username or Email</Label>
-          <Controller
-            name="username"
-            rules={{ required: "Username or Email is required" }}
-            defaultValue=""
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="username"
-                autoCapitalize="none"
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("password")}
-                textContentType="username"
-              />
-            )}
+      <Text size="4xl" weight="black" className="mb-4">
+        Ride Beep App 🚕
+      </Text>
+      <Label htmlFor="username">Username or Email</Label>
+      <Controller
+        name="username"
+        rules={{ required: "Username or Email is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, onBlur, value, ref } }) => (
+          <Input
+            id="username"
+            autoCapitalize="none"
+            onBlur={onBlur}
+            onChangeText={(val) => onChange(val)}
+            value={value}
+            ref={ref}
+            returnKeyLabel="next"
+            returnKeyType="next"
+            onSubmitEditing={() => setFocus("password")}
+            textContentType="username"
           />
-          <Text color="red">
-            {errors.username?.message}
-            {validationErrors?.username?.[0]}
-          </Text>
-        </Stack>
-        <Stack>
-          <Label htmlFor="password" fontWeight="bold">Password</Label>
-          <Controller
-            name="password"
-            rules={{ required: "Password is required" }}
-            defaultValue=""
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <PasswordInput
-                id="password"
-                autoCapitalize="none"
-                onBlur={onBlur}
-                onChangeText={(val: string) => onChange(val)}
-                value={value}
-                inputRef={ref}
-                returnKeyLabel="login"
-                returnKeyType="go"
-                onSubmitEditing={onLogin}
-                textContentType="password"
-              />
-            )}
+        )}
+      />
+      <Text className="text-red-400 dark:!text-red-400 mt-1">
+        {errors.username?.message}
+        {validationErrors?.username?.[0]}
+      </Text>
+      <Label htmlFor="password">Password</Label>
+      <Controller
+        name="password"
+        rules={{ required: "Password is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, onBlur, value, ref } }) => (
+          <PasswordInput
+            id="password"
+            autoCapitalize="none"
+            onBlur={onBlur}
+            onChangeText={(val: string) => onChange(val)}
+            value={value}
+            inputRef={ref}
+            returnKeyLabel="login"
+            returnKeyType="go"
+            onSubmitEditing={onLogin}
+            textContentType="password"
           />
-          <Text color="red">
-            {errors.password?.message}
-            {validationErrors?.password?.[0]}
-          </Text>
-        </Stack>
+        )}
+      />
+      <Text className="text-red-400 dark:!text-red-400 mt-1">
+        {errors.password?.message}
+        {validationErrors?.password?.[0]}
+      </Text>
+      <Button isLoading={isSubmitting} onPress={onLogin} className="my-4">
+        Login
+      </Button>
+      <View className="flex flex-row justify-between">
         <Button
-          iconAfter={isSubmitting ? <Spinner /> : undefined}
-          onPress={onLogin}
+          variant="secondary"
+          onPress={() => navigation.navigate("Sign Up")}
         >
-          Login
+          Sign Up
         </Button>
-        <XStack justifyContent="space-between">
-          <Button onPress={() => navigation.navigate("Sign Up")}>
-            Sign Up
-          </Button>
-          <Button onPress={() => navigation.navigate("Forgot Password")}>
-            Forgot Password
-          </Button>
-        </XStack>
-      </Stack>
-    </Container>
+        <Button
+          variant="secondary"
+          onPress={() => navigation.navigate("Forgot Password")}
+        >
+          Forgot Password
+        </Button>
+      </View>
+    </KeyboardAwareScrollView>
   );
 }

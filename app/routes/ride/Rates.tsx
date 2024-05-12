@@ -1,5 +1,7 @@
 import React from "react";
-import { Card, XStack, Text, Stack } from "@beep/ui";
+import { View } from "react-native";
+import { Card } from "@/components/Card";
+import { Text } from "@/components/Text";
 
 interface Props {
   singles: number;
@@ -8,23 +10,21 @@ interface Props {
 
 export function Rates({ singles, group }: Props) {
   return (
-    <Card p="$3" w="100%" alignItems="center">
-      <XStack gap="$4" alignItems="center" w="100%" jc="space-between">
-        <Text>
-          <Text fontWeight="bold">Rates </Text>
-          <Text>per person</Text>
-        </Text>
-        <XStack>
-          <Stack alignItems="center">
-            <Text fontWeight="bold">Single</Text>
-            <Text>${singles}</Text>
-          </Stack>
-          <Stack alignItems="center">
-            <Text fontWeight="bold">Group</Text>
-            <Text>${group}</Text>
-          </Stack>
-        </XStack>
-      </XStack>
+    <Card variant="outlined" className="p-4 flex flex-row justify-between w-full items-center">
+      <Text>
+        <Text weight="black">Rates </Text>
+        <Text>per person</Text>
+      </Text>
+      <View className="flex flex-row gap-4">
+        <View className="items-center">
+          <Text weight="bold">Single</Text>
+          <Text>${singles}</Text>
+        </View>
+        <View className="items-center">
+          <Text weight="bold">Group</Text>
+          <Text>${group}</Text>
+        </View>
+      </View>
     </Card>
   );
 }

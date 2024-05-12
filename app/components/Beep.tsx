@@ -1,27 +1,30 @@
 import React from "react";
+import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Card, XStack, Stack, Text } from "@beep/ui";
+import { Card } from "@/components/Card";
+import { Text } from "@/components/Text";
+import { Avatar } from "@/components/Avatar";
 import { useUser } from "../utils/useUser";
-import { Avatar } from "./Avatar";
 import { Unpacked } from "../utils/constants";
 import { Status } from "../utils/types";
 import { ResultOf } from "gql.tada";
 import { GetBeepHistory } from "../routes/Beeps";
+import { cx } from "class-variance-authority";
 
 interface Props {
-  item: Unpacked<ResultOf<typeof GetBeepHistory>['getBeeps']['items']>;
+  item: Unpacked<ResultOf<typeof GetBeepHistory>["getBeeps"]["items"]>;
   index: number;
 }
 
 export const beepStatusMap: Record<Status, string> = {
-  [Status.WAITING]: "$orange9",
-  [Status.ON_THE_WAY]: "$orange9",
-  [Status.ACCEPTED]: "$green9",
-  [Status.IN_PROGRESS]: "$green9",
-  [Status.HERE]: "$green9",
-  [Status.DENIED]: "$red9",
-  [Status.CANCELED]: "$red9",
-  [Status.COMPLETE]: "$green9",
+  [Status.WAITING]: "!bg-green-400",
+  [Status.ON_THE_WAY]: "!bg-orange-400",
+  [Status.ACCEPTED]: "!bg-green-400",
+  [Status.IN_PROGRESS]: "!bg-green-400",
+  [Status.HERE]: "!bg-green-400",
+  [Status.DENIED]: "!bg-red-400",
+  [Status.CANCELED]: "!bg-red-400",
+  [Status.COMPLETE]: "!bg-green-400",
 };
 
 export function Beep({ item }: Props) {
@@ -32,47 +35,44 @@ export function Beep({ item }: Props) {
 
   return (
     <Card
-      mt="$2"
-      mx="$2"
-      p="$4"
-      pressTheme
-      hoverTheme
+      className="p-4 gap-1"
+      variant="outlined"
+      pressable
       onPress={() =>
         navigation.navigate("User", { id: otherUser.id, beepId: item.id })
       }
     >
-      <XStack alignItems="center" mb="$2">
-        <Avatar size="$4" mr="$2" url={otherUser.photo} />
-        <Stack flexShrink={1}>
-          <Text fontWeight="bold">
-            {otherUser.name}
-          </Text>
-          <Text color="$gray10">
-            {`${isRider ? "Ride" : "Beep"} - ${new Date(
-              item.start as string
-            ).toLocaleString()}`}
-          </Text>
-        </Stack>
-        <Stack flexGrow={1} />
-        <Card
-          backgroundColor={beepStatusMap[item.status as Status]}
-          borderRadius="$4"
-          px="$1.5"
-        >
-          <Text textTransform="capitalize" color="white" fontWeight="bold" fontSize="$2">{item.status}</Text>
-        </Card>
-      </XStack>
-      <Stack>
-        <Text>
-          <Text fontWeight="bold">Group size</Text> <Text>{item.groupSize}</Text>
-        </Text>
-        <Text>
-          <Text fontWeight="bold">Pick Up</Text> <Text>{item.origin}</Text>
-        </Text>
-        <Text>
-          <Text fontWeight="bold">Drop Off</Text> <Text>{item.destination}</Text>
-        </Text>
-      </Stack>
+      <View className="flex flex-row items-center justify-between mb-2">
+        <View className="flex flex-row items-center gap-2">
+          <Avatar size="xs" src={otherUser.photo ?? undefined} />
+          <View className="flex-shrink">
+            <Text weight="bold" size="lg">
+              {otherUser.name}
+            </Text>
+            <Text color="subtle">
+              {`${isRider ? "Ride" : "Beep"} - ${new Date(
+                item.start as string,
+              ).toLocaleString()}`}
+            </Text>
+          </View>
+        </View>
+        <View>
+          <Card className={cx("p-1", beepStatusMap[item.status as Status])}>
+            <Text weight="bold" className="capitalize color-white" size="xs">
+              {item.status}
+            </Text>
+          </Card>
+        </View>
+      </View>
+      <Text>
+        <Text weight="bold">Group size</Text> <Text>{item.groupSize}</Text>
+      </Text>
+      <Text>
+        <Text weight="bold">Pick Up</Text> <Text>{item.origin}</Text>
+      </Text>
+      <Text>
+        <Text weight="bold">Drop Off</Text> <Text>{item.destination}</Text>
+      </Text>
     </Card>
   );
 }

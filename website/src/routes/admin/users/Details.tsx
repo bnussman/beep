@@ -2,24 +2,24 @@ import React from "react";
 import { Box, Text, Stack, Tooltip } from "@chakra-ui/react";
 import { Indicator } from "../../../components/Indicator";
 import { printStars } from "../ratings";
-import { Route } from "@tanstack/react-router";
+import { createRoute, useParams } from "@tanstack/react-router";
 import { GetUser, userRoute } from "./User";
 import { useQuery } from "@apollo/client";
 
-export const userDetailsRoute = new Route({
+export const userDetailsRoute = createRoute({
   component: Details,
   path: 'details',
   getParentRoute: () => userRoute,
 });
 
-export const userDetailsInitalRoute = new Route({
+export const userDetailsInitalRoute = createRoute({
   component: Details,
   path: '/',
   getParentRoute: () => userRoute,
 });
 
 export function Details() {
-  const { userId } = userDetailsRoute.useParams();
+  const { userId } = useParams({ from: "/admin/users/$userId" });
 
   const { data } = useQuery(GetUser, { variables: { id: userId } });
 

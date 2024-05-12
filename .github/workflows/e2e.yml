@@ -9,31 +9,22 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 15
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
-    - uses: pnpm/action-setup@v2.2.4
+        node-version: latest
+    - uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    - uses: pnpm/action-setup@v3
       name: Install pnpm
       id: pnpm-install
       with:
         version: latest
         run_install: false
-    - name: Get pnpm store directory
-      id: pnpm-cache
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-    - uses: actions/cache@v3
-      name: Setup pnpm cache
-      with:
-        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
     - name: 📦 install packages
       run: pnpm i --frozen-lockfile
     - name: Install Playwright Browsers
@@ -43,10 +34,11 @@ jobs:
     - name: Build the api
       run: pnpm build:api
     - name: Init the DB
-      run: pnpm --filter @beep/api db:create
+      working-directory: ./api
+      run: bun run --bun db:create
     - name: Run Playwright tests
       run: pnpm --filter @beep/test test
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report

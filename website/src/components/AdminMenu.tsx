@@ -67,6 +67,9 @@ export function AdminMenu() {
           <MenuItem icon={<Icon fontSize="2xl" as={DiRedis} />}  as={Link} to="/admin/redis">
             Redis
           </MenuItem>
+          <MenuItem icon={<Icon fontSize="2xl" as={MdAlternateEmail} />}  as={Link} to="/admin/duplicate-emails">
+            Duplicate Emails
+          </MenuItem>
         </MenuGroup>
       </MenuList>
     </Menu>

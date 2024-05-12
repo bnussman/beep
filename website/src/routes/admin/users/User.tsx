@@ -10,7 +10,7 @@ import { DeleteIcon, CheckIcon } from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { PhotoDialog } from '../../../components/PhotoDialog';
 import { DeleteUserDialog } from './DeleteUserDialog';
-import { Link, Outlet, Route, useNavigate, useRouterState } from '@tanstack/react-router';
+import { Link, Outlet, createRoute, useNavigate, useRouterState } from '@tanstack/react-router';
 import { usersRoute } from '.';
 import { graphql } from '../../../graphql';
 import {
@@ -120,7 +120,7 @@ const tabs = [
   'payments',
 ] as const;
 
-export const userRoute = new Route({
+export const userRoute = createRoute({
   component: User,
   path: "$userId",
   getParentRoute: () => usersRoute,

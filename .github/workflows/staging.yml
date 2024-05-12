@@ -9,14 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: 🔑 Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: 💾 Build and push image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           push: true
           file: Dockerfile
@@ -39,14 +39,14 @@ jobs:
           tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
           mv linux-amd64/helm /usr/local/bin/helm
           helm version
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: 🔍 Lint helm charts
         run: helm lint ./.github/helm/ -f ./.github/helm/values-staging.yaml
-      - uses: actions/setup-node@v3
+      - uses: oven-sh/setup-bun@v1
         with:
-          node-version: 18
+          bun-version: latest
       - name: 🔐 Inject Secrets
-        run: node .github/helm/inject.js
+        run: bun run .github/helm/inject.js
         env:
           secrets: ${{ toJSON(secrets) }}
       - run: cat .github/helm/templates/configmap.yaml

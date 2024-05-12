@@ -1,4 +1,4 @@
-import { useIsSignedIn, useIsSignedOut } from "../utils/useUser";
+import { useIsSignedIn, useIsSignedOut } from "./useUser";
 import { ProfileScreen } from "../routes/global/Profile";
 import { ReportScreen } from "../routes/global/Report";
 import { RateScreen } from "../routes/global/Rate";
@@ -8,7 +8,10 @@ import { AddCar } from "../routes/cars/AddCar";
 import { LoginScreen } from "../routes/auth/Login";
 import { SignUpScreen } from "../routes/auth/SignUp";
 import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
-import { StaticParamList, createStaticNavigation } from "@react-navigation/native";
+import {
+  StaticParamList,
+  createStaticNavigation,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
 import { Appearance } from "react-native";
@@ -28,7 +31,7 @@ const RootStack = createNativeStackNavigator({
     const colorScheme = Appearance.getColorScheme();
     return {
       headerTintColor: colorScheme === "dark" ? "white" : "black",
-    }
+    };
   },
   groups: {
     SignedIn: {
@@ -43,15 +46,15 @@ const RootStack = createNativeStackNavigator({
         User: ProfileScreen,
         Report: {
           screen: ReportScreen,
-          options: {
-            presentation: 'modal',
-          }
+          // options: {
+          //   presentation: "modal",
+          // },
         },
         Rate: {
           screen: RateScreen,
-          options: {
-            presentation: 'modal',
-          }
+          // options: {
+          //   presentation: "modal",
+          // },
         },
         "Change Password": ChangePasswordScreen,
         "Choose Beeper": PickBeepScreen,
@@ -61,8 +64,8 @@ const RootStack = createNativeStackNavigator({
     SignedOut: {
       if: useIsSignedOut,
       screens: {
-        'Sign Up': SignUpScreen,
-        'Forgot Password': ForgotPasswordScreen,
+        "Sign Up": SignUpScreen,
+        "Forgot Password": ForgotPasswordScreen,
       },
     },
   },

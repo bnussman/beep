@@ -1,5 +1,5 @@
 import { Linking, Platform, Share } from "react-native";
-import { Logger } from "./Logger";
+import { Logger } from "./logger";
 
 export function openDirections(origin: string, dest: string): void {
   if (Platform.OS == "ios") {

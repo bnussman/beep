@@ -1,8 +1,8 @@
 import * as Notifications from "expo-notifications";
-import { client } from "../utils/Apollo";
+import { client } from "./apollo";
 import { isMobile } from "./constants";
 import { EditAccount } from "../routes/settings/EditProfile";
-import { Logger } from "./Logger";
+import { Logger } from "./logger";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -59,12 +59,16 @@ async function getNotificationPermission(): Promise<boolean> {
 export async function updatePushToken(): Promise<void> {
   if (isMobile) {
     const token = await getPushToken();
-
     if (token) {
-      await client.mutate({
-        mutation: EditAccount,
-        variables: { input: { pushToken: token } },
-      });
+      try {
+        await client.mutate({
+          mutation: EditAccount,
+          variables: { input: { pushToken: token } },
+        });
+      } catch (error) {
+        alert(error);
+        Logger.error(error);
+      }
     }
   }
 }

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Unpacked } from "../utils/constants";
+import { Button } from "@/components/Button";
 import { ApolloError, useMutation } from "@apollo/client";
 import { useEffect } from "react";
-import { Button, Spinner } from "@beep/ui";
 import { Status } from "../utils/types";
 import { ResultOf, graphql } from "gql.tada";
 import { GetInitialQueue } from "../routes/beep/StartBeeping";
@@ -21,7 +21,7 @@ const nextStatusMap: Record<InProgressStatuses, Status> = {
 };
 
 interface Props {
-  beep: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
+  beep: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
 }
 
 export const UpdateBeeperQueue = graphql(`
@@ -59,13 +59,13 @@ export function ActionButton(props: Props) {
       case Status.WAITING:
         return "Accept";
       case Status.ACCEPTED:
-        return "I'm on the way";
+        return "I'm on the way 🚕";
       case Status.ON_THE_WAY:
-        return "I'm here";
+        return "I'm here 👋";
       case Status.HERE:
-        return "I'm now beeping this rider";
+        return "I'm now beeping this rider 🚙";
       case Status.IN_PROGRESS:
-        return "Done beeping this rider";
+        return "Done beeping this rider ✅";
       default:
         return "Yikes";
     }
@@ -89,10 +89,7 @@ export function ActionButton(props: Props) {
   };
 
   return (
-    <Button
-      iconAfter={isLoading ? <Spinner /> : undefined}
-      onPress={onPress}
-    >
+    <Button isLoading={isLoading} onPress={onPress} size="lg">
       {getMessage()}
     </Button>
   );

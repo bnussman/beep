@@ -6,14 +6,25 @@ import { BeepersMap } from "./BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
-import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
-import { Linking, AppState, AppStateStatus, Pressable } from "react-native";
-import { cache, client } from "../../utils/Apollo";
-import { Container } from "../../components/Container";
+import {
+  View,
+  Linking,
+  AppState,
+  AppStateStatus,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
+import { cache, client } from "../../utils/apollo";
 import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";
-import { Avatar } from "../../components/Avatar";
+import { Avatar } from "@/components/Avatar";
+import { Image } from "@/components/Image";
+import { Card } from "@/components/Card";
+import { Input } from "@/components/Input";
+import { Button } from "@/components/Button";
+import { Label } from "@/components/Label";
+import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
 import { GetBeepHistory } from "../Beeps";
@@ -23,16 +34,11 @@ import {
   openVenmo,
   shareVenmoInformation,
 } from "../../utils/links";
-import {
-  useLazyQuery,
-  useQuery,
-  useSubscription,
-} from "@apollo/client";
+import { useLazyQuery, useQuery, useSubscription } from "@apollo/client";
 import { VariablesOf, graphql } from "gql.tada";
-import { ChooseBeep } from '../ride/PickBeep';
+import { ChooseBeep } from "../ride/PickBeep";
 import { BeeperMarker } from "../../components/Marker";
-import { Card, Label, Image, Input, Text, Button, Heading, XStack, Stack, Spinner } from "@beep/ui";
-import { CreditCard, MessageCircle, PhoneCall, Share } from "@tamagui/lucide-icons";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export const InitialRiderStatus = graphql(`
   query GetInitialRiderStatus {
@@ -134,12 +140,9 @@ export function MainFindBeepScreen() {
   const { getLocation } = useLocation(false);
   const { navigate } = useNavigation();
 
-  const { data, previousData, refetch } = useQuery(
-    InitialRiderStatus,
-    {
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { data, previousData, refetch } = useQuery(InitialRiderStatus, {
+    notifyOnNetworkStatusChange: true,
+  });
 
   const beep = data?.getRiderStatus;
 
@@ -190,11 +193,11 @@ export function MainFindBeepScreen() {
     handleSubmit,
     setFocus,
     formState: { errors },
-  } = useForm<Omit<VariablesOf<typeof ChooseBeep>, 'beeperId'>>({
+  } = useForm<Omit<VariablesOf<typeof ChooseBeep>, "beeperId">>({
     defaultValues: {
       groupSize: undefined,
-      origin: '',
-      destination: '',
+      origin: "",
+      destination: "",
     },
   });
 
@@ -235,7 +238,7 @@ export function MainFindBeepScreen() {
 
     // Run some code when a beep completes
     if (previousData && !beep) {
-      client.refetchQueries({ include: [GetRateData, GetBeepHistory] });
+      client.refetchQueries({ include: [GetBeepHistory] });
     }
   }, [beep]);
 
@@ -262,292 +265,292 @@ export function MainFindBeepScreen() {
 
   if (user?.isBeeping) {
     return (
-      <Container justifyContent="center" alignItems="center">
-        <Heading fontWeight="bold">You are beeping!</Heading>
+      <View>
+        <Text weight="bold">You are beeping!</Text>
         <Text>You can&apos;t find a ride when you are beeping</Text>
-      </Container>
+      </View>
     );
   }
 
   if (!beep) {
     return (
-      <Container keyboard alignItems="center" px="$4">
-        <Stack w="100%">
-          <Label htmlFor="groupSize" fontWeight="bold">Group Size</Label>
-          <Controller
-            name="groupSize"
-            rules={{ required: "Group size is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="groupSize"
-                keyboardType="numeric"
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val === "" ? "" : Number(val))}
-                value={value === undefined ? "" : String(value)}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("origin")}
-              />
-            )}
-          />
-          <Text color="red">
-            {errors.groupSize?.message}
-          </Text>
-          <Label htmlFor="origin" fontWeight="bold">Pick Up Location</Label>
-          <Controller
-            name="origin"
-            rules={{ required: "Pick up location is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <LocationInput
-                id="origin"
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                inputRef={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("destination")}
-                textContentType="location"
-              />
-            )}
-          />
-          <Text color="red">
-            {errors.origin?.message}
-          </Text>
-          <Label htmlFor="destination" fontWeight="bold">Destination Location</Label>
-          <Controller
-            name="destination"
-            rules={{ required: "Destination location is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="destination"
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                ref={ref}
-                returnKeyType="go"
-                onSubmitEditing={() => findBeep()}
-                textContentType="location"
-              />
-            )}
-          />
-          <Text color="red">
-            {errors.destination?.message}
-          </Text>
-          <Button onPress={() => findBeep()} mt="$4" mb="$4">
-            Find Beep
-          </Button>
-          <BeepersMap />
-        </Stack>
-        <RateSheet />
-      </Container>
+      <KeyboardAwareScrollView
+        scrollEnabled={false}
+        contentContainerClassName="p-4"
+      >
+        <Label htmlFor="groupSize">Group Size</Label>
+        <Controller
+          name="groupSize"
+          rules={{
+            required: "Group size is required",
+            validate: (value) => {
+              if (value > 100) {
+                return "Too large";
+              }
+              if (value < 1) {
+                return "Too small";
+              }
+              return true;
+            },
+          }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="groupSize"
+              inputMode="numeric"
+              onBlur={onBlur}
+              onChangeText={(value) => {
+                if (value === "") {
+                  onChange("");
+                } else if (value.length > 3) {
+                  onChange(Number(value.substring(0, 3)));
+                } else {
+                  onChange(Number(value));
+                }
+              }}
+              value={value === undefined ? "" : String(value)}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("origin")}
+            />
+          )}
+        />
+        <Text color="error">{errors.groupSize?.message}</Text>
+        <Label htmlFor="origin">Pick Up Location</Label>
+        <Controller
+          name="origin"
+          rules={{ required: "Pick up location is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <LocationInput
+              id="origin"
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value}
+              inputRef={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("destination")}
+              textContentType="location"
+            />
+          )}
+        />
+        <Text color="error">{errors.origin?.message}</Text>
+        <Label htmlFor="destination">Destination Location</Label>
+        <Controller
+          name="destination"
+          rules={{ required: "Destination location is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="destination"
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value}
+              ref={ref}
+              returnKeyType="go"
+              onSubmitEditing={() => findBeep()}
+              textContentType="location"
+            />
+          )}
+        />
+        <Text color="error">{errors.destination?.message}</Text>
+        <Button onPress={() => findBeep()} className="my-4">
+          Find Beep
+        </Button>
+        <BeepersMap />
+        {/* <RateSheet /> */}
+      </KeyboardAwareScrollView>
     );
   }
 
   if (isAcceptedBeep) {
     return (
-      <Container p="$3" alignItems="center">
-        <Stack alignItems="center" gap="$4" w="100%">
-          <Pressable style={{ width: "100%" }} onPress={() => navigate("User", { id: beep.beeper.id, beepId: beep.id }) }>
-            <XStack alignItems="center" gap="$4" w="100%">
-              <Stack flexShrink={1}>
-                <Heading fontWeight="bold">
-                  {beep.beeper.name}
-                </Heading>
-                <Text>
-                  <Text fontWeight="bold">Pick Up </Text>
-                  <Text>{beep.origin}</Text>
-                </Text>
-                <Text>
-                  <Text fontWeight="bold">Destination </Text>
-                  <Text>{beep.destination}</Text>
-                </Text>
-              </Stack>
-              <Stack flexGrow={1} />
-              <Avatar size="$8" url={beep.beeper.photo} />
-            </XStack>
-          </Pressable>
-          <Rates
-            singles={beep.beeper.singlesRate}
-            group={beep.beeper.groupRate}
-          />
-          {beep.position <= 0 && (
-            <Card w="100%" p="$3">
-              <Heading fontWeight="bold" mb={1}>
-                Current Status
-              </Heading>
-              <Text>{getCurrentStatusMessage()}</Text>
-            </Card>
-          )}
-          {beep.status === Status.ON_THE_WAY && (
-            <Card w="100%" p="$3">
-              <XStack alignItems="center">
-                <Heading fontWeight="bold">
-                  ETA
-                </Heading>
-                <Stack flexGrow={1} />
-                {etaError ? (
-                  <Text>{etaError.message}</Text>
-                ) : eta?.getETA ? (
-                  <Text>{eta.getETA}</Text>
-                ) : (
-                  <Spinner />
-                )}
-              </XStack>
-            </Card>
-          )}
-          {beep.position > 0 && (
-            <PlaceInQueue
-              firstName={beep.beeper.first}
-              position={beep.position}
-            />
-          )}
-          {beep.status === Status.HERE ? (
-            <Image
-              borderRadius="$4"
-              w="100%"
-              h="$16"
-              flexGrow={1}
-              source={{ uri: beep.beeper.cars?.[0].photo }}
-              alt={`car-${beep.beeper.cars?.[0].id}`}
-            />
-          ) : (
-            <Map
-              showsUserLocation
-              style={{
-                flexGrow: 1,
-                width: "100%",
-                borderRadius: 15,
-                overflow: "hidden",
-              }}
-              initialRegion={{
-                latitude: beep.beeper.location?.latitude ?? 0,
-                longitude: beep.beeper.location?.longitude ?? 0,
-                longitudeDelta: 0.05,
-                latitudeDelta: 0.05,
-              }}
-            >
-              <BeeperMarker
-                latitude={beep.beeper.location?.latitude ?? 0}
-                longitude={beep.beeper.location?.longitude ?? 0}
-              />
-            </Map>
-          )}
-          <Stack gap="$2" w="100%" alignSelf="flex-end">
-            <XStack gap="$2" w="100%">
-              <Button
-                flexGrow={1}
-                iconAfter={<PhoneCall />}
-                onPress={() =>
-                  Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
-                }
-              >
-                Call Beeper
-              </Button>
-              <Button
-                flexGrow={1}
-                onPress={() =>
-                  Linking.openURL(`sms:${getRawPhoneNumber(beep.beeper.phone)}`)
-                }
-                iconAfter={<MessageCircle />}
-              >
-                Text Beeper
-              </Button>
-            </XStack>
-
-            {beep.beeper.cashapp ? (
-              <Button
-                onPress={() =>
-                  openCashApp(
-                    beep.beeper.cashapp,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate
-                  )
-                }
-              >
-                Pay Beeper with Cash App
-              </Button>
-            ) : null}
-            <XStack w="100%" gap="$2">
-              {beep.beeper.venmo ? (
-                <Button
-                  flexGrow={1}
-                  theme="blue"
-                  iconAfter={<CreditCard />}
-                  onPress={() =>
-                    openVenmo(
-                      beep.beeper.venmo,
-                      beep.groupSize,
-                      beep.beeper.groupRate,
-                      beep.beeper.singlesRate,
-                      "pay"
-                    )
-                  }
-                >
-                  Pay with Venmo
-                </Button>
-              ) : null}
-              {beep.beeper.venmo && beep.groupSize > 1 && (
-                <Button
-                  iconAfter={<Share />}
-                  onPress={() =>
-                    shareVenmoInformation(
-                      beep.beeper.venmo,
-                      beep.groupSize,
-                      beep.beeper.groupRate,
-                      beep.beeper.singlesRate
-                    )
-                  }
-                >
-                  Share Venmo
-                </Button>
-              )}
-            </XStack>
-            {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
-          </Stack>
-        </Stack>
-      </Container>
-    );
-  }
-
-  return (
-    <Container alignItems="center" p={2}>
-      <Stack gap="$4" w="100%" alignItems="center" h="94%">
-        <Avatar size={100} url={beep.beeper.photo} />
-        <Stack justifyContent="center" ai="center">
-          <Text>Waiting on</Text>
-          <Heading fontWeight="bold">
-            {beep.beeper.name}
-          </Heading>
-          <Text>to accept your request.</Text>
-        </Stack>
-        <Card w="100%" p="$3">
-          <Text>
-            <Text fontWeight="bold">Pick Up </Text>
-            <Text>{beep.origin}</Text>
-          </Text>
-          <Text>
-            <Text fontWeight="bold">Destination </Text>
-            <Text>{beep.destination}</Text>
-          </Text>
-          <Text>
-            <Text fontWeight="bold">Number of Riders </Text>
-            <Text>{beep.groupSize}</Text>
-          </Text>
-        </Card>
+      <View className="h-full p-4 gap-4 pb-8">
+        <Pressable
+          className="flex flex-row w-full justify-between"
+          onPress={() =>
+            navigate("User", { id: beep.beeper.id, beepId: beep.id })
+          }
+        >
+          <View className="flex-shrink">
+            <Text size="3xl" weight="black" className="mb-2">
+              {beep.beeper.name}
+            </Text>
+            <Text>
+              <Text weight="bold">Pick Up </Text>
+              <Text>{beep.origin}</Text>
+            </Text>
+            <Text>
+              <Text weight="bold">Destination </Text>
+              <Text>{beep.destination}</Text>
+            </Text>
+          </View>
+          <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
+        </Pressable>
         <Rates
           singles={beep.beeper.singlesRate}
           group={beep.beeper.groupRate}
         />
-        <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
-        <Stack flexGrow={1} />
-        <LeaveButton beepersId={beep.beeper.id} w="100%" />
-      </Stack>
-    </Container>
+        {beep.position <= 0 && (
+          <Card variant="outlined" className="p-4 gap-2">
+            <Text weight="black" size="xl">
+              Current Status
+            </Text>
+            <Text>{getCurrentStatusMessage()}</Text>
+          </Card>
+        )}
+        {beep.status === Status.ON_THE_WAY && (
+          <Card
+            variant="outlined"
+            className="p-4 flex flex-row justify-between items-center"
+          >
+            <Text size="xl" weight="black">
+              ETA
+            </Text>
+            {etaError ? (
+              <Text>{etaError.message}</Text>
+            ) : eta?.getETA ? (
+              <Text>{eta.getETA}</Text>
+            ) : (
+              <ActivityIndicator />
+            )}
+          </Card>
+        )}
+        {beep.position > 0 && (
+          <PlaceInQueue
+            firstName={beep.beeper.first}
+            position={beep.position}
+          />
+        )}
+        {beep.status === Status.HERE ? (
+          <Image
+            className="flex-grow rounded-xl"
+            source={{ uri: beep.beeper.cars?.[0].photo }}
+            alt={`car-${beep.beeper.cars?.[0].id}`}
+          />
+        ) : (
+          <Map
+            showsUserLocation
+            style={{
+              flexGrow: 1,
+              width: "100%",
+              borderRadius: 15,
+              overflow: "hidden",
+            }}
+            initialRegion={{
+              latitude: beep.beeper.location?.latitude ?? 0,
+              longitude: beep.beeper.location?.longitude ?? 0,
+              longitudeDelta: 0.05,
+              latitudeDelta: 0.05,
+            }}
+          >
+            <BeeperMarker
+              latitude={beep.beeper.location?.latitude ?? 0}
+              longitude={beep.beeper.location?.longitude ?? 0}
+            />
+          </Map>
+        )}
+        <View className="gap-2">
+          <View className="flex flex-row gap-2">
+            <Button
+              className="flex-grow"
+              onPress={() =>
+                Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
+              }
+            >
+              Call 📞
+            </Button>
+            <Button
+              className="flex-grow"
+              onPress={() =>
+                Linking.openURL(`sms:${getRawPhoneNumber(beep.beeper.phone)}`)
+              }
+            >
+              Text 💬
+            </Button>
+          </View>
+          {beep.beeper.cashapp && (
+            <Button
+              onPress={() =>
+                openCashApp(
+                  beep.beeper.cashapp,
+                  beep.groupSize,
+                  beep.beeper.groupRate,
+                  beep.beeper.singlesRate,
+                )
+              }
+            >
+              Pay Beeper with Cash App 💵
+            </Button>
+          )}
+          <View className="flex flex-row gap-2">
+            {beep.beeper.venmo && (
+              <Button
+                className="flex-grow"
+                onPress={() =>
+                  openVenmo(
+                    beep.beeper.venmo,
+                    beep.groupSize,
+                    beep.beeper.groupRate,
+                    beep.beeper.singlesRate,
+                    "pay",
+                  )
+                }
+              >
+                Pay with Venmo 💵
+              </Button>
+            )}
+            {beep.beeper.venmo && beep.groupSize > 1 && (
+              <Button
+                onPress={() =>
+                  shareVenmoInformation(
+                    beep.beeper.venmo,
+                    beep.groupSize,
+                    beep.beeper.groupRate,
+                    beep.beeper.singlesRate,
+                  )
+                }
+              >
+                Share Venmo 🔗
+              </Button>
+            )}
+          </View>
+        </View>
+        {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
+      </View>
+    );
+  }
+
+  return (
+    <View className="h-full p-4 gap-4 pb-8 items-center">
+      <Avatar size="xl" src={beep.beeper.photo ?? undefined} />
+      <View className="items-center gap-1">
+        <Text>Waiting on</Text>
+        <Text size="4xl" weight="black">
+          {beep.beeper.name}
+        </Text>
+        <Text>to accept your request.</Text>
+      </View>
+      <Card className="p-4 w-full" variant="outlined">
+        <Text>
+          <Text weight="bold">Pick Up </Text>
+          <Text>{beep.origin}</Text>
+        </Text>
+        <Text>
+          <Text weight="bold">Destination </Text>
+          <Text>{beep.destination}</Text>
+        </Text>
+        <Text>
+          <Text weight="bold">Number of Riders </Text>
+          <Text>{beep.groupSize}</Text>
+        </Text>
+      </Card>
+      <Rates singles={beep.beeper.singlesRate} group={beep.beeper.groupRate} />
+      <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
+      <View className="flex flex-grow" />
+      <LeaveButton beepersId={beep.beeper.id} />
+    </View>
   );
 }

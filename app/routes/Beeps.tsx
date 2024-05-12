@@ -1,12 +1,16 @@
 import React from "react";
-import { FlatList, RefreshControl, useColorScheme } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  View,
+} from "react-native";
 import { useQuery } from "@apollo/client";
-import { Container } from "../components/Container";
+import { Text } from "@/components/Text";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
-import { Spinner, Text, Heading, Stack } from "@beep/ui";
 
 export const GetBeepHistory = graphql(`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -41,13 +45,14 @@ export const GetBeepHistory = graphql(`
 
 export function BeepsScreen() {
   const { user } = useUser();
-  const colorMode = useColorScheme();
 
-  const { data, loading, error, fetchMore, refetch } =
-    useQuery(GetBeepHistory, {
+  const { data, loading, error, fetchMore, refetch } = useQuery(
+    GetBeepHistory,
+    {
       variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
       notifyOnNetworkStatusChange: true,
-    });
+    },
+  );
 
   const beeps = data?.getBeeps.items;
   const count = data?.getBeeps.count || 0;
@@ -83,54 +88,49 @@ export function BeepsScreen() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Stack ai="center" jc="center">
-        <Spinner  />
-      </Stack>
+      <View className="flex items-center justify-center p-4">
+        <ActivityIndicator />
+      </View>
     );
   };
 
   if (loading && !beeps) {
     return (
-      <Container center>
-        <Spinner />
-      </Container>
+      <View>
+        <ActivityIndicator size="large" />
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container center>
+      <View>
         <Text>{error.message}</Text>
-      </Container>
-    );
-  }
-
-  if (beeps?.length === 0) {
-    return (
-      <Container center>
-        <Heading fontWeight="bold">No Beeps</Heading>
-        <Text>You have no previous beeps to display</Text>
-      </Container>
+      </View>
     );
   }
 
   return (
-    <Container>
-      <FlatList
-        data={beeps}
-        renderItem={(data) => <Beep {...data} />}
-        keyExtractor={(beep) => beep.id}
-        onEndReached={getMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter()}
-        refreshControl={
-          <RefreshControl
-            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={isRefreshing}
-            onRefresh={refetch}
-          />
-        }
-      />
-    </Container>
+    <FlatList
+      data={beeps}
+      className="p-2"
+      contentContainerClassName={beeps?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"}
+      renderItem={(data) => <Beep {...data} />}
+      keyExtractor={(beep) => beep.id}
+      onEndReached={getMore}
+      onEndReachedThreshold={0.1}
+      ListFooterComponent={renderFooter()}
+      ListEmptyComponent={
+        <View className="items-center">
+          <Text size="3xl" weight="black">
+            No Beeps
+          </Text>
+          <Text>You have no previous beeps to display</Text>
+        </View>
+      }
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+      }
+    />
   );
 }

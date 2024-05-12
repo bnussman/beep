@@ -7,7 +7,7 @@ import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { SearchIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
-import { Route, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from 'gql.tada';
 
@@ -35,12 +35,12 @@ export interface PaginationSearchParams {
   query?: string;
 }
 
-export const usersRoute = new Route({
+export const usersRoute = createRoute({
   path: 'users',
   getParentRoute: () => adminRoute,
 });
 
-export const usersListRoute = new Route({
+export const usersListRoute = createRoute({
   component: Users,
   path: '/',
   getParentRoute: () => usersRoute,

@@ -3,31 +3,27 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as mime from "react-native-mime-types";
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
-import { Avatar } from "../../components/Avatar";
-import { Alert, Pressable } from "react-native";
-import { isMobile } from "../../utils/constants";
-import { Container } from "../../components/Container";
-import { useUser } from "../../utils/useUser";
+import * as DropdownMenu from "zeego/dropdown-menu";
+import { View, Alert, Pressable, ActivityIndicator } from "react-native";
+import { isMobile } from "@/utils/constants";
+import { Avatar } from "@/components/Avatar";
+import { Input } from "@/components/Input";
+import { Button } from "@/components/Button";
+import { Label } from "@/components/Label";
+import { Text } from "@/components/Text";
+import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
-import { client } from "../../utils/Apollo";
+import { client } from "@/utils/apollo";
 import { ApolloError, useMutation } from "@apollo/client";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { ReactNativeFile } from "apollo-upload-client";
-import { VariablesOf, graphql } from "gql.tada";
-import { Label, Menu } from "@beep/ui";
+import { VariablesOf, graphql } from "@/graphql";
 import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import {
-  Spinner,
-  Input,
-  Button,
-  Stack,
-  XStack,
-  Text,
-} from "@beep/ui";
 
 const DeleteAccount = graphql(`
   mutation DeleteAccount {
@@ -51,7 +47,7 @@ export const EditAccount = graphql(`
 `);
 
 export const UploadPhoto = graphql(`
-  mutation AddProfilePicture($picture: Upload!) {
+  mutation AddProfilePicture($picture: File!) {
     addProfilePicture(picture: $picture) {
       id
       photo
@@ -69,7 +65,7 @@ export function generateRNFile(uri: string, name: string) {
     : null;
 }
 
-type Values = VariablesOf<typeof EditAccount>['input']
+type Values = VariablesOf<typeof EditAccount>["input"];
 
 export function EditProfileScreen() {
   const { user } = useUser();
@@ -84,10 +80,10 @@ export function EditProfileScreen() {
       venmo: user?.venmo,
       cashapp: user?.cashapp,
     }),
-    [user]
+    [user],
   );
 
-  const [edit, { loading, error }] = useMutation(EditAccount);
+  const [edit, { error }] = useMutation(EditAccount);
   const [deleteAccount] = useMutation(DeleteAccount);
 
   const {
@@ -95,7 +91,7 @@ export function EditProfileScreen() {
     handleSubmit,
     setFocus,
     reset,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<Values>({ defaultValues });
 
   useEffect(() => {
@@ -105,25 +101,42 @@ export function EditProfileScreen() {
   const validationErrors = useValidationErrors<Values>(error);
 
   const [upload, { loading: uploadLoading }] = useMutation(UploadPhoto, {
-      context: {
-        headers: {
-          "apollo-require-preflight": true,
-        },
+    context: {
+      headers: {
+        "apollo-require-preflight": true,
       },
-    });
+    },
+  });
 
   const [photo, setPhoto] = useState<any>();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Menu
-          Trigger={<Button>Menu</Button>}
-          items={[
-            { title: "Change Password", onPress: () => navigation.navigate("Change Password") },
-            { title: "Delete Account", onPress: handleDeleteWrapper },
-          ]}
-        />
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger>
+            <Text size="3xl" className="mr-2">
+              ⬇️
+            </Text>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            <DropdownMenu.Item
+              key="change-password"
+              onSelect={() => navigation.navigate("Change Password")}
+            >
+              <DropdownMenu.ItemTitle>Change Password</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              destructive
+              key="delete-account"
+              onSelect={handleDeleteWrapper}
+            >
+              <DropdownMenu.ItemTitle>Delete Account</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Arrow />
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       ),
     });
   }, [navigation]);
@@ -140,7 +153,7 @@ export function EditProfileScreen() {
           },
           { text: "Delete", onPress: handleDelete, style: "destructive" },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       handleDelete();
@@ -210,169 +223,160 @@ export function EditProfileScreen() {
   });
 
   return (
-    <Container
-      keyboard
-      alignItems="center"
-      scrollViewProps={{ bounces: false, scrollEnabled: true }}
-      px="$4"
-    >
-      <Stack w="100%">
-        <XStack alignItems="center" gap="$4">
-          <Stack gap="$2" flexGrow={1}>
-            <Label htmlFor="first" fontWeight="bold">First Name</Label>
-            <Controller
-              name="first"
-              rules={{ required: "First name is required" }}
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  id="first"
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value ? value : undefined}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("last")}
-                  textContentType="givenName"
-                />
-              )}
-            />
-            <Text color="red">
-              {errors.first?.message}
-              {validationErrors?.first?.[0]}
-            </Text>
-            <Label htmlFor="last" fontWeight="bold">Last Name</Label>
-            <Controller
-              name="last"
-              rules={{ required: "Last name is required" }}
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  id="last"
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value ? value : undefined}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("email")}
-                  textContentType="familyName"
-                />
-              )}
-            />
-            <Text>
-              {errors.last?.message}
-              {validationErrors?.last?.[0]}
-            </Text>
-          </Stack>
-          <Pressable onPress={() => handleUpdatePhoto()}>
-            <Avatar url={photo?.uri ?? user?.photo} size="$10" />
-            {uploadLoading ? <Spinner /> : null}
-          </Pressable>
-        </XStack>
-        <Label htmlFor="email" fontWeight="bold">Email</Label>
-        <Controller
-          name="email"
-          rules={{ required: "Email is required" }}
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <Input
-              id="email"
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value ? value : undefined}
-              ref={ref}
-              returnKeyLabel="next"
-              returnKeyType="next"
-              onSubmitEditing={() => setFocus("phone")}
-              textContentType="emailAddress"
-            />
-          )}
-        />
-        <Text color="red">
-          {errors.email?.message}
-          {validationErrors?.email?.[0]}
-        </Text>
-        <Label htmlFor="bold" fontWeight="bold">Phone Number</Label>
-        <Controller
-          name="phone"
-          rules={{ required: "Phone number is required" }}
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <Input
-              id="phone"
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value ? value : undefined}
-              ref={ref}
-              returnKeyLabel="next"
-              returnKeyType="next"
-              onSubmitEditing={() => setFocus("phone")}
-              textContentType="telephoneNumber"
-            />
-          )}
-        />
-        <Text color="red">
-          {errors.phone?.message}
-          {validationErrors?.phone?.[0]}
-        </Text>
-        <Label htmlFor="venmo" fontWeight="bold">Venmo Username</Label>
-        <Controller
-          name="venmo"
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <Input
-              flexGrow={1}
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value as string | undefined}
-              ref={ref}
-              returnKeyLabel="next"
-              returnKeyType="next"
-              textContentType="username"
-              onSubmitEditing={() => setFocus("cashapp")}
-              autoCapitalize="none"
-            />
-          )}
-        />
-        <Text color="red">
-          {errors.venmo?.message}
-          {validationErrors?.venmo?.[0]}
-        </Text>
-        <Label htmlFor="cashapp" fontWeight="bold">Cash App Username</Label>
-        <Controller
-          name="cashapp"
-          control={control}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <Input
-              id="cashapp"
-              flexGrow={1}
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value as string | undefined}
-              ref={ref}
-              returnKeyLabel="update"
-              returnKeyType="go"
-              textContentType="username"
-              onSubmitEditing={isDirty ? onSubmit : undefined}
-              autoCapitalize="none"
-            />
-          )}
-        />
-        <Text color="red">
-          {errors.cashapp?.message}
-          {validationErrors?.cashapp?.[0]}
-        </Text>
-        <Button
-          onPress={onSubmit}
-          iconAfter={loading ? <Spinner /> : undefined}
-          disabled={!isDirty}
-          mt="$4"
-        >
-          Update Profile
-        </Button>
-      </Stack>
-    </Container>
+    <KeyboardAwareScrollView contentContainerClassName="p-4">
+      <View className="flex flex-row gap-4 items-center">
+        <View className="flex-grow">
+          <Label htmlFor="first">First Name</Label>
+          <Controller
+            name="first"
+            rules={{ required: "First name is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                id="first"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value ? value : undefined}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("last")}
+                textContentType="givenName"
+              />
+            )}
+          />
+          <Text color="error">
+            {errors.first?.message}
+            {validationErrors?.first?.[0]}
+          </Text>
+          <Label htmlFor="last">Last Name</Label>
+          <Controller
+            name="last"
+            rules={{ required: "Last name is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                id="last"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value ?? ""}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("email")}
+                textContentType="familyName"
+              />
+            )}
+          />
+          <Text>
+            {errors.last?.message}
+            {validationErrors?.last?.[0]}
+          </Text>
+        </View>
+        <Pressable onPress={() => handleUpdatePhoto()}>
+          <Avatar size="xl" src={photo?.uri ?? user?.photo} />
+          {uploadLoading ? <ActivityIndicator /> : null}
+        </Pressable>
+      </View>
+      <Label htmlFor="email">Email</Label>
+      <Controller
+        name="email"
+        rules={{ required: "Email is required" }}
+        control={control}
+        render={({ field: { onChange, onBlur, value, ref } }) => (
+          <Input
+            id="email"
+            onBlur={onBlur}
+            onChangeText={(val) => onChange(val)}
+            value={value ?? ""}
+            ref={ref}
+            returnKeyLabel="next"
+            returnKeyType="next"
+            onSubmitEditing={() => setFocus("phone")}
+            textContentType="emailAddress"
+          />
+        )}
+      />
+      <Text color="error">
+        {errors.email?.message}
+        {validationErrors?.email?.[0]}
+      </Text>
+      <Label htmlFor="bold">Phone Number</Label>
+      <Controller
+        name="phone"
+        rules={{ required: "Phone number is required" }}
+        control={control}
+        render={({ field: { onChange, onBlur, value, ref } }) => (
+          <Input
+            id="phone"
+            onBlur={onBlur}
+            onChangeText={(val) => onChange(val)}
+            value={value ?? ""}
+            ref={ref}
+            returnKeyLabel="next"
+            returnKeyType="next"
+            onSubmitEditing={() => setFocus("phone")}
+            textContentType="telephoneNumber"
+          />
+        )}
+      />
+      <Text color="error">
+        {errors.phone?.message}
+        {validationErrors?.phone?.[0]}
+      </Text>
+      <Label htmlFor="venmo">Venmo Username</Label>
+      <Controller
+        name="venmo"
+        control={control}
+        render={({ field: { onChange, onBlur, value, ref } }) => (
+          <Input
+            onBlur={onBlur}
+            onChangeText={(val) => onChange(val)}
+            value={value ?? ""}
+            ref={ref}
+            returnKeyLabel="next"
+            returnKeyType="next"
+            textContentType="username"
+            onSubmitEditing={() => setFocus("cashapp")}
+            autoCapitalize="none"
+          />
+        )}
+      />
+      <Text color="error">
+        {errors.venmo?.message}
+        {validationErrors?.venmo?.[0]}
+      </Text>
+      <Label htmlFor="cashapp">Cash App Username</Label>
+      <Controller
+        name="cashapp"
+        control={control}
+        render={({ field: { onChange, onBlur, value, ref } }) => (
+          <Input
+            id="cashapp"
+            onBlur={onBlur}
+            onChangeText={(val) => onChange(val)}
+            value={value ?? ""}
+            ref={ref}
+            returnKeyLabel="update"
+            returnKeyType="go"
+            textContentType="username"
+            onSubmitEditing={isDirty ? onSubmit : undefined}
+            autoCapitalize="none"
+          />
+        )}
+      />
+      <Text color="error">
+        {errors.cashapp?.message}
+        {validationErrors?.cashapp?.[0]}
+      </Text>
+      <Button
+        onPress={onSubmit}
+        isLoading={isSubmitting}
+        disabled={!isDirty}
+        className="mt-4"
+      >
+        Update Profile
+      </Button>
+    </KeyboardAwareScrollView>
   );
 }

@@ -1,8 +1,8 @@
-import * as Sentry from '@sentry/node';
+import * as Sentry from '@sentry/bun';
 import { sendNotification } from '../utils/notifications';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep, Status } from '../entities/Beep';
-import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver, Root, Subscription } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from './args';
 import { User } from '../entities/User';
@@ -11,6 +11,8 @@ import { sha256 } from 'js-sha256';
 import { BeeperLocationArgs } from '../location/args';
 import { Car } from '../entities/Car';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
+import { pubSub } from '../utils/pubsub';
+import { GraphQLError } from 'graphql';
 
 @ObjectType()
 export class AnonymousBeeper {
@@ -47,18 +49,18 @@ export class BeeperResolver {
 
   @Mutation(() => User)
   @Authorized()
-  public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput, @PubSub() pubSub: PubSubEngine): Promise<User> {
+  public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input') input: BeeperSettingsInput): Promise<User> {
     if (input.isBeeping) {
       const car = await ctx.em.findOne(Car, { user: ctx.user.id, default: true });
 
       if (!car) {
-        throw new Error("You need to add a car to your account to beep.");
+        throw new GraphQLError("You need to add a car to your account to beep.");
       }
     } else {
       const queueSize = await ctx.em.count(Beep, { beeper: ctx.user.id }, { filters: ['inProgress'] });
 
       if (queueSize > 0) {
-        throw new Error("You can't stop beeping when you still have riders in your queue");
+        throw new GraphQLError("You can't stop beeping when you still have riders in your queue");
       }
     }
 
@@ -77,7 +79,7 @@ export class BeeperResolver {
       });
     }
 
-    pubSub.publish("User" + ctx.user.id, ctx.user);
+    pubSub.publish("user", ctx.user.id, ctx.user);
 
     await ctx.em.persistAndFlush(ctx.user);
 
@@ -86,7 +88,7 @@ export class BeeperResolver {
 
   @Mutation(() => [Beep])
   @Authorized()
-  public async setBeeperQueue(@Ctx() ctx: Context, @PubSub() pubSub: PubSubEngine, @Arg('input') input: UpdateQueueEntryInput): Promise<Beep[]> {
+  public async setBeeperQueue(@Ctx() ctx: Context, @Arg('input') input: UpdateQueueEntryInput): Promise<Beep[]> {
     await ctx.em.populate(
       ctx.user,
       ['queue', 'queue.rider', 'queue.beeper', 'queue.beeper.cars'],
@@ -99,14 +101,16 @@ export class BeeperResolver {
 
     const queueEntry = ctx.user.queue.getItems().find((entry) => entry.id === input.id);
 
-    if (!queueEntry) throw new Error("Can't find queue entry");
+    if (!queueEntry) {
+      throw new GraphQLError("Can't find queue entry");
+    }
 
     const isAcceptingOrDenying = input.status === Status.ACCEPTED || input.status === Status.DENIED;
 
     const numRidersBefore = isAcceptingOrDenying ? ctx.user.queue.getItems().filter((entry) => entry.start < queueEntry.start && entry.status === Status.WAITING).length : ctx.user.queue.getItems().filter((entry) => entry.start < queueEntry.start && entry.status !== Status.WAITING).length;
 
     if (numRidersBefore !== 0) {
-      throw new Error("You must respond to the rider who first joined your queue.");
+      throw new GraphQLError("You must respond to the rider who first joined your queue.");
     }
 
     queueEntry.status = input.status as Status;
@@ -118,7 +122,7 @@ export class BeeperResolver {
     }
 
     if (input.status === Status.DENIED || input.status === Status.COMPLETE) {
-      pubSub.publish("Rider" + queueEntry.rider.id, null);
+      pubSub.publish("currentRide", queueEntry.rider.id, null);
 
       ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
 
@@ -129,16 +133,32 @@ export class BeeperResolver {
 
     switch (queueEntry.status) {
       case Status.DENIED:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has denied your beep request 🚫`, "Open your app to find a diffrent beeper");
+        sendNotification({
+          token: queueEntry.rider.pushToken,
+          title: `${ctx.user.name()} has denied your beep request 🚫`,
+          message: "Open your app to find a diffrent beeper"
+        });
         break;
       case Status.ACCEPTED:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} has accepted your beep request ✅`, "You will recieve another notification when they are on their way to pick you up");
+        sendNotification({
+          token: queueEntry.rider.pushToken,
+          title: `${ctx.user.name()} has accepted your beep request ✅`,
+          message: "You will recieve another notification when they are on their way to pick you up"
+        });
         break;
       case Status.ON_THE_WAY:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is on their way 🚕`, `Your beeper is on their way in a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`);
+        sendNotification({
+          token: queueEntry.rider.pushToken,
+          title: `${ctx.user.name()} is on their way 🚕`,
+          message: `Your beeper is on their way in a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`
+        });
         break;
       case Status.HERE:
-        sendNotification(queueEntry.rider.pushToken, `${ctx.user.name()} is here 📍`, `Look for a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`);
+        sendNotification({
+          token: queueEntry.rider.pushToken,
+          title: `${ctx.user.name()} is here 📍`,
+          message: `Look for a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`
+        });
         break;
       case Status.IN_PROGRESS:
         // Beep is in progress - no notification needed at this stage.
@@ -154,55 +174,69 @@ export class BeeperResolver {
 
     await ctx.em.persistAndFlush(queueEntry);
 
-    this.sendRiderUpdates(ctx.user, queueNew, pubSub);
+    this.sendRiderUpdates(ctx.user, queueNew);
 
     return queueNew;
   }
 
-  private async sendRiderUpdates(beeper: User, queue: Beep[], pubSub: PubSubEngine) {
-    pubSub.publish("Beeper" + beeper.id, queue);
+  private async sendRiderUpdates(beeper: User, queue: Beep[]) {
+    pubSub.publish("beeperQueue", beeper.id, queue);
 
     for (const entry of queue) {
       entry.position = getPositionInQueue(queue, entry);
 
-      pubSub.publish("Rider" + entry.rider.id, entry);
+      pubSub.publish("currentRide", entry.rider.id, entry);
     }
   }
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine): Promise<boolean> {
-    const entry = ctx.em.getReference(Beep, id);
+  public async cancelBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
+    const queue = await ctx.em.find(
+      Beep,
+      { beeper: ctx.user.id },
+      {
+        populate: ["beeper", "rider", "beeper.cars"],
+        populateWhere: { beeper: { cars: { default: true } } },
+        filters: ['inProgress'],
+        orderBy: { start: QueryOrder.ASC },
+      },
+    );
 
-    await ctx.em.populate(ctx.user, ['queue', 'queue.rider', 'cars'], { where: { cars: { default: true } }, filters: ['inProgress'], orderBy: { queue: { start: QueryOrder.ASC } } });
+    const newQueue = queue.filter(entry => entry.id !== id);
 
-    const newQueue = ctx.user.queue.getItems().filter(entry => entry.id !== id);
+    pubSub.publish("beeperQueue", ctx.user.id, newQueue);
 
-    pubSub.publish("Beeper" + ctx.user.id, newQueue);
-
-    for (const entry of ctx.user.queue) {
+    for (const entry of queue) {
       if (entry.id === id) {
-        sendNotification(entry.rider.pushToken, "Beep Canceled 🚫", `Your beeper, ${ctx.user.name()}, has canceled the beep`);
-        pubSub.publish("Rider" + entry.rider.id, null);
+        sendNotification({
+          token: entry.rider.pushToken,
+          title: "Beep Canceled 🚫",
+          message: `Your beeper, ${ctx.user.name()}, has canceled the beep`
+        });
+        pubSub.publish("currentRide", entry.rider.id, null);
       }
       else {
         entry.position = getPositionInQueue(newQueue, entry);
-        pubSub.publish("Rider" + entry.rider.id, entry);
+        pubSub.publish("currentRide", entry.rider.id, entry);
       }
     }
 
-    entry.status = Status.CANCELED
-    entry.end = new Date();
+    const beep = ctx.em.getReference(Beep, id);
 
-    ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
+    beep.status = Status.CANCELED;
+    beep.end = new Date();
 
-    await ctx.em.persistAndFlush(ctx.user);
+    ctx.user.queueSize = newQueue.length;
+
+    await ctx.em.persistAndFlush([ctx.user, beep]);
 
     return true;
   }
 
   @Subscription(() => [Beep], {
-    topics: ({ args }) => "Beeper" + args.id,
+    topics: "beeperQueue",
+    topicId: ({ args }) => args.id
   })
   @Authorized('No Verification Self')
   public async getBeeperUpdates(@Arg("id") id: string, @Root() entry: Beep[]): Promise<Beep[]> {

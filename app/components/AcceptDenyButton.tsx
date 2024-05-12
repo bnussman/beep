@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Button, Spinner } from "@beep/ui";
 import { useMutation } from "@apollo/client";
-import { Alert } from "../utils/Alert";
+import { Alert } from "../utils/alert";
 import { Unpacked } from "../utils/constants";
 import { UpdateBeeperQueue } from "./ActionButton";
+import { Button } from "./Button";
 import { Status } from "../utils/types";
 import { ResultOf } from "gql.tada";
 import { GetInitialQueue } from "../routes/beep/StartBeeping";
-import { Check, X } from "@tamagui/lucide-icons";
+import { cx } from "class-variance-authority";
 
 interface Props {
   type: "accept" | "deny";
-  item: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
+  item: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
 }
 
 export function AcceptDenyButton(props: Props) {
@@ -40,11 +40,13 @@ export function AcceptDenyButton(props: Props) {
 
   return (
     <Button
-      flexGrow={isAccept ? 1 : undefined}
-      theme={isAccept ? "green" : "red"}
-      iconAfter={loading ? <Spinner /> : undefined}
+      className={cx({
+        ["flex-grow !bg-green-400 dark:!bg-green-400"]: isAccept,
+        ["!bg-red-400 dark:!bg-red-400"]: !isAccept,
+      })}
+      isLoading={loading}
       onPress={onPress}
-      icon={isAccept ? <Check /> : <X />}
+      activityIndicatorProps={{ color: "white" }}
     >
       {isAccept ? "Accept" : "Deny"}
     </Button>

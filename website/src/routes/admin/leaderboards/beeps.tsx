@@ -30,7 +30,7 @@ const pageLimit = 20;
 export function Beeps() {
   const { page } = leaderboardsRoute.useSearch();
   const navigate = useNavigate();
-  const { loading, error, data } = useQuery(UsersWithBeeps, {
+  const { loading, error, data, previousData } = useQuery(UsersWithBeeps, {
     variables: {
       show: pageLimit,
       offset: (page - 1) * pageLimit,
@@ -45,10 +45,13 @@ export function Beeps() {
     return <Error error={error} />;
   }
 
+  const beeps = data?.getUsersWithBeeps.items ?? previousData?.getUsersWithBeeps.items;
+  const count = data?.getUsersWithBeeps.count ?? previousData?.getUsersWithBeeps.count;
+
   return (
     <Box>
       <Pagination
-        resultCount={data?.getUsersWithBeeps.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -62,7 +65,7 @@ export function Beeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getUsersWithBeeps.items.map(({ user, beeps }) => (
+            {beeps?.map(({ user, beeps }) => (
               <Tr key={user.id}>
                 <TdUser user={user} />
                 <Td>{beeps}</Td>
@@ -73,7 +76,7 @@ export function Beeps() {
       </Box>
       {loading && <Loading />}
       <Pagination
-        resultCount={data?.getUsersWithBeeps.count}
+        resultCount={count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

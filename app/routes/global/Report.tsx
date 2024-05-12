@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { Input, Button, Stack, Spinner } from "@beep/ui";
-import { Container } from "../../components/Container";
-import { UserHeader } from "../../components/UserHeader";
+import { View, ActivityIndicator } from "react-native";
+import { Input } from "@/components/Input";
+import { Button } from "@/components/Button";
+import { UserHeader } from "@/components/UserHeader";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { GetUser } from "./Profile";
 import { graphql } from "gql.tada";
@@ -13,8 +14,7 @@ const ReportUser = graphql(`
   }
 `);
 
-
-type Props = StaticScreenProps<{ userId: string, beepId?: string }>;
+type Props = StaticScreenProps<{ userId: string; beepId?: string }>;
 
 export function ReportScreen({ route }: Props) {
   const [reason, setReason] = useState<string>("");
@@ -23,8 +23,8 @@ export function ReportScreen({ route }: Props) {
 
   const { data } = useQuery(GetUser, {
     variables: {
-      id: route.params.userId
-    }
+      id: route.params.userId,
+    },
   });
 
   const user = data?.getUser;
@@ -45,32 +45,31 @@ export function ReportScreen({ route }: Props) {
   }
 
   return (
-    <Container keyboard p="$4">
-      <Stack gap="$4" w="full">
-        {user &&
-          <UserHeader
-            username={user.username}
-            name={user.name}
-            picture={user.photo}
-          />
-        }
-        <Input
-          h={100}
-          multiline={true}
-          placeholder="Your reason for reporting here"
-          returnKeyType="go"
-          onChangeText={(text) => setReason(text)}
-          onSubmitEditing={() => reportUser()}
-          blurOnSubmit={true}
+    <View className="p-4 gap-4">
+      {user && (
+        <UserHeader
+          username={user.username}
+          name={user.name}
+          picture={user.photo}
         />
-        <Button
-          onPress={() => reportUser()}
-          disabled={!reason}
-          iconAfter={loading ? <Spinner /> : undefined}
-        >
-          Report User
-        </Button>
-      </Stack>
-    </Container>
+      )}
+      <Input
+        multiline={true}
+        numberOfLines={4}
+        placeholder="Your reason for reporting here"
+        returnKeyType="go"
+        style={{ minHeight: 150 }}
+        onChangeText={(text) => setReason(text)}
+        onSubmitEditing={() => reportUser()}
+        blurOnSubmit={true}
+      />
+      <Button
+        onPress={() => reportUser()}
+        disabled={!reason}
+        isLoading={loading}
+      >
+        Report User
+      </Button>
+    </View>
   );
 }

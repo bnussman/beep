@@ -1,22 +1,13 @@
 import React from "react";
+import * as DropdownMenu from "zeego/dropdown-menu";
 import { useQuery } from "@apollo/client";
-import { printStars } from "../../components/Stars";
-import { Container } from "../../components/Container";
-import { Avatar } from "../../components/Avatar";
+import { printStars } from "@/components/Stars";
+import { Avatar } from "@/components/Avatar";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { RatePreview } from "./RatePreview";
-import { useUser } from "../../utils/useUser";
+import { useUser } from "@/utils/useUser";
 import { graphql } from "gql.tada";
-import {
-  Card,
-  Spinner,
-  Text,
-  Stack,
-  XStack,
-  Heading,
-  Menu,
-  Button,
-} from "@beep/ui";
+import { Text } from "@/components/Text";
+import { ActivityIndicator, View } from "react-native";
 
 export const GetUser = graphql(`
   query GetUserProfile($id: String!) {
@@ -40,15 +31,17 @@ export const GetUser = graphql(`
   }
 `);
 
-type Props = StaticScreenProps<{ id: string, beepId?: string }>;
+type Props = StaticScreenProps<{ id: string; beepId?: string }>;
 
 export function ProfileScreen({ route }: Props) {
-  const { user } = useUser();
+  const { user: currentUser } = useUser();
   const navigation = useNavigation();
 
   const { data, loading, error } = useQuery(GetUser, {
     variables: { id: route.params.id },
   });
+
+  const user = data?.getUser;
 
   const handleReport = () => {
     navigation.navigate("Report", {
@@ -67,45 +60,27 @@ export function ProfileScreen({ route }: Props) {
       beepId: route.params.beepId!,
     });
   };
-
   React.useLayoutEffect(() => {
-    if (user?.id !== route.params.id) {
+    if (currentUser?.id !== route.params.id) {
       navigation.setOptions({
-        /*
         headerRight: () => (
-          <Menu
-            w="190"
-            trigger={(triggerProps) => {
-              return (
-                <Pressable
-                  accessibilityLabel="More options menu"
-                  {...triggerProps}
-                >
-                  <Icon
-                    mr={3}
-                    size="xl"
-                    as={Ionicons}
-                    name="ellipsis-horizontal-circle"
-                  />
-                </Pressable>
-              );
-            }}
-          >
-            {Boolean(route.params.beepId) && (
-              <Menu.Item onPress={handleRate}>Rate</Menu.Item>
-            )}
-            <Menu.Item onPress={handleReport}>Report</Menu.Item>
-          </Menu>
-        ),
-        */
-        headerRight: () => (
-          <Menu
-            items={[
-              { title: "Rate", onPress: handleRate },
-              { title: "Report", onPress: handleReport },
-            ]}
-            Trigger={<Button>Menu</Button>}
-          />
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <Text size="3xl" className="mr-1">
+                ⬇️
+              </Text>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item key="rate" onSelect={handleRate}>
+                <DropdownMenu.ItemTitle>Rate</DropdownMenu.ItemTitle>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item key="report" onSelect={handleReport}>
+                <DropdownMenu.ItemTitle>Report</DropdownMenu.ItemTitle>
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         ),
       });
     }
@@ -113,89 +88,77 @@ export function ProfileScreen({ route }: Props) {
 
   if (loading) {
     return (
-      <Container center>
-        <Spinner />
-      </Container>
+      <View className="flex h-full items-center justify-center">
+        <ActivityIndicator />
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container center>
+      <View className="flex h-full items-center justify-center">
         <Text>{error.message}</Text>
-      </Container>
+      </View>
     );
   }
 
-  if (!data?.getUser) {
+  if (!user) {
     return (
-      <Container center>
+      <View className="flex h-full items-center justify-center">
         <Text>User does not exist</Text>
-      </Container>
+      </View>
     );
   }
 
   return (
-    <Container p="$2">
-      <Stack gap="$2" flexShrink={1}>
-        <Card p="$3">
-          <XStack alignItems="center">
-            <Stack>
-              <Heading fontWeight="bold">
-                {data.getUser.name}
-              </Heading>
-              <Text color="$gray10">
-                @{data.getUser.username}
-              </Text>
-            </Stack>
-            <Stack flexGrow={1} />
-            <Avatar
-              url={data.getUser.photo}
-            />
-          </XStack>
-        </Card>
-        <Card p="$3">
-          <Stack gap="$2">
-            {data.getUser.isBeeping && (
-              <Text>
-                <Text fontWeight="bold">Queue Size </Text>
-                <Text>{data.getUser.queueSize}</Text>
-              </Text>
-            )}
-            {data?.getUser.venmo && (
-              <Text>
-                <Text fontWeight="bold">Venmo </Text>
-                <Text>@{data.getUser.venmo}</Text>
-              </Text>
-            )}
-            {data?.getUser.cashapp && (
-              <Text>
-                <Text fontWeight="bold">Cash App </Text>
-                <Text>@{data.getUser.cashapp}</Text>
-              </Text>
-            )}
-            <Text>
-              <Text fontWeight="bold">Capacity </Text>
-              <Text>{data.getUser.capacity}</Text>
-            </Text>
-            <Text>
-              <Text fontWeight="bold">Singles Rate </Text>
-              <Text>${data.getUser.singlesRate}</Text>
-            </Text>
-            <Text>
-              <Text fontWeight="bold">Group Rate </Text>
-              <Text>${data.getUser.groupRate}</Text>
-            </Text>
-            {data.getUser.rating && (
-              <Text>
-                <Text fontWeight="bold">Rating </Text>
-                <Text>{printStars(data.getUser.rating)}</Text>
-              </Text>
-            )}
-          </Stack>
-        </Card>
-        <RatePreview id={route.params.id} />
-      </Stack>
-    </Container>
+    <View className="p-4 flex gap-4">
+      <View className="flex flex-row justify-between items-center">
+        <View>
+          <Text size="4xl" weight="black">
+            {user.name}
+          </Text>
+          <Text color="subtle" className="mb-8">
+            @{user.username}
+          </Text>
+        </View>
+        <Avatar size="xl" src={user.photo ?? undefined} />
+      </View>
+      {user.isBeeping && (
+        <>
+          <Text weight="bold">Queue Size</Text>
+          <Text>{user.queueSize}</Text>
+        </>
+      )}
+      {user.venmo && (
+        <Text>
+          <Text weight="bold">Venmo </Text>
+          <Text>@{user.venmo}</Text>
+        </Text>
+      )}
+      {user.cashapp && (
+        <Text>
+          <Text weight="bold">Cash App </Text>
+          <Text>@{user.cashapp}</Text>
+        </Text>
+      )}
+      <Text>
+        <Text weight="bold">Capacity </Text>
+        <Text>{user.capacity}</Text>
+      </Text>
+      <Text>
+        <Text weight="bold">Singles Rate </Text>
+        <Text>${user.singlesRate}</Text>
+      </Text>
+      <Text>
+        <Text weight="bold">Group Rate </Text>
+        <Text>${user.groupRate}</Text>
+      </Text>
+      {user.rating && (
+        <Text>
+          <Text weight="bold">Rating </Text>
+          <Text>{printStars(user.rating)}</Text>
+        </Text>
+      )}
+    </View>
   );
 }

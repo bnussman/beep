@@ -7,7 +7,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Indicator } from './Indicator';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Link, Route } from '@tanstack/react-router';
+import { Link, createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
 import { graphql } from '../graphql';
 
@@ -45,7 +45,7 @@ const Reports = graphql(`
   }
 `);
 
-export const reportsTableRoute = new Route({
+export const reportsTableRoute = createRoute({
   component: ReportsTable,
   path: 'reports',
   getParentRoute: () => userRoute,

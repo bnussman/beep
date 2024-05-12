@@ -1,5 +1,9 @@
 import React from "react";
-import { Container } from "../../components/Container";
+import { Card } from "@/components/Card";
+import { Text } from "@/components/Text";
+import { Button } from "@/components/Button";
+import { Input } from "@/components/Input";
+import { Label } from "@/components/Label";
 import { useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Linking } from "react-native";
@@ -8,15 +12,7 @@ import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import {
-  Card,
-  Text,
-  Button,
-  Input,
-  Stack,
-  Label,
-  Spinner,
-} from "@beep/ui";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const CreateFeedback = graphql(`
   mutation CreateFeedback($message: String!) {
@@ -40,14 +36,15 @@ export function Feedback() {
     },
   });
 
-  const validationErrors = useValidationErrors<VariablesOf<typeof CreateFeedback>>(error);
+  const validationErrors =
+    useValidationErrors<VariablesOf<typeof CreateFeedback>>(error);
 
   const onSubmit = handleSubmit((variables) => {
     createFeedback({ variables })
       .then(() => {
         Alert.alert(
           "Thank you for your feedback!",
-          "We will contact you if we have any further questions"
+          "We will contact you if we have any further questions",
         );
         reset();
       })
@@ -59,54 +56,47 @@ export function Feedback() {
   });
 
   return (
-    <Container p="$3" keyboard>
-      <Stack gap="$2">
-        <Card
-          p="$3"
-          hoverTheme
-          pressTheme
-          onPress={() =>
-            Linking.openURL(
-              "https://apps.apple.com/us/app/ride-beep-app/id1528601773"
-            )
-          }
-        >
-          <Text>
-            Please submit your ideas, bugs, and feature requests here! If you
-            like the app, pleae consider clicking here to leave us an App Store
-            rating.
-          </Text>
-        </Card>
-        <Stack>
-          <Label htmlFor="message" fontWeight="bold">Feedback</Label>
-          <Controller
-            name="message"
-            rules={{ required: "Message is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="message"
-                minHeight={170}
-                multiline
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                ref={ref}
-              />
-            )}
+    <KeyboardAwareScrollView
+      contentContainerClassName="p-4"
+      scrollEnabled={false}
+    >
+      <Card
+        variant="outlined"
+        className="p-4 mb-4"
+        onPress={() =>
+          Linking.openURL(
+            "https://apps.apple.com/us/app/ride-beep-app/id1528601773",
+          )
+        }
+      >
+        <Text>
+          Please submit your ideas, bugs, and feature requests here! If you like
+          the app, pleae consider clicking here to leave us an App Store rating.
+        </Text>
+      </Card>
+      <Label htmlFor="feedback-input">Feedback</Label>
+      <Controller
+        name="message"
+        rules={{ required: "Message is required" }}
+        control={control}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Input
+            id="feeback-input"
+            multiline
+            numberOfLines={4}
+            style={{ minHeight: 150 }}
+            onBlur={onBlur}
+            onChangeText={(val) => onChange(val)}
+            value={value}
           />
-          <Text color="$red10">
-            {errors.message?.message}
-            {validationErrors?.message?.[0]}
-          </Text>
-        </Stack>
-        <Button
-          onPress={onSubmit}
-          iconAfter={loading ? <Spinner /> : undefined}
-        >
-          Submit
-        </Button>
-      </Stack>
-    </Container>
+        )}
+      />
+      <Text color="error">
+        {errors.message?.message ?? validationErrors?.message?.[0]}
+      </Text>
+      <Button onPress={onSubmit} isLoading={loading} className="mt-4">
+        Submit
+      </Button>
+    </KeyboardAwareScrollView>
   );
 }

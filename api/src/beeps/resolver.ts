@@ -1,12 +1,13 @@
 import { Beep, Status } from '../entities/Beep';
 import { LoadStrategy, QueryOrder } from '@mikro-orm/core';
-import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, PubSub, PubSubEngine, Query, Resolver } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Info, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { User, UserRole } from '../entities/User';
 import { Context } from '../utils/context';
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
 import { PushNotification, sendNotifications } from '../utils/notifications';
+import { pubSub } from '../utils/pubsub';
 
 @ObjectType()
 class BeepsResponse extends Paginated(Beep) {}
@@ -43,7 +44,7 @@ export class BeepResolver {
     const beep = await ctx.em.findOne(Beep, id, { populate: ['beeper', 'rider'] });
 
     if (!beep) {
-      throw new Error("This beep entry does not exist");
+      throw new GraphQLError("This beep entry does not exist");
     }
 
     return beep;
@@ -102,7 +103,6 @@ export class BeepResolver {
     @Ctx() ctx: Context,
     @Arg('id') id: string,
     @Arg('stopBeeping') stopBeeping: boolean,
-    @PubSub() pubSub: PubSubEngine
   ): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(
       User,
@@ -115,7 +115,7 @@ export class BeepResolver {
     );
 
     if (user.queueSize === 0 && user.queue.length === 0) {
-      throw new Error('Queue is already clear!');
+      throw new GraphQLError('Queue is already clear!');
     }
 
     const entries: Beep[] = user.queue.getItems();
@@ -123,7 +123,7 @@ export class BeepResolver {
     const toSend: PushNotification[] = [];
 
     for (const entry of entries) {
-      pubSub.publish("Rider" + entry.rider.id, null);
+      pubSub.publish("currentRide", entry.rider.id, null);
       entry.status = Status.CANCELED;
 
       if (entry.rider.pushToken) {
@@ -147,12 +147,12 @@ export class BeepResolver {
 
     if (stopBeeping) {
       user.isBeeping = false;
-      pubSub.publish("User" + id, user);
+      pubSub.publish("user", id, user);
     }
 
     user.queueSize = 0;
 
-    pubSub.publish("Beeper" + id, []);
+    pubSub.publish("beeperQueue", id, []);
 
     await ctx.em.flush();
 
