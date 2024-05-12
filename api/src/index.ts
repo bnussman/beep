@@ -80,7 +80,6 @@ async function start() {
         startTransaction: false,
         renameTransaction: true,
         includeRawResult: true,
-        includeResolverArgs: true,
       })
     ]
   });
