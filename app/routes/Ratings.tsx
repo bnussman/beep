@@ -106,27 +106,24 @@ export function RatingsScreen() {
     );
   }
 
-  if (ratings?.length === 0) {
-    return (
-      <View>
-        <Text weight="black" size="3xl">
-          No Ratings
-        </Text>
-        <Text>You have no ratings to display</Text>
-      </View>
-    );
-  }
-
   return (
     <FlatList
       className="p-2"
-      contentContainerClassName="gap-2"
+      contentContainerClassName={ratings?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"}
       data={ratings}
       renderItem={(data) => <Rating {...data} />}
       keyExtractor={(rating) => rating.id}
       onEndReached={getMore}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
+      ListEmptyComponent={
+        <View className="items-center">
+        <Text weight="black" size="3xl">
+          No Ratings
+        </Text>
+        <Text>You have no ratings to display</Text>
+        </View>
+      }
       refreshControl={
         <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
       }

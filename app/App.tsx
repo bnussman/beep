@@ -116,7 +116,7 @@ function Beep() {
           enabled: "auto",
           prefixes: ["beep://", "https://app.ridebeep.app"],
         }}
-        theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        theme={colorScheme === "dark" ? DarkTheme : { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: 'white' } }}
       />
     </>
   );

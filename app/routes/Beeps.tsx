@@ -110,27 +110,24 @@ export function BeepsScreen() {
     );
   }
 
-  if (beeps?.length === 0) {
-    return (
-      <View>
-        <Text size="3xl" weight="black">
-          No Beeps
-        </Text>
-        <Text>You have no previous beeps to display</Text>
-      </View>
-    );
-  }
-
   return (
     <FlatList
       data={beeps}
       className="p-2"
-      contentContainerClassName="gap-2"
+      contentContainerClassName={beeps?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"}
       renderItem={(data) => <Beep {...data} />}
       keyExtractor={(beep) => beep.id}
       onEndReached={getMore}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
+      ListEmptyComponent={
+        <View className="items-center">
+          <Text size="3xl" weight="black">
+            No Beeps
+          </Text>
+          <Text>You have no previous beeps to display</Text>
+        </View>
+      }
       refreshControl={
         <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
       }
