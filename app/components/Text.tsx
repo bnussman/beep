@@ -27,6 +27,9 @@ export const text = cva(["text-black", "dark:text-white"], {
       subtle: ["!text-neutral-500", "dark:!text-neutral-400"],
       error: ["text-red-600", "dark:!text-red-400"],
     },
+    //selectable: {
+    //  true: "select-all",
+    // },
   },
   defaultVariants: {
     size: "md",

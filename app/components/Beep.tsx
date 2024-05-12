@@ -17,14 +17,14 @@ interface Props {
 }
 
 export const beepStatusMap: Record<Status, string> = {
-  [Status.WAITING]: "bg-green-500 dark:bg-green-500",
-  [Status.ON_THE_WAY]: "bg-orange-500 dark:bg-orange-500",
-  [Status.ACCEPTED]: "bg-green-500 dark:bg-green-500",
-  [Status.IN_PROGRESS]: "bg-green-500 dark:bg-green-500",
-  [Status.HERE]: "bg-green-500 dark:bg-green-500",
-  [Status.DENIED]: "bg-red-500 dark:bg-red-400",
-  [Status.CANCELED]: "bg-red-500 dark:bg-red-400",
-  [Status.COMPLETE]: "bg-green-500 dark:bg-green-500",
+  [Status.WAITING]: "!bg-green-400",
+  [Status.ON_THE_WAY]: "!bg-orange-400",
+  [Status.ACCEPTED]: "!bg-green-400",
+  [Status.IN_PROGRESS]: "!bg-green-400",
+  [Status.HERE]: "!bg-green-400",
+  [Status.DENIED]: "!bg-red-400",
+  [Status.CANCELED]: "!bg-red-400",
+  [Status.COMPLETE]: "!bg-green-400",
 };
 
 export function Beep({ item }: Props) {

@@ -23,6 +23,7 @@ import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
+import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 let unsubscribe: any = null;
@@ -413,8 +414,13 @@ export function StartBeepingScreen() {
   }
 
   return (
-    <View className="flex h-full p-4">
+    <View className="flex h-full p-4 pb-16">
       {queue[0] && <Beep beep={queue[0]} />}
+      <Queue
+        beeps={queue.filter(beep => beep.id !== queue[0]?.id)}
+        onRefresh={refetch}
+        refreshing={isRefreshing}
+      />
     </View>
   );
 }

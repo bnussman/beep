@@ -28,31 +28,26 @@ interface Props {
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
-  const { navigate } = useNavigation();
 
   return (
-    <View className="gap-4 h-full pb-8">
-      <Pressable onPress={() => navigate("User", { id: beep.rider.id, beepId: beep.id })}>
-        <Card variant="outlined" className="p-4">
-          <View>
-            <Text className="flex-shrink" weight="bold">
-              {beep.rider.name}
-            </Text>
-            {beep.rider.rating && (
-              <Text size="sm">{printStars(beep.rider.rating)}</Text>
-            )}
-          </View>
-          <Avatar src={beep.rider.photo ?? undefined} />
-        </Card>
-      </Pressable>
-      <Card variant="outlined" className="p-4">
-        <Text weight="bold">Group Size</Text>
-        <Text>{beep.groupSize}</Text>
-        <Text weight="bold">Pick Up</Text>
-        <Text>{beep.origin}</Text>
-        <Text weight="bold">Destination</Text>
-        <Text>{beep.destination}</Text>
-      </Card>
+    <View className="h-full pb-8 gap-2">
+      <View className="flex flex-row items-center justify-between">
+        <View>
+          <Text className="flex-shrink" weight="black" size="4xl">
+            {beep.rider.name}
+          </Text>
+          {beep.rider.rating && (
+            <Text size="sm">{printStars(beep.rider.rating)}</Text>
+          )}
+        </View>
+        <Avatar src={beep.rider.photo ?? undefined} size="xl" />
+      </View>
+      <Text size="xl" weight="black">Group Size</Text>
+      <Text selectable>{beep.groupSize}</Text>
+      <Text size="xl" weight="black">Pick Up</Text>
+      <Text selectable>{beep.origin}</Text>
+      <Text size="xl" weight="black">Destination</Text>
+      <Text selectable>{beep.destination}</Text>
       <View className="flex-grow" />
       {beep.status === Status.WAITING ? (
         <View className="flex flex-row gap-4">
@@ -61,20 +56,24 @@ export function Beep(props: Props) {
         </View>
       ) : (
         <>
-          <Button
-            onPress={() => {
-              Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
-            }}
-          >
-            Call
-          </Button>
-          <Button
-            onPress={() => {
-              Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
-            }}
-          >
-            Text
-          </Button>
+            <View className="flex flex-row gap-2">
+              <Button
+                className="flex-grow"
+                onPress={() => {
+                  Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
+                }}
+              >
+                Call 📞
+              </Button>
+              <Button
+                className="flex-grow"
+                onPress={() => {
+                  Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
+                }}
+              >
+                Text 💬
+              </Button>
+            </View>
           {[Status.HERE, Status.IN_PROGRESS].includes(
             beep.status as Status,
           ) && (
@@ -116,13 +115,13 @@ export function Beep(props: Props) {
             <Button
               onPress={() => openDirections("Current+Location", beep.origin)}
             >
-              Get Directions to Rider
+              Get Directions to Rider 🗺️
             </Button>
           ) : (
             <Button
               onPress={() => openDirections(beep.origin, beep.destination)}
             >
-              Get Directions for Beep
+              Get Directions for Beep 🗺️
             </Button>
           )}
           {[Status.ON_THE_WAY, Status.WAITING, Status.ACCEPTED].includes(

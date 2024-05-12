@@ -9,6 +9,11 @@ import { Text } from "./Text";
 
 export const button = cva(["p-4 flex cursor-pointer items-center rounded-xl"], {
   variants: {
+    size: {
+      sm: "p-2",
+      md: "p-4",
+      lg: "p-6",
+    },
     variant: {
       parimary: [
         "bg-neutral-100",
@@ -22,6 +27,7 @@ export const button = cva(["p-4 flex cursor-pointer items-center rounded-xl"], {
   },
   defaultVariants: {
     variant: "parimary",
+    size: "md"
   },
 });
 
@@ -36,6 +42,7 @@ export function Button(props: Props) {
     children,
     isLoading,
     variant,
+    size,
     activityIndicatorProps,
     ...rest
   } = props;
@@ -43,7 +50,7 @@ export function Button(props: Props) {
   return (
     <Pressable
       accessibilityRole="button"
-      className={button({ className, variant })}
+      className={button({ className, variant, size })}
       {...rest}
     >
       {isLoading ? (

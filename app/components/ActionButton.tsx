@@ -59,13 +59,13 @@ export function ActionButton(props: Props) {
       case Status.WAITING:
         return "Accept";
       case Status.ACCEPTED:
-        return "I'm on the way";
+        return "I'm on the way 🚕";
       case Status.ON_THE_WAY:
-        return "I'm here";
+        return "I'm here 👋";
       case Status.HERE:
-        return "I'm now beeping this rider";
+        return "I'm now beeping this rider 🚙";
       case Status.IN_PROGRESS:
-        return "Done beeping this rider";
+        return "Done beeping this rider ✅";
       default:
         return "Yikes";
     }
@@ -89,7 +89,7 @@ export function ActionButton(props: Props) {
   };
 
   return (
-    <Button isLoading={isLoading} onPress={onPress}>
+    <Button isLoading={isLoading} onPress={onPress} size="lg">
       {getMessage()}
     </Button>
   );

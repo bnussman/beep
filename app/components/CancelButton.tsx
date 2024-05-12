@@ -62,7 +62,7 @@ export function CancelButton({ beep }: Props) {
     <Button
       isLoading={isLoading}
       onPress={onPress}
-      className="bg-red-400 dark:bg-red-400 dark:active:bg-red-500 active:bg-red-500"
+      className="text-white bg-red-400 dark:bg-red-400 dark:active:bg-red-500 active:bg-red-500"
     >
       Cancel Beep
     </Button>

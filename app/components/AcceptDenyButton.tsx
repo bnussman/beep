@@ -46,6 +46,7 @@ export function AcceptDenyButton(props: Props) {
       })}
       isLoading={loading}
       onPress={onPress}
+      activityIndicatorProps={{ color: "white" }}
     >
       {isAccept ? "Accept" : "Deny"}
     </Button>
