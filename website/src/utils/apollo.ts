@@ -7,8 +7,7 @@ import {
   FetchResult,
   Observable,
 } from "@apollo/client";
-// @ts-expect-error the author is dumb
-import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
+import { createUploadLink } from "apollo-upload-client";
 import { setContext } from "@apollo/client/link/context";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { Client, ClientOptions, createClient } from "graphql-ws";

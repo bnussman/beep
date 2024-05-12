@@ -115,7 +115,6 @@ export function AddCar() {
 
       navigation.goBack();
     } catch (error) {
-      alert(JSON.stringify(error));
       if (!isValidationError(error as ApolloError)) {
         alert((error as ApolloError).message);
       }

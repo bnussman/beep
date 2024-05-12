@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getMainDefinition } from "@apollo/client/utilities";
-// @ts-expect-error the author is dumb
-import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
+import { createUploadLink } from "apollo-upload-client";
 import { createClient } from "graphql-ws";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { setContext } from "@apollo/client/link/context";

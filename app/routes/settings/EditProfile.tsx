@@ -18,6 +18,7 @@ import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { client } from "@/utils/apollo";
 import { ApolloError, useMutation } from "@apollo/client";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { ReactNativeFile } from "apollo-upload-client";
 import { VariablesOf, graphql } from "@/graphql";
 import {
   isValidationError,
@@ -56,11 +57,11 @@ export const UploadPhoto = graphql(`
 
 export function generateRNFile(uri: string, name: string) {
   return uri
-    ? {
+    ? new ReactNativeFile({
         uri,
         type: mime.lookup(uri) || "image",
         name,
-      }
+      })
     : null;
 }
 
