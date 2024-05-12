@@ -24,9 +24,9 @@ export async function setPurchaseUser(user: User) {
 }
 
 export async function setupPurchase() {
-  if (isRunningInExpoGo || isWeb || __DEV__) {
-    return;
-  }
+  // if (isRunningInExpoGo || isWeb || __DEV__) {
+  //   return;
+  // }
 
   try {
     const Purchases: typeof import("react-native-purchases").default =

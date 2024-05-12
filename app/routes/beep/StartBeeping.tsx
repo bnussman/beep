@@ -14,20 +14,10 @@ import {
 } from "@apollo/client";
 import { cache, client } from "../../utils/apollo";
 import { LocationActivityType } from "expo-location";
-import { Container } from "../../components/Container";
-import { QueueItem } from "./QueueItem";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
-import { Status } from "../../utils/types";
 import { graphql } from "gql.tada";
-import {
-  Alert,
-  AppState,
-  AppStateStatus,
-  Pressable,
-  View,
-  Switch,
-} from "react-native";
+import { Alert, AppState, AppStateStatus, View, Switch } from "react-native";
 import { Input } from "@/components/Input";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
@@ -389,7 +379,7 @@ export function StartBeepingScreen() {
         <Input
           id="capacity"
           placeholder="Max Capcity"
-          keyboardType="numeric"
+          inputMode="numeric"
           value={String(capacity)}
           onChangeText={(value) => setCapacity(value)}
         />
@@ -422,7 +412,11 @@ export function StartBeepingScreen() {
     );
   }
 
-  return <View>{queue[0] && <Beep beep={queue[0]} />}</View>;
+  return (
+    <View className="flex h-full p-4">
+      {queue[0] && <Beep beep={queue[0]} />}
+    </View>
+  );
 }
 
 TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {

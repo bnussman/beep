@@ -299,7 +299,7 @@ export function MainFindBeepScreen() {
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <Input
               id="groupSize"
-              keyboardType="numeric"
+              inputMode="numeric"
               onBlur={onBlur}
               onChangeText={(value) => {
                 if (value === "") {
@@ -362,7 +362,7 @@ export function MainFindBeepScreen() {
           Find Beep
         </Button>
         <BeepersMap />
-        <RateSheet />
+        {/* <RateSheet /> */}
       </KeyboardAwareScrollView>
     );
   }

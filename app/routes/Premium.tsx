@@ -1,16 +1,21 @@
-import React from 'react';
+import React from "react";
 import { useEffect, useState } from "react";
-import { Container } from "../components/Container";
-import { Card, Image, Spinner, Stack, Text, Button, XStack, Heading } from "@beep/ui";
-import type { PurchasesOffering, PurchasesPackage } from "react-native-purchases";
-import PremiumImage from '../assets/premium.png';
-import { Logger } from '../utils/logger';
-import { useMutation, useQuery } from '@apollo/client';
-import { Countdown } from '../components/CountDown';
-import { FlatList, RefreshControl, useColorScheme } from 'react-native';
-import { useUser } from '../utils/useUser';
-import { graphql } from 'gql.tada';
-import { Check } from '@tamagui/lucide-icons';
+import { Text } from "@/components/Text";
+import { Card } from "@/components/Card";
+import { Image } from "@/components/Image";
+import { Button } from "@/components/Button";
+import { View, ActivityIndicator } from "react-native";
+import type {
+  PurchasesOffering,
+  PurchasesPackage,
+} from "react-native-purchases";
+import PremiumImage from "../assets/premium.png";
+import { Logger } from "../utils/logger";
+import { useMutation, useQuery } from "@apollo/client";
+import { Countdown } from "../components/CountDown";
+import { FlatList, RefreshControl, useColorScheme } from "react-native";
+import { useUser } from "../utils/useUser";
+import { graphql } from "gql.tada";
 
 interface Props {
   item: PurchasesOffering;
@@ -41,30 +46,42 @@ function Offering({ item }: Props) {
   const packages = item.availablePackages;
 
   return (
-    <Card m="$2" p="$3">
-      <Stack gap="$2">
-        <Heading fontWeight="bold">
-          {item.identifier}
-        </Heading>
-        <Text>Promotes you to the top of the beeper list so you get more riders joining your queue</Text>
-        <Text fontSize="$1">Goes into effect immediately upon purchase</Text>
-        <Image source={PremiumImage} height="$18" w="100%" resizeMode="contain" alt="beep screenshot of premium" mb="$1" />
-        {packages.map((p) => <Package key={p.identifier} p={p} />)}
-      </Stack>
+    <Card className="p-3">
+      <Text weight="bold">{item.identifier}</Text>
+      <Text>
+        Promotes you to the top of the beeper list so you get more riders
+        joining your queue
+      </Text>
+      <Text size="sm">Goes into effect immediately upon purchase</Text>
+      <Image
+        source={PremiumImage}
+        className="h-64"
+        resizeMode="contain"
+        alt="beep screenshot of premium"
+      />
+      {packages.map((p) => (
+        <Package key={p.identifier} p={p} />
+      ))}
     </Card>
   );
-};
+}
 
 function Package({ p }: { p: PurchasesPackage }) {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [checkVerificationStatus] = useMutation(CheckVerificationStatus);
   const { user } = useUser();
 
-  const { data, refetch } = useQuery(PaymentsQuery, { variables: { id: user?.id ?? "" } });
+  const { data, refetch } = useQuery(PaymentsQuery, {
+    variables: { id: user?.id ?? "" },
+  });
 
-  const payment = data?.getPayments.items.find(sub => sub.productId === p.product.identifier);
+  const payment = data?.getPayments.items.find(
+    (sub) => sub.productId === p.product.identifier,
+  );
 
-  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires as string)} /> : null;
+  const countdown = payment?.expires ? (
+    <Countdown date={new Date(payment.expires as string)} />
+  ) : null;
 
   const onBuy = async (item: PurchasesPackage) => {
     if (Boolean(payment)) {
@@ -74,7 +91,8 @@ function Package({ p }: { p: PurchasesPackage }) {
     setIsPurchasing(true);
 
     try {
-      const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
+      const Purchases: typeof import("react-native-purchases").default =
+        require("react-native-purchases").default;
       await Purchases.purchasePackage(item);
       await checkVerificationStatus();
     } catch (e: any) {
@@ -90,20 +108,18 @@ function Package({ p }: { p: PurchasesPackage }) {
   };
 
   return (
-    <Card p="$3" py="$2">
-      <XStack alignItems="center" gap="$2">
-        <Text fontWeight="bold">{p.identifier}</Text>
-        <Text fontSize="$2">{countdown}</Text>
-        <Stack flexGrow={1} />
-        {Boolean(payment) && <Check size="$2" color="$green9" />}
-        <Button
-          iconAfter={isPurchasing ? <Spinner /> : undefined}
-          onPress={() => onBuy(p)}
-          disabled={Boolean(payment)}
-        >
-          {p.product.priceString}
-        </Button>
-      </XStack>
+    <Card className="p-2 flex flex-row">
+      <Text weight="bold">{p.identifier}</Text>
+      <Text size="sm">{countdown}</Text>
+      <View className="flex-grow" />
+      {Boolean(payment) && <Text>✅</Text>}
+      <Button
+        isLoading={isPurchasing}
+        onPress={() => onBuy(p)}
+        disabled={Boolean(payment)}
+      >
+        {p.product.priceString}
+      </Button>
     </Card>
   );
 }
@@ -120,10 +136,16 @@ function usePackages() {
       setIsLoading(true);
     }
     try {
-      const Purchases: typeof import('react-native-purchases').default = require("react-native-purchases").default;
+      const Purchases: typeof import("react-native-purchases").default =
+        require("react-native-purchases").default;
       const offerings = await Purchases.getOfferings();
-      if (offerings.current !== null && offerings.current.availablePackages.length !== 0) {
-        const topOfBeeperListPackages: PurchasesOffering[] = Object.values(offerings.all);
+      if (
+        offerings.current !== null &&
+        offerings.current.availablePackages.length !== 0
+      ) {
+        const topOfBeeperListPackages: PurchasesOffering[] = Object.values(
+          offerings.all,
+        );
         setOfferings(topOfBeeperListPackages);
       }
     } catch (e) {
@@ -143,8 +165,17 @@ function usePackages() {
 
 export function Premium() {
   const { user } = useUser();
-  const { refetch: refetchUserPayments, loading } = useQuery(PaymentsQuery, { variables: { id: user?.id ?? "" }, notifyOnNetworkStatusChange: true });
-  const { offerings, error, isLoading, refetch: refetchAppPackages, isRefreshing } = usePackages();
+  const { refetch: refetchUserPayments, loading } = useQuery(PaymentsQuery, {
+    variables: { id: user?.id ?? "" },
+    notifyOnNetworkStatusChange: true,
+  });
+  const {
+    offerings,
+    error,
+    isLoading,
+    refetch: refetchAppPackages,
+    isRefreshing,
+  } = usePackages();
 
   const colorMode = useColorScheme();
 
@@ -155,35 +186,33 @@ export function Premium() {
 
   if (isLoading && !offerings) {
     return (
-      <Container center>
-        <Spinner />
-      </Container>
+      <View>
+        <ActivityIndicator />
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container center>
+      <View>
         <Text>{error}</Text>
-      </Container>
+      </View>
     );
   }
 
   return (
-    <Container>
-      <FlatList
-        data={offerings}
-        renderItem={({ item }) => <Offering item={item} />}
-        onRefresh={refetch}
-        refreshing={isRefreshing || loading}
-        refreshControl={
-          <RefreshControl
-            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={isRefreshing || loading}
-            onRefresh={refetch}
-          />
-        }
-      />
-    </Container>
+    <FlatList
+      data={offerings}
+      renderItem={({ item }) => <Offering item={item} />}
+      onRefresh={refetch}
+      refreshing={isRefreshing || loading}
+      refreshControl={
+        <RefreshControl
+          tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+          refreshing={isRefreshing || loading}
+          onRefresh={refetch}
+        />
+      }
+    />
   );
 }

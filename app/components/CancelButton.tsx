@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { isMobile, Unpacked } from "../utils/constants";
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { Button, Spinner } from "@beep/ui";
+import { Button } from "@/components/Button";
 import { useEffect } from "react";
 import { Alert } from "react-native";
 import { ResultOf } from "gql.tada";
 import { GetInitialQueue } from "../routes/beep/StartBeeping";
 
 interface Props {
-  beep: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
+  beep: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
 }
 
 export const CancelBeep = gql`
@@ -43,7 +43,7 @@ export function CancelButton({ beep }: Props) {
             onPress: onCancel,
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       onCancel();
@@ -60,9 +60,9 @@ export function CancelButton({ beep }: Props) {
 
   return (
     <Button
-      iconAfter={isLoading ? <Spinner /> : undefined}
-      theme="red"
+      isLoading={isLoading}
       onPress={onPress}
+      className="bg-red-400 dark:bg-red-400 dark:active:bg-red-500 active:bg-red-500"
     >
       Cancel Beep
     </Button>

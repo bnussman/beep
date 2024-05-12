@@ -1,22 +1,15 @@
-import { Stack, Text } from "@beep/ui";
+import { Text } from "@/components/Text";
+import { Card } from "@/components/Card";
 import React from "react";
+import { MapViewProps } from "react-native-maps";
 
-export function Map() {
+export function Map(props: MapViewProps) {
   return (
-    <Stack
-      backgroundColor="$gray6"
-      p="$4"
-      w="100%"
-      borderRadius="$4"
-      minHeight="200px"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexGrow={1}
+    <Card
+      className="p-4 items-center justify-center min-h-32"
+      style={props.style}
     >
-      <Text>
-        Map not supported in web
-      </Text>
-    </Stack>
+      <Text>Map not supported in web</Text>
+    </Card>
   );
 }

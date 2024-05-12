@@ -1,38 +1,26 @@
 import React from "react";
-import { XStack, XStackProps } from "@beep/ui";
-import { Button } from "@beep/ui";
-import { Star, StarFull } from "@tamagui/lucide-icons";
+import { View } from "react-native";
+import { Button } from "@/components/Button";
+import { Text } from "@/components/Text";
 
-export interface RateBarProps extends XStackProps {
+export interface RateBarProps {
   hint: string;
   value: number;
   onValueChange: (value: number) => void;
 }
 
 export const RateBar = (props: RateBarProps) => {
-  const renderRateButtonElement = (value: number) => {
-    const isSelected = value <= props.value
-
-    const color = isSelected ? "gold" : "$gray8";
-    const Icon = isSelected ? <StarFull size="$2" /> : <Star size="$2" />;
-
-    return (
-      <Button
-        backgroundColor="$colorTransparent"
-        px="$2"
-        icon={Icon}
-        color={color}
-        key={value}
-        onPress={() => props.onValueChange(value)}
-      />
-    );
-  };
-
-  const { ...restProps } = props;
-
   return (
-    <XStack {...restProps}>
-      {[1, 2, 3, 4, 5].map(renderRateButtonElement)}
-    </XStack>
+    <View className="flex flex-row gap-2">
+      {[1, 2, 3, 4, 5].map((value) => {
+        const isSelected = value <= props.value;
+
+        return (
+          <Button key={value} onPress={() => props.onValueChange(value)}>
+            <Text>{isSelected ? "⭐" : "⚪"}</Text>
+          </Button>
+        );
+      })}
+    </View>
   );
 };

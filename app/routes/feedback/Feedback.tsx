@@ -1,9 +1,9 @@
 import React from "react";
-import { Container } from "@/components/Container";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
+import { Label } from "@/components/Label";
 import { useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Linking } from "react-native";
@@ -12,6 +12,7 @@ import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const CreateFeedback = graphql(`
   mutation CreateFeedback($message: String!) {
@@ -55,7 +56,10 @@ export function Feedback() {
   });
 
   return (
-    <Container p="$3" keyboard>
+    <KeyboardAwareScrollView
+      contentContainerClassName="p-4"
+      scrollEnabled={false}
+    >
       <Card
         variant="outlined"
         className="p-4 mb-4"
@@ -70,15 +74,14 @@ export function Feedback() {
           the app, pleae consider clicking here to leave us an App Store rating.
         </Text>
       </Card>
-      <Text weight="bold" className="mb-2">
-        Feedback
-      </Text>
+      <Label htmlFor="feedback-input">Feedback</Label>
       <Controller
         name="message"
         rules={{ required: "Message is required" }}
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
+            id="feeback-input"
             multiline
             numberOfLines={4}
             style={{ minHeight: 150 }}
@@ -88,12 +91,12 @@ export function Feedback() {
           />
         )}
       />
-      <Text className="text-red-500">
+      <Text color="error">
         {errors.message?.message ?? validationErrors?.message?.[0]}
       </Text>
       <Button onPress={onSubmit} isLoading={loading} className="mt-4">
         Submit
       </Button>
-    </Container>
+    </KeyboardAwareScrollView>
   );
 }

@@ -260,7 +260,7 @@ export function AddCar() {
                 alt="uploaded car image"
               />
             ) : (
-              <View className="rounded-lg h-48 w-full flex items-center justify-center bg-neutral-100 dark:bg-neutral-700">
+              <View className="rounded-lg h-48 w-full flex items-center justify-center bg-neutral-100 dark:bg-neutral-800">
                 <Text weight="bold">Attach a Photo</Text>
                 <Text size="4xl">📷</Text>
               </View>

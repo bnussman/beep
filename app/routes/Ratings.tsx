@@ -1,12 +1,16 @@
 import React from "react";
-import { FlatList, RefreshControl, useColorScheme } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import { useUser } from "../utils/useUser";
 import { useQuery } from "@apollo/client";
-import { Container } from "../components/Container";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
-import { Text, Spinner, Heading, Stack } from "@beep/ui";
+import { Text } from "@/components/Text";
 
 export const Ratings = graphql(`
   query GetRatings($id: String, $offset: Int, $show: Int) {
@@ -37,7 +41,6 @@ export const Ratings = graphql(`
 
 export function RatingsScreen() {
   const { user } = useUser();
-  const colorMode = useColorScheme();
 
   const { data, loading, error, fetchMore, refetch } = useQuery(Ratings, {
     variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
@@ -81,58 +84,52 @@ export function RatingsScreen() {
     if (!count || count < PAGE_SIZE) return null;
 
     return (
-      <Stack ai="center" jc="center">
-        <Spinner />
-      </Stack>
+      <View className="flex items-center p-4">
+        <ActivityIndicator />
+      </View>
     );
   };
 
   if (loading && !ratings) {
     return (
-      <Container center>
-        <Spinner />
-      </Container>
+      <View>
+        <ActivityIndicator />
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Container center>
+      <View>
         <Text>{error.message}</Text>
-      </Container>
+      </View>
     );
   }
 
   if (ratings?.length === 0) {
     return (
-      <Container center>
-        <Heading fontWeight="bold">No Ratings</Heading>
+      <View>
+        <Text weight="black" size="2xl">
+          No Ratings
+        </Text>
         <Text>You have no ratings to display</Text>
-      </Container>
+      </View>
     );
   }
 
   return (
-    <Container>
-      <FlatList
-        className="p-2"
-        data={ratings}
-        contentContainerStyle={{
-          gap: 6
-        }}
-        renderItem={(data) => <Rating {...data} />}
-        keyExtractor={(rating) => rating.id}
-        onEndReached={getMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter()}
-        refreshControl={
-          <RefreshControl
-            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={isRefreshing}
-            onRefresh={refetch}
-          />
-        }
-      />
-    </Container>
+    <FlatList
+      className="p-4"
+      contentContainerClassName="gap-2"
+      data={ratings}
+      renderItem={(data) => <Rating {...data} />}
+      keyExtractor={(rating) => rating.id}
+      onEndReached={getMore}
+      onEndReachedThreshold={0.1}
+      ListFooterComponent={renderFooter()}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+      }
+    />
   );
 }

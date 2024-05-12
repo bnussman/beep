@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { createUploadLink } from "apollo-upload-client";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { createClient } from "graphql-ws";
-import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { setContext } from "@apollo/client/link/context";
 import { Logger } from "./logger";
 import { ApolloClient, ApolloLink, InMemoryCache, split } from "@apollo/client";
@@ -126,7 +126,7 @@ const wsClient = createClient({
     closed: () => console.log("[Websocket] Closed"),
     error: (error) => {
       Logger.error(error);
-    }
+    },
   },
 });
 
