@@ -4,33 +4,25 @@ import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Linking, Pressable } from "react-native";
-import { Avatar } from "../../components/Avatar";
+import { Linking, Pressable, View } from "react-native";
+import { Card } from "@/components/Card";
+import { Button } from "@/components/Button";
+import { Avatar } from "@/components/Avatar";
+import { Text } from "@/components/Text";
 import { useNavigation } from "@react-navigation/native";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
 import { ResultOf } from "gql.tada";
 import { GetInitialQueue } from "./StartBeeping";
-import { MessageCircle, PhoneCall } from "@tamagui/lucide-icons";
 import {
   getRawPhoneNumber,
   openCashApp,
   openDirections,
   openVenmo,
 } from "../../utils/links";
-import {
-  Card,
-  Stack,
-  Button,
-  Heading,
-  XStack,
-  Spacer,
-  Text,
-  Paragraph,
-} from "@beep/ui";
 
 interface Props {
-  beep: Unpacked<ResultOf<typeof GetInitialQueue>['getQueue']>;
+  beep: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
 }
 
 export function Beep(props: Props) {
@@ -40,125 +32,106 @@ export function Beep(props: Props) {
 
   return (
     <>
-      <Pressable onPress={() => navigate("User", { id: beep.rider.id, beepId: beep.id, })}>
-        <Card flexDirection="row" alignItems="center" p="$3" gap="$4" justifyContent="space-between">
-          <Stack>
-            <Heading flexShrink={1} fontWeight="bold">
+      <Pressable
+        onPress={() => navigate("User", { id: beep.rider.id, beepId: beep.id })}
+      >
+        <Card>
+          <View>
+            <Text className="flex-shrink" weight="bold">
               {beep.rider.name}
-            </Heading>
+            </Text>
             {beep.rider.rating && (
-              <Text fontSize="$1">{printStars(beep.rider.rating)}</Text>
+              <Text size="sm">{printStars(beep.rider.rating)}</Text>
             )}
-          </Stack>
+          </View>
           <Avatar src={beep.rider.photo ?? undefined} />
         </Card>
       </Pressable>
-      <Card mt="$4" p="$3">
-        <Stack gap="$2">
-          <Stack>
-            <Heading fontWeight="bold">
-              Group Size
-            </Heading>
-            <Text>{beep.groupSize}</Text>
-          </Stack>
-          <Stack>
-            <Heading fontWeight="bold">
-              Pick Up
-            </Heading>
-            <Paragraph flexShrink={1}>{beep.origin}</Paragraph>
-          </Stack>
-          <Stack>
-            <Heading fontWeight="bold">
-              Destination
-            </Heading>
-            <Paragraph flexShrink={1}>{beep.destination}</Paragraph>
-          </Stack>
-        </Stack>
+      <Card>
+        <Text weight="bold">Group Size</Text>
+        <Text>{beep.groupSize}</Text>
+        <Text weight="bold">Pick Up</Text>
+        <Text>{beep.origin}</Text>
+        <Text weight="bold">Destination</Text>
+        <Text>{beep.destination}</Text>
       </Card>
-      <Stack flexGrow={1} />
-      <Stack gap="$3">
-        {beep.status === Status.WAITING ? (
-          <>
-            <AcceptDenyButton item={beep} type="deny" />
-            <AcceptDenyButton item={beep} type="accept" />
-          </>
-        ) : (
-          <>
-            <XStack gap="$2">
-              <Button
-                flexGrow={1}
-                onPress={() => {
-                  Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
-                }}
-                icon={<PhoneCall />}
-              />
-              <Button
-                flexGrow={1}
-                onPress={() => {
-                  Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
-                }}
-                icon={<MessageCircle />}
-              />
-            </XStack>
-            {[Status.HERE, Status.IN_PROGRESS].includes(
-              beep.status as Status
-            ) && (
-              <>
-                {beep.rider.cashapp && (
-                  <Button
-                    theme="green"
-                    onPress={() =>
-                      openCashApp(
-                        beep.rider.cashapp,
-                        beep.groupSize,
-                        user?.groupRate,
-                        user?.singlesRate
-                      )
-                    }
-                  >
-                    Request Money from Rider with Cash App
-                  </Button>
-                )}
-                {beep.rider?.venmo && (
-                  <Button
-                    theme="blue"
-                    onPress={() =>
-                      openVenmo(
-                        beep.rider.venmo,
-                        beep.groupSize,
-                        user?.groupRate,
-                        user?.singlesRate,
-                        "charge"
-                      )
-                    }
-                  >
-                    Request Money from Rider with Venmo
-                  </Button>
-                )}
-              </>
-            )}
-            {[Status.ON_THE_WAY, Status.ACCEPTED].includes(
-              beep.status as Status
-            ) ? (
-              <Button
-                onPress={() => openDirections("Current+Location", beep.origin)}
-              >
-                Get Directions to Rider
-              </Button>
-            ) : (
-              <Button
-                onPress={() => openDirections(beep.origin, beep.destination)}
-              >
-                Get Directions for Beep
-              </Button>
-            )}
-            {[Status.ON_THE_WAY, Status.WAITING, Status.ACCEPTED].includes(
-              beep.status as Status
-            ) && <CancelButton beep={beep} />}
-            <ActionButton beep={beep} />
-          </>
-        )}
-      </Stack>
+      {beep.status === Status.WAITING ? (
+        <>
+          <AcceptDenyButton item={beep} type="deny" />
+          <AcceptDenyButton item={beep} type="accept" />
+        </>
+      ) : (
+        <>
+          <Button
+            onPress={() => {
+              Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
+            }}
+          >
+            Call
+          </Button>
+          <Button
+            onPress={() => {
+              Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
+            }}
+          >
+            Text
+          </Button>
+          {[Status.HERE, Status.IN_PROGRESS].includes(
+            beep.status as Status,
+          ) && (
+            <>
+              {beep.rider.cashapp && (
+                <Button
+                  onPress={() =>
+                    openCashApp(
+                      beep.rider.cashapp,
+                      beep.groupSize,
+                      user?.groupRate,
+                      user?.singlesRate,
+                    )
+                  }
+                >
+                  Request Money from Rider with Cash App
+                </Button>
+              )}
+              {beep.rider?.venmo && (
+                <Button
+                  onPress={() =>
+                    openVenmo(
+                      beep.rider.venmo,
+                      beep.groupSize,
+                      user?.groupRate,
+                      user?.singlesRate,
+                      "charge",
+                    )
+                  }
+                >
+                  Request Money from Rider with Venmo
+                </Button>
+              )}
+            </>
+          )}
+          {[Status.ON_THE_WAY, Status.ACCEPTED].includes(
+            beep.status as Status,
+          ) ? (
+            <Button
+              onPress={() => openDirections("Current+Location", beep.origin)}
+            >
+              Get Directions to Rider
+            </Button>
+          ) : (
+            <Button
+              onPress={() => openDirections(beep.origin, beep.destination)}
+            >
+              Get Directions for Beep
+            </Button>
+          )}
+          {[Status.ON_THE_WAY, Status.WAITING, Status.ACCEPTED].includes(
+            beep.status as Status,
+          ) && <CancelButton beep={beep} />}
+          <ActionButton beep={beep} />
+        </>
+      )}
     </>
   );
 }

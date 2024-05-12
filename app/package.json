@@ -12,14 +12,12 @@
   },
   "dependencies": {
     "@apollo/client": "^3.9.11",
-    "@beep/ui": "workspace:*",
     "@react-native-async-storage/async-storage": "~1.23.1",
     "@react-native-menu/menu": "^1.0.1",
     "@react-navigation/drawer": "7.0.0-alpha.21",
     "@react-navigation/native": "7.0.0-alpha.18",
     "@react-navigation/native-stack": "7.0.0-alpha.20",
     "@sentry/react-native": "5.22.2",
-    "@tamagui/lucide-icons": "^1.94.5",
     "apollo-upload-client": "^18.0.1",
     "car-info": "^0.1.7",
     "class-variance-authority": "^0.7.0",
@@ -58,7 +56,6 @@
     "react-native-svg": "15.2.0",
     "react-native-web": "~0.19.10",
     "tailwindcss": "^3.4.3",
-    "tamagui": "^1.94.5",
     "url-parse": "^1.5.10",
     "zeego": "^1.10.0"
   },

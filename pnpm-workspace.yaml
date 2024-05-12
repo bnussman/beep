@@ -1,6 +1,5 @@
 packages:
-  - 'app'
-  - 'website'
-  - 'api'
-  - 'test'
-  - 'ui'
+  - "app"
+  - "website"
+  - "api"
+  - "test"

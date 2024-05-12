@@ -14,7 +14,6 @@ import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/navigation";
 import { useAutoUpdate } from "./utils/updates";
-import { TamaguiProvider, tamaguiConfig } from "@beep/ui";
 import { useColorScheme } from "react-native";
 import * as Notifications from "expo-notifications";
 import { UpdateBeeperQueue } from "./components/ActionButton";
@@ -124,17 +123,11 @@ function Beep() {
 }
 
 function App() {
-  const colorScheme = useColorScheme();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TamaguiProvider
-        config={tamaguiConfig}
-        defaultTheme={colorScheme ?? "light"}
-      >
-        <ApolloProvider client={client}>
-          <Beep />
-        </ApolloProvider>
-      </TamaguiProvider>
+      <ApolloProvider client={client}>
+        <Beep />
+      </ApolloProvider>
     </GestureHandlerRootView>
   );
 }

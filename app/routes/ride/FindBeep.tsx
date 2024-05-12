@@ -6,7 +6,6 @@ import { BeepersMap } from "./BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
-import { GetRateData, RateSheet } from "../../components/RateSheet";
 import { LeaveButton } from "./LeaveButton";
 import {
   View,
@@ -267,10 +266,10 @@ export function MainFindBeepScreen() {
 
   if (user?.isBeeping) {
     return (
-      <Container justifyContent="center" alignItems="center">
+      <View>
         <Text weight="bold">You are beeping!</Text>
         <Text>You can&apos;t find a ride when you are beeping</Text>
-      </Container>
+      </View>
     );
   }
 

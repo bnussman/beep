@@ -1,5 +1,4 @@
 import React, { useLayoutEffect } from "react";
-import { Plus } from "@tamagui/lucide-icons";
 import { useNavigation } from "@react-navigation/native";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import {
@@ -146,7 +145,7 @@ export function Cars() {
             onPress={() => navigation.navigate("Add Car")}
             aria-label="Add a car"
           >
-            <Plus />
+            <Text>➕</Text>
           </Pressable>
         );
       },
