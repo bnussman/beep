@@ -31,11 +31,9 @@ export function Beep(props: Props) {
   const { navigate } = useNavigation();
 
   return (
-    <>
-      <Pressable
-        onPress={() => navigate("User", { id: beep.rider.id, beepId: beep.id })}
-      >
-        <Card>
+    <View className="gap-4 h-full pb-8">
+      <Pressable onPress={() => navigate("User", { id: beep.rider.id, beepId: beep.id })}>
+        <Card variant="outlined" className="p-4">
           <View>
             <Text className="flex-shrink" weight="bold">
               {beep.rider.name}
@@ -47,7 +45,7 @@ export function Beep(props: Props) {
           <Avatar src={beep.rider.photo ?? undefined} />
         </Card>
       </Pressable>
-      <Card>
+      <Card variant="outlined" className="p-4">
         <Text weight="bold">Group Size</Text>
         <Text>{beep.groupSize}</Text>
         <Text weight="bold">Pick Up</Text>
@@ -55,11 +53,12 @@ export function Beep(props: Props) {
         <Text weight="bold">Destination</Text>
         <Text>{beep.destination}</Text>
       </Card>
+      <View className="flex-grow" />
       {beep.status === Status.WAITING ? (
-        <>
+        <View className="flex flex-row gap-4">
           <AcceptDenyButton item={beep} type="deny" />
           <AcceptDenyButton item={beep} type="accept" />
-        </>
+        </View>
       ) : (
         <>
           <Button
@@ -132,6 +131,6 @@ export function Beep(props: Props) {
           <ActionButton beep={beep} />
         </>
       )}
-    </>
+    </View>
   );
 }

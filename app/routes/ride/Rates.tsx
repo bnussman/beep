@@ -10,18 +10,18 @@ interface Props {
 
 export function Rates({ singles, group }: Props) {
   return (
-    <Card className="p-4 flex flex-row justify-between">
+    <Card variant="outlined" className="p-4 flex flex-row justify-between w-full items-center">
       <Text>
         <Text weight="black">Rates </Text>
         <Text>per person</Text>
       </Text>
-      <View>
+      <View className="flex flex-row gap-4">
         <View className="items-center">
           <Text weight="bold">Single</Text>
           <Text>${singles}</Text>
         </View>
         <View className="items-center">
-          <Text weight="bold">black</Text>
+          <Text weight="bold">Group</Text>
           <Text>${group}</Text>
         </View>
       </View>
