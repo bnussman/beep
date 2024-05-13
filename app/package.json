@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.25.0",
-    "@trpc/client": "11.0.0-next-beta.316",
-    "@trpc/react-query": "11.0.0-next-beta.316",
+    "@trpc/client": "11.0.0-rc.366",
+    "@trpc/react-query": "11.0.0-rc.366",
     "@apollo/client": "^3.9.11",
     "@gorhom/bottom-sheet": "^4",
     "@react-native-async-storage/async-storage": "~1.23.1",
