@@ -1,6 +1,6 @@
 {
-  "name": "apinext",
-  "module": "index.ts",
+  "name": "@beep/apinext",
+  "types": "src/index.ts",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest",
