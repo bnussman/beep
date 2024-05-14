@@ -1,12 +1,10 @@
 import { t } from './trpc';
 import { z } from 'zod';
 import { observable } from '@trpc/server/observable';
-import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import { createBunHttpHandler, createBunWSHandler } from 'trpc-bun-adapter';
 import { createContext } from './context';
 import { octetInputParser } from '@trpc/server/unstable-core-do-not-import';
 import { s3 } from './s3';
-import cors from 'cors';
 
 const appRouter = t.router({
   user: t.procedure.query(({ ctx }) => {
@@ -33,20 +31,6 @@ const appRouter = t.router({
 });
 
 export type AppRouter = typeof appRouter;
-
-
-// create server
-/* createHTTPServer({
-  middleware: cors(),
-  router: appRouter,
-  createContext() {
-    return {};
-  },
-  onError(opts) {
-    console.error('Error', opts.error);
-  },
-}).listen(3001);
- */
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -75,7 +59,7 @@ const bunHandler = createBunHttpHandler({
  Bun.serve({
   async fetch(request, server) {
 		const headers = new Headers(CORS_HEADERS);
-    
+
     if (request.method === "OPTIONS") {
 			// This is the preflight request. It should only return the CORS headers
 			return new Response(null, {
@@ -84,7 +68,7 @@ const bunHandler = createBunHttpHandler({
 			});
 		}
 
-    console.log(request.url)    
+    console.log(request.url)
     if (request.url.endsWith('/ws') && server.upgrade(request, { data: { req: request } })) {
       return;
     }
