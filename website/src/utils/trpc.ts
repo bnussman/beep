@@ -1,7 +1,7 @@
+
 import { HTTPHeaders, createTRPCClient, createTRPCReact, createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trpc/react-query';
-import type { AppRouter } from '../../apinext/src/index';
+import type { AppRouter } from '../../../apinext/src/index';
 import { QueryClient } from '@tanstack/react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const trpc = createTRPCReact<AppRouter>();
 
@@ -29,7 +29,7 @@ export const trpcClient = trpc.createClient({
       true: wsLink<AppRouter>({
         client: wsClient
       }),
-      false: httpLink({
+      false: httpBatchLink({
         url: 'http://localhost:3001/trpc',
         headers: getHeaders,
       }),
@@ -38,7 +38,7 @@ export const trpcClient = trpc.createClient({
 });
 
 async function getHeaders(): Promise<HTTPHeaders> {
-  const tokens = await AsyncStorage.getItem("auth");
+  const tokens = localStorage.getItem("auth");
 
   if (tokens) {
     const auth = JSON.parse(tokens);
