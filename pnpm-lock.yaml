@@ -110,7 +110,7 @@ importers:
         version: 2.8.5
       drizzle-orm:
         specifier: ^0.30.1
-        version: 0.30.10(@types/react@18.2.79)(bun-types@1.1.6)(knex@3.1.0(pg@8.11.5))(pg@8.11.5)(postgres@3.4.4)(react@18.2.0)
+        version: 0.30.10(@types/react@18.2.79)(bun-types@1.1.8)(knex@3.1.0(pg@8.11.5))(pg@8.11.5)(postgres@3.4.4)(react@18.2.0)
       postgres:
         specifier: ^3.4.3
         version: 3.4.4
@@ -132,7 +132,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: latest
-        version: 1.1.1
+        version: 1.1.2
       '@types/cors':
         specifier: ^2.8.17
         version: 2.8.17
@@ -3317,6 +3317,9 @@ packages:
   '@types/bun@1.1.1':
     resolution: {integrity: sha512-lUe9rLMhgDCViciZtgDj5CMl2u7uTq/IP149kSZH/Si6FWkCioximABFf+baRQgbm8QlH4bzT0qJRteQFNqeGA==}
 
+  '@types/bun@1.1.2':
+    resolution: {integrity: sha512-pRBDD3EDqPf83qe95i3EpYu5G2J8bbb78a3736vnCm2K8YWtEE5cvJUq2jkKvJhW07YTfQtbImywIwRhWL8z3Q==}
+
   '@types/cors@2.8.17':
     resolution: {integrity: sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==}
 
@@ -3767,6 +3770,9 @@ packages:
 
   bun-types@1.1.6:
     resolution: {integrity: sha512-LK2aaJdBBTUkDyN+kRiJHLF3VGrAcdkEHrbBvbmTkccShPw6ZalxxKjWSBJwn4UkikhZdrdA87bZWmfUgkRUYg==}
+
+  bun-types@1.1.8:
+    resolution: {integrity: sha512-dwhfuUKSGK8hm5Llcvb5+ejRh+4mIt8ibObJVKhZBsi0ScpXmt+AlaS1eDW6uRXCHj084Qt0kIqAJ08/7ZGC9Q==}
 
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
@@ -11541,6 +11547,10 @@ snapshots:
     dependencies:
       bun-types: 1.1.6
 
+  '@types/bun@1.1.2':
+    dependencies:
+      bun-types: 1.1.8
+
   '@types/cors@2.8.17':
     dependencies:
       '@types/node': 20.12.11
@@ -11616,7 +11626,7 @@ snapshots:
 
   '@types/ws@8.5.10':
     dependencies:
-      '@types/node': 20.11.30
+      '@types/node': 20.12.11
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -12036,6 +12046,11 @@ snapshots:
   bun-types@1.1.6:
     dependencies:
       '@types/node': 20.11.30
+      '@types/ws': 8.5.10
+
+  bun-types@1.1.8:
+    dependencies:
+      '@types/node': 20.12.11
       '@types/ws': 8.5.10
 
   busboy@1.6.0:
@@ -12584,10 +12599,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.30.10(@types/react@18.2.79)(bun-types@1.1.6)(knex@3.1.0(pg@8.11.5))(pg@8.11.5)(postgres@3.4.4)(react@18.2.0):
+  drizzle-orm@0.30.10(@types/react@18.2.79)(bun-types@1.1.8)(knex@3.1.0(pg@8.11.5))(pg@8.11.5)(postgres@3.4.4)(react@18.2.0):
     optionalDependencies:
       '@types/react': 18.2.79
-      bun-types: 1.1.6
+      bun-types: 1.1.8
       knex: 3.1.0(pg@8.11.5)
       pg: 8.11.5
       postgres: 3.4.4

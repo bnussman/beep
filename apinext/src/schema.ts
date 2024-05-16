@@ -1,6 +1,7 @@
 import { pgTable, integer, text, varchar, timestamp, unique, boolean, numeric, index } from "drizzle-orm/pg-core";
 import { customType } from 'drizzle-orm/pg-core';
 import { relations } from "drizzle-orm";
+import { Geometry } from "wkx";
 
 interface Point {
   latitude: number;
@@ -19,7 +20,12 @@ const geography = customType<{ data: Point }>({
       return { latitude: value.coordinates[0], longitude: value.coordinates[1] };
     }
 
-    throw new Error("error getting location from db");
+    // @ts-expect-error YOUR TYPES ARE SO BAD WHAT ARE YOU DOING??
+    const { coordinates } = value.charAt(0) == 'P' ?
+      Geometry.parse(value).toGeoJSON() :
+      Geometry.parse(Buffer.from(value, 'hex')).toGeoJSON();
+
+    return { latitude: coordinates[0], longitude:  coordinates[1] };
   }
 });
 

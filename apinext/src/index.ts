@@ -1,41 +1,50 @@
-import { t } from './trpc';
-import { z } from 'zod';
-import { observable } from '@trpc/server/observable';
-import { createBunHttpHandler, createBunWSHandler } from 'trpc-bun-adapter';
-import { createContext } from './context';
-import { octetInputParser } from '@trpc/server/unstable-core-do-not-import';
-import { s3 } from './s3';
+import { protectedProcedure, t } from "./trpc";
+import { z } from "zod";
+import { db } from "./db";
+import { observable } from "@trpc/server/observable";
+import { createBunHttpHandler, createBunWSHandler } from "trpc-bun-adapter";
+import { createContext } from "./context";
+import { octetInputParser } from "@trpc/server/unstable-core-do-not-import";
+import { s3 } from "./s3";
+import { user } from "./schema";
+import { eq } from "drizzle-orm";
 
 const appRouter = t.router({
   user: t.procedure.query(({ ctx }) => {
     return ctx.user;
   }),
-  updateProfilePicture: t.procedure.input(octetInputParser).mutation(async ({ input }) => {
-    console.log("Input:", input)
-    const result = await s3.putObject('photo.png', input)
-    console.log("Upload success", result);
-    return result.etag;
-  }),
-  updateUser: t.procedure.input(
-    z.object({
-      name: z.string(),
-    })
-  ).mutation(({ input }) => {
-    return "OMG!";
-  }),
+  updateProfilePicture: protectedProcedure
+    .input(octetInputParser)
+    .mutation(async ({ input, ctx }) => {
+      console.log("Input:", input);
+      const result = await s3.putObject("photo.png", input);
+      console.log("Upload success", result);
+      const u = await db.update(user).set({ photo: "url" }).where(eq(user.id, ctx.user.id)).returning();
+      return u;
+    }),
+  updateUser: t.procedure
+    .input(
+      z.object({
+        name: z.string(),
+      }),
+    )
+    .mutation(({ input }) => {
+      return "OMG!";
+    }),
   listen: t.procedure.subscription(() =>
     observable<string>((emit) => {
       emit.next("hey!");
-    })
-  )
+    }),
+  ),
 });
 
 export type AppRouter = typeof appRouter;
 
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETET, OPTIONS, POST',
-  'Access-Control-Allow-Headers': '*',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods":
+    "GET,HEAD,PUT,PATCH,POST,DELETET, OPTIONS, POST",
+  "Access-Control-Allow-Headers": "*",
 };
 
 const websocket = createBunWSHandler({
@@ -45,31 +54,34 @@ const websocket = createBunWSHandler({
 
 const bunHandler = createBunHttpHandler({
   router: appRouter,
-  endpoint: '/trpc',
+  endpoint: "/trpc",
   createContext,
   batching: {
-      enabled: true,
+    enabled: true,
   },
   responseMeta: () => ({
-    headers: CORS_HEADERS
+    headers: CORS_HEADERS,
   }),
   emitWsUpgrades: false,
 });
 
- Bun.serve({
+Bun.serve({
   async fetch(request, server) {
-		const headers = new Headers(CORS_HEADERS);
+    const headers = new Headers(CORS_HEADERS);
 
     if (request.method === "OPTIONS") {
-			// This is the preflight request. It should only return the CORS headers
-			return new Response(null, {
-				status: 200,
-				headers,
-			});
-		}
+      // This is the preflight request. It should only return the CORS headers
+      return new Response(null, {
+        status: 200,
+        headers,
+      });
+    }
 
-    console.log(request.url)
-    if (request.url.endsWith('/ws') && server.upgrade(request, { data: { req: request } })) {
+    console.log(request.url);
+    if (
+      request.url.endsWith("/ws") &&
+      server.upgrade(request, { data: { req: request } })
+    ) {
       return;
     }
 
@@ -80,4 +92,4 @@ const bunHandler = createBunHttpHandler({
   },
   port: 3001,
   websocket,
-})
+});

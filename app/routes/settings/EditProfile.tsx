@@ -24,7 +24,7 @@ import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
-import { trpc, vanillatrpc } from "@/utils/trpc";
+import { trpc } from "@/utils/trpc";
 
 const DeleteAccount = graphql(`
   mutation DeleteAccount {
@@ -200,12 +200,7 @@ export function EditProfileScreen() {
     } else {
       const res = await fetch(result.assets[0].uri);
       const blob = await res.blob();
-      console.log(blob)
-      try {
-        await mutateAsync(blob);
-      } catch (error) {
-        alert(error.message);
-      }
+      console.log(blob);
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
       picture = file;
@@ -213,11 +208,10 @@ export function EditProfileScreen() {
     }
 
     try {
-      await upload({ variables: { picture } });
+      await mutateAsync(picture);
     } catch (error) {
-      alert((error as ApolloError)?.message);
+      alert("Unable to upload profile picture");
     }
-    
 
     setPhoto(undefined);
   };
