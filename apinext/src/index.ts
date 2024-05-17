@@ -8,6 +8,11 @@ import { octetInputParser } from "@trpc/server/unstable-core-do-not-import";
 import { s3 } from "./s3";
 import { user } from "./schema";
 import { eq } from "drizzle-orm";
+import { EventEmitter } from "events";
+
+type User = typeof user.$inferSelect;
+
+const ee = new EventEmitter();
 
 const appRouter = t.router({
   user: t.procedure.query(({ ctx }) => {
@@ -19,7 +24,12 @@ const appRouter = t.router({
       console.log("Input:", input);
       const result = await s3.putObject("photo.png", input);
       console.log("Upload success", result);
-      const u = await db.update(user).set({ photo: "url" }).where(eq(user.id, ctx.user.id)).returning();
+      const u = await db
+        .update(user)
+        .set({ photo: "url" })
+        .where(eq(user.id, ctx.user.id))
+        .returning();
+      ee.emit("userUpdate", u);
       return u;
     }),
   updateUser: t.procedure
@@ -31,9 +41,23 @@ const appRouter = t.router({
     .mutation(({ input }) => {
       return "OMG!";
     }),
-  listen: t.procedure.subscription(() =>
-    observable<string>((emit) => {
-      emit.next("hey!");
+  userUpdates: protectedProcedure.subscription(({ ctx }) =>
+    observable<User>((emit) => {
+      const onUpdate = (user: User) => {
+        emit.next(user);
+      };
+      ee.on("userUpdate", onUpdate);
+      (async () => {
+        const u = (
+          await db.select().from(user).where(eq(user.id, ctx.user.id))
+        ).at(0);
+        if (u) {
+          emit.next(u);
+        }
+      })();
+      return () => {
+        ee.off("userUpdate", onUpdate);
+      };
     }),
   ),
 });
@@ -50,6 +74,9 @@ const CORS_HEADERS = {
 const websocket = createBunWSHandler({
   router: appRouter,
   onError: console.error,
+  createContext(params) {
+      console.log(params)
+  },
 });
 
 const bunHandler = createBunHttpHandler({
@@ -77,7 +104,6 @@ Bun.serve({
       });
     }
 
-    console.log(request.url);
     if (
       request.url.endsWith("/ws") &&
       server.upgrade(request, { data: { req: request } })
