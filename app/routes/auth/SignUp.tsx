@@ -87,7 +87,7 @@ export function SignUpScreen() {
 
       await AsyncStorage.setItem("auth", JSON.stringify(data?.signup));
 
-      utils.user.invalidate();
+      utils.user.setData(undefined, data!.signup.user as any);
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         alert(error as ApolloError);
