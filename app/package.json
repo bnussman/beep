@@ -11,7 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@apollo/client": "^3.10.4",
+    "@apollo/client": "^3.9.11",
     "@gorhom/bottom-sheet": "^4",
     "@react-native-async-storage/async-storage": "~1.23.1",
     "@react-native-menu/menu": "^1.0.1",
@@ -36,7 +36,7 @@
     "expo-status-bar": "~1.12.1",
     "expo-task-manager": "~11.8.1",
     "expo-updates": "~0.25.11",
-    "gql.tada": "^1.7.5",
+    "gql.tada": "^1.5.5",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.16.0",
     "nativewind": "4.0.36",
@@ -61,7 +61,7 @@
     "zeego": "^1.10.0"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.12.3",
+    "@0no-co/graphqlsp": "^1.10.3",
     "@babel/core": "^7.24.4",
     "@expo/metro-runtime": "~3.2.1",
     "@types/apollo-upload-client": "17.0.3",
