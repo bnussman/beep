@@ -258,8 +258,6 @@ export class UserResolver {
     };
   }
 
-
-
   @Query(() => UsersWithRidesResponse)
   @Authorized()
   public async getUsersWithRides(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<UsersWithRidesResponse> {
