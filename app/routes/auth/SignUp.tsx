@@ -7,9 +7,7 @@ import { getPushToken } from "../../utils/notifications";
 import { ApolloError, useMutation } from "@apollo/client";
 import { isMobile, isSimulator } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
-import { client } from "../../utils/apollo";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { UserData } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "@/components/Avatar";
 import { VariablesOf, graphql } from "../../graphql";
@@ -22,6 +20,7 @@ import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
+import { trpc } from "@/utils/trpc";
 
 const SignUp = graphql(`
   mutation SignUp($input: SignUpInput!) {
@@ -74,6 +73,8 @@ export function SignUpScreen() {
 
   const validationErrors = useValidationErrors<Values>(error);
 
+  const utils = trpc.useUtils();
+
   const [photo, setPhoto] = useState<any>();
 
   const onSubmit = handleSubmit(async (variables) => {
@@ -86,10 +87,7 @@ export function SignUpScreen() {
 
       await AsyncStorage.setItem("auth", JSON.stringify(data?.signup));
 
-      client.writeQuery({
-        query: UserData,
-        data: { getUser: { ...data?.signup.user } },
-      });
+      utils.user.invalidate();
     } catch (error) {
       if (!isValidationError(error as ApolloError)) {
         alert(error as ApolloError);

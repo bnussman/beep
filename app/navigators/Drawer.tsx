@@ -8,7 +8,7 @@ import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { gql, useMutation } from "@apollo/client";
 import { client } from "../utils/apollo";
-import { useIsUserNotBeeping, useUser } from "../utils/useUser";
+import { useIsUserNotBeeping } from "../utils/user";
 import { Avatar } from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { Cars } from "../routes/cars/Cars";
@@ -31,6 +31,8 @@ import {
 } from "react-native";
 import { Text } from "@/components/Text";
 import { cx } from "class-variance-authority";
+import { trpc } from "@/utils/trpc";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Logout = gql`
   mutation Logout {
@@ -45,10 +47,12 @@ const Resend = gql`
 `;
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
   const { navigate } = useNavigation();
   const [logout, { loading }] = useMutation(Logout);
   const [resend, { loading: resendLoading }] = useMutation(Resend);
+
+  const queryClient = useQueryClient();
 
   const handleLogout = async () => {
     await logout({
@@ -63,7 +67,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
 
-    client.resetStore();
+    queryClient.clear();
   };
 
   const handleResendVerification = () => {
@@ -83,7 +87,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
           <View className="flex flex-row items-center justify-between px-2">
             <View className="flex-shrink">
               <Text size="lg" weight="bold">
-                {user?.name}
+                {user?.first} {user?.last}
               </Text>
               <Text color="subtle">@{user?.username}</Text>
             </View>

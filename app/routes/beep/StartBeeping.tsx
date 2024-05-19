@@ -4,7 +4,6 @@ import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
 import { Logger } from "../../utils/logger";
-import { useUser } from "../../utils/useUser";
 import { isAndroid } from "../../utils/constants";
 import {
   ApolloError,
@@ -25,6 +24,7 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { trpc } from "@/utils/trpc";
 
 let unsubscribe: any = null;
 
@@ -106,7 +106,7 @@ const UpdateBeepSettings = graphql(`
 export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
   const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
@@ -417,7 +417,7 @@ export function StartBeepingScreen() {
     <View className="flex h-full p-4 pb-16">
       {queue[0] && <Beep beep={queue[0]} />}
       <Queue
-        beeps={queue.filter(beep => beep.id !== queue[0]?.id)}
+        beeps={queue.filter((beep) => beep.id !== queue[0]?.id)}
         onRefresh={refetch}
         refreshing={isRefreshing}
       />

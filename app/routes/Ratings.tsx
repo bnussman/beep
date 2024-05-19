@@ -5,12 +5,12 @@ import {
   View,
   ActivityIndicator,
 } from "react-native";
-import { useUser } from "../utils/useUser";
 import { useQuery } from "@apollo/client";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
 import { Text } from "@/components/Text";
+import { trpc } from "@/utils/trpc";
 
 export const Ratings = graphql(`
   query GetRatings($id: String, $offset: Int, $show: Int) {
@@ -40,7 +40,7 @@ export const Ratings = graphql(`
 `);
 
 export function RatingsScreen() {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
 
   const { data, loading, error, fetchMore, refetch } = useQuery(Ratings, {
     variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
@@ -109,7 +109,9 @@ export function RatingsScreen() {
   return (
     <FlatList
       className="p-2"
-      contentContainerClassName={ratings?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"}
+      contentContainerClassName={
+        ratings?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"
+      }
       data={ratings}
       renderItem={(data) => <Rating {...data} />}
       keyExtractor={(rating) => rating.id}
@@ -118,10 +120,10 @@ export function RatingsScreen() {
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
         <View className="items-center">
-        <Text weight="black" size="3xl">
-          No Ratings
-        </Text>
-        <Text>You have no ratings to display</Text>
+          <Text weight="black" size="3xl">
+            No Ratings
+          </Text>
+          <Text>You have no ratings to display</Text>
         </View>
       }
       refreshControl={

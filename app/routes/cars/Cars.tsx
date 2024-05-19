@@ -8,7 +8,6 @@ import {
   RefreshControl,
 } from "react-native";
 import { PAGE_SIZE } from "@/utils/constants";
-import { useUser } from "@/utils/useUser";
 import { Image } from "@/components/Image";
 import { View } from "react-native";
 import { Text } from "@/components/Text";
@@ -16,6 +15,7 @@ import { Card } from "@/components/Card";
 import { cache } from "@/utils/apollo";
 import { graphql } from "gql.tada";
 import * as ContextMenu from "zeego/context-menu";
+import { trpc } from "@/utils/trpc";
 
 export const DeleteCar = graphql(`
   mutation DeleteCar($id: String!) {
@@ -51,7 +51,7 @@ export const CarsQuery = graphql(`
 
 export function Cars() {
   const navigation = useNavigation();
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
 
   const { data, loading, error, refetch, fetchMore } = useQuery(CarsQuery, {
     variables: { id: user?.id, offset: 0, show: PAGE_SIZE },

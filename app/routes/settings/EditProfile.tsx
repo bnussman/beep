@@ -11,7 +11,6 @@ import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
-import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
@@ -69,7 +68,7 @@ export function generateRNFile(uri: string, name: string) {
 type Values = VariablesOf<typeof EditAccount>["input"];
 
 export function EditProfileScreen() {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
   const navigation = useNavigation();
 
   const defaultValues = useMemo(

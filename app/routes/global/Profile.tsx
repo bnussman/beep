@@ -4,10 +4,10 @@ import { useQuery } from "@apollo/client";
 import { printStars } from "@/components/Stars";
 import { Avatar } from "@/components/Avatar";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { useUser } from "@/utils/useUser";
 import { graphql } from "gql.tada";
 import { Text } from "@/components/Text";
 import { ActivityIndicator, View } from "react-native";
+import { trpc } from "@/utils/trpc";
 
 export const GetUser = graphql(`
   query GetUserProfile($id: String!) {
@@ -34,7 +34,7 @@ export const GetUser = graphql(`
 type Props = StaticScreenProps<{ id: string; beepId?: string }>;
 
 export function ProfileScreen({ route }: Props) {
-  const { user: currentUser } = useUser();
+  const { data: currentUser } = trpc.user.useQuery();
   const navigation = useNavigation();
 
   const { data, loading, error } = useQuery(GetUser, {

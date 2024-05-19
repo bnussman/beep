@@ -16,7 +16,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { cache, client } from "../../utils/apollo";
-import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";
 import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
@@ -39,6 +38,7 @@ import { VariablesOf, graphql } from "gql.tada";
 import { ChooseBeep } from "../ride/PickBeep";
 import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { trpc } from "@/utils/trpc";
 
 export const InitialRiderStatus = graphql(`
   query GetInitialRiderStatus {
@@ -136,7 +136,7 @@ const GetETA = graphql(`
 `);
 
 export function MainFindBeepScreen() {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
   const { getLocation } = useLocation(false);
   const { navigate } = useNavigation();
 

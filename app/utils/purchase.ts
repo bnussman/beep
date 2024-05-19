@@ -1,7 +1,7 @@
 import { Logger } from "./logger";
 import { Platform } from "react-native";
 import { isRunningInExpoGo, isWeb } from "./constants";
-import type { User } from "./useUser";
+import type { User } from "./user";
 
 export async function setPurchaseUser(user: User) {
   if (isRunningInExpoGo || isWeb) {
@@ -24,9 +24,9 @@ export async function setPurchaseUser(user: User) {
 }
 
 export async function setupPurchase() {
-  // if (isRunningInExpoGo || isWeb || __DEV__) {
-  //   return;
-  // }
+  if (isRunningInExpoGo || isWeb || __DEV__) {
+    return;
+  }
 
   try {
     const Purchases: typeof import("react-native-purchases").default =

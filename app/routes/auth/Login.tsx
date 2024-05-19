@@ -12,13 +12,13 @@ import { ApolloError, useMutation } from "@apollo/client";
 import { client } from "../../utils/apollo";
 import { getPushToken } from "../../utils/notifications";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { UserData } from "../../utils/useUser";
 import { Logger } from "../../utils/logger";
 import { useValidationErrors } from "../../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { VariablesOf, graphql } from "gql.tada";
 import { View } from "react-native";
+import { trpc } from "@/utils/trpc";
 
 const Login = graphql(`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
@@ -67,6 +67,8 @@ export function LoginScreen() {
     formState: { errors, isSubmitting },
   } = useForm<Omit<Values, "pushToken">>();
 
+  const utils = trpc.useUtils();
+
   useEffect(() => {
     try {
       SplashScreen.hideAsync();
@@ -92,10 +94,7 @@ export function LoginScreen() {
 
       await AsyncStorage.setItem("auth", JSON.stringify(data?.login));
 
-      client.writeQuery({
-        query: UserData,
-        data: { getUser: { ...data?.login.user } },
-      });
+      utils.user.setData(undefined, data!.login.user as any);
     } catch (error) {
       Alert(error as ApolloError);
     }

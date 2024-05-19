@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import { useUser } from "../utils/useUser";
 import { Avatar } from "@/components/Avatar";
 import { printStars } from "./Stars";
 import { Unpacked } from "@/utils/constants";
@@ -11,6 +10,7 @@ import { useMutation } from "@apollo/client";
 import { ResultOf, graphql } from "gql.tada";
 import { Ratings } from "../routes/Ratings";
 import * as ContextMenu from "zeego/context-menu";
+import { trpc } from "@/utils/trpc";
 
 type Rating = Unpacked<ResultOf<typeof Ratings>["getRatings"]["items"]>;
 
@@ -27,7 +27,7 @@ const DeleteRating = graphql(`
 
 export function Rating(props: Props) {
   const { item } = props;
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
   const navigation = useNavigation();
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 

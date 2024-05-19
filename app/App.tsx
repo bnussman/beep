@@ -3,10 +3,9 @@ import React, { useEffect } from "react";
 import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
-import { cache, client } from "./utils/apollo";
-import { ApolloProvider, useSubscription } from "@apollo/client";
+import { client } from "./utils/apollo";
+import { ApolloProvider } from "@apollo/client";
 import { updatePushToken } from "./utils/notifications";
-import { UserData, UserSubscription, useUser } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
@@ -79,49 +78,30 @@ setupPurchase();
 
 function Beep() {
   const colorScheme = useColorScheme();
-  const { data, loading } = useUser({
-    errorPolicy: "none",
-    onCompleted: () => {
-      updatePushToken();
-    },
-  });
 
-  const { data: d } = trpc.user.useQuery();
-  const { mutateAsync } = trpc.updateUser.useMutation();
-
-  trpc.userUpdates.useSubscription(undefined, {
-    onData(data) {
-      console.log("WS", data)
-    }
-  })
+  const { data: user, isLoading } = trpc.user.useQuery();
 
   const utils = trpc.useUtils();
 
-  console.log("trpc user context", d);
+  // trpc.userUpdates.useSubscription(undefined, {
+  //   onData(data) {
+  //     utils.user.setData(undefined, data);
+  //   },
+  // });
 
   useAutoUpdate();
-
-  const user = data?.getUser;
-
-  useSubscription(UserSubscription, {
-    onData({ data }) {
-      cache.updateQuery({ query: UserData }, () => ({
-        getUser: data.data!.getUserUpdates,
-      }));
-    },
-    skip: !user,
-  });
 
   useEffect(() => {
     if (user) {
       setPurchaseUser(user);
       setUserContext(user);
+      updatePushToken();
     }
   }, [user]);
 
-  if (loading) {
-    return null;
-  }
+  // if (isLoading) {
+  //   return null;
+  // }
 
   return (
     <>
@@ -131,7 +111,14 @@ function Beep() {
           enabled: "auto",
           prefixes: ["beep://", "https://app.ridebeep.app"],
         }}
-        theme={colorScheme === "dark" ? DarkTheme : { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: 'white' } }}
+        theme={
+          colorScheme === "dark"
+            ? DarkTheme
+            : {
+                ...DefaultTheme,
+                colors: { ...DefaultTheme.colors, background: "white" },
+              }
+        }
       />
     </>
   );

@@ -4,12 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
-import { useUser } from "../utils/useUser";
 import { Unpacked } from "../utils/constants";
 import { Status } from "../utils/types";
 import { ResultOf } from "gql.tada";
 import { GetBeepHistory } from "../routes/Beeps";
 import { cx } from "class-variance-authority";
+import { trpc } from "@/utils/trpc";
 
 interface Props {
   item: Unpacked<ResultOf<typeof GetBeepHistory>["getBeeps"]["items"]>;
@@ -28,7 +28,7 @@ export const beepStatusMap: Record<Status, string> = {
 };
 
 export function Beep({ item }: Props) {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
   const navigation = useNavigation();
   const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
   const isRider = user?.id === item.rider.id;
