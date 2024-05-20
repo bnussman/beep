@@ -107,6 +107,7 @@ export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
   const { data: user } = trpc.user.useQuery();
+  const { mutateAsync: updateUser } = trpc.updateUser.useMutation();
   const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
@@ -225,8 +226,8 @@ export function StartBeepingScreen() {
       return;
     }
 
-    let lon = undefined;
-    let lat = undefined;
+    let lon: number | undefined = undefined;
+    let lat: number | undefined = undefined;
 
     if (willBeBeeping) {
       let lastKnowLocation = await Location.getLastKnownPositionAsync({
@@ -242,17 +243,17 @@ export function StartBeepingScreen() {
       lat = lastKnowLocation.coords.latitude;
     }
 
-    updateBeepSettings({
-      variables: {
-        input: {
-          isBeeping: willBeBeeping,
-          singlesRate: Number(singlesRate),
-          groupRate: Number(groupRate),
-          capacity: Number(capacity),
-          latitude: lat,
-          longitude: lon,
+    updateUser({
+      isBeeping: willBeBeeping,
+      singlesRate: Number(singlesRate),
+      groupRate: Number(groupRate),
+      capacity: Number(capacity),
+      ...(willBeBeeping && {
+        location: {
+          latitude: lat!,
+          longitude: lon!,
         },
-      },
+      }),
     })
       .then(() => {
         if (willBeBeeping) {

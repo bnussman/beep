@@ -49,14 +49,31 @@ const appRouter = t.router({
       ee.emit("userUpdate", u);
       return u;
     }),
-  updateUser: t.procedure
+  updateUser: protectedProcedure
     .input(
-      z.object({
-        name: z.string(),
-      }),
+      z
+        .object({
+          first: z.string(),
+          last: z.string(),
+          email: z.string(),
+          capacity: z.number(),
+          groupRate: z.number(),
+          singlesRate: z.number(),
+          isBeeping: z.boolean(),
+          location: z.object({
+            longitude: z.number(),
+            latitude: z.number(),
+          }),
+        })
+        .partial(),
     )
-    .mutation(({ input }) => {
-      return "OMG!";
+    .mutation(async ({ input, ctx }) => {
+      const result = await db
+        .update(user)
+        .set(input)
+        .where(eq(user.id, ctx.user.id))
+        .returning();
+      return result[0];
     }),
   // userUpdates: t.procedure.subscription(({ ctx }) =>
   //   observable<User>((emit) => {
