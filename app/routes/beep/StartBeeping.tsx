@@ -106,6 +106,7 @@ const UpdateBeepSettings = graphql(`
 export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
+  const utils = trpc.useUtils();
   const { data: user } = trpc.user.useQuery();
   const { mutateAsync: updateUser } = trpc.updateUser.useMutation();
   const navigation = useNavigation();
@@ -255,7 +256,8 @@ export function StartBeepingScreen() {
         },
       }),
     })
-      .then(() => {
+      .then((user) => {
+        utils.user.setData(undefined, user);
         if (willBeBeeping) {
           startLocationTracking();
         } else {
