@@ -8,13 +8,19 @@ export const trpc = createTRPCReact<AppRouter>();
 export const vanillatrpc = createTRPCClient<AppRouter>({
   links: [
     httpLink({
-      url: 'http://localhost:3001/trpc',
+      url: 'http://192.168.1.65:3001/trpc',
       headers: getHeaders,
     })
   ],
 });
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity
+    },
+  }
+});
 
 const wsClient = createWSClient({
   url: 'ws://localhost:3001/ws',
@@ -30,7 +36,7 @@ export const trpcClient = trpc.createClient({
         client: wsClient
       }),
       false: httpLink({
-        url: 'http://localhost:3001/trpc',
+        url: 'http://192.168.1.65:3001/trpc',
         headers: getHeaders,
       }),
     }),
@@ -39,7 +45,6 @@ export const trpcClient = trpc.createClient({
 
 async function getHeaders(): Promise<HTTPHeaders> {
   const tokens = await AsyncStorage.getItem("auth");
-
   if (tokens) {
     const auth = JSON.parse(tokens);
 

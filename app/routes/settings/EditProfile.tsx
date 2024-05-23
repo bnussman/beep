@@ -198,24 +198,30 @@ export function EditProfileScreen() {
     let picture;
 
     if (isMobile) {
-      setPhoto(result.assets[0]);
-      const fileType = result.assets[0].uri.split(".")[1];
-      const file = generateRNFile(result.assets[0].uri, `file.${fileType}`);
-      picture = file;
+      const image = result.assets[0];
+      setPhoto(image);
+      picture = {
+        name: image.uri,
+        type: image.type,
+        uri: image.uri,
+      };
     } else {
       const res = await fetch(result.assets[0].uri);
       const blob = await res.blob();
-      console.log(blob);
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
       picture = file;
       setPhoto(result.assets[0]);
     }
 
+    const formdata = new FormData();
+
+    formdata.append('file', picture)
+
     try {
-      await mutateAsync(picture);
+      await mutateAsync(formdata);
     } catch (error) {
-      alert("Unable to upload profile picture");
+      console.error(error);
     }
 
     setPhoto(undefined);

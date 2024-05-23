@@ -99,9 +99,7 @@ function Beep() {
     }
   }, [user]);
 
-  // if (isLoading) {
-  //   return null;
-  // }
+  console.log(user, isLoading)
 
   return (
     <>

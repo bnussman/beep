@@ -37,10 +37,12 @@ const appRouter = t.router({
       return ctx.user;
     }),
   updateProfilePicture: protectedProcedure
-    .input(octetInputParser)
+    .input(z.instanceof(FormData))
     .mutation(async ({ input, ctx }) => {
-      const result = await s3.putObject("images/photo.png", input);
-      const url = S3_BUCKET_URL + "images/photo.png";
+      const file = input.get('file') as unknown as File;
+      const imagePath = `images/${ctx.user.id}-${Date.now()}.${file.type.split('/')[1]}`;
+      await s3.putObject(imagePath, file.stream());
+      const url = S3_BUCKET_URL + imagePath;
       const u = await db
         .update(user)
         .set({ photo: url })
