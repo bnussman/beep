@@ -108,7 +108,13 @@ export function EditProfileScreen() {
     },
   });
 
-  const { mutateAsync } = trpc.updateProfilePicture.useMutation();
+  const utils = trpc.useUtils();
+
+  const { mutateAsync } = trpc.updateProfilePicture.useMutation({
+    onSuccess(data) {
+      utils.user.setData(undefined, data);
+    }
+  });
 
   const [photo, setPhoto] = useState<any>();
 

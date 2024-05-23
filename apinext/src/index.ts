@@ -12,6 +12,7 @@ import { s3 } from "./s3";
 import { user } from "./schema";
 import { eq } from "drizzle-orm";
 import { EventEmitter } from "events";
+import { S3_BUCKET_URL } from "./constants";
 
 type User = typeof user.$inferSelect;
 
@@ -38,16 +39,14 @@ const appRouter = t.router({
   updateProfilePicture: protectedProcedure
     .input(octetInputParser)
     .mutation(async ({ input, ctx }) => {
-      console.log("Input:", input);
-      const result = await s3.putObject("photo.png", input);
-      console.log("Upload success", result);
+      const result = await s3.putObject("images/photo.png", input);
+      const url = S3_BUCKET_URL + "images/photo.png";
       const u = await db
         .update(user)
-        .set({ photo: "url" })
+        .set({ photo: url })
         .where(eq(user.id, ctx.user.id))
         .returning();
-      ee.emit("userUpdate", u);
-      return u;
+      return u[0];
     }),
   updateUser: protectedProcedure
     .input(
