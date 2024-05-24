@@ -10,11 +10,11 @@
     "typecheck": "tsc --noEmit",
     "start": "bun run build/index.js",
     "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"bun run --watch build/index.js\"",
-    "db:create": "mikro-orm schema:create --run",
-    "db:update": "mikro-orm schema:update --run",
-    "db:drop": "mikro-orm schema:drop --run",
-    "db:migrate": "mikro-orm migration:up",
-    "db:migration:create": "mikro-orm migration:create"
+    "db:create": "bun --bun mikro-orm schema:create --run",
+    "db:update": "bun --bun mikro-orm schema:update --run",
+    "db:drop": "bun --bun mikro-orm schema:drop --run",
+    "db:migrate": "bun --bun mikro-orm migration:up",
+    "db:migration:create": "bun --bun mikro-orm migration:create"
   },
   "mikro-orm": {
     "configPaths": [
