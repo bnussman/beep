@@ -1,6 +1,6 @@
 {
   "name": "@beep/app",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "main": "index.js",
   "scripts": {
     "dev": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css.web.css && EXPO_USE_FAST_RESOLVER=1 expo start --dev-client --web",
