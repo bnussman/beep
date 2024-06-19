@@ -1,6 +1,6 @@
 import { isWeb } from "@/utils/constants";
 import { Text, TextProps } from "./Text";
-import { Text as _Text } from "react-native";
+import { AccessibilityRole, Text as _Text } from "react-native";
 import { useEffect } from "react";
 
 interface Props extends TextProps {
@@ -22,14 +22,15 @@ export function Label(props: Props) {
     }, [htmlFor]);
   }
 
+  const webProps = isWeb ? { accessibilityRole: "label" as AccessibilityRole } : {};
+
   return (
     <Text
       id={id}
-      // @ts-expect-error shut up
-      accessibilityRole="label"
       weight="bold"
       className="py-2"
       {...rest}
+      {...webProps}
     />
   );
 }
