@@ -1,8 +1,3 @@
-export interface Subscription {
-  closed: boolean;
-  unsubscribe(): void;
-}
-
 export enum Status {
   CANCELED = "canceled",
   DENIED = "denied",
