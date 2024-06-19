@@ -9,6 +9,7 @@ import { VariablesOf, graphql } from '../graphql';
 import { createRoute } from '@tanstack/react-router';
 import { useUser } from '../utils/user';
 import { rootRoute } from '../utils/router';
+import { vanillatrpc } from '../utils/trpc';
 
 const pick = (obj: any, keys: string[]) => Object.fromEntries(
   keys
@@ -78,6 +79,11 @@ export function EditProfile() {
 
   async function uploadPhoto(picture: File | undefined) {
     if (!picture) return;
+    try {
+    await vanillatrpc.updateProfilePicture.mutate(picture);
+    } catch (error) {
+      alert(error)
+    }
     upload({ variables: { picture } })
       .then(() => {
         toast({ status: 'success', title: "Success", description: "Successfully updated profile picture" });

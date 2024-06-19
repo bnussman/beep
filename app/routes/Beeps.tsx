@@ -7,10 +7,10 @@ import {
 } from "react-native";
 import { useQuery } from "@apollo/client";
 import { Text } from "@/components/Text";
-import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
 import { graphql } from "gql.tada";
+import { trpc } from "@/utils/trpc";
 
 export const GetBeepHistory = graphql(`
   query GetBeepHistory($id: String, $offset: Int, $show: Int) {
@@ -44,7 +44,7 @@ export const GetBeepHistory = graphql(`
 `);
 
 export function BeepsScreen() {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
 
   const { data, loading, error, fetchMore, refetch } = useQuery(
     GetBeepHistory,
@@ -114,7 +114,9 @@ export function BeepsScreen() {
     <FlatList
       data={beeps}
       className="p-2"
-      contentContainerClassName={beeps?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"}
+      contentContainerClassName={
+        beeps?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"
+      }
       renderItem={(data) => <Beep {...data} />}
       keyExtractor={(beep) => beep.id}
       onEndReached={getMore}

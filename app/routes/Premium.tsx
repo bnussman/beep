@@ -13,9 +13,9 @@ import PremiumImage from "../assets/premium.png";
 import { Logger } from "../utils/logger";
 import { useMutation, useQuery } from "@apollo/client";
 import { Countdown } from "../components/CountDown";
-import { FlatList, RefreshControl, useColorScheme } from "react-native";
-import { useUser } from "../utils/useUser";
+import { FlatList, RefreshControl } from "react-native";
 import { graphql } from "gql.tada";
+import { trpc } from "@/utils/trpc";
 
 interface Props {
   item: PurchasesOffering;
@@ -71,7 +71,7 @@ function Offering({ item }: Props) {
 function Package({ p }: { p: PurchasesPackage }) {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [checkVerificationStatus] = useMutation(CheckVerificationStatus);
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
 
   const { data, refetch } = useQuery(PaymentsQuery, {
     variables: { id: user?.id ?? "" },
@@ -170,7 +170,7 @@ function usePackages() {
 }
 
 export function Premium() {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
   const { refetch: refetchUserPayments, loading } = useQuery(PaymentsQuery, {
     variables: { id: user?.id ?? "" },
     notifyOnNetworkStatusChange: true,

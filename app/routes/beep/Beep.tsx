@@ -1,15 +1,12 @@
 import React from "react";
 import { Unpacked } from "../../utils/constants";
-import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Linking, Pressable, View } from "react-native";
-import { Card } from "@/components/Card";
+import { Linking, View } from "react-native";
 import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
-import { useNavigation } from "@react-navigation/native";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
 import { ResultOf } from "gql.tada";
@@ -20,6 +17,7 @@ import {
   openDirections,
   openVenmo,
 } from "../../utils/links";
+import { trpc } from "@/utils/trpc";
 
 interface Props {
   beep: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
@@ -27,7 +25,7 @@ interface Props {
 
 export function Beep(props: Props) {
   const { beep } = props;
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
 
   return (
     <View className="h-full pb-8 gap-2">
@@ -42,11 +40,17 @@ export function Beep(props: Props) {
         </View>
         <Avatar src={beep.rider.photo ?? undefined} size="xl" />
       </View>
-      <Text size="xl" weight="black">Group Size</Text>
+      <Text size="xl" weight="black">
+        Group Size
+      </Text>
       <Text selectable>{beep.groupSize}</Text>
-      <Text size="xl" weight="black">Pick Up</Text>
+      <Text size="xl" weight="black">
+        Pick Up
+      </Text>
       <Text selectable>{beep.origin}</Text>
-      <Text size="xl" weight="black">Destination</Text>
+      <Text size="xl" weight="black">
+        Destination
+      </Text>
       <Text selectable>{beep.destination}</Text>
       <View className="flex-grow" />
       {beep.status === Status.WAITING ? (
@@ -56,24 +60,24 @@ export function Beep(props: Props) {
         </View>
       ) : (
         <>
-            <View className="flex flex-row gap-2">
-              <Button
-                className="flex-grow"
-                onPress={() => {
-                  Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
-                }}
-              >
-                Call 📞
-              </Button>
-              <Button
-                className="flex-grow"
-                onPress={() => {
-                  Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
-                }}
-              >
-                Text 💬
-              </Button>
-            </View>
+          <View className="flex flex-row gap-2">
+            <Button
+              className="flex-grow"
+              onPress={() => {
+                Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
+              }}
+            >
+              Call 📞
+            </Button>
+            <Button
+              className="flex-grow"
+              onPress={() => {
+                Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
+              }}
+            >
+              Text 💬
+            </Button>
+          </View>
           {[Status.HERE, Status.IN_PROGRESS].includes(
             beep.status as Status,
           ) && (

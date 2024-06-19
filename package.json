@@ -11,6 +11,7 @@
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
     "build:api": "pnpm --filter @beep/api build",
+    "build:apinext": "pnpm --filter @beep/apinext build",
     "build:website": "pnpm --filter @beep/website build",
     "typecheck": "pnpm run --parallel typecheck"
   },

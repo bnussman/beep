@@ -11,7 +11,6 @@ import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
-import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
@@ -24,6 +23,7 @@ import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
+import { trpc } from "@/utils/trpc";
 
 const DeleteAccount = graphql(`
   mutation DeleteAccount {
@@ -68,7 +68,7 @@ export function generateRNFile(uri: string, name: string) {
 type Values = VariablesOf<typeof EditAccount>["input"];
 
 export function EditProfileScreen() {
-  const { user } = useUser();
+  const { data: user } = trpc.user.useQuery();
   const navigation = useNavigation();
 
   const defaultValues = useMemo(
@@ -106,6 +106,14 @@ export function EditProfileScreen() {
         "apollo-require-preflight": true,
       },
     },
+  });
+
+  const utils = trpc.useUtils();
+
+  const { mutateAsync } = trpc.updateProfilePicture.useMutation({
+    onSuccess(data) {
+      utils.user.setData(undefined, data);
+    }
   });
 
   const [photo, setPhoto] = useState<any>();
@@ -190,10 +198,13 @@ export function EditProfileScreen() {
     let picture;
 
     if (isMobile) {
-      setPhoto(result.assets[0]);
-      const fileType = result.assets[0].uri.split(".")[1];
-      const file = generateRNFile(result.assets[0].uri, `file.${fileType}`);
-      picture = file;
+      const image = result.assets[0];
+      setPhoto(image);
+      picture = {
+        name: image.uri,
+        type: image.type,
+        uri: image.uri,
+      };
     } else {
       const res = await fetch(result.assets[0].uri);
       const blob = await res.blob();
@@ -203,10 +214,14 @@ export function EditProfileScreen() {
       setPhoto(result.assets[0]);
     }
 
+    const formdata = new FormData();
+
+    formdata.append('file', picture)
+
     try {
-      await upload({ variables: { picture } });
+      await mutateAsync(formdata);
     } catch (error) {
-      alert((error as ApolloError)?.message);
+      console.error(error);
     }
 
     setPhoto(undefined);

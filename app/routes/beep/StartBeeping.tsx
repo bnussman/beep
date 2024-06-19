@@ -4,7 +4,6 @@ import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
 import { Logger } from "../../utils/logger";
-import { useUser } from "../../utils/useUser";
 import { isAndroid } from "../../utils/constants";
 import {
   ApolloError,
@@ -25,6 +24,7 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { trpc } from "@/utils/trpc";
 
 let unsubscribe: any = null;
 
@@ -106,7 +106,9 @@ const UpdateBeepSettings = graphql(`
 export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
-  const { user } = useUser();
+  const utils = trpc.useUtils();
+  const { data: user } = trpc.user.useQuery();
+  const { mutateAsync: updateUser } = trpc.updateUser.useMutation();
   const navigation = useNavigation();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
@@ -225,8 +227,8 @@ export function StartBeepingScreen() {
       return;
     }
 
-    let lon = undefined;
-    let lat = undefined;
+    let lon: number | undefined = undefined;
+    let lat: number | undefined = undefined;
 
     if (willBeBeeping) {
       let lastKnowLocation = await Location.getLastKnownPositionAsync({
@@ -242,19 +244,20 @@ export function StartBeepingScreen() {
       lat = lastKnowLocation.coords.latitude;
     }
 
-    updateBeepSettings({
-      variables: {
-        input: {
-          isBeeping: willBeBeeping,
-          singlesRate: Number(singlesRate),
-          groupRate: Number(groupRate),
-          capacity: Number(capacity),
-          latitude: lat,
-          longitude: lon,
+    updateUser({
+      isBeeping: willBeBeeping,
+      singlesRate: Number(singlesRate),
+      groupRate: Number(groupRate),
+      capacity: Number(capacity),
+      ...(willBeBeeping && {
+        location: {
+          latitude: lat!,
+          longitude: lon!,
         },
-      },
+      }),
     })
-      .then(() => {
+      .then((user) => {
+        utils.user.setData(undefined, user);
         if (willBeBeeping) {
           startLocationTracking();
         } else {
@@ -417,7 +420,7 @@ export function StartBeepingScreen() {
     <View className="flex h-full p-4 pb-16">
       {queue[0] && <Beep beep={queue[0]} />}
       <Queue
-        beeps={queue.filter(beep => beep.id !== queue[0]?.id)}
+        beeps={queue.filter((beep) => beep.id !== queue[0]?.id)}
         onRefresh={refetch}
         refreshing={isRefreshing}
       />

@@ -1,5 +1,6 @@
 packages:
-  - "app"
-  - "website"
-  - "api"
-  - "test"
+  - 'app'
+  - 'website'
+  - 'api'
+  - 'test'
+  - 'apinext'

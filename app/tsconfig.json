@@ -10,6 +10,7 @@
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": true,
+    "experimentalDecorators": true,
     "resolveJsonModule": true,
     "strict": true,
     "paths": {
