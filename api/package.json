@@ -48,10 +48,6 @@
     "@types/bun": "^1.1.0",
     "@types/nodemailer": "^6.4.14",
     "concurrently": "^8.2.2",
-    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
-  },
-  "volta": {
-    "node": "18.10.0"
   }
 }
