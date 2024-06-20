@@ -1,7 +1,6 @@
 import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Authorized, Field, ObjectType, UseMiddleware } from "type-graphql";
 import { Rating } from './Rating';
-import { v4 } from "uuid";
 import { PointType } from "../location/types";
 import { Point } from "../location/resolver";
 import { Car } from "./Car";
@@ -31,7 +30,7 @@ export class User {
 
   @PrimaryKey()
   @Field()
-  id: string = v4();
+  id: string = crypto.randomUUID();
 
   @Field()
   @Property()

@@ -40,7 +40,6 @@
     "nodemailer": "^6.9.13",
     "reflect-metadata": "^0.2.2",
     "type-graphql": "2.0.0-rc.1",
-    "uuid": "^9.0.1",
     "wkx": "^0.5.0"
   },
   "devDependencies": {
@@ -48,7 +47,6 @@
     "@mikro-orm/migrations": "6.2.9",
     "@types/bun": "^1.1.0",
     "@types/nodemailer": "^6.4.14",
-    "@types/uuid": "^9.0.8",
     "concurrently": "^8.2.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"

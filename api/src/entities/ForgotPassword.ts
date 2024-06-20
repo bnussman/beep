@@ -1,6 +1,5 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
-import { v4 } from "uuid";
 import { User } from "./User";
 
 @ObjectType()
@@ -8,7 +7,7 @@ import { User } from "./User";
 export class ForgotPassword {
   @PrimaryKey()
   @Field()
-  id: string = v4();
+  id: string = crypto.randomUUID();
 
   @Field()
   @ManyToOne()

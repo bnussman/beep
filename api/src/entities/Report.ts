@@ -1,6 +1,5 @@
 import { Entity, Filter, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
-import { v4 } from "uuid";
 import { Beep } from "./Beep";
 import { User } from "./User";
 
@@ -11,7 +10,7 @@ export class Report {
 
   @PrimaryKey()
   @Field()
-  id: string = v4();
+  id: string = crypto.randomUUID();
 
   @Field()
   @ManyToOne()

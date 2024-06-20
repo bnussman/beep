@@ -1,7 +1,6 @@
 import { Entity, Enum, Filter, Index, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
-import { v4 } from 'uuid';
 
 export enum Status {
   CANCELED = "canceled",
@@ -40,7 +39,7 @@ export class Beep {
 
   @PrimaryKey()
   @Field()
-  id: string = v4();
+  id: string = crypto.randomUUID();
 
   @Field(() => User)
   @ManyToOne(() => User)

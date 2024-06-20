@@ -1,6 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
 import { Entity, Property, PrimaryKey, ManyToOne } from "@mikro-orm/core";
-import { v4 } from "uuid";
 import { User } from "./User";
 
 @ObjectType()
@@ -14,7 +13,7 @@ export class Car {
 
   @PrimaryKey()
   @Field()
-  id: string = v4();
+  id: string = crypto.randomUUID();
 
   @ManyToOne(() => User)
   @Field(() => User)

@@ -1,6 +1,5 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
-import { v4 } from "uuid";
 import { User } from "./User";
 
 @ObjectType()
@@ -9,11 +8,11 @@ export class Token {
 
   @PrimaryKey()
   @Field()
-  id: string = v4();
+  id: string = crypto.randomUUID();
 
   @Field()
   @Property()
-  tokenid: string = v4();
+  tokenid: string = crypto.randomUUID();
 
   @Field(() => User)
   @ManyToOne(() => User)
