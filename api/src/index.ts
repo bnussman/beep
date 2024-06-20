@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import * as Sentry from '@sentry/bun';
 import config from './mikro-orm.config';
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { SENTRY_URL, ENVIRONMENT } from './utils/constants';
 import { useSentry } from '@envelop/sentry'
 import { makeHandler } from "graphql-ws/lib/use/bun";
@@ -26,6 +27,14 @@ import { getContext, onConnect } from "./utils/context";
 import { handlePaymentWebook } from "./utils/payments";
 import { FileScaler } from "./utils/scalers";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
+import { appRouter } from "./utils/router";
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods":
+    "GET,HEAD,PUT,PATCH,POST,DELETET, OPTIONS, POST",
+  "Access-Control-Allow-Headers": "*",
+}
 
 Sentry.init({
   dsn: SENTRY_URL,
@@ -117,6 +126,14 @@ async function start() {
 
   Bun.serve({
     fetch: (request, server) => {
+      if (request.method === "OPTIONS") {
+        const headers = new Headers(CORS_HEADERS);
+        // This is the preflight request. It should only return the CORS headers
+        return new Response(null, {
+          status: 200,
+          headers,
+        });
+      }
       // Upgrade the request to a WebSocket
       if (server.upgrade(request)) {
         return new Response();
@@ -124,6 +141,20 @@ async function start() {
       // Handle payments webhook
       if (request.url.endsWith("/payments/webhook")) {
         return handlePaymentWebook(request, orm);
+      }
+      // Handle TRPC
+      if (request.url.includes("/trpc")) {
+        return fetchRequestHandler({
+          endpoint: '/trpc',
+          req: request,
+          router: appRouter,
+          createContext: () => ({}),
+          responseMeta() {
+            return {
+              headers: CORS_HEADERS
+            }
+          },
+        });
       }
       // Handle GraphQL
       return yoga.fetch(request, server);

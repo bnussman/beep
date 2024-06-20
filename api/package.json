@@ -30,6 +30,7 @@
     "@mikro-orm/postgresql": "6.2.9",
     "@sentry/bun": "7.107.0",
     "@sentry/node": "7.107.0",
+    "@trpc/server": "11.0.0-rc.413",
     "car-info": "^0.1.7",
     "class-validator": "^0.14.1",
     "graphql": "^16.8.1",
