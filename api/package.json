@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "start": "bun run build/index.js",
+    "start": "bun run build/src/index.js",
     "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"bun run --watch build/index.js\"",
     "db:create": "bun --bun mikro-orm schema:create --run",
     "db:update": "bun --bun mikro-orm schema:update --run",
