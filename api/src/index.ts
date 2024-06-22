@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import * as Sentry from '@sentry/bun';
-import config from './mikro-orm.config';
+import config from '../mikro-orm.config';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { SENTRY_URL, ENVIRONMENT } from './utils/constants';
 import { useSentry } from '@envelop/sentry'
