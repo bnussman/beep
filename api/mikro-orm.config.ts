@@ -8,7 +8,7 @@ import {
   DB_URL,
   DB_USER,
   isDevelopment,
-} from "./utils/constants";
+} from "./src/utils/constants";
 
 export default defineConfig({
   entities: ["./build/entities/*.js"],
