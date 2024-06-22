@@ -315,8 +315,12 @@ export class UserResolver {
   }
 
   @Subscription(() => User, {
-    topics: "user",
-    topicId: ({ context }) => context.user.id,
+    subscribe: async function*({ context }) {
+      yield context.user;
+      for await (const user of pubSub.subscribe("user", context.user.id)) {
+        yield user;
+      }
+    }
   })
   @Authorized('No Verification')
   public getUserUpdates(@Ctx() ctx: Context, @Root() user: User): User {

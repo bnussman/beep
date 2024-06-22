@@ -7,14 +7,7 @@ import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
 import { useNavigation } from "@react-navigation/native";
 import { LeaveButton } from "./LeaveButton";
-import {
-  View,
-  Linking,
-  AppState,
-  AppStateStatus,
-  Pressable,
-  ActivityIndicator,
-} from "react-native";
+import { View, Linking, Pressable, ActivityIndicator } from "react-native";
 import { cache, client } from "../../utils/apollo";
 import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";
@@ -34,53 +27,13 @@ import {
   openVenmo,
   shareVenmoInformation,
 } from "../../utils/links";
-import { useLazyQuery, useQuery, useSubscription } from "@apollo/client";
+import { useLazyQuery, useSubscription } from "@apollo/client";
 import { VariablesOf, graphql } from "gql.tada";
 import { ChooseBeep } from "../ride/PickBeep";
 import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-export const InitialRiderStatus = graphql(`
-  query GetInitialRiderStatus {
-    getRiderStatus {
-      id
-      position
-      origin
-      destination
-      status
-      groupSize
-      beeper {
-        id
-        first
-        name
-        singlesRate
-        groupRate
-        isStudent
-        role
-        venmo
-        cashapp
-        username
-        phone
-        photo
-        capacity
-        queueSize
-        location {
-          longitude
-          latitude
-        }
-        cars {
-          id
-          photo
-          make
-          color
-          model
-        }
-      }
-    }
-  }
-`);
-
-const RiderStatus = graphql(`
+export const RiderStatus = graphql(`
   subscription RiderStatus {
     getRiderUpdates {
       id
@@ -140,28 +93,16 @@ export function MainFindBeepScreen() {
   const { getLocation } = useLocation(false);
   const { navigate } = useNavigation();
 
-  const { data, previousData, refetch } = useQuery(InitialRiderStatus, {
-    notifyOnNetworkStatusChange: true,
-  });
+  const data = useSubscription(RiderStatus);
 
-  const beep = data?.getRiderStatus;
+  const beep = data.data?.getRiderUpdates;
 
-  const isAcceptedBeep = [
-    Status.ACCEPTED,
-    Status.IN_PROGRESS,
-    Status.HERE,
-    Status.ON_THE_WAY,
-  ].includes(beep?.status as Status);
-
-  useSubscription(RiderStatus, {
-    onData({ data }) {
-      client.writeQuery({
-        query: InitialRiderStatus,
-        data: { getRiderStatus: data.data?.getRiderUpdates },
-      });
-    },
-    skip: !beep,
-  });
+    const isAcceptedBeep = [
+      Status.ACCEPTED,
+      Status.IN_PROGRESS,
+      Status.HERE,
+      Status.ON_THE_WAY,
+    ].includes(beep?.status as Status);
 
   useSubscription(BeepersLocation, {
     variables: { id: beep?.beeper.id ?? "" },
@@ -201,12 +142,6 @@ export function MainFindBeepScreen() {
     },
   });
 
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === "active") {
-      refetch();
-    }
-  };
-
   const updateETA = async () => {
     const location = await getLocation();
 
@@ -222,12 +157,6 @@ export function MainFindBeepScreen() {
 
   useEffect(() => {
     SplashScreen.hideAsync();
-
-    const listener = AppState.addEventListener("change", handleAppStateChange);
-
-    return () => {
-      listener.remove();
-    };
   }, []);
 
   useEffect(() => {
@@ -237,7 +166,7 @@ export function MainFindBeepScreen() {
     }
 
     // Run some code when a beep completes
-    if (previousData && !beep) {
+    if (!beep) {
       client.refetchQueries({ include: [GetBeepHistory] });
     }
   }, [beep]);

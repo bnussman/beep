@@ -62,6 +62,7 @@ export class RiderResolver {
     });
 
     pubSub.publish("beeperQueue", beeper.id, queue);
+    pubSub.publish("currentRide", ctx.user.id, entry);
 
     return entry;
   }
@@ -209,8 +210,45 @@ export class RiderResolver {
 
   @Subscription(() => Beep, {
     nullable: true,
-    topics: "currentRide",
-    topicId: ({ context }) => context.user.id,
+    // topics: "currentRide",
+    // topicId: ({ context }) => context.user.id,
+    subscribe: async function*({ context }) {
+      const beep = await context.em.findOne(
+        Beep,
+        {
+          rider: context.user,
+        },
+        {
+          populateWhere: { beeper: { cars: { default: true } }},
+          populate: ['beeper', 'beeper.cars'],
+          filters: ['inProgress']
+        }
+      );
+
+      if (beep) {
+        beep.position = await context.em.count(
+          Beep,
+          {
+            beeper: beep.beeper,
+            start: {
+              $lt: beep.start
+            },
+            status: { $ne: Status.WAITING }
+          },
+          {
+            filters: ['inProgress']
+          }
+        );
+      }
+
+      if (beep) {
+        yield beep;
+      }
+
+      for await (const beep of pubSub.subscribe("currentRide", context.user.id)) {
+        yield beep;
+      }
+    }
   })
   public getRiderUpdates(@Root() entry: Beep | null): Beep | null {
     // This is a bug with current pubsub

@@ -12,7 +12,7 @@ import {
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/useLocation";
 import { client } from "@/utils/apollo";
-import { InitialRiderStatus } from "./FindBeep";
+import { InitialRiderStatus, RiderStatus } from "./FindBeep";
 import { ResultOf, VariablesOf, graphql } from "gql.tada";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
@@ -133,8 +133,8 @@ export function PickBeepScreen({ route }: Props) {
 
       if (data) {
         client.writeQuery({
-          query: InitialRiderStatus,
-          data: { getRiderStatus: { ...data.chooseBeep } },
+          query: RiderStatus,
+          data: { getRiderUpdates: { ...data.chooseBeep } },
         });
         navigation.goBack();
       }
