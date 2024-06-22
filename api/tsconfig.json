@@ -26,5 +26,5 @@
     ]
   },
   "compileOnSave": true,
-  "include": ["src", "drizzle.config.ts", "dizzle"]
+  "include": ["src"]
 }
