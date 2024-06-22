@@ -11,7 +11,7 @@ import {
 } from "./src/utils/constants";
 
 export default defineConfig({
-  entities: ["./build/entities/*.js"],
+  entities: ["./build/src/entities/*.js"],
   entitiesTs: ["./src/entities/*.ts"],
   user: DB_USER,
   password: DB_PASSWORD,
