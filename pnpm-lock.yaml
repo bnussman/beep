@@ -39,8 +39,8 @@ importers:
         specifier: 7.107.0
         version: 7.107.0
       '@trpc/server':
-        specifier: 11.0.0-rc.413
-        version: 11.0.0-rc.413
+        specifier: 11.0.0-rc.419
+        version: 11.0.0-rc.419
       car-info:
         specifier: ^0.1.7
         version: 0.1.7
@@ -80,6 +80,9 @@ importers:
       wkx:
         specifier: ^0.5.0
         version: 0.5.0
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@mikro-orm/cli':
         specifier: 6.2.9
@@ -133,11 +136,11 @@ importers:
         specifier: ^5.45.1
         version: 5.45.1(react@18.2.0)
       '@trpc/client':
-        specifier: 11.0.0-rc.413
-        version: 11.0.0-rc.413(@trpc/server@11.0.0-rc.413)
+        specifier: 11.0.0-rc.419
+        version: 11.0.0-rc.419(@trpc/server@11.0.0-rc.419)
       '@trpc/react-query':
-        specifier: 11.0.0-rc.413
-        version: 11.0.0-rc.413(@tanstack/react-query@5.45.1(react@18.2.0))(@trpc/client@11.0.0-rc.413(@trpc/server@11.0.0-rc.413))(@trpc/server@11.0.0-rc.413)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: 11.0.0-rc.419
+        version: 11.0.0-rc.419(@tanstack/react-query@5.45.1(react@18.2.0))(@trpc/client@11.0.0-rc.419(@trpc/server@11.0.0-rc.419))(@trpc/server@11.0.0-rc.419)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       apollo-upload-client:
         specifier: 17.0.0
         version: 17.0.0(@apollo/client@3.10.5(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2)
@@ -3416,22 +3419,22 @@ packages:
   '@tanstack/store@0.1.3':
     resolution: {integrity: sha512-GnolmC8Fr4mvsHE1fGQmR3Nm0eBO3KnZjDU0a+P3TeQNM/dDscFGxtA7p31NplQNW3KwBw4t1RVFmz0VeKLxcw==}
 
-  '@trpc/client@11.0.0-rc.413':
-    resolution: {integrity: sha512-+5WRP5gK2OLHWSCkNDkrEeO0EmLScytUPU0jhp3gdKrpyx1AkVqCXUDioofkNXCmQd/WNUrWF35tkVfY3kYwlQ==}
+  '@trpc/client@11.0.0-rc.419':
+    resolution: {integrity: sha512-rHsyX+Rpz7LFqg+ElyXLaUR+3nRaHh6aAz5tCZAViFgmOQ3ocNoN69zQXr2zzznH8cdaGJRZGljLR6prFC18IQ==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.413+87f0cbc94
+      '@trpc/server': 11.0.0-rc.419+343b6de2e
 
-  '@trpc/react-query@11.0.0-rc.413':
-    resolution: {integrity: sha512-b+mmkhmdijEFa3vEoUwgpcq36ha7U5f/1w2RW/UQGMFrEJyZJn3lFQpEXQSvn23AEnE0ckDBJo+y/TDrleMCNQ==}
+  '@trpc/react-query@11.0.0-rc.419':
+    resolution: {integrity: sha512-tl+NM8VB4NNbwUiKf0zG9HEW5jXB4wA9/D7skJ/keZvYVIUDksgq7FxCZR2wGkxNJC/I5+yD6G7ToVngL4ypLw==}
     peerDependencies:
       '@tanstack/react-query': ^5.40.0
-      '@trpc/client': 11.0.0-rc.413+87f0cbc94
-      '@trpc/server': 11.0.0-rc.413+87f0cbc94
+      '@trpc/client': 11.0.0-rc.419+343b6de2e
+      '@trpc/server': 11.0.0-rc.419+343b6de2e
       react: 18.2.0
       react-dom: 18.2.0
 
-  '@trpc/server@11.0.0-rc.413':
-    resolution: {integrity: sha512-fQl7/69pSfk+7+Emm5eOCoAW6f2anxKV/3mUObQfFe0NLH0d4XwGyJuYV+sK7NBy1oit0Qwg12B0EXdsIryDuw==}
+  '@trpc/server@11.0.0-rc.419':
+    resolution: {integrity: sha512-6NmsKSvw2sOVWG7b6+2+g0A2Js34eTQjM8bAM/rOwNQqKinB2usFGySuvKQxDkrmXid7aPld1arZzoDmSYktxg==}
 
   '@tsconfig/node10@1.0.9':
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
@@ -8042,6 +8045,9 @@ packages:
   zen-observable@0.8.15:
     resolution: {integrity: sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==}
 
+  zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+
 snapshots:
 
   '@0no-co/graphql.web@1.0.7(graphql@16.8.2)':
@@ -12064,19 +12070,19 @@ snapshots:
 
   '@tanstack/store@0.1.3': {}
 
-  '@trpc/client@11.0.0-rc.413(@trpc/server@11.0.0-rc.413)':
+  '@trpc/client@11.0.0-rc.419(@trpc/server@11.0.0-rc.419)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.413
+      '@trpc/server': 11.0.0-rc.419
 
-  '@trpc/react-query@11.0.0-rc.413(@tanstack/react-query@5.45.1(react@18.2.0))(@trpc/client@11.0.0-rc.413(@trpc/server@11.0.0-rc.413))(@trpc/server@11.0.0-rc.413)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@trpc/react-query@11.0.0-rc.419(@tanstack/react-query@5.45.1(react@18.2.0))(@trpc/client@11.0.0-rc.419(@trpc/server@11.0.0-rc.419))(@trpc/server@11.0.0-rc.419)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/react-query': 5.45.1(react@18.2.0)
-      '@trpc/client': 11.0.0-rc.413(@trpc/server@11.0.0-rc.413)
-      '@trpc/server': 11.0.0-rc.413
+      '@trpc/client': 11.0.0-rc.419(@trpc/server@11.0.0-rc.419)
+      '@trpc/server': 11.0.0-rc.419
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@trpc/server@11.0.0-rc.413': {}
+  '@trpc/server@11.0.0-rc.419': {}
 
   '@tsconfig/node10@1.0.9':
     optional: true
@@ -16975,3 +16981,5 @@ snapshots:
       zen-observable: 0.8.15
 
   zen-observable@0.8.15: {}
+
+  zod@3.23.8: {}

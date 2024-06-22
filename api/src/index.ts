@@ -28,6 +28,7 @@ import { handlePaymentWebook } from "./utils/payments";
 import { FileScaler } from "./utils/scalers";
 import type { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { appRouter } from "./utils/router";
+import { createContext } from "./utils/trpc";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -148,7 +149,7 @@ async function start() {
           endpoint: '/trpc',
           req: request,
           router: appRouter,
-          createContext: () => ({}),
+          createContext,
           responseMeta() {
             return {
               headers: CORS_HEADERS
