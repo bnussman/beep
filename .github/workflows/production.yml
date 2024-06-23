@@ -46,7 +46,7 @@ jobs:
         with:
           bun-version: latest
       - name: 🔐 Inject Secrets
-        run: bun run .github/helm/inject.js
+        run: bun run .github/helm/inject.ts
         env:
           secrets: ${{ toJSON(secrets) }}
       - name: 🚀 Deploy api
