@@ -2,8 +2,6 @@ import { appendFile } from "node:fs/promises";
 
 const excludedSecrets = [
   "github_token",
-  "DOCKERHUB_TOKEN",
-  "DOCKERHUB_USERNAME",
   "KUBE_CONFIG",
 ];
 
