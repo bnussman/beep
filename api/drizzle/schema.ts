@@ -36,7 +36,7 @@ export const user = pgTable(
     role: text("role").default("user").notNull(),
     pushToken: varchar("push_token", { length: 255 }),
     photo: varchar("photo", { length: 255 }),
-    // location: geometry("location"),
+    location: geometry("location"),
     created: timestamp("created", { withTimezone: true, mode: "string" }),
   },
   (table) => {

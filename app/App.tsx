@@ -86,14 +86,9 @@ function Beep() {
     },
   });
 
-  const { data: userFromTRPC } = trpc.user.useQuery();
-  trpc.userUpdates.useSubscription(undefined, {
-    onData(data) {
-      console.log("TRPC User Subscription:", data)
-    },
-  })
+  const { data: test } = trpc.test.useQuery();
 
-  console.log(userFromTRPC)
+  console.log(test)
 
   useAutoUpdate();
 
