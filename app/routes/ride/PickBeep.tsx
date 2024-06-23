@@ -234,7 +234,7 @@ export function PickBeepScreen({ route }: Props) {
       contentContainerStyle={
         beepers?.length === 0
           ? { flex: 1, alignItems: "center", justifyContent: "center" }
-          : undefined
+          : { gap: 8 }
       }
       ListEmptyComponent={
         <>
