@@ -1,5 +1,4 @@
 import { useIsSignedIn, useIsSignedOut } from "./useUser";
-import { ProfileScreen } from "../routes/global/Profile";
 import { ReportScreen } from "../routes/global/Report";
 import { RateScreen } from "../routes/global/Rate";
 import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
@@ -43,7 +42,6 @@ const RootStack = createNativeStackNavigator({
             headerShown: false,
           },
         },
-        User: ProfileScreen,
         Report: {
           screen: ReportScreen,
           // options: {

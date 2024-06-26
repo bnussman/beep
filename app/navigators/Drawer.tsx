@@ -79,17 +79,15 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props}>
       <View className="gap-3 m-2">
-        <Pressable onPress={() => navigate("User", { id: user?.id ?? "" })}>
-          <View className="flex flex-row items-center justify-between px-2">
-            <View className="flex-shrink">
-              <Text size="lg" weight="bold">
-                {user?.name}
-              </Text>
-              <Text color="subtle">@{user?.username}</Text>
-            </View>
-            <Avatar src={user?.photo ?? undefined} />
+        <View className="flex flex-row items-center justify-between px-2">
+          <View className="flex-shrink">
+            <Text size="lg" weight="bold">
+              {user?.name}
+            </Text>
+            <Text color="subtle">@{user?.username}</Text>
           </View>
-        </Pressable>
+          <Avatar src={user?.photo ?? undefined} />
+        </View>
         <View className="flex gap-3">
           {!user?.isEmailVerified && (
             <Button

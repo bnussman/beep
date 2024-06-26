@@ -8,8 +8,17 @@ import { Text } from "@/components/Text";
 import { Alert } from "../../utils/alert";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
-import { GetUser } from "./Profile";
 import { graphql } from "gql.tada";
+
+export const GetUser = graphql(`
+  query GetUserProfile($id: String!) {
+    getUser(id: $id) {
+      username
+      name
+      photo
+    }
+  }
+`);
 
 export const RateUser = graphql(`
   mutation RateUser(

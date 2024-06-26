@@ -92,7 +92,7 @@ export function RatingsScreen() {
 
   if (loading && !ratings) {
     return (
-      <View>
+      <View className="h-full items-center justify-center">
         <ActivityIndicator />
       </View>
     );
@@ -100,7 +100,7 @@ export function RatingsScreen() {
 
   if (error) {
     return (
-      <View>
+      <View className="h-full items-center justify-center">
         <Text>{error.message}</Text>
       </View>
     );

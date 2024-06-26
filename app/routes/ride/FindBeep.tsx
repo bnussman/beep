@@ -368,12 +368,7 @@ export function MainFindBeepScreen() {
   if (isAcceptedBeep) {
     return (
       <View className="h-full p-4 gap-4 pb-8">
-        <Pressable
-          className="flex flex-row w-full justify-between"
-          onPress={() =>
-            navigate("User", { id: beep.beeper.id, beepId: beep.id })
-          }
-        >
+        <View className="flex flex-row w-full justify-between">
           <View className="flex-shrink">
             <Text size="3xl" weight="black" className="mb-2">
               {beep.beeper.name}
@@ -388,7 +383,7 @@ export function MainFindBeepScreen() {
             </Text>
           </View>
           <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
-        </Pressable>
+        </View>
         <Rates
           singles={beep.beeper.singlesRate}
           group={beep.beeper.groupRate}

@@ -76,10 +76,10 @@ export function Rating(props: Props) {
       </ContextMenu.Trigger>
       <ContextMenu.Content>
         <ContextMenu.Item
-          key="Profile"
-          onSelect={() => navigation.navigate("User", { id: otherUser.id })}
+          key="report"
+          onSelect={() => navigation.navigate("Report", { userId: otherUser.id, beepId: item.beep.id })}
         >
-          <ContextMenu.ItemTitle>View Profile</ContextMenu.ItemTitle>
+          <ContextMenu.ItemTitle>Report</ContextMenu.ItemTitle>
         </ContextMenu.Item>
         <ContextMenu.Item
           key="delete-rating"

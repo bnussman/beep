@@ -116,7 +116,7 @@ export function EditProfileScreen() {
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
             <Text size="3xl" className="mr-2">
-              ⬇️
+              🧰
             </Text>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>

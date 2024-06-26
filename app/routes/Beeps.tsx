@@ -29,6 +29,7 @@ export const GetBeepHistory = graphql(`
           first
           last
           photo
+          venmo
         }
         beeper {
           id
@@ -36,6 +37,9 @@ export const GetBeepHistory = graphql(`
           first
           last
           photo
+          venmo
+          groupRate
+          singlesRate
         }
       }
       count
@@ -96,15 +100,15 @@ export function BeepsScreen() {
 
   if (loading && !beeps) {
     return (
-      <View>
-        <ActivityIndicator size="large" />
-      </View>
+      <View className="h-full items-center justify-center">
+        <ActivityIndicator />
+      </View >
     );
   }
 
   if (error) {
     return (
-      <View>
+      <View className="h-full items-center justify-center">
         <Text>{error.message}</Text>
       </View>
     );

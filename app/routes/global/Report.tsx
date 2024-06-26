@@ -5,7 +5,7 @@ import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { UserHeader } from "@/components/UserHeader";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { GetUser } from "./Profile";
+import { GetUser } from "./Rate";
 import { graphql } from "gql.tada";
 
 const ReportUser = graphql(`
