@@ -54,7 +54,7 @@ export async function onConnect(ctx: WSContext<any, any>, orm: MikroORM<IDatabas
   const bearer = ctx.connectionParams?.token;
 
   if (!bearer) {
-    return true;
+    return;
   }
 
   const token = await orm.em.fork().findOne(
@@ -67,6 +67,5 @@ export async function onConnect(ctx: WSContext<any, any>, orm: MikroORM<IDatabas
 
   if (token) {
     ctx.extra.token = token;
-    return { user: token.user };
   }
 }

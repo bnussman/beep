@@ -69,65 +69,6 @@ const wsClient = createClient({
       };
     }
   },
-  on: {
-    connected: (socket, payload: Record<"user", any> | undefined) => {
-      if (!payload?.user) {
-        return;
-      }
-
-      try {
-        cache.modify({
-          id: cache.identify({
-            __typename: "User",
-            id: payload.user.id,
-          }),
-          fields: {
-            isBeeping() {
-              return payload.user.isBeeping;
-            },
-            isStudent() {
-              return payload.user.isStudent;
-            },
-            isEmailVerified() {
-              return payload.user.isEmailVerified;
-            },
-            first() {
-              return payload.user.first;
-            },
-            last() {
-              return payload.user.last;
-            },
-            phone() {
-              return payload.user.phone;
-            },
-            venmo() {
-              return payload.user.venmo;
-            },
-            cashapp() {
-              return payload.user.cashapp;
-            },
-            photo() {
-              return payload.user.photo;
-            },
-            name() {
-              return payload.user.name;
-            },
-            email() {
-              return payload.user.email;
-            },
-          },
-        });
-      } catch (e) {
-        Logger.error(e);
-      }
-    },
-    connecting: () => console.log("[Websocket] Connecting"),
-    opened: () => console.log("[Websocket] Opened"),
-    closed: () => console.log("[Websocket] Closed"),
-    error: (error) => {
-      Logger.error(error);
-    },
-  },
 });
 
 export const wsLink = new GraphQLWsLink(wsClient);

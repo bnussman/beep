@@ -15,6 +15,7 @@ import { S3_BUCKET_URL } from '../utils/constants';
 import { pubSub } from '../utils/pubsub';
 import { FileScaler } from '../utils/scalers';
 import { s3 } from '../utils/s3';
+import { Repeater } from 'graphql-yoga';
 
 @ObjectType()
 class UsersPerDomain {
@@ -315,8 +316,11 @@ export class UserResolver {
   }
 
   @Subscription(() => User, {
-    topics: "user",
-    topicId: ({ context }) => context.user.id,
+    subscribe: ({ context }) =>
+      Repeater.merge([
+        context.user,
+        pubSub.subscribe('user', context.user.id)
+      ])
   })
   @Authorized('No Verification')
   public getUserUpdates(@Ctx() ctx: Context, @Root() user: User): User {
