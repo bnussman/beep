@@ -19,6 +19,8 @@ import * as Notifications from "expo-notifications";
 import { UpdateBeeperQueue } from "./components/ActionButton";
 import { Status } from "./utils/types";
 import "./global.css";
+import { queryClient, trpc, trpcClient } from "./utils/trpc";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 Notifications.setNotificationCategoryAsync(
   "newbeep",
@@ -84,6 +86,10 @@ function Beep() {
     },
   });
 
+  const { data: test } = trpc.test.useQuery();
+
+  console.log(test)
+
   useAutoUpdate();
 
   const user = data?.getUser;
@@ -124,11 +130,15 @@ function Beep() {
 
 function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ApolloProvider client={client}>
-        <Beep />
-      </ApolloProvider>
-    </GestureHandlerRootView>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <ApolloProvider client={client}>
+            <Beep />
+          </ApolloProvider>
+        </GestureHandlerRootView>
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }
 

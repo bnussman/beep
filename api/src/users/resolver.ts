@@ -1,20 +1,35 @@
-import fieldsToRelations from '@bnussman/graphql-fields-to-relations';
-import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, Query, Resolver, Root, Subscription } from 'type-graphql';
-import { deleteUser, isEduEmail, search } from './helpers';
-import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
-import { PasswordType, User, UserRole } from '../entities/User';
-import { Context } from '../utils/context';
-import { GraphQLError, GraphQLResolveInfo } from 'graphql';
-import { Paginated, PaginationArgs } from '../utils/pagination';
-import { sendNotification, sendNotificationsNew } from '../utils/notifications';
-import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';
-import { createVerifyEmailEntryAndSendEmail } from '../auth/helpers';
-import { password as bunPassword } from 'bun';
-import { VerifyEmail } from '../entities/VerifyEmail';
-import { S3_BUCKET_URL } from '../utils/constants';
-import { pubSub } from '../utils/pubsub';
-import { FileScaler } from '../utils/scalers';
-import { s3 } from '../utils/s3';
+import {
+  Arg,
+  Args,
+  Authorized,
+  Ctx,
+  Field,
+  Info,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+  Root,
+  Subscription,
+} from "type-graphql";
+import { deleteUser, isEduEmail, search } from "./helpers";
+import { QueryOrder, wrap } from "@mikro-orm/core";
+import { PasswordType, User, UserRole } from "../entities/User";
+import { Context } from "../utils/context";
+import { GraphQLError, GraphQLResolveInfo } from "graphql";
+import { Paginated, PaginationArgs } from "../utils/pagination";
+import { sendNotification, sendNotificationsNew } from "../utils/notifications";
+import { ChangePasswordInput, EditUserInput, NotificationArgs } from "./args";
+import { createVerifyEmailEntryAndSendEmail } from "../auth/helpers";
+import { password as bunPassword } from "bun";
+import { VerifyEmail } from "../entities/VerifyEmail";
+import { S3_BUCKET_URL } from "../utils/constants";
+import { pubSub } from "../utils/pubsub";
+import { FileScaler } from "../utils/scalers";
+import { s3 } from "../utils/s3";
+import { db } from "../utils/db";
+import { eq } from "drizzle-orm";
+import { user } from "drizzle/schema";
 
 @ObjectType()
 class UsersPerDomain {
@@ -54,26 +69,42 @@ export class UsersResponse extends Paginated(User) {}
 
 @Resolver(User)
 export class UserResolver {
-
   @Query(() => User)
-  @Authorized('No Verification')
-  public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
-    const populate = fieldsToRelations<User>(info);
-
-    return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
+  @Authorized("No Verification")
+  public async getUser(
+    @Ctx() ctx: Context,
+    @Info() info: GraphQLResolveInfo,
+    @Arg("id", { nullable: true }) id?: string,
+  ): Promise<User> {
+    //const populate = fieldsToRelations<User>(info);
+    const u = await db.query.user.findFirst({
+      where: eq(user.id, id ?? ctx.user.id),
+    });
+    if (!u) {
+      throw new GraphQLError("User not found");
+    }
+    return u as unknown as User;
+    // return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
   }
 
   @Mutation(() => Boolean)
   @Authorized(UserRole.ADMIN)
-  public async removeUser(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
+  public async removeUser(
+    @Ctx() ctx: Context,
+    @Arg("id") id: string,
+  ): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, id);
 
     return await deleteUser(user, ctx.em);
   }
 
   @Mutation(() => User)
-  @Authorized('No Verification Self')
-  public async editUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id: string, @Arg('data') data: EditUserInput): Promise<User> {
+  @Authorized("No Verification Self")
+  public async editUser(
+    @Ctx() ctx: Context,
+    @Arg("id", { nullable: true }) id: string,
+    @Arg("data") data: EditUserInput,
+  ): Promise<User> {
     const user = !id ? ctx.user : await ctx.em.findOneOrFail(User, id);
 
     const oldEmail = ctx.user.email;
@@ -82,11 +113,11 @@ export class UserResolver {
       sendNotification({
         token: user.pushToken,
         title: "Account Verified ✅",
-        message: "An admin has approved your account."
+        message: "An admin has approved your account.",
       });
     }
 
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       // @ts-expect-error dumb
       if (data[key] === undefined) {
         // @ts-expect-error dumb
@@ -96,7 +127,7 @@ export class UserResolver {
 
     wrap(user).assign(data);
 
-    if (id === undefined && data.email && (oldEmail !== data.email)) {
+    if (id === undefined && data.email && oldEmail !== data.email) {
       wrap(ctx.user).assign({ isEmailVerified: false, isStudent: false });
 
       createVerifyEmailEntryAndSendEmail(ctx.user, ctx.em);
@@ -110,8 +141,11 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized('No Verification')
-  public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
+  @Authorized("No Verification")
+  public async changePassword(
+    @Ctx() ctx: Context,
+    @Arg("input") input: ChangePasswordInput,
+  ): Promise<boolean> {
     ctx.user.password = await bunPassword.hash(input.password, "bcrypt");
     ctx.user.passwordType = PasswordType.BCRYPT;
 
@@ -121,20 +155,29 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  public async verifyAccount(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
-    const verification = await ctx.em.findOneOrFail(VerifyEmail, id, { populate: ['user'] });
+  public async verifyAccount(
+    @Ctx() ctx: Context,
+    @Arg("id") id: string,
+  ): Promise<boolean> {
+    const verification = await ctx.em.findOneOrFail(VerifyEmail, id, {
+      populate: ["user"],
+    });
 
-    if ((verification.time.getTime() + (18000 * 1000)) < Date.now()) {
+    if (verification.time.getTime() + 18000 * 1000 < Date.now()) {
       await ctx.em.removeAndFlush(verification);
       throw new GraphQLError("Your verification token has expired");
     }
 
     if (verification.email !== verification.user.email) {
       await ctx.em.removeAndFlush(verification);
-      throw new GraphQLError("You tried to verify an email address that is not the same as your current email.");
+      throw new GraphQLError(
+        "You tried to verify an email address that is not the same as your current email.",
+      );
     }
 
-    const update = isEduEmail(verification.email) ? { isEmailVerified: true, isStudent: true } : { isEmailVerified: true };
+    const update = isEduEmail(verification.email)
+      ? { isEmailVerified: true, isStudent: true }
+      : { isEmailVerified: true };
 
     wrap(verification.user).assign(update);
 
@@ -146,7 +189,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  @Authorized('No Verification')
+  @Authorized("No Verification")
   public async resendEmailVarification(@Ctx() ctx: Context): Promise<boolean> {
     await ctx.em.nativeDelete(VerifyEmail, { user: ctx.user });
 
@@ -166,16 +209,23 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @Authorized('No Verification')
-  public async addProfilePicture(@Ctx() ctx: Context, @Arg("picture", () => FileScaler) file: File): Promise<User> {
-
-    const extention = file.name.substring(file.name.lastIndexOf("."), file.name.length);
+  @Authorized("No Verification")
+  public async addProfilePicture(
+    @Ctx() ctx: Context,
+    @Arg("picture", () => FileScaler) file: File,
+  ): Promise<User> {
+    const extention = file.name.substring(
+      file.name.lastIndexOf("."),
+      file.name.length,
+    );
 
     const filename = ctx.user.id + "-" + Date.now() + extention;
 
     const objectKey = "images/" + filename;
 
-    await s3.putObject(objectKey, file.stream(), { metadata: { "x-amz-acl": "public-read" }});
+    await s3.putObject(objectKey, file.stream(), {
+      metadata: { "x-amz-acl": "public-read" },
+    });
 
     if (ctx.user.photo) {
       const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
@@ -194,7 +244,10 @@ export class UserResolver {
 
   @Query(() => UsersResponse)
   @Authorized(UserRole.ADMIN)
-  public async getUsers(@Ctx() ctx: Context, @Args() { offset, show, query }: PaginationArgs): Promise<UsersResponse> {
+  public async getUsers(
+    @Ctx() ctx: Context,
+    @Args() { offset, show, query }: PaginationArgs,
+  ): Promise<UsersResponse> {
     if (query) {
       return await search(ctx.em, offset, show, query);
     }
@@ -205,19 +258,21 @@ export class UserResolver {
       {
         limit: show,
         offset: offset,
-        orderBy: { created: QueryOrder.DESC_NULLS_LAST }
-      }
+        orderBy: { created: QueryOrder.DESC_NULLS_LAST },
+      },
     );
 
     return {
       items: users,
-      count: count
+      count: count,
     };
   }
 
   @Query(() => [UsersPerDomain])
   @Authorized(UserRole.ADMIN)
-  public async getUsersPerDomain(@Ctx() ctx: Context): Promise<UsersPerDomain[]> {
+  public async getUsersPerDomain(
+    @Ctx() ctx: Context,
+  ): Promise<UsersPerDomain[]> {
     const connection = ctx.em.getConnection();
 
     const result: UsersPerDomain[] = await connection.execute(`
@@ -232,7 +287,10 @@ export class UserResolver {
 
   @Query(() => UsersWithBeepsResponse)
   @Authorized()
-  public async getUsersWithBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<UsersWithBeepsResponse> {
+  public async getUsersWithBeeps(
+    @Ctx() ctx: Context,
+    @Args() { offset, show }: PaginationArgs,
+  ): Promise<UsersWithBeepsResponse> {
     const connection = ctx.em.getConnection();
 
     const count = await ctx.em.count(User);
@@ -253,14 +311,20 @@ export class UserResolver {
     `);
 
     return {
-      items: result.map(({ beeps, ...user }) => ({ user: new User(user), beeps })),
-      count
+      items: result.map(({ beeps, ...user }) => ({
+        user: new User(user),
+        beeps,
+      })),
+      count,
     };
   }
 
   @Query(() => UsersWithRidesResponse)
   @Authorized()
-  public async getUsersWithRides(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<UsersWithRidesResponse> {
+  public async getUsersWithRides(
+    @Ctx() ctx: Context,
+    @Args() { offset, show }: PaginationArgs,
+  ): Promise<UsersWithRidesResponse> {
     const connection = ctx.em.getConnection();
 
     const count = await ctx.em.count(User);
@@ -281,19 +345,32 @@ export class UserResolver {
     `);
 
     return {
-      items: result.map(({ rides, ...user }) => ({ user: new User(user), rides })),
-      count
+      items: result.map(({ rides, ...user }) => ({
+        user: new User(user),
+        rides,
+      })),
+      count,
     };
   }
 
   @Mutation(() => Number)
   @Authorized(UserRole.ADMIN)
-  public async sendNotifications(@Ctx() ctx: Context, @Args() { title, match, body }: NotificationArgs): Promise<number> {
-    const users = await ctx.em.find(User, match ? {
-      email: { $like: match }
-    } : {});
+  public async sendNotifications(
+    @Ctx() ctx: Context,
+    @Args() { title, match, body }: NotificationArgs,
+  ): Promise<number> {
+    const users = await ctx.em.find(
+      User,
+      match
+        ? {
+            email: { $like: match },
+          }
+        : {},
+    );
 
-    const tokens = users.map(user => user.pushToken).filter(token => token) as string[];
+    const tokens = users
+      .map((user) => user.pushToken)
+      .filter((token) => token) as string[];
 
     await sendNotificationsNew(tokens, title, body);
 
@@ -302,13 +379,18 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @Authorized(UserRole.ADMIN)
-  public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string, @Arg('id') id: string): Promise<boolean> {
+  public async sendNotification(
+    @Ctx() ctx: Context,
+    @Arg("title") title: string,
+    @Arg("body") body: string,
+    @Arg("id") id: string,
+  ): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, id);
 
     await sendNotification({
       token: user.pushToken,
       title,
-      message: body
+      message: body,
     });
 
     return true;
@@ -318,7 +400,7 @@ export class UserResolver {
     topics: "user",
     topicId: ({ context }) => context.user.id,
   })
-  @Authorized('No Verification')
+  @Authorized("No Verification")
   public getUserUpdates(@Ctx() ctx: Context, @Root() user: User): User {
     return user;
   }

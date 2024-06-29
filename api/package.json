@@ -2,14 +2,14 @@
   "name": "@beep/api",
   "version": "1.0.0",
   "description": "GraphQL API for the Beep App",
-  "main": "build/index.js",
+  "main": "build/src/index.js",
   "author": "Banks Nussman",
   "private": true,
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "start": "bun run build/index.js",
-    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"bun run --watch build/index.js\"",
+    "start": "bun run build/src/index.js",
+    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"bun run --watch build/src/index.js\"",
     "db:create": "bun --bun mikro-orm schema:create --run",
     "db:update": "bun --bun mikro-orm schema:update --run",
     "db:drop": "bun --bun mikro-orm schema:drop --run",
@@ -30,14 +30,17 @@
     "@mikro-orm/postgresql": "6.2.9",
     "@sentry/bun": "7.107.0",
     "@sentry/node": "7.107.0",
+    "@trpc/server": "11.0.0-rc.413",
     "car-info": "^0.1.7",
     "class-validator": "^0.14.1",
+    "drizzle-orm": "^0.31.2",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.16.0",
     "graphql-yoga": "^5.3.0",
     "ioredis": "^5.4.1",
     "js-sha256": "^0.11.0",
     "nodemailer": "^6.9.13",
+    "postgres": "^3.4.4",
     "reflect-metadata": "^0.2.2",
     "type-graphql": "2.0.0-rc.1",
     "wkx": "^0.5.0"
@@ -48,6 +51,7 @@
     "@types/bun": "^1.1.0",
     "@types/nodemailer": "^6.4.14",
     "concurrently": "^8.2.2",
+    "drizzle-kit": "^0.22.7",
     "typescript": "^5.4.5"
   }
 }
