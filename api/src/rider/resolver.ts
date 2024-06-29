@@ -9,6 +9,7 @@ import { Rating } from '../entities/Rating';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';
 import { pubSub } from '../utils/pubsub';
 import { GraphQLError } from 'graphql';
+import { Repeater } from 'graphql-yoga';
 
 @Resolver()
 export class RiderResolver {
@@ -209,8 +210,40 @@ export class RiderResolver {
 
   @Subscription(() => Beep, {
     nullable: true,
-    topics: "currentRide",
-    topicId: ({ context }) => context.user.id,
+    subscribe: async ({ context }) => {
+      const beep = await context.em.findOne(
+        Beep,
+        {
+          rider: context.user,
+        },
+        {
+          populateWhere: { beeper: { cars: { default: true } }},
+          populate: ['beeper', 'beeper.cars'],
+          filters: ['inProgress']
+        }
+      );
+
+      if (beep) {
+        beep.position = await context.em.count(
+          Beep,
+          {
+            beeper: beep.beeper,
+            start: {
+              $lt: beep.start
+            },
+            status: { $ne: Status.WAITING }
+          },
+          {
+            filters: ['inProgress']
+          }
+        );
+      }
+      if (beep) {
+        return Repeater.merge([beep, pubSub.subscribe('currentRide', context.user.id)]);
+      }
+
+      return Repeater.merge([pubSub.subscribe('currentRide', context.user.id)]);
+    }
   })
   public getRiderUpdates(@Root() entry: Beep | null): Beep | null {
     // This is a bug with current pubsub
