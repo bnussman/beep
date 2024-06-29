@@ -190,7 +190,7 @@ export function Premium() {
 
   if (isLoading && !offerings) {
     return (
-      <View>
+      <View className="flex items-center justify-center h-full">
         <ActivityIndicator />
       </View>
     );
@@ -198,7 +198,7 @@ export function Premium() {
 
   if (error) {
     return (
-      <View>
+      <View className="flex items-center justify-center h-full">
         <Text>{error}</Text>
       </View>
     );
