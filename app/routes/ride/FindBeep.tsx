@@ -5,7 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 import { BeepersMap } from "./BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
-import { useNavigation } from "@react-navigation/native";
 import { LeaveButton } from "./LeaveButton";
 import {
   View,
@@ -39,6 +38,7 @@ import { VariablesOf, graphql } from "gql.tada";
 import { ChooseBeep } from "../ride/PickBeep";
 import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 
 export const InitialRiderStatus = graphql(`
   query GetInitialRiderStatus {
@@ -135,7 +135,10 @@ const GetETA = graphql(`
   }
 `);
 
-export function MainFindBeepScreen() {
+
+type Props = StaticScreenProps<{ origin?: string, destination?: string, groupSize?: string } | undefined>;
+
+export function MainFindBeepScreen(props: Props) {
   const { user } = useUser();
   const { getLocation } = useLocation(false);
   const { navigate } = useNavigation();
@@ -192,12 +195,19 @@ export function MainFindBeepScreen() {
     control,
     handleSubmit,
     setFocus,
+    reset,
     formState: { errors },
   } = useForm<Omit<VariablesOf<typeof ChooseBeep>, "beeperId">>({
     defaultValues: {
       groupSize: undefined,
-      origin: "",
-      destination: "",
+      origin: props.route.params?.origin,
+      destination: props.route.params?.destination,
+    },
+    values: {
+      // @ts-expect-error we don't want a default group size'
+      groupSize: props.route.params?.groupSize ? Number(props.route.params.groupSize) : undefined,
+      origin: props.route.params?.origin ?? '',
+      destination: props.route.params?.destination ?? '',
     },
   });
 
