@@ -2,7 +2,6 @@ import "reflect-metadata";
 import * as Sentry from '@sentry/bun';
 import config from './mikro-orm.config';
 import { SENTRY_URL, ENVIRONMENT } from './utils/constants';
-import { useSentry } from '@envelop/sentry'
 import { makeHandler } from "graphql-ws/lib/use/bun";
 import { MikroORM } from "@mikro-orm/core";
 import { buildSchema } from 'type-graphql';
@@ -75,13 +74,6 @@ async function start() {
   const yoga = createYoga({
     schema,
     context: (data) => getContext(data, orm),
-    plugins: [
-      useSentry({
-        startTransaction: false,
-        renameTransaction: true,
-        includeRawResult: true,
-      })
-    ]
   });
 
   const websocketHandler = makeHandler({

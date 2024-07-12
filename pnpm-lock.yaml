@@ -20,9 +20,6 @@ importers:
       '@capgo/s3-lite-client':
         specifier: ^0.1.8
         version: 0.1.8
-      '@envelop/sentry':
-        specifier: ^9.0.0
-        version: 9.0.0(@envelop/core@5.0.1)(@sentry/node@7.107.0)(graphql@16.8.2)
       '@graphql-yoga/redis-event-target':
         specifier: ^3.0.0
         version: 3.0.1(ioredis@5.4.1)
@@ -1861,18 +1858,6 @@ packages:
   '@envelop/core@5.0.0':
     resolution: {integrity: sha512-aJdnH/ptv+cvwfvciCBe7TSvccBwo9g0S5f6u35TBVzRVqIGkK03lFlIL+x1cnfZgN9EfR2b1PH2galrT1CdCQ==}
     engines: {node: '>=18.0.0'}
-
-  '@envelop/core@5.0.1':
-    resolution: {integrity: sha512-wxA8EyE1fPnlbP0nC/SFI7uU8wSNf4YjxZhAPu0P63QbgIvqHtHsH4L3/u+rsTruzhk3OvNRgQyLsMfaR9uzAQ==}
-    engines: {node: '>=18.0.0'}
-
-  '@envelop/sentry@9.0.0':
-    resolution: {integrity: sha512-R1qgYKOiaDGc1MXRfJCzNs8z5lVuRK3liHquwR72HxawgXP2wEPzTJgqMo1M7s7pZEHgf2RvO6mYAUExbZNYlg==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      '@envelop/core': ^5.0.0
-      '@sentry/node': ^6 || ^7
-      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
 
   '@envelop/types@5.0.0':
     resolution: {integrity: sha512-IPjmgSc4KpQRlO4qbEDnBEixvtb06WDmjKfi/7fkZaryh5HuOmTtixe1EupQI5XfXO8joc3d27uUZ0QdC++euA==}
@@ -9649,18 +9634,6 @@ snapshots:
   '@envelop/core@5.0.0':
     dependencies:
       '@envelop/types': 5.0.0
-      tslib: 2.6.2
-
-  '@envelop/core@5.0.1':
-    dependencies:
-      '@envelop/types': 5.0.0
-      tslib: 2.6.3
-
-  '@envelop/sentry@9.0.0(@envelop/core@5.0.1)(@sentry/node@7.107.0)(graphql@16.8.2)':
-    dependencies:
-      '@envelop/core': 5.0.1
-      '@sentry/node': 7.107.0
-      graphql: 16.8.2
       tslib: 2.6.2
 
   '@envelop/types@5.0.0':
