@@ -78,7 +78,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <View className="gap-3 m-2">
+      <View className="gap-3">
         <View className="flex flex-row items-center justify-between px-2">
           <View className="flex-shrink">
             <Text size="lg" weight="bold">

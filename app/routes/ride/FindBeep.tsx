@@ -136,7 +136,7 @@ const GetETA = graphql(`
 `);
 
 
-type Props = StaticScreenProps<{ origin?: string, destination?: string } | undefined>;
+type Props = StaticScreenProps<{ origin?: string, destination?: string, groupSize?: string } | undefined>;
 
 export function MainFindBeepScreen(props: Props) {
   const { user } = useUser();
@@ -203,19 +203,13 @@ export function MainFindBeepScreen(props: Props) {
       origin: props.route.params?.origin,
       destination: props.route.params?.destination,
     },
+    values: {
+      // @ts-expect-error we don't want a default group size'
+      groupSize: props.route.params?.groupSize ? Number(props.route.params.groupSize) : undefined,
+      origin: props.route.params?.origin ?? '',
+      destination: props.route.params?.destination ?? '',
+    },
   });
-
-  useEffect(() => {
-    if (props.route.params) {
-      reset({
-        groupSize: undefined,
-        origin: props.route.params?.origin,
-        destination: props.route.params?.destination,
-      });
-    }
-  }, [props.route.params]);
-
-  alert(props.route.params)
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === "active") {
