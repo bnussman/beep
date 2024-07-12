@@ -32,9 +32,9 @@
     "@sentry/node": "7.107.0",
     "car-info": "^0.1.7",
     "class-validator": "^0.14.1",
-    "graphql": "^16.9.0",
+    "graphql": "^16.8.1",
     "graphql-ws": "^5.16.0",
-    "graphql-yoga": "^5.6.0",
+    "graphql-yoga": "^5.3.0",
     "ioredis": "^5.4.1",
     "js-sha256": "^0.11.0",
     "nodemailer": "^6.9.13",
@@ -45,9 +45,9 @@
   "devDependencies": {
     "@mikro-orm/cli": "6.2.9",
     "@mikro-orm/migrations": "6.2.9",
-    "@types/bun": "^1.1.6",
+    "@types/bun": "^1.1.0",
     "@types/nodemailer": "^6.4.14",
     "concurrently": "^8.2.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.4.5"
   }
 }
