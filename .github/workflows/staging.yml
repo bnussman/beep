@@ -66,6 +66,7 @@ jobs:
           command: up
           stack-name: ${{ secrets.ENVIRONMENT_NAME }}
           work-dir: deploy
+          replace: api-deployment
         env:
           secrets: ${{ toJSON(secrets) }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
