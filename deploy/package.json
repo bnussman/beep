@@ -1,0 +1,14 @@
+{
+    "name": "beep",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^18",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@pulumi/kubernetes": "^4.15.0",
+        "@pulumi/linode": "^4.0.0",
+        "@pulumi/pulumi": "^3.113.0",
+        "@pulumi/tls-self-signed-cert": "^0.1.3"
+    }
+}
