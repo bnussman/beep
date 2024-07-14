@@ -3,8 +3,14 @@ import * as linode from "@pulumi/linode";
 import * as k8s from "@pulumi/kubernetes";
 import * as selfSignedCert from "@pulumi/tls-self-signed-cert";
 
+if (!process.env.secrets) {
+  throw new Error("Secrets are not in the environment.");
+}
+
+const env = JSON.parse(process.env.secrets);
+
 const linodeProvider = new linode.Provider("linodeProvider", {
-  token: process.env.LINODE_TOKEN,
+  token: env.LINODE_TOKEN,
 });
 
 const lkeCluster = new linode.LkeCluster(
@@ -81,7 +87,7 @@ const config = new k8s.core.v1.ConfigMap(
       name: appName,
       namespace: namespaceName,
     },
-    data: process.env as Record<string, string>,
+    data: env,
   },
   { provider: k8sProvider }
 );
