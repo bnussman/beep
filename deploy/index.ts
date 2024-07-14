@@ -3,6 +3,10 @@ import * as linode from "@pulumi/linode";
 import * as k8s from "@pulumi/kubernetes";
 import * as selfSignedCert from "@pulumi/tls-self-signed-cert";
 
+const linodeProvider = new linode.Provider("linodeProvider", {
+  token: process.env.LINODE_TOKEN,
+});
+
 const lkeCluster = new linode.LkeCluster(
   "cluster",
   {
@@ -15,7 +19,8 @@ const lkeCluster = new linode.LkeCluster(
         count: 3,
       }
     ],
-  }
+  },
+  { provider: linodeProvider }
 );
 
 const namespaceName = "beep";
@@ -170,8 +175,6 @@ const redisService = new k8s.core.v1.Service(
   },
   { provider: k8sProvider }
 );
-
-
 
 export const clusterLabel = lkeCluster.label;
 
