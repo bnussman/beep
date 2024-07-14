@@ -65,3 +65,4 @@ jobs:
           work-dir: deploy
         env:
           secrets: ${{ toJSON(secrets) }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
