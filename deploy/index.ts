@@ -45,7 +45,7 @@ const namespace = new k8s.core.v1.Namespace(namespaceName, {
 );
 
 const deployment = new k8s.apps.v1.Deployment(
-  "api-deployment",
+  appName,
   {
     metadata: {
       name: appName,
