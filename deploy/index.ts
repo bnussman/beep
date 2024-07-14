@@ -22,7 +22,7 @@ const namespaceName = "beep";
 const appName = "api";
 
 const k8sProvider = new k8s.Provider("k8sProvider", {
-    kubeconfig: lkeCluster.kubeconfig.apply(x => Buffer.from(x, 'base64').toString()),
+  kubeconfig: lkeCluster.kubeconfig.apply(x => Buffer.from(x, 'base64').toString()),
 });
 
 const namespace = new k8s.core.v1.Namespace(namespaceName, {
