@@ -3,11 +3,9 @@ import * as linode from "@pulumi/linode";
 import * as k8s from "@pulumi/kubernetes";
 import * as selfSignedCert from "@pulumi/tls-self-signed-cert";
 
-if (!process.env.secrets) {
-  throw new Error("Secrets are not in the environment.");
-}
+const env = process.env.secrets ? JSON.parse(process.env.secrets) : {};
 
-const env = JSON.parse(process.env.secrets);
+const envName = pulumi.getStack();
 
 const linodeProvider = new linode.Provider("linodeProvider", {
   token: env.LINODE_TOKEN,
@@ -18,7 +16,7 @@ const lkeCluster = new linode.LkeCluster(
   {
     region: "us-east",
     k8sVersion: "1.30",
-    label: "cluster",
+    label: envName,
     pools: [
       {
         type: 'g6-standard-1',
@@ -63,7 +61,7 @@ const deployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name: appName,
-              image: "ghcr.io/bnussman/beep:main",
+              image: `ghcr.io/bnussman/beep:${envName === 'staging' ? 'main' : envName}`,
               imagePullPolicy: "Always",
               ports: [
                 { containerPort: 3000 }

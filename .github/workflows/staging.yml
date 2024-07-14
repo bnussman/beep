@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - production
 
 env:
   REGISTRY: ghcr.io
@@ -19,8 +20,7 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - name: 🔑 Login to DockerHub
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -37,35 +37,36 @@ jobs:
           file: Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-  deploy:
-    needs: build
+  up:
+    name: Update
     runs-on: ubuntu-latest
+    needs: build
     environment:
       name: staging
       url: https://staging.ridebeep.app
     steps:
-      - name: 📃 Import kube config
-        run: |
-          mkdir -p $HOME/.kube/
-          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-      - name: 📦 Install helm
-        run: |
-          curl -LO https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz
-          tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
-          mv linux-amd64/helm /usr/local/bin/helm
-          helm version
-      - uses: actions/checkout@v4
-      - name: 🔍 Lint helm charts
-        run: helm lint ./.github/helm/ -f ./.github/helm/values-staging.yaml
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - name: 🔐 Inject Secrets
-        run: bun run .github/helm/inject.ts
+      - uses: pnpm/action-setup@v3
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
+      - name: 📦 install packages
+        run: pnpm i --frozen-lockfile
+      - name: Applying infrastructure 🚀
+        uses: pulumi/actions@v4
+        with:
+          command: up
+          stack-name: ${{ secrets.ENVIRONMENT_NAME }}
+          work-dir: deploy
         env:
           secrets: ${{ toJSON(secrets) }}
-      - run: cat .github/helm/templates/configmap.yaml
-      - name: 🚀 Deploy api
-        run: |
-          helm upgrade --install --atomic --timeout 5m api ./.github/helm/ -f ./.github/helm/values-staging.yaml --namespace beep --create-namespace
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
