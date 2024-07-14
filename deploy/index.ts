@@ -78,18 +78,6 @@ const deployment = new k8s.apps.v1.Deployment(
   { provider: k8sProvider }
 );
 
-const config = new k8s.core.v1.ConfigMap(
-  appName,
-  {
-    metadata: {
-      name: appName,
-      namespace: namespaceName,
-    },
-    data: env,
-  },
-  { provider: k8sProvider }
-);
-
 const cert = new selfSignedCert.SelfSignedCertificate("cert", {
   dnsName: "api.dev.ridebeep.app",
   validityPeriodHours: 807660,
@@ -176,6 +164,21 @@ const redisService = new k8s.core.v1.Service(
       ports: [{ port: 6379 }],
       selector: { app: "redis" }
     }
+  },
+  { provider: k8sProvider }
+);
+
+const config = new k8s.core.v1.ConfigMap(
+  appName,
+  {
+    metadata: {
+      name: appName,
+      namespace: namespaceName,
+    },
+    data: {
+      ...env,
+      REDIS_HOST: "redis.beep",
+    },
   },
   { provider: k8sProvider }
 );
