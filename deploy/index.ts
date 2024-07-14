@@ -125,6 +125,54 @@ const service = new k8s.core.v1.Service(
   { provider: k8sProvider }
 );
 
+const redisDeployment = new k8s.apps.v1.Deployment(
+  "redis",
+  {
+    metadata: {
+      name: "redis",
+      namespace: namespace.metadata.name,
+      labels: { app: "redis" }
+    },
+    spec: {
+      selector: { matchLabels: { app: "redis" } },
+      replicas: 1,
+      template: {
+        metadata: { labels: { app: "redis" } },
+        spec: {
+          containers: [
+            {
+              name: "redis",
+              image: "redis:latest",
+              ports: [
+                { containerPort: 6379 }
+              ],
+            }
+          ]
+        }
+      }
+    }
+  },
+  { provider: k8sProvider }
+);
+
+const redisService = new k8s.core.v1.Service(
+  "redis",
+  {
+    metadata: {
+      name: "redis",
+      namespace: namespaceName,
+    },
+    spec: {
+      type: "ClusterIP",
+      ports: [{ port: 6379 }],
+      selector: { app: "redis" }
+    }
+  },
+  { provider: k8sProvider }
+);
+
+
+
 export const clusterLabel = lkeCluster.label;
 
 export const ip = service.status.loadBalancer.apply((lb) => lb.ingress[0].ip || lb.ingress[0].hostname);
