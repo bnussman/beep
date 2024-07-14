@@ -14,7 +14,7 @@ const linodeProvider = new linode.Provider("linodeProvider", {
 const lkeCluster = new linode.LkeCluster(
   "cluster",
   {
-    region: "us-east",
+    region: "us-southeast",
     k8sVersion: "1.30",
     label: envName,
     pools: [
