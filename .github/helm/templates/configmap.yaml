@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}
-  namespace: {{ .Release.Namespace | default .Values.namespace }}
- 
-data:
-  HTTP_ADDR: {{ .Values.env.HTTP_ADDR }}
