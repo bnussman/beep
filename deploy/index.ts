@@ -1,14 +1,31 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as linode from "@pulumi/linode";
+import * as docker from "@pulumi/docker";
 import * as k8s from "@pulumi/kubernetes";
 import * as selfSignedCert from "@pulumi/tls-self-signed-cert";
 
 const env = process.env.secrets ? JSON.parse(process.env.secrets) : {};
+const ACTOR = process.env.ACTOR;
 
 const envName = pulumi.getStack();
 
 const linodeProvider = new linode.Provider("linodeProvider", {
   token: env.LINODE_TOKEN,
+});
+
+const imageName = `ghcr.io/bnussman/beep:${envName === 'staging' ? 'main' : envName}`;
+
+const imageResource = new docker.Image("imageResource", {
+  imageName: imageName,
+  build: {
+      context: "../",
+      dockerfile: "Dockerfile",
+  },
+  registry: {
+      password: env.GITHUB_TOKEN,
+      server: "ghcr.io",
+      username: ACTOR,
+  },
 });
 
 const lkeCluster = new linode.LkeCluster(
@@ -64,7 +81,7 @@ const deployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name: appName,
-              image: `ghcr.io/bnussman/beep:${envName === 'staging' ? 'main' : envName}`,
+              image: imageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [
                 { containerPort: 3000 }

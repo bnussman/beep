@@ -6,6 +6,7 @@
         "typescript": "^5.0.0"
     },
     "dependencies": {
+        "@pulumi/docker": "^4.5.4",
         "@pulumi/kubernetes": "^4.15.0",
         "@pulumi/linode": "^4.0.0",
         "@pulumi/pulumi": "^3.113.0",
