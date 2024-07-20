@@ -18,7 +18,6 @@ jobs:
       attestations: write
       id-token: write
     runs-on: ubuntu-latest
-    needs: build
     environment:
       name: staging
       url: https://staging.ridebeep.app

@@ -20,7 +20,6 @@ jobs:
       attestations: write
       id-token: write
     runs-on: ubuntu-latest
-    needs: build
     environment:
       name: production
       url: https://ridebeep.app
