@@ -5,13 +5,8 @@ on:
     branches:
       - main
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
-  up:
-    name: Update
+  deploy:
     permissions:
       contents: read
       packages: write

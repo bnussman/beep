@@ -5,15 +5,8 @@ on:
     branches:
       - production
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
-  up:
-    name: Update
+  deploy:
     permissions:
       contents: read
       packages: write
