@@ -18,13 +18,12 @@ const imageName = `ghcr.io/bnussman/beep:${envName === 'staging' ? 'main' : envN
 const imageResource = new docker.Image("imageResource", {
   imageName: imageName,
   build: {
-      context: "../",
-      dockerfile: "Dockerfile",
+    dockerfile: "Dockerfile",
   },
   registry: {
-      password: env.GITHUB_TOKEN,
-      server: "ghcr.io",
-      username: ACTOR,
+    password: env.GITHUB_TOKEN,
+    server: "ghcr.io",
+    username: ACTOR,
   },
 });
 
