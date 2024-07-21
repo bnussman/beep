@@ -50,6 +50,7 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   publish:
      runs-on: ubuntu-latest
      steps:

@@ -15,7 +15,7 @@ const linodeProvider = new linode.Provider("linodeProvider", {
 
 const imageName = `ghcr.io/bnussman/beep:${envName === 'staging' ? 'main' : envName}`;
 
-console.log("Github Token - Banks -", env.GITHUB_TOKEN)
+console.log("Github Token - Banks -", process.env.GITHUB_TOKEN)
 
 const imageResource = new docker.Image("imageResource", {
   imageName: imageName,
@@ -24,7 +24,7 @@ const imageResource = new docker.Image("imageResource", {
     dockerfile: "../Dockerfile",
   },
   registry: {
-    password: env.GITHUB_TOKEN,
+    password: process.env.GITHUB_TOKEN,
     server: "ghcr.io",
     username: ACTOR,
   },
