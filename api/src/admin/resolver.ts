@@ -12,7 +12,6 @@ class UserWithBeeps extends User {
   beeps!: number;
 }
 
-
 @Resolver()
 export class AdminResolver {
   @Query(() => [String])
@@ -73,7 +72,7 @@ export class AdminResolver {
 
     for (const [email, users] of emailUserMap) {
       const indexOfUserToKeep = getUserWithMostBeeps(users);
- 
+
       const mailOptions = {
         from: 'Beep App <banks@ridebeep.app>',
         to: email,
