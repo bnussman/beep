@@ -19,9 +19,6 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: latest
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
@@ -31,6 +28,10 @@ jobs:
         with:
           version: latest
           run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: 'pnpm'
       - name: 📦 install packages
         run: pnpm i --frozen-lockfile
       - name: Applying infrastructure 🚀
