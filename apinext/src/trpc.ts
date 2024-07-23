@@ -19,7 +19,8 @@ export function createContext({
   req,
   resHeaders,
 }: FetchCreateContextFnOptions) {
-  const user = { name: req.headers.get('username') ?? 'anonymous' };
+  const token = req.headers.get('authorization');
+  const user = { name: "Banks", token };
   return { req, resHeaders, user };
 }
 
