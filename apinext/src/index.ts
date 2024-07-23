@@ -8,6 +8,7 @@ const appRouter = router({
 });
 
 Bun.serve({
+  port: 3001,
   fetch(req) {
     return fetchRequestHandler({
       endpoint: '/trpc',
