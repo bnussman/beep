@@ -11,12 +11,11 @@
   ],
   "author": "Banks Nussman",
   "devDependencies": {
-    "drizzle-kit": "^0.23.2",
+    "drizzle-kit": "^0.23.0",
     "typescript": "^5.4.5"
   },
   "dependencies": {
     "@trpc/server": "11.0.0-rc.467",
-    "drizzle-orm": "^0.32.2",
-    "postgres": "^3.4.4"
+    "drizzle-orm": "^0.32.1"
   }
 }

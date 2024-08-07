@@ -1,9 +1,9 @@
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { authedProcedure, createContext, publicProcedure, router } from './trpc';
+import { createContext, publicProcedure, router } from './trpc';
 
 const appRouter = router({
-  me: authedProcedure.query(({ ctx }) => {
-    return ctx.user;
+  me: publicProcedure.query(() => {
+    return "hey";
   })
 });
 

@@ -5,11 +5,11 @@ export default defineConfig({
 	schema: 'src/schema.ts',
 	dialect: "postgresql",
 	dbCredentials: {
-	   url: DB_URL,
-		 user: DB_USER,
-		 host: "localhost",
-		 password: DB_PASSWORD,
-		 database: DB_DATABASE,
+	   url: "posgresql://beep:beep@localhost/beep",
+		 // user: DB_USER,
+		 // host: "localhost",
+		 // password: DB_PASSWORD,
+		 // database: DB_DATABASE,
 		  ssl: {
  		   ca: DB_CA,
 		  },
