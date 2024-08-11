@@ -14,7 +14,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   const rider = await signup(riderPage);
   const beeper = await signup(beeperPage);
 
-  await beeperPage.getByRole("button").nth(2).click();
+  await beeperPage.getByRole("button").nth(0).click();
   await beeperPage.getByText("Cars").click();
   await beeperPage.getByLabel("Add a car").click();
   // await beeperPage.getByLabel('Make').selectOption('Ford');
