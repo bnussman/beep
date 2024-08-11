@@ -17,6 +17,7 @@
   "dependencies": {
     "@trpc/server": "11.0.0-rc.467",
     "drizzle-orm": "^0.32.2",
-    "postgres": "^3.4.4"
+    "postgres": "^3.4.4",
+    "wkx": "^0.5.0"
   }
 }

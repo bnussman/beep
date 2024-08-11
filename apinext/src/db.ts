@@ -7,9 +7,11 @@ const queryClient = postgres(DB_URL, {
   user: DB_USER,
   password: DB_PASSWORD,
   database: DB_DATABASE,
-  ssl: {
-   ca: DB_CA
-  }
+  ...(!!DB_CA && {
+    ssl: {
+      ca: DB_CA
+    }
+  }),
 });
 
 export const db = drizzle(queryClient, { schema });

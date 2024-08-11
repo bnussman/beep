@@ -1,5 +1,35 @@
-import { pgTable, integer, text, varchar, serial, timestamp, unique, boolean, numeric, geometry, foreignKey, index } from "drizzle-orm/pg-core"
+import { pgTable, integer, text, varchar, timestamp, unique, boolean, numeric, index } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm/relations";
+import type { CustomTypeValues } from "drizzle-orm/pg-core";
+import { customType } from "drizzle-orm/pg-core";
+import type { Point } from "geojson";
+
+export const geography = (
+  dbName: string,
+  fieldConfig?: CustomTypeValues
+) => {
+  return customType<{
+    data: { latitude: number, longitude: number } | null;
+  }>({
+    dataType() {
+      return "geography";
+    },
+    toDriver(value) {
+      if (!value) {
+        return value;
+      }
+
+      return `point(${value.latitude} ${value.longitude})`;
+    },
+    fromDriver(value) {
+      const point = value as Point | null;
+      if (!point) {
+        return null;
+      }
+      return { latitude: point.coordinates[0], longitude: point.coordinates[1] };
+    },
+  })(dbName, fieldConfig);
+};
 
 export const user = pgTable("user", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
@@ -23,7 +53,7 @@ export const user = pgTable("user", {
 	role: text("role").default('user').notNull(),
 	push_token: varchar("push_token", { length: 255 }),
 	photo: varchar("photo", { length: 255 }),
-	location: geometry("location"),
+	location: geography("location"),
 	created: timestamp("created", { withTimezone: true, mode: 'string' }),
 },
 (table) => {
