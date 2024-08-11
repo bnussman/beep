@@ -431,8 +431,9 @@ export function MainFindBeepScreen(props: Props) {
         )}
         {beep.status === Status.HERE ? (
           <Image
-            className="flex-grow rounded-xl"
-            source={{ uri: beep.beeper.cars?.[0].photo }}
+            className="flex-grow rounded-xl w-full min-h-4"
+            resizeMode="cover"
+            src={beep.beeper.cars?.[0].photo}
             alt={`car-${beep.beeper.cars?.[0].id}`}
           />
         ) : (
