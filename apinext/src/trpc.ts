@@ -39,7 +39,11 @@ export async function createContext({ req }: FetchCreateContextFnOptions) {
     with: { user: true }
   })
 
-  return { user: session?.user, token: session };
+  if (!session) {
+    return {};
+  }
+
+  return { user: session.user, token: session };
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
