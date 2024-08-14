@@ -17,7 +17,7 @@ export default defineConfig({
   password: DB_PASSWORD,
   clientUrl: `${DB_URL}/${DB_DATABASE}`,
   loadStrategy: LoadStrategy.JOINED,
-  debug: true,
+  debug: isDevelopment,
   driverOptions: DB_CA
     ? {
         connection: {
