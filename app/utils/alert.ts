@@ -8,7 +8,7 @@ const doAlert = isMobile
 
 export function Alert(error: ApolloError, title = "Error") {
   if (error?.message === "Validation Error") {
-    const errors = error?.graphQLErrors[0]?.extensions;
+    const errors = error?.graphQLErrors[0]?.extensions ?? {};
 
     const keys = Object.keys(errors);
 
