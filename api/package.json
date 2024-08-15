@@ -27,8 +27,7 @@
     "@graphql-yoga/redis-event-target": "^3.0.0",
     "@mikro-orm/core": "6.2.9",
     "@mikro-orm/postgresql": "6.2.9",
-    "@sentry/bun": "7.107.0",
-    "@sentry/node": "7.107.0",
+    "@sentry/bun": "8.26.0",
     "car-info": "^0.1.7",
     "class-validator": "^0.14.1",
     "graphql": "^16.8.1",
@@ -44,7 +43,7 @@
   "devDependencies": {
     "@mikro-orm/cli": "6.2.9",
     "@mikro-orm/migrations": "6.2.9",
-    "@types/bun": "^1.1.0",
+    "@types/bun": "^1.1.6",
     "@types/nodemailer": "^6.4.14",
     "concurrently": "^8.2.2",
     "typescript": "^5.4.5"
