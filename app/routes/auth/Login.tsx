@@ -20,7 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 import { VariablesOf, graphql } from "gql.tada";
 import { View } from "react-native";
 
-const Login = graphql(`
+export const Login = graphql(`
   mutation Login($username: String!, $password: String!, $pushToken: String) {
     login(
       input: { username: $username, password: $password, pushToken: $pushToken }

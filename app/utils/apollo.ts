@@ -1,13 +1,15 @@
+import * as Sentry from '@sentry/react-native';
+import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createUploadLink } from "apollo-upload-client";
 import { createClient } from "graphql-ws";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { setContext } from "@apollo/client/link/context";
-import { Logger } from "./logger";
 import { ApolloClient, ApolloLink, InMemoryCache, split } from "@apollo/client";
-import Constants from "expo-constants";
 import { isWeb } from "./constants";
+import { ResultOf } from "gql.tada";
+import { Login } from "@/routes/auth/Login";
 
 function getLocalIP() {
   if (isWeb) {
@@ -39,17 +41,34 @@ const url = __DEV__
 // const wsUrl = "wss://api.ridebeep.app/subscriptions";
 // const url = "https://api.ridebeep.app/graphql";
 
-const authLink = setContext(async (_, { headers }) => {
+async function getAuthToken() {
   const tokens = await AsyncStorage.getItem("auth");
+
   if (tokens) {
-    const auth = JSON.parse(tokens);
+    try {
+      // When we login, we just store the response in AsyncStorage.
+      // We get the token from there.
+      const auth = JSON.parse(tokens) as ResultOf<typeof Login>['login'];
+
+      return auth.tokens.id;
+    } catch (error) {
+      Sentry.captureException(error, { extra: { hint: "Error when parsing authentication token from AsyncStorage" } });
+
+      return null;
+    }
+  }
+
+  return null;
+}
+
+const authLink = setContext(async (_, { headers }) => {
+  const token = await getAuthToken();
+  if (token) {
     return {
       headers: {
         ...headers,
-        Authorization: auth?.tokens?.id
-          ? `Bearer ${auth?.tokens?.id}`
-          : undefined,
-      },
+        Authorization: `Bearer ${token}`,
+      }
     };
   }
 });
@@ -60,15 +79,12 @@ const wsClient = createClient({
   retryAttempts: Infinity,
   isFatalConnectionProblem: () => false,
   shouldRetry: () => true,
-  connectionParams: async () => {
-    const tokens = await AsyncStorage.getItem("auth");
-    if (tokens) {
-      const auth = JSON.parse(tokens);
-      return {
-        token: auth?.tokens?.id,
-      };
+  async connectionParams() {
+    const token = await getAuthToken();
+    if (token) {
+      return { token };
     }
-  },
+  }
 });
 
 export const wsLink = new GraphQLWsLink(wsClient);
