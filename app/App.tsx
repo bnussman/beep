@@ -18,8 +18,6 @@ import { useColorScheme } from "react-native";
 import * as Notifications from "expo-notifications";
 import { UpdateBeeperQueue } from "./components/ActionButton";
 import { Status } from "./utils/types";
-import { trpc, queryClient, trpcClient } from './utils/trpc';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import "./global.css";
 
 Notifications.setNotificationCategoryAsync(
@@ -130,13 +128,9 @@ function Beep() {
 function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <ApolloProvider client={client}>
-            <Beep />
-          </ApolloProvider>
-        </QueryClientProvider>
-      </trpc.Provider>
+      <ApolloProvider client={client}>
+        <Beep />
+      </ApolloProvider>
     </GestureHandlerRootView>
   );
 }
