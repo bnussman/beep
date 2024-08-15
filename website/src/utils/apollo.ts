@@ -10,8 +10,8 @@ import {
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { setContext } from "@apollo/client/link/context";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { Client, ClientOptions, createClient } from "graphql-ws";
-import { print } from "graphql";
+import { createClient } from "graphql-ws";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 
 function getUrl() {
   // return 'https://api.dev.ridebeep.app/graphql';
@@ -35,43 +35,6 @@ function getWSUrl() {
   return "ws://localhost:3000/subscriptions";
 }
 
-class WebSocketLink extends ApolloLink {
-  private client: Client;
-
-  constructor(options: ClientOptions) {
-    super();
-    this.client = createClient(options);
-  }
-
-  public request(operation: Operation): Observable<FetchResult> {
-    return new Observable((sink) => {
-      return this.client.subscribe<FetchResult>(
-        { ...operation, query: print(operation.query) },
-        {
-          next: sink.next.bind(sink),
-          complete: sink.complete.bind(sink),
-          error: (err) => {
-            if (Array.isArray(err))
-              // GraphQLError[]
-              return sink.error(
-                new Error(err.map(({ message }) => message).join(", ")),
-              );
-
-            if (err instanceof CloseEvent)
-              return sink.error(
-                new Error(
-                  `Socket closed with event ${err.code} ${err.reason || ""}`,
-                ),
-              );
-
-            return sink.error(err);
-          },
-        },
-      );
-    });
-  }
-}
-
 const uploadLink = createUploadLink({
   uri: getUrl(),
 });
@@ -91,9 +54,14 @@ const authLink = setContext(async (_, { headers }) => {
   }
 });
 
-const wsLink = new WebSocketLink({
+
+const wsClient = createClient({
   url: getWSUrl(),
-  connectionParams: () => {
+  lazy: true,
+  retryAttempts: Infinity,
+  isFatalConnectionProblem: () => false,
+  shouldRetry: () => true,
+  connectionParams() {
     const tokens = localStorage.getItem("user");
     if (tokens) {
       const auth = JSON.parse(tokens);
@@ -103,6 +71,8 @@ const wsLink = new WebSocketLink({
     }
   },
 });
+
+export const wsLink = new GraphQLWsLink(wsClient);
 
 const splitLink = split(({ query }) => {
   const definition = getMainDefinition(query);

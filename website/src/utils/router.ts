@@ -39,7 +39,7 @@ import { userDetailsRoute, userDetailsInitalRoute } from "../routes/admin/users/
 import { locationRoute } from "../routes/admin/users/Location";
 import { userRoute } from "../routes/admin/users/User";
 import { editUserRoute } from "../routes/admin/users/edit";
-import { notFoundRoute } from "../components/NotFound";
+import { NotFound } from "../components/NotFound";
 import { Beep } from "../App";
 
 export const rootRoute = createRootRoute({
@@ -102,7 +102,7 @@ export const routeTree = rootRoute.addChildren([
   ]),
 ]);
 
-export const router = createRouter({ routeTree, notFoundRoute });
+export const router = createRouter({ routeTree, defaultNotFoundComponent: NotFound });
 
 declare module '@tanstack/react-router' {
   interface Register {

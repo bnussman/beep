@@ -10,7 +10,7 @@ interface Props {
 export function Error({ error, children }: Props) {
 
   if (error?.message === 'Validation Error') {
-    const errors = error?.graphQLErrors[0]?.extensions;
+    const errors = error?.graphQLErrors[0]?.extensions ?? {};
 
     return (
       <Alert status="error" mb={4}>

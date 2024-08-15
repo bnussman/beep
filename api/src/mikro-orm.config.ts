@@ -31,4 +31,5 @@ export default defineConfig({
   migrations: {
     disableForeignKeys: false,
   },
+  tsNode: false,
 });

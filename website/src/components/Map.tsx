@@ -1,8 +1,8 @@
 import React from 'react';
-import { default as _Map, MapProps } from 'react-map-gl';
+import { default as _Map } from 'react-map-gl';
 import { useColorMode } from '@chakra-ui/react';
 
-export function Map(props: MapProps) {
+export function Map(props: React.ComponentProps<typeof _Map>) {
   const { colorMode } = useColorMode();
 
   return (
