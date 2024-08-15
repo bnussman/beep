@@ -11,7 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@apollo/client": "^3.11.4",
+    "@apollo/client": "^3.9.11",
     "@gorhom/bottom-sheet": "^4",
     "@react-native-async-storage/async-storage": "~1.23.1",
     "@react-native-menu/menu": "^1.0.1",
@@ -36,13 +36,13 @@
     "expo-status-bar": "~1.12.1",
     "expo-task-manager": "~11.8.1",
     "expo-updates": "~0.25.11",
-    "gql.tada": "^1.8.5",
+    "gql.tada": "^1.5.5",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.16.0",
     "nativewind": "4.0.36",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.52.2",
+    "react-hook-form": "^7.51.3",
     "react-native": "0.74.1",
     "react-native-gesture-handler": "~2.16.2",
     "react-native-ios-context-menu": "^2.5.1",
@@ -61,13 +61,13 @@
     "zeego": "^1.10.0"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.12.13",
+    "@0no-co/graphqlsp": "^1.10.3",
     "@babel/core": "^7.24.4",
     "@expo/metro-runtime": "~3.2.1",
     "@types/react": "~18.2.79",
     "@types/react-dom": "~18.2.25",
     "babel-preset-expo": "^11.0.5",
-    "typescript": "^5.5.4"
+    "typescript": "^5.3.3"
   },
   "private": true,
   "volta": {

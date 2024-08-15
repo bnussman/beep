@@ -33,9 +33,9 @@ Sentry.init({
   debug: false,
   autoSessionTracking: true,
   integrations: [
-    Sentry.httpIntegration(),
-    Sentry.graphqlIntegration(),
-    Sentry.postgresIntegration(),
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Sentry.Integrations.GraphQL(),
+    new Sentry.Integrations.Postgres(),
   ],
   tracesSampler: (samplingContext) => {
     if (samplingContext.request?.method === 'OPTIONS') {
