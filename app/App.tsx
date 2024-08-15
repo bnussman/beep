@@ -84,9 +84,6 @@ function Beep() {
     },
   });
 
-  // const { data: user } = trpc.me.useQuery();
-  // console.log(user);
-
   useAutoUpdate();
 
   const user = data?.getUser;
