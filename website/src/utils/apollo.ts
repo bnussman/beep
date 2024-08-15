@@ -7,7 +7,7 @@ import {
   FetchResult,
   Observable,
 } from "@apollo/client";
-import { createUploadLink } from "apollo-upload-client";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { setContext } from "@apollo/client/link/context";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { Client, ClientOptions, createClient } from "graphql-ws";

@@ -2,7 +2,8 @@ import * as Sentry from '@sentry/react-native';
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { createUploadLink } from "apollo-upload-client";
+// @ts-expect-error author is toxic
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { createClient } from "graphql-ws";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { setContext } from "@apollo/client/link/context";
@@ -97,8 +98,25 @@ const splitLink = split(({ query }) => {
   );
 }, wsLink);
 
+function customIsExtractableFile(value: unknown): value is ReactNativeFile {
+  return value instanceof ReactNativeFile;
+}
+
+export class ReactNativeFile {
+  uri: string;
+  name: string;
+  type: string;
+
+  constructor({ uri, name, type }: { uri: string, name: string, type: string }) {
+    this.uri = uri;
+    this.name = name;
+    this.type = type;
+  }
+}
+
 const uploadLink = createUploadLink({
   uri: url,
+  isExtractableFile: isWeb ? undefined : customIsExtractableFile
 });
 
 export const client = new ApolloClient({

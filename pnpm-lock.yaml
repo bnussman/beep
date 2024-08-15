@@ -115,8 +115,8 @@ importers:
         specifier: 5.22.2
         version: 5.22.2(encoding@0.1.13)(expo@51.0.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(encoding@0.1.13))(react-native@0.74.1(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.2.79)(encoding@0.1.13)(react@18.2.0))(react@18.2.0)
       apollo-upload-client:
-        specifier: 17.0.0
-        version: 17.0.0(@apollo/client@3.10.5(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2)
+        specifier: 18.0.1
+        version: 18.0.1(@apollo/client@3.10.5(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2)
       car-info:
         specifier: ^0.1.7
         version: 0.1.7
@@ -244,9 +244,6 @@ importers:
       '@expo/metro-runtime':
         specifier: ~3.2.1
         version: 3.2.1(react-native@0.74.1(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.2.79)(encoding@0.1.13)(react@18.2.0))
-      '@types/apollo-upload-client':
-        specifier: 17.0.3
-        version: 17.0.3(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@types/react':
         specifier: ~18.2.79
         version: 18.2.79
@@ -318,8 +315,8 @@ importers:
         specifier: ^1.29.2
         version: 1.39.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       apollo-upload-client:
-        specifier: 17.0.0
-        version: 17.0.0(@apollo/client@3.10.5(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2)
+        specifier: 18.0.1
+        version: 18.0.1(@apollo/client@3.10.5(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2)
       dayjs:
         specifier: ^1.11.10
         version: 1.11.11
@@ -357,9 +354,6 @@ importers:
       '@0no-co/graphqlsp':
         specifier: ^1.10.3
         version: 1.12.8(graphql@16.8.2)(typescript@5.4.5)
-      '@types/apollo-upload-client':
-        specifier: 17.0.3
-        version: 17.0.3(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@types/react':
         specifier: ^18.2.48
         version: 18.3.3
@@ -3396,9 +3390,6 @@ packages:
     resolution: {integrity: sha512-92F7/SFyufn4DXsha9+QfKnN03JGqtMFMXgSHbZOo8JG59WkTni7UzAouNQDf7AuP9OAMxVOPQcqG3sB7w+kkg==}
     engines: {node: ^16.14.0 || >=18.0.0}
 
-  '@types/apollo-upload-client@17.0.3':
-    resolution: {integrity: sha512-uomG6TvssrJXx1XeLdo/YvViLRTuEOrHeC0+uDG8qK1GFeeRMiwGqp9T4e7vR2Bwrk5qydvQjnyv9SJX6zPLJQ==}
-
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
 
@@ -3422,9 +3413,6 @@ packages:
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
-
-  '@types/extract-files@8.1.1':
-    resolution: {integrity: sha512-dMJJqBqyhsfJKuK7p7HyyNmki7qj1AlwhUKWx6KrU7i1K2T2SPsUsSUTWFmr/sEM1q8rfR8j5IyUmYrDbrhfjQ==}
 
   '@types/geojson@7946.0.14':
     resolution: {integrity: sha512-WCfD5Ht3ZesJUsONdhvm84dmzWOiOzOAqOncN0++w0lBw1o8OuDNJF2McvvCef/yBqb/HYRahp1BYtODFQ8bRg==}
@@ -3731,11 +3719,11 @@ packages:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
 
-  apollo-upload-client@17.0.0:
-    resolution: {integrity: sha512-pue33bWVbdlXAGFPkgz53TTmxVMrKeQr0mdRcftNY+PoHIdbGZD0hoaXHvO6OePJAkFz7OiCFUf98p1G/9+Ykw==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >= 16.0.0}
+  apollo-upload-client@18.0.1:
+    resolution: {integrity: sha512-OQvZg1rK05VNI79D658FUmMdoI2oB/KJKb6QGMa2Si25QXOaAvLMBFUEwJct7wf+19U8vk9ILhidBOU1ZWv6QA==}
+    engines: {node: ^18.15.0 || >=20.4.0}
     peerDependencies:
-      '@apollo/client': ^3.0.0
+      '@apollo/client': ^3.8.0
       graphql: 14 - 16
 
   appdirsjs@1.2.7:
@@ -4780,9 +4768,9 @@ packages:
     resolution: {integrity: sha512-BwY5b5Ql4+qZoefgMj2NUmx+tehVTH/Kf4k1ZEtOHNFcm2wSxMRo992l6X3TIgni2eZVTZ85xMOjF31fwZAj6Q==}
     engines: {node: '>=0.10.0'}
 
-  extract-files@11.0.0:
-    resolution: {integrity: sha512-FuoE1qtbJ4bBVvv94CC7s0oTnKUGvQs+Rjf1L2SJFfS+HTVVjhPFtehPdQ0JiGPqVNfSSZvL5yzHHQq2Z4WNhQ==}
-    engines: {node: ^12.20 || >= 14.13}
+  extract-files@13.0.0:
+    resolution: {integrity: sha512-FXD+2Tsr8Iqtm3QZy1Zmwscca7Jx3mMC5Crr+sEP1I303Jy1CYMuYCm7hRTplFNg3XdUavErkxnTzpaqdSoi6g==}
+    engines: {node: ^14.17.0 || ^16.0.0 || >= 18.0.0}
 
   fast-decode-uri-component@1.0.1:
     resolution: {integrity: sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==}
@@ -5455,6 +5443,10 @@ packages:
   is-plain-obj@2.1.0:
     resolution: {integrity: sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA==}
     engines: {node: '>=8'}
+
+  is-plain-obj@4.1.0:
+    resolution: {integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==}
+    engines: {node: '>=12'}
 
   is-plain-object@2.0.4:
     resolution: {integrity: sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==}
@@ -12665,30 +12657,6 @@ snapshots:
       '@tufjs/canonical-json': 2.0.0
       minimatch: 9.0.4
 
-  '@types/apollo-upload-client@17.0.3(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@apollo/client': 3.10.5(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@types/extract-files': 8.1.1
-      graphql: 16.8.2
-    transitivePeerDependencies:
-      - '@types/react'
-      - graphql-ws
-      - react
-      - react-dom
-      - subscriptions-transport-ws
-
-  '@types/apollo-upload-client@17.0.3(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@apollo/client': 3.10.5(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@types/extract-files': 8.1.1
-      graphql: 16.8.2
-    transitivePeerDependencies:
-      - '@types/react'
-      - graphql-ws
-      - react
-      - react-dom
-      - subscriptions-transport-ws
-
   '@types/argparse@1.0.38': {}
 
   '@types/babel__core@7.20.5':
@@ -12724,8 +12692,6 @@ snapshots:
       '@types/responselike': 1.0.3
 
   '@types/estree@1.0.5': {}
-
-  '@types/extract-files@8.1.1': {}
 
   '@types/geojson@7946.0.14': {}
 
@@ -13051,16 +13017,16 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.1
 
-  apollo-upload-client@17.0.0(@apollo/client@3.10.5(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2):
+  apollo-upload-client@18.0.1(@apollo/client@3.10.5(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2):
     dependencies:
       '@apollo/client': 3.10.5(@types/react@18.2.79)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      extract-files: 11.0.0
+      extract-files: 13.0.0
       graphql: 16.8.2
 
-  apollo-upload-client@17.0.0(@apollo/client@3.10.5(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2):
+  apollo-upload-client@18.0.1(@apollo/client@3.10.5(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.2):
     dependencies:
       '@apollo/client': 3.10.5(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.8.2))(graphql@16.8.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      extract-files: 11.0.0
+      extract-files: 13.0.0
       graphql: 16.8.2
 
   appdirsjs@1.2.7: {}
@@ -14276,7 +14242,9 @@ snapshots:
       assign-symbols: 1.0.0
       is-extendable: 1.0.1
 
-  extract-files@11.0.0: {}
+  extract-files@13.0.0:
+    dependencies:
+      is-plain-obj: 4.1.0
 
   fast-decode-uri-component@1.0.1: {}
 
@@ -14971,6 +14939,8 @@ snapshots:
   is-path-inside@3.0.3: {}
 
   is-plain-obj@2.1.0: {}
+
+  is-plain-obj@4.1.0: {}
 
   is-plain-object@2.0.4:
     dependencies:
