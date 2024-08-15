@@ -12,7 +12,7 @@ import {
 
 export default defineConfig({
   entities: ["./build/entities/*.js"],
-  entitiesTs: ["./src/entities/*.ts"],
+  // entitiesTs: ["./src/entities/*.ts"], we can only run in compiled mode
   user: DB_USER,
   password: DB_PASSWORD,
   clientUrl: `${DB_URL}/${DB_DATABASE}`,
@@ -31,5 +31,4 @@ export default defineConfig({
   migrations: {
     disableForeignKeys: false,
   },
-  tsNode: false,
 });
