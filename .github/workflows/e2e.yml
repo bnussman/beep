@@ -25,13 +25,12 @@ jobs:
       with:
         version: latest
         run_install: false
+    - name: Start Docker services (PostgreSQL, Redis, and S3)
+      run: docker compose up -d
     - name: 📦 install packages
       run: pnpm i --frozen-lockfile
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps chromium
-    - name: Start Docker services (PostgreSQL, Redis, and S3)
-      continue-on-error: true
-      run: docker compose up -d --wait
     - name: Init the DB
       working-directory: ./api
       run: bun run --bun db:create
