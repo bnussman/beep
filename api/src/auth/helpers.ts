@@ -29,8 +29,7 @@ export function sendResetEmail(email: string, id: string, username: string): voi
     subject: 'Change your Beep App password',
     html: `Hey ${username}, <br><br>
             Head to ${url}/password/reset/${id} to reset your password. This link will expire in 5 hours. <br><br>
-            Roll Neers, <br>
-            -Banks Nussman
+            - Beep App Team
         `
   };
 
@@ -55,8 +54,7 @@ export function sendVerifyEmailEmail(user: User, verifyEntry: VerifyEmail): void
     subject: 'Verify your Beep App Email!',
     html: `Hey ${user.username}, <br><br>
             Head to ${url}/account/verify/${verifyEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
-            Roll Neers, <br>
-            -Banks Nussman
+            - Beep App Team
         `
   };
 
