@@ -1,8 +1,8 @@
-import { createTRPCClient, createWSClient, wsLink, splitLink, httpBatchLink } from '@trpc/client';
-import { getAuthToken } from './apollo';
+import { QueryClient } from '@tanstack/react-query';
+import { createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
 import type { AppRouter } from '../../../apinext';
-import { QueryClient } from '@tanstack/react-query';
+import { getAuthToken } from './apollo';
 
 export const trpc = createTRPCReact<AppRouter>();
 
@@ -21,14 +21,14 @@ const wsClient = createWSClient({
   }
 });
 
-export const trpcClient = createTRPCClient<AppRouter>({
+export const trpcClient = trpc.createClient({
   links: [
-    splitLink({
+    splitLink<AppRouter>({
       condition: (op) => op.type === 'subscription',
-      true: wsLink({
+      true: wsLink<AppRouter>({
         client: wsClient
       }),
-      false: httpBatchLink({
+      false: httpLink({
         url: 'http://localhost:3001/trpc',
         headers() {
           const token = getAuthToken();

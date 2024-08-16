@@ -5,11 +5,12 @@ import { observable } from '@trpc/server/observable';
 import { db } from './utils/db';
 import { user } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { createBunWSHandler } from 'trpc-bun-adapter';
 
 type User = typeof user.$inferSelect;
 
 const appRouter = router({
-  me: publicProcedure.query(async ({ ctx }) => {
+  me: authedProcedure.query(async ({ ctx }) => {
     return ctx.user;
   }),
   update: authedProcedure.mutation(async ({ ctx }) => {
@@ -18,6 +19,7 @@ const appRouter = router({
     return u[0];
   }),
   updates: authedProcedure.subscription(({ ctx }) => {
+    console.log("Subscription context", ctx);
     // return an `observable` with a callback which is triggered immediately
     return observable<User>((emit) => {
       const onUserUpdate = (data: string) => {
@@ -64,11 +66,20 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization"
 };
 
+const websocket = createBunWSHandler({
+  router,
+  createContext,
+  onError: console.error,
+});
+
 Bun.serve({
   port: 3001,
   fetch(request, server) {
     if (request.method === "OPTIONS") {
       return new Response("All good!", { headers: CORS_HEADERS });
+    }
+    if (server.upgrade(request, {data: {req: request}})) {
+      return;
     }
     return fetchRequestHandler({
       onError: console.error,
@@ -80,5 +91,6 @@ Bun.serve({
       },
       createContext,
     });
-  }
+  },
+  websocket
 })

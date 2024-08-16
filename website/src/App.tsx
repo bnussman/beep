@@ -19,8 +19,16 @@ export type User = ResultOf<typeof UserQuery>['getUser'];
 export function Beep() {
   const { user, loading } = useUser();
 
-  const { data } = trpc.me.useQuery();
-  console.log(data)
+  // Test Query
+  const data = trpc.me.useQuery();
+
+ // Test Subscription
+  trpc.updates.useSubscription(undefined, { onData: console.log })
+
+  // Test Mutation
+  const { mutateAsync } = trpc.update.useMutation();
+
+  // trpcClient.me.query()
 
   useSubscription(UserSubscription, {
     onData({ data }) {
@@ -39,6 +47,7 @@ export function Beep() {
 
   return (
     <>
+      <button onClick={() => mutateAsync()}>test tRPC</button>
       <Header />
       <Container as="main" maxW="container.xl" pt={20}>
         <Banners />

@@ -16,7 +16,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@trpc/server": "11.0.0-rc.467",
+    "@trpc/server": "11.0.0-rc.477",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.32.2",
     "ioredis": "^5.4.1",

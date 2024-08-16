@@ -88,8 +88,8 @@ importers:
   apinext:
     dependencies:
       '@trpc/server':
-        specifier: 11.0.0-rc.467
-        version: 11.0.0-rc.467
+        specifier: 11.0.0-rc.477
+        version: 11.0.0-rc.477
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -104,7 +104,7 @@ importers:
         version: 3.4.4
       trpc-bun-adapter:
         specifier: ^1.1.2
-        version: 1.1.2(@trpc/server@11.0.0-rc.467)
+        version: 1.1.2(@trpc/server@11.0.0-rc.477)
     devDependencies:
       '@types/cors':
         specifier: ^2.8.17
@@ -346,11 +346,11 @@ importers:
         specifier: ^1.29.2
         version: 1.48.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@trpc/client':
-        specifier: 11.0.0-rc.467
-        version: 11.0.0-rc.467(@trpc/server@11.0.0-rc.477)
+        specifier: 11.0.0-rc.477
+        version: 11.0.0-rc.477(@trpc/server@11.0.0-rc.477)
       '@trpc/react-query':
-        specifier: 11.0.0-rc.467
-        version: 11.0.0-rc.467(@tanstack/react-query@5.51.23(react@18.2.0))(@trpc/client@11.0.0-rc.467(@trpc/server@11.0.0-rc.477))(@trpc/server@11.0.0-rc.477)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: 11.0.0-rc.477
+        version: 11.0.0-rc.477(@tanstack/react-query@5.51.23(react@18.2.0))(@trpc/client@11.0.0-rc.477(@trpc/server@11.0.0-rc.477))(@trpc/server@11.0.0-rc.477)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       apollo-upload-client:
         specifier: 18.0.1
         version: 18.0.1(@apollo/client@3.11.4(@types/react@18.3.3)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.9.0)
@@ -3806,22 +3806,19 @@ packages:
   '@tanstack/store@0.5.5':
     resolution: {integrity: sha512-EOSrgdDAJExbvRZEQ/Xhh9iZchXpMN+ga1Bnk8Nmygzs8TfiE6hbzThF+Pr2G19uHL6+DTDTHhJ8VQiOd7l4tA==}
 
-  '@trpc/client@11.0.0-rc.467':
-    resolution: {integrity: sha512-ovZaGdAUl+EEmtJJc5uuo95B0gw8+q3jwNjUQQmmSMU5Isq4sYdjIWNkhbrFtR8CovllFyrRrjAgCWdaOTEY4g==}
+  '@trpc/client@11.0.0-rc.477':
+    resolution: {integrity: sha512-Ah/Er3vxTm2bIEUcIrike7Z/8Yc+DkFveU2ZHQQ0+zY7yxs931438+4OEJuY/Xl/0p5OTDeZTm6HBuZ1REFiyA==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.467+8f72171d6
+      '@trpc/server': 11.0.0-rc.477+a467f8314
 
-  '@trpc/react-query@11.0.0-rc.467':
-    resolution: {integrity: sha512-PNpHgISXJ60s0fJc6JUomKe3iu1wj6pZNFHJgQecAEK0gs1y6VM8Oh8CHgZg8+J/KDP/UtUmBcbpFP9l8Nq48w==}
+  '@trpc/react-query@11.0.0-rc.477':
+    resolution: {integrity: sha512-1ZCAm0wv7yLmb3muq+5DTRxdKXzI1KjTrcM2+QRKCFu6EherGM8x6zGI36P9ZmC6o+SCoedzxqazDNe+kkqVqA==}
     peerDependencies:
       '@tanstack/react-query': ^5.49.2
-      '@trpc/client': 11.0.0-rc.467+8f72171d6
-      '@trpc/server': 11.0.0-rc.467+8f72171d6
+      '@trpc/client': 11.0.0-rc.477+a467f8314
+      '@trpc/server': 11.0.0-rc.477+a467f8314
       react: 18.2.0
       react-dom: 18.2.0
-
-  '@trpc/server@11.0.0-rc.467':
-    resolution: {integrity: sha512-94Gv26ALuBfxgFlSGV3x2uF2ixUEViuK0m3IPKOvCTMreisZkBqyTa3NkBcuPZW/AMUieM5P4Q2NrbHTIA0fKQ==}
 
   '@trpc/server@11.0.0-rc.477':
     resolution: {integrity: sha512-K6zmjRv96fWilqm/ETehEK1DWsy5bSyrs2xbsNzCbjguMgamMhOClRHgYzJcwgLp2kasJ7QgD9YbahOhV1/u1w==}
@@ -13376,19 +13373,17 @@ snapshots:
 
   '@tanstack/store@0.5.5': {}
 
-  '@trpc/client@11.0.0-rc.467(@trpc/server@11.0.0-rc.477)':
+  '@trpc/client@11.0.0-rc.477(@trpc/server@11.0.0-rc.477)':
     dependencies:
       '@trpc/server': 11.0.0-rc.477
 
-  '@trpc/react-query@11.0.0-rc.467(@tanstack/react-query@5.51.23(react@18.2.0))(@trpc/client@11.0.0-rc.467(@trpc/server@11.0.0-rc.477))(@trpc/server@11.0.0-rc.477)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@trpc/react-query@11.0.0-rc.477(@tanstack/react-query@5.51.23(react@18.2.0))(@trpc/client@11.0.0-rc.477(@trpc/server@11.0.0-rc.477))(@trpc/server@11.0.0-rc.477)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/react-query': 5.51.23(react@18.2.0)
-      '@trpc/client': 11.0.0-rc.467(@trpc/server@11.0.0-rc.477)
+      '@trpc/client': 11.0.0-rc.477(@trpc/server@11.0.0-rc.477)
       '@trpc/server': 11.0.0-rc.477
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-
-  '@trpc/server@11.0.0-rc.467': {}
 
   '@trpc/server@11.0.0-rc.477': {}
 
@@ -18239,9 +18234,9 @@ snapshots:
 
   treeverse@3.0.0: {}
 
-  trpc-bun-adapter@1.1.2(@trpc/server@11.0.0-rc.467):
+  trpc-bun-adapter@1.1.2(@trpc/server@11.0.0-rc.477):
     dependencies:
-      '@trpc/server': 11.0.0-rc.467
+      '@trpc/server': 11.0.0-rc.477
 
   ts-interface-checker@0.1.13: {}
 

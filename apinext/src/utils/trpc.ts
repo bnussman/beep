@@ -3,9 +3,7 @@ import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
 import { token } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
-import { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
-import { CreateBunWSSContextFnOptions } from 'trpc-bun-adapter';
+import { CreateBunContextOptions } from 'trpc-bun-adapter';
  
 /**
  * Initialization of tRPC backend
@@ -23,8 +21,6 @@ export const publicProcedure = t.procedure;
 export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
   const { ctx } = opts;
 
-  console.log(ctx)
-
   if (!ctx.user || !ctx.token) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
@@ -32,8 +28,9 @@ export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
   return opts.next({ ctx });
 });
 
-export async function createContext(data: FetchCreateContextFnOptions | CreateBunWSSContextFnOptions) {
-  const bearerToken = data.info.connectionParams?.token ?? data.req?.headers.authorization?.split(' ')[1]
+export async function createContext(data: CreateBunContextOptions) {
+  console.log("GOT CONNECTION PARAMS!!!", data.info)
+  const bearerToken = data.req?.headers.get('authorization')?.split(' ')[1]
 
   if (!bearerToken) {
     return {};
