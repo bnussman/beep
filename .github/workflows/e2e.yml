@@ -30,7 +30,7 @@ jobs:
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps chromium
     - name: Start Docker services (PostgreSQL, Redis, and S3)
-      run: docker compose up -d
+      run: docker compose up -d --wait
     - name: Init the DB
       working-directory: ./api
       run: bun run --bun db:create
