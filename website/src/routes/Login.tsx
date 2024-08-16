@@ -10,7 +10,7 @@ import { graphql } from 'gql.tada';
 import { UserQuery } from '../utils/user';
 import { rootRoute } from '../utils/router';
 
-const LoginGraphQL = graphql(`
+export const LoginGraphQL = graphql(`
   mutation Login($username: String!, $password: String!) {
     login(input: { username: $username, password: $password }) {
       tokens {

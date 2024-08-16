@@ -5,6 +5,7 @@ import { token } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
 import { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
+import { CreateBunWSSContextFnOptions } from 'trpc-bun-adapter';
  
 /**
  * Initialization of tRPC backend
@@ -22,6 +23,8 @@ export const publicProcedure = t.procedure;
 export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
   const { ctx } = opts;
 
+  console.log(ctx)
+
   if (!ctx.user || !ctx.token) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
@@ -29,7 +32,7 @@ export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
   return opts.next({ ctx });
 });
 
-export async function createContext(data: CreateHTTPContextOptions | CreateWSSContextFnOptions) {
+export async function createContext(data: FetchCreateContextFnOptions | CreateBunWSSContextFnOptions) {
   const bearerToken = data.info.connectionParams?.token ?? data.req?.headers.authorization?.split(' ')[1]
 
   if (!bearerToken) {

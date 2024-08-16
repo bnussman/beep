@@ -11,6 +11,7 @@
   ],
   "author": "Banks Nussman",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "drizzle-kit": "^0.23.2",
     "typescript": "^5.4.5"
   },
@@ -19,6 +20,7 @@
     "cors": "^2.8.5",
     "drizzle-orm": "^0.32.2",
     "ioredis": "^5.4.1",
-    "postgres": "^3.4.4"
+    "postgres": "^3.4.4",
+    "trpc-bun-adapter": "^1.1.2"
   }
 }

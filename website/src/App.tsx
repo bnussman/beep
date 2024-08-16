@@ -10,12 +10,17 @@ import { Banners } from './components/Banners';
 import { Outlet, RouterProvider } from '@tanstack/react-router';
 import { UserQuery, UserSubscription, useUser } from './utils/user';
 import { router } from './utils/router';
+import { trpc, queryClient, trpcClient } from './utils/trpc';
+import { QueryClientProvider } from '@tanstack/react-query';
 import type { ResultOf } from 'gql.tada';
 
 export type User = ResultOf<typeof UserQuery>['getUser'];
 
 export function Beep() {
   const { user, loading } = useUser();
+
+  const { data } = trpc.me.useQuery();
+  console.log(data)
 
   useSubscription(UserSubscription, {
     onData({ data }) {
@@ -47,7 +52,11 @@ export function App() {
   return (
     <ChakraProvider theme={theme}>
       <ApolloProvider client={client}>
-        <RouterProvider router={router} />
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </trpc.Provider>
       </ApolloProvider>
     </ChakraProvider>
   );
