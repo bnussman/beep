@@ -43,34 +43,34 @@ export class Payment {
   }
 
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id!: string;
 
   @Field(() => User)
   @ManyToOne(() => User)
   user!: User;
 
-  @Field()
+  @Field(() => String)
   @Property()
   storeId!: string;
 
-  @Field()
+  @Field(() => Product)
   @Enum(() => Product)
   productId!: Product;
 
-  @Field()
+  @Field(() => Number)
   @Property({ columnType: "numeric" })
   price!: number;
 
-  @Field()
+  @Field(() => Store)
   @Enum(() => Store)
   store!: Store;
 
-  @Field()
+  @Field(() => Date)
   @Property()
   created!: Date;
 
-  @Field()
+  @Field(() => Date)
   @Property()
   expires!: Date;
 }

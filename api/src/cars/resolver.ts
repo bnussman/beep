@@ -18,7 +18,7 @@ export class CarResolver {
 
   @Mutation(() => Car)
   @Authorized()
-  public async createCar(@Ctx() ctx: Context, @Args() data: CarArgs): Promise<Car> {
+  public async createCar(@Ctx() ctx: Context, @Args(() => CarArgs) data: CarArgs): Promise<Car> {
     const { photo, ...input } = data;
 
     if (!photo) {
@@ -50,7 +50,7 @@ export class CarResolver {
 
   @Query(() => CarsResponse)
   @Authorized('self')
-  public async getCars(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<CarsResponse> {
+  public async getCars(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show }: PaginationArgs, @Arg('id', () => String, { nullable: true }) id?: string): Promise<CarsResponse> {
     const filter = id ? { user: id  } : {};
 
     const [cars, count] = await ctx.em.findAndCount(Car, filter, {
@@ -68,7 +68,7 @@ export class CarResolver {
 
   @Mutation(() => Car)
   @Authorized()
-  public async editCar(@Ctx() ctx: Context, @Arg("id") id: string, @Args() data: EditCarArgs): Promise<Car> {
+  public async editCar(@Ctx() ctx: Context, @Arg("id", () => String) id: string, @Args(() => EditCarArgs) data: EditCarArgs): Promise<Car> {
     const car = await ctx.em.findOneOrFail(Car, id);
 
     if (ctx.user.role !== UserRole.ADMIN && car.user.id !== ctx.user.id) {
@@ -86,7 +86,7 @@ export class CarResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async deleteCar(@Ctx() ctx: Context, @Args() args: DeleteCarArgs): Promise<boolean> {
+  public async deleteCar(@Ctx() ctx: Context, @Args(() => DeleteCarArgs) args: DeleteCarArgs): Promise<boolean> {
     const car = await ctx.em.findOneOrFail(Car, args.id);
 
     if (car.default && ctx.user.isBeeping) {

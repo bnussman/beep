@@ -3,7 +3,7 @@ import { ArgsType, Field } from "type-graphql";
 
 @ArgsType()
 export class FeedbackArgs {
-  @Field()
+  @Field(() => String)
   @IsString()
   @MinLength(10)
   message!: string;

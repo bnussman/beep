@@ -19,28 +19,28 @@ import { Repeater } from 'graphql-yoga';
 
 @ObjectType()
 class UsersPerDomain {
-  @Field()
+  @Field(() => String)
   domain!: string;
 
-  @Field()
+  @Field(() => Number)
   count!: number;
 }
 
 @ObjectType()
 class UsersWithBeeps {
-  @Field()
+  @Field(() => User)
   user!: User;
 
-  @Field()
+  @Field(() => Number)
   beeps!: number;
 }
 
 @ObjectType()
 class UsersWithRides {
-  @Field()
+  @Field(() => User)
   user!: User;
 
-  @Field()
+  @Field(() => Number)
   rides!: number;
 }
 
@@ -58,7 +58,7 @@ export class UserResolver {
 
   @Query(() => User)
   @Authorized('No Verification')
-  public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<User> {
+  public async getUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", () => String, { nullable: true }) id?: string): Promise<User> {
     const populate = fieldsToRelations<User>(info);
 
     return await ctx.em.findOneOrFail(User, id || ctx.user.id, { populate, filters: ["inProgress"], strategy: LoadStrategy.SELECT_IN });
@@ -66,7 +66,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @Authorized(UserRole.ADMIN)
-  public async removeUser(@Ctx() ctx: Context, @Arg("id") id: string): Promise<boolean> {
+  public async removeUser(@Ctx() ctx: Context, @Arg("id", () => String) id: string): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, id);
 
     return await deleteUser(user, ctx.em);
@@ -74,7 +74,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Authorized('No Verification Self')
-  public async editUser(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id: string, @Arg('data') data: EditUserInput): Promise<User> {
+  public async editUser(@Ctx() ctx: Context, @Arg("id", () => String, { nullable: true }) id: string, @Arg('data', () => EditUserInput) data: EditUserInput): Promise<User> {
     const user = !id ? ctx.user : await ctx.em.findOneOrFail(User, id);
 
     const oldEmail = ctx.user.email;
@@ -112,7 +112,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @Authorized('No Verification')
-  public async changePassword(@Ctx() ctx: Context, @Arg('input') input: ChangePasswordInput): Promise<boolean> {
+  public async changePassword(@Ctx() ctx: Context, @Arg('input', () => ChangePasswordInput) input: ChangePasswordInput): Promise<boolean> {
     ctx.user.password = await bunPassword.hash(input.password, "bcrypt");
     ctx.user.passwordType = PasswordType.BCRYPT;
 
@@ -122,7 +122,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  public async verifyAccount(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
+  public async verifyAccount(@Ctx() ctx: Context, @Arg('id', () => String) id: string): Promise<boolean> {
     const verification = await ctx.em.findOneOrFail(VerifyEmail, id, { populate: ['user'] });
 
     if ((verification.time.getTime() + (18000 * 1000)) < Date.now()) {
@@ -195,7 +195,7 @@ export class UserResolver {
 
   @Query(() => UsersResponse)
   @Authorized(UserRole.ADMIN)
-  public async getUsers(@Ctx() ctx: Context, @Args() { offset, show, query }: PaginationArgs): Promise<UsersResponse> {
+  public async getUsers(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show, query }: PaginationArgs): Promise<UsersResponse> {
     if (query) {
       return await search(ctx.em, offset, show, query);
     }
@@ -233,7 +233,7 @@ export class UserResolver {
 
   @Query(() => UsersWithBeepsResponse)
   @Authorized()
-  public async getUsersWithBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<UsersWithBeepsResponse> {
+  public async getUsersWithBeeps(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show }: PaginationArgs): Promise<UsersWithBeepsResponse> {
     const connection = ctx.em.getConnection();
 
     const count = await ctx.em.count(User);
@@ -261,7 +261,7 @@ export class UserResolver {
 
   @Query(() => UsersWithRidesResponse)
   @Authorized()
-  public async getUsersWithRides(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<UsersWithRidesResponse> {
+  public async getUsersWithRides(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show }: PaginationArgs): Promise<UsersWithRidesResponse> {
     const connection = ctx.em.getConnection();
 
     const count = await ctx.em.count(User);
@@ -289,7 +289,7 @@ export class UserResolver {
 
   @Mutation(() => Number)
   @Authorized(UserRole.ADMIN)
-  public async sendNotifications(@Ctx() ctx: Context, @Args() { title, match, body }: NotificationArgs): Promise<number> {
+  public async sendNotifications(@Ctx() ctx: Context, @Args(() => NotificationArgs) { title, match, body }: NotificationArgs): Promise<number> {
     const users = await ctx.em.find(User, match ? {
       email: { $like: match }
     } : {});
@@ -303,7 +303,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @Authorized(UserRole.ADMIN)
-  public async sendNotification(@Ctx() ctx: Context, @Arg('title') title: string, @Arg('body') body: string, @Arg('id') id: string): Promise<boolean> {
+  public async sendNotification(@Ctx() ctx: Context, @Arg('title', () => String) title: string, @Arg('body', () => String) body: string, @Arg('id', () => String) id: string): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, id);
 
     await sendNotification({

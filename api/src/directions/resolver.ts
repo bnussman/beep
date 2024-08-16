@@ -6,7 +6,7 @@ export class DirectionsResolver {
 
   @Query(() => String)
   @Authorized()
-  public async getETA(@Arg('start') start: string, @Arg('end') end: string): Promise<string> {
+  public async getETA(@Arg('start', () => String) start: string, @Arg('end', () => String) end: string): Promise<string> {
     const username = "Admin";
     const password = OSRM_SECRET;
 

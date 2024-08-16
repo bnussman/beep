@@ -12,7 +12,7 @@ import { User } from "./User";
 export class Rating {
 
     @PrimaryKey()
-    @Field()
+    @Field(() => String)
     id: string = crypto.randomUUID();
 
     @Field(() => User)
@@ -23,16 +23,16 @@ export class Rating {
     @ManyToOne(() => User)
     rated!: User;
 
-    @Field()
+    @Field(() => Number)
     @Property()
     stars!: number;
 
-    @Field({ nullable: true })
+    @Field(() => String, { nullable: true })
     @Property({ nullable: true })
     message?: string;
 
-    @Field()
-    @Property() 
+    @Field(() => Date)
+    @Property()
     timestamp: Date;
 
     @Field(() => Beep)

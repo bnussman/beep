@@ -15,7 +15,7 @@ class PaymentResponse extends Paginated(Payment) {}
 export class PaymentsResolver {
   @Query(() => PaymentResponse)
   @Authorized('self')
-  public async getPayments(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<PaymentResponse> {
+  public async getPayments(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show }: PaginationArgs, @Arg('id', () => String, { nullable: true }) id?: string): Promise<PaymentResponse> {
     const [items, count] = await ctx.em.findAndCount(
       Payment,
       {},
@@ -33,7 +33,7 @@ export class PaymentsResolver {
 
   @Query(() => PaymentResponse)
   @Authorized('self')
-  public async getPaymentHistory(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<PaymentResponse> {
+  public async getPaymentHistory(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show }: PaginationArgs, @Arg('id', () => String, { nullable: true }) id?: string): Promise<PaymentResponse> {
     const [items, count] = await ctx.em.findAndCount(
       Payment,
       {},
@@ -51,7 +51,7 @@ export class PaymentsResolver {
 
   @Mutation(() => [Payment], { nullable: true })
   @Authorized('No Verification Self')
-  public async checkUserSubscriptions(@Ctx() ctx: Context, @Arg("id", { nullable: true }) id?: string): Promise<Payment[]> {
+  public async checkUserSubscriptions(@Ctx() ctx: Context, @Arg("id", () => String, { nullable: true }) id?: string): Promise<Payment[]> {
     return syncUserPayments(ctx.em, id ?? ctx.user.id);
   }
 }

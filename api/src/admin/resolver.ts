@@ -8,7 +8,7 @@ import * as Sentry from '@sentry/bun';
 
 @ObjectType()
 class UserWithBeeps extends User {
-  @Field()
+  @Field(() => Number)
   beeps!: number;
 }
 

@@ -6,14 +6,14 @@ import { User } from "./User";
 @Entity()
 export class ForgotPassword {
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = crypto.randomUUID();
 
-  @Field()
+  @Field(() => User)
   @ManyToOne()
   user!: User;
 
-  @Field()
+  @Field(() => Date)
   @Property()
   time: Date = new Date();
 

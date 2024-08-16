@@ -12,23 +12,23 @@ import { FileScaler } from "../utils/scalers";
 
 @ArgsType()
 export class CarArgs {
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsMake()
   public make!: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @IsModelFor("make", {
     message: "The model you selected is not a model of the selected make.",
   })
   public model!: string;
 
-  @Field()
+  @Field(() => Number)
   @IsNumber()
   public year!: number;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   public color!: string;
 
@@ -39,18 +39,18 @@ export class CarArgs {
 
 @ArgsType()
 export class EditCarArgs {
-  @Field()
+  @Field(() => Boolean)
   @IsBoolean()
   public default!: boolean;
 }
 
 @ArgsType()
 export class DeleteCarArgs {
-  @Field()
+  @Field(() => String)
   @IsString()
   public id!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   @Authorized(UserRole.ADMIN)

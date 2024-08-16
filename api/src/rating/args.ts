@@ -4,22 +4,22 @@ import { Rating } from '../entities/Rating';
 
 @InputType()
 export class RatingInput implements Partial<Rating> {
-  @Field()
+  @Field(() => String)
   @IsString()
   public userId!: string;
 
-  @Field()
+  @Field(() => Number)
   @IsNumber()
   @Max(5)
   @Min(1)
   public stars!: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   public message?: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   public beepId!: string;
 }

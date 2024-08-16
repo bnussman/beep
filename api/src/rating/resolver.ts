@@ -18,7 +18,7 @@ export class RatingResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async rateUser(@Ctx() ctx: Context, @Arg('input') input: RatingInput): Promise<boolean> {
+  public async rateUser(@Ctx() ctx: Context, @Arg('input', () => RatingInput) input: RatingInput): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(User, input.userId);
 
     const beep = await ctx.em.findOne(Beep, {
@@ -59,7 +59,7 @@ export class RatingResolver {
 
   @Query(() => RatingsResponse)
   @Authorized()
-  public async getRatings(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string, @Arg('filter', { nullable: true }) filter?: 'recieved' | 'given'): Promise<RatingsResponse> {
+  public async getRatings(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show }: PaginationArgs, @Arg('id', () => String, { nullable: true }) id?: string, @Arg('filter', () => String, { nullable: true }) filter?: 'recieved' | 'given'): Promise<RatingsResponse> {
     let filters;
 
     if (filter && id) {
@@ -88,13 +88,13 @@ export class RatingResolver {
 
   @Query(() => Rating)
   @Authorized(UserRole.ADMIN)
-  public async getRating(@Ctx() ctx: Context, @Arg('id') id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
+  public async getRating(@Ctx() ctx: Context, @Arg('id', () => String) id: string, @Info() info: GraphQLResolveInfo): Promise<Rating> {
     return await ctx.em.findOneOrFail(Rating, id, { populate: fieldsToRelations<Rating>(info) });
   }
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async deleteRating(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
+  public async deleteRating(@Ctx() ctx: Context, @Arg('id', () => String) id: string): Promise<boolean> {
     const rating = await ctx.em.findOneOrFail(Rating, id, { populate: ['rated'] });
 
     if (ctx.user.role === UserRole.USER && rating.rater.id !== ctx.user.id) {

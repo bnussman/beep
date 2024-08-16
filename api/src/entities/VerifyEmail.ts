@@ -6,18 +6,18 @@ import { User } from "./User";
 @Entity()
 export class VerifyEmail {
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = crypto.randomUUID();
 
-  @Field()
+  @Field(() => User)
   @ManyToOne()
   user!: User;
 
-  @Field()
+  @Field(() => Date)
   @Property()
   time: Date = new Date();
 
-  @Field()
+  @Field(() => String)
   @Property()
   email!: string;
 

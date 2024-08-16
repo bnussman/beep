@@ -11,8 +11,7 @@ import {
 } from "./utils/constants";
 
 export default defineConfig({
-  entities: ["./build/entities/*.js"],
-  // entitiesTs: ["./src/entities/*.ts"], we can only run in compiled mode
+  entities: ["src/entities"],
   user: DB_USER,
   password: DB_PASSWORD,
   clientUrl: `${DB_URL}/${DB_DATABASE}`,

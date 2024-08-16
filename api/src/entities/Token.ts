@@ -7,10 +7,10 @@ import { User } from "./User";
 export class Token {
 
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = crypto.randomUUID();
 
-  @Field()
+  @Field(() => String)
   @Property()
   tokenid: string = crypto.randomUUID();
 

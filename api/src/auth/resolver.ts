@@ -22,7 +22,7 @@ import { GraphQLError } from "graphql";
 
 @ObjectType()
 class Auth {
-  @Field()
+  @Field(() => User)
   public user!: User;
 
   @Field(() => Token)
@@ -34,7 +34,7 @@ export class AuthResolver {
   @Mutation(() => Auth)
   public async login(
     @Ctx() ctx: Context,
-    @Arg("input") { username, password, pushToken }: LoginInput,
+    @Arg("input", () => LoginInput) { username, password, pushToken }: LoginInput,
   ): Promise<Auth> {
     const user = await ctx.em.findOne(
       User,
@@ -81,7 +81,7 @@ export class AuthResolver {
   @Mutation(() => Auth)
   public async signup(
     @Ctx() ctx: Context,
-    @Arg("input") input: SignUpInput,
+    @Arg("input", () => SignUpInput) input: SignUpInput,
   ): Promise<Auth> {
     const picture = input.picture;
 
@@ -149,7 +149,7 @@ export class AuthResolver {
   @Authorized("No Verification")
   public async logout(
     @Ctx() ctx: Context,
-    @Arg("isApp", { nullable: true }) isApp?: boolean,
+    @Arg("isApp", () => Boolean, { nullable: true }) isApp?: boolean,
   ): Promise<boolean> {
     ctx.em.remove(ctx.token);
 
@@ -167,7 +167,7 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   public async removeToken(
     @Ctx() ctx: Context,
-    @Arg("token") tokenid: string,
+    @Arg("token", () => String) tokenid: string,
   ): Promise<boolean> {
     await ctx.em.removeAndFlush({ tokenid: tokenid });
 
@@ -177,7 +177,7 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   public async forgotPassword(
     @Ctx() ctx: Context,
-    @Arg("email") email: string,
+    @Arg("email", () => String) email: string,
   ): Promise<boolean> {
     const user = await ctx.em.findOne(User, { email });
 
@@ -211,8 +211,8 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   public async resetPassword(
     @Ctx() ctx: Context,
-    @Arg("id") id: string,
-    @Arg("input") input: ResetPasswordInput,
+    @Arg("id", () => String) id: string,
+    @Arg("input", () => ResetPasswordInput) input: ResetPasswordInput,
   ): Promise<boolean> {
     const entry = await ctx.em.findOne(ForgotPassword, id, {
       populate: ["user"],

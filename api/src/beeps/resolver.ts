@@ -17,7 +17,12 @@ export class BeepResolver {
 
   @Query(() => BeepsResponse)
   @Authorized('self')
-  public async getBeeps(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Args() { offset, show }: PaginationArgs, @Arg('id', { nullable: true }) id?: string): Promise<BeepsResponse> {
+  public async getBeeps(
+    @Ctx() ctx: Context,
+    @Info() info: GraphQLResolveInfo,
+    @Args(() => PaginationArgs) { offset, show }: PaginationArgs,
+    @Arg('id', () => String, { nullable: true }) id?: string
+  ): Promise<BeepsResponse> {
     const populate = fieldsToRelations<Beep>(info, { root: 'items' });
 
     const [beeps, count] = await ctx.em.findAndCount(
@@ -40,7 +45,7 @@ export class BeepResolver {
 
   @Query(() => Beep)
   @Authorized(UserRole.ADMIN)
-  public async getBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<Beep> {
+  public async getBeep(@Ctx() ctx: Context, @Arg('id', () => String) id: string): Promise<Beep> {
     const beep = await ctx.em.findOne(Beep, id, { populate: ['beeper', 'rider'] });
 
     if (!beep) {
@@ -52,7 +57,7 @@ export class BeepResolver {
 
   @Mutation(() => Boolean)
   @Authorized(UserRole.ADMIN)
-  public async deleteBeep(@Ctx() ctx: Context, @Arg('id') id: string): Promise<boolean> {
+  public async deleteBeep(@Ctx() ctx: Context, @Arg('id', () => String) id: string): Promise<boolean> {
     const beep = ctx.em.getReference(Beep, id);
 
     await ctx.em.removeAndFlush(beep);
@@ -62,7 +67,7 @@ export class BeepResolver {
 
   @Query(() => [Beep])
   @Authorized("self")
-  public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", { nullable: true }) id?: string): Promise<Beep[]> {
+  public async getQueue(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo, @Arg("id", () => String, { nullable: true }) id?: string): Promise<Beep[]> {
     const populate = fieldsToRelations<Beep>(info);
 
     return await ctx.em.find(
@@ -78,7 +83,7 @@ export class BeepResolver {
 
   @Query(() => BeepsResponse)
   @Authorized(UserRole.ADMIN)
-  public async getInProgressBeeps(@Ctx() ctx: Context, @Args() { offset, show }: PaginationArgs): Promise<BeepsResponse> {
+  public async getInProgressBeeps(@Ctx() ctx: Context, @Args(() => PaginationArgs) { offset, show }: PaginationArgs): Promise<BeepsResponse> {
     const [beeps, count] = await ctx.em.findAndCount(
       Beep,
       {},
@@ -101,8 +106,8 @@ export class BeepResolver {
   @Authorized(UserRole.ADMIN)
   public async clearQueue(
     @Ctx() ctx: Context,
-    @Arg('id') id: string,
-    @Arg('stopBeeping') stopBeeping: boolean,
+    @Arg('id', () => String) id: string,
+    @Arg('stopBeeping', () => Boolean) stopBeeping: boolean,
   ): Promise<boolean> {
     const user = await ctx.em.findOneOrFail(
       User,

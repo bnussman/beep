@@ -9,14 +9,14 @@ import { User } from "./User";
 export class Report {
 
   @PrimaryKey()
-  @Field()
+  @Field(() => String)
   id: string = crypto.randomUUID();
 
-  @Field()
+  @Field(() => User)
   @ManyToOne()
   reporter!: User;
 
-  @Field()
+  @Field(() => User)
   @ManyToOne()
   reported!: User;
 
@@ -24,23 +24,23 @@ export class Report {
   @ManyToOne(() => User, { nullable: true })
   handledBy?: User | null;
 
-  @Field()
+  @Field(() => String)
   @Property()
   reason!: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @Property({ nullable: true })
   notes?: string;
 
-  @Field()
+  @Field(() => Date)
   @Property()
   timestamp: Date;
 
-  @Field()
+  @Field(() => Boolean)
   @Property({ default: false })
   handled: boolean = false;
 
-  @Field({ nullable: true })
+  @Field(() => Beep, { nullable: true })
   @ManyToOne({ nullable: true })
   beep?: Beep;
 
