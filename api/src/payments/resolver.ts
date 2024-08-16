@@ -2,7 +2,7 @@ import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } fro
 import type { Context } from "../utils/context";
 import { Paginated, PaginationArgs } from "../utils/pagination";
 import { QueryOrder } from "@mikro-orm/core";
-import { Payment, Product, Store, productExpireTimes, productPrice } from '../entities/Payments';
+import { Payment, Product, Store, productExpireTimes, productPrice } from '../entities/Payment';
 import { User } from "../entities/User";
 import { REVENUE_CAT_SECRET } from "../utils/constants";
 import { SubscriberResponse } from "../users/types";

@@ -6,7 +6,7 @@ import { Point } from "../location/resolver";
 import { Car } from "./Car";
 import { Beep } from "./Beep";
 import { MustBeInAcceptedBeep } from "../utils/decorators";
-import { Payment } from "./Payments";
+import { Payment } from "./Payment";
 
 export enum UserRole {
   ADMIN = 'admin',

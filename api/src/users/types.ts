@@ -1,4 +1,4 @@
-import type { Product } from "../entities/Payments"
+import type { Product } from "../entities/Payment"
 
 export interface SubscriberResponse {
   request_date: string

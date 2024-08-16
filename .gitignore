@@ -12,5 +12,6 @@ build/**
 yarn-error.log
 api/storage.json
 **/test-results/
+**/tsconfig.tsbuildinfo
 test/playwright-report/**
 test/playwright/.cache/
