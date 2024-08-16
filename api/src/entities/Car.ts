@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
-import { Entity, Property, PrimaryKey, ManyToOne } from "@mikro-orm/core";
+import { Entity, Property, PrimaryKey, ManyToOne, type Rel } from "@mikro-orm/core";
 import { User } from "./User";
 
 @ObjectType()
@@ -17,7 +17,7 @@ export class Car {
 
   @ManyToOne(() => User)
   @Field(() => User)
-  user!: User;
+  user!: Rel<User>;
 
   @Field(() => String)
   @Property()

@@ -1,7 +1,7 @@
 import { IsLatitude, IsLongitude } from 'class-validator';
 import { User, UserRole } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, Resolver, Root, Subscription } from 'type-graphql';
-import { Context } from '../utils/context';
+import type { Context } from '../utils/context';
 import { BeeperLocationArgs, LocationInput } from './args';
 import { AnonymousBeeper } from '../beeper/resolver';
 import { getDistance } from '../utils/dist';

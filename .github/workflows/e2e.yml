@@ -31,8 +31,6 @@ jobs:
       run: pnpm exec playwright install --with-deps chromium
     - name: Start Docker services (PostgreSQL, Redis, and S3)
       run: docker compose up -d
-    - name: Build the api
-      run: pnpm build:api
     - name: Init the DB
       working-directory: ./api
       run: bun run --bun db:create

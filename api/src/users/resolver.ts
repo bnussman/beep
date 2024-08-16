@@ -3,8 +3,9 @@ import { Arg, Args, Authorized, Ctx, Field, Info, Mutation, ObjectType, Query, R
 import { deleteUser, isEduEmail, search } from './helpers';
 import { LoadStrategy, QueryOrder, wrap } from '@mikro-orm/core';
 import { PasswordType, User, UserRole } from '../entities/User';
-import { Context } from '../utils/context';
-import { GraphQLError, GraphQLResolveInfo } from 'graphql';
+import type { Context } from '../utils/context';
+import type { GraphQLResolveInfo } from 'graphql';
+import { GraphQLError } from 'graphql';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { sendNotification, sendNotificationsNew } from '../utils/notifications';
 import { ChangePasswordInput, EditUserInput, NotificationArgs } from './args';

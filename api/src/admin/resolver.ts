@@ -2,7 +2,7 @@ import Redis from "ioredis";
 import { User, UserRole } from "../entities/User";
 import { REDIS_HOST, REDIS_PASSWROD } from "../utils/constants";
 import { Authorized, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
-import { Context } from "../utils/context";
+import type { Context } from "../utils/context";
 import { transporter } from "src/utils/mailer";
 import * as Sentry from '@sentry/bun';
 

@@ -1,4 +1,4 @@
-import { Entity, Filter, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, Filter, ManyToOne, PrimaryKey, Property, type Rel } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { Beep } from "./Beep";
 import { User } from "./User";
@@ -13,16 +13,16 @@ export class Report {
   id: string = crypto.randomUUID();
 
   @Field(() => User)
-  @ManyToOne()
-  reporter!: User;
+  @ManyToOne(() => User)
+  reporter!: Rel<User>;
 
   @Field(() => User)
-  @ManyToOne()
-  reported!: User;
+  @ManyToOne(() => User)
+  reported!: Rel<User>;
 
   @Field(() => User, { nullable: true })
   @ManyToOne(() => User, { nullable: true })
-  handledBy?: User | null;
+  handledBy?: Rel<User> | null;
 
   @Field(() => String)
   @Property()
@@ -41,10 +41,10 @@ export class Report {
   handled: boolean = false;
 
   @Field(() => Beep, { nullable: true })
-  @ManyToOne({ nullable: true })
-  beep?: Beep;
+  @ManyToOne(() => Beep, { nullable: true })
+  beep?: Rel<Beep>;
 
-  constructor(reporter: User, reported: User, reason: string, beep?: string) {
+  constructor(reporter: Rel<User>, reported: Rel<User>, reason: string, beep?: string) {
     this.reporter = reporter;
     this.reported = reported;
     this.reason = reason;

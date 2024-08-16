@@ -3,7 +3,7 @@ import { QueryOrder, raw } from '@mikro-orm/core';
 import { User } from '../entities/User';
 import { Arg, Args, Authorized, Ctx, Mutation, Query, Resolver, Root, Subscription } from 'type-graphql';
 import { GetBeepInput, GetBeepersArgs } from './args';
-import { Context } from '../utils/context';
+import type { Context } from '../utils/context';
 import { Beep, Status } from '../entities/Beep';
 import { Rating } from '../entities/Rating';
 import { getPositionInQueue, getQueueSize } from '../utils/dist';

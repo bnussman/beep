@@ -1,4 +1,4 @@
-import { Entity, Enum, Filter, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, Enum, Filter, ManyToOne, PrimaryKey, Property, type Rel } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 
@@ -48,13 +48,13 @@ export class Payment {
 
   @Field(() => User)
   @ManyToOne(() => User)
-  user!: User;
+  user!: Rel<User>;
 
   @Field(() => String)
   @Property()
   storeId!: string;
 
-  @Field(() => Product)
+  @Field(() => String)
   @Enum(() => Product)
   productId!: Product;
 
@@ -62,7 +62,7 @@ export class Payment {
   @Property({ columnType: "numeric" })
   price!: number;
 
-  @Field(() => Store)
+  @Field(() => String)
   @Enum(() => Store)
   store!: Store;
 

@@ -3,7 +3,7 @@ import { Beep, Status } from "../entities/Beep";
 import { QueryOrder } from "@mikro-orm/core";
 import { User, UserRole } from "../entities/User";
 import { MiddlewareFn } from "type-graphql";
-import { Context } from "./context";
+import type { Context } from "./context";
 
 export const MustBeInAcceptedBeep: MiddlewareFn<Context> = async ({ context, info, root }, next) => {
  /*  if (info.parentType.name !== "User") {

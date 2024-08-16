@@ -1,4 +1,4 @@
-import { Entity, Enum, Filter, Index, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, Enum, Filter, Index, ManyToOne, PrimaryKey, Property, type Rel } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./User";
 
@@ -44,12 +44,12 @@ export class Beep {
   @Field(() => User)
   @ManyToOne(() => User)
   @Index()
-  beeper!: User;
+  beeper!: Rel<User>;
 
   @Field(() => User)
   @ManyToOne(() => User)
   @Index()
-  rider!: User;
+  rider!: Rel<User>;
 
   @Field(() => String)
   @Property()
@@ -72,7 +72,7 @@ export class Beep {
   @Property({ type: 'datetime', nullable: true })
   end!: Date | null;
 
-  @Field(() => Status)
+  @Field(() => String)
   @Enum(() => Status)
   @Index()
   status: Status = Status.COMPLETE;

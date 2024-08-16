@@ -14,7 +14,7 @@ import {
 } from "type-graphql";
 import { LoginInput, ResetPasswordInput, SignUpInput } from "./args";
 import { Token } from "../entities/Token";
-import { Context } from "../utils/context";
+import type { Context } from "../utils/context";
 import { s3 } from "../utils/s3";
 import { password as bunPassword } from "bun";
 import { S3_BUCKET_URL, isDevelopment } from "../utils/constants";

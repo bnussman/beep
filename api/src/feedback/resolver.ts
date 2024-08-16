@@ -1,6 +1,6 @@
 import { UserRole } from "../entities/User";
 import { Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from "type-graphql";
-import { Context } from "../utils/context";
+import type { Context } from "../utils/context";
 import { Paginated, PaginationArgs } from "../utils/pagination";
 import { Feedback } from "../entities/Feedback";
 import { FeedbackArgs } from "./args";

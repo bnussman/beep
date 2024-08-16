@@ -1,4 +1,4 @@
-import { Entity, Filter, ManyToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
+import { Entity, Filter, ManyToOne, PrimaryKey, Property, type Rel, Unique } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { Beep } from "./Beep";
 import { User } from "./User";
@@ -17,11 +17,11 @@ export class Rating {
 
     @Field(() => User)
     @ManyToOne(() => User)
-    rater!: User;
+    rater!: Rel<User>;
 
     @Field(() => User)
     @ManyToOne(() => User)
-    rated!: User;
+    rated!: Rel<User>;
 
     @Field(() => Number)
     @Property()
@@ -37,9 +37,9 @@ export class Rating {
 
     @Field(() => Beep)
     @ManyToOne(() => Beep)
-    beep!: Beep;
+    beep!: Rel<Beep>;
 
-    constructor(rater: User, rated: User, stars: number, beep: Beep, message?: string) {
+    constructor(rater: Rel<User>, rated: Rel<User>, stars: number, beep: Rel<Beep>, message?: string) {
         this.rater = rater;
         this.rated = rated;
         this.stars = stars;

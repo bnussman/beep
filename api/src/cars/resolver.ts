@@ -1,5 +1,5 @@
 import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
-import { Context } from '../utils/context';
+import type { Context } from '../utils/context';
 import { Car } from '../entities/Car';
 import { Paginated, PaginationArgs } from '../utils/pagination';
 import { QueryOrder, wrap } from '@mikro-orm/core';

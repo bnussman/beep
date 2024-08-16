@@ -69,7 +69,7 @@ export class User {
   @Authorized(UserRole.ADMIN)
   password!: string;
 
-  @Field(() => PasswordType)
+  @Field(() => String)
   @Enum({ items: () => PasswordType, default: 'sha256', lazy: true })
   @Authorized(UserRole.ADMIN)
   passwordType!: PasswordType;
@@ -106,7 +106,7 @@ export class User {
   @Property({ columnType: 'numeric', nullable: true })
   rating?: number;
 
-  @Field(() => UserRole)
+  @Field(() => String)
   @Enum(() => UserRole)
   role: UserRole = UserRole.USER;
 

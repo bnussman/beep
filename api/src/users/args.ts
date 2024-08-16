@@ -99,7 +99,7 @@ export class EditUserInput implements Partial<User> {
   @Authorized(UserRole.ADMIN)
   public queueSize?: number;
 
-  @Field(() => UserRole, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @Authorized(UserRole.ADMIN)
   public role?: UserRole;

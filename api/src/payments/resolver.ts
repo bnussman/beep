@@ -1,5 +1,5 @@
 import { Arg, Args, Authorized, Ctx, Mutation, ObjectType, Query, Resolver } from "type-graphql";
-import { Context } from "../utils/context";
+import type { Context } from "../utils/context";
 import { Paginated, PaginationArgs } from "../utils/pagination";
 import { QueryOrder } from "@mikro-orm/core";
 import { Payment, Product, Store, productExpireTimes, productPrice } from '../entities/Payments';

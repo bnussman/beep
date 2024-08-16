@@ -3,7 +3,7 @@ import { sendNotification } from '../utils/notifications';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { Beep, Status } from '../entities/Beep';
 import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, Query, Resolver, Root, Subscription } from 'type-graphql';
-import { Context } from '../utils/context';
+import type { Context } from '../utils/context';
 import { BeeperSettingsInput, UpdateQueueEntryInput } from './args';
 import { User } from '../entities/User';
 import { Point } from '../location/resolver';
