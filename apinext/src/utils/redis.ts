@@ -1,14 +1,15 @@
-import Redis from 'ioredis';
+import { createClient } from 'redis';
 import { REDIS_HOST, REDIS_PASSWROD } from './constants';
 
-export const redisPublisher = new Redis({
-  host: REDIS_HOST,
+export const redis = createClient({
+  url: `redis://${REDIS_HOST}`,
   password: REDIS_PASSWROD,
-  lazyConnect: true,
 });
 
-export const redisSubscriber = new Redis({
-  host: REDIS_HOST,
-  password: REDIS_PASSWROD,
-  lazyConnect: true,
-});
+await redis.connect();
+
+export const redisSubscriber = redis.duplicate();
+
+redisSubscriber.on('error', err => console.error(err));
+
+await redisSubscriber.connect();

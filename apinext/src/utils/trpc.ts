@@ -18,7 +18,7 @@ const t = initTRPC.context<Context>().create();
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
-export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
+export const authedProcedure = t.procedure.use(function isAuthed(opts) {
   const { ctx } = opts;
 
   if (!ctx.user || !ctx.token) {
