@@ -102,9 +102,6 @@ importers:
       postgres:
         specifier: ^3.4.4
         version: 3.4.4
-      trpc-bun-adapter:
-        specifier: ^1.1.2
-        version: 1.1.2(@trpc/server@11.0.0-rc.477)
     devDependencies:
       '@types/cors':
         specifier: ^2.8.17
@@ -8327,11 +8324,6 @@ packages:
   treeverse@3.0.0:
     resolution: {integrity: sha512-gcANaAnd2QDZFmHFEOF4k7uc1J/6a6z3DJMd/QwEyxLoKGiptJRwid582r7QIsFlFMIZ3SnxfS52S4hm2DHkuQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-
-  trpc-bun-adapter@1.1.2:
-    resolution: {integrity: sha512-Tu2YU1bTxrO1E8jkX5tJw2CyL5HqBd/7GtOyXAxjartfaMPuiXOTqdtL2zf/NNgI4AyaWauvuxxXYQa0LMcP0Q==}
-    peerDependencies:
-      '@trpc/server': ^11.0.0-rc.477
 
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
@@ -18233,10 +18225,6 @@ snapshots:
   tree-kill@1.2.2: {}
 
   treeverse@3.0.0: {}
-
-  trpc-bun-adapter@1.1.2(@trpc/server@11.0.0-rc.477):
-    dependencies:
-      '@trpc/server': 11.0.0-rc.477
 
   ts-interface-checker@0.1.13: {}
 
