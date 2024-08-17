@@ -23,7 +23,6 @@ export const geography = (
       return `point(${value.latitude} ${value.longitude})`;
     },
     fromDriver(value) {
-      console.log("Database Location Value", value)
       if (!value) {
         return null;
       }

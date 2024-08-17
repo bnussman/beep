@@ -20,13 +20,13 @@ export function Beep() {
   const { user, loading } = useUser();
 
   // Test Query
-  const data = trpc.me.useQuery();
+  const data = trpc.user.me.useQuery();
 
  // Test Subscription
-  trpc.updates.useSubscription(undefined, { onData: console.log })
+  trpc.user.updates.useSubscription(undefined, { onData: console.log })
 
   // Test Mutation
-  const { mutateAsync } = trpc.update.useMutation();
+  const { mutateAsync } = trpc.user.update.useMutation();
 
   // trpcClient.me.query()
 
