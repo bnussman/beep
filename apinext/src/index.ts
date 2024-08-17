@@ -34,7 +34,7 @@ const appRouter = router({
       // trigger `onAdd()` when `add` is triggered in our event emitter
       const listener = (message: string) => onUserUpdate(message);
       redisSubscriber.subscribe(`user-${ctx.user.id}`, listener);
-      // (async () => emit.next(ctx.user))();
+      (async () => emit.next(ctx.user))();
       // unsubscribe function when client disconnects or stops subscribing
       return () => {
         redisSubscriber.unsubscribe(`user-${ctx.user.id}`, listener);
