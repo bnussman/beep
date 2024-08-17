@@ -4,7 +4,8 @@
   "description": "tRPC for Ride Beep App",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "typecheck": "tsc"
   },
   "keywords": [
     "trpc"

@@ -3,7 +3,7 @@ import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
 import { token } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { CreateBunContextOptions } from 'trpc-bun-adapter';
+import { CreateBunContextOptions, CreateBunWSSContextFnOptions } from 'trpc-bun-adapter';
  
 /**
  * Initialization of tRPC backend
@@ -28,9 +28,18 @@ export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
   return opts.next({ ctx });
 });
 
+function isWebsocketContext(context: FetchCreateContextFnOptions | CreateBunWSSContextFnOptions): context is CreateBunWSSContextFnOptions {
+  return context.info;
+}
+
 export async function createContext(data: CreateBunContextOptions) {
-  console.log("GOT CONNECTION PARAMS!!!", data.info)
-  const bearerToken = data.req?.headers.get('authorization')?.split(' ')[1]
+
+  const isWebsocket = Boolean(data.info);
+
+
+  const bearerToken = data.req.url.includes('subscription') ? data.info?.connectionParams?.token : data.req?.headers.get('authorization')?.split(' ')[1]
+
+  console.log(isWebsocket ? "WS Context" : "HTTP Context", data)
 
   if (!bearerToken) {
     return {};

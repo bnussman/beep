@@ -9,7 +9,7 @@ export const trpc = createTRPCReact<AppRouter>();
 export const queryClient = new QueryClient();
 
 const wsClient = createWSClient({
-  url: 'ws://localhost:3001/trpc',
+  url: 'ws://localhost:3001/subscriptions',
   lazy: {
     enabled: true,
     closeMs: 0,

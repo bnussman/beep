@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER } from './src/constants';
+import { DB_CA, DB_DATABASE, DB_PASSWORD, DB_URL, DB_USER } from "./src/utils/constants";
 
 export default defineConfig({
 	schema: 'src/schema.ts',

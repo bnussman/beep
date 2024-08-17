@@ -5,7 +5,7 @@ import { observable } from '@trpc/server/observable';
 import { db } from './utils/db';
 import { user } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { createBunWSHandler } from 'trpc-bun-adapter';
+import { createBunHttpHandler, createBunWSHandler } from 'trpc-bun-adapter';
 
 type User = typeof user.$inferSelect;
 
@@ -66,10 +66,26 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization"
 };
 
-const websocket = createBunWSHandler({
+const websocket = createBunWSHandler<AppRouter>({
   router,
   createContext,
   onError: console.error,
+});
+
+const bunHandler = createBunHttpHandler<AppRouter>({
+    router: appRouter,
+    endpoint: '/trpc',
+    createContext,
+    onError: console.error,
+    responseMeta(opts) {
+        return {
+          headers: CORS_HEADERS,
+        }
+    },
+    batching: {
+        enabled: true,
+    },
+    emitWsUpgrades: false, // pass true to upgrade to WebSocket
 });
 
 Bun.serve({
@@ -78,19 +94,22 @@ Bun.serve({
     if (request.method === "OPTIONS") {
       return new Response("All good!", { headers: CORS_HEADERS });
     }
-    if (server.upgrade(request, {data: {req: request}})) {
-      return;
+    if (request.url.includes('subscriptions')) {
+      if (server.upgrade(request, {data: {req: request}})) {
+        return;
+      }
     }
-    return fetchRequestHandler({
-      onError: console.error,
-      endpoint: '/trpc',
-      req: request,
-      router: appRouter,
-      responseMeta(opts) {
-        return { headers: CORS_HEADERS }
-      },
-      createContext,
-    });
+    // return fetchRequestHandler({
+    //   onError: console.error,
+    //   endpoint: '/trpc',
+    //   req: request,
+    //   router: appRouter,
+    //   responseMeta(opts) {
+    //     return { headers: CORS_HEADERS }
+    //   },
+    //   createContext,
+    // });
+    return bunHandler(request, server) ?? new Response("Not found", {status: 404});
   },
   websocket
 })
