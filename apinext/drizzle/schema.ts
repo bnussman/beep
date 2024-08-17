@@ -3,6 +3,7 @@ import { relations } from "drizzle-orm/relations";
 import type { CustomTypeValues } from "drizzle-orm/pg-core";
 import { customType } from "drizzle-orm/pg-core";
 import type { Point } from "geojson";
+import { Geometry } from "wkx";
 
 export const geography = (
   dbName: string,
@@ -22,12 +23,22 @@ export const geography = (
       return `point(${value.latitude} ${value.longitude})`;
     },
     fromDriver(value) {
-      console.log("here", value)
-      const point = value as Point | null;
-      if (!point) {
+      console.log("Database Location Value", value)
+      if (!value) {
         return null;
       }
-      return { latitude: point.coordinates[0], longitude: point.coordinates[1] };
+
+      if (typeof value === 'object') {
+        const point = value as Point;
+        return { latitude: point.coordinates[0], longitude: point.coordinates[1] };
+      }
+
+      // @ts-expect-error YOUR TYPES ARE SO BAD WHAT ARE YOU DOING??
+      const { coordinates } = (value as string).charAt(0) == 'P' ?
+          Geometry.parse(value as string).toGeoJSON() :
+          Geometry.parse(Buffer.from(value as string, 'hex')).toGeoJSON();
+
+      return { latitude: coordinates[0], longitude: coordinates[1] };
     },
   })(dbName, fieldConfig);
 };

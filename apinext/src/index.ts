@@ -1,14 +1,13 @@
 import { authedProcedure, createContext, router } from './utils/trpc';
-import { redis } from './utils/redis';
+import { redisPublisher, redisSubscriber } from './utils/redis';
 import { observable } from '@trpc/server/observable';
 import { db } from './utils/db';
 import { user } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { createBunServeHandler } from 'trpc-bun-adapter';
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
+import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import ws from 'ws';
 import cors from 'cors';
-import { applyWSSHandler } from '@trpc/server/adapters/ws';
 
 type User = typeof user.$inferSelect;
 
@@ -18,25 +17,25 @@ const appRouter = router({
   }),
   update: authedProcedure.mutation(async ({ ctx }) => {
     const u = await db.update(user).set({ location: { latitude: 5, longitude: 5 } }).where(eq(user.id, ctx.user.id)).returning();
-    redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]))
+    redisPublisher.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]))
     return u[0];
   }),
   updates: authedProcedure.subscription(({ ctx }) => {
-    console.log("Subscription context", ctx);
     // return an `observable` with a callback which is triggered immediately
     return observable<User>((emit) => {
-      const onUserUpdate = (data: string) => {
+      const onUserUpdate = (message: string) => {
         // emit data to client
-        emit.next(JSON.parse(data));
+        console.log(message);
+        emit.next(JSON.parse(message));
       };
       // trigger `onAdd()` when `add` is triggered in our event emitter
-      redis.subscribe(`user-${ctx.user.id}`);
-      redis.on("message", onUserUpdate);
+      redisSubscriber.subscribe(`user-${ctx.user.id}`);
+      redisSubscriber.on("message", (channel, message) => onUserUpdate(message));
       (() => emit.next(ctx.user))();
       // unsubscribe function when client disconnects or stops subscribing
       return () => {
-        redis.off("message", onUserUpdate);
-        redis.unsubscribe(`user-${ctx.user.id}`);
+        redisSubscriber.off("message", onUserUpdate);
+        redisSubscriber.unsubscribe(`user-${ctx.user.id}`);
       };
     });
   }),
@@ -66,6 +65,6 @@ applyWSSHandler<AppRouter>({
 
 setInterval(() => {
   console.log('Connected clients', wss.clients.size);
-}, 1000);
+}, 10_000);
 
 httpServer.listen(3001);

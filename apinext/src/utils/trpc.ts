@@ -31,8 +31,6 @@ export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
 export async function createContext(data: CreateHTTPContextOptions | CreateWSSContextFnOptions) {
   const bearerToken = data.req?.headers.authorization?.split(' ')[1] ?? data.info?.connectionParams?.token;
 
-  console.log("Context Data", data.req.url, data?.info?.connectionParams)
-
   if (!bearerToken) {
     return {};
   }
