@@ -14,4 +14,4 @@ const queryClient = postgres(DB_URL, {
   }),
 });
 
-export const db = drizzle(queryClient, { schema, logger: true });
+export const db = drizzle(queryClient, { schema, logger: false });
