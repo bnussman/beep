@@ -5,6 +5,10 @@ import { db } from './utils/db';
 import { user } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { createBunServeHandler } from 'trpc-bun-adapter';
+import { createHTTPServer } from '@trpc/server/adapters/standalone';
+import ws from 'ws';
+import cors from 'cors';
+import { applyWSSHandler } from '@trpc/server/adapters/ws';
 
 type User = typeof user.$inferSelect;
 
@@ -46,21 +50,22 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization"
 };
 
-Bun.serve(
-  createBunServeHandler<AppRouter>(
-    {
-      responseMeta() {
-        return {
-          status: 200,
-          headers: CORS_HEADERS
-        };
-      },
-      createContext,
-      endpoint: "/trpc",
-      router: appRouter,
-    },
-    {
-      port: 3001,
-    },
-  )
-);
+const httpServer = createHTTPServer({
+  middleware: cors(),
+  router: appRouter,
+  createContext,
+});
+
+const wss = new ws.Server({ server: httpServer });
+
+applyWSSHandler<AppRouter>({
+  wss,
+  router: appRouter,
+  createContext,
+});
+
+setInterval(() => {
+  console.log('Connected clients', wss.clients.size);
+}, 1000);
+
+httpServer.listen(3001);

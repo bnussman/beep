@@ -29,7 +29,7 @@ export const trpcClient = trpc.createClient({
         client: wsClient
       }),
       false: httpLink({
-        url: 'http://localhost:3001/trpc',
+        url: 'http://localhost:3001',
         headers() {
           const token = getAuthToken();
 
