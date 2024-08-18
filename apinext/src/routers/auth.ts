@@ -1,7 +1,7 @@
 import { authedProcedure, publicProcedure, router } from "../utils/trpc";
 import { z } from 'zod';
 import { db } from "../utils/db";
-import { token, user, verify_email } from "../../drizzle/schema";
+import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
 import { eq, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
@@ -185,4 +185,80 @@ export const authRouter = router({
         await db.update(user).set({ pushToken: null }).where(eq(user.id, ctx.user.id));
       }
     }),
+  forgotPassword: publicProcedure
+    .input(
+      z.object({
+        email: z.string()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const u = await db.query.user.findFirst({
+        where: eq(user.email, input.email)
+      });
+
+      if (!u) {
+        return input.email;
+      }
+
+      const existingForgotPassword = await db
+        .query
+        .forgot_password
+        .findFirst({
+          where: eq(forgot_password.user_id, u.id),
+        });
+
+      if (existingForgotPassword) {
+        if (existingForgotPassword.time.getTime() + 18000 * 1000 < Date.now()) {
+          // The user's existing forgot password request has expired.'
+          // We will delete it, and proceed with creating a new one.
+          await db.delete(forgot_password).where(eq(forgot_password.id, existingForgotPassword.id));
+        } else {
+          // The user has an existing forgot password link that is still valid.
+          // Keep the same entry in the database, just resend the email.
+          const mailOptions: SendMailOptions = {
+            from: 'Beep App <banks@ridebeep.app>',
+            to: u.email,
+            subject: 'Change your Beep App password',
+            html: `Hey ${u.username}, <br><br>
+                    Head to ${WEB_BASE_URL}/password/reset/${existingForgotPassword.id} to reset your password. This link will expire in 5 hours. <br><br>
+                    - Beep App Team
+                `
+          };
+
+          try {
+            await email.sendMail(mailOptions);
+          } catch (error) {
+            Sentry.captureException(error);
+          }
+
+          return u.email;
+        }
+      }
+
+      const forgotPasswordValues = {
+        id: crypto.randomUUID(),
+        time: new Date(),
+        user_id: u.id,
+      };
+
+      await db.insert(forgot_password).values(forgotPasswordValues);
+
+      const mailOptions: SendMailOptions = {
+        from: 'Beep App <banks@ridebeep.app>',
+        to: u.email,
+        subject: 'Change your Beep App password',
+        html: `Hey ${u.username}, <br><br>
+                Head to ${WEB_BASE_URL}/password/reset/${forgotPasswordValues.id} to reset your password. This link will expire in 5 hours. <br><br>
+                - Beep App Team
+            `
+      };
+
+      try {
+        await email.sendMail(mailOptions);
+      } catch (error) {
+        Sentry.captureException(error);
+      }
+
+      return u.email;
+    })
 });

@@ -1,19 +1,12 @@
-import React, { FormEvent, useState } from 'react';
-import { useMutation } from '@apollo/client';
+import React, {  } from 'react';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
-import { Button, Center, Container, FormControl, FormHelperText, FormLabel, Heading, Input } from '@chakra-ui/react';
-import { EmailIcon } from '@chakra-ui/icons';
+import { Text, Button, Center, Code, Container, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 import { createRoute } from '@tanstack/react-router';
-import { graphql } from 'gql.tada';
 import { rootRoute } from '../utils/router';
-
-const ForgotPasswordGraphQL = graphql(`
-  mutation ForgotPassword($email: String!) {
-    forgotPassword(email: $email)
-  }
-`);
+import { RouterInput, trpc } from '../utils/trpc';
+import { useForm } from 'react-hook-form';
 
 export const forgotPasswordRoute = createRoute({
   component: ForgotPassword,
@@ -22,21 +15,24 @@ export const forgotPasswordRoute = createRoute({
 });
 
 export function ForgotPassword() {
-  const [forgot, { data, loading, error }] = useMutation(ForgotPasswordGraphQL);
-  const [email, setEmail] = useState("");
+  const {
+    mutateAsync: sendForgotPasswordEmail,
+    data,
+    isPending,
+    error
+  } = trpc.auth.forgotPassword.useMutation();
 
-  async function handleForgotPassword(e: FormEvent): Promise<void> {
-    e.preventDefault();
-    try {
-      await forgot({
-        variables: {
-          email: email
-        }
-      });
+  const form = useForm({
+    defaultValues: {
+      email: '',
     }
-    catch (error) {
-    }
-  }
+  });
+
+  const onSubmit = async (values: RouterInput['auth']['forgotPassword']) => {
+    await sendForgotPasswordEmail(values);
+
+    form.reset();
+  };
 
   return (
     <Container maxW="container.sm" p={[0]}>
@@ -44,26 +40,31 @@ export function ForgotPassword() {
         <Center pb={4}>
           <Heading>Forgot Password</Heading>
         </Center>
-        {error && <Error error={error} />}
-        {data?.forgotPassword && <Success message="Successfully sent password reset email" />}
-        <form onSubmit={handleForgotPassword}>
+        {error && <Error>{error.message}</Error>}
+        {data && (
+          <Success>
+            <Text>If an account with the email <Code>{data}</Code> exists, you will see an email in your inbox with a link to reset your password.</Text>
+          </Success>
+        )}
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormControl>
             <FormLabel>Email address</FormLabel>
             <Input
               type="email"
+              required
+              {...form.register('email', {
+                required: 'This is required',
+              })}
               placeholder="example@ridebeep.app"
-              onChange={(value: any) => setEmail(value.target.value)}
-              isDisabled={data?.forgotPassword}
             />
             <FormHelperText>We'll send you an email with a link to reset your password.</FormHelperText>
+            <FormErrorMessage>{form.formState.errors.email?.message}</FormErrorMessage>
           </FormControl>
           <Button
             w="full"
             mt={4}
             type="submit"
-            rightIcon={<EmailIcon />}
-            isLoading={loading}
-            isDisabled={data?.forgotPassword || !email}
+            isLoading={isPending}
           >
             Send Reset Password Email
           </Button>

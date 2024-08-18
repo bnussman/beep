@@ -94,7 +94,7 @@ export const payment = pgTable("payment", {
 export const forgot_password = pgTable("forgot_password", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	user_id: varchar("user_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
-	time: timestamp("time", { withTimezone: true, mode: 'string' }).notNull(),
+	time: timestamp("time", { withTimezone: true, mode: 'date' }).notNull(),
 });
 
 export const feedback = pgTable("feedback", {
