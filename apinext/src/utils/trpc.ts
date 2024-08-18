@@ -32,7 +32,6 @@ export async function createContext(data: CreateHTTPContextOptions | CreateWSSCo
   const bearerToken = data.req?.headers.authorization?.split(' ')[1] ?? data.info?.connectionParams?.token;
 
   if (!bearerToken) {
-    console.log("hello????")
     return {};
   }
 
