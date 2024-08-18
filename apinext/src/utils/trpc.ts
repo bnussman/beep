@@ -7,7 +7,6 @@ import { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
 import { ZodError } from 'zod';
 import * as Sentry from '@sentry/bun';
 
- 
 /**
  * Initialization of tRPC backend
  * Should be done only once per backend!
@@ -60,11 +59,13 @@ export async function createContext(data: CreateHTTPContextOptions | CreateWSSCo
   const session = await db.query.token.findFirst({
     where: eq(token.id, bearerToken),
     with: { user: true }
-  })
+  });
 
   if (!session) {
     return {};
   }
+
+  Sentry.setUser(session.user);
 
   return { user: session.user, token: session };
 }
