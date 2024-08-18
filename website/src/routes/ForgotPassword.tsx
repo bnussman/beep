@@ -1,7 +1,7 @@
 import React, {  } from 'react';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
-import { Text, Button, Center, Code, Container, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input } from '@chakra-ui/react';
+import { Text, Button, Center, Code, Container, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Box } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 import { createRoute } from '@tanstack/react-router';
 import { rootRoute } from '../utils/router';
@@ -43,7 +43,7 @@ export function ForgotPassword() {
         {error && <Error>{error.message}</Error>}
         {data && (
           <Success>
-            <Text>If an account with the email <Code>{data}</Code> exists, you will see an email in your inbox with a link to reset your password.</Text>
+            <Text>Done! If an account with the email <Code>{data}</Code> exists, you will recieve an email with a link to reset your password.</Text>
           </Success>
         )}
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -55,19 +55,20 @@ export function ForgotPassword() {
               {...form.register('email', {
                 required: 'This is required',
               })}
-              placeholder="example@ridebeep.app"
             />
             <FormHelperText>We'll send you an email with a link to reset your password.</FormHelperText>
             <FormErrorMessage>{form.formState.errors.email?.message}</FormErrorMessage>
           </FormControl>
+          <Box display="flex" justifyContent="flex-end">
           <Button
-            w="full"
             mt={4}
             type="submit"
             isLoading={isPending}
+            colorScheme="blue"
           >
             Send Reset Password Email
           </Button>
+          </Box>
         </form>
       </Card>
     </Container>

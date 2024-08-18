@@ -260,5 +260,51 @@ export const authRouter = router({
       }
 
       return u.email;
+    }),
+  resetPassword: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        password: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const forgotPassword = await db
+        .query
+        .forgot_password
+        .findFirst({
+          where: eq(forgot_password.id, input.id)
+        });
+
+      if (!forgotPassword) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Password reset request not found."
+        });
+      }
+
+      if (forgotPassword.time.getTime() + 18000 * 1000 < Date.now()) {
+        await db.delete(forgot_password).where(eq(forgot_password.id, forgotPassword.id));
+
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "This password reset request has expired."
+        });
+      }
+
+      await db
+        .update(user)
+        .set({
+          password: await bunPassword.hash(input.password, "bcrypt"),
+          passwordType: "bcrypt"
+        })
+        .where(eq(user.id, forgotPassword.user_id));
+
+      await db.delete(forgot_password).where(eq(forgot_password.id, forgotPassword.id));
+
+      // Remove all of the user's auth tokens because they have a new password.
+      await db.delete(token).where(eq(token.user_id, forgotPassword.user_id))
+
+      return true;
     })
 });
