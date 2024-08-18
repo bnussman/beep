@@ -4,6 +4,7 @@ import { user } from '../../drizzle/schema';
 import { redis, redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
@@ -32,4 +33,24 @@ export const userRouter = router({
       };
     });
   }),
+  edit: authedProcedure
+    .input(
+      z.object({
+        first: z.string(),
+        last: z.string(),
+        email: z.string().endsWith('.edu', 'Email must end with .edu'),
+        phone: z.string(),
+        venmo: z.string(),
+        cashapp: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const u = await db
+        .update(user)
+        .set(input)
+        .where(eq(user.id, ctx.user.id))
+        .returning();
+
+      return u[0];
+    })
 })

@@ -11,3 +11,13 @@ export const DB_CA = process.env.DB_CA;
 export const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 
 export const REDIS_PASSWROD = process.env.REDIS_PASSWORD;
+
+export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID ?? "beep";
+
+export const S3_ACCESS_KEY_SECRET = process.env.S3_ACCESS_KEY_SECRET ?? "beepbeepbeep";
+
+export const S3_ENDPOINT = process.env.S3_ENDPOINT ?? "localhost";
+
+export const isLocalS3 = S3_ACCESS_KEY_SECRET === "beepbeepbeep";
+
+export const S3_BUCKET_URL = isLocalS3 ? "http://localhost:9000/beep/" : "https://beep.us-east-1.linodeobjects.com/";

@@ -87,6 +87,9 @@ importers:
 
   apinext:
     dependencies:
+      '@capgo/s3-lite-client':
+        specifier: ^0.1.8
+        version: 0.1.8
       '@trpc/server':
         specifier: 11.0.0-rc.477
         version: 11.0.0-rc.477

@@ -2,7 +2,11 @@ import { QueryClient } from '@tanstack/react-query';
 import { createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
 import type { AppRouter } from '../../../apinext';
+import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { getAuthToken } from './apollo';
+
+export type RouterInput = inferRouterInputs<AppRouter>;
+export type RouterOutput = inferRouterOutputs<AppRouter>;
 
 export const trpc = createTRPCReact<AppRouter>();
 

@@ -1,13 +1,10 @@
 import React, { useMemo } from 'react';
-import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
-import { client } from '../utils/apollo';
 import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from "react-hook-form";
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
-import { VariablesOf, graphql } from 'gql.tada';
 import { rootRoute } from '../utils/router';
 import {
   Link as ChakraLink,
@@ -33,100 +30,67 @@ import {
 } from '@chakra-ui/react';
 import { trpc } from '../utils/trpc';
 
-const SignUpGraphQL = graphql(`
-  mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: File) {
-    signup(
-      input: {
-        first: $first,
-        last: $last,
-        email: $email,
-        phone: $phone,
-        venmo: $venmo,
-        cashapp: $cashapp,
-        username: $username,
-        password: $password,
-        picture: $picture
-    }) {
-      tokens {
-        id
-        tokenid
-      }
-      user {
-        id
-        name
-        first
-        last
-        email
-        phone
-        venmo
-        isBeeping
-        isEmailVerified
-        isStudent
-        groupRate
-        singlesRate
-        photo
-        capacity
-        username
-        role
-        cashapp
-        queueSize
-      }
-    }
-  }
-`);
-
-type Values = VariablesOf<typeof SignUpGraphQL> & { picture: any };
-
 export const signupRoute = createRoute({
   component: SignUp,
   path: "/signup",
   getParentRoute: () => rootRoute,
 });
 
+interface SignUpFormValues {
+  first: string;
+  last: string;
+  username: string;
+  password: string;
+  email: string;
+  venmo: string;
+  phone: string;
+  photo: FileList;
+}
 
 export function SignUp() {
   const navigate = useNavigate();
   const avatarSize = useBreakpointValue({ base: 'xl', md: '2xl' });
 
-  const [signup, { error, loading }] = useMutation(SignUpGraphQL, {
-    context: {
-      headers: {
-        'apollo-require-preflight': true,
-      },
-    },
-  });
+  const { mutateAsync: signup, error, isPending } = trpc.auth.signup.useMutation();
 
   const {
     handleSubmit,
     register,
     watch,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<Values>({ mode: "onChange" });
+  } = useForm<SignUpFormValues>({ mode: "onChange" });
 
   const utils = trpc.useUtils();
 
-  const picture = watch("picture");
+  const photo = watch("photo");
 
-  const validationErrors = useValidationErrors<Values>(error);
+  const validationErrors = useValidationErrors<SignUpFormValues>(error ?? undefined);
 
-  const onSubmit = handleSubmit(async (variables) => {
-    const { data } = await signup({
-      variables: { ...variables, picture: variables.picture[0] }
-    });
+  const onSubmit = handleSubmit(async (variables, e) => {
+    const formData = new FormData();
+    for (const key in variables) {
+      if (key === 'photo') {
+        formData.set(key, (variables[key as keyof typeof variables] as FileList)[0]);
+
+      } else {
+        formData.set(key, variables[key as keyof typeof variables] as string);
+      }
+    }
+
+    const data = await signup(formData);
 
     if (data) {
-      localStorage.setItem('user', JSON.stringify(data?.signup));
+      localStorage.setItem('user', JSON.stringify(data));
 
-      // @ts-expect-error transition to tRPC
-      utils.user.me.setData(undefined, data.signup.user);
+      utils.user.me.setData(undefined, data.user);
 
       navigate({ to: '/' });
     }
   });
 
   const Image = useMemo(() => (
-    <Avatar size={avatarSize} src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} cursor="pointer" />
-  ), [picture, avatarSize]);
+    <Avatar size={avatarSize} src={photo?.[0] ? URL.createObjectURL(photo?.[0]) : undefined} cursor="pointer" />
+  ), [photo, avatarSize]);
 
   return (
     <Container maxW="container.sm" p={[0]}>
@@ -134,7 +98,7 @@ export function SignUp() {
         <Center pb={8}>
           <Heading>Sign Up</Heading>
         </Center>
-        {error && !validationErrors ? <Error error={error} /> : null}
+        {error && !validationErrors && <Error>{error.message}</Error>}
         <Alert mb={4} status="info">
           <AlertIcon />
           <Text>
@@ -179,22 +143,22 @@ export function SignUp() {
               </Stack>
               <Spacer />
               <Box>
-                <FormControl isInvalid={Boolean(errors.picture) || Boolean(validationErrors?.picture)}>
-                  <FormLabel htmlFor="picture">
+                <FormControl isInvalid={Boolean(errors.photo) || Boolean(validationErrors?.photo)}>
+                  <FormLabel htmlFor="photo">
                     {Image}
                   </FormLabel>
                   <Input
                     hidden
                     variant="unstyled"
-                    id="picture"
+                    id="photo"
                     type="file"
-                    {...register('picture', {
+                    {...register('photo', {
                       required: 'This is required',
                     })}
                   />
                   <FormErrorMessage>
-                    {errors.picture && errors.picture.message as unknown as string}
-                    {validationErrors?.picture && validationErrors?.picture[0]}
+                    {errors.photo && errors.photo.message as unknown as string}
+                    {validationErrors?.photo && validationErrors?.photo[0]}
                   </FormErrorMessage>
                 </FormControl>
               </Box>
@@ -267,7 +231,7 @@ export function SignUp() {
                 {validationErrors?.password && validationErrors?.password[0]}
               </FormErrorMessage>
             </FormControl>
-            <Button type="submit" isLoading={loading}>
+            <Button type="submit" isLoading={isPending}>
               Sign Up
             </Button>
           </Stack>

@@ -5,6 +5,8 @@ import { token, user } from "../../drizzle/schema";
 import { eq, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
+import { s3 } from "../utils/s3";
+import { S3_BUCKET_URL } from "../utils/constants";
 
 export const authRouter = router({
   login: publicProcedure
@@ -72,20 +74,52 @@ export const authRouter = router({
       return { user: u, tokens };
     }),
   signup: publicProcedure
-    .input(
-      z.object({
-        first: z.string(),
-        last: z.string(),
-        email: z.string(),
-        username: z.string(),
-        password: z.string(),
-        phone: z.string(),
-        venmo: z.string().optional(),
-        cashapp: z.string().optional(),
-      })
-    )
-    .mutation(async () => {
+    .input(z.instanceof(FormData))
+    .mutation(async ({ input: formData }) => {
+      const object = {} as Record<string, unknown>;
 
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          object[key] = value;
+        } else {
+          object[key] = value;
+        }
+      }
+
+      const userId = crypto.randomUUID();
+
+      const input = signupSchema.parse(object);
+
+      const extention = input.photo.name.substring(
+        input.photo.name.lastIndexOf("."),
+        input.photo.name.length,
+      );
+
+      const objectKey = `images/${userId}-${Date.now()}${extention}`;
+
+      await s3.putObject(objectKey, input.photo.stream(), {
+        metadata: { "x-amz-acl": "public-read" },
+      });
+
+      const password = await bunPassword.hash(input.password, "bcrypt");
+
+      const u = await db.insert(user).values({
+        id: userId,
+        ...input,
+        password,
+        passwordType: 'bcrypt',
+        photo: S3_BUCKET_URL + objectKey,
+      }).returning();
+
+      const tokens = {
+        id: crypto.randomUUID(),
+        tokenid: crypto.randomUUID(),
+        user_id: userId,
+      };
+
+      await db.insert(token).values(tokens);
+
+      return { user: u[0], tokens };
     }),
   logout: authedProcedure
     .input(
@@ -98,4 +132,17 @@ export const authRouter = router({
         await db.update(user).set({ pushToken: null }).where(eq(user.id, ctx.user.id));
       }
     }),
+});
+
+const signupSchema = z.object({
+  first: z.string(),
+  last: z.string(),
+  username: z.string(),
+  password: z.string(),
+  email: z.string().email().endsWith('.edu', 'Email must end with .edu'),
+  phone: z.string(),
+  venmo: z.string().optional(),
+  cashapp: z.string().optional(),
+  pushToken: z.string().optional(),
+  photo: z.instanceof(File),
 });

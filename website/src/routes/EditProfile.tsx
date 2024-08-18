@@ -8,7 +8,7 @@ import { useValidationErrors } from '../utils/useValidationErrors';
 import { VariablesOf, graphql } from '../graphql';
 import { createRoute } from '@tanstack/react-router';
 import { rootRoute } from '../utils/router';
-import { trpc } from '../utils/trpc';
+import { RouterInput, trpc } from '../utils/trpc';
 
 const pick = (obj: any, keys: string[]) => Object.fromEntries(
   keys
@@ -16,21 +16,7 @@ const pick = (obj: any, keys: string[]) => Object.fromEntries(
   .map(key => [key, obj[key]])
 );
 
-const EditAccount = graphql(`
-  mutation EditAccount($data: EditUserInput!) {
-    editUser (data: $data) {
-      id
-      first
-      last
-      email
-      phone
-      venmo
-      cashapp
-    }
-  }
-`);
-
-type Values = VariablesOf<typeof EditAccount>['data'];
+type Values = RouterInput['user']['edit'];
 
 export const UploadPhoto = graphql(`
   mutation AddProfilePicture ($picture: File!){
@@ -48,7 +34,7 @@ export const editProfileRoute = createRoute({
 })
 
 export function EditProfile() {
-  const [edit, { error, loading }] = useMutation(EditAccount);
+  const { mutateAsync: edit, error, isPending } = trpc.user.edit.useMutation();
   const [upload, { loading: uploadLoading, error: uploadError }] = useMutation(UploadPhoto, {
    context: {
       headers: {
@@ -60,20 +46,27 @@ export function EditProfile() {
   const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
   const toast = useToast();
 
-  const validationErrors = useValidationErrors<Values>(error);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
   const defaultValues = pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp']);
 
-  const { handleSubmit, register, reset, formState: { errors, isValid, isDirty } } = useForm<Values>({
+  const {
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors, isValid, isDirty }
+  } = useForm<Values>({
      defaultValues
   });
 
   const onSubmit = handleSubmit(async (variables) => {
-    const { data } = await edit({ variables: { data: variables } });
+    await edit(variables);
 
-    if (data) {
-      toast({ status: 'success', title: "Success", description: "Successfully updated profile" });
-    }
+    toast({
+      status: 'success',
+      title: "Success",
+      description: "Successfully updated profile"
+    });
   });
 
   async function uploadPhoto(picture: File | undefined) {
@@ -95,7 +88,7 @@ export function EditProfile() {
   return (
     <Container maxW="container.sm" p={[0]}>
       <Card>
-        {error && !validationErrors ? <Error error={error} /> : null}
+        {error && !validationErrors && <Error>{error.message}</Error>}
         {uploadLoading &&
           <Alert status="info" mb={2}>
             <Spinner size="xs" mr={2} />
@@ -211,7 +204,7 @@ export function EditProfile() {
               </FormErrorMessage>
             </FormControl>
             <Flex justifyContent="flex-end">
-              <Button type="submit" colorScheme='blue' isLoading={loading} isDisabled={!isValid || !isDirty}>
+              <Button type="submit" colorScheme='blue' isLoading={isPending} isDisabled={!isValid || !isDirty}>
                 Save Profile
               </Button>
             </Flex>
