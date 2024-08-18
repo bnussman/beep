@@ -88,7 +88,18 @@ export const authRouter = router({
 
       const userId = crypto.randomUUID();
 
-      const input = signupSchema.parse(object);
+      const {
+        success,
+        data: input,
+        error
+      } = signupSchema.safeParse(object);
+
+      if (!success) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          cause: error,
+        });
+      }
 
       const extention = input.photo.name.substring(
         input.photo.name.lastIndexOf("."),

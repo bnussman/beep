@@ -57,14 +57,14 @@ export function SignUp() {
     handleSubmit,
     register,
     watch,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors },
   } = useForm<SignUpFormValues>({ mode: "onChange" });
 
   const utils = trpc.useUtils();
 
   const photo = watch("photo");
 
-  const validationErrors = useValidationErrors<SignUpFormValues>(error ?? undefined);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
   const onSubmit = handleSubmit(async (variables, e) => {
     const formData = new FormData();

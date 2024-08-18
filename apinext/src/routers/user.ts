@@ -40,8 +40,8 @@ export const userRouter = router({
         last: z.string(),
         email: z.string().endsWith('.edu', 'Email must end with .edu'),
         phone: z.string(),
-        venmo: z.string(),
-        cashapp: z.string(),
+        venmo: z.string().nullable(),
+        cashapp: z.string().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -50,6 +50,8 @@ export const userRouter = router({
         .set(input)
         .where(eq(user.id, ctx.user.id))
         .returning();
+
+      redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]))
 
       return u[0];
     })
