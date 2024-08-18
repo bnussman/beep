@@ -14,14 +14,27 @@ const linodeProvider = new linode.Provider("linodeProvider", {
 });
 
 const imageName = `ghcr.io/bnussman/beep:${envName === 'staging' ? 'main' : envName}`;
-
-console.log("Github Token - Banks -", process.env.GITHUB_TOKEN)
+const apinextImageName = `ghcr.io/bnussman/apinext:${envName === 'staging' ? 'main' : envName}`;
 
 const imageResource = new docker.Image("imageResource", {
   imageName: imageName,
   build: {
     context: "../api",
     dockerfile: "../api/Dockerfile",
+  },
+  registry: {
+    password: process.env.GITHUB_TOKEN,
+    server: "ghcr.io",
+    username: ACTOR,
+  },
+});
+
+
+const apinextImageResource = new docker.Image("imageResource", {
+  imageName: apinextImageName,
+  build: {
+    context: "../apinext",
+    dockerfile: "../apinext/Dockerfile",
   },
   registry: {
     password: process.env.GITHUB_TOKEN,
@@ -51,6 +64,7 @@ const lkeCluster = new linode.LkeCluster(
 
 const namespaceName = "beep";
 const appName = "api";
+const apinextAppName = "apinext";
 
 const k8sProvider = new k8s.Provider("k8sProvider", {
   kubeconfig: lkeCluster.kubeconfig.apply(x => Buffer.from(x, 'base64').toString()),
@@ -87,6 +101,40 @@ const deployment = new k8s.apps.v1.Deployment(
               imagePullPolicy: "Always",
               ports: [
                 { containerPort: 3000 }
+              ],
+              envFrom: [
+                { configMapRef: { name: appName }}
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  { provider: k8sProvider }
+);
+
+const apinextDeployment = new k8s.apps.v1.Deployment(
+  apinextAppName,
+  {
+    metadata: {
+      name: apinextAppName,
+      namespace: namespace.metadata.name,
+      labels: { app: apinextAppName }
+    },
+    spec: {
+      selector: { matchLabels: { app: apinextAppName } },
+      replicas: 3,
+      template: {
+        metadata: { labels: { app: apinextAppName } },
+        spec: {
+          containers: [
+            {
+              name: apinextAppName,
+              image: apinextImageResource.repoDigest,
+              imagePullPolicy: "Always",
+              ports: [
+                { containerPort: 3001 }
               ],
               envFrom: [
                 { configMapRef: { name: appName }}
@@ -139,6 +187,27 @@ const service = new k8s.core.v1.Service(
       type: "LoadBalancer",
       ports: [{ port: 443, targetPort: 3000 }],
       selector: { app: appName }
+    }
+  },
+  { provider: k8sProvider }
+);
+
+const apinextService = new k8s.core.v1.Service(
+  apinextAppName,
+  {
+    metadata: {
+      name: apinextAppName,
+      namespace: namespaceName,
+      annotations: {
+        ['service.beta.kubernetes.io/linode-loadbalancer-default-protocol']: 'https',
+        ['service.beta.kubernetes.io/linode-loadbalancer-check-type']: 'connection',
+        ['service.beta.kubernetes.io/linode-loadbalancer-port-443']: '{ "tls-secret-name": "cert", "protocol": "https" }'
+      }
+    },
+    spec: {
+      type: "LoadBalancer",
+      ports: [{ port: 443, targetPort: 3001 }],
+      selector: { app: apinextAppName }
     }
   },
   { provider: k8sProvider }
@@ -208,3 +277,4 @@ const config = new k8s.core.v1.ConfigMap(
 export const clusterLabel = lkeCluster.label;
 
 export const ip = service.status.loadBalancer.apply((lb) => lb.ingress[0].ip || lb.ingress[0].hostname);
+export const apinextIp = apinextService.status.loadBalancer.apply((lb) => lb.ingress[0].ip || lb.ingress[0].hostname);
