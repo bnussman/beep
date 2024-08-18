@@ -1,30 +1,31 @@
 import React from 'react';
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/700.css";
-import { ApolloProvider, useSubscription } from '@apollo/client';
-import { cache, client } from './utils/apollo';
+import { ApolloProvider } from '@apollo/client';
+import { client } from './utils/apollo';
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
 import { Header } from './components/Header';
 import { Banners } from './components/Banners';
 import { Outlet, RouterProvider } from '@tanstack/react-router';
-import { UserQuery, UserSubscription, useUser } from './utils/user';
 import { router } from './utils/router';
-import type { ResultOf } from 'gql.tada';
-
-export type User = ResultOf<typeof UserQuery>['getUser'];
+import { trpc, queryClient, trpcClient } from './utils/trpc';
+import { QueryClientProvider } from '@tanstack/react-query';
 
 export function Beep() {
-  const { user, loading } = useUser();
-
-  useSubscription(UserSubscription, {
-    onData({ data }) {
-      cache.updateQuery({ query: UserQuery }, () => ({ getUser: data.data!.getUserUpdates }));
-    },
-    skip: !user,
+  const { data: user, isPending } = trpc.user.me.useQuery(undefined, {
+    retry: false,
   });
+  const utils = trpc.useUtils();
 
-  if (loading) {
+  trpc.user.updates.useSubscription(undefined, {
+    enabled: user !== undefined,
+    onData(user) {
+      utils.user.me.setData(undefined, user);
+    }
+  })
+
+  if (isPending) {
     return (
       <Center h="100vh">
         <Spinner size="xl" />
@@ -47,7 +48,11 @@ export function App() {
   return (
     <ChakraProvider theme={theme}>
       <ApolloProvider client={client}>
-        <RouterProvider router={router} />
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </trpc.Provider>
       </ApolloProvider>
     </ChakraProvider>
   );

@@ -3,15 +3,14 @@ import {
   InMemoryCache,
   split,
   ApolloLink,
-  Operation,
-  FetchResult,
-  Observable,
 } from "@apollo/client";
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { setContext } from "@apollo/client/link/context";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import type { inferRouterOutputs } from '@trpc/server';
+import type { AppRouter } from '../../../apinext';
 
 function getUrl() {
   // return 'https://api.dev.ridebeep.app/graphql';
@@ -35,25 +34,38 @@ function getWSUrl() {
   return "ws://localhost:3000/subscriptions";
 }
 
+type RouterOutput = inferRouterOutputs<AppRouter>;
+
 const uploadLink = createUploadLink({
   uri: getUrl(),
 });
 
-const authLink = setContext(async (_, { headers }) => {
+export function getAuthToken() {
   const stored = localStorage.getItem("user");
   if (stored) {
-    const auth = JSON.parse(stored);
+    try {
+      const auth = JSON.parse(stored) as RouterOutput['auth']['login'];
+      return auth.tokens.id;
+    } catch (error) {
+      // @todo log to Sentry
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
+const authLink = setContext(async (_, { headers }) => {
+  const token = getAuthToken();
+
+  if (token) {
     return {
       headers: {
         ...headers,
-        Authorization: auth?.tokens?.id
-          ? `Bearer ${auth?.tokens?.id}`
-          : undefined,
-      },
-    };
+        Authorization: `Bearer ${token}`,
+      }
+    }
   }
 });
-
 
 const wsClient = createClient({
   url: getWSUrl(),
@@ -62,12 +74,10 @@ const wsClient = createClient({
   isFatalConnectionProblem: () => false,
   shouldRetry: () => true,
   connectionParams() {
-    const tokens = localStorage.getItem("user");
-    if (tokens) {
-      const auth = JSON.parse(tokens);
-      return {
-        token: auth?.tokens?.id,
-      };
+    const token = getAuthToken();
+
+    if (token) {
+      return { token };
     }
   },
 });

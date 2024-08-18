@@ -1,10 +1,9 @@
 import React from "react";
 import { Text, Avatar, Flex } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
-import { User } from "../App";
 
 interface Props {
-  user: Partial<User>;
+  user: any;
 }
 
 export function BasicUser(props: Props) {

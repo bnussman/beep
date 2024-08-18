@@ -1,5 +1,4 @@
 import React from 'react';
-import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { Button, Center, Container, FormControl, FormErrorMessage, FormLabel, Heading, Input } from '@chakra-ui/react';
@@ -7,21 +6,10 @@ import { Card } from '../components/Card';
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from 'react-hook-form';
 import { createRoute } from '@tanstack/react-router';
-import { VariablesOf, graphql } from 'gql.tada';
 import { rootRoute } from '../utils/router';
+import { RouterInput, trpc } from '../utils/trpc';
 
-const Reset = graphql(`
-  mutation ResetPassword($id: String!, $password: String!) {
-    resetPassword(
-      id: $id,
-      input: {
-        password: $password
-      }
-    )
-  }
-`);
-
-type ResetPasswordValues = VariablesOf<typeof Reset>;
+type ResetPasswordValues = RouterInput['auth']['resetPassword'];
 
 export const resetPasswordRoute = createRoute({
   component: ResetPassword,
@@ -29,21 +17,32 @@ export const resetPasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
 });
 
-
 export function ResetPassword() {
   const { id } = resetPasswordRoute.useParams();
-  const [resetPassword, { data, error, loading }] = useMutation(Reset);
+
+  const {
+    mutateAsync: resetPassword,
+    data,
+    error,
+    isPending
+  } = trpc.auth.resetPassword.useMutation();
 
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isValid },
   } = useForm<ResetPasswordValues>({ mode: 'onChange' });
 
-  const validationErrors = useValidationErrors<ResetPasswordValues>(error);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
   const onSubmit = handleSubmit(async (variables) => {
-    await resetPassword({ variables: { ...variables, id } });
+    await resetPassword({
+      password: variables.password,
+      id,
+    });
+
+    reset();
   });
 
   return (
@@ -52,7 +51,7 @@ export function ResetPassword() {
         <Center pb={8}>
           <Heading>Reset Password</Heading>
         </Center>
-        {error && !validationErrors && <Error error={error} />}
+        {error && !validationErrors && <Error>{error.message}</Error>}
         {data && <Success message="Successfully changed password" />}
         <form onSubmit={onSubmit}>
           <FormControl isInvalid={Boolean(errors.password) || Boolean(validationErrors?.password)}>
@@ -72,7 +71,7 @@ export function ResetPassword() {
             w="full"
             mt={4}
             type="submit"
-            isLoading={loading}
+            isLoading={isPending}
             isDisabled={!isValid}
           >
             Reset Password

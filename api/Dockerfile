@@ -2,11 +2,11 @@ FROM oven/bun:alpine
 
 WORKDIR /usr/api
 
-COPY api/package.json ./
+COPY package.json ./
 
 RUN bun install
 
-COPY api/ .
+COPY / .
 
 EXPOSE 3000
 
