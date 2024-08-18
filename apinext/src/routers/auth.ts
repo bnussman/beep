@@ -1,12 +1,15 @@
 import { authedProcedure, publicProcedure, router } from "../utils/trpc";
 import { z } from 'zod';
 import { db } from "../utils/db";
-import { token, user } from "../../drizzle/schema";
+import { token, user, verify_email } from "../../drizzle/schema";
 import { eq, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
-import { S3_BUCKET_URL } from "../utils/constants";
+import { S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
+import { email } from "../utils/email";
+import { SendMailOptions } from "nodemailer";
+import * as Sentry from '@sentry/bun';
 
 export const authRouter = router({
   login: publicProcedure
@@ -88,6 +91,19 @@ export const authRouter = router({
 
       const userId = crypto.randomUUID();
 
+      const signupSchema = z.object({
+        first: z.string(),
+        last: z.string(),
+        username: z.string(),
+        password: z.string(),
+        email: z.string().email().endsWith('.edu', 'Email must end with .edu'),
+        phone: z.string(),
+        venmo: z.string().optional(),
+        cashapp: z.string().optional(),
+        pushToken: z.string().optional(),
+        photo: z.instanceof(File),
+      });
+
       const {
         success,
         data: input,
@@ -130,6 +146,32 @@ export const authRouter = router({
 
       await db.insert(token).values(tokens);
 
+      const verifyEmailEntry = await db
+        .insert(verify_email)
+        .values({
+          email: input.email,
+          id: crypto.randomUUID(),
+          time: new Date(),
+          user_id: userId,
+        })
+        .returning();
+
+      const mailOptions: SendMailOptions = {
+        from: 'Beep App <banks@ridebeep.app>',
+        to: input.email,
+        subject: 'Verify your Beep App Email!',
+        html: `Hey ${input.username}, <br><br>
+                Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry[0].id} to verify your email. This link will expire in 5 hours. <br><br>
+                - Beep App Team
+            `
+      };
+
+      try {
+        await email.sendMail(mailOptions);
+      } catch (error) {
+        Sentry.captureException(error);
+      }
+
       return { user: u[0], tokens };
     }),
   logout: authedProcedure
@@ -143,17 +185,4 @@ export const authRouter = router({
         await db.update(user).set({ pushToken: null }).where(eq(user.id, ctx.user.id));
       }
     }),
-});
-
-const signupSchema = z.object({
-  first: z.string(),
-  last: z.string(),
-  username: z.string(),
-  password: z.string(),
-  email: z.string().email().endsWith('.edu', 'Email must end with .edu'),
-  phone: z.string(),
-  venmo: z.string().optional(),
-  cashapp: z.string().optional(),
-  pushToken: z.string().optional(),
-  photo: z.instanceof(File),
 });

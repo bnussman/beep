@@ -13,14 +13,17 @@
   "author": "Banks Nussman",
   "devDependencies": {
     "@types/cors": "^2.8.17",
+    "@types/nodemailer": "^6.4.14",
     "drizzle-kit": "^0.23.2",
     "typescript": "^5.4.5"
   },
   "dependencies": {
     "@capgo/s3-lite-client": "^0.1.8",
+    "@sentry/bun": "^8.26.0",
     "@trpc/server": "11.0.0-rc.477",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.32.2",
+    "nodemailer": "^6.9.14",
     "postgres": "^3.4.4",
     "redis": "^4.7.0",
     "wkx": "^0.5.0",

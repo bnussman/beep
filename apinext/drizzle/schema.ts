@@ -168,7 +168,7 @@ export const rating = pgTable("rating", {
 export const verify_email = pgTable("verify_email", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	user_id: varchar("user_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
-	time: timestamp("time", { withTimezone: true, mode: 'string' }).notNull(),
+	time: timestamp("time", { withTimezone: true, mode: 'date' }).notNull(),
 	email: varchar("email", { length: 255 }).notNull(),
 });
 

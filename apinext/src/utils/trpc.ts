@@ -5,6 +5,8 @@ import { eq } from 'drizzle-orm';
 import { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
 import { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
 import { ZodError } from 'zod';
+import * as Sentry from '@sentry/bun';
+
  
 /**
  * Initialization of tRPC backend
@@ -25,15 +27,20 @@ const t = initTRPC.context<Context>().create({
     };
   },
 });
+
+const sentryMiddleware = t.middleware(
+  Sentry.trpcMiddleware({
+    attachRpcInput: true,
+  }),
+);
  
 /**
  * Export reusable router and procedure helpers
  * that can be used throughout the router
  */
 export const router = t.router;
-export const publicProcedure = t.procedure;
-
-export const authedProcedure = t.procedure.use(function isAuthed(opts) {
+export const publicProcedure = t.procedure.use(sentryMiddleware);
+export const authedProcedure = t.procedure.use(sentryMiddleware).use(function isAuthed(opts) {
   const { ctx } = opts;
 
   if (!ctx.user || !ctx.token) {
