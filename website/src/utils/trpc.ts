@@ -7,7 +7,6 @@ import { getAuthToken } from './apollo';
 export const trpc = createTRPCReact<AppRouter>();
 
 export const queryClient = new QueryClient();
-
 const wsClient = createWSClient({
   url: 'ws://localhost:3001/trpc',
   lazy: {

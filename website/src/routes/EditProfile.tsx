@@ -57,7 +57,7 @@ export function EditProfile() {
     },
   });
 
-  const { data: user } = trpc.user.me.useQuery();
+  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
   const toast = useToast();
 
   const validationErrors = useValidationErrors<Values>(error);

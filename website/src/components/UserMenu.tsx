@@ -18,7 +18,7 @@ import {
 import { queryClient, trpc } from "../utils/trpc";
 
 export function UserMenu() {
-  const { data: user } = trpc.user.me.useQuery();
+  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
   const { mutateAsync: logout } = trpc.auth.logout.useMutation();
   const utils = trpc.useUtils();
   const navigate = useNavigate();

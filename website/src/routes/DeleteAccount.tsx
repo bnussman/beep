@@ -21,7 +21,7 @@ const DeleteAccountMutation = graphql(`
 `);
 
 function DeleteAccount() {
-  const { data: user } = trpc.user.me.useQuery();
+  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
   const [deleteAccount, { loading, error }] = useMutation(DeleteAccountMutation);
   const cancelRef = React.useRef(null);
   const toast = useToast();
