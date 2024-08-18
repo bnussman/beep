@@ -11,7 +11,7 @@ const Resend = graphql(`
 `);
 
 export function Banners() {
-  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
+  const { data: user } = trpc.user.me.useQuery(undefined, { retry: false, enabled: false });
   const [resend, { loading }] = useMutation(Resend);
   const toast = useToast();
 
