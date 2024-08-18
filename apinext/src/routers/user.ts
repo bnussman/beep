@@ -5,8 +5,6 @@ import { redis, redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
 
-type User = typeof user.$inferSelect;
-
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
     return ctx.user;
@@ -18,7 +16,7 @@ export const userRouter = router({
   }),
   updates: authedProcedure.subscription(({ ctx }) => {
     // return an `observable` with a callback which is triggered immediately
-    return observable<User>((emit) => {
+    return observable<typeof ctx.user>((emit) => {
       const onUserUpdate = (message: string) => {
         // emit data to client
         console.log("Emitting to WS", message);

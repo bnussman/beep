@@ -71,12 +71,31 @@ export const authRouter = router({
 
       return { user: u, tokens };
     }),
+  signup: publicProcedure
+    .input(
+      z.object({
+        first: z.string(),
+        last: z.string(),
+        email: z.string(),
+        username: z.string(),
+        password: z.string(),
+        phone: z.string(),
+        venmo: z.string().optional(),
+        cashapp: z.string().optional(),
+      })
+    )
+    .mutation(async () => {
+
+    }),
   logout: authedProcedure
+    .input(
+      z.object({ isApp: z.boolean().optional() })
+    )
     .mutation(async ({ ctx, input }) => {
       await db.delete(token).where(eq(token.id, ctx.token.id));
 
-      // if (input?.isApp) {
-      //   await db.update(user).set({ push_token: null }).where(eq(user.id, ctx.user.id));
-      // }
+      if (input.isApp) {
+        await db.update(user).set({ pushToken: null }).where(eq(user.id, ctx.user.id));
+      }
     }),
 });
