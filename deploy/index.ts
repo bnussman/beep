@@ -30,7 +30,7 @@ const imageResource = new docker.Image("imageResource", {
 });
 
 
-const apinextImageResource = new docker.Image("imageResource", {
+const apinextImageResource = new docker.Image("apinextImageResource", {
   imageName: apinextImageName,
   build: {
     context: "../apinext",
