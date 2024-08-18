@@ -10,9 +10,29 @@ export type RouterOutput = inferRouterOutputs<AppRouter>;
 
 export const trpc = createTRPCReact<AppRouter>();
 
+function getUrl() {
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === "production") {
+    return "https://apinext.ridebeep.app";
+  }
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
+    return "https://apinext.staging.ridebeep.app";
+  }
+  return 'http://localhost:3001';
+}
+
+function getWSUrl() {
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === "production") {
+    return "wss://apinext.ridebeep.app";
+  }
+  if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
+    return "wss://apinext.staging.ridebeep.app";
+  }
+  return "ws://localhost:3001/trpc";
+}
+
 export const queryClient = new QueryClient();
 const wsClient = createWSClient({
-  url: 'ws://localhost:3001/trpc',
+  url: getWSUrl(),
   lazy: {
     enabled: true,
     closeMs: 0,
@@ -34,7 +54,7 @@ export const trpcClient = trpc.createClient({
         client: wsClient
       }),
       false: httpLink({
-        url: 'http://localhost:3001',
+        url: getUrl(),
         headers() {
           const token = getAuthToken();
           if (token) {
