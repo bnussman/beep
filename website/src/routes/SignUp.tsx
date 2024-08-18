@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
 import { VariablesOf, graphql } from 'gql.tada';
-import { UserQuery } from '../utils/user';
 import { rootRoute } from '../utils/router';
 import {
   Link as ChakraLink,
@@ -32,6 +31,7 @@ import {
   FormErrorMessage,
   useBreakpointValue
 } from '@chakra-ui/react';
+import { trpc } from '../utils/trpc';
 
 const SignUpGraphQL = graphql(`
   mutation SignUp ($first: String!, $last: String!, $email: String!, $phone: String!, $venmo: String, $cashapp: String, $username: String!, $password: String!, $picture: File) {
@@ -103,6 +103,8 @@ export function SignUp() {
     formState: { errors, isSubmitting, isValid },
   } = useForm<Values>({ mode: "onChange" });
 
+  const utils = trpc.useUtils();
+
   const picture = watch("picture");
 
   const validationErrors = useValidationErrors<Values>(error);
@@ -115,10 +117,8 @@ export function SignUp() {
     if (data) {
       localStorage.setItem('user', JSON.stringify(data?.signup));
 
-      client.writeQuery({
-        query: UserQuery,
-        data: { getUser: { ...data?.signup?.user } }
-      });
+      // @ts-expect-error transition to tRPC
+      utils.user.me.setData(undefined, data.signup.user);
 
       navigate({ to: '/' });
     }

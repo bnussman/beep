@@ -12,10 +12,8 @@ import { DeleteReportDialog } from "./DeleteReportDialog";
 import { Link, createRoute } from "@tanstack/react-router";
 import { reportsRoute } from ".";
 import { graphql } from 'gql.tada';
-import { User } from "../../../App";
 
 dayjs.extend(relativeTime);
-
 
 export const UpdateReport = graphql(`
   mutation UpdateReport($id: String!, $notes: String, $handled: Boolean) {
@@ -168,7 +166,7 @@ export function Report() {
                   <Flex align="center">
                     <Indicator color='green' />
                     <Text mr={2}>Handled by</Text>
-                    <BasicUser user={data?.getReport.handledBy as User} />
+                    <BasicUser user={data?.getReport.handledBy as any} />
                   </Flex>
                 </Box>
                 :

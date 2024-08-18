@@ -5,8 +5,8 @@ import { Link, Button, Text, Stack, Heading, Alert, AlertIcon, useDisclosure, Bo
 import { graphql } from 'gql.tada';
 import { Error } from "../components/Error";
 import { client } from "../utils/apollo";
-import { UserQuery } from "../utils/user";
 import { rootRoute } from "../utils/router";
+import { trpc } from "../utils/trpc";
 
 export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -21,7 +21,7 @@ const DeleteAccountMutation = graphql(`
 `);
 
 function DeleteAccount() {
-  const { data } = useQuery(UserQuery);
+  const { data: user } = trpc.user.me.useQuery();
   const [deleteAccount, { loading, error }] = useMutation(DeleteAccountMutation);
   const cancelRef = React.useRef(null);
   const toast = useToast();
@@ -35,8 +35,6 @@ function DeleteAccount() {
     client.resetStore();
     navigate({ to: '/' });
   };
-
-  const user = data?.getUser;
 
   return (
     <Stack spacing={4}>

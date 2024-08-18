@@ -15,17 +15,12 @@ import {
   MenuDivider,
   Icon,
 } from "@chakra-ui/react"
-import { useUser } from "../utils/user";
-
-const Logout = graphql(`
-  mutation Logout {
-    logout (isApp: false)
-  }
-`);
+import { queryClient, trpc } from "../utils/trpc";
 
 export function UserMenu() {
-  const { user } = useUser();
-  const [logout] = useMutation(Logout);
+  const { data: user } = trpc.user.me.useQuery();
+  const { mutateAsync: logout } = trpc.auth.logout.useMutation();
+  const utils = trpc.useUtils();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -35,6 +30,7 @@ export function UserMenu() {
       localStorage.removeItem('user');
 
       client.resetStore();
+      queryClient.resetQueries();
 
       navigate({ to: "/" });
     }

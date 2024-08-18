@@ -1,45 +1,11 @@
 import React, { FormEvent, useState } from 'react';
-import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
-import { client } from '../utils/apollo';
 import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack, Center, Heading } from "@chakra-ui/react"
 import { Card } from '../components/Card';
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
-import { graphql } from 'gql.tada';
-import { UserQuery } from '../utils/user';
 import { rootRoute } from '../utils/router';
-
-export const LoginGraphQL = graphql(`
-  mutation Login($username: String!, $password: String!) {
-    login(input: { username: $username, password: $password }) {
-      tokens {
-        id
-        tokenid
-      }
-      user {
-        id
-        name
-        first
-        last
-        email
-        phone
-        venmo
-        isBeeping
-        isEmailVerified
-        isStudent
-        groupRate
-        singlesRate
-        photo
-        capacity
-        username
-        role
-        cashapp
-        queueSize
-      }
-    }
-  }
-`);
+import { trpc } from '../utils/trpc';
 
 export const loginRoute = createRoute({
   component: Login,
@@ -51,25 +17,21 @@ export function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [login, { loading, error }] = useMutation(LoginGraphQL);
+  const { mutateAsync: login, isPending, error } = trpc.auth.login.useMutation();
+  const utils = trpc.useUtils();
 
   async function handleLogin(e: FormEvent) {
     e.preventDefault();
 
     const result = await login({
-      variables: {
-        username: username,
-        password: password
-      },
+      username: username,
+      password: password
     });
 
     if (result) {
-      localStorage.setItem('user', JSON.stringify(result.data?.login));
+      localStorage.setItem('user', JSON.stringify(result));
 
-      client.writeQuery({
-        query: UserQuery,
-        data: { getUser: { ...result.data?.login.user } }
-      });
+      utils.user.me.setData(undefined, result.user);
 
       navigate({ to: '/' });
     }
@@ -81,7 +43,7 @@ export function Login() {
         <Center pb={8}>
           <Heading>Login</Heading>
         </Center>
-        {error && <Error error={error} />}
+          {error && <Error>{error.message}</Error>}
         <form onSubmit={handleLogin}>
           <Stack spacing={4}>
             <FormControl>
@@ -98,7 +60,7 @@ export function Login() {
             <HStack>
               <Button
                 type="submit"
-                isLoading={loading}
+                isLoading={isPending}
                 isDisabled={!username || !password}
                 textColor="white"
                 bgGradient='linear(to-r, #fb7ba2, #fce043)'

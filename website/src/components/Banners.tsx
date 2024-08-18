@@ -2,7 +2,7 @@ import React from 'react';
 import { useMutation } from '@apollo/client';
 import { Alert, AlertIcon, Box, Button, Spacer, useToast } from '@chakra-ui/react';
 import { graphql } from 'gql.tada';
-import { useUser } from '../utils/user';
+import { trpc } from '../utils/trpc';
 
 const Resend = graphql(`
   mutation ResendEmail {
@@ -11,7 +11,7 @@ const Resend = graphql(`
 `);
 
 export function Banners() {
-  const { user } = useUser();
+  const { data: user } = trpc.user.me.useQuery(undefined);
   const [resend, { loading }] = useMutation(Resend);
   const toast = useToast();
 

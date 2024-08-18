@@ -7,8 +7,8 @@ import { useForm } from "react-hook-form";
 import { useValidationErrors } from '../utils/useValidationErrors';
 import { VariablesOf, graphql } from '../graphql';
 import { createRoute } from '@tanstack/react-router';
-import { useUser } from '../utils/user';
 import { rootRoute } from '../utils/router';
+import { trpc } from '../utils/trpc';
 
 const pick = (obj: any, keys: string[]) => Object.fromEntries(
   keys
@@ -57,7 +57,7 @@ export function EditProfile() {
     },
   });
 
-  const { user } = useUser();
+  const { data: user } = trpc.user.me.useQuery();
   const toast = useToast();
 
   const validationErrors = useValidationErrors<Values>(error);
@@ -117,7 +117,7 @@ export function EditProfile() {
               />
             </Box>
             <Box ml="4">
-              <Heading>{user.name}</Heading>
+              <Heading>{user.first} {user.last}</Heading>
               <Text>@{user?.username}</Text>
             </Box>
           </Flex>

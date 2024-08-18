@@ -16,8 +16,10 @@ const wsClient = createWSClient({
   },
   connectionParams() {
     const token = getAuthToken();
-
-    return { token };
+    if (token) {
+      return { token };
+    }
+    return {};
   }
 });
 
@@ -32,8 +34,10 @@ export const trpcClient = trpc.createClient({
         url: 'http://localhost:3001',
         headers() {
           const token = getAuthToken();
-
-          return { Authorization: `Bearer ${token}` };
+          if (token) {
+            return { Authorization: `Bearer ${token}` };
+          }
+          return {};
         }
       }),
     })

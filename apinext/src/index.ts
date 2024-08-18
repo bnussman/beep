@@ -4,9 +4,11 @@ import { createContext, router } from './utils/trpc';
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import { userRouter } from './routers/user';
+import { authRouter } from './routers/auth';
 
 const appRouter = router({
   user: userRouter,
+  auth: authRouter,
 });
 
 export type AppRouter = typeof appRouter;

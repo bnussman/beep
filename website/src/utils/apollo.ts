@@ -3,17 +3,14 @@ import {
   InMemoryCache,
   split,
   ApolloLink,
-  Operation,
-  FetchResult,
-  Observable,
 } from "@apollo/client";
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { setContext } from "@apollo/client/link/context";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
-import { ResultOf } from "gql.tada";
-import { LoginGraphQL } from "../routes/Login";
+import type { inferRouterOutputs } from '@trpc/server';
+import type { AppRouter } from '../../../apinext';
 
 function getUrl() {
   // return 'https://api.dev.ridebeep.app/graphql';
@@ -37,6 +34,8 @@ function getWSUrl() {
   return "ws://localhost:3000/subscriptions";
 }
 
+type RouterOutput = inferRouterOutputs<AppRouter>;
+
 const uploadLink = createUploadLink({
   uri: getUrl(),
 });
@@ -45,7 +44,7 @@ export function getAuthToken() {
   const stored = localStorage.getItem("user");
   if (stored) {
     try {
-      const auth = JSON.parse(stored) as ResultOf<typeof LoginGraphQL>['login'];
+      const auth = JSON.parse(stored) as RouterOutput['auth']['login'];
       return auth.tokens.id;
     } catch (error) {
       // @todo log to Sentry

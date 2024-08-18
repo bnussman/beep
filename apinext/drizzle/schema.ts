@@ -1,4 +1,4 @@
-import { pgTable, integer, text, varchar, timestamp, unique, boolean, numeric, index } from "drizzle-orm/pg-core"
+import { pgTable, integer, text, varchar, timestamp, unique, boolean, numeric, index, pgEnum } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm/relations";
 import type { CustomTypeValues } from "drizzle-orm/pg-core";
 import { customType } from "drizzle-orm/pg-core";
@@ -52,17 +52,17 @@ export const user = pgTable("user", {
 	venmo: varchar("venmo", { length: 255 }),
 	cashapp: varchar("cashapp", { length: 255 }),
 	password: varchar("password", { length: 255 }).notNull(),
-	password_type: text("password_type").default('sha256').notNull(),
-	is_beeping: boolean("is_beeping").default(false).notNull(),
-	is_email_verified: boolean("is_email_verified").default(false).notNull(),
-	is_student: boolean("is_student").default(false).notNull(),
-	group_rate: integer("group_rate").default(4).notNull(),
-	singles_rate: integer("singles_rate").default(3).notNull(),
+	passwordType: text("password_type").default('sha256').notNull(),
+	isBeeping: boolean("is_beeping").default(false).notNull(),
+	isEmailVerified: boolean("is_email_verified").default(false).notNull(),
+	isStudent: boolean("is_student").default(false).notNull(),
+	groupRate: integer("group_rate").default(4).notNull(),
+	singlesRate: integer("singles_rate").default(3).notNull(),
 	capacity: integer("capacity").default(4).notNull(),
-	queue_size: integer("queue_size").default(0).notNull(),
+	queueSize: integer("queue_size").default(0).notNull(),
 	rating: numeric("rating"),
 	role: text("role").default('user').notNull(),
-	push_token: varchar("push_token", { length: 255 }),
+	pushToken: varchar("push_token", { length: 255 }),
 	photo: varchar("photo", { length: 255 }),
 	location: geography("location"),
 	created: timestamp("created", { withTimezone: true, mode: 'string' }),
