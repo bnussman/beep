@@ -20,8 +20,8 @@ console.log("Github Token - Banks -", process.env.GITHUB_TOKEN)
 const imageResource = new docker.Image("imageResource", {
   imageName: imageName,
   build: {
-    context: "../",
-    dockerfile: "../Dockerfile",
+    context: "../api",
+    dockerfile: "../api/Dockerfile",
   },
   registry: {
     password: process.env.GITHUB_TOKEN,
