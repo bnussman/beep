@@ -1,29 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
-import { graphql } from '../graphql';
 import { createRoute } from '@tanstack/react-router';
 import { rootRoute } from '../utils/router';
 import { RouterInput, trpc } from '../utils/trpc';
 
-const pick = (obj: any, keys: string[]) => Object.fromEntries(
-  keys
-  .filter(key => key in obj)
-  .map(key => [key, obj[key]])
-);
-
 type Values = RouterInput['user']['edit'];
-
-export const UploadPhoto = graphql(`
-  mutation AddProfilePicture ($picture: File!){
-    addProfilePicture (picture: $picture) {
-      id
-      photo
-    }
-  }
-`);
 
 export const editProfileRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -40,15 +24,28 @@ export function EditProfile() {
 
   const validationErrors = error?.data?.zodError?.fieldErrors;
 
-  const defaultValues = pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp']);
-
   const {
     handleSubmit,
     register,
     reset,
     formState: { errors, isValid, isDirty }
   } = useForm<Values>({
-     defaultValues
+     defaultValues: {
+       first: user?.first,
+       last: user?.last,
+       email: user?.email,
+       phone: user?.phone,
+       venmo: user?.venmo,
+       cashapp: user?.cashapp,
+     },
+     values: user ? {
+       first: user.first,
+       last: user.last,
+       email: user.email,
+       phone: user.phone,
+       venmo: user.venmo,
+       cashapp: user.cashapp,
+     } : undefined,
   });
 
   const onSubmit = handleSubmit(async (variables) => {
@@ -61,19 +58,36 @@ export function EditProfile() {
     });
   });
 
-  async function uploadPhoto(picture: File | undefined) {
-    if (!picture) return;
-    const formData = new FormData();
-    formData.set('photo', picture);
-    uploadPicture(formData)
-      .then(() => {
-        toast({ status: 'success', title: "Success", description: "Successfully updated profile picture" });
+  const uploadPhoto = async (picture: File | undefined) => {
+    if (!picture) {
+      return toast({
+        status: "error",
+        title: "Error",
+        description: "No file found when trying to start upload."
       });
-  }
+    };
 
-  useEffect(() => {
-    reset(pick(user, ['first', 'last', 'email', 'phone', 'venmo', 'cashapp']));
-  }, [user]);
+    const formData = new FormData();
+
+    formData.set('photo', picture);
+
+    try {
+      await uploadPicture(formData);
+
+      toast({
+        status: 'success',
+        title: "Success",
+        description:
+        "Successfully updated profile picture"
+      });
+    } catch (error) {
+      toast({
+        status: "error",
+        title: "Error",
+        description: uploadError?.message,
+      });
+    }
+  }
 
   if (!user) {
     return null;
