@@ -2,7 +2,6 @@ import React from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../../components/Pagination';
-import { useQuery } from '@apollo/client';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
@@ -10,45 +9,9 @@ import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from '../../../graphql';
+import { trpc } from '../../../utils/trpc';
 
 dayjs.extend(relativeTime);
-
-export const RatesGraphQL = graphql(`
-  query getRatings($show: Int, $offset: Int) {
-    getRatings(show: $show, offset: $offset) {
-      items {
-        id
-        timestamp
-        message
-        stars
-        rater {
-          id
-          name
-          photo
-          username
-        }
-        rated {
-          id
-          name
-          photo
-          username
-        }
-      }
-      count
-    }
-  }
-`);
-
-export function printStars(rating: number): string {
-  let stars = "";
-
-  for (let i = 0; i < rating; i++) {
-    stars += "⭐️";
-  }
-
-  return stars;
-}
 
 export const ratingsRoute = createRoute({
   path: "ratings",
@@ -71,11 +34,9 @@ export function Ratings() {
 
   const navigate = useNavigate({ from: ratingsListRoute.id });
 
-  const { data, loading, error, previousData } = useQuery(RatesGraphQL, {
-    variables: {
-      offset: (page - 1) * pageLimit,
-      show: pageLimit
-    }
+  const { data, isPending, error } = trpc.rating.ratings.useQuery({
+    offset: (page - 1) * pageLimit,
+    show: pageLimit
   });
 
   const setCurrentPage = (page: number) => {
@@ -83,17 +44,14 @@ export function Ratings() {
   };
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
-
-  const ratings = data?.getRatings.items ?? previousData?.getRatings.items;
-  const count = data?.getRatings.count ?? previousData?.getRatings.count;
 
   return (
     <Box>
       <Heading>Ratings</Heading>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -111,7 +69,7 @@ export function Ratings() {
             </Tr>
           </Thead>
           <Tbody>
-            {ratings?.map((rating) => (
+            {data?.ratings.map((rating) => (
               <Tr key={rating.id}>
                 <TdUser user={rating.rater} />
                 <TdUser user={rating.rated} />
@@ -128,13 +86,23 @@ export function Ratings() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isPending && <Loading />}
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
       />
     </Box>
   );
+}
+
+export function printStars(rating: number): string {
+  let stars = "";
+
+  for (let i = 0; i < rating; i++) {
+    stars += "⭐️";
+  }
+
+  return stars;
 }

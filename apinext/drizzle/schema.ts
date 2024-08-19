@@ -276,12 +276,12 @@ export const reportRelations = relations(report, ({ one }) => ({
 }));
 
 export const ratingRelations = relations(rating, ({one}) => ({
-	user_rater_id: one(user, {
+	rater: one(user, {
 		fields: [rating.rater_id],
 		references: [user.id],
 		relationName: "rating_rater_id_user_id"
 	}),
-	user_rated_id: one(user, {
+	rated: one(user, {
 		fields: [rating.rated_id],
 		references: [user.id],
 		relationName: "rating_rated_id_user_id"
