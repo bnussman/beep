@@ -10,6 +10,7 @@ import { Loading } from '../../../components/Loading';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from 'gql.tada';
+import { trpc } from '../../../utils/trpc';
 
 export const UsersGraphQL = graphql(`
   query getUsers($show: Int, $offset: Int, $query: String) {
@@ -57,12 +58,10 @@ export function Users() {
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
 
-  const { loading, error, data, previousData } = useQuery(UsersGraphQL, {
-    variables: {
-      offset: (page - 1) * pageLimit,
-      show: pageLimit,
-      query: !query ? undefined : query
-    }
+  const { isPending, error, data } = trpc.user.users.useQuery({
+    offset: (page - 1) * pageLimit,
+    show: pageLimit,
+    query: !query ? undefined : query
   });
 
   const setCurrentPage = (page: number) => {
@@ -81,17 +80,15 @@ export function Users() {
     }
   };
 
-  const users = data?.getUsers ?? previousData?.getUsers;
-
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
 
   return (
     <Box>
       <Heading>Users</Heading>
       <Pagination
-        resultCount={users?.count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -106,7 +103,7 @@ export function Users() {
           value={query ?? ""}
           onChange={(e) => setQuery(e.target.value)}
         />
-        {(query && loading) && (
+        {(query && isPending) && (
           <InputRightElement>
             <Spinner />
           </InputRightElement>
@@ -124,7 +121,7 @@ export function Users() {
             </Tr>
           </Thead>
           <Tbody>
-            {users?.items.map((user) => (
+            {data?.users.map((user) => (
               <Tr key={user.id}>
                 <TdUser user={user} />
                 <Td>{user.email}</Td>
@@ -136,9 +133,9 @@ export function Users() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isPending && <Loading />}
       <Pagination
-        resultCount={users?.count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

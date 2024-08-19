@@ -49,6 +49,16 @@ export const authedProcedure = t.procedure.use(sentryMiddleware).use(function is
   return opts.next({ ctx });
 });
 
+export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
+  const { ctx } = opts;
+
+    if (ctx.user.role !== 'admin') {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    return opts.next({ ctx });
+})
+
 export async function createContext(data: CreateHTTPContextOptions | CreateWSSContextFnOptions) {
   const bearerToken = data.req?.headers.authorization?.split(' ')[1] ?? data.info?.connectionParams?.token;
 

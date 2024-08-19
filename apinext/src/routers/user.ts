@@ -1,9 +1,9 @@
 import { observable } from "@trpc/server/observable";
-import { authedProcedure, router } from "../utils/trpc";
-import { user } from '../../drizzle/schema';
+import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { beep, user } from '../../drizzle/schema';
 import { redis, redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
-import { eq } from "drizzle-orm";
+import { count, eq, desc, sql } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
@@ -12,11 +12,6 @@ import { S3_BUCKET_URL } from "../utils/constants";
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
     return ctx.user;
-  }),
-  update: authedProcedure.mutation(async ({ ctx }) => {
-    const u = await db.update(user).set({ location: { latitude: 5, longitude: 5 } }).where(eq(user.id, ctx.user.id)).returning();
-    redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]))
-    return u[0];
   }),
   updates: authedProcedure.subscription(({ ctx }) => {
     // return an `observable` with a callback which is triggered immediately
@@ -110,5 +105,70 @@ export const userRouter = router({
       redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]));
 
       return ctx.user;
+    }),
+  users: adminProcedure
+    .input(
+      z.object({
+        offset: z.number(),
+        show: z.number(),
+        query: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const users = await db
+        .select({
+          id: user.id,
+          first: user.first,
+          last: user.last,
+          photo: user.photo,
+          email: user.email,
+          isStudent: user.isStudent,
+          isEmailVerified: user.isEmailVerified,
+          isBeeping: user.isBeeping,
+          created: user.created,
+        })
+        .from(user)
+        .orderBy(sql`${user.created} desc nulls last`)
+        .limit(input.show)
+        .offset(input.offset);
+
+      const usersCount = await db.select({ count: count() }).from(user);
+
+      return {
+        users,
+        count: usersCount[0].count
+      };
+    }),
+  usersWithBeeps: adminProcedure
+    .input(
+      z.object({
+        offset: z.number(),
+        show: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const users = await db
+        .select({
+          user: {
+            id: user.id,
+            first: user.first,
+            last: user.last,
+            photo: user.photo,
+          },
+          beeps: count(beep.beeper_id).as('beeps')
+        })
+        .from(user)
+        .leftJoin(beep, eq(user.id, beep.beeper_id))
+        .groupBy(user.id)
+        .orderBy(sql`beeps desc`)
+        .offset(input.offset)
+        .limit(input.show);
+
+      const usersCount = await db.select({ count: count() }).from(user);
+
+      return {
+        users,
+        count: usersCount[0].count
+      };
     })
 })
