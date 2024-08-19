@@ -238,7 +238,7 @@ export const carRelations = relations(car, ({one}) => ({
 	}),
 }));
 
-export const beepRelations = relations(beep, ({one, many}) => ({
+export const beepRelations = relations(beep, ({ one, many }) => ({
 	user_beeper_id: one(user, {
 		fields: [beep.beeper_id],
 		references: [user.id],
@@ -253,18 +253,18 @@ export const beepRelations = relations(beep, ({one, many}) => ({
 	ratings: many(rating),
 }));
 
-export const reportRelations = relations(report, ({one}) => ({
-	user_reporter_id: one(user, {
+export const reportRelations = relations(report, ({ one }) => ({
+	reporter: one(user, {
 		fields: [report.reporter_id],
 		references: [user.id],
 		relationName: "report_reporter_id_user_id"
 	}),
-	user_reported_id: one(user, {
+	reported: one(user, {
 		fields: [report.reported_id],
 		references: [user.id],
 		relationName: "report_reported_id_user_id"
 	}),
-	user_handled_by_id: one(user, {
+	handledBy: one(user, {
 		fields: [report.handled_by_id],
 		references: [user.id],
 		relationName: "report_handled_by_id_user_id"

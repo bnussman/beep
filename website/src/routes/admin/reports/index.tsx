@@ -6,41 +6,13 @@ import { ReportDrawer } from './Drawer';
 import { Loading } from '../../../components/Loading';
 import { Pagination } from '../../../components/Pagination';
 import { Indicator } from '../../../components/Indicator';
-import { useQuery } from '@apollo/client';
 import { Error } from '../../../components/Error';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from '../../../graphql';
+import { trpc } from '../../../utils/trpc';
 
 dayjs.extend(relativeTime);
-
-export const ReportsGraphQL = graphql(`
-  query getReports($show: Int, $offset: Int) {
-    getReports(show: $show, offset: $offset) {
-      items {
-        id
-        timestamp
-        reason
-        notes
-        handled
-        reporter {
-          id
-          name
-          photo
-          username
-        }
-        reported {
-          id
-          name
-          photo
-          username
-        }
-      }
-      count
-    }
-  }
-`);
 
 export const reportsRoute = createRoute({
   path: 'reports',
@@ -64,19 +36,14 @@ export function Reports() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate({ from: reportsListRoute.id });
 
-  const { data, loading, error, previousData } = useQuery(ReportsGraphQL, {
-    variables: {
-      offset: (page - 1) * pageLimit,
-      show: pageLimit
-    }
+  const { data, isPending, error } = trpc.report.reports.useQuery({
+    offset: (page - 1) * pageLimit,
+    show: pageLimit
   });
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
-
-  const reports = data?.getReports.items ?? previousData?.getReports.items;
-  const count = data?.getReports.count ?? previousData?.getReports.count;
 
   function openReport(id: string) {
     setId(id);
@@ -84,14 +51,14 @@ export function Reports() {
   }
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
 
   return (
     <Box>
       <Heading>Reports</Heading>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -108,7 +75,7 @@ export function Reports() {
             </Tr>
           </Thead>
           <Tbody>
-            {reports?.map((report) => (
+            {data?.reports.map((report) => (
               <Tr
                 key={report.id}
                 onClick={() => openReport(report.id)}
@@ -127,9 +94,9 @@ export function Reports() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isPending && <Loading />}
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
