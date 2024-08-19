@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
-import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Spinner, Stack, Text, useToast } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
-import { useValidationErrors } from '../utils/useValidationErrors';
-import { VariablesOf, graphql } from '../graphql';
+import { graphql } from '../graphql';
 import { createRoute } from '@tanstack/react-router';
 import { rootRoute } from '../utils/router';
 import { RouterInput, trpc } from '../utils/trpc';
@@ -35,13 +33,7 @@ export const editProfileRoute = createRoute({
 
 export function EditProfile() {
   const { mutateAsync: edit, error, isPending } = trpc.user.edit.useMutation();
-  const [upload, { loading: uploadLoading, error: uploadError }] = useMutation(UploadPhoto, {
-   context: {
-      headers: {
-        'apollo-require-preflight': true,
-      },
-    },
-  });
+  const { mutateAsync: uploadPicture, isPending: isUploadPending, error: uploadError } = trpc.user.updatePicture.useMutation();
 
   const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
   const toast = useToast();
@@ -71,7 +63,9 @@ export function EditProfile() {
 
   async function uploadPhoto(picture: File | undefined) {
     if (!picture) return;
-    upload({ variables: { picture } })
+    const formData = new FormData();
+    formData.set('photo', picture);
+    uploadPicture(formData)
       .then(() => {
         toast({ status: 'success', title: "Success", description: "Successfully updated profile picture" });
       });
@@ -89,13 +83,13 @@ export function EditProfile() {
     <Container maxW="container.sm" p={[0]}>
       <Card>
         {error && !validationErrors && <Error>{error.message}</Error>}
-        {uploadLoading &&
+        {isUploadPending &&
           <Alert status="info" mb={2}>
             <Spinner size="xs" mr={2} />
             Uploading Profile Photo
           </Alert>
         }
-        {uploadError && <Error error={uploadError} />}
+        {uploadError && <Error>{uploadError.message}</Error>}
         <Box mb={6}>
           <Flex align="center">
             <Box>
