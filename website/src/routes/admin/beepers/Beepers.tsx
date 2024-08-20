@@ -1,55 +1,12 @@
-import React, { useEffect } from 'react'
-import { gql, useQuery, useSubscription } from '@apollo/client';
+import React from 'react'
 import { Badge, Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
-import { cache } from '../../../utils/apollo';
 import { createRoute } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from 'gql.tada';
 import { trpc } from '../../../utils/trpc';
-
-export const BeepersGraphQL = graphql(`
-  query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
-    getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
-      id
-      username
-      name
-      photo
-      singlesRate
-      groupRate
-      capacity
-      isStudent
-      queueSize
-      location {
-        longitude
-        latitude
-      }
-    }
-  }
-`);
-
-const BeeperLocationUpdates = gql`
-  subscription GetBeeperLocationUpdates(
-    $radius: Float!
-    $longitude: Float!
-    $latitude: Float!
-    $anonymize: Boolean
-  ) {
-    getBeeperLocationUpdates(
-      radius: $radius
-      longitude: $longitude
-      latitude: $latitude
-      anonymize: $anonymize
-    ) {
-      id
-      latitude
-      longitude
-    }
-  }
-`;
 
 export const beepersRoute = createRoute({
   component: Beepers,
@@ -64,40 +21,7 @@ export function Beepers() {
     offset: 0,
   });
 
-  useSubscription(BeeperLocationUpdates, {
-    variables: {
-      radius: 0,
-      latitude: 0,
-      longitude: 0,
-      anonymize: false,
-    },
-    onData(data) {
-      const location = data.data.data?.getBeeperLocationUpdates;
-      if (
-        location &&
-        location.latitude !== null &&
-        location.latitude !== undefined &&
-        location.longitude !== null &&
-        location.longitude !== undefined
-      ) {
-        cache.modify({
-          id: cache.identify({
-            __typename: "User",
-            id: location.id,
-          }),
-          fields: {
-            location() {
-              return {
-                latitude: location.latitude,
-                longitude: location.longitude,
-              };
-            },
-          },
-        });
-      }
-    },
-  });
-
+  // @todo subscribe to all beeper's locations
 
   if (isLoading) {
     return <Loading />;

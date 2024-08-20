@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
-import { useQuery } from '@apollo/client';
 import { Badge, Box, Flex, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
@@ -12,38 +11,9 @@ import { Status } from '../../../types/User';
 import { beepStatusMap } from '.';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from '../../../graphql';
 import { trpc } from '../../../utils/trpc';
 
 dayjs.extend(duration);
-
-export const ActiveBeepsGraphQL = graphql(`
-  query getInProgressBeeps($show: Int, $offset: Int) {
-    getInProgressBeeps (show: $show, offset: $offset) {
-      items {
-        id
-        origin
-        destination
-        start
-        groupSize
-        status
-        beeper {
-          id
-          name
-          photo
-          username
-        }
-        rider {
-          id
-          name
-          photo
-          username
-        }
-      }
-      count
-    }
-  }
-`);
 
 export const activeBeepsRoute = createRoute({
   component: ActiveBeeps,

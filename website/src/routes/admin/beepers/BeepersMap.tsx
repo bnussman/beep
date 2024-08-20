@@ -2,7 +2,6 @@ import React from "react";
 import { Box } from "@chakra-ui/react";
 import { Marker } from "../../../components/Marker";
 import { Map } from "../../../components/Map";
-import { BeepersGraphQL } from "./Beepers";
 import { RouterOutput } from "../../../utils/trpc";
 
 interface Props {
