@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import { Pagination } from './Pagination';
 import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
 import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
+import { createRoute } from '@tanstack/react-router';
+import { userRoute } from '../routes/admin/users/User';
+import { trpc } from '../utils/trpc';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { createRoute } from '@tanstack/react-router';
-import { userRoute } from '../routes/admin/users/User';
-import { graphql } from '../graphql';
-import { trpc } from '../utils/trpc';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);

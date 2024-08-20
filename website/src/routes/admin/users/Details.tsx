@@ -1,10 +1,11 @@
 import React from "react";
 import { Box, Text, Stack, Tooltip } from "@chakra-ui/react";
 import { Indicator } from "../../../components/Indicator";
+import { Error } from "../../../components/Error";
 import { printStars } from "../ratings";
 import { createRoute, useParams } from "@tanstack/react-router";
-import { GetUser, userRoute } from "./User";
-import { useQuery } from "@apollo/client";
+import { userRoute } from "./User";
+import { trpc } from "../../../utils/trpc";
 
 export const userDetailsRoute = createRoute({
   component: Details,
@@ -21,11 +22,15 @@ export const userDetailsInitalRoute = createRoute({
 export function Details() {
   const { userId } = useParams({ from: "/admin/users/$userId" });
 
-  const { data } = useQuery(GetUser, { variables: { id: userId } });
+  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
-  const user = data?.getUser;
+  if (isLoading || !user) {
+    return null
+  }
 
-  if (!user) return null;
+  if (error) {
+    return <Error>{error.message}</Error>;
+  }
 
   return (
     <Stack spacing={2}>
@@ -48,7 +53,7 @@ export function Details() {
         {user.rating ?
           <Text>
             <Tooltip label={user.rating} aria-label={`User rating of ${user.rating}`}>
-              {printStars(user.rating)}
+              {printStars(Number(user.rating))}
             </Tooltip>
           </Text>
           :

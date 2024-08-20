@@ -4,6 +4,9 @@ import { EmailIcon } from "@chakra-ui/icons";
 import { useMutation } from "@apollo/client";
 import { Error } from '../../../components/Error';
 import { useValidationErrors } from "../../../utils/useValidationErrors";
+import { createRoute } from "@tanstack/react-router";
+import { adminRoute } from "..";
+import { VariablesOf, graphql } from "gql.tada";
 import {
   AlertDialog,
   AlertDialogBody,
@@ -24,23 +27,9 @@ import {
   useDisclosure,
   useToast
 } from "@chakra-ui/react";
-import { createRoute } from "@tanstack/react-router";
-import { adminRoute } from "..";
-import { VariablesOf, graphql } from "gql.tada";
+import { RouterInput, trpc } from "../../../utils/trpc";
 
-const SendNotifications = graphql(`
-    mutation SendNotifications($title: String!, $body: String!, $match: String) {
-      sendNotifications(title: $title, body: $body, match: $match)
-    }
-`);
-
-type SendNotifictionVariables = VariablesOf<typeof SendNotifications>;
-
-const CleanObjectStorageBucket = graphql(`
-  mutation CleanObjectStorageBucket {
-    cleanObjectStorageBucket
-  }
-`);
+type SendNotifictionVariables = RouterInput['notification']['sendNotification'];
 
 export const notificationsRoute = createRoute({
   component: Notifications,
@@ -53,8 +42,11 @@ export function Notifications() {
   const cancelRef = useRef<any>();
   const toast = useToast();
 
-  const [send, { error, loading: notificationLoading }] = useMutation(SendNotifications);
-  const [clean, { loading }] = useMutation(CleanObjectStorageBucket);
+  const {
+    mutateAsync: sendNotification,
+    error,
+    isPending
+  } = trpc.notification.sendNotification.useMutation();
 
   const {
     handleSubmit,
@@ -64,33 +56,23 @@ export function Notifications() {
     formState: { errors, isSubmitting, isValid },
   } = useForm<SendNotifictionVariables>({ mode: 'onChange' });
 
-  const validationErrors = useValidationErrors<SendNotifictionVariables>(error);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
-  const match = watch('match');
+  const emailMatch = watch('emailMatch');
 
   const onSubmit = handleSubmit((variables) => {
-    onClose();
-    send({ variables }).then(({ data }) => {
-      toast({ title: `Sent notification to ${data?.sendNotifications} users.`})
+    sendNotification(variables).then((numberOfNotificationsSend) => {
+      onClose();
+      toast({ title: `Sent notification to ${numberOfNotificationsSend} users.`})
       reset();
     });
   });
-
-  const onClean = () => {
-    clean()
-      .then(({ data }) => {
-        toast({ status: 'success', description: `Cleaned ${data?.cleanObjectStorageBucket} objects` });
-      })
-      .catch((error) => {
-        toast({ status: 'error', description: error.message });
-      });
-  }
 
   return (
     <>
       <Stack spacing={4}>
         <Heading>Notifications</Heading>
-        {error && !validationErrors ? <Error error={error} /> : null}
+        {error && <Error>{error.message}</Error>}
         <FormControl isInvalid={Boolean(errors.title) || Boolean(validationErrors?.title)}>
           <FormLabel>Title</FormLabel>
           <Input
@@ -103,15 +85,15 @@ export function Notifications() {
             {validationErrors?.title && validationErrors?.title[0]}
           </FormErrorMessage>
         </FormControl>
-        <FormControl isInvalid={Boolean(errors.match) || Boolean(validationErrors?.match)}>
+        <FormControl isInvalid={Boolean(errors.emailMatch) || Boolean(validationErrors?.emailMatch)}>
           <FormLabel>Match</FormLabel>
           <Input
             placeholder="%@appstate.edu"
-            {...register('match')}
+            {...register('emailMatch')}
           />
           <FormHelperText>Leave this empty to send to all Beep App users.</FormHelperText>
           <FormErrorMessage>
-            {errors.match && errors.match.message}
+            {errors.emailMatch && errors.emailMatch.message}
             {validationErrors?.match && validationErrors?.match[0]}
           </FormErrorMessage>
         </FormControl>
@@ -134,18 +116,10 @@ export function Notifications() {
         onClick={onOpen}
         rightIcon={<EmailIcon />}
         isDisabled={!isValid}
-        isLoading={isSubmitting || notificationLoading}
+        isLoading={isSubmitting || isPending}
       >
         Send
       </Button>
-      {/* <Button
-        colorScheme="red"
-        onClick={onClean}
-        isLoading={loading}
-        mt={4}
-      >
-        Clean Object Bucket
-      </Button> */}
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -157,7 +131,7 @@ export function Notifications() {
               Send Notification
             </AlertDialogHeader>
             <AlertDialogBody>
-              Are you sure? {match ? <>This will be sent to all user having an email that matches <Code>{match}</Code></> : 'This will be sent to all Beep App users.'}
+              Are you sure? {emailMatch ? <>This will be sent to all user having an email that matches <Code>{emailMatch}</Code></> : 'This will be sent to all Beep App users.'}
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>

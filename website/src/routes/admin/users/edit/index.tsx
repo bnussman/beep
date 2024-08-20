@@ -1,10 +1,10 @@
 import React from "react";
 import { EditDetails } from "./EditDetails";
 import { EditLocation } from "./EditLocation";
-import { useQuery } from "@apollo/client";
-import { GetUser, userRoute } from "../User";
 import { Error } from '../../../../components/Error';
 import { createRoute } from "@tanstack/react-router";
+import { userRoute } from "../User";
+import { trpc } from "../../../../utils/trpc";
 import {
   Tabs,
   TabList,
@@ -24,29 +24,28 @@ export const editUserRoute = createRoute({
 
 export function Edit() {
   const { userId } = editUserRoute.useParams();
-  const { data, loading, error } = useQuery(GetUser, { variables: { id: userId } });
 
-  const user = data?.getUser;
+  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
-  if (loading || !user) {
+  if (isLoading) {
     return <Spinner />;
   }
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
 
   return (
     <Box>
       <Heading>Edit</Heading>
       <Tabs colorScheme="brand" lazyBehavior="keepMounted" isLazy>
-        <TabList >
+        <TabList>
           <Tab>Details</Tab>
           <Tab>Location</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
-            <EditDetails userId={userId} />
+            <EditDetails />
           </TabPanel>
           <TabPanel>
             <EditLocation />

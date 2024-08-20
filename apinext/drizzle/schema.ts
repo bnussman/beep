@@ -80,15 +80,26 @@ export const token = pgTable("token", {
 	user_id: varchar("user_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
 });
 
+export const productEnum = pgEnum('payment_product', [
+  'top_of_beeper_list_1_hour',
+  'top_of_beeper_list_2_hours',
+  'top_of_beeper_list_3_hours'
+]);
+
+export const storeEnum = pgEnum('payment_store', [
+ 'play_store',
+ 'app_store'
+]);
+
 export const payment = pgTable("payment", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	user_id: varchar("user_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
 	storeId: varchar("store_id", { length: 255 }).notNull(),
-	productId: text("product_id").notNull(),
+	productId: productEnum("product_id").notNull(),
 	price: numeric("price").notNull(),
-	store: text("store").notNull(),
-	created: timestamp("created", { withTimezone: true, mode: 'string' }).notNull(),
-	expires: timestamp("expires", { withTimezone: true, mode: 'string' }).notNull(),
+	store: storeEnum("store").notNull(),
+	created: timestamp("created", { withTimezone: true, mode: 'date' }).notNull(),
+	expires: timestamp("expires", { withTimezone: true, mode: 'date' }).notNull(),
 });
 
 export const forgot_password = pgTable("forgot_password", {
@@ -197,10 +208,10 @@ export const userRelations = relations(user, ({many}) => ({
 	forgot_passwords: many(forgot_password),
 	feedbacks: many(feedback),
 	cars: many(car),
-	beeps_beeper_id: many(beep, {
+	beeps: many(beep, {
 		relationName: "beep_beeper_id_user_id"
 	}),
-	beeps_rider_id: many(beep, {
+	rides: many(beep, {
 		relationName: "beep_rider_id_user_id"
 	}),
 	reports_reporter_id: many(report, {

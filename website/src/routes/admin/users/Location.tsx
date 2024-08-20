@@ -1,23 +1,12 @@
-import React, { useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import React from 'react';
 import { Box, Center } from '@chakra-ui/react';
-import { cache, client } from '../../../utils/apollo';
 import { Marker } from '../../../components/Marker';
+import { Error } from '../../../components/Error';
 import { Map } from '../../../components/Map';
 import { createRoute } from '@tanstack/react-router';
-import { GetUser, userRoute } from './User';
-import { graphql } from 'gql.tada';
-
-const BeepersLocation = graphql(`
-  subscription BeepersLocation($id: String!) {
-    getLocationUpdates(id: $id) {
-      latitude
-      longitude
-    }
-  }
-`);
-
-let sub: any;
+import { userRoute } from './User';
+import { trpc } from '../../../utils/trpc';
+import { Loading } from '../../../components/Loading';
 
 export const locationRoute = createRoute({
   component: LocationView,
@@ -25,42 +14,18 @@ export const locationRoute = createRoute({
   getParentRoute: () => userRoute,
 });
 
-
 export function LocationView() {
   const { userId } = locationRoute.useParams();
 
-  const { data } = useQuery(GetUser, { variables: { id: userId } });
+  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
-  const user = data?.getUser;
-
-  async function subscribe() {
-    const a = client.subscribe({ query: BeepersLocation, variables: { id: userId } });
-
-    sub = a.subscribe(({ data }) => {
-      cache.modify({
-        id: cache.identify({
-          __typename: "User",
-          id: userId,
-        }),
-        fields: {
-          location() {
-            return {
-              latitude: data?.getLocationUpdates?.latitude ?? 0,
-              longitude: data?.getLocationUpdates?.longitude ?? 0,
-            };
-          },
-        },
-      });
-    });
+  if (isLoading) {
+    return <Loading />;
   }
 
-  useEffect(() => {
-    subscribe();
-
-    return () => {
-      sub?.unsubscribe();
-    };
-  }, []);
+  if (error) {
+    return <Error>{error.message}</Error>;
+  }
 
   if (!user?.location) {
     return (
@@ -86,7 +51,7 @@ export function LocationView() {
             userId={user.id}
             username={user.username}
             photo={user.photo}
-            name={user.name}
+            name={`${user.first} ${user.last}`}
             variant="default"
           />
         </Map>

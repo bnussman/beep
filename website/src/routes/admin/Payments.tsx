@@ -2,14 +2,12 @@ import React from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../components/Pagination';
-import { useQuery } from '@apollo/client';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../components/TdUser';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
-import { graphql } from '../../graphql';
 import { trpc } from '../../utils/trpc';
 
 dayjs.extend(relativeTime);

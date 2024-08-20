@@ -6,12 +6,7 @@ import { Error } from "../../components/Error";
 import { createRoute } from "@tanstack/react-router";
 import { adminRoute } from ".";
 import { graphql } from "gql.tada";
-
-const RedisChannelsQuery = graphql(`
-  query RedisChannelsQuery {
-    getRedisChannels
-  }
-`);
+import { trpc } from "../../utils/trpc";
 
 export const redisRoute = createRoute({
   component: Redis,
@@ -20,22 +15,21 @@ export const redisRoute = createRoute({
 });
 
 export function Redis() {
-  const { data, loading, error } = useQuery(RedisChannelsQuery);
+  const { data, isLoading, error } = trpc.redis.channels.useQuery();
 
-
-  if (loading) {
+  if (isLoading) {
     return <Loading />;
   }
 
-  if (error ) {
-    return <Error error={error} />
+  if (error) {
+    return <Error>{error.message}</Error>;
   }
 
   return (
     <Stack spacing={4}>
       <Heading>Redis Channels</Heading>
       <UnorderedList>
-        {data?.getRedisChannels.map((channel) => (<ListItem>{channel}</ListItem>))}
+        {data?.map((channel) => (<ListItem>{channel}</ListItem>))}
       </UnorderedList>
     </Stack>
   );

@@ -3,11 +3,12 @@ import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { beep, user } from '../../drizzle/schema';
 import { redis, redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
-import { count, eq, desc, sql } from "drizzle-orm";
+import { count, eq, desc, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
 import { S3_BUCKET_URL } from "../utils/constants";
+import { syncUserPayments } from "../utils/payments";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
@@ -52,6 +53,43 @@ export const userRouter = router({
       redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]))
 
       return u[0];
+    }),
+  editAdmin: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        data: z.object({
+          first: z.string(),
+          last: z.string(),
+          email: z.string(),
+          phone: z.string(),
+          venmo: z.string(),
+          cashapp: z.string(),
+          isStudent: z.boolean(),
+          isEmailVerified: z.boolean()
+        }).partial(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const u = await db
+        .update(user)
+        .set(input.data)
+        .where(eq(user.id, input.userId))
+        .returning();
+
+      redis.publish(`user-${u[0].id}`, JSON.stringify(u[0]))
+
+      return u[0];
+    }),
+  syncPayments: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const activePayments = await syncUserPayments(input.userId);
+      return activePayments;
     }),
   updatePicture: authedProcedure
     .input(z.instanceof(FormData))
@@ -116,6 +154,17 @@ export const userRouter = router({
       })
     )
     .query(async ({ input }) => {
+      const where = and(
+        input.isBeeping ? eq(user.isBeeping, true) : undefined,
+        input.query ? or(
+          eq(user.id, input.query),
+          like(user.first, input.query),
+          like(user.last, input.query),
+          like(user.email, input.query),
+          like(user.username, input.query),
+        ) : undefined
+      );
+
       const users = await db
         .select({
           id: user.id,
@@ -135,19 +184,32 @@ export const userRouter = router({
           capacity: user.capacity,
         })
         .from(user)
-        .where(input.isBeeping ? eq(user.isBeeping, true) : undefined)
+        .where(where)
         .orderBy(sql`${user.created} desc nulls last`)
         .limit(input.show)
         .offset(input.offset);
 
       const usersCount = await db.select({ count: count() })
         .from(user)
-        .where(input.isBeeping ? eq(user.isBeeping, true) : undefined);
+        .where(where);
 
       return {
         users,
         count: usersCount[0].count
       };
+    }),
+  user: adminProcedure
+    .input(z.string())
+    .query(async ({ input }) => {
+      const u = await db.query.user.findFirst({
+        where: eq(user.id, input)
+      });
+
+      if (!u) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return u;
     }),
   usersWithBeeps: adminProcedure
     .input(
@@ -212,5 +274,16 @@ export const userRouter = router({
         users,
         count: usersCount[0].count
       };
-    })
+    }),
+  usersByDomain: adminProcedure
+      .query(async ({ input }) => {
+        return await db
+          .select({
+            domain: sql<string>`substring(email from '@(.*)$')`.as('domain'),
+            count: count()
+          })
+          .from(user)
+          .groupBy(sql`domain`)
+          .orderBy(sql`count desc`);
+      })
 })

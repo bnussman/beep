@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Error } from './Error';
-import { gql, useMutation } from '@apollo/client';
+import { trpc } from '../utils/trpc';
 import {
   Button,
   FormControl,
@@ -16,13 +16,6 @@ import {
   Textarea,
   useToast
 } from "@chakra-ui/react";
-import { graphql } from 'gql.tada';
-
-const SendNotification = graphql(`
-  mutation SendNotification($title: String!, $body: String!, $id: String!) {
-    sendNotification(title: $title, body: $body, id: $id)
-  }
-`);
 
 interface Props {
   isOpen: boolean;
@@ -37,10 +30,18 @@ export function SendNotificationDialog(props: Props) {
   const [title, setTitle] = useState<string>();
   const [body, setBody] = useState<string>();
 
-  const [send, { loading, error }] = useMutation(SendNotification);
+  const {
+    mutateAsync: sendNotification,
+    isPending,
+    error
+  } = trpc.notification.sendNotificationToUser.useMutation();
 
   const onClick = async () => {
-    await send({ variables: { title: title ?? "", body: body ?? "", id } });
+    await sendNotification({
+      userId: id,
+      title: title ?? "",
+      body: body ?? "",
+    });
     toast({ title: "Successfully sent notification!", status: "success" });
     onClose();
   };
@@ -52,7 +53,7 @@ export function SendNotificationDialog(props: Props) {
         <ModalHeader>Send Notification</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {error && <Error error={error} />}
+          {error && <Error>{error.message}</Error>}
           <FormControl mb={2}>
             <FormLabel>Title</FormLabel>
             <Input
@@ -76,7 +77,7 @@ export function SendNotificationDialog(props: Props) {
             </Button>
             <Button
               colorScheme='blue'
-              isLoading={loading}
+              isLoading={isPending}
               onClick={onClick}
             >
               Send Notification

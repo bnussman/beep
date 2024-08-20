@@ -60,6 +60,39 @@ export const ratingRouter = router({
         count: ratingsCount[0].count
       }
     }),
+  rating: adminProcedure
+     .input(
+       z.string()
+     )
+     .query(async ({ input }) => {
+       const r = await db.query.rating.findFirst({
+         where: eq(rating.id, input),
+         with: {
+           rater: {
+             columns: {
+               id: true,
+               first: true,
+               last: true,
+               photo: true,
+             }
+           },
+           rated: {
+             columns: {
+               id: true,
+               first: true,
+               last: true,
+               photo: true,
+             }
+           },
+         },
+       });
+
+       if (!r) {
+         throw new TRPCError({ code: "NOT_FOUND" });
+       }
+
+       return r;
+     }),
   deleteRating: authedProcedure
     .input(
       z.object({

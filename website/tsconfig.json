@@ -14,14 +14,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
-    "plugins": [
-      {
-        "name": "@0no-co/graphqlsp",
-        "schema": "http://localhost:3000/graphql",
-        "tadaOutputLocation": "./src/graphql-env.d.ts"
-      }
-    ]
+    "jsx": "react"
   },
   "include": ["./src"]
 }

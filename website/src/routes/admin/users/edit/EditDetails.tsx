@@ -1,100 +1,57 @@
 import React from "react";
 import { Box, Button, Checkbox, FormControl, FormLabel, Input, useToast, FormErrorMessage, Stack } from "@chakra-ui/react";
-import { useMutation, useQuery } from '@apollo/client';
 import { Error } from '../../../../components/Error';
-import { useValidationErrors } from "../../../../utils/useValidationErrors";
 import { useForm } from "react-hook-form";
 import { editUserRoute } from ".";
-import { VariablesOf, graphql } from "gql.tada";
-import { GetUser } from "../User";
+import { RouterInput, trpc } from "../../../../utils/trpc";
 
-interface Props {
-  userId: string;
-}
+type Values = RouterInput['user']['editAdmin']['data'];
 
-const EditUser = graphql(`
-  mutation EditUser($id: String!, $data: EditUserInput!) {
-    editUser(id: $id, data: $data) {
-      id
-      first
-      last
-      isBeeping
-      isStudent
-      isEmailVerified
-      role
-      venmo
-      singlesRate
-      groupRate
-      capacity
-      photo
-      queueSize
-      phone
-      username
-      email
-      cashapp
-      pushToken
-    }
-  }
-`);
-
-interface Omit {
-  <T extends object, K extends [...(keyof T | string)[]]>
-  (obj: T, ...keys: K): {
-      [K2 in Exclude<keyof T, K[number]>]: T[K2]
-  }
-}
-
-const omit: Omit = (obj, ...keys) => {
-  const ret = {} as {
-      [K in keyof typeof obj]: (typeof obj)[K]
-  };
-  let key: keyof typeof obj;
-  for (key in obj) {
-      if (!(keys.includes(key))) {
-          ret[key] = obj[key];
-      }
-  }
-  return ret;
-};
-
-type Values = VariablesOf<typeof EditUser>['data'];
-
-export function EditDetails({ userId }: Props) {
-  const { userId: id } = editUserRoute.useParams();
+export function EditDetails() {
   const toast = useToast();
 
-  const { data } = useQuery(GetUser, { variables: { id: userId } });
+  const { userId } = editUserRoute.useParams();
+  const { data: user } = trpc.user.user.useQuery(userId);
 
-  const user = data?.getUser;
+  const { mutateAsync: editUser, error: editError } = trpc.user.editAdmin.useMutation();
 
-  const defaultValues = user ? omit(user, 'id', 'name', 'location', 'queue', 'created', 'rating', '__typename') : undefined;
-
-  const [edit, { error: editError }] = useMutation(EditUser);
+  const values = {
+    first: user?.first,
+    last: user?.last,
+    email: user?.email,
+    phone: user?.phone,
+    venmo: user?.venmo ?? undefined,
+    cashapp: user?.cashapp ?? undefined,
+    isEmailVerified: user?.isEmailVerified,
+    isStudent: user?.isStudent,
+  };
 
   const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm<Values>({
-    defaultValues
+    defaultValues: values,
+    values,
   });
 
-  const validationErrors = useValidationErrors<Values>(editError);
+  const validationErrors = editError?.data?.zodError?.fieldErrors;
 
   const onSubmit = handleSubmit(async (data) => {
-    const result = await edit({ variables: { id, data } });
-
-    if (result.data) {
-      toast({ status: 'success', title: "Success", description: `Successfully edited ${user?.first}'s profile` });
-    }
+    const result = await editUser({ userId, data });
+    toast({
+      status: 'success',
+      title: "Success",
+      description: `Successfully edited ${user?.first}'s profile`
+    });
   });
 
-  const keys = defaultValues ? Object.keys(defaultValues) : [];
+  const keys = values ? Object.keys(values) : [];
 
   return (
     <Box>
-      {editError && !validationErrors ? <Error error={editError} /> : null}
+      {editError && !validationErrors && <Error>{editError.message}</Error>}
       <form onSubmit={onSubmit}>
         <Stack spacing={4}>
           {keys.map((_key) => {
             const key = _key as keyof Values;
-            const type = typeof defaultValues?.[key];
+            const type = typeof user?.[key];
             return (
               <FormControl key={key} isInvalid={Boolean(errors[key]) || Boolean(validationErrors?.[key])}>
                 <FormLabel>{key}</FormLabel>

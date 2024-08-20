@@ -18,7 +18,6 @@ import { signupRoute } from "../routes/SignUp";
 import { termsRoute } from "../routes/Terms";
 import { verifyAccountRoute } from "../routes/VerifyAccount";
 import { adminRoute } from "../routes/admin";
-import { duplicateEmailRoute } from "../routes/admin/DuplicateEmails";
 import { feedbackRoute } from "../routes/admin/Feedback";
 import { paymentsRoute } from "../routes/admin/Payments";
 import { redisRoute } from "../routes/admin/Redis";
@@ -70,7 +69,6 @@ export const routeTree = rootRoute.addChildren([
     feedbackRoute,
     paymentsRoute,
     redisRoute,
-    duplicateEmailRoute,
     ratingsRoute.addChildren([
       ratingsListRoute,
       ratingRoute

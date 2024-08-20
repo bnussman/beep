@@ -12,7 +12,6 @@ import { PhotoDialog } from '../../../components/PhotoDialog';
 import { DeleteUserDialog } from './DeleteUserDialog';
 import { Link, Outlet, createRoute, useNavigate, useRouterState } from '@tanstack/react-router';
 import { usersRoute } from '.';
-import { graphql } from '../../../graphql';
 import {
   useToast,
   useDisclosure,
@@ -31,83 +30,10 @@ import {
   TabList,
   useMediaQuery,
 } from '@chakra-ui/react';
+import { trpc } from '../../../utils/trpc';
+import { TRPCClientError } from '@trpc/client';
 
 dayjs.extend(relativeTime);
-
-export const GetUser = graphql(`
-  query GetUser($id: String!) {
-    getUser(id: $id) {
-      id
-      name
-      first
-      last
-      isBeeping
-      isStudent
-      isEmailVerified
-      role
-      venmo
-      cashapp
-      singlesRate
-      groupRate
-      capacity
-      photo
-      queueSize
-      phone
-      username
-      rating
-      email
-      created
-      pushToken
-      location {
-        latitude
-        longitude
-      }
-      queue {
-        id
-        origin
-        destination
-        start
-        groupSize
-        status
-        rider {
-          id
-          photo
-          username
-          first
-          last
-          name
-        }
-      }
-    }
-  }
-`);
-
-const VerifyUser = graphql(`
-  mutation VerifyUser($id: String!, $data: EditUserInput!) {
-    editUser(id: $id, data: $data) {
-      id
-      isEmailVerified
-      isStudent
-    }
-  }
-`);
-
-const ClearQueue = graphql(`
-  mutation ClearQueue($id: String!, $stopBeeping: Boolean!) {
-    clearQueue(id: $id, stopBeeping: $stopBeeping)
-  }
-`);
-
-const SyncPayments = graphql(`
-  mutation SyncPayments($id: String) {
-    checkUserSubscriptions(id: $id) {
-      id
-      productId
-      price
-    }
-  }
-`);
-
 
 const tabs = [
   'details',
@@ -128,18 +54,35 @@ export const userRoute = createRoute({
 
 export function User() {
   const { userId } = userRoute.useParams();
-  const { data, loading, error, refetch } = useQuery(GetUser, { variables: { id: userId } });
-  const [isDesktop] = useMediaQuery('(min-width: 800px)')
+  const {
+    data: user,
+    isLoading,
+    error,
+    refetch
+  } = trpc.user.user.useQuery(userId);
 
-  const user = data?.getUser;
+  const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   const toast = useToast();
   const navigate = useNavigate({ from: userRoute.id });
   const routerState = useRouterState();
 
-  const [clear, { loading: isClearLoading, error: clearError }] = useMutation(ClearQueue);
-  const [verify, { loading: isVerifyLoading, error: verifyError }] = useMutation(VerifyUser);
-  const [syncPayments, { loading: isSyncingPayments }] = useMutation(SyncPayments);
+  const {
+    mutateAsync: clearQueue,
+    isPending: isClearLoading,
+    error: clearError
+  } = trpc.beep.clearQueue.useMutation();
+
+  const {
+    mutateAsync: syncPayments,
+    isPending: isSyncingPayments
+  } = trpc.user.syncPayments.useMutation();
+
+  const {
+    mutateAsync: updateUser,
+    isPending: isVerifyLoading,
+    error: verifyError
+  } = trpc.user.editAdmin.useMutation();
 
   const [stopBeeping, setStopBeeping] = useState<boolean>(true);
 
@@ -171,35 +114,39 @@ export function User() {
 
   async function doClear() {
     try {
-      await clear({
-        variables: { id: userId, stopBeeping }
+      await clearQueue({
+        userId, stopBeeping
       });
       if (refetch) refetch();
       onClearClose();
       toast({
         title: "Queue Cleared",
-        description: `${user?.name}'s queue has been cleared ${stopBeeping ? ' and they have stopped beeping.' : ''}`,
+        description: `${user?.first}'s queue has been cleared ${stopBeeping ? ' and they have stopped beeping.' : ''}`,
         status: "success",
       });
     }
     catch (e) {
       onClearClose();
+      toast({
+        title: "Unable to clear user's queue",
+        description: (e as TRPCClientError<any>).message,
+        status: "error",
+      });
     }
   }
 
   const onVerify = () => {
-    verify({
-      variables: { id: userId, data: { isEmailVerified: true, isStudent: true } },
+    updateUser({
+      userId,
+      data: { isEmailVerified: true, isStudent: true }
     }).then(() => {
       toast({ title: "User verified", status: "success" });
     });
   };
 
   const onSyncPayments = () => {
-    syncPayments({
-      variables: { id: userId },
-    }).then(() => {
-      toast({ title: "Payments synced", status: "success" });
+    syncPayments({ userId }).then((activePayments) => {
+      toast({ title: "Payments synced", description: `The user has ${activePayments.length} active payments.`, status: "success" });
     }).catch((error) => {
       toast({ title: "Error", description: error.message, status: "error" });
     });
@@ -216,18 +163,18 @@ export function User() {
   }
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
 
-  if (loading || !user) {
+  if (isLoading || !user) {
     return <Loading />;
   }
 
   return (
     <>
       <Box>
-        {clearError && <Error error={clearError} />}
-        {verifyError && <Error error={verifyError} />}
+        {clearError && <Error>{clearError.message}</Error>}
+        {verifyError && <Error>{verifyError.message}</Error>}
         <Flex alignItems="center" flexWrap="wrap">
           <Flex alignItems="center">
             <Box mr={4}>
@@ -241,7 +188,7 @@ export function User() {
               </Avatar>
             </Box>
             <Box>
-              <Heading size="md">{user.name}</Heading>
+              <Heading size="md">{user.first} {user.last}</Heading>
               <Text>@{user.username}</Text>
               <Text fontSize="xs" textOverflow="ellipsis">{user.id}</Text>
               {user.created && (<Text fontSize="xs">Joined {dayjs().to(user.created)}</Text>)}
