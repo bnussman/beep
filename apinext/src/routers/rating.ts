@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { adminProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, eq, or } from "drizzle-orm";
-import { rating } from '../../drizzle/schema';
+import { rating, user } from '../../drizzle/schema';
+import { TRPCError } from "@trpc/server";
 
 export const ratingRouter = router({
   ratings: adminProcedure
@@ -58,5 +59,58 @@ export const ratingRouter = router({
         ratings,
         count: ratingsCount[0].count
       }
+    }),
+  deleteRating: authedProcedure
+    .input(
+      z.object({
+        ratingId: z.string()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const r = await db.query.rating.findFirst({
+        where: eq(rating.id, input.ratingId),
+        with: {
+          rated: true,
+        },
+      });
+
+      if (!r) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Rating not found"
+        });
+      }
+
+      if (ctx.user.role === 'user' && r?.rater_id !== ctx.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You can't delete a rating that you didn't create."
+        });
+      }
+
+      if (!r.rated.rating) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "You are trying to delete a rating for a user who's rating value is undefined"
+        });
+      }
+
+      const numberOfRatings = await db
+        .select({ count: count() })
+        .from(rating)
+        .where(eq(rating.rated_id, r.rated_id));
+
+      const numberOfRatingsCount = numberOfRatings[0].count;
+
+      let ratedUsersNewRating: string | null;
+
+      if (numberOfRatingsCount <= 1) {
+        ratedUsersNewRating = null;
+      } else {
+        ratedUsersNewRating = String((Number(r.rated.rating) * numberOfRatingsCount - r.stars) / (numberOfRatingsCount - 1));;
+      }
+
+      await db.update(user).set({ rating: ratedUsersNewRating }).where(eq(user.id, r.rated_id));
+      await db.delete(rating).where(eq(rating.id, r.id));
     })
 });
