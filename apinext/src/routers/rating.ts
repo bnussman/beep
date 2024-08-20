@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, eq, or } from "drizzle-orm";
+import { count, eq, or, sql } from "drizzle-orm";
 import { rating, user } from '../../drizzle/schema';
 import { TRPCError } from "@trpc/server";
 
@@ -102,15 +102,15 @@ export const ratingRouter = router({
 
       const numberOfRatingsCount = numberOfRatings[0].count;
 
-      let ratedUsersNewRating: string | null;
-
       if (numberOfRatingsCount <= 1) {
-        ratedUsersNewRating = null;
+        await db.update(user).set({ rating: null }).where(eq(user.id, r.rated_id));
       } else {
-        ratedUsersNewRating = String((Number(r.rated.rating) * numberOfRatingsCount - r.stars) / (numberOfRatingsCount - 1));;
+        await db
+          .update(user)
+          .set({ rating: sql`("rating" * ${numberOfRatingsCount} - ${r.stars}) / (${numberOfRatingsCount} - 1)` })
+          .where(eq(user.id, r.rated_id));
       }
 
-      await db.update(user).set({ rating: ratedUsersNewRating }).where(eq(user.id, r.rated_id));
       await db.delete(rating).where(eq(rating.id, r.id));
     })
 });
