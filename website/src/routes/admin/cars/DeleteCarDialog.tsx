@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { client } from '../../../utils/apollo';
-import { Unpacked } from '../../../utils/utils';
-import { CarsQuery } from '.';
 import { Error } from '../../../components/Error';
 import { useMutation } from '@apollo/client';
-import { ResultOf, graphql } from 'gql.tada';
+import { graphql } from 'gql.tada';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -19,10 +16,11 @@ import {
   Textarea,
   useToast
 } from "@chakra-ui/react";
+import { RouterOutput, trpc } from '../../../utils/trpc';
 
 interface Props {
   isOpen: boolean;
-  car: Unpacked<ResultOf<typeof CarsQuery>['getCars']['items']> | undefined;
+  car: RouterOutput['car']['cars']['cars'][number] | undefined;
   onClose: () => void;
 }
 
@@ -36,6 +34,7 @@ export function DeleteCarDialog(props: Props) {
   const { isOpen, onClose, car } = props;
   const cancelRef = React.useRef(null);
   const toast = useToast();
+  const utils = trpc.useUtils();
 
   const [deleteCar, { loading, error }] = useMutation(DeleteCar);
   const [notification, setNotification] = useState("");
@@ -44,7 +43,7 @@ export function DeleteCarDialog(props: Props) {
     deleteCar({ variables: { id: car?.id ?? "", notification } }).then(() => {
       toast({ title: 'Successfully deleted car', status: 'success' });
       onClose()
-      client.refetchQueries({ include: [CarsQuery] });
+      utils.car.cars.invalidate();
     });
   };
 
@@ -58,7 +57,7 @@ export function DeleteCarDialog(props: Props) {
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete {car?.user.name}'s {car?.make} {car?.model}?
+            Delete {car?.user.first}'s {car?.make} {car?.model}?
           </AlertDialogHeader>
           <AlertDialogBody>
             {error && <Error error={error} />}

@@ -1,29 +1,12 @@
 import React from 'react'
 import { Table, Thead, Tbody, Tr, Th, Td, Box } from "@chakra-ui/react"
-import { useQuery } from '@apollo/client';
 import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { Loading } from '../../../components/Loading';
 import { Pagination } from '../../../components/Pagination';
 import { leaderboardsRoute } from '.';
 import { useNavigate } from '@tanstack/react-router';
-import { graphql } from 'gql.tada';
-
-export const UsersWithRides = graphql(`
-  query getUsersWithRides($show: Int, $offset: Int) {
-    getUsersWithRides(show: $show, offset: $offset) {
-      items {
-        user {
-          id
-          photo
-          name
-        }
-        rides
-      }
-      count
-    }
-  }
-`);
+import { trpc } from '../../../utils/trpc';
 
 const pageLimit = 20;
 
@@ -31,11 +14,9 @@ export function Rides() {
   const { page } = leaderboardsRoute.useSearch();
   const navigate = useNavigate({ from: leaderboardsRoute.id });
 
-  const { loading, error, data, previousData } = useQuery(UsersWithRides, {
-    variables: {
-      show: pageLimit,
-      offset: (page - 1) * pageLimit,
-    }
+  const { isLoading, error, data } = trpc.user.usersWithRides.useQuery({
+    show: pageLimit,
+    offset: (page - 1) * pageLimit,
   });
 
   const setCurrentPage = (page: number) => {
@@ -43,16 +24,13 @@ export function Rides() {
   };
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
-
-  const users = data?.getUsersWithRides.items ?? previousData?.getUsersWithRides.items;
-  const count = data?.getUsersWithRides.count ?? previousData?.getUsersWithRides.count;
 
   return (
     <Box>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -66,7 +44,7 @@ export function Rides() {
             </Tr>
           </Thead>
           <Tbody>
-            {users?.map(({ user, rides }) => (
+            {data?.users.map(({ user, rides }) => (
               <Tr key={user.id}>
                 <TdUser user={user} />
                 <Td>{rides}</Td>
@@ -75,9 +53,9 @@ export function Rides() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

@@ -170,5 +170,37 @@ export const userRouter = router({
         users,
         count: usersCount[0].count
       };
+    }),
+  usersWithRides: adminProcedure
+    .input(
+      z.object({
+        offset: z.number(),
+        show: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const users = await db
+        .select({
+          user: {
+            id: user.id,
+            first: user.first,
+            last: user.last,
+            photo: user.photo,
+          },
+          rides: count(beep.rider_id).as('rides')
+        })
+        .from(user)
+        .leftJoin(beep, eq(user.id, beep.rider_id))
+        .groupBy(user.id)
+        .orderBy(sql`rides desc`)
+        .offset(input.offset)
+        .limit(input.show);
+
+      const usersCount = await db.select({ count: count() }).from(user);
+
+      return {
+        users,
+        count: usersCount[0].count
+      };
     })
 })

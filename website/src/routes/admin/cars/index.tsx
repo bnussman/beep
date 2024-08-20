@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Pagination } from '../../../components/Pagination';
-import { useQuery } from '@apollo/client';
 import { Box, Heading, IconButton, Image, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
@@ -11,33 +10,11 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { DeleteCarDialog } from './DeleteCarDialog';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from '../../../graphql';
+import { trpc } from '../../../utils/trpc';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
-
-export const CarsQuery = graphql(`
-  query GetCars($offset: Int, $show: Int) {
-    getCars(offset: $offset, show: $show) {
-      items {
-        id
-        make
-        model
-        year
-        color
-        photo
-        created
-        user {
-          id
-          photo
-          name
-        }
-      }
-      count
-    }
-  }
-`);
 
 export const carsRoute = createRoute({
   component: Cars,
@@ -67,17 +44,12 @@ export function Cars() {
 
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
-  const { data, loading, error, previousData } = useQuery(CarsQuery, {
-    variables: {
-      offset: (page - 1) * pageLimit,
-      show: pageLimit
-    }
+  const { data, isLoading, error } = trpc.car.cars.useQuery({
+    offset: (page - 1) * pageLimit,
+    show: pageLimit
   });
 
-  const cars = data?.getCars.items ?? previousData?.getCars.items;
-  const count = data?.getCars.count ?? previousData?.getCars.count;
-
-  const selectedCar = cars?.find(car => car.id === selectedCarId);
+  const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page: page } });
@@ -95,14 +67,14 @@ export function Cars() {
   };
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
 
   return (
     <Box>
       <Heading>Cars</Heading>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -121,7 +93,7 @@ export function Cars() {
             </Tr>
           </Thead>
           <Tbody>
-            {cars && cars.map(car => (
+            {data?.cars.map((car) => (
               <Tr key={car.id}>
                 <TdUser user={car.user} />
                 <Td>{car.make}</Td>
@@ -142,9 +114,9 @@ export function Cars() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

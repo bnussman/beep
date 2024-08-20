@@ -8,6 +8,7 @@ import { userRouter } from './routers/user';
 import { authRouter } from './routers/auth';
 import { reportRouter } from "./routers/report";
 import { ratingRouter } from "./routers/rating";
+import { carRouter } from "./routers/car";
 
 Sentry.init({
   dsn: "https://c00b90fd57886f1b49fb31b9d52142de@o1155818.ingest.us.sentry.io/4507799279435776",
@@ -19,6 +20,7 @@ const appRouter = router({
   auth: authRouter,
   report: reportRouter,
   rating: ratingRouter,
+  car: carRouter,
 });
 
 export type AppRouter = typeof appRouter;
