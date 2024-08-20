@@ -10,6 +10,7 @@ import { S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
 import { email } from "../utils/email";
 import { SendMailOptions } from "nodemailer";
 import * as Sentry from '@sentry/bun';
+import { redis } from "../utils/redis";
 
 export const authRouter = router({
   login: publicProcedure
@@ -306,5 +307,62 @@ export const authRouter = router({
       await db.delete(token).where(eq(token.user_id, forgotPassword.user_id))
 
       return true;
+    }),
+  verifyAccount: publicProcedure
+    .input(
+      z.object({
+        id: z.string()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const verifyAccountEntry = await db.query.verify_email.findFirst({
+        where: eq(verify_email.id, input.id),
+        with: {
+          user: true,
+        },
+      });
+
+      if (!verifyAccountEntry)  {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: ''
+        });
+      }
+
+      if ((verifyAccountEntry.time.getTime() + (18000 * 1000)) < Date.now()) {
+        await db
+          .delete(verify_email)
+          .where(eq(verify_email.id, verifyAccountEntry.id));
+
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Your account verification link has expired. Login to your account to request another link.'
+        });
+      }
+
+      if (verifyAccountEntry.email !== verifyAccountEntry.user.email) {
+        await db
+          .delete(verify_email)
+          .where(eq(verify_email.id, verifyAccountEntry.id));
+
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: 'You tried to verify your email, but your email has changed. Login to request a new verification link.'
+        });
+      }
+
+      const isStudent = verifyAccountEntry.email.endsWith('.edu');
+      const values = isStudent ?
+        { isStudent: true, isEmailVerified: true } :
+        { isEmailVerified: true };
+
+      const u = await db.update(user).set(values).returning();
+      await db
+        .delete(verify_email)
+        .where(eq(verify_email.id, verifyAccountEntry.id));
+
+      redis.publish(`user-${u[0].id}`, JSON.stringify(u[0]));
+
+      return u[0].email;
     })
 });

@@ -1,19 +1,12 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { useMutation } from '@apollo/client';
 import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { Loading } from '../components/Loading';
 import { Box } from '@chakra-ui/react';
 import { createRoute } from '@tanstack/react-router';
-import { graphql } from 'gql.tada';
 import { rootRoute } from '../utils/router';
-
-const VerifyAccountGraphQL = graphql(`
-  mutation VerifyAccount($id: String!) {
-    verifyAccount(id: $id)
-  }
-`);
+import { trpc } from '../utils/trpc';
 
 export const verifyAccountRoute = createRoute({
   component: VerifyAccount,
@@ -23,16 +16,17 @@ export const verifyAccountRoute = createRoute({
 
 export function VerifyAccount() {
   const { id } = verifyAccountRoute.useParams();
-  const [verify, { data, loading, error }] = useMutation(VerifyAccountGraphQL);
 
-  async function handleVerify(): Promise<void> {
+  const {
+    mutateAsync: verifyEmail,
+    data,
+    isPending,
+    error
+  } = trpc.auth.verifyAccount.useMutation();
+
+  const handleVerify = async () => {
     try {
-      await verify({
-        variables: {
-          id: id
-        },
-        refetchQueries: () => ["GetUserData"]
-      });
+      await verifyEmail({ id });
     }
     catch (error) {
       console.error(error);
@@ -45,9 +39,9 @@ export function VerifyAccount() {
 
   return (
     <Box>
-      {loading && <Loading />}
+      {isPending && <Loading />}
       {data && <Success message="Successfully verified email" />}
-      {error && <Error error={error} />}
+      {error && <Error>{error.message}</Error>}
     </Box>
   );
 }
