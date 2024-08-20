@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
+import { RouterOutput, trpc } from '../../../utils/trpc';
 import { Error } from '../../../components/Error';
-import { useMutation } from '@apollo/client';
-import { graphql } from 'gql.tada';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -16,7 +15,6 @@ import {
   Textarea,
   useToast
 } from "@chakra-ui/react";
-import { RouterOutput, trpc } from '../../../utils/trpc';
 
 interface Props {
   isOpen: boolean;
@@ -24,23 +22,24 @@ interface Props {
   onClose: () => void;
 }
 
-const DeleteCar = graphql(`
-  mutation DeleteCar($id: String!, $notification: String) {
-    deleteCar(id: $id, notification: $notification)
-  }
-`);
-
 export function DeleteCarDialog(props: Props) {
   const { isOpen, onClose, car } = props;
-  const cancelRef = React.useRef(null);
+
   const toast = useToast();
   const utils = trpc.useUtils();
 
-  const [deleteCar, { loading, error }] = useMutation(DeleteCar);
-  const [notification, setNotification] = useState("");
+  const cancelRef = React.useRef(null);
+  const [reason, setReason] = useState("");
+
+  const { mutateAsync: deleteCar, isPending, error, reset } = trpc.car.deleteCar.useMutation();
+
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
   const doDelete = () => {
-    deleteCar({ variables: { id: car?.id ?? "", notification } }).then(() => {
+    deleteCar({ carId: car?.id ?? "", reason }).then(() => {
       toast({ title: 'Successfully deleted car', status: 'success' });
       onClose()
       utils.car.cars.invalidate();
@@ -51,7 +50,7 @@ export function DeleteCarDialog(props: Props) {
     <AlertDialog
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
-      onClose={onClose}
+      onClose={handleClose}
       isCentered
     >
       <AlertDialogOverlay>
@@ -60,21 +59,21 @@ export function DeleteCarDialog(props: Props) {
             Delete {car?.user.first}'s {car?.make} {car?.model}?
           </AlertDialogHeader>
           <AlertDialogBody>
-            {error && <Error error={error} />}
+            {error && <Error>{error.message}</Error>}
             <FormControl>
               <FormLabel>Notification</FormLabel>
               <Textarea
-                onChange={(e) => setNotification(e.target.value)}
-                value={notification}
+                onChange={(e) => setReason(e.target.value)}
+                value={reason}
               />
               <FormHelperText>Type a message here if you want the user to recieve a notification about why their car was removed</FormHelperText>
             </FormControl>
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
+            <Button ref={cancelRef} onClick={handleClose}>
               Cancel
             </Button>
-            <Button isLoading={loading} colorScheme="red" onClick={doDelete} ml={3}>
+            <Button isLoading={isPending} colorScheme="red" onClick={doDelete} ml={3}>
               Delete
             </Button>
           </AlertDialogFooter>
