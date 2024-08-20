@@ -1,41 +1,16 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
 import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { client } from '../utils/apollo';
-import { useQuery } from '@apollo/client';
-import { GetUser, userRoute } from '../routes/admin/users/User';
+import { userRoute } from '../routes/admin/users/User';
 import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
 import { createRoute } from '@tanstack/react-router';
-import { graphql } from '../graphql';
+import { trpc } from '../utils/trpc';
 
 dayjs.extend(duration);
-
-export const QueueSubscription = graphql(`
-  subscription GetQueue($id: String!) {
-    getBeeperUpdates(id: $id) {
-      id
-      origin
-      destination
-      start
-      groupSize
-      status
-      rider {
-        id
-        photo
-        username
-        first
-        last
-        name
-      }
-    }
-  }
-`);
-
-let sub: any;
 
 export const queueRoute = createRoute({
   component: QueueTable,
@@ -46,39 +21,15 @@ export const queueRoute = createRoute({
 export function QueueTable() {
   const { userId } = queueRoute.useParams();
 
-  const { data } = useQuery(GetUser, { variables: { id: userId } });
+  const { data } = trpc.beep.beeps.useQuery({
+    userId,
+    offset: 0,
+    show: 500,
+  });
 
-  const user = data?.getUser;
+  // @todo subscribe to users queue
 
-  async function subscribe() {
-    const a = client.subscribe({ query: QueueSubscription, variables: { id: userId } });
-
-    sub = a.subscribe(({ data }) => {
-      client.writeQuery({
-        query: GetUser,
-        data: {
-          getUser: {
-            ...user,
-            queue: data?.getBeeperUpdates
-          }
-        },
-        variables: {
-          id: userId
-        }
-      });
-    });
-  }
-
-  useEffect(() => {
-    subscribe();
-
-    return () => {
-      sub?.unsubscribe();
-    };
-  }, []);
-
-
-  if (!user?.queue || user.queue.length === 0) {
+  if (data?.count === 0) {
     return (
       <Center h="100px">
         This user's queue is empty.
@@ -100,7 +51,7 @@ export function QueueTable() {
           </Tr>
         </Thead>
         <Tbody>
-          {user?.queue.map((beep) => (
+          {data?.beeps.map((beep) => (
             <Tr key={beep.id}>
               <TdUser user={beep.rider} />
               <Td>{beep.origin}</Td>

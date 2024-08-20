@@ -13,6 +13,7 @@ import { beepStatusMap } from '.';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from '../../../graphql';
+import { trpc } from '../../../utils/trpc';
 
 dayjs.extend(duration);
 
@@ -60,44 +61,25 @@ export function ActiveBeeps() {
   const { page } = activeBeepsRoute.useSearch();
   const navigate = useNavigate({ from: activeBeepsRoute.id });
 
-  const {
-    data,
-    loading,
-    error,
-    previousData,
-    refetch,
-    startPolling,
-    stopPolling
-  } = useQuery(
-    ActiveBeepsGraphQL,
+  const { data, isLoading, error } = trpc.beep.beeps.useQuery(
     {
-      variables: {
-        offset: (page - 1) * pageLimit,
-        show: pageLimit
-      }
+      offset: (page - 1) * pageLimit,
+      show: pageLimit,
+      inProgress: true,
+    },
+    {
+      refetchOnMount: true,
+      refetchInterval: 5_000,
     }
   );
-
-  useEffect(() => {
-    startPolling(2000);
-    if (data) {
-      refetch();
-    }
-    return () => {
-      stopPolling();
-    };
-  }, []);
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
-
-  const beeps = data?.getInProgressBeeps.items ?? previousData?.getInProgressBeeps.items;
-  const count = data?.getInProgressBeeps.count ?? previousData?.getInProgressBeeps.count;
 
   return (
     <Box>
@@ -108,7 +90,7 @@ export function ActiveBeeps() {
         </Badge>
       </Flex>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -127,7 +109,7 @@ export function ActiveBeeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {beeps?.map((beep) => (
+            {data?.beeps.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />
                 <TdUser user={beep.rider} />
@@ -146,9 +128,9 @@ export function ActiveBeeps() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

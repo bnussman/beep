@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import { Pagination } from './Pagination';
 import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { Loading } from './Loading';
@@ -8,25 +7,10 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
-import { graphql } from '../graphql';
+import { trpc } from '../utils/trpc';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
-
-const PaymentsQuery = graphql(`
-  query UserPayments($id: String, $offset: Int, $show: Int) {
-    getPaymentHistory(id: $id, offset: $offset, show: $show) {
-      items {
-        id
-        productId
-        price
-        created
-        expires
-      }
-      count
-    }
-  }
-`);
 
 export const paymentsTableRoute = createRoute({
   component: PaymentsTable,
@@ -34,26 +18,17 @@ export const paymentsTableRoute = createRoute({
   getParentRoute: () => userRoute,
 });
 
-
 export function PaymentsTable() {
   const pageLimit = 5;
   const { userId } = paymentsTableRoute.useParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, loading } = useQuery(
-    PaymentsQuery,
-    {
-      variables: {
-        id: userId,
-        offset: (currentPage - 1) * pageLimit,
-        show: pageLimit
-      }
-    }
-  );
+  const { data, isLoading } = trpc.payment.payments.useQuery({
+    userId,
+    offset: (currentPage - 1) * pageLimit,
+    limit: pageLimit
+  });
 
-  const payments = data?.getPaymentHistory.items;
-  const count = data?.getPaymentHistory.count;
-
-  if (count === 0) {
+  if (data?.count === 0) {
     return (
       <Center h="100px">
         This user has no payments.
@@ -61,14 +36,14 @@ export function PaymentsTable() {
     );
   }
 
-  if (loading) {
+  if (isLoading) {
     return <Loading />;
   }
 
   return (
     <Box>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -85,7 +60,7 @@ export function PaymentsTable() {
             </Tr>
           </Thead>
           <Tbody>
-            {payments?.map((payment) => (
+            {data?.payments.map((payment) => (
               <Tr key={payment.id}>
                 <Td>{payment.id}</Td>
                 <Td>{payment.productId}</Td>
@@ -98,7 +73,7 @@ export function PaymentsTable() {
         </Table>
       </Box>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

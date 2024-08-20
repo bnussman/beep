@@ -112,6 +112,7 @@ export const userRouter = router({
         offset: z.number(),
         show: z.number(),
         query: z.string().optional(),
+        isBeeping: z.boolean().optional()
       })
     )
     .query(async ({ input }) => {
@@ -122,17 +123,26 @@ export const userRouter = router({
           last: user.last,
           photo: user.photo,
           email: user.email,
+          username: user.username,
           isStudent: user.isStudent,
           isEmailVerified: user.isEmailVerified,
           isBeeping: user.isBeeping,
           created: user.created,
+          location: user.location,
+          queueSize: user.queueSize,
+          groupRate: user.groupRate,
+          singlesRate: user.singlesRate,
+          capacity: user.capacity,
         })
         .from(user)
+        .where(input.isBeeping ? eq(user.isBeeping, true) : undefined)
         .orderBy(sql`${user.created} desc nulls last`)
         .limit(input.show)
         .offset(input.offset);
 
-      const usersCount = await db.select({ count: count() }).from(user);
+      const usersCount = await db.select({ count: count() })
+        .from(user)
+        .where(input.isBeeping ? eq(user.isBeeping, true) : undefined);
 
       return {
         users,

@@ -12,42 +12,10 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
 import { graphql } from '../graphql';
+import { trpc } from '../utils/trpc';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
-
-const Hisory = graphql(`
-  query GetBeepsForUser($id: String, $show: Int, $offset: Int) {
-    getBeeps(id: $id, show: $show, offset: $offset) {
-      items {
-        id
-        origin
-        destination
-        start
-        end
-        groupSize
-        status
-        beeper {
-          id
-          photo
-          username
-          first
-          last
-          name
-        }
-        rider {
-          id
-          photo
-          username
-          first
-          last
-          name
-        }
-      }
-      count
-    }
-  }
-`);
 
 export const beepsTableRoute = createRoute({
   component: BeepsTable,
@@ -62,18 +30,13 @@ export function BeepsTable() {
 
   const { userId } = beepsTableRoute.useParams();
 
-  const { data } = useQuery(
-    Hisory,
-    {
-      variables: {
-        id: userId,
-        offset: (currentPage - 1) * pageLimit,
-        show: pageLimit
-      }
-    }
-  );
+  const { data } = trpc.beep.beeps.useQuery({
+    userId,
+    offset: (currentPage - 1) * pageLimit,
+    show: pageLimit
+  });
 
-  if (data?.getBeeps && data.getBeeps.items.length === 0) {
+  if (data?.count === 0) {
     return (
       <Center h="100px">
         This user has no ride history.
@@ -84,7 +47,7 @@ export function BeepsTable() {
   return (
     <Box>
       <Pagination
-        resultCount={data?.getBeeps.count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -104,7 +67,7 @@ export function BeepsTable() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getBeeps.items.map((ride) => (
+            {data?.beeps.map((ride) => (
               <Tr key={ride.id}>
                 <TdUser user={ride.beeper} />
                 <TdUser user={ride.rider} />
@@ -125,7 +88,7 @@ export function BeepsTable() {
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.getBeeps.count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

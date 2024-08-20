@@ -2,34 +2,15 @@ import React from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../components/Pagination';
-import { useQuery } from '@apollo/client';
 import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from '../../components/TdUser';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
-import { graphql } from '../../graphql';
+import { trpc } from '../../utils/trpc';
 
 dayjs.extend(relativeTime);
-
-const FeedbackGQL = graphql(`
-  query Feedback($offset: Int, $show: Int) {
-    getFeedback(offset: $offset, show: $show) {
-      items {
-        id
-        message
-        created
-        user {
-          id
-          photo
-          name
-        }
-      }
-      count
-    }
-  }
-`);
 
 export const feedbackRoute = createRoute({
   component: Feedback,
@@ -43,29 +24,24 @@ export function Feedback() {
   const { page } = feedbackRoute.useSearch();
   const navigate = useNavigate({ from: feedbackRoute.id });
 
-  const { data, loading, error, previousData } = useQuery(FeedbackGQL, {
-    variables: {
-      offset: (page - 1) * pageLimit,
-      show: pageLimit
-    }
+  const { data, isLoading, error } = trpc.feedback.feedback.useQuery({
+    offset: (page - 1) * pageLimit,
+    limit: pageLimit
   });
-
-  const feedback = data?.getFeedback.items ?? previousData?.getFeedback.items;
-  const count = data?.getFeedback.count ?? previousData?.getFeedback.count;
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
 
   return (
     <Box>
       <Heading>Feedback</Heading>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -80,7 +56,7 @@ export function Feedback() {
             </Tr>
           </Thead>
           <Tbody>
-            {feedback?.map((feedback) => (
+            {data?.feedback.map((feedback) => (
               <Tr key={feedback.id}>
                 <TdUser user={feedback.user} />
                 <Td>{feedback.message}</Td>
@@ -90,9 +66,9 @@ export function Feedback() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

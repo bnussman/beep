@@ -9,6 +9,7 @@ import { cache } from '../../../utils/apollo';
 import { createRoute } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { graphql } from 'gql.tada';
+import { trpc } from '../../../utils/trpc';
 
 export const BeepersGraphQL = graphql(`
   query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
@@ -57,28 +58,11 @@ export const beepersRoute = createRoute({
 });
 
 export function Beepers() {
-  const {
-    data,
-    loading,
-    error,
-    startPolling,
-    stopPolling
-  } = useQuery(BeepersGraphQL, {
-    variables: {
-      latitude: 0,
-      longitude: 0,
-      radius: 0
-    }
+  const { data, isLoading, error } = trpc.user.users.useQuery({
+    isBeeping: true,
+    show: 500,
+    offset: 0,
   });
-
-  const beepers = data?.getBeepers;
-
-  useEffect(() => {
-    startPolling(15000);
-    return () => {
-      stopPolling();
-    };
-  }, []);
 
   useSubscription(BeeperLocationUpdates, {
     variables: {
@@ -115,12 +99,12 @@ export function Beepers() {
   });
 
 
-  if (loading || beepers === undefined) {
+  if (isLoading) {
     return <Loading />;
   }
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
 
   return (
@@ -128,10 +112,10 @@ export function Beepers() {
       <HStack alignItems="center">
         <Heading>Beepers</Heading>
         <Badge ml={2}>
-          {String(beepers?.length ?? 0)}
+          {data?.count ?? 0}
         </Badge>
       </HStack>
-      <BeepersMap beepers={beepers} />
+      <BeepersMap beepers={data?.users ?? []} />
       <Box overflowX="auto">
         <Table>
           <Thead>
@@ -143,7 +127,7 @@ export function Beepers() {
             </Tr>
           </Thead>
           <Tbody>
-            {beepers.map((beeper) => (
+            {data?.users.map((beeper) => (
               <Tr key={beeper.id}>
                 <TdUser user={beeper} />
                 <Td>{beeper.queueSize} riders</Td>

@@ -1,67 +1,28 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Indicator } from './Indicator';
 import { Text, Avatar, Box, Center, HStack, Spacer, Spinner } from '@chakra-ui/react';
-import { client } from '../utils/apollo';
-import { useQuery } from '@apollo/client';
-import { QueueSubscription } from './QueueTable';
 import { Status } from '../types/User';
 import { Link } from '@tanstack/react-router';
-import { graphql } from 'gql.tada';
+import { trpc } from '../utils/trpc';
 
 dayjs.extend(duration);
-
-let sub: any;
-
-const QueueQuery = graphql(`
-  query UsersQueue($id: String) {
-    getQueue(id: $id) {
-      id
-      status
-      rider {
-        id
-        name
-        photo
-      }
-    }
-  }
-`);
 
 interface Props {
   userId: string;
 }
 
 export function QueuePreview({ userId }: Props) {
-  const { data, loading, error } = useQuery(QueueQuery, { variables: { id: userId } });
+  const { data, isLoading, error } = trpc.beep.beeps.useQuery({
+    userId,
+    show: 500,
+    offset: 0,
+  });
 
-  const queue = data?.getQueue;
+  // @todo subscribe to queue for realtime updates
 
-  async function subscribe() {
-    const a = client.subscribe({ query: QueueSubscription, variables: { id: userId } });
-
-    sub = a.subscribe(({ data }) => {
-      if (data) {
-        client.writeQuery({
-          query: QueueQuery,
-          data: {
-            getQueue: data.getBeeperUpdates
-          },
-          variables: { id: userId }
-        });
-      }
-    });
-  }
-
-  useEffect(() => {
-    subscribe();
-
-    return () => {
-      sub?.unsubscribe();
-    };
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Center>
         <Spinner />
@@ -77,7 +38,7 @@ export function QueuePreview({ userId }: Props) {
     );
   }
 
-  if (queue?.length === 0) {
+  if (data?.count === 0) {
     return (
       <Center h="100px">
         This user's queue is empty.
@@ -87,19 +48,19 @@ export function QueuePreview({ userId }: Props) {
 
   return (
     <Box>
-      {queue?.map((entry) => (
-        <HStack key={entry.id}>
-          <Link to="/admin/users/$userId" params={{ userId: entry.rider.id }}>
-            <Avatar src={entry.rider.photo || ''} size="xs" />
+      {data?.beeps?.map((beep) => (
+        <HStack key={beep.id}>
+          <Link to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
+            <Avatar src={beep.rider.photo || ''} size="xs" />
           </Link>
-          <Link to="/admin/users/$userId" params={{ userId: entry.rider.id }}>
-            <Box fontWeight="bold" whiteSpace="nowrap">{entry.rider.name}</Box>
+          <Link to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
+            <Box fontWeight="bold" whiteSpace="nowrap">{beep.rider.first} {beep.rider.last}</Box>
           </Link>
           <Text noOfLines={1}>
-            {entry.status}
+            {beep.status}
           </Text>
           <Spacer />
-          <Indicator color={entry.status !== Status.WAITING ? 'green' : 'red'} />
+          <Indicator color={beep.status !== Status.WAITING ? 'green' : 'red'} />
         </HStack>
       ))}
     </Box>

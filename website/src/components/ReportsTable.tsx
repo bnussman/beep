@@ -1,49 +1,16 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import { Pagination } from './Pagination';
 import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Indicator } from './Indicator';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
 import { Link, createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
-import { graphql } from '../graphql';
+import { trpc } from '../utils/trpc';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
-
-const Reports = graphql(`
-  query GetReportsForUser($id: String, $show: Int, $offset: Int) {
-    getReports(id: $id, show: $show, offset: $offset) {
-      items {
-        id
-        timestamp
-        reason
-        handled
-        handledBy {
-          id
-          name
-          photo
-          username
-        }
-        reporter {
-          id
-          name
-          photo
-          username
-        }
-        reported {
-          id
-          name
-          photo
-          username
-        }
-      }
-      count
-    }
-  }
-`);
 
 export const reportsTableRoute = createRoute({
   component: ReportsTable,
@@ -55,18 +22,13 @@ export function ReportsTable() {
   const { userId } = reportsTableRoute.useParams();
   const pageLimit = 5;
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, loading } = useQuery(
-    Reports,
-    {
-      variables: {
-        id: userId,
-        offset: (currentPage - 1) * pageLimit,
-        show: pageLimit
-      }
-    }
-  );
+  const { data, isLoading } = trpc.report.reports.useQuery({
+    userId,
+    offset: (currentPage - 1) * pageLimit,
+    show: pageLimit
+  });
 
-  if (data?.getReports && data.getReports.items.length === 0) {
+  if (data?.count === 0) {
     return (
       <Center h="100px">
         This user has no reports.
@@ -74,7 +36,7 @@ export function ReportsTable() {
     );
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Center h="100px">
         <Spinner size="xl" />
@@ -85,7 +47,7 @@ export function ReportsTable() {
   return (
     <Box>
       <Pagination
-        resultCount={data?.getReports.count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -103,7 +65,7 @@ export function ReportsTable() {
             </Tr>
           </Thead>
           <Tbody>
-            {data?.getReports.items.map((report) => (
+            {data?.reports.map((report) => (
               <Tr key={report.id}>
                 <TdUser user={report.reporter} />
                 <TdUser user={report.reported} />
@@ -121,7 +83,7 @@ export function ReportsTable() {
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.getReports.count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

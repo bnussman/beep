@@ -9,6 +9,9 @@ import { authRouter } from './routers/auth';
 import { reportRouter } from "./routers/report";
 import { ratingRouter } from "./routers/rating";
 import { carRouter } from "./routers/car";
+import { beepRouter } from "./routers/beep";
+import { paymentRouter } from "./routers/payment";
+import { feedbackRouter } from "./routers/feedback";
 
 Sentry.init({
   dsn: "https://c00b90fd57886f1b49fb31b9d52142de@o1155818.ingest.us.sentry.io/4507799279435776",
@@ -21,6 +24,9 @@ const appRouter = router({
   report: reportRouter,
   rating: ratingRouter,
   car: carRouter,
+  beep: beepRouter,
+  payment: paymentRouter,
+  feedback: feedbackRouter,
 });
 
 export type AppRouter = typeof appRouter;

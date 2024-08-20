@@ -83,8 +83,8 @@ export const token = pgTable("token", {
 export const payment = pgTable("payment", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	user_id: varchar("user_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
-	store_id: varchar("store_id", { length: 255 }).notNull(),
-	product_id: text("product_id").notNull(),
+	storeId: varchar("store_id", { length: 255 }).notNull(),
+	productId: text("product_id").notNull(),
 	price: numeric("price").notNull(),
 	store: text("store").notNull(),
 	created: timestamp("created", { withTimezone: true, mode: 'string' }).notNull(),
@@ -117,16 +117,27 @@ export const car = pgTable("car", {
 	updated: timestamp("updated", { withTimezone: true, mode: 'string' }).notNull(),
 });
 
+export const beepStatusEnum = pgEnum('beep_status', [
+  "canceled",
+  "denied",
+  "waiting",
+  "accepted",
+  "on_the_way",
+  "here",
+  "in_progress",
+  "complete",
+]);
+
 export const beep = pgTable("beep", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	beeper_id: varchar("beeper_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
 	rider_id: varchar("rider_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
 	origin: varchar("origin", { length: 255 }).notNull(),
 	destination: varchar("destination", { length: 255 }).notNull(),
-	group_size: integer("group_size").notNull(),
+	groupSize: integer("group_size").notNull(),
 	start: timestamp("start", { withTimezone: true, mode: 'string' }).notNull(),
 	end: timestamp("end", { withTimezone: true, mode: 'string' }),
-	status: text("status").default('complete').notNull(),
+	status: beepStatusEnum("status").default('waiting').notNull(),
 },
 (table) => {
 	return {
@@ -239,12 +250,12 @@ export const carRelations = relations(car, ({one}) => ({
 }));
 
 export const beepRelations = relations(beep, ({ one, many }) => ({
-	user_beeper_id: one(user, {
+	beeper: one(user, {
 		fields: [beep.beeper_id],
 		references: [user.id],
 		relationName: "beep_beeper_id_user_id"
 	}),
-	user_rider_id: one(user, {
+	rider: one(user, {
 		fields: [beep.rider_id],
 		references: [user.id],
 		relationName: "beep_rider_id_user_id"

@@ -1,4 +1,4 @@
-import { count, desc } from "drizzle-orm";
+import { count, desc, eq, or } from "drizzle-orm";
 import { report } from "../../drizzle/schema";
 import { db } from "../utils/db";
 import { adminProcedure, router } from "../utils/trpc";
@@ -10,12 +10,21 @@ export const reportRouter = router({
       z.object({
         offset: z.number(),
         show: z.number(),
+        userId: z.string().optional()
       })
     )
     .query(async ({ input }) => {
+      const where = input.userId ?
+        or(
+          eq(report.reported_id, input.userId),
+          eq(report.reporter_id, input.userId),
+        )
+        : undefined;
+
       const reports = await db.query.report.findMany({
         offset: input.offset,
         limit: input.show,
+        where,
         columns: {
           reported_id: false,
           reporter_id: false,
@@ -42,7 +51,8 @@ export const reportRouter = router({
 
       const reportsCount = await db
         .select({ count: count() })
-        .from(report);
+        .from(report)
+        .where(where);
 
       return {
         reports,

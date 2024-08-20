@@ -1,25 +1,25 @@
 import { z } from "zod";
 import { adminProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { car } from "../../drizzle/schema";
-import { count, desc, eq } from 'drizzle-orm';
+import { count, desc, eq } from "drizzle-orm";
+import { payment } from "../../drizzle/schema";
 
-export const carRouter = router({
-  cars: adminProcedure
+export const paymentRouter = router({
+  payments: adminProcedure
     .input(
       z.object({
-        show: z.number(),
         offset: z.number(),
+        limit: z.number(),
         userId: z.string().optional()
       })
     )
     .query(async ({ input }) => {
-      const where = input.userId ? eq(car.user_id, input.userId) : undefined;
+      const where = input.userId ? eq(payment.user_id, input.userId) : undefined;
 
-      const cars = await db.query.car.findMany({
-        limit: input.show,
+      const payments = await db.query.payment.findMany({
+        orderBy: desc(payment.created),
+        limit: input.limit,
         offset: input.offset,
-        orderBy: desc(car.created),
         where,
         with: {
           user: {
@@ -33,14 +33,14 @@ export const carRouter = router({
         }
       });
 
-      const carsCount = await db
+      const paymentsCount = await db
         .select({ count: count() })
-        .from(car)
+        .from(payment)
         .where(where);
 
       return {
-        cars,
-        count: carsCount[0].count
-      }
+        payments,
+        count: paymentsCount[0].count,
+      };
     })
 });

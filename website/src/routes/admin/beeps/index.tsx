@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Pagination } from '../../../components/Pagination';
-import { useQuery } from '@apollo/client';
 import { Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
@@ -11,38 +10,9 @@ import { Indicator } from '../../../components/Indicator';
 import { Status } from '../../../types/User';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from '../../../graphql';
+import { trpc } from '../../../utils/trpc';
 
 dayjs.extend(duration);
-
-export const BeepsGraphQL = graphql(`
-  query getBeeps($show: Int, $offset: Int) {
-    getBeeps(show: $show, offset: $offset) {
-      items {
-        id
-        origin
-        destination
-        start
-        end
-        groupSize
-        status
-        beeper {
-          id
-          name
-          photo
-          username
-        }
-        rider {
-          id
-          name
-          photo
-          username
-        }
-      }
-      count
-    }
-  }
-`);
 
 export const beepStatusMap: Record<Status, string> = {
   [Status.WAITING]: 'orange',
@@ -60,7 +30,6 @@ export const beepsRoute = createRoute({
   getParentRoute: () => adminRoute,
 });
 
-
 export const beepsListRoute = createRoute({
   path: "/",
   getParentRoute: () => beepsRoute,
@@ -77,40 +46,30 @@ export function Beeps() {
   const { page } = beepsListRoute.useSearch();
   const navigate = useNavigate({ from: beepsListRoute.id });
 
-  const { data, loading, error, refetch, startPolling, stopPolling, previousData } = useQuery(BeepsGraphQL, {
-    variables: {
+  const { data, isLoading, error } = trpc.beep.beeps.useQuery(
+    {
       offset: (page - 1) * pageLimit,
       show: pageLimit
+    },
+    {
+      refetchInterval: 5_000,
+      refetchOnMount: true,
     }
-  });
-
-  useEffect(() => {
-    startPolling(3000);
-
-    if (data) {
-      refetch();
-    }
-
-    return () => {
-      stopPolling();
-    }
-  }, []);
+  );
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
-
-  const beepData = data?.getBeeps ?? previousData?.getBeeps;
 
   return (
     <Box>
       <Heading>Beeps</Heading>
       <Pagination
-        resultCount={beepData?.count ?? 0}
+        resultCount={data?.count ?? 0}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -131,7 +90,7 @@ export function Beeps() {
             </Tr>
           </Thead>
           <Tbody>
-            {beepData?.items.map((beep) => (
+            {data?.beeps.map((beep) => (
               <Tr key={beep.id}>
                 <TdUser user={beep.beeper} />
                 <TdUser user={beep.rider} />
@@ -152,9 +111,9 @@ export function Beeps() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <Pagination
-        resultCount={beepData?.count ?? 0}
+        resultCount={data?.count ?? 0}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}

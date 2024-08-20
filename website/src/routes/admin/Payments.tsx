@@ -10,29 +10,9 @@ import { Error } from '../../components/Error';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '.';
 import { graphql } from '../../graphql';
+import { trpc } from '../../utils/trpc';
 
 dayjs.extend(relativeTime);
-
-const PaymentsGQL = graphql(`
-  query Payments($offset: Int, $show: Int) {
-    getPayments(offset: $offset, show: $show) {
-      items {
-        id
-        created
-        expires
-        price
-        store
-        productId
-        user {
-          id
-          photo
-          name
-        }
-      }
-      count
-    }
-  }
-`);
 
 export const paymentsRoute = createRoute({
   component: Payments,
@@ -41,7 +21,6 @@ export const paymentsRoute = createRoute({
   validateSearch: (search: Record<string, string>) => ({ page: Number(search?.page ?? 1)})
 });
 
-
 export function Payments() {
   const pageLimit = 20;
 
@@ -49,29 +28,24 @@ export function Payments() {
 
   const navigate = useNavigate({ from: paymentsRoute.id });
 
-  const { data, loading, error, previousData } = useQuery(PaymentsGQL, {
-    variables: {
-      offset: (page - 1) * pageLimit,
-      show: pageLimit
-    }
+  const { data, isLoading, error } = trpc.payment.payments.useQuery({
+    offset: (page - 1) * pageLimit,
+    limit: pageLimit
   });
-
-  const payments = data?.getPayments.items ?? previousData?.getPayments.items;
-  const count = data?.getPayments.count ?? previousData?.getPayments.count;
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
   };
 
   if (error) {
-    return <Error error={error} />;
+    return <Error>{error.message}</Error>;
   }
 
   return (
     <Box>
       <Heading>Payments</Heading>
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
@@ -89,7 +63,7 @@ export function Payments() {
             </Tr>
           </Thead>
           <Tbody>
-            {payments?.map((payment) => (
+            {data?.payments.map((payment) => (
               <Tr key={payment.id}>
                 <TdUser user={payment.user} />
                 <Td>{payment.productId}</Td>
@@ -102,9 +76,9 @@ export function Payments() {
           </Tbody>
         </Table>
       </Box>
-      {loading && <Loading />}
+      {isLoading && <Loading />}
       <Pagination
-        resultCount={count}
+        resultCount={data?.count}
         limit={pageLimit}
         currentPage={page}
         setCurrentPage={setCurrentPage}
