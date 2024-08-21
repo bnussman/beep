@@ -1,9 +1,7 @@
 import React from "react";
-import { useMutation } from "@apollo/client";
 import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
-import { graphql } from "gql.tada";
 import { trpc } from "../../../utils/trpc";
 
 interface Props {

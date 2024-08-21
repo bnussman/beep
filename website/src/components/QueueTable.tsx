@@ -22,6 +22,7 @@ export function QueueTable() {
 
   const { data } = trpc.beep.beeps.useQuery({
     userId,
+    inProgress: true,
     offset: 0,
     show: 500,
   });

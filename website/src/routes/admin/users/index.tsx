@@ -2,34 +2,13 @@ import React from 'react'
 import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input, InputRightElement, Spinner } from "@chakra-ui/react"
 import { Indicator } from '../../../components/Indicator';
 import { Pagination } from '../../../components/Pagination';
-import { useQuery } from '@apollo/client';
 import { TdUser } from '../../../components/TdUser';
 import { Error } from '../../../components/Error';
 import { SearchIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { graphql } from 'gql.tada';
 import { trpc } from '../../../utils/trpc';
-
-export const UsersGraphQL = graphql(`
-  query getUsers($show: Int, $offset: Int, $query: String) {
-    getUsers(show: $show, offset: $offset, query: $query) {
-      items {
-        id
-        photo
-        name
-        email
-        isStudent
-        isEmailVerified
-        username
-        phone
-        isBeeping
-      }
-      count
-    }
-  }
-`);
 
 export interface PaginationSearchParams {
   page: number;
@@ -58,7 +37,7 @@ export function Users() {
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
 
-  const { isPending, error, data } = trpc.user.users.useQuery({
+  const { isLoading, isFetching, error, data } = trpc.user.users.useQuery({
     offset: (page - 1) * pageLimit,
     show: pageLimit,
     query: !query ? undefined : query
@@ -103,7 +82,7 @@ export function Users() {
           value={query ?? ""}
           onChange={(e) => setQuery(e.target.value)}
         />
-        {(query && isPending) && (
+        {(query && isFetching) && (
           <InputRightElement>
             <Spinner />
           </InputRightElement>
@@ -133,7 +112,7 @@ export function Users() {
           </Tbody>
         </Table>
       </Box>
-      {isPending && <Loading />}
+      {isLoading && <Loading />}
       <Pagination
         resultCount={data?.count}
         limit={pageLimit}

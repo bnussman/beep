@@ -5,7 +5,6 @@ import { Error } from '../../../components/Error';
 import { createRoute } from "@tanstack/react-router";
 import { RouterInput, trpc } from "../../../utils/trpc";
 import { adminRoute } from "..";
-import { VariablesOf, graphql } from "gql.tada";
 import {
   AlertDialog,
   AlertDialogBody,
