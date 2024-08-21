@@ -1,23 +1,20 @@
 import React from 'react';
-import { useMutation } from '@apollo/client';
 import { Alert, AlertIcon, Box, Button, Spacer, useToast } from '@chakra-ui/react';
-import { graphql } from 'gql.tada';
 import { trpc } from '../utils/trpc';
-
-const Resend = graphql(`
-  mutation ResendEmail {
-    resendEmailVarification
-  }
-`);
 
 export function Banners() {
   const { data: user } = trpc.user.me.useQuery(undefined, { retry: false, enabled: false });
-  const [resend, { loading }] = useMutation(Resend);
+
+  const {
+    mutateAsync: resendVerifyEmail,
+    isPending
+  } = trpc.auth.resendVerification.useMutation();
+
   const toast = useToast();
 
   async function resendVarificationEmail() {
     try {
-      await resend();
+      await resendVerifyEmail();
       toast({
         status: 'success',
         title: "Success",
@@ -41,7 +38,7 @@ export function Banners() {
           Please verify your email
           <Spacer />
           <Button
-            isLoading={loading}
+            isLoading={isPending}
             onClick={resendVarificationEmail}
             colorScheme="red"
           >

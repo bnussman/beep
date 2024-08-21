@@ -364,5 +364,34 @@ export const authRouter = router({
       redis.publish(`user-${u[0].id}`, JSON.stringify(u[0]));
 
       return u[0].email;
+    }),
+  resendVerification: authedProcedure
+    .mutation(async ({ ctx  }) => {
+      await db.delete(verify_email).where(eq(verify_email.user_id, ctx.user.id));
+
+      const verifyEmailEntry = {
+        id: crypto.randomUUID(),
+        email: ctx.user.email,
+        user_id: ctx.user.id,
+        time: new Date(),
+      };
+
+      await db.insert(verify_email).values(verifyEmailEntry);
+
+      const mailOptions: SendMailOptions = {
+        from: 'Beep App <banks@ridebeep.app>',
+        to: ctx.user.email,
+        subject: 'Verify your Beep App Email!',
+        html: `Hey ${ctx.user.username}, <br><br>
+                Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
+                - Beep App Team
+            `
+      };
+
+      try {
+        await email.sendMail(mailOptions);
+      } catch (error) {
+        Sentry.captureException(error);
+      }
     })
 });

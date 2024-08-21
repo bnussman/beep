@@ -100,6 +100,11 @@ export const beepRouter = router({
 
        return b;
      }),
+  deleteBeep: adminProcedure
+    .input(z.string())
+    .mutation(async ({ input }) => {
+      await db.delete(beep).where(eq(beep.id, input));
+    }),
   clearQueue: adminProcedure
     .input(
       z.object({
