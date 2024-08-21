@@ -1,14 +1,18 @@
 import { observable } from "@trpc/server/observable";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
-import { beep, user } from '../../drizzle/schema';
+import { beep, user, verify_email } from '../../drizzle/schema';
 import { redis, redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
 import { count, eq, desc, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
-import { S3_BUCKET_URL } from "../utils/constants";
+import { S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
 import { syncUserPayments } from "../utils/payments";
+import { SendMailOptions } from "nodemailer";
+import { email } from "../utils/email";
+import * as Sentry from '@sentry/bun';
+import { sendNotification } from "../utils/notifications";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
@@ -44,9 +48,48 @@ export const userRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const values = {
+        ...input,
+        isEmailVerified: ctx.user.isEmailVerified,
+        isStudent: ctx.user.isStudent,
+      }
+
+      if (input.email && input.email !== ctx.user.email) {
+        // User is changing their email, we must make them reverify.
+        values.isEmailVerified = false;
+        values.isEmailVerified = false;
+
+        await db.delete(verify_email).where(eq(verify_email.user_id, ctx.user.id));
+
+        const verifyEmailEntry = {
+          id: crypto.randomUUID(),
+          email: input.email,
+          user_id: ctx.user.id,
+          time: new Date(),
+        };
+
+        await db.insert(verify_email).values(verifyEmailEntry);
+
+        const mailOptions: SendMailOptions = {
+          from: 'Beep App <banks@ridebeep.app>',
+          to: input.email,
+          subject: 'Verify your Beep App Email!',
+          html: `Hey ${ctx.user.username}, <br><br>
+                  Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
+                  - Beep App Team
+              `
+        };
+
+        try {
+          await email.sendMail(mailOptions);
+        } catch (error) {
+          Sentry.captureException(error);
+        }
+      }
+
       const u = await db
         .update(user)
-        .set(input)
+        .set(values)
         .where(eq(user.id, ctx.user.id))
         .returning();
 
@@ -75,6 +118,26 @@ export const userRouter = router({
       })
     )
     .mutation(async ({ input }) => {
+      const existingUser = await db.query.user.findFirst({
+        where: eq(user.id, input.userId),
+        columns: {
+          isEmailVerified: true,
+          pushToken: true,
+        },
+      });
+
+      if (!existingUser) {
+        throw new TRPCError({ code: "NOT_FOUND"});
+      }
+
+      if (!existingUser.isEmailVerified && input.data.isEmailVerified && existingUser.pushToken) {
+        sendNotification({
+          to: existingUser.pushToken,
+          title: "Account Verified ✅",
+          body: "An admin has approved your account."
+        });
+      }
+
       const u = await db
         .update(user)
         .set(input.data)

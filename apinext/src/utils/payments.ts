@@ -88,6 +88,10 @@ export async function syncUserPayments(userId: string) {
     throw new Error("No user id provided when syncing payments.");
   }
 
+  if (!REVENUE_CAT_SECRET) {
+    throw new Error("No REVENU_CAT_SECRET in env.");
+  }
+
   const options = {
     method: 'GET',
     headers: {

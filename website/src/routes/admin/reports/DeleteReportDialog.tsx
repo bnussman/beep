@@ -3,6 +3,8 @@ import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { trpc } from "../../../utils/trpc";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 interface Props {
   isOpen: boolean;
@@ -12,7 +14,18 @@ interface Props {
 }
 
 export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
-  const { mutateAsync: deleteReport, isPending, error } = trpc.report.deleteReport.useMutation();
+  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
+
+  const {
+    mutateAsync: deleteReport,
+    isPending,
+    error
+  } = trpc.report.deleteReport.useMutation({
+    onSuccess() {
+      utils.report.reports.invalidate();
+    }
+  });
 
   const onDelete = async () => {
     await deleteReport(id);

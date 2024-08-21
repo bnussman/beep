@@ -3,6 +3,7 @@ import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { trpc } from "../../../utils/trpc";
+import { useRouter } from "@tanstack/react-router";
 
 interface Props {
   isOpen: boolean;
@@ -12,9 +13,11 @@ interface Props {
 
 export function DeleteRatingDialog({ isOpen, onClose, id }: Props) {
   const { mutateAsync: deleteRating, isPending, error } = trpc.rating.deleteRating.useMutation();
+  const { history } = useRouter();
 
   const onDelete = async () => {
     await deleteRating({ ratingId: id });
+    history.go(-1);
     onClose();
   };
 

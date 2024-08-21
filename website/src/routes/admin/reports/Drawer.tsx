@@ -19,12 +19,17 @@ interface Props {
 
 export function ReportDrawer(props: Props) {
   const { isOpen, onClose, report } = props;
+  const utils = trpc.useUtils();
 
   const {
     mutateAsync: updateReport,
     isPending,
     error: updateError
-  } = trpc.report.updateReport.useMutation();
+  } = trpc.report.updateReport.useMutation({
+    onSuccess() {
+      utils.report.invalidate();
+    }
+  });
 
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
@@ -38,6 +43,11 @@ export function ReportDrawer(props: Props) {
     values,
   });
 
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  }
+
   const onSubmit = form.handleSubmit((values) => {
     updateReport({
       reportId: report?.id ?? '',
@@ -49,80 +59,83 @@ export function ReportDrawer(props: Props) {
     <Drawer
       isOpen={isOpen}
       placement="right"
-      onClose={onClose}
+      onClose={handleClose}
       size="md"
     >
       <DrawerOverlay />
-      <DrawerContent>
-        <DrawerCloseButton />
-        <DrawerHeader>Report</DrawerHeader>
-        <DrawerBody>
-          {updateError && <Error>{updateError.message}</Error>}
-          <Stack spacing={2}>
-            <Heading size="md">Reporter</Heading>
-            {report && <BasicUser user={report?.reporter} />}
-            <Heading size="md">Reported</Heading>
-            {report && <BasicUser user={report?.reported} />}
-            <Heading size="md">Reason</Heading>
-            <Text>{report?.reason}</Text>
-            <Heading size="md">Created</Heading>
-            <Text>{dayjs().to(report?.timestamp)}</Text>
-            {report?.beep_id && (
-              <Box>
-                <Heading size="md">Associated Beep</Heading>
-                <Link to="/admin/beeps/$beepId" params={{ beepId: report?.beep_id }}>
-                  {report?.beep_id}
-                </Link>
-              </Box>
-            )}
-            <Box>
-              <Heading size="md">Status</Heading>
-              {report?.handled && report?.handledBy ? (
-                <HStack alignItems="center">
-                  <Indicator color='green' />
-                  <Text noOfLines={1} mr={2}>Handled by</Text>
-                  <BasicUser user={report.handledBy} />
-                </HStack>
-                ) : (
-                <HStack>
-                  <Indicator color='red' />
-                  <span>Not handled</span>
-                </HStack>
+      <form onSubmit={onSubmit}>
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>Report</DrawerHeader>
+          <DrawerBody>
+            {updateError && <Error>{updateError.message}</Error>}
+            <Stack spacing={2}>
+              <Heading size="md">Reporter</Heading>
+              {report && <BasicUser user={report?.reporter} />}
+              <Heading size="md">Reported</Heading>
+              {report && <BasicUser user={report?.reported} />}
+              <Heading size="md">Reason</Heading>
+              <Text>{report?.reason}</Text>
+              <Heading size="md">Created</Heading>
+              <Text>{dayjs().to(report?.timestamp)}</Text>
+              {report?.beep_id && (
+                <Box>
+                  <Heading size="md">Associated Beep</Heading>
+                  <Link to="/admin/beeps/$beepId" params={{ beepId: report?.beep_id }}>
+                    {report?.beep_id}
+                  </Link>
+                </Box>
               )}
+              <Box>
+                <Heading size="md">Status</Heading>
+                {report?.handled && report?.handledBy ? (
+                  <HStack alignItems="center">
+                    <Indicator color='green' />
+                    <Text noOfLines={1} mr={2}>Handled by</Text>
+                    <BasicUser user={report.handledBy} />
+                  </HStack>
+                  ) : (
+                  <HStack>
+                    <Indicator color='red' />
+                    <span>Not handled</span>
+                  </HStack>
+                )}
+              </Box>
+              <Textarea
+                {...form.register('notes')}
+              />
+              <Checkbox
+                {...form.register('handled')}
+              >
+                Handled
+              </Checkbox>
+            </Stack>
+          </DrawerBody>
+          <DrawerFooter>
+            <Box mr={4}>
+              <Link to="/admin/reports/$reportId" params={{ reportId: report?.id ?? '' }}>
+                <ExternalLinkIcon />
+              </Link>
             </Box>
-            <Textarea
-              {...form.register('notes')}
-            />
-            <Checkbox
-              {...form.register('handled')}
+            <Button
+              colorScheme="red"
+              leftIcon={<DeleteIcon />}
+              onClick={onDeleteOpen}
+              mr={2}
             >
-              Handled
-            </Checkbox>
-          </Stack>
-        </DrawerBody>
-        <DrawerFooter>
-          <Box mr={4}>
-            <Link to="/admin/reports/$reportId" params={{ reportId: report?.id ?? '' }}>
-              <ExternalLinkIcon />
-            </Link>
-          </Box>
-          <Button
-            colorScheme="red"
-            leftIcon={<DeleteIcon />}
-            onClick={onDeleteOpen}
-            mr={2}
-          >
-            Delete
-          </Button>
-          <Button isLoading={isPending} colorScheme="blue" type="submit">
-            Update
-          </Button>
-        </DrawerFooter>
-      </DrawerContent>
+              Delete
+            </Button>
+            <Button isLoading={isPending} colorScheme="blue" type="submit">
+              Update
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </form>
       <DeleteReportDialog
         id={report?.id ?? ''}
         onClose={onDeleteClose}
         isOpen={isDeleteOpen}
+        onSuccess={handleClose}
       />
     </Drawer>
   )

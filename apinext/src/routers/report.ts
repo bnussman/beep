@@ -1,4 +1,4 @@
-import { count, eq, or } from "drizzle-orm";
+import { count, desc, eq, or } from "drizzle-orm";
 import { report } from "../../drizzle/schema";
 import { db } from "../utils/db";
 import { adminProcedure, router } from "../utils/trpc";
@@ -25,6 +25,7 @@ export const reportRouter = router({
       const reports = await db.query.report.findMany({
         offset: input.offset,
         limit: input.show,
+        orderBy: desc(report.timestamp),
         where,
         columns: {
           reported_id: false,
