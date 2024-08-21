@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
 import { Error } from '../components/Error';
-import { useMutation } from '@apollo/client';
 import { Success } from '../components/Success';
 import { Input, Button, FormControl, FormLabel, Center, Heading, Container, Flex, Stack } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 import { createRoute } from '@tanstack/react-router';
-import { graphql } from 'gql.tada';
 import { rootRoute } from '../utils/router';
-
-const ChangePasswordGraphQL = graphql(`
-  mutation ChangePassword($password: String!) {
-    changePassword (input: {password: $password})
-  }
-`);
+import { trpc } from '../utils/trpc';
 
 export const changePasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -21,18 +14,20 @@ export const changePasswordRoute = createRoute({
 })
 
 export function ChangePassword() {
-  const [changePassword, { data, loading, error }] = useMutation(ChangePasswordGraphQL);
+  const {
+    mutateAsync: changePassword,
+    data,
+    isPending,
+    error
+  } = trpc.auth.changePassword.useMutation();
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   async function handleEdit(e: any): Promise<void> {
     e.preventDefault();
 
-    changePassword({
-      variables: {
-        password: password
-      }
-    })
+    changePassword({ password })
       .then(() => {
         setPassword('');
         setConfirmPassword('');
@@ -45,8 +40,8 @@ export function ChangePassword() {
         <Center pb={4}>
           <Heading>Change Password</Heading>
         </Center>
-        {data?.changePassword && <Success message="Successfully changed your password" />}
-        {error && <Error error={error} />}
+        {data && <Success message="Successfully changed your password" />}
+        {error && <Error>{error.message}</Error>}
         <form onSubmit={handleEdit}>
           <Stack>
             <FormControl id="password">
@@ -54,7 +49,7 @@ export function ChangePassword() {
               <Input
                 type="password"
                 value={password}
-                onChange={(value: any) => setPassword(value.target.value)}
+                onChange={(value) => setPassword(value.target.value)}
               />
             </FormControl>
             <FormControl id="password2" mt={2} mb={2}>
@@ -62,12 +57,12 @@ export function ChangePassword() {
               <Input
                 type="password"
                 value={confirmPassword}
-                onChange={(value: any) => setConfirmPassword(value.target.value)}
+                onChange={(value) => setConfirmPassword(value.target.value)}
               />
             </FormControl>
             <Flex justifyContent="flex-end">
               <Button
-                isLoading={loading}
+                isLoading={isPending}
                 type="submit"
                 colorScheme="blue"
                 isDisabled={!password || password !== confirmPassword}

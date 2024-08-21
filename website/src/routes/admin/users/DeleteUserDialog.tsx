@@ -2,8 +2,7 @@ import React from "react";
 import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
-import { useMutation } from "@apollo/client";
-import { graphql } from "gql.tada";
+import { trpc } from "../../../utils/trpc";
 
 interface Props {
   userId: string;
@@ -11,26 +10,11 @@ interface Props {
   onClose: () => void;
 }
 
-
-const RemoveUser = graphql(`
-  mutation RemoveUser($id: String!) {
-    removeUser(id: $id)
-  }
-`);
-
 export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
-  const [deleteUser, { loading, error }] = useMutation(RemoveUser, {
-    variables: { id: userId },
-    update: (cache) => {
-      const id = cache.identify({ __typename: "User", id: userId });
-
-      cache.evict({ id });
-      cache.gc();
-    },
-  });
+  const { mutateAsync: deleteUser, isPending, error } = trpc.user.deleteUser.useMutation();
 
   const onDelete = async () => {
-    await deleteUser();
+    await deleteUser(userId);
     onClose();
   };
 
@@ -41,14 +25,14 @@ export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
       title="Delete User?"
     >
       <AlertDialogBody>
-        {error && <Error error={error} />}
+        {error && <Error>{error.message}</Error>}
         Are you sure you want to delete user {userId}?
       </AlertDialogBody>
       <AlertDialogFooter>
         <Button onClick={onClose}>
           Cancel
         </Button>
-        <Button isLoading={loading} colorScheme="red" onClick={onDelete} ml={3}>
+        <Button isLoading={isPending} colorScheme="red" onClick={onDelete} ml={3}>
           Delete
         </Button>
       </AlertDialogFooter>

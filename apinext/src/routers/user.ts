@@ -66,7 +66,11 @@ export const userRouter = router({
           venmo: z.string(),
           cashapp: z.string(),
           isStudent: z.boolean(),
-          isEmailVerified: z.boolean()
+          isEmailVerified: z.boolean(),
+          location: z.object({
+            longitude: z.number(),
+            latitude: z.number(),
+          })
         }).partial(),
       })
     )
@@ -297,5 +301,11 @@ export const userRouter = router({
 
       // @todo properly handle deleting across all tables
       await db.delete(user).where(eq(user.id, ctx.user.id));
+    }),
+  deleteUser: adminProcedure
+    .input(z.string())
+    .mutation(async ({ input }) => {
+      // @todo properly handle deleting across all tables
+      await db.delete(user).where(eq(user.id, input));
     })
 })

@@ -2,7 +2,7 @@ import { authedProcedure, publicProcedure, router } from "../utils/trpc";
 import { z } from 'zod';
 import { db } from "../utils/db";
 import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
-import { eq, or } from "drizzle-orm";
+import { and, eq, ne, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
@@ -393,5 +393,30 @@ export const authRouter = router({
       } catch (error) {
         Sentry.captureException(error);
       }
+    }),
+  changePassword: authedProcedure
+    .input(
+      z.object({
+        password: z.string()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const password = await bunPassword.hash(input.password, "bcrypt");
+
+      await db
+        .update(user)
+        .set({ password, passwordType: 'bcrypt' })
+        .where(eq(user.id, ctx.user.id));
+
+      await db
+        .delete(token)
+        .where(
+          and(
+            eq(token.user_id, ctx.user.id),
+            ne(token.id, ctx.token.id),
+          )
+        );
+
+      return ctx.user;
     })
 });
