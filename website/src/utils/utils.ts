@@ -1,8 +1,6 @@
 /**
  * Determine the mobile operating system.
  * This function returns one of 'iOS', 'Android', 'Windows Phone', or 'unknown'.
- *
- * @returns {String}
  */
 export function getMobileOperatingSystem() {
   const userAgent = navigator?.userAgent || navigator?.vendor;
@@ -21,5 +19,3 @@ export function getMobileOperatingSystem() {
 
   return "unknown";
 }
-
-export type Unpacked<T> = T extends (infer U)[] ? U : T;

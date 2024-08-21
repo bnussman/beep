@@ -3,9 +3,9 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Indicator } from './Indicator';
 import { Text, Avatar, Box, Center, HStack, Spacer, Spinner } from '@chakra-ui/react';
-import { Status } from '../types/User';
 import { Link } from '@tanstack/react-router';
 import { trpc } from '../utils/trpc';
+import { beepStatusMap } from '../routes/admin/beeps';
 
 dayjs.extend(duration);
 
@@ -60,7 +60,7 @@ export function QueuePreview({ userId }: Props) {
             {beep.status}
           </Text>
           <Spacer />
-          <Indicator color={beep.status !== Status.WAITING ? 'green' : 'red'} />
+          <Indicator color={beepStatusMap[beep.status]} />
         </HStack>
       ))}
     </Box>

@@ -42,6 +42,11 @@ export const geography = (
   })(dbName, fieldConfig);
 };
 
+export const userRoleEnum = pgEnum('user_role', [
+  'user',
+  'admin',
+]);
+
 export const user = pgTable("user", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	first: varchar("first", { length: 255 }).notNull(),
@@ -61,7 +66,7 @@ export const user = pgTable("user", {
 	capacity: integer("capacity").default(4).notNull(),
 	queueSize: integer("queue_size").default(0).notNull(),
 	rating: numeric("rating"),
-	role: text("role").default('user').notNull(),
+	role: userRoleEnum("role").default('user').notNull(),
 	pushToken: varchar("push_token", { length: 255 }),
 	photo: varchar("photo", { length: 255 }),
 	location: geography("location"),

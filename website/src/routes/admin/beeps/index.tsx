@@ -7,22 +7,21 @@ import { TdUser } from '../../../components/TdUser';
 import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
-import { Status } from '../../../types/User';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { trpc } from '../../../utils/trpc';
+import { RouterOutput, trpc } from '../../../utils/trpc';
 
 dayjs.extend(duration);
 
-export const beepStatusMap: Record<Status, string> = {
-  [Status.WAITING]: 'orange',
-  [Status.ON_THE_WAY]: 'orange',
-  [Status.ACCEPTED]: 'green',
-  [Status.IN_PROGRESS]: 'green',
-  [Status.HERE]: 'green',
-  [Status.DENIED]: 'red',
-  [Status.CANCELED]: 'red',
-  [Status.COMPLETE]: 'green',
+export const beepStatusMap: Record<RouterOutput['beep']['beep']['status'], string> = {
+  waiting: 'orange',
+  on_the_way: 'orange',
+  accepted: 'green',
+  in_progress: 'green',
+  here: 'green',
+  denied: 'red',
+  canceled: 'red',
+  complete: 'green',
 };
 
 export const beepsRoute = createRoute({
@@ -99,7 +98,7 @@ export function Beeps() {
                 <Td>{beep.groupSize}</Td>
                 <Td>
                   <HStack>
-                    <Indicator color={beepStatusMap[beep.status as Status]} />
+                    <Indicator color={beepStatusMap[beep.status]} />
                     <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
                   </HStack>
                 </Td>

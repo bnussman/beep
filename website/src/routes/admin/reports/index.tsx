@@ -32,7 +32,7 @@ export function Reports() {
   const pageLimit = 20;
   const { page } = reportsListRoute.useSearch();
   const bg = useColorModeValue('gray.50', 'rgb(20, 24, 28)');
-  const [id, setId] = useState<string | null>(null);
+  const [selectedReportId, setSelectedReportId] = useState<string | undefined>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate({ from: reportsListRoute.id });
 
@@ -46,9 +46,11 @@ export function Reports() {
   };
 
   function openReport(id: string) {
-    setId(id);
+    setSelectedReportId(id);
     onOpen();
   }
+
+  const selectedReport = data?.reports.find(r => r.id === selectedReportId);
 
   if (error) {
     return <Error>{error.message}</Error>;
@@ -105,7 +107,7 @@ export function Reports() {
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}
-        id={id}
+        report={selectedReport}
       />
     </Box>
   );

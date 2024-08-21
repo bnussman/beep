@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Indicator } from '../../../components/Indicator';
-import { gql, useMutation, useQuery } from '@apollo/client';
 import { Box, Button, Checkbox, Flex, Heading, Spacer, Stack, Text, Textarea } from '@chakra-ui/react';
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Error } from '../../../components/Error';
@@ -11,75 +10,10 @@ import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
 import { Link, createRoute } from "@tanstack/react-router";
 import { reportsRoute } from ".";
-import { graphql } from 'gql.tada';
+import { trpc } from "../../../utils/trpc";
+import { useForm } from "react-hook-form";
 
 dayjs.extend(relativeTime);
-
-export const UpdateReport = graphql(`
-  mutation UpdateReport($id: String!, $notes: String, $handled: Boolean) {
-    updateReport(id: $id, input: { notes: $notes, handled: $handled }) {
-      id
-      reason
-      timestamp
-      handled
-      notes
-      beep {
-        id
-      }
-      reporter {
-        id
-        name
-        photo
-        username
-      }
-      reported {
-        id
-        name
-        photo
-        username
-      }
-      handledBy {
-        id
-        name
-        photo
-        username
-      }
-    }
-  }
-`);
-
-export const GetReport = gql`
-  query GetReport($id: String!) {
-    getReport(id: $id) {
-      id
-      reason
-      timestamp
-      handled
-      notes
-      beep {
-        id
-      }
-      reporter {
-        id
-        name
-        photo
-        username
-      }
-      reported {
-        id
-        name
-        photo
-        username
-      }
-      handledBy {
-        id
-        name
-        photo
-        username
-      }
-    }
-  }
-`;
 
 export const reportRoute = createRoute({
   component: Report,
@@ -88,32 +22,47 @@ export const reportRoute = createRoute({
 });
 
 export function Report() {
-  const { reportId: id } = reportRoute.useParams();
+  const { reportId } = reportRoute.useParams();
 
-  const { data, loading, error } = useQuery(GetReport, { variables: { id } });
-  const [update, { loading: updateLoading, error: updateError }] = useMutation(UpdateReport);
+  const {
+    data: report,
+    isLoading,
+    error
+  } = trpc.report.report.useQuery(reportId);
 
-  const [notes, setNotes] = useState<string>();
-  const [isHandled, setIsHandled] = useState<boolean>();
+  const {
+    mutateAsync: updateReport,
+    isPending,
+    error: updateError
+  } = trpc.report.updateReport.useMutation();
+
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
 
-  function updateReport() {
-    update({
-      variables: {
-        id,
-        handled: isHandled,
-        notes
-      },
+  const values = {
+    notes: report?.notes,
+    handled: report?.handled
+  };
+
+  const form = useForm({
+    defaultValues: values,
+    values,
+  });
+
+  const onSubmit = form.handleSubmit((values) => {
+    updateReport({
+      reportId,
+      data: values,
     });
+  });
+
+  if (isLoading || !report) {
+    return <Loading />;
   }
 
-  useEffect(() => {
-    setIsHandled(data?.getReport.handled);
-    if (data?.getReport.notes) {
-      setNotes(data?.getReport.notes)
-    }
-  }, [data?.getReport]);
+  if (error) {
+    return <Error>{error.message}</Error>;
+  }
 
   return (
     <Box>
@@ -128,84 +77,75 @@ export function Report() {
           Delete
         </Button>
       </Flex>
-
-      {error && <Error error={error} />}
-      {loading && <Loading />}
-
-      {data?.getReport ?
-        <React.Fragment>
-          <Stack spacing={6}>
+      <Stack spacing={6}>
+        <Box>
+          <Heading size="lg">Reporter</Heading>
+          <BasicUser user={report.reporter} />
+        </Box>
+        <Box>
+          <Heading size="lg">Reported</Heading>
+          <BasicUser user={report.reported} />
+        </Box>
+        <Box>
+          <Heading size="lg">Reason</Heading>
+          <Text>{report.reason}</Text>
+        </Box>
+        <Box>
+          <Heading size="lg">Created</Heading>
+          <Text>{dayjs().to(report.timestamp)}</Text>
+        </Box>
+        {report.beep_id && (
+          <Box>
+            <Heading size="lg">Beep</Heading>
+            <Link to="/admin/beeps/$beepId" params={{ beepId: report.beep_id }}>
+              {report.beep_id}
+            </Link>
+          </Box>
+        )}
+        <Box>
+          <Heading size="lg">Status</Heading>
+          {report.handled ? (
             <Box>
-              <Heading size="lg">Reporter</Heading>
-              <BasicUser user={data?.getReport.reporter} />
+              <Flex align="center">
+                <Indicator color='green' />
+                <Text mr={2}>Handled by</Text>
+                <BasicUser user={report.handledBy} />
+              </Flex>
             </Box>
+          )
+            :
+            (
             <Box>
-              <Heading size="lg">Reported</Heading>
-              <BasicUser user={data?.getReport.reported} />
+              <Indicator color='red' />
+              <span>Not handled</span>
             </Box>
-            <Box>
-              <Heading size="lg">Reason</Heading>
-              <Text>{data?.getReport.reason}</Text>
-            </Box>
-            <Box>
-              <Heading size="lg">Created</Heading>
-              <Text>{dayjs().to(data?.getReport.timestamp)}</Text>
-            </Box>
-            {data?.getReport.beep &&
-              <Box>
-                <Heading size="lg">Beep</Heading>
-                <Link to="/admin/beeps/$beepId" params={{ beepId: data.getReport.beep.id }}>
-                  {data?.getReport.beep.id}
-                </Link>
-              </Box>
-            }
-            <Box>
-              <Heading size="lg">Status</Heading>
-              {data?.getReport.handled ?
-                <Box>
-                  <Flex align="center">
-                    <Indicator color='green' />
-                    <Text mr={2}>Handled by</Text>
-                    <BasicUser user={data?.getReport.handledBy as any} />
-                  </Flex>
-                </Box>
-                :
-                <Box>
-                  <Indicator color='red' />
-                  <span>Not handled</span>
-                </Box>
-              }
-            </Box>
-          </Stack>
-            <Stack spacing={2} mt={8}>
-                <Heading size="lg">Admin Notes</Heading>
-                {updateError && <Error error={updateError} />}
-                <Textarea
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                />
-                <Checkbox
-                    isChecked={isHandled}
-                    onChange={(e) => setIsHandled(e.target.checked)}
-                >
-                    Handled
-                </Checkbox>
-            </Stack>
-            <Button
-                type="submit"
-                isLoading={updateLoading}
-                onClick={() => updateReport()}
-                mt={2}
+            )}
+        </Box>
+      </Stack>
+        <Stack spacing={2} mt={8}>
+            <Heading size="lg">Admin Notes</Heading>
+            {updateError && <Error>{updateError.message}</Error>}
+            <Textarea
+                {...form.register('notes')}
+            />
+            <Checkbox
+                {...form.register('handled')}
             >
-                Update Report
-            </Button>
-          <DeleteReportDialog
-            id={data.getReport.id}
-            onClose={onClose}
-            isOpen={isOpen}
-          />
-        </React.Fragment>
-      : null}
+                Handled
+            </Checkbox>
+        </Stack>
+        <Button
+            type="submit"
+            isLoading={isPending}
+            mt={2}
+        >
+            Update Report
+        </Button>
+      <DeleteReportDialog
+        id={reportId}
+        onClose={onClose}
+        isOpen={isOpen}
+      />
     </Box>
   )
 }

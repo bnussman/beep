@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
+import { trpc } from '../utils/trpc';
 import { Error } from '../components/Error';
 import { Card } from '../components/Card';
-import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from "react-hook-form";
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
@@ -28,7 +28,6 @@ import {
   FormErrorMessage,
   useBreakpointValue
 } from '@chakra-ui/react';
-import { trpc } from '../utils/trpc';
 
 export const signupRoute = createRoute({
   component: SignUp,

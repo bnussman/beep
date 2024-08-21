@@ -3,7 +3,6 @@ import { Pagination } from './Pagination';
 import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
-import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
 import { createRoute } from '@tanstack/react-router';
 import { userRoute } from '../routes/admin/users/User';
@@ -74,7 +73,7 @@ export function BeepsTable() {
                 <Td>{ride.groupSize}</Td>
                 <Td>
                   <HStack>
-                    <Indicator color={beepStatusMap[ride.status as Status]} />
+                    <Indicator color={beepStatusMap[ride.status]} />
                     <Text textTransform="capitalize">{ride.status.replaceAll("_", " ")}</Text>
                   </HStack>
                 </Td>

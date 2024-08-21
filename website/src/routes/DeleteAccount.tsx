@@ -1,12 +1,9 @@
 import React from "react";
 import { Link as RouterLink, createRoute, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@apollo/client";
 import { Link, Button, Text, Stack, Heading, Alert, AlertIcon, useDisclosure, Box, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, AlertDialogFooter, useToast } from "@chakra-ui/react";
-import { graphql } from 'gql.tada';
 import { Error } from "../components/Error";
-import { client } from "../utils/apollo";
 import { rootRoute } from "../utils/router";
-import { trpc } from "../utils/trpc";
+import { queryClient, trpc } from "../utils/trpc";
 
 export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -14,15 +11,14 @@ export const deleteAccountRoute = createRoute({
   component: DeleteAccount,
 })
 
-const DeleteAccountMutation = graphql(`
-  mutation DeleteAccount {
-    deleteAccount
-  }
-`);
-
 function DeleteAccount() {
   const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
-  const [deleteAccount, { loading, error }] = useMutation(DeleteAccountMutation);
+  const {
+    mutateAsync: deleteAccount,
+    isPending,
+    error
+  } = trpc.user.deleteMyAccount.useMutation();
+
   const cancelRef = React.useRef(null);
   const toast = useToast();
   const navigate  = useNavigate();
@@ -32,7 +28,8 @@ function DeleteAccount() {
   const onDelete = async () => {
     await deleteAccount();
     toast({ title: "Account deleted.", variant: 'success' });
-    client.resetStore();
+    localStorage.removeItem('user');
+    queryClient.resetQueries();
     navigate({ to: '/' });
   };
 
@@ -69,14 +66,14 @@ function DeleteAccount() {
           <AlertDialogHeader>Delete Account?</AlertDialogHeader>
           <AlertDialogCloseButton />
           <AlertDialogBody>
-            {error && <Error error={error} />}
+            {error && <Error>{error.message}</Error>}
             Are you sure you want to delete your account and all of your Beep data?
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button ref={cancelRef} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme='red' ml={3} isLoading={loading} onClick={onDelete}>
+            <Button colorScheme='red' ml={3} isLoading={isPending} onClick={onDelete}>
               Delete Account
             </Button>
           </AlertDialogFooter>

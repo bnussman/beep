@@ -1,8 +1,9 @@
-import { count, desc, eq, or } from "drizzle-orm";
+import { count, eq, or } from "drizzle-orm";
 import { report } from "../../drizzle/schema";
 import { db } from "../utils/db";
 import { adminProcedure, router } from "../utils/trpc";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 export const reportRouter = router({
   reports: adminProcedure
@@ -46,6 +47,14 @@ export const reportRouter = router({
               photo: true,
             }
           },
+          handledBy: {
+            columns: {
+              id: true,
+              first: true,
+              last: true,
+              photo: true,
+            }
+          },
         },
       });
 
@@ -58,5 +67,71 @@ export const reportRouter = router({
         reports,
         count: reportsCount[0].count
       }
+    }),
+  report: adminProcedure
+    .input(z.string())
+    .query(async ({ input }) => {
+      const r = await db.query.report.findFirst({
+        where: eq(report.id, input),
+        with: {
+          reported: {
+            columns: {
+              id: true,
+              first: true,
+              last: true,
+              photo: true,
+            }
+          },
+          reporter: {
+            columns: {
+              id: true,
+              first: true,
+              last: true,
+              photo: true,
+            }
+          },
+          handledBy: {
+            columns: {
+              id: true,
+              first: true,
+              last: true,
+              photo: true,
+            }
+          },
+        },
+      });
+
+      if (!r) {
+        throw new TRPCError({ code: "NOT_FOUND"});
+      }
+
+      return r;
+    }),
+  updateReport: adminProcedure
+    .input(
+      z.object({
+        reportId: z.string(),
+        data: z.object({
+          notes: z.string().nullable().optional(),
+          handled: z.boolean().nullable().optional()
+        })
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const values = input.data.handled ?
+        { handled: true, handled_by_id: ctx.user.id, notes: input.data.notes } :
+        { handled: false, handled_by_id: null, notes: input.data.notes };
+
+      const r = await db
+        .update(report)
+        .set(values)
+        .where(eq(report.id, input.reportId));
+
+      return r[0];
+    }),
+  deleteReport: adminProcedure
+    .input(z.string())
+    .mutation(async ({ input }) => {
+      await db.delete(report).where(eq(report.id, input));
     })
 });

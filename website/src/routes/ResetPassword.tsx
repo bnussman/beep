@@ -3,7 +3,6 @@ import { Error } from '../components/Error';
 import { Success } from '../components/Success';
 import { Button, Center, Container, FormControl, FormErrorMessage, FormLabel, Heading, Input } from '@chakra-ui/react';
 import { Card } from '../components/Card';
-import { useValidationErrors } from '../utils/useValidationErrors';
 import { useForm } from 'react-hook-form';
 import { createRoute } from '@tanstack/react-router';
 import { rootRoute } from '../utils/router';

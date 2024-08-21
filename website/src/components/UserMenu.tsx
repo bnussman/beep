@@ -1,5 +1,4 @@
 import React from "react";
-import { client } from "../utils/apollo";
 import { LiaKeySolid, LiaSignOutAltSolid, LiaUserEditSolid } from 'react-icons/lia';
 import { Link, useNavigate } from "@tanstack/react-router";
 import { queryClient, trpc } from "../utils/trpc";
@@ -26,7 +25,6 @@ export function UserMenu() {
 
       localStorage.removeItem('user');
 
-      client.resetStore();
       queryClient.resetQueries();
 
       navigate({ to: "/" });

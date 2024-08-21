@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { trpc } from '../../../utils/trpc';
+import { TRPCClientError } from '@trpc/client';
 import { Loading } from '../../../components/Loading';
 import { ClearQueueDialog } from '../../../components/ClearQueueDialog';
 import { SendNotificationDialog } from '../../../components/SendNotificationDialog';
-import { UserRole } from '../../../types/User';
-import { useMutation, useQuery } from '@apollo/client';
 import { DeleteIcon, CheckIcon } from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { PhotoDialog } from '../../../components/PhotoDialog';
@@ -30,8 +30,6 @@ import {
   TabList,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { trpc } from '../../../utils/trpc';
-import { TRPCClientError } from '@trpc/client';
 
 dayjs.extend(relativeTime);
 
@@ -193,7 +191,7 @@ export function User() {
               <Text fontSize="xs" textOverflow="ellipsis">{user.id}</Text>
               {user.created && (<Text fontSize="xs">Joined {dayjs().to(user.created)}</Text>)}
               <Stack direction="row" mt="2" mb="2">
-                {user.role === UserRole.ADMIN && <Badge variant="solid" colorScheme="red">admin</Badge>}
+                {user.role === "user" && <Badge variant="solid" colorScheme="red">admin</Badge>}
                 {user.isStudent && <Badge variant="solid" colorScheme="blue">student</Badge>}
               </Stack>
             </Box>

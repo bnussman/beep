@@ -276,14 +276,26 @@ export const userRouter = router({
       };
     }),
   usersByDomain: adminProcedure
-      .query(async ({ input }) => {
-        return await db
-          .select({
-            domain: sql<string>`substring(email from '@(.*)$')`.as('domain'),
-            count: count()
-          })
-          .from(user)
-          .groupBy(sql`domain`)
-          .orderBy(sql`count desc`);
-      })
+    .query(async () => {
+      return await db
+        .select({
+          domain: sql<string>`substring(email from '@(.*)$')`.as('domain'),
+          count: count()
+        })
+        .from(user)
+        .groupBy(sql`domain`)
+        .orderBy(sql`count desc`);
+    }),
+  deleteMyAccount: authedProcedure
+    .mutation(async ({ ctx }) => {
+      if (ctx.user.role === 'admin') {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Admins can't delete their own accounts."
+        });
+      }
+
+      // @todo properly handle deleting across all tables
+      await db.delete(user).where(eq(user.id, ctx.user.id));
+    })
 })

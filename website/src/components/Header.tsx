@@ -1,8 +1,8 @@
 import React from 'react';
 import { UserMenu } from './UserMenu';
 import { AdminMenu } from './AdminMenu';
-import { UserRole } from '../types/User';
 import { Link } from '@tanstack/react-router';
+import { trpc } from '../utils/trpc';
 import {
   Flex,
   HStack,
@@ -11,7 +11,6 @@ import {
   Heading,
   useColorModeValue
 } from '@chakra-ui/react';
-import { trpc } from '../utils/trpc';
 
 export function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -41,7 +40,7 @@ export function Header() {
       <HStack spacing={[2, 3]}>
         <Button variant="outline" onClick={toggleColorMode}>{colorMode === 'light' ? "🌙" : "☀️"}</Button>
         <>
-          {user?.role === UserRole.ADMIN && <AdminMenu />}
+          {user?.role === "admin" && <AdminMenu />}
           {user && <UserMenu />}
           {!user &&
             <>

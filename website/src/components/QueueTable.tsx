@@ -5,7 +5,6 @@ import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
 import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { userRoute } from '../routes/admin/users/User';
-import { Status } from '../types/User';
 import { beepStatusMap } from '../routes/admin/beeps';
 import { createRoute } from '@tanstack/react-router';
 import { trpc } from '../utils/trpc';
@@ -60,7 +59,7 @@ export function QueueTable() {
               <Td>{dayjs().to(beep.start)}</Td>
               <Td>
                 <HStack>
-                  <Indicator color={beepStatusMap[beep.status as Status]} />
+                  <Indicator color={beepStatusMap[beep.status]} />
                   <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
                 </HStack>
               </Td>

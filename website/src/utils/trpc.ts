@@ -3,7 +3,6 @@ import { createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trp
 import { createTRPCReact } from '@trpc/react-query';
 import type { AppRouter } from '../../../apinext';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import { getAuthToken } from './apollo';
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -30,7 +29,22 @@ function getWSUrl() {
   return "ws://localhost:3001/trpc";
 }
 
+export function getAuthToken() {
+  const stored = localStorage.getItem("user");
+  if (stored) {
+    try {
+      const auth = JSON.parse(stored) as RouterOutput['auth']['login'];
+      return auth.tokens.id;
+    } catch (error) {
+      // @todo log to Sentry
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
 export const queryClient = new QueryClient();
+
 const wsClient = createWSClient({
   url: getWSUrl(),
   lazy: {

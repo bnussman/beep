@@ -1,8 +1,6 @@
 import React from 'react';
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/700.css";
-import { ApolloProvider } from '@apollo/client';
-import { client } from './utils/apollo';
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
 import { theme } from './utils/theme';
 import { Header } from './components/Header';
@@ -47,13 +45,11 @@ export function Beep() {
 export function App() {
   return (
     <ChakraProvider theme={theme}>
-      <ApolloProvider client={client}>
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </trpc.Provider>
-      </ApolloProvider>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </trpc.Provider>
     </ChakraProvider>
   );
 }

@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import dayjs from 'dayjs';
 import { Heading, Text, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, useDisclosure, Textarea, Box, Checkbox, Stack, HStack } from '@chakra-ui/react';
-import { GetReport, UpdateReport } from './Report';
-import { useQuery, useMutation } from '@apollo/client';
 import { DeleteIcon, ExternalLinkIcon} from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { BasicUser } from '../../../components/BasicUser';
@@ -10,40 +7,44 @@ import { Indicator } from '../../../components/Indicator';
 import { Loading } from '../../../components/Loading';
 import { DeleteReportDialog } from './DeleteReportDialog';
 import { Link } from '@tanstack/react-router';
+import dayjs from 'dayjs';
+import { RouterOutput, trpc } from '../../../utils/trpc';
+import { useForm } from 'react-hook-form';
 
 interface Props {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
-  id: string | null;
+  report: RouterOutput['report']['reports']['reports'][number] | undefined;
 }
 
 export function ReportDrawer(props: Props) {
-  const { isOpen, onClose, id } = props;
-  const { data, loading, error } = useQuery(GetReport, { variables: { id }, skip: !id });
-  const [update, { loading: updateLoading, error: updateError }] = useMutation(UpdateReport);
+  const { isOpen, onClose, report } = props;
+
+  const {
+    mutateAsync: updateReport,
+    isPending,
+    error: updateError
+  } = trpc.report.updateReport.useMutation();
 
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
-  const [notes, setNotes] = useState<string | undefined>();
-  const [isHandled, setIsHandled] = useState<boolean | undefined>();
+  const values = {
+    notes: report?.notes,
+    handled: report?.handled
+  };
 
-  function updateReport() {
-    update({
-      variables: {
-        id: id ?? "",
-        handled: isHandled,
-        notes
-      },
+  const form = useForm({
+    defaultValues: values,
+    values,
+  });
+
+  const onSubmit = form.handleSubmit((values) => {
+    updateReport({
+      reportId: report?.id ?? '',
+      data: values,
     });
-  }
-
-  useEffect(() => {
-    setIsHandled(data?.getReport.handled);
-    if (data?.getReport.notes) {
-      setNotes(data?.getReport.notes)
-    }
-  }, [data?.getReport]);
+  });
 
   return (
     <Drawer
@@ -57,62 +58,54 @@ export function ReportDrawer(props: Props) {
         <DrawerCloseButton />
         <DrawerHeader>Report</DrawerHeader>
         <DrawerBody>
-          {error && <Error error={error} />}
-          {updateError && <Error error={updateError} />}
-          {loading && <Loading />}
-          {data?.getReport &&
-            <Stack spacing={2}>
-              <Heading size="md">Reporter</Heading>
-              <BasicUser user={data.getReport.reporter} />
-              <Heading size="md">Reported</Heading>
-              <BasicUser user={data.getReport.reported} />
-              <Heading size="md">Reason</Heading>
-              <Text>{data.getReport.reason}</Text>
-              <Heading size="md">Created</Heading>
-              <Text>{dayjs().to(data.getReport.timestamp)}</Text>
-              {data.getReport.beep &&
-                <Box>
-                  <Heading size="md">Associated Beep</Heading>
-                  <Link to="/admin/beeps/$beepId" params={{ beepId: data.getReport.beep.id }}>
-                    {data.getReport.beep.id}
-                  </Link>
-                </Box>
-              }
+          {updateError && <Error>{updateError.message}</Error>}
+          <Stack spacing={2}>
+            <Heading size="md">Reporter</Heading>
+            <BasicUser user={report?.reporter} />
+            <Heading size="md">Reported</Heading>
+            <BasicUser user={report?.reported} />
+            <Heading size="md">Reason</Heading>
+            <Text>{report?.reason}</Text>
+            <Heading size="md">Created</Heading>
+            <Text>{dayjs().to(report?.timestamp)}</Text>
+            {report?.beep_id && (
               <Box>
-                <Heading size="md">Status</Heading>
-                {data.getReport.handled && data.getReport.handledBy ?
-                  <HStack alignItems="center">
-                    <Indicator color='green' />
-                    <Text noOfLines={1} mr={2}>Handled by</Text>
-                    <BasicUser user={data.getReport.handledBy} />
-                  </HStack>
-                  :
-                  <HStack>
-                    <Indicator color='red' />
-                    <span>Not handled</span>
-                  </HStack>
-                }
+                <Heading size="md">Associated Beep</Heading>
+                <Link to="/admin/beeps/$beepId" params={{ beepId: report?.beep_id }}>
+                  {report?.beep_id}
+                </Link>
               </Box>
-              <Textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-              <Checkbox
-                isChecked={isHandled}
-                onChange={(e) => setIsHandled(e.target.checked)}
-              >
-                Handled
-              </Checkbox>
-            </Stack>
-          }
+            )}
+            <Box>
+              <Heading size="md">Status</Heading>
+              {report?.handled && report?.handledBy ? (
+                <HStack alignItems="center">
+                  <Indicator color='green' />
+                  <Text noOfLines={1} mr={2}>Handled by</Text>
+                  <BasicUser user={report.handledBy} />
+                </HStack>
+                ) : (
+                <HStack>
+                  <Indicator color='red' />
+                  <span>Not handled</span>
+                </HStack>
+              )}
+            </Box>
+            <Textarea
+              {...form.register('notes')}
+            />
+            <Checkbox
+              {...form.register('handled')}
+            >
+              Handled
+            </Checkbox>
+          </Stack>
         </DrawerBody>
         <DrawerFooter>
           <Box mr={4}>
-            {data && (
-              <Link to="/admin/reports/$reportId" params={{ reportId: data.getReport.id }}>
-                <ExternalLinkIcon />
-              </Link>
-            )}
+            <Link to="/admin/reports/$reportId" params={{ reportId: report?.id ?? '' }}>
+              <ExternalLinkIcon />
+            </Link>
           </Box>
           <Button
             colorScheme="red"
@@ -122,11 +115,13 @@ export function ReportDrawer(props: Props) {
           >
             Delete
           </Button>
-          <Button isLoading={updateLoading} colorScheme="blue" onClick={() => updateReport()}>Update</Button>
+          <Button isLoading={isPending} colorScheme="blue" type="submit">
+            Update
+          </Button>
         </DrawerFooter>
       </DrawerContent>
       <DeleteReportDialog
-        id={data?.getReport.id ?? ""}
+        id={report?.id ?? ''}
         onClose={onDeleteClose}
         isOpen={isDeleteOpen}
       />
