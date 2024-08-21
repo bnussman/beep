@@ -1,9 +1,9 @@
 import { Logger } from "./logger";
 import { Platform } from "react-native";
 import { isRunningInExpoGo, isWeb } from "./constants";
-import type { User } from "./useUser";
+import { RouterOutput } from "./trpc";
 
-export async function setPurchaseUser(user: User) {
+export async function setPurchaseUser(user: RouterOutput['user']['me']) {
   if (isRunningInExpoGo || isWeb) {
     return;
   }

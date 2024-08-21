@@ -3,12 +3,10 @@ import React, { useEffect } from "react";
 import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
-import { cache, client } from "./utils/apollo";
-import { ApolloProvider, useSubscription } from "@apollo/client";
+import { client } from "./utils/apollo";
+import { ApolloProvider } from "@apollo/client";
 import { updatePushToken } from "./utils/notifications";
-import { UserData, UserSubscription, useUser } from "./utils/useUser";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { setUserContext } from "./utils/sentry";
 import { StatusBar } from "expo-status-bar";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
@@ -18,6 +16,8 @@ import { useColorScheme } from "react-native";
 import * as Notifications from "expo-notifications";
 import { UpdateBeeperQueue } from "./components/ActionButton";
 import { Status } from "./utils/types";
+import { trpc, queryClient, trpcClient } from './utils/trpc';
+import { QueryClientProvider } from '@tanstack/react-query';
 import "./global.css";
 
 Notifications.setNotificationCategoryAsync(
@@ -77,34 +77,29 @@ setupPurchase();
 
 function Beep() {
   const colorScheme = useColorScheme();
-  const { data, loading } = useUser({
-    errorPolicy: "none",
-    onCompleted: () => {
-      updatePushToken();
-    },
+  const utils = trpc.useUtils();
+  const { data: user, isLoading } = trpc.user.me.useQuery(undefined, {
+    retry: false,
   });
 
   useAutoUpdate();
 
-  const user = data?.getUser;
-
-  useSubscription(UserSubscription, {
-    onData({ data }) {
-      cache.updateQuery({ query: UserData }, () => ({
-        getUser: data.data!.getUserUpdates,
-      }));
-    },
-    skip: !user,
+  trpc.user.updates.useSubscription(undefined, {
+    enabled: user !== undefined,
+    onData(user) {
+      utils.user.me.setData(undefined, user);
+    }
   });
 
   useEffect(() => {
     if (user) {
+      Sentry.setUser(user);
+      updatePushToken();
       setPurchaseUser(user);
-      setUserContext(user);
     }
   }, [user]);
 
-  if (loading) {
+  if (isLoading) {
     return null;
   }
 
@@ -126,7 +121,11 @@ function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ApolloProvider client={client}>
-        <Beep />
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <Beep />
+          </QueryClientProvider>
+        </trpc.Provider>
       </ApolloProvider>
     </GestureHandlerRootView>
   );

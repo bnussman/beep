@@ -17,7 +17,7 @@ export const authRouter = router({
     .input(z.object({
       username: z.string(),
       password: z.string(),
-      pushToken: z.string().optional(),
+      pushToken: z.string().nullable().optional(),
     }))
     .mutation(async ({ input }) => {
       const { username, password, pushToken } = input;

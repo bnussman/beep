@@ -4,6 +4,7 @@
     "jsx": "react-native",
     "lib": [
       "dom",
+      "DOM.Iterable",
       "esnext"
     ],
     "module": "esnext",

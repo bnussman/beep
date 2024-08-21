@@ -4,66 +4,34 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity, View } from "react-native";
 import { getPushToken } from "../../utils/notifications";
-import { ApolloError, useMutation } from "@apollo/client";
 import { isMobile, isSimulator } from "../../utils/constants";
 import { generateRNFile } from "../settings/EditProfile";
-import { client } from "../../utils/apollo";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { UserData } from "../../utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "@/components/Avatar";
-import { VariablesOf, graphql } from "../../graphql";
-import {
-  isValidationError,
-  useValidationErrors,
-} from "../../utils/useValidationErrors";
 import { PasswordInput } from "@/components/PasswordInput";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
-
-const SignUp = graphql(`
-  mutation SignUp($input: SignUpInput!) {
-    signup(input: $input) {
-      tokens {
-        id
-        tokenid
-      }
-      user {
-        id
-        username
-        name
-        first
-        last
-        email
-        phone
-        venmo
-        isBeeping
-        isEmailVerified
-        isStudent
-        groupRate
-        singlesRate
-        photo
-        capacity
-        cashapp
-      }
-    }
-  }
-`);
+import { trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 let picture: any;
 
-type Values = VariablesOf<typeof SignUp>["input"];
+interface Values {
+  first: string;
+  last: string;
+  username: string;
+  password: string;
+  email: string;
+  venmo: string;
+  phone: string;
+}
 
 export function SignUpScreen() {
-  const [signup, { error }] = useMutation(SignUp, {
-    context: {
-      headers: {
-        "apollo-require-preflight": true,
-      },
-    },
-  });
+  const { mutateAsync: signup, error } = trpc.auth.signup.useMutation();
+  const utils = trpc.useUtils();
 
   const {
     control,
@@ -72,28 +40,34 @@ export function SignUpScreen() {
     formState: { errors, isSubmitting },
   } = useForm<Values>();
 
-  const validationErrors = useValidationErrors<Values>(error);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
   const [photo, setPhoto] = useState<any>();
 
   const onSubmit = handleSubmit(async (variables) => {
     try {
-      const pushToken = isMobile && !isSimulator ? await getPushToken() : null;
+      const formData = new FormData();
 
-      const { data } = await signup({
-        variables: { input: { ...variables, picture, pushToken } },
-      });
-
-      await AsyncStorage.setItem("auth", JSON.stringify(data?.signup));
-
-      client.writeQuery({
-        query: UserData,
-        data: { getUser: { ...data?.signup.user } },
-      });
-    } catch (error) {
-      if (!isValidationError(error as ApolloError)) {
-        alert(error as ApolloError);
+      for (const key in variables) {
+        formData.set(key, variables[key as keyof typeof variables]);
       }
+
+      if (isMobile && !isSimulator) {
+        const pushToken = await getPushToken();
+        if (pushToken) {
+          formData.set("pushToken", pushToken);
+        }
+      }
+
+      formData.set("photo", picture);
+
+      const data = await signup(formData);
+
+      await AsyncStorage.setItem("auth", JSON.stringify(data));
+
+      utils.user.me.setData(undefined, data.user);
+    } catch (error) {
+      alert((error as TRPCClientError<any>).message);
     }
   });
 
@@ -191,7 +165,7 @@ export function SignUpScreen() {
           >
             <Avatar src={photo?.uri} size="xl" />
           </TouchableOpacity>
-          <Text color="error">{validationErrors?.picture?.[0]}</Text>
+          <Text color="error">{validationErrors?.photo?.[0]}</Text>
         </View>
       </View>
       <Label htmlFor="email">Email</Label>

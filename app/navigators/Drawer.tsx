@@ -6,7 +6,6 @@ import { Feedback } from "../routes/feedback/Feedback";
 import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
-import { gql, useMutation } from "@apollo/client";
 import { client } from "../utils/apollo";
 import { useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
@@ -31,30 +30,17 @@ import {
 } from "react-native";
 import { Text } from "@/components/Text";
 import { cx } from "class-variance-authority";
-
-const Logout = gql`
-  mutation Logout {
-    logout(isApp: true)
-  }
-`;
-
-const Resend = gql`
-  mutation Resend {
-    resendEmailVarification
-  }
-`;
+import { queryClient, trpc } from "@/utils/trpc";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
   const { navigate } = useNavigation();
-  const [logout, { loading }] = useMutation(Logout);
-  const [resend, { loading: resendLoading }] = useMutation(Resend);
+  const { mutateAsync: logout, isPending } = trpc.auth.logout.useMutation();
+  const { mutateAsync: resend, isPending: resendLoading } = trpc.auth.resendVerification.useMutation();
 
   const handleLogout = async () => {
     await logout({
-      variables: {
-        isApp: true,
-      },
+      isApp: true,
     });
 
     AsyncStorage.clear();
@@ -64,6 +50,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     }
 
     client.resetStore();
+    queryClient.resetQueries();
   };
 
   const handleResendVerification = () => {
@@ -82,7 +69,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         <View className="flex flex-row items-center justify-between px-2">
           <View className="flex-shrink">
             <Text size="lg" weight="bold">
-              {user?.name}
+              {user?.first} {user?.last}
             </Text>
             <Text color="subtle">@{user?.username}</Text>
           </View>
@@ -108,7 +95,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             onPress={handleLogout}
             className="px-5 py-3 rounded-lg flex flex-row items-center gap-6 active:bg-gray-300/5"
           >
-            {loading ? (
+            {isPending ? (
               <ActivityIndicator />
             ) : (
               <Text style={{ fontSize: 18 }}>↩️</Text>

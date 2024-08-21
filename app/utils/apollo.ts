@@ -9,8 +9,7 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { setContext } from "@apollo/client/link/context";
 import { ApolloClient, ApolloLink, InMemoryCache, split } from "@apollo/client";
 import { isWeb } from "./constants";
-import { ResultOf } from "gql.tada";
-import { Login } from "@/routes/auth/Login";
+import { getAuthToken } from './trpc';
 
 function getLocalIP() {
   if (isWeb) {
@@ -41,26 +40,6 @@ const url = __DEV__
 // const url = __DEV__ ? `https://staging.ridebeep.app/graphql` : "https://ridebeep.app/graphql";
 // const wsUrl = "wss://api.ridebeep.app/subscriptions";
 // const url = "https://api.ridebeep.app/graphql";
-
-async function getAuthToken() {
-  const tokens = await AsyncStorage.getItem("auth");
-
-  if (tokens) {
-    try {
-      // When we login, we just store the response in AsyncStorage.
-      // We get the token from there.
-      const auth = JSON.parse(tokens) as ResultOf<typeof Login>['login'];
-
-      return auth.tokens.id;
-    } catch (error) {
-      Sentry.captureException(error, { extra: { hint: "Error when parsing authentication token from AsyncStorage" } });
-
-      return null;
-    }
-  }
-
-  return null;
-}
 
 const authLink = setContext(async (_, { headers }) => {
   const token = await getAuthToken();

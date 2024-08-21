@@ -6,57 +6,23 @@ import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
-import { Alert } from "../../utils/alert";
 import { isSimulator } from "../../utils/constants";
-import { ApolloError, useMutation } from "@apollo/client";
-import { client } from "../../utils/apollo";
 import { getPushToken } from "../../utils/notifications";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { UserData } from "../../utils/useUser";
 import { Logger } from "../../utils/logger";
-import { useValidationErrors } from "../../utils/useValidationErrors";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { VariablesOf, graphql } from "gql.tada";
 import { View } from "react-native";
+import { RouterInput, trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
-export const Login = graphql(`
-  mutation Login($username: String!, $password: String!, $pushToken: String) {
-    login(
-      input: { username: $username, password: $password, pushToken: $pushToken }
-    ) {
-      tokens {
-        id
-        tokenid
-      }
-      user {
-        id
-        username
-        name
-        first
-        last
-        email
-        phone
-        venmo
-        isBeeping
-        isEmailVerified
-        isStudent
-        groupRate
-        singlesRate
-        photo
-        capacity
-        cashapp
-      }
-    }
-  }
-`);
-
-type Values = VariablesOf<typeof Login>;
+type Values = RouterInput['auth']['login'];
 
 export function LoginScreen() {
-  const [login, { error }] = useMutation(Login);
+  const utils = trpc.useUtils();
+  const { mutateAsync: login, error } = trpc.auth.login.useMutation();
 
-  const validationErrors = useValidationErrors<Values>(error);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
   const navigation = useNavigation();
 
@@ -86,18 +52,17 @@ export function LoginScreen() {
     }
 
     try {
-      const { data } = await login({
-        variables: { ...variables, pushToken },
+      const data = await login({
+        ...variables,
+        pushToken,
       });
 
-      await AsyncStorage.setItem("auth", JSON.stringify(data?.login));
+      await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-      client.writeQuery({
-        query: UserData,
-        data: { getUser: { ...data?.login.user } },
-      });
+      utils.user.me.setData(undefined, data.user);
+
     } catch (error) {
-      Alert(error as ApolloError);
+      alert((error as TRPCClientError<any>).message);
     }
   });
 

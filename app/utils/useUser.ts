@@ -1,85 +1,25 @@
-import { QueryHookOptions, useQuery } from "@apollo/client";
-import { graphql, ResultOf } from "gql.tada";
+import { trpc } from "./trpc";
 
-export type User = ResultOf<typeof UserData>['getUser'];
-
-export const UserData = graphql(`
-  query UserData {
-    getUser {
-      id
-      username
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      photo
-      capacity
-      cashapp
-    }
-  }
-`);
-
-export const UserSubscription = graphql(`
-  subscription UserUpdates {
-    getUserUpdates {
-      id
-      username
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      isBeeping
-      isEmailVerified
-      isStudent
-      groupRate
-      singlesRate
-      photo
-      capacity
-      cashapp
-    }
-  }
-`);
-
-export function useUser(options?: QueryHookOptions) {
-  const query = useQuery(UserData, {
-    nextFetchPolicy: "cache-only",
-    ...options,
-  });
-
-  const user = query.data?.getUser;
+export function useUser() {
+  const { data: user, ...query } = trpc.user.me.useQuery(undefined, { enabled: false });
 
   return { user, ...query };
 }
 
 export function useIsSignedIn() {
-  const { data } = useQuery(UserData, {
-    fetchPolicy: "cache-only",
-  });
+  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
 
-  return Boolean(data?.getUser);
+  return user !== undefined;
 }
 
 export function useIsSignedOut() {
-  const { data } = useQuery(UserData, {
-    fetchPolicy: "cache-only",
-  });
+  const isSignedIn = useIsSignedIn();
 
-  return !Boolean(data?.getUser);
+  return !isSignedIn;
 }
 
 export function useIsUserNotBeeping() {
-  const { data } = useQuery(UserData, {
-    fetchPolicy: "cache-only",
-  });
+  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
 
-  return !Boolean(data?.getUser?.isBeeping);
+  return !Boolean(user?.isBeeping);
 }
