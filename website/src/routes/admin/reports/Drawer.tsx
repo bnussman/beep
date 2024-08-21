@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Heading, Text, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, useDisclosure, Textarea, Box, Checkbox, Stack, HStack } from '@chakra-ui/react';
 import { DeleteIcon, ExternalLinkIcon} from '@chakra-ui/icons';
 import { Error } from '../../../components/Error';
 import { BasicUser } from '../../../components/BasicUser';
 import { Indicator } from '../../../components/Indicator';
-import { Loading } from '../../../components/Loading';
 import { DeleteReportDialog } from './DeleteReportDialog';
 import { Link } from '@tanstack/react-router';
-import dayjs from 'dayjs';
 import { RouterOutput, trpc } from '../../../utils/trpc';
 import { useForm } from 'react-hook-form';
+import dayjs from 'dayjs';
 
 interface Props {
   isOpen: boolean;
@@ -61,9 +60,9 @@ export function ReportDrawer(props: Props) {
           {updateError && <Error>{updateError.message}</Error>}
           <Stack spacing={2}>
             <Heading size="md">Reporter</Heading>
-            <BasicUser user={report?.reporter} />
+            {report && <BasicUser user={report?.reporter} />}
             <Heading size="md">Reported</Heading>
-            <BasicUser user={report?.reported} />
+            {report && <BasicUser user={report?.reported} />}
             <Heading size="md">Reason</Heading>
             <Text>{report?.reason}</Text>
             <Heading size="md">Created</Heading>

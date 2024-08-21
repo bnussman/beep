@@ -104,7 +104,7 @@ export function Report() {
         )}
         <Box>
           <Heading size="lg">Status</Heading>
-          {report.handled ? (
+          {report.handled && report.handledBy ? (
             <Box>
               <Flex align="center">
                 <Indicator color='green' />
@@ -112,14 +112,12 @@ export function Report() {
                 <BasicUser user={report.handledBy} />
               </Flex>
             </Box>
-          )
-            :
-            (
+          ) : (
             <Box>
               <Indicator color='red' />
               <span>Not handled</span>
             </Box>
-            )}
+          )}
         </Box>
       </Stack>
         <Stack spacing={2} mt={8}>
