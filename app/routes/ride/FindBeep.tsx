@@ -35,10 +35,10 @@ import {
 } from "../../utils/links";
 import { useLazyQuery, useQuery, useSubscription } from "@apollo/client";
 import { VariablesOf, graphql } from "gql.tada";
-import { ChooseBeep } from "../ride/PickBeep";
 import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { RouterInput } from "@/utils/trpc";
 
 export const InitialRiderStatus = graphql(`
   query GetInitialRiderStatus {
@@ -197,7 +197,7 @@ export function MainFindBeepScreen(props: Props) {
     setFocus,
     reset,
     formState: { errors },
-  } = useForm<Omit<VariablesOf<typeof ChooseBeep>, "beeperId">>({
+  } = useForm<Omit<RouterInput['rider']['startBeep'], "beeperId">>({
     defaultValues: {
       groupSize: undefined,
       origin: props.route.params?.origin,

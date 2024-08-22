@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
-import { Unpacked } from "../../utils/constants";
 import {
   ActivityIndicator,
   FlatList,
@@ -11,67 +10,13 @@ import {
 } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/useLocation";
-import { client } from "@/utils/apollo";
 import { InitialRiderStatus } from "./FindBeep";
-import { ResultOf, VariablesOf, graphql } from "gql.tada";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { RouterOutput, trpc } from "@/utils/trpc";
-
-export const ChooseBeep = graphql(`
-  mutation ChooseBeep(
-    $beeperId: String!
-    $origin: String!
-    $destination: String!
-    $groupSize: Float!
-  ) {
-    chooseBeep(
-      beeperId: $beeperId
-      input: {
-        origin: $origin
-        destination: $destination
-        groupSize: $groupSize
-      }
-    ) {
-      id
-      position
-      origin
-      destination
-      status
-      groupSize
-      beeper {
-        id
-        first
-        name
-        singlesRate
-        groupRate
-        isStudent
-        role
-        venmo
-        cashapp
-        username
-        phone
-        photo
-        capacity
-        queueSize
-        location {
-          longitude
-          latitude
-        }
-        cars {
-          id
-          photo
-          make
-          color
-          model
-        }
-      }
-    }
-  }
-`);
+import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";
 
 type Props = StaticScreenProps<
-  Omit<VariablesOf<typeof ChooseBeep>, "beeperId">
+  Omit<RouterInput['rider']['startBeep'], "beeperId">
 >;
 
 export function PickBeepScreen({ route }: Props) {
@@ -88,7 +33,10 @@ export function PickBeepScreen({ route }: Props) {
     }
   );
 
-  const [getBeep, { loading: isPickBeeperLoading }] = useMutation(ChooseBeep);
+  const {
+    mutateAsync: startBeep,
+    isPending: isPickBeeperLoading
+  } = trpc.rider.startBeep.useMutation();
 
   useEffect(() => {
     navigation.setOptions({
@@ -101,20 +49,14 @@ export function PickBeepScreen({ route }: Props) {
       return;
     }
     try {
-      const { data } = await getBeep({
-        variables: {
-          ...route.params,
-          beeperId,
-        },
+      const data = await startBeep({
+        ...route.params,
+        beeperId,
       });
 
-      if (data) {
-        client.writeQuery({
-          query: InitialRiderStatus,
-          data: { getRiderStatus: { ...data.chooseBeep } },
-        });
-        navigation.goBack();
-      }
+      // @todo write rider's beep to cache
+
+      navigation.goBack();
     } catch (error) {
       alert((error as ApolloError).message);
     }

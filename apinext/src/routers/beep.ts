@@ -7,7 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { redis } from "../utils/redis";
 
-const inProgressBeep = or(
+export const inProgressBeep = or(
   eq(beep.status, "waiting"),
   eq(beep.status, "accepted"),
   eq(beep.status, "here"),

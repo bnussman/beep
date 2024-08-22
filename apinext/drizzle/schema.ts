@@ -151,8 +151,8 @@ export const beep = pgTable("beep", {
 	origin: varchar("origin", { length: 255 }).notNull(),
 	destination: varchar("destination", { length: 255 }).notNull(),
 	groupSize: integer("group_size").notNull(),
-	start: timestamp("start", { withTimezone: true, mode: 'string' }).notNull(),
-	end: timestamp("end", { withTimezone: true, mode: 'string' }),
+	start: timestamp("start", { withTimezone: true, mode: 'date' }).notNull(),
+	end: timestamp("end", { withTimezone: true, mode: 'date' }),
 	status: beepStatusEnum("status").default('waiting').notNull(),
 },
 (table) => {
