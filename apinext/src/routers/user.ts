@@ -45,7 +45,8 @@ export const userRouter = router({
         phone: z.string(),
         venmo: z.string().nullable(),
         cashapp: z.string().nullable(),
-      })
+        pushToken: z.string(),
+      }).partial()
     )
     .mutation(async ({ ctx, input }) => {
       const values = {

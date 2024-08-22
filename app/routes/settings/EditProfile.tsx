@@ -15,98 +15,48 @@ import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
-import { client } from "@/utils/apollo";
-import { ApolloError, useMutation } from "@apollo/client";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { VariablesOf, graphql } from "@/graphql";
 import { ReactNativeFile } from "@/utils/apollo";
-import {
-  isValidationError,
-  useValidationErrors,
-} from "../../utils/useValidationErrors";
-
-const DeleteAccount = graphql(`
-  mutation DeleteAccount {
-    deleteAccount
-  }
-`);
-
-export const EditAccount = graphql(`
-  mutation EditAccount($input: EditUserInput!) {
-    editUser(data: $input) {
-      id
-      name
-      first
-      last
-      email
-      phone
-      venmo
-      cashapp
-    }
-  }
-`);
-
-export const UploadPhoto = graphql(`
-  mutation AddProfilePicture($picture: File!) {
-    addProfilePicture(picture: $picture) {
-      id
-      photo
-    }
-  }
-`);
+import { queryClient, trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 export function generateRNFile(uri: string, name: string) {
-  return uri
-    ? new ReactNativeFile({
-        uri,
-        type: mime.lookup(uri) || "image",
-        name,
-      })
-    : null;
+  return new ReactNativeFile({
+    uri,
+    type: mime.lookup(uri) || "image",
+    name,
+  });
 }
-
-type Values = VariablesOf<typeof EditAccount>["input"];
 
 export function EditProfileScreen() {
   const { user } = useUser();
   const navigation = useNavigation();
 
-  const defaultValues = useMemo(
+  const values = useMemo(
     () => ({
       first: user?.first,
       last: user?.last,
-      email: user?.email ? user.email : undefined,
-      phone: user?.phone ? user.phone : undefined,
+      email: user?.email,
+      phone: user?.phone,
       venmo: user?.venmo,
       cashapp: user?.cashapp,
     }),
     [user],
   );
 
-  const [edit, { error }] = useMutation(EditAccount);
-  const [deleteAccount] = useMutation(DeleteAccount);
+  const { mutateAsync: edit, error } = trpc.user.edit.useMutation();
+  const { mutateAsync: deleteAccount }  = trpc.user.deleteMyAccount.useMutation();
 
   const {
     control,
     handleSubmit,
     setFocus,
-    reset,
     formState: { errors, isDirty, isSubmitting },
-  } = useForm<Values>({ defaultValues });
+  } = useForm({ defaultValues: values, values });
 
-  useEffect(() => {
-    reset(defaultValues);
-  }, [defaultValues]);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
-  const validationErrors = useValidationErrors<Values>(error);
-
-  const [upload, { loading: uploadLoading }] = useMutation(UploadPhoto, {
-    context: {
-      headers: {
-        "apollo-require-preflight": true,
-      },
-    },
-  });
+  const { mutateAsync: upload, isPending: uploadLoading } = trpc.user.updatePicture.useMutation();
 
   const [photo, setPhoto] = useState<any>();
 
@@ -169,9 +119,9 @@ export function EditProfileScreen() {
           Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
         }
 
-        client.resetStore();
+        queryClient.resetQueries();
       })
-      .catch((error: ApolloError) => alert(error.message));
+      .catch((error: TRPCClientError<any>) => alert(error.message));
   };
 
   const handleUpdatePhoto = async () => {
@@ -203,10 +153,19 @@ export function EditProfileScreen() {
       setPhoto(result.assets[0]);
     }
 
+    if (!picture) {
+      return alert('Error when picking photo');
+    }
+
+    const formData = new FormData();
+
+    // @ts-expect-error need to fix
+    formData.append('photo', picture);
+
     try {
-      await upload({ variables: { picture } });
+      await upload(formData);
     } catch (error) {
-      alert((error as ApolloError)?.message);
+      alert((error as TRPCClientError<any>).message);
     }
 
     setPhoto(undefined);
@@ -214,11 +173,9 @@ export function EditProfileScreen() {
 
   const onSubmit = handleSubmit(async (variables) => {
     try {
-      await edit({ variables: { input: variables } });
+      await edit(variables);
     } catch (error) {
-      if (!isValidationError(error as ApolloError)) {
-        alert((error as ApolloError)?.message);
-      }
+      alert((error as TRPCClientError<any>).message);
     }
   });
 

@@ -97,12 +97,12 @@ export const authRouter = router({
         last: z.string(),
         username: z.string(),
         password: z.string(),
-        email: z.string().email().endsWith('.edu', 'Email must end with .edu'),
+        email: z.string().email().endsWith('.edu', 'you must use a .edu email'),
         phone: z.string(),
         venmo: z.string().optional(),
         cashapp: z.string().optional(),
         pushToken: z.string().optional(),
-        photo: z.instanceof(File),
+        photo: z.instanceof(File, { message: "You must add a profile picture" }),
       });
 
       const {

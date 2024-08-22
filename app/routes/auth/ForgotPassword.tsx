@@ -1,29 +1,20 @@
 import React, { useState } from "react";
-import { ApolloError, useMutation } from "@apollo/client";
-import { View } from "react-native";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
-import { graphql } from "gql.tada";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
-const ForgotPassword = graphql(`
-  mutation ForgotPassword($email: String!) {
-    forgotPassword(email: $email)
-  }
-`);
+import { trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 export function ForgotPasswordScreen() {
-  const [forgot, { loading }] = useMutation(ForgotPassword);
+  const { mutateAsync: sendForgotEmail, isPending } = trpc.auth.forgotPassword.useMutation();
 
   const [email, setEmail] = useState<string>("");
 
   const handleForgotPassword = () => {
-    forgot({
-      variables: { email },
-    })
+    sendForgotEmail({ email })
       .then(() => alert("Check your email for a link to reset your password!"))
-      .catch((error: ApolloError) => alert(error.message));
+      .catch((error: TRPCClientError<any>) => alert(error.message));
   };
 
   return (
@@ -37,7 +28,7 @@ export function ForgotPasswordScreen() {
         onSubmitEditing={handleForgotPassword}
       />
       <Button
-        isLoading={loading}
+        isLoading={isPending}
         disabled={!email}
         onPress={handleForgotPassword}
         className="mt-4"

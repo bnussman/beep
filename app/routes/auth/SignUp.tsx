@@ -49,17 +49,17 @@ export function SignUpScreen() {
       const formData = new FormData();
 
       for (const key in variables) {
-        formData.set(key, variables[key as keyof typeof variables]);
+        formData.append(key, variables[key as keyof typeof variables]);
       }
 
       if (isMobile && !isSimulator) {
         const pushToken = await getPushToken();
         if (pushToken) {
-          formData.set("pushToken", pushToken);
+          formData.append("pushToken", pushToken);
         }
       }
 
-      formData.set("photo", picture);
+      formData.append("photo", picture);
 
       const data = await signup(formData);
 

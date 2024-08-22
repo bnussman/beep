@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trpc/client';
+import { createTRPCClient, createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
 import type { AppRouter } from '../../apinext';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
@@ -70,6 +70,17 @@ const wsClient = createWSClient({
   }
 });
 
+const trpcHttpLink = httpLink({
+  url,
+  async headers() {
+    const token = await getAuthToken();
+    if (token) {
+      return { Authorization: `Bearer ${token}` };
+    }
+    return {};
+  }
+});
+
 export const trpcClient = trpc.createClient({
   links: [
     splitLink<AppRouter>({
@@ -77,16 +88,11 @@ export const trpcClient = trpc.createClient({
       true: wsLink<AppRouter>({
         client: wsClient
       }),
-      false: httpLink({
-        url,
-        async headers() {
-          const token = await getAuthToken();
-          if (token) {
-            return { Authorization: `Bearer ${token}` };
-          }
-          return {};
-        }
-      }),
+      false: trpcHttpLink,
     })
   ],
+});
+
+export const basicTrpcClient = createTRPCClient<AppRouter>({
+  links: [trpcHttpLink]
 });
