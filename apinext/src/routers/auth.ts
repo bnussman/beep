@@ -6,7 +6,7 @@ import { and, eq, ne, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
-import { S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
+import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
 import { email } from "../utils/email";
 import { SendMailOptions } from "nodemailer";
 import * as Sentry from '@sentry/bun';
@@ -137,6 +137,10 @@ export const authRouter = router({
         password,
         passwordType: 'bcrypt',
         photo: S3_BUCKET_URL + objectKey,
+        ...(isDevelopment && ({
+          isEmailVerified: true,
+          isStudent: true
+        }))
       }).returning();
 
       const tokens = {
