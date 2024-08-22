@@ -3,9 +3,6 @@ import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { payment, user } from "../../drizzle/schema";
 import { and, eq, gte, like, sql } from "drizzle-orm";
-import { alias } from "drizzle-orm/pg-core";
-
-const p = alias(payment, "p")
 
 export const riderRouter = router({
   beepers: authedProcedure
@@ -29,7 +26,7 @@ export const riderRouter = router({
           groupRate: user.groupRate,
           queueSize: user.queueSize,
           capacity: user.capacity,
-          isPremium: sql<boolean>`${p.id} IS NOT NULL`,
+          isPremium: sql<boolean>`${payment.id} IS NOT NULL`,
         })
         .from(user)
         .where(
@@ -39,15 +36,15 @@ export const riderRouter = router({
           )
         )
         .orderBy(
-          sql<boolean>`${p.id} IS NOT NULL desc`,
+          sql<boolean>`${payment.id} IS NOT NULL desc`,
           sql`ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))`
         )
         .leftJoin(
-          p,
+          payment,
           and(
-            eq(p.user_id, user.id),
-            gte(p.expires, new Date()),
-            like(p.productId, 'top_of_beeper_list_%')
+            eq(payment.user_id, user.id),
+            gte(payment.expires, new Date()),
+            like(payment.productId, 'top_of_beeper_list_%')
           )
         );
 
