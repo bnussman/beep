@@ -70,7 +70,7 @@ export const user = pgTable("user", {
 	pushToken: varchar("push_token", { length: 255 }),
 	photo: varchar("photo", { length: 255 }),
 	location: geography("location"),
-	created: timestamp("created", { withTimezone: true, mode: 'string' }),
+	created: timestamp("created", { withTimezone: true, mode: 'date' }),
 },
 (table) => {
 	return {

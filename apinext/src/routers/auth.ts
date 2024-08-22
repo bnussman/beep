@@ -136,6 +136,7 @@ export const authRouter = router({
         ...input,
         password,
         passwordType: 'bcrypt',
+        created: new Date(),
         photo: S3_BUCKET_URL + objectKey,
         ...(isDevelopment && ({
           isEmailVerified: true,
