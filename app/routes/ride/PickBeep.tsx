@@ -16,30 +16,7 @@ import { InitialRiderStatus } from "./FindBeep";
 import { ResultOf, VariablesOf, graphql } from "gql.tada";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-
-const GetBeepers = graphql(`
-  query GetBeepers($latitude: Float!, $longitude: Float!, $radius: Float) {
-    getBeepers(latitude: $latitude, longitude: $longitude, radius: $radius) {
-      id
-      name
-      first
-      isStudent
-      singlesRate
-      groupRate
-      capacity
-      queueSize
-      photo
-      role
-      rating
-      venmo
-      cashapp
-      payments {
-        id
-        productId
-      }
-    }
-  }
-`);
+import { RouterOutput, trpc } from "@/utils/trpc";
 
 export const ChooseBeep = graphql(`
   mutation ChooseBeep(
@@ -101,15 +78,15 @@ export function PickBeepScreen({ route }: Props) {
   const { location } = useLocation();
   const navigation = useNavigation();
 
-  const { data, loading, error, refetch } = useQuery(GetBeepers, {
-    variables: {
+  const { data: beepers, isLoading, error, refetch } = trpc.rider.beepers.useQuery(
+    {
       latitude: location?.coords.latitude ?? 0,
       longitude: location?.coords.longitude ?? 0,
-      radius: 20,
     },
-    skip: !location,
-    notifyOnNetworkStatusChange: true,
-  });
+    {
+      enabled: location !== undefined
+    }
+  );
 
   const [getBeep, { loading: isPickBeeperLoading }] = useMutation(ChooseBeep);
 
@@ -143,20 +120,14 @@ export function PickBeepScreen({ route }: Props) {
     }
   };
 
-  const beepers = data?.getBeepers;
-  const isRefreshing = Boolean(data) && loading;
+  const isRefreshing = Boolean(beepers) && isLoading;
 
   const renderItem = ({
     item,
   }: {
-    item: Unpacked<ResultOf<typeof GetBeepers>["getBeepers"]>;
+    item: RouterOutput['rider']['beepers'][number];
     index: number;
   }) => {
-    const isPremium =
-      item.payments?.some((p) =>
-        p.productId.startsWith("top_of_beeper_list"),
-      ) ?? false;
-
     return (
       <Card
         className="p-4"
@@ -167,11 +138,11 @@ export function PickBeepScreen({ route }: Props) {
         <View className="flex flex-row items-center mb-4">
           <View className="flex-grow flex-wrap">
             <Text size="2xl" weight="black">
-              {item.name}
+              {item.first} {item.last}
             </Text>
-            {item.rating && <Text size="xs">{printStars(item.rating)}</Text>}
+            {item.rating && <Text size="xs">{printStars(Number(item.rating))}</Text>}
           </View>
-          {isPremium && (
+          {item.isPremium && (
             <Text
               size="lg"
               className="shadow-xl opacity-100 shadow-yellow-400 mr-4"
@@ -208,7 +179,7 @@ export function PickBeepScreen({ route }: Props) {
     );
   };
 
-  if ((!data && loading) || location === undefined) {
+  if ((!beepers && isLoading) || location === undefined) {
     return (
       <View className="flex items-center justify-center h-full">
         <ActivityIndicator />
