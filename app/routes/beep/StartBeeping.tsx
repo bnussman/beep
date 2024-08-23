@@ -25,6 +25,7 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { trpc } from "@/utils/trpc";
 
 let unsubscribe: any = null;
 
@@ -35,52 +36,6 @@ const LocationUpdate = graphql(`
       location {
         latitude
         longitude
-      }
-    }
-  }
-`);
-
-export const GetInitialQueue = graphql(`
-  query GetInitialQueue($id: String) {
-    getQueue(id: $id) {
-      id
-      groupSize
-      origin
-      destination
-      status
-      rider {
-        id
-        name
-        first
-        last
-        venmo
-        cashapp
-        phone
-        photo
-        rating
-      }
-    }
-  }
-`);
-
-const GetQueue = graphql(`
-  subscription GetQueue($id: String!) {
-    getBeeperUpdates(id: $id) {
-      id
-      groupSize
-      origin
-      destination
-      status
-      rider {
-        id
-        name
-        first
-        last
-        venmo
-        cashapp
-        phone
-        photo
-        rating
       }
     }
   }
@@ -116,33 +71,22 @@ export function StartBeepingScreen() {
   const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
-  const { data, refetch, loading } = useQuery(GetInitialQueue, {
-    notifyOnNetworkStatusChange: true,
-    variables: { id: user!.id },
+  const utils = trpc.useUtils();
+
+  const { data: queue, refetch, isLoading } = trpc.beeper.queue.useQuery(user!.id, {
+    enabled: user && user.isBeeping
   });
 
-  useSubscription(GetQueue, {
-    variables: { id: user!.id },
-    onData({ data }) {
-      cache.updateQuery(
-        { query: GetInitialQueue, variables: { id: user?.id } },
-        (prev) => {
-          const newQueue = { getQueue: data.data!.getBeeperUpdates };
-          if (prev && prev.getQueue.length < newQueue.getQueue.length) {
-            setPosition(100);
-          }
-          return newQueue;
-        },
-      );
+  trpc.beeper.watchQueue.useSubscription(user!.id, {
+    onData(data) {
+      utils.beeper.queue.setData(user!.id, data);
     },
-    skip: !user?.isBeeping,
-  });
+    enabled: user && user.isBeeping,
+  })
 
   const [position, setPosition] = useState(0);
 
   const [updateBeepSettings] = useMutation(UpdateBeepSettings);
-
-  const queue = data?.getQueue;
 
   const snapPoints = useMemo(() => [100, 85, 15], []);
 
@@ -339,7 +283,7 @@ export function StartBeepingScreen() {
     handleIsBeepingChange();
   }, [user]);
 
-  const isRefreshing = Boolean(data) && loading;
+  const isRefreshing = Boolean(queue) && isLoading;
 
   if (isBeeping && queue?.length === 0) {
     return (
