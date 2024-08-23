@@ -21,6 +21,7 @@ type Props = StaticScreenProps<
 export function PickBeepScreen({ route }: Props) {
   const { location } = useLocation();
   const navigation = useNavigation();
+  const utils = trpc.useUtils();
 
   const { data: beepers, isLoading, error, refetch } = trpc.rider.beepers.useQuery(
     {
@@ -54,6 +55,7 @@ export function PickBeepScreen({ route }: Props) {
       });
 
       // @todo write rider's beep to cache
+      utils.rider.currentRide.setData(undefined, data);
 
       navigation.goBack();
     } catch (error) {

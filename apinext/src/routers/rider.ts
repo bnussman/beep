@@ -78,6 +78,12 @@ export const riderRouter = router({
           first: true,
           last: true,
           isBeeping: true,
+          photo: true,
+          singlesRate: true,
+          groupRate: true,
+          capacity: true,
+          cashapp: true,
+          venmo: true,
         },
         where: eq(user.id, input.beeperId),
         with: {
@@ -119,7 +125,8 @@ export const riderRouter = router({
         groupSize: input.groupSize,
         id: crypto.randomUUID(),
         start: new Date(),
-        status: 'waiting'
+        status: 'waiting',
+        end: null,
       } as const;
 
       await db.insert(beep).values(newBeep);
@@ -139,16 +146,18 @@ export const riderRouter = router({
 
       return {
         ...newBeep,
+        position: queue.length,
         rider: {
           id: ctx.user.id,
           first: ctx.user.first,
           last: ctx.user.last,
         },
         beeper: {
-          id: beeper.id,
-          first: beeper.first,
-          last: beeper.first,
-        }
+          ...beeper,
+          phone: null,
+          location: null,
+          cars: [],
+        },
       };
     }),
   currentRide: authedProcedure
@@ -236,6 +245,7 @@ async function getRidersCurrentRide(userId: string) {
     beeper: {
       ...b.beeper,
       location: isAcceptedBeep ? b.beeper.location : null,
+      phone: isAcceptedBeep ? b.beeper.phone : null,
     },
     position: position[0].count
   };
