@@ -1,4 +1,4 @@
-import { TRPCError, initTRPC } from '@trpc/server';
+import { TRPCError, inferRouterInputs, inferRouterOutputs, initTRPC } from '@trpc/server';
 import { db } from './db';
 import { token } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
@@ -6,6 +6,7 @@ import { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
 import { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
 import { ZodError } from 'zod';
 import * as Sentry from '@sentry/bun';
+import { AppRouter } from '..';
 
 /**
  * Initialization of tRPC backend
@@ -26,6 +27,8 @@ const t = initTRPC.context<Context>().create({
     };
   },
 });
+
+export type RouterInput = inferRouterInputs<AppRouter>;
 
 const sentryMiddleware = t.middleware(
   Sentry.trpcMiddleware({

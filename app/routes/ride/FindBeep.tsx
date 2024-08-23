@@ -38,47 +38,7 @@ import { VariablesOf, graphql } from "gql.tada";
 import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { RouterInput } from "@/utils/trpc";
-
-export const InitialRiderStatus = graphql(`
-  query GetInitialRiderStatus {
-    getRiderStatus {
-      id
-      position
-      origin
-      destination
-      status
-      groupSize
-      beeper {
-        id
-        first
-        name
-        singlesRate
-        groupRate
-        isStudent
-        role
-        venmo
-        cashapp
-        username
-        phone
-        photo
-        capacity
-        queueSize
-        location {
-          longitude
-          latitude
-        }
-        cars {
-          id
-          photo
-          make
-          color
-          model
-        }
-      }
-    }
-  }
-`);
+import { RouterInput, trpc } from "@/utils/trpc";
 
 const RiderStatus = graphql(`
   subscription RiderStatus {
@@ -143,27 +103,20 @@ export function MainFindBeepScreen(props: Props) {
   const { getLocation } = useLocation(false);
   const { navigate } = useNavigation();
 
-  const { data, previousData, refetch } = useQuery(InitialRiderStatus, {
-    notifyOnNetworkStatusChange: true,
-  });
+  const utils = trpc.useUtils();
+  const { data: beep } = trpc.rider.currentRide.useQuery();
 
-  const beep = data?.getRiderStatus;
+  const isAcceptedBeep =
+    beep?.status === "accepted" ||
+    beep?.status === "in_progress" ||
+    beep?.status === "here" ||
+    beep?.status === "on_the_way";
 
-  const isAcceptedBeep = [
-    Status.ACCEPTED,
-    Status.IN_PROGRESS,
-    Status.HERE,
-    Status.ON_THE_WAY,
-  ].includes(beep?.status as Status);
-
-  useSubscription(RiderStatus, {
-    onData({ data }) {
-      client.writeQuery({
-        query: InitialRiderStatus,
-        data: { getRiderStatus: data.data?.getRiderUpdates },
-      });
+  trpc.rider.currentRideUpdates.useSubscription(undefined, {
+    onData(data) {
+      utils.rider.currentRide.setData(undefined, data);
     },
-    skip: !beep,
+    enabled: !!beep
   });
 
   useSubscription(BeepersLocation, {
@@ -211,12 +164,6 @@ export function MainFindBeepScreen(props: Props) {
     },
   });
 
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === "active") {
-      refetch();
-    }
-  };
-
   const updateETA = async () => {
     const location = await getLocation();
 
@@ -232,12 +179,6 @@ export function MainFindBeepScreen(props: Props) {
 
   useEffect(() => {
     SplashScreen.hideAsync();
-
-    const listener = AppState.addEventListener("change", handleAppStateChange);
-
-    return () => {
-      listener.remove();
-    };
   }, []);
 
   useEffect(() => {
@@ -247,9 +188,9 @@ export function MainFindBeepScreen(props: Props) {
     }
 
     // Run some code when a beep completes
-    if (previousData && !beep) {
-      client.refetchQueries({ include: [GetBeepHistory] });
-    }
+    // if (previousData && !beep) {
+    //   client.refetchQueries({ include: [GetBeepHistory] });
+    // }
   }, [beep]);
 
   const findBeep = handleSubmit((values) => {
@@ -381,7 +322,7 @@ export function MainFindBeepScreen(props: Props) {
         <View className="flex flex-row w-full justify-between">
           <View className="flex-shrink">
             <Text size="3xl" weight="black" className="mb-2">
-              {beep.beeper.name}
+              {beep.beeper.first} {beep.beeper.last}
             </Text>
             <Text>
               <Text weight="bold">Pick Up </Text>
@@ -535,7 +476,7 @@ export function MainFindBeepScreen(props: Props) {
       <View className="items-center gap-1">
         <Text>Waiting on</Text>
         <Text size="4xl" weight="black">
-          {beep.beeper.name}
+          {beep.beeper.first} {beep.beeper.last}
         </Text>
         <Text>to accept your request.</Text>
       </View>

@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/useLocation";
-import { InitialRiderStatus } from "./FindBeep";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";

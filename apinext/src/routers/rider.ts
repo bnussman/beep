@@ -1,10 +1,12 @@
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { beep, payment, user } from "../../drizzle/schema";
-import { and, asc, desc, eq, gte, like, lte, sql } from "drizzle-orm";
+import { beep, car, payment, user } from "../../drizzle/schema";
+import { and, asc, count, desc, eq, gte, like, lte, ne, sql, lt } from "drizzle-orm";
 import { inProgressBeep } from "./beep";
 import { TRPCError } from "@trpc/server";
+import { observable } from "@trpc/server/observable";
+import { redisSubscriber } from "../utils/redis";
 
 export const riderRouter = router({
   beepers: authedProcedure
@@ -148,5 +150,93 @@ export const riderRouter = router({
           last: beeper.first,
         }
       };
-    })
+    }),
+  currentRide: authedProcedure
+    .query(async ({ ctx }) => {
+      return getRidersCurrentRide(ctx.user.id);
+    }),
+  currentRideUpdates: authedProcedure.subscription(({ ctx }) => {
+      // return an `observable` with a callback which is triggered immediately
+      return observable<Awaited<ReturnType<typeof getRidersCurrentRide>>>((emit) => {
+        const onUserUpdate = (message: string) => {
+          // emit data to client
+          console.log("Emitting to WS", message);
+          emit.next(JSON.parse(message));
+        };
+        // trigger `onAdd()` when `add` is triggered in our event emitter
+        const listener = (message: string) => onUserUpdate(message);
+        redisSubscriber.subscribe(`rider-${ctx.user.id}`, listener);
+        (async () => {
+          const ride = await getRidersCurrentRide(ctx.user.id);
+          emit.next(ride);
+        })();
+        // unsubscribe function when client disconnects or stops subscribing
+        return () => {
+          redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, listener);
+        };
+      });
+    }),
 });
+
+async function getRidersCurrentRide(userId: string) {
+  const b = await db.query.beep.findFirst({
+    where: and(
+      eq(beep.rider_id, userId),
+      inProgressBeep
+    ),
+    with: {
+      beeper: {
+        columns: {
+          id: true,
+          first: true,
+          last: true,
+          photo: true,
+          location: true,
+          singlesRate: true,
+          groupRate: true,
+          capacity: true,
+          phone: true,
+          cashapp: true,
+          venmo: true,
+        },
+        with: {
+          cars: {
+            where: eq(car.default, true),
+            limit: 1
+          },
+        },
+      },
+    },
+  });
+
+  if (!b) {
+    return null;
+  }
+
+  const position = await db
+    .select({ count: count() })
+    .from(beep)
+    .where(
+      and(
+        eq(beep.beeper_id, b.beeper_id),
+        lt(beep.start, b.start),
+        ne(beep.status, 'waiting'),
+        inProgressBeep,
+      )
+    );
+
+  const isAcceptedBeep =
+    b.status === "accepted" ||
+    b.status === "in_progress" ||
+    b.status === "here" ||
+    b.status === "on_the_way";
+
+  return {
+    ...b,
+    beeper: {
+      ...b.beeper,
+      location: isAcceptedBeep ? b.beeper.location : null,
+    },
+    position: position[0].count
+  };
+};
