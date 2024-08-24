@@ -41,23 +41,6 @@ const LocationUpdate = graphql(`
   }
 `);
 
-const UpdateBeepSettings = graphql(`
-  mutation UpdateBeepSettings($input: BeeperSettingsInput!) {
-    setBeeperStatus(input: $input) {
-      id
-      singlesRate
-      groupRate
-      capacity
-      isBeeping
-      queueSize
-      location {
-        latitude
-        longitude
-      }
-    }
-  }
-`);
-
 export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
@@ -86,7 +69,11 @@ export function StartBeepingScreen() {
 
   const [position, setPosition] = useState(0);
 
-  const [updateBeepSettings] = useMutation(UpdateBeepSettings);
+  const { mutateAsync: updateBeepSettings } = trpc.user.edit.useMutation({
+    onSuccess(data) {
+      utils.user.me.setData(undefined, data);
+    }
+  });
 
   const snapPoints = useMemo(() => [100, 85, 15], []);
 
@@ -187,16 +174,14 @@ export function StartBeepingScreen() {
     }
 
     updateBeepSettings({
-      variables: {
-        input: {
-          isBeeping: willBeBeeping,
-          singlesRate: Number(singlesRate),
-          groupRate: Number(groupRate),
-          capacity: Number(capacity),
-          latitude: lat,
-          longitude: lon,
+        isBeeping: willBeBeeping,
+        singlesRate: Number(singlesRate),
+        groupRate: Number(groupRate),
+        capacity: Number(capacity),
+        location: {
+          latitude: lat!,
+          longitude: lon!,
         },
-      },
     })
       .then(() => {
         if (willBeBeeping) {

@@ -1,16 +1,9 @@
 import React, { useState } from "react";
 import { Alert as NativeAlert } from "react-native";
 import { isMobile } from "../../utils/constants";
-import { useMutation } from "@apollo/client";
 import { Button } from "@/components/Button";
 import { Alert } from "../../utils/alert";
-import { graphql } from "gql.tada";
-
-const LeaveQueue = graphql(`
-  mutation LeaveQueue($id: String!) {
-    leaveQueue(id: $id)
-  }
-`);
+import { trpc } from "@/utils/trpc";
 
 interface Props {
   beepersId: string;
@@ -18,9 +11,7 @@ interface Props {
 
 export function LeaveButton(props: Props) {
   const { beepersId, ...rest } = props;
-  const [leave] = useMutation(LeaveQueue, {
-    variables: { id: beepersId },
-  });
+  const { mutateAsync: leave } = trpc.rider.leaveQueue.useMutation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function leaveQueueWrapper(): void {
@@ -44,7 +35,7 @@ export function LeaveButton(props: Props) {
 
   async function leaveQueue(): Promise<void> {
     setIsLoading(true);
-    leave().catch((error) => {
+    leave({ beeperId: beepersId }).catch((error) => {
       Alert(error);
       setIsLoading(false);
     });

@@ -1,28 +1,24 @@
 import React from "react";
-import { Unpacked } from "../../utils/constants";
 import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
 import { CancelButton } from "../../components/CancelButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Linking, Pressable, View } from "react-native";
-import { Card } from "@/components/Card";
+import { Linking, View } from "react-native";
 import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
-import { useNavigation } from "@react-navigation/native";
 import { printStars } from "../../components/Stars";
 import { Status } from "../../utils/types";
-import { ResultOf } from "gql.tada";
-import { GetInitialQueue } from "./StartBeeping";
 import {
   getRawPhoneNumber,
   openCashApp,
   openDirections,
   openVenmo,
 } from "../../utils/links";
+import { RouterOutput } from "@/utils/trpc";
 
 interface Props {
-  beep: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
+  beep: RouterOutput['beeper']['queue'][number];
 }
 
 export function Beep(props: Props) {
@@ -34,10 +30,10 @@ export function Beep(props: Props) {
       <View className="flex flex-row items-center justify-between">
         <View>
           <Text className="flex-shrink" weight="black" size="4xl">
-            {beep.rider.name}
+            {beep.rider.first} {beep.rider.last}
           </Text>
           {beep.rider.rating && (
-            <Text size="sm">{printStars(beep.rider.rating)}</Text>
+            <Text size="sm">{printStars(Number(beep.rider.rating))}</Text>
           )}
         </View>
         <Avatar src={beep.rider.photo ?? undefined} size="xl" />

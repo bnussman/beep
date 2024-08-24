@@ -6,7 +6,8 @@ import { and, asc, count, desc, eq, gte, like, lte, ne, sql, lt } from "drizzle-
 import { inProgressBeep } from "./beep";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
-import { redisSubscriber } from "../utils/redis";
+import { redis, redisSubscriber } from "../utils/redis";
+import { sendNotification } from "../utils/notifications";
 
 export const riderRouter = router({
   beepers: authedProcedure
@@ -84,6 +85,7 @@ export const riderRouter = router({
           capacity: true,
           cashapp: true,
           venmo: true,
+          pushToken: true,
         },
         where: eq(user.id, input.beeperId),
         with: {
@@ -140,9 +142,20 @@ export const riderRouter = router({
         },
       }));
 
-      // @todo emit queue update to beeper
+      redis.publish(
+        `beeper-${beeper.id}`,
+        JSON.stringify([...queue, { ...newBeep, rider: {}, beeper: {} }])
+      );
 
-      // @todo send notification
+      if (beeper.pushToken) {
+        sendNotification({
+          to: beeper.pushToken,
+          title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
+          body: "Please accept or deny this rider.",
+          categoryId: "newbeep",
+          data: { id: newBeep.id }
+        });
+      }
 
       return {
         ...newBeep,
@@ -165,26 +178,107 @@ export const riderRouter = router({
       return getRidersCurrentRide(ctx.user.id);
     }),
   currentRideUpdates: authedProcedure.subscription(({ ctx }) => {
-      // return an `observable` with a callback which is triggered immediately
-      return observable<Awaited<ReturnType<typeof getRidersCurrentRide>>>((emit) => {
-        const onUserUpdate = (message: string) => {
-          // emit data to client
-          console.log("Emitting to WS", message);
-          emit.next(JSON.parse(message));
-        };
-        // trigger `onAdd()` when `add` is triggered in our event emitter
-        const listener = (message: string) => onUserUpdate(message);
-        redisSubscriber.subscribe(`rider-${ctx.user.id}`, listener);
-        (async () => {
-          const ride = await getRidersCurrentRide(ctx.user.id);
-          emit.next(ride);
-        })();
-        // unsubscribe function when client disconnects or stops subscribing
-        return () => {
-          redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, listener);
-        };
+    // return an `observable` with a callback which is triggered immediately
+    return observable<Awaited<ReturnType<typeof getRidersCurrentRide>>>((emit) => {
+      const onUserUpdate = (message: string) => {
+        // emit data to client
+        console.log("Emitting to WS", message);
+        emit.next(JSON.parse(message));
+      };
+      // trigger `onAdd()` when `add` is triggered in our event emitter
+      const listener = (message: string) => onUserUpdate(message);
+      redisSubscriber.subscribe(`rider-${ctx.user.id}`, listener);
+      (async () => {
+        const ride = await getRidersCurrentRide(ctx.user.id);
+        emit.next(ride);
+      })();
+      // unsubscribe function when client disconnects or stops subscribing
+      return () => {
+        redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, listener);
+      };
+    });
+  }),
+  leaveQueue: authedProcedure
+    .input(
+      z.object({
+        beeperId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const beeper = await db.query.user.findFirst({
+        columns: {
+          id: true,
+          first: true,
+          last: true,
+          isBeeping: true,
+          photo: true,
+          singlesRate: true,
+          groupRate: true,
+          capacity: true,
+          cashapp: true,
+          venmo: true,
+          pushToken: true,
+        },
+        where: eq(user.id, input.beeperId),
+        with: {
+          beeps: {
+            where: inProgressBeep,
+            orderBy: asc(beep.start),
+            with: {
+              rider: {
+                columns: {
+                  id: true,
+                  first: true,
+                  last: true,
+                },
+              },
+            },
+          }
+        },
       });
-    }),
+
+      if (!beeper) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Beeper not found."
+        });
+      }
+
+      const entry = beeper.beeps.find((beep) => beep.rider.id === ctx.user.id);
+
+      if (!entry) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "You are not in that beepers queue."
+        });
+      }
+
+      if (beeper.pushToken) {
+        sendNotification({
+          to: beeper.pushToken,
+          title: `${ctx.user.first} ${ctx.user.last} left your queue 🥹`,
+          body: "They decided they did not want a beep from you!"
+        });
+      }
+
+      await db
+        .update(beep)
+        .set({ status: "canceled", end: new Date() })
+        .where(eq(beep.id, entry.id));
+
+      const newQueue = beeper.beeps.filter(beep => beep.id !== entry.id);
+
+      redis.publish(`rider-${ctx.user.id}`, JSON.stringify(null));
+      redis.publish(`beeper-${beeper.id}`, JSON.stringify(newQueue));
+
+      for (const entry of newQueue) {
+        redis.publish(`rider-${entry.rider_id}`, JSON.stringify({ ...entry, position: getPositionInQueue(queue, entry), beeper }));
+      }
+
+      await db.update(user).set({ queueSize: getQueueSize(newQueue) }).where(eq(user.id, beeper.id));
+
+      return true;
+    })
 });
 
 async function getRidersCurrentRide(userId: string) {
@@ -250,3 +344,13 @@ async function getRidersCurrentRide(userId: string) {
     position: position[0].count
   };
 };
+
+type Beep = typeof beep.$inferSelect;
+
+export function getPositionInQueue(queue: Beep[], entry: Beep) {
+  return queue.filter((q) => q.start < entry.start && q.status !== "waiting").length;
+}
+
+export function getQueueSize(queue: Beep[]) {
+  return queue.filter(entry => !["wairing", "complete", "canceled", "denied"].includes(entry.status)).length
+}
