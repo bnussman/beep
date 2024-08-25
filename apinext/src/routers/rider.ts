@@ -283,7 +283,7 @@ export const riderRouter = router({
       redis.publish(`beeper-${beeper.id}`, JSON.stringify(newQueue));
 
       for (const entry of newQueue) {
-        redis.publish(`rider-${entry.rider_id}`, JSON.stringify({ ...entry, position: getPositionInQueue(queue, entry), beeper }));
+        redis.publish(`rider-${entry.rider_id}`, JSON.stringify({ ...entry, position: getPositionInQueue(newQueue, entry), beeper }));
       }
 
       await db.update(user).set({ queueSize: getQueueSize(newQueue) }).where(eq(user.id, beeper.id));
