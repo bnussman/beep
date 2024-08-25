@@ -1,70 +1,45 @@
 import React, { useState } from "react";
-import { Unpacked } from "../utils/constants";
 import { Button } from "@/components/Button";
-import { ApolloError, useMutation } from "@apollo/client";
 import { useEffect } from "react";
-import { Status } from "../utils/types";
-import { ResultOf, graphql } from "gql.tada";
-import { GetInitialQueue } from "../routes/beep/StartBeeping";
+import { RouterOutput, trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
+
+type Status = RouterOutput['beeper']['queue'][number]['status'];
 
 type InProgressStatuses = Exclude<
   Status,
-  Status.COMPLETE | Status.DENIED | Status.CANCELED
+  "complete" | "denied" | "canceled"
 >;
 
 const nextStatusMap: Record<InProgressStatuses, Status> = {
-  [Status.WAITING]: Status.ACCEPTED,
-  [Status.ACCEPTED]: Status.ON_THE_WAY,
-  [Status.ON_THE_WAY]: Status.HERE,
-  [Status.HERE]: Status.IN_PROGRESS,
-  [Status.IN_PROGRESS]: Status.COMPLETE,
+  'waiting': 'accepted',
+  'accepted': 'on_the_way',
+  'on_the_way': 'here',
+  'here': 'in_progress',
+  'in_progress': 'complete',
 };
 
 interface Props {
-  beep: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
+  beep: RouterOutput['beeper']['queue'][number];
 }
-
-export const UpdateBeeperQueue = graphql(`
-  mutation UpdateBeeperQueue($id: String!, $status: String!) {
-    setBeeperQueue(input: { id: $id, status: $status }) {
-      id
-      groupSize
-      origin
-      destination
-      status
-      rider {
-        id
-        name
-        first
-        last
-        venmo
-        cashapp
-        phone
-        photo
-        isStudent
-        rating
-      }
-    }
-  }
-`);
 
 export function ActionButton(props: Props) {
   const { beep } = props;
-
   const [isLoading, setIsLoading] = useState(false);
-  const [update] = useMutation(UpdateBeeperQueue);
+  const { mutateAsync: update } = trpc.beeper.updateBeep.useMutation();
+  const utils = trpc.useUtils();
 
   const getMessage = () => {
     switch (beep.status) {
-      case Status.WAITING:
+      case "waiting":
         return "Accept";
-      case Status.ACCEPTED:
+      case "accepted":
         return "I'm on the way 🚕";
-      case Status.ON_THE_WAY:
+      case "on_the_way":
         return "I'm here 👋";
-      case Status.HERE:
+      case "here":
         return "I'm now beeping this rider 🚙";
-      case Status.IN_PROGRESS:
+      case "in_progress":
         return "Done beeping this rider ✅";
       default:
         return "Yikes";
@@ -78,11 +53,13 @@ export function ActionButton(props: Props) {
   const onPress = () => {
     setIsLoading(true);
     update({
-      variables: {
-        id: beep.id,
-        status: nextStatusMap[beep.status as InProgressStatuses],
-      },
-    }).catch((error: ApolloError) => {
+        beepId: beep.id,
+        data: {
+          status: nextStatusMap[beep.status as InProgressStatuses],
+        }
+    }).then((data) => {
+      utils.beeper.queue.setData(undefined, data);
+    }).catch((error: TRPCClientError<any>) => {
       setIsLoading(false);
       alert(error.message);
     });

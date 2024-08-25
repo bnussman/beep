@@ -56,13 +56,13 @@ export function StartBeepingScreen() {
 
   const utils = trpc.useUtils();
 
-  const { data: queue, refetch, isLoading } = trpc.beeper.queue.useQuery(user!.id, {
+  const { data: queue, refetch, isLoading } = trpc.beeper.queue.useQuery(undefined, {
     enabled: user && user.isBeeping
   });
 
-  trpc.beeper.watchQueue.useSubscription(user!.id, {
+  trpc.beeper.watchQueue.useSubscription(undefined, {
     onData(data) {
-      utils.beeper.queue.setData(user!.id, data);
+      utils.beeper.queue.setData(undefined, data);
     },
     enabled: user && user.isBeeping,
   })

@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useMutation } from "@apollo/client";
 import { Alert } from "../utils/alert";
-import { Unpacked } from "../utils/constants";
-import { UpdateBeeperQueue } from "./ActionButton";
 import { Button } from "./Button";
 import { Status } from "../utils/types";
-import { ResultOf } from "gql.tada";
-import { GetInitialQueue } from "../routes/beep/StartBeeping";
 import { cx } from "class-variance-authority";
+import { RouterOutput, trpc } from "@/utils/trpc";
 
 interface Props {
   type: "accept" | "deny";
-  item: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
+  item: RouterOutput['beeper']['queue'][number];
 }
 
 export function AcceptDenyButton(props: Props) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [update] = useMutation(UpdateBeeperQueue);
+  const { mutateAsync: update } = trpc.beeper.updateBeep.useMutation();
 
   const isAccept = props.type === "accept";
 
@@ -28,8 +24,8 @@ export function AcceptDenyButton(props: Props) {
     setLoading(true);
 
     update({
-      variables: {
-        id: props.item.id,
+      beepId: props.item.id,
+      data: {
         status: props.type === "accept" ? Status.ACCEPTED : Status.DENIED,
       },
     }).catch((error) => {

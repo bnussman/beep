@@ -3,19 +3,22 @@ import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { inProgressBeep } from "./beep";
 import { and, asc, eq } from "drizzle-orm";
-import { beep, car } from "../../drizzle/schema";
+import { beep, car, user } from "../../drizzle/schema";
 import { observable } from "@trpc/server/observable";
-import { redisSubscriber } from "../utils/redis";
+import { redis, redisSubscriber } from "../utils/redis";
 import { TRPCError } from "@trpc/server";
+import { sendNotification } from "../utils/notifications";
+import { getPositionInQueue, getQueueSize } from "./rider";
+import * as Sentry from '@sentry/bun';
 
 export const beeperRouter = router({
   queue: authedProcedure
-    .input(z.string())
-    .query(async ({ input }) => {
-      return getBeeperQueue(input);
+    .input(z.string().optional())
+    .query(async ({ input, ctx }) => {
+      return getBeeperQueue(input ?? ctx.user.id);
     }),
   watchQueue: authedProcedure
-    .input(z.string())
+    .input(z.string().optional())
     .subscription(({ ctx, input }) => {
     // return an `observable` with a callback which is triggered immediately
     return observable<Awaited<ReturnType<typeof getBeeperQueue>>>((emit) => {
@@ -25,14 +28,14 @@ export const beeperRouter = router({
       };
       // trigger `onAdd()` when `add` is triggered in our event emitter
       const listener = (message: string) => onUserUpdate(message);
-      redisSubscriber.subscribe(`beeper-${input}`, listener);
+      redisSubscriber.subscribe(`beeper-${input ?? ctx.user.id}`, listener);
       (async () => {
-        const ride = await getBeeperQueue(input);
+        const ride = await getBeeperQueue(input ?? ctx.user.id);
         emit.next(ride);
       })();
       // unsubscribe function when client disconnects or stops subscribing
       return () => {
-        redisSubscriber.unsubscribe(`beeper-${input}`, listener);
+        redisSubscriber.unsubscribe(`beeper-${input ?? ctx.user.id}`, listener);
       };
     });
   }),
@@ -66,74 +69,100 @@ export const beeperRouter = router({
           queue.filter((entry) => entry.start < queueEntry.start && entry.status !== "waiting").length;
 
       if (numRidersBefore !== 0) {
-        throw new GraphQLError("You must respond to the rider who first joined your queue.");
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You must respond to the rider who first joined your queue."
+        });
       }
 
-      queueEntry.status = input.status as Status;
+      await db
+        .update(beep)
+        .set({ status: input.data.status })
+        .where(eq(beep.id, queueEntry.id));
 
-      if (input.status === Status.ACCEPTED) {
-        ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
+      queueEntry.status = input.data.status;
 
-        ctx.em.persist(ctx.user);
+      if (input.data.status === "accepted") {
+        ctx.user.queueSize = getQueueSize(queue);
+
+        await db
+          .update(user)
+          .set({ queueSize: getQueueSize(queue) })
+          .where(eq(user.id, ctx.user.id));
       }
 
-      if (input.status === Status.DENIED || input.status === Status.COMPLETE) {
-        pubSub.publish("currentRide", queueEntry.rider.id, null);
+      if (input.data.status === "denied" || input.data.status === "complete") {
+        redis.publish(`rider-${queueEntry.rider_id}`, JSON.stringify(null));
 
-        ctx.user.queueSize = getQueueSize(ctx.user.queue.getItems());
+        ctx.user.queueSize = getQueueSize(queue);
 
         queueEntry.end = new Date();
 
-        ctx.em.persist(ctx.user);
+
+        await db
+          .update(user)
+          .set({ queueSize: getQueueSize(queue) })
+          .where(eq(user.id, ctx.user.id));
+
+        await db
+          .update(beep)
+          .set({ end: new Date() })
+          .where(eq(beep.id, queueEntry.id));
       }
 
-      switch (queueEntry.status) {
-        case Status.DENIED:
-          sendNotification({
-            token: queueEntry.rider.pushToken,
-            title: `${ctx.user.name()} has denied your beep request 🚫`,
-            message: "Open your app to find a diffrent beeper"
-          });
-          break;
-        case Status.ACCEPTED:
-          sendNotification({
-            token: queueEntry.rider.pushToken,
-            title: `${ctx.user.name()} has accepted your beep request ✅`,
-            message: "You will recieve another notification when they are on their way to pick you up"
-          });
-          break;
-        case Status.ON_THE_WAY:
-          sendNotification({
-            token: queueEntry.rider.pushToken,
-            title: `${ctx.user.name()} is on their way 🚕`,
-            message: `Your beeper is on their way in a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`
-          });
-          break;
-        case Status.HERE:
-          sendNotification({
-            token: queueEntry.rider.pushToken,
-            title: `${ctx.user.name()} is here 📍`,
-            message: `Look for a ${ctx.user.cars[0]?.color} ${ctx.user.cars[0]?.make} ${ctx.user.cars[0]?.model}`
-          });
-          break;
-        case Status.IN_PROGRESS:
-          // Beep is in progress - no notification needed at this stage.
-          break;
-        case Status.COMPLETE:
-          // Beep is complete.
-          break;
-        default:
-          Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
+      if (queueEntry.rider.pushToken) {
+        switch (queueEntry.status) {
+          case "denied":
+            sendNotification({
+              to: queueEntry.rider.pushToken,
+              title: `${ctx.user.first} ${ctx.user.last} has denied your beep request 🚫`,
+              body: "Open your app to find a diffrent beeper"
+            });
+            break;
+          case "accepted":
+            sendNotification({
+              to: queueEntry.rider.pushToken,
+              title: `${ctx.user.first} ${ctx.user.last} has accepted your beep request ✅`,
+              body: "You will recieve another notification when they are on their way to pick you up"
+            });
+            break;
+          case "on_the_way":
+            sendNotification({
+              to: queueEntry.rider.pushToken,
+              title: `${ctx.user.first} ${ctx.user.last} is on their way 🚕`,
+              body: `Your beeper is on their way in a ${queueEntry.beeper.cars[0]?.color} ${queueEntry.beeper.cars[0]?.make} ${queueEntry.beeper.cars[0]?.model}`
+            });
+            break;
+          case "here":
+            sendNotification({
+              to: queueEntry.rider.pushToken,
+              title: `${ctx.user.first} ${ctx.user.last} is here 📍`,
+              body: `Look for a ${queueEntry.beeper.cars[0]?.color} ${queueEntry.beeper.cars[0]?.make} ${queueEntry.beeper.cars[0]?.model}`
+            });
+            break;
+          case "in_progress":
+            // Beep is in progress - no notification needed at this stage.
+            break;
+          case "complete":
+            // Beep is complete.
+            break;
+          default:
+            Sentry.captureException("Our beeper's state notification switch statement reached a point that is should not have");
+        }
       }
 
-      const queueNew = ctx.user.queue.getItems().filter(beep => ![Status.COMPLETE, Status.CANCELED, Status.DENIED].includes(beep.status));
+      const newQueue = queue.filter((beep) => beep.status !== "complete" && beep.status !== 'denied' && beep.status !== "canceled");
 
-      await ctx.em.persistAndFlush(queueEntry);
+      redis.publish(`beeper-${ctx.user.id}`, JSON.stringify(newQueue));
 
-      this.sendRiderUpdates(ctx.user, queueNew);
+      for (const entry of newQueue) {
+        redis.publish(
+          `rider-${entry.rider_id}`,
+          JSON.stringify({ ...entry, position: getPositionInQueue(queue, entry) })
+        );
+      }
 
-      return queueNew;
-
+      return newQueue;
     })
 });
 
@@ -177,6 +206,7 @@ async function getBeeperQueue(beeperId: string) {
           phone: true,
           photo: true,
           rating: true,
+          pushToken: true,
         },
       },
     }

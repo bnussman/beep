@@ -144,7 +144,18 @@ export const riderRouter = router({
 
       redis.publish(
         `beeper-${beeper.id}`,
-        JSON.stringify([...queue, { ...newBeep, rider: {}, beeper: {} }])
+        JSON.stringify([
+          ...queue,
+          {
+            ...newBeep,
+            rider: {
+              id: ctx.user.id,
+              first: ctx.user.first,
+              last: ctx.user.last,
+            },
+            beeper: {}
+          }
+        ])
       );
 
       if (beeper.pushToken) {
