@@ -83,21 +83,14 @@ export const beeperRouter = router({
       queueEntry.status = input.data.status;
 
       if (input.data.status === "accepted") {
-        ctx.user.queueSize = getQueueSize(queue);
-
         await db
           .update(user)
           .set({ queueSize: getQueueSize(queue) })
           .where(eq(user.id, ctx.user.id));
       }
 
-      if (input.data.status === "denied" || input.data.status === "complete") {
+      if (input.data.status === "denied" || input.data.status === "complete" || input.data.status === "canceled") {
         redis.publish(`rider-${queueEntry.rider_id}`, JSON.stringify(null));
-
-        ctx.user.queueSize = getQueueSize(queue);
-
-        queueEntry.end = new Date();
-
 
         await db
           .update(user)

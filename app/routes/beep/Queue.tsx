@@ -2,15 +2,14 @@ import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { Text } from '@/components/Text';
 import { QueueItem } from './QueueItem';
 import { FlatList, Pressable, useColorScheme } from 'react-native';
-import { GetInitialQueue } from './StartBeeping';
-import { ResultOf } from 'gql.tada';
 import { View } from 'react-native';
 import { Status } from '@/utils/types';
 import { useRef } from 'react';
 import { isWeb } from '@/utils/constants';
+import { RouterOutput } from '@/utils/trpc';
 
 interface Props {
-  beeps: ResultOf<typeof GetInitialQueue>['getQueue'];
+  beeps: RouterOutput['beeper']['queue'];
   onRefresh: () => void;
   refreshing: boolean;
 }

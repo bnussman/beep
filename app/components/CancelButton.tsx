@@ -1,25 +1,18 @@
 import React, { useState } from "react";
 import { isMobile, Unpacked } from "../utils/constants";
-import { ApolloError, gql, useMutation } from "@apollo/client";
 import { Button } from "@/components/Button";
 import { useEffect } from "react";
 import { Alert } from "react-native";
-import { ResultOf } from "gql.tada";
-import { GetInitialQueue } from "../routes/beep/StartBeeping";
+import { RouterOutput, trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 interface Props {
-  beep: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
+  beep: RouterOutput['beeper']['queue'][number];
 }
-
-export const CancelBeep = gql`
-  mutation CancelBeep($id: String!) {
-    cancelBeep(id: $id)
-  }
-`;
 
 export function CancelButton({ beep }: Props) {
   const [isLoading, setIsLoading] = useState(false);
-  const [cancel] = useMutation(CancelBeep);
+  const { mutateAsync: cancel } = trpc.beeper.updateBeep.useMutation();
 
   useEffect(() => {
     setIsLoading(false);
@@ -52,7 +45,7 @@ export function CancelButton({ beep }: Props) {
 
   const onCancel = () => {
     setIsLoading(true);
-    cancel({ variables: { id: beep.id } }).catch((error: ApolloError) => {
+    cancel({ beepId: beep.id, data: { status: "canceled" } }).catch((error: TRPCClientError<any>) => {
       setIsLoading(false);
       alert(error.message);
     });

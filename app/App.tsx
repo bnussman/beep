@@ -14,9 +14,7 @@ import { Navigation } from "./utils/navigation";
 import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
 import * as Notifications from "expo-notifications";
-import { UpdateBeeperQueue } from "./components/ActionButton";
-import { Status } from "./utils/types";
-import { trpc, queryClient, trpcClient } from './utils/trpc';
+import { trpc, queryClient, trpcClient, basicTrpcClient } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
 import "./global.css";
 
@@ -52,16 +50,14 @@ Notifications.addNotificationResponseReceivedListener((response) => {
     response.notification.request.content.categoryIdentifier === "newbeep" &&
     response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER
   ) {
-    client.mutate({
-      mutation: UpdateBeeperQueue,
-      variables: {
-        id: response.notification.request.content.data.id,
-        status:
-          response.actionIdentifier === "accept"
-            ? Status.ACCEPTED
-            : Status.DENIED,
-      },
-    });
+    basicTrpcClient.beeper.updateBeep.mutate({
+      beepId: response.notification.request.content.data.id,
+      data: {
+        status: response.actionIdentifier === "accept"
+        ? "accepted"
+        : "denied"
+      }
+    })
   }
 });
 

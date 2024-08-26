@@ -1,28 +1,26 @@
 import React from "react";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Alert, Linking, View } from "react-native";
-import { isMobile, Unpacked } from "../../utils/constants";
+import { isMobile } from "../../utils/constants";
 import { getRawPhoneNumber, openDirections } from "../../utils/links";
-import { CancelBeep } from "../../components/CancelButton";
 import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Avatar } from "../../components/Avatar";
-import { Button } from "@/components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { Status } from "../../utils/types";
-import { ResultOf } from "gql.tada";
-import { GetInitialQueue } from "./StartBeeping";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import * as DropdownMenu from "zeego/dropdown-menu";
+import { RouterOutput, trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 interface Props {
-  item: Unpacked<ResultOf<typeof GetInitialQueue>["getQueue"]>;
+  item: RouterOutput['beeper']['queue'][number];
   index: number;
 }
 
 export function QueueItem({ item }: Props) {
-  const [cancel] = useMutation(CancelBeep);
+  const { mutateAsync: updateBeep } = trpc.beeper.updateBeep.useMutation();
   const { navigate } = useNavigation();
 
   const onCancelPress = () => {
@@ -48,7 +46,7 @@ export function QueueItem({ item }: Props) {
   };
 
   const onCancel = () => {
-    cancel({ variables: { id: item.id } }).catch((error: ApolloError) => {
+    updateBeep({ beepId: item.id, data: { status: 'canceled' } }).catch((error: TRPCClientError<any>) => {
       alert(error.message);
     });
   };
@@ -61,10 +59,10 @@ export function QueueItem({ item }: Props) {
             <View className="flex flex-row justify-between items-start">
               <View>
                 <Text weight="black" size="2xl">
-                  {item.rider.name}
+                  {item.rider.first} {item.rider.last}
                 </Text>
                 <Text size="sm">
-                  {item.rider.rating && printStars(item.rider.rating)}
+                  {item.rider.rating && printStars(Number(item.rider.rating))}
                 </Text>
               </View>
               <Avatar
@@ -128,10 +126,10 @@ export function QueueItem({ item }: Props) {
       <View className="flex flex-row justify-between items-center">
         <View>
           <Text weight="black" size="2xl">
-            {item.rider.name}
+            {item.rider.first} {item.rider.last}
           </Text>
           <Text size="sm">
-            {item.rider.rating && printStars(item.rider.rating)}
+            {item.rider.rating && printStars(Number(item.rider.rating))}
           </Text>
         </View>
         <Avatar
