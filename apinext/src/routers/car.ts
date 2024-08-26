@@ -1,10 +1,12 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { car } from "../../drizzle/schema";
-import { count, desc, eq } from 'drizzle-orm';
+import { car, user } from "../../drizzle/schema";
+import { and, count, desc, eq, ne } from 'drizzle-orm';
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
+import { s3 } from "../utils/s3";
+import { S3_BUCKET_URL } from "../utils/constants";
 
 export const carRouter = router({
   cars: adminProcedure
@@ -97,5 +99,73 @@ export const carRouter = router({
           body: input.reason,
         });
       }
-    })
+    }),
+  createCar: authedProcedure
+    .input(z.instanceof(FormData))
+    .mutation(async ({ input: formData, ctx }) => {
+      const object = {} as Record<string, unknown>;
+
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          object[key] = value;
+        } else {
+          object[key] = value;
+        }
+      }
+
+      const carSchema = z.object({
+        make: z.string(),
+        model: z.string(),
+        year: z.string(),
+        color: z.string(),
+        photo: z.instanceof(File),
+      });
+
+      const {
+        success,
+        data: input,
+        error
+      } = carSchema.safeParse(object);
+
+      if (!success) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          cause: error,
+        });
+      }
+
+      const extention = input.photo.name.substring(
+        input.photo.name.lastIndexOf("."),
+        input.photo.name.length,
+      );
+
+      const objectKey = `cars/${car.id}${extention}`;
+
+      await s3.putObject(objectKey, input.photo.stream(), {
+        metadata: { "x-amz-acl": "public-read" },
+      });
+
+      const newCar = {
+        id: crypto.randomUUID(),
+        ...input,
+        year: Number(input.year),
+        user_id: ctx.user.id,
+        photo: S3_BUCKET_URL + objectKey,
+        default: true,
+        created: new Date(),
+        updated: new Date()
+      };
+
+      await db.insert(car).values(newCar);
+      await db.update(car)
+        .set({ default: false })
+        .where(
+          and(
+            eq(car.user_id, ctx.user.id),
+            ne(car.id, newCar.id)
+          )
+        );
+
+      return newCar;
+    }),
 });

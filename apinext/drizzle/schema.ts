@@ -129,8 +129,8 @@ export const car = pgTable("car", {
 	photo: varchar("photo", { length: 255 }).notNull(),
 	year: integer("year").notNull(),
 	default: boolean("default").default(false).notNull(),
-	created: timestamp("created", { withTimezone: true, mode: 'string' }).notNull(),
-	updated: timestamp("updated", { withTimezone: true, mode: 'string' }).notNull(),
+	created: timestamp("created", { withTimezone: true, mode: 'date' }).notNull(),
+	updated: timestamp("updated", { withTimezone: true, mode: 'date' }).notNull(),
 });
 
 export const beepStatusEnum = pgEnum('beep_status', [

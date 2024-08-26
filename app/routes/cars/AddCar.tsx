@@ -20,36 +20,20 @@ import {
   isValidationError,
   useValidationErrors,
 } from "../../utils/useValidationErrors";
+import { trpc } from "@/utils/trpc";
+import { RouterInput } from "../../../apinext/src/utils/trpc";
 
 const makes = getMakes();
 
-const AddCarMutation = graphql(`
-  mutation CreateCar(
-    $make: String!
-    $model: String!
-    $year: Float!
-    $color: String!
-    $photo: File!
-  ) {
-    createCar(
-      make: $make
-      model: $model
-      year: $year
-      color: $color
-      photo: $photo
-    ) {
-      id
-      make
-      model
-      year
-      color
-    }
-  }
-`);
-
 let picture: any;
 
-type Values = VariablesOf<typeof AddCarMutation>;
+interface Values {
+  year: number;
+  make: string;
+  model: string;
+  color: string;
+  photo: any;
+};
 
 export function AddCar() {
   const navigation = useNavigation();
@@ -65,15 +49,9 @@ export function AddCar() {
   const photo: any = watch("photo");
   const make = watch("make");
 
-  const [addCar, { error, loading }] = useMutation(AddCarMutation, {
-    context: {
-      headers: {
-        "apollo-require-preflight": true,
-      },
-    },
-  });
+  const { mutateAsync: addCar, error, isPending } = trpc.car.createCar.useMutation();
 
-  const validationErrors = useValidationErrors<Values>(error);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -103,15 +81,16 @@ export function AddCar() {
   };
 
   const onSubmit = handleSubmit(async (variables) => {
+    const formData = new FormData();
+
+    for (const key in variables) {
+      formData.append(key, variables[key as keyof typeof variables]);
+    }
+
+    formData.append("photo", picture);
+
     try {
-      await addCar({
-        variables: {
-          ...variables,
-          year: Number(variables.year),
-          photo: picture,
-        },
-        refetchQueries: [CarsQuery],
-      });
+      await addCar(formData);
 
       navigation.goBack();
     } catch (error) {
@@ -198,9 +177,9 @@ export function AddCar() {
               </View>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content>
-              {years.map((make) => (
-                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+              {years.map((year) => (
+                <DropdownMenu.Item key={year} onSelect={() => onChange(year)}>
+                  <DropdownMenu.ItemTitle>{year}</DropdownMenu.ItemTitle>
                 </DropdownMenu.Item>
               ))}
               <DropdownMenu.Separator />
