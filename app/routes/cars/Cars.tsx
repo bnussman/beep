@@ -1,6 +1,5 @@
 import React, { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import {
   ActivityIndicator,
   FlatList,
@@ -13,25 +12,15 @@ import { Image } from "@/components/Image";
 import { View } from "react-native";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { cache } from "@/utils/apollo";
-import { graphql } from "gql.tada";
 import * as ContextMenu from "zeego/context-menu";
 import { trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
-
-export const EditCar = graphql(`
-  mutation EditCar($default: Boolean!, $id: String!) {
-    editCar(default: $default, id: $id) {
-      id
-      default
-    }
-  }
-`);
 
 export function Cars() {
   const navigation = useNavigation();
   const { user } = useUser();
 
+  const utils = trpc.useUtils();
   const {
     data,
     isLoading,
@@ -41,6 +30,7 @@ export function Cars() {
     isFetchingNextPage,
     fetchNextPage,
     isFetching,
+    isRefetching
   } = trpc.car.cars.useInfiniteQuery(
     {
       userId: user?.id,
@@ -48,27 +38,52 @@ export function Cars() {
     },
     {
       initialCursor: 0,
-      getNextPageParam: (lastPage, allPages) => allPages.reduce((acc, page) => acc += page.cars.length, 0)
+      getNextPageParam: (lastPage, allPages) => {
+        const numberOfCarsLoaded = allPages.reduce((acc, page) => acc += page.cars.length, 0)
+        if (numberOfCarsLoaded === lastPage.count) {
+          return undefined;
+        }
+        return numberOfCarsLoaded;
+      }
     });
 
-  const { mutateAsync: deleteCar } = trpc.car.deleteCar.useMutation();
+  const { mutateAsync: deleteCar } = trpc.car.deleteCar.useMutation({
+    onSuccess() {
+      utils.car.cars.invalidate();
+    }
+  });
 
-  const [editCar] = useMutation(EditCar);
+  const { mutateAsync: updateCar } = trpc.car.updateCar.useMutation({
+    onMutate(vars) {
+      utils.car.cars.setInfiniteData({ userId: user?.id, show: PAGE_SIZE }, (oldData) => {
+        if (!oldData) {
+          return undefined;
+        }
+
+        for (const page of oldData.pages) {
+          for (const car of page.cars) {
+            car.default = car.id === vars.carId;
+          }
+        }
+
+        return oldData;
+      })
+    }
+  });
 
   const cars = data?.pages.flatMap((page) => page.cars);
   const count = data?.pages[0]?.count ?? 0;
-  const isRefreshing = Boolean(data) && isLoading;
 
   const renderFooter = () => {
-    if (!isRefreshing) return null;
+    if (isFetchingNextPage) {
+      return (
+        <View className="flex items-center p-4">
+          <ActivityIndicator />
+        </View>
+      );
+    }
 
-    if (!count || count < PAGE_SIZE) return null;
-
-    return (
-      <View className="flex items-center p-4">
-        <ActivityIndicator />
-      </View>
-    );
+    return null;
   };
 
   const onDelete = (id: string) => {
@@ -76,22 +91,9 @@ export function Cars() {
   };
 
   const setDefault = (id: string) => {
-    const oldDefaultId = cars?.find((car) => car.default)?.id;
-
-    editCar({ variables: { id, default: true } }).then(() => {
-      if (oldDefaultId) {
-        cache.modify({
-          id: cache.identify({
-            __typename: "Car",
-            id: oldDefaultId,
-          }),
-          fields: {
-            default() {
-              return false;
-            },
-          },
-        });
-      }
+    updateCar({
+      carId: id,
+      data: { default: true }
     });
   };
 
@@ -111,7 +113,7 @@ export function Cars() {
     });
   }, [navigation]);
 
-  if (!data && isLoading) {
+  if (isLoading) {
     return (
       <View className="h-full flex items-center justify-center">
         <ActivityIndicator />
@@ -195,7 +197,7 @@ export function Cars() {
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
     />
   );

@@ -49,6 +49,7 @@ export function AddCar() {
   const photo: any = watch("photo");
   const make = watch("make");
 
+  const utils = trpc.useUtils();
   const { mutateAsync: addCar, error, isPending } = trpc.car.createCar.useMutation();
 
   const validationErrors = error?.data?.zodError?.fieldErrors;
@@ -91,6 +92,8 @@ export function AddCar() {
 
     try {
       await addCar(formData);
+
+      utils.car.cars.invalidate();
 
       navigation.goBack();
     } catch (error) {

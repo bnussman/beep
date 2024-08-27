@@ -134,19 +134,21 @@ export const carRouter = router({
         });
       }
 
+      const carId = crypto.randomUUID();
+
       const extention = input.photo.name.substring(
         input.photo.name.lastIndexOf("."),
         input.photo.name.length,
       );
 
-      const objectKey = `cars/${car.id}${extention}`;
+      const objectKey = `cars/${carId}${extention}`;
 
       await s3.putObject(objectKey, input.photo.stream(), {
         metadata: { "x-amz-acl": "public-read" },
       });
 
       const newCar = {
-        id: crypto.randomUUID(),
+        id: carId,
         ...input,
         year: Number(input.year),
         user_id: ctx.user.id,
@@ -168,4 +170,29 @@ export const carRouter = router({
 
       return newCar;
     }),
+  updateCar: authedProcedure
+    .input(
+      z.object({
+        carId: z.string(),
+        data: z.object({
+          default: z.boolean()
+        })
+      })
+    )
+    .mutation(async ({ input }) => {
+      const c = await db.update(car).set(input.data).where(eq(car.id, input.carId)).returning();
+
+      if (input.data.default) {
+        await db.update(car)
+          .set({ default: false })
+          .where(
+            and(
+              ne(car.id, input.carId),
+              eq(car.user_id, c[0].user_id)
+            )
+          );
+      }
+
+      return c[0];
+    })
 });
