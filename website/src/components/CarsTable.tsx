@@ -25,7 +25,7 @@ export function CarsTable() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, isLoading } = trpc.car.cars.useQuery({
     userId,
-    offset: (currentPage - 1) * pageLimit,
+    cursor: (currentPage - 1) * pageLimit,
     show: pageLimit
   });
 

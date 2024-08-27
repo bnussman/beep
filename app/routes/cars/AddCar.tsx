@@ -2,7 +2,6 @@ import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { useNavigation } from "@react-navigation/native";
-import { ApolloError, useMutation } from "@apollo/client";
 import { useForm, Controller } from "react-hook-form";
 import { isMobile } from "@/utils/constants";
 import { Label } from "@/components/Label";
@@ -11,17 +10,11 @@ import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
 import { generateRNFile } from "../settings/EditProfile";
-import { CarsQuery } from "./Cars";
 import { getMakes, getModels } from "car-info";
 import { colors, years } from "./utils";
-import { VariablesOf, graphql } from "../../graphql";
 import { Pressable, View } from "react-native";
-import {
-  isValidationError,
-  useValidationErrors,
-} from "../../utils/useValidationErrors";
 import { trpc } from "@/utils/trpc";
-import { RouterInput } from "../../../apinext/src/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 const makes = getMakes();
 
@@ -97,9 +90,7 @@ export function AddCar() {
 
       navigation.goBack();
     } catch (error) {
-      if (!isValidationError(error as ApolloError)) {
-        alert((error as ApolloError).message);
-      }
+      alert((error as TRPCClientError<any>).message)
     }
   });
 

@@ -45,7 +45,7 @@ export function Cars() {
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
   const { data, isLoading, error } = trpc.car.cars.useQuery({
-    offset: (page - 1) * pageLimit,
+    cursor: (page - 1) * pageLimit,
     show: pageLimit
   });
 
