@@ -25,21 +25,7 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { trpc } from "@/utils/trpc";
-
-let unsubscribe: any = null;
-
-const LocationUpdate = graphql(`
-  mutation LocationUpdate($location: LocationInput!) {
-    setLocation(location: $location) {
-      id
-      location {
-        latitude
-        longitude
-      }
-    }
-  }
-`);
+import { basicTrpcClient, trpc } from "@/utils/trpc";
 
 export const LOCATION_TRACKING = "location-tracking";
 
@@ -156,8 +142,7 @@ export function StartBeepingScreen() {
       return;
     }
 
-    let lon = undefined;
-    let lat = undefined;
+    let location: { latitude: number, longitude: number } | undefined = undefined;
 
     if (willBeBeeping) {
       let lastKnowLocation = await Location.getLastKnownPositionAsync({
@@ -169,8 +154,11 @@ export function StartBeepingScreen() {
         lastKnowLocation = await Location.getCurrentPositionAsync();
       }
 
-      lon = lastKnowLocation.coords.longitude;
-      lat = lastKnowLocation.coords.latitude;
+      location = {
+        longitude: lastKnowLocation.coords.longitude,
+        latitude: lastKnowLocation.coords.latitude
+      };
+
     }
 
     updateBeepSettings({
@@ -178,16 +166,12 @@ export function StartBeepingScreen() {
         singlesRate: Number(singlesRate),
         groupRate: Number(groupRate),
         capacity: Number(capacity),
-        location: {
-          latitude: lat!,
-          longitude: lon!,
-        },
+        location
     })
       .then(() => {
         if (willBeBeeping) {
           startLocationTracking();
         } else {
-          if (unsubscribe) unsubscribe();
           stopLocationTracking();
         }
       })
@@ -259,7 +243,6 @@ export function StartBeepingScreen() {
         setIsBeeping(true);
       }
       if (!user.isBeeping && isBeeping) {
-        if (unsubscribe) unsubscribe();
         stopLocationTracking();
         setIsBeeping(false);
       }
@@ -363,9 +346,8 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
     // @ts-expect-error dumb
     const { locations } = data;
     try {
-      await client.mutate({
-        mutation: LocationUpdate,
-        variables: { location: locations[0].coords },
+      await basicTrpcClient.user.edit.mutate({
+        location: locations[0].coords
       });
     } catch (e) {
       Logger.error(e);

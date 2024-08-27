@@ -16,12 +16,8 @@ import { Card } from "@/components/Card";
 import { cache } from "@/utils/apollo";
 import { graphql } from "gql.tada";
 import * as ContextMenu from "zeego/context-menu";
-
-export const DeleteCar = graphql(`
-  mutation DeleteCar($id: String!) {
-    deleteCar(id: $id)
-  }
-`);
+import { trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 export const EditCar = graphql(`
   mutation EditCar($default: Boolean!, $id: String!) {
@@ -32,63 +28,36 @@ export const EditCar = graphql(`
   }
 `);
 
-export const CarsQuery = graphql(`
-  query GetCars($id: String, $offset: Int, $show: Int) {
-    getCars(id: $id, offset: $offset, show: $show) {
-      items {
-        id
-        make
-        model
-        year
-        color
-        photo
-        default
-      }
-      count
-    }
-  }
-`);
-
 export function Cars() {
   const navigation = useNavigation();
   const { user } = useUser();
 
-  const { data, loading, error, refetch, fetchMore } = useQuery(CarsQuery, {
-    variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
-    notifyOnNetworkStatusChange: true,
-  });
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isFetching,
+  } = trpc.car.cars.useInfiniteQuery(
+    {
+      userId: user?.id,
+      show: PAGE_SIZE
+    },
+    {
+      initialCursor: 0,
+      getNextPageParam: (lastPage, allPages) => allPages.reduce((acc, page) => acc += page.cars.length, 0)
+    });
 
-  const [deleteCar] = useMutation(DeleteCar);
+  const { mutateAsync: deleteCar } = trpc.car.deleteCar.useMutation();
 
   const [editCar] = useMutation(EditCar);
 
-  const cars = data?.getCars.items;
-  const count = data?.getCars.count ?? 0;
-  const isRefreshing = Boolean(data) && loading;
-  const canLoadMore = cars && count && cars?.length < count;
-
-  const getMore = () => {
-    if (!canLoadMore || isRefreshing) return;
-
-    fetchMore({
-      variables: {
-        offset: cars?.length ?? 0,
-        limit: PAGE_SIZE,
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return prev;
-        }
-
-        return {
-          getCars: {
-            items: [...prev.getCars.items, ...fetchMoreResult.getCars.items],
-            count: fetchMoreResult.getCars.count,
-          },
-        };
-      },
-    });
-  };
+  const cars = data?.pages.flatMap((page) => page.cars);
+  const count = data?.pages[0]?.count ?? 0;
+  const isRefreshing = Boolean(data) && isLoading;
 
   const renderFooter = () => {
     if (!isRefreshing) return null;
@@ -103,17 +72,7 @@ export function Cars() {
   };
 
   const onDelete = (id: string) => {
-    deleteCar({
-      variables: { id },
-      update: (cache) => {
-        cache.evict({
-          id: cache.identify({
-            __typename: "Car",
-            id,
-          }),
-        });
-      },
-    }).catch((error: ApolloError) => alert(error?.message));
+    deleteCar({ carId: id }).catch((error: TRPCClientError<any>) => alert(error?.message));
   };
 
   const setDefault = (id: string) => {
@@ -152,7 +111,7 @@ export function Cars() {
     });
   }, [navigation]);
 
-  if (!data && loading) {
+  if (!data && isLoading) {
     return (
       <View className="h-full flex items-center justify-center">
         <ActivityIndicator />
@@ -232,7 +191,7 @@ export function Cars() {
           <Text key="message">You have no cars on your account!</Text>
         </>
       }
-      onEndReached={getMore}
+      onEndReached={() => fetchNextPage()}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       refreshControl={

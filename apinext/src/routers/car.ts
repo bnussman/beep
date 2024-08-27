@@ -13,7 +13,7 @@ export const carRouter = router({
     .input(
       z.object({
         show: z.number(),
-        offset: z.number(),
+        cursor: z.number().optional(),
         userId: z.string().optional()
       })
     )
@@ -22,7 +22,7 @@ export const carRouter = router({
 
       const cars = await db.query.car.findMany({
         limit: input.show,
-        offset: input.offset,
+        offset: input.cursor,
         orderBy: desc(car.created),
         where,
         with: {
