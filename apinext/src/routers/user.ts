@@ -1,6 +1,6 @@
 import { observable } from "@trpc/server/observable";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
-import { beep, user, verify_email } from '../../drizzle/schema';
+import { beep, car, user, verify_email } from '../../drizzle/schema';
 import { redis, redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
 import { count, eq, desc, sql, like, and, or } from "drizzle-orm";
@@ -93,6 +93,21 @@ export const userRouter = router({
           await email.sendMail(mailOptions);
         } catch (error) {
           Sentry.captureException(error);
+        }
+      }
+
+      if (input.isBeeping) {
+        const c = await db.query.car.findFirst({
+          where: and(
+            eq(car.user_id, ctx.user.id),
+            eq(car.default, true),
+          ),
+        });
+        if (!c) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You must have a default car to beep."
+          });
         }
       }
 
