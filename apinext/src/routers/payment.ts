@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, gte } from "drizzle-orm";
 import { payment } from "../../drizzle/schema";
 
 export const paymentRouter = router({
@@ -10,11 +10,15 @@ export const paymentRouter = router({
       z.object({
         offset: z.number(),
         limit: z.number(),
-        userId: z.string().optional()
+        userId: z.string().optional(),
+        active: z.boolean().optional()
       })
     )
     .query(async ({ input }) => {
-      const where = input.userId ? eq(payment.user_id, input.userId) : undefined;
+      const where = and(
+        input.userId ? eq(payment.user_id, input.userId) : undefined,
+        input.active ? gte(payment.expires, new Date()) : undefined,
+      );
 
       const payments = await db.query.payment.findMany({
         orderBy: desc(payment.created),

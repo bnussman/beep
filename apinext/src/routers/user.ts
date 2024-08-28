@@ -157,14 +157,14 @@ export const userRouter = router({
 
       return u[0];
     }),
-  syncPayments: adminProcedure
+  syncPayments: authedProcedure
     .input(
       z.object({
-        userId: z.string(),
-      })
+        userId: z.string().optional(),
+      }).optional()
     )
-    .mutation(async ({ input }) => {
-      const activePayments = await syncUserPayments(input.userId);
+    .mutation(async ({ input, ctx }) => {
+      const activePayments = await syncUserPayments(input?.userId ?? ctx.user.id);
       return activePayments;
     }),
   updatePicture: authedProcedure

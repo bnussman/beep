@@ -11,36 +11,14 @@ import type {
 } from "react-native-purchases";
 import PremiumImage from "../assets/premium.png";
 import { Logger } from "../utils/logger";
-import { useMutation, useQuery } from "@apollo/client";
 import { Countdown } from "../components/CountDown";
 import { FlatList, RefreshControl, useColorScheme } from "react-native";
 import { useUser } from "../utils/useUser";
-import { graphql } from "gql.tada";
+import { trpc } from "@/utils/trpc";
 
 interface Props {
   item: PurchasesOffering;
 }
-
-const CheckVerificationStatus = graphql(`
-  mutation checkUserSubscriptions {
-    checkUserSubscriptions {
-      id
-      expires
-    }
-  }
-`);
-
-const PaymentsQuery = graphql(`
-  query PaymentsQuery($id: String) {
-    getPayments(id: $id) {
-      items {
-        id
-        productId
-        expires
-      }
-    }
-  }
-`);
 
 function Offering({ item }: Props) {
   const packages = item.availablePackages;
@@ -70,14 +48,18 @@ function Offering({ item }: Props) {
 
 function Package({ p }: { p: PurchasesPackage }) {
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [checkVerificationStatus] = useMutation(CheckVerificationStatus);
   const { user } = useUser();
 
-  const { data, refetch } = useQuery(PaymentsQuery, {
-    variables: { id: user?.id ?? "" },
+  const { mutateAsync: checkVerificationStatus } = trpc.user.syncPayments.useMutation();
+
+  const { data, refetch } = trpc.payment.payments.useQuery({
+    userId: user?.id,
+    offset: 0,
+    active: true,
+    limit: 500,
   });
 
-  const payment = data?.getPayments.items.find(
+  const payment = data?.payments.find(
     (sub) => sub.productId === p.product.identifier,
   );
 
@@ -170,11 +152,8 @@ function usePackages() {
 }
 
 export function Premium() {
-  const { user } = useUser();
-  const { refetch: refetchUserPayments, loading } = useQuery(PaymentsQuery, {
-    variables: { id: user?.id ?? "" },
-    notifyOnNetworkStatusChange: true,
-  });
+  const utils = trpc.useUtils();
+
   const {
     offerings,
     error,
@@ -184,7 +163,7 @@ export function Premium() {
   } = usePackages();
 
   const refetch = () => {
-    refetchUserPayments();
+    utils.payment.payments.invalidate();
     refetchAppPackages();
   };
 
@@ -210,10 +189,10 @@ export function Premium() {
       contentContainerClassName="p-4"
       renderItem={({ item }) => <Offering item={item} />}
       onRefresh={refetch}
-      refreshing={isRefreshing || loading}
+      refreshing={isLoading}
       refreshControl={
         <RefreshControl
-          refreshing={isRefreshing || loading}
+          refreshing={isLoading}
           onRefresh={refetch}
         />
       }
