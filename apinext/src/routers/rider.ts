@@ -21,7 +21,7 @@ export const riderRouter = router({
       const { latitude, longitude } = input;
 
       const beepers = await db
-        .select({
+        .selectDistinct({
           first: user.first,
           last: user.last,
           id: user.id,

@@ -274,7 +274,7 @@ export const userRouter = router({
         count: usersCount[0].count
       };
     }),
-  user: adminProcedure
+  user: authedProcedure
     .input(z.string())
     .query(async ({ input }) => {
       const u = await db.query.user.findFirst({

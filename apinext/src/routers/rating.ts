@@ -4,9 +4,10 @@ import { db } from "../utils/db";
 import { count, eq, or, sql } from "drizzle-orm";
 import { rating, user } from '../../drizzle/schema';
 import { TRPCError } from "@trpc/server";
+import { sendNotification } from "../utils/notifications";
 
 export const ratingRouter = router({
-  ratings: adminProcedure
+  ratings: authedProcedure
     .input(
       z.object({
         cursor: z.number().optional(),
@@ -156,6 +157,17 @@ export const ratingRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const u = await db.query.user.findFirst({
+        where: eq(user.id, input.userId)
+      });
+
+      if (!u) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found"
+        });
+      }
+
       const r = await db
         .insert(rating)
         .values({
@@ -168,6 +180,29 @@ export const ratingRouter = router({
           rater_id: ctx.user.id,
         })
         .returning();
+
+      if (!u.rating) {
+        await db.update(user).set({ rating: sql`${input.stars}` });
+      } else {
+        const numberOfRatingsForUserCount = await db
+          .select({ count: count() })
+          .from(user)
+          .where(eq(user.id, u.id));
+
+        const numberOfRatingsForUser = numberOfRatingsForUserCount[0].count;
+
+        await db
+          .update(user)
+          .set({ rating: sql`(("rating" * ${numberOfRatingsForUser}) + ${input.stars}) / (${numberOfRatingsForUser + 1})` });
+      }
+
+      if (u.pushToken)  {
+        sendNotification({
+          to: u.pushToken,
+          title: `You got rated ⭐️`,
+          body: `${ctx.user.first} ${ctx.user.last} rated you ${input.stars} stars!`
+        });
+      }
 
       return r[0];
     })

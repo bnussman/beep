@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, desc, eq, or, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
@@ -16,7 +16,7 @@ export const inProgressBeep = or(
 );
 
 export const beepRouter = router({
-  beeps: adminProcedure
+  beeps: authedProcedure
     .input(
       z.object({
         cursor: z.number().optional(),
