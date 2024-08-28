@@ -109,8 +109,8 @@ export function MainFindBeepScreen(props: Props) {
   } = useForm<Omit<RouterInput['rider']['startBeep'], "beeperId">>({
     defaultValues: {
       groupSize: undefined,
-      origin: props.route.params?.origin,
-      destination: props.route.params?.destination,
+      origin: props.route.params?.origin ?? '',
+      destination: props.route.params?.destination ?? '',
     },
     values: {
       // @ts-expect-error we don't want a default group size'

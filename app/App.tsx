@@ -17,31 +17,34 @@ import * as Notifications from "expo-notifications";
 import { trpc, queryClient, trpcClient, basicTrpcClient } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
 import "./global.css";
+import { isWeb } from "./utils/constants";
 
-Notifications.setNotificationCategoryAsync(
-  "newbeep",
-  [
-    {
-      identifier: "accept",
-      buttonTitle: "Accept",
-      options: {
-        opensAppToForeground: false,
+if (!isWeb) {
+  Notifications.setNotificationCategoryAsync(
+    "newbeep",
+    [
+      {
+        identifier: "accept",
+        buttonTitle: "Accept",
+        options: {
+          opensAppToForeground: false,
+        },
       },
-    },
-    {
-      identifier: "deny",
-      buttonTitle: "Deny",
-      options: {
-        isDestructive: true,
-        opensAppToForeground: false,
+      {
+        identifier: "deny",
+        buttonTitle: "Deny",
+        options: {
+          isDestructive: true,
+          opensAppToForeground: false,
+        },
       },
+    ],
+    {
+      allowInCarPlay: true,
+      allowAnnouncement: true,
     },
-  ],
-  {
-    allowInCarPlay: true,
-    allowAnnouncement: true,
-  },
-);
+  );
+}
 
 Notifications.addNotificationResponseReceivedListener((response) => {
   console.log(response.actionIdentifier);
