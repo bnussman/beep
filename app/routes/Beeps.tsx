@@ -5,100 +5,56 @@ import {
   RefreshControl,
   View,
 } from "react-native";
-import { useQuery } from "@apollo/client";
 import { Text } from "@/components/Text";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
-import { graphql } from "gql.tada";
-
-export const GetBeepHistory = graphql(`
-  query GetBeepHistory($id: String, $offset: Int, $show: Int) {
-    getBeeps(id: $id, offset: $offset, show: $show) {
-      items {
-        id
-        start
-        end
-        groupSize
-        origin
-        destination
-        status
-        rider {
-          id
-          name
-          first
-          last
-          photo
-          venmo
-        }
-        beeper {
-          id
-          name
-          first
-          last
-          photo
-          venmo
-          groupRate
-          singlesRate
-        }
-      }
-      count
-    }
-  }
-`);
+import { trpc } from "@/utils/trpc";
 
 export function BeepsScreen() {
   const { user } = useUser();
 
-  const { data, loading, error, fetchMore, refetch } = useQuery(
-    GetBeepHistory,
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = trpc.beep.beeps.useInfiniteQuery(
     {
-      variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
-      notifyOnNetworkStatusChange: true,
+      userId: user?.id,
+      show: PAGE_SIZE
     },
+    {
+      initialCursor: 0,
+      getNextPageParam: (lastPage, allPages) => {
+        const numberOfBeepsLoaded = allPages.reduce((acc, page) => acc += page.beeps.length, 0);
+        if (numberOfBeepsLoaded === lastPage.count) {
+          return undefined;
+        }
+        return numberOfBeepsLoaded;
+      }
+    }
   );
 
-  const beeps = data?.getBeeps.items;
-  const count = data?.getBeeps.count || 0;
-  const isRefreshing = Boolean(data) && loading;
-  const canLoadMore = beeps && count && beeps?.length < count;
-
-  const getMore = () => {
-    if (!canLoadMore || isRefreshing) return;
-
-    fetchMore({
-      variables: {
-        offset: beeps?.length || 0,
-        limit: PAGE_SIZE,
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return prev;
-        }
-
-        return {
-          getBeeps: {
-            items: [...prev.getBeeps.items, ...fetchMoreResult.getBeeps.items],
-            count: fetchMoreResult.getBeeps.count,
-          },
-        };
-      },
-    });
-  };
+  const beeps = data?.pages.flatMap((page) => page.beeps);
+  const count = data?.pages[0]?.count ?? 0;
 
   const renderFooter = () => {
-    if (!isRefreshing) return null;
+    if (isFetchingNextPage) {
+      return (
+        <View className="flex items-center justify-center p-4">
+          <ActivityIndicator />
+        </View>
+      );
+    }
 
-    if (!count || count < PAGE_SIZE) return null;
-
-    return (
-      <View className="flex items-center justify-center p-4">
-        <ActivityIndicator />
-      </View>
-    );
+    return null;
   };
 
-  if (loading && !beeps) {
+  if (isLoading) {
     return (
       <View className="h-full items-center justify-center">
         <ActivityIndicator />
@@ -121,7 +77,7 @@ export function BeepsScreen() {
       contentContainerClassName={beeps?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"}
       renderItem={(data) => <Beep {...data} />}
       keyExtractor={(beep) => beep.id}
-      onEndReached={getMore}
+      onEndReached={() => fetchNextPage()}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
@@ -133,7 +89,7 @@ export function BeepsScreen() {
         </View>
       }
       refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
     />
   );

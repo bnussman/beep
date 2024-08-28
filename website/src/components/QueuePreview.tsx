@@ -17,7 +17,7 @@ export function QueuePreview({ userId }: Props) {
   const { data, isLoading, error } = trpc.beep.beeps.useQuery({
     userId,
     show: 500,
-    offset: 0,
+    cursor: 0,
   });
 
   // @todo subscribe to queue for realtime updates

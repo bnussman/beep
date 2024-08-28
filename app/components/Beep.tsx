@@ -1,20 +1,17 @@
 import React from "react";
+import * as ContextMenu from "zeego/context-menu";
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
 import { useUser } from "../utils/useUser";
-import { Unpacked } from "../utils/constants";
 import { Status } from "../utils/types";
-import { ResultOf } from "gql.tada";
-import { GetBeepHistory } from "../routes/Beeps";
-import { cx } from "class-variance-authority";
-import * as ContextMenu from "zeego/context-menu";
 import { openVenmo } from "@/utils/links";
+import { RouterOutput } from "@/utils/trpc";
 
 interface Props {
-  item: Unpacked<ResultOf<typeof GetBeepHistory>["getBeeps"]["items"]>;
+  item: RouterOutput['beep']['beeps']['beeps'][number];
   index: number;
 }
 
@@ -33,7 +30,7 @@ export function Beep({ item }: Props) {
             <Avatar size="xs" src={otherUser.photo ?? undefined} />
             <View className="flex-shrink">
               <Text weight="bold" size="lg">
-                {otherUser.name}
+                {otherUser.first} {otherUser.last}
               </Text>
               <Text color="subtle" size="sm">
                 {`${isRider ? "Ride" : "Beep"} - ${new Date(

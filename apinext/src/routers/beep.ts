@@ -19,7 +19,7 @@ export const beepRouter = router({
   beeps: adminProcedure
     .input(
       z.object({
-        offset: z.number(),
+        cursor: z.number().optional(),
         show: z.number(),
         inProgress: z.boolean().optional(),
         userId: z.string().optional(),
@@ -32,7 +32,7 @@ export const beepRouter = router({
       );
 
       const beeps = await db.query.beep.findMany({
-        offset: input.offset,
+        offset: input.cursor ?? 0,
         limit: input.show,
         where,
         orderBy: desc(beep.start),
@@ -43,6 +43,9 @@ export const beepRouter = router({
               first: true,
               last: true,
               photo: true,
+              venmo: true,
+              groupRate: true,
+              singlesRate: true,
             },
           },
           rider: {
@@ -51,6 +54,7 @@ export const beepRouter = router({
               first: true,
               last: true,
               photo: true,
+              venmo: true,
             },
           },
         },

@@ -32,7 +32,7 @@ export function ActiveBeeps() {
 
   const { data, isLoading, error } = trpc.beep.beeps.useQuery(
     {
-      offset: (page - 1) * pageLimit,
+      cursor: (page - 1) * pageLimit,
       show: pageLimit,
       inProgress: true,
     },

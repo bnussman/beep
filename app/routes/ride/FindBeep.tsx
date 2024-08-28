@@ -9,12 +9,8 @@ import { LeaveButton } from "./LeaveButton";
 import {
   View,
   Linking,
-  AppState,
-  AppStateStatus,
-  Pressable,
   ActivityIndicator,
 } from "react-native";
-import { cache, client } from "../../utils/apollo";
 import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";
 import { Avatar } from "@/components/Avatar";
@@ -26,59 +22,19 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
-import { GetBeepHistory } from "../Beeps";
 import {
   getRawPhoneNumber,
   openCashApp,
   openVenmo,
   shareVenmoInformation,
 } from "../../utils/links";
-import { useLazyQuery, useQuery, useSubscription } from "@apollo/client";
-import { VariablesOf, graphql } from "gql.tada";
 import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
-
-const RiderStatus = graphql(`
-  subscription RiderStatus {
-    getRiderUpdates {
-      id
-      position
-      origin
-      destination
-      status
-      groupSize
-      beeper {
-        id
-        first
-        name
-        singlesRate
-        groupRate
-        isStudent
-        role
-        venmo
-        cashapp
-        username
-        phone
-        photo
-        capacity
-        queueSize
-        location {
-          longitude
-          latitude
-        }
-        cars {
-          id
-          photo
-          make
-          color
-          model
-        }
-      }
-    }
-  }
-`);
+import { graphql } from "gql.tada";
+import { useLazyQuery, useSubscription } from "@apollo/client";
+import { cache } from "@/utils/apollo";
 
 const BeepersLocation = graphql(`
   subscription BeepersLocation($id: String!) {

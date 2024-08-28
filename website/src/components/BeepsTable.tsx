@@ -29,7 +29,7 @@ export function BeepsTable() {
 
   const { data } = trpc.beep.beeps.useQuery({
     userId,
-    offset: (currentPage - 1) * pageLimit,
+    cursor: (currentPage - 1) * pageLimit,
     show: pageLimit
   });
 
