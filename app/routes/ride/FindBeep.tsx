@@ -32,18 +32,6 @@ import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
-import { graphql } from "gql.tada";
-import { useLazyQuery, useSubscription } from "@apollo/client";
-import { cache } from "@/utils/apollo";
-
-const BeepersLocation = graphql(`
-  subscription BeepersLocation($id: String!) {
-    getLocationUpdates(id: $id) {
-      latitude
-      longitude
-    }
-  }
-`);
 
 type Props = StaticScreenProps<{ origin?: string, destination?: string, groupSize?: string } | undefined>;
 
@@ -69,27 +57,22 @@ export function MainFindBeepScreen(props: Props) {
     enabled: !!beep
   });
 
-  useSubscription(BeepersLocation, {
-    variables: { id: beep?.beeper.id ?? "" },
-    onData({ data }) {
-      if (!data?.data?.getLocationUpdates?.latitude) return;
-
-      cache.modify({
-        id: cache.identify({
-          __typename: "User",
-          id: beep?.beeper.id,
-        }),
-        fields: {
-          location() {
-            return {
-              latitude: data.data?.getLocationUpdates?.latitude,
-              longitude: data.data?.getLocationUpdates?.longitude,
-            };
+  trpc.rider.beeperLocationUpdates.useSubscription(beep?.beeper.id ?? '', {
+    enabled: isAcceptedBeep,
+    onData(updatedLocation) {
+      utils.rider.currentRide.setData(undefined, (prev) => {
+        if (!prev) {
+          return undefined
+        }
+        return ({
+          ...prev,
+          beeper: {
+            ...prev.beeper,
+            location: updatedLocation,
           },
-        },
+        })
       });
-    },
-    skip: !isAcceptedBeep,
+    }
   });
 
   const { data: eta, error: etaError } = trpc.location.getETA.useQuery(
@@ -106,7 +89,6 @@ export function MainFindBeepScreen(props: Props) {
     control,
     handleSubmit,
     setFocus,
-    reset,
     formState: { errors },
   } = useForm<Omit<RouterInput['rider']['startBeep'], "beeperId">>({
     defaultValues: {

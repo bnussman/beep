@@ -119,6 +119,10 @@ export const userRouter = router({
 
       redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]))
 
+      if (input.location) {
+        redis.publish(`beeper-location-${ctx.user.id}`, JSON.stringify(input.location));
+      }
+
       return u[0];
     }),
   editAdmin: adminProcedure
@@ -169,6 +173,10 @@ export const userRouter = router({
         .returning();
 
       redis.publish(`user-${u[0].id}`, JSON.stringify(u[0]))
+
+      if (input.data.location) {
+        redis.publish(`beeper-location-${u[0].id}`, JSON.stringify(u[0].location))
+      }
 
       return u[0];
     }),

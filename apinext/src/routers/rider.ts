@@ -209,6 +209,22 @@ export const riderRouter = router({
       };
     });
   }),
+  beeperLocationUpdates: authedProcedure
+    .input(z.string())
+    .subscription(({ input }) => {
+    // return an `observable` with a callback which is triggered immediately
+    return observable<{ latitude: number;  longitude: number }>((emit) => {
+      const onUserUpdate = (message: string) => {
+        console.log("Emitting to WS", message);
+        emit.next(JSON.parse(message));
+      };
+      const listener = (message: string) => onUserUpdate(message);
+      redisSubscriber.subscribe(`beeper-location-${input}`, listener);
+      return () => {
+        redisSubscriber.unsubscribe(`beeper-location-${input}`, listener);
+      };
+    });
+  }),
   leaveQueue: authedProcedure
     .input(
       z.object({
