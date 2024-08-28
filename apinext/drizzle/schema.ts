@@ -172,7 +172,7 @@ export const report = pgTable("report", {
 	handled_by_id: varchar("handled_by_id", { length: 255 }).references(() => user.id, { onDelete: "set null", onUpdate: "cascade" } ),
 	reason: varchar("reason", { length: 255 }).notNull(),
 	notes: varchar("notes", { length: 255 }),
-	timestamp: timestamp("timestamp", { withTimezone: true, mode: 'string' }).notNull(),
+	timestamp: timestamp("timestamp", { withTimezone: true, mode: 'date' }).notNull(),
 	handled: boolean("handled").default(false).notNull(),
 	beep_id: varchar("beep_id", { length: 255 }).references(() => beep.id, { onDelete: "set null", onUpdate: "cascade" } ),
 });
@@ -183,7 +183,7 @@ export const rating = pgTable("rating", {
 	rated_id: varchar("rated_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
 	stars: integer("stars").notNull(),
 	message: varchar("message", { length: 255 }),
-	timestamp: timestamp("timestamp", { withTimezone: true, mode: 'string' }).notNull(),
+	timestamp: timestamp("timestamp", { withTimezone: true, mode: 'date' }).notNull(),
 	beep_id: varchar("beep_id", { length: 255 }).notNull().references(() => beep.id, { onUpdate: "cascade" } ),
 },
 (table) => {

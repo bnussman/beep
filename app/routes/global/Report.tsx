@@ -1,47 +1,33 @@
 import React, { useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
-import { View, ActivityIndicator } from "react-native";
+import { View } from "react-native";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { UserHeader } from "@/components/UserHeader";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { GetUser } from "./Rate";
-import { graphql } from "gql.tada";
-
-const ReportUser = graphql(`
-  mutation ReportUser($userId: String!, $reason: String!, $beepId: String) {
-    reportUser(input: { userId: $userId, reason: $reason, beepId: $beepId })
-  }
-`);
+import { trpc } from "@/utils/trpc";
 
 type Props = StaticScreenProps<{ userId: string; beepId?: string }>;
 
 export function ReportScreen({ route }: Props) {
   const [reason, setReason] = useState<string>("");
-  const [report, { loading }] = useMutation(ReportUser);
   const { goBack } = useNavigation();
 
-  const { data } = useQuery(GetUser, {
-    variables: {
-      id: route.params.userId,
+  const { data: user } = trpc.user.user.useQuery(route.params.userId);
+  const { mutateAsync: report, isPending } = trpc.report.createReport.useMutation({
+    onSuccess() {
+      goBack();
     },
+    onError(error) {
+      alert(error.message);
+    }
   });
 
-  const user = data?.getUser;
-
-  async function reportUser() {
-    try {
-      await report({
-        variables: {
-          userId: route.params.userId,
-          beepId: route.params.beepId,
-          reason: reason,
-        },
-      });
-      goBack();
-    } catch (error) {
-      alert(error);
-    }
+  const handleReport = () => {
+    report({
+      userId: route.params.userId,
+      beepId: route.params.beepId,
+      reason: reason,
+    });
   }
 
   return (
@@ -49,7 +35,7 @@ export function ReportScreen({ route }: Props) {
       {user && (
         <UserHeader
           username={user.username}
-          name={user.name}
+          name={`${user.first} ${user.last}`}
           picture={user.photo}
         />
       )}
@@ -60,13 +46,13 @@ export function ReportScreen({ route }: Props) {
         returnKeyType="go"
         style={{ minHeight: 150 }}
         onChangeText={(text) => setReason(text)}
-        onSubmitEditing={() => reportUser()}
+        onSubmitEditing={handleReport}
         blurOnSubmit={true}
       />
       <Button
-        onPress={() => reportUser()}
+        onPress={handleReport}
         disabled={!reason}
-        isLoading={loading}
+        isLoading={isPending}
       >
         Report User
       </Button>

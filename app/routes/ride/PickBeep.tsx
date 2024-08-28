@@ -23,7 +23,7 @@ export function PickBeepScreen({ route }: Props) {
   const navigation = useNavigation();
   const utils = trpc.useUtils();
 
-  const { data: beepers, isLoading, error, refetch } = trpc.rider.beepers.useQuery(
+  const { data: beepers, isLoading, error, refetch, isRefetching } = trpc.rider.beepers.useQuery(
     {
       latitude: location?.coords.latitude ?? 0,
       longitude: location?.coords.longitude ?? 0,
@@ -62,8 +62,6 @@ export function PickBeepScreen({ route }: Props) {
       alert((error as ApolloError).message);
     }
   };
-
-  const isRefreshing = Boolean(beepers) && isLoading;
 
   const renderItem = ({
     item,
@@ -159,7 +157,7 @@ export function PickBeepScreen({ route }: Props) {
         </>
       }
       refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
     />
   );

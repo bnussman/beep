@@ -1,7 +1,7 @@
 import { count, desc, eq, or } from "drizzle-orm";
 import { report } from "../../drizzle/schema";
 import { db } from "../utils/db";
-import { adminProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
@@ -134,5 +134,27 @@ export const reportRouter = router({
     .input(z.string())
     .mutation(async ({ input }) => {
       await db.delete(report).where(eq(report.id, input));
+    }),
+  createReport: authedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        reason: z.string(),
+        beepId: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const r = await db
+        .insert(report)
+        .values({
+          id: crypto.randomUUID(),
+          reason: input.reason,
+          timestamp: new Date(),
+          reported_id: input.userId,
+          reporter_id: ctx.user.id,
+        })
+        .returning();
+
+      return r[0];
     })
 });

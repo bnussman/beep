@@ -145,5 +145,30 @@ export const ratingRouter = router({
       }
 
       await db.delete(rating).where(eq(rating.id, r.id));
+    }),
+  createRating: authedProcedure
+    .input(
+      z.object({
+        stars: z.number(),
+        message: z.string().optional(),
+        beepId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const r = await db
+        .insert(rating)
+        .values({
+          id: crypto.randomUUID(),
+          timestamp: new Date(),
+          stars: input.stars,
+          message: input.message,
+          beep_id: input.beepId,
+          rated_id: input.userId,
+          rater_id: ctx.user.id,
+        })
+        .returning();
+
+      return r[0];
     })
 });

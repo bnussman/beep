@@ -1,39 +1,36 @@
 import React, { useRef, useState } from "react";
-import { ApolloError, useMutation } from "@apollo/client";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
-import { Alert } from "../../utils/alert";
-import { graphql } from "gql.tada";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
-const ChangePassword = graphql(`
-  mutation ChangePassword($password: String!) {
-    changePassword(input: { password: $password })
-  }
-`);
+import { trpc } from "@/utils/trpc";
 
 export function ChangePasswordScreen() {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [changePassword, { loading }] = useMutation(ChangePassword);
   const confirmPasswordRef = useRef<any>();
 
-  async function handleChangePassword() {
-    changePassword({
-      variables: {
-        password: password,
-      },
-    })
-      .then(() => {
-        alert("Successfully changed your password.");
-        setPassword("");
-        setConfirmPassword("");
-      })
-      .catch((error: ApolloError) => {
-        Alert(error);
-      });
-  }
+  const {
+    mutateAsync: changePassword,
+    isPending
+  } = trpc.auth.changePassword.useMutation({
+    onSuccess() {
+      alert("Successfully changed password.");
+      setPassword("");
+      setConfirmPassword("");
+    },
+    onError(error) {
+      alert(error.message)
+    }
+  });
+
+  const handlePasswordChange = () => {
+    if (password !== confirmPassword) {
+      return alert('Passwords did not match.');
+    }
+
+    changePassword({ password });
+  };
 
   return (
     <KeyboardAwareScrollView
@@ -59,12 +56,12 @@ export function ChangePasswordScreen() {
         placeholder="Confirm Password"
         returnKeyType="go"
         onChangeText={(text) => setConfirmPassword(text)}
-        onSubmitEditing={() => handleChangePassword()}
+        onSubmitEditing={handlePasswordChange}
       />
       <Button
-        onPress={() => handleChangePassword()}
+        onPress={handlePasswordChange}
         disabled={!password || password !== confirmPassword}
-        isLoading={loading}
+        isLoading={isPending}
         className="mt-4"
       >
         Change Password
