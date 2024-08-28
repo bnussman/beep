@@ -117,7 +117,7 @@ export const feedback = pgTable("feedback", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	user_id: varchar("user_id", { length: 255 }).notNull().references(() => user.id, { onUpdate: "cascade" } ),
 	message: varchar("message", { length: 255 }).notNull(),
-	created: timestamp("created", { withTimezone: true, mode: 'string' }).notNull(),
+	created: timestamp("created", { withTimezone: true, mode: 'date' }).notNull(),
 });
 
 export const car = pgTable("car", {

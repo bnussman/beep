@@ -4,26 +4,28 @@ import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
-import { useMutation } from "@apollo/client";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Linking } from "react-native";
-import { VariablesOf, graphql } from "gql.tada";
-import {
-  isValidationError,
-  useValidationErrors,
-} from "../../utils/useValidationErrors";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
-const CreateFeedback = graphql(`
-  mutation CreateFeedback($message: String!) {
-    createFeedback(message: $message) {
-      id
-    }
-  }
-`);
+import { trpc } from "@/utils/trpc";
 
 export function Feedback() {
-  const [createFeedback, { loading, error }] = useMutation(CreateFeedback);
+  const {
+    mutateAsync: createFeedback,
+    isPending,
+    error
+  } = trpc.feedback.createFeedback.useMutation({
+    onSuccess() {
+      Alert.alert(
+        "Thank you for your feedback!",
+        "We will contact you if we have any further questions",
+      );
+      reset();
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  });
 
   const {
     control,
@@ -31,29 +33,12 @@ export function Feedback() {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      message: "",
-    },
+    defaultValues: { message: "" }
   });
 
-  const validationErrors =
-    useValidationErrors<VariablesOf<typeof CreateFeedback>>(error);
+  const validationErrors = error?.data?.zodError?.fieldErrors;
 
-  const onSubmit = handleSubmit((variables) => {
-    createFeedback({ variables })
-      .then(() => {
-        Alert.alert(
-          "Thank you for your feedback!",
-          "We will contact you if we have any further questions",
-        );
-        reset();
-      })
-      .catch((error) => {
-        if (!isValidationError(error)) {
-          alert(error);
-        }
-      });
-  });
+  const onSubmit = handleSubmit((values) => createFeedback(values));
 
   return (
     <KeyboardAwareScrollView
@@ -94,7 +79,7 @@ export function Feedback() {
       <Text color="error">
         {errors.message?.message ?? validationErrors?.message?.[0]}
       </Text>
-      <Button onPress={onSubmit} isLoading={loading} className="mt-4">
+      <Button onPress={onSubmit} isLoading={isPending} className="mt-4">
         Submit
       </Button>
     </KeyboardAwareScrollView>

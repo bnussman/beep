@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, desc } from "drizzle-orm";
 import { feedback } from "../../drizzle/schema";
@@ -35,5 +35,24 @@ export const feedbackRouter = router({
         feedback: feedbackItems,
         count: feedbackCount[0].count
       };
+    }),
+  createFeedback: authedProcedure
+    .input(
+      z.object({
+        message: z.string()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const f = await db
+        .insert(feedback)
+        .values({
+          id: crypto.randomUUID(),
+          user_id: ctx.user.id,
+          message: input.message,
+          created: new Date()
+        })
+        .returning();
+
+      return f[0];
     })
 });
