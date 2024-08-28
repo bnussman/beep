@@ -45,22 +45,16 @@ const BeepersLocation = graphql(`
   }
 `);
 
-const GetETA = graphql(`
-  query GetETA($start: String!, $end: String!) {
-    getETA(start: $start, end: $end)
-  }
-`);
-
-
 type Props = StaticScreenProps<{ origin?: string, destination?: string, groupSize?: string } | undefined>;
 
 export function MainFindBeepScreen(props: Props) {
   const { user } = useUser();
-  const { getLocation } = useLocation(false);
   const { navigate } = useNavigation();
 
   const utils = trpc.useUtils();
   const { data: beep } = trpc.rider.currentRide.useQuery();
+
+  const { location } = useLocation(beep?.status === "on_the_way");
 
   const isAcceptedBeep =
     beep?.status === "accepted" ||
@@ -98,7 +92,15 @@ export function MainFindBeepScreen(props: Props) {
     skip: !isAcceptedBeep,
   });
 
-  const [getETA, { data: eta, error: etaError }] = useLazyQuery(GetETA);
+  const { data: eta, error: etaError } = trpc.location.getETA.useQuery(
+    {
+      start: `${beep?.beeper.location?.longitude},${beep?.beeper.location?.latitude}`,
+      end: `${location?.coords.longitude},${location?.coords.latitude}`,
+    },
+    {
+      enabled: Boolean(beep?.beeper.location) && Boolean(location) && beep?.status === "on_the_way",
+    }
+  );
 
   const {
     control,
@@ -120,34 +122,9 @@ export function MainFindBeepScreen(props: Props) {
     },
   });
 
-  const updateETA = async () => {
-    const location = await getLocation();
-
-    if (beep?.beeper.location) {
-      getETA({
-        variables: {
-          start: `${beep.beeper.location.longitude},${beep.beeper.location.latitude}`,
-          end: `${location.coords.longitude},${location.coords.latitude}`,
-        },
-      });
-    }
-  };
-
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
-
-  useEffect(() => {
-    // If no ETA has been gotten, try to get it
-    if (beep?.beeper.location && beep?.status === Status.ON_THE_WAY) {
-      updateETA();
-    }
-
-    // Run some code when a beep completes
-    // if (previousData && !beep) {
-    //   client.refetchQueries({ include: [GetBeepHistory] });
-    // }
-  }, [beep]);
 
   const findBeep = handleSubmit((values) => {
     navigate("Choose Beeper", values);
@@ -313,8 +290,8 @@ export function MainFindBeepScreen(props: Props) {
             </Text>
             {etaError ? (
               <Text>{etaError.message}</Text>
-            ) : eta?.getETA ? (
-              <Text>{eta.getETA}</Text>
+            ) : eta ? (
+              <Text>{eta}</Text>
             ) : (
               <ActivityIndicator />
             )}

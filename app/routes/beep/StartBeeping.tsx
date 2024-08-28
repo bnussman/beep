@@ -8,15 +8,10 @@ import { useUser } from "../../utils/useUser";
 import { isAndroid } from "../../utils/constants";
 import {
   ApolloError,
-  useMutation,
-  useQuery,
-  useSubscription,
 } from "@apollo/client";
-import { cache, client } from "../../utils/apollo";
 import { LocationActivityType } from "expo-location";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
-import { graphql } from "gql.tada";
 import { Alert, AppState, AppStateStatus, View, Switch } from "react-native";
 import { Input } from "@/components/Input";
 import { Card } from "@/components/Card";
