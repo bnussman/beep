@@ -9,7 +9,7 @@ export const ratingRouter = router({
   ratings: adminProcedure
     .input(
       z.object({
-        offset: z.number(),
+        cursor: z.number().optional(),
         show: z.number(),
         userId: z.string().optional(),
       })
@@ -23,7 +23,7 @@ export const ratingRouter = router({
         : undefined;
 
       const ratings = await db.query.rating.findMany({
-        offset: input.offset,
+        offset: input.cursor ?? 0,
         limit: input.show,
         where,
         columns: {

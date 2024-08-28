@@ -35,7 +35,7 @@ export function Ratings() {
   const navigate = useNavigate({ from: ratingsListRoute.id });
 
   const { data, isPending, error } = trpc.rating.ratings.useQuery({
-    offset: (page - 1) * pageLimit,
+    cursor: (page - 1) * pageLimit,
     show: pageLimit
   });
 

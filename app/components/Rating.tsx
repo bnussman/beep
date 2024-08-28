@@ -1,29 +1,20 @@
 import React from "react";
+import * as ContextMenu from "zeego/context-menu";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "@/components/Avatar";
 import { printStars } from "./Stars";
-import { Unpacked } from "@/utils/constants";
 import { View } from "react-native";
-import { useMutation } from "@apollo/client";
-import { ResultOf, graphql } from "gql.tada";
-import { Ratings } from "../routes/Ratings";
-import * as ContextMenu from "zeego/context-menu";
+import { RouterOutput, trpc } from "@/utils/trpc";
 
-type Rating = Unpacked<ResultOf<typeof Ratings>["getRatings"]["items"]>;
+type Rating = RouterOutput['rating']['ratings']['ratings'][number];
 
 interface Props {
   item: Rating;
   index: number;
 }
-
-const DeleteRating = graphql(`
-  mutation DeleteRating($id: String!) {
-    deleteRating(id: $id)
-  }
-`);
 
 export function Rating(props: Props) {
   const { item } = props;
@@ -33,20 +24,14 @@ export function Rating(props: Props) {
 
   const isRater = user?.id === item.rater.id;
 
-  const [deleteRating] = useMutation(DeleteRating, {
-    variables: {
-      id: item.id,
+  const utils = trpc.useUtils();
+
+  const { mutateAsync: deleteRating } = trpc.rating.deleteRating.useMutation({
+    onSuccess() {
+      utils.rating.ratings.invalidate();
     },
     onError(error) {
       alert(error.message);
-    },
-    update(cache) {
-      cache.evict({
-        id: cache.identify({
-          __typename: "Rating",
-          id: item.id,
-        }),
-      });
     },
   });
 
@@ -58,7 +43,7 @@ export function Rating(props: Props) {
             <View className="flex flex-row items-center gap-2">
               <Avatar size="xs" src={otherUser.photo ?? undefined} />
               <View className="flex-shrink">
-                <Text weight="bold">{otherUser.name}</Text>
+                <Text weight="bold">{otherUser.first} {otherUser.last}</Text>
                 <Text color="subtle" size="sm">
                   {`${isRater ? "You rated" : "Rated you"} - ${new Date(
                     item.timestamp as string,
@@ -77,13 +62,13 @@ export function Rating(props: Props) {
       <ContextMenu.Content>
         <ContextMenu.Item
           key="report"
-          onSelect={() => navigation.navigate("Report", { userId: otherUser.id, beepId: item.beep.id })}
+          onSelect={() => navigation.navigate("Report", { userId: otherUser.id, beepId: item.beep_id })}
         >
           <ContextMenu.ItemTitle>Report</ContextMenu.ItemTitle>
         </ContextMenu.Item>
         <ContextMenu.Item
           key="delete-rating"
-          onSelect={deleteRating}
+          onSelect={() => deleteRating({ ratingId: item.id })}
           destructive
         >
           <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>

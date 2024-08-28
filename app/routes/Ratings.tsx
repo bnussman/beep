@@ -6,91 +6,54 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useUser } from "../utils/useUser";
-import { useQuery } from "@apollo/client";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
-import { graphql } from "gql.tada";
 import { Text } from "@/components/Text";
-
-export const Ratings = graphql(`
-  query GetRatings($id: String, $offset: Int, $show: Int) {
-    getRatings(id: $id, offset: $offset, show: $show) {
-      items {
-        id
-        stars
-        timestamp
-        message
-        rater {
-          id
-          name
-          photo
-        }
-        rated {
-          id
-          name
-          photo
-        }
-        beep {
-          id
-        }
-      }
-      count
-    }
-  }
-`);
+import { trpc } from "@/utils/trpc";
 
 export function RatingsScreen() {
   const { user } = useUser();
 
-  const { data, loading, error, fetchMore, refetch } = useQuery(Ratings, {
-    variables: { id: user?.id, offset: 0, show: PAGE_SIZE },
-    notifyOnNetworkStatusChange: true,
-  });
-
-  const ratings = data?.getRatings.items;
-  const count = data?.getRatings.count || 0;
-  const isRefreshing = Boolean(data) && loading;
-  const canLoadMore = ratings && count && ratings?.length < count;
-
-  const getMore = () => {
-    if (!canLoadMore || isRefreshing) return;
-
-    fetchMore({
-      variables: {
-        offset: ratings?.length || 0,
-        limit: PAGE_SIZE,
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return prev;
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    refetch,
+    isFetchingNextPage,
+    isRefetching,
+  } = trpc.rating.ratings.useInfiniteQuery(
+    {
+      userId: user?.id,
+      show: PAGE_SIZE
+    },
+    {
+      initialCursor: 0,
+      getNextPageParam: (lastPage, allPages) => {
+        const numberOfRatingsLoaded = allPages.reduce((acc, page) => acc += page.ratings.length, 0);
+        if (numberOfRatingsLoaded === lastPage.count) {
+          return undefined;
         }
+        return numberOfRatingsLoaded;
+      }
+    }
+  );
 
-        return {
-          getRatings: {
-            items: [
-              ...prev.getRatings.items,
-              ...fetchMoreResult.getRatings.items,
-            ],
-            count: fetchMoreResult.getRatings.count,
-          },
-        };
-      },
-    });
-  };
+  const ratings = data?.pages.flatMap((ratings) => ratings.ratings);
+  const count = data?.pages[0]?.count ?? 0;
 
   const renderFooter = () => {
-    if (!isRefreshing) return null;
-
-    if (!count || count < PAGE_SIZE) return null;
-
-    return (
-      <View className="flex items-center p-4">
-        <ActivityIndicator />
-      </View>
-    );
+    if (isFetchingNextPage) {
+      return (
+        <View className="flex items-center p-4">
+          <ActivityIndicator />
+        </View>
+      );
+    }
+    return null;
   };
 
-  if (loading && !ratings) {
+  if (isLoading) {
     return (
       <View className="h-full items-center justify-center">
         <ActivityIndicator />
@@ -113,7 +76,7 @@ export function RatingsScreen() {
       data={ratings}
       renderItem={(data) => <Rating {...data} />}
       keyExtractor={(rating) => rating.id}
-      onEndReached={getMore}
+      onEndReached={() => fetchNextPage()}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
@@ -125,7 +88,7 @@ export function RatingsScreen() {
         </View>
       }
       refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
     />
   );
