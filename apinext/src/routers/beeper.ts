@@ -105,6 +105,13 @@ export const beeperRouter = router({
 
       if (queueEntry.rider.pushToken) {
         switch (queueEntry.status) {
+          case "canceled":
+            sendNotification({
+              to: queueEntry.rider.pushToken,
+              title: `${ctx.user.first} ${ctx.user.last} has canceled your beep 🚫`,
+              body: "Open your app to find a new beep"
+            });
+            break;
           case "denied":
             sendNotification({
               to: queueEntry.rider.pushToken,
