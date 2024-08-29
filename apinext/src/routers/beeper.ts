@@ -158,7 +158,7 @@ export const beeperRouter = router({
       for (const entry of newQueue) {
         redis.publish(
           `rider-${entry.rider_id}`,
-          JSON.stringify({ ...entry, position: getPositionInQueue(queue, entry) })
+          JSON.stringify({ ...entry, position: getPositionInQueue(newQueue, entry) })
         );
       }
 

@@ -3,7 +3,7 @@ import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { beep, car, user, verify_email } from '../../drizzle/schema';
 import { redis, redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
-import { count, eq, desc, sql, like, and, or } from "drizzle-orm";
+import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
