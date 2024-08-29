@@ -6,24 +6,7 @@ import { useEffect } from "react";
 import { cache } from "../../utils/apollo";
 import { graphql } from "gql.tada";
 import { BeeperMarker } from "../../components/Marker";
-
-const BeepersLocations = graphql(`
-  query GetAllBeepersLocation(
-    $radius: Float!
-    $longitude: Float!
-    $latitude: Float!
-  ) {
-    getAllBeepersLocation(
-      radius: $radius
-      longitude: $longitude
-      latitude: $latitude
-    ) {
-      id
-      latitude
-      longitude
-    }
-  }
-`);
+import { trpc } from "@/utils/trpc";
 
 const BeeperLocationUpdates = graphql(`
   subscription GetBeeperLocationUpdates(
@@ -45,26 +28,43 @@ const BeeperLocationUpdates = graphql(`
 
 export function BeepersMap() {
   const { location } = useLocation();
-  const { data, startPolling, stopPolling } = useQuery(
-    BeepersLocations,
+  const utils = trpc.useUtils();
+
+  const input = {
+    latitude: location?.coords.latitude ?? 0,
+    longitude: location?.coords.longitude ?? 0,
+  };
+
+  const { data: beepers } = trpc.rider.beepersNearMe.useQuery(
+    input,
     {
-      variables: {
-        radius: 20,
-        latitude: location?.coords.latitude ?? 0,
-        longitude: location?.coords.longitude ?? 0,
-      },
-      skip: !location,
+      enabled: location !== undefined,
+      refetchInterval: 15_000
     }
   );
 
-  const beepers = data?.getAllBeepersLocation;
+  trpc.rider.beepersLocations.useSubscription(
+    input,
+    {
+      enabled: location !== undefined,
+      onData(locationUpdate) {
+        console.log(locationUpdate)
+        utils.rider.beepersNearMe.setData(input, (prev) => {
+          if (!prev) {
+            return undefined;
+          }
 
-  useEffect(() => {
-    startPolling(15000);
-    return () => {
-      stopPolling();
-    };
-  }, []);
+          const indexOfItem = prev.findIndex(beeper => beeper.id === locationUpdate.id)
+
+          if (indexOfItem !== -1)  {
+            const newData = [...prev];
+            newData[indexOfItem] = { ...prev[indexOfItem], location: locationUpdate.location };
+            return newData;
+          }
+        });
+      }
+    }
+  );
 
   useSubscription(BeeperLocationUpdates, {
     variables: {
@@ -121,16 +121,14 @@ export function BeepersMap() {
       initialRegion={initialRegion}
     >
       {beepers?.map((beeper) => {
-        if (beeper.latitude === null || beeper.longitude === null) {
+        if (!beeper.location) {
           return null;
         }
 
         return (
-          <BeeperMarker key={beeper.id} latitude={beeper.latitude} longitude={beeper.longitude} />
+          <BeeperMarker key={beeper.id} latitude={beeper.location.latitude} longitude={beeper.location.longitude} />
         );
       })}
     </Map>
   );
 }
-
-

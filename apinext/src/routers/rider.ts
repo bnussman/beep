@@ -212,19 +212,85 @@ export const riderRouter = router({
   beeperLocationUpdates: authedProcedure
     .input(z.string())
     .subscription(({ input }) => {
-    // return an `observable` with a callback which is triggered immediately
-    return observable<{ latitude: number;  longitude: number }>((emit) => {
-      const onUserUpdate = (message: string) => {
-        console.log("Emitting to WS", message);
-        emit.next(JSON.parse(message));
-      };
-      const listener = (message: string) => onUserUpdate(message);
-      redisSubscriber.subscribe(`beeper-location-${input}`, listener);
-      return () => {
-        redisSubscriber.unsubscribe(`beeper-location-${input}`, listener);
-      };
-    });
+      // return an `observable` with a callback which is triggered immediately
+      return observable<{ latitude: number;  longitude: number }>((emit) => {
+        const onUserUpdate = (message: string) => {
+          console.log("Emitting to WS", message);
+          emit.next(JSON.parse(message));
+        };
+        const listener = (message: string) => onUserUpdate(message);
+        redisSubscriber.subscribe(`beeper-location-${input}`, listener);
+        return () => {
+          redisSubscriber.unsubscribe(`beeper-location-${input}`, listener);
+        };
+      });
   }),
+  beepersNearMe: authedProcedure
+    .input(
+      z.object({
+        latitude: z.number(),
+        longitude: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const users = await db
+        .select({
+          id: user.id,
+          location: user.location,
+          distance: sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude}))`.as('distance'),
+        })
+        .from(user)
+        .where(({ distance }) =>
+          and(
+            eq(user.isBeeping, true),
+            lte(distance, 10 * 1609.34)
+          )
+        );
+
+      return users.map((user) => {
+        const hasher = new Bun.CryptoHasher("sha256");
+        hasher.update(user.id);
+        const hashedId = hasher.digest("hex");
+
+        return {
+          id: hashedId,
+          location: user.location,
+          distance: user.distance
+        };
+      });
+    }),
+  beepersLocations: authedProcedure
+    .input(
+      z.object({
+        latitude: z.number(),
+        longitude: z.number(),
+        admin: z.boolean().optional()
+      })
+    )
+    .subscription(({ input, ctx }) => {
+      if (input.admin && ctx.user.role !== 'admin') {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      return observable<{ id: string; location: { latitude: number; longitude: number } }>((emit) => {
+        const onUserUpdate = (message: string) => {
+          console.log("[WS] - All Beepers Location -", message);
+          const data = JSON.parse(message) as { id: string; location: { latitude: number; longitude: number } };
+          if (input.admin) {
+            emit.next(data);
+          } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < 20) {
+            const hasher = new Bun.CryptoHasher("sha256");
+            hasher.update(data.id);
+            data.id = hasher.digest("hex");
+            emit.next(data);
+          }
+        };
+        const listener = (message: string) => onUserUpdate(message);
+        redisSubscriber.pSubscribe("beeper-location-*", listener);
+        return () => {
+          redisSubscriber.pUnsubscribe("beeper-location-*", listener);
+        };
+      });
+    }),
   leaveQueue: authedProcedure
     .input(
       z.object({
@@ -380,4 +446,31 @@ export function getPositionInQueue(queue: Beep[], entry: Beep) {
 
 export function getQueueSize(queue: Beep[]) {
   return queue.filter(entry => !["waiting", "complete", "canceled", "denied"].includes(entry.status)).length
+}
+
+
+export function getDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371;
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const d = R * c;
+  return d * 0.621371;
+}
+
+function deg2rad(deg: number): number {
+  return deg * (Math.PI / 180);
 }

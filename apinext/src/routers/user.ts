@@ -124,7 +124,11 @@ export const userRouter = router({
       redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]))
 
       if (input.location) {
-        redis.publish(`beeper-location-${ctx.user.id}`, JSON.stringify(input.location));
+        const data = {
+          id: ctx.user.id,
+          location: input.location
+        };
+        redis.publish(`beeper-location-${ctx.user.id}`, JSON.stringify(data));
       }
 
       return u[0];
@@ -179,7 +183,12 @@ export const userRouter = router({
       redis.publish(`user-${u[0].id}`, JSON.stringify(u[0]))
 
       if (input.data.location) {
-        redis.publish(`beeper-location-${u[0].id}`, JSON.stringify(u[0].location))
+        const data = {
+          id: u[0].id,
+          location: u[0].location,
+        };
+
+        redis.publish(`beeper-location-${u[0].id}`, JSON.stringify(data))
       }
 
       return u[0];
