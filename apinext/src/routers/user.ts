@@ -18,22 +18,26 @@ export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
     return ctx.user;
   }),
-  updates: authedProcedure.subscription(({ ctx }) => {
-    // return an `observable` with a callback which is triggered immediately
-    return observable<typeof ctx.user>((emit) => {
-      const onUserUpdate = (message: string) => {
-        // emit data to client
-        console.log("Emitting to WS", message);
-        emit.next(JSON.parse(message));
-      };
-      // trigger `onAdd()` when `add` is triggered in our event emitter
-      const listener = (message: string) => onUserUpdate(message);
-      redisSubscriber.subscribe(`user-${ctx.user.id}`, listener);
-      (async () => emit.next(ctx.user))();
-      // unsubscribe function when client disconnects or stops subscribing
-      return () => {
-        redisSubscriber.unsubscribe(`user-${ctx.user.id}`, listener);
-      };
+  updates: authedProcedure
+    .input(z.string())
+    .subscription(({ ctx, input }) => {
+      const userId = input ?? ctx.user.id;
+
+      return observable<typeof ctx.user>((emit) => {
+        const onUserUpdate = (message: string) => {
+          console.log("[WS] - User -", message);
+          emit.next(JSON.parse(message));
+        };
+        const listener = (message: string) => onUserUpdate(message);
+        redisSubscriber.subscribe(`user-${userId}`, listener);
+        (async () => {
+          if (!input) {
+            emit.next(ctx.user)
+          }
+        })();
+        return () => {
+          redisSubscriber.unsubscribe(`user-${userId}`, listener);
+        };
     });
   }),
   edit: authedProcedure

@@ -9,7 +9,7 @@ import { s3 } from "../utils/s3";
 import { S3_BUCKET_URL } from "../utils/constants";
 
 export const carRouter = router({
-  cars: adminProcedure
+  cars: authedProcedure
     .input(
       z.object({
         show: z.number(),

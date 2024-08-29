@@ -86,7 +86,7 @@ export function AddCar() {
     try {
       await addCar(formData);
 
-      utils.car.cars.invalidate();
+      utils.car.invalidate();
 
       navigation.goBack();
     } catch (error) {
