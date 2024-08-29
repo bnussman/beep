@@ -21,14 +21,8 @@ export const userDetailsInitalRoute = createRoute({
 
 export function Details() {
   const { userId } = useParams({ from: "/admin/users/$userId" });
-  const utils = trpc.useUtils();
-  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
-  trpc.user.updates.useSubscription(userId, {
-    onData(user) {
-      utils.user.user.setData(userId, user);
-    }
-  });
+  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
   if (isLoading || !user) {
     return null

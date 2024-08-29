@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
-import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Spinner } from '@chakra-ui/react';
 import { userRoute } from '../routes/admin/users/User';
 import { beepStatusMap } from '../routes/admin/beeps';
 import { createRoute } from '@tanstack/react-router';
@@ -20,16 +20,33 @@ export const queueRoute = createRoute({
 export function QueueTable() {
   const { userId } = queueRoute.useParams();
 
-  const { data } = trpc.beep.beeps.useQuery({
-    userId,
-    inProgress: true,
-    cursor: 0,
-    show: 500,
+  const utils = trpc.useUtils();
+
+  const { data, isLoading, error } = trpc.beeper.queue.useQuery(userId);
+
+  trpc.beeper.watchQueue.useSubscription(userId, {
+    onData(queue) {
+      utils.beeper.queue.setData(userId, queue);
+    }
   });
 
-  // @todo subscribe to users queue
+  if (isLoading) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
+  }
 
-  if (data?.count === 0) {
+  if (error) {
+    return (
+      <Center>
+        {error.message}
+      </Center>
+    );
+  }
+
+  if (data?.length === 0) {
     return (
       <Center h="100px">
         This user's queue is empty.
@@ -51,7 +68,7 @@ export function QueueTable() {
           </Tr>
         </Thead>
         <Tbody>
-          {data?.beeps.map((beep) => (
+          {data?.map((beep) => (
             <Tr key={beep.id}>
               <TdUser user={beep.rider} />
               <Td>{beep.origin}</Td>

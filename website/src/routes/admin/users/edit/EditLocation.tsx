@@ -86,6 +86,7 @@ export function EditLocation() {
           w="150px"
           onClick={onUpdate}
           isLoading={mutateLoading}
+          isDisabled={latitude === user.location?.latitude && longitude === user.location?.longitude}
         >
           Save
         </Button>

@@ -59,6 +59,14 @@ export function User() {
     refetch
   } = trpc.user.user.useQuery(userId);
 
+  const utils = trpc.useUtils();
+
+  trpc.user.updates.useSubscription(userId, {
+    onData(user) {
+      utils.user.user.setData(userId, user);
+    }
+  });
+
   const [isDesktop] = useMediaQuery('(min-width: 800px)')
 
   const toast = useToast();

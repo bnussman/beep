@@ -14,13 +14,15 @@ interface Props {
 }
 
 export function QueuePreview({ userId }: Props) {
-  const { data, isLoading, error } = trpc.beep.beeps.useQuery({
-    userId,
-    show: 500,
-    cursor: 0,
-  });
+  const utils = trpc.useUtils();
 
-  // @todo subscribe to queue for realtime updates
+  const { data, isLoading, error } = trpc.beeper.queue.useQuery(userId);
+
+  trpc.beeper.watchQueue.useSubscription(userId, {
+    onData(queue) {
+      utils.beeper.queue.setData(userId, queue);
+    }
+  });
 
   if (isLoading) {
     return (
@@ -38,7 +40,7 @@ export function QueuePreview({ userId }: Props) {
     );
   }
 
-  if (data?.count === 0) {
+  if (data?.length === 0) {
     return (
       <Center h="100px">
         This user's queue is empty.
@@ -48,7 +50,7 @@ export function QueuePreview({ userId }: Props) {
 
   return (
     <Box>
-      {data?.beeps?.map((beep) => (
+      {data?.map((beep) => (
         <HStack key={beep.id}>
           <Link to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
             <Avatar src={beep.rider.photo || ''} size="xs" />
