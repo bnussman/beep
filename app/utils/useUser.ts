@@ -1,7 +1,7 @@
 import { trpc } from "./trpc";
 
 export function useUser() {
-  const { data: user, ...query } = trpc.user.me.useQuery(undefined, { enabled: false });
+  const { data: user, ...query } = trpc.user.me.useQuery(undefined, { enabled: false, retry: false });
 
   return { user, ...query };
 }

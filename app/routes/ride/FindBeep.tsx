@@ -68,7 +68,7 @@ export function MainFindBeepScreen(props: Props) {
           ...prev,
           beeper: {
             ...prev.beeper,
-            location: updatedLocation,
+            location: updatedLocation.location,
           },
         })
       });

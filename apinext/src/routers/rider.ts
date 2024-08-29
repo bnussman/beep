@@ -213,7 +213,7 @@ export const riderRouter = router({
     .input(z.string())
     .subscription(({ input }) => {
       // return an `observable` with a callback which is triggered immediately
-      return observable<{ latitude: number;  longitude: number }>((emit) => {
+      return observable<{ id: string; location: { latitude: number; longitude: number } }>((emit) => {
         const onUserUpdate = (message: string) => {
           console.log("Emitting to WS", message);
           emit.next(JSON.parse(message));
