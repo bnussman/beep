@@ -19,7 +19,7 @@ export const userRouter = router({
     return ctx.user;
   }),
   updates: authedProcedure
-    .input(z.string())
+    .input(z.string().optional())
     .subscription(({ ctx, input }) => {
       const userId = input ?? ctx.user.id;
 
