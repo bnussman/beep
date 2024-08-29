@@ -42,7 +42,7 @@ const sentryMiddleware = t.middleware(
  */
 export const router = t.router;
 export const publicProcedure = t.procedure.use(sentryMiddleware);
-export const authedProcedure = t.procedure.use(sentryMiddleware).use(function isAuthed(opts) {
+export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
 
   if (!ctx.user || !ctx.token) {
