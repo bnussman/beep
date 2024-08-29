@@ -6,7 +6,8 @@ import { Error } from '../../../components/Error';
 import { BeepersMap } from './BeepersMap';
 import { createRoute } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { trpc } from '../../../utils/trpc';
+import { queryClient, trpc } from '../../../utils/trpc';
+import { getQueryKey } from '@trpc/react-query';
 
 export const beepersRoute = createRoute({
   component: Beepers,
@@ -14,14 +15,46 @@ export const beepersRoute = createRoute({
   getParentRoute: () => adminRoute,
 });
 
+const queryKey = getQueryKey(trpc.user.users);
+
 export function Beepers() {
-  const { data, isLoading, error } = trpc.user.users.useQuery({
+  const utils = trpc.useUtils();
+
+  const input = {
     isBeeping: true,
     show: 500,
     offset: 0,
-  });
+  };
 
-  // @todo subscribe to all beeper's locations
+  const { data, isLoading, error } = trpc.user.users.useQuery(input);
+
+  trpc.rider.beepersLocations.useSubscription(
+    {
+      longitude: 0,
+      latitude: 0,
+      admin: true,
+    },
+    {
+      enabled: location !== undefined,
+      onData(locationUpdate) {
+        utils.user.users.setData(input, (oldUsers) => {
+          if (!oldUsers)  {
+            return undefined;
+          }
+
+          const indexOfUser = oldUsers.users.findIndex((user) => user.id === locationUpdate.id);
+
+          if (indexOfUser !== -1) {
+            const newData = [...oldUsers.users];
+
+            newData[indexOfUser] = { ...oldUsers.users[indexOfUser], location: locationUpdate.location }
+
+            return { ...oldUsers, users: newData };
+          }
+        })
+      }
+    }
+  );
 
   if (isLoading) {
     return <Loading />;
