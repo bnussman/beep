@@ -6,9 +6,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { Logger } from "../../utils/logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid } from "../../utils/constants";
-import {
-  ApolloError,
-} from "@apollo/client";
 import { LocationActivityType } from "expo-location";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
@@ -21,6 +18,7 @@ import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { basicTrpcClient, trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 export const LOCATION_TRACKING = "location-tracking";
 
@@ -170,7 +168,7 @@ export function StartBeepingScreen() {
           stopLocationTracking();
         }
       })
-      .catch((error: ApolloError) => {
+      .catch((error: TRPCClientError<any>) => {
         setIsBeeping((value) => !value);
         alert(error.message);
       });

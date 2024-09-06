@@ -16,9 +16,20 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { ReactNativeFile } from "@/utils/apollo";
 import { queryClient, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
+
+export class ReactNativeFile {
+  uri: string;
+  name: string;
+  type: string;
+
+  constructor({ uri, name, type }: { uri: string, name: string, type: string }) {
+    this.uri = uri;
+    this.name = name;
+    this.type = type;
+  }
+}
 
 export function generateRNFile(uri: string, name: string) {
   return new ReactNativeFile({

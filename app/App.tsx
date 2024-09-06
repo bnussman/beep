@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
-import { client } from "./utils/apollo";
 import { ApolloProvider } from "@apollo/client";
 import { updatePushToken } from "./utils/notifications";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -13,11 +12,10 @@ import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./utils/navigation";
 import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
-import * as Notifications from "expo-notifications";
 import { trpc, queryClient, trpcClient, basicTrpcClient } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
-import "./global.css";
 import { isWeb } from "./utils/constants";
+import "./global.css";
 
 if (!isWeb) {
   Notifications.setNotificationCategoryAsync(
@@ -119,13 +117,11 @@ function Beep() {
 function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ApolloProvider client={client}>
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            <Beep />
-          </QueryClientProvider>
-        </trpc.Provider>
-      </ApolloProvider>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <Beep />
+        </QueryClientProvider>
+      </trpc.Provider>
     </GestureHandlerRootView>
   );
 }

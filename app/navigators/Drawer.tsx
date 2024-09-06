@@ -6,7 +6,6 @@ import { Feedback } from "../routes/feedback/Feedback";
 import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
-import { client } from "../utils/apollo";
 import { useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
@@ -49,7 +48,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
 
-    client.resetStore();
     queryClient.resetQueries();
   };
 

@@ -3,7 +3,6 @@ import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Alert, Linking, View } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { getRawPhoneNumber, openDirections } from "../../utils/links";
-import { ApolloError, useMutation } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import { Avatar } from "../../components/Avatar";
 import { useNavigation } from "@react-navigation/native";

@@ -1,30 +1,8 @@
 import { Map } from "../../components/Map";
 import { useLocation } from "../../utils/useLocation";
 import { type Region } from "react-native-maps";
-import { useQuery, useSubscription } from "@apollo/client";
-import { useEffect } from "react";
-import { cache } from "../../utils/apollo";
-import { graphql } from "gql.tada";
 import { BeeperMarker } from "../../components/Marker";
 import { trpc } from "@/utils/trpc";
-
-const BeeperLocationUpdates = graphql(`
-  subscription GetBeeperLocationUpdates(
-    $radius: Float!
-    $longitude: Float!
-    $latitude: Float!
-  ) {
-    getBeeperLocationUpdates(
-      radius: $radius
-      longitude: $longitude
-      latitude: $latitude
-    ) {
-      id
-      latitude
-      longitude
-    }
-  }
-`);
 
 export function BeepersMap() {
   const { location } = useLocation();
@@ -65,40 +43,6 @@ export function BeepersMap() {
       }
     }
   );
-
-  useSubscription(BeeperLocationUpdates, {
-    variables: {
-      radius: 20,
-      latitude: location?.coords.latitude ?? 0,
-      longitude: location?.coords.longitude ?? 0,
-    },
-    skip: !location,
-    onData(d) {
-      const data = d.data.data?.getBeeperLocationUpdates;
-      if (
-        data &&
-        data.latitude !== null &&
-        data.latitude !== undefined &&
-        data.longitude !== null &&
-        data.longitude !== undefined
-      ) {
-        cache.modify({
-          id: cache.identify({
-            __typename: "AnonymousBeeper",
-            id: data.id,
-          }),
-          fields: {
-            latitude() {
-              return data.latitude!;
-            },
-            longitude() {
-              return data.longitude!;
-            },
-          },
-        });
-      }
-    },
-  });
 
   const initialRegion: Region | undefined = location
     ? {

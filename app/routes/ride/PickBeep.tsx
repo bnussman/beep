@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { printStars } from "../../components/Stars";
 import {
   ActivityIndicator,
@@ -13,6 +12,7 @@ import { useLocation } from "@/utils/useLocation";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 type Props = StaticScreenProps<
   Omit<RouterInput['rider']['startBeep'], "beeperId">
@@ -54,12 +54,11 @@ export function PickBeepScreen({ route }: Props) {
         beeperId,
       });
 
-      // @todo write rider's beep to cache
       utils.rider.currentRide.setData(undefined, data);
 
       navigation.goBack();
     } catch (error) {
-      alert((error as ApolloError).message);
+      alert((error as TRPCClientError<any>).message);
     }
   };
 
