@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
-import { ApolloProvider } from "@apollo/client";
+import * as Notifications from 'expo-notifications';
 import { updatePushToken } from "./utils/notifications";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
