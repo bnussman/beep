@@ -51,6 +51,18 @@ export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
 
   return opts.next({ ctx });
 });
+export const verifiedProcedure = authedProcedure.use(function isVerified(opts) {
+  const { ctx } = opts;
+
+  if (!ctx.user.isStudent || !ctx.user.isEmailVerified) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'Your edu email must be verified.'
+    });
+  }
+
+  return opts.next({ ctx });
+});
 
 export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
   const { ctx } = opts;

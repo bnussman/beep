@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
+import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
 import { and, asc, count, desc, eq, gte, like, lte, ne, sql, lt, or } from "drizzle-orm";
@@ -10,7 +10,7 @@ import { redis, redisSubscriber } from "../utils/redis";
 import { sendNotification } from "../utils/notifications";
 
 export const riderRouter = router({
-  beepers: authedProcedure
+  beepers: verifiedProcedure
     .input(
       z.object({
         longitude: z.number(),
@@ -60,7 +60,7 @@ export const riderRouter = router({
 
       return beepers;
     }),
-  startBeep: authedProcedure
+  startBeep: verifiedProcedure
     .input(
       z.object({
         beeperId: z.string(),

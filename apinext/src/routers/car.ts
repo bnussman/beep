@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure, router, verifiedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { car, user } from "../../drizzle/schema";
 import { and, count, desc, eq, ne } from 'drizzle-orm';
@@ -100,7 +100,7 @@ export const carRouter = router({
         });
       }
     }),
-  createCar: authedProcedure
+  createCar: verifiedProcedure
     .input(z.instanceof(FormData))
     .mutation(async ({ input: formData, ctx }) => {
       const object = {} as Record<string, unknown>;

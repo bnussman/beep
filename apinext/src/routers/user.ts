@@ -101,6 +101,13 @@ export const userRouter = router({
       }
 
       if (input.isBeeping) {
+        if (!ctx.user.isStudent && !ctx.user.isEmailVerified) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Your edu email must be verified to beep."
+          });
+        }
+
         const c = await db.query.car.findFirst({
           where: and(
             eq(car.user_id, ctx.user.id),
