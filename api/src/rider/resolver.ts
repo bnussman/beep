@@ -165,7 +165,7 @@ export class RiderResolver {
       .where('ST_DistanceSphere(u.location, ST_MakePoint(?,?)) <= ? * 1609.34', [latitude, longitude, radius])
       .andWhere({ isBeeping: true })
       .orderBy({
-        [raw("CASE WHEN p.product_id LIKE 'top_of_beeper_list_%' THEN 1 ELSE 0 END")]: QueryOrder.DESC,
+        [raw("CASE WHEN p.product_id = 'top_of_beeper_list_1_hour' or p.product_id = 'top_of_beeper_list_2_hours' or p.product_id = 'top_of_beeper_list_3_hours' THEN 1 ELSE 0 END")]: QueryOrder.DESC,
         [raw(`ST_DistanceSphere(u.location, ST_MakePoint(?,?))`, [latitude, longitude])]: QueryOrder.ASC
       })
       .getResultList();
