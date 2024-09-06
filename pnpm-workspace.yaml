@@ -1,7 +1,0 @@
-packages:
-  - "app"
-  - "website"
-  - "api"
-  - "apinext"
-  - "test"
-  - "deploy"
