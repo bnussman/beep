@@ -12,7 +12,7 @@ const pageLimit = 20;
 
 export function Beeps() {
   const { page } = leaderboardsRoute.useSearch();
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: leaderboardsRoute.id });
   const { isPending, error, data } = trpc.user.usersWithBeeps.useQuery({
     show: pageLimit,
     offset: (page - 1) * pageLimit,
