@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Alert } from "../utils/alert";
 import { Button } from "./Button";
 import { Status } from "../utils/types";
 import { cx } from "class-variance-authority";
@@ -29,7 +28,7 @@ export function AcceptDenyButton(props: Props) {
         status: props.type === "accept" ? Status.ACCEPTED : Status.DENIED,
       },
     }).catch((error) => {
-      Alert(error);
+      alert(error.message);
       setLoading(false);
     });
   };

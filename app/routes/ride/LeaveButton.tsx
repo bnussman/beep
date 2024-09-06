@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Alert as NativeAlert } from "react-native";
+import { Alert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { Button } from "@/components/Button";
-import { Alert } from "../../utils/alert";
 import { trpc } from "@/utils/trpc";
 
 interface Props {
@@ -16,7 +15,7 @@ export function LeaveButton(props: Props) {
 
   function leaveQueueWrapper(): void {
     if (isMobile) {
-      NativeAlert.alert(
+      Alert.alert(
         "Leave Queue?",
         "Are you sure you want to leave this queue?",
         [
@@ -36,7 +35,7 @@ export function LeaveButton(props: Props) {
   async function leaveQueue(): Promise<void> {
     setIsLoading(true);
     leave({ beeperId: beepersId }).catch((error) => {
-      Alert(error);
+      alert(error.message);
       setIsLoading(false);
     });
   }
