@@ -2,6 +2,7 @@ import { Page, expect } from "@playwright/test";
 import { getRandomString } from "./random";
 
 export async function signup(page: Page) {
+  await expect(page.getByRole('button', { name: 'Sign Up' })).toBeVisible({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Sign Up' }).click();
 
   const name = getRandomString();
