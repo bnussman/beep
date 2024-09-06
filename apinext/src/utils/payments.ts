@@ -47,7 +47,6 @@ export const productExpireTimes: Record<Product, number> = {
   'top_of_beeper_list_3_hours': (3 * 60 * 60 * 1000),
 }
 
-
 export type NonSubscriptions = Record<Product, {
   id: string;
   purchase_date: string;
