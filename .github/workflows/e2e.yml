@@ -33,7 +33,7 @@ jobs:
       run: pnpm exec playwright install --with-deps chromium
     - name: Init the DB
       working-directory: ./apinext
-      run: pnpm drizzle-kit push
+      run: pnpm drizzle-kit push --force
     - name: Run Playwright tests
       run: pnpm --filter @beep/test test
     - uses: actions/upload-artifact@v4
