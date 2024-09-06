@@ -83,7 +83,14 @@ export async function createContext(data: CreateHTTPContextOptions | CreateWSSCo
 
   const session = await db.query.token.findFirst({
     where: eq(token.id, bearerToken),
-    with: { user: true }
+    with: {
+      user: {
+        columns: {
+          password: false,
+          passwordType: false,
+        },
+      }
+    }
   });
 
   if (!session) {
