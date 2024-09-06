@@ -2,7 +2,7 @@ import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
-import { and, asc, count, desc, eq, gte, like, lte, ne, sql, lt } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, like, lte, ne, sql, lt, or } from "drizzle-orm";
 import { inProgressBeep } from "./beep";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
@@ -50,7 +50,11 @@ export const riderRouter = router({
           and(
             eq(payment.user_id, user.id),
             gte(payment.expires, new Date()),
-            like(payment.productId, 'top_of_beeper_list_%')
+            or(
+              eq(payment.productId, 'top_of_beeper_list_1_hour'),
+              eq(payment.productId, 'top_of_beeper_list_2_hours'),
+              eq(payment.productId, 'top_of_beeper_list_3_hours'),
+            )
           )
         );
 

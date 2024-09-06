@@ -13,7 +13,7 @@ export const geography = (
     data: { latitude: number, longitude: number } | null;
   }>({
     dataType() {
-      return "geography";
+      return "geometry";
     },
     toDriver(value) {
       if (!value) {
