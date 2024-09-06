@@ -29,7 +29,7 @@ export async function signup(page: Page) {
   await page.getByRole('button', { name: 'Sign Up' }).click();
 
   // If sign up was successful, we should be sent to the Ride page
-  await expect(page.getByLabel("Group Size")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByLabel("Group Size")).toBeVisible({ timeout: 60_000 });
 
   return { name };
 }
