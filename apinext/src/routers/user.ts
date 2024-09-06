@@ -321,7 +321,11 @@ export const userRouter = router({
     .input(z.string())
     .query(async ({ input }) => {
       const u = await db.query.user.findFirst({
-        where: eq(user.id, input)
+        where: eq(user.id, input),
+        columns: {
+          password: false,
+          passwordType: false,
+        },
       });
 
       if (!u) {
