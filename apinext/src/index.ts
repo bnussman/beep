@@ -1,8 +1,9 @@
 import * as Sentry from "@sentry/bun";
 import ws from 'ws';
 import cors from 'cors';
+import { createServer } from 'http';
 import { createContext, router } from './utils/trpc';
-import { createHTTPServer } from '@trpc/server/adapters/standalone';
+import { createHTTPHandler, createHTTPServer } from '@trpc/server/adapters/standalone';
 import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import { userRouter } from './routers/user';
 import { authRouter } from './routers/auth';
@@ -17,6 +18,7 @@ import { redisRouter } from "./routers/redis";
 import { riderRouter } from "./routers/rider";
 import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
+import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
 
 Sentry.init({
   dsn: "https://c00b90fd57886f1b49fb31b9d52142de@o1155818.ingest.us.sentry.io/4507799279435776",
@@ -41,10 +43,17 @@ const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-const httpServer = createHTTPServer({
+const handler = createHTTPHandler({
   middleware: cors(),
   router: appRouter,
   createContext,
+});
+
+const httpServer = createServer(async (req, res) => {
+  // @todo check request for payment webhook before handling it as tRPC
+  const request = incomingMessageToRequest(req, { maxBodySize: 20_000 });
+
+  handler(req, res);
 });
 
 const wss = new ws.Server({ server: httpServer });
