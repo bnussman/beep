@@ -16,14 +16,7 @@
     "paths": {
       "react": ["./node_modules/@types/react"],
       "@/*": ["./*"]
-    },
-    "plugins": [
-      {
-        "name": "@0no-co/graphqlsp",
-        "schema": "http://localhost:3000/graphql",
-        "tadaOutputLocation": "./graphql-env.d.ts"
-      }
-    ]
+    }
   },
   "extends": "expo/tsconfig.base"
 }
