@@ -20,6 +20,7 @@ import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
 import { ENVIRONMENT } from "./utils/constants";
+import { handlePaymentWebook } from "./utils/payments";
 
 Sentry.init({
   dsn: "https://c00b90fd57886f1b49fb31b9d52142de@o1155818.ingest.us.sentry.io/4507799279435776",
@@ -52,8 +53,11 @@ const handler = createHTTPHandler({
 });
 
 const httpServer = createServer(async (req, res) => {
-  // @todo check request for payment webhook before handling it as tRPC
   const request = incomingMessageToRequest(req, { maxBodySize: 20_000 });
+
+  if (request.url.endsWith("/payments/webhook")) {
+    return handlePaymentWebook(request);
+  }
 
   handler(req, res);
 });

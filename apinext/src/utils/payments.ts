@@ -1,7 +1,8 @@
 import { and, eq, gte } from "drizzle-orm";
-import { REVENUE_CAT_SECRET } from "./constants";
+import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { db } from "./db";
 import { user, productEnum, payment, storeEnum } from "../../drizzle/schema";
+import * as Sentry from '@sentry/bun';
 
 export interface SubscriberResponse {
   request_date: string
@@ -135,4 +136,69 @@ export async function syncUserPayments(userId: string) {
   });
 
   return activePayments;
+}
+
+
+
+export interface Webhook {
+  api_version: string
+  event: Event
+}
+
+export interface Event {
+  aliases: string[]
+  app_id: string
+  app_user_id: string
+  commission_percentage: number
+  country_code: string
+  currency: string
+  entitlement_id: string
+  entitlement_ids: string[]
+  environment: string
+  event_timestamp_ms: number
+  expiration_at_ms: number
+  id: string
+  is_family_share: boolean
+  offer_code: string
+  original_app_user_id: string
+  original_transaction_id: string
+  period_type: string
+  presented_offering_id: string
+  price: number
+  price_in_purchased_currency: number
+  product_id: string
+  purchased_at_ms: number
+  store: string
+  subscriber_attributes: SubscriberAttributes
+  takehome_percentage: number
+  tax_percentage: number
+  transaction_id: string
+  type: string
+}
+
+export interface SubscriberAttributes {
+  "$Favorite Cat": FavoriteCat
+}
+
+export interface FavoriteCat {
+  updated_at_ms: number
+  value: string
+}
+
+
+export async function handlePaymentWebook(request: Request) {
+  const data: Webhook = await request.json();
+
+  if (request.headers.get("Authorization") !== `Bearer ${REVENUE_CAT_WEBHOOK_TOKEN}`) {
+    return new Response("Unable to auth webhook call", { status: 403 });
+  }
+
+  try {
+    await syncUserPayments(data.event.app_user_id);
+  } catch (error) {
+    Sentry.captureException(error);
+    return new Response("Error syncing payments for user", { status: 500 });
+  }
+
+  return new Response("Success!");
 }
