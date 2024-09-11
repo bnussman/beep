@@ -199,7 +199,7 @@ export function User() {
               <Text fontSize="xs" textOverflow="ellipsis">{user.id}</Text>
               {user.created && (<Text fontSize="xs">Joined {dayjs().to(user.created)}</Text>)}
               <Stack direction="row" mt="2" mb="2">
-                {user.role === "user" && <Badge variant="solid" colorScheme="red">admin</Badge>}
+                {user.role === "admin" && <Badge variant="solid" colorScheme="red">admin</Badge>}
                 {user.isStudent && <Badge variant="solid" colorScheme="blue">student</Badge>}
               </Stack>
             </Box>
