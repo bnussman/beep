@@ -73,35 +73,38 @@ export async function syncUserPayments(em: EntityManager, userId: string): Promi
 
   const response: SubscriberResponse = await request.json();
 
-  const user = await em.findOneOrFail(User, userId, { populate: ['payments.id'] });
-
   const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
 
   for (const product of products) {
     for (const payment of response.subscriber.non_subscriptions[product]) {
 
-      if (user.payments.exists(p => p.id === payment.id)) {
-        continue;
-      }
-
       const created = new Date(payment.purchase_date);
 
-      user.payments.add(new Payment({
-        id: payment.id,
-        store: payment.store as Store,
-        user,
-        storeId: payment.store_transaction_id,
-        price: productPrice[product],
-        productId: product,
-        created,
-        expires: new Date(created.getTime() + productExpireTimes[product])
-      }));
+     try {
+      await em.insert(
+        Payment,
+        new Payment({
+          id: payment.id,
+          store: payment.store as Store,
+          user: em.getReference(User, userId),
+          storeId: payment.store_transaction_id,
+          price: productPrice[product],
+          productId: product,
+          created,
+          expires: new Date(created.getTime() + productExpireTimes[product])
+        })
+      );
+     } catch (error) {
+       console.error(error)
+     }
     }
   }
 
-  await em.persistAndFlush(user);
-
-  const activePayments = user.payments.filter(payment => payment.expires >= new Date());
+  const activePayments = await em.find(
+    Payment,
+    { user: userId },
+    { filters: { active: true } }
+  );
 
   return activePayments;
 }
