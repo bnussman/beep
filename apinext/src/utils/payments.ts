@@ -103,38 +103,27 @@ export async function syncUserPayments(userId: string) {
 
   const response: SubscriberResponse = await request.json();
 
-  const u = await db.query.user.findFirst({
-    where: eq(user.id, userId),
-    with: {
-      payments: true,
-    }
-  });
-
-  if (!u) {
-    throw new Error("User not found in our database");
-  }
-
   const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
 
   for (const product of products) {
     for (const paymentItem of response.subscriber.non_subscriptions[product]) {
 
-      if (u.payments.some(p => p.id === paymentItem.id)) {
-        continue;
-      }
-
       const created = new Date(paymentItem.purchase_date);
 
-      await db.insert(payment).values({
-        id: paymentItem.id,
-        user_id: u.id,
-        store: paymentItem.store as Store,
-        storeId: paymentItem.store_transaction_id,
-        price: String(productPrice[product]),
-        productId: product,
-        created,
-        expires: new Date(created.getTime() + productExpireTimes[product])
-      })
+      try {
+        await db.insert(payment).values({
+          id: paymentItem.id,
+          user_id: userId,
+          store: paymentItem.store as Store,
+          storeId: paymentItem.store_transaction_id,
+          price: String(productPrice[product]),
+          productId: product,
+          created,
+          expires: new Date(created.getTime() + productExpireTimes[product])
+        })
+      } catch (error) {
+        console.error("payment might already be stored", error)
+      }
     }
   }
 
