@@ -13,7 +13,9 @@ export const redisRoute = createRoute({
 });
 
 export function Redis() {
-  const { data, isLoading, error } = trpc.redis.channels.useQuery();
+  const { data, isLoading, error } = trpc.redis.channels.useQuery(undefined, {
+    refetchInterval: 2_000,
+  });
 
   if (isLoading) {
     return <Loading />;

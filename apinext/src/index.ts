@@ -19,10 +19,12 @@ import { riderRouter } from "./routers/rider";
 import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
+import { ENVIRONMENT } from "./utils/constants";
 
 Sentry.init({
   dsn: "https://c00b90fd57886f1b49fb31b9d52142de@o1155818.ingest.us.sentry.io/4507799279435776",
   tracesSampleRate: 1.0,
+  environment: ENVIRONMENT
 });
 
 const appRouter = router({
