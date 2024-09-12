@@ -13,6 +13,7 @@ import { SendMailOptions } from "nodemailer";
 import { email } from "../utils/email";
 import * as Sentry from '@sentry/bun';
 import { sendNotification } from "../utils/notifications";
+import { inProgressBeep } from "./beep";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
@@ -65,6 +66,22 @@ export const userRouter = router({
         ...input,
         isEmailVerified: ctx.user.isEmailVerified,
         isStudent: ctx.user.isStudent,
+      }
+
+      if (values.isBeeping === false) {
+        const countOfInProgressBeeps = await db
+          .select({ count: count() })
+          .from(beep)
+          .where(
+            and(
+              eq(beep.beeper_id, ctx.user.id),
+              inProgressBeep
+            )
+          );
+
+        if (countOfInProgressBeeps[0].count > 0) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "You can't stop beeping when you have riders in your queue" })
+        }
       }
 
       if (input.email && input.email !== ctx.user.email) {
