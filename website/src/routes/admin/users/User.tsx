@@ -151,7 +151,7 @@ export function User() {
   };
 
   const onSyncPayments = () => {
-    syncPayments({ userId }).then((activePayments) => {
+    syncPayments(userId).then((activePayments) => {
       toast({ title: "Payments synced", description: `The user has ${activePayments.length} active payments.`, status: "success" });
     }).catch((error) => {
       toast({ title: "Error", description: error.message, status: "error" });
