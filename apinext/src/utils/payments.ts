@@ -3,6 +3,7 @@ import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { db } from "./db";
 import { user, productEnum, payment, storeEnum } from "../../drizzle/schema";
 import * as Sentry from '@sentry/bun';
+import type { ServerResponse } from 'node:http';
 
 export interface SubscriberResponse {
   request_date: string
@@ -186,19 +187,22 @@ export interface FavoriteCat {
 }
 
 
-export async function handlePaymentWebook(request: Request) {
+export async function handlePaymentWebook(request: Request, res: ServerResponse) {
   const data: Webhook = await request.json();
 
   if (request.headers.get("Authorization") !== `Bearer ${REVENUE_CAT_WEBHOOK_TOKEN}`) {
-    return new Response("Unable to auth webhook call", { status: 403 });
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+    return res.end('Unable to auth webhook call!\n');
   }
 
   try {
     await syncUserPayments(data.event.app_user_id);
   } catch (error) {
     Sentry.captureException(error);
-    return new Response("Error syncing payments for user", { status: 500 });
+    res.writeHead(500, { 'Content-Type': 'text/plain' });
+    return res.end('Error!\n');
   }
 
-  return new Response("Success!");
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  return res.end('Success!\n');
 }
