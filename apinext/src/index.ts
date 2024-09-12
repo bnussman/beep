@@ -56,7 +56,7 @@ const httpServer = createServer(async (req, res) => {
   const request = incomingMessageToRequest(req, { maxBodySize: 20_000 });
 
   if (request.url.endsWith("/payments/webhook")) {
-    return handlePaymentWebook(request, res);
+    handlePaymentWebook(request, res);
   }
 
   handler(req, res);

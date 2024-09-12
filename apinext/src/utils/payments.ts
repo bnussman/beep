@@ -192,7 +192,7 @@ export async function handlePaymentWebook(request: Request, res: ServerResponse)
 
   if (request.headers.get("Authorization") !== `Bearer ${REVENUE_CAT_WEBHOOK_TOKEN}`) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
-    return res.end('Unable to auth webhook call!\n');
+    res.end('Unable to auth webhook call!\n');
   }
 
   try {
@@ -200,9 +200,9 @@ export async function handlePaymentWebook(request: Request, res: ServerResponse)
   } catch (error) {
     Sentry.captureException(error);
     res.writeHead(500, { 'Content-Type': 'text/plain' });
-    return res.end('Error!\n');
+    res.end('Error!\n');
   }
 
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  return res.end('Success!\n');
+  res.end('Success!\n');
 }
