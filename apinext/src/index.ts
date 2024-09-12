@@ -57,9 +57,9 @@ const httpServer = createServer(async (req, res) => {
 
   if (request.url.endsWith("/payments/webhook")) {
     handlePaymentWebook(request, res);
+  } else {
+    handler(req, res);
   }
-
-  handler(req, res);
 });
 
 const wss = new ws.Server({ server: httpServer });
