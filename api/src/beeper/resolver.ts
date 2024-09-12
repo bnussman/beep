@@ -51,6 +51,8 @@ export class BeeperResolver {
   @Authorized()
   public async setBeeperStatus(@Ctx() ctx: Context, @Arg('input', () => BeeperSettingsInput) input: BeeperSettingsInput): Promise<User> {
     if (input.isBeeping) {
+      throw new GraphQLError("You need to update your app to start beeping.");
+
       const car = await ctx.em.findOne(Car, { user: ctx.user.id, default: true });
 
       if (!car) {

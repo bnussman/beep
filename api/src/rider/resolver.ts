@@ -16,6 +16,8 @@ export class RiderResolver {
   @Mutation(() => Beep)
   @Authorized()
   public async chooseBeep(@Ctx() ctx: Context, @Arg('beeperId', () => String) beeperId: string, @Arg('input', () => GetBeepInput) input: GetBeepInput): Promise<Beep> {
+    throw new GraphQLError("You need to update your app to get a ride.");
+
     const beeper = await ctx.em.findOneOrFail(
       User,
       beeperId,
