@@ -24,6 +24,7 @@ export function EditDetails() {
     cashapp: user?.cashapp ?? undefined,
     isEmailVerified: user?.isEmailVerified,
     isStudent: user?.isStudent,
+    isBeeping: user?.isBeeping,
   };
 
   const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm<Values>({

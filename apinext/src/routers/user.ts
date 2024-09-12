@@ -170,6 +170,7 @@ export const userRouter = router({
           cashapp: z.string(),
           isStudent: z.boolean(),
           isEmailVerified: z.boolean(),
+          isBeeping: z.boolean(),
           location: z.object({
             longitude: z.number(),
             latitude: z.number(),
