@@ -50,7 +50,7 @@ function Package({ p }: { p: PurchasesPackage }) {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const { user } = useUser();
 
-  const { mutateAsync: checkVerificationStatus } = trpc.user.syncPayments.useMutation();
+  const { mutateAsync: checkVerificationStatus } = trpc.user.syncMyPayments.useMutation();
 
   const { data, refetch } = trpc.payment.payments.useQuery({
     userId: user?.id,
@@ -167,6 +167,8 @@ export function Premium() {
     refetchAppPackages();
   };
 
+  const { mutateAsync: checkVerificationStatus } = trpc.user.syncMyPayments.useMutation();
+
   if (isLoading && !offerings) {
     return (
       <View className="flex items-center justify-center h-full">
@@ -178,6 +180,7 @@ export function Premium() {
   if (error) {
     return (
       <View className="flex items-center justify-center h-full">
+        <Button onPress={() => checkVerificationStatus()}>debug</Button>
         <Text>{error}</Text>
       </View>
     );
