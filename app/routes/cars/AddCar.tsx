@@ -78,6 +78,9 @@ export function AddCar() {
     const formData = new FormData();
 
     for (const key in variables) {
+      if (key === 'photo') {
+        continue;
+      }
       formData.append(key, variables[key as keyof typeof variables]);
     }
 
