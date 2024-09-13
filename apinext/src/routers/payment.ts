@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { adminProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { and, count, desc, eq, gte } from "drizzle-orm";
 import { payment } from "../../drizzle/schema";
 
 export const paymentRouter = router({
-  payments: adminProcedure
+  payments: authedProcedure
     .input(
       z.object({
         offset: z.number(),
