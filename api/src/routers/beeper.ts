@@ -5,7 +5,7 @@ import { inProgressBeep } from "./beep";
 import { and, asc, eq } from "drizzle-orm";
 import { beep, car, user } from "../../drizzle/schema";
 import { observable } from "@trpc/server/observable";
-import { redis, redisSubscriber } from "../utils/redis";
+import { redisSubscriber } from "../utils/redis";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { getPositionInQueue, getQueueSize } from "./rider";
@@ -21,24 +21,28 @@ export const beeperRouter = router({
   watchQueue: authedProcedure
     .input(z.string().optional())
     .subscription(({ ctx, input }) => {
-    // return an `observable` with a callback which is triggered immediately
-    return observable<Awaited<ReturnType<typeof getBeeperQueue>>>((emit) => {
-      const onUserUpdate = (message: string) => {
-        // emit data to client
-        emit.next(JSON.parse(message));
-      };
-      // trigger `onAdd()` when `add` is triggered in our event emitter
-      const listener = (message: string) => onUserUpdate(message);
-      redisSubscriber.subscribe(`beeper-${input ?? ctx.user.id}`, listener);
-      (async () => {
-        const ride = await getBeeperQueue(input ?? ctx.user.id);
-        emit.next(ride);
-      })();
-      // unsubscribe function when client disconnects or stops subscribing
-      return () => {
-        redisSubscriber.unsubscribe(`beeper-${input ?? ctx.user.id}`, listener);
-      };
-    });
+      const id = input ?? ctx.user.id;
+
+      if (ctx.user.role === 'user' && input && input !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: "You do not have permission to subscribe to another user's queue"
+        });
+      }
+
+      return observable<Awaited<ReturnType<typeof getBeeperQueue>>>((emit) => {
+        const onUpdatedQueue = (message: string) => {
+          emit.next(JSON.parse(message));
+        };
+        redisSubscriber.subscribe(`beeper-${id}`, onUpdatedQueue);
+        (async () => {
+          const ride = await getBeeperQueue(id);
+          emit.next(ride);
+        })();
+        return () => {
+          redisSubscriber.unsubscribe(`beeper-${id}`, onUpdatedQueue);
+        };
+      });
   }),
   updateBeep: authedProcedure
     .input(

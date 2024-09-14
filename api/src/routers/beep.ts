@@ -179,17 +179,16 @@ export const beepRouter = router({
 
       sendNotifications(notifications);
 
-      if (input.stopBeeping) {
-        const u = await db.update(user).set({ isBeeping: false, queueSize: 0 }).where(eq(user.id, beeper.id)).returning();
+      const u = await db
+        .update(user)
+        .set({
+          ...(input.stopBeeping ? { isBeeping: false } : {}),
+          queueSize: 0
+        })
+        .where(eq(user.id, beeper.id))
+        .returning();
 
-        // @todo can we publish a partial user?
-        redis.publish(`user-${beeper.id}`, JSON.stringify(u[0]));
-      } else {
-        await db.update(user).set({ queueSize: 0 }).where(eq(user.id, beeper.id)).returning();
-
-        // @todo Send update to empty the user's queue
-        redis.publish(`queue-${beeper.id}`, JSON.stringify([]));
-      }
-
+      redis.publish(`user-${beeper.id}`, JSON.stringify(u[0]));
+      pubSub.publishBeeperQueue(beeper.id, []);
     }),
 });
