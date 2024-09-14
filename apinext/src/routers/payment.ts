@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { and, count, desc, eq, gte } from "drizzle-orm";
 import { payment } from "../../drizzle/schema";
+import { TRPCError } from "@trpc/server";
 
 export const paymentRouter = router({
   payments: authedProcedure
@@ -14,7 +15,14 @@ export const paymentRouter = router({
         active: z.boolean().optional()
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      if (ctx.user.role === "user" && input.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must be an admin to get purchases for other users",
+        });
+      }
+
       const where = and(
         input.userId ? eq(payment.user_id, input.userId) : undefined,
         input.active ? gte(payment.expires, new Date()) : undefined,
