@@ -56,7 +56,6 @@ export function User() {
     data: user,
     isLoading,
     error,
-    refetch
   } = trpc.user.user.useQuery(userId);
 
   const utils = trpc.useUtils();
@@ -123,8 +122,8 @@ export function User() {
       await clearQueue({
         userId, stopBeeping
       });
-      if (refetch) refetch();
       onClearClose();
+      utils.beeper.queue.invalidate(userId);
       toast({
         title: "Queue Cleared",
         description: `${user?.first}'s queue has been cleared ${stopBeeping ? ' and they have stopped beeping.' : ''}`,
