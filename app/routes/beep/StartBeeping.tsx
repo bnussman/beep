@@ -20,7 +20,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { basicTrpcClient, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { PremiumBanner } from "./PremiumBanner";
-import { Controller, useForm } from "react-hook-form";
 
 export const LOCATION_TRACKING = "location-tracking";
 
@@ -28,18 +27,12 @@ export function StartBeepingScreen() {
   const { user } = useUser();
   const navigation = useNavigation();
 
-  const values = {
-    singlesRate: user?.singlesRate,
-    groupRate: user?.groupRate,
-    capacity: user?.capacity,
-  };
-
-  const form = useForm({
-    defaultValues: values,
-    values,
-  });
-
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
+  const [singlesRate, setSinglesRate] = useState<string>(
+    String(user?.singlesRate),
+  );
+  const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
+  const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
   const utils = trpc.useUtils();
 
@@ -59,17 +52,6 @@ export function StartBeepingScreen() {
   const { mutateAsync: updateBeepSettings } = trpc.user.edit.useMutation({
     onSuccess(data) {
       utils.user.me.setData(undefined, data);
-    },
-    onError(error) {
-      const fieldErrors = error.data?.zodError?.fieldErrors;
-      console.log(fieldErrors)
-      if (fieldErrors) {
-        for (const key in fieldErrors) {
-          form.setError(key as any, { message: fieldErrors[key]?.[0] });
-        }
-      } else {
-        alert(error.message);
-      }
     }
   });
 
@@ -118,7 +100,7 @@ export function StartBeepingScreen() {
         />
       ),
     });
-  }, [navigation, isBeeping]);
+  }, [navigation, isBeeping, capacity, singlesRate, groupRate]);
 
   async function getBeepingLocationPermissions(): Promise<boolean> {
     try {
@@ -170,13 +152,14 @@ export function StartBeepingScreen() {
         longitude: lastKnowLocation.coords.longitude,
         latitude: lastKnowLocation.coords.latitude
       };
-    }
 
-    const values = form.getValues();
+    }
 
     updateBeepSettings({
         isBeeping: willBeBeeping,
-        ...values,
+        singlesRate: Number(singlesRate),
+        groupRate: Number(groupRate),
+        capacity: Number(capacity),
         location
     })
       .then(() => {
@@ -188,6 +171,7 @@ export function StartBeepingScreen() {
       })
       .catch((error: TRPCClientError<any>) => {
         setIsBeeping((value) => !value);
+        alert(error.message);
       });
   }
 
@@ -284,60 +268,33 @@ export function StartBeepingScreen() {
         scrollEnabled={false}
         contentContainerClassName="p-4 h-full"
       >
-        <Controller
-          control={form.control}
-          name="capacity"
-          render={({ field, fieldState }) => (
-            <>
-              <Label htmlFor="capacity">Max Rider Capacity</Label>
-              <Input
-                id="capacity"
-                placeholder="Max Capcity"
-                inputMode="numeric"
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(+value)}
-              />
-              <Text color="error">{fieldState.error?.message}</Text>
-            </>
-          )}
+        <Label htmlFor="capacity">Max Rider Capacity</Label>
+        <Input
+          id="capacity"
+          placeholder="Max Capcity"
+          inputMode="numeric"
+          value={String(capacity)}
+          onChangeText={(value) => setCapacity(value)}
         />
         <Text size="sm">
           Maximum number of riders you can safely fit in your car
         </Text>
-        <Controller
-          control={form.control}
-          name="singlesRate"
-          render={({ field, fieldState }) => (
-            <>
-              <Label htmlFor="singles">Singles Rate</Label>
-              <Input
-                id="singles"
-                placeholder="Singles Rate"
-                keyboardType="numeric"
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(+value)}
-              />
-              <Text color="error">{fieldState.error?.message}</Text>
-            </>
-          )}
+        <Label htmlFor="singles">Singles Rate</Label>
+        <Input
+          id="singles"
+          placeholder="Singles Rate"
+          keyboardType="numeric"
+          value={String(singlesRate)}
+          onChangeText={(value) => setSinglesRate(value)}
         />
         <Text size="sm">Price for a single person riding alone</Text>
-        <Controller
-          control={form.control}
-          name="groupRate"
-          render={({ field, fieldState }) => (
-            <>
-              <Label htmlFor="groups">Group Rate</Label>
-              <Input
-                id="groups"
-                placeholder="Group Rate"
-                keyboardType="numeric"
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(+value)}
-              />
-              <Text color="error">{fieldState.error?.message}</Text>
-            </>
-          )}
+        <Label htmlFor="groups">Group Rate</Label>
+        <Input
+          id="groups"
+          placeholder="Group Rate"
+          keyboardType="numeric"
+          value={String(groupRate)}
+          onChangeText={(value) => setGroupRate(value)}
         />
         <Text size="sm">Price per person in a group</Text>
         <View className="flex-grow" />

@@ -52,9 +52,9 @@ export const userRouter = router({
         cashapp: z.string().nullable(),
         pushToken: z.string(),
         isBeeping: z.boolean(),
-        singlesRate: z.number().min(0).max(25),
-        groupRate: z.number().min(0).max(25),
-        capacity: z.number().min(0).max(25),
+        singlesRate: z.number(),
+        groupRate: z.number(),
+        capacity: z.number(),
         location: z.object({
           longitude: z.number(),
           latitude: z.number(),
