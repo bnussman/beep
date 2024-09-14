@@ -51,7 +51,7 @@ function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
 
   const { mutateAsync: checkVerificationStatus } = trpc.user.syncMyPayments.useMutation();
 
-  const { data, refetch } = trpc.payment.activePayments.useQuery();
+  const { data, refetch } = useActivePayments();
 
   const payment = data?.find(
     (sub) => sub.productId === p.product.identifier,
@@ -158,7 +158,7 @@ export function Premium() {
     isLoading: isLoadingActivePayments,
     refetch: refetchActivePayments,
     isRefetching: isRefetchingActivePayments,
-  } = trpc.payment.activePayments.useQuery();
+  } = useActivePayments();
 
   const {
     offerings,
@@ -208,4 +208,31 @@ export function Premium() {
       refreshing={isRefetchingAppPackages || isRefetchingActivePayments}
     />
   );
+}
+
+
+export function useActivePayments() {
+  const query = trpc.payment.activePayments.useQuery(undefined, {
+    // Refetches payments when the user's first payment expires so the UI updates
+    // to reflect that their premium expired
+    refetchInterval(query) {
+      const payments = query.state.data;
+
+      if (payments && payments[0]) {
+        const expiresAt = new Date(payments[0].expires).getTime();
+        const now = new Date().getTime();
+        const timeUntilExpires = expiresAt - now;
+
+       if (timeUntilExpires <= 0)  {
+         return 1_000;
+       } else {
+         return timeUntilExpires;
+       }
+      }
+
+      return false;
+    },
+  });
+
+  return query;
 }

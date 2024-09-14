@@ -4,11 +4,12 @@ import { Countdown } from "@/components/CountDown";
 import { Text } from "@/components/Text";
 import { trpc } from "@/utils/trpc";
 import { useNavigation } from "@react-navigation/native";
+import { useActivePayments } from "../Premium";
 
 export function PremiumBanner() {
   const navigation = useNavigation();
 
-  const { data: payments } = trpc.payment.activePayments.useQuery();
+  const { data: payments } = useActivePayments();
 
   const payment = payments?.[0];
 
