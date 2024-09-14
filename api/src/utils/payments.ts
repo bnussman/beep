@@ -4,7 +4,7 @@ import { db } from "./db";
 import { user, productEnum, payment, storeEnum } from "../../drizzle/schema";
 import * as Sentry from '@sentry/bun';
 import type { ServerResponse } from 'node:http';
-import { SubscriberResponse, Webhook } from "./revenucat";
+import { SubscriberResponse, Webhook } from "./revenuecat";
 
 type Product = typeof productEnum.enumValues[number];
 type Store = typeof storeEnum.enumValues[number];
