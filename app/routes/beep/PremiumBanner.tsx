@@ -12,17 +12,15 @@ export function PremiumBanner() {
 
   const payment = payments?.[0];
 
-  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires)} /> : null;
-
   return (
     <Card variant="outlined" className="p-4 items-center">
     {payment ? (
       <>
         <Text weight="black" size="xl">
-          You are premium!
+          You are premium! 👑
         </Text>
-        <Text className="text-center mb-4">
-          Expires in {countdown}
+        <Text className="text-center mb-4 mt-2">
+          Expires in <Countdown date={new Date(payment.expires)} />
         </Text>
       </>
     ) : (

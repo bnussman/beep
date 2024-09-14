@@ -32,7 +32,7 @@ function Offering({ item, disabled }: Props) {
         Promotes you to the top of the beeper list so you get more riders
         joining your queue
       </Text>
-      <Text size="sm">Goes into effect immediately upon purchase</Text>
+      <Text size="xs">Goes into effect immediately upon purchase and cannot be paused</Text>
       <Image
         source={PremiumImage}
         className="h-64 w-full"
@@ -56,8 +56,6 @@ function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
   const payment = data?.find(
     (sub) => sub.productId === p.product.identifier,
   );
-
-  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires)} /> : null;
 
   const onBuy = async (item: PurchasesPackage) => {
     if (Boolean(payment)) {
@@ -89,7 +87,11 @@ function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
       variant="outlined"
     >
       <Text weight="bold">{p.identifier}</Text>
-      <Text size="sm">{countdown}</Text>
+      {payment && (
+        <Text size="sm">
+          Expires in <Countdown date={new Date(payment.expires)} />
+        </Text>
+      )}
       <View className="flex-grow" />
       {Boolean(payment) && <Text>✅</Text>}
       <Button

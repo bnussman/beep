@@ -35,5 +35,5 @@ export const Countdown = ({ date }: { date: Date }) => {
 
   const { hours, minutes, seconds } = timeRemaining;
 
-  return `Expires in ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
