@@ -17,4 +17,7 @@ export const pubSub = {
   publishUserUpdate(userId: string, user: NonNullable<Context['user']>) {
     redis.publish(`user-${userId}`, JSON.stringify(user));
   },
+  publishBeeperLocation(userId: string, location: RouterOutput['rider']['beeperLocationUpdates']) {
+    redis.publish(`beeper-location-${userId}`, JSON.stringify(location));
+  }
 };

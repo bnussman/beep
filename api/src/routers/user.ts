@@ -152,7 +152,7 @@ export const userRouter = router({
           location: input.location
         };
 
-        redis.publish(`beeper-location-${ctx.user.id}`, JSON.stringify(data));
+        pubSub.publishBeeperLocation(ctx.user.id, data);
       }
 
       return u[0];
@@ -207,13 +207,13 @@ export const userRouter = router({
 
       pubSub.publishUserUpdate(u[0].id, u[0]);
 
-      if (input.data.location) {
+      if (u[0].location) {
         const data = {
           id: u[0].id,
           location: u[0].location,
         };
 
-        redis.publish(`beeper-location-${u[0].id}`, JSON.stringify(data))
+        pubSub.publishBeeperLocation(u[0].id, data);
       }
 
       return u[0];

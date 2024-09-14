@@ -208,16 +208,13 @@ export const riderRouter = router({
   beeperLocationUpdates: authedProcedure
     .input(z.string())
     .subscription(({ input }) => {
-      // return an `observable` with a callback which is triggered immediately
       return observable<{ id: string; location: { latitude: number; longitude: number } }>((emit) => {
-        const onUserUpdate = (message: string) => {
-          console.log("Emitting to WS", message);
+        const onLocation = (message: string) => {
           emit.next(JSON.parse(message));
         };
-        const listener = (message: string) => onUserUpdate(message);
-        redisSubscriber.subscribe(`beeper-location-${input}`, listener);
+        redisSubscriber.subscribe(`beeper-location-${input}`, onLocation);
         return () => {
-          redisSubscriber.unsubscribe(`beeper-location-${input}`, listener);
+          redisSubscriber.unsubscribe(`beeper-location-${input}`, onLocation);
         };
       });
   }),
@@ -268,8 +265,7 @@ export const riderRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       return observable<{ id: string; location: { latitude: number; longitude: number } }>((emit) => {
-        const onUserUpdate = (message: string) => {
-          console.log("[WS] - All Beepers Location -", message);
+        const onLocation = (message: string) => {
           const data = JSON.parse(message) as { id: string; location: { latitude: number; longitude: number } };
           if (input.admin) {
             emit.next(data);
@@ -280,10 +276,9 @@ export const riderRouter = router({
             emit.next(data);
           }
         };
-        const listener = (message: string) => onUserUpdate(message);
-        redisSubscriber.pSubscribe("beeper-location-*", listener);
+        redisSubscriber.pSubscribe("beeper-location-*", onLocation);
         return () => {
-          redisSubscriber.pUnsubscribe("beeper-location-*", listener);
+          redisSubscriber.pUnsubscribe("beeper-location-*", onLocation);
         };
       });
     }),
