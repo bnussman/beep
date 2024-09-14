@@ -30,7 +30,19 @@ interface Values {
 }
 
 export function SignUpScreen() {
-  const { mutateAsync: signup, error } = trpc.auth.signup.useMutation();
+  const { mutate: signup, error } = trpc.auth.signup.useMutation({
+    async onSuccess(data) {
+      await AsyncStorage.setItem("auth", JSON.stringify(data));
+
+      utils.user.me.setData(undefined, data.user);
+    },
+    onError(error) {
+      const fieldErrors = error.data?.zodError?.fieldErrors;
+      if (!fieldErrors) {
+        alert(error.message);
+      }
+    }
+  });
   const utils = trpc.useUtils();
 
   const {
@@ -45,7 +57,6 @@ export function SignUpScreen() {
   const [photo, setPhoto] = useState<any>();
 
   const onSubmit = handleSubmit(async (variables) => {
-    try {
       const formData = new FormData();
 
       for (const key in variables) {
@@ -61,14 +72,7 @@ export function SignUpScreen() {
 
       formData.append("photo", picture);
 
-      const data = await signup(formData);
-
-      await AsyncStorage.setItem("auth", JSON.stringify(data));
-
-      utils.user.me.setData(undefined, data.user);
-    } catch (error) {
-      alert((error as TRPCClientError<any>).message);
-    }
+      signup(formData);
   });
 
   const chooseProfilePhoto = async () => {
@@ -165,7 +169,9 @@ export function SignUpScreen() {
           >
             <Avatar src={photo?.uri} size="xl" />
           </TouchableOpacity>
-          <Text color="error">{validationErrors?.photo?.[0]}</Text>
+          <Text color="error" className="max-w-32">
+            {validationErrors?.photo?.[0]}
+          </Text>
         </View>
       </View>
       <Label htmlFor="email">Email</Label>

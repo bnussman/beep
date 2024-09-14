@@ -100,7 +100,7 @@ export const authRouter = router({
         username: z.string(),
         password: z.string(),
         email: z.string().email().endsWith('.edu', 'you must use a .edu email'),
-        phone: z.string().regex(PHONE_NUMBER_REGEX, 'Not a valid phone number.'),
+        phone: z.string().regex(PHONE_NUMBER_REGEX, 'Invalid phone number'),
         venmo: z.string().optional(),
         cashapp: z.string().optional(),
         pushToken: z.string().optional(),
