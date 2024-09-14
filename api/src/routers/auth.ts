@@ -11,6 +11,7 @@ import { email } from "../utils/email";
 import { SendMailOptions } from "nodemailer";
 import * as Sentry from '@sentry/bun';
 import { redis } from "../utils/redis";
+import { pubSub } from "../utils/pubsub";
 
 export const authRouter = router({
   login: publicProcedure
@@ -362,11 +363,12 @@ export const authRouter = router({
         { isEmailVerified: true };
 
       const u = await db.update(user).set(values).returning();
+
       await db
         .delete(verify_email)
         .where(eq(verify_email.id, verifyAccountEntry.id));
 
-      redis.publish(`user-${u[0].id}`, JSON.stringify(u[0]));
+      pubSub.publishUserUpdate(u[0].id, u[0]);
 
       return u[0].email;
     }),

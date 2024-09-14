@@ -188,7 +188,7 @@ export const beepRouter = router({
         .where(eq(user.id, beeper.id))
         .returning();
 
-      redis.publish(`user-${beeper.id}`, JSON.stringify(u[0]));
+      pubSub.publishUserUpdate(beeper.id, u[0]);
       pubSub.publishBeeperQueue(beeper.id, []);
     }),
 });

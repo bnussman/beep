@@ -14,6 +14,7 @@ import { email } from "../utils/email";
 import * as Sentry from '@sentry/bun';
 import { sendNotification } from "../utils/notifications";
 import { inProgressBeep } from "./beep";
+import { pubSub } from "../utils/pubsub";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
@@ -26,18 +27,16 @@ export const userRouter = router({
 
       return observable<typeof ctx.user>((emit) => {
         const onUserUpdate = (message: string) => {
-          console.log("[WS] - User -", message);
           emit.next(JSON.parse(message));
         };
-        const listener = (message: string) => onUserUpdate(message);
-        redisSubscriber.subscribe(`user-${userId}`, listener);
+        redisSubscriber.subscribe(`user-${userId}`, onUserUpdate);
         (async () => {
           if (!input) {
             emit.next(ctx.user)
           }
         })();
         return () => {
-          redisSubscriber.unsubscribe(`user-${userId}`, listener);
+          redisSubscriber.unsubscribe(`user-${userId}`, onUserUpdate);
         };
     });
   }),
@@ -145,13 +144,14 @@ export const userRouter = router({
         .where(eq(user.id, ctx.user.id))
         .returning();
 
-      redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]))
+      pubSub.publishUserUpdate(ctx.user.id, u[0]);
 
       if (input.location) {
         const data = {
           id: ctx.user.id,
           location: input.location
         };
+
         redis.publish(`beeper-location-${ctx.user.id}`, JSON.stringify(data));
       }
 
@@ -205,7 +205,7 @@ export const userRouter = router({
         .where(eq(user.id, input.userId))
         .returning();
 
-      redis.publish(`user-${u[0].id}`, JSON.stringify(u[0]))
+      pubSub.publishUserUpdate(u[0].id, u[0]);
 
       if (input.data.location) {
         const data = {
@@ -276,7 +276,7 @@ export const userRouter = router({
         .where(eq(user.id, ctx.user.id))
         .returning();
 
-      redis.publish(`user-${ctx.user.id}`, JSON.stringify(u[0]));
+      pubSub.publishUserUpdate(ctx.user.id, u[0]);
 
       return ctx.user;
     }),
