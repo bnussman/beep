@@ -13,13 +13,13 @@ const linodeProvider = new linode.Provider("linodeProvider", {
   token: env.LINODE_TOKEN,
 });
 
-const apinextImageName = `ghcr.io/bnussman/apinext:${envName === 'staging' ? 'main' : envName}`;
+const apiImageName = `ghcr.io/bnussman/api:${envName === 'staging' ? 'main' : envName}`;
 
-const apinextImageResource = new docker.Image("apinextImageResource", {
-  imageName: apinextImageName,
+const apiImageResource = new docker.Image("apiImageResource", {
+  imageName: apiImageName,
   build: {
-    context: "../apinext",
-    dockerfile: "../apinext/Dockerfile",
+    context: "../api",
+    dockerfile: "../api/Dockerfile",
   },
   registry: {
     password: process.env.GITHUB_TOKEN,
@@ -48,7 +48,7 @@ const lkeCluster = new linode.LkeCluster(
 );
 
 const namespaceName = "beep";
-const apinextAppName = "apinext";
+const apiAppName = "api";
 
 const k8sProvider = new k8s.Provider("k8sProvider", {
   kubeconfig: lkeCluster.kubeconfig.apply(x => Buffer.from(x, 'base64').toString()),
@@ -64,30 +64,30 @@ const namespace = new k8s.core.v1.Namespace(namespaceName, {
   { provider: k8sProvider }
 );
 
-const apinextDeployment = new k8s.apps.v1.Deployment(
-  apinextAppName,
+const apiDeployment = new k8s.apps.v1.Deployment(
+  apiAppName,
   {
     metadata: {
-      name: apinextAppName,
+      name: apiAppName,
       namespace: namespace.metadata.name,
-      labels: { app: apinextAppName }
+      labels: { app: apiAppName }
     },
     spec: {
-      selector: { matchLabels: { app: apinextAppName } },
+      selector: { matchLabels: { app: apiAppName } },
       replicas: 3,
       template: {
-        metadata: { labels: { app: apinextAppName } },
+        metadata: { labels: { app: apiAppName } },
         spec: {
           containers: [
             {
-              name: apinextAppName,
-              image: apinextImageResource.repoDigest,
+              name: apiAppName,
+              image: apiImageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [
                 { containerPort: 3001 }
               ],
               envFrom: [
-                { configMapRef: { name: apinextAppName }}
+                { configMapRef: { name: apiAppName }}
               ]
             }
           ]
@@ -109,7 +109,7 @@ const cert = new selfSignedCert.SelfSignedCertificate("cert", {
 });
 
 const secret = new k8s.core.v1.Secret(
-  apinextAppName,
+  apiAppName,
   {
     metadata: { name: "cert", namespace: namespace.metadata.name },
     type: "kubernetes.io/tls",
@@ -121,11 +121,11 @@ const secret = new k8s.core.v1.Secret(
   { provider: k8sProvider }
 );
 
-const apinextService = new k8s.core.v1.Service(
-  apinextAppName,
+const apiService = new k8s.core.v1.Service(
+  apiAppName,
   {
     metadata: {
-      name: apinextAppName,
+      name: apiAppName,
       namespace: namespaceName,
       annotations: {
         ['service.beta.kubernetes.io/linode-loadbalancer-default-protocol']: 'https',
@@ -136,7 +136,7 @@ const apinextService = new k8s.core.v1.Service(
     spec: {
       type: "LoadBalancer",
       ports: [{ port: 443, targetPort: 3001 }],
-      selector: { app: apinextAppName }
+      selector: { app: apiAppName }
     }
   },
   { provider: k8sProvider }
@@ -189,10 +189,10 @@ const redisService = new k8s.core.v1.Service(
 );
 
 const config = new k8s.core.v1.ConfigMap(
-  apinextAppName,
+  apiAppName,
   {
     metadata: {
-      name: apinextAppName,
+      name: apiAppName,
       namespace: namespaceName,
     },
     data: {
@@ -205,4 +205,4 @@ const config = new k8s.core.v1.ConfigMap(
 
 export const clusterLabel = lkeCluster.label;
 
-export const apinextIp = apinextService.status.loadBalancer.apply((lb) => lb.ingress[0].ip || lb.ingress[0].hostname);
+export const apiIp = apiService.status.loadBalancer.apply((lb) => lb.ingress[0].ip || lb.ingress[0].hostname);

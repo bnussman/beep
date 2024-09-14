@@ -32,7 +32,7 @@ jobs:
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps chromium
     - name: Init the DB
-      working-directory: ./apinext
+      working-directory: ./api
       run: pnpm drizzle-kit push --force
     - name: Run Playwright tests
       run: pnpm --filter @beep/test test

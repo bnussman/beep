@@ -1,5 +1,5 @@
 {
-  "name": "@beep/apinext",
+  "name": "@beep/api",
   "version": "0.0.1",
   "description": "tRPC for Ride Beep App",
   "main": "src/index.ts",

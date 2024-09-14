@@ -1,6 +1,6 @@
 packages:
   - "app"
   - "website"
-  - "apinext"
+  - "api"
   - "test"
   - "deploy"
