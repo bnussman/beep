@@ -1,5 +1,5 @@
 {
-    "name": "beep",
+    "name": "@beep/deploy",
     "main": "index.ts",
     "devDependencies": {
         "@types/node": "^18",
