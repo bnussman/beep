@@ -151,7 +151,7 @@ export const ratingRouter = router({
   createRating: authedProcedure
     .input(
       z.object({
-        stars: z.number(),
+        stars: z.number().min(1).max(5),
         message: z.string().optional(),
         beepId: z.string(),
         userId: z.string(),

@@ -44,17 +44,17 @@ export const userRouter = router({
   edit: authedProcedure
     .input(
       z.object({
-        first: z.string(),
-        last: z.string(),
+        first: z.string().min(1),
+        last: z.string().min(1),
         email: z.string().email().endsWith('.edu', 'Email must end with .edu'),
         phone: z.string().regex(PHONE_NUMBER_REGEX, 'Not a valid phone number.'),
-        venmo: z.string().nullable(),
-        cashapp: z.string().nullable(),
+        venmo: z.string().min(1).nullable(),
+        cashapp: z.string().min(1).nullable(),
         pushToken: z.string(),
         isBeeping: z.boolean(),
-        singlesRate: z.number(),
-        groupRate: z.number(),
-        capacity: z.number(),
+        singlesRate: z.number().min(1).max(25),
+        groupRate: z.number().min(1).max(25),
+        capacity: z.number().min(1).max(25),
         location: z.object({
           longitude: z.number(),
           latitude: z.number(),

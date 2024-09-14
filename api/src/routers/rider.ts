@@ -67,7 +67,7 @@ export const riderRouter = router({
         beeperId: z.string(),
         origin: z.string(),
         destination: z.string(),
-        groupSize: z.number()
+        groupSize: z.number().min(1).max(25)
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -185,21 +185,15 @@ export const riderRouter = router({
       return getRidersCurrentRide(ctx.user.id);
     }),
   currentRideUpdates: authedProcedure.subscription(({ ctx }) => {
-    // return an `observable` with a callback which is triggered immediately
     return observable<Awaited<ReturnType<typeof getRidersCurrentRide>>>((emit) => {
-      const onUserUpdate = (message: string) => {
-        // emit data to client
-        console.log("Emitting to WS", message);
+      const onBeepUpdate = (message: string) => {
         emit.next(JSON.parse(message));
       };
-      // trigger `onAdd()` when `add` is triggered in our event emitter
-      const listener = (message: string) => onUserUpdate(message);
-      redisSubscriber.subscribe(`rider-${ctx.user.id}`, listener);
+      redisSubscriber.subscribe(`rider-${ctx.user.id}`, onBeepUpdate);
       (async () => {
         const ride = await getRidersCurrentRide(ctx.user.id);
         emit.next(ride);
       })();
-      // unsubscribe function when client disconnects or stops subscribing
       return () => {
         redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, listener);
       };
@@ -435,7 +429,6 @@ export function getPositionInQueue(queue: Beep[], entry: Beep) {
 export function getQueueSize(queue: Beep[]) {
   return queue.filter(entry => !["waiting", "complete", "canceled", "denied"].includes(entry.status)).length
 }
-
 
 export function getDistance(
   lat1: number,

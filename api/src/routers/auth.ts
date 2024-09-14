@@ -95,14 +95,14 @@ export const authRouter = router({
       const userId = crypto.randomUUID();
 
       const signupSchema = z.object({
-        first: z.string(),
-        last: z.string(),
-        username: z.string(),
-        password: z.string(),
+        first: z.string().min(1),
+        last: z.string().min(1),
+        username: z.string().min(3),
+        password: z.string().min(6),
         email: z.string().email().endsWith('.edu', 'you must use a .edu email'),
         phone: z.string().regex(PHONE_NUMBER_REGEX, 'Invalid phone number'),
-        venmo: z.string().optional(),
-        cashapp: z.string().optional(),
+        venmo: z.string().min(1).optional(),
+        cashapp: z.string().min(1).optional(),
         pushToken: z.string().optional(),
         photo: z.instanceof(File, { message: "You must add a profile picture" }),
       });
@@ -196,7 +196,7 @@ export const authRouter = router({
   forgotPassword: publicProcedure
     .input(
       z.object({
-        email: z.string()
+        email: z.string().email()
       })
     )
     .mutation(async ({ input }) => {
@@ -273,7 +273,7 @@ export const authRouter = router({
     .input(
       z.object({
         id: z.string(),
-        password: z.string(),
+        password: z.string().min(6),
       })
     )
     .mutation(async ({ input }) => {
@@ -405,7 +405,7 @@ export const authRouter = router({
   changePassword: authedProcedure
     .input(
       z.object({
-        password: z.string()
+        password: z.string().min(6)
       })
     )
     .mutation(async ({ input, ctx }) => {
