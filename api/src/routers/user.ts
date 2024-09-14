@@ -15,6 +15,7 @@ import * as Sentry from '@sentry/bun';
 import { sendNotification } from "../utils/notifications";
 import { inProgressBeep } from "./beep";
 import { pubSub } from "../utils/pubsub";
+import { PHONE_NUMBER_REGEX } from "../utils/validation";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
@@ -45,8 +46,8 @@ export const userRouter = router({
       z.object({
         first: z.string(),
         last: z.string(),
-        email: z.string().endsWith('.edu', 'Email must end with .edu'),
-        phone: z.string(),
+        email: z.string().email().endsWith('.edu', 'Email must end with .edu'),
+        phone: z.string().regex(PHONE_NUMBER_REGEX, 'Not a valid phone number.'),
         venmo: z.string().nullable(),
         cashapp: z.string().nullable(),
         pushToken: z.string(),

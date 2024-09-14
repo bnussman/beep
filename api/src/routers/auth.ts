@@ -12,6 +12,7 @@ import { SendMailOptions } from "nodemailer";
 import * as Sentry from '@sentry/bun';
 import { redis } from "../utils/redis";
 import { pubSub } from "../utils/pubsub";
+import { PHONE_NUMBER_REGEX } from "../utils/validation";
 
 export const authRouter = router({
   login: publicProcedure
@@ -99,7 +100,7 @@ export const authRouter = router({
         username: z.string(),
         password: z.string(),
         email: z.string().email().endsWith('.edu', 'you must use a .edu email'),
-        phone: z.string(),
+        phone: z.string().regex(PHONE_NUMBER_REGEX, 'Not a valid phone number.'),
         venmo: z.string().optional(),
         cashapp: z.string().optional(),
         pushToken: z.string().optional(),
