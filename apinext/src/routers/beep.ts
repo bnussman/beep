@@ -6,6 +6,7 @@ import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { redis } from "../utils/redis";
+import { pubSub } from "../utils/pubsub";
 
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),
@@ -157,8 +158,7 @@ export const beepRouter = router({
       const notifications: PushNotification[] = [];
 
       for (const beep of beeper.beeps) {
-        // @todo send rider an update that they are no longer in a beep
-        redis.publish(`rider-${beep.rider.id}`, JSON.stringify(null));
+        pubSub.publishRiderUpdate(beep.rider.id, null);
 
         if (beep.rider.pushToken) {
           notifications.push({

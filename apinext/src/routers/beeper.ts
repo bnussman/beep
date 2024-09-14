@@ -10,6 +10,7 @@ import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { getPositionInQueue, getQueueSize } from "./rider";
 import * as Sentry from '@sentry/bun';
+import { pubSub } from "../utils/pubsub";
 
 export const beeperRouter = router({
   queue: authedProcedure
@@ -90,7 +91,7 @@ export const beeperRouter = router({
       }
 
       if (input.data.status === "denied" || input.data.status === "complete" || input.data.status === "canceled") {
-        redis.publish(`rider-${queueEntry.rider_id}`, JSON.stringify(null));
+        pubSub.publishRiderUpdate(queueEntry.rider_id, null);
 
         await db
           .update(user)
@@ -153,12 +154,12 @@ export const beeperRouter = router({
 
       const newQueue = queue.filter((beep) => beep.status !== "complete" && beep.status !== 'denied' && beep.status !== "canceled");
 
-      redis.publish(`beeper-${ctx.user.id}`, JSON.stringify(newQueue));
+      pubSub.publishBeeperQueue(ctx.user.id, newQueue);
 
       for (const entry of newQueue) {
-        redis.publish(
-          `rider-${entry.rider_id}`,
-          JSON.stringify({ ...entry, position: getPositionInQueue(newQueue, entry) })
+        pubSub.publishRiderUpdate(
+          entry.rider_id,
+          { ...entry, position: getPositionInQueue(newQueue, entry) }
         );
       }
 
@@ -167,7 +168,7 @@ export const beeperRouter = router({
 });
 
 
-async function getBeeperQueue(beeperId: string) {
+export async function getBeeperQueue(beeperId: string) {
   const queue = await db.query.beep.findMany({
     where: and(
       inProgressBeep,

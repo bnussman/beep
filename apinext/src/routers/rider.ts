@@ -8,6 +8,7 @@ import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { redis, redisSubscriber } from "../utils/redis";
 import { sendNotification } from "../utils/notifications";
+import { pubSub } from "../utils/pubsub";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -79,31 +80,20 @@ export const riderRouter = router({
 
       const beeper = await db.query.user.findFirst({
         columns: {
-          id: true,
-          first: true,
-          last: true,
-          isBeeping: true,
-          photo: true,
-          singlesRate: true,
-          groupRate: true,
-          capacity: true,
-          cashapp: true,
-          venmo: true,
-          pushToken: true,
+          password: false,
+          passwordType: false,
         },
         where: eq(user.id, input.beeperId),
         with: {
+          cars: {
+            where: eq(car.default, true),
+            limit: 1,
+          },
           beeps: {
             where: inProgressBeep,
             orderBy: asc(beep.start),
             with: {
-              rider: {
-                columns: {
-                  id: true,
-                  first: true,
-                  last: true,
-                },
-              },
+              rider: true,
             },
           }
         },
@@ -139,16 +129,12 @@ export const riderRouter = router({
 
       const queue = beeper?.beeps.map((beep) => ({
         ...beep,
-        beeper: {
-          id: beeper.id,
-          first: beeper.first,
-          last: beeper.first,
-        },
+        beeper,
       }));
 
-      redis.publish(
-        `beeper-${beeper.id}`,
-        JSON.stringify([
+      pubSub.publishBeeperQueue(
+        beeper.id,
+        [
           ...queue,
           {
             ...newBeep,
@@ -156,10 +142,16 @@ export const riderRouter = router({
               id: ctx.user.id,
               first: ctx.user.first,
               last: ctx.user.last,
+              phone: ctx.user.phone,
+              venmo: ctx.user.venmo,
+              cashapp: ctx.user.cashapp,
+              rating: ctx.user.rating,
+              photo: ctx.user.photo,
+              pushToken: ctx.user.pushToken,
             },
-            beeper: {}
+            beeper
           }
-        ])
+        ]
       );
 
       if (beeper.pushToken) {
@@ -304,29 +296,23 @@ export const riderRouter = router({
     .mutation(async ({ ctx, input }) => {
       const beeper = await db.query.user.findFirst({
         columns: {
-          id: true,
-          first: true,
-          last: true,
-          isBeeping: true,
-          photo: true,
-          singlesRate: true,
-          groupRate: true,
-          capacity: true,
-          cashapp: true,
-          venmo: true,
-          pushToken: true,
+          password: false,
+          passwordType: false,
         },
         where: eq(user.id, input.beeperId),
         with: {
+          cars: {
+            where: eq(car.default, true),
+            limit: 1,
+          },
           beeps: {
             where: inProgressBeep,
             orderBy: asc(beep.start),
             with: {
               rider: {
                 columns: {
-                  id: true,
-                  first: true,
-                  last: true,
+                  password: false,
+                  passwordType: false,
                 },
               },
             },
@@ -363,13 +349,16 @@ export const riderRouter = router({
         .set({ status: "canceled", end: new Date() })
         .where(eq(beep.id, entry.id));
 
-      const newQueue = beeper.beeps.filter(beep => beep.id !== entry.id);
+      const newQueue = beeper.beeps.filter(beep => beep.id !== entry.id).map((b) => ({ ...b, beeper }));
 
-      redis.publish(`rider-${ctx.user.id}`, JSON.stringify(null));
-      redis.publish(`beeper-${beeper.id}`, JSON.stringify(newQueue));
+      pubSub.publishRiderUpdate(ctx.user.id, null);
+      pubSub.publishBeeperQueue(beeper.id, newQueue);
 
       for (const entry of newQueue) {
-        redis.publish(`rider-${entry.rider_id}`, JSON.stringify({ ...entry, position: getPositionInQueue(newQueue, entry), beeper }));
+        pubSub.publishRiderUpdate(
+          entry.rider_id,
+          { ...entry, position: getPositionInQueue(newQueue, entry), beeper }
+        );
       }
 
       await db.update(user).set({ queueSize: getQueueSize(newQueue) }).where(eq(user.id, beeper.id));
@@ -378,7 +367,7 @@ export const riderRouter = router({
     })
 });
 
-async function getRidersCurrentRide(userId: string) {
+export async function getRidersCurrentRide(userId: string) {
   const b = await db.query.beep.findFirst({
     where: and(
       eq(beep.rider_id, userId),
