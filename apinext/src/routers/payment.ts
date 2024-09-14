@@ -54,5 +54,14 @@ export const paymentRouter = router({
         payments,
         count: paymentsCount[0].count,
       };
+    }),
+  activePayments: authedProcedure
+    .query(async ({ ctx }) => {
+      return await db.query.payment.findMany({
+        where: and(
+          eq(payment.user_id, ctx.user.id),
+          gte(payment.expires, new Date())
+        )
+      })
     })
 });

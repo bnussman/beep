@@ -12,15 +12,15 @@ import type {
 import PremiumImage from "../assets/premium.png";
 import { Logger } from "../utils/logger";
 import { Countdown } from "../components/CountDown";
-import { FlatList, RefreshControl, useColorScheme } from "react-native";
-import { useUser } from "../utils/useUser";
+import { FlatList, RefreshControl } from "react-native";
 import { trpc } from "@/utils/trpc";
 
 interface Props {
   item: PurchasesOffering;
+  disabled: boolean;
 }
 
-function Offering({ item }: Props) {
+function Offering({ item, disabled }: Props) {
   const packages = item.availablePackages;
 
   return (
@@ -40,32 +40,24 @@ function Offering({ item }: Props) {
         alt="beep screenshot of premium"
       />
       {packages.map((p) => (
-        <Package key={p.identifier} p={p} />
+        <Package key={p.identifier} p={p} disabled={disabled} />
       ))}
     </Card>
   );
 }
 
-function Package({ p }: { p: PurchasesPackage }) {
+function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const { user } = useUser();
 
   const { mutateAsync: checkVerificationStatus } = trpc.user.syncMyPayments.useMutation();
 
-  const { data, refetch } = trpc.payment.payments.useQuery({
-    userId: user?.id,
-    offset: 0,
-    active: true,
-    limit: 500,
-  });
+  const { data, refetch } = trpc.payment.activePayments.useQuery();
 
-  const payment = data?.payments.find(
+  const payment = data?.find(
     (sub) => sub.productId === p.product.identifier,
   );
 
-  const countdown = payment?.expires ? (
-    <Countdown date={new Date(payment.expires as string)} />
-  ) : null;
+  const countdown = payment?.expires ? <Countdown date={new Date(payment.expires)} /> : null;
 
   const onBuy = async (item: PurchasesPackage) => {
     if (Boolean(payment)) {
@@ -103,7 +95,7 @@ function Package({ p }: { p: PurchasesPackage }) {
       <Button
         isLoading={isPurchasing}
         onPress={() => onBuy(p)}
-        disabled={Boolean(payment)}
+        disabled={disabled}
         className="dark:bg-stone-800 dark:active:!bg-stone-700"
       >
         {p.product.priceString}
@@ -148,28 +140,38 @@ function usePackages() {
     getOfferings();
   }, []);
 
-  return { offerings, error, isLoading, refetch: getOfferings, isRefreshing };
+  return {
+    offerings,
+    error,
+    isLoading: isLoading && offerings === undefined,
+    refetch: getOfferings,
+    isRefreshing
+  };
 }
 
 export function Premium() {
-  const utils = trpc.useUtils();
+  const {
+    data: activePayments,
+    error: activePaymentsError,
+    isLoading: isLoadingActivePayments,
+    refetch: refetchActivePayments,
+    isRefetching: isRefetchingActivePayments,
+  } = trpc.payment.activePayments.useQuery();
 
   const {
     offerings,
-    error,
-    isLoading,
+    error: packagesError,
+    isLoading: isLoadingPackages,
     refetch: refetchAppPackages,
-    isRefreshing,
+    isRefreshing: isRefetchingAppPackages,
   } = usePackages();
 
   const refetch = () => {
-    utils.payment.payments.invalidate();
+    refetchActivePayments();
     refetchAppPackages();
   };
 
-  const { mutateAsync: checkVerificationStatus } = trpc.user.syncMyPayments.useMutation();
-
-  if (isLoading && !offerings) {
+  if (isLoadingActivePayments || isLoadingPackages) {
     return (
       <View className="flex items-center justify-center h-full">
         <ActivityIndicator />
@@ -177,28 +179,31 @@ export function Premium() {
     );
   }
 
-  if (error) {
+  if (packagesError) {
     return (
       <View className="flex items-center justify-center h-full">
-        <Button onPress={() => checkVerificationStatus()}>debug</Button>
-        <Text>{error}</Text>
+        <Text>{packagesError}</Text>
       </View>
     );
   }
+
+  if (activePaymentsError) {
+    return (
+      <View className="flex items-center justify-center h-full">
+        <Text>{activePaymentsError.message}</Text>
+      </View>
+    );
+  }
+
+  const numberOfActivePayments = activePayments?.length ?? 0;
 
   return (
     <FlatList
       data={offerings}
       contentContainerClassName="p-4"
-      renderItem={({ item }) => <Offering item={item} />}
+      renderItem={({ item }) => <Offering item={item} disabled={numberOfActivePayments > 0} />}
       onRefresh={refetch}
-      refreshing={isLoading}
-      refreshControl={
-        <RefreshControl
-          refreshing={isLoading}
-          onRefresh={refetch}
-        />
-      }
+      refreshing={isRefetchingAppPackages || isRefetchingActivePayments}
     />
   );
 }

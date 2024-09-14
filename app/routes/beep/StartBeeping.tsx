@@ -19,6 +19,7 @@ import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { basicTrpcClient, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
+import { PremiumBanner } from "./PremiumBanner";
 
 export const LOCATION_TRACKING = "location-tracking";
 
@@ -256,21 +257,7 @@ export function StartBeepingScreen() {
           If someone wants you to beep them, it will appear here. If your app is
           closed, you will recieve a push notification.
         </Text>
-        <Card variant="outlined" className="p-4 items-center">
-          <Text weight="black" size="xl">
-            Want more riders?
-          </Text>
-          <Text className="text-center mb-4">
-            Jump to the top of the beeper list
-          </Text>
-          <Button
-            className="flex flex-row gap-2 dark:!bg-neutral-700 active:dark:!bg-neutral-800"
-            onPress={() => navigation.navigate("Main", { screen: "Premium" })}
-          >
-            <Text weight="bold">Get Promoted</Text>
-            <Text>👑</Text>
-          </Button>
-        </Card>
+        <PremiumBanner />
       </View>
     );
   }
