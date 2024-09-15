@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
@@ -9,10 +9,8 @@ import { isAndroid } from "../../utils/constants";
 import { LocationActivityType } from "expo-location";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
-import { Alert, AppState, AppStateStatus, View, Switch } from "react-native";
+import { Alert, View, Switch } from "react-native";
 import { Input } from "@/components/Input";
-import { Card } from "@/components/Card";
-import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
@@ -36,7 +34,11 @@ export function StartBeepingScreen() {
 
   const utils = trpc.useUtils();
 
-  const { data: queue, refetch, isLoading } = trpc.beeper.queue.useQuery(undefined, {
+  const {
+    data: queue,
+    refetch,
+    isRefetching,
+  } = trpc.beeper.queue.useQuery(undefined, {
     enabled: user && user.isBeeping
   });
 
@@ -47,29 +49,11 @@ export function StartBeepingScreen() {
     enabled: user && user.isBeeping,
   })
 
-  const [position, setPosition] = useState(0);
-
   const { mutateAsync: updateBeepSettings } = trpc.user.edit.useMutation({
     onSuccess(data) {
       utils.user.me.setData(undefined, data);
     }
   });
-
-  const snapPoints = useMemo(() => [100, 85, 15], []);
-
-  useEffect(() => {
-    const listener = AppState.addEventListener("change", handleAppStateChange);
-
-    return () => {
-      listener.remove();
-    };
-  }, []);
-
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === "active") {
-      refetch();
-    }
-  };
 
   function toggleSwitchWrapper(): void {
     if (isAndroid && !isBeeping) {
@@ -245,8 +229,6 @@ export function StartBeepingScreen() {
     handleIsBeepingChange();
   }, [user]);
 
-  const isRefreshing = Boolean(queue) && isLoading;
-
   if (isBeeping && queue?.length === 0) {
     return (
       <View className="flex items-center justify-center h-full">
@@ -311,7 +293,7 @@ export function StartBeepingScreen() {
       <Queue
         beeps={queue.filter(beep => beep.id !== queue[0]?.id)}
         onRefresh={refetch}
-        refreshing={isRefreshing}
+        refreshing={isRefetching}
       />
     </View>
   );
