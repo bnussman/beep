@@ -18,12 +18,14 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { basicTrpcClient, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { PremiumBanner } from "./PremiumBanner";
+import { useAppState } from "@/utils/useAppState";
 
 export const LOCATION_TRACKING = "location-tracking";
 
 export function StartBeepingScreen() {
   const { user } = useUser();
   const navigation = useNavigation();
+  const appState = useAppState();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
   const [singlesRate, setSinglesRate] = useState<string>(
@@ -46,7 +48,7 @@ export function StartBeepingScreen() {
     onData(data) {
       utils.beeper.queue.setData(undefined, data);
     },
-    enabled: user && user.isBeeping,
+    enabled: user && user.isBeeping && appState === 'active',
   })
 
   const { mutateAsync: updateBeepSettings } = trpc.user.edit.useMutation({

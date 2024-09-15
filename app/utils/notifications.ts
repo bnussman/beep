@@ -55,10 +55,10 @@ async function getNotificationPermission(): Promise<boolean> {
   );
 }
 
-export async function updatePushToken(): Promise<void> {
+export async function updatePushToken(currentPushToken: string | null): Promise<void> {
   if (isMobile) {
     const token = await getPushToken();
-    if (token) {
+    if (token && token !== currentPushToken) {
       try {
         await basicTrpcClient.user.edit.mutate({ pushToken: token });
       } catch (error) {

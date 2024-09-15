@@ -192,9 +192,11 @@ export const riderRouter = router({
       redisSubscriber.subscribe(`rider-${ctx.user.id}`, onBeepUpdate);
       (async () => {
         const ride = await getRidersCurrentRide(ctx.user.id);
+        console.log("-> Send current ride status on sub init")
         emit.next(ride);
       })();
       return () => {
+        console.log("-> Rider unsubscribed")
         redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, onBeepUpdate);
       };
     });

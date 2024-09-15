@@ -3,10 +3,12 @@ import { useLocation } from "../../utils/useLocation";
 import { type Region } from "react-native-maps";
 import { BeeperMarker } from "../../components/Marker";
 import { trpc } from "@/utils/trpc";
+import { useAppState } from "@/utils/useAppState";
 
 export function BeepersMap() {
   const { location } = useLocation();
   const utils = trpc.useUtils();
+  const appState = useAppState();
 
   const input = {
     latitude: location?.coords.latitude ?? 0,
@@ -24,7 +26,7 @@ export function BeepersMap() {
   trpc.rider.beepersLocations.useSubscription(
     input,
     {
-      enabled: location !== undefined,
+      enabled: location !== undefined && appState === 'active',
       onData(locationUpdate) {
         console.log(locationUpdate)
         utils.rider.beepersNearMe.setData(input, (prev) => {
