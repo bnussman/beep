@@ -195,7 +195,7 @@ export const riderRouter = router({
         emit.next(ride);
       })();
       return () => {
-        redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, listener);
+        redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, onBeepUpdate);
       };
     });
   }),
