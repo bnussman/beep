@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "tRPC for Ride Beep App",
   "main": "src/index.ts",
+  "type": "module",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "typecheck": "tsc"
