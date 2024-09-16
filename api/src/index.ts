@@ -23,7 +23,7 @@ import { ENVIRONMENT } from "./utils/constants";
 import { handlePaymentWebook } from "./utils/payments";
 
 Sentry.init({
-  dsn: "https://c00b90fd57886f1b49fb31b9d52142de@o1155818.ingest.us.sentry.io/4507799279435776",
+  dsn: "https://7dd69cf0a7fcbaecea5fadffc461727c@sentry.nussman.us/2",
   tracesSampleRate: 1.0,
   environment: ENVIRONMENT
 });
