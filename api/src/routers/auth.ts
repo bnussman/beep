@@ -362,7 +362,11 @@ export const authRouter = router({
         { isStudent: true, isEmailVerified: true } :
         { isEmailVerified: true };
 
-      const u = await db.update(user).set(values).returning();
+      const u = await db
+        .update(user)
+        .set(values)
+        .where(eq(user.id, verifyAccountEntry.user_id))
+        .returning();
 
       await db
         .delete(verify_email)
