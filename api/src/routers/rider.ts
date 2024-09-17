@@ -2,11 +2,11 @@ import { z } from "zod";
 import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
-import { and, asc, count, desc, eq, gte, like, lte, ne, sql, lt, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-orm";
 import { inProgressBeep } from "./beep";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
-import { redis, redisSubscriber } from "../utils/redis";
+import { redisSubscriber } from "../utils/redis";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 

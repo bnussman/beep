@@ -1,7 +1,7 @@
 import { observable } from "@trpc/server/observable";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { beep, car, user, verify_email } from '../../drizzle/schema';
-import { redis, redisSubscriber } from "../utils/redis";
+import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
 import { count, eq, sql, like, and, or } from "drizzle-orm";
 import { z } from "zod";

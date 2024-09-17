@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router, verifiedProcedure } from "../utils/trpc";
+import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
-import { car, user } from "../../drizzle/schema";
+import { car } from "../../drizzle/schema";
 import { and, count, desc, eq, ne } from 'drizzle-orm';
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";

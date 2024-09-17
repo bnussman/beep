@@ -5,7 +5,6 @@ import { count, desc, eq, or, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
-import { redis } from "../utils/redis";
 import { pubSub } from "../utils/pubsub";
 
 export const inProgressBeep = or(

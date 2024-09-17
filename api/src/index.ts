@@ -3,7 +3,7 @@ import ws from 'ws';
 import cors from 'cors';
 import { createServer } from 'http';
 import { createContext, router } from './utils/trpc';
-import { createHTTPHandler, createHTTPServer } from '@trpc/server/adapters/standalone';
+import { createHTTPHandler } from '@trpc/server/adapters/standalone';
 import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import { userRouter } from './routers/user';
 import { authRouter } from './routers/auth';
@@ -52,7 +52,7 @@ const handler = createHTTPHandler({
   createContext,
 });
 
-const httpServer = createServer(async (req, res) => {
+const httpServer = createServer((req, res) => {
   const request = incomingMessageToRequest(req, { maxBodySize: 20_000 });
 
   if (request.url.endsWith("/payments/webhook")) {
@@ -72,3 +72,6 @@ applyWSSHandler<AppRouter>({
 });
 
 httpServer.listen(3001);
+
+console.info("🚕 Beep API Server Started");
+console.info("➡️  Listening on http://0.0.0.0:3001 and ws://0.0.0.0:3001");

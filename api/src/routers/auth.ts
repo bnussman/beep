@@ -10,7 +10,6 @@ import { isDevelopment, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
 import { email } from "../utils/email";
 import { SendMailOptions } from "nodemailer";
 import * as Sentry from '@sentry/bun';
-import { redis } from "../utils/redis";
 import { pubSub } from "../utils/pubsub";
 import { PHONE_NUMBER_REGEX } from "../utils/validation";
 

@@ -16,6 +16,13 @@ export const beeperRouter = router({
   queue: authedProcedure
     .input(z.string().optional())
     .query(async ({ input, ctx }) => {
+      if (input && input !== ctx.user.id && ctx.user.role !== 'admin') {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must be an admin to view other user's queue."
+        });
+      }
+
       return getBeeperQueue(input ?? ctx.user.id);
     }),
   watchQueue: authedProcedure
@@ -51,7 +58,7 @@ export const beeperRouter = router({
       z.object({
         beepId: z.string(),
         data: z.object({
-          status: z.enum([ "canceled", "denied", "waiting", "accepted", "on_the_way", "here", "in_progress", "complete", ])
+          status: z.enum([ "canceled", "denied", "waiting", "accepted", "on_the_way", "here", "in_progress", "complete"])
         })
       })
     )
