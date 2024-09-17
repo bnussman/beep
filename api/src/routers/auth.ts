@@ -100,8 +100,8 @@ export const authRouter = router({
         password: z.string().min(6),
         email: z.string().email().endsWith('.edu', 'you must use a .edu email'),
         phone: z.string().regex(PHONE_NUMBER_REGEX, 'Invalid phone number'),
-        venmo: z.string().min(1).optional(),
-        cashapp: z.string().min(1).optional(),
+        venmo: z.string().optional(),
+        cashapp: z.string().optional(),
         pushToken: z.string().optional(),
         photo: z.instanceof(File, { message: "You must add a profile picture" }),
       });

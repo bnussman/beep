@@ -30,12 +30,7 @@ interface Values {
 }
 
 export function SignUpScreen() {
-  const { mutate: signup, error } = trpc.auth.signup.useMutation({
-    async onSuccess(data) {
-      await AsyncStorage.setItem("auth", JSON.stringify(data));
-
-      utils.user.me.setData(undefined, data.user);
-    },
+  const { mutateAsync: signup, error } = trpc.auth.signup.useMutation({
     onError(error) {
       const fieldErrors = error.data?.zodError?.fieldErrors;
       if (!fieldErrors) {
@@ -43,6 +38,7 @@ export function SignUpScreen() {
       }
     }
   });
+
   const utils = trpc.useUtils();
 
   const {
@@ -57,12 +53,12 @@ export function SignUpScreen() {
   const [photo, setPhoto] = useState<any>();
 
   const onSubmit = handleSubmit(async (variables) => {
+    try {
       const formData = new FormData();
 
       for (const key in variables) {
         formData.append(key, variables[key as keyof typeof variables]);
       }
-
       if (isMobile && !isSimulator) {
         const pushToken = await getPushToken();
         if (pushToken) {
@@ -72,7 +68,14 @@ export function SignUpScreen() {
 
       formData.append("photo", picture);
 
-      signup(formData);
+      const data = await signup(formData);
+
+      await AsyncStorage.setItem("auth", JSON.stringify(data));
+
+      utils.user.me.setData(undefined, data.user);
+    } catch (error) {
+      // ...
+    }
   });
 
   const chooseProfilePhoto = async () => {
