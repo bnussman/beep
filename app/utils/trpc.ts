@@ -53,7 +53,13 @@ export async function getAuthToken() {
   return null;
 }
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    }
+  },
+});
 
 const wsClient = createWSClient({
   url: wsUrl,

@@ -25,9 +25,9 @@ import {
   Appearance,
   View,
   ActivityIndicator,
-  Button,
 } from "react-native";
 import { Text } from "@/components/Text";
+import { Button } from "@/components/Button";
 import { cx } from "class-variance-authority";
 import { queryClient, trpc } from "@/utils/trpc";
 
@@ -77,9 +77,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
           {!user?.isEmailVerified && (
             <Button
               onPress={handleResendVerification}
-              title="Resend Verification Email"
-              color="red"
-            />
+              className="text-gray-50 !bg-red-400 active:!bg-red-500"
+            >
+              <Text className="text-white" weight="black">Resend Verification Email</Text>
+            </Button>
           )}
           {props.state.routeNames.map((name, index) => (
             <DrawerItem
