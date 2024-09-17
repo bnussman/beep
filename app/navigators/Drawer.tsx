@@ -66,7 +66,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       <View className="gap-3">
         <View className="flex flex-row items-center justify-between px-2">
           <View className="flex-shrink">
-            <Text size="lg" weight="bold">
+            <Text size="xl" weight="black">
               {user?.first} {user?.last}
             </Text>
             <Text color="subtle">@{user?.username}</Text>
@@ -78,6 +78,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             <Button
               onPress={handleResendVerification}
               className="text-gray-50 !bg-red-400 active:!bg-red-500"
+              isLoading={resendLoading}
+              activityIndicatorProps={{ color: "white" }}
             >
               <Text className="text-white" weight="black">Resend Verification Email</Text>
             </Button>
