@@ -11,7 +11,7 @@ import { email } from "../utils/email";
 import { SendMailOptions } from "nodemailer";
 import * as Sentry from '@sentry/bun';
 import { pubSub } from "../utils/pubsub";
-import { PHONE_NUMBER_REGEX } from "../utils/validation";
+import { isAlpha, isMobilePhone, isSlug } from "validator";
 
 export const authRouter = router({
   login: publicProcedure
@@ -94,14 +94,14 @@ export const authRouter = router({
       const userId = crypto.randomUUID();
 
       const signupSchema = z.object({
-        first: z.string().min(1),
-        last: z.string().min(1),
-        username: z.string().min(3),
-        password: z.string().min(6),
-        email: z.string().email().endsWith('.edu', 'you must use a .edu email'),
-        phone: z.string().regex(PHONE_NUMBER_REGEX, 'Invalid phone number'),
-        venmo: z.string().optional(),
-        cashapp: z.string().optional(),
+        first: z.string().min(1).max(64).refine(isAlpha, 'Must only contain letters'),
+        last: z.string().min(1).max(64).refine(isAlpha, 'Must only contain letters'),
+        username: z.string().min(3).max(64),
+        password: z.string().min(6).max(255),
+        email: z.string().email().endsWith('.edu', 'you must use a .edu email').toLowerCase(),
+        phone: z.string().refine(isMobilePhone, 'Invalid phone number'),
+        venmo: z.string().max(30).optional(),
+        cashapp: z.string().max(40).optional(),
         pushToken: z.string().optional(),
         photo: z.instanceof(File, { message: "You must add a profile picture" }),
       });

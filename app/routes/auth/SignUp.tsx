@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import * as Linking from "expo-linking";
 import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity, View } from "react-native";
 import { getPushToken } from "../../utils/notifications";
 import { isMobile, isSimulator } from "../../utils/constants";
-import { generateRNFile } from "../settings/EditProfile";
+import { generateRNFile, ReactNativeFile } from "../settings/EditProfile";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "@/components/Avatar";
@@ -15,9 +14,8 @@ import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
 import { trpc } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 
-let picture: any;
+let picture: File | ReactNativeFile;
 
 interface Values {
   first: string;
@@ -27,61 +25,60 @@ interface Values {
   email: string;
   venmo: string;
   phone: string;
+  photo: ImagePicker.ImagePickerAsset;
 }
 
 export function SignUpScreen() {
-  const { mutateAsync: signup, error } = trpc.auth.signup.useMutation({
+  const {
+    control,
+    handleSubmit,
+    setFocus,
+    setError,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<Values>();
+
+  const { mutateAsync: signup } = trpc.auth.signup.useMutation({
     onError(error) {
       const fieldErrors = error.data?.zodError?.fieldErrors;
       if (!fieldErrors) {
         alert(error.message);
+      } else {
+        for (const key in fieldErrors) {
+          setError(key as keyof Values, { message: fieldErrors[key as keyof Values]?.[0] });
+        }
       }
     }
   });
 
   const utils = trpc.useUtils();
 
-  const {
-    control,
-    handleSubmit,
-    setFocus,
-    formState: { errors, isSubmitting },
-  } = useForm<Values>();
-
-  const validationErrors = error?.data?.zodError?.fieldErrors;
-
-  const [photo, setPhoto] = useState<any>();
-
   const onSubmit = handleSubmit(async (variables) => {
-    try {
-      const formData = new FormData();
+    const formData = new FormData();
 
-      for (const key in variables) {
-        formData.append(key, variables[key as keyof typeof variables]);
+    for (const key in variables) {
+      if (key !== 'photo') {
+        formData.append(key, variables[key as keyof typeof variables] as string);
       }
-      if (isMobile && !isSimulator) {
-        const pushToken = await getPushToken();
-        if (pushToken) {
-          formData.append("pushToken", pushToken);
-        }
-      }
-
-      formData.append("photo", picture);
-
-      const data = await signup(formData);
-
-      await AsyncStorage.setItem("auth", JSON.stringify(data));
-
-      utils.user.me.setData(undefined, data.user);
-    } catch (error) {
-      // ...
     }
+
+    if (isMobile && !isSimulator) {
+      const pushToken = await getPushToken();
+      if (pushToken) {
+        formData.append("pushToken", pushToken);
+      }
+    }
+
+    formData.append("photo", picture as File);
+
+    const data = await signup(formData);
+
+    await AsyncStorage.setItem("auth", JSON.stringify(data));
+
+    utils.user.me.setData(undefined, data.user);
   });
 
   const chooseProfilePhoto = async () => {
-    setPhoto(null);
-    picture = null;
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,
@@ -100,10 +97,10 @@ export function SignUpScreen() {
       const fileType = blob.type.split("/")[1];
       const file = new File([blob], "photo." + fileType);
       picture = file;
-      setPhoto(result.assets[0]);
+      setValue('photo', result.assets[0], { shouldValidate: true });
     } else {
       if (!result.canceled) {
-        setPhoto(result.assets[0]);
+        setValue('photo', result.assets[0], { shouldValidate: true });
         const file = generateRNFile(result.assets[0].uri, "file.jpg");
         picture = file;
       }
@@ -137,7 +134,6 @@ export function SignUpScreen() {
           />
           <Text color="error">
             {errors.first?.message}
-            {validationErrors?.first?.[0]}
           </Text>
           <Label htmlFor="last">Last Name</Label>
           <Controller
@@ -162,18 +158,24 @@ export function SignUpScreen() {
           />
           <Text color="error">
             {errors.last?.message}
-            {validationErrors?.last?.[0]}
           </Text>
         </View>
         <View>
-          <TouchableOpacity
-            onPress={chooseProfilePhoto}
-            aria-label="profile photo"
-          >
-            <Avatar src={photo?.uri} size="xl" />
-          </TouchableOpacity>
+          <Controller
+            control={control}
+            rules={{ required: "Profile picture is required" }}
+            name="photo"
+            render={({ field }) => (
+              <TouchableOpacity
+                onPress={chooseProfilePhoto}
+                aria-label="profile photo"
+              >
+                <Avatar src={field.value?.uri} size="xl" />
+              </TouchableOpacity>
+            )}
+          />
           <Text color="error" className="max-w-32">
-            {validationErrors?.photo?.[0]}
+            {errors.photo?.message}
           </Text>
         </View>
       </View>
@@ -204,7 +206,6 @@ export function SignUpScreen() {
       </Text>
       <Text color="error">
         {errors.email?.message}
-        {validationErrors?.email?.[0]}
       </Text>
       <Label htmlFor="phone">Phone</Label>
       <Controller
@@ -229,7 +230,6 @@ export function SignUpScreen() {
       />
       <Text color="error">
         {errors.phone?.message}
-        {validationErrors?.phone?.[0]}
       </Text>
       <Label htmlFor="venmo">Venmo Username</Label>
       <Controller
@@ -255,7 +255,6 @@ export function SignUpScreen() {
       />
       <Text color="error">
         {errors.venmo?.message}
-        {validationErrors?.venmo?.[0]}
       </Text>
       <Label htmlFor="username-input">Username</Label>
       <Controller
@@ -281,19 +280,12 @@ export function SignUpScreen() {
       />
       <Text color="error">
         {errors.username?.message}
-        {validationErrors?.username?.[0]}
       </Text>
       <Label htmlFor="password-input">Password</Label>
       <Controller
         name="password"
-        rules={{
-          required: "Password is required",
-          minLength: {
-            value: 5,
-            message: "Password must be longer than 5 characters",
-          },
-        }}
         defaultValue=""
+        rules={{ required: "Password is required" }}
         control={control}
         render={({ field: { onChange, onBlur, value, ref } }) => (
           <PasswordInput
@@ -310,21 +302,10 @@ export function SignUpScreen() {
       />
       <Text color="error">
         {errors.password?.message}
-        {validationErrors?.password?.[0]}
       </Text>
       <Button isLoading={isSubmitting} onPress={onSubmit} className="my-4">
         Sign Up
       </Button>
-      {/* <Text>
-        <Text>By signing up, you agree to our </Text>
-        <Text onPress={() => Linking.openURL("https://ridebeep.app/privacy")}>
-          Privacy Policy
-        </Text>
-        <Text> and </Text>
-        <Text onPress={() => Linking.openURL("https://ridebeep.app/terms")}>
-          Terms of Service
-        </Text>
-      </Text> */}
     </KeyboardAwareScrollView>
   );
 }
