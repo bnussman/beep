@@ -29,8 +29,6 @@ export const locationRouter = router({
       // @todo add types for this API call
       const data = await result.json();
 
-      console.log(data)
-
       // this is the ETA in seconds
       const eta = data?.routes?.[0]?.duration as number | undefined;
 

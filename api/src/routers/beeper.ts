@@ -42,13 +42,13 @@ export const beeperRouter = router({
           emit.next(JSON.parse(message));
         };
         redisSubscriber.subscribe(`beeper-${id}`, onUpdatedQueue);
+        console.log("➕ Beeper subscribed", id);
         (async () => {
-          console.log("Queue subscribe init")
           const ride = await getBeeperQueue(id);
           emit.next(ride);
         })();
         return () => {
-          console.log("Queue unsubscribe")
+          console.log("➖ Beeper unsubscribed", id);
           redisSubscriber.unsubscribe(`beeper-${id}`, onUpdatedQueue);
         };
       });

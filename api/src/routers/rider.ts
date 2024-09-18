@@ -189,14 +189,18 @@ export const riderRouter = router({
       const onBeepUpdate = (message: string) => {
         emit.next(JSON.parse(message));
       };
+
+      console.log("➕ Rider subscribed", ctx.user.id);
+
       redisSubscriber.subscribe(`rider-${ctx.user.id}`, onBeepUpdate);
+
       (async () => {
         const ride = await getRidersCurrentRide(ctx.user.id);
-        console.log("-> Send current ride status on sub init")
         emit.next(ride);
       })();
+
       return () => {
-        console.log("-> Rider unsubscribed")
+        console.log("➖ Rider unsubscribed", ctx.user.id);
         redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, onBeepUpdate);
       };
     });
