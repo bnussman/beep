@@ -30,22 +30,28 @@ test('server side validation works', async ({ page }) => {
   await page.getByRole('button', { name: 'Sign Up' }).click();
 
   await page.getByLabel('First Name').click();
-  await page.getByLabel('First Name').fill('User');
+  await page.getByLabel('First Name').fill('6326573872465');
   await page.getByLabel('Last Name').click();
   await page.getByLabel('Last Name').fill(name);
   await page.getByLabel('Email', { exact: true }).click();
   await page.getByLabel('Email', { exact: true }).fill(`${name}@test.com`);
   await page.getByLabel('Phone').click();
-  await page.getByLabel('Phone').fill('7049969999');
+  await page.getByLabel('Phone').fill('bjhfebhjfe');
   await page.getByLabel('Venmo Username').click();
   await page.getByLabel('Venmo Username').fill('test');
   await page.getByLabel('Username', { exact: true }).click();
   await page.getByLabel('Username', { exact: true }).fill(name);
   await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('test12345');
+  await page.getByRole('textbox', { name: 'Password' }).fill('test');
+
+  const fileChooserPromise = page.waitForEvent('filechooser');
+  await page.getByLabel('profile photo').click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles('../app/assets/icon.png');
 
   await page.getByRole('button', { name: 'Sign Up' }).click();
 
-  await expect(page.getByText("you must use a .edu email")).toBeVisible();
-  await expect(page.getByText("You must add a profile picture")).toBeVisible();
+  await expect(page.getByText("Must only contain letters")).toBeVisible();
+  await expect(page.getByText("You must use a .edu email")).toBeVisible();
+  await expect(page.getByText("Invalid phone number")).toBeVisible();
 });
