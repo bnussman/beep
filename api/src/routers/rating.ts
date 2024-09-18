@@ -183,7 +183,9 @@ export const ratingRouter = router({
         .returning();
 
       if (!u.rating) {
-        await db.update(user).set({ rating: sql`${input.stars}` });
+        await db.update(user)
+          .set({ rating: sql`${input.stars}` })
+          .where(eq(user.id, u.id));
       } else {
         const numberOfRatingsForUserCount = await db
           .select({ count: count() })
@@ -194,7 +196,8 @@ export const ratingRouter = router({
 
         await db
           .update(user)
-          .set({ rating: sql`(("rating" * ${numberOfRatingsForUser}) + ${input.stars}) / (${numberOfRatingsForUser + 1})` });
+          .set({ rating: sql`(("rating" * ${numberOfRatingsForUser}) + ${input.stars}) / (${numberOfRatingsForUser + 1})` })
+          .where(eq(user.id, u.id));
       }
 
       if (u.pushToken)  {
