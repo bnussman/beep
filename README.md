@@ -59,6 +59,6 @@ pnpm dev
 ### 🌎 Services running for local development
 | Service    | URL                           |
 |------------|-------------------------------|
-| API        | http://localhost:3000/graphql |
+| API        | http://localhost:3000         |
 | Website    | http://localhost:5173         |
 | App        | http://localhost:8081         |
