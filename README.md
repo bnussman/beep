@@ -16,13 +16,13 @@ This is the monorepo for the Beep App. The *Beep App* is a full stack ride share
 ### Dependencies
 
 #### Required
-- Bun (the API runs on Bun)
-- Node.js (still working on migrating to Bun)
-- pnpm
-- Docker Compose
+- [Bun](https://bun.sh/docs/installation)
+- [Node.js](https://nodejs.org/) (I reccomend using [Volta](https://docs.volta.sh/guide/getting-started) to install)
+- [pnpm](https://pnpm.io/installation)
+- [Docker Compose](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 
 #### Optional
-- EAS CLI
+- [EAS CLI](https://github.com/expo/eas-cli?tab=readme-ov-file#installation) (only needed if you're going to build releases for the app)
 
 ### 💻 Running Locally
 
