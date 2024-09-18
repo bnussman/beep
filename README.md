@@ -48,7 +48,7 @@ docker-compose up -d
 
 Create the database schema (run this in the `api/` directory)
 ```
-pnpm db:create
+pnpm db:push
 ```
 
 To run the development envrionment use in the repo's root
