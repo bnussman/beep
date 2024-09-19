@@ -2,7 +2,7 @@ import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, desc, eq, or, sql } from "drizzle-orm";
-import { rating, user } from '../../drizzle/schema';
+import { rating, user, beep } from '../../drizzle/schema';
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 
@@ -152,9 +152,9 @@ export const ratingRouter = router({
     .input(
       z.object({
         stars: z.number().min(1).max(5),
-        message: z.string().optional(),
-        beepId: z.string(),
-        userId: z.string(),
+        message: z.string().max(255).optional(),
+        beepId: z.string().uuid(),
+        userId: z.string().uuid(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -166,6 +166,24 @@ export const ratingRouter = router({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "User not found"
+        });
+      }
+
+      const b = await db.query.beep.findFirst({
+        where: eq(beep.id, input.beepId)
+      });
+
+      if (!b) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Beep not found"
+        });
+      }
+
+      if (b.status !== 'complete') {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You can only leave a rating once the beep is complete"
         });
       }
 
