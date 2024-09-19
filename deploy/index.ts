@@ -84,7 +84,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
               image: apiImageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [
-                { containerPort: 3001 }
+                { containerPort: 3000 }
               ],
               envFrom: [
                 { configMapRef: { name: apiAppName }}
@@ -135,7 +135,7 @@ const apiService = new k8s.core.v1.Service(
     },
     spec: {
       type: "LoadBalancer",
-      ports: [{ port: 443, targetPort: 3001 }],
+      ports: [{ port: 443, targetPort: 3000 }],
       selector: { app: apiAppName }
     }
   },
