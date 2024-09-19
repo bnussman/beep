@@ -105,7 +105,11 @@ export const ratingRouter = router({
       const r = await db.query.rating.findFirst({
         where: eq(rating.id, input.ratingId),
         with: {
-          rated: true,
+          rated: {
+            columns: {
+              rating: true,
+            },
+          },
         },
       });
 
@@ -116,7 +120,7 @@ export const ratingRouter = router({
         });
       }
 
-      if (ctx.user.role === 'user' && r?.rater_id !== ctx.user.id) {
+      if (ctx.user.role === 'user' && r.rater_id !== ctx.user.id) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "You can't delete a rating that you didn't create."
