@@ -2,7 +2,7 @@ import React from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Pagination } from '../../../components/Pagination';
-import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr, useToast } from '@chakra-ui/react';
 import { TdUser } from '../../../components/TdUser';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Loading } from '../../../components/Loading';
@@ -34,9 +34,28 @@ export function Ratings() {
 
   const navigate = useNavigate({ from: ratingsListRoute.id });
 
-  const { data, isPending, error } = trpc.rating.ratings.useQuery({
+  const toast = useToast();
+
+  const { data, isLoading, error } = trpc.rating.ratings.useQuery({
     cursor: (page - 1) * pageLimit,
     show: pageLimit
+  });
+
+  const { mutate, isPending } = trpc.user.reconcileUserRatings.useMutation({
+    onSuccess(count) {
+      toast({
+        title: "Successfully reconciled user ratings",
+        description: `${count} user ratings were updated`,
+        status: 'success',
+      });
+    },
+    onError(error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        status: 'error',
+      });
+    }
   });
 
   const setCurrentPage = (page: number) => {
@@ -49,7 +68,16 @@ export function Ratings() {
 
   return (
     <Box>
-      <Heading>Ratings</Heading>
+      <Flex direction="row" justifyContent="space-between">
+        <Heading>Ratings</Heading>
+        <Button
+          isLoading={isPending}
+          onClick={() => mutate()}
+          colorScheme="yellow"
+        >
+          Reconcile
+        </Button>
+      </Flex>
       <Pagination
         resultCount={data?.count}
         limit={pageLimit}
@@ -86,7 +114,7 @@ export function Ratings() {
           </Tbody>
         </Table>
       </Box>
-      {isPending && <Loading />}
+      {isLoading && <Loading />}
       <Pagination
         resultCount={data?.count}
         limit={pageLimit}
