@@ -124,7 +124,7 @@ export function MainFindBeepScreen(props: Props) {
       case Status.ON_THE_WAY:
         return "Beeper is on their way to get you.";
       case Status.HERE:
-        return `Beeper is here to pick you up in a ${beep.beeper.cars?.[0].color} ${beep.beeper.cars?.[0].make} ${beep.beeper.cars?.[0].model}`;
+        return `Beeper is here to pick you up in a ${beep.beeper.cars?.[0].color.toLowerCase()} ${beep.beeper.cars?.[0].make} ${beep.beeper.cars?.[0].model}`;
       case Status.IN_PROGRESS:
         return "You are currently in the car with your beeper.";
       default:

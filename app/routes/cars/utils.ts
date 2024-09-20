@@ -1,16 +1,16 @@
 export const colors = [
-  "red",
-  "green",
-  "blue",
-  "purple",
-  "black",
-  "gray",
-  "pink",
-  "white",
-  "orange",
-  "tan",
-  "brown",
-  "silver",
+  "Red",
+  "Green",
+  "Blue",
+  "Purple",
+  "Black",
+  "Gray",
+  "Pink",
+  "White",
+  "Orange",
+  "Tan",
+  "Brown",
+  "Silver",
 ];
 
 export function capitalize(value: string) {
