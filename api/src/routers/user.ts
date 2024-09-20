@@ -1,9 +1,9 @@
 import { observable } from "@trpc/server/observable";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
-import { beep, car, user, verify_email } from '../../drizzle/schema';
+import { beep, car, rating, user, verify_email } from '../../drizzle/schema';
 import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
-import { count, eq, sql, like, and, or } from "drizzle-orm";
+import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
@@ -444,5 +444,27 @@ export const userRouter = router({
     .mutation(async ({ input }) => {
       // @todo properly handle deleting across all tables
       await db.delete(user).where(eq(user.id, input));
+    }),
+  reconcileUserRatings: adminProcedure
+    .mutation(async () => {
+      await db.update(user).set({ rating: null });
+
+      const ratings = await db
+        .select({
+          userId: rating.rated_id,
+          avgRating: avg(rating.stars)
+        })
+        .from(rating)
+        .groupBy(rating.rated_id);
+
+      if (!ratings) {
+        throw new Error("No ratings!");
+      }
+
+      for (const { userId, avgRating } of ratings) {
+        await db.update(user).set({ rating: avgRating }).where(eq(user.id, userId));
+      }
+
+      return ratings.length;
     })
 })

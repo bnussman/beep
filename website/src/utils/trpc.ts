@@ -16,7 +16,7 @@ function getUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
     return "https://apinext.staging.ridebeep.app";
   }
-  return 'http://localhost:3001';
+  return 'http://localhost:3000';
 }
 
 function getWSUrl() {
@@ -26,7 +26,7 @@ function getWSUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
     return "wss://apinext.staging.ridebeep.app";
   }
-  return "ws://localhost:3001/trpc";
+  return "ws://localhost:3000/trpc";
 }
 
 export function getAuthToken() {

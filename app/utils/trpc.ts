@@ -27,10 +27,10 @@ function getLocalIP() {
 const ip = getLocalIP();
 
 const wsUrl = __DEV__
-  ? `ws://${ip}:3001`
+  ? `ws://${ip}:3000`
   : "wss://apinext.ridebeep.app";
 const url = __DEV__
-  ? `http://${ip}:3001`
+  ? `http://${ip}:3000`
   : "https://apinext.ridebeep.app";
 
 export async function getAuthToken() {
