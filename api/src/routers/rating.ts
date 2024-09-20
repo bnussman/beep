@@ -211,8 +211,8 @@ export const ratingRouter = router({
       } else {
         const numberOfRatingsForUserCount = await db
           .select({ count: count() })
-          .from(user)
-          .where(eq(user.id, u.id));
+          .from(rating)
+          .where(eq(rating.rated_id, input.userId));
 
         const numberOfRatingsForUser = numberOfRatingsForUserCount[0].count;
 
