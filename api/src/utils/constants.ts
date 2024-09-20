@@ -1,5 +1,3 @@
-export const SENTRY_URL = process.env.SENTRY_URL;
-
 export const DB_HOST = process.env.DB_HOST || "localhost";
 
 export const DB_DATABASE = process.env.DB_DATABASE || "beep";
@@ -9,8 +7,6 @@ export const DB_PASSWORD = process.env.DB_PASSWORD || "beep";
 export const DB_USER = process.env.DB_USER || "beep";
 
 export const DB_URL = `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_DATABASE}`;
-
-export const DB_CA = process.env.DB_CA;
 
 export const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 
