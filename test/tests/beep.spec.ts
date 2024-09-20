@@ -106,3 +106,201 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await expect(riderPage.getByLabel("Group Size")).toBeVisible();
   await expect(beeperPage.getByText("Your queue is empty")).toBeVisible();
 });
+
+test("a beep with one driver and multiple riders", async ({ browser }) => {
+  const rider1Context = await browser.newContext();
+  const rider2Context = await browser.newContext();
+  const rider3Context = await browser.newContext();
+  const beeperContext = await browser.newContext();
+
+  const rider1Page = await rider1Context.newPage();
+  const rider2Page = await rider2Context.newPage();
+  const rider3Page = await rider3Context.newPage();
+  const beeperPage = await beeperContext.newPage();
+
+  await rider1Page.goto("/", { timeout: 200_000 });
+  await rider2Page.goto("/", { timeout: 200_000 });
+  await rider3Page.goto("/", { timeout: 200_000 });
+  await beeperPage.goto("/", { timeout: 200_000 });
+
+  const rider1 = await signup(rider1Page);
+  const rider2 = await signup(rider2Page);
+  const rider3 = await signup(rider3Page);
+  const beeper = await signup(beeperPage);
+
+  await beeperPage.getByRole("button").nth(0).click();
+  await beeperPage.getByText("Cars").click();
+  await beeperPage.getByLabel("Add a car").click();
+  await beeperPage.getByText("Make").click();
+  await beeperPage.getByText("Ford").click();
+  await beeperPage.getByText("Model").click();
+  await beeperPage.getByText("F150").click();
+  await beeperPage.getByText("Year").click();
+  await beeperPage.getByText("2021").click();
+  await beeperPage.getByText("Color").click();
+  await beeperPage.getByText("gray").click();
+
+  const fileChooserPromise = beeperPage.waitForEvent("filechooser");
+  await beeperPage.getByText("Attach a Photo").click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles("../app/assets/icon.png");
+
+  await beeperPage.getByRole("button", { name: "Add Car" }).click();
+  await beeperPage.getByRole("button").first().click(); // click drawer button
+  await beeperPage.getByText("Beep", { exact: true }).dispatchEvent("click"); // what the fuck
+  await beeperPage.getByRole("switch").first().check();
+
+  await rider1Page.getByLabel("Group Size").click();
+  await rider1Page.getByLabel("Group Size").fill("3");
+  await rider1Page.getByLabel("Pick Up Location").click();
+  await rider1Page.getByLabel("Pick Up Location").fill("The Cottages");
+  await rider1Page.getByLabel("Destination Location").click();
+  await rider1Page.getByLabel("Destination Location").fill("Boone Saloon");
+  await rider1Page.getByRole("button", { name: "Find Beep" }).click();
+
+  await rider1Page.getByText(beeper.name, { exact: false }).click();
+
+  await expect(rider1Page.getByText("Waiting on")).toBeVisible();
+  // await expect(riderPage.getByText(`User ${beeper.name}`)).toBeVisible();
+  await expect(rider1Page.getByText("to accept your request.")).toBeVisible();
+  await expect(
+    rider1Page.getByText("people are ahead of you in User's queue."),
+  ).toBeVisible();
+
+  await expect(beeperPage.getByText(rider1.name)).toBeVisible();
+  await expect(beeperPage.getByText("3", { exact: true })).toBeVisible();
+  await expect(beeperPage.getByText("The Cottages")).toBeVisible();
+  await expect(beeperPage.getByText("Boone Saloon")).toBeVisible();
+
+  // First beep
+
+  await beeperPage.getByText("Accept").click();
+
+  await expect(
+    rider1Page.getByText(
+      "Beeper is getting ready to come get you. They will be on the way soon.",
+    ),
+  ).toBeVisible();
+  await expect(rider1Page.getByText("Call")).toBeVisible();
+  await expect(rider1Page.getByText("Text")).toBeVisible();
+  await expect(rider1Page.getByText("Pay with Venmo")).toBeVisible();
+  await expect(rider1Page.getByText("Share Venmo")).toBeVisible();
+
+  await expect(beeperPage.getByText("Get Directions to Rider")).toBeVisible();
+  await expect(beeperPage.getByText("Cancel Beep")).toBeVisible();
+
+  await beeperPage.getByText("I'm on the way").click();
+
+  await expect(
+    rider1Page.getByText("Beeper is on their way to get you."),
+  ).toBeVisible();
+  await expect(rider1Page.getByText("ETA", { exact: true })).toBeVisible();
+
+  await beeperPage.getByText("I'm here").click();
+
+  await expect(beeperPage.getByText("Get Directions for Beep")).toBeVisible();
+  await expect(
+    beeperPage.getByText("Request Money from Rider with Venmo"),
+  ).toBeVisible();
+
+  await expect(
+    rider1Page.getByText('Beeper is here to pick you up in a gray Ford F150'),
+  ).toBeVisible();
+
+  await beeperPage.getByText("I'm now beeping this rider").click();
+
+  await expect(
+    rider1Page.getByText("You are currently in the car with your beeper."),
+  ).toBeVisible();
+
+  await beeperPage.getByText("Done beeping this rider").click();
+
+  await expect(rider1Page.getByLabel("Group Size")).toBeVisible();
+  await expect(beeperPage.getByText("Your queue is empty")).toBeVisible();
+
+  // Second beep
+
+  await rider2Page.getByLabel("Group Size").click();
+  await rider2Page.getByLabel("Group Size").fill("1");
+  await rider2Page.getByLabel("Pick Up Location").click();
+  await rider2Page.getByLabel("Pick Up Location").fill("Mountaineer Village");
+  await rider2Page.getByLabel("Destination Location").click();
+  await rider2Page.getByLabel("Destination Location").fill("Macado's");
+  await rider2Page.getByRole("button", { name: "Find Beep" }).click();
+
+  await rider2Page.getByText(beeper.name, { exact: false }).click();
+
+  await expect(rider2Page.getByText("Waiting on")).toBeVisible();
+  await expect(rider2Page.getByText("to accept your request.")).toBeVisible();
+
+  await expect(beeperPage.getByText(rider2.name)).toBeVisible();
+  await expect(beeperPage.getByText("1", { exact: true })).toBeVisible();
+  await expect(beeperPage.getByText("Mountaineer Village")).toBeVisible();
+  await expect(beeperPage.getByText("Macado's")).toBeVisible();
+
+  await beeperPage.getByText("Deny").click();
+  // ^Savage
+
+  await expect(beeperPage.getByText("Your queue is empty")).toBeVisible();
+
+  // Third beep
+
+  await rider3Page.getByLabel("Group Size").click();
+  await rider3Page.getByLabel("Group Size").fill("4");
+  await rider3Page.getByLabel("Pick Up Location").click();
+  await rider3Page.getByLabel("Pick Up Location").fill("East Village");
+  await rider3Page.getByLabel("Destination Location").click();
+  await rider3Page.getByLabel("Destination Location").fill("Black Cat");
+  await rider3Page.getByRole("button", { name: "Find Beep" }).click();
+
+  await rider3Page.getByText(beeper.name, { exact: false }).click();
+
+  await expect(rider3Page.getByText("Waiting on")).toBeVisible();
+  await expect(rider3Page.getByText("to accept your request.")).toBeVisible();
+
+  await expect(beeperPage.getByText(rider3.name)).toBeVisible();
+  await expect(beeperPage.getByText("4", { exact: true })).toBeVisible();
+  await expect(beeperPage.getByText("East Village")).toBeVisible();
+  await expect(beeperPage.getByText("Black Cat")).toBeVisible();
+  // ^Yum Yum😋🥺
+
+  await beeperPage.getByText("Accept").click();
+
+  await expect(rider3Page.getByText("Call")).toBeVisible();
+  await expect(rider3Page.getByText("Text")).toBeVisible();
+
+  await expect(
+    rider3Page.getByText(
+      "Beeper is getting ready to come get you. They will be on the way soon.",
+    ),
+  ).toBeVisible();
+
+  await expect(beeperPage.getByText("Get Directions to Rider")).toBeVisible();
+  await expect(beeperPage.getByText("Cancel Beep")).toBeVisible();
+
+  await beeperPage.getByText("I'm on the way").click();
+
+  await expect(rider3Page.getByText("ETA", { exact: true })).toBeVisible();
+
+  await beeperPage.getByText("I'm here").click();
+
+  await expect(beeperPage.getByText("Get Directions for Beep")).toBeVisible();
+  await expect(
+    beeperPage.getByText("Request Money from Rider with Venmo"),
+  ).toBeVisible();
+
+  await expect(
+    rider3Page.getByText('Beeper is here to pick you up in a gray Ford F150'),
+  ).toBeVisible();
+
+  await beeperPage.getByText("I'm now beeping this rider").click();
+
+  await expect(
+    rider3Page.getByText("You are currently in the car with your beeper."),
+  ).toBeVisible();
+
+  await beeperPage.getByText("Done beeping this rider").click()
+
+  await expect(rider3Page.getByLabel("Group Size")).toBeVisible();
+  await expect(beeperPage.getByText("Your queue is empty")).toBeVisible();
+});
