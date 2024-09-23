@@ -97,8 +97,8 @@ importers:
         specifier: 11.0.0-rc.528
         version: 11.0.0-rc.528(@tanstack/react-query@5.56.2(react@18.2.0))(@trpc/client@11.0.0-rc.528(@trpc/server@11.0.0-rc.528))(@trpc/server@11.0.0-rc.528)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       car-info:
-        specifier: ^0.1.7
-        version: 0.1.7
+        specifier: 0.1.8
+        version: 0.1.8
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -4257,8 +4257,8 @@ packages:
   caniuse-lite@1.0.30001651:
     resolution: {integrity: sha512-9Cf+Xv1jJNe1xPZLGuUXLNkE1BoDkqRqYyFJ9TDYSqhduqA4hu4oR9HluGoWYQC/aj8WHjsGVV+bwkh0+tegRg==}
 
-  car-info@0.1.7:
-    resolution: {integrity: sha512-qx2I/Oo2n8xC6lROWjDV4WwoUOShRMkSqn9eX5/ouqWzAx8DFsGBoiZUrfsb5UHTd8UOwaxW661XU/t6Yf6OTA==}
+  car-info@0.1.8:
+    resolution: {integrity: sha512-rwAm6PuEbVMqn5ed5TMcLXcR9wOLHECt7pZwEc1nUx3k7vQUrEmSA4tBUDjr1MJmRJFjDRQvApHvXLZ31LM0rw==}
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -13502,7 +13502,7 @@ snapshots:
 
   caniuse-lite@1.0.30001651: {}
 
-  car-info@0.1.7: {}
+  car-info@0.1.8: {}
 
   chalk@2.4.2:
     dependencies:
