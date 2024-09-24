@@ -102,7 +102,7 @@ export function SignUp() {
           <AlertIcon />
           <Text>
             By signing up, you agree to our{' '}
-            <ChakraLink as={Link} to="/terms">Terms of Service</ChakraLink>
+            <ChakraLink as={Link} preload="intent" to="/terms">Terms of Service</ChakraLink>
             {' '}and{' '}
             <ChakraLink as={Link} to="/privacy">Privacy Policy</ChakraLink>
           </Text>

@@ -1,4 +1,4 @@
-import { createRootRoute, createRouter } from "@tanstack/react-router";
+import { createRootRoute, createRoute, createRouter } from "@tanstack/react-router";
 import { beepsTableRoute } from "../components/BeepsTable";
 import { carsTableRoute } from "../components/CarsTable";
 import { paymentsTableRoute } from "../components/PaymentsTable";
@@ -15,7 +15,6 @@ import { loginRoute } from "../routes/Login";
 import { privacyRoute } from "../routes/Privacy";
 import { resetPasswordRoute } from "../routes/ResetPassword";
 import { signupRoute } from "../routes/SignUp";
-import { termsRoute } from "../routes/Terms";
 import { verifyAccountRoute } from "../routes/VerifyAccount";
 import { adminRoute } from "../routes/admin";
 import { feedbackRoute } from "../routes/admin/Feedback";
@@ -44,6 +43,11 @@ import { Beep } from "../App";
 export const rootRoute = createRootRoute({
   component: Beep,
 });
+
+export const termsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/terms',
+}).lazy(() => import('../routes/Terms').then(r => r.termsRoute))
 
 
 export const routeTree = rootRoute.addChildren([
