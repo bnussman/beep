@@ -19,6 +19,7 @@ export function Queue(props: Props) {
   const colorScheme = useColorScheme();
 
   const ref = useRef<BottomSheet>(null);
+  const drawerPositionIndex = useRef<number>(0);
 
   const hasUnacceptedBeep = beeps.some(beep => beep.status === Status.WAITING);
 
@@ -27,11 +28,22 @@ export function Queue(props: Props) {
   return (
     <BottomSheet
       ref={ref}
+      onChange={(index) => {
+        drawerPositionIndex.current = index;
+      }}
       snapPoints={["10%", "50%", "100%"]}
       backgroundStyle={colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}}
       handleIndicatorStyle={colorScheme === "dark" ? { backgroundColor: "white" } : {}}
     >
-      <Pressable className="px-4 pb-4 justify-between flex-row" onPress={() => ref.current?.expand()}>
+      <Pressable className="px-4 pb-4 justify-between flex-row" onPress={() => {
+        if (drawerPositionIndex.current > 0) {
+          ref.current?.snapToIndex(0);
+          drawerPositionIndex.current = 0;
+        } else {
+          ref.current?.snapToIndex(2);
+          drawerPositionIndex.current = 2;
+        }
+      }}>
         <Text size="3xl" weight="black">Queue</Text>
         {hasUnacceptedBeep && <View className="rounded-full bg-blue-400 w-4 h-4 animate-pulse" />}
       </Pressable>
