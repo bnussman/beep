@@ -16,7 +16,6 @@ import { trpc, queryClient, trpcClient, basicTrpcClient } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { isWeb } from "./utils/constants";
 import "./global.css";
-import { useAppState } from "./utils/useAppState";
 
 if (!isWeb) {
   Notifications.setNotificationCategoryAsync(
@@ -76,7 +75,6 @@ setupPurchase();
 function Beep() {
   const colorScheme = useColorScheme();
   const utils = trpc.useUtils();
-  const appState = useAppState();
   const { data: user, isLoading } = trpc.user.me.useQuery(undefined, {
     retry: false,
   });
@@ -84,7 +82,7 @@ function Beep() {
   useAutoUpdate();
 
   trpc.user.updates.useSubscription(undefined, {
-    enabled: user !== undefined && appState === 'active',
+    enabled: user !== undefined,
     onData(user) {
       utils.user.me.setData(undefined, user);
     }

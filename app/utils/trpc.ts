@@ -20,7 +20,7 @@ function getLocalIP() {
   try {
     return Constants.experienceUrl.split("//")[1].split(":")[0];
   } catch (error) {
-    return "192.168.1.65";
+    return "10.0.0.77";
   }
 }
 
@@ -28,10 +28,10 @@ const ip = getLocalIP();
 
 const wsUrl = __DEV__
   ? `ws://${ip}:3000`
-  : "wss://apinext.ridebeep.app";
+  : "wss://api.ridebeep.app";
 const url = __DEV__
   ? `http://${ip}:3000`
-  : "https://apinext.ridebeep.app";
+  : "https://api.ridebeep.app";
 
 export async function getAuthToken() {
   const tokens = await AsyncStorage.getItem("auth");

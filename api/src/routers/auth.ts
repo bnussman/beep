@@ -216,7 +216,7 @@ export const authRouter = router({
 
       if (existingForgotPassword) {
         if (existingForgotPassword.time.getTime() + 18000 * 1000 < Date.now()) {
-          // The user's existing forgot password request has expired.'
+          // The user's existing forgot password request has expired.
           // We will delete it, and proceed with creating a new one.
           await db.delete(forgot_password).where(eq(forgot_password.id, existingForgotPassword.id));
         } else {

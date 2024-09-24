@@ -117,7 +117,7 @@ export const carRouter = router({
         make: z.string(),
         model: z.string(),
         year: z.string(),
-        color: z.string(),
+        color: z.string().toLowerCase(),
         photo: z.instanceof(File),
       });
 

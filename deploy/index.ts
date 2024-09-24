@@ -32,7 +32,7 @@ const lkeCluster = new linode.LkeCluster(
   "cluster",
   {
     region: "us-southeast",
-    k8sVersion: "1.30",
+    k8sVersion: "1.31",
     controlPlane: {
       highAvailability: envName === "production",
     },
@@ -74,7 +74,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
     },
     spec: {
       selector: { matchLabels: { app: apiAppName } },
-      replicas: 10,
+      replicas: 5,
       template: {
         metadata: { labels: { app: apiAppName } },
         spec: {
@@ -130,7 +130,7 @@ const apiService = new k8s.core.v1.Service(
       annotations: {
         ['service.beta.kubernetes.io/linode-loadbalancer-default-protocol']: 'https',
         ['service.beta.kubernetes.io/linode-loadbalancer-check-type']: 'connection',
-        ['service.beta.kubernetes.io/linode-loadbalancer-port-443']: '{ "tls-secret-name": "cert", "protocol": "https" }'
+        ['service.beta.kubernetes.io/linode-loadbalancer-port-443']: `{ "tls-secret-name": "cert", "protocol": "https" }`
       }
     },
     spec: {

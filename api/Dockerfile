@@ -1,5 +1,4 @@
-# FROM oven/bun:alpine
-FROM oven/bun:1.1.4-alpine
+FROM oven/bun:alpine
 
 WORKDIR /usr/api
 

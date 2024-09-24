@@ -11,20 +11,20 @@ export const trpc = createTRPCReact<AppRouter>();
 
 function getUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "production") {
-    return "https://apinext.ridebeep.app";
+    return "https://api.ridebeep.app";
   }
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
-    return "https://apinext.staging.ridebeep.app";
+    return "https://api.staging.ridebeep.app";
   }
   return 'http://localhost:3000';
 }
 
 function getWSUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "production") {
-    return "wss://apinext.ridebeep.app";
+    return "wss://api.ridebeep.app";
   }
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
-    return "wss://apinext.staging.ridebeep.app";
+    return "wss://api.staging.ridebeep.app";
   }
   return "ws://localhost:3000/trpc";
 }

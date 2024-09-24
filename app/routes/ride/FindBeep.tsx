@@ -32,15 +32,12 @@ import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
-import { useAppState } from "@/utils/useAppState";
 
 type Props = StaticScreenProps<{ origin?: string, destination?: string, groupSize?: string } | undefined>;
 
 export function MainFindBeepScreen(props: Props) {
   const { user } = useUser();
   const { navigate } = useNavigation();
-
-  const appState = useAppState();
 
   const utils = trpc.useUtils();
   const { data: beep } = trpc.rider.currentRide.useQuery();
@@ -57,11 +54,11 @@ export function MainFindBeepScreen(props: Props) {
     onData(data) {
       utils.rider.currentRide.setData(undefined, data);
     },
-    enabled: Boolean(beep) && appState === 'active'
+    enabled: Boolean(beep)
   });
 
   trpc.rider.beeperLocationUpdates.useSubscription(beep?.beeper.id ?? '', {
-    enabled: isAcceptedBeep && appState === 'active',
+    enabled: isAcceptedBeep,
     onData(updatedLocation) {
       utils.rider.currentRide.setData(undefined, (prev) => {
         if (!prev) {
