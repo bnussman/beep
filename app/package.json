@@ -3,7 +3,7 @@
   "version": "2.13.0",
   "main": "index.js",
   "scripts": {
-    "dev": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css.web.css && EXPO_USE_FAST_RESOLVER=1 expo start --dev-client --web",
+    "dev": "EXPO_USE_FAST_RESOLVER=1 expo start --dev-client --web",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -37,7 +37,7 @@
     "expo-status-bar": "~1.12.1",
     "expo-task-manager": "~11.8.1",
     "expo-updates": "~0.25.11",
-    "nativewind": "4.0.36",
+    "nativewind": "4.1.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.51.3",
