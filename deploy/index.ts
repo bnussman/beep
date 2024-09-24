@@ -32,7 +32,7 @@ const lkeCluster = new linode.LkeCluster(
   "cluster",
   {
     region: "us-southeast",
-    k8sVersion: "1.30",
+    k8sVersion: "1.31",
     controlPlane: {
       highAvailability: envName === "production",
     },
