@@ -20,7 +20,7 @@ function getLocalIP() {
   try {
     return Constants.experienceUrl.split("//")[1].split(":")[0];
   } catch (error) {
-    return "10.0.0.77";
+    return "192.168.1.65";
   }
 }
 

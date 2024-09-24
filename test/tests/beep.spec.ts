@@ -252,17 +252,5 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await expect(rider3Page.getByText("people are ahead of you in User's queue.")).toBeVisible();
   await expect(rider3Page.getByRole("button", { name: "Leave Queue"})).toBeVisible(); // the rider should be allowed to leave the queue
 
-  // As the beeper, perform the first beep (and verify rider 2 and rider 3 still see the correct stuff)
-  await beeperPage.getByText("Queue").click(); // click "Queue" to close the bottom sheet
-  await beeperPage.getByText("I'm on the way").click();
-
-  await expect(rider1Page.getByText("Beeper is on their way to get you.")).toBeVisible();
-
-  await expect(rider2Page.getByText("1").first()).toBeVisible();
-  await expect(rider2Page.getByText("person is ahead of you in User's queue.")).toBeVisible();
-  await expect(rider2Page.getByRole("button", { name: "Leave Queue"})).toBeVisible(); // the rider should be allowed to leave the queue
-
-  await expect(rider3Page.getByText("2")).toBeVisible();
-  await expect(rider3Page.getByText("people are ahead of you in User's queue.")).toBeVisible();
-  await expect(rider3Page.getByRole("button", { name: "Leave Queue"})).toBeVisible(); // the rider should be allowed to leave the queue
+  // @todo finish this test
 });

@@ -28,8 +28,8 @@ export function Beep(props: Props) {
   return (
     <View className="h-full pb-8 gap-2">
       <View className="flex flex-row items-center justify-between">
-        <View>
-          <Text className="flex-shrink" weight="black" size="4xl">
+        <View className="flex-shrink">
+          <Text weight="black" size="3xl">
             {beep.rider.first} {beep.rider.last}
           </Text>
           {beep.rider.rating && (
