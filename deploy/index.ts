@@ -130,7 +130,7 @@ const apiService = new k8s.core.v1.Service(
       annotations: {
         ['service.beta.kubernetes.io/linode-loadbalancer-default-protocol']: 'https',
         ['service.beta.kubernetes.io/linode-loadbalancer-check-type']: 'connection',
-        ['service.beta.kubernetes.io/linode-loadbalancer-port-443']: `{ "tls-secret-name": "${secret.metadata.name}", "protocol": "https" }`
+        ['service.beta.kubernetes.io/linode-loadbalancer-port-443']: `{ "tls-secret-name": "cert", "protocol": "https" }`
       }
     },
     spec: {
