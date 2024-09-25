@@ -6,14 +6,7 @@ import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-
-export const inProgressBeep = or(
-  eq(beep.status, "waiting"),
-  eq(beep.status, "accepted"),
-  eq(beep.status, "here"),
-  eq(beep.status, "in_progress"),
-  eq(beep.status, "on_the_way"),
-);
+import { inProgressBeep } from "../utils/beep";
 
 export const beepRouter = router({
   beeps: authedProcedure

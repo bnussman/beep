@@ -3,12 +3,12 @@ import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
 import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-orm";
-import { inProgressBeep } from "./beep";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { redisSubscriber } from "../utils/redis";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
+import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -349,10 +349,10 @@ export const riderRouter = router({
       pubSub.publishRiderUpdate(ctx.user.id, null);
       pubSub.publishBeeperQueue(beeper.id, newQueue);
 
-      for (const entry of newQueue) {
+      for (const beep of newQueue) {
         pubSub.publishRiderUpdate(
           entry.rider_id,
-          { ...entry, position: getPositionInQueue(newQueue, entry), beeper }
+          getRiderBeepFromBeeperQueue(beep.rider_id, newQueue)
         );
       }
 
@@ -409,11 +409,7 @@ export async function getRidersCurrentRide(userId: string) {
       )
     );
 
-  const isAcceptedBeep =
-    b.status === "accepted" ||
-    b.status === "in_progress" ||
-    b.status === "here" ||
-    b.status === "on_the_way";
+  const isAcceptedBeep = getIsAcceptedBeep(b);
 
   return {
     ...b,
@@ -425,16 +421,6 @@ export async function getRidersCurrentRide(userId: string) {
     position: position[0].count
   };
 };
-
-type Beep = typeof beep.$inferSelect;
-
-export function getPositionInQueue(queue: Beep[], entry: Beep) {
-  return queue.filter((q) => q.start < entry.start && q.status !== "waiting").length;
-}
-
-export function getQueueSize(queue: Beep[]) {
-  return queue.filter(entry => !["waiting", "complete", "canceled", "denied"].includes(entry.status)).length
-}
 
 export function getDistance(
   lat1: number,

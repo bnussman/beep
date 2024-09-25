@@ -13,9 +13,9 @@ import { SendMailOptions } from "nodemailer";
 import { email } from "../utils/email";
 import * as Sentry from '@sentry/bun';
 import { sendNotification } from "../utils/notifications";
-import { inProgressBeep } from "./beep";
 import { pubSub } from "../utils/pubsub";
 import { isMobilePhone } from "validator";
+import { inProgressBeep } from "../utils/beep";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {

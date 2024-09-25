@@ -1,16 +1,15 @@
+import * as Sentry from '@sentry/bun';
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { inProgressBeep } from "./beep";
-import { and, asc, eq } from "drizzle-orm";
-import { beep, car, user } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
+import { beep, user } from "../../drizzle/schema";
 import { observable } from "@trpc/server/observable";
 import { redisSubscriber } from "../utils/redis";
-import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
-import { getPositionInQueue, getQueueSize } from "./rider";
-import * as Sentry from '@sentry/bun';
 import { pubSub } from "../utils/pubsub";
+import { getBeeperQueue, getQueueSize, getRiderBeepFromBeeperQueue } from "../utils/beep";
 
 export const beeperRouter = router({
   queue: authedProcedure
@@ -172,59 +171,10 @@ export const beeperRouter = router({
       for (const entry of newQueue) {
         pubSub.publishRiderUpdate(
           entry.rider_id,
-          { ...entry, position: getPositionInQueue(newQueue, entry) }
+          getRiderBeepFromBeeperQueue(entry.rider_id, newQueue)
         );
       }
 
       return newQueue;
     })
 });
-
-
-export async function getBeeperQueue(beeperId: string) {
-  const queue = await db.query.beep.findMany({
-    where: and(
-      inProgressBeep,
-      eq(beep.beeper_id, beeperId)
-    ),
-    orderBy: asc(beep.start),
-    with: {
-      beeper: {
-        columns: {
-          id: true,
-          first: true,
-          last: true,
-          photo: true,
-          location: true,
-          singlesRate: true,
-          groupRate: true,
-          capacity: true,
-          phone: true,
-          cashapp: true,
-          venmo: true,
-        },
-        with: {
-          cars: {
-            where: eq(car.default, true),
-            limit: 1,
-          },
-        }
-      },
-      rider: {
-        columns: {
-          id: true,
-          first: true,
-          last: true,
-          venmo: true,
-          cashapp: true,
-          phone: true,
-          photo: true,
-          rating: true,
-          pushToken: true,
-        },
-      },
-    }
-  });
-
-  return queue;
-}

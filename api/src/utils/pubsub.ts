@@ -1,9 +1,9 @@
 import { inferRouterOutputs } from "@trpc/server";
 import { AppRouter } from "..";
-import { getBeeperQueue } from "../routers/beeper";
 import { getRidersCurrentRide } from "../routers/rider";
 import { redis } from "./redis";
 import { Context } from "./trpc";
+import { getBeeperQueue } from "./beep";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
