@@ -3,7 +3,7 @@ import { AppRouter } from "..";
 import { getRidersCurrentRide } from "../routers/rider";
 import { redis } from "./redis";
 import { Context } from "./trpc";
-import { getBeeperQueue } from "./beep";
+import { getBeeperQueue, getProtectedBeeperQueue } from "./beep";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
@@ -12,7 +12,7 @@ export const pubSub = {
     redis.publish(`rider-${userId}`, JSON.stringify(beep));
   },
   publishBeeperQueue(userId: string, queue: Awaited<ReturnType<typeof getBeeperQueue>>) {
-    redis.publish(`beeper-${userId}`, JSON.stringify(queue));
+    redis.publish(`beeper-${userId}`, JSON.stringify(getProtectedBeeperQueue(queue)));
   },
   publishUserUpdate(userId: string, user: NonNullable<Context['user']>) {
     redis.publish(`user-${userId}`, JSON.stringify(user));

@@ -96,3 +96,14 @@ export function getIsAcceptedBeep(beep: { status: BeepStatus }) {
 export function getQueueSize(queue: { status: BeepStatus }[]) {
   return queue.filter(getIsAcceptedBeep).length
 }
+
+export function getProtectedBeeperQueue(queue: Awaited<ReturnType<typeof getBeeperQueue>>): Awaited<ReturnType<typeof getBeeperQueue>> {
+  for (const beep of queue) {
+    const isAcceptedBeep = getIsAcceptedBeep(beep);
+    if (!isAcceptedBeep) {
+      beep.rider.phone = '';
+      beep.rider.pushToken = null;
+    }
+  }
+  return queue;
+}

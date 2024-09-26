@@ -337,12 +337,18 @@ export const userRouter = router({
     }),
   user: authedProcedure
     .input(z.string())
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const u = await db.query.user.findFirst({
         where: eq(user.id, input),
         columns: {
           password: false,
           passwordType: false,
+          ...(ctx.user.role === "user" ? {
+            pushToken: false,
+            email: false,
+            phone: false,
+            location: false,
+          } : {})
         },
       });
 
