@@ -343,17 +343,18 @@ export const userRouter = router({
         columns: {
           password: false,
           passwordType: false,
-          ...(ctx.user.role === "user" ? {
-            pushToken: false,
-            email: false,
-            phone: false,
-            location: false,
-          } : {})
         },
       });
 
       if (!u) {
         throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (ctx.user.role === 'user' && input !== ctx.user.id) {
+        u.phone = '';
+        u.email = '';
+        u.pushToken = null;
+        u.location = null;
       }
 
       return u;
