@@ -380,7 +380,7 @@ export function MainFindBeepScreen(props: Props) {
             )}
           </View>
         </View>
-        {beep.position >= 1 && <LeaveButton beepersId={beep.beeper.id} />}
+        {(beep.position >= 1 || (beep.position === 0 && beep.status === 'accepted')) && <LeaveButton beepersId={beep.beeper.id} />}
       </View>
     );
   }
