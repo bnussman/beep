@@ -58,25 +58,17 @@ export function Login() {
               <PasswordInput onChange={(e) => setPassword(e.target.value)} />
             </FormControl>
             <HStack>
+              <Button as={Link} to="/password/forgot">
+                Forgot Password
+              </Button>
+              <Spacer />
               <Button
                 type="submit"
                 isLoading={isPending}
                 isDisabled={!username || !password}
-                textColor="white"
-                bgGradient='linear(to-r, #fb7ba2, #fce043)'
-                boxShadow="0 0 15px 2px #fb7ba2"
-                _hover={{
-                  bgGradient: 'linear(to-r, pink.200, yellow.200)',
-                }}
-                _active={{
-                  bgGradient: 'linear(to-r, pink.300, yellow.400)',
-                }}
+                colorScheme="yellow"
               >
                 Sign in
-              </Button>
-              <Spacer />
-              <Button as={Link} to="/password/forgot">
-                Forgot Password
               </Button>
             </HStack>
           </Stack>

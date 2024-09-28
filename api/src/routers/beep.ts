@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure, publicProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, desc, eq, or, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
@@ -183,4 +183,8 @@ export const beepRouter = router({
       pubSub.publishUserUpdate(beeper.id, u[0]);
       pubSub.publishBeeperQueue(beeper.id, []);
     }),
+    beepsCount: publicProcedure.query(async () => {
+      const beepsCount = await db.select({ count: count() }).from(beep);
+      return beepsCount[0].count;
+    })
 });

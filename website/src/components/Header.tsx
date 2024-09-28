@@ -38,7 +38,7 @@ export function Header() {
         </Heading>
       </HStack>
       <HStack spacing={[2, 3]}>
-        <Button variant="outline" onClick={toggleColorMode}>{colorMode === 'light' ? "🌙" : "☀️"}</Button>
+        <Button onClick={toggleColorMode}>{colorMode === 'light' ? "🌙" : "☀️"}</Button>
         <>
           {user?.role === "admin" && <AdminMenu />}
           {user && <UserMenu />}
@@ -53,15 +53,7 @@ export function Header() {
               <Button
                 as={Link}
                 to='/signup'
-                textColor="white"
-                bgGradient='linear(to-r, #fb7ba2, #fce043)'
-                boxShadow="0 0 15px 2px #fb7ba2"
-                _hover={{
-                  bgGradient: 'linear(to-r, pink.200, yellow.200)',
-                }}
-                _active={{
-                  bgGradient: 'linear(to-r, pink.300, yellow.400)',
-                }}
+
               >
                 Sign Up
               </Button>

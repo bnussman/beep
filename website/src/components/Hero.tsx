@@ -1,5 +1,6 @@
 import React from 'react';
 import { DownloadIcon } from '@chakra-ui/icons';
+import { Link } from '@tanstack/react-router';
 import {
   Box,
   Button,
@@ -7,8 +8,14 @@ import {
   Image,
   Heading,
   Stack,
+  StatGroup,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
 } from "@chakra-ui/react"
-import { Link } from '@tanstack/react-router';
+import { trpc } from '../utils/trpc';
 
 interface Props {
   title: string;
@@ -20,6 +27,9 @@ interface Props {
 
 export function Hero(props: Props) {
   const { title, subtitle, image, buttonText, buttonLink } = props;
+
+  const { data: userCount } = trpc.user.userCount.useQuery();
+  const { data: beepsCount } = trpc.beep.beepsCount.useQuery();
 
   return (
     <Flex
@@ -60,10 +70,21 @@ export function Hero(props: Props) {
           to={buttonLink}
           target="_blank"
           size="lg"
-          leftIcon={<DownloadIcon />}
+          rightIcon={<DownloadIcon />}
+          colorScheme="yellow"
         >
           {buttonText}
         </Button>
+        <StatGroup gap={8}>
+          <Stat>
+            <StatLabel>Users</StatLabel>
+            <StatNumber>{userCount ?? 0}</StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>Rides</StatLabel>
+            <StatNumber>{beepsCount ?? 0}</StatNumber>
+          </Stat>
+        </StatGroup>
       </Stack>
       <Box w={{ base: "80%", sm: "60%", md: "50%" }} mb={{ base: 12, md: 0 }}>
         <Image maxH="800px" src={image} />

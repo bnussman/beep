@@ -1,5 +1,5 @@
 import { observable } from "@trpc/server/observable";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure, publicProcedure, router } from "../utils/trpc";
 import { beep, car, rating, user, verify_email } from '../../drizzle/schema';
 import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
@@ -473,5 +473,9 @@ export const userRouter = router({
       }
 
       return ratings.length;
+    }),
+    userCount: publicProcedure.query(async () => {
+      const usersCount = await db.select({ count: count() }).from(user);
+      return usersCount[0].count;
     })
 })
