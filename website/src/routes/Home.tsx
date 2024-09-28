@@ -64,7 +64,7 @@ export function Home() {
             lineHeight={1.5}
             textAlign={["center", "center", "left", "left"]}
           >
-            A rideshare app for students. Ride or drive at your college or university today.
+            A rideshare app for students. Ride or drive at your university today.
           </Heading>
           <Button
             as={Link}
