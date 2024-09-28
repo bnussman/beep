@@ -114,11 +114,11 @@ export function Home() {
           <StatGroup gap={12} mt={8}>
             <Stat>
               <StatLabel>Users</StatLabel>
-              <StatNumber>{userCount ?? 0}</StatNumber>
+              <StatNumber>{(userCount ?? 0).toLocaleString()}</StatNumber>
             </Stat>
             <Stat>
               <StatLabel>Rides</StatLabel>
-              <StatNumber>{beepsCount ?? 0}</StatNumber>
+              <StatNumber>{(beepsCount ?? 0).toLocaleString()}</StatNumber>
             </Stat>
           </StatGroup>
         </Stack>
