@@ -38,7 +38,6 @@ export function UserMenu() {
     <Menu>
       <MenuButton
         as={Button}
-        variant="outline"
         leftIcon={
           <Avatar
             size='xs'

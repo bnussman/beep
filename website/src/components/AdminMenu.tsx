@@ -20,7 +20,7 @@ import { Link } from "@tanstack/react-router";
 export function AdminMenu() {
   return (
     <Menu>
-      <Button as={MenuButton} variant="outline">
+      <Button as={MenuButton}>
         Admin
       </Button>
       <MenuList>
