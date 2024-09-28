@@ -187,7 +187,7 @@ export function Cars() {
       }
       ListEmptyComponent={
         <>
-          <Text weight="black" key="title">
+          <Text weight="black" key="title" size="3xl">
             No Cars
           </Text>
           <Text key="message">You have no cars on your account!</Text>

@@ -57,7 +57,7 @@ export function BeepsScreen() {
   if (isLoading) {
     return (
       <View className="h-full items-center justify-center">
-        <ActivityIndicator />
+        <ActivityIndicator size="large" />
       </View >
     );
   }
