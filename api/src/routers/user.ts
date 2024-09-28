@@ -477,5 +477,16 @@ export const userRouter = router({
     userCount: publicProcedure.query(async () => {
       const usersCount = await db.select({ count: count() }).from(user);
       return usersCount[0].count;
+    }),
+    numberOfUsersSubscription: publicProcedure.subscription(() => {
+      return observable<'increment' | 'decrement'>((emit) => {
+        const onUserUpdate = (message: string) => {
+          emit.next(message as 'increment' | 'decrement');
+        };
+        redisSubscriber.subscribe("user-count", onUserUpdate);
+        return () => {
+          redisSubscriber.unsubscribe(`user-count`, onUserUpdate);
+        }
+      });
     })
 })

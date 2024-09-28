@@ -28,8 +28,43 @@ export const indexRoute = createRoute({
 
 export function Home() {
   const { colorMode } = useColorMode();
+  const utils = trpc.useUtils();
   const { data: userCount } = trpc.user.userCount.useQuery();
   const { data: beepsCount } = trpc.beep.beepsCount.useQuery();
+
+  trpc.user.numberOfUsersSubscription.useSubscription(undefined, {
+    onData(action) {
+      utils.user.userCount.setData(undefined, (prev) => {
+        if (prev === undefined) {
+          return;
+        }
+        if (action === "increment") {
+          return prev + 1;
+        }
+        if (action === "decrement") {
+          return prev - 1;
+        }
+        return prev;
+      });
+    }
+  });
+
+  trpc.beep.numberOfBeepsSubscription.useSubscription(undefined, {
+    onData(action) {
+      utils.beep.beepsCount.setData(undefined, (prev) => {
+        if (prev === undefined) {
+          return;
+        }
+        if (action === "increment") {
+          return prev + 1;
+        }
+        if (action === "decrement") {
+          return prev - 1;
+        }
+        return prev;
+      });
+    }
+  });
 
   return (
     <Container maxW="container.xl">

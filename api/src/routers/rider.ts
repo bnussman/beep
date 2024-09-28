@@ -5,7 +5,7 @@ import { beep, car, payment, user } from "../../drizzle/schema";
 import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
-import { redisSubscriber } from "../utils/redis";
+import { redis, redisSubscriber } from "../utils/redis";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
@@ -163,6 +163,8 @@ export const riderRouter = router({
           data: { id: newBeep.id }
         });
       }
+
+      redis.publish("beep-count", "increment");
 
       return {
         ...newBeep,

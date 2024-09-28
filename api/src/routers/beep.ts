@@ -7,6 +7,8 @@ import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { inProgressBeep } from "../utils/beep";
+import { observable } from "@trpc/server/observable";
+import { redisSubscriber } from "../utils/redis";
 
 export const beepRouter = router({
   beeps: authedProcedure
@@ -186,5 +188,16 @@ export const beepRouter = router({
     beepsCount: publicProcedure.query(async () => {
       const beepsCount = await db.select({ count: count() }).from(beep);
       return beepsCount[0].count;
+    }),
+    numberOfBeepsSubscription: publicProcedure.subscription(() => {
+      return observable<'increment' | 'decrement'>((emit) => {
+        const onUserUpdate = (message: string) => {
+          emit.next(message as 'increment' | 'decrement');
+        };
+        redisSubscriber.subscribe("beep-count", onUserUpdate);
+        return () => {
+          redisSubscriber.unsubscribe("beep-count", onUserUpdate);
+        }
+      });
     })
 });
