@@ -334,7 +334,7 @@ export const authRouter = router({
       if (!verifyAccountEntry)  {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: ''
+          message: 'Unable to find that email verification entry.'
         });
       }
 
