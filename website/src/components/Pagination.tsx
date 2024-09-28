@@ -114,7 +114,7 @@ export function Pagination({
     <Flex alignItems="center" mb={2} mt={2} flexWrap="wrap">
       {!!resultCount &&
         <Text noOfLines={1}>
-          {`Showing ${(currentPage - 1) * limit + 1} to ${currentPage * limit <= resultCount ? currentPage * limit : resultCount}	of ${resultCount} results`}
+          {`Showing ${(currentPage - 1) * limit + 1} to ${currentPage * limit <= resultCount ? currentPage * limit : resultCount}	of ${resultCount.toLocaleString()} results`}
         </Text>
       }
       <Spacer />
