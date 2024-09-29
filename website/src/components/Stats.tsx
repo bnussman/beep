@@ -45,11 +45,11 @@ export function Stats() {
     <StatGroup gap={12} mt={8}>
       <Stat>
         <StatLabel>Users</StatLabel>
-        <StatNumber>{userCount === undefined ? <Skeleton w="50px" height="32px" /> : userCount.toLocaleString()}</StatNumber>
+        <StatNumber minWidth="125px">{userCount === undefined ? <Skeleton w="100%" height="32px" /> : userCount.toLocaleString()}</StatNumber>
       </Stat>
       <Stat>
         <StatLabel>Rides</StatLabel>
-        <StatNumber>{beepCount === undefined ? <Skeleton w="50px" height="32px" /> : beepCount.toLocaleString()}</StatNumber>
+        <StatNumber minWidth="125px">{beepCount === undefined ? <Skeleton w="100%" height="32px" /> : beepCount.toLocaleString()}</StatNumber>
       </Stat>
     </StatGroup>
   );
