@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Pagination } from './Pagination';
-import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
+import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text, Spinner } from '@chakra-ui/react';
 import { TdUser } from './TdUser';
 import { Indicator } from './Indicator';
 import { beepStatusMap } from '../routes/admin/beeps';
@@ -27,7 +27,7 @@ export function BeepsTable() {
 
   const { userId } = beepsTableRoute.useParams();
 
-  const { data } = trpc.beep.beeps.useQuery({
+  const { data, isLoading } = trpc.beep.beeps.useQuery({
     userId,
     cursor: (currentPage - 1) * pageLimit,
     show: pageLimit
@@ -37,6 +37,14 @@ export function BeepsTable() {
     return (
       <Center h="100px">
         This user has no ride history.
+      </Center>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Center h="100px">
+        <Spinner size="xl" />
       </Center>
     );
   }
