@@ -1,4 +1,4 @@
-import { pgTable, integer, text, varchar, timestamp, unique, boolean, numeric, index, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, integer, varchar, timestamp, unique, boolean, numeric, index, pgEnum } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm/relations";
 import type { CustomTypeValues } from "drizzle-orm/pg-core";
 import { customType } from "drizzle-orm/pg-core";
