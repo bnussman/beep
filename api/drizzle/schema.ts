@@ -47,6 +47,11 @@ export const userRoleEnum = pgEnum('user_role', [
   'admin',
 ]);
 
+export const userPasswordTypeEnum = pgEnum('user_password_type', [
+  'sha256',
+  'bcrypt',
+]);
+
 export const user = pgTable("user", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	first: varchar("first", { length: 255 }).notNull(),
@@ -57,7 +62,7 @@ export const user = pgTable("user", {
 	venmo: varchar("venmo", { length: 255 }),
 	cashapp: varchar("cashapp", { length: 255 }),
 	password: varchar("password", { length: 255 }).notNull(),
-	passwordType: text("password_type").default('sha256').notNull(),
+	passwordType: userPasswordTypeEnum("password_type").default('bcrypt').notNull(),
 	isBeeping: boolean("is_beeping").default(false).notNull(),
 	isEmailVerified: boolean("is_email_verified").default(false).notNull(),
 	isStudent: boolean("is_student").default(false).notNull(),
