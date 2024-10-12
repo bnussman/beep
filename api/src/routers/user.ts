@@ -24,7 +24,7 @@ export const userRouter = router({
   updates: authedProcedure
     .input(z.string().optional())
     .subscription(({ ctx, input }) => {
-      if (ctx.user.role === 'user' && input !== ctx.user.id) {
+      if (ctx.user.role === 'user' && input && input !== ctx.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "You don't have permission to subscrbe to another user's user updates." });
       }
 
