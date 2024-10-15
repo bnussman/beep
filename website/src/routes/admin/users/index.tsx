@@ -1,14 +1,29 @@
-import React from 'react'
-import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, InputGroup, InputLeftElement, Input, InputRightElement, Spinner } from "@chakra-ui/react"
-import { Indicator } from '../../../components/Indicator';
-import { Pagination } from '../../../components/Pagination';
-import { TdUser } from '../../../components/TdUser';
-import { Error } from '../../../components/Error';
-import { SearchIcon } from '@chakra-ui/icons';
-import { Loading } from '../../../components/Loading';
-import { createRoute, useNavigate } from '@tanstack/react-router';
-import { adminRoute } from '..';
-import { trpc } from '../../../utils/trpc';
+import React from "react";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Heading,
+  Box,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  InputRightElement,
+  Spinner,
+} from "@chakra-ui/react";
+import { Indicator } from "../../../components/Indicator";
+import { Pagination } from "../../../components/Pagination";
+import { TdUser } from "../../../components/TdUser";
+import { Error } from "../../../components/Error";
+import { SearchIcon } from "@chakra-ui/icons";
+import { Loading } from "../../../components/Loading";
+import { createRoute, useNavigate } from "@tanstack/react-router";
+import { adminRoute } from "..";
+import { trpc } from "../../../utils/trpc";
+import { keepPreviousData } from "@tanstack/react-query";
 
 export interface PaginationSearchParams {
   page: number;
@@ -16,19 +31,19 @@ export interface PaginationSearchParams {
 }
 
 export const usersRoute = createRoute({
-  path: 'users',
+  path: "users",
   getParentRoute: () => adminRoute,
 });
 
 export const usersListRoute = createRoute({
   component: Users,
-  path: '/',
+  path: "/",
   getParentRoute: () => usersRoute,
   validateSearch: (search: Record<string, string>): PaginationSearchParams => {
     return {
       page: Number(search?.page ?? 1),
       query: search.query ? search.query : undefined,
-    }
+    };
   },
 });
 
@@ -37,25 +52,28 @@ export function Users() {
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
 
-  const { isLoading, isFetching, error, data } = trpc.user.users.useQuery({
-    offset: (page - 1) * pageLimit,
-    show: pageLimit,
-    query: !query ? undefined : query
-  });
+  const { isLoading, isFetching, error, data } = trpc.user.users.useQuery(
+    {
+      offset: (page - 1) * pageLimit,
+      show: pageLimit,
+      query: !query ? undefined : query,
+    },
+    { placeholderData: keepPreviousData },
+  );
 
   const setCurrentPage = (page: number) => {
-    navigate({ search: (prev) => ({ ...prev, page }) })
+    navigate({ search: (prev) => ({ ...prev, page }) });
   };
 
   const setQuery = (query: string) => {
     if (!query) {
       navigate({
-        search: (prev) => ({ ...prev, query: undefined })
-      })
+        search: (prev) => ({ ...prev, query: undefined }),
+      });
     } else {
       navigate({
-        search: (prev) => ({ ...prev, query })
-      })
+        search: (prev) => ({ ...prev, query }),
+      });
     }
   };
 
@@ -82,7 +100,7 @@ export function Users() {
           value={query ?? ""}
           onChange={(e) => setQuery(e.target.value)}
         />
-        {(query && isFetching) && (
+        {query && isFetching && (
           <InputRightElement>
             <Spinner />
           </InputRightElement>
@@ -104,9 +122,15 @@ export function Users() {
               <Tr key={user.id}>
                 <TdUser user={user} />
                 <Td>{user.email}</Td>
-                <Td><Indicator color={user.isStudent ? 'green' : 'red'} /></Td>
-                <Td><Indicator color={user.isEmailVerified ? "green" : 'red'} /></Td>
-                <Td><Indicator color={user.isBeeping ? 'green' : 'red'} /></Td>
+                <Td>
+                  <Indicator color={user.isStudent ? "green" : "red"} />
+                </Td>
+                <Td>
+                  <Indicator color={user.isEmailVerified ? "green" : "red"} />
+                </Td>
+                <Td>
+                  <Indicator color={user.isBeeping ? "green" : "red"} />
+                </Td>
               </Tr>
             ))}
           </Tbody>
