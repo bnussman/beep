@@ -1,26 +1,40 @@
-import React, { useState } from 'react'
-import { Pagination } from '../../../components/Pagination';
-import { Box, Heading, IconButton, Image, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from '@chakra-ui/react';
-import { TdUser } from '../../../components/TdUser';
-import { Loading } from '../../../components/Loading';
-import { Error } from '../../../components/Error';
-import { Indicator } from '../../../components/Indicator';
-import { PhotoDialog } from '../../../components/PhotoDialog';
-import { DeleteIcon } from '@chakra-ui/icons';
-import { DeleteCarDialog } from './DeleteCarDialog';
-import { createRoute, useNavigate } from '@tanstack/react-router';
-import { adminRoute } from '..';
-import { trpc } from '../../../utils/trpc';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import React, { useState } from "react";
+import { Pagination } from "../../../components/Pagination";
+import {
+  Box,
+  Heading,
+  IconButton,
+  Image,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { TdUser } from "../../../components/TdUser";
+import { Loading } from "../../../components/Loading";
+import { Error } from "../../../components/Error";
+import { Indicator } from "../../../components/Indicator";
+import { PhotoDialog } from "../../../components/PhotoDialog";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteCarDialog } from "./DeleteCarDialog";
+import { createRoute, useNavigate } from "@tanstack/react-router";
+import { adminRoute } from "..";
+import { trpc } from "../../../utils/trpc";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 
 export const carsRoute = createRoute({
   component: Cars,
-  path: '/cars',
+  path: "/cars",
   getParentRoute: () => adminRoute,
-  validateSearch: (search: Record<string, string>) => ({ page: Number(search?.page ?? 1)})
+  validateSearch: (search: Record<string, string>) => ({
+    page: Number(search?.page ?? 1),
+  }),
 });
 
 export function Cars() {
@@ -33,20 +47,20 @@ export function Cars() {
   const {
     isOpen: isPhotoOpen,
     onOpen: onPhotoOpen,
-    onClose: onPhotoClose
+    onClose: onPhotoClose,
   } = useDisclosure();
 
   const {
     isOpen: isDeleteOpen,
     onOpen: onDeleteOpen,
-    onClose: onDeleteClose
+    onClose: onDeleteClose,
   } = useDisclosure();
 
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
   const { data, isLoading, error } = trpc.car.cars.useQuery({
     cursor: (page - 1) * pageLimit,
-    show: pageLimit
+    show: pageLimit,
   });
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
@@ -54,7 +68,6 @@ export function Cars() {
   const setCurrentPage = (page: number) => {
     navigate({ search: { page: page } });
   };
-
 
   const onDelete = (id: string) => {
     setSelectedCarId(id);
@@ -107,7 +120,13 @@ export function Cars() {
                   <Image src={car.photo} borderRadius="lg" maxH="56px" />
                 </Td>
                 <Td>
-                  <IconButton icon={<DeleteIcon />} aria-label={`Delete car ${car.id} action menu`} size="sm" colorScheme="red" onClick={() => onDelete(car.id)} />
+                  <IconButton
+                    icon={<DeleteIcon />}
+                    aria-label={`Delete car ${car.id}`}
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => onDelete(car.id)}
+                  />
                 </Td>
               </Tr>
             ))}
