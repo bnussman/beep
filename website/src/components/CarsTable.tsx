@@ -1,10 +1,21 @@
 import React, { useState } from "react";
 import { Pagination } from "./Pagination";
+import { Loading } from "./Loading";
+import { Indicator } from "./Indicator";
+import { createRoute } from "@tanstack/react-router";
+import { userRoute } from "../routes/admin/users/User";
+import { trpc } from "../utils/trpc";
+import { DeleteCarDialog } from "../routes/admin/cars/DeleteCarDialog";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
   Center,
   IconButton,
   Image,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Table,
   Tbody,
   Td,
@@ -13,16 +24,10 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Loading } from "./Loading";
-import { Indicator } from "./Indicator";
-import { createRoute } from "@tanstack/react-router";
-import { userRoute } from "../routes/admin/users/User";
-import { trpc } from "../utils/trpc";
+
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { DeleteCarDialog } from "../routes/admin/cars/DeleteCarDialog";
-import { DeleteIcon } from "@chakra-ui/icons";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -46,10 +51,18 @@ export function CarsTable() {
     onClose: onDeleteClose,
   } = useDisclosure();
 
+  const utils = trpc.useUtils();
+
   const { data, isLoading } = trpc.car.cars.useQuery({
     userId,
     cursor: (currentPage - 1) * pageLimit,
     show: pageLimit,
+  });
+
+  const { mutateAsync: updateCar } = trpc.car.updateCar.useMutation({
+    onSuccess() {
+      utils.car.cars.invalidate();
+    },
   });
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
@@ -106,13 +119,28 @@ export function CarsTable() {
                   <Indicator color={car.default ? "green" : "red"} />
                 </Td>
                 <Td>
-                  <IconButton
-                    icon={<DeleteIcon />}
-                    aria-label={`Delete car ${car.id} action menu`}
-                    size="sm"
-                    colorScheme="red"
-                    onClick={() => onDelete(car.id)}
-                  />
+                  <Menu isLazy>
+                    <MenuButton
+                      as={IconButton}
+                      icon={<HamburgerIcon />}
+                      size="sm"
+                      aria-label={`Action menu for car ${car.id}`}
+                    >
+                      Actions
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem
+                        onClick={() =>
+                          updateCar({ carId: car.id, data: { default: true } })
+                        }
+                      >
+                        Make Default
+                      </MenuItem>
+                      <MenuItem onClick={() => onDelete(car.id)}>
+                        Delete
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
                 </Td>
               </Tr>
             ))}
