@@ -16,9 +16,6 @@ jobs:
       - name: Install PostgreSQL client
         run: sudo apt install -y postgresql-client
 
-      - name: Set Timestamp
-        run: echo "TIMESTAMP=$(date -u +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
-
       - name: Dump database
         run: pg_dump postgresql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@${{ env.DB_HOST_PUBLIC }}:5432/beep | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
         env:
