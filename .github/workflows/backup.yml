@@ -16,15 +16,18 @@ jobs:
       - name: Install PostgreSQL client
         run: sudo apt install -y postgresql-client jq s3cmd
 
+      - name: Filename
+        run: echo "file_name=$(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz" >> $GITHUB_ENV
+
       - name: Dump database
-        run: pg_dump postgresql://${{ env.DB_USER }}:$( printf %s '${{ env.DB_PASSWORD }}'| jq -sRr @uri)@${{ env.DB_HOST_PUBLIC }}:5432/beep?sslmode=require | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
+        run: pg_dump postgresql://${{ env.DB_USER }}:$( printf %s '${{ env.DB_PASSWORD }}'| jq -sRr @uri)@${{ env.DB_HOST_PUBLIC }}:5432/beep?sslmode=require | gzip > ${{ env.file_name }}
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST_PUBLIC: ${{ secrets.DB_HOST_PUBLIC }}
 
       - name: Upload backup
-        run: s3cmd put --access_key=${{ env.S3_BACKUPS_ACCESS_KEY }} --secret_key=${{ env.S3_BACKUPS_SECRET_KEY }} --host=https://us-lax-1.linodeobjects.com s3://beep-backups/
+        run: s3cmd put --access_key=${{ env.S3_BACKUPS_ACCESS_KEY }} --secret_key=${{ env.S3_BACKUPS_SECRET_KEY }} --host=https://us-lax-1.linodeobjects.com ${{ env.file_name }} s3://beep-backups/
         env:
           S3_BACKUPS_ACCESS_KEY: ${{ secrets.S3_BACKUPS_ACCESS_KEY }}
           S3_BACKUPS_SECRET_KEY: ${{ secrets.BACKUPS_SECRET_KEY }}
