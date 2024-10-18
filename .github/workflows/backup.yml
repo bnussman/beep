@@ -23,5 +23,8 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST_PUBLIC: ${{ secrets.DB_HOST_PUBLIC }}
 
+      - name: Set permissions
+        run: chmod 0600 ~/.pgpass
+
       - name: Dump database
         run: pg_dump | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
