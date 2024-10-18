@@ -16,15 +16,9 @@ jobs:
       - name: Install PostgreSQL client
         run: sudo apt install -y postgresql-client
 
-      - name: Setup credentials
-        run: echo '${{ env.DB_HOST_PUBLIC }}:5432:beep:${{ env.DB_USER }}:${{ env.DB_PASSWORD }}' > ~/.pgpass
+      - name: Dump database
+        run: pg_dump postgresql://${{ env.DB_USER }}:$(${{ env.DB_PASSWORD }} | jq -sRr @uri)@${{ env.DB_HOST_PUBLIC }}:5432/beep | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST_PUBLIC: ${{ secrets.DB_HOST_PUBLIC }}
-
-      - name: Set permissions
-        run: chmod 0600 ~/.pgpass
-
-      - name: Dump database
-        run: pg_dump | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
