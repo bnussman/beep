@@ -24,7 +24,7 @@ jobs:
           DB_HOST_PUBLIC: ${{ secrets.DB_HOST_PUBLIC }}
 
       - name: Upload backup
-        run: s3cmd put --access_key=${{ env.S3_BACKUPS_ACCESS_KEY }} --secret-key=${{ env.S3_BACKUPS_SECRET_KEY }} --host=https://us-lax-1.linodeobjects.com s3://beep-backups/
+        run: s3cmd put --access_key=${{ env.S3_BACKUPS_ACCESS_KEY }} --secret_key=${{ env.S3_BACKUPS_SECRET_KEY }} --host=https://us-lax-1.linodeobjects.com s3://beep-backups/
         env:
           S3_BACKUPS_ACCESS_KEY: ${{ secrets.S3_BACKUPS_ACCESS_KEY }}
           S3_BACKUPS_SECRET_KEY: ${{ secrets.BACKUPS_SECRET_KEY }}
