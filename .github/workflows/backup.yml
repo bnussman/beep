@@ -17,5 +17,4 @@ jobs:
         run: echo "TIMESTAMP=$(date -u +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
 
       - name: Dump database
-        run: |
-          /usr/lib/postgresql/16/bin/pg_dump ${{ secrets[format('{0}_BACKUP_DB_CONNECTION', matrix.prefix)] }} | gzip > "${TIMESTAMP}.sql.gz"
+        run: pg_dump --help
