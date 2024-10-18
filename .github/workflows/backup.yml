@@ -18,7 +18,7 @@ jobs:
 
       - name: Filename
         run: |
-          echo "file_name=$(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz" >> $GITHUB_ENV
+          echo "file_name=$(TZ=":America/New_York" date +'%B-%d-%Y-%I-%M-%S-%p').sql.gz" >> $GITHUB_ENV
           echo "${{ env.file_name }}"
 
       - name: Dump database
