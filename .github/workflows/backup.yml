@@ -14,10 +14,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install PostgreSQL client
-        run: sudo apt install -y postgresql-client jq
+        run: sudo apt install -y postgresql-client recode
 
       - name: Dump database
-        run: pg_dump postgresql://${{ env.DB_USER }}:$(echo "${{ env.DB_PASSWORD }}" | jq -sRr @uri)@${{ env.DB_HOST_PUBLIC }}:5432/beep?sslmode=require | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
+        run: pg_dump postgresql://${{ env.DB_USER }}:$(echo "${{ env.DB_PASSWORD }}" | recode ascii..html)@${{ env.DB_HOST_PUBLIC }}:5432/beep?sslmode=require | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
