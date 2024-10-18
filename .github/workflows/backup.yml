@@ -7,7 +7,7 @@ on:
 
 jobs:
   backup-and-upload:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     environment: production
     steps:
       - name: Checkout code
