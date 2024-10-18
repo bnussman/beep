@@ -20,7 +20,7 @@ jobs:
         run: echo "TIMESTAMP=$(date -u +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
 
       - name: Dump database
-        run: pg_dump postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST_PUBLIC:5432/beep | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
+        run: pg_dump postgresql://${{ DB_USER }}:${{ DB_PASSWORD }}@${{ DB_HOST_PUBLIC }}:5432/beep | gzip > $(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
