@@ -1,0 +1,21 @@
+on:
+  schedule:
+    - cron: "33 8 * * *" # Run at 8:33am UTC every day (Will be the middle of the night in the US)
+  workflow_dispatch: # Allows manual triggering from GitHub UI
+
+jobs:
+  backup-and-upload:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install PostgreSQL client
+        run: sudo apt install -y postgresql-client
+
+      - name: Set Timestamp
+        run: echo "TIMESTAMP=$(date -u +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
+
+      - name: Dump database
+        run: |
+          /usr/lib/postgresql/16/bin/pg_dump ${{ secrets[format('{0}_BACKUP_DB_CONNECTION', matrix.prefix)] }} | gzip > "${TIMESTAMP}.sql.gz"
