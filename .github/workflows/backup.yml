@@ -17,7 +17,9 @@ jobs:
         run: sudo apt install -y postgresql-client jq s3cmd
 
       - name: Filename
-        run: echo "file_name=$(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz" >> $GITHUB_ENV
+        run: |
+          echo "file_name=$(date -u +'%Y-%m-%d-%H-%M-%S').sql.gz" >> $GITHUB_ENV
+          echo "${{ env.file_name }}"
 
       - name: Dump database
         run: pg_dump postgresql://${{ env.DB_USER }}:$( printf %s '${{ env.DB_PASSWORD }}'| jq -sRr @uri)@${{ env.DB_HOST_PUBLIC }}:5432/beep?sslmode=require | gzip > ${{ env.file_name }}
