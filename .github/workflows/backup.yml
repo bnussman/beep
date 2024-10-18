@@ -32,4 +32,4 @@ jobs:
         run: s3cmd put --access_key=${{ env.S3_BACKUPS_ACCESS_KEY }} --secret_key=${{ env.S3_BACKUPS_SECRET_KEY }} --host=https://us-lax-1.linodeobjects.com ${{ env.file_name }} s3://beep-backups/
         env:
           S3_BACKUPS_ACCESS_KEY: ${{ secrets.S3_BACKUPS_ACCESS_KEY }}
-          S3_BACKUPS_SECRET_KEY: ${{ secrets.BACKUPS_SECRET_KEY }}
+          S3_BACKUPS_SECRET_KEY: ${{ secrets.S3_BACKUPS_SECRET_KEY }}
