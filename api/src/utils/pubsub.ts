@@ -1,23 +1,47 @@
 import { inferRouterOutputs } from "@trpc/server";
 import { AppRouter } from "..";
 import { getRidersCurrentRide } from "../routers/rider";
-import { redis } from "./redis";
+import { redis, redisPublisher, redisSubscriber } from "./redis";
 import { Context } from "./trpc";
 import { getBeeperQueue, getProtectedBeeperQueue } from "./beep";
+import { RedisPubSub } from "@soundxyz/redis-pubsub";
+import { z } from "zod";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
 export const pubSub = {
-  publishRiderUpdate(userId: string, beep: Awaited<ReturnType<typeof getRidersCurrentRide>>) {
+  publishRiderUpdate(
+    userId: string,
+    beep: Awaited<ReturnType<typeof getRidersCurrentRide>>,
+  ) {
     redis.publish(`rider-${userId}`, JSON.stringify(beep));
   },
-  publishBeeperQueue(userId: string, queue: Awaited<ReturnType<typeof getBeeperQueue>>) {
-    redis.publish(`beeper-${userId}`, JSON.stringify(getProtectedBeeperQueue(queue)));
+  publishBeeperQueue(
+    userId: string,
+    queue: Awaited<ReturnType<typeof getBeeperQueue>>,
+  ) {
+    redis.publish(
+      `beeper-${userId}`,
+      JSON.stringify(getProtectedBeeperQueue(queue)),
+    );
   },
-  publishUserUpdate(userId: string, user: NonNullable<Context['user']>) {
+  publishUserUpdate(userId: string, user: NonNullable<Context["user"]>) {
     redis.publish(`user-${userId}`, JSON.stringify(user));
   },
-  publishBeeperLocation(userId: string, location: RouterOutput['rider']['beeperLocationUpdates']) {
+  publishBeeperLocation(
+    userId: string,
+    location: RouterOutput["rider"]["beeperLocationUpdates"],
+  ) {
     redis.publish(`beeper-location-${userId}`, JSON.stringify(location));
-  }
+  },
 };
+
+const { createChannel } = RedisPubSub({
+  publisher: redisPublisher,
+  subscriber: redisSubscriber,
+});
+
+const beeperLocationChannel = createChannel({
+  name: "beeper-location",
+  schema: z.any() as z.ZodType<RouterOutput["rider"]["beeperLocationUpdates"]>,
+});
