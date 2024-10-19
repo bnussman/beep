@@ -2,7 +2,7 @@ name: backup
 
 on:
   schedule:
-    - cron: "33 8 * * *" # Run at 8:33am UTC every day (Will be the middle of the night in the US)
+    - cron: "0 10 * * *" # Run at 10:00am UTC every day (6:00am EST)
   workflow_dispatch: # Allows manual triggering from GitHub UI
 
 jobs:
