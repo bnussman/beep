@@ -11,7 +11,7 @@ jobs:
     environment: production
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install PostgreSQL client
         run: sudo apt install -y postgresql-client jq s3cmd
