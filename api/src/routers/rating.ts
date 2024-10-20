@@ -197,7 +197,7 @@ export const ratingRouter = router({
       if (b.status !== "complete") {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "You can only leave a rating once the beep is complete",
+          message: `You can only leave a rating once the beep is complete. That this beep has a status of ${b.status}`,
         });
       }
 
