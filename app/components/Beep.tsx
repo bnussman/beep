@@ -8,7 +8,7 @@ import { Avatar } from "@/components/Avatar";
 import { useUser } from "../utils/useUser";
 import { Status } from "../utils/types";
 import { openVenmo } from "@/utils/links";
-import { RouterOutput } from "@/utils/trpc";
+import { RouterOutput, trpc } from "@/utils/trpc";
 import { printStars } from "./Stars";
 
 interface Props {
@@ -27,6 +27,14 @@ export function Beep({ item }: Props) {
   const otherUsersRating = item.ratings.find(
     (r) => r.rater_id === otherUser.id,
   );
+  const utils = trpc.useUtils();
+  const { mutateAsync: deleteRating } = trpc.rating.deleteRating.useMutation({
+    onSuccess() {
+      utils.beep.beeps.invalidate();
+      utils.rating.ratings.invalidate();
+    },
+  });
+
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger action="press">
@@ -111,17 +119,31 @@ export function Beep({ item }: Props) {
             </ContextMenu.ItemTitle>
           </ContextMenu.Item>
         )}
-        <ContextMenu.Item
-          key="rate"
-          onSelect={() =>
-            navigation.navigate("Rate", {
-              userId: otherUser.id,
-              beepId: item.id,
-            })
-          }
-        >
-          <ContextMenu.ItemTitle>Rate</ContextMenu.ItemTitle>
-        </ContextMenu.Item>
+        {myRating ? (
+          <ContextMenu.Item
+            key="delete-rating"
+            destructive
+            onSelect={() => {
+              if (myRating) {
+                deleteRating({ ratingId: myRating.id });
+              }
+            }}
+          >
+            <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>
+          </ContextMenu.Item>
+        ) : (
+          <ContextMenu.Item
+            key="rate"
+            onSelect={() =>
+              navigation.navigate("Rate", {
+                userId: otherUser.id,
+                beepId: item.id,
+              })
+            }
+          >
+            <ContextMenu.ItemTitle>Rate</ContextMenu.ItemTitle>
+          </ContextMenu.Item>
+        )}
         <ContextMenu.Item
           key="report"
           onSelect={() =>
