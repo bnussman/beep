@@ -51,6 +51,18 @@ export function Beep({ item }: Props) {
                 ).toLocaleString()}`}
               </Text>
             </View>
+            {/* <View className="flex-grow" />
+            <View
+              className={cx("p-1 rounded-xl", {
+                ["bg-green-400/40"]: item.status === "complete",
+                ["bg-red-400/40"]:
+                  item.status === "canceled" || item.status === "denied",
+              })}
+            >
+              <Text size="xs" className="capitalize" weight="bold">
+                {item.status}
+              </Text>
+            </View> */}
           </View>
           <View>
             <View className="flex flex-row justify-between gap-12">
@@ -101,7 +113,7 @@ export function Beep({ item }: Props) {
             <ContextMenu.ItemTitle>Pay Beeper with Venmo</ContextMenu.ItemTitle>
           </ContextMenu.Item>
         )}
-        {isBeeper && item.rider.venmo && (
+        {isBeeper && item.rider.venmo && item.status === "complete" && (
           <ContextMenu.Item
             key="request-rider"
             onSelect={() =>
@@ -119,7 +131,7 @@ export function Beep({ item }: Props) {
             </ContextMenu.ItemTitle>
           </ContextMenu.Item>
         )}
-        {myRating ? (
+        {myRating && (
           <ContextMenu.Item
             key="delete-rating"
             destructive
@@ -131,7 +143,8 @@ export function Beep({ item }: Props) {
           >
             <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>
           </ContextMenu.Item>
-        ) : (
+        )}
+        {!myRating && item.status === "complete" && (
           <ContextMenu.Item
             key="rate"
             onSelect={() =>

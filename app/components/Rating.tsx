@@ -9,7 +9,7 @@ import { printStars } from "./Stars";
 import { View } from "react-native";
 import { RouterOutput, trpc } from "@/utils/trpc";
 
-type Rating = RouterOutput['rating']['ratings']['ratings'][number];
+type Rating = RouterOutput["rating"]["ratings"]["ratings"][number];
 
 interface Props {
   item: Rating;
@@ -43,7 +43,9 @@ export function Rating(props: Props) {
             <View className="flex flex-row items-center gap-2">
               <Avatar size="xs" src={otherUser.photo ?? undefined} />
               <View className="flex-shrink">
-                <Text weight="bold">{otherUser.first} {otherUser.last}</Text>
+                <Text weight="bold">
+                  {otherUser.first} {otherUser.last}
+                </Text>
                 <Text color="subtle" size="sm">
                   {`${isRater ? "You rated" : "Rated you"} - ${new Date(
                     item.timestamp as string,
@@ -62,17 +64,24 @@ export function Rating(props: Props) {
       <ContextMenu.Content>
         <ContextMenu.Item
           key="report"
-          onSelect={() => navigation.navigate("Report", { userId: otherUser.id, beepId: item.beep_id })}
+          onSelect={() =>
+            navigation.navigate("Report", {
+              userId: otherUser.id,
+              beepId: item.beep_id,
+            })
+          }
         >
           <ContextMenu.ItemTitle>Report</ContextMenu.ItemTitle>
         </ContextMenu.Item>
-        <ContextMenu.Item
-          key="delete-rating"
-          onSelect={() => deleteRating({ ratingId: item.id })}
-          destructive
-        >
-          <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>
-        </ContextMenu.Item>
+        {isRater && (
+          <ContextMenu.Item
+            key="delete-rating"
+            onSelect={() => deleteRating({ ratingId: item.id })}
+            destructive
+          >
+            <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>
+          </ContextMenu.Item>
+        )}
       </ContextMenu.Content>
     </ContextMenu.Root>
   );
