@@ -57,16 +57,22 @@ export function Beep({ item }: Props) {
               <Text weight="bold">Group size</Text>
               <Text>{item.groupSize}</Text>
             </View>
-            <View className="flex flex-row justify-between gap-12">
-              <Text weight="bold">Your Rating</Text>
-              <Text>{myRating ? printStars(myRating.stars) : "N/A"}</Text>
-            </View>
-            <View className="flex flex-row justify-between gap-12">
-              <Text weight="bold">{otherUser.first}'s Rating</Text>
-              <Text>
-                {otherUsersRating ? printStars(otherUsersRating.stars) : "N/A"}
-              </Text>
-            </View>
+            {item.status === "complete" && (
+              <>
+                <View className="flex flex-row justify-between gap-12">
+                  <Text weight="bold">Your Rating</Text>
+                  <Text>{myRating ? printStars(myRating.stars) : "N/A"}</Text>
+                </View>
+                <View className="flex flex-row justify-between gap-12">
+                  <Text weight="bold">{otherUser.first}'s Rating</Text>
+                  <Text>
+                    {otherUsersRating
+                      ? printStars(otherUsersRating.stars)
+                      : "N/A"}
+                  </Text>
+                </View>
+              </>
+            )}
           </View>
         </Card>
       </ContextMenu.Trigger>
