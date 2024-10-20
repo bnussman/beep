@@ -45,10 +45,6 @@ export function Beep({ item }: Props) {
             </View>
           </View>
           <View>
-            <View className="flex flex-row justify-between">
-              <Text weight="bold">Group size</Text>
-              <Text>{item.groupSize}</Text>
-            </View>
             <View className="flex flex-row justify-between gap-12">
               <Text weight="bold">Pick Up</Text>
               <Text className="flex-shrink text-right">{item.origin}</Text>
@@ -56,6 +52,10 @@ export function Beep({ item }: Props) {
             <View className="flex flex-row justify-between gap-12">
               <Text weight="bold">Drop Off</Text>
               <Text>{item.destination}</Text>
+            </View>
+            <View className="flex flex-row justify-between">
+              <Text weight="bold">Group size</Text>
+              <Text>{item.groupSize}</Text>
             </View>
             <View className="flex flex-row justify-between gap-12">
               <Text weight="bold">Your Rating</Text>
