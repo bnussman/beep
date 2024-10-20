@@ -15,16 +15,21 @@ export function RateScreen({ route }: Props) {
   const [message, setMessage] = useState<string>();
 
   const { goBack } = useNavigation();
+  const utils = trpc.useUtils();
 
   const { data: user } = trpc.user.user.useQuery(route.params.userId);
-  const { mutateAsync: rate, isPending } = trpc.rating.createRating.useMutation({
-    onSuccess() {
-      goBack();
+  const { mutateAsync: rate, isPending } = trpc.rating.createRating.useMutation(
+    {
+      onSuccess() {
+        utils.beep.beeps.invalidate();
+        utils.rating.ratings.invalidate();
+        goBack();
+      },
+      onError(error) {
+        alert(error.message);
+      },
     },
-    onError(error) {
-      alert(error.message);
-    }
-  });
+  );
 
   const onSubmit = () => {
     rate({
@@ -32,7 +37,7 @@ export function RateScreen({ route }: Props) {
       beepId: route.params.beepId,
       message: message,
       stars: stars,
-    })
+    });
   };
 
   return (

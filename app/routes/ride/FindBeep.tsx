@@ -6,11 +6,7 @@ import { BeepersMap } from "./BeepersMap";
 import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
 import { LeaveButton } from "./LeaveButton";
-import {
-  View,
-  Linking,
-  ActivityIndicator,
-} from "react-native";
+import { View, Linking, ActivityIndicator } from "react-native";
 import { useUser } from "../../utils/useUser";
 import { Status } from "../../utils/types";
 import { Avatar } from "@/components/Avatar";
@@ -33,7 +29,9 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
 
-type Props = StaticScreenProps<{ origin?: string, destination?: string, groupSize?: string } | undefined>;
+type Props = StaticScreenProps<
+  { origin?: string; destination?: string; groupSize?: string } | undefined
+>;
 
 export function MainFindBeepScreen(props: Props) {
   const { user } = useUser();
@@ -54,25 +52,25 @@ export function MainFindBeepScreen(props: Props) {
     onData(data) {
       utils.rider.currentRide.setData(undefined, data);
     },
-    enabled: Boolean(beep)
+    enabled: Boolean(beep),
   });
 
-  trpc.rider.beeperLocationUpdates.useSubscription(beep?.beeper.id ?? '', {
+  trpc.rider.beeperLocationUpdates.useSubscription(beep?.beeper.id ?? "", {
     enabled: isAcceptedBeep,
     onData(updatedLocation) {
       utils.rider.currentRide.setData(undefined, (prev) => {
         if (!prev) {
-          return undefined
+          return undefined;
         }
-        return ({
+        return {
           ...prev,
           beeper: {
             ...prev.beeper,
             location: updatedLocation.location,
           },
-        })
+        };
       });
-    }
+    },
   });
 
   const { data: eta, error: etaError } = trpc.location.getETA.useQuery(
@@ -81,8 +79,11 @@ export function MainFindBeepScreen(props: Props) {
       end: `${location?.coords.longitude},${location?.coords.latitude}`,
     },
     {
-      enabled: Boolean(beep?.beeper.location) && Boolean(location) && beep?.status === "on_the_way",
-    }
+      enabled:
+        Boolean(beep?.beeper.location) &&
+        Boolean(location) &&
+        beep?.status === "on_the_way",
+    },
   );
 
   const {
@@ -90,17 +91,19 @@ export function MainFindBeepScreen(props: Props) {
     handleSubmit,
     setFocus,
     formState: { errors },
-  } = useForm<Omit<RouterInput['rider']['startBeep'], "beeperId">>({
+  } = useForm<Omit<RouterInput["rider"]["startBeep"], "beeperId">>({
     defaultValues: {
       groupSize: undefined,
-      origin: props.route.params?.origin ?? '',
-      destination: props.route.params?.destination ?? '',
+      origin: props.route.params?.origin ?? "",
+      destination: props.route.params?.destination ?? "",
     },
     values: {
       // @ts-expect-error we don't want a default group size'
-      groupSize: props.route.params?.groupSize ? Number(props.route.params.groupSize) : undefined,
-      origin: props.route.params?.origin ?? '',
-      destination: props.route.params?.destination ?? '',
+      groupSize: props.route.params?.groupSize
+        ? Number(props.route.params.groupSize)
+        : undefined,
+      origin: props.route.params?.origin ?? "",
+      destination: props.route.params?.destination ?? "",
     },
   });
 
@@ -380,7 +383,10 @@ export function MainFindBeepScreen(props: Props) {
             )}
           </View>
         </View>
-        {(beep.position >= 1 || (beep.position === 0 && beep.status === 'accepted')) && <LeaveButton beepersId={beep.beeper.id} />}
+        {(beep.position >= 1 ||
+          (beep.position === 0 && beep.status === "accepted")) && (
+          <LeaveButton beepersId={beep.beeper.id} />
+        )}
       </View>
     );
   }
@@ -396,10 +402,10 @@ export function MainFindBeepScreen(props: Props) {
         <Text>to accept your request.</Text>
       </View>
       <Card className="p-4 w-full" variant="outlined">
-        <Text>
+        <View className="flex flex-row justify-between">
           <Text weight="bold">Pick Up </Text>
           <Text>{beep.origin}</Text>
-        </Text>
+        </View>
         <Text>
           <Text weight="bold">Destination </Text>
           <Text>{beep.destination}</Text>

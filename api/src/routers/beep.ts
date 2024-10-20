@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, publicProcedure, router } from "../utils/trpc";
+import {
+  adminProcedure,
+  authedProcedure,
+  publicProcedure,
+  router,
+} from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, desc, eq, or, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
@@ -18,12 +23,17 @@ export const beepRouter = router({
         show: z.number(),
         inProgress: z.boolean().optional(),
         userId: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const where = and(
         input.inProgress ? inProgressBeep : undefined,
-        input.userId ? or(eq(beep.rider_id, input.userId), eq(beep.beeper_id, input.userId)) : undefined,
+        input.userId
+          ? or(
+              eq(beep.rider_id, input.userId),
+              eq(beep.beeper_id, input.userId),
+            )
+          : undefined,
       );
 
       const beeps = await db.query.beep.findMany({
@@ -52,6 +62,7 @@ export const beepRouter = router({
               venmo: true,
             },
           },
+          ratings: true,
         },
       });
 
@@ -62,92 +73,82 @@ export const beepRouter = router({
 
       return {
         beeps,
-        count: beepsCount[0].count
+        count: beepsCount[0].count,
       };
     }),
-  beep: adminProcedure
-     .input(z.string())
-     .query(async ({ input }) => {
-       const b = await db.query.beep.findFirst({
-         where: eq(beep.id, input),
-         with: {
-           beeper: {
-             columns: {
-               id: true,
-               first: true,
-               last: true,
-               photo: true,
-             },
-           },
-           rider: {
-             columns: {
-               id: true,
-               first: true,
-               last: true,
-               photo: true,
-             },
-           },
-         },
-       });
+  beep: adminProcedure.input(z.string()).query(async ({ input }) => {
+    const b = await db.query.beep.findFirst({
+      where: eq(beep.id, input),
+      with: {
+        beeper: {
+          columns: {
+            id: true,
+            first: true,
+            last: true,
+            photo: true,
+          },
+        },
+        rider: {
+          columns: {
+            id: true,
+            first: true,
+            last: true,
+            photo: true,
+          },
+        },
+      },
+    });
 
-       if (!b) {
-         throw new TRPCError({
-           code: "NOT_FOUND",
-           message: "Beep not found"
-         });
-       }
+    if (!b) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Beep not found",
+      });
+    }
 
-       return b;
-     }),
-  deleteBeep: adminProcedure
-    .input(z.string())
-    .mutation(async ({ input }) => {
-      await db.delete(beep).where(eq(beep.id, input));
-    }),
+    return b;
+  }),
+  deleteBeep: adminProcedure.input(z.string()).mutation(async ({ input }) => {
+    await db.delete(beep).where(eq(beep.id, input));
+  }),
   clearQueue: adminProcedure
     .input(
       z.object({
         userId: z.string(),
-        stopBeeping: z.boolean()
-      })
+        stopBeeping: z.boolean(),
+      }),
     )
     .mutation(async ({ input }) => {
       const beeper = await db.query.user.findFirst({
-        where: and(
-          eq(user.id, input.userId),
-        ),
+        where: and(eq(user.id, input.userId)),
         with: {
           beeps: {
             where: inProgressBeep,
             with: {
               rider: true,
             },
-          }
-        }
+          },
+        },
       });
 
       if (!beeper) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "User not found."
+          message: "User not found.",
         });
       }
 
       if (beeper?.beeps.length === 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User's queue is already empty."
+          message: "User's queue is already empty.",
         });
       }
 
-      await db.update(beep)
-        .set({ status: 'canceled' })
-        .where(
-          and(
-            eq(beep.beeper_id, beeper.id),
-            inProgressBeep,
-          )
-        );
+      await db
+        .update(beep)
+        .set({ status: "canceled" })
+        .where(and(eq(beep.beeper_id, beeper.id), inProgressBeep));
 
       const notifications: PushNotification[] = [];
 
@@ -157,8 +158,8 @@ export const beepRouter = router({
         if (beep.rider.pushToken) {
           notifications.push({
             to: beep.rider.pushToken,
-            title: 'You are no longer getting a ride!',
-            body: "An admin cleared your beeper's queue probably because they were inactive."
+            title: "You are no longer getting a ride!",
+            body: "An admin cleared your beeper's queue probably because they were inactive.",
           });
         }
       }
@@ -166,8 +167,8 @@ export const beepRouter = router({
       if (beeper.pushToken) {
         notifications.push({
           to: beeper.pushToken,
-          title: 'Your queue has been cleared',
-          body: 'An admin has cleared your queue probably because you were inactive!'
+          title: "Your queue has been cleared",
+          body: "An admin has cleared your queue probably because you were inactive!",
         });
       }
 
@@ -177,7 +178,7 @@ export const beepRouter = router({
         .update(user)
         .set({
           ...(input.stopBeeping ? { isBeeping: false } : {}),
-          queueSize: 0
+          queueSize: 0,
         })
         .where(eq(user.id, beeper.id))
         .returning();
@@ -185,19 +186,19 @@ export const beepRouter = router({
       pubSub.publishUserUpdate(beeper.id, u[0]);
       pubSub.publishBeeperQueue(beeper.id, []);
     }),
-    beepsCount: publicProcedure.query(async () => {
-      const beepsCount = await db.select({ count: count() }).from(beep);
-      return beepsCount[0].count;
-    }),
-    numberOfBeepsSubscription: publicProcedure.subscription(() => {
-      return observable<'increment' | 'decrement'>((emit) => {
-        const onUserUpdate = (message: string) => {
-          emit.next(message as 'increment' | 'decrement');
-        };
-        redisSubscriber.subscribe("beep-count", onUserUpdate);
-        return () => {
-          redisSubscriber.unsubscribe("beep-count", onUserUpdate);
-        }
-      });
-    })
+  beepsCount: publicProcedure.query(async () => {
+    const beepsCount = await db.select({ count: count() }).from(beep);
+    return beepsCount[0].count;
+  }),
+  numberOfBeepsSubscription: publicProcedure.subscription(() => {
+    return observable<"increment" | "decrement">((emit) => {
+      const onUserUpdate = (message: string) => {
+        emit.next(message as "increment" | "decrement");
+      };
+      redisSubscriber.subscribe("beep-count", onUserUpdate);
+      return () => {
+        redisSubscriber.unsubscribe("beep-count", onUserUpdate);
+      };
+    });
+  }),
 });
