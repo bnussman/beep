@@ -9,9 +9,16 @@ interface Props {
 }
 
 export function LeaveButton(props: Props) {
-  const { beepersId, ...rest } = props;
-  const { mutateAsync: leave } = trpc.rider.leaveQueue.useMutation();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { beepersId } = props;
+  const utils = trpc.useUtils();
+  const { mutate, isPending } = trpc.rider.leaveQueue.useMutation({
+    onSuccess() {
+      utils.rider.currentRide.setData(undefined, null);
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  });
 
   function leaveQueueWrapper(): void {
     if (isMobile) {
@@ -23,30 +30,21 @@ export function LeaveButton(props: Props) {
             text: "No",
             style: "cancel",
           },
-          { text: "Yes", onPress: () => leaveQueue() },
+          { text: "Yes", onPress: () => mutate({ beeperId: beepersId }) },
         ],
         { cancelable: true },
       );
     } else {
-      leaveQueue();
+      mutate({ beeperId: beepersId });
     }
-  }
-
-  async function leaveQueue(): Promise<void> {
-    setIsLoading(true);
-    leave({ beeperId: beepersId }).catch((error) => {
-      alert(error.message);
-      setIsLoading(false);
-    });
   }
 
   return (
     <Button
-      isLoading={isLoading}
+      isLoading={isPending}
       onPress={() => leaveQueueWrapper()}
       activityIndicatorProps={{ color: "white" }}
       className="min-w-48 !text-white !bg-red-400 active:!bg-red-500"
-      {...rest}
     >
       Leave Queue
     </Button>

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { isMobile, Unpacked } from "../utils/constants";
+import React from "react";
+import { isMobile } from "../utils/constants";
 import { Button } from "@/components/Button";
-import { useEffect } from "react";
 import { Alert } from "react-native";
 import { RouterOutput, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
@@ -11,12 +10,15 @@ interface Props {
 }
 
 export function CancelButton({ beep }: Props) {
-  const [isLoading, setIsLoading] = useState(false);
-  const { mutateAsync: cancel } = trpc.beeper.updateBeep.useMutation();
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, [beep]);
+  const utils = trpc.useUtils();
+  const { mutate: cancel, isPending } = trpc.beeper.updateBeep.useMutation({
+    onSuccess(data) {
+      utils.beeper.queue.setData(undefined, data);
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  });
 
   const onPress = () => {
     if (isMobile) {
@@ -26,9 +28,6 @@ export function CancelButton({ beep }: Props) {
         [
           {
             text: "No",
-            onPress: () => {
-              setIsLoading(false);
-            },
             style: "cancel",
           },
           {
@@ -44,16 +43,12 @@ export function CancelButton({ beep }: Props) {
   };
 
   const onCancel = () => {
-    setIsLoading(true);
-    cancel({ beepId: beep.id, data: { status: "canceled" } }).catch((error: TRPCClientError<any>) => {
-      setIsLoading(false);
-      alert(error.message);
-    });
+    cancel({ beepId: beep.id, data: { status: "canceled" } });
   };
 
   return (
     <Button
-      isLoading={isLoading}
+      isLoading={isPending}
       onPress={onPress}
       className="text-white bg-red-400 dark:bg-red-400 dark:active:bg-red-500 active:bg-red-500"
     >

@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/Button";
-import { useEffect } from "react";
 import { RouterOutput, trpc } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 
 type Status = RouterOutput['beeper']['queue'][number]['status'];
 
@@ -25,9 +23,15 @@ interface Props {
 
 export function ActionButton(props: Props) {
   const { beep } = props;
-  const [isLoading, setIsLoading] = useState(false);
-  const { mutateAsync: update } = trpc.beeper.updateBeep.useMutation();
   const utils = trpc.useUtils();
+  const { mutate, isPending } = trpc.beeper.updateBeep.useMutation({
+    onSuccess(data) {
+      utils.beeper.queue.setData(undefined, data);
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  });
 
   const getMessage = () => {
     switch (beep.status) {
@@ -46,27 +50,17 @@ export function ActionButton(props: Props) {
     }
   };
 
-  useEffect(() => {
-    setIsLoading(false);
-  }, [beep]);
-
   const onPress = () => {
-    setIsLoading(true);
-    update({
-        beepId: beep.id,
-        data: {
-          status: nextStatusMap[beep.status as InProgressStatuses],
-        }
-    }).then((data) => {
-      utils.beeper.queue.setData(undefined, data);
-    }).catch((error: TRPCClientError<any>) => {
-      setIsLoading(false);
-      alert(error.message);
-    });
+    mutate({
+      beepId: beep.id,
+      data: {
+        status: nextStatusMap[beep.status as InProgressStatuses],
+      }
+    })
   };
 
   return (
-    <Button isLoading={isLoading} onPress={onPress} size="lg">
+    <Button isLoading={isPending} onPress={onPress} size="lg">
       {getMessage()}
     </Button>
   );
