@@ -31,7 +31,7 @@ export function Queue(props: Props) {
       onChange={(index) => {
         drawerPositionIndex.current = index;
       }}
-      snapPoints={["10%", "50%", "100%"]}
+      snapPoints={["10%", "50%", isWeb ? "90%" : "100%"]}
       backgroundStyle={colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}}
       handleIndicatorStyle={colorScheme === "dark" ? { backgroundColor: "white" } : {}}
     >
