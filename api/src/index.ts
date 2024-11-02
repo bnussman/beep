@@ -74,4 +74,5 @@ applyWSSHandler<AppRouter>({
 httpServer.listen(3000);
 
 console.info("🚕 Beep API Server Started");
-console.info("➡️  Listening on http://0.0.0.0:3000 and ws://0.0.0.0:3000");
+console.info("➡️  Listening on http://0.0.0.0:3000");
+console.info("➡️  Listening on ws://0.0.0.0:3000");
