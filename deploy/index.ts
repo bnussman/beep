@@ -39,8 +39,8 @@ const lkeCluster = new linode.LkeCluster(
     label: envName,
     pools: [
       {
-        type: 'g6-standard-1',
-        count: 3,
+        type: envName === "production" ? 'g6-dedicated-2' : 'g6-standard-1',
+        count: envName === "production" ? 4 : 3,
       }
     ],
   },
