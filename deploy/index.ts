@@ -40,7 +40,7 @@ const lkeCluster = new linode.LkeCluster(
     pools: [
       {
         type: envName === "production" ? 'g6-dedicated-2' : 'g6-standard-1',
-        count: envName === "production" ? 4 : 3,
+        count: 3,
       }
     ],
   },
@@ -74,7 +74,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
     },
     spec: {
       selector: { matchLabels: { app: apiAppName } },
-      replicas: 5,
+      replicas: 6,
       template: {
         metadata: { labels: { app: apiAppName } },
         spec: {
