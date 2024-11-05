@@ -56,7 +56,7 @@ export function Feedback() {
       >
         <Text>
           Please submit your ideas, bugs, and feature requests here! If you like
-          the app, pleae consider clicking here to leave us an App Store rating.
+          the app, please consider clicking here to leave us an App Store rating.
         </Text>
       </Card>
       <Label htmlFor="feedback-input">Feedback</Label>

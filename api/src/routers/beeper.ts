@@ -129,14 +129,14 @@ export const beeperRouter = router({
             sendNotification({
               to: queueEntry.rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} has denied your beep request 🚫`,
-              body: "Open your app to find a diffrent beeper"
+              body: "Open your app to find a different beeper"
             });
             break;
           case "accepted":
             sendNotification({
               to: queueEntry.rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} has accepted your beep request ✅`,
-              body: "You will recieve another notification when they are on their way to pick you up"
+              body: "You will receive another notification when they are on their way to pick you up"
             });
             break;
           case "on_the_way":
