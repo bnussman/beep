@@ -237,7 +237,7 @@ export function StartBeepingScreen() {
         </Text>
         <Text className="text-center mb-8">
           If someone wants you to beep them, it will appear here. If your app is
-          closed, you will recieve a push notification.
+          closed, you will receive a push notification.
         </Text>
         <PremiumBanner />
       </View>
@@ -253,7 +253,7 @@ export function StartBeepingScreen() {
         <Label htmlFor="capacity">Max Rider Capacity</Label>
         <Input
           id="capacity"
-          placeholder="Max Capcity"
+          placeholder="Max Capacity"
           inputMode="numeric"
           value={String(capacity)}
           onChangeText={(value) => setCapacity(value)}
