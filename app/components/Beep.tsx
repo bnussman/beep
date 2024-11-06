@@ -51,27 +51,15 @@ export function Beep({ item }: Props) {
                 ).toLocaleString()}`}
               </Text>
             </View>
-            {/* <View className="flex-grow" />
-            <View
-              className={cx("p-1 rounded-xl", {
-                ["bg-green-400/40"]: item.status === "complete",
-                ["bg-red-400/40"]:
-                  item.status === "canceled" || item.status === "denied",
-              })}
-            >
-              <Text size="xs" className="capitalize" weight="bold">
-                {item.status}
-              </Text>
-            </View> */}
           </View>
           <View>
-            <View className="flex flex-row justify-between gap-12">
-              <Text weight="bold">Pick Up</Text>
-              <Text className="flex-shrink text-right">{item.origin}</Text>
+            <View className="flex flex-row justify-between items-center">
+              <Text className="w-24" weight="bold">Pick Up</Text>
+              <Text className="text-right flex-shrink">{item.origin}</Text>
             </View>
-            <View className="flex flex-row justify-between gap-12">
-              <Text weight="bold">Drop Off</Text>
-              <Text>{item.destination}</Text>
+            <View className="flex flex-row justify-between items-center">
+              <Text className="w-24" weight="bold">Drop Off</Text>
+              <Text className="text-right flex-shrink">{item.destination}</Text>
             </View>
             <View className="flex flex-row justify-between">
               <Text weight="bold">Group size</Text>
@@ -79,11 +67,11 @@ export function Beep({ item }: Props) {
             </View>
             {item.status === "complete" && (
               <>
-                <View className="flex flex-row justify-between gap-12">
+                <View className="flex flex-row justify-between">
                   <Text weight="bold">Your Rating</Text>
                   <Text>{myRating ? printStars(myRating.stars) : "N/A"}</Text>
                 </View>
-                <View className="flex flex-row justify-between gap-12">
+                <View className="flex flex-row justify-between">
                   <Text weight="bold">{otherUser.first}'s Rating</Text>
                   <Text>
                     {otherUsersRating
