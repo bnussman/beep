@@ -401,19 +401,19 @@ export function MainFindBeepScreen(props: Props) {
         </Text>
         <Text>to accept your request.</Text>
       </View>
-      <Card className="p-4 w-full" variant="outlined">
-        <View className="flex flex-row justify-between">
+      <Card className="p-4 w-full gap-2" variant="outlined">
+        <View>
           <Text weight="bold">Pick Up </Text>
           <Text>{beep.origin}</Text>
         </View>
-        <Text>
+        <View>
           <Text weight="bold">Destination </Text>
           <Text>{beep.destination}</Text>
-        </Text>
-        <Text>
+        </View>
+        <View>
           <Text weight="bold">Number of Riders </Text>
           <Text>{beep.groupSize}</Text>
-        </Text>
+        </View>
       </Card>
       <Rates singles={beep.beeper.singlesRate} group={beep.beeper.groupRate} />
       <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
