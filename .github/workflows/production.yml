@@ -42,6 +42,7 @@ jobs:
           work-dir: deploy
         env:
           secrets: ${{ toJSON(secrets) }}
+          PULUMI_K8S_ENABLE_PATCH_FORCE: true
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
