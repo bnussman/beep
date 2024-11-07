@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, desc } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 import { feedback } from "../../drizzle/schema";
 
 export const feedbackRouter = router({
@@ -54,5 +54,11 @@ export const feedbackRouter = router({
         .returning();
 
       return f[0];
+    }),
+  deleteFeedback: adminProcedure
+    .input(z.string())
+    .mutation(async ({ input }) => {
+      await db.delete(feedback)
+        .where(eq(feedback.id, input))
     })
 });
