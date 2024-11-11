@@ -6,7 +6,7 @@
   "type": "module",
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
+    "dev": "concurrently \"bun run --watch src/index.ts\" \"cd ../aPulse && bun run start\"",
     "typecheck": "tsc",
     "db:push": "drizzle-kit push"
   },
@@ -14,6 +14,7 @@
     "@types/cors": "^2.8.17",
     "@types/nodemailer": "^6.4.16",
     "@types/validator": "^13.12.2",
+    "concurrently": "^9.1.0",
     "drizzle-kit": "^0.24.2",
     "typescript": "^5.6.2"
   },
