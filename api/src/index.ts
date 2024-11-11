@@ -21,6 +21,7 @@ import { locationRouter } from "./routers/location";
 import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
 import { ENVIRONMENT } from "./utils/constants";
 import { handlePaymentWebook } from "./utils/payments";
+import { healthRouter } from "./routers/health";
 
 Sentry.init({
   dsn: "https://7dd69cf0a7fcbaecea5fadffc461727c@sentry.nussman.us/2",
@@ -42,6 +43,7 @@ const appRouter = router({
   rider: riderRouter,
   beeper: beeperRouter,
   location: locationRouter,
+  health: healthRouter,
 });
 
 export type AppRouter = typeof appRouter;
