@@ -1,0 +1,13 @@
+{
+  "name": "aPulse",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A one-file NodeJS server status monitoring/notification tool.",
+  "main": "watcher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node watcher.js"
+  },
+  "author": "ybouane",
+  "license": "Apache-2.0"
+}
