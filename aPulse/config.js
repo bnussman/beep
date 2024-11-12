@@ -1,5 +1,5 @@
 export default {
-	interval			: 1, // Interval in minutes between each pulse
+	interval			: 15, // Interval in minutes between each pulse
 	nDataPoints			: 90, // Number of datapoints to display on the dashboard
 	responseTimeGood	: 300, // In milliseconds, this and below will be green
 	responseTimeWarning	: 600, // In milliseconds, above this will be red
