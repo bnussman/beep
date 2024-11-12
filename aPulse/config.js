@@ -16,7 +16,7 @@ export default {
 		channelId	: '',
 	},
 	discord				: { // optional, tokens to send notifications through discord 
-		webhookUrl	: 'https://discord.com/api/webhooks/1305606487070081167/ikPxRa1M78xP4L02i-899VZJH4TZM1NFN7d0b3oiJUey36rWh3XR8Ao6q6xxsTgjfFAn',
+		webhookUrl	: process.env.DISCORD_WEBHOOK_URL ?? '',
 	},
 	twilio				: { // optional, tokens to send notifications through twilio (SMS)
 		accountSid		: '',
