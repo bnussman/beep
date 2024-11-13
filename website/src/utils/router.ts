@@ -39,6 +39,7 @@ import { userRoute } from "../routes/admin/users/User";
 import { editUserRoute } from "../routes/admin/users/edit";
 import { NotFound } from "../components/NotFound";
 import { Beep } from "../App";
+import { healthRoute } from "../routes/admin/Health";
 
 export const rootRoute = createRootRoute({
   component: Beep,
@@ -73,6 +74,7 @@ export const routeTree = rootRoute.addChildren([
     feedbackRoute,
     paymentsRoute,
     redisRoute,
+    healthRoute,
     ratingsRoute.addChildren([
       ratingsListRoute,
       ratingRoute
