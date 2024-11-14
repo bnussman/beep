@@ -135,7 +135,7 @@ export function Cars() {
       contentContainerClassName="h-full p-3 gap-2"
       renderItem={({ item: car }) => (
         <ContextMenu.Root>
-          <ContextMenu.Trigger action="press">
+          <ContextMenu.Trigger>
             <Card
               pressable
               variant="outlined"
