@@ -6,7 +6,7 @@
   "type": "module",
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
+    "dev": "bun run --preload ./src/utils/instrument.ts --watch src/index.ts",
     "typecheck": "tsc",
     "db:push": "drizzle-kit push"
   },

@@ -18,17 +18,8 @@ import { riderRouter } from "./routers/rider";
 import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
-import { ENVIRONMENT, SENTRY_DSN } from "./utils/constants";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
-import * as Sentry from '@sentry/bun';
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-  tracesSampleRate: 1.0,
-  environment: ENVIRONMENT,
-  debug: true,
-});
 
 const appRouter = router({
   user: userRouter,
@@ -53,9 +44,6 @@ const handler = createHTTPHandler({
   middleware: cors(),
   router: appRouter,
   createContext,
-  // onError(error) {
-  //   console.error(error);
-  // }
 });
 
 const httpServer = createServer((req, res) => {
