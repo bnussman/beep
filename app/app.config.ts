@@ -13,6 +13,7 @@ const config: ExpoConfig = {
   primaryColor: "#575A62",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",
+  newArchEnabled: true,
   notification: {
     iosDisplayInForeground: true,
   },
