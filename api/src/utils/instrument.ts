@@ -5,8 +5,8 @@ Sentry.init({
   dsn: SENTRY_DSN,
   tracesSampleRate: 1.0,
   environment: ENVIRONMENT,
+  debug: ENVIRONMENT === 'development',
   integrations(integrations) {
-    console.log(integrations)
     return [
       ...integrations.filter(i => i.name !== "Http"),
       Sentry.postgresIntegration(),
