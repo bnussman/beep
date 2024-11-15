@@ -19,12 +19,12 @@ import { riderRouter } from "./routers/rider";
 import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
-import { ENVIRONMENT } from "./utils/constants";
+import { ENVIRONMENT, SENTRY_DSN } from "./utils/constants";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
 
 Sentry.init({
-  dsn: "https://7dd69cf0a7fcbaecea5fadffc461727c@sentry.nussman.us/2",
+  dsn: SENTRY_DSN,
   tracesSampleRate: 1.0,
   environment: ENVIRONMENT
 });

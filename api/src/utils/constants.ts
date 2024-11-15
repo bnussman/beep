@@ -36,6 +36,8 @@ export const REVENUE_CAT_SECRET = process.env.REVENUE_CAT_SECRET;
 
 export const OSRM_SECRET = process.env.OSRM_SECRET;
 
+export const SENTRY_DSN = process.env.SENTRY_DSN;
+
 export const isProduction = process.env.NODE_ENV === "production";
 
 export const ENVIRONMENT: 'staging' | 'production' | 'development' = process.env.ENVIRONMENT_NAME as 'staging' | 'production' ?? "development";
