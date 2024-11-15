@@ -10,7 +10,7 @@ Sentry.init({
     return [
       ...integrations.filter(i => i.name !== "Http"),
       Sentry.postgresIntegration(),
-      Sentry.redisIntegration()
+      // Sentry.redisIntegration()
     ]
   }
 });
