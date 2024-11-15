@@ -26,7 +26,11 @@ import { healthRouter } from "./routers/health";
 Sentry.init({
   dsn: SENTRY_DSN,
   tracesSampleRate: 1.0,
-  environment: ENVIRONMENT
+  environment: ENVIRONMENT,
+  debug: true,
+  integrations(integrations) {
+    return integrations.filter(i => i.name === "jelkfekl");
+  }
 });
 
 const appRouter = router({

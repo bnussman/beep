@@ -1,16 +1,10 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import { DB_HOST, DB_URL, ENVIRONMENT } from "./constants";
 import * as  schema from '../../drizzle/schema';
+import { Client } from "pg";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { DB_HOST, DB_URL, ENVIRONMENT } from "./constants";
 
-function getOptions() {
-  if (DB_HOST.includes('neon') || ENVIRONMENT === 'production') {
-    return { ssl: 'require' as const };
-  }
+const ssl = DB_HOST.includes('neon') || ENVIRONMENT === "production" ? "?sslmode=require" : '';
 
-  return undefined
-}
-
-const queryClient = postgres(DB_URL, getOptions());
+const queryClient = new Client(DB_URL + ssl);
 
 export const db = drizzle(queryClient, { schema, logger: false });

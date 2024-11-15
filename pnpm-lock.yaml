@@ -28,13 +28,13 @@ importers:
         version: 2.8.5
       drizzle-orm:
         specifier: ^0.33.0
-        version: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@18.3.8)(bun-types@1.1.29)(knex@3.1.0(pg@8.13.0))(pg@8.13.0)(postgres@3.4.4)(react@18.2.0)
+        version: 0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@18.3.8)(bun-types@1.1.29)(knex@3.1.0(pg@8.13.1))(pg@8.13.1)(postgres@3.4.4)(react@18.2.0)
       nodemailer:
         specifier: ^6.9.14
         version: 6.9.15
-      postgres:
-        specifier: ^3.4.4
-        version: 3.4.4
+      pg:
+        specifier: ^8.13.1
+        version: 8.13.1
       redis:
         specifier: ^4.7.0
         version: 4.7.0
@@ -6849,8 +6849,8 @@ packages:
     resolution: {integrity: sha512-cRL3JpS3lKMGsKaWndugWQoLOCoP+Cic8oseVcbr0qhPzYD5DWXK+RZ9LY9wxRf7RQia4SCwQlXk0q6FCPrVng==}
     engines: {node: '>=10'}
 
-  pg@8.13.0:
-    resolution: {integrity: sha512-34wkUTh3SxTClfoHB3pQ7bIMvw9dpFU1audQQeZG837fmHfHpr14n/AELVDoOYVDW2h5RDWU78tFjkD+erSBsw==}
+  pg@8.13.1:
+    resolution: {integrity: sha512-OUir1A0rPNZlX//c7ksiu7crsGZTKSOXJPgtNiHGIlC9H0lO+NC6ZDYksSgBYY/thSWhnSRBv8w1lieNNGATNQ==}
     engines: {node: '>= 8.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
@@ -14017,14 +14017,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@18.3.8)(bun-types@1.1.29)(knex@3.1.0(pg@8.13.0))(pg@8.13.0)(postgres@3.4.4)(react@18.2.0):
+  drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(@types/react@18.3.8)(bun-types@1.1.29)(knex@3.1.0(pg@8.13.1))(pg@8.13.1)(postgres@3.4.4)(react@18.2.0):
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       '@types/pg': 8.11.10
       '@types/react': 18.3.8
       bun-types: 1.1.29
-      knex: 3.1.0(pg@8.13.0)
-      pg: 8.13.0
+      knex: 3.1.0(pg@8.13.1)
+      pg: 8.13.1
       postgres: 3.4.4
       react: 18.2.0
 
@@ -15346,7 +15346,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  knex@3.1.0(pg@8.13.0):
+  knex@3.1.0(pg@8.13.1):
     dependencies:
       colorette: 2.0.19
       commander: 10.0.1
@@ -15363,7 +15363,7 @@ snapshots:
       tarn: 3.0.2
       tildify: 2.0.0
     optionalDependencies:
-      pg: 8.13.0
+      pg: 8.13.1
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -16308,17 +16308,15 @@ snapshots:
   pg-connection-string@2.6.2:
     optional: true
 
-  pg-connection-string@2.7.0:
-    optional: true
+  pg-connection-string@2.7.0: {}
 
   pg-int8@1.0.1: {}
 
   pg-numeric@1.0.2: {}
 
-  pg-pool@3.7.0(pg@8.13.0):
+  pg-pool@3.7.0(pg@8.13.1):
     dependencies:
-      pg: 8.13.0
-    optional: true
+      pg: 8.13.1
 
   pg-protocol@1.7.0: {}
 
@@ -16340,21 +16338,19 @@ snapshots:
       postgres-interval: 3.0.0
       postgres-range: 1.1.4
 
-  pg@8.13.0:
+  pg@8.13.1:
     dependencies:
       pg-connection-string: 2.7.0
-      pg-pool: 3.7.0(pg@8.13.0)
+      pg-pool: 3.7.0(pg@8.13.1)
       pg-protocol: 1.7.0
       pg-types: 2.2.0
       pgpass: 1.0.5
     optionalDependencies:
       pg-cloudflare: 1.1.1
-    optional: true
 
   pgpass@1.0.5:
     dependencies:
       split2: 4.2.0
-    optional: true
 
   picocolors@1.0.0: {}
 
@@ -16464,7 +16460,8 @@ snapshots:
 
   postgres-range@1.1.4: {}
 
-  postgres@3.4.4: {}
+  postgres@3.4.4:
+    optional: true
 
   potpack@2.0.0: {}
 
@@ -17326,8 +17323,7 @@ snapshots:
     dependencies:
       extend-shallow: 3.0.2
 
-  split2@4.2.0:
-    optional: true
+  split2@4.2.0: {}
 
   split@1.0.1:
     dependencies:
