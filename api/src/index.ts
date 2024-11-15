@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/bun";
 import ws from 'ws';
 import cors from 'cors';
 import { createServer } from 'http';
@@ -22,15 +21,13 @@ import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
 import { ENVIRONMENT, SENTRY_DSN } from "./utils/constants";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
+import * as Sentry from '@sentry/bun';
 
 Sentry.init({
   dsn: SENTRY_DSN,
   tracesSampleRate: 1.0,
   environment: ENVIRONMENT,
   debug: true,
-  integrations(integrations) {
-    return integrations.filter(i => i.name === "jelkfekl");
-  }
 });
 
 const appRouter = router({
@@ -56,6 +53,9 @@ const handler = createHTTPHandler({
   middleware: cors(),
   router: appRouter,
   createContext,
+  // onError(error) {
+  //   console.error(error);
+  // }
 });
 
 const httpServer = createServer((req, res) => {
