@@ -7,6 +7,7 @@ import { CreateWSSContextFnOptions } from '@trpc/server/adapters/ws';
 import { ZodError } from 'zod';
 import * as Sentry from '@sentry/bun';
 import { AppRouter } from '..';
+import { CreateBunContextOptions } from 'trpc-bun-adapter';
 
 /**
  * Initialization of tRPC backend
@@ -74,8 +75,8 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
     return opts.next({ ctx });
 })
 
-export async function createContext(data: CreateHTTPContextOptions | CreateWSSContextFnOptions) {
-  const bearerToken = data.req?.headers.authorization?.split(' ')[1] ?? data.info?.connectionParams?.token;
+export async function createContext(data: CreateBunContextOptions) {
+  const bearerToken = data.req?.headers.get('authorization')?.split(' ')[1] ?? data.info?.connectionParams?.token;
 
   if (!bearerToken) {
     return {};
