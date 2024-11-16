@@ -26,6 +26,7 @@
     "nodemailer": "^6.9.14",
     "postgres": "^3.4.4",
     "redis": "^4.7.0",
+    "trpc-bun-adapter": "^1.2.0",
     "validator": "^13.12.0",
     "wkx": "^0.5.0",
     "zod": "^3.23.8"

@@ -22,6 +22,7 @@ import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
 import { ENVIRONMENT, SENTRY_DSN } from "./utils/constants";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
+import { createBunHttpHandler, createBunWSHandler } from "trpc-bun-adapter";
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -48,32 +49,75 @@ const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-const handler = createHTTPHandler({
-  middleware: cors(),
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Vary',
+};
+
+// const handler = createHTTPHandler({
+//   middleware: cors(),
+//   router: appRouter,
+//   createContext,
+// });
+
+// const httpServer = createServer((req, res) => {
+//   const request = incomingMessageToRequest(req, { maxBodySize: 20_000 });
+
+//   if (request.url.endsWith("/payments/webhook")) {
+//     handlePaymentWebook(request, res);
+//   } else {
+//     handler(req, res);
+//   }
+// });
+
+// const wss = new ws.Server({ server: httpServer });
+
+// applyWSSHandler<AppRouter>({
+//   onError: console.error,
+//   wss,
+//   router: appRouter,
+//   createContext,
+// });
+
+// httpServer.listen(3000);
+
+const bunHandler = createBunHttpHandler({
   router: appRouter,
+  endpoint: '/',
   createContext,
-});
-
-const httpServer = createServer((req, res) => {
-  const request = incomingMessageToRequest(req, { maxBodySize: 20_000 });
-
-  if (request.url.endsWith("/payments/webhook")) {
-    handlePaymentWebook(request, res);
-  } else {
-    handler(req, res);
-  }
-});
-
-const wss = new ws.Server({ server: httpServer });
-
-applyWSSHandler<AppRouter>({
   onError: console.error,
-  wss,
-  router: appRouter,
-  createContext,
+  responseMeta(opts) {
+      return {
+        headers: CORS_HEADERS,
+      }
+  },
+  // batching: {
+  //     enabled: true,
+  // },
+  emitWsUpgrades: true, // pass true to upgrade to WebSocket
 });
 
-httpServer.listen(3000);
+const websocket = createBunWSHandler({
+  router: appRouter,
+  // optional arguments:
+  createContext,
+  onError: console.error,
+  // batching: {
+  //     enabled: true,
+  // },
+});
+
+Bun.serve({
+  fetch(request, response) {
+      if (request.method === 'OPTIONS') {
+        const res = new Response('Departed', { headers: CORS_HEADERS });
+        return res;
+      }
+      return bunHandler(request, response) ?? new Response("Not found", {status: 404});
+  },
+  websocket
+});
 
 console.info("🚕 Beep API Server Started");
 console.info("➡️  Listening on http://0.0.0.0:3000");

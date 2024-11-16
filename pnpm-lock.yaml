@@ -38,6 +38,9 @@ importers:
       redis:
         specifier: ^4.7.0
         version: 4.7.0
+      trpc-bun-adapter:
+        specifier: ^1.2.0
+        version: 1.2.0(@trpc/server@11.0.0-rc.553)
       validator:
         specifier: ^13.12.0
         version: 13.12.0
@@ -7999,6 +8002,11 @@ packages:
   treeverse@3.0.0:
     resolution: {integrity: sha512-gcANaAnd2QDZFmHFEOF4k7uc1J/6a6z3DJMd/QwEyxLoKGiptJRwid582r7QIsFlFMIZ3SnxfS52S4hm2DHkuQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  trpc-bun-adapter@1.2.0:
+    resolution: {integrity: sha512-3ufDWpMU68ab0UffBr4hm3sczDzIOQr7+byCsXhiT2CT39t+3Gi2iBAfYlc/0twGiSCkH23HKzj2misgRgJ3aA==}
+    peerDependencies:
+      '@trpc/server': ^11.0.0-rc.566
 
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
@@ -17591,6 +17599,10 @@ snapshots:
       which-typed-array: 1.1.15
 
   treeverse@3.0.0: {}
+
+  trpc-bun-adapter@1.2.0(@trpc/server@11.0.0-rc.553):
+    dependencies:
+      '@trpc/server': 11.0.0-rc.553
 
   ts-interface-checker@0.1.13: {}
 
