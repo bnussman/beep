@@ -1,9 +1,8 @@
 import { and, eq, gte } from "drizzle-orm";
 import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { db } from "./db";
-import { user, productEnum, payment, storeEnum } from "../../drizzle/schema";
+import { productEnum, payment, storeEnum } from "../../drizzle/schema";
 import * as Sentry from '@sentry/bun';
-import type { ServerResponse } from 'node:http';
 import { SubscriberResponse, Webhook } from "./revenuecat";
 
 type Product = typeof productEnum.enumValues[number];
@@ -83,22 +82,19 @@ export async function syncUserPayments(userId: string) {
 /**
  * A webhook RevenueCat uses to let us know a payment was made.
  */
-export async function handlePaymentWebook(request: Request, res: ServerResponse) {
+export async function handlePaymentWebook(request: Request) {
   const data: Webhook = await request.json();
 
   if (request.headers.get("Authorization") !== `Bearer ${REVENUE_CAT_WEBHOOK_TOKEN}`) {
-    res.writeHead(403, { 'Content-Type': 'text/plain' });
-    res.end('Unable to auth webhook call!\n');
+    return new Response("Incorrect Token ", { status: 401 });
   }
 
   try {
     await syncUserPayments(data.event.app_user_id);
   } catch (error) {
     Sentry.captureException(error);
-    res.writeHead(500, { 'Content-Type': 'text/plain' });
-    res.end('Error!\n');
+    return new Response("Internal Server Error", { status: 500 });
   }
 
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Success!\n');
+  return new Response("Success!");
 }

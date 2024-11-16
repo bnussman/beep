@@ -16,6 +16,7 @@ import { locationRouter } from "./routers/location";
 import { ENVIRONMENT, SENTRY_DSN } from "./utils/constants";
 import { healthRouter } from "./routers/health";
 import { createBunHttpHandler, createBunWSHandler } from "trpc-bun-adapter";
+import { handlePaymentWebook } from "./utils/payments";
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -85,15 +86,14 @@ const bunHandler = createBunHttpHandler({
         headers: CORS_HEADERS,
       }
   },
+  emitWsUpgrades: true,
   // batching: {
   //     enabled: true,
   // },
-  emitWsUpgrades: true, // pass true to upgrade to WebSocket
 });
 
 const websocket = createBunWSHandler({
   router: appRouter,
-  // optional arguments:
   createContext,
   onError: console.error,
   // batching: {
@@ -106,6 +106,9 @@ Bun.serve({
       if (request.method === 'OPTIONS') {
         const res = new Response('Departed', { headers: CORS_HEADERS });
         return res;
+      }
+      if (request.url.endsWith("/payments/webhook")) {
+        handlePaymentWebook(request);
       }
       return bunHandler(request, response) ?? new Response("Not found", {status: 404});
   },
