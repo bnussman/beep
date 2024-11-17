@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/bun";
 import ws from 'ws';
 import cors from 'cors';
 import { createServer } from 'http';
@@ -19,15 +18,8 @@ import { riderRouter } from "./routers/rider";
 import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
-import { ENVIRONMENT, SENTRY_DSN } from "./utils/constants";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-  tracesSampleRate: 1.0,
-  environment: ENVIRONMENT
-});
 
 const appRouter = router({
   user: userRouter,

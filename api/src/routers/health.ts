@@ -40,7 +40,7 @@ async function getDatabaseStatus() {
 
   const end = performance.now();
 
-  const isDatabaseHealthy = Object.values(databasePing[0])[0] === true;
+  const isDatabaseHealthy = Object.values(databasePing.rows[0])[0] === true;
 
   return {
     latency: end - start,
