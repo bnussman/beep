@@ -1,13 +1,17 @@
 import * as schema from '../../drizzle/schema';
-const { Pool } = require("pg");
+import type { ClientConfig } from 'pg';
+const { Client } = require("pg"); // we must use `require` because of Bun / Sentry / OpenTelementry weirdness
 import { drizzle } from "drizzle-orm/node-postgres";
-import { DB_HOST, DB_URL, ENVIRONMENT } from "./constants";
+import { DB_URL } from "./constants";
 
-const ssl = DB_HOST.includes('neon') || ENVIRONMENT === "production" ? "?sslmode=require" : '';
+const options: ClientConfig = {
+  connectionString: DB_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+};
 
-const queryClient = new Pool({
-  connectionString: DB_URL + ssl
-});
+const queryClient = new Client(options);
 
 await queryClient.connect();
 
