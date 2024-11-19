@@ -1,5 +1,5 @@
 import * as schema from '../../drizzle/schema';
-import { Pool } from "pg";
+const { Pool } = require("pg");
 import { drizzle } from "drizzle-orm/node-postgres";
 import { DB_HOST, DB_URL, ENVIRONMENT } from "./constants";
 
