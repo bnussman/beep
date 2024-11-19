@@ -7,8 +7,9 @@ Sentry.init({
   environment: ENVIRONMENT,
   debug: ENVIRONMENT === 'development',
   integrations(integrations) {
+    console.log(integrations)
     return [
-      ...integrations.filter(i => i.name !== "Http"),
+      ...integrations.filter(i => i.name !== "Http" && i.name !== "BunServer"),
       Sentry.postgresIntegration(),
       // Sentry.redisIntegration()
     ]

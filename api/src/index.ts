@@ -1,5 +1,6 @@
 import ws from 'ws';
 import cors from 'cors';
+import * as Sentry from '@sentry/bun';
 import { createServer } from 'http';
 import { createContext, router } from './utils/trpc';
 import { createHTTPHandler } from '@trpc/server/adapters/standalone';
@@ -44,22 +45,33 @@ const handler = createHTTPHandler({
   middleware: cors(),
   router: appRouter,
   createContext,
+  onError(error) {
+    console.error(error);
+    if (error.error.code === "INTERNAL_SERVER_ERROR") {
+      Sentry.captureException(error.error, { extra: { input: error.input } });
+    }
+  }
 });
 
 const httpServer = createServer((req, res) => {
   const request = incomingMessageToRequest(req, { maxBodySize: 20_000 });
 
   if (request.url.endsWith("/payments/webhook")) {
-    handlePaymentWebook(request, res);
-  } else {
-    handler(req, res);
+    return handlePaymentWebook(request, res);
   }
+
+  return handler(req, res);
 });
 
 const wss = new ws.Server({ server: httpServer });
 
 applyWSSHandler<AppRouter>({
-  onError: console.error,
+  onError(error) {
+    console.error(error);
+    if (error.error.code === "INTERNAL_SERVER_ERROR") {
+      Sentry.captureException(error.error, { extra: { input: error.input } });
+    }
+  },
   wss,
   router: appRouter,
   createContext,
