@@ -7,11 +7,17 @@ Sentry.init({
   environment: ENVIRONMENT,
   debug: ENVIRONMENT === 'development',
   integrations(integrations) {
-    console.log(integrations)
     return [
       ...integrations.filter(i => i.name !== "Http"),
       Sentry.postgresIntegration(),
-      // Sentry.redisIntegration()
     ]
+  },
+  beforeSendTransaction(event, hint) {
+    if (event.transaction && event.extra?.trpc) {
+      // We must replace "." with "/" because Sentry groups requests on their end.
+      // trpc's method of using `.`s insted of `/`s hurts us here.
+      event.transaction = event.transaction.replaceAll('.', '/')
+    }
+    return event;
   }
 });
