@@ -5,7 +5,7 @@ Sentry.init({
   dsn: SENTRY_DSN,
   tracesSampleRate: 1.0,
   environment: ENVIRONMENT,
-  debug: ENVIRONMENT === 'development',
+  debug: true,
   integrations(integrations) {
     return [
       ...integrations.filter(i => i.name !== "Http"),
