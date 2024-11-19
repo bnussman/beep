@@ -36,9 +36,7 @@ export type RouterInput = inferRouterInputs<AppRouter>;
  */
 export const router = t.router;
 
-export const publicProcedure = t.procedure.use(Sentry.trpcMiddleware({
-  attachRpcInput: true,
-}));
+export const publicProcedure = t.procedure;
 
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
