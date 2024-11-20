@@ -1,11 +1,11 @@
+import * as Sentry from '@sentry/bun';
 import { TRPCError, inferRouterInputs, initTRPC } from '@trpc/server';
+import { ZodError } from 'zod';
+import { AppRouter } from '..';
+import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
 import { token } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
-import { ZodError } from 'zod';
-import * as Sentry from '@sentry/bun';
-import { AppRouter } from '..';
-import { CreateBunContextOptions } from 'trpc-bun-adapter';
 
 /**
  * Initialization of tRPC backend
@@ -72,11 +72,7 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
     return opts.next({ ctx });
 })
 
-export async function createContext(data: Omit<CreateBunContextOptions, 'resHeaders'>) {
-  if (data.info.connectionParams) {
-    console.log("------ WS -------")
-    console.log(data.info.connectionParams)
-  }
+export async function createContext(data: Omit<FetchCreateContextFnOptions, 'resHeaders'>) {
   const bearerToken = data.req?.headers.get('authorization')?.split(' ')[1] ?? data.info?.connectionParams?.token;
 
   if (!bearerToken) {

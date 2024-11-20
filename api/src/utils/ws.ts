@@ -1,3 +1,5 @@
+// Credit to https://github.com/cah4a/trpc-bun-adapter
+// This is a modified version of the WS adpater
 import {
     type AnyRouter,
     TRPCError,
