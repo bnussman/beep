@@ -342,14 +342,17 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
             client.data.abortController = new AbortController();
             client.data.abortControllers = new Map();
 
-            const connectionParams =
-                new URL(client.data.req.url ?? "").searchParams.get(
-                    "connectionParams",
-                ) === "1";
+        if (client.data.req.url) {
 
-            if (!connectionParams) {
-                client.data.ctx = createClientCtx(client, null);
-            }
+          const connectionParams =
+            new URL(client.data.req.url).searchParams.get(
+              "connectionParams",
+            ) === "1";
+
+          if (!connectionParams) {
+            client.data.ctx = createClientCtx(client, null);
+          }
+        }
         },
 
         async close(client) {
