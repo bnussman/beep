@@ -73,8 +73,9 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
 })
 
 export async function createContext(data: CreateBunContextOptions) {
-  if (data.info) {
-    console.log("-------------> WS: ", data.info)
+  if (data.info.connectionParams) {
+    console.log("------ WS -------")
+    console.log(data.info.connectionParams)
   }
   const bearerToken = data.req?.headers.get('authorization')?.split(' ')[1] ?? data.info?.connectionParams?.token;
 
