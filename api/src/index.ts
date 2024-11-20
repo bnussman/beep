@@ -53,19 +53,12 @@ const bunHandler = createBunHttpHandler({
       }
   },
   emitWsUpgrades: false,
-  // batching: {
-  //     enabled: true,
-  // },
 });
 
 const websocket = createBunWSHandler({
   router: appRouter,
   createContext,
   onError: console.error,
-  batching: {
-      enabled: true,
-  },
-
 });
 
 Bun.serve({
@@ -73,14 +66,13 @@ Bun.serve({
       if (request.method === 'OPTIONS') {
         return new Response('Departed', { headers: CORS_HEADERS });
       }
-      if (server.upgrade(request, {data: {req: request}})) {
-        console.log(request)
+      if (server.upgrade(request, { data: {req: request } })) {
         return;
       }
       if (request.url.endsWith("/payments/webhook")) {
         return handlePaymentWebook(request);
       }
-      return bunHandler(request, server) ?? new Response("Not found", {status: 404});
+      return bunHandler(request, server) ?? new Response("Not found", { status: 404 });
   },
   websocket
 });
