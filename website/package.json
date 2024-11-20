@@ -17,12 +17,12 @@
     "@emotion/styled": "^11.11.5",
     "@fontsource/poppins": "^5.0.14",
     "@tanstack/react-query": "^5.51.23",
-    "@tanstack/react-router": "^1.29.2",
+    "@tanstack/react-router": "^1.82.1",
     "@trpc/client": "11.0.0-rc.553",
     "@trpc/react-query": "11.0.0-rc.553",
     "dayjs": "^1.11.10",
-    "framer-motion": "^11.1.7",
-    "mapbox-gl": "^3.3.0",
+    "framer-motion": "^11.11.17",
+    "mapbox-gl": "^3.8.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.51.3",
@@ -32,8 +32,8 @@
   "devDependencies": {
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.8",
-    "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "^5.6.2",
-    "vite": "^5.4.0"
+    "@vitejs/plugin-react": "^4.3.3",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
   }
 }
