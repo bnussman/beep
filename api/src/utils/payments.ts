@@ -83,22 +83,19 @@ export async function syncUserPayments(userId: string) {
 /**
  * A webhook RevenueCat uses to let us know a payment was made.
  */
-export async function handlePaymentWebook(request: Request, res: ServerResponse) {
+export async function handlePaymentWebook(request: Request) {
   const data: Webhook = await request.json();
 
   if (request.headers.get("Authorization") !== `Bearer ${REVENUE_CAT_WEBHOOK_TOKEN}`) {
-    res.writeHead(403, { 'Content-Type': 'text/plain' });
-    res.end('Unable to auth webhook call!\n');
+    return new Response("Unable to auth webhook call", { status: 401 });
   }
 
   try {
     await syncUserPayments(data.event.app_user_id);
   } catch (error) {
     Sentry.captureException(error);
-    res.writeHead(500, { 'Content-Type': 'text/plain' });
-    res.end('Error!\n');
+    return new Response("Internal Server Error", { status: 500 });
   }
 
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Success!\n');
+  return new Response("Success");
 }

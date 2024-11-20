@@ -1,10 +1,4 @@
-import ws from 'ws';
-import cors from 'cors';
-import * as Sentry from '@sentry/bun';
-import { createServer } from 'http';
 import { createContext, router } from './utils/trpc';
-import { createHTTPHandler } from '@trpc/server/adapters/standalone';
-import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import { userRouter } from './routers/user';
 import { authRouter } from './routers/auth';
 import { reportRouter } from "./routers/report";
@@ -18,9 +12,10 @@ import { redisRouter } from "./routers/redis";
 import { riderRouter } from "./routers/rider";
 import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
-import { incomingMessageToRequest } from "@trpc/server/adapters/node-http";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
+import { createBunHttpHandler } from 'trpc-bun-adapter';
+import { createBunWSHandler } from './utils/ws';
 
 const appRouter = router({
   user: userRouter,
@@ -41,43 +36,54 @@ const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-const handler = createHTTPHandler({
-  middleware: cors(),
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Vary',
+};
+
+const bunHandler = createBunHttpHandler({
   router: appRouter,
+  endpoint: '/',
   createContext,
-  onError(error) {
-    console.error(error);
-    if (error.error.code === "INTERNAL_SERVER_ERROR") {
-      Sentry.captureException(error.error, { extra: { input: error.input } });
-    }
-  }
-});
-
-const httpServer = createServer((req, res) => {
-  const request = incomingMessageToRequest(req, { maxBodySize: 20_000 });
-
-  if (request.url.endsWith("/payments/webhook")) {
-    return handlePaymentWebook(request, res);
-  }
-
-  return handler(req, res);
-});
-
-const wss = new ws.Server({ server: httpServer });
-
-applyWSSHandler<AppRouter>({
-  onError(error) {
-    console.error(error);
-    if (error.error.code === "INTERNAL_SERVER_ERROR") {
-      Sentry.captureException(error.error, { extra: { input: error.input } });
-    }
+  onError: console.error,
+  responseMeta(opts) {
+      return {
+        headers: CORS_HEADERS,
+      }
   },
-  wss,
-  router: appRouter,
-  createContext,
+  emitWsUpgrades: false,
+  // batching: {
+  //     enabled: true,
+  // },
 });
 
-httpServer.listen(3000);
+const websocket = createBunWSHandler({
+  router: appRouter,
+  createContext,
+  onError: console.error,
+  batching: {
+      enabled: true,
+  },
+
+});
+
+Bun.serve({
+  fetch(request, server) {
+      if (request.method === 'OPTIONS') {
+        return new Response('Departed', { headers: CORS_HEADERS });
+      }
+      if (server.upgrade(request, {data: {req: request}})) {
+        console.log(request)
+        return;
+      }
+      if (request.url.endsWith("/payments/webhook")) {
+        return handlePaymentWebook(request);
+      }
+      return bunHandler(request, server) ?? new Response("Not found", {status: 404});
+  },
+  websocket
+});
 
 console.info("🚕 Beep API Server Started");
 console.info("➡️  Listening on http://0.0.0.0:3000");
