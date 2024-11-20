@@ -14,8 +14,8 @@ import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
-import { createBunHttpHandler } from 'trpc-bun-adapter';
 import { createBunWSHandler } from './utils/ws';
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 
 const appRouter = router({
   user: userRouter,
@@ -42,19 +42,6 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, Vary',
 };
 
-const bunHandler = createBunHttpHandler({
-  router: appRouter,
-  endpoint: '/',
-  createContext,
-  onError: console.error,
-  responseMeta(opts) {
-      return {
-        headers: CORS_HEADERS,
-      }
-  },
-  emitWsUpgrades: false,
-});
-
 const websocket = createBunWSHandler({
   router: appRouter,
   createContext,
@@ -63,16 +50,24 @@ const websocket = createBunWSHandler({
 
 Bun.serve({
   fetch(request, server) {
-      if (request.method === 'OPTIONS') {
-        return new Response('Departed', { headers: CORS_HEADERS });
+    if (request.method === 'OPTIONS') {
+      return new Response('Departed', { headers: CORS_HEADERS });
+    }
+    if (server.upgrade(request, { data: { req: request } })) {
+      return;
+    }
+    if (request.url.endsWith("/payments/webhook")) {
+      return handlePaymentWebook(request);
+    }
+    return fetchRequestHandler({
+      endpoint: '/',
+      req: request,
+      router: appRouter,
+      createContext,
+      responseMeta() {
+        return { headers: CORS_HEADERS };
       }
-      if (server.upgrade(request, { data: {req: request } })) {
-        return;
-      }
-      if (request.url.endsWith("/payments/webhook")) {
-        return handlePaymentWebook(request);
-      }
-      return bunHandler(request, server) ?? new Response("Not found", { status: 404 });
+    });
   },
   websocket
 });

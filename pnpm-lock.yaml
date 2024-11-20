@@ -35,9 +35,6 @@ importers:
       redis:
         specifier: ^4.7.0
         version: 4.7.0
-      trpc-bun-adapter:
-        specifier: ^1.2.0
-        version: 1.2.0(@trpc/server@11.0.0-rc.638(@opentelemetry/api@1.9.0)(@playwright/test@1.49.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       validator:
         specifier: ^13.12.0
         version: 13.12.0
@@ -7759,11 +7756,6 @@ packages:
   trim-right@1.0.1:
     resolution: {integrity: sha512-WZGXGstmCWgeevgTL54hrCuw1dyMQIzWy7ZfqRJfSmJZBwklI15egmQytFP6bPidmw3M8d5yEowl1niq4vmqZw==}
     engines: {node: '>=0.10.0'}
-
-  trpc-bun-adapter@1.2.0:
-    resolution: {integrity: sha512-3ufDWpMU68ab0UffBr4hm3sczDzIOQr7+byCsXhiT2CT39t+3Gi2iBAfYlc/0twGiSCkH23HKzj2misgRgJ3aA==}
-    peerDependencies:
-      '@trpc/server': ^11.0.0-rc.566
 
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
@@ -17026,10 +17018,6 @@ snapshots:
   treeverse@3.0.0: {}
 
   trim-right@1.0.1: {}
-
-  trpc-bun-adapter@1.2.0(@trpc/server@11.0.0-rc.638(@opentelemetry/api@1.9.0)(@playwright/test@1.49.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)):
-    dependencies:
-      '@trpc/server': 11.0.0-rc.638(@babel/core@7.26.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.49.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
   ts-interface-checker@0.1.13: {}
 
