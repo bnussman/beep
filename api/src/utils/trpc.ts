@@ -72,7 +72,7 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
     return opts.next({ ctx });
 })
 
-export async function createContext(data: CreateBunContextOptions) {
+export async function createContext(data: Omit<CreateBunContextOptions, 'resHeaders'>) {
   if (data.info.connectionParams) {
     console.log("------ WS -------")
     console.log(data.info.connectionParams)
