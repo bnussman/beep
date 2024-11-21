@@ -23,14 +23,13 @@ export function Queue(props: Props) {
 
   const hasUnacceptedBeep = beeps.some(beep => beep.status === Status.WAITING);
 
-  const List = isWeb ? FlatList : BottomSheetFlatList;
-
   return (
     <BottomSheet
       ref={ref}
       onChange={(index) => {
         drawerPositionIndex.current = index;
       }}
+      enableDynamicSizing={false}
       snapPoints={["10%", "50%", isWeb ? "90%" : "100%"]}
       backgroundStyle={colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}}
       handleIndicatorStyle={colorScheme === "dark" ? { backgroundColor: "white" } : {}}
@@ -47,7 +46,7 @@ export function Queue(props: Props) {
         <Text size="3xl" weight="black">Queue</Text>
         {hasUnacceptedBeep && <View className="rounded-full bg-blue-400 w-4 h-4 animate-pulse" />}
       </Pressable>
-      <List
+      <BottomSheetFlatList
         data={beeps}
         keyExtractor={(beep) => beep.id}
         renderItem={({ item, index }) => (

@@ -37,7 +37,7 @@ export function Rating(props: Props) {
 
   return (
     <ContextMenu.Root>
-      <ContextMenu.Trigger action="press">
+      <ContextMenu.Trigger>
         <Card variant="outlined" pressable className="p-4 flex gap-4">
           <View className="flex flex-row items-center justify-between">
             <View className="flex flex-row items-center gap-2">
