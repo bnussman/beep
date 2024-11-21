@@ -20,7 +20,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await beeperPage.getByText("Make").click();
   await beeperPage.getByText("Ford").click();
   await beeperPage.getByText("Model").click();
-  await beeperPage.getByText("F250").click();
+  await beeperPage.getByText("Aspire").click();
   await beeperPage.getByText("Year").click();
   await beeperPage.getByText("2023").click();
   await beeperPage.getByText("Color").click();
@@ -88,7 +88,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   ).toBeVisible();
 
   await expect(
-    riderPage.getByText(`Beeper is here to pick you up in a white Ford F250`),
+    riderPage.getByText(`Beeper is here to pick you up in a white Ford Aspire`),
   ).toBeVisible();
 
   await beeperPage.getByText("I'm now beeping this rider").click();
@@ -130,7 +130,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await beeperPage.getByText("Make").click();
   await beeperPage.getByText("Ford").click();
   await beeperPage.getByText("Model").click();
-  await beeperPage.getByText("F150").click();
+  await beeperPage.getByText("Aspire").click();
   await beeperPage.getByText("Year").click();
   await beeperPage.getByText("2021").click();
   await beeperPage.getByText("Color").click();

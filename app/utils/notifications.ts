@@ -45,7 +45,6 @@ async function getNotificationPermission(): Promise<boolean> {
       allowAlert: true,
       allowBadge: true,
       allowSound: true,
-      allowAnnouncements: true,
     },
   });
 
