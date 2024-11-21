@@ -2,14 +2,14 @@
     "name": "@beep/deploy",
     "main": "index.ts",
     "devDependencies": {
-        "@types/node": "^18",
-        "typescript": "^5.6.2"
+        "@types/node": "^22.9.1",
+        "typescript": "^5.6.3"
     },
     "dependencies": {
-        "@pulumi/docker": "^4.5.4",
-        "@pulumi/kubernetes": "^4.15.0",
-        "@pulumi/linode": "^4.0.0",
-        "@pulumi/pulumi": "^3.113.0",
+        "@pulumi/docker": "^4.5.7",
+        "@pulumi/kubernetes": "^4.18.3",
+        "@pulumi/linode": "^4.30.0",
+        "@pulumi/pulumi": "^3.140.0",
         "@pulumi/tls-self-signed-cert": "^0.1.3"
     }
 }

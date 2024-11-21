@@ -126,7 +126,8 @@ export const reportRouter = router({
       const r = await db
         .update(report)
         .set(values)
-        .where(eq(report.id, input.reportId));
+        .where(eq(report.id, input.reportId))
+        .returning();
 
       return r[0];
     }),

@@ -30,18 +30,17 @@ const t = initTRPC.context<Context>().create({
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 
-const sentryMiddleware = t.middleware(
-  Sentry.trpcMiddleware({
-    attachRpcInput: true,
-  }),
-);
- 
 /**
  * Export reusable router and procedure helpers
  * that can be used throughout the router
  */
 export const router = t.router;
-export const publicProcedure = t.procedure.use(sentryMiddleware);
+
+export const publicProcedure = t.procedure.use((opts) => {
+  Sentry.getCurrentScope().setExtra("trpc", true);
+  return opts.next(opts);
+});
+
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
 

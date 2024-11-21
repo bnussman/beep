@@ -6,25 +6,26 @@
   "type": "module",
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
+    "dev": "bun run --preload ./src/utils/instrument.ts --watch src/index.ts",
     "typecheck": "tsc",
     "db:push": "drizzle-kit push"
   },
   "devDependencies": {
+    "@types/bun": "^1.1.13",
     "@types/cors": "^2.8.17",
-    "@types/nodemailer": "^6.4.16",
+    "@types/nodemailer": "^6.4.17",
     "@types/validator": "^13.12.2",
-    "drizzle-kit": "^0.24.2",
-    "typescript": "^5.6.2"
+    "drizzle-kit": "^0.28.1",
+    "typescript": "^5.6.3"
   },
   "dependencies": {
     "@capgo/s3-lite-client": "^0.1.8",
-    "@sentry/bun": "^8.30.0",
+    "@sentry/bun": "^8.39.0",
     "@trpc/server": "11.0.0-rc.553",
     "cors": "^2.8.5",
-    "drizzle-orm": "^0.33.0",
-    "nodemailer": "^6.9.14",
-    "postgres": "^3.4.4",
+    "drizzle-orm": "^0.36.3",
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1",
     "redis": "^4.7.0",
     "validator": "^13.12.0",
     "wkx": "^0.5.0",
