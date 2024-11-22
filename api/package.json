@@ -20,7 +20,7 @@
   "dependencies": {
     "@capgo/s3-lite-client": "^0.1.8",
     "@sentry/bun": "^8.39.0",
-    "@trpc/server": "11.0.0-rc.638",
+    "@trpc/server": "11.0.0-rc.643",
     "drizzle-orm": "^0.36.3",
     "nodemailer": "^6.9.16",
     "pg": "^8.13.1",
