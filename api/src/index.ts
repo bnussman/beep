@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/bun';
 import { createContext, router } from './utils/trpc';
 import { userRouter } from './routers/user';
 import { authRouter } from './routers/auth';
@@ -16,6 +17,8 @@ import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
 import { createBunWSHandler } from './utils/ws';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
+import { getHTTPStatusCodeFromError } from '@trpc/server/http';
+import { CORS_HEADERS } from './utils/cors';
 
 const appRouter = router({
   user: userRouter,
@@ -36,16 +39,18 @@ const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Vary',
-};
-
 const websocket = createBunWSHandler({
   router: appRouter,
   createContext,
-  onError: console.error,
+  onError(error) {
+    console.error(error);
+
+    if (getHTTPStatusCodeFromError(error.error) >= 500) {
+      captureException(error.error, {
+        extra: { input: error.input, type: error.type }
+      });
+    }
+  },
 });
 
 Bun.serve({
@@ -64,6 +69,15 @@ Bun.serve({
       req: request,
       router: appRouter,
       createContext,
+      onError(error) {
+        console.error(error);
+
+        if (getHTTPStatusCodeFromError(error.error) >= 500) {
+          captureException(error.error, {
+            extra: { input: error.input, type: error.type }
+          });
+        }
+      },
       responseMeta() {
         return { headers: CORS_HEADERS };
       }
