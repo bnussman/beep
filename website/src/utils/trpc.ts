@@ -26,7 +26,7 @@ function getWSUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
     return "wss://api.staging.ridebeep.app";
   }
-  return "ws://localhost:3000/trpc";
+  return "ws://localhost:3000";
 }
 
 export function getAuthToken() {
