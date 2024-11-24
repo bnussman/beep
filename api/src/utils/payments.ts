@@ -1,10 +1,10 @@
-import { and, eq, gte } from "drizzle-orm";
+import { and, desc, eq, gte } from "drizzle-orm";
 import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { db } from "./db";
 import { user, productEnum, payment, storeEnum } from "../../drizzle/schema";
 import * as Sentry from '@sentry/bun';
-import type { ServerResponse } from 'node:http';
-import { SubscriberResponse, Webhook } from "./revenuecat";
+import { Webhook } from "./revenuecat";
+import { paths } from "./revenucat-api";
 
 type Product = typeof productEnum.enumValues[number];
 type Store = typeof storeEnum.enumValues[number];
@@ -42,32 +42,35 @@ export async function syncUserPayments(userId: string) {
     }
   };
 
-  const request = await fetch(`https://api.revenuecat.com/v1/subscribers/${userId}`, options);
+  const usersMostRecentPayment = await db.query.payment.findFirst({
+    where: eq(user.id, userId),
+    orderBy: desc(payment.created)
+  });
 
-  const response: SubscriberResponse = await request.json();
+  const params: paths['/projects/{project_id}/customers/{customer_id}/purchases']['get']['parameters']['query'] = {
+    environment: 'production',
+    limit: 100,
+    starting_after: usersMostRecentPayment?.id,
+  };
 
-  const products = Object.keys(response.subscriber.non_subscriptions) as Product[];
+  const request = await fetch(`https://api.revenuecat.com/v2/projects/d7da55a3/customers/${userId}/purchases`, options);
 
-  for (const product of products) {
-    for (const paymentItem of response.subscriber.non_subscriptions[product]) {
+  const response: paths['/projects/{project_id}/customers/{customer_id}/purchases']['get']['responses']['200']['content']['application/json'] = await request.json();
 
-      const created = new Date(paymentItem.purchase_date);
+  for (const paymentItem of response.items) {
+    const created = new Date(paymentItem.purchased_at);
+    const productId = paymentItem.product_id as Product;
 
-      try {
-        await db.insert(payment).values({
-          id: paymentItem.id,
-          user_id: userId,
-          store: paymentItem.store as Store,
-          storeId: paymentItem.store_transaction_id,
-          price: String(productPrice[product]),
-          productId: product,
-          created,
-          expires: new Date(created.getTime() + productExpireTimes[product])
-        })
-      } catch (error) {
-        console.error("payment might already be stored", error)
-      }
-    }
+    await db.insert(payment).values({
+      id: paymentItem.id,
+      user_id: userId,
+      store: paymentItem.store as Store,
+      storeId: paymentItem.store_purchase_identifier,
+      price: String(productPrice[productId]),
+      productId,
+      created,
+      expires: new Date(created.getTime() + productExpireTimes[productId])
+    });
   }
 
   const activePayments = await db.query.payment.findMany({
