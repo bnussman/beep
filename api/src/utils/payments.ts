@@ -21,6 +21,8 @@ export const productExpireTimes: Record<Product, number> = {
   top_of_beeper_list_3_hours: (3 * 60 * 60 * 1000),
 }
 
+const API_ROOT = 'https://api.revenuecat.com';
+
 /**
  * Makes a fetch to https://api.revenuecat.com/v1/subscribers/:id
  * to sync our database with RevenuCat's purchases
@@ -47,31 +49,53 @@ export async function syncUserPayments(userId: string) {
     orderBy: desc(payment.created)
   });
 
-  const params: paths['/projects/{project_id}/customers/{customer_id}/purchases']['get']['parameters']['query'] = {
+  const queryParams = new URLSearchParams({
     environment: 'production',
-    limit: 100,
-    starting_after: usersMostRecentPayment?.id,
-  };
+  });
 
-  const request = await fetch(`https://api.revenuecat.com/v2/projects/d7da55a3/customers/${userId}/purchases`, options);
-
-  const response: paths['/projects/{project_id}/customers/{customer_id}/purchases']['get']['responses']['200']['content']['application/json'] = await request.json();
-
-  for (const paymentItem of response.items) {
-    const created = new Date(paymentItem.purchased_at);
-    const productId = paymentItem.product_id as Product;
-
-    await db.insert(payment).values({
-      id: paymentItem.id,
-      user_id: userId,
-      store: paymentItem.store as Store,
-      storeId: paymentItem.store_purchase_identifier,
-      price: String(productPrice[productId]),
-      productId,
-      created,
-      expires: new Date(created.getTime() + productExpireTimes[productId])
-    });
+  if (usersMostRecentPayment) {
+    queryParams.set('starting_after', usersMostRecentPayment.id);
   }
+
+  do {
+    const url = `${API_ROOT}/v2/projects/d7da55a3/customers/${userId}/purchases?${queryParams.toString()}`
+    const request = await fetch(url, options);
+
+    const response: paths['/projects/{project_id}/customers/{customer_id}/purchases']['get']['responses']['200']['content']['application/json'] = await request.json();
+
+    for (const paymentItem of response.items) {
+      const created = new Date(paymentItem.purchased_at);
+      const productId = paymentItem.product_id as Product;
+
+      try {
+        await db.insert(payment).values({
+          id: paymentItem.id,
+          user_id: userId,
+          store: paymentItem.store as Store,
+          storeId: paymentItem.store_purchase_identifier,
+          price: String(productPrice[productId]),
+          productId,
+          created,
+          expires: new Date(created.getTime() + productExpireTimes[productId])
+        });
+      } catch (error) {
+        Sentry.captureException(error);
+      }
+    }
+
+    if (response.next_page) {
+      const nextPageParam = new URLSearchParams(response.next_page).get('starting_after');
+
+      if (nextPageParam) {
+        queryParams.set('starting_after', nextPageParam);
+      } else {
+        queryParams.delete('starting_after');
+      }
+    } else {
+      queryParams.delete('starting_after');
+    }
+
+  } while (queryParams.has('starting_after'))
 
   const activePayments = await db.query.payment.findMany({
     where: and(
