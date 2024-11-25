@@ -55,6 +55,10 @@ export async function syncUserPaymentsV2(userId: string) {
     const url = `https://api.revenuecat.com/v2/projects/d7da55a3/customers/${userId}/purchases?${queryParams.toString()}`
     const request = await fetch(url, options);
 
+    if (request.status >= 400) {
+      throw new Error(`Got a ${request.status} response from RevenueCat's API`);
+    }
+
     const response: paths['/projects/{project_id}/customers/{customer_id}/purchases']['get']['responses']['200']['content']['application/json'] = await request.json();
 
     for (const paymentItem of response.items) {
