@@ -4,7 +4,7 @@ import { ENVIRONMENT, SENTRY_DSN } from './constants';
 Sentry.init({
   dsn: SENTRY_DSN,
   environment: ENVIRONMENT,
-  debug: true,
+  debug: false,
   tracesSampler(samplingContext) {
     return true;
   },

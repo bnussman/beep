@@ -21,6 +21,15 @@ export const productExpireTimes: Record<Product, number> = {
   top_of_beeper_list_3_hours: (3 * 60 * 60 * 1000),
 }
 
+const productIdToProductIdentifier: Record<string, Product> = {
+  prod44973ec22c: 'top_of_beeper_list_1_hour',
+  prod329641f9da: 'top_of_beeper_list_1_hour',
+  prod2b730f7c44: 'top_of_beeper_list_2_hours',
+  proddb4e5e278d: 'top_of_beeper_list_2_hours',
+  prodaaf983f76b: 'top_of_beeper_list_3_hours',
+  prod74fbab46ac: 'top_of_beeper_list_3_hours',
+};
+
 export async function syncUserPaymentsV2(userId: string) {
   if (!userId) {
     throw new Error("No user id provided when syncing payments.");
@@ -63,20 +72,22 @@ export async function syncUserPaymentsV2(userId: string) {
 
     for (const paymentItem of response.items) {
       const created = new Date(paymentItem.purchased_at);
-      const productId = paymentItem.product_id as Product;
+      const productIdentifier = productIdToProductIdentifier[paymentItem.product_id];
 
       try {
-        await db.insert(payment).values({
-          id: paymentItem.id,
-          user_id: userId,
-          store: paymentItem.store as Store,
-          storeId: paymentItem.store_purchase_identifier,
-          price: String(productPrice[productId]),
-          productId,
-          created,
-          expires: new Date(created.getTime() + productExpireTimes[productId])
-        });
+        // await db.insert(payment).values({
+        //   id: paymentItem.id,
+        //   user_id: userId,
+        //   store: paymentItem.store as Store,
+        //   storeId: paymentItem.store_purchase_identifier,
+        //   price: String(productPrice[productIdentifier]),
+        //   productId: productIdentifier,
+        //   created,
+        //   expires: new Date(created.getTime() + productExpireTimes[productIdentifier])
+        // });
+        console.log(paymentItem)
       } catch (error) {
+        console.error(error);
         Sentry.captureException(error);
       }
     }
