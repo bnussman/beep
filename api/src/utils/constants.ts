@@ -32,7 +32,9 @@ export const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
 
 export const REVENUE_CAT_WEBHOOK_TOKEN = process.env.REVENUE_CAT_WEBHOOK_TOKEN;
 
-export const REVENUE_CAT_SECRET = process.env.REVENUE_CAT_SECRET;
+export const REVENUE_CAT_SECRET = process.env.REVENUE_CAT_SECRET; // For v1
+
+export const REVENUE_CAT_API_KEY = process.env.REVENUE_CAT_API_KEY; // For v2
 
 export const OSRM_SECRET = process.env.OSRM_SECRET;
 

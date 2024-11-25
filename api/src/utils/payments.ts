@@ -1,5 +1,5 @@
 import { and, desc, eq, gte } from "drizzle-orm";
-import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
+import { REVENUE_CAT_API_KEY, REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { db } from "./db";
 import { user, productEnum, payment, storeEnum } from "../../drizzle/schema";
 import * as Sentry from '@sentry/bun';
@@ -26,15 +26,15 @@ export async function syncUserPaymentsV2(userId: string) {
     throw new Error("No user id provided when syncing payments.");
   }
 
-  if (!REVENUE_CAT_SECRET) {
-    throw new Error("No REVENU_CAT_SECRET in env.");
+  if (!REVENUE_CAT_API_KEY) {
+    throw new Error("No REVENUE_CAT_API_KEY in env.");
   }
 
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: `Bearer ${REVENUE_CAT_SECRET}`
+      Authorization: `Bearer ${REVENUE_CAT_API_KEY}`
     }
   };
 
