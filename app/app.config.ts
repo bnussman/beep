@@ -59,6 +59,21 @@ const config: ExpoConfig = {
     config: {
       googleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0",
     },
+    icon: {
+      light: './assets/icon.png',
+      dark: './assets/icon-transparent.png',
+      tinted: './assets/icon-tinted.png'
+    },
+    splash: {
+      image: "./assets/splash.png",
+      resizeMode: "cover",
+      backgroundColor: "#ffffff",
+      dark: {
+        image: "./assets/splash.png",
+        resizeMode: "cover",
+        backgroundColor: "#00000",
+      }
+    },
   },
   android: {
     package: "app.ridebeep.App",
@@ -76,11 +91,16 @@ const config: ExpoConfig = {
         apiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
       },
     },
-  },
-  splash: {
-    image: "./assets/splash.png",
-    resizeMode: "cover",
-    backgroundColor: "#ffffff",
+    splash: {
+      image: "./assets/splash.png",
+      resizeMode: "cover",
+      backgroundColor: "#ffffff",
+      dark: {
+        image: "./assets/splash.png",
+        resizeMode: "cover",
+        backgroundColor: "#00000",
+      }
+    },
   },
   assetBundlePatterns: ["**/*"],
 };
