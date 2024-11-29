@@ -71,7 +71,7 @@ const config: ExpoConfig = {
       dark: {
         image: "./assets/splash.png",
         resizeMode: "cover",
-        backgroundColor: "#00000",
+        backgroundColor: "#000000",
       }
     },
   },
@@ -98,7 +98,7 @@ const config: ExpoConfig = {
       dark: {
         image: "./assets/splash.png",
         resizeMode: "cover",
-        backgroundColor: "#00000",
+        backgroundColor: "#000000",
       }
     },
   },
