@@ -57,7 +57,7 @@ export const beeperRouter = router({
       z.object({
         beepId: z.string(),
         data: z.object({
-          status: z.enum([ "canceled", "denied", "waiting", "accepted", "on_the_way", "here", "in_progress", "complete"])
+          status: z.enum(["canceled", "denied", "waiting", "accepted", "on_the_way", "here", "in_progress", "complete"])
         })
       })
     )
@@ -76,12 +76,7 @@ export const beeperRouter = router({
       const isAcceptingOrDenying =
         input.data.status === "accepted" || input.data.status === "denied";
 
-      const numRidersBefore =
-        isAcceptingOrDenying ?
-          queue.filter((entry) => entry.start < queueEntry.start && entry.status === "waiting").length :
-          queue.filter((entry) => entry.start < queueEntry.start && entry.status !== "waiting").length;
-
-      if (numRidersBefore !== 0) {
+      if (isAcceptingOrDenying && queue.filter((entry) => entry.start < queueEntry.start && entry.status === "waiting").length !== 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "You must respond to the rider who first joined your queue."

@@ -44,15 +44,15 @@ const RootStack = createNativeStackNavigator({
         },
         Report: {
           screen: ReportScreen,
-          // options: {
-          //   presentation: "modal",
-          // },
+          options: {
+            presentation: "modal",
+          },
         },
         Rate: {
           screen: RateScreen,
-          // options: {
-          //   presentation: "modal",
-          // },
+          options: {
+            presentation: "modal",
+          },
         },
         "Change Password": ChangePasswordScreen,
         "Choose Beeper": PickBeepScreen,

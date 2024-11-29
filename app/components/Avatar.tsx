@@ -26,7 +26,7 @@ export function Avatar(props: Props) {
   const { className, src, size, ...rest } = props;
   return (
     <Image
-      source={{ uri: src }}
+      source={src ? { uri: src } : AvatarImage}
       defaultSource={AvatarImage}
       className={avatar({ className, size })}
       {...rest}
