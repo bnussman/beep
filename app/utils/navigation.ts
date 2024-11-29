@@ -16,16 +16,7 @@ import { Drawer } from "../navigators/Drawer";
 import { Appearance } from "react-native";
 
 const RootStack = createNativeStackNavigator({
-  screens: {
-    // This is stupid but it has to go here rather than the signed in group because logout will crash the ios app
-    Login: {
-      if: useIsSignedOut,
-      screen: LoginScreen,
-      options: {
-        headerShown: false,
-      },
-    },
-  },
+  screens: {},
   screenOptions: () => {
     const colorScheme = Appearance.getColorScheme();
     return {
@@ -62,6 +53,12 @@ const RootStack = createNativeStackNavigator({
     SignedOut: {
       if: useIsSignedOut,
       screens: {
+        "Login": {
+          screen: LoginScreen,
+          options: {
+            headerShown: false,
+          },
+        },
         "Sign Up": SignUpScreen,
         "Forgot Password": ForgotPasswordScreen,
       },
