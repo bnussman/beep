@@ -1,6 +1,7 @@
 packages:
   - "app"
   - "website"
+  - "site"
   - "api"
   - "test"
   - "deploy"
