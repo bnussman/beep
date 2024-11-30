@@ -115,7 +115,9 @@ export function Beep(props: Props) {
               Get Directions for Beep 🗺️
             </Button>
           )}
-          {beep.status === "on_the_way" || beep.status === "accepted" || beep.status === "here"  && <CancelButton beep={beep} />}
+          {(beep.status === "on_the_way" || beep.status === "accepted") && (
+            <CancelButton beep={beep} />
+          )}
           <ActionButton beep={beep} />
         </>
       )}
