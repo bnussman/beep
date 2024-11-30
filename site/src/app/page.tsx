@@ -1,14 +1,14 @@
-import styles from "./page.module.css";
 import { trpc } from "@/utils/trpc";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 
 export default async function Home() {
   const t = await trpc.user.me.query();
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
+    <main>
+      <Typography>
         Hello {t.first}
-      </main>
-    </div>
+      </Typography>
+    </main>
   );
 }
