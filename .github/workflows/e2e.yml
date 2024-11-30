@@ -13,18 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: latest
-    - uses: oven-sh/setup-bun@v1
-      with:
-        bun-version: latest
-    - uses: pnpm/action-setup@v3
-      name: Install pnpm
-      id: pnpm-install
+    - uses: pnpm/action-setup@v4
       with:
         version: latest
         run_install: false
+    - uses: actions/setup-node@v4
+      with:
+        cache: 'pnpm'
+    - uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
     - name: Start Docker services (PostgreSQL, Redis, and S3)
       run: docker compose up -d
     - name: 📦 install packages
