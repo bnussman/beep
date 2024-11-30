@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from "@/utils/theme";
 import { Link, AppBar, Box, Button, Container, CssBaseline, Toolbar, Typography } from "@mui/material";
 import { default as NextLink } from 'next/link';
+import { logout } from "./login/actions";
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
@@ -37,13 +38,18 @@ export default function RootLayout({
                   </Typography>
                 </Link>
                 <Box flexGrow={1} />
+                <Button variant="outlined" onClick={logout}>
+                  Logout 
+                </Button>
                 <Button variant="contained" href="/login" LinkComponent={Link}>
                   Login 
                 </Button>
               </Toolbar>
             </AppBar>
             <Container sx={{ pt: 12}}>
-              {children}
+              <main>
+                {children}
+              </main>
             </Container>
           </ThemeProvider>
         </AppRouterCacheProvider>
