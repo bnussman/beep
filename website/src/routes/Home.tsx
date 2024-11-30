@@ -6,7 +6,6 @@ import { createRoute } from '@tanstack/react-router';
 import { rootRoute } from '../utils/router';
 import { DownloadIcon } from '@chakra-ui/icons';
 import { Link } from '@tanstack/react-router';
-import { trpc } from '../utils/trpc';
 import {
   Box,
   Button,
@@ -14,10 +13,6 @@ import {
   Image,
   Heading,
   Stack,
-  StatGroup,
-  Stat,
-  StatLabel,
-  StatNumber,
 } from "@chakra-ui/react"
 import { Stats } from '../components/Stats';
 
