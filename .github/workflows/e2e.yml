@@ -19,21 +19,16 @@ jobs:
         run_install: false
     - uses: actions/setup-node@v4
       with:
-        cache: 'pnpm'
+        cache: pnpm
     - uses: oven-sh/setup-bun@v1
       with:
         bun-version: latest
-    - name: Start Docker services (PostgreSQL, Redis, and S3)
-      run: docker compose up -d
-    - name: 📦 install packages
-      run: pnpm i --frozen-lockfile
-    - name: Install Playwright Browsers
-      run: pnpm exec playwright install --with-deps chromium
-    - name: Init the DB
+    - run: docker compose up -d
+    - run: pnpm i --frozen-lockfile
+    - run: pnpm exec playwright install --with-deps chromium
+    - run: pnpm drizzle-kit push --force
       working-directory: ./api
-      run: pnpm drizzle-kit push --force
-    - name: Run Playwright tests
-      run: pnpm --filter @beep/test test
+    - run: pnpm --filter @beep/test test
     - uses: actions/upload-artifact@v4
       if: always()
       with:

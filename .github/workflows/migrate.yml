@@ -20,11 +20,9 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - name: 📦 install packages
-        run: bun install
+      - run: bun install
         working-directory: ./api/
-      - name: 💿 run migration
-        run: bun run db:migrate
+      - run: bun run db:migrate
         working-directory: ./api/
         env:
           DB_URL: ${{ secrets.DB_URL_PUBLIC }}

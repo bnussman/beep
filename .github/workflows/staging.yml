@@ -17,8 +17,7 @@ jobs:
       name: staging
       url: https://staging.ridebeep.app
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
@@ -30,10 +29,8 @@ jobs:
         with:
           node-version: latest
           cache: 'pnpm'
-      - name: 📦 install packages
-        run: pnpm i --frozen-lockfile
-      - name: Applying infrastructure 🚀
-        uses: pulumi/actions@v4
+      - run: pnpm i --frozen-lockfile
+      - uses: pulumi/actions@v4
         with:
           command: up
           stack-name: ${{ secrets.ENVIRONMENT_NAME }}
