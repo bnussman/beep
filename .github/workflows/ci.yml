@@ -18,7 +18,7 @@ jobs:
           run_install: false
       - uses: actions/setup-node@v4
         with:
-          cache: 'pnpm'
+          cache: pnpm
       - run: pnpm i --frozen-lockfile
       - run: pnpm --filter @beep/api typecheck
   website:
@@ -31,7 +31,7 @@ jobs:
           run_install: false
       - uses: actions/setup-node@v4
         with:
-          cache: "pnpm"
+          cache: pnpm
       - run: pnpm i --frozen-lockfile
       - run: pnpm --filter @beep/website typecheck
   app:
@@ -44,6 +44,6 @@ jobs:
           run_install: false
       - uses: actions/setup-node@v4
         with:
-          cache: "pnpm"
+          cache: pnpm
       - run: pnpm i --frozen-lockfile
       - run: pnpm --filter @beep/app typecheck

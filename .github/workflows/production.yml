@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
-          cache: 'pnpm'
+          cache: pnpm
       - run: pnpm i --frozen-lockfile
       - uses: pulumi/actions@v4
         with:
