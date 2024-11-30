@@ -3,11 +3,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { LocationInput } from "../../components/LocationInput";
 import { Controller, useForm } from "react-hook-form";
 import { BeepersMap } from "./BeepersMap";
-import { useLocation } from "../../utils/useLocation";
 import { Map } from "../../components/Map";
 import { LeaveButton } from "./LeaveButton";
-import { View, Linking, ActivityIndicator } from "react-native";
-import { useUser } from "../../utils/useUser";
+import { View, Linking } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
 import { Card } from "@/components/Card";
@@ -28,6 +26,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
+import { ETA } from "./ETA";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -39,7 +38,6 @@ export function MainFindBeepScreen(props: Props) {
   const utils = trpc.useUtils();
   const { data: beep } = trpc.rider.currentRide.useQuery();
 
-  const { location } = useLocation(beep?.status === "on_the_way");
 
   const isAcceptedBeep =
     beep?.status === "accepted" ||
@@ -72,18 +70,6 @@ export function MainFindBeepScreen(props: Props) {
     },
   });
 
-  const { data: eta, error: etaError } = trpc.location.getETA.useQuery(
-    {
-      start: `${beep?.beeper.location?.longitude},${beep?.beeper.location?.latitude}`,
-      end: `${location?.coords.longitude},${location?.coords.latitude}`,
-    },
-    {
-      enabled:
-        Boolean(beep?.beeper.location) &&
-        Boolean(location) &&
-        beep?.status === "on_the_way",
-    },
-  );
 
   const {
     control,
@@ -238,21 +224,7 @@ export function MainFindBeepScreen(props: Props) {
           </Card>
         )}
         {beep.status === "on_the_way" && (
-          <Card
-            variant="outlined"
-            className="p-4 flex flex-row justify-between items-center"
-          >
-            <Text size="xl" weight="black">
-              ETA
-            </Text>
-            {etaError ? (
-              <Text>{etaError.message}</Text>
-            ) : eta ? (
-              <Text>{eta}</Text>
-            ) : (
-              <ActivityIndicator />
-            )}
-          </Card>
+          <ETA beeperLocation={beep.beeper.location} />
         )}
         {beep.position > 0 && (
           <PlaceInQueue
