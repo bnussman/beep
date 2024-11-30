@@ -34,7 +34,6 @@ type Props = StaticScreenProps<
 >;
 
 export function MainFindBeepScreen(props: Props) {
-  const { user } = useUser();
   const { navigate } = useNavigation();
 
   const utils = trpc.useUtils();
@@ -98,7 +97,7 @@ export function MainFindBeepScreen(props: Props) {
       destination: props.route.params?.destination ?? "",
     },
     values: {
-      // @ts-expect-error we don't want a default group size'
+      // @ts-expect-error we don't want a default group size
       groupSize: props.route.params?.groupSize
         ? Number(props.route.params.groupSize)
         : undefined,
@@ -114,7 +113,6 @@ export function MainFindBeepScreen(props: Props) {
   const findBeep = handleSubmit((values) => {
     navigate("Choose Beeper", values);
   });
-
 
   if (!beep) {
     return (
