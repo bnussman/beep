@@ -69,7 +69,7 @@ export function Beep(props: Props) {
                 Text 💬
               </Button>
             </View>
-          {beep.status === "here" || beep.status === "in_progress" && (
+          {(beep.status === "here" || beep.status === "in_progress") && (
             <>
               {beep.rider.cashapp && (
                 <Button
@@ -102,7 +102,7 @@ export function Beep(props: Props) {
               )}
             </>
           )}
-          {beep.status === "on_the_way" || beep.status === "accepted" ? (
+          {(beep.status === "on_the_way" || beep.status === "accepted") ? (
             <Button
               onPress={() => openDirections("Current+Location", beep.origin)}
             >
