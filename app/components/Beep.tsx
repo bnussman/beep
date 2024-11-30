@@ -6,7 +6,6 @@ import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
 import { useUser } from "../utils/useUser";
-import { Status } from "../utils/types";
 import { openVenmo } from "@/utils/links";
 import { RouterOutput, trpc } from "@/utils/trpc";
 import { printStars } from "./Stars";
@@ -160,14 +159,3 @@ export function Beep({ item }: Props) {
     </ContextMenu.Root>
   );
 }
-
-const STATUS_TO_EMOJI: Record<Status, string> = {
-  [Status.ACCEPTED]: "☑️",
-  [Status.CANCELED]: "❌",
-  [Status.DENIED]: "⛔",
-  [Status.WAITING]: "⏳",
-  [Status.ON_THE_WAY]: "🚙",
-  [Status.HERE]: "📍",
-  [Status.IN_PROGRESS]: "🚙",
-  [Status.COMPLETE]: "✅",
-};

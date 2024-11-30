@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "./Button";
-import { Status } from "../utils/types";
 import { cx } from "class-variance-authority";
 import { RouterOutput, trpc } from "@/utils/trpc";
 
@@ -10,26 +9,25 @@ interface Props {
 }
 
 export function AcceptDenyButton(props: Props) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const { mutateAsync: update } = trpc.beeper.updateBeep.useMutation();
+  const utils = trpc.useUtils();
+
+  const { mutate, isPending } = trpc.beeper.updateBeep.useMutation({
+    onSuccess(data) {
+      utils.beeper.queue.setData(undefined, data);
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  });
 
   const isAccept = props.type === "accept";
 
-  useEffect(() => {
-    setLoading(false);
-  }, [props.item]);
-
   const onPress = () => {
-    setLoading(true);
-
-    update({
+    mutate({
       beepId: props.item.id,
       data: {
-        status: props.type === "accept" ? Status.ACCEPTED : Status.DENIED,
+        status: props.type === "accept" ? "accepted" : "denied",
       },
-    }).catch((error) => {
-      alert(error.message);
-      setLoading(false);
     });
   };
 
@@ -39,7 +37,7 @@ export function AcceptDenyButton(props: Props) {
         ["flex-grow !bg-green-400 dark:!bg-green-400"]: isAccept,
         ["!bg-red-400 dark:!bg-red-400"]: !isAccept,
       })}
-      isLoading={loading}
+      isLoading={isPending}
       onPress={onPress}
       activityIndicatorProps={{ color: "white" }}
     >

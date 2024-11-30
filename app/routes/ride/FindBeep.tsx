@@ -8,7 +8,6 @@ import { Map } from "../../components/Map";
 import { LeaveButton } from "./LeaveButton";
 import { View, Linking, ActivityIndicator } from "react-native";
 import { useUser } from "../../utils/useUser";
-import { Status } from "../../utils/types";
 import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
 import { Card } from "@/components/Card";
@@ -28,6 +27,7 @@ import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
+import { getCurrentStatusMessage } from "./utils";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -115,31 +115,6 @@ export function MainFindBeepScreen(props: Props) {
     navigate("Choose Beeper", values);
   });
 
-  function getCurrentStatusMessage(): string {
-    switch (beep?.status) {
-      case Status.WAITING:
-        return "Waiting for beeper to accept or deny you.";
-      case Status.ACCEPTED:
-        return "Beeper is getting ready to come get you. They will be on the way soon.";
-      case Status.ON_THE_WAY:
-        return "Beeper is on their way to get you.";
-      case Status.HERE:
-        return `Beeper is here to pick you up in a ${beep.beeper.cars?.[0].color} ${beep.beeper.cars?.[0].make} ${beep.beeper.cars?.[0].model}`;
-      case Status.IN_PROGRESS:
-        return "You are currently in the car with your beeper.";
-      default:
-        return "Unknown";
-    }
-  }
-
-  if (user?.isBeeping) {
-    return (
-      <View>
-        <Text weight="bold">You are beeping!</Text>
-        <Text>You can&apos;t find a ride when you are beeping</Text>
-      </View>
-    );
-  }
 
   if (!beep) {
     return (
@@ -229,7 +204,6 @@ export function MainFindBeepScreen(props: Props) {
           Find Beep
         </Button>
         <BeepersMap />
-        {/* <RateSheet /> */}
       </KeyboardAwareScrollView>
     );
   }
@@ -262,10 +236,10 @@ export function MainFindBeepScreen(props: Props) {
             <Text weight="black" size="xl">
               Current Status
             </Text>
-            <Text>{getCurrentStatusMessage()}</Text>
+            <Text>{getCurrentStatusMessage(beep)}</Text>
           </Card>
         )}
-        {beep.status === Status.ON_THE_WAY && (
+        {beep.status === "on_the_way" && (
           <Card
             variant="outlined"
             className="p-4 flex flex-row justify-between items-center"
@@ -288,7 +262,7 @@ export function MainFindBeepScreen(props: Props) {
             position={beep.position}
           />
         )}
-        {beep.status === Status.HERE ? (
+        {beep.status === "here" ? (
           <Image
             className="flex-grow rounded-xl w-full min-h-4"
             resizeMode="cover"

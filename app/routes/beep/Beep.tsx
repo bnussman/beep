@@ -8,14 +8,13 @@ import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { printStars } from "../../components/Stars";
-import { Status } from "../../utils/types";
 import {
   getRawPhoneNumber,
   openCashApp,
   openDirections,
   openVenmo,
 } from "../../utils/links";
-import { RouterOutput } from "@/utils/trpc";
+import type { RouterOutput } from "@/utils/trpc";
 
 interface Props {
   beep: RouterOutput['beeper']['queue'][number];
@@ -45,7 +44,7 @@ export function Beep(props: Props) {
       <Text size="xl" weight="black">Destination</Text>
       <Text selectable>{beep.destination}</Text>
       <View className="flex-grow" />
-      {beep.status === Status.WAITING ? (
+      {beep.status === "waiting" ? (
         <View className="flex flex-row gap-4">
           <AcceptDenyButton item={beep} type="deny" />
           <AcceptDenyButton item={beep} type="accept" />
@@ -70,9 +69,7 @@ export function Beep(props: Props) {
                 Text 💬
               </Button>
             </View>
-          {[Status.HERE, Status.IN_PROGRESS].includes(
-            beep.status as Status,
-          ) && (
+          {beep.status === "here" || beep.status === "in_progress" && (
             <>
               {beep.rider.cashapp && (
                 <Button
@@ -105,9 +102,7 @@ export function Beep(props: Props) {
               )}
             </>
           )}
-          {[Status.ON_THE_WAY, Status.ACCEPTED].includes(
-            beep.status as Status,
-          ) ? (
+          {beep.status === "on_the_way" || beep.status === "accepted" ? (
             <Button
               onPress={() => openDirections("Current+Location", beep.origin)}
             >
@@ -120,9 +115,7 @@ export function Beep(props: Props) {
               Get Directions for Beep 🗺️
             </Button>
           )}
-          {[Status.ON_THE_WAY, Status.WAITING, Status.ACCEPTED].includes(
-            beep.status as Status,
-          ) && <CancelButton beep={beep} />}
+          {beep.status === "on_the_way" || beep.status === "accepted" || beep.status === "here"  && <CancelButton beep={beep} />}
           <ActionButton beep={beep} />
         </>
       )}

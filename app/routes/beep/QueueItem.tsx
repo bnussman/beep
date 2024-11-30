@@ -1,15 +1,13 @@
 import React from "react";
-import { AcceptDenyButton } from "../../components/AcceptDenyButton";
+import * as DropdownMenu from "zeego/dropdown-menu";
+import { AcceptDenyButton } from "@/components/AcceptDenyButton";
 import { Alert, Linking, View } from "react-native";
-import { isMobile } from "../../utils/constants";
-import { getRawPhoneNumber, openDirections } from "../../utils/links";
-import { printStars } from "../../components/Stars";
-import { Avatar } from "../../components/Avatar";
-import { useNavigation } from "@react-navigation/native";
-import { Status } from "../../utils/types";
+import { isMobile } from "@/utils/constants";
+import { getRawPhoneNumber, openDirections } from "@/utils/links";
+import { printStars } from "@/components/Stars";
+import { Avatar } from "@/components/Avatar";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import * as DropdownMenu from "zeego/dropdown-menu";
 import { RouterOutput, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 
@@ -19,10 +17,18 @@ interface Props {
 }
 
 export function QueueItem({ item }: Props) {
-  const { mutateAsync: updateBeep } = trpc.beeper.updateBeep.useMutation();
-  const { navigate } = useNavigation();
+  const utils = trpc.useUtils();
 
-  const onCancelPress = () => {
+  const { mutate } = trpc.beeper.updateBeep.useMutation({
+    onSuccess(data) {
+      utils.beeper.queue.setData(undefined, data);
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  });
+
+  const onPromptCancel = () => {
     if (isMobile) {
       Alert.alert(
         "Cancel Beep?",
@@ -45,12 +51,10 @@ export function QueueItem({ item }: Props) {
   };
 
   const onCancel = () => {
-    updateBeep({ beepId: item.id, data: { status: 'canceled' } }).catch((error: TRPCClientError<any>) => {
-      alert(error.message);
-    });
+    mutate({ beepId: item.id, data: { status: 'canceled' } });
   };
 
-  if (item.status !== Status.WAITING) {
+  if (item.status !== "waiting") {
     return (
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
@@ -108,7 +112,7 @@ export function QueueItem({ item }: Props) {
           </DropdownMenu.Item>
           <DropdownMenu.Item
             key="cancel"
-            onSelect={onCancelPress}
+            onSelect={onPromptCancel}
             destructive
           >
             <DropdownMenu.ItemTitle>Cancel Beep</DropdownMenu.ItemTitle>

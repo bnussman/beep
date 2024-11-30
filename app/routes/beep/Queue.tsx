@@ -1,9 +1,8 @@
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { Text } from '@/components/Text';
 import { QueueItem } from './QueueItem';
-import { FlatList, Pressable, useColorScheme } from 'react-native';
+import { Pressable, useColorScheme } from 'react-native';
 import { View } from 'react-native';
-import { Status } from '@/utils/types';
 import { useRef } from 'react';
 import { isWeb } from '@/utils/constants';
 import { RouterOutput } from '@/utils/trpc';
@@ -21,7 +20,7 @@ export function Queue(props: Props) {
   const ref = useRef<BottomSheet>(null);
   const drawerPositionIndex = useRef<number>(0);
 
-  const hasUnacceptedBeep = beeps.some(beep => beep.status === Status.WAITING);
+  const hasUnacceptedBeep = beeps.some(beep => beep.status === "waiting");
 
   return (
     <BottomSheet
