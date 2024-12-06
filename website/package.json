@@ -10,30 +10,30 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^2.1.1",
-    "@chakra-ui/react": "^2.8.2",
-    "@chakra-ui/theme-tools": "^2.1.2",
+    "@chakra-ui/icons": "2.1.1",
+    "@chakra-ui/react": "2.8.2",
+    "@chakra-ui/theme-tools": "2.1.2",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@fontsource/poppins": "^5.0.14",
-    "@tanstack/react-query": "^5.51.23",
-    "@tanstack/react-router": "^1.82.1",
+    "@tanstack/react-query": "^5.62.2",
+    "@tanstack/react-router": "^1.85.5",
     "@trpc/client": "11.0.0-rc.643",
     "@trpc/react-query": "11.0.0-rc.643",
     "dayjs": "^1.11.10",
-    "framer-motion": "^11.11.17",
+    "framer-motion": "^11.13.1",
     "mapbox-gl": "^3.8.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "^7.51.3",
-    "react-icons": "^5.1.0",
+    "react-icons": "^5.4.0",
     "react-map-gl": "^7.0.21"
   },
   "devDependencies": {
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.8",
-    "@vitejs/plugin-react": "^4.3.3",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.11"
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
   }
 }
