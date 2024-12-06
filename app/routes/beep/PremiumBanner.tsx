@@ -1,8 +1,8 @@
+import React from 'react';
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { Countdown } from "@/components/CountDown";
 import { Text } from "@/components/Text";
-import { trpc } from "@/utils/trpc";
 import { useNavigation } from "@react-navigation/native";
 import { useActivePayments } from "../Premium";
 
