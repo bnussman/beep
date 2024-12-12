@@ -4,11 +4,12 @@ import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { trpc } from "@/utils/trpc";
+import type { TextInput } from "react-native";
 
 export function ChangePasswordScreen() {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const confirmPasswordRef = useRef<any>();
+  const confirmPasswordRef = useRef<TextInput>(null);
 
   const {
     mutateAsync: changePassword,
@@ -44,7 +45,7 @@ export function ChangePasswordScreen() {
         textContentType="password"
         placeholder="New Password"
         onChangeText={(text) => setPassword(text)}
-        onSubmitEditing={() => confirmPasswordRef.current.focus()}
+        onSubmitEditing={() => confirmPasswordRef.current?.focus()}
         returnKeyType="next"
       />
       <Label htmlFor="password1">Repeat Password</Label>
