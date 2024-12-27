@@ -9,7 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
-import { Navigation } from "./utils/navigation";
+import { Navigation } from "./navigators/Stack";
 import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
 import { trpc, queryClient, trpcClient, basicTrpcClient } from './utils/trpc';
