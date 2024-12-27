@@ -6,7 +6,7 @@
   },
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "pnpm run --parallel dev",
+    "dev": "concurrently --raw \"pnpm --filter @beep/app dev\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
     "start:api": "pnpm --filter @beep/api start",
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
@@ -20,5 +20,8 @@
   },
   "volta": {
     "node": "19.4.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.1"
   }
 }
