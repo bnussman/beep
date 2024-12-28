@@ -42,13 +42,13 @@ export function Stats() {
   });
 
   return (
-    <StatGroup gap={12} mt={8}>
-      <Stat>
+    <StatGroup gap={8} mt={8}>
+      <Stat textAlign={{ sm: 'center', md: 'left' }}>
         <StatLabel>Users</StatLabel>
         <StatNumber minWidth="125px">{userCount === undefined ? <Skeleton w="100%" height="32px" /> : userCount.toLocaleString()}</StatNumber>
       </Stat>
-      <Stat>
-        <StatLabel>Rides</StatLabel>
+      <Stat textAlign={{ sm: 'center', md: 'left' }}>
+        <StatLabel>Beeps</StatLabel>
         <StatNumber minWidth="125px">{beepCount === undefined ? <Skeleton w="100%" height="32px" /> : beepCount.toLocaleString()}</StatNumber>
       </Stat>
     </StatGroup>
