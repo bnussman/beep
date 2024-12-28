@@ -15,7 +15,7 @@ const SIZE_MAP: Record<Size, number> = {
 };
 
 interface Props extends ImageProps {
-  size: Size;
+  size?: Size;
 }
 
 export function Avatar(props: Props) {
