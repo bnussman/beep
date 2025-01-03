@@ -27,6 +27,7 @@ import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";
+import { RateBeeper } from "./RateBeeper";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -102,10 +103,7 @@ export function MainFindBeepScreen(props: Props) {
 
   if (!beep) {
     return (
-      <KeyboardAwareScrollView
-        scrollEnabled={false}
-        contentContainerClassName="p-4"
-      >
+      <View className="p-4 h-full" >
         <Label htmlFor="groupSize">Group Size</Label>
         <Controller
           name="groupSize"
@@ -188,7 +186,8 @@ export function MainFindBeepScreen(props: Props) {
           Find Beep
         </Button>
         <BeepersMap />
-      </KeyboardAwareScrollView>
+        <RateBeeper />
+      </View>
     );
   }
 
