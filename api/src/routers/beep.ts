@@ -25,7 +25,14 @@ export const beepRouter = router({
         userId: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      if (ctx.user.role !== 'admin' && input.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You cannot view beeps for other users.'
+        });
+      }
+
       const where = and(
         input.inProgress ? inProgressBeep : undefined,
         input.userId
