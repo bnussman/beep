@@ -48,14 +48,17 @@ export function RateScreen({ route }: Props) {
   return (
     <View className="p-4 gap-4 pt-8">
       <View className="flex flex-row items-center gap-2 justify-between">
-        <Text size="3xl" weight="black">
+        <Text size="3xl" weight="black" className="flex-shrink">
           {user.first} {user.last}
         </Text>
         <Avatar src={user.photo ?? undefined} />
       </View>
-      <Text>Stars</Text>
+      <Text weight="bold">Stars</Text>
       <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-      <Text className="mt-4">Message (optional)</Text>
+      <Text className="mt-4">
+        <Text weight="bold">Message</Text>{' '}
+        (optional)
+      </Text>
       <Input
         multiline
         className="h-24"

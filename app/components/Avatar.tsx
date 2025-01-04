@@ -28,7 +28,8 @@ export function Avatar(props: Props) {
       style={{
         borderRadius: '50%',
         width: SIZE_MAP[size],
-        height: SIZE_MAP[size]
+        height: SIZE_MAP[size],
+        backgroundColor: 'gray',
       }}
       {...rest}
     />
