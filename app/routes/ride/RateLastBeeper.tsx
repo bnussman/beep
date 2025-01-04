@@ -24,7 +24,7 @@ export function RateLastBeeper() {
                 beepId: beep.id,
             })}
             variant="outlined"
-            className="flex flex-row items-center justify-between px-4 py-2 mt-4 gap-4"
+            className="flex flex-row items-center justify-between px-4 py-2 mt-4 gap-4 ease-in ease-out duration-300"
         >
             <Text>⭐</Text>
             <Text className="flex-shrink">

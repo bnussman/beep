@@ -30,6 +30,7 @@ import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { cx } from "class-variance-authority";
 import { queryClient, trpc } from "@/utils/trpc";
+import { printStars } from "@/components/Stars";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
@@ -61,6 +62,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       .catch((error) => alert(error.message));
   };
 
+  const rating = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 2 }).format(
+    Number(user?.rating ?? 0),
+  )
+
   return (
     <DrawerContentScrollView {...props}>
       <View className="gap-3">
@@ -69,7 +74,9 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             <Text size="xl" weight="black">
               {user?.first} {user?.last}
             </Text>
-            <Text color="subtle">@{user?.username}</Text>
+            {user?.rating && (
+              <Text color="subtle" size="sm">{printStars(Number(user.rating))} ({rating})</Text>
+            )}
           </View>
           <Avatar src={user?.photo ?? undefined} />
         </View>
