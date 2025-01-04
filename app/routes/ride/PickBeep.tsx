@@ -1,18 +1,18 @@
 import React, { useEffect } from "react";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { printStars } from "../../components/Stars";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  View,
-} from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/useLocation";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  View,
+} from "react-native";
 
 type Props = StaticScreenProps<
   Omit<RouterInput['rider']['startBeep'], "beeperId">
@@ -119,7 +119,7 @@ export function PickBeepScreen({ route }: Props) {
     );
   };
 
-  if ((!beepers && isLoading) || location === undefined) {
+  if (isLoading) {
     return (
       <View className="flex items-center justify-center h-full">
         <ActivityIndicator />

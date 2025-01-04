@@ -15,18 +15,18 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
-import {
-  getRawPhoneNumber,
-  openCashApp,
-  openVenmo,
-  shareVenmoInformation,
-} from "../../utils/links";
 import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";
+import {
+  getRawPhoneNumber,
+  openCashApp,
+  openVenmo,
+  shareVenmoInformation,
+} from "../../utils/links";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -102,7 +102,7 @@ export function MainFindBeepScreen(props: Props) {
 
   if (!beep) {
     return (
-      <View className="p-4 h-full" >
+      <KeyboardAwareScrollView scrollEnabled={false} contentContainerClassName="p-4">
         <Label htmlFor="groupSize">Group Size</Label>
         <Controller
           name="groupSize"
@@ -185,7 +185,7 @@ export function MainFindBeepScreen(props: Props) {
           Find Beep
         </Button>
         <BeepersMap />
-      </View>
+      </KeyboardAwareScrollView>
     );
   }
 
