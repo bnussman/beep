@@ -125,7 +125,7 @@ export function ReportDrawer(props: Props) {
             >
               Delete
             </Button>
-            <Button isLoading={isPending} colorScheme="blue" type="submit">
+            <Button isLoading={isPending} colorScheme="blue" type="submit" isDisabled={!form.formState.isDirty}>
               Update
             </Button>
           </DrawerFooter>
