@@ -16,7 +16,12 @@ export const RateBar = (props: RateBarProps) => {
         const isSelected = value <= props.value;
 
         return (
-          <Button key={value} onPress={() => props.onValueChange(value)}>
+          <Button
+            key={value}
+            variant="parimary"
+            onPress={() => props.onValueChange(value)}
+            style={{ padding: 8 }}
+          >
             <Text>{isSelected ? "⭐" : "⚪"}</Text>
           </Button>
         );

@@ -42,7 +42,12 @@ const RootStack = createNativeStackNavigator({
         Rate: {
           screen: RateScreen,
           options: {
-            presentation: "modal",
+            presentation: "formSheet",
+            headerShown: false,
+            sheetGrabberVisible: true,
+            sheetInitialDetentIndex: 0,
+            sheetAllowedDetents: [0.5, 1],
+
           },
         },
         "Change Password": ChangePasswordScreen,

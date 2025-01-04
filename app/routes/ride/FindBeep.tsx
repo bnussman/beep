@@ -27,7 +27,6 @@ import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, trpc } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";
-import { RateBeeper } from "./RateBeeper";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -186,7 +185,6 @@ export function MainFindBeepScreen(props: Props) {
           Find Beep
         </Button>
         <BeepersMap />
-        <RateBeeper />
       </View>
     );
   }
