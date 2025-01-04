@@ -25,7 +25,11 @@ export function ActionButton(props: Props) {
   const { beep } = props;
   const utils = trpc.useUtils();
   const { mutate, isPending } = trpc.beeper.updateBeep.useMutation({
-    onSuccess(data) {
+    onSuccess(data, vars) {
+      if (vars.data.status === 'complete') {
+        utils.rider.getLastBeepToRate.invalidate();
+      }
+      utils.beep.beeps.invalidate();
       utils.beeper.queue.setData(undefined, data);
     },
     onError(error) {

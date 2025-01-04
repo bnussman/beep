@@ -24,6 +24,7 @@ export function RateScreen({ route }: Props) {
       onSuccess() {
         utils.beep.beeps.invalidate();
         utils.rating.ratings.invalidate();
+        utils.rider.getLastBeepToRate.invalidate();
         goBack();
       },
       onError(error) {

@@ -361,6 +361,47 @@ export const riderRouter = router({
       await db.update(user).set({ queueSize: getQueueSize(newQueue) }).where(eq(user.id, beeper.id));
 
       return true;
+    }),
+    getLastBeepToRate: authedProcedure.query(async ({ ctx }) => {
+      const mostRecentCompletedBeep = await db.query.beep.findFirst({
+        orderBy: desc(beep.start),
+        where: and(
+          or(
+             eq(beep.rider_id, ctx.user.id),
+             eq(beep.beeper_id, ctx.user.id)
+          ),
+          eq(beep.status, 'complete')
+        ),
+        with: {
+          ratings: true,
+          beeper: {
+            columns: {
+              id: true,
+              first: true,
+              last: true,
+              photo: true,
+            },
+          },
+          rider: {
+            columns: {
+              id: true,
+              first: true,
+              last: true,
+              photo: true,
+            },
+          },
+        }
+      });
+
+      if (!mostRecentCompletedBeep) {
+        return null;
+      }
+
+      if (mostRecentCompletedBeep.ratings.some((rating) => rating.rater_id === ctx.user.id)) {
+        return null;
+      }
+
+      return mostRecentCompletedBeep;
     })
 });
 

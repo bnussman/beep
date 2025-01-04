@@ -27,6 +27,7 @@ import {
   openVenmo,
   shareVenmoInformation,
 } from "../../utils/links";
+import { RateLastBeeper } from "./RateLastBeeper";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -47,6 +48,9 @@ export function MainFindBeepScreen(props: Props) {
 
   trpc.rider.currentRideUpdates.useSubscription(undefined, {
     onData(data) {
+      if (data === null) {
+        utils.rider.getLastBeepToRate.invalidate();
+      }
       utils.rider.currentRide.setData(undefined, data);
     },
     enabled: Boolean(beep),
@@ -185,6 +189,7 @@ export function MainFindBeepScreen(props: Props) {
           Find Beep
         </Button>
         <BeepersMap />
+        <RateLastBeeper />
       </KeyboardAwareScrollView>
     );
   }
