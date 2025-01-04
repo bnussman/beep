@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { RateBar } from "@/components/Rate";
-import { UserHeader } from "@/components/UserHeader";
 import { Input } from "@/components/Input";
-import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
+import { Button } from "@/components/Button";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { trpc } from "@/utils/trpc";
+import { ActivityIndicator } from "react-native";
+import { Avatar } from "@/components/Avatar";
 
 type Props = StaticScreenProps<{ userId: string; beepId: string }>;
 
@@ -40,24 +41,30 @@ export function RateScreen({ route }: Props) {
     });
   };
 
+  if (!user) {
+    return <ActivityIndicator />;
+  }
+
   return (
-    <View className="p-4 gap-4">
-      {user && (
-        <UserHeader
-          username={user.username}
-          name={`${user.first} ${user.last}`}
-          picture={user.photo}
-        />
-      )}
+    <View className="p-4 gap-4 pt-8">
+      <View className="flex flex-row items-center gap-2 justify-between">
+        <Text size="3xl" weight="black" className="flex-shrink">
+          {user.first} {user.last}
+        </Text>
+        <Avatar src={user.photo ?? undefined} />
+      </View>
+      <Text weight="bold">Stars</Text>
       <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-      <Text>Message (optional)</Text>
+      <Text className="mt-4">
+        <Text weight="bold">Message</Text>{' '}
+        (optional)
+      </Text>
       <Input
         multiline
         className="h-24"
-        returnKeyType="go"
         onChangeText={(text) => setMessage(text)}
         onSubmitEditing={onSubmit}
-        blurOnSubmit={true}
+        autoFocus
       />
       <Button onPress={onSubmit} disabled={stars < 1} isLoading={isPending}>
         Rate User

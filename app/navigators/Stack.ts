@@ -14,6 +14,7 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
 import { Appearance } from "react-native";
+import { isWeb } from "@/utils/constants";
 
 const RootStack = createNativeStackNavigator({
   screens: {},
@@ -42,7 +43,11 @@ const RootStack = createNativeStackNavigator({
         Rate: {
           screen: RateScreen,
           options: {
-            presentation: "modal",
+            presentation: "formSheet",
+            headerShown: isWeb,
+            sheetGrabberVisible: true,
+            sheetInitialDetentIndex: 0,
+            sheetAllowedDetents: [0.5, 1] as number[],
           },
         },
         "Change Password": ChangePasswordScreen,

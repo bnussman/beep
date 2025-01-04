@@ -1,18 +1,17 @@
 import React, { useEffect } from "react";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { printStars } from "../../components/Stars";
+import { Avatar } from "@/components/Avatar";
+import { useLocation } from "@/utils/useLocation";
+import { Text } from "@/components/Text";
+import { Card } from "@/components/Card";
+import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";
 import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
   View,
 } from "react-native";
-import { Avatar } from "@/components/Avatar";
-import { useLocation } from "@/utils/useLocation";
-import { Text } from "@/components/Text";
-import { Card } from "@/components/Card";
-import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 
 type Props = StaticScreenProps<
   Omit<RouterInput['rider']['startBeep'], "beeperId">
@@ -33,10 +32,15 @@ export function PickBeepScreen({ route }: Props) {
     }
   );
 
-  const {
-    mutateAsync: startBeep,
-    isPending: isPickBeeperLoading
-  } = trpc.rider.startBeep.useMutation();
+  const { mutate: startBeep, isPending: isPickBeeperLoading } = trpc.rider.startBeep.useMutation({
+    onSuccess(data) {
+      utils.rider.currentRide.setData(undefined, data);
+      navigation.goBack();
+    },
+     onError(error) {
+      alert(error.message);
+     },
+  });
 
   useEffect(() => {
     navigation.setOptions({
@@ -46,20 +50,14 @@ export function PickBeepScreen({ route }: Props) {
 
   const chooseBeep = async (beeperId: string) => {
     if (isPickBeeperLoading) {
+      // We don't want to make API requests if a request is inflight
       return;
     }
-    try {
-      const data = await startBeep({
-        ...route.params,
-        beeperId,
-      });
 
-      utils.rider.currentRide.setData(undefined, data);
-
-      navigation.goBack();
-    } catch (error) {
-      alert((error as TRPCClientError<any>).message);
-    }
+    startBeep({
+      ...route.params,
+      beeperId,
+    });
   };
 
   const renderItem = ({
@@ -119,7 +117,7 @@ export function PickBeepScreen({ route }: Props) {
     );
   };
 
-  if ((!beepers && isLoading) || location === undefined) {
+  if (isLoading) {
     return (
       <View className="flex items-center justify-center h-full">
         <ActivityIndicator />
