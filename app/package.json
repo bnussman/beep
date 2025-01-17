@@ -59,7 +59,6 @@
     "zeego": "^2.0.4"
   },
   "devDependencies": {
-    "@trpc/server": "11.0.0-rc.643",
     "@babel/core": "^7.24.4",
     "@expo/metro-runtime": "~4.0.0",
     "@types/react": "~18.3.12",
