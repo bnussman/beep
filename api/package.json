@@ -11,15 +11,15 @@
     "db:push": "drizzle-kit push"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.14",
+    "@types/bun": "^1.1.16",
     "@types/nodemailer": "^6.4.17",
     "@types/validator": "^13.12.2",
-    "drizzle-kit": "^0.30.0",
-    "typescript": "^5.7.2"
+    "drizzle-kit": "^0.30.2",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "@capgo/s3-lite-client": "^0.1.8",
-    "@sentry/bun": "^8.43.0",
+    "@sentry/bun": "^8.50.0",
     "@trpc/server": "11.0.0-rc.643",
     "drizzle-orm": "^0.38.1",
     "nodemailer": "^6.9.16",
