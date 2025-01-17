@@ -7,4 +7,5 @@ export const s3 = new S3Client({
   accessKeyId: S3_ACCESS_KEY_ID,
   region: 'beep',
   bucket: "beep",
+  // pathStyle: isLocalS3,
 });
