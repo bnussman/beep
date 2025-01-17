@@ -21,12 +21,12 @@ function getUrl() {
 
 function getWSUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "production") {
-    return "wss://api.ridebeep.app";
+    return "wss://api.ridebeep.app/subscriptions";
   }
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
-    return "wss://api.staging.ridebeep.app";
+    return "wss://api.staging.ridebeep.app/subscriptions";
   }
-  return "ws://localhost:3000";
+  return "ws://localhost:3000/subscriptions";
 }
 
 export function getAuthToken() {

@@ -27,8 +27,8 @@ function getLocalIP() {
 const ip = getLocalIP();
 
 const wsUrl = __DEV__
-  ? `ws://${ip}:3000`
-  : "wss://api.ridebeep.app";
+  ? `ws://${ip}:3000/subscriptions`
+  : "wss://api.ridebeep.app/subscriptions";
 const url = __DEV__
   ? `http://${ip}:3000`
   : "https://api.ridebeep.app";
@@ -70,11 +70,9 @@ const wsClient = createWSClient({
   },
   onError(error) {
     Sentry.captureMessage("Websocket Error", { extra: { error } });
-    console.log("Websocket Error", error);
   },
   onClose(reason) {
     Sentry.captureMessage("Websocket Closed", { extra: { reason } });
-    console.log("Websocket Closed", reason);
   },
   async connectionParams() {
     const token = await getAuthToken();
