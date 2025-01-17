@@ -143,8 +143,8 @@ export const carRouter = router({
 
       const objectKey = `cars/${carId}${extention}`;
 
-      await s3.write(objectKey, input.photo, {
-        acl: "public-read",
+      await s3.putObject(objectKey, input.photo.stream(), {
+        metadata: { "x-amz-acl": "public-read" },
       });
 
       const newCar = {
