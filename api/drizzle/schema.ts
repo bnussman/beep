@@ -1,8 +1,7 @@
 import { pgTable, integer, varchar, timestamp, unique, boolean, numeric, index, pgEnum } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm/relations";
-import type { CustomTypeValues } from "drizzle-orm/pg-core";
+import type { CustomTypeValues, PgPointObject } from "drizzle-orm/pg-core";
 import { customType } from "drizzle-orm/pg-core";
-import type { Point } from "geojson";
 import { Geometry } from "wkx";
 
 export const geography = (
@@ -28,7 +27,7 @@ export const geography = (
       }
 
       if (typeof value === 'object') {
-        const point = value as Point;
+        const point = value as { coordinates: [number, number] };
         return { latitude: point.coordinates[0], longitude: point.coordinates[1] };
       }
 

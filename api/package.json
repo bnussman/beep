@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/bun": "^1.1.16",
     "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.11.10",
     "@types/validator": "^13.12.2",
     "drizzle-kit": "^0.30.2",
     "typescript": "^5.7.3"

@@ -55,6 +55,9 @@ importers:
       '@types/nodemailer':
         specifier: ^6.4.17
         version: 6.4.17
+      '@types/pg':
+        specifier: ^8.11.10
+        version: 8.11.10
       '@types/validator':
         specifier: ^13.12.2
         version: 13.12.2
@@ -212,6 +215,9 @@ importers:
       '@expo/metro-runtime':
         specifier: ~4.0.0
         version: 4.0.0(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.25.4(@babel/core@7.26.0))(@react-native-community/cli-server-api@13.6.9(encoding@0.1.13))(@types/react@18.3.18)(encoding@0.1.13)(react@18.3.1))
+      '@trpc/server':
+        specifier: 11.0.0-rc.643
+        version: 11.0.0-rc.643(typescript@5.7.3)
       '@types/react':
         specifier: ~18.3.12
         version: 18.3.18
@@ -313,6 +319,9 @@ importers:
         specifier: ^7.1.8
         version: 7.1.8(mapbox-gl@3.9.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
+      '@trpc/server':
+        specifier: 11.0.0-rc.643
+        version: 11.0.0-rc.643(typescript@5.7.3)
       '@types/react':
         specifier: ^18.2.48
         version: 18.3.18
@@ -1723,7 +1732,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {node: '>=0.10.0'}
+    engines: {'0': node >=0.10.0}
 
   '@expo/cli@0.21.8':
     resolution: {integrity: sha512-gU+NlL/XS9r7LEfLhjDDKuv3jEtOh+rVnk/k7Lp8WrUwaMCoEGfmQpSqLXetFCCC4UFXSaj1cdMGoy2UBw4rew==}
@@ -11313,14 +11322,13 @@ snapshots:
 
   '@types/pg-pool@2.0.6':
     dependencies:
-      '@types/pg': 8.6.1
+      '@types/pg': 8.11.10
 
   '@types/pg@8.11.10':
     dependencies:
       '@types/node': 22.10.7
       pg-protocol: 1.7.0
       pg-types: 4.0.2
-    optional: true
 
   '@types/pg@8.6.1':
     dependencies:
@@ -14115,8 +14123,7 @@ snapshots:
 
   object-keys@1.1.1: {}
 
-  obuf@1.1.2:
-    optional: true
+  obuf@1.1.2: {}
 
   on-finished@2.3.0:
     dependencies:
@@ -14312,8 +14319,7 @@ snapshots:
 
   pg-int8@1.0.1: {}
 
-  pg-numeric@1.0.2:
-    optional: true
+  pg-numeric@1.0.2: {}
 
   pg-pool@3.7.0(pg@8.13.1):
     dependencies:
@@ -14338,7 +14344,6 @@ snapshots:
       postgres-date: 2.1.0
       postgres-interval: 3.0.0
       postgres-range: 1.1.4
-    optional: true
 
   pg@8.13.1:
     dependencies:
@@ -14438,30 +14443,25 @@ snapshots:
 
   postgres-array@2.0.0: {}
 
-  postgres-array@3.0.2:
-    optional: true
+  postgres-array@3.0.2: {}
 
   postgres-bytea@1.0.0: {}
 
   postgres-bytea@3.0.0:
     dependencies:
       obuf: 1.1.2
-    optional: true
 
   postgres-date@1.0.7: {}
 
-  postgres-date@2.1.0:
-    optional: true
+  postgres-date@2.1.0: {}
 
   postgres-interval@1.2.0:
     dependencies:
       xtend: 4.0.2
 
-  postgres-interval@3.0.0:
-    optional: true
+  postgres-interval@3.0.0: {}
 
-  postgres-range@1.1.4:
-    optional: true
+  postgres-range@1.1.4: {}
 
   postgres@3.4.4:
     optional: true
