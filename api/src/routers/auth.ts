@@ -127,8 +127,8 @@ export const authRouter = router({
 
       const objectKey = `images/${userId}-${Date.now()}${extention}`;
 
-      await s3.putObject(objectKey, input.photo.stream(), {
-        metadata: { "x-amz-acl": "public-read" },
+      await s3.write(objectKey, input.photo, {
+        acl: "public-read",
       });
 
       const password = await bunPassword.hash(input.password, "bcrypt");

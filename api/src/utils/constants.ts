@@ -16,7 +16,7 @@ export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID ?? "beep";
 
 export const S3_ACCESS_KEY_SECRET = process.env.S3_ACCESS_KEY_SECRET ?? "beepbeepbeep";
 
-export const S3_ENDPOINT = process.env.S3_ENDPOINT ?? "localhost";
+export const S3_ENDPOINT = process.env.S3_ENDPOINT ?? "http://localhost:9000";
 
 export const isLocalS3 = S3_ACCESS_KEY_SECRET === "beepbeepbeep";
 
