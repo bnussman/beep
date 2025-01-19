@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, ListItem, Stack, UnorderedList } from "@chakra-ui/react";
+import { Heading, ListItem, Stack, Text, UnorderedList } from "@chakra-ui/react";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
 import { createRoute } from "@tanstack/react-router";
@@ -15,7 +15,7 @@ export const duplicateRoute = createRoute({
 export function UsersWithDuplicateEmail() {
   const { data, isLoading, error } = trpc.user.emailsWithManyAccounts.useQuery();
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return <Loading />;
   }
 
@@ -23,12 +23,23 @@ export function UsersWithDuplicateEmail() {
     return <Error>{error.message}</Error>;
   }
 
+  const emails = Object.keys(data);
+
   return (
     <Stack spacing={4}>
       <Heading>Users with duplicate emails</Heading>
-      <pre>
-        {JSON.stringify(data, null, 2)}
-      </pre>
+      <Text>There are {emails.length} emails that are being shared that we need to fix</Text>
+      
+      {emails.map((email) => (
+        <Stack spacing={1}>
+          <Heading size="md">{email}</Heading>
+          <UnorderedList>
+            {data[email].map((user) => (
+              <ListItem>{JSON.stringify(user)}</ListItem>
+            ))}
+          </UnorderedList>
+        </Stack>
+      ))}
     </Stack>
   );
 }
