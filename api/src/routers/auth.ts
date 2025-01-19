@@ -85,12 +85,6 @@ export const authRouter = router({
   signup: publicProcedure
     .input(z.instanceof(FormData))
     .mutation(async ({ input: formData }) => {
-      const object = {} as Record<string, unknown>;
-
-      for (const [key, value] of formData.entries()) {
-        object[key] = value;
-      }
-
       const userId = crypto.randomUUID();
 
       const signupSchema = z.object({
@@ -110,7 +104,7 @@ export const authRouter = router({
         success,
         data: input,
         error
-      } = signupSchema.safeParse(object);
+      } = signupSchema.safeParse(Object.fromEntries(formData.entries()));
 
       if (!success) {
         throw new TRPCError({
