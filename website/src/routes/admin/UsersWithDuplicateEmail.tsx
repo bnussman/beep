@@ -1,5 +1,5 @@
 import React from "react";
-import { Code, Heading, ListItem, Stack, Text, UnorderedList } from "@chakra-ui/react";
+import { Box, Button, Code, Heading, ListItem, Stack, Text, UnorderedList, useToast } from "@chakra-ui/react";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
 import { createRoute } from "@tanstack/react-router";
@@ -13,7 +13,18 @@ export const duplicateRoute = createRoute({
 });
 
 export function UsersWithDuplicateEmail() {
-  const { data, isLoading, error } = trpc.user.emailsWithManyAccounts.useQuery();
+  const toast = useToast();
+
+  const { data, isLoading, error, refetch } = trpc.user.emailsWithManyAccounts.useQuery();
+  const { mutate, isPending } = trpc.user.deleteDuplicateAccounts.useMutation({
+    onError(error) {
+      toast({ title: "Error", description: error.message, status: "error" });
+    },
+    onSuccess() {
+      toast({ title: "Success", description: "Done!", status: "success" });
+      refetch();
+    },
+  });
 
   if (isLoading || !data) {
     return <Loading />;
@@ -29,12 +40,18 @@ export function UsersWithDuplicateEmail() {
     <Stack spacing={4}>
       <Heading>Users with duplicate emails</Heading>
       <Text>There are {emails.length} emails that are being shared that we need to fix</Text>
+
+      <Box>
+        <Button colorScheme="red" isLoading={isPending} onClick={(() => mutate())}>
+          Delete Duplictae Accounts
+        </Button>
+      </Box> 
       
       {emails.map((email) => (
         <Stack spacing={1} key={email}>
           <Heading size="md">{email}</Heading>
-          <Text>User <Code>{data[email].userToDelete}</Code> will be <b>KEPT</b></Text>
-          {data[email].userToDelete === null && (<Error>Needs more logic</Error>)}
+          <Text>User <Code>{data[email].userToKeep}</Code> will be <b>KEPT</b></Text>
+          {data[email].userToKeep === null && (<Error>Needs more logic</Error>)}
           <UnorderedList>
             {data[email].users.map((user) => (
               <ListItem key={user.id}>{JSON.stringify(user)}</ListItem>

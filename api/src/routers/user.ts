@@ -494,9 +494,22 @@ export const userRouter = router({
     });
   }),
   emailsWithManyAccounts: adminProcedure.query(async () => {
-    const emails = getDuplicateEmailUsers();
+    const emails = await getDuplicateEmailUsers();
     return emails;
   }),
+  deleteDuplicateAccounts: adminProcedure.mutation(async () => {
+    const emails = await getDuplicateEmailUsers();
+
+    for (const email in emails) {
+      for (const userUsingEmail of emails[email].users) {
+        if (emails[email].userToKeep !== userUsingEmail.id) {
+          await db.delete(user).where(eq(user.id, userUsingEmail.id));
+        }
+      }
+    }
+
+    return emails;
+  })
 });
 
 async function getDuplicateEmailUsers() {
@@ -526,12 +539,12 @@ async function getDuplicateEmailUsers() {
     return acc;
   }, {});
 
-  let output: Output = {};
+  let output: EmailInformation = {};
 
   for (const email in emails) {
     output[email] = {
       users: emails[email],
-      userToDelete: getUserToKeep(emails[email]).id
+      userToKeep: getUserToKeep(emails[email]).id
     }
   }
 
@@ -547,7 +560,7 @@ type User = {
   beeps: number;
 }
 
-type Output = Record<string, { users: User[], userToDelete: string }>;
+type EmailInformation = Record<string, { users: User[], userToKeep: string }>;
 
 
 function getUserToKeep(users: User[]) {
