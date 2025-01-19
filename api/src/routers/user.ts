@@ -263,16 +263,16 @@ export const userRouter = router({
 
       const objectKey = "images/" + filename;
 
-      await s3.putObject(
+      await s3.write(
         objectKey,
-        input.photo.stream(),
-        { metadata: { "x-amz-acl": "public-read" } }
+        input.photo,
+        { acl: 'public-read' }
       );
 
       if (ctx.user.photo) {
         const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
-        s3.deleteObject(key);
+        s3.delete(key);
       }
 
       const u = await db
