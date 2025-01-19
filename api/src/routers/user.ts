@@ -3,7 +3,7 @@ import { adminProcedure, authedProcedure, publicProcedure, router } from "../uti
 import { beep, car, rating, user, verify_email } from '../../drizzle/schema';
 import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
-import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
+import { count, eq, sql, like, and, or, avg, gte } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
@@ -478,19 +478,27 @@ export const userRouter = router({
 
       return ratings.length;
     }),
-    userCount: publicProcedure.query(async () => {
-      const usersCount = await db.select({ count: count() }).from(user);
-      return usersCount[0].count;
-    }),
-    numberOfUsersSubscription: publicProcedure.subscription(() => {
-      return observable<'increment' | 'decrement'>((emit) => {
-        const onUserUpdate = (message: string) => {
-          emit.next(message as 'increment' | 'decrement');
-        };
-        redisSubscriber.subscribe("user-count", onUserUpdate);
-        return () => {
-          redisSubscriber.unsubscribe(`user-count`, onUserUpdate);
-        }
-      });
-    })
-})
+  userCount: publicProcedure.query(async () => {
+    const usersCount = await db.select({ count: count() }).from(user);
+    return usersCount[0].count;
+  }),
+  numberOfUsersSubscription: publicProcedure.subscription(() => {
+    return observable<'increment' | 'decrement'>((emit) => {
+      const onUserUpdate = (message: string) => {
+        emit.next(message as 'increment' | 'decrement');
+      };
+      redisSubscriber.subscribe("user-count", onUserUpdate);
+      return () => {
+        redisSubscriber.unsubscribe(`user-count`, onUserUpdate);
+      }
+    });
+  }),
+  emailsWithManyAccounts: adminProcedure.query(async () => {
+    const users = await db.select({ email: sql<string>`lower(${user.email})` })
+      .from(user)
+      .groupBy(({ email }) => email)
+      .having(gte(sql<number>`count(*)`, 2))
+
+    return users;
+  }),
+});

@@ -19,6 +19,7 @@ import {
   LiaUsersSolid,
   LiaMoneyBillAlt,
   LiaHeart,
+  LiaEnvelope
 } from "react-icons/lia";
 import { DiRedis } from "react-icons/di";
 import { AiOutlineNotification } from 'react-icons/ai'
@@ -79,6 +80,9 @@ export function AdminMenu() {
           </MenuItem>
           <MenuItem icon={<Icon fontSize="2xl" as={LiaHeart} />} as={Link} to="/admin/health">
             Health
+          </MenuItem>
+          <MenuItem icon={<Icon fontSize="2xl" as={LiaEnvelope} />} as={Link} to="/admin/duplicate">
+            Duplicate Emails
           </MenuItem>
         </MenuGroup>
       </MenuList>

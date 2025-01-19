@@ -15,4 +15,4 @@ const queryClient = new Client(options);
 
 await queryClient.connect();
 
-export const db = drizzle(queryClient, { schema, logger: false });
+export const db = drizzle(queryClient, { schema, logger: true });
