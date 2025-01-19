@@ -8,7 +8,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
 import { S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
-import { syncUserPaymentsV1, syncUserPaymentsV2 } from "../utils/payments";
+import { syncUserPayments } from "../utils/payments";
 import { SendMailOptions } from "nodemailer";
 import { email } from "../utils/email";
 import * as Sentry from '@sentry/bun';
@@ -225,12 +225,12 @@ export const userRouter = router({
     }),
   syncMyPayments: authedProcedure
     .mutation(async ({ ctx }) => {
-      return await syncUserPaymentsV1(ctx.user.id);
+      return await syncUserPayments(ctx.user.id);
     }),
   syncPayments: authedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
-      return await syncUserPaymentsV2(input);
+      return await syncUserPayments(input);
     }),
   updatePicture: authedProcedure
     .input(z.instanceof(FormData))
