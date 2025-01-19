@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading, ListItem, Stack, Text, UnorderedList } from "@chakra-ui/react";
+import { Code, Heading, ListItem, Stack, Text, UnorderedList } from "@chakra-ui/react";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
 import { createRoute } from "@tanstack/react-router";
@@ -33,8 +33,10 @@ export function UsersWithDuplicateEmail() {
       {emails.map((email) => (
         <Stack spacing={1} key={email}>
           <Heading size="md">{email}</Heading>
+          <Text>User <Code>{data[email].userToDelete}</Code> will be deleted</Text>
+          {data[email].userToDelete === null && (<Error>Needs more logic</Error>)}
           <UnorderedList>
-            {data[email].map((user) => (
+            {data[email].users.map((user) => (
               <ListItem key={user.id}>{JSON.stringify(user)}</ListItem>
             ))}
           </UnorderedList>

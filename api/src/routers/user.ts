@@ -494,31 +494,77 @@ export const userRouter = router({
     });
   }),
   emailsWithManyAccounts: adminProcedure.query(async () => {
-    const otherUser = aliasedTable(user, "otherUser")
-    const users = await db
-      .select({
-        id: user.id,
-        first: user.first,
-        last: user.last,
-        email: user.email,
-        created: user.created,
-        beeps: db.$count(beep, or(eq(beep.beeper_id, user.id), eq(beep.rider_id, user.id)))
-      })
-      .from(user)
-      .innerJoin(otherUser, eq(sql`lower(${user.email})`, sql`lower(${otherUser.email})`))
-      .where(ne(user.id, otherUser.id));
-
-    const emails = users.reduce<Record<string, typeof users>>((acc, user) => {
-      const lowerEmail = user.email.toLowerCase();
-      const existingUsers = acc[lowerEmail] ?? [];
-
-      if (!existingUsers.some((u) => u.id === user.id)) {
-        acc[lowerEmail] = [...existingUsers, user]
-      }
-
-      return acc;
-    }, {});
-
+    const emails = getDuplicateEmailUsers();
     return emails;
   }),
 });
+
+async function getDuplicateEmailUsers() {
+  const otherUser = aliasedTable(user, "otherUser")
+  const users = await db
+    .select({
+      id: user.id,
+      first: user.first,
+      last: user.last,
+      email: user.email,
+      created: user.created,
+      beeps: db.$count(beep, or(eq(beep.beeper_id, user.id), eq(beep.rider_id, user.id)))
+    })
+    .from(user)
+    .innerJoin(otherUser, eq(sql`lower(${user.email})`, sql`lower(${otherUser.email})`))
+    .where(ne(user.id, otherUser.id));
+
+  const emails = users.reduce<Record<string, typeof users>>((acc, user) => {
+    const lowerEmail = user.email.toLowerCase();
+    const existingUsers = acc[lowerEmail] ?? [];
+
+    if (!existingUsers.some((u) => u.id === user.id)) {
+      acc[lowerEmail] = [...existingUsers, user]
+    }
+
+    return acc;
+  }, {});
+
+  let output: Output = {};
+
+  for (const email in emails) {
+    output[email] = {
+      users: emails[email],
+      userToDelete: getUserToKeep(emails[email])?.id ?? null
+    }
+  }
+
+  return output;
+}
+
+type User = {
+  id: string;
+  first: string;
+  last: string;
+  email: string;
+  created: Date | null;
+  beeps: number;
+}
+
+type Output = Record<string, { users: User[], userToDelete: string | null }>;
+
+
+function getUserToKeep(users: User[]) {
+  if (users.every((user) => user.beeps === 0)) {
+    // This email's users all have zero beeps. We should use `created` to deturmine which account to delete
+    return null;
+  }
+  return getUserWithMostBeeps(users);
+}
+
+function getUserWithMostBeeps(users: User[]) {
+  let userWithMostBeeps = users[0];
+
+  for (const user of users) {
+    if (user.beeps > userWithMostBeeps.beeps) {
+      userWithMostBeeps = user;
+    }
+  }
+  
+  return userWithMostBeeps;
+}
