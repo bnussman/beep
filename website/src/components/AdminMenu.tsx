@@ -81,9 +81,6 @@ export function AdminMenu() {
           <MenuItem icon={<Icon fontSize="2xl" as={LiaHeart} />} as={Link} to="/admin/health">
             Health
           </MenuItem>
-          <MenuItem icon={<Icon fontSize="2xl" as={LiaEnvelope} />} as={Link} to="/admin/duplicate">
-            Duplicate Emails
-          </MenuItem>
         </MenuGroup>
       </MenuList>
     </Menu>
