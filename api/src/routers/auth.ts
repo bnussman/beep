@@ -88,11 +88,7 @@ export const authRouter = router({
       const object = {} as Record<string, unknown>;
 
       for (const [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          object[key] = value;
-        } else {
-          object[key] = value;
-        }
+        object[key] = value;
       }
 
       const userId = crypto.randomUUID();
