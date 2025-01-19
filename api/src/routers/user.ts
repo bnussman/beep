@@ -3,7 +3,7 @@ import { adminProcedure, authedProcedure, publicProcedure, router } from "../uti
 import { beep, car, rating, user, verify_email } from '../../drizzle/schema';
 import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
-import { count, eq, sql, like, and, or, avg, gte } from "drizzle-orm";
+import { count, eq, sql, like, and, or, avg, gte, aliasedTable, ne, getTableColumns } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
@@ -494,10 +494,12 @@ export const userRouter = router({
     });
   }),
   emailsWithManyAccounts: adminProcedure.query(async () => {
-    const users = await db.select({ email: sql<string>`lower(${user.email})` })
+    const otherUser = aliasedTable(user, "otherUser")
+    const users = await db
+      .select({ ...getTableColumns(user) })
       .from(user)
-      .groupBy(({ email }) => email)
-      .having(gte(sql<number>`count(*)`, 2))
+      .innerJoin(otherUser, eq(sql`lower(${user.email})`, sql`lower(${otherUser.email})`))
+      .where(ne(user.id, otherUser.id));
 
     return users;
   }),
