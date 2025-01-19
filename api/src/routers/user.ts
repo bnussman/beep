@@ -531,7 +531,7 @@ async function getDuplicateEmailUsers() {
   for (const email in emails) {
     output[email] = {
       users: emails[email],
-      userToDelete: getUserToKeep(emails[email])?.id ?? null
+      userToDelete: getUserToKeep(emails[email]).id
     }
   }
 
@@ -547,7 +547,7 @@ type User = {
   beeps: number;
 }
 
-type Output = Record<string, { users: User[], userToDelete: string | null }>;
+type Output = Record<string, { users: User[], userToDelete: string }>;
 
 
 function getUserToKeep(users: User[]) {
