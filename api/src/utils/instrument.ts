@@ -15,7 +15,7 @@ Sentry.init({
     ]
   },
   beforeSendTransaction(event, hint) {
-    if (event.transaction && event.extra?.trpc) {
+    if (event.transaction) {
       // We must replace "." with "/" because Sentry groups requests on their end.
       // trpc's method of using `.`s insted of `/`s hurts us here.
       event.transaction = event.transaction.replaceAll('.', '/')
