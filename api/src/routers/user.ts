@@ -496,11 +496,24 @@ export const userRouter = router({
   emailsWithManyAccounts: adminProcedure.query(async () => {
     const otherUser = aliasedTable(user, "otherUser")
     const users = await db
-      .select({ ...getTableColumns(user), beeps: db.$count(beep, or(eq(beep.beeper_id, user.id), eq(beep.rider_id, user.id))) })
+      .select({
+        id: user.id,
+        first: user.first,
+        last: user.last,
+        email: user.email,
+        created: user.created,
+        beeps: db.$count(beep, or(eq(beep.beeper_id, user.id), eq(beep.rider_id, user.id)))
+      })
       .from(user)
       .innerJoin(otherUser, eq(sql`lower(${user.email})`, sql`lower(${otherUser.email})`))
       .where(ne(user.id, otherUser.id));
 
-    return users;
+    const emails = users.reduce<Record<string, typeof users>>((acc, user) => {
+      const lowerEmail = user.email.toLowerCase();
+      acc[lowerEmail] = [...(acc[lowerEmail] ?? []), user]
+      return acc;
+    }, {});
+
+    return emails;
   }),
 });
