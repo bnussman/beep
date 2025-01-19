@@ -33,7 +33,7 @@ export function UsersWithDuplicateEmail() {
       {emails.map((email) => (
         <Stack spacing={1} key={email}>
           <Heading size="md">{email}</Heading>
-          <Text>User <Code>{data[email].userToDelete}</Code> will be deleted</Text>
+          <Text>User <Code>{data[email].userToDelete}</Code> will be <b>KEPT</b></Text>
           {data[email].userToDelete === null && (<Error>Needs more logic</Error>)}
           <UnorderedList>
             {data[email].users.map((user) => (

@@ -3,7 +3,7 @@ import { adminProcedure, authedProcedure, publicProcedure, router } from "../uti
 import { beep, car, rating, user, verify_email } from '../../drizzle/schema';
 import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
-import { count, eq, sql, like, and, or, avg, gte, aliasedTable, ne, getTableColumns } from "drizzle-orm";
+import { count, eq, sql, like, and, or, avg, gte, aliasedTable, ne, getTableColumns, desc } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
@@ -511,6 +511,7 @@ async function getDuplicateEmailUsers() {
       beeps: db.$count(beep, or(eq(beep.beeper_id, user.id), eq(beep.rider_id, user.id)))
     })
     .from(user)
+    .orderBy(sql`${user.created} desc nulls last`)
     .innerJoin(otherUser, eq(sql`lower(${user.email})`, sql`lower(${otherUser.email})`))
     .where(ne(user.id, otherUser.id));
 
@@ -550,11 +551,11 @@ type Output = Record<string, { users: User[], userToDelete: string | null }>;
 
 
 function getUserToKeep(users: User[]) {
-  if (users.every((user) => user.beeps === 0)) {
-    // This email's users all have zero beeps. We should use `created` to deturmine which account to delete
-    return null;
+  if (!doesEveryUserHaveSameNumberOfBeeps(users)) {
+    return getUserWithMostBeeps(users);
   }
-  return getUserWithMostBeeps(users);
+  return users[0];
+  
 }
 
 function getUserWithMostBeeps(users: User[]) {
@@ -567,4 +568,9 @@ function getUserWithMostBeeps(users: User[]) {
   }
   
   return userWithMostBeeps;
+}
+
+
+function doesEveryUserHaveSameNumberOfBeeps(users: User[]) {
+  return users.every(user => user.beeps === users[0].beeps);
 }
