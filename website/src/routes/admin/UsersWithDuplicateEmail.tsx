@@ -31,11 +31,11 @@ export function UsersWithDuplicateEmail() {
       <Text>There are {emails.length} emails that are being shared that we need to fix</Text>
       
       {emails.map((email) => (
-        <Stack spacing={1}>
+        <Stack spacing={1} key={email}>
           <Heading size="md">{email}</Heading>
           <UnorderedList>
             {data[email].map((user) => (
-              <ListItem>{JSON.stringify(user)}</ListItem>
+              <ListItem key={user.id}>{JSON.stringify(user)}</ListItem>
             ))}
           </UnorderedList>
         </Stack>

@@ -510,7 +510,12 @@ export const userRouter = router({
 
     const emails = users.reduce<Record<string, typeof users>>((acc, user) => {
       const lowerEmail = user.email.toLowerCase();
-      acc[lowerEmail] = [...(acc[lowerEmail] ?? []), user]
+      const existingUsers = acc[lowerEmail] ?? [];
+
+      if (!existingUsers.some((u) => u.id === user.id)) {
+        acc[lowerEmail] = [...existingUsers, user]
+      }
+
       return acc;
     }, {});
 
