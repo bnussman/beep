@@ -103,16 +103,6 @@ export const carRouter = router({
   createCar: verifiedProcedure
     .input(z.instanceof(FormData))
     .mutation(async ({ input: formData, ctx }) => {
-      const object = {} as Record<string, unknown>;
-
-      for (const [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          object[key] = value;
-        } else {
-          object[key] = value;
-        }
-      }
-
       const carSchema = z.object({
         make: z.string(),
         model: z.string(),
@@ -125,7 +115,7 @@ export const carRouter = router({
         success,
         data: input,
         error
-      } = carSchema.safeParse(object);
+      } = carSchema.safeParse(Object.fromEntries(formData.entries()));
 
       if (!success) {
         throw new TRPCError({
