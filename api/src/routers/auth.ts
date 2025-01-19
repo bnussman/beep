@@ -2,7 +2,7 @@ import { authedProcedure, publicProcedure, router } from "../utils/trpc";
 import { z } from 'zod';
 import { db } from "../utils/db";
 import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
-import { and, eq, ne, or } from "drizzle-orm";
+import { and, eq, ne, or, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
@@ -25,7 +25,10 @@ export const authRouter = router({
       const { username, password, pushToken } = input;
 
       const u = await db.query.user.findFirst({
-        where: or(eq(user.username, username), eq(user.email, username))
+        where: or(
+          eq(user.username, username),
+          eq(sql`lower(${user.email})`, username.toLowerCase())
+        )
       });
 
       if (!u) {
@@ -99,7 +102,7 @@ export const authRouter = router({
         last: z.string().min(1).max(64).refine(isAlpha, 'Must only contain letters'),
         username: z.string().min(3).max(64),
         password: z.string().min(6).max(255),
-        email: z.string().email().endsWith('.edu', 'You must use a .edu email').toLowerCase(),
+        email: z.string().email().endsWith('.edu', 'You must use a .edu email'),
         phone: z.string().refine(isMobilePhone, 'Invalid phone number'),
         venmo: z.string().max(30).optional(),
         cashapp: z.string().max(40).optional(),
@@ -117,6 +120,17 @@ export const authRouter = router({
         throw new TRPCError({
           code: "BAD_REQUEST",
           cause: error,
+        });
+      }
+
+      const existing = await db.query.user.findFirst({
+        where: eq(sql`lower(${user.email})`, input.email.toLowerCase())
+      });
+
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "A user with that email already exists."
         });
       }
 
