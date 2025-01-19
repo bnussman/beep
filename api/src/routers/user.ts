@@ -3,7 +3,7 @@ import { adminProcedure, authedProcedure, publicProcedure, router } from "../uti
 import { beep, car, rating, user, verify_email } from '../../drizzle/schema';
 import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
-import { count, eq, sql, like, and, or, avg, gte, aliasedTable, ne, getTableColumns, desc } from "drizzle-orm";
+import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
@@ -493,97 +493,4 @@ export const userRouter = router({
       }
     });
   }),
-  emailsWithManyAccounts: adminProcedure.query(async () => {
-    const emails = await getDuplicateEmailUsers();
-    return emails;
-  }),
-  deleteDuplicateAccounts: adminProcedure.mutation(async () => {
-    const emails = await getDuplicateEmailUsers();
-
-    for (const email in emails) {
-      for (const userUsingEmail of emails[email].users) {
-        if (emails[email].userToKeep !== userUsingEmail.id) {
-          await db.delete(user).where(eq(user.id, userUsingEmail.id));
-        }
-      }
-    }
-
-    return emails;
-  })
 });
-
-async function getDuplicateEmailUsers() {
-  const otherUser = aliasedTable(user, "otherUser")
-  const users = await db
-    .select({
-      id: user.id,
-      first: user.first,
-      last: user.last,
-      email: user.email,
-      created: user.created,
-      beeps: db.$count(beep, or(eq(beep.beeper_id, user.id), eq(beep.rider_id, user.id)))
-    })
-    .from(user)
-    .orderBy(sql`${user.created} desc nulls last`)
-    .innerJoin(otherUser, eq(sql`lower(${user.email})`, sql`lower(${otherUser.email})`))
-    .where(ne(user.id, otherUser.id));
-
-  const emails = users.reduce<Record<string, typeof users>>((acc, user) => {
-    const lowerEmail = user.email.toLowerCase();
-    const existingUsers = acc[lowerEmail] ?? [];
-
-    if (!existingUsers.some((u) => u.id === user.id)) {
-      acc[lowerEmail] = [...existingUsers, user]
-    }
-
-    return acc;
-  }, {});
-
-  let output: EmailInformation = {};
-
-  for (const email in emails) {
-    output[email] = {
-      users: emails[email],
-      userToKeep: getUserToKeep(emails[email]).id
-    }
-  }
-
-  return output;
-}
-
-type User = {
-  id: string;
-  first: string;
-  last: string;
-  email: string;
-  created: Date | null;
-  beeps: number;
-}
-
-type EmailInformation = Record<string, { users: User[], userToKeep: string }>;
-
-
-function getUserToKeep(users: User[]) {
-  if (!doesEveryUserHaveSameNumberOfBeeps(users)) {
-    return getUserWithMostBeeps(users);
-  }
-  return users[0];
-  
-}
-
-function getUserWithMostBeeps(users: User[]) {
-  let userWithMostBeeps = users[0];
-
-  for (const user of users) {
-    if (user.beeps > userWithMostBeeps.beeps) {
-      userWithMostBeeps = user;
-    }
-  }
-  
-  return userWithMostBeeps;
-}
-
-
-function doesEveryUserHaveSameNumberOfBeeps(users: User[]) {
-  return users.every(user => user.beeps === users[0].beeps);
-}

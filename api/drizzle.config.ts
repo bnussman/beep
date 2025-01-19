@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { DB_DATABASE, DB_HOST, DB_URL, ENVIRONMENT } from "./src/utils/constants";
+import { DB_HOST, DB_URL, ENVIRONMENT } from "./src/utils/constants";
 
 const ssl = DB_HOST.includes('neon') || ENVIRONMENT === "production" ? "?sslmode=require" : '';
 

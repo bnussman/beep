@@ -35,10 +35,7 @@ export type RouterInput = inferRouterInputs<AppRouter>;
  */
 export const router = t.router;
 
-export const publicProcedure = t.procedure.use((opts) => {
-  Sentry.getCurrentScope().setExtra("trpc", true);
-  return opts.next(opts);
-});
+export const publicProcedure = t.procedure;
 
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
@@ -49,6 +46,7 @@ export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
 
   return opts.next({ ctx });
 });
+
 export const verifiedProcedure = authedProcedure.use(function isVerified(opts) {
   const { ctx } = opts;
 

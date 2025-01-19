@@ -11,7 +11,7 @@ import { email } from "../utils/email";
 import { SendMailOptions } from "nodemailer";
 import * as Sentry from '@sentry/bun';
 import { pubSub } from "../utils/pubsub";
-import { isAlpha, isMobilePhone, isSlug } from "validator";
+import { isAlpha, isMobilePhone } from "validator";
 import { redis } from "../utils/redis";
 
 export const authRouter = router({
