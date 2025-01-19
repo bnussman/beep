@@ -18,9 +18,6 @@ importers:
 
   api:
     dependencies:
-      '@capgo/s3-lite-client':
-        specifier: ^0.1.8
-        version: 0.1.8
       '@sentry/bun':
         specifier: ^8.50.0
         version: 8.50.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.56.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.28.0)
@@ -1120,10 +1117,6 @@ packages:
   '@babel/types@7.26.5':
     resolution: {integrity: sha512-L6mZmwFDK6Cjh1nRCLXpa6no13ZIioJDz7mdkzHv399pThrTa/k0nUlNaenOeh2kWu/iaOQYElEpKPUswUa9Vg==}
     engines: {node: '>=6.9.0'}
-
-  '@capgo/s3-lite-client@0.1.8':
-    resolution: {integrity: sha512-sTBLTa3lWvw13BO4jdIaNAwRmywuIDGD3zXOPPEqatbEon2qF8sTKbJfTtvikO1j0STPERLBQ/vt1dTFL0yP+w==}
-    engines: {node: '>=20'}
 
   '@chakra-ui/anatomy@2.2.2':
     resolution: {integrity: sha512-MV6D4VLRIHr4PkW4zMyqfrNS1mPlCTiCXwvYGtDFQYr+xHFfonhAuf9WjsSc0nyp2m0OdkSLnzmVKkZFLo25Tg==}
@@ -8620,8 +8613,6 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
-
-  '@capgo/s3-lite-client@0.1.8': {}
 
   '@chakra-ui/anatomy@2.2.2': {}
 
