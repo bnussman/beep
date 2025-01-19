@@ -496,7 +496,7 @@ export const userRouter = router({
   emailsWithManyAccounts: adminProcedure.query(async () => {
     const otherUser = aliasedTable(user, "otherUser")
     const users = await db
-      .select({ ...getTableColumns(user) })
+      .select({ ...getTableColumns(user), beeps: db.$count(beep, or(eq(beep.beeper_id, user.id), eq(beep.rider_id, user.id))) })
       .from(user)
       .innerJoin(otherUser, eq(sql`lower(${user.email})`, sql`lower(${otherUser.email})`))
       .where(ne(user.id, otherUser.id));
