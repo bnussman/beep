@@ -1,5 +1,5 @@
 import { authedProcedure, publicProcedure, router } from "../utils/trpc";
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { db } from "../utils/db";
 import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
 import { and, eq, ne, or, sql } from "drizzle-orm";
@@ -129,8 +129,8 @@ export const authRouter = router({
 
       if (existing) {
         throw new TRPCError({
-          code: "CONFLICT",
-          message: "A user with that email already exists."
+          code: "BAD_REQUEST",
+          cause: new ZodError([{ code: 'custom', path: ['email'], message: 'A user with that email already exists.' }])
         });
       }
 
