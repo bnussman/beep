@@ -6,7 +6,7 @@
   },
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "concurrently --raw \"pnpm --filter @beep/app dev\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
+    "dev": "concurrently --raw \"pnpm --filter @beep/app dev\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\" \"pnpm --filter @beep/site dev\"",
     "start:api": "pnpm --filter @beep/api start",
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
@@ -19,7 +19,7 @@
     "react-dom": "18.3.1"
   },
   "volta": {
-    "node": "19.4.0"
+    "node": "23.6.0"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
