@@ -11,7 +11,7 @@
     "db:push": "drizzle-kit push"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.16",
+    "@types/bun": "^1.1.17",
     "@types/nodemailer": "^6.4.17",
     "@types/validator": "^13.12.2",
     "drizzle-kit": "^0.30.2",
