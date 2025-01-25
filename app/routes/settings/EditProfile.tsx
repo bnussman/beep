@@ -14,10 +14,10 @@ import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { LOCATION_TRACKING } from "../beep/StartBeeping";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { queryClient, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
+import { LOCATION_TRACKING } from "@/utils/location";
 
 export class ReactNativeFile {
   uri: string;

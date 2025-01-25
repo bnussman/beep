@@ -12,7 +12,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Cars } from "../routes/cars/Cars";
 import { Premium } from "../routes/Premium";
 import {
-  LOCATION_TRACKING,
   StartBeepingScreen,
 } from "../routes/beep/StartBeeping";
 import {
@@ -31,6 +30,7 @@ import { Button } from "@/components/Button";
 import { cx } from "class-variance-authority";
 import { queryClient, trpc } from "@/utils/trpc";
 import { printStars } from "@/components/Stars";
+import { LOCATION_TRACKING } from "@/utils/location";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
