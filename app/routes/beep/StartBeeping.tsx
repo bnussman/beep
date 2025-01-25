@@ -15,7 +15,7 @@ import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { basicTrpcClient, trpc } from "@/utils/trpc";
 import { PremiumBanner } from "./PremiumBanner";
-import { getBeepingLocationPermissions, LOCATION_TRACKING, startLocationTracking, stopLocationTracking } from "@/utils/location";
+import { LOCATION_TRACKING, startLocationTracking, stopLocationTracking, useLocationPermissions } from "@/utils/location";
 
 export function StartBeepingScreen() {
   const { user } = useUser();
@@ -28,10 +28,7 @@ export function StartBeepingScreen() {
   const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
-  const [foregroundPermission, requestForegroundPermission] = Location.useForegroundPermissions();
-  const [backgroundPermission, requestBackgroundPermission] = Location.useBackgroundPermissions();
-
-  const hasLocationPermission = foregroundPermission?.granted && backgroundPermission?.granted;
+  const { hasLocationPermission, requestLocationPermission } = useLocationPermissions();
 
   const {
     data: queue,
@@ -98,7 +95,7 @@ export function StartBeepingScreen() {
     let location: { latitude: number, longitude: number } | undefined = undefined;
 
     if (value) {
-      const hasLoactionPermission = await getBeepingLocationPermissions();
+      const hasLoactionPermission = await requestLocationPermission();
 
       if (!hasLoactionPermission) {
         setIsBeeping(!value);

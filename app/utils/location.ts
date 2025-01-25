@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import * as Sentry from "@sentry/react-native";
-import Constants from "expo-constants";
 
 export function useLocation(enabled = true) {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -59,24 +58,6 @@ export function useLocation(enabled = true) {
   return { location, updateLocation, getLocation, getHasPermission };
 }
 
-
-export async function getBeepingLocationPermissions(): Promise<boolean> {
-  try {
-    const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
-    const { status: bgStatus } = await Location.requestBackgroundPermissionsAsync();
-
-    if (fgStatus !== "granted" || bgStatus !== "granted") {
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Unable to get location permission", error);
-    Sentry.captureException(error);
-    return false;
-  }
-}
-
 export const LOCATION_TRACKING = "location-tracking";
 
 export async function startLocationTracking() {
@@ -112,4 +93,32 @@ export async function stopLocationTracking() {
     console.error("Unable to stop location tracking", error)
     Sentry.captureException(error);
   }
+}
+
+export function useLocationPermissions() {
+  const [foregroundPermission, requestForegroundPermission] = Location.useForegroundPermissions();
+  const [backgroundPermission, requestBackgroundPermission] = Location.useBackgroundPermissions();
+
+  const hasLocationPermission = foregroundPermission?.granted && backgroundPermission?.granted;
+
+  const requestLocationPermission = async () => {
+    try {
+      const { granted: forgroundGranted } = await requestForegroundPermission();
+      const { granted: backgroundGranted } = await requestBackgroundPermission();
+      return forgroundGranted && backgroundGranted;
+    } catch (error) {
+      console.error("Unable to get location permission", error);
+      Sentry.captureException(error);
+      return false;
+    }
+  };
+
+  return {
+    foregroundPermission,
+    backgroundPermission,
+    hasLocationPermission,
+    requestForegroundPermission,
+    requestBackgroundPermission,
+    requestLocationPermission,
+  };
 }
