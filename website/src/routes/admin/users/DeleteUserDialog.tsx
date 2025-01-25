@@ -3,6 +3,7 @@ import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
 import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { trpc } from "../../../utils/trpc";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 
 interface Props {
   userId: string;
@@ -11,10 +12,12 @@ interface Props {
 }
 
 export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
+  const router = useRouter();
   const { mutateAsync: deleteUser, isPending, error } = trpc.user.deleteUser.useMutation();
 
   const onDelete = async () => {
     await deleteUser(userId);
+    router.history.back();
     onClose();
   };
 
