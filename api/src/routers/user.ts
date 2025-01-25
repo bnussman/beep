@@ -453,7 +453,6 @@ export const userRouter = router({
   deleteUser: adminProcedure
     .input(z.string())
     .mutation(async ({ input }) => {
-      // @todo properly handle deleting across all tables
       await db.delete(user).where(eq(user.id, input));
     }),
   reconcileUserRatings: adminProcedure
