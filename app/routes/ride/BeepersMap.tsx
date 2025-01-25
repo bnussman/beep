@@ -1,5 +1,5 @@
 import { Map } from "../../components/Map";
-import { useLocation } from "../../utils/useLocation";
+import { useLocation } from "../../utils/location";
 import { type Region } from "react-native-maps";
 import { BeeperMarker } from "../../components/Marker";
 import { trpc } from "@/utils/trpc";

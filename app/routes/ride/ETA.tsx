@@ -1,7 +1,7 @@
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { trpc } from "@/utils/trpc";
-import { useLocation } from "@/utils/useLocation";
+import { useLocation } from "@/utils/location";
 import { ActivityIndicator } from 'react-native';
 
 interface Location {

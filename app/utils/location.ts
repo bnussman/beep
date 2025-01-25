@@ -62,9 +62,6 @@ export function useLocation(enabled = true) {
 
 export async function getBeepingLocationPermissions(): Promise<boolean> {
   try {
-    //Temporary fix for being able to toggle beeping in dev
-    if (__DEV__ || Constants.appOwnership === "expo") return true;
-
     const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
     const { status: bgStatus } = await Location.requestBackgroundPermissionsAsync();
 
@@ -74,6 +71,7 @@ export async function getBeepingLocationPermissions(): Promise<boolean> {
 
     return true;
   } catch (error) {
+    console.error("Unable to get location permission", error);
     Sentry.captureException(error);
     return false;
   }
@@ -81,35 +79,37 @@ export async function getBeepingLocationPermissions(): Promise<boolean> {
 
 export const LOCATION_TRACKING = "location-tracking";
 
-export async  function startLocationTracking() {
-  if (__DEV__) {
-    return;
-  }
+export async function startLocationTracking() {
+  try {
+    await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
+      accuracy: Location.Accuracy.Highest,
+      timeInterval: 15 * 1000,
+      distanceInterval: 6,
+      activityType: Location.LocationActivityType.AutomotiveNavigation,
+      showsBackgroundLocationIndicator: true,
+      foregroundService: {
+        notificationTitle: "Ride Beep App",
+        notificationBody: "You are currently beeping!",
+        notificationColor: "#e8c848",
+      },
+    });
 
-  await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
-    accuracy: Location.Accuracy.Highest,
-    timeInterval: 15 * 1000,
-    distanceInterval: 6,
-    activityType: Location.LocationActivityType.AutomotiveNavigation,
-    showsBackgroundLocationIndicator: true,
-    foregroundService: {
-      notificationTitle: "Ride Beep App",
-      notificationBody: "You are currently beeping!",
-      notificationColor: "#e8c848",
-    },
-  });
+    const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
 
-  const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-
-  if (!hasStarted) {
-    Sentry.captureMessage("User was unable to start location tracking");
+    if (!hasStarted) {
+      Sentry.captureMessage("User was unable to start location tracking");
+    }
+  } catch (error) {
+    console.error("Unable to start location tracking", error)
+    Sentry.captureException(error);
   }
 }
 
-export function stopLocationTracking() {
-  if (__DEV__) {
-    return;
+export async function stopLocationTracking() {
+  try {
+    await Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+  } catch (error) {
+    console.error("Unable to stop location tracking", error)
+    Sentry.captureException(error);
   }
-
-  Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
 }

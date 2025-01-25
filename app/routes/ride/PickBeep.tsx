@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { printStars } from "../../components/Stars";
 import { Avatar } from "@/components/Avatar";
-import { useLocation } from "@/utils/useLocation";
+import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";

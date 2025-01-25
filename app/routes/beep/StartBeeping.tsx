@@ -14,22 +14,24 @@ import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { basicTrpcClient, trpc } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 import { PremiumBanner } from "./PremiumBanner";
 import { getBeepingLocationPermissions, LOCATION_TRACKING, startLocationTracking, stopLocationTracking } from "@/utils/location";
 
 export function StartBeepingScreen() {
   const { user } = useUser();
+
   const navigation = useNavigation();
+  const utils = trpc.useUtils();
 
   const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
-  const [singlesRate, setSinglesRate] = useState<string>(
-    String(user?.singlesRate),
-  );
+  const [singlesRate, setSinglesRate] = useState<string>(String(user?.singlesRate));
   const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
   const [capacity, setCapacity] = useState<string>(String(user?.capacity));
 
-  const utils = trpc.useUtils();
+  const [foregroundPermission, requestForegroundPermission] = Location.useForegroundPermissions();
+  const [backgroundPermission, requestBackgroundPermission] = Location.useBackgroundPermissions();
+
+  const hasLocationPermission = foregroundPermission?.granted && backgroundPermission?.granted;
 
   const {
     data: queue,
@@ -46,9 +48,13 @@ export function StartBeepingScreen() {
     enabled: user && user.isBeeping,
   })
 
-  const { mutateAsync: updateBeepSettings } = trpc.user.edit.useMutation({
+  const { mutate: updateBeepSettings } = trpc.user.edit.useMutation({
     onSuccess(data) {
       utils.user.me.setData(undefined, data);
+    },
+    onError(error, variables) {
+      alert(error.message)
+      setIsBeeping(!variables.isBeeping);
     }
   });
 
@@ -86,21 +92,20 @@ export function StartBeepingScreen() {
     });
   }, [navigation, isBeeping, capacity, singlesRate, groupRate]);
 
-
   const handleIsBeepingChange = async (value: boolean) => {
     setIsBeeping(value);
-
-    const hasLoactionPermission = await getBeepingLocationPermissions();
-
-    if (value && !hasLoactionPermission) {
-      setIsBeeping(!value);
-      alert("You must allow background location to start beeping!");
-      return;
-    }
 
     let location: { latitude: number, longitude: number } | undefined = undefined;
 
     if (value) {
+      const hasLoactionPermission = await getBeepingLocationPermissions();
+
+      if (!hasLoactionPermission) {
+        setIsBeeping(!value);
+        alert("You must allow background location to start beeping!");
+        return;
+      }
+
       let lastKnowLocation = await Location.getLastKnownPositionAsync({
         maxAge: 180000,
         requiredAccuracy: 800,
@@ -117,65 +122,39 @@ export function StartBeepingScreen() {
     }
 
     updateBeepSettings({
-        isBeeping: value,
-        singlesRate: Number(singlesRate),
-        groupRate: Number(groupRate),
-        capacity: Number(capacity),
-        location
-    })
-      .then(() => {
-        if (value) {
-          startLocationTracking();
-        } else {
-          stopLocationTracking();
-        }
-      })
-      .catch((error: TRPCClientError<any>) => {
-        setIsBeeping(!value);
-        alert(error.message);
-      });
+      isBeeping: value,
+      singlesRate: Number(singlesRate),
+      groupRate: Number(groupRate),
+      capacity: Number(capacity),
+      location
+    });
   }
-
-  useEffect(() => {
-    const init = async () => {
-      if (user?.isBeeping) {
-        if (!(await getBeepingLocationPermissions())) {
-          alert("You must allow background location to start beeping!");
-          return;
-        }
-        startLocationTracking();
-      }
-    };
-
-    init();
-  }, []);
 
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      return;
+    if (isBeeping && hasLocationPermission) {
+      startLocationTracking();
+    } else {
+      stopLocationTracking();
     }
+  }, [user?.isBeeping, hasLocationPermission]);
 
-    const handleIsBeepingChange = async () => {
-      if (user.isBeeping && !isBeeping) {
-        if (!(await getBeepingLocationPermissions())) {
-          alert("You must allow background location to start beeping!");
-          return;
-        }
-        startLocationTracking();
-        setIsBeeping(true);
-      }
-      if (!user.isBeeping && isBeeping) {
-        stopLocationTracking();
-        setIsBeeping(false);
-      }
-    };
-
-    handleIsBeepingChange();
-  }, [user]);
+  if (isBeeping && !hasLocationPermission) {
+    return (
+      <View className="flex items-center justify-center h-full">
+        <Text size="2xl" weight="black">
+          No Location Permission
+        </Text>
+        <Text className="text-center mb-8">
+          You are beeping, but you have not granted this app permission to use your location in the background.
+          Please enable full time background location for the app in your settings.
+        </Text>
+      </View>
+    );
+  }
 
   if (isBeeping && queue?.length === 0) {
     return (
