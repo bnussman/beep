@@ -7,7 +7,7 @@ import { useUser } from "../../utils/useUser";
 import { isAndroid } from "../../utils/constants";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
-import { Alert, View, Switch } from "react-native";
+import { Alert, View, Switch, ActivityIndicator } from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
@@ -16,6 +16,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { basicTrpcClient, trpc } from "@/utils/trpc";
 import { PremiumBanner } from "./PremiumBanner";
 import { LOCATION_TRACKING, startLocationTracking, stopLocationTracking, useLocationPermissions } from "@/utils/location";
+import { Controller, useForm } from "react-hook-form";
 
 export function StartBeepingScreen() {
   const { user } = useUser();
@@ -23,10 +24,13 @@ export function StartBeepingScreen() {
   const navigation = useNavigation();
   const utils = trpc.useUtils();
 
-  const [isBeeping, setIsBeeping] = useState(user?.isBeeping);
-  const [singlesRate, setSinglesRate] = useState<string>(String(user?.singlesRate));
-  const [groupRate, setGroupRate] = useState<string>(String(user?.groupRate));
-  const [capacity, setCapacity] = useState<string>(String(user?.capacity));
+  const form = useForm({
+    values: {
+      capacity: user?.capacity,
+      singlesRate: user?.singlesRate,
+      groupRate: user?.groupRate,
+    },
+  });
 
   const { hasLocationPermission, requestLocationPermission } = useLocationPermissions();
 
@@ -50,8 +54,14 @@ export function StartBeepingScreen() {
       utils.user.me.setData(undefined, data);
     },
     onError(error, variables) {
-      alert(error.message)
-      setIsBeeping(!variables.isBeeping);
+      const fieldErrors = error.data?.zodError?.fieldErrors;
+      if (!fieldErrors) {
+        alert(error.message);
+      } else {
+        for (const key in fieldErrors) {
+          form.setError(key as any, { message: fieldErrors[key]?.[0] });
+        }
+      }
     }
   });
 
@@ -67,38 +77,40 @@ export function StartBeepingScreen() {
           },
           {
             text: "OK",
-            onPress: () => handleIsBeepingChange(value)
+            onPress: () => handleIsBeepingChange()
           },
         ],
         { cancelable: true },
       );
     } else {
-      handleIsBeepingChange(value);
+      handleIsBeepingChange();
     }
   }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Switch
-          value={isBeeping}
-          onValueChange={onToggleIsBeeping}
-          className="mr-2"
-        />
+        <View className="mr-2 flex flex-row gap-4">
+          {form.formState.isSubmitting && <ActivityIndicator size="small" />}
+          <Switch
+            disabled={form.formState.isSubmitting}
+            value={user?.isBeeping ?? false}
+            onValueChange={onToggleIsBeeping}
+          />
+        </View>
       ),
     });
-  }, [navigation, isBeeping, capacity, singlesRate, groupRate]);
+  }, [navigation, user?.isBeeping, form.formState.isSubmitting]);
 
-  const handleIsBeepingChange = async (value: boolean) => {
-    setIsBeeping(value);
+  const handleIsBeepingChange = form.handleSubmit(async (values) => {
+    const willBeBeeping = !user?.isBeeping;
 
     let location: { latitude: number, longitude: number } | undefined = undefined;
 
-    if (value) {
+    if (willBeBeeping) {
       const hasLoactionPermission = await requestLocationPermission();
 
       if (!hasLoactionPermission) {
-        setIsBeeping(!value);
         alert("You must allow background location to start beeping!");
         return;
       }
@@ -119,27 +131,25 @@ export function StartBeepingScreen() {
     }
 
     updateBeepSettings({
-      isBeeping: value,
-      singlesRate: Number(singlesRate),
-      groupRate: Number(groupRate),
-      capacity: Number(capacity),
+      isBeeping: willBeBeeping,
+      ...values,
       location
     });
-  }
+  });
 
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
 
   useEffect(() => {
-    if (isBeeping && hasLocationPermission) {
+    if (user?.isBeeping && hasLocationPermission) {
       startLocationTracking();
     } else {
       stopLocationTracking();
     }
   }, [user?.isBeeping, hasLocationPermission]);
 
-  if (isBeeping && !hasLocationPermission) {
+  if (user?.isBeeping && !hasLocationPermission) {
     return (
       <View className="flex items-center justify-center h-full">
         <Text size="2xl" weight="black">
@@ -153,7 +163,7 @@ export function StartBeepingScreen() {
     );
   }
 
-  if (isBeeping && queue?.length === 0) {
+  if (user?.isBeeping && queue?.length === 0) {
     return (
       <View className="flex items-center justify-center h-full">
         <Text size="2xl" weight="black">
@@ -168,41 +178,68 @@ export function StartBeepingScreen() {
     );
   }
 
-  if (!isBeeping || !queue) {
+  if (!user?.isBeeping || !queue) {
     return (
       <KeyboardAwareScrollView
         scrollEnabled={false}
         contentContainerClassName="p-4 h-full"
       >
         <Label htmlFor="capacity">Max Rider Capacity</Label>
-        <Input
-          id="capacity"
-          placeholder="Max Capacity"
-          inputMode="numeric"
-          value={String(capacity)}
-          onChangeText={(value) => setCapacity(value)}
+        <Controller
+          control={form.control}
+          name="capacity"
+          render={({ field, fieldState }) => (
+            <>
+              <Input
+                id="capacity"
+                placeholder="Max Capacity"
+                inputMode="numeric"
+                value={String(field.value)}
+                onChangeText={(value) => field.onChange(Number(value))}
+              />
+              <Text size="sm">
+                Maximum number of riders you can safely fit in your car
+              </Text>
+              <Text size="sm" color="error">{fieldState.error?.message}</Text>
+            </>
+          )}
         />
-        <Text size="sm">
-          Maximum number of riders you can safely fit in your car
-        </Text>
         <Label htmlFor="singles">Singles Rate</Label>
-        <Input
-          id="singles"
-          placeholder="Singles Rate"
-          keyboardType="numeric"
-          value={String(singlesRate)}
-          onChangeText={(value) => setSinglesRate(value)}
+        <Controller
+          control={form.control}
+          name="singlesRate"
+          render={({ field, fieldState }) => (
+            <>
+              <Input
+                id="singles"
+                placeholder="Singles Rate"
+                keyboardType="numeric"
+                value={String(field.value)}
+                onChangeText={(value) => field.onChange(Number(value))}
+              />
+              <Text size="sm">Price for a single person riding alone</Text>
+              <Text size="sm" color="error">{fieldState.error?.message}</Text>
+            </>
+          )}
         />
-        <Text size="sm">Price for a single person riding alone</Text>
         <Label htmlFor="groups">Group Rate</Label>
-        <Input
-          id="groups"
-          placeholder="Group Rate"
-          keyboardType="numeric"
-          value={String(groupRate)}
-          onChangeText={(value) => setGroupRate(value)}
+        <Controller
+          control={form.control}
+          name="groupRate"
+          render={({ field, fieldState }) => (
+            <>
+              <Input
+                id="groups"
+                placeholder="Group Rate"
+                keyboardType="numeric"
+                value={String(field.value)}
+                onChangeText={(value) => field.onChange(Number(value))}
+              />
+              <Text size="sm">Price per person in a group</Text>
+              <Text size="sm" color="error">{fieldState.error?.message}</Text>
+            </>
+          )}
         />
-        <Text size="sm">Price per person in a group</Text>
         <View className="flex-grow" />
         <Text size="sm" className="mb-10 text-center">
           Use the toggle in the top right to start beeping

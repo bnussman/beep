@@ -62,6 +62,12 @@ export const LOCATION_TRACKING = "location-tracking";
 
 export async function startLocationTracking() {
   try {
+    const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
+
+    if (hasStarted) {
+      return;
+    }
+
     await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
       accuracy: Location.Accuracy.Highest,
       timeInterval: 15 * 1000,
@@ -74,12 +80,6 @@ export async function startLocationTracking() {
         notificationColor: "#e8c848",
       },
     });
-
-    const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
-
-    if (!hasStarted) {
-      Sentry.captureMessage("User was unable to start location tracking");
-    }
   } catch (error) {
     console.error("Unable to start location tracking", error)
     Sentry.captureException(error);
@@ -88,7 +88,11 @@ export async function startLocationTracking() {
 
 export async function stopLocationTracking() {
   try {
-    await Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+    const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
+
+    if (hasStarted) {
+      await Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+    }
   } catch (error) {
     console.error("Unable to stop location tracking", error)
     Sentry.captureException(error);
@@ -103,9 +107,13 @@ export function useLocationPermissions() {
 
   const requestLocationPermission = async () => {
     try {
-      const { granted: forgroundGranted } = await requestForegroundPermission();
-      const { granted: backgroundGranted } = await requestBackgroundPermission();
-      return forgroundGranted && backgroundGranted;
+      await requestForegroundPermission();
+      await requestBackgroundPermission();
+
+      const { granted: foregroundGranted } = await Location.getForegroundPermissionsAsync();
+      const { granted: backgroundGranted } = await Location.getBackgroundPermissionsAsync();
+
+      return foregroundGranted && backgroundGranted;
     } catch (error) {
       console.error("Unable to get location permission", error);
       Sentry.captureException(error);
