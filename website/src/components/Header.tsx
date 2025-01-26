@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react';
 
 export function Header() {
-  const { colorMode, toggleColorMode } = useColorMode();
   const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false, retry: false });
 
   return (
@@ -38,7 +37,6 @@ export function Header() {
         </Heading>
       </HStack>
       <HStack spacing={[2, 3]}>
-        <Button onClick={toggleColorMode}>{colorMode === 'light' ? "🌙" : "☀️"}</Button>
         <>
           {user?.role === "admin" && <AdminMenu />}
           {user && <UserMenu />}
