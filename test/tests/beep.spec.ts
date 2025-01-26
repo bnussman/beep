@@ -34,7 +34,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await beeperPage.getByRole("button", { name: "Add Car" }).click();
   await beeperPage.getByRole("button").first().click(); // click drawer button
   await beeperPage.getByText("Beep", { exact: true }).dispatchEvent("click"); // what the fuck
-  await beeperPage.getByRole("switch").first().check();
+  await beeperPage.getByRole("switch").first().click();
 
   await riderPage.getByLabel("Group Size").click();
   await riderPage.getByLabel("Group Size").fill("3");
@@ -144,7 +144,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await beeperPage.getByRole("button", { name: "Add Car" }).click();
   await beeperPage.getByRole("button").first().click(); // click drawer button
   await beeperPage.getByText("Beep", { exact: true }).dispatchEvent("click"); // what the fuck
-  await beeperPage.getByRole("switch").first().check();
+  await beeperPage.getByRole("switch").first().click();
 
   // As rider 1, get a beep.
   await rider1Page.getByLabel("Group Size").click();
