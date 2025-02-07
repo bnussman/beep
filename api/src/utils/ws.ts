@@ -82,6 +82,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
             req: client.data.req,
             res: client,
             info: {
+                url: null,
                 connectionParams,
                 calls: [],
                 isBatchCall: false,
@@ -210,7 +211,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
             }
 
             const iterable = isObservable(result)
-                ? observableToAsyncIterable(result)
+                ? observableToAsyncIterable(result, abortController.signal)
                 : result;
 
             const iterator: AsyncIterator<unknown> =
