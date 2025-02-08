@@ -18,9 +18,9 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@sentry/bun": "^8.53.0",
+    "@sentry/bun": "^8.54.0",
     "@trpc/server": "11.0.0-rc.747",
-    "drizzle-orm": "^0.39.1",
+    "drizzle-orm": "^0.39.2",
     "nodemailer": "^6.10.0",
     "pg": "^8.13.1",
     "redis": "^4.7.0",
