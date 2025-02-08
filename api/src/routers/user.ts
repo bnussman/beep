@@ -43,8 +43,8 @@ export const userRouter = router({
         return () => {
           redisSubscriber.unsubscribe(`user-${userId}`, onUserUpdate);
         };
-    });
-  }),
+      });
+    }),
   edit: authedProcedure
     .input(
       z.object({
@@ -193,7 +193,7 @@ export const userRouter = router({
       });
 
       if (!existingUser) {
-        throw new TRPCError({ code: "NOT_FOUND"});
+        throw new TRPCError({ code: "NOT_FOUND" });
       }
 
       if (!existingUser.isEmailVerified && input.data.isEmailVerified && existingUser.pushToken) {

@@ -92,6 +92,9 @@ export const carRouter = router({
 
       await db.delete(car).where(eq(car.id, c.id));
 
+      const key = c.photo.split(S3_BUCKET_URL)[1];
+      await s3.delete(key);
+
       if (input.reason && c.user.pushToken) {
         await sendNotification({
           to: c.user.pushToken,
