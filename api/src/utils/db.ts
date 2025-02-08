@@ -2,7 +2,7 @@ import * as schema from '../../drizzle/schema';
 import type { ClientConfig } from 'pg';
 const { Client } = require("pg"); // we must use `require` because of Bun / Sentry / OpenTelementry weirdness
 import { drizzle } from "drizzle-orm/node-postgres";
-import { DB_URL, ENVIRONMENT } from "./constants";
+import { DB_URL, ENVIRONMENT, isDevelopment } from "./constants";
 
 const options: ClientConfig = {
   connectionString: DB_URL,
@@ -15,4 +15,4 @@ const queryClient = new Client(options);
 
 await queryClient.connect();
 
-export const db = drizzle(queryClient, { schema, logger: true });
+export const db = drizzle(queryClient, { schema, logger: isDevelopment });
