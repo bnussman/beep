@@ -1,15 +1,19 @@
+import { DB_PASSWORD, DB_URL } from "./src/utils/constants";
 import { defineConfig } from "drizzle-kit";
-import { DB_HOST, DB_URL, ENVIRONMENT } from "./src/utils/constants";
 
-const ssl = DB_HOST.includes('neon') || ENVIRONMENT === "production" ? "?sslmode=require" : '';
+const ssl = DB_PASSWORD !== "beep" ? "?sslmode=require" : '';
+
+if (ssl) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+}
 
 export default defineConfig({
-	schema: 'drizzle/schema.ts',
-	dialect: "postgresql",
-	extensionsFilters: ["postgis"],
-	dbCredentials: {
-	  url: DB_URL + ssl,
-	},
-	verbose: true,
-	strict: true,
+  schema: 'drizzle/schema.ts',
+  dialect: "postgresql",
+  extensionsFilters: ["postgis"],
+  dbCredentials: {
+    url: DB_URL + ssl,
+  },
+  verbose: true,
+  strict: true,
 });
