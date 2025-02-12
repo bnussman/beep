@@ -32,7 +32,7 @@ const lkeCluster = new linode.LkeCluster(
   "cluster",
   {
     region: "us-southeast",
-    k8sVersion: "1.31",
+    k8sVersion: "1.32",
     controlPlane: {
       highAvailability: envName === "production",
     },
@@ -56,11 +56,11 @@ const k8sProvider = new k8s.Provider("k8sProvider", {
 
 const namespace = new k8s.core.v1.Namespace(namespaceName, {
   metadata:
-    {
-      name: namespaceName,
-      labels: { name: namespaceName }
-    }
-  },
+  {
+    name: namespaceName,
+    labels: { name: namespaceName }
+  }
+},
   { provider: k8sProvider }
 );
 
@@ -87,7 +87,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
                 { containerPort: 3000 }
               ],
               envFrom: [
-                { configMapRef: { name: apiAppName }}
+                { configMapRef: { name: apiAppName } }
               ]
             }
           ]
