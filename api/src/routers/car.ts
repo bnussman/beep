@@ -7,7 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
 import { S3_BUCKET_URL } from "../utils/constants";
-import { data as cars, getMakes, getModels } from 'car-info';
+import { data as cars, getModels } from 'car-info';
 
 export const carRouter = router({
   cars: authedProcedure
