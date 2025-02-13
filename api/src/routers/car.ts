@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
 import { S3_BUCKET_URL } from "../utils/constants";
+import { data as cars, getMakes, getModels } from 'car-info';
 
 export const carRouter = router({
   cars: authedProcedure
@@ -124,6 +125,22 @@ export const carRouter = router({
         throw new TRPCError({
           code: "BAD_REQUEST",
           cause: error,
+        });
+      }
+
+      if (!(input.make in cars)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid make."
+        });
+      }
+
+      const validModels = getModels(input.make) as string[];
+
+      if (!validModels.includes(input.model)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid make."
         });
       }
 
