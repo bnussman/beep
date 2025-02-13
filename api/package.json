@@ -20,7 +20,7 @@
   "dependencies": {
     "@sentry/bun": "^9.0.1",
     "@trpc/server": "11.0.0-rc.747",
-    "car-info": "0.1.8",
+    "car-info": "0.2.0",
     "drizzle-orm": "^0.39.3",
     "nodemailer": "^6.10.0",
     "pg": "^8.13.2",
