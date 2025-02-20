@@ -1,106 +1,54 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Text } from "@/components/Text";
-import { Marker, MapMarkerProps } from "react-native-maps";
 import { BEEPER_ICON } from "../utils/constants";
-import Animated, {
-  Easing,
-  EasingFn,
-  EasingFunctionFactory,
-  useAnimatedProps,
+import { MapMarker, Marker } from 'react-native-maps';
+import {
+  runOnJS,
+  useDerivedValue,
   useSharedValue,
   withTiming,
-} from "react-native-reanimated";
-
-interface LatLng {
-  latitude: number;
-  longitude: number;
-  longitudeDelta?: number;
-  latitudeDelta?: number;
-}
-
-interface AnimateOptions extends LatLng {
-  duration?: number;
-  easing?: EasingFn | EasingFunctionFactory;
-}
-
-export const useAnimatedRegion = (location: Partial<LatLng> = {}) => {
-  const latitute = useSharedValue(location.latitude);
-  const longitude = useSharedValue(location.longitude);
-  const latitudeDelta = useSharedValue(location.latitudeDelta);
-  const longitudeDelta = useSharedValue(location.longitudeDelta);
-
-  const animatedProps = useAnimatedProps(() => ({
-    coordinate: {
-      latitude: latitute.value ?? 0,
-      longitude: longitude.value ?? 0,
-      latitudeDelta: latitudeDelta.value ?? 0,
-      longitudeDelta: longitudeDelta.value ?? 0,
-    },
-  }));
-
-  const animate = useCallback(
-    (options: AnimateOptions) => {
-      const { duration = 500, easing = Easing.inOut(Easing.ease) } = options;
-
-      const animateValue = (
-        value: Animated.SharedValue<number | undefined>,
-        toValue?: number,
-      ) => {
-        if (!toValue) {
-          return;
-        }
-
-        value.value = withTiming(toValue, {
-          duration,
-          easing,
-        });
-      };
-
-      animateValue(latitute, options.latitude);
-      animateValue(longitude, options.longitude);
-      animateValue(latitudeDelta, options.latitudeDelta);
-      animateValue(longitudeDelta, options.longitudeDelta);
-    },
-    [latitute, longitude, latitudeDelta, longitudeDelta],
-  );
-
-  return {
-    props: animatedProps,
-    animate,
-  };
-};
-
-type MarkerProps = Omit<MapMarkerProps, "coordinate"> & {
-  coordinate?: MapMarkerProps["coordinate"];
-};
-
-export const AnimatedMarker = Animated.createAnimatedComponent(
-  Marker as React.ComponentClass<MarkerProps>,
-);
+} from 'react-native-reanimated';
 
 interface BeeperMakerProps {
   longitude: number;
   latitude: number;
 }
 
-export const BeeperMarker = ({ latitude, longitude }: BeeperMakerProps) => {
-  const animatedRegion = useAnimatedRegion({
-    latitude,
-    longitude,
-  });
+export const BeeperMarker = (props: BeeperMakerProps) => {
+  const markerRef = useRef<MapMarker>(null);
+  // Shared values for latitude and longitude
+  const latitude = useSharedValue(props.latitude);
+  const longitude = useSharedValue(props.longitude);
+
+  // Derived value to trigger marker updates
+  const updateMarkerPosition = (lat: number, lng: number) => {
+    if (markerRef && markerRef.current) {
+      markerRef.current.setNativeProps({
+        coordinate: {latitude: lat, longitude: lng},
+      });
+    }
+  };
 
   useEffect(() => {
-    animatedRegion.animate({
-      latitude,
-      longitude,
-      duration: 1000,
-      easing: Easing.linear,
-    });
+    latitude.value = withTiming(props.latitude, { duration: 1000 });
+    longitude.value = withTiming(props.longitude, { duration: 1000 });
+  }, [props]);
+
+  // Use useDerivedValue to react to changes in latitude and longitude
+  useDerivedValue(() => {
+    const lat = latitude.value;
+    const lng = longitude.value;
+    // Use runOnJS to call updateMarkerPosition from the UI thread
+    // runOnJS requires functions to be called with their arguments
+    runOnJS(updateMarkerPosition)(lat, lng);
   }, [latitude, longitude]);
 
   return (
-    <AnimatedMarker animatedProps={animatedRegion.props}>
+    <Marker
+      ref={markerRef}
+      coordinate={{ latitude: latitude.value, longitude: longitude.value }}
+    >
       <Text size="3xl">{BEEPER_ICON}</Text>
-    </AnimatedMarker>
+    </Marker>
   );
 };
