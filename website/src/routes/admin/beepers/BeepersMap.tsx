@@ -5,7 +5,7 @@ import { Map } from "../../../components/Map";
 import { RouterOutput } from "../../../utils/trpc";
 
 interface Props {
-  beepers: RouterOutput['user']['users']['users'];
+  beepers: RouterOutput['rider']['beepers'];
   viewState?: { latitude: number, longitude: number, zoom: number };
 }
 

@@ -30,6 +30,7 @@ export const riderRouter = router({
         .selectDistinct({
           first: user.first,
           last: user.last,
+          username: user.username,
           id: user.id,
           photo: user.photo,
           rating: user.rating,
