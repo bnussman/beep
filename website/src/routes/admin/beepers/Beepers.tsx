@@ -26,7 +26,7 @@ export function Beepers() {
     offset: 0,
   };
 
-  const { data, isLoading, error } = trpc.user.users.useQuery(input);
+  const { data, isLoading, error } = trpc.rider.beepers.useQuery();
 
   trpc.rider.beepersLocations.useSubscription(
     {
@@ -37,19 +37,19 @@ export function Beepers() {
     {
       enabled: location !== undefined,
       onData(locationUpdate) {
-        utils.user.users.setData(input, (oldUsers) => {
+        utils.rider.beepers.setData(undefined, (oldUsers) => {
           if (!oldUsers)  {
             return undefined;
           }
 
-          const indexOfUser = oldUsers.users.findIndex((user) => user.id === locationUpdate.id);
+          const indexOfUser = oldUsers.findIndex((user) => user.id === locationUpdate.id);
 
           if (indexOfUser !== -1) {
-            const newData = [...oldUsers.users];
+            const newData = [...oldUsers];
 
-            newData[indexOfUser] = { ...oldUsers.users[indexOfUser], location: locationUpdate.location }
+            newData[indexOfUser] = { ...oldUsers[indexOfUser] }
 
-            return { ...oldUsers, users: newData };
+            return newData;
           }
         })
       }
@@ -69,24 +69,26 @@ export function Beepers() {
       <HStack alignItems="center">
         <Heading>Beepers</Heading>
         <Badge ml={2}>
-          {data?.count ?? 0}
+          {data?.length ?? 0}
         </Badge>
       </HStack>
-      <BeepersMap beepers={data?.users ?? []} />
+      <BeepersMap beepers={data ?? []} />
       <Box overflowX="auto">
         <Table>
           <Thead>
             <Tr>
               <Th>Beeper</Th>
+              <Th>Premium</Th>
               <Th>Queue size</Th>
               <Th>Ride capacity</Th>
               <Th>Rate</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {data?.users.map((beeper) => (
+            {data?.map((beeper) => (
               <Tr key={beeper.id}>
                 <TdUser user={beeper} />
+                <Td>{beeper.isPremium && "👑"}</Td>
                 <Td>{beeper.queueSize} riders</Td>
                 <Td>{beeper.capacity} riders</Td>
                 <Td>${beeper.singlesRate} / ${beeper.groupRate}</Td>

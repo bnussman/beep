@@ -16,10 +16,15 @@ export const riderRouter = router({
       z.object({
         longitude: z.number(),
         latitude: z.number(),
-      })
+      }).optional()
     )
-    .query(async ({ input }) => {
-      const { latitude, longitude } = input;
+    .query(async ({ input, ctx }) => {
+      if (ctx.user.role === "user" && input === undefined) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: "You must pass location infromation to get beepers. Only admins can pass no location."
+        });
+      }
 
       const beepers = await db
         .selectDistinct({
@@ -32,14 +37,15 @@ export const riderRouter = router({
           groupRate: user.groupRate,
           queueSize: user.queueSize,
           capacity: user.capacity,
-          distance: sql<number>`ST_DistanceSphere(location, ST_MakePoint(${latitude},${longitude}))`.as('distance'),
+          ...(ctx.user.role === "admin" && { location: user.location }),
+          distance: sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input?.latitude ?? 0},${input?.longitude ?? 0}))`.as('distance'),
           isPremium: sql<boolean>`${payment.id} IS NOT NULL`,
         })
         .from(user)
         .where(({ distance }) =>
           and(
             eq(user.isBeeping, true),
-            lte(distance, 10 * 1609.34)
+            input ? lte(distance, 10 * 1609.34) : undefined
           )
         )
         .orderBy(({ distance, isPremium }) => ([
