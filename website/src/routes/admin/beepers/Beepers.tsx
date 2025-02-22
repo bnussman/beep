@@ -20,12 +20,6 @@ const queryKey = getQueryKey(trpc.user.users);
 export function Beepers() {
   const utils = trpc.useUtils();
 
-  const input = {
-    isBeeping: true,
-    show: 500,
-    offset: 0,
-  };
-
   const { data, isLoading, error } = trpc.rider.beepers.useQuery();
 
   trpc.rider.beepersLocations.useSubscription(
@@ -47,7 +41,7 @@ export function Beepers() {
           if (indexOfUser !== -1) {
             const newData = [...oldUsers];
 
-            newData[indexOfUser] = { ...oldUsers[indexOfUser] }
+            newData[indexOfUser] = { ...oldUsers[indexOfUser], location: locationUpdate.location }
 
             return newData;
           }
