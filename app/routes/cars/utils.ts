@@ -11,6 +11,7 @@ export const colors = [
   "Tan",
   "Brown",
   "Silver",
+  "Yellow",
 ];
 
 export const years = Array.from({ length: 50 }, (_, i) =>
