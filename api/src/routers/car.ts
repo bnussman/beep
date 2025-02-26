@@ -145,7 +145,7 @@ export const carRouter = router({
         });
       }
 
-      if (!colors.includes(input.color)) {
+      if (!colors.map((color: string) => color.toLowerCase()).includes(input.color)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid color."
