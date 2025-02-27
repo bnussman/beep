@@ -51,3 +51,19 @@ const urls = {
 };
 
 export const WEB_BASE_URL = urls[ENVIRONMENT];
+
+export const CAR_COLOR_OPTIONS = [
+  "Red",
+  "Green",
+  "Blue",
+  "Purple",
+  "Black",
+  "Gray",
+  "Pink",
+  "White",
+  "Orange",
+  "Tan",
+  "Brown",
+  "Silver",
+  "Yellow",
+];

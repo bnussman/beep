@@ -8,7 +8,7 @@ import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
 import { S3_BUCKET_URL } from "../utils/constants";
 import { data as cars, getModels } from 'car-info';
-import { colors } from '../../../app/routes/cars/utils';
+import { CAR_COLOR_OPTIONS } from "../utils/constants";
 
 export const carRouter = router({
   cars: authedProcedure
@@ -145,7 +145,7 @@ export const carRouter = router({
         });
       }
 
-      if (!colors.map((color: string) => color.toLowerCase()).includes(input.color)) {
+      if (!CAR_COLOR_OPTIONS.map((color: string) => color.toLowerCase()).includes(input.color)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid color."
