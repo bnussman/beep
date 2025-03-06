@@ -11,7 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@gorhom/bottom-sheet": "5.0.6",
+    "@gorhom/bottom-sheet": "5.1.1",
     "@react-native-async-storage/async-storage": "~1.23.1",
     "@react-native-menu/menu": "^1.2.2",
     "@react-navigation/drawer": "7.1.1",
@@ -21,7 +21,7 @@
     "@tanstack/react-query": "^5.64.2",
     "@trpc/client": "11.0.0-rc.747",
     "@trpc/react-query": "11.0.0-rc.747",
-    "car-info": "0.2.0",
+    "car-info": "0.2.1",
     "class-variance-authority": "^0.7.1",
     "expo": "~52.0.36",
     "expo-application": "^6.0.1",
@@ -64,7 +64,7 @@
     "@types/react": "~18.3.12",
     "@types/react-dom": "~18.3.1",
     "babel-preset-expo": "^12.0.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   },
   "private": true,
   "volta": {
