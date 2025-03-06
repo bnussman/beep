@@ -5,7 +5,7 @@ import { Loading } from "../../../../components/Loading";
 import { Error } from '../../../../components/Error';
 import { Map } from '../../../../components/Map';
 import { editUserRoute } from ".";
-import type { MapLayerMouseEvent } from 'react-map-gl';
+import type { MapLayerMouseEvent } from 'react-map-gl/maplibre';
 import { trpc } from "../../../../utils/trpc";
 
 export function EditLocation() {

@@ -15,25 +15,25 @@
     "@chakra-ui/theme-tools": "2.2.7",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@fontsource/poppins": "^5.1.1",
+    "@fontsource/poppins": "^5.2.5",
     "@tanstack/react-query": "^5.64.2",
-    "@tanstack/react-router": "^1.97.3",
+    "@tanstack/react-router": "^1.112.17",
     "@trpc/client": "11.0.0-rc.747",
     "@trpc/react-query": "11.0.0-rc.747",
     "dayjs": "^1.11.10",
-    "framer-motion": "^11.18.0",
-    "mapbox-gl": "^3.9.3",
+    "framer-motion": "^12.4.10",
+    "mapbox-gl": "^3.10.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "^7.51.3",
-    "react-icons": "^5.4.0",
-    "react-map-gl": "^7.1.8"
+    "react-icons": "^5.5.0",
+    "react-map-gl": "^8.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.8",
     "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "^5.7.3",
-    "vite": "^6.0.11"
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
   }
 }
