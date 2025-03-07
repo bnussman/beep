@@ -26,7 +26,7 @@ export function Avatar(props: Props) {
       source={src ? { uri: src } : AvatarImage}
       defaultSource={AvatarImage}
       style={{
-        borderRadius: '50%',
+        borderRadius: 50,
         width: SIZE_MAP[size],
         height: SIZE_MAP[size],
         backgroundColor: 'gray',
