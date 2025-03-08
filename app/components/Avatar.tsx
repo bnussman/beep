@@ -21,14 +21,16 @@ interface Props extends ImageProps {
 export function Avatar(props: Props) {
   const { className, src, size = 'md', ...rest } = props;
 
+  const px = SIZE_MAP[size];
+
   return (
     <Image
       source={src ? { uri: src } : AvatarImage}
       defaultSource={AvatarImage}
       style={{
-        borderRadius: 50,
-        width: SIZE_MAP[size],
-        height: SIZE_MAP[size],
+        borderRadius: px / 2,
+        width: px,
+        height: px,
         backgroundColor: 'gray',
       }}
       {...rest}
