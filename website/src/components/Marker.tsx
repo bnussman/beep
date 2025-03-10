@@ -1,5 +1,5 @@
 import React from "react";
-import { Marker as _Marker } from 'react-map-gl/maplibre';
+import { Marker as _Marker } from 'react-map-gl/mapbox';
 import { QueuePreview } from "./QueuePreview";
 import {
   Avatar,

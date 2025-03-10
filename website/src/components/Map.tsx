@@ -1,5 +1,5 @@
 import React from 'react';
-import { default as _Map } from 'react-map-gl/maplibre';
+import { default as _Map } from 'react-map-gl/mapbox';
 import { useColorMode } from '@chakra-ui/react';
 
 export function Map(props: React.ComponentProps<typeof _Map>) {

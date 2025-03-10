@@ -5,8 +5,8 @@ import { Loading } from "../../../../components/Loading";
 import { Error } from '../../../../components/Error';
 import { Map } from '../../../../components/Map';
 import { editUserRoute } from ".";
-import type { MapLayerMouseEvent } from 'react-map-gl/maplibre';
 import { trpc } from "../../../../utils/trpc";
+import type { MapLayerMouseEvent } from 'react-map-gl/maplibre';
 
 export function EditLocation() {
   const { userId } = editUserRoute.useParams();

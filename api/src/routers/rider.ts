@@ -51,7 +51,7 @@ export const riderRouter = router({
         )
         .orderBy(({ distance, isPremium }) => ([
           desc(isPremium),
-          desc(distance)
+          asc(distance)
         ]))
         .leftJoin(
           payment,
