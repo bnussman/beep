@@ -26,13 +26,17 @@ function Offering({ item, disabled }: Props) {
   return (
     <Card className="p-4 gap-2" variant="outlined">
       <Text weight="black" size="2xl">
-        {item.identifier}
+        {item.identifier} ✨
       </Text>
       <Text>
         Promotes you to the top of the beeper list so you get more riders
         joining your queue
       </Text>
-      <Text size="xs">Goes into effect immediately upon purchase and cannot be paused</Text>
+      <Text size="xs" style={{ marginBottom: 4 }}>
+        Goes into effect immediately upon purchase and cannot be paused.
+        When riders go to find a beeper, beepers are ordered by their premium status,
+        then by their distance from the beeper.
+      </Text>
       <Image
         source={PremiumImage}
         className="h-64 w-full"
