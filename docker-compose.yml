@@ -17,6 +17,11 @@ services:
     image: minio/minio
     ports:
       - "9000:9000"
+    healthcheck:
+      test: mc ready local
+      interval: 2s
+      timeout: 10s
+      retries: 5
     environment:
       MINIO_ACCESS_KEY: beep
       MINIO_SECRET_KEY: beepbeepbeep
@@ -26,7 +31,8 @@ services:
   bucket:
     image: minio/mc
     depends_on:
-      - s3
+      s3:
+        condition: service_healthy
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc alias set beep http://s3:9000 beep beepbeepbeep;
