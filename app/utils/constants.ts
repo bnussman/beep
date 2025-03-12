@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
+import beeperIcon from "./beeperIcon";
 
 export const isRunningInExpoGo = Constants.appOwnership === "expo";
 
@@ -19,4 +20,4 @@ export type Unpacked<T> = T extends (infer U)[] ? U : T;
 
 export const PAGE_SIZE = 10;
 
-export const BEEPER_ICON = "🚕";
+export const BEEPER_ICON = beeperIcon();
