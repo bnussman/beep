@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Text } from "@/components/Text";
-import { BEEPER_ICON } from "../utils/constants";
+import { getBeeperIcon } from "@/utils/emojis";
 import { MapMarker, Marker } from 'react-native-maps';
 import {
   runOnJS,
@@ -48,7 +48,7 @@ export const BeeperMarker = (props: BeeperMakerProps) => {
       ref={markerRef}
       coordinate={{ latitude: latitude.value, longitude: longitude.value }}
     >
-      <Text size="3xl">{BEEPER_ICON}</Text>
+      <Text size="3xl">{getBeeperIcon()}</Text>
     </Marker>
   );
 };
