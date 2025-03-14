@@ -6,7 +6,7 @@ export function getBeeperIcon() {
   const today = new Date();
 
   const day = today.getDay(); // Get day as a number (1-31)
-  const month = today.getMonth() + 1; // Get month as a number (0-11)
+  const month = today.getMonth() + 1; // Get month as a number (0-11) + 1 so it becomes (1-12)
 
   // New Years and New Years Eve
   if ((month === 1 && day === 1) || (month === 12 && day === 31)) {
