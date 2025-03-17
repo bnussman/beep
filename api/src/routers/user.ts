@@ -34,6 +34,7 @@ export const userRouter = router({
         const onUserUpdate = (message: string) => {
           emit.next(JSON.parse(message));
         };
+        console.log("➕ User subscribed", userId);
         redisSubscriber.subscribe(`user-${userId}`, onUserUpdate);
         (async () => {
           if (!input) {
@@ -41,6 +42,7 @@ export const userRouter = router({
           }
         })();
         return () => {
+          console.log("➖ User unsubscribed", userId);
           redisSubscriber.unsubscribe(`user-${userId}`, onUserUpdate);
         };
       });
