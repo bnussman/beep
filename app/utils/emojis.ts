@@ -5,7 +5,7 @@ function getRandom<T>(array: T[]): T {
 export function getBeeperIcon() {
   const today = new Date();
 
-  const day = today.getDay(); // Get day as a number (1-31)
+  const day = today.getDate(); // Get day as a number (1-31)
   const month = today.getMonth() + 1; // Get month as a number (0-11) + 1 so it becomes (1-12)
 
   // New Years and New Years Eve
