@@ -139,6 +139,7 @@ export function Notifications() {
                 colorScheme="blue"
                 type="submit"
                 onClick={onSubmit}
+                isLoading={isSubmitting || isPending}
               >
                 Send
               </Button>
