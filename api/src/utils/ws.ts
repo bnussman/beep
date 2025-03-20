@@ -3,7 +3,7 @@
 import {
     type AnyRouter,
     TRPCError,
-    callProcedure,
+    callTRPCProcedure,
     getErrorShape,
     getTRPCErrorFromUnknown,
     type inferRouterContext,
@@ -166,7 +166,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
             }
 
             const abortController = new AbortController();
-            const result = await callProcedure({
+            const result = await callTRPCProcedure({
                 procedures: router._def.procedures,
                 path,
                 getRawInput: () => Promise.resolve(input),
