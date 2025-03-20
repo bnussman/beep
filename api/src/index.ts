@@ -43,12 +43,10 @@ const websocket = createBunWSHandler({
   router: appRouter,
   createContext,
   onError(error) {
-    if (getHTTPStatusCodeFromError(error.error) >= 500) {
-      console.error(error.error);
-      captureException(error.error, {
-        extra: { input: error.input, type: error.type }
-      });
-    }
+    console.error(error.error);
+    captureException(error.error, {
+      extra: { input: error.input, type: error }
+    });
   },
 });
 
