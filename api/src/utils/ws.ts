@@ -167,7 +167,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
 
             const abortController = new AbortController();
             const result = await callTRPCProcedure({
-                procedures: router._def.procedures,
+                router,
                 path,
                 getRawInput: () => Promise.resolve(input),
                 ctx,
