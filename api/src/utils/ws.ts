@@ -269,7 +269,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
                     };
 
                     if (isTrackedEnvelope(next.value)) {
-                        const [id, data] = next.value;
+                        const [id, data] = next.value as any;
                         result.id = id;
                         result.data = {
                             id,
