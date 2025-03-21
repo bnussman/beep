@@ -262,6 +262,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
                 ctx,
               }),
             });
+            client.data.abortController.abort();
             break;
           }
 
@@ -346,6 +347,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
           ctx,
         }),
       });
+      client.data.abortController.abort();
     }
   }
 
