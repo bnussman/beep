@@ -47,6 +47,7 @@ export const queryClient = new QueryClient();
 
 const wsClient = createWSClient({
   url: getWSUrl(),
+  retryDelayMs: () => 1_000,
   lazy: {
     enabled: true,
     closeMs: 0,
