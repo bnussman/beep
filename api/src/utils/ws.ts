@@ -27,7 +27,7 @@ import {
   type BaseHandlerOptions,
 } from "@trpc/server/http";
 import type { TRPCConnectionParamsMessage } from "@trpc/server/rpc";
-import { iteratorResource, type MaybePromise } from "@trpc/server/unstable-core-do-not-import";
+import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
 import type { ServerWebSocket, WebSocketHandler } from "bun";
 import { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
 
@@ -82,13 +82,13 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
       req: client.data.req,
       res: client,
       info: {
-        url: null,
         connectionParams,
         calls: [],
         isBatchCall: false,
         accept: null,
         type: "unknown",
         signal: client.data.abortController.signal,
+        url: null
       },
     });
 
@@ -131,6 +131,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
 
     if (msg.method === "subscription.stop") {
       client.data.abortControllers.get(msg.id)?.abort();
+      client.data.abortControllers.delete(msg.id);
       return;
     }
 
@@ -213,24 +214,17 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
         ? observableToAsyncIterable(result, abortController.signal)
         : result;
 
+      const iterator: AsyncIterator<unknown> =
+        iterable[Symbol.asyncIterator]();
+
+      const abortPromise = new Promise<"abort">((resolve) => {
+        abortController.signal.onabort = () => resolve("abort");
+      });
+
+      clientAbortControllers.set(id, abortController);
       run(async () => {
-        await using iterator = iteratorResource(iterable);
-
-        const abortPromise = new Promise<'abort'>((resolve) => {
-          abortController.signal.onabort = () => resolve('abort');
-        });
-        // We need those declarations outside the loop for garbage collection reasons. If they
-        // were declared inside, they would not be freed until the next value is present.
-        let next:
-          | null
-          | TRPCError
-          | Awaited<
-            typeof abortPromise | ReturnType<(typeof iterator)['next']>
-          >;
-        let result: null | TRPCResultMessage<unknown>['result'];
-
         while (true) {
-          next = await Promise.race([
+          const next = await Promise.race([
             iterator.next().catch(getTRPCErrorFromUnknown),
             abortPromise,
           ]);
@@ -262,7 +256,6 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
                 ctx,
               }),
             });
-            client.data.abortController.abort();
             break;
           }
 
@@ -270,7 +263,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
             break;
           }
 
-          result = {
+          const result: TRPCResultMessage<unknown>["result"] = {
             type: "data",
             data: next.value,
           };
@@ -289,12 +282,9 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
             jsonrpc,
             result,
           });
-
-          // free up references for garbage collection
-          next = null;
-          result = null;
         }
 
+        await iterator.return?.();
         respond(client, {
           id,
           jsonrpc,
@@ -302,28 +292,28 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
             type: "stopped",
           },
         });
-
-        clientAbortControllers.delete(id);
       })
-        .catch((cause) => {
-          const error = getTRPCErrorFromUnknown(cause);
-          opts.onError?.({ error, path, type, ctx, req, input });
-          respond(client, {
-            id,
-            jsonrpc,
-            error: getErrorShape({
-              config: router._def._config,
-              error,
-              type,
-              path,
-              input,
-              ctx,
-            }),
-          });
-          abortController.abort();
+      .catch((cause) => {
+        const error = getTRPCErrorFromUnknown(cause);
+        opts.onError?.({ error, path, type, ctx, req, input });
+        respond(client, {
+          id,
+          jsonrpc,
+          error: getErrorShape({
+            config: router._def._config,
+            error,
+            type,
+            path,
+            input,
+            ctx,
+          }),
         });
+        abortController.abort();
+      })
+      .finally(() => {
+        clientAbortControllers.delete(id);
+      });
 
-      clientAbortControllers.set(id, abortController);
       respond(client, {
         id,
         jsonrpc,
@@ -347,7 +337,6 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
           ctx,
         }),
       });
-      client.data.abortController.abort();
     }
   }
 
@@ -370,11 +359,12 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
     },
 
     async close(client) {
-      for (const sub of client.data.abortControllers.values()) {
-        sub.abort();
-      }
-      client.data.abortControllers.clear();
       client.data.abortController.abort();
+      await Promise.all(
+        Array.from(client.data.abortControllers.values(), (ctrl) =>
+          ctrl.abort(),
+        ),
+      );
     },
 
     async message(client, message) {
