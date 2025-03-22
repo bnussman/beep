@@ -14,7 +14,8 @@ import { parseConnectionParamsFromUnknown } from "@trpc/server/http";
 import type { TRPCRequestInfo } from "@trpc/server/http";
 import {
   isObservable,
-  observableToAsyncIterable
+  Observable,
+  Unsubscribable,
 } from "@trpc/server/observable";
 import {
   type TRPCClientOutgoingMessage,
@@ -27,9 +28,97 @@ import {
   type BaseHandlerOptions,
 } from "@trpc/server/http";
 import type { TRPCConnectionParamsMessage } from "@trpc/server/rpc";
-import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
+import type { MaybePromise, Result } from "@trpc/server/unstable-core-do-not-import";
 import type { ServerWebSocket, WebSocketHandler } from "bun";
 import { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
+import * as Sentry from '@sentry/bun';
+
+/**
+ * @internal
+ */
+function observableToReadableStream<TValue>(
+  observable: Observable<TValue, unknown>,
+  signal: AbortSignal,
+): ReadableStream<Result<TValue>> {
+  let unsub: Unsubscribable | null = null;
+
+  const onAbort = () => {
+    unsub?.unsubscribe();
+    unsub = null;
+    signal.removeEventListener('abort', onAbort);
+  };
+
+  return new ReadableStream<Result<TValue>>({
+    start(controller) {
+      unsub = observable.subscribe({
+        next(data) {
+          try {
+            controller.enqueue({ ok: true, value: data });
+          } catch (error) {
+            Sentry.captureException(error);
+          }
+        },
+        error(error) {
+          controller.enqueue({ ok: false, error });
+          controller.close();
+        },
+        complete() {
+          controller.close();
+        },
+      });
+
+      if (signal.aborted) {
+        onAbort();
+      } else {
+        signal.addEventListener('abort', onAbort, { once: true });
+      }
+    },
+    cancel() {
+      onAbort();
+    },
+  });
+}
+
+
+export function observableToAsyncIterable<TValue>(
+  observable: Observable<TValue, unknown>,
+  signal: AbortSignal,
+): AsyncIterable<TValue> {
+  const stream = observableToReadableStream(observable, signal);
+
+  const reader = stream.getReader();
+  const iterator: AsyncIterator<TValue> = {
+    async next() {
+      const value = await reader.read();
+      if (value.done) {
+        return {
+          value: undefined,
+          done: true,
+        };
+      }
+      const { value: result } = value;
+      if (!result.ok) {
+        throw result.error;
+      }
+      return {
+        value: result.value,
+        done: false,
+      };
+    },
+    async return() {
+      await reader.cancel();
+      return {
+        value: undefined,
+        done: true,
+      };
+    },
+  };
+  return {
+    [Symbol.asyncIterator]() {
+      return iterator;
+    },
+  };
+}
 
 export type CreateBunWSSContextFnOptions<TRouter extends AnyRouter> =
 NodeHTTPCreateContextFnOptions<
