@@ -68,12 +68,6 @@ const wsClient = createWSClient({
     enabled: true,
     closeMs: 0,
   },
-  onError(error) {
-    Sentry.captureMessage("Websocket Error", { extra: { error } });
-  },
-  onClose(reason) {
-    Sentry.captureMessage("Websocket Closed", { extra: { reason } });
-  },
   async connectionParams() {
     const token = await getAuthToken();
     if (token) {
