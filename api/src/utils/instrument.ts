@@ -10,8 +10,9 @@ Sentry.init({
   },
   integrations(integrations) {
     return [
-      ...integrations.filter(i => i.name !== "Http"),
+      ...integrations,
       Sentry.postgresIntegration(),
+      Sentry.redisIntegration(),
     ]
   },
   beforeSendTransaction(event, hint) {
