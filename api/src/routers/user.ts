@@ -449,7 +449,6 @@ export const userRouter = router({
         });
       }
 
-      // @todo properly handle deleting across all tables
       await db.delete(user).where(eq(user.id, ctx.user.id));
     }),
   deleteUser: adminProcedure
