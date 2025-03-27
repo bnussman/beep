@@ -11,21 +11,21 @@
     "db:push": "drizzle-kit push"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.4",
+    "@types/bun": "^1.2.6",
     "@types/nodemailer": "^6.4.17",
     "@types/validator": "^13.12.2",
     "drizzle-kit": "^0.30.5",
     "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@sentry/bun": "^9.4.0",
+    "@sentry/bun": "^9.9.0",
     "@trpc/server": "^11.0.0",
     "car-info": "0.2.1",
-    "drizzle-orm": "^0.40.0",
+    "drizzle-orm": "^0.41.0",
     "nodemailer": "^6.10.0",
-    "pg": "^8.13.3",
+    "pg": "^8.14.1",
     "redis": "^4.7.0",
-    "validator": "^13.12.0",
+    "validator": "^13.15.0",
     "wkx": "^0.5.0",
     "zod": "^3.24.2"
   }
