@@ -460,12 +460,11 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
     },
 
     async close(client) {
+      for (const sub of client.data.abortControllers.values()) {
+        sub.abort();
+      }
+      client.data.abortControllers.clear();
       client.data.abortController.abort();
-      await Promise.all(
-        Array.from(client.data.abortControllers.values(), (ctrl) =>
-          ctrl.abort(),
-        ),
-      );
     },
 
     async message(client, message) {
