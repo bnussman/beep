@@ -35,14 +35,14 @@ export type RouterInput = inferRouterInputs<AppRouter>;
  */
 export const router = t.router;
 
-const sentryMiddleware = t.middleware(
-  Sentry.trpcMiddleware({
-    attachRpcInput: true,
-    forceTransaction: true
-  }),
-);
+// const sentryMiddleware = t.middleware(
+//   Sentry.trpcMiddleware({
+//     attachRpcInput: true,
+//     forceTransaction: true
+//   }),
+// );
 
-export const publicProcedure = t.procedure.use(sentryMiddleware);
+export const publicProcedure = t.procedure;
 
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
