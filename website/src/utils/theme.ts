@@ -1,5 +1,14 @@
 import { extendTheme, StyleFunctionProps } from "@chakra-ui/react";
 import { mode } from '@chakra-ui/theme-tools';
+import { createTheme } from '@mui/material/styles';
+
+export const muiTheme = createTheme({
+  cssVariables: true,
+  colorSchemes: {
+    light: true,
+    dark: true,
+  },
+});
 
 export const theme = extendTheme({
   config: {

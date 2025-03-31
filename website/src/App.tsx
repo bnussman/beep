@@ -2,13 +2,15 @@ import React from 'react';
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/700.css";
 import { Center, ChakraProvider, Container, Spinner } from "@chakra-ui/react"
-import { theme } from './utils/theme';
+import { theme, muiTheme } from './utils/theme';
 import { Header } from './components/Header';
 import { Banners } from './components/Banners';
 import { Outlet, RouterProvider } from '@tanstack/react-router';
 import { router } from './utils/router';
 import { trpc, queryClient, trpcClient } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { THEME_ID, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 export function Beep() {
   const { data: user, isPending } = trpc.user.me.useQuery(undefined, {
@@ -45,11 +47,14 @@ export function Beep() {
 export function App() {
   return (
     <ChakraProvider theme={theme}>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
-      </trpc.Provider>
+      <ThemeProvider theme={{ [THEME_ID]: muiTheme }}>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <CssBaseline enableColorScheme />
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </trpc.Provider>
+      </ThemeProvider>
     </ChakraProvider>
   );
 }
