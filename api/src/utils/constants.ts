@@ -67,3 +67,5 @@ export const CAR_COLOR_OPTIONS = [
   "Silver",
   "Yellow",
 ];
+
+export const DEFAULT_PAGE_SIZE = 25;

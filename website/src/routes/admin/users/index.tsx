@@ -15,7 +15,6 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { Indicator } from "../../../components/Indicator";
-import { Pagination } from "../../../components/Pagination";
 import { TdUser } from "../../../components/TdUser";
 import { Error } from "../../../components/Error";
 import { SearchIcon } from "@chakra-ui/icons";
@@ -24,6 +23,7 @@ import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
+import { PaginationFooter } from "../../../components/PaginationFooter";
 
 export interface PaginationSearchParams {
   page: number;
@@ -48,20 +48,20 @@ export const usersListRoute = createRoute({
 });
 
 export function Users() {
-  const pageLimit = 20;
+  const PAGE_SIZE = 20;
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
 
   const { isLoading, isFetching, error, data } = trpc.user.users.useQuery(
     {
-      offset: (page - 1) * pageLimit,
-      show: pageLimit,
+      page,
+      pageSize: PAGE_SIZE,
       query: !query ? undefined : query,
     },
     { placeholderData: keepPreviousData },
   );
 
-  const setCurrentPage = (page: number) => {
+  const setCurrentPage = (event: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: (prev) => ({ ...prev, page }) });
   };
 
@@ -84,11 +84,12 @@ export function Users() {
   return (
     <Box>
       <Heading>Users</Heading>
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+      <PaginationFooter
+        pageSize={PAGE_SIZE}
+        results={data?.results}
+        count={data?.pages}
+        page={page}
+        onChange={setCurrentPage}
       />
       <InputGroup mb={4}>
         <InputLeftElement>
@@ -137,11 +138,12 @@ export function Users() {
         </Table>
       </Box>
       {isLoading && <Loading />}
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+      <PaginationFooter
+        pageSize={PAGE_SIZE}
+        results={data?.results}
+        count={data?.pages}
+        page={page}
+        onChange={setCurrentPage}
       />
     </Box>
   );

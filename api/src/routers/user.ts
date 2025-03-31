@@ -7,7 +7,7 @@ import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
-import { S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
+import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
 import { syncUserPayments } from "../utils/payments";
 import { SendMailOptions } from "nodemailer";
 import { email } from "../utils/email";
@@ -290,8 +290,8 @@ export const userRouter = router({
   users: adminProcedure
     .input(
       z.object({
-        offset: z.number(),
-        show: z.number(),
+        page: z.number().default(1),
+        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
         query: z.string().optional(),
         isBeeping: z.boolean().optional()
       })
@@ -307,6 +307,8 @@ export const userRouter = router({
           like(user.username, input.query),
         ) : undefined
       );
+
+      const offset = (input.page - 1) * input.pageSize;
 
       const users = await db
         .select({
@@ -329,16 +331,20 @@ export const userRouter = router({
         .from(user)
         .where(where)
         .orderBy(sql`${user.created} desc nulls last`)
-        .limit(input.show)
-        .offset(input.offset);
+        .limit(input.pageSize)
+        .offset(offset);
 
       const usersCount = await db.select({ count: count() })
         .from(user)
         .where(where);
 
+      const results = usersCount[0].count;
+
       return {
         users,
-        count: usersCount[0].count
+        page: input.page,
+        pages: Math.ceil(results / input.pageSize),
+        results,
       };
     }),
   user: authedProcedure

@@ -8,6 +8,9 @@ export const muiTheme = createTheme({
     light: true,
     dark: true,
   },
+  typography: {
+      fontFamily: "Poppins",
+    },
 });
 
 export const theme = extendTheme({
