@@ -65,7 +65,7 @@ function Users() {
       });
     } else {
       navigate({
-        search: (prev) => ({ ...prev, query }),
+        search: (prev) => ({ ...prev, query, page: 1 }),
       });
     }
   };
@@ -95,7 +95,7 @@ function Users() {
             input: {
               endAdornment: isFetching && (
                 <InputAdornment position="end">
-                  <CircularProgress />
+                  <CircularProgress size="16px" />
                 </InputAdornment>
               )
             }
