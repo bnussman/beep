@@ -43,7 +43,13 @@ export function getAuthToken() {
   return undefined;
 }
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 const wsClient = createWSClient({
   url: getWSUrl(),

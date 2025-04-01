@@ -22,6 +22,8 @@ import { trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { usersRoute } from "./routes";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
 
 export interface PaginationSearchParams {
   page: number;
@@ -70,10 +72,6 @@ function Users() {
     }
   };
 
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
     <Stack>
       <Typography variant="h4" fontWeight="bold">Users</Typography>
@@ -113,6 +111,8 @@ function Users() {
               </TableRow>
             </TableHead>
             <TableBody>
+              {isLoading && <TableLoading colSpan={5} />}
+              {error && <TableError colSpan={5} error={error.message} />}
               {data?.users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>
@@ -138,7 +138,6 @@ function Users() {
             </TableBody>
           </Table>
         </TableContainer>
-        {isLoading && <Loading />}
         <PaginationFooter
           pageSize={PAGE_SIZE}
           results={data?.results}

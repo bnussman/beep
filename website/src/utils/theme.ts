@@ -19,6 +19,13 @@ export const muiTheme = createTheme({
         },
       }
     },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          fontWeight: "bold"
+        },
+      },
+    },
   },
 });
 
