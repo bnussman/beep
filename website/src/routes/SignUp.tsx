@@ -5,7 +5,7 @@ import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
+import { rootRoute } from '../utils/root';
 import {
   Link as ChakraLink,
   Text,

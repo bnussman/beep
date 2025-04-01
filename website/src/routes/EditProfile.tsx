@@ -4,8 +4,8 @@ import { Alert, Avatar, Box, Button, Container, Flex, FormControl, FormErrorMess
 import { Card } from '../components/Card';
 import { useForm } from "react-hook-form";
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
 import { RouterInput, trpc } from '../utils/trpc';
+import { rootRoute } from '../utils/root';
 
 type Values = RouterInput['user']['edit'];
 

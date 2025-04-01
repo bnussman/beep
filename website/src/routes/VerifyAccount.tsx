@@ -5,7 +5,7 @@ import { Success } from '../components/Success';
 import { Loading } from '../components/Loading';
 import { Box } from '@chakra-ui/react';
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
+import { rootRoute } from '../utils/root';
 import { trpc } from '../utils/trpc';
 
 export const verifyAccountRoute = createRoute({

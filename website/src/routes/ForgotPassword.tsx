@@ -4,7 +4,7 @@ import { Success } from '../components/Success';
 import { Text, Button, Center, Code, Container, FormControl, FormErrorMessage, FormHelperText, FormLabel, Heading, Input, Box } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
+import { rootRoute } from '../utils/root';
 import { RouterInput, trpc } from '../utils/trpc';
 import { useForm } from 'react-hook-form';
 

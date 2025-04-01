@@ -2,8 +2,8 @@ import React from "react";
 import { Link as RouterLink, createRoute, useNavigate } from "@tanstack/react-router";
 import { Link, Button, Text, Stack, Heading, Alert, AlertIcon, useDisclosure, Box, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogCloseButton, AlertDialogBody, AlertDialogFooter, useToast } from "@chakra-ui/react";
 import { Error } from "../components/Error";
-import { rootRoute } from "../utils/router";
 import { queryClient, trpc } from "../utils/trpc";
+import { rootRoute } from "../utils/root";
 
 export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,

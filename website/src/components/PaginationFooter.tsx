@@ -18,7 +18,7 @@ export function PaginationFooter(props: Props) {
       justifyContent="space-between"
     >
       <Typography>
-        Showing {startIndex} to {endIndex} of {props.results} results
+        Showing {startIndex + 1} to {endIndex} of {props.results} results
       </Typography>
       <Pagination {...props} />
     </Stack>

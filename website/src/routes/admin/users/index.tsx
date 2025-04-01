@@ -1,39 +1,32 @@
 import React from "react";
 import {
   Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Heading,
-  Box,
-  InputGroup,
-  InputLeftElement,
-  Input,
-  InputRightElement,
-  Spinner,
-} from "@chakra-ui/react";
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Typography,
+  CircularProgress,
+  Stack,
+  InputAdornment,
+  TableContainer,
+  Paper,
+  TextField,
+  Avatar,
+} from "@mui/material";
 import { Indicator } from "../../../components/Indicator";
-import { TdUser } from "../../../components/TdUser";
 import { Error } from "../../../components/Error";
-import { SearchIcon } from "@chakra-ui/icons";
 import { Loading } from "../../../components/Loading";
-import { createRoute, useNavigate } from "@tanstack/react-router";
-import { adminRoute } from "..";
+import { createRoute, Link, useNavigate } from "@tanstack/react-router";
 import { trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
+import { usersRoute } from "./routes";
 
 export interface PaginationSearchParams {
   page: number;
   query?: string;
 }
-
-export const usersRoute = createRoute({
-  path: "users",
-  getParentRoute: () => adminRoute,
-});
 
 export const usersListRoute = createRoute({
   component: Users,
@@ -47,7 +40,7 @@ export const usersListRoute = createRoute({
   },
 });
 
-export function Users() {
+function Users() {
   const PAGE_SIZE = 20;
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
@@ -82,69 +75,78 @@ export function Users() {
   }
 
   return (
-    <Box>
-      <Heading>Users</Heading>
-      <PaginationFooter
-        pageSize={PAGE_SIZE}
-        results={data?.results}
-        count={data?.pages}
-        page={page}
-        onChange={setCurrentPage}
-      />
-      <InputGroup mb={4}>
-        <InputLeftElement>
-          <SearchIcon color="gray.300" />
-        </InputLeftElement>
-        <Input
+    <Stack>
+      <Typography variant="h4" fontWeight="bold">Users</Typography>
+      <Stack spacing={1}>
+        <PaginationFooter
+          pageSize={PAGE_SIZE}
+          results={data?.results}
+          count={data?.pages}
+          page={page}
+          onChange={setCurrentPage}
+        />
+        <TextField
+          size="small"
           type="text"
           placeholder="Search"
           value={query ?? ""}
           onChange={(e) => setQuery(e.target.value)}
+          slotProps={{
+            input: {
+              endAdornment: isFetching && (
+                <InputAdornment position="end">
+                  <CircularProgress />
+                </InputAdornment>
+              )
+            }
+          }}
         />
-        {query && isFetching && (
-          <InputRightElement>
-            <Spinner />
-          </InputRightElement>
-        )}
-      </InputGroup>
-      <Box overflowX="auto">
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>User</Th>
-              <Th>Email</Th>
-              <Th>Student</Th>
-              <Th>Email Verified</Th>
-              <Th>Beeping</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data?.users.map((user) => (
-              <Tr key={user.id}>
-                <TdUser user={user} />
-                <Td>{user.email}</Td>
-                <Td>
-                  <Indicator color={user.isStudent ? "green" : "red"} />
-                </Td>
-                <Td>
-                  <Indicator color={user.isEmailVerified ? "green" : "red"} />
-                </Td>
-                <Td>
-                  <Indicator color={user.isBeeping ? "green" : "red"} />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
-      {isLoading && <Loading />}
-      <PaginationFooter
-        pageSize={PAGE_SIZE}
-        results={data?.results}
-        count={data?.pages}
-        page={page}
-        onChange={setCurrentPage}
-      />
-    </Box>
+        <TableContainer component={Paper} variant="outlined">
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>User</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Student</TableCell>
+                <TableCell>Email Verified</TableCell>
+                <TableCell>Beeping</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data?.users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Link to="/admin/users/$userId" params={{ userId: user.id }}>
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <Avatar src={user.photo ?? undefined} />
+                        <Typography>{user.first} {user.last}</Typography>
+                      </Stack>
+                    </Link>
+                  </TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <Indicator color={user.isStudent ? "green" : "red"} />
+                  </TableCell>
+                  <TableCell>
+                    <Indicator color={user.isEmailVerified ? "green" : "red"} />
+                  </TableCell>
+                  <TableCell>
+                    <Indicator color={user.isBeeping ? "green" : "red"} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {isLoading && <Loading />}
+        <PaginationFooter
+          pageSize={PAGE_SIZE}
+          results={data?.results}
+          count={data?.pages}
+          page={page}
+          onChange={setCurrentPage}
+        />
+      </Stack>
+    </Stack>
   );
 }

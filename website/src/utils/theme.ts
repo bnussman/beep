@@ -9,8 +9,17 @@ export const muiTheme = createTheme({
     dark: true,
   },
   typography: {
-      fontFamily: "Poppins",
+    fontFamily: "Poppins",
+  },
+  components: {
+    MuiTableRow: {
+      styleOverrides: {
+        root: {
+          '&:last-child td': { border: 0 }
+        },
+      }
     },
+  },
 });
 
 export const theme = extendTheme({

@@ -3,7 +3,6 @@ import iPhoneDark from '../assets/dark.png';
 import iPhoneLight from '../assets/light.png';
 import { Container, useColorMode } from "@chakra-ui/react";
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
 import { DownloadIcon } from '@chakra-ui/icons';
 import { Link } from '@tanstack/react-router';
 import {
@@ -15,6 +14,7 @@ import {
   Stack,
 } from "@chakra-ui/react"
 import { Stats } from '../components/Stats';
+import { rootRoute } from '../utils/root';
 
 export const indexRoute = createRoute({
   getParentRoute: () => rootRoute,

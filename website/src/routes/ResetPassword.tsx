@@ -5,7 +5,7 @@ import { Button, Center, Container, FormControl, FormErrorMessage, FormLabel, He
 import { Card } from '../components/Card';
 import { useForm } from 'react-hook-form';
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
+import { rootRoute } from '../utils/root';
 import { RouterInput, trpc } from '../utils/trpc';
 
 type ResetPasswordValues = RouterInput['auth']['resetPassword'];

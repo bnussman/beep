@@ -4,7 +4,7 @@ import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack
 import { Card } from '../components/Card';
 import { PasswordInput } from '../components/PasswordInput';
 import { Link, createRoute, useNavigate } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
+import { rootRoute } from '../utils/root';
 import { trpc } from '../utils/trpc';
 
 export const loginRoute = createRoute({

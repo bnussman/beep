@@ -3,8 +3,8 @@ import { Heading, Stack, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/reac
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
 import { createRoute } from "@tanstack/react-router";
-import { usersRoute } from "./users";
 import { trpc } from "../../utils/trpc";
+import { usersRoute } from "./users/routes";
 
 export const usersByDomainRoute = createRoute({
   component: UsersByDomain,

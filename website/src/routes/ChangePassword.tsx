@@ -4,7 +4,7 @@ import { Success } from '../components/Success';
 import { Input, Button, FormControl, FormLabel, Center, Heading, Container, Flex, Stack } from '@chakra-ui/react';
 import { Card } from '../components/Card';
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
+import { rootRoute } from '../utils/root';
 import { trpc } from '../utils/trpc';
 
 export const changePasswordRoute = createRoute({

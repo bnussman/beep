@@ -11,7 +11,6 @@ import { Error } from '../../../components/Error';
 import { PhotoDialog } from '../../../components/PhotoDialog';
 import { DeleteUserDialog } from './DeleteUserDialog';
 import { Link, Outlet, createRoute, useNavigate, useRouterState } from '@tanstack/react-router';
-import { usersRoute } from '.';
 import {
   useToast,
   useDisclosure,
@@ -30,6 +29,7 @@ import {
   TabList,
   useMediaQuery,
 } from '@chakra-ui/react';
+import { usersRoute } from './routes';
 
 dayjs.extend(relativeTime);
 

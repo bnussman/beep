@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { VStack, Spinner, Center, Text } from '@chakra-ui/react';
 import { getMobileOperatingSystem } from '../utils/utils';
 import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/router';
+import { rootRoute } from '../utils/root';
 
 export const downloadRoute = createRoute({
   path: "/download",
