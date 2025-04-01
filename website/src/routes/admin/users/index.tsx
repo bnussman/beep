@@ -14,9 +14,8 @@ import {
   TextField,
   Avatar,
 } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 import { Indicator } from "../../../components/Indicator";
-import { Error } from "../../../components/Error";
-import { Loading } from "../../../components/Loading";
 import { createRoute, Link, useNavigate } from "@tanstack/react-router";
 import { trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
@@ -94,6 +93,11 @@ function Users() {
               endAdornment: isFetching && (
                 <InputAdornment position="end">
                   <CircularProgress size="16px" />
+                </InputAdornment>
+              ),
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
                 </InputAdornment>
               )
             }
