@@ -5,14 +5,25 @@ import { Error } from '../../../components/Error';
 import { Loading } from '../../../components/Loading';
 import { Pagination } from '../../../components/Pagination';
 import { leaderboardsRoute } from '.';
-import { useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { trpc } from '../../../utils/trpc';
 
 const pageLimit = 20;
 
+export const ridesLeaderboard = createRoute({
+  component: Rides,
+  path: 'rides',
+  getParentRoute: () => leaderboardsRoute,
+  validateSearch: (search: Record<string, string>) => {
+    return {
+      page: Number(search?.page ?? 1),
+    }
+  },
+});
+
 export function Rides() {
-  const { page } = leaderboardsRoute.useSearch();
-  const navigate = useNavigate({ from: leaderboardsRoute.id });
+  const { page } = ridesLeaderboard.useSearch();
+  const navigate = useNavigate({ from: "/admin/leaderboards/rides" });
 
   const { isLoading, error, data } = trpc.user.usersWithRides.useQuery({
     show: pageLimit,

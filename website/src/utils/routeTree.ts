@@ -13,6 +13,8 @@ import { carsRoute } from "../routes/admin/cars";
 import { feedbackRoute } from "../routes/admin/Feedback";
 import { healthRoute } from "../routes/admin/Health";
 import { leaderboardsRoute } from "../routes/admin/leaderboards";
+import { beepsLeaderboard } from "../routes/admin/leaderboards/beeps";
+import { ridesLeaderboard } from "../routes/admin/leaderboards/rides";
 import { notificationsRoute } from "../routes/admin/notifications";
 import { paymentsRoute } from "../routes/admin/Payments";
 import { ratingsRoute, ratingsListRoute } from "../routes/admin/ratings";
@@ -54,7 +56,10 @@ export const routeTree = rootRoute.addChildren([
   verifyAccountRoute,
   resetPasswordRoute,
   adminRoute.addChildren([
-    leaderboardsRoute,
+    leaderboardsRoute.addChildren([
+      beepsLeaderboard,
+      ridesLeaderboard
+    ]),
     usersByDomainRoute,
     beepersRoute,
     activeBeepsRoute,

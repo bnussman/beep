@@ -1,39 +1,46 @@
 import React from 'react'
-import { Heading, Tabs, TabList, Tab, TabPanel, TabPanels, Stack } from "@chakra-ui/react"
-import { Beeps } from './beeps';
-import { Rides } from './rides';
-import { createRoute } from '@tanstack/react-router';
+import { createRoute, Outlet, useLocation, useMatch } from '@tanstack/react-router';
 import { adminRoute } from '..';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Tabs from '@mui/material/Tabs';
+import { Link } from '@tanstack/react-router';
 
 export const leaderboardsRoute = createRoute({
   component: Leaderboards,
   path: 'leaderboards',
   getParentRoute: () => adminRoute,
-  validateSearch: (search: Record<string, string>) => {
-    return {
-      page: Number(search?.page ?? 1),
-    }
-  },
 });
 
 export function Leaderboards() {
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  })
+
+  const tabs = [
+    {
+      label: "Beeps",
+      href: "/admin/leaderboards/beeps",
+    },
+    {
+      label: "Rides",
+      href: "/admin/leaderboards/rides",
+    },
+  ];
+
+  const index = tabs.findIndex(t => t.href === pathname)
+
   return (
-    <Stack>
-      <Heading>Leaderboards</Heading>
-      <Tabs isLazy colorScheme="brand">
-        <TabList>
-          <Tab>Beeps</Tab>
-          <Tab>Rides</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <Beeps />
-          </TabPanel>
-          <TabPanel>
-            <Rides />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+    <Stack spacing={1}>
+      <Typography variant="h5" fontWeight="bold">Leaderboards</Typography>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={index === -1 ? 0 : index}>
+          {tabs.map((tab) => <Tab LinkComponent={Link} {...tab} />)}
+        </Tabs>
+      </Box>
+      <Outlet />
     </Stack>
   );
 }

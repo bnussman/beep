@@ -36,7 +36,7 @@ export function AdminMenu() {
       </Button>
       <MenuList>
         <MenuGroup title='General'>
-          <MenuItem icon={<Icon fontSize="2xl" as={LiaUsersSolid} />} as={Link} to="/admin/leaderboards">
+          <MenuItem icon={<Icon fontSize="2xl" as={LiaUsersSolid} />} as={Link} to="/admin/leaderboards/beeps">
             Leaderboards
           </MenuItem>
           <MenuItem icon={<Icon fontSize="2xl" as={LiaUser} />} as={Link} to="/admin/users">

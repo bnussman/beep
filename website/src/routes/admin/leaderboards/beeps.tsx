@@ -5,21 +5,33 @@ import { Error } from '../../../components/Error';
 import { Loading } from '../../../components/Loading';
 import { Pagination } from '../../../components/Pagination';
 import { leaderboardsRoute } from '.';
-import { useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { trpc } from '../../../utils/trpc';
 
 const pageLimit = 20;
 
+export const beepsLeaderboard = createRoute({
+  component: Beeps,
+  path: 'beeps',
+  getParentRoute: () => leaderboardsRoute,
+  validateSearch: (search: Record<string, string>) => {
+    return {
+      page: Number(search?.page ?? 1),
+    }
+  },
+});
+
 export function Beeps() {
-  const { page } = leaderboardsRoute.useSearch();
-  const navigate = useNavigate({ from: leaderboardsRoute.id });
+  const { page } = beepsLeaderboard.useSearch();
+  const navigate = useNavigate({ from: "/admin/leaderboards/beeps" });
+
   const { isPending, error, data } = trpc.user.usersWithBeeps.useQuery({
     show: pageLimit,
     offset: (page - 1) * pageLimit,
   });
 
   const setCurrentPage = (page: number) => {
-    navigate({ search: { page }, params: {} });
+    navigate({ search: { page } });
   };
 
   if (error) {
