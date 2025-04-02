@@ -1,10 +1,10 @@
 import React from "react";
-import { Heading, Stack, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
-import { Loading } from "../../components/Loading";
-import { Error } from "../../components/Error";
 import { createRoute } from "@tanstack/react-router";
 import { trpc } from "../../utils/trpc";
 import { usersRoute } from "./users/routes";
+import { TableContainer, Stack, TableHead, Paper, Typography, Table, TableCell, TableRow, TableBody } from "@mui/material";
+import { TableLoading } from "../../components/TableLoading";
+import { TableError } from "../../components/TableError";
 
 export const usersByDomainRoute = createRoute({
   component: UsersByDomain,
@@ -15,33 +15,29 @@ export const usersByDomainRoute = createRoute({
 export function UsersByDomain() {
   const { data, isLoading, error } = trpc.user.usersByDomain.useQuery();
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
-    <Stack spacing={4}>
-      <Heading>Users by Domain</Heading>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Domain</Th>
-            <Th>Count</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data?.map(({ domain, count }) => (
-            <Tr key={domain}>
-              <Td>{domain}</Td>
-              <Td>{count}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+    <Stack spacing={2}>
+      <Typography fontWeight="bold" variant="h4">Users by Domain</Typography>
+      <TableContainer component={Paper} variant="outlined">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Domain</TableCell>
+              <TableCell>Count</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading && <TableLoading colSpan={2} />}
+            {error && <TableError colSpan={2} error={error.message} />}
+            {data?.map(({ domain, count }) => (
+              <TableRow key={domain}>
+                <TableCell>{domain}</TableCell>
+                <TableCell>{count}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Stack>
   );
 }
