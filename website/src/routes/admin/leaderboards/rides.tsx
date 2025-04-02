@@ -7,6 +7,7 @@ import { PaginationFooter } from '../../../components/PaginationFooter';
 import { Stack, Avatar, TableCell, TableContainer, TableHead, TableRow, Paper, TableBody, Typography } from '@mui/material';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
+import { keepPreviousData } from '@tanstack/react-query';
 
 export const ridesLeaderboard = createRoute({
   component: Rides,
@@ -23,9 +24,14 @@ export function Rides() {
   const { page } = ridesLeaderboard.useSearch();
   const navigate = useNavigate({ from: "/admin/leaderboards/rides" });
 
-  const { isLoading, error, data } = trpc.user.usersWithRides.useQuery({
-    page,
-  });
+  const { isLoading, error, data } = trpc.user.usersWithRides.useQuery(
+    {
+      page,
+    },
+    {
+      placeholderData: keepPreviousData,
+    }
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
