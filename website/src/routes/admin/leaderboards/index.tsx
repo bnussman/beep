@@ -33,14 +33,16 @@ export function Leaderboards() {
   const index = tabs.findIndex(t => t.href === pathname)
 
   return (
-    <Stack spacing={1}>
-      <Typography variant="h5" fontWeight="bold">Leaderboards</Typography>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={index === -1 ? 0 : index}>
-          {tabs.map((tab) => <Tab LinkComponent={Link} {...tab} />)}
-        </Tabs>
-      </Box>
-      <Outlet />
+    <Stack>
+      <Typography variant="h4" fontWeight="bold">Leaderboards</Typography>
+      <Stack spacing={1}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={index === -1 ? 0 : index}>
+            {tabs.map((tab) => <Tab LinkComponent={Link} {...tab} />)}
+          </Tabs>
+        </Box>
+        <Outlet />
+      </Stack>
     </Stack>
   );
 }

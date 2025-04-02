@@ -374,8 +374,8 @@ export const userRouter = router({
   usersWithBeeps: adminProcedure
     .input(
       z.object({
-        offset: z.number(),
-        show: z.number(),
+        page: z.number().default(1),
+        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
       })
     )
     .query(async ({ input }) => {
@@ -393,21 +393,25 @@ export const userRouter = router({
         .leftJoin(beep, eq(user.id, beep.beeper_id))
         .groupBy(user.id)
         .orderBy(sql`beeps desc`)
-        .offset(input.offset)
-        .limit(input.show);
+        .offset((input.page - 1) * input.pageSize)
+        .limit(input.pageSize);
 
       const usersCount = await db.select({ count: count() }).from(user);
+      const results = usersCount[0].count;
 
       return {
         users,
-        count: usersCount[0].count
+        page: input.page,
+        pages: Math.ceil(results / input.pageSize),
+        pageSize: input.pageSize,
+        results,
       };
     }),
   usersWithRides: adminProcedure
     .input(
       z.object({
-        offset: z.number(),
-        show: z.number(),
+        page: z.number().default(1),
+        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
       })
     )
     .query(async ({ input }) => {
@@ -425,14 +429,18 @@ export const userRouter = router({
         .leftJoin(beep, eq(user.id, beep.rider_id))
         .groupBy(user.id)
         .orderBy(sql`rides desc`)
-        .offset(input.offset)
-        .limit(input.show);
+        .offset((input.page - 1) * input.pageSize)
+        .limit(input.pageSize);
 
       const usersCount = await db.select({ count: count() }).from(user);
+      const results = usersCount[0].count;
 
       return {
         users,
-        count: usersCount[0].count
+        results,
+        page: input.page,
+        pages: Math.ceil(results / input.pageSize),
+        pageSize: input.pageSize,
       };
     }),
   usersByDomain: adminProcedure

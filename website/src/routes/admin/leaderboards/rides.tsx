@@ -1,14 +1,12 @@
 import React from 'react'
-import { Table, Thead, Tbody, Tr, Th, Td, Box } from "@chakra-ui/react"
-import { TdUser } from '../../../components/TdUser';
-import { Error } from '../../../components/Error';
-import { Loading } from '../../../components/Loading';
-import { Pagination } from '../../../components/Pagination';
+import { Table } from "@chakra-ui/react"
 import { leaderboardsRoute } from '.';
-import { createRoute, useNavigate } from '@tanstack/react-router';
+import { createRoute, Link, useNavigate } from '@tanstack/react-router';
 import { trpc } from '../../../utils/trpc';
-
-const pageLimit = 20;
+import { PaginationFooter } from '../../../components/PaginationFooter';
+import { Stack, Avatar, TableCell, TableContainer, TableHead, TableRow, Paper, TableBody, Typography } from '@mui/material';
+import { TableLoading } from '../../../components/TableLoading';
+import { TableError } from '../../../components/TableError';
 
 export const ridesLeaderboard = createRoute({
   component: Rides,
@@ -26,51 +24,56 @@ export function Rides() {
   const navigate = useNavigate({ from: "/admin/leaderboards/rides" });
 
   const { isLoading, error, data } = trpc.user.usersWithRides.useQuery({
-    show: pageLimit,
-    offset: (page - 1) * pageLimit,
+    page,
   });
 
-  const setCurrentPage = (page: number) => {
+  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
   };
 
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
-    <Box>
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+    <Stack spacing={1}>
+      <PaginationFooter
+        count={data?.pages}
+        page={page}
+        pageSize={data?.pageSize ?? 0}
+        results={data?.results}
+        onChange={setCurrentPage}
       />
-      <Box overflowX="auto">
+      <TableContainer component={Paper} variant="outlined">
         <Table>
-          <Thead>
-            <Tr>
-              <Th>User</Th>
-              <Th>Beeps</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data?.users.map(({ user, rides }) => (
-              <Tr key={user.id}>
-                <TdUser user={user} />
-                <Td>{rides}</Td>
-              </Tr>
+          <TableHead>
+            <TableRow>
+              <TableCell>User</TableCell>
+              <TableCell>Beeps</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.users?.map(({ user, rides }) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <Link to="/admin/users/$userId" params={{ userId: user.id }}>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <Avatar src={user.photo ?? undefined} />
+                      <Typography>{user.first} {user.last}</Typography>
+                    </Stack>
+                  </Link>
+                </TableCell>
+                <TableCell>{rides}</TableCell>
+              </TableRow>
             ))}
-          </Tbody>
+            {isLoading && <TableLoading colSpan={2} />}
+            {error && <TableError colSpan={2} error={error.message} />}
+          </TableBody>
         </Table>
-      </Box>
-      {isLoading && <Loading />}
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+      </TableContainer>
+      <PaginationFooter
+        count={data?.pages}
+        page={page}
+        pageSize={data?.pageSize ?? 0}
+        results={data?.results}
+        onChange={setCurrentPage}
       />
-    </Box>
+    </Stack>
   );
 }
