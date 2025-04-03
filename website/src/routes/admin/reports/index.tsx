@@ -1,16 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { TdUser } from '../../../components/TdUser';
-import { ReportDrawer } from './Drawer';
-import { Loading } from '../../../components/Loading';
-import { Pagination } from '../../../components/Pagination';
 import { Indicator } from '../../../components/Indicator';
-import { Error } from '../../../components/Error';
-import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue, useDisclosure } from '@chakra-ui/react';
+import { Table, Tbody, Td } from '@chakra-ui/react';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { trpc } from '../../../utils/trpc';
+import { PaginationFooter } from '../../../components/PaginationFooter';
+import { IconButton, Menu, MenuItem, Paper, Stack, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { TableCellUser } from '../../../components/TableCellUser';
+import { TableEmpty } from '../../../components/TableEmpty';
+import { TableError } from '../../../components/TableError';
+import { TableLoading } from '../../../components/TableLoading';
+import MenuIcon from '@mui/icons-material/Menu';
 
 dayjs.extend(relativeTime);
 
@@ -29,86 +31,94 @@ export const reportsListRoute = createRoute({
 });
 
 export function Reports() {
-  const pageLimit = 20;
   const { page } = reportsListRoute.useSearch();
-  const bg = useColorModeValue('gray.50', 'rgb(20, 24, 28)');
-  const [selectedReportId, setSelectedReportId] = useState<string | undefined>();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate({ from: reportsListRoute.id });
 
-  const { data, isPending, error } = trpc.report.reports.useQuery({
-    offset: (page - 1) * pageLimit,
-    show: pageLimit
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const { data, isLoading, error } = trpc.report.reports.useQuery({
+    page,
   });
 
-  const setCurrentPage = (page: number) => {
+  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
   };
 
-  function openReport(id: string) {
-    setSelectedReportId(id);
-    onOpen();
-  }
-
-  const selectedReport = data?.reports.find(r => r.id === selectedReportId);
-
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
-    <Box>
-      <Heading>Reports</Heading>
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+    <Stack spacing={1}>
+      <Typography variant="h4" fontWeight="bold">Reports</Typography>
+      <PaginationFooter
+        results={data?.results}
+        pageSize={data?.pageSize ?? 0}
+        page={page}
+        onChange={setCurrentPage}
       />
-      <Box overflowX="auto">
+      <TableContainer component={Paper} variant="outlined">
         <Table>
-          <Thead>
-            <Tr>
-              <Th>Reporter</Th>
-              <Th>Reported</Th>
-              <Th>Reason</Th>
-              <Th>Date</Th>
-              <Th>Handled</Th>
-            </Tr>
-          </Thead>
+          <TableHead>
+            <TableRow>
+              <TableCell>Reporter</TableCell>
+              <TableCell>Reported</TableCell>
+              <TableCell>Reason</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Handled</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
           <Tbody>
+            {data?.results === 0 && <TableEmpty colSpan={5} />}
+            {error && <TableError colSpan={5} error={error.message} />}
+            {isLoading && <TableLoading colSpan={5} />}
             {data?.reports.map((report) => (
-              <Tr
-                key={report.id}
-                onClick={() => openReport(report.id)}
-                _hover={{
-                  cursor: 'pointer',
-                  bg
-                }}
-              >
-                <TdUser user={report.reporter} />
-                <TdUser user={report.reported} />
-                <Td>{report.reason}</Td>
-                <Td>{dayjs().to(report.timestamp)}</Td>
-                <Td><Indicator color={report.handled ? 'green' : 'red'} /></Td>
-              </Tr>
+              <TableRow>
+                <TableCellUser user={report.reporter} />
+                <TableCellUser user={report.reported} />
+                <TableCell>{report.reason}</TableCell>
+                <TableCell>{dayjs().to(report.timestamp)}</TableCell>
+                <TableCell>
+                  <Indicator color={report.handled ? 'green' : 'red'} />
+                </TableCell>
+                <TableCell sx={{ textAlign: "right" }}>
+                  <IconButton
+                    id="basic-button"
+                    aria-controls={open ? 'basic-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick}
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button',
+                    }}
+                  >
+                    <MenuItem onClick={handleClose}>Details</MenuItem>
+                    <MenuItem onClick={handleClose}>Delete</MenuItem>
+                  </Menu>
+                </TableCell>
+              </TableRow>
             ))}
           </Tbody>
         </Table>
-      </Box>
-      {isPending && <Loading />}
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+      </TableContainer>
+      <PaginationFooter
+        results={data?.results}
+        pageSize={data?.pageSize ?? 0}
+        page={page}
+        onChange={setCurrentPage}
       />
-      <ReportDrawer
-        isOpen={isOpen}
-        onOpen={onOpen}
-        onClose={onClose}
-        report={selectedReport}
-      />
-    </Box>
+    </Stack>
   );
 }

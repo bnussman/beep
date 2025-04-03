@@ -4,13 +4,14 @@ import { db } from "../utils/db";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const reportRouter = router({
   reports: adminProcedure
     .input(
       z.object({
-        offset: z.number(),
-        show: z.number(),
+        page: z.number().default(1),
+        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
         userId: z.string().optional()
       })
     )
@@ -23,8 +24,8 @@ export const reportRouter = router({
         : undefined;
 
       const reports = await db.query.report.findMany({
-        offset: input.offset,
-        limit: input.show,
+        offset: (input.page - 1) * input.pageSize,
+        limit: input.pageSize,
         orderBy: desc(report.timestamp),
         where,
         columns: {
@@ -64,9 +65,14 @@ export const reportRouter = router({
         .from(report)
         .where(where);
 
+      const results = reportsCount[0].count;
+
       return {
         reports,
-        count: reportsCount[0].count
+        page: input.page,
+        pages: Math.ceil(results / input.pageSize),
+        pageSize: input.pageSize,
+        results,
       }
     }),
   report: adminProcedure
