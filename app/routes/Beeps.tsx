@@ -25,22 +25,20 @@ export function BeepsScreen() {
   } = trpc.beep.beeps.useInfiniteQuery(
     {
       userId: user?.id,
-      show: PAGE_SIZE
+      pageSize: PAGE_SIZE
     },
     {
-      initialCursor: 0,
-      getNextPageParam: (lastPage, allPages) => {
-        const numberOfBeepsLoaded = allPages.reduce((acc, page) => acc += page.beeps.length, 0);
-        if (numberOfBeepsLoaded === lastPage.count) {
+      initialCursor: 1,
+      getNextPageParam(page) {
+        if (page.page === page.pages) {
           return undefined;
         }
-        return numberOfBeepsLoaded;
+        return page.page + 1;
       }
     }
   );
 
   const beeps = data?.pages.flatMap((page) => page.beeps);
-  const count = data?.pages[0]?.count ?? 0;
 
   const renderFooter = () => {
     if (isFetchingNextPage) {

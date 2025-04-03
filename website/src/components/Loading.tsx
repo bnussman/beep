@@ -1,10 +1,10 @@
 import React from 'react';
-import { Center, Spinner } from '@chakra-ui/react';
+import { Box, CircularProgress } from '@mui/material';
 
 export function Loading() {
   return (
-    <Center h="100px">
-      <Spinner size="xl" />
-    </Center>
+    <Box display="flex" alignItems="center" justifyContent="center" height="100px">
+      <CircularProgress size="xl" />
+    </Box>
   );
 }

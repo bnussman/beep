@@ -1,21 +1,19 @@
 import React from 'react'
-import { Badge, Box, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { TdUser } from '../../../components/TdUser';
-import { Loading } from '../../../components/Loading';
-import { Error } from '../../../components/Error';
+import { Paper, Box, Typography, Stack, Table, TableBody, TableHead, TableRow, TableCell, TableContainer, Avatar, Chip, Tooltip } from '@mui/material';
 import { BeepersMap } from './BeepersMap';
-import { createRoute } from '@tanstack/react-router';
+import { createRoute, Link } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { queryClient, trpc } from '../../../utils/trpc';
-import { getQueryKey } from '@trpc/react-query';
+import { trpc } from '../../../utils/trpc';
+import { printStars } from '../ratings';
+import { TableEmpty } from '../../../components/TableEmpty';
+import { TableError } from '../../../components/TableError';
+import { TableLoading } from '../../../components/TableLoading';
 
 export const beepersRoute = createRoute({
   component: Beepers,
   path: 'beepers',
   getParentRoute: () => adminRoute,
 });
-
-const queryKey = getQueryKey(trpc.user.users);
 
 export function Beepers() {
   const utils = trpc.useUtils();
@@ -50,47 +48,63 @@ export function Beepers() {
     }
   );
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
     <Box>
-      <HStack alignItems="center">
-        <Heading>Beepers</Heading>
-        <Badge ml={2}>
-          {data?.length ?? 0}
-        </Badge>
-      </HStack>
+      <Stack direction="row" alignItems="center" spacing={2}>
+        <Typography fontWeight="bold" variant="h4">Beepers</Typography>
+        <Chip variant="outlined" label={`${data?.length ?? 0} beepers`} size="small" />
+      </Stack>
       <BeepersMap beepers={data ?? []} />
-      <Box overflowX="auto">
+      <TableContainer component={Paper} variant="outlined">
         <Table>
-          <Thead>
-            <Tr>
-              <Th>Beeper</Th>
-              <Th>Premium</Th>
-              <Th>Queue size</Th>
-              <Th>Ride capacity</Th>
-              <Th>Rate</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+          <TableHead>
+            <TableRow>
+              <TableCell>Beeper</TableCell>
+              <TableCell>Queue size</TableCell>
+              <TableCell>Ride capacity</TableCell>
+              <TableCell>Rates</TableCell>
+              <TableCell>Rating</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.length === 0 && <TableEmpty colSpan={5} />}
+            {error && <TableError colSpan={5} error={error.message} />}
+            {isLoading && <TableLoading colSpan={5} />}
             {data?.map((beeper) => (
-              <Tr key={beeper.id}>
-                <TdUser user={beeper} />
-                <Td>{beeper.isPremium && "👑"}</Td>
-                <Td>{beeper.queueSize} riders</Td>
-                <Td>{beeper.capacity} riders</Td>
-                <Td>${beeper.singlesRate} / ${beeper.groupRate}</Td>
-              </Tr>
+              <TableRow key={beeper.id}>
+                <TableCell>
+                  <Link to="/admin/users/$userId" params={{ userId: beeper.id }}>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <Avatar src={beeper.photo ?? undefined} />
+                      <Typography>{beeper.first} {beeper.last}</Typography>
+                      <Box flexGrow={1} />
+                      {beeper.isPremium && (
+                        <Chip label="Premium 👑" size="small" />
+                      )}
+                    </Stack>
+                  </Link>
+                </TableCell>
+                <TableCell>{beeper.queueSize} riders</TableCell>
+                <TableCell>{beeper.capacity} riders</TableCell>
+                <TableCell>${beeper.singlesRate} / ${beeper.groupRate}</TableCell>
+                <TableCell>
+                  {beeper.rating ? (
+                    <Tooltip title={`User rating of ${beeper.rating}`}>
+                      <Typography>
+                        {printStars(Number(beeper.rating))}
+                      </Typography>
+                    </Tooltip>
+                  ) : (
+                    <Typography>
+                      N/A
+                    </Typography>
+                  )}
+                </TableCell>
+              </TableRow>
             ))}
-          </Tbody>
+          </TableBody>
         </Table>
-      </Box>
+      </TableContainer>
     </Box>
   );
 }

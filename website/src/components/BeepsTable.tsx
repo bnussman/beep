@@ -29,11 +29,11 @@ export function BeepsTable() {
 
   const { data, isLoading } = trpc.beep.beeps.useQuery({
     userId,
-    cursor: (currentPage - 1) * pageLimit,
-    show: pageLimit
+    cursor: currentPage,
+    pageSize: pageLimit
   });
 
-  if (data?.count === 0) {
+  if (data?.results === 0) {
     return (
       <Center h="100px">
         This user has no ride history.
@@ -52,7 +52,7 @@ export function BeepsTable() {
   return (
     <Box>
       <Pagination
-        resultCount={data?.count}
+        resultCount={data?.results}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -93,7 +93,7 @@ export function BeepsTable() {
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.count}
+        resultCount={data?.results}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

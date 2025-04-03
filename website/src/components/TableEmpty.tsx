@@ -4,15 +4,19 @@ import TableCell, { TableCellProps } from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 
 interface Props extends TableCellProps {
-  error: string;
+  /**
+   * The message to show for this empty state
+   * @default "No results"
+   */
+  message?: string;
 }
 
-export function TableError({ error, ...props }: Props) {
+export function TableEmpty({ message, ...props }: Props) {
   return (
     <TableRow>
       <TableCell {...props} sx={{ p: 0 }}>
-        <Alert severity="error" sx={{ py: 10, justifyContent: "center"}}>
-          {error}
+        <Alert severity="info" sx={{ py: 10, justifyContent: "center"}}>
+          {message ?? "No results"}
         </Alert>
       </TableCell>
     </TableRow>

@@ -1,16 +1,18 @@
 import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Pagination } from '../../../components/Pagination';
-import { Badge, Box, Flex, Heading, HStack, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
-import { TdUser } from '../../../components/TdUser';
-import { Loading } from '../../../components/Loading';
 import { Error } from '../../../components/Error';
 import { Indicator } from '../../../components/Indicator';
 import { beepStatusMap } from '.';
 import { createRoute, useNavigate } from '@tanstack/react-router';
 import { adminRoute } from '..';
+import { TableBody, TableCell, Paper, Box, Chip, Stack, Table, TableHead, Typography, TableContainer, TableRow } from '@mui/material';
 import { trpc } from '../../../utils/trpc';
+import { PaginationFooter } from '../../../components/PaginationFooter';
+import { TableCellUser } from '../../../components/TableCellUser';
+import { TableLoading } from '../../../components/TableLoading';
+import { TableEmpty } from '../../../components/TableEmpty';
+import { TableError } from '../../../components/TableError';
 
 dayjs.extend(duration);
 
@@ -18,7 +20,7 @@ export const activeBeepsRoute = createRoute({
   component: ActiveBeeps,
   path: 'beeps/active',
   getParentRoute: () => adminRoute,
-  validateSearch: (search: Record<string, string>)  => {
+  validateSearch: (search: Record<string, string>) => {
     return {
       page: Number(search?.page ?? 1),
     }
@@ -26,14 +28,12 @@ export const activeBeepsRoute = createRoute({
 });
 
 export function ActiveBeeps() {
-  const pageLimit = 25;
   const { page } = activeBeepsRoute.useSearch();
   const navigate = useNavigate({ from: activeBeepsRoute.id });
 
   const { data, isLoading, error } = trpc.beep.beeps.useQuery(
     {
-      cursor: (page - 1) * pageLimit,
-      show: pageLimit,
+      page,
       inProgress: true,
     },
     {
@@ -42,68 +42,68 @@ export function ActiveBeeps() {
     }
   );
 
-  const setCurrentPage = (page: number) => {
+  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
   };
 
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
-    <Box>
-      <Flex align="center">
-        <Heading>Beeps</Heading>
-        <Badge ml={2} variant="solid" colorScheme="green">
-          in progress
-        </Badge>
-      </Flex>
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+    <Stack spacing={1}>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Typography fontWeight="bold" variant="h4">Beeps</Typography>
+        <Chip color="success" variant="outlined" size="small" label="in progress" />
+      </Stack>
+      <PaginationFooter
+        count={data?.pages}
+        pageSize={data?.pageSize ?? 0}
+        page={page}
+        results={data?.results}
+        onChange={setCurrentPage}
       />
-      <Box overflowX="auto">
+      <TableContainer component={Paper} variant="outlined">
         <Table>
-          <Thead>
-            <Tr>
-              <Th>Beeper</Th>
-              <Th>Rider</Th>
-              <Th>Origin</Th>
-              <Th>Destination</Th>
-              <Th>Group Size</Th>
-              <Th>Start Time</Th>
-              <Th>Status</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+          <TableHead>
+            <TableRow>
+              <TableCell>Beeper</TableCell>
+              <TableCell>Rider</TableCell>
+              <TableCell>Origin</TableCell>
+              <TableCell>Destination</TableCell>
+              <TableCell>Group Size</TableCell>
+              <TableCell>Start Time</TableCell>
+              <TableCell>Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading && <TableLoading colSpan={7} />}
+            {error && <TableError colSpan={7} error={error.message} />}
+            {data?.results === 0 && <TableEmpty colSpan={7} />}
             {data?.beeps.map((beep) => (
-              <Tr key={beep.id}>
-                <TdUser user={beep.beeper} />
-                <TdUser user={beep.rider} />
-                <Td>{beep.origin}</Td>
-                <Td>{beep.destination}</Td>
-                <Td>{beep.groupSize}</Td>
-                <Td>{dayjs().to(beep.start)}</Td>
-                <Td>
-                  <HStack>
+              <TableRow key={beep.id}>
+                <TableCellUser user={beep.beeper} />
+                <TableCellUser user={beep.rider} />
+                <TableCell>{beep.origin}</TableCell>
+                <TableCell>{beep.destination}</TableCell>
+                <TableCell>{beep.groupSize}</TableCell>
+                <TableCell>{dayjs().to(beep.start)}</TableCell>
+                <TableCell>
+                  <Stack direction="row" alignItems="center" spacing={1}>
                     <Indicator color={beepStatusMap[beep.status]} />
-                    <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
-                  </HStack>
-                </Td>
-              </Tr>
+                    <Typography sx={{ textTransform: "capitalize" }}>
+                      {beep.status.replaceAll("_", " ")}
+                    </Typography>
+                  </Stack>
+                </TableCell>
+              </TableRow>
             ))}
-          </Tbody>
+          </TableBody>
         </Table>
-      </Box>
-      {isLoading && <Loading />}
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+      </TableContainer>
+      <PaginationFooter
+        count={data?.pages}
+        pageSize={data?.pageSize ?? 0}
+        page={page}
+        results={data?.results}
+        onChange={setCurrentPage}
       />
-    </Box>
+    </Stack>
   );
 }

@@ -14,13 +14,15 @@ import { pubSub } from "../utils/pubsub";
 import { inProgressBeep } from "../utils/beep";
 import { observable } from "@trpc/server/observable";
 import { redisSubscriber } from "../utils/redis";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const beepRouter = router({
   beeps: authedProcedure
     .input(
       z.object({
-        cursor: z.number().optional(),
-        show: z.number(),
+        cursor: z.number().min(1).optional(),
+        page: z.number().min(1).optional(),
+        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
         inProgress: z.boolean().optional(),
         userId: z.string().optional(),
       }),
@@ -43,9 +45,12 @@ export const beepRouter = router({
           : undefined,
       );
 
+      const page = input.cursor ?? input.page ?? 1;
+      const offset = (page - 1) * input.pageSize;
+
       const beeps = await db.query.beep.findMany({
-        offset: input.cursor ?? 0,
-        limit: input.show,
+        offset,
+        limit: input.pageSize,
         where,
         orderBy: desc(beep.start),
         with: {
@@ -78,9 +83,14 @@ export const beepRouter = router({
         .from(beep)
         .where(where);
 
+      const results  = beepsCount[0].count;
+
       return {
         beeps,
-        count: beepsCount[0].count,
+        page,
+        pages: Math.ceil(results / input.pageSize),
+        pageSize: input.pageSize,
+        results,
       };
     }),
   beep: adminProcedure.input(z.string()).query(async ({ input }) => {
