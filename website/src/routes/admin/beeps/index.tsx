@@ -10,6 +10,9 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
+import { TableError } from "../../../components/TableError";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableEmpty } from "../../../components/TableEmpty";
 
 dayjs.extend(duration);
 
@@ -92,6 +95,9 @@ export function Beeps() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {error && <TableError colSpan={9} error="Unable to fetch beeps" />}
+            {isLoading && <TableLoading colSpan={9} />}
+            {data?.results === 0 && <TableEmpty colSpan={9} />}
             {data?.beeps.map((beep) => (
               <TableRow key={beep.id}>
                 <TableCellUser user={beep.beeper} />

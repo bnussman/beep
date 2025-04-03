@@ -56,8 +56,9 @@ export function Reports() {
       <Typography variant="h4" fontWeight="bold">Reports</Typography>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
+        count={data?.pages}
         page={page}
+        pageSize={data?.pageSize ?? 0}
         onChange={setCurrentPage}
       />
       <TableContainer component={Paper} variant="outlined">
@@ -115,8 +116,9 @@ export function Reports() {
       </TableContainer>
       <PaginationFooter
         results={data?.results}
-        pageSize={data?.pageSize ?? 0}
+        count={data?.pages}
         page={page}
+        pageSize={data?.pageSize ?? 0}
         onChange={setCurrentPage}
       />
     </Stack>
