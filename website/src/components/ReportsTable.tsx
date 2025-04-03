@@ -24,11 +24,11 @@ export function ReportsTable() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, isLoading } = trpc.report.reports.useQuery({
     userId,
-    offset: (currentPage - 1) * pageLimit,
-    show: pageLimit
+    page: currentPage,
+    pageSize: pageLimit
   });
 
-  if (data?.count === 0) {
+  if (data?.results === 0) {
     return (
       <Center h="100px">
         This user has no reports.
@@ -47,7 +47,7 @@ export function ReportsTable() {
   return (
     <Box>
       <Pagination
-        resultCount={data?.count}
+        resultCount={data?.results}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -83,7 +83,7 @@ export function ReportsTable() {
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.count}
+        resultCount={data?.results}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
