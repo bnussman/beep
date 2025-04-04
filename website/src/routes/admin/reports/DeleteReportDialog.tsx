@@ -1,10 +1,15 @@
 import React from "react";
-import { Dialog } from "../../../components/Dialog";
 import { Error } from "../../../components/Error";
-import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { trpc } from "../../../utils/trpc";
 import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
+import Dialog from "@mui/material/Dialog";
+import {
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 interface Props {
   isOpen: boolean;
@@ -20,11 +25,11 @@ export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
   const {
     mutateAsync: deleteReport,
     isPending,
-    error
+    error,
   } = trpc.report.deleteReport.useMutation({
     onSuccess() {
       utils.report.reports.invalidate();
-    }
+    },
   });
 
   const onDelete = async () => {
@@ -37,15 +42,20 @@ export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
   };
 
   return (
-    <Dialog title="Delete Report?" isOpen={isOpen} onClose={onClose}>
-      <AlertDialogBody>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Delete report?</DialogTitle>
+      <DialogContent>
         {error && <Error>{error.message}</Error>}
-        Are you sure you want to delete this report?
-      </AlertDialogBody>
-      <AlertDialogFooter>
-        <Button onClick={onClose} mr={2}>Cancel</Button>
-        <Button isLoading={isPending} onClick={onDelete} colorScheme="red">Delete</Button>
-      </AlertDialogFooter>
+        <DialogContentText>
+          Are you sure you want to delete this report?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button loading={isPending} onClick={onDelete} color="error">
+          Delete
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }

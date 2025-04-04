@@ -5,18 +5,14 @@ interface Props extends PaginationProps {
   pageSize: number;
 }
 
-export function PaginationFooter(props: Props) {
+export function PaginationFooter({ pageSize, ...props }: Props) {
   const page = props.page ?? 1;
 
-  const startIndex = (page - 1) * props.pageSize;
-  const endIndex = Math.min(startIndex + props.pageSize, props.results ?? 0);
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, props.results ?? 0);
 
   return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-    >
+    <Stack direction="row" alignItems="center" justifyContent="space-between">
       <Typography>
         Showing {startIndex} to {endIndex} of {props.results} results
       </Typography>
