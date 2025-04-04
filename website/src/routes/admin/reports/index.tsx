@@ -22,6 +22,7 @@ import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { ReportMenu } from "./ReportMenu";
 import { DeleteReportDialog } from "./DeleteReportDialog";
+import { keepPreviousData } from "@tanstack/react-query";
 
 dayjs.extend(relativeTime);
 
@@ -49,9 +50,12 @@ export function Reports() {
     setSelectedReportId(id);
   };
 
-  const { data, isLoading, error } = trpc.report.reports.useQuery({
-    page,
-  });
+  const { data, isLoading, error } = trpc.report.reports.useQuery(
+    {
+      page,
+    },
+    { placeholderData: keepPreviousData },
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
