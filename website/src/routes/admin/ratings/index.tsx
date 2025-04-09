@@ -1,15 +1,28 @@
-import React from 'react'
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { Pagination } from '../../../components/Pagination';
-import { Box, Button, Flex, Heading, Table, Tbody, Td, Th, Thead, Tr, useToast } from '@chakra-ui/react';
-import { TdUser } from '../../../components/TdUser';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Loading } from '../../../components/Loading';
-import { Error } from '../../../components/Error';
-import { Link, createRoute, useNavigate } from '@tanstack/react-router';
-import { adminRoute } from '..';
-import { trpc } from '../../../utils/trpc';
+import React from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { TdUser } from "../../../components/TdUser";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Link, createRoute, useNavigate } from "@tanstack/react-router";
+import { adminRoute } from "..";
+import { trpc } from "../../../utils/trpc";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import {
+  TableContainer,
+  Table,
+  TableRow,
+  TableCell,
+  TableHead,
+  Stack,
+  Typography,
+  Button,
+  Paper,
+  TableBody,
+} from "@mui/material";
+import { useToast } from "@chakra-ui/react";
+import { TableCellUser } from "../../../components/TableCellUser";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
 
 dayjs.extend(relativeTime);
 
@@ -23,13 +36,11 @@ export const ratingsListRoute = createRoute({
   component: Ratings,
   getParentRoute: () => ratingsRoute,
   validateSearch: (search: Record<string, string>) => ({
-    page: Number(search?.page ?? 1)
-  })
+    page: Number(search?.page ?? 1),
+  }),
 });
 
 export function Ratings() {
-  const pageLimit = 20;
-
   const { page } = ratingsListRoute.useSearch();
 
   const navigate = useNavigate({ from: ratingsListRoute.id });
@@ -37,8 +48,7 @@ export function Ratings() {
   const toast = useToast();
 
   const { data, isLoading, error } = trpc.rating.ratings.useQuery({
-    cursor: (page - 1) * pageLimit,
-    show: pageLimit
+    cursor: page,
   });
 
   const { mutate, isPending } = trpc.user.reconcileUserRatings.useMutation({
@@ -46,82 +56,87 @@ export function Ratings() {
       toast({
         title: "Successfully reconciled user ratings",
         description: `${count} user ratings were updated`,
-        status: 'success',
+        status: "success",
       });
     },
     onError(error) {
       toast({
         title: "Error",
         description: error.message,
-        status: 'error',
+        status: "error",
       });
-    }
+    },
   });
 
-  const setCurrentPage = (page: number) => {
+  const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
   };
 
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
-    <Box>
-      <Flex direction="row" justifyContent="space-between">
-        <Heading>Ratings</Heading>
+    <Stack spacing={1}>
+      <Stack direction="row" justifyContent="space-between">
+        <Typography variant="h4" fontWeight="bold">
+          Ratings
+        </Typography>
         <Button
-          isLoading={isPending}
+          loading={isPending}
           onClick={() => mutate()}
-          colorScheme="yellow"
+          color="warning"
+          variant="outlined"
         >
           Reconcile
         </Button>
-      </Flex>
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+      </Stack>
+      <PaginationFooter
+        results={data?.results}
+        pageSize={data?.pageSize ?? 0}
+        page={page}
+        count={data?.pages}
+        onChange={setCurrentPage}
       />
-      <Box overflowX="auto">
+      <TableContainer component={Paper} variant="outlined">
         <Table>
-          <Thead>
-            <Tr>
-              <Th>Rater</Th>
-              <Th>Rated</Th>
-              <Th>Message</Th>
-              <Th>Stars</Th>
-              <Th>Date</Th>
-              <Th> </Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+          <TableHead>
+            <TableRow>
+              <TableCell>Rater</TableCell>
+              <TableCell>Rated</TableCell>
+              <TableCell>Message</TableCell>
+              <TableCell>Stars</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading && <TableLoading colSpan={6} />}
+            {error && <TableError colSpan={6} error={error.message} />}
             {data?.ratings.map((rating) => (
-              <Tr key={rating.id}>
-                <TdUser user={rating.rater} />
-                <TdUser user={rating.rated} />
-                <Td>{rating.message ?? "N/A"}</Td>
-                <Td>{printStars(rating.stars)}</Td>
-                <Td>{dayjs().to(rating.timestamp)}</Td>
-                <Td>
-                  <Link to="/admin/ratings/$ratingId" params={{ ratingId: rating.id }}>
+              <TableRow key={rating.id}>
+                <TableCellUser user={rating.rater} />
+                <TableCellUser user={rating.rated} />
+                <TableCell>{rating.message ?? "N/A"}</TableCell>
+                <TableCell>{printStars(rating.stars)}</TableCell>
+                <TableCell>{dayjs().to(rating.timestamp)}</TableCell>
+                <TableCell>
+                  <Link
+                    to="/admin/ratings/$ratingId"
+                    params={{ ratingId: rating.id }}
+                  >
                     <ExternalLinkIcon />
                   </Link>
-                </Td>
-              </Tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </Tbody>
+          </TableBody>
         </Table>
-      </Box>
-      {isLoading && <Loading />}
-      <Pagination
-        resultCount={data?.count}
-        limit={pageLimit}
-        currentPage={page}
-        setCurrentPage={setCurrentPage}
+      </TableContainer>
+      <PaginationFooter
+        results={data?.results}
+        pageSize={data?.pageSize ?? 0}
+        page={page}
+        count={data?.pages}
+        onChange={setCurrentPage}
       />
-    </Box>
+    </Stack>
   );
 }
 
