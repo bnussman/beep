@@ -24,7 +24,7 @@ export const carRouter = router({
 
       const cars = await db.query.car.findMany({
         limit: input.pageSize,
-        offset: input.cursor,
+        offset: (input.cursor - 1) * input.pageSize,
         orderBy: desc(car.created),
         where,
         with: {
