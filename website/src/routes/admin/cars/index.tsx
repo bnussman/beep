@@ -26,6 +26,7 @@ import { Delete } from "@mui/icons-material";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { TableEmpty } from "../../../components/TableEmpty";
+import { keepPreviousData } from "@tanstack/react-query";
 
 dayjs.extend(relativeTime);
 
@@ -47,9 +48,12 @@ export function Cars() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
-  const { data, isLoading, error } = trpc.car.cars.useQuery({
-    cursor: page,
-  });
+  const { data, isLoading, error } = trpc.car.cars.useQuery(
+    {
+      cursor: page,
+    },
+    { placeholderData: keepPreviousData },
+  );
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
 

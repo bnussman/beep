@@ -24,6 +24,7 @@ import { TableError } from "../../../components/TableError";
 import { RatingMenu } from "./RatingMenu";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
 import { TableEmpty } from "../../../components/TableEmpty";
+import { keepPreviousData } from "@tanstack/react-query";
 
 dayjs.extend(relativeTime);
 
@@ -48,9 +49,12 @@ export function Ratings() {
 
   const toast = useToast();
 
-  const { data, isLoading, error } = trpc.rating.ratings.useQuery({
-    cursor: page,
-  });
+  const { data, isLoading, error } = trpc.rating.ratings.useQuery(
+    {
+      cursor: page,
+    },
+    { placeholderData: keepPreviousData },
+  );
 
   const [selectedRatingId, setSelectedRatingId] = useState<string>();
 

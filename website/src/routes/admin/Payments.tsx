@@ -1,22 +1,34 @@
-import React from 'react';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { Pagination } from '../../components/Pagination';
-import { Box, Heading, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { TdUser } from '../../components/TdUser';
-import { Loading } from '../../components/Loading';
-import { Error } from '../../components/Error';
-import { createRoute, useNavigate } from '@tanstack/react-router';
-import { adminRoute } from '.';
-import { trpc } from '../../utils/trpc';
+import React from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { Pagination } from "../../components/Pagination";
+import {
+  Box,
+  Heading,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
+import { TdUser } from "../../components/TdUser";
+import { Loading } from "../../components/Loading";
+import { Error } from "../../components/Error";
+import { createRoute, useNavigate } from "@tanstack/react-router";
+import { adminRoute } from ".";
+import { trpc } from "../../utils/trpc";
+import { keepPreviousData } from "@tanstack/react-query";
 
 dayjs.extend(relativeTime);
 
 export const paymentsRoute = createRoute({
   component: Payments,
-  path: '/payments',
+  path: "/payments",
   getParentRoute: () => adminRoute,
-  validateSearch: (search: Record<string, string>) => ({ page: Number(search?.page ?? 1)})
+  validateSearch: (search: Record<string, string>) => ({
+    page: Number(search?.page ?? 1),
+  }),
 });
 
 export function Payments() {
@@ -26,10 +38,13 @@ export function Payments() {
 
   const navigate = useNavigate({ from: paymentsRoute.id });
 
-  const { data, isLoading, error } = trpc.payment.payments.useQuery({
-    offset: (page - 1) * pageLimit,
-    limit: pageLimit
-  });
+  const { data, isLoading, error } = trpc.payment.payments.useQuery(
+    {
+      offset: (page - 1) * pageLimit,
+      limit: pageLimit,
+    },
+    { placeholderData: keepPreviousData },
+  );
 
   const setCurrentPage = (page: number) => {
     navigate({ search: { page } });
