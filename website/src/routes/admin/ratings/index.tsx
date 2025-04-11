@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { TdUser } from "../../../components/TdUser";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Link, createRoute, useNavigate } from "@tanstack/react-router";
+import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { trpc } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
@@ -23,6 +21,9 @@ import { useToast } from "@chakra-ui/react";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
+import { RatingMenu } from "./RatingMenu";
+import { DeleteRatingDialog } from "./DeleteRatingDialog";
+import { TableEmpty } from "../../../components/TableEmpty";
 
 dayjs.extend(relativeTime);
 
@@ -50,6 +51,8 @@ export function Ratings() {
   const { data, isLoading, error } = trpc.rating.ratings.useQuery({
     cursor: page,
   });
+
+  const [selectedRatingId, setSelectedRatingId] = useState<string>();
 
   const { mutate, isPending } = trpc.user.reconcileUserRatings.useMutation({
     onSuccess(count) {
@@ -107,6 +110,7 @@ export function Ratings() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {data?.results === 0 && <TableEmpty colSpan={6} />}
             {isLoading && <TableLoading colSpan={6} />}
             {error && <TableError colSpan={6} error={error.message} />}
             {data?.ratings.map((rating) => (
@@ -116,13 +120,11 @@ export function Ratings() {
                 <TableCell>{rating.message ?? "N/A"}</TableCell>
                 <TableCell>{printStars(rating.stars)}</TableCell>
                 <TableCell>{dayjs().to(rating.timestamp)}</TableCell>
-                <TableCell>
-                  <Link
-                    to="/admin/ratings/$ratingId"
-                    params={{ ratingId: rating.id }}
-                  >
-                    <ExternalLinkIcon />
-                  </Link>
+                <TableCell sx={{ textAlign: "right" }}>
+                  <RatingMenu
+                    ratingId={rating.id}
+                    onDelete={() => setSelectedRatingId(rating.id)}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -135,6 +137,11 @@ export function Ratings() {
         page={page}
         count={data?.pages}
         onChange={setCurrentPage}
+      />
+      <DeleteRatingDialog
+        id={selectedRatingId}
+        isOpen={selectedRatingId !== undefined}
+        onClose={() => setSelectedRatingId(undefined)}
       />
     </Stack>
   );
