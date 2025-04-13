@@ -1,29 +1,15 @@
 import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Pagination } from "../../components/Pagination";
-import {
-  Box,
-  Heading,
-  IconButton,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react";
-import { TdUser } from "../../components/TdUser";
-import { Loading } from "../../components/Loading";
-import { Error } from "../../components/Error";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from ".";
 import { trpc } from "../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
-import { DeleteIcon } from "@chakra-ui/icons";
 import {
+  IconButton,
   Paper,
   Stack,
+  Table,
   TableBody,
   TableCell,
   TableContainer,
@@ -32,6 +18,10 @@ import {
   Typography,
 } from "@mui/material";
 import { PaginationFooter } from "../../components/PaginationFooter";
+import { TableCellUser } from "../../components/TableCellUser";
+import { Delete } from "@mui/icons-material";
+import { TableEmpty } from "../../components/TableEmpty";
+import { TableError } from "../../components/TableError";
 
 dayjs.extend(relativeTime);
 
@@ -69,10 +59,6 @@ export function Feedback() {
     navigate({ search: { page } });
   };
 
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
     <Stack spacing={1}>
       <Typography variant="h4" fontWeight="bold">
@@ -96,20 +82,23 @@ export function Feedback() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {data?.results === 0 && <TableEmpty colSpan={4} />}
+            {isLoading && <TableEmpty colSpan={4} />}
+            {error && <TableError colSpan={4} error={error.message} />}
             {data?.feedback.map((feedback) => (
               <TableRow key={feedback.id}>
-                <TdUser user={feedback.user} />
-                <Td>{feedback.message}</Td>
-                <Td>{dayjs().to(feedback.created)}</Td>
+                <TableCellUser user={feedback.user} />
+                <TableCell>{feedback.message}</TableCell>
+                <TableCell>{dayjs().to(feedback.created)}</TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
                   <IconButton
-                    colorScheme="red"
+                    color="error"
                     aria-label={`Delete feeback ${feedback.id}`}
-                    icon={<DeleteIcon />}
-                    size="sm"
-                    isLoading={isPending}
+                    loading={isPending}
                     onClick={() => mutate(feedback.id)}
-                  />
+                  >
+                    <Delete />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
