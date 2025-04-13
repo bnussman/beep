@@ -22,6 +22,7 @@ import { TableCellUser } from "../../components/TableCellUser";
 import { Delete } from "@mui/icons-material";
 import { TableEmpty } from "../../components/TableEmpty";
 import { TableError } from "../../components/TableError";
+import { TableLoading } from "../../components/TableLoading";
 
 dayjs.extend(relativeTime);
 
@@ -83,7 +84,7 @@ export function Feedback() {
           </TableHead>
           <TableBody>
             {data?.results === 0 && <TableEmpty colSpan={4} />}
-            {isLoading && <TableEmpty colSpan={4} />}
+            {isLoading && <TableLoading colSpan={4} />}
             {error && <TableError colSpan={4} error={error.message} />}
             {data?.feedback.map((feedback) => (
               <TableRow key={feedback.id}>
