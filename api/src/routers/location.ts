@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { OSRM_SECRET } from "../utils/constants";
+// import { OSRM_SECRET } from "../utils/constants";
 import { authedProcedure, router } from "../utils/trpc";
 
 export const locationRouter = router({
@@ -10,15 +10,15 @@ export const locationRouter = router({
         end: z.string(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async () => {
+      return "ETA offline, sorry!";
+      /*
       const username = "Admin";
       const password = OSRM_SECRET;
 
       if (!password) {
         throw new Error("NO OSRM secret");
       }
-
-      return "ETA offline, sorry!";
 
       // http://192.168.1.104:5000/route/v1/driving/-81.6538314,36.2221064;-80.75991097845207,35.08197829130579
 
@@ -42,5 +42,6 @@ export const locationRouter = router({
       const etaMinutes = Math.round(eta / 60);
 
       return `${etaMinutes} min`;
+      */
     })
 });
