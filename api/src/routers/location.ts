@@ -18,6 +18,8 @@ export const locationRouter = router({
         throw new Error("NO OSRM secret");
       }
 
+      return "ETA offline, sorry!";
+
       // http://192.168.1.104:5000/route/v1/driving/-81.6538314,36.2221064;-80.75991097845207,35.08197829130579
 
       const result = await fetch(`https://osrm.ridebeep.app/route/v1/driving/${input.start};${input.end}`, {
