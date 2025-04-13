@@ -4,16 +4,17 @@ import { db } from "../utils/db";
 import { and, count, desc, eq, gte } from "drizzle-orm";
 import { payment } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const paymentRouter = router({
   payments: authedProcedure
     .input(
       z.object({
-        offset: z.number(),
-        limit: z.number(),
+        page: z.number().default(1),
+        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
         userId: z.string().optional(),
-        active: z.boolean().optional()
-      })
+        active: z.boolean().optional(),
+      }),
     )
     .query(async ({ input, ctx }) => {
       if (ctx.user.role === "user" && input.userId !== ctx.user.id) {
@@ -30,8 +31,8 @@ export const paymentRouter = router({
 
       const payments = await db.query.payment.findMany({
         orderBy: desc(payment.created),
-        limit: input.limit,
-        offset: input.offset,
+        limit: input.pageSize,
+        offset: (input.page - 1) * input.pageSize,
         where,
         with: {
           user: {
@@ -41,8 +42,8 @@ export const paymentRouter = router({
               last: true,
               photo: true,
             },
-          }
-        }
+          },
+        },
       });
 
       const paymentsCount = await db
@@ -50,18 +51,22 @@ export const paymentRouter = router({
         .from(payment)
         .where(where);
 
+      const results = paymentsCount[0].count;
+
       return {
         payments,
-        count: paymentsCount[0].count,
+        pages: Math.ceil(results / input.pageSize),
+        page: input.page,
+        pageSize: input.page,
+        results,
       };
     }),
-  activePayments: authedProcedure
-    .query(async ({ ctx }) => {
-      return await db.query.payment.findMany({
-        where: and(
-          eq(payment.user_id, ctx.user.id),
-          gte(payment.expires, new Date())
-        )
-      })
-    })
+  activePayments: authedProcedure.query(async ({ ctx }) => {
+    return await db.query.payment.findMany({
+      where: and(
+        eq(payment.user_id, ctx.user.id),
+        gte(payment.expires, new Date()),
+      ),
+    });
+  }),
 });
