@@ -114,7 +114,12 @@ export function Cars() {
                 <TableCell onClick={() => onPhotoClick(car.id)}>
                   <img
                     src={car.photo}
-                    style={{ width: 64, height: 64, borderRadius: 10 }}
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: 10,
+                      objectFit: "cover",
+                    }}
                   />
                 </TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
