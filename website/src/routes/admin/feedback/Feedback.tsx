@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { createRoute, useNavigate } from "@tanstack/react-router";
-import { adminRoute } from ".";
-import { trpc } from "../../utils/trpc";
+import { adminRoute } from "..";
+import { RouterOutput, trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import {
   IconButton,
@@ -17,12 +17,13 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { PaginationFooter } from "../../components/PaginationFooter";
-import { TableCellUser } from "../../components/TableCellUser";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableCellUser } from "../../../components/TableCellUser";
 import { Delete } from "@mui/icons-material";
-import { TableEmpty } from "../../components/TableEmpty";
-import { TableError } from "../../components/TableError";
-import { TableLoading } from "../../components/TableLoading";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { TableError } from "../../../components/TableError";
+import { TableLoading } from "../../../components/TableLoading";
+import { DeleteFeedbackDialog } from "./DeleteFeedbackDialog";
 
 dayjs.extend(relativeTime);
 
@@ -38,6 +39,8 @@ export const feedbackRoute = createRoute({
 export function Feedback() {
   const { page } = feedbackRoute.useSearch();
   const navigate = useNavigate({ from: feedbackRoute.id });
+
+  const [selectedFeedbackId, setSelectedFeedbackId] = useState<string>();
 
   const { data, isLoading, error } = trpc.feedback.feedback.useQuery(
     {
@@ -59,6 +62,10 @@ export function Feedback() {
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
   };
+
+  const selectedFeedback = data?.feedback.find(
+    (f) => f.id === selectedFeedbackId,
+  );
 
   return (
     <Stack spacing={1}>
@@ -96,7 +103,7 @@ export function Feedback() {
                     color="error"
                     aria-label={`Delete feeback ${feedback.id}`}
                     loading={isPending}
-                    onClick={() => mutate(feedback.id)}
+                    onClick={() => setSelectedFeedbackId(feedback.id)}
                   >
                     <Delete />
                   </IconButton>
@@ -112,6 +119,11 @@ export function Feedback() {
         pageSize={data?.pageSize ?? 0}
         page={page}
         onChange={setCurrentPage}
+      />
+      <DeleteFeedbackDialog
+        isOpen={selectedFeedback !== undefined}
+        onClose={() => setSelectedFeedbackId(undefined)}
+        feedback={selectedFeedback}
       />
     </Stack>
   );
