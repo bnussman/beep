@@ -5,6 +5,9 @@ import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { email } from "../utils/email";
+import { SendMailOptions } from "nodemailer";
+import * as Sentry from '@sentry/bun';
 
 export const reportRouter = router({
   reports: adminProcedure
@@ -163,5 +166,26 @@ export const reportRouter = router({
         .returning();
 
       return r[0];
+    }),
+  emailUser: adminProcedure
+    .input(
+      z.object({
+        userEmail: z.string(),
+        emailSubject: z.string(),
+        emailContent: z.string()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const emailOpts: SendMailOptions = {
+        from: 'Beep App <banks@ridebeep.app>',
+        to: input.userEmail,
+        subject: input.emailSubject,
+        text: input.emailContent
+      }
+      try {
+        await email.sendMail(emailOpts);
+      } catch (err) {
+        Sentry.captureException(err);
+      }
     })
 });
