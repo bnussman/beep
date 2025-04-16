@@ -10,6 +10,7 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
+  Box,
 } from "@mui/material";
 import { Error } from "../../../components/Error";
 import { Loading } from "../../../components/Loading";
@@ -18,6 +19,7 @@ import { createRoute, useRouter } from "@tanstack/react-router";
 import { reportsRoute } from ".";
 import { RouterInput, trpc } from "../../../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
+import { MailOutline } from "@mui/icons-material";
 
 dayjs.extend(relativeTime);
 
@@ -38,6 +40,34 @@ export function Report() {
     error,
   } = trpc.report.report.useQuery(reportId);
 
+  const reporterUserId = report?.reporter_id;
+  const reportedUserId = report?.reported_id;
+
+  const {
+    data: reporter,
+    isLoading: reporterLoading,
+    error: reporterError,
+  } = trpc.user.user.useQuery(reporterUserId as string, {
+    enabled: !!reporterUserId,
+  });
+
+  const {
+    data: reported,
+    isLoading: reportedLoading,
+    error: reportedError,
+  } = trpc.user.user.useQuery(reportedUserId as string, {
+    enabled: !!reportedUserId,
+  });
+
+  const { mutateAsync: emailUser, isPending: sending} = trpc.report.emailUser.useMutation({
+    onSuccess() {
+      setSendEmailTo('');
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  })
+
   const {
     mutateAsync: updateReport,
     isPending,
@@ -48,6 +78,8 @@ export function Report() {
       utils.report.reports.invalidate();
     },
   });
+
+  const [sendEmailTo, setSendEmailTo] = React.useState('');
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
@@ -62,12 +94,28 @@ export function Report() {
     values,
   });
 
+  const emailValues = {
+    emailSubject: '',
+    emailContent: ''
+  };
+
+  const emailForm = useForm({
+    defaultValues: emailValues,
+  });
+
   const onSubmit = (values: RouterInput["report"]["updateReport"]["data"]) => {
     updateReport({
       reportId,
       data: values,
     });
   };
+
+  const sendEmail = (values: { emailSubject: string, emailContent: string }) => {
+    emailUser({
+      userEmail: sendEmailTo,
+      ...values,
+    })
+  }
 
   if (isLoading || !report) {
     return <Loading />;
@@ -103,6 +151,11 @@ export function Report() {
               <Typography>
                 {report.reporter.first} {report.reporter.last}
               </Typography>
+              {
+                (reporter && reporter.email) ? (
+                  <Button endIcon={<MailOutline />} color="error" onClick={() => setSendEmailTo(reporter.email)}>Contact</Button>
+                ) : null
+              }
             </Stack>
           </Stack>
           <Stack spacing={1}>
@@ -112,6 +165,11 @@ export function Report() {
               <Typography>
                 {report.reported.first} {report.reported.last}
               </Typography>
+              {
+                (reported && reported.email) ? (
+                  <Button endIcon={<MailOutline />} color="error" onClick={() => setSendEmailTo(reported.email)}>Contact</Button>
+                ) : null
+              }
             </Stack>
           </Stack>
           <Stack spacing={1}>
@@ -170,6 +228,52 @@ export function Report() {
           </Stack>
         </form>
       </Card>
+      {
+        sendEmailTo ? (
+        <Card sx={{ p: 2, pt: 1 }} variant="outlined">
+          <form onSubmit={emailForm.handleSubmit(sendEmail)}>
+          <Stack spacing={4}>
+          <Typography variant="h5" fontWeight="bold">Email</Typography>
+          <Stack direction="row" alignItems="baseline" spacing={1}>
+            <Typography variant="body1" fontWeight="bold">To:</Typography>
+            <Typography variant="body1">{sendEmailTo}</Typography>
+          </Stack>
+            <Controller
+              control={emailForm.control}
+              name="emailSubject"
+              render={({ field, fieldState }) =>(
+                <TextField
+                label="Subject"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}/>
+            <Controller
+              control={emailForm.control}
+              name="emailContent"
+              render={({ field, fieldState }) =>(
+                <TextField
+                multiline
+                label="Write an email..."
+                rows={4}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}/>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                variant="contained"
+                color="success"
+                type="submit"
+                loading={sending}
+                disabled={!(emailForm.watch('emailSubject') && emailForm.watch('emailContent'))}
+              >Send</Button>
+            </Box>
+          </Stack>
+          </form>
+        </Card>
+        ) : null
+      }
       <DeleteReportDialog
         id={reportId}
         onClose={onClose}
