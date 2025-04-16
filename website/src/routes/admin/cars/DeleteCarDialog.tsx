@@ -1,20 +1,14 @@
 import React, { useState } from "react";
 import { RouterOutput, trpc } from "../../../utils/trpc";
-import { Error } from "../../../components/Error";
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
+  Alert,
   Button,
-  FormControl,
-  FormHelperText,
-  FormLabel,
-  Textarea,
-  useToast,
-} from "@chakra-ui/react";
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 
 interface Props {
   isOpen: boolean;
@@ -25,10 +19,8 @@ interface Props {
 export function DeleteCarDialog(props: Props) {
   const { isOpen, onClose, car } = props;
 
-  const toast = useToast();
   const utils = trpc.useUtils();
 
-  const cancelRef = React.useRef(null);
   const [reason, setReason] = useState("");
 
   const {
@@ -45,53 +37,37 @@ export function DeleteCarDialog(props: Props) {
 
   const doDelete = () => {
     deleteCar({ carId: car?.id ?? "", reason }).then(() => {
-      toast({ title: "Successfully deleted car", status: "success" });
       onClose();
       utils.car.cars.invalidate();
     });
   };
 
   return (
-    <AlertDialog
-      isOpen={isOpen}
-      leastDestructiveRef={cancelRef}
-      onClose={handleClose}
-      isCentered
-    >
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete {car?.user.first}'s {car?.make} {car?.model}?
-          </AlertDialogHeader>
-          <AlertDialogBody>
-            {error && <Error>{error.message}</Error>}
-            <FormControl>
-              <FormLabel>Notification</FormLabel>
-              <Textarea
-                onChange={(e) => setReason(e.target.value)}
-                value={reason}
-              />
-              <FormHelperText>
-                Type a message here if you want the user to recieve a
-                notification about why their car was removed
-              </FormHelperText>
-            </FormControl>
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button
-              isLoading={isPending}
-              colorScheme="red"
-              onClick={doDelete}
-              ml={3}
-            >
-              Delete
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
+    <Dialog open={isOpen} onClose={handleClose}>
+      <DialogTitle fontSize="lg" fontWeight="bold">
+        Delete {car?.user.first}'s {car?.make} {car?.model}?
+      </DialogTitle>
+      <DialogContent>
+        {error && <Alert severity="error">{error.message}</Alert>}
+        <TextField
+          sx={{ mt: 2 }}
+          label="Notification Message"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          helperText="Type a message here if you want the user to recieve a notification about why their car was removed"
+          multiline
+          rows={3}
+          slotProps={{
+            inputLabel: { shrink: true },
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button loading={isPending} color="error" onClick={doDelete}>
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

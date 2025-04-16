@@ -1,20 +1,30 @@
-import React, { useState } from 'react';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { Pagination } from './Pagination';
-import { Box, Center, Spinner, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
-import { TdUser } from './TdUser';
-import { printStars } from '../routes/admin/ratings';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Link, createRoute } from '@tanstack/react-router';
-import { userRoute } from '../routes/admin/users/User';
-import { trpc } from '../utils/trpc';
+import React, { useState } from "react";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import { Pagination } from "./Pagination";
+import {
+  Box,
+  Center,
+  Spinner,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
+import { TdUser } from "./TdUser";
+import { printStars } from "../routes/admin/ratings";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Link, createRoute } from "@tanstack/react-router";
+import { userRoute } from "../routes/admin/users/User";
+import { trpc } from "../utils/trpc";
 
 dayjs.extend(duration);
 
 export const ratingsTableRoute = createRoute({
   component: RatingsTable,
-  path: 'ratings',
+  path: "ratings",
   getParentRoute: () => userRoute,
 });
 
@@ -24,18 +34,14 @@ export function RatingsTable() {
   const { userId } = ratingsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, isLoading } = trpc.rating.ratings.useQuery( {
+  const { data, isLoading } = trpc.rating.ratings.useQuery({
     userId,
-    cursor: (currentPage - 1) * pageLimit,
-    show: pageLimit
+    cursor: currentPage,
+    pageSize: pageLimit,
   });
 
-  if (data?.count === 0) {
-    return (
-      <Center h="100px">
-        This user has no ratings.
-      </Center>
-    );
+  if (data?.results === 0) {
+    return <Center h="100px">This user has no ratings.</Center>;
   }
 
   if (isLoading) {
@@ -49,7 +55,7 @@ export function RatingsTable() {
   return (
     <Box>
       <Pagination
-        resultCount={data?.count}
+        resultCount={data?.results}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -71,11 +77,14 @@ export function RatingsTable() {
               <Tr key={rating.id}>
                 <TdUser user={rating.rater} />
                 <TdUser user={rating.rated} />
-                <Td>{rating.message || "N/A"}</Td>
+                <Td>{rating.message ?? "N/A"}</Td>
                 <Td>{printStars(rating.stars)}</Td>
                 <Td>{dayjs().to(rating.timestamp)}</Td>
                 <Td>
-                  <Link to="/admin/ratings/$ratingId" params={{ ratingId: rating.id }}>
+                  <Link
+                    to="/admin/ratings/$ratingId"
+                    params={{ ratingId: rating.id }}
+                  >
                     <ExternalLinkIcon />
                   </Link>
                 </Td>
@@ -85,7 +94,7 @@ export function RatingsTable() {
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.count}
+        resultCount={data?.results}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

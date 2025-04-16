@@ -6,13 +6,14 @@ import { rating, user, beep } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
+import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const ratingRouter = router({
   ratings: authedProcedure
     .input(
       z.object({
-        cursor: z.number().optional(),
-        show: z.number(),
+        cursor: z.number().optional().default(1),
+        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
         userId: z.string().optional(),
       }),
     )
@@ -25,8 +26,8 @@ export const ratingRouter = router({
         : undefined;
 
       const ratings = await db.query.rating.findMany({
-        offset: input.cursor ?? 0,
-        limit: input.show,
+        offset: (input.cursor - 1) * input.pageSize,
+        limit: input.pageSize,
         where,
         columns: {
           rated_id: false,
@@ -58,9 +59,14 @@ export const ratingRouter = router({
         .from(rating)
         .where(where);
 
+      const results = ratingsCount[0].count;
+
       return {
         ratings,
-        count: ratingsCount[0].count,
+        pageSize: input.pageSize,
+        page: input.cursor,
+        pages: Math.ceil(results / input.pageSize),
+        results,
       };
     }),
   rating: adminProcedure.input(z.string()).query(async ({ input }) => {

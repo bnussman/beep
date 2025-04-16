@@ -10,7 +10,7 @@ import { beepsRoute, beepsListRoute } from "../routes/admin/beeps";
 import { activeBeepsRoute } from "../routes/admin/beeps/ActiveBeeps";
 import { beepRoute } from "../routes/admin/beeps/Beep";
 import { carsRoute } from "../routes/admin/cars";
-import { feedbackRoute } from "../routes/admin/Feedback";
+import { feedbackRoute } from "../routes/admin/feedback/Feedback";
 import { healthRoute } from "../routes/admin/Health";
 import { leaderboardsRoute } from "../routes/admin/leaderboards";
 import { beepsLeaderboard } from "../routes/admin/leaderboards/beeps";
@@ -23,7 +23,10 @@ import { redisRoute } from "../routes/admin/Redis";
 import { reportsRoute, reportsListRoute } from "../routes/admin/reports";
 import { reportRoute } from "../routes/admin/reports/Report";
 import { usersListRoute } from "../routes/admin/users";
-import { userDetailsInitalRoute, userDetailsRoute } from "../routes/admin/users/Details";
+import {
+  userDetailsInitalRoute,
+  userDetailsRoute,
+} from "../routes/admin/users/Details";
 import { editUserRoute } from "../routes/admin/users/edit";
 import { locationRoute } from "../routes/admin/users/Location";
 import { usersRoute } from "../routes/admin/users/routes";
@@ -56,10 +59,7 @@ export const routeTree = rootRoute.addChildren([
   verifyAccountRoute,
   resetPasswordRoute,
   adminRoute.addChildren([
-    leaderboardsRoute.addChildren([
-      beepsLeaderboard,
-      ridesLeaderboard
-    ]),
+    leaderboardsRoute.addChildren([beepsLeaderboard, ridesLeaderboard]),
     usersByDomainRoute,
     beepersRoute,
     activeBeepsRoute,
@@ -69,18 +69,9 @@ export const routeTree = rootRoute.addChildren([
     paymentsRoute,
     redisRoute,
     healthRoute,
-    ratingsRoute.addChildren([
-      ratingsListRoute,
-      ratingRoute
-    ]),
-    reportsRoute.addChildren([
-      reportsListRoute,
-      reportRoute,
-    ]),
-    beepsRoute.addChildren([
-      beepsListRoute,
-      beepRoute,
-    ]),
+    ratingsRoute.addChildren([ratingsListRoute, ratingRoute]),
+    reportsRoute.addChildren([reportsListRoute, reportRoute]),
+    beepsRoute.addChildren([beepsListRoute, beepRoute]),
     usersRoute.addChildren([
       usersListRoute,
       usersByDomainRoute,
@@ -95,7 +86,7 @@ export const routeTree = rootRoute.addChildren([
         ratingsTableRoute,
         carsTableRoute,
         paymentsTableRoute,
-      ])
+      ]),
     ]),
   ]),
 ]);

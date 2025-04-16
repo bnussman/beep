@@ -1,11 +1,6 @@
-import React from 'react';
-import {
-  Image,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay
-} from "@chakra-ui/react";
+import React from "react";
+import { Dialog, DialogContent, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface Props {
   isOpen: boolean;
@@ -21,12 +16,31 @@ export function PhotoDialog(props: Props) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent borderRadius="2xl">
-        <ModalCloseButton />
-        <Image borderRadius="2xl" src={src} />
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onClose={onClose}>
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={(theme) => ({
+          position: "absolute",
+          right: 8,
+          top: 8,
+          color: theme.palette.grey[400],
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
+      <DialogContent
+        sx={{
+          p: 0,
+          minWidth: "300px",
+          minHeight: "200px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <img src={src} />
+      </DialogContent>
+    </Dialog>
   );
 }

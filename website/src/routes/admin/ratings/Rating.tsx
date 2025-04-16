@@ -1,14 +1,23 @@
 import React from "react";
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { Heading, Text, Box, Button, Flex, Spacer, Stack, useDisclosure } from "@chakra-ui/react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import {
+  Heading,
+  Text,
+  Box,
+  Button,
+  Flex,
+  Spacer,
+  Stack,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { printStars, ratingsRoute } from ".";
-import { Error } from '../../../components/Error';
+import { Error } from "../../../components/Error";
 import { BasicUser } from "../../../components/BasicUser";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
-import { Link, createRoute } from "@tanstack/react-router";
+import { Link, createRoute, useRouter } from "@tanstack/react-router";
 import { trpc } from "../../../utils/trpc";
 
 dayjs.extend(relativeTime);
@@ -21,33 +30,34 @@ export const ratingRoute = createRoute({
 
 export function Rating() {
   const { ratingId } = ratingRoute.useParams();
+  const router = useRouter();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const { data: rating, isLoading, error } = trpc.rating.rating.useQuery(ratingId);
+  const {
+    data: rating,
+    isLoading,
+    error,
+  } = trpc.rating.rating.useQuery(ratingId);
 
   if (isLoading || !rating) {
     return <Loading />;
   }
 
   if (error) {
-    return <Error>{error.message}</Error>
+    return <Error>{error.message}</Error>;
   }
 
   return (
     <Box>
-      <Flex align='center' mb={4}>
+      <Flex align="center" mb={4}>
         <Heading>Rating</Heading>
         <Spacer />
-        <Button
-          colorScheme="red"
-          leftIcon={<DeleteIcon />}
-          onClick={onOpen}
-        >
+        <Button colorScheme="red" leftIcon={<DeleteIcon />} onClick={onOpen}>
           Delete
         </Button>
       </Flex>
-        <Stack spacing={6}>
+      <Stack spacing={6}>
         <Box>
           <Heading size="lg">Rater</Heading>
           <BasicUser user={rating.rater} />
@@ -58,7 +68,9 @@ export function Rating() {
         </Box>
         <Box>
           <Heading size="lg">Stars</Heading>
-          <Text>{printStars(rating.stars)} {rating.stars}</Text>
+          <Text>
+            {printStars(rating.stars)} {rating.stars}
+          </Text>
         </Box>
         <Box>
           <Heading size="lg">Message</Heading>
@@ -80,6 +92,7 @@ export function Rating() {
           id={ratingId}
           isOpen={isOpen}
           onClose={onClose}
+          onSuccess={() => router.history.back()}
         />
       </Stack>
     </Box>

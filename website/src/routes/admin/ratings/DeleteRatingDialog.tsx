@@ -1,36 +1,52 @@
 import React from "react";
-import { Dialog } from "../../../components/Dialog";
-import { Error } from "../../../components/Error";
-import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { trpc } from "../../../utils/trpc";
-import { useRouter } from "@tanstack/react-router";
+import {
+  Dialog,
+  Alert,
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
 interface Props {
   isOpen: boolean;
+  id: string | undefined;
   onClose: () => void;
-  id: string;
+  onSuccess?: () => void;
 }
 
-export function DeleteRatingDialog({ isOpen, onClose, id }: Props) {
-  const { mutateAsync: deleteRating, isPending, error } = trpc.rating.deleteRating.useMutation();
-  const { history } = useRouter();
+export function DeleteRatingDialog({ isOpen, onClose, id, onSuccess }: Props) {
+  const utils = trpc.useUtils();
+  const {
+    mutateAsync: deleteRating,
+    isPending,
+    error,
+  } = trpc.rating.deleteRating.useMutation({
+    onSuccess() {
+      utils.rating.ratings.invalidate();
+    },
+  });
 
   const onDelete = async () => {
-    await deleteRating({ ratingId: id });
-    history.go(-1);
+    await deleteRating({ ratingId: id ?? "" });
     onClose();
+    onSuccess?.();
   };
 
   return (
-    <Dialog title="Delete Rating?" isOpen={isOpen} onClose={onClose}>
-      <AlertDialogBody>
-        {error && <Error>{error.message}</Error>}
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Delete Rating?</DialogTitle>
+      <DialogContent>
+        {error && <Alert severity="error">{error.message}</Alert>}
         Are you sure you want to delete this rating?
-      </AlertDialogBody>
-      <AlertDialogFooter>
-        <Button onClick={onClose} mr={2}>Cancel</Button>
-        <Button isLoading={isPending} onClick={onDelete} colorScheme="red">Delete</Button>
-      </AlertDialogFooter>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button loading={isPending} onClick={onDelete} color="error">
+          Delete
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }

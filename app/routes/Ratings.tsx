@@ -25,22 +25,20 @@ export function RatingsScreen() {
   } = trpc.rating.ratings.useInfiniteQuery(
     {
       userId: user?.id,
-      show: PAGE_SIZE
+      pageSize: PAGE_SIZE,
     },
     {
       initialCursor: 0,
-      getNextPageParam: (lastPage, allPages) => {
-        const numberOfRatingsLoaded = allPages.reduce((acc, page) => acc += page.ratings.length, 0);
-        if (numberOfRatingsLoaded === lastPage.count) {
+      getNextPageParam(page) {
+        if (page.page === page.pages) {
           return undefined;
         }
-        return numberOfRatingsLoaded;
-      }
-    }
+        return page.page + 1;
+      },
+    },
   );
 
   const ratings = data?.pages.flatMap((ratings) => ratings.ratings);
-  const count = data?.pages[0]?.count ?? 0;
 
   const renderFooter = () => {
     if (isFetchingNextPage) {
@@ -72,7 +70,9 @@ export function RatingsScreen() {
   return (
     <FlatList
       className="p-2"
-      contentContainerClassName={ratings?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"}
+      contentContainerClassName={
+        ratings?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"
+      }
       data={ratings}
       renderItem={(data) => <Rating {...data} />}
       keyExtractor={(rating) => rating.id}
@@ -81,10 +81,10 @@ export function RatingsScreen() {
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
         <View className="items-center">
-        <Text weight="black" size="3xl">
-          No Ratings
-        </Text>
-        <Text>You have no ratings to display</Text>
+          <Text weight="black" size="3xl">
+            No Ratings
+          </Text>
+          <Text>You have no ratings to display</Text>
         </View>
       }
       refreshControl={

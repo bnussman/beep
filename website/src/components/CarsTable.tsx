@@ -56,7 +56,7 @@ export function CarsTable() {
   const { data, isLoading } = trpc.car.cars.useQuery({
     userId,
     cursor: (currentPage - 1) * pageLimit,
-    show: pageLimit,
+    pageSize: pageLimit,
   });
 
   const { mutateAsync: updateCar } = trpc.car.updateCar.useMutation({
@@ -72,7 +72,7 @@ export function CarsTable() {
     onDeleteOpen();
   };
 
-  if (data?.count === 0) {
+  if (data?.results === 0) {
     return <Center h="100px">This user has no cars.</Center>;
   }
 
@@ -83,7 +83,7 @@ export function CarsTable() {
   return (
     <Box>
       <Pagination
-        resultCount={data?.count}
+        resultCount={data?.results}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -148,7 +148,7 @@ export function CarsTable() {
         </Table>
       </Box>
       <Pagination
-        resultCount={data?.count}
+        resultCount={data?.results}
         limit={pageLimit}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

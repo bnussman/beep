@@ -26,53 +26,53 @@ export function Cars() {
     isLoading,
     error,
     refetch,
-    hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    isFetching,
-    isRefetching
+    isRefetching,
   } = trpc.car.cars.useInfiniteQuery(
     {
       userId: user?.id,
-      show: PAGE_SIZE
+      pageSize: PAGE_SIZE,
     },
     {
-      initialCursor: 0,
-      getNextPageParam: (lastPage, allPages) => {
-        const numberOfCarsLoaded = allPages.reduce((acc, page) => acc += page.cars.length, 0)
-        if (numberOfCarsLoaded === lastPage.count) {
+      initialCursor: 1,
+      getNextPageParam(page) {
+        if (page.page === page.pages) {
           return undefined;
         }
-        return numberOfCarsLoaded;
-      }
-    });
+        return page.page + 1;
+      },
+    },
+  );
 
   const { mutateAsync: deleteCar } = trpc.car.deleteCar.useMutation({
     onSuccess() {
       utils.car.cars.invalidate();
-    }
+    },
   });
 
   const { mutateAsync: updateCar } = trpc.car.updateCar.useMutation({
     onMutate(vars) {
-      utils.car.cars.setInfiniteData({ userId: user?.id, show: PAGE_SIZE }, (oldData) => {
-        if (!oldData) {
-          return undefined;
-        }
-
-        for (const page of oldData.pages) {
-          for (const car of page.cars) {
-            car.default = car.id === vars.carId;
+      utils.car.cars.setInfiniteData(
+        { userId: user?.id, pageSize: PAGE_SIZE },
+        (oldData) => {
+          if (!oldData) {
+            return undefined;
           }
-        }
 
-        return oldData;
-      })
-    }
+          for (const page of oldData.pages) {
+            for (const car of page.cars) {
+              car.default = car.id === vars.carId;
+            }
+          }
+
+          return oldData;
+        },
+      );
+    },
   });
 
   const cars = data?.pages.flatMap((page) => page.cars);
-  const count = data?.pages[0]?.count ?? 0;
 
   const renderFooter = () => {
     if (isFetchingNextPage) {
@@ -87,13 +87,15 @@ export function Cars() {
   };
 
   const onDelete = (id: string) => {
-    deleteCar({ carId: id }).catch((error: TRPCClientError<any>) => alert(error?.message));
+    deleteCar({ carId: id }).catch((error: TRPCClientError<any>) =>
+      alert(error?.message),
+    );
   };
 
   const setDefault = (id: string) => {
     updateCar({
       carId: id,
-      data: { default: true }
+      data: { default: true },
     });
   };
 

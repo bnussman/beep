@@ -2,29 +2,29 @@ import { z } from "zod";
 import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { car } from "../../drizzle/schema";
-import { and, count, desc, eq, ne } from 'drizzle-orm';
+import { and, count, desc, eq, ne } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
-import { S3_BUCKET_URL } from "../utils/constants";
-import { data as cars, getModels } from 'car-info';
+import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL } from "../utils/constants";
+import { data as cars, getModels } from "car-info";
 import { CAR_COLOR_OPTIONS } from "../utils/constants";
 
 export const carRouter = router({
   cars: authedProcedure
     .input(
       z.object({
-        show: z.number(),
-        cursor: z.number().optional(),
-        userId: z.string().optional()
-      })
+        pageSize: z.number().default(DEFAULT_PAGE_SIZE),
+        cursor: z.number().optional().default(1),
+        userId: z.string().optional(),
+      }),
     )
     .query(async ({ input }) => {
       const where = input.userId ? eq(car.user_id, input.userId) : undefined;
 
       const cars = await db.query.car.findMany({
-        limit: input.show,
-        offset: input.cursor,
+        limit: input.pageSize,
+        offset: (input.cursor - 1) * input.pageSize,
         orderBy: desc(car.created),
         where,
         with: {
@@ -35,8 +35,8 @@ export const carRouter = router({
               last: true,
               photo: true,
             },
-          }
-        }
+          },
+        },
       });
 
       const carsCount = await db
@@ -44,23 +44,28 @@ export const carRouter = router({
         .from(car)
         .where(where);
 
+      const results = carsCount[0].count;
+
       return {
         cars,
-        count: carsCount[0].count
-      }
+        page: input.cursor,
+        pageSize: input.pageSize,
+        pages: Math.ceil(results / input.pageSize),
+        results,
+      };
     }),
   deleteCar: authedProcedure
     .input(
       z.object({
         carId: z.string(),
-        reason: z.string().optional()
-      })
+        reason: z.string().optional(),
+      }),
     )
     .mutation(async ({ input, ctx }) => {
-      if (ctx.user.role !== 'admin' && input.reason) {
+      if (ctx.user.role !== "admin" && input.reason) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Only admins can specify a reason."
+          message: "Only admins can specify a reason.",
         });
       }
 
@@ -74,21 +79,21 @@ export const carRouter = router({
       if (!c) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Car not found"
+          message: "Car not found",
         });
       }
 
       if (c.default && c.user.isBeeping) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Default car can not be deleted while beeping."
+          message: "Default car can not be deleted while beeping.",
         });
       }
 
-      if (c.user_id !== ctx.user.id && ctx.user.role !== 'admin') {
+      if (c.user_id !== ctx.user.id && ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "You don't have permission to delete another user's car."
+          message: "You don't have permission to delete another user's car.",
         });
       }
 
@@ -119,7 +124,7 @@ export const carRouter = router({
       const {
         success,
         data: input,
-        error
+        error,
       } = carSchema.safeParse(Object.fromEntries(formData.entries()));
 
       if (!success) {
@@ -132,7 +137,7 @@ export const carRouter = router({
       if (!(input.make in cars)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invalid make."
+          message: "Invalid make.",
         });
       }
 
@@ -141,14 +146,18 @@ export const carRouter = router({
       if (!validModels.includes(input.model)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invalid make."
+          message: "Invalid make.",
         });
       }
 
-      if (!CAR_COLOR_OPTIONS.map((color: string) => color.toLowerCase()).includes(input.color)) {
+      if (
+        !CAR_COLOR_OPTIONS.map((color: string) => color.toLowerCase()).includes(
+          input.color,
+        )
+      ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invalid color."
+          message: "Invalid color.",
         });
       }
 
@@ -162,7 +171,7 @@ export const carRouter = router({
       const objectKey = `cars/${carId}${extention}`;
 
       await s3.write(objectKey, input.photo, {
-        acl: 'public-read'
+        acl: "public-read",
       });
 
       const newCar = {
@@ -173,18 +182,14 @@ export const carRouter = router({
         photo: S3_BUCKET_URL + objectKey,
         default: true,
         created: new Date(),
-        updated: new Date()
+        updated: new Date(),
       };
 
       await db.insert(car).values(newCar);
-      await db.update(car)
+      await db
+        .update(car)
         .set({ default: false })
-        .where(
-          and(
-            eq(car.user_id, ctx.user.id),
-            ne(car.id, newCar.id)
-          )
-        );
+        .where(and(eq(car.user_id, ctx.user.id), ne(car.id, newCar.id)));
 
       return newCar;
     }),
@@ -193,24 +198,24 @@ export const carRouter = router({
       z.object({
         carId: z.string(),
         data: z.object({
-          default: z.boolean()
-        })
-      })
+          default: z.boolean(),
+        }),
+      }),
     )
     .mutation(async ({ input }) => {
-      const c = await db.update(car).set(input.data).where(eq(car.id, input.carId)).returning();
+      const c = await db
+        .update(car)
+        .set(input.data)
+        .where(eq(car.id, input.carId))
+        .returning();
 
       if (input.data.default) {
-        await db.update(car)
+        await db
+          .update(car)
           .set({ default: false })
-          .where(
-            and(
-              ne(car.id, input.carId),
-              eq(car.user_id, c[0].user_id)
-            )
-          );
+          .where(and(ne(car.id, input.carId), eq(car.user_id, c[0].user_id)));
       }
 
       return c[0];
-    })
+    }),
 });
