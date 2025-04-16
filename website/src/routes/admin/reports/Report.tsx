@@ -11,6 +11,8 @@ import {
   Checkbox,
   FormControlLabel,
   Box,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { Error } from "../../../components/Error";
 import { Loading } from "../../../components/Loading";
@@ -62,9 +64,12 @@ export function Report() {
   const { mutateAsync: emailUser, isPending: sending} = trpc.report.emailUser.useMutation({
     onSuccess() {
       setSendEmailTo('');
+      emailForm.reset();
+      setDisplaySendAlert({ isOpen: true, status: 'success', message: 'Email was successfully sent!'})
     },
     onError(error) {
-      alert(error.message);
+      console.error(error.message);
+      setDisplaySendAlert({ isOpen: true, status: 'error', message: 'Uh oh! Something went wrong when trying to send the email...'})
     }
   })
 
@@ -80,6 +85,7 @@ export function Report() {
   });
 
   const [sendEmailTo, setSendEmailTo] = React.useState('');
+  const [displaySendAlert, setDisplaySendAlert] = React.useState({ isOpen: false, status: '', message: ''})
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
@@ -280,6 +286,20 @@ export function Report() {
         isOpen={isOpen}
         onSuccess={() => history.back()}
       />
+      <Snackbar
+        open={displaySendAlert.isOpen}
+        autoHideDuration={5000}
+        onClose={() => setDisplaySendAlert({ isOpen: false, status: '', message: ''})}
+      >
+        <Alert
+          variant="outlined"
+          severity={displaySendAlert.status as "success" | "error"}
+          sx={{ bgcolor: 'background.paper' }}
+          onClose={() => setDisplaySendAlert({ isOpen: false, status: '', message: '' })}
+          >
+            {displaySendAlert.message}
+          </Alert>
+      </Snackbar>
     </Stack>
   );
 }
