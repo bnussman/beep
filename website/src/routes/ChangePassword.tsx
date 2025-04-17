@@ -1,78 +1,121 @@
-import React, { useState } from 'react';
-import { Error } from '../components/Error';
-import { Success } from '../components/Success';
-import { Input, Button, FormControl, FormLabel, Center, Heading, Container, Flex, Stack } from '@chakra-ui/react';
-import { Card } from '../components/Card';
-import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/root';
-import { trpc } from '../utils/trpc';
+import React from "react";
+import { createRoute } from "@tanstack/react-router";
+import { rootRoute } from "../utils/root";
+import { trpc } from "../utils/trpc";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
 
 export const changePasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/password/change',
+  path: "/password/change",
   component: ChangePassword,
-})
+});
+
+interface Values {
+  password: string;
+  confirmPassword: string;
+}
 
 export function ChangePassword() {
+  const form = useForm<Values>({
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+    resolver(values) {
+      if (values.password !== values.confirmPassword) {
+        return {
+          values,
+          errors: { confirmPassword: { message: "Password must match." } },
+        };
+      }
+      return { values, errors: {} };
+    },
+  });
+
   const {
     mutateAsync: changePassword,
     data,
-    isPending,
-    error
-  } = trpc.auth.changePassword.useMutation();
+    error,
+  } = trpc.auth.changePassword.useMutation({
+    onError(errors) {
+      if (errors.data?.zodError?.fieldErrors) {
+        for (const field in errors.data?.zodError?.fieldErrors) {
+          form.setError(field as keyof Values, {
+            message: errors.data?.zodError?.fieldErrors[field]?.[0],
+          });
+        }
+      } else {
+        form.setError("root", { message: errors.message });
+      }
+    },
+  });
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  async function handleEdit(e: any): Promise<void> {
-    e.preventDefault();
-
-    changePassword({ password })
-      .then(() => {
-        setPassword('');
-        setConfirmPassword('');
-      });
-  }
+  const onSubmit = async (values: Values) => {
+    await changePassword(values);
+    form.reset();
+  };
 
   return (
-    <Container maxW="container.sm" p={[0]}>
-      <Card>
-        <Center pb={4}>
-          <Heading>Change Password</Heading>
-        </Center>
-        {data && <Success message="Successfully changed your password" />}
-        {error && <Error>{error.message}</Error>}
-        <form onSubmit={handleEdit}>
-          <Stack>
-            <FormControl id="password">
-              <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                value={password}
-                onChange={(value) => setPassword(value.target.value)}
+    <Card sx={{ p: 3 }}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Stack spacing={2}>
+          <Typography variant="h4" fontWeight="bold">
+            Change Password
+          </Typography>
+          {data && (
+            <Alert severity="success">Successfully changed your password</Alert>
+          )}
+          {form.formState.errors.root?.message && (
+            <Alert severity="error">{form.formState.errors.root.message}</Alert>
+          )}
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Password"
+                type="new-password"
+                value={field.value}
+                onChange={field.onChange}
+                error={Boolean(fieldState.error?.message)}
+                helperText={fieldState.error?.message}
               />
-            </FormControl>
-            <FormControl id="password2" mt={2} mb={2}>
-              <FormLabel>Repreat Password</FormLabel>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(value) => setConfirmPassword(value.target.value)}
+            )}
+          />
+          <Controller
+            name="confirmPassword"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Confirm Password"
+                type="new-password"
+                value={field.value}
+                onChange={field.onChange}
+                error={Boolean(fieldState.error?.message)}
+                helperText={fieldState.error?.message}
               />
-            </FormControl>
-            <Flex justifyContent="flex-end">
-              <Button
-                isLoading={isPending}
-                type="submit"
-                colorScheme="blue"
-                isDisabled={!password || password !== confirmPassword}
-              >
-                Update password
-              </Button>
-            </Flex>
-          </Stack>
-        </form>
-      </Card>
-    </Container>
+            )}
+          />
+          <Box display="flex" justifyContent="flex-end">
+            <Button
+              loading={form.formState.isSubmitting}
+              type="submit"
+              variant="contained"
+            >
+              Update password
+            </Button>
+          </Box>
+        </Stack>
+      </form>
+    </Card>
   );
 }

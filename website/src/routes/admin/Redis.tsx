@@ -1,10 +1,10 @@
 import React from "react";
-import { Heading, ListItem, Stack, UnorderedList } from "@chakra-ui/react";
 import { Loading } from "../../components/Loading";
 import { Error } from "../../components/Error";
 import { createRoute } from "@tanstack/react-router";
 import { adminRoute } from ".";
 import { trpc } from "../../utils/trpc";
+import { Stack, Typography } from "@mui/material";
 
 export const redisRoute = createRoute({
   component: Redis,
@@ -26,11 +26,13 @@ export function Redis() {
   }
 
   return (
-    <Stack spacing={4}>
-      <Heading>Redis Channels</Heading>
-      <UnorderedList>
-        {data?.map((channel) => (<ListItem>{channel}</ListItem>))}
-      </UnorderedList>
+    <Stack spacing={1}>
+      <Typography variant="h4" fontWeight="bold">
+        Redis Channels
+      </Typography>
+      <ul style={{ paddingLeft: 20 }}>
+        {data?.map((channel) => <li>{channel}</li>)}
+      </ul>
     </Stack>
   );
 }

@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
-import { trpc } from '../utils/trpc';
-import { Error } from '../components/Error';
-import { Card } from '../components/Card';
+import React, { useMemo } from "react";
+import { trpc } from "../utils/trpc";
+import { Error } from "../components/Error";
+import { Card } from "../components/Card";
 import { useForm } from "react-hook-form";
-import { PasswordInput } from '../components/PasswordInput';
-import { Link, createRoute, useNavigate } from '@tanstack/react-router';
-import { rootRoute } from '../utils/root';
+import { PasswordInput } from "../components/PasswordInput";
+import { Link, createRoute, useNavigate } from "@tanstack/react-router";
+import { rootRoute } from "../utils/root";
 import {
   Link as ChakraLink,
   Text,
@@ -17,8 +17,6 @@ import {
   FormLabel,
   FormHelperText,
   Code,
-  Alert,
-  AlertIcon,
   Container,
   HStack,
   Stack,
@@ -26,8 +24,9 @@ import {
   Center,
   Heading,
   FormErrorMessage,
-  useBreakpointValue
-} from '@chakra-ui/react';
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import { Alert } from "@mui/material";
 
 export const signupRoute = createRoute({
   component: SignUp,
@@ -48,9 +47,13 @@ interface SignUpFormValues {
 
 export function SignUp() {
   const navigate = useNavigate();
-  const avatarSize = useBreakpointValue({ base: 'xl', md: '2xl' });
+  const avatarSize = useBreakpointValue({ base: "xl", md: "2xl" });
 
-  const { mutateAsync: signup, error, isPending } = trpc.auth.signup.useMutation();
+  const {
+    mutateAsync: signup,
+    error,
+    isPending,
+  } = trpc.auth.signup.useMutation();
 
   const {
     handleSubmit,
@@ -68,9 +71,11 @@ export function SignUp() {
   const onSubmit = handleSubmit(async (variables, e) => {
     const formData = new FormData();
     for (const key in variables) {
-      if (key === 'photo') {
-        formData.set(key, (variables[key as keyof typeof variables] as FileList)[0]);
-
+      if (key === "photo") {
+        formData.set(
+          key,
+          (variables[key as keyof typeof variables] as FileList)[0],
+        );
       } else {
         formData.set(key, variables[key as keyof typeof variables] as string);
       }
@@ -79,17 +84,24 @@ export function SignUp() {
     const data = await signup(formData);
 
     if (data) {
-      localStorage.setItem('user', JSON.stringify(data));
+      localStorage.setItem("user", JSON.stringify(data));
 
       utils.user.me.setData(undefined, data.user);
 
-      navigate({ to: '/' });
+      navigate({ to: "/" });
     }
   });
 
-  const Image = useMemo(() => (
-    <Avatar size={avatarSize} src={photo?.[0] ? URL.createObjectURL(photo?.[0]) : undefined} cursor="pointer" />
-  ), [photo, avatarSize]);
+  const Image = useMemo(
+    () => (
+      <Avatar
+        size={avatarSize}
+        src={photo?.[0] ? URL.createObjectURL(photo?.[0]) : undefined}
+        cursor="pointer"
+      />
+    ),
+    [photo, avatarSize],
+  );
 
   return (
     <Container maxW="container.sm" p={[0]}>
@@ -98,26 +110,31 @@ export function SignUp() {
           <Heading>Sign Up</Heading>
         </Center>
         {error && !validationErrors && <Error>{error.message}</Error>}
-        <Alert mb={4} status="info">
-          <AlertIcon />
-          <Text>
-            By signing up, you agree to our{' '}
-            <ChakraLink as={Link} preload="intent" to="/terms">Terms of Service</ChakraLink>
-            {' '}and{' '}
-            <ChakraLink as={Link} to="/privacy">Privacy Policy</ChakraLink>
-          </Text>
+        <Alert severity="info">
+          By signing up, you agree to our{" "}
+          <ChakraLink as={Link} preload="intent" to="/terms">
+            Terms of Service
+          </ChakraLink>{" "}
+          and{" "}
+          <ChakraLink as={Link} to="/privacy">
+            Privacy Policy
+          </ChakraLink>
         </Alert>
         <form onSubmit={onSubmit}>
           <Stack>
             <HStack>
               <Stack w="full">
-                <FormControl isInvalid={Boolean(errors.first) || Boolean(validationErrors?.first)}>
+                <FormControl
+                  isInvalid={
+                    Boolean(errors.first) || Boolean(validationErrors?.first)
+                  }
+                >
                   <FormLabel>First Name</FormLabel>
                   <Input
                     type="text"
                     id="first"
-                    {...register('first', {
-                      required: 'This is required',
+                    {...register("first", {
+                      required: "This is required",
                     })}
                   />
                   <FormErrorMessage>
@@ -125,13 +142,17 @@ export function SignUp() {
                     {validationErrors?.first && validationErrors?.first[0]}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={Boolean(errors.last) || Boolean(validationErrors?.last)}>
+                <FormControl
+                  isInvalid={
+                    Boolean(errors.last) || Boolean(validationErrors?.last)
+                  }
+                >
                   <FormLabel>Last Name</FormLabel>
                   <Input
                     type="text"
                     id="last"
-                    {...register('last', {
-                      required: 'This is required',
+                    {...register("last", {
+                      required: "This is required",
                     })}
                   />
                   <FormErrorMessage>
@@ -142,48 +163,62 @@ export function SignUp() {
               </Stack>
               <Spacer />
               <Box>
-                <FormControl isInvalid={Boolean(errors.photo) || Boolean(validationErrors?.photo)}>
-                  <FormLabel htmlFor="photo">
-                    {Image}
-                  </FormLabel>
+                <FormControl
+                  isInvalid={
+                    Boolean(errors.photo) || Boolean(validationErrors?.photo)
+                  }
+                >
+                  <FormLabel htmlFor="photo">{Image}</FormLabel>
                   <Input
                     hidden
                     variant="unstyled"
                     id="photo"
                     type="file"
-                    {...register('photo', {
-                      required: 'This is required',
+                    {...register("photo", {
+                      required: "This is required",
                     })}
                   />
                   <FormErrorMessage>
-                    {errors.photo && errors.photo.message as unknown as string}
+                    {errors.photo &&
+                      (errors.photo.message as unknown as string)}
                     {validationErrors?.photo && validationErrors?.photo[0]}
                   </FormErrorMessage>
                 </FormControl>
               </Box>
             </HStack>
-            <FormControl isInvalid={Boolean(Boolean(errors.email) || validationErrors?.email)}>
+            <FormControl
+              isInvalid={Boolean(
+                Boolean(errors.email) || validationErrors?.email,
+              )}
+            >
               <FormLabel>Email</FormLabel>
               <Input
                 type="email"
                 id="email"
-                {...register('email', {
-                  required: 'This is required',
+                {...register("email", {
+                  required: "This is required",
                 })}
               />
-              <FormHelperText>You must use a <Code>.edu</Code> to be eligible to use the Beep App</FormHelperText>
+              <FormHelperText>
+                You must use a <Code>.edu</Code> to be eligible to use the Beep
+                App
+              </FormHelperText>
               <FormErrorMessage>
                 {errors.email && errors.email.message}
                 {validationErrors?.email && validationErrors?.email[0]}
               </FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={Boolean(errors.phone) || Boolean(validationErrors?.phone)}>
+            <FormControl
+              isInvalid={
+                Boolean(errors.phone) || Boolean(validationErrors?.phone)
+              }
+            >
               <FormLabel>Phone Number</FormLabel>
               <Input
                 type="phone"
                 id="phone"
-                {...register('phone', {
-                  required: 'This is required',
+                {...register("phone", {
+                  required: "This is required",
                 })}
               />
               <FormErrorMessage>
@@ -191,25 +226,29 @@ export function SignUp() {
                 {validationErrors?.phone && validationErrors?.phone[0]}
               </FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={Boolean(errors.venmo) || Boolean(validationErrors?.venmo)}>
+            <FormControl
+              isInvalid={
+                Boolean(errors.venmo) || Boolean(validationErrors?.venmo)
+              }
+            >
               <FormLabel>Venmo Username</FormLabel>
-              <Input
-                type="text"
-                id="venmo"
-                {...register('venmo')}
-              />
+              <Input type="text" id="venmo" {...register("venmo")} />
               <FormErrorMessage>
                 {errors.venmo && errors.venmo.message}
                 {validationErrors?.venmo && validationErrors?.venmo[0]}
               </FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={Boolean(errors.username) || Boolean(validationErrors?.username)}>
+            <FormControl
+              isInvalid={
+                Boolean(errors.username) || Boolean(validationErrors?.username)
+              }
+            >
               <FormLabel>Username</FormLabel>
               <Input
                 type="text"
                 id="username"
-                {...register('username', {
-                  required: 'This is required',
+                {...register("username", {
+                  required: "This is required",
                 })}
               />
               <FormErrorMessage>
@@ -217,12 +256,16 @@ export function SignUp() {
                 {validationErrors?.username && validationErrors?.username[0]}
               </FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={Boolean(errors.password) || Boolean(validationErrors?.password)}>
+            <FormControl
+              isInvalid={
+                Boolean(errors.password) || Boolean(validationErrors?.password)
+              }
+            >
               <FormLabel>Password</FormLabel>
               <PasswordInput
                 id="password"
-                {...register('password', {
-                  required: 'This is required',
+                {...register("password", {
+                  required: "This is required",
                 })}
               />
               <FormErrorMessage>

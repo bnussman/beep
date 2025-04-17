@@ -1,14 +1,22 @@
-import React from 'react';
-import { Error } from '../components/Error';
-import { Success } from '../components/Success';
-import { Button, Center, Container, FormControl, FormErrorMessage, FormLabel, Heading, Input } from '@chakra-ui/react';
-import { Card } from '../components/Card';
-import { useForm } from 'react-hook-form';
-import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/root';
-import { RouterInput, trpc } from '../utils/trpc';
+import React from "react";
+import {
+  Button,
+  Center,
+  Container,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Heading,
+  Input,
+} from "@chakra-ui/react";
+import { Card } from "../components/Card";
+import { useForm } from "react-hook-form";
+import { createRoute } from "@tanstack/react-router";
+import { rootRoute } from "../utils/root";
+import { RouterInput, trpc } from "../utils/trpc";
+import Alert from "@mui/material/Alert";
 
-type ResetPasswordValues = RouterInput['auth']['resetPassword'];
+type ResetPasswordValues = RouterInput["auth"]["resetPassword"];
 
 export const resetPasswordRoute = createRoute({
   component: ResetPassword,
@@ -23,7 +31,7 @@ export function ResetPassword() {
     mutateAsync: resetPassword,
     data,
     error,
-    isPending
+    isPending,
   } = trpc.auth.resetPassword.useMutation();
 
   const {
@@ -31,7 +39,7 @@ export function ResetPassword() {
     register,
     reset,
     formState: { errors, isValid },
-  } = useForm<ResetPasswordValues>({ mode: 'onChange' });
+  } = useForm<ResetPasswordValues>({ mode: "onChange" });
 
   const validationErrors = error?.data?.zodError?.fieldErrors;
 
@@ -50,15 +58,23 @@ export function ResetPassword() {
         <Center pb={8}>
           <Heading>Reset Password</Heading>
         </Center>
-        {error && !validationErrors && <Error>{error.message}</Error>}
-        {data && <Success message="Successfully changed password" />}
+        {error && !validationErrors && (
+          <Alert severity="error">{error.message}</Alert>
+        )}
+        {data && (
+          <Alert severity="success">Successfully changed password</Alert>
+        )}
         <form onSubmit={onSubmit}>
-          <FormControl isInvalid={Boolean(errors.password) || Boolean(validationErrors?.password)}>
+          <FormControl
+            isInvalid={
+              Boolean(errors.password) || Boolean(validationErrors?.password)
+            }
+          >
             <FormLabel>New Password</FormLabel>
             <Input
               type="password"
-              {...register('password', {
-                required: 'This is required',
+              {...register("password", {
+                required: "This is required",
               })}
             />
             <FormErrorMessage>

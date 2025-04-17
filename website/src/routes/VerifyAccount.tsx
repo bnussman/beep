@@ -1,12 +1,10 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { Error } from '../components/Error';
-import { Success } from '../components/Success';
-import { Loading } from '../components/Loading';
-import { Box } from '@chakra-ui/react';
-import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/root';
-import { trpc } from '../utils/trpc';
+import React from "react";
+import { useEffect } from "react";
+import { Loading } from "../components/Loading";
+import { createRoute } from "@tanstack/react-router";
+import { rootRoute } from "../utils/root";
+import { trpc } from "../utils/trpc";
+import { Box, Alert } from "@mui/material";
 
 export const verifyAccountRoute = createRoute({
   component: VerifyAccount,
@@ -21,17 +19,16 @@ export function VerifyAccount() {
     mutateAsync: verifyEmail,
     data,
     isPending,
-    error
+    error,
   } = trpc.auth.verifyAccount.useMutation();
 
   const handleVerify = async () => {
     try {
       await verifyEmail({ id });
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     handleVerify();
@@ -40,8 +37,8 @@ export function VerifyAccount() {
   return (
     <Box>
       {isPending && <Loading />}
-      {data && <Success message="Successfully verified email" />}
-      {error && <Error>{error.message}</Error>}
+      {data && <Alert severity="success">Successfully verified email</Alert>}
+      {error && <Alert severity="error">{error.message}</Alert>}
     </Box>
   );
 }
