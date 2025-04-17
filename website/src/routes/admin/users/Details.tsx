@@ -1,21 +1,21 @@
 import React from "react";
 import { Box, Text, Stack, Tooltip } from "@chakra-ui/react";
 import { Indicator } from "../../../components/Indicator";
-import { Error } from "../../../components/Error";
 import { printStars } from "../ratings";
 import { createRoute, useParams } from "@tanstack/react-router";
 import { userRoute } from "./User";
 import { trpc } from "../../../utils/trpc";
+import { Alert } from "@mui/material";
 
 export const userDetailsRoute = createRoute({
   component: Details,
-  path: 'details',
+  path: "details",
   getParentRoute: () => userRoute,
 });
 
 export const userDetailsInitalRoute = createRoute({
   component: Details,
-  path: '/',
+  path: "/",
   getParentRoute: () => userRoute,
 });
 
@@ -25,11 +25,11 @@ export function Details() {
   const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
   if (isLoading || !user) {
-    return null
+    return null;
   }
 
   if (error) {
-    return <Error>{error.message}</Error>;
+    return <Alert severity="error">{error.message}</Alert>;
   }
 
   return (
@@ -50,21 +50,22 @@ export function Details() {
       </Box>
       <Box>
         <strong>Rating:</strong>
-        {user.rating ?
+        {user.rating ? (
           <Text>
-            <Tooltip label={user.rating} aria-label={`User rating of ${user.rating}`}>
+            <Tooltip
+              label={user.rating}
+              aria-label={`User rating of ${user.rating}`}
+            >
               {printStars(Number(user.rating))}
             </Tooltip>
           </Text>
-          :
-          <Text>
-            No Rating
-          </Text>
-        }
+        ) : (
+          <Text>No Rating</Text>
+        )}
       </Box>
       <Box>
         <strong>Phone:</strong>
-        <Text>{user.phone || ''}</Text>
+        <Text>{user.phone || ""}</Text>
       </Box>
       <Box>
         <strong>Queue Size:</strong>
@@ -76,7 +77,9 @@ export function Details() {
       </Box>
       <Box>
         <strong>Rate:</strong>
-        <Text>${user.singlesRate} / ${user.groupRate}</Text>
+        <Text>
+          ${user.singlesRate} / ${user.groupRate}
+        </Text>
       </Box>
       <Box>
         <strong>Venmo usename:</strong>

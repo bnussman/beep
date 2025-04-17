@@ -1,9 +1,9 @@
 import React from "react";
-import { Error } from "../../../components/Error";
 import { trpc } from "../../../utils/trpc";
 import { useQueryClient } from "@tanstack/react-query";
-import Dialog from "@mui/material/Dialog";
 import {
+  Alert,
+  Dialog,
   Button,
   DialogActions,
   DialogContent,
@@ -45,7 +45,7 @@ export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Delete report?</DialogTitle>
       <DialogContent>
-        {error && <Error>{error.message}</Error>}
+        {error && <Alert severity="error">{error.message}</Alert>}
         <DialogContentText>
           Are you sure you want to delete this report?
         </DialogContentText>

@@ -3,7 +3,7 @@ import { trpc } from "../../utils/trpc";
 import { createRoute } from "@tanstack/react-router";
 import { adminRoute } from ".";
 import { Loading } from "../../components/Loading";
-import { Error } from "../../components/Error";
+import { Alert } from "@mui/material";
 
 export const healthRoute = createRoute({
   component: Health,
@@ -24,7 +24,7 @@ export function Health() {
   }
 
   if (error) {
-    return <Error>{error.message}</Error>;
+    return <Alert severity="error">{error.message}</Alert>;
   }
 
   return <pre>{JSON.stringify(data, null, 2)}</pre>;

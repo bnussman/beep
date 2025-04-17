@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Error } from './Error';
-import { trpc } from '../utils/trpc';
+import React, { useState } from "react";
+import { trpc } from "../utils/trpc";
 import {
   Button,
   FormControl,
@@ -14,8 +13,9 @@ import {
   ModalHeader,
   ModalOverlay,
   Textarea,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
+import { Alert } from "@mui/material";
 
 interface Props {
   isOpen: boolean;
@@ -33,7 +33,7 @@ export function SendNotificationDialog(props: Props) {
   const {
     mutateAsync: sendNotification,
     isPending,
-    error
+    error,
   } = trpc.notification.sendNotificationToUser.useMutation();
 
   const onClick = async () => {
@@ -53,7 +53,7 @@ export function SendNotificationDialog(props: Props) {
         <ModalHeader>Send Notification</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {error && <Error>{error.message}</Error>}
+          {error && <Alert severity="error">{error.message}</Alert>}
           <FormControl mb={2}>
             <FormLabel>Title</FormLabel>
             <Input
@@ -72,18 +72,14 @@ export function SendNotificationDialog(props: Props) {
           </FormControl>
         </ModalBody>
         <ModalFooter>
-            <Button variant='ghost' mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button
-              colorScheme='blue'
-              isLoading={isPending}
-              onClick={onClick}
-            >
-              Send Notification
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          <Button variant="ghost" mr={3} onClick={onClose}>
+            Close
+          </Button>
+          <Button colorScheme="blue" isLoading={isPending} onClick={onClick}>
+            Send Notification
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }

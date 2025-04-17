@@ -12,13 +12,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { printStars, ratingsRoute } from ".";
-import { Error } from "../../../components/Error";
 import { BasicUser } from "../../../components/BasicUser";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
 import { Link, createRoute, useRouter } from "@tanstack/react-router";
 import { trpc } from "../../../utils/trpc";
+import { Alert } from "@mui/material";
 
 dayjs.extend(relativeTime);
 
@@ -45,7 +45,7 @@ export function Rating() {
   }
 
   if (error) {
-    return <Error>{error.message}</Error>;
+    return <Alert severity="error">{error.message}</Alert>;
   }
 
   return (

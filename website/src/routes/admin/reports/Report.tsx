@@ -10,8 +10,8 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
+  Alert,
 } from "@mui/material";
-import { Error } from "../../../components/Error";
 import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
 import { createRoute, useRouter } from "@tanstack/react-router";
@@ -74,7 +74,7 @@ export function Report() {
   }
 
   if (error) {
-    return <Error>{error.message}</Error>;
+    return <Alert severity="error">{error.message}</Alert>;
   }
 
   return (

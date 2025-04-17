@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { trpc } from "../utils/trpc";
-import { Error } from "../components/Error";
 import { Card } from "../components/Card";
 import { useForm } from "react-hook-form";
 import { PasswordInput } from "../components/PasswordInput";
@@ -109,7 +108,9 @@ export function SignUp() {
         <Center pb={8}>
           <Heading>Sign Up</Heading>
         </Center>
-        {error && !validationErrors && <Error>{error.message}</Error>}
+        {error && !validationErrors && (
+          <Alert severity="error">{error.message}</Alert>
+        )}
         <Alert severity="info">
           By signing up, you agree to our{" "}
           <ChakraLink as={Link} preload="intent" to="/terms">

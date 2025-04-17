@@ -1,11 +1,22 @@
-import React, { FormEvent, useState } from 'react';
-import { Error } from '../components/Error';
-import { Button, Input, FormControl, FormLabel, Container, HStack, Spacer, Stack, Center, Heading } from "@chakra-ui/react"
-import { Card } from '../components/Card';
-import { PasswordInput } from '../components/PasswordInput';
-import { Link, createRoute, useNavigate } from '@tanstack/react-router';
-import { rootRoute } from '../utils/root';
-import { trpc } from '../utils/trpc';
+import React, { FormEvent, useState } from "react";
+import {
+  Button,
+  Input,
+  FormControl,
+  FormLabel,
+  Container,
+  HStack,
+  Spacer,
+  Stack,
+  Center,
+  Heading,
+} from "@chakra-ui/react";
+import { Card } from "../components/Card";
+import { PasswordInput } from "../components/PasswordInput";
+import { Link, createRoute, useNavigate } from "@tanstack/react-router";
+import { rootRoute } from "../utils/root";
+import { trpc } from "../utils/trpc";
+import { Alert } from "@mui/material";
 
 export const loginRoute = createRoute({
   component: Login,
@@ -17,7 +28,11 @@ export function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { mutateAsync: login, isPending, error } = trpc.auth.login.useMutation();
+  const {
+    mutateAsync: login,
+    isPending,
+    error,
+  } = trpc.auth.login.useMutation();
   const utils = trpc.useUtils();
 
   async function handleLogin(e: FormEvent) {
@@ -25,15 +40,15 @@ export function Login() {
 
     const result = await login({
       username: username,
-      password: password
+      password: password,
     });
 
     if (result) {
-      localStorage.setItem('user', JSON.stringify(result));
+      localStorage.setItem("user", JSON.stringify(result));
 
       utils.user.me.setData(undefined, result.user);
 
-      navigate({ to: '/' });
+      navigate({ to: "/" });
     }
   }
 
@@ -43,7 +58,7 @@ export function Login() {
         <Center pb={8}>
           <Heading>Login</Heading>
         </Center>
-          {error && <Error>{error.message}</Error>}
+        {error && <Alert severity="error">{error.message}</Alert>}
         <form onSubmit={handleLogin}>
           <Stack spacing={4}>
             <FormControl>

@@ -1,29 +1,40 @@
-import React from 'react'
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { Error } from '../../../components/Error';
-import { Indicator } from '../../../components/Indicator';
-import { beepStatusMap } from '.';
-import { createRoute, useNavigate } from '@tanstack/react-router';
-import { adminRoute } from '..';
-import { TableBody, TableCell, Paper, Box, Chip, Stack, Table, TableHead, Typography, TableContainer, TableRow } from '@mui/material';
-import { trpc } from '../../../utils/trpc';
-import { PaginationFooter } from '../../../components/PaginationFooter';
-import { TableCellUser } from '../../../components/TableCellUser';
-import { TableLoading } from '../../../components/TableLoading';
-import { TableEmpty } from '../../../components/TableEmpty';
-import { TableError } from '../../../components/TableError';
+import React from "react";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import { Indicator } from "../../../components/Indicator";
+import { beepStatusMap } from ".";
+import { createRoute, useNavigate } from "@tanstack/react-router";
+import { adminRoute } from "..";
+import {
+  TableBody,
+  TableCell,
+  Paper,
+  Box,
+  Chip,
+  Stack,
+  Table,
+  TableHead,
+  Typography,
+  TableContainer,
+  TableRow,
+} from "@mui/material";
+import { trpc } from "../../../utils/trpc";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableCellUser } from "../../../components/TableCellUser";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { TableError } from "../../../components/TableError";
 
 dayjs.extend(duration);
 
 export const activeBeepsRoute = createRoute({
   component: ActiveBeeps,
-  path: 'beeps/active',
+  path: "beeps/active",
   getParentRoute: () => adminRoute,
   validateSearch: (search: Record<string, string>) => {
     return {
       page: Number(search?.page ?? 1),
-    }
+    };
   },
 });
 
@@ -39,7 +50,7 @@ export function ActiveBeeps() {
     {
       refetchOnMount: true,
       refetchInterval: 5_000,
-    }
+    },
   );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
@@ -49,8 +60,15 @@ export function ActiveBeeps() {
   return (
     <Stack spacing={1}>
       <Stack direction="row" spacing={2} alignItems="center">
-        <Typography fontWeight="bold" variant="h4">Beeps</Typography>
-        <Chip color="success" variant="outlined" size="small" label="in progress" />
+        <Typography fontWeight="bold" variant="h4">
+          Beeps
+        </Typography>
+        <Chip
+          color="success"
+          variant="outlined"
+          size="small"
+          label="in progress"
+        />
       </Stack>
       <PaginationFooter
         count={data?.pages}

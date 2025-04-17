@@ -1,13 +1,22 @@
 import React from "react";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import { Error } from "../../../components/Error";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { RouterOutput, trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
-import { Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import {
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableError } from "../../../components/TableError";
@@ -52,7 +61,7 @@ export function Beeps() {
 
   const { data, isLoading, error } = trpc.beep.beeps.useQuery(
     {
-      page
+      page,
     },
     {
       refetchInterval: 5_000,
@@ -65,13 +74,11 @@ export function Beeps() {
     navigate({ search: { page } });
   };
 
-  if (error) {
-    return <Error>{error.message}</Error>;
-  }
-
   return (
     <Stack spacing={1}>
-      <Typography fontWeight="bold" variant="h4">Beeps</Typography>
+      <Typography fontWeight="bold" variant="h4">
+        Beeps
+      </Typography>
       <PaginationFooter
         count={data?.pages}
         pageSize={data?.pageSize ?? 0}
