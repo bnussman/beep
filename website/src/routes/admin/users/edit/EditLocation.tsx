@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  HStack,
-  Input,
-} from "@chakra-ui/react";
+import { Alert, Button, Stack, TextField } from "@mui/material";
 import { Marker } from "../../../../components/Marker";
 import { Loading } from "../../../../components/Loading";
 import { Map } from "../../../../components/Map";
 import { editUserRoute } from ".";
 import { trpc } from "../../../../utils/trpc";
 import type { MapLayerMouseEvent } from "react-map-gl/maplibre";
-import { Alert } from "@mui/material";
 
 export function EditLocation() {
   const { userId } = editUserRoute.useParams();
@@ -66,37 +58,36 @@ export function EditLocation() {
   }
 
   return (
-    <Box>
+    <Stack spacing={2}>
       {mutateError && <Alert severity="error">{mutateError.message}</Alert>}
-      <HStack mb={4} alignItems="flex-end">
-        <FormControl>
-          <FormLabel>Longitude</FormLabel>
-          <Input
-            type="number"
-            value={longitude}
-            onChange={(value) => setLongitude(Number(value.target.value))}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Latitude</FormLabel>
-          <Input
-            type="number"
-            value={latitude}
-            onChange={(value) => setLatitude(Number(value.target.value))}
-          />
-        </FormControl>
+      <Stack direction="row" spacing={1}>
+        <TextField
+          fullWidth
+          label="Longitude"
+          type="number"
+          value={longitude}
+          onChange={(value) => setLongitude(Number(value.target.value))}
+        />
+        <TextField
+          fullWidth
+          label="Latitude"
+          type="number"
+          value={latitude}
+          onChange={(value) => setLatitude(Number(value.target.value))}
+        />
         <Button
-          w="150px"
           onClick={onUpdate}
-          isLoading={mutateLoading}
-          isDisabled={
+          loading={mutateLoading}
+          variant="contained"
+          sx={{ minWidth: "100px" }}
+          disabled={
             latitude === user.location?.latitude &&
             longitude === user.location?.longitude
           }
         >
           Save
         </Button>
-      </HStack>
+      </Stack>
       <div style={{ height: 450, width: "100%" }}>
         <Map
           onClick={onMapClick}
@@ -118,6 +109,6 @@ export function EditLocation() {
           )}
         </Map>
       </div>
-    </Box>
+    </Stack>
   );
 }
