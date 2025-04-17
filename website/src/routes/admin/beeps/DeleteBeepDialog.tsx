@@ -1,8 +1,13 @@
 import React from "react";
-import { Dialog } from "../../../components/Dialog";
-import { Error } from "../../../components/Error";
-import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { trpc } from "../../../utils/trpc";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
 interface Props {
   isOpen: boolean;
@@ -14,7 +19,7 @@ export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
   const {
     mutateAsync: deleteBeep,
     isPending,
-    error
+    error,
   } = trpc.beep.deleteBeep.useMutation();
 
   const onDelete = async () => {
@@ -23,19 +28,23 @@ export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
   };
 
   return (
-    <Dialog title="Delete Beep?" isOpen={isOpen} onClose={onClose}>
-      <AlertDialogBody>
-        {error && <Error>{error.message}</Error>}
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Delete Beep?</DialogTitle>
+      <DialogContent>
+        {error && <Alert severity="error">{error.message}</Alert>}
         Are you sure you want to delete this beep?
-      </AlertDialogBody>
-      <AlertDialogFooter>
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
-        <Button isLoading={isPending} onClick={onDelete} colorScheme="red">
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          loading={isPending}
+          onClick={onDelete}
+          color="error"
+          variant="contained"
+        >
           Delete
         </Button>
-      </AlertDialogFooter>
+      </DialogActions>
     </Dialog>
   );
 }

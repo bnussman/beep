@@ -1,11 +1,21 @@
 import React from "react";
-import { Box, Button, Checkbox, FormControl, FormLabel, Input, useToast, FormErrorMessage, Stack } from "@chakra-ui/react";
-import { Error } from '../../../../components/Error';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControl,
+  FormLabel,
+  Input,
+  useToast,
+  FormErrorMessage,
+  Stack,
+} from "@chakra-ui/react";
+import { Alert } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { editUserRoute } from ".";
 import { RouterInput, trpc } from "../../../../utils/trpc";
 
-type Values = RouterInput['user']['editAdmin']['data'];
+type Values = RouterInput["user"]["editAdmin"]["data"];
 
 export function EditDetails() {
   const toast = useToast();
@@ -13,7 +23,8 @@ export function EditDetails() {
   const { userId } = editUserRoute.useParams();
   const { data: user } = trpc.user.user.useQuery(userId);
 
-  const { mutateAsync: editUser, error: editError } = trpc.user.editAdmin.useMutation();
+  const { mutateAsync: editUser, error: editError } =
+    trpc.user.editAdmin.useMutation();
 
   const values = {
     first: user?.first,
@@ -27,7 +38,11 @@ export function EditDetails() {
     isBeeping: user?.isBeeping,
   };
 
-  const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm<Values>({
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm<Values>({
     defaultValues: values,
     values,
   });
@@ -37,9 +52,9 @@ export function EditDetails() {
   const onSubmit = handleSubmit(async (data) => {
     const result = await editUser({ userId, data });
     toast({
-      status: 'success',
+      status: "success",
       title: "Success",
-      description: `Successfully edited ${user?.first}'s profile`
+      description: `Successfully edited ${user?.first}'s profile`,
     });
   });
 
@@ -47,25 +62,32 @@ export function EditDetails() {
 
   return (
     <Box>
-      {editError && !validationErrors && <Error>{editError.message}</Error>}
+      {editError && !validationErrors && (
+        <Alert severity="error">{editError.message}</Alert>
+      )}
       <form onSubmit={onSubmit}>
         <Stack spacing={4}>
           {keys.map((_key) => {
             const key = _key as keyof Values;
             const type = typeof user?.[key];
             return (
-              <FormControl key={key} isInvalid={Boolean(errors[key]) || Boolean(validationErrors?.[key])}>
+              <FormControl
+                key={key}
+                isInvalid={
+                  Boolean(errors[key]) || Boolean(validationErrors?.[key])
+                }
+              >
                 <FormLabel>{key}</FormLabel>
-                {type === 'boolean' ?
+                {type === "boolean" ? (
                   <Checkbox {...register(key)} />
-                :
+                ) : (
                   <Input
-                    type={type === 'number' ? 'number' : 'text'}
+                    type={type === "number" ? "number" : "text"}
                     {...register(key, {
-                      valueAsNumber: type === 'number'
+                      valueAsNumber: type === "number",
                     })}
                   />
-                }
+                )}
                 <FormErrorMessage>
                   {errors[key] && errors[key]?.message}
                   {validationErrors?.[key] && validationErrors[key]?.[0]}
@@ -73,7 +95,9 @@ export function EditDetails() {
               </FormControl>
             );
           })}
-          <Button type="submit" isLoading={isSubmitting}>Update User</Button>
+          <Button type="submit" isLoading={isSubmitting}>
+            Update User
+          </Button>
         </Stack>
       </form>
     </Box>

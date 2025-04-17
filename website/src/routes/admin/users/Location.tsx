@@ -1,16 +1,15 @@
-import React from 'react';
-import { Box, Center } from '@chakra-ui/react';
-import { Marker } from '../../../components/Marker';
-import { Error } from '../../../components/Error';
-import { Map } from '../../../components/Map';
-import { createRoute } from '@tanstack/react-router';
-import { userRoute } from './User';
-import { trpc } from '../../../utils/trpc';
-import { Loading } from '../../../components/Loading';
+import React from "react";
+import { Marker } from "../../../components/Marker";
+import { Map } from "../../../components/Map";
+import { createRoute } from "@tanstack/react-router";
+import { userRoute } from "./User";
+import { trpc } from "../../../utils/trpc";
+import { Loading } from "../../../components/Loading";
+import { Alert, Box } from "@mui/material";
 
 export const locationRoute = createRoute({
   component: LocationView,
-  path: 'location',
+  path: "location",
   getParentRoute: () => userRoute,
 });
 
@@ -24,20 +23,20 @@ export function LocationView() {
   }
 
   if (error) {
-    return <Error>{error.message}</Error>;
+    return <Alert severity="error">{error.message}</Alert>;
   }
 
   if (!user?.location) {
     return (
-      <Center h="100px">
+      <Box textAlign="center" height="100px">
         This user has no Location data.
-      </Center>
+      </Box>
     );
   }
 
   return (
     <Box>
-      <div style={{ height: 550, width: '100%' }}>
+      <div style={{ height: 550, width: "100%" }}>
         <Map
           initialViewState={{
             latitude: user.location.latitude,

@@ -1,10 +1,10 @@
 import React from "react";
 import { EditDetails } from "./EditDetails";
 import { EditLocation } from "./EditLocation";
-import { Error } from '../../../../components/Error';
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../User";
 import { trpc } from "../../../../utils/trpc";
+import { Alert } from "@mui/material";
 import {
   Tabs,
   TabList,
@@ -13,12 +13,12 @@ import {
   TabPanel,
   Box,
   Heading,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 
 export const editUserRoute = createRoute({
   component: Edit,
-  path: 'edit',
+  path: "edit",
   getParentRoute: () => userRoute,
 });
 
@@ -32,7 +32,7 @@ export function Edit() {
   }
 
   if (error) {
-    return <Error>{error.message}</Error>;
+    return <Alert severity="error">{error.message}</Alert>;
   }
 
   return (

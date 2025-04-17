@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, FormControl, FormLabel, HStack, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  HStack,
+  Input,
+} from "@chakra-ui/react";
 import { Marker } from "../../../../components/Marker";
 import { Loading } from "../../../../components/Loading";
-import { Error } from '../../../../components/Error';
-import { Map } from '../../../../components/Map';
+import { Map } from "../../../../components/Map";
 import { editUserRoute } from ".";
 import { trpc } from "../../../../utils/trpc";
-import type { MapLayerMouseEvent } from 'react-map-gl/maplibre';
+import type { MapLayerMouseEvent } from "react-map-gl/maplibre";
+import { Alert } from "@mui/material";
 
 export function EditLocation() {
   const { userId } = editUserRoute.useParams();
 
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = trpc.user.user.useQuery(userId);
+  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
   const {
     mutateAsync: updateUser,
     error: mutateError,
-    isPending: mutateLoading
+    isPending: mutateLoading,
   } = trpc.user.editAdmin.useMutation();
 
   const [longitude, setLongitude] = useState<number>();
@@ -39,9 +42,9 @@ export function EditLocation() {
       data: {
         location: {
           longitude: longitude ?? 0,
-          latitude: latitude ?? 0
-        }
-      }
+          latitude: latitude ?? 0,
+        },
+      },
     });
   };
 
@@ -51,11 +54,11 @@ export function EditLocation() {
   };
 
   if (isLoading) {
-    <Loading />
+    <Loading />;
   }
 
   if (error) {
-    return <Error>{error.message}</Error>;
+    return <Alert severity="error">{error.message}</Alert>;
   }
 
   if (!user) {
@@ -64,7 +67,7 @@ export function EditLocation() {
 
   return (
     <Box>
-      {mutateError && <Error>{mutateError.message}</Error>}
+      {mutateError && <Alert severity="error">{mutateError.message}</Alert>}
       <HStack mb={4} alignItems="flex-end">
         <FormControl>
           <FormLabel>Longitude</FormLabel>
@@ -86,12 +89,15 @@ export function EditLocation() {
           w="150px"
           onClick={onUpdate}
           isLoading={mutateLoading}
-          isDisabled={latitude === user.location?.latitude && longitude === user.location?.longitude}
+          isDisabled={
+            latitude === user.location?.latitude &&
+            longitude === user.location?.longitude
+          }
         >
           Save
         </Button>
       </HStack>
-      <div style={{ height: 450, width: '100%' }}>
+      <div style={{ height: 450, width: "100%" }}>
         <Map
           onClick={onMapClick}
           initialViewState={{

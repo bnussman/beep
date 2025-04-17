@@ -1,14 +1,13 @@
-import React from 'react';
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Button,
-  Checkbox
-} from "@chakra-ui/react";
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+} from "@mui/material";
+import React from "react";
 
 interface Props {
   isOpen: boolean;
@@ -21,42 +20,26 @@ interface Props {
 }
 
 export function ClearQueueDialog(props: Props) {
-  const {
-    isOpen,
-    onClose,
-    cancelRef,
-    isLoading,
-    onSubmit,
-    stopBeeping,
-    setStopBeeping
-  } = props;
+  const { isOpen, onClose, isLoading, onSubmit, stopBeeping, setStopBeeping } =
+    props;
 
   return (
-    <AlertDialog
-      isOpen={isOpen}
-      leastDestructiveRef={cancelRef}
-      onClose={onClose}
-    >
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Clear user's queue?
-          </AlertDialogHeader>
-
-          <AlertDialogBody>
-            <Checkbox isChecked={stopBeeping} onChange={() => setStopBeeping(!stopBeeping)}>Turn off user's Beeping status after clear?</Checkbox>
-          </AlertDialogBody>
-
-          <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button isLoading={isLoading} colorScheme="blue" onClick={onSubmit} ml={3}>
-              Clear Queue
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Clear user's queue?</DialogTitle>
+      <DialogContent>
+        <FormControlLabel
+          control={<Checkbox />}
+          label="Turn off user's Beeping status after clear?"
+          checked={stopBeeping}
+          onChange={() => setStopBeeping(!stopBeeping)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button loading={isLoading} variant="contained" onClick={onSubmit}>
+          Clear Queue
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

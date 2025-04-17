@@ -1,9 +1,14 @@
 import React from "react";
-import { Dialog } from "../../../components/Dialog";
-import { Error } from "../../../components/Error";
-import { AlertDialogBody, AlertDialogFooter, Button } from "@chakra-ui/react";
 import { trpc } from "../../../utils/trpc";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
+import Dialog from "@mui/material/Dialog";
+import {
+  Alert,
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
 interface Props {
   userId: string;
@@ -13,7 +18,11 @@ interface Props {
 
 export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
   const router = useRouter();
-  const { mutateAsync: deleteUser, isPending, error } = trpc.user.deleteUser.useMutation();
+  const {
+    mutateAsync: deleteUser,
+    isPending,
+    error,
+  } = trpc.user.deleteUser.useMutation();
 
   const onDelete = async () => {
     await deleteUser(userId);
@@ -22,23 +31,23 @@ export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
   };
 
   return (
-    <Dialog
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Delete User?"
-    >
-      <AlertDialogBody>
-        {error && <Error>{error.message}</Error>}
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Delete User?</DialogTitle>
+      <DialogContent>
+        {error && <Alert severity="error">{error.message}</Alert>}
         Are you sure you want to delete user {userId}?
-      </AlertDialogBody>
-      <AlertDialogFooter>
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
-        <Button isLoading={isPending} colorScheme="red" onClick={onDelete} ml={3}>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          loading={isPending}
+          color="error"
+          variant="contained"
+          onClick={onDelete}
+        >
           Delete
         </Button>
-      </AlertDialogFooter>
+      </DialogActions>
     </Dialog>
   );
 }

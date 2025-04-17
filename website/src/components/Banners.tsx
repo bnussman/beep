@@ -1,14 +1,16 @@
-import React from 'react';
-import { Alert, AlertIcon, Box, Button, Spacer, useToast } from '@chakra-ui/react';
-import { trpc } from '../utils/trpc';
+import React from "react";
+import { trpc } from "../utils/trpc";
+import { Alert, Button } from "@mui/material";
+import { useToast } from "@chakra-ui/react";
 
 export function Banners() {
-  const { data: user } = trpc.user.me.useQuery(undefined, { retry: false, enabled: false });
+  const { data: user } = trpc.user.me.useQuery(undefined, {
+    retry: false,
+    enabled: false,
+  });
 
-  const {
-    mutateAsync: resendVerifyEmail,
-    isPending
-  } = trpc.auth.resendVerification.useMutation();
+  const { mutateAsync: resendVerifyEmail, isPending } =
+    trpc.auth.resendVerification.useMutation();
 
   const toast = useToast();
 
@@ -16,38 +18,38 @@ export function Banners() {
     try {
       await resendVerifyEmail();
       toast({
-        status: 'success',
+        status: "success",
         title: "Success",
-        description: "Successfully resent verification email."
+        description: "Successfully resent verification email.",
       });
-    }
-    catch (error: any) {
+    } catch (error: any) {
       toast({
-        status: 'error',
+        status: "error",
         title: "Error",
-        description: error.message
+        description: error.message,
       });
     }
   }
 
-  if (user && !user.isEmailVerified) {
-    return (
-      <Box mb={4}>
-        <Alert status="error" mb={2}>
-          <AlertIcon />
-          Please verify your email
-          <Spacer />
-          <Button
-            isLoading={isPending}
-            onClick={resendVarificationEmail}
-            colorScheme="red"
-          >
-            Resend
-          </Button>
-        </Alert>
-      </Box>
-    );
+  if (!user || user.isEmailVerified) {
+    return null;
   }
 
-  return null;
+  return (
+    <Alert
+      severity="error"
+      action={
+        <Button
+          loading={isPending}
+          onClick={resendVarificationEmail}
+          color="error"
+          variant="outlined"
+        >
+          Resend
+        </Button>
+      }
+    >
+      Please verify your email
+    </Alert>
+  );
 }
