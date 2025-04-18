@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, CircularProgress, Container } from "@mui/material";
+import React from "react";
+import { Stack, Box, CircularProgress, Container } from "@mui/material";
 import { trpc } from "./utils/trpc";
 import { Header } from "./components/Header";
 import { Banners } from "./components/Banners";
@@ -15,12 +15,17 @@ export function Entry() {
     enabled: user !== undefined,
     onData(user) {
       utils.user.me.setData(undefined, user);
-    }
-  })
+    },
+  });
 
   if (isPending) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
         <CircularProgress />
       </Box>
     );
@@ -30,8 +35,10 @@ export function Entry() {
     <>
       <Header />
       <Container component="main" sx={{ pt: 10 }}>
-        <Banners />
-        <Outlet />
+        <Stack spacing={2}>
+          <Banners />
+          <Outlet />
+        </Stack>
       </Container>
     </>
   );

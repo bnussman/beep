@@ -1,41 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { trpc } from "../../../utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 import { Loading } from "../../../components/Loading";
 import { ClearQueueDialog } from "../../../components/ClearQueueDialog";
 import { SendNotificationDialog } from "../../../components/SendNotificationDialog";
-import { DeleteIcon, CheckIcon } from "@chakra-ui/icons";
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { DeleteUserDialog } from "./DeleteUserDialog";
-import {
-  Link,
-  Outlet,
-  createRoute,
-  useNavigate,
-  useRouterState,
-} from "@tanstack/react-router";
-import {
-  useToast,
-  useDisclosure,
-  Stack,
-  AvatarBadge,
-  Heading,
-  Badge,
-  Box,
-  Text,
-  Avatar,
-  Button,
-  Flex,
-  Spacer,
-  Tabs,
-  Tab,
-  TabList,
-  useMediaQuery,
-} from "@chakra-ui/react";
+import { Link, Outlet, createRoute, useLocation } from "@tanstack/react-router";
+import { useToast, useDisclosure } from "@chakra-ui/react";
 import { usersRoute } from "./routes";
-import { Alert } from "@mui/material";
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 
 dayjs.extend(relativeTime);
 
@@ -58,9 +42,11 @@ export const userRoute = createRoute({
 
 export function User() {
   const { userId } = userRoute.useParams();
-  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
   const utils = trpc.useUtils();
+  const toast = useToast();
+
+  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
   trpc.user.updates.useSubscription(userId, {
     onData(user) {
@@ -68,30 +54,11 @@ export function User() {
     },
   });
 
-  const [isDesktop] = useMediaQuery("(min-width: 800px)");
-
-  const toast = useToast();
-  const navigate = useNavigate({ from: userRoute.id });
-  const routerState = useRouterState();
-
-  const {
-    mutateAsync: clearQueue,
-    isPending: isClearLoading,
-    error: clearError,
-  } = trpc.beep.clearQueue.useMutation();
-
   const { mutateAsync: syncPayments, isPending: isSyncingPayments } =
     trpc.user.syncPayments.useMutation();
 
-  const {
-    mutateAsync: updateUser,
-    isPending: isVerifyLoading,
-    error: verifyError,
-  } = trpc.user.editAdmin.useMutation();
-
-  const [stopBeeping, setStopBeeping] = useState<boolean>(true);
-
-  const cancelRefClear = React.useRef();
+  const { mutateAsync: updateUser, isPending: isVerifyLoading } =
+    trpc.user.editAdmin.useMutation();
 
   const {
     isOpen: isDeleteOpen,
@@ -117,36 +84,17 @@ export function User() {
     onClose: onPhotoClose,
   } = useDisclosure();
 
-  async function doClear() {
-    try {
-      await clearQueue({
-        userId,
-        stopBeeping,
-      });
-      onClearClose();
-      utils.beeper.queue.invalidate(userId);
-      toast({
-        title: "Queue Cleared",
-        description: `${user?.first}'s queue has been cleared ${stopBeeping ? " and they have stopped beeping." : ""}`,
-        status: "success",
-      });
-    } catch (e) {
-      onClearClose();
-      toast({
-        title: "Unable to clear user's queue",
-        description: (e as TRPCClientError<any>).message,
-        status: "error",
-      });
-    }
-  }
-
   const onVerify = () => {
     updateUser({
       userId,
       data: { isEmailVerified: true, isStudent: true },
-    }).then(() => {
-      toast({ title: "User verified", status: "success" });
-    });
+    })
+      .then(() => {
+        toast({ title: "User verified", status: "success" });
+      })
+      .catch((error) => {
+        toast({ title: "Error", description: error.message, status: "error" });
+      });
   };
 
   const onSyncPayments = () => {
@@ -163,13 +111,15 @@ export function User() {
       });
   };
 
-  const path = routerState.location.pathname;
+  const pathname = useLocation({
+    select: (location) => location.pathname,
+  });
 
-  const foundTabIndex = tabs.findIndex((tab) => path.endsWith(tab));
+  const foundTabIndex = tabs.findIndex((tab) => pathname.endsWith(tab));
 
   const currentTabIndex = foundTabIndex === -1 ? 0 : foundTabIndex;
 
-  if (path.endsWith("/edit")) {
+  if (pathname.endsWith("/edit")) {
     return <Outlet />;
   }
 
@@ -182,120 +132,94 @@ export function User() {
   }
 
   return (
-    <>
-      <Box>
-        {clearError && <Alert severity="error">{clearError.message}</Alert>}
-        {verifyError && <Alert severity="error">{verifyError.message}</Alert>}
-        <Flex alignItems="center" flexWrap="wrap">
-          <Flex alignItems="center">
-            <Box mr={4}>
-              <Avatar
-                src={user.photo || ""}
-                size={isDesktop ? "2xl" : "xl"}
-                onClick={user.photo ? onPhotoOpen : undefined}
-                cursor={user.photo ? "pointer" : undefined}
-              >
-                {user.isBeeping && (
-                  <AvatarBadge boxSize="1.0em" bg="green.500" />
-                )}
-              </Avatar>
-            </Box>
-            <Box>
-              <Heading size="md">
-                {user.first} {user.last}
-              </Heading>
-              <Text>@{user.username}</Text>
-              <Text fontSize="xs" textOverflow="ellipsis">
-                {user.id}
-              </Text>
-              {user.created && (
-                <Text fontSize="xs">Joined {dayjs().to(user.created)}</Text>
-              )}
-              <Stack direction="row" mt="2" mb="2">
-                {user.role === "admin" && (
-                  <Badge variant="solid" colorScheme="red">
-                    admin
-                  </Badge>
-                )}
-                {user.isStudent && (
-                  <Badge variant="solid" colorScheme="blue">
-                    student
-                  </Badge>
-                )}
-              </Stack>
-            </Box>
-          </Flex>
-          <Spacer />
-          <Box py={4}>
-            <Link to="/admin/users/$userId/edit" params={{ userId }}>
-              <Button m="1">Edit</Button>
-            </Link>
-            {!user.isEmailVerified && (
-              <Button
-                m={1}
-                colorScheme="green"
-                leftIcon={<CheckIcon />}
-                onClick={onVerify}
-                isLoading={isVerifyLoading}
-              >
-                Verify
-              </Button>
+    <Stack spacing={2}>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        justifyContent="space-between"
+        flexWrap="wrap"
+      >
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Avatar
+            src={user.photo ?? ""}
+            onClick={user.photo ? onPhotoOpen : undefined}
+            sx={{
+              ...(user.photo ? { cursor: "pointer" } : {}),
+              width: 120,
+              height: 120,
+            }}
+          />
+          <Stack>
+            <Typography fontWeight="bold" variant="h4">
+              {user.first} {user.last}
+            </Typography>
+            <Typography>{user.username}</Typography>
+            <Typography fontSize="12px">{user.id}</Typography>
+            {user.created && (
+              <Typography fontSize="12px">
+                Joined {dayjs().to(user.created)}
+              </Typography>
             )}
-            <Button
-              m={1}
-              colorScheme="purple"
-              onClick={onSendNotificationOpen}
-              isDisabled={!user?.pushToken}
-            >
-              Send Notification
-            </Button>
-            <Button
-              m={1}
-              colorScheme="yellow"
-              onClick={onSyncPayments}
-              isLoading={isSyncingPayments}
-            >
-              Sync Payments
-            </Button>
-            <Button m="1" colorScheme="blue" onClick={onClearOpen}>
-              Clear Queue
-            </Button>
-            <Button
-              m={1}
-              colorScheme="red"
-              leftIcon={<DeleteIcon />}
-              onClick={onDeleteOpen}
-            >
-              Delete
-            </Button>
-          </Box>
-        </Flex>
-        <Tabs
-          isLazy
-          mt="4"
-          colorScheme="brand"
-          lazyBehavior="keepMounted"
-          index={currentTabIndex}
-          onChange={(i) =>
-            navigate({
-              to: `/admin/users/$userId/${tabs[i]}`,
-              params: { userId },
-            })
-          }
+          </Stack>
+        </Stack>
+        <Stack
+          direction="row"
+          gap={1}
+          flexWrap="wrap"
+          justifyContent="flex-end"
         >
-          <Box overflowX="auto">
-            <TabList>
-              {tabs.map((tab: string, idx) => (
-                <Tab key={idx} style={{ textTransform: "capitalize" }}>
-                  {tab}
-                </Tab>
-              ))}
-            </TabList>
-          </Box>
+          <Link to="/admin/users/$userId/edit" params={{ userId }}>
+            <Button variant="contained">Edit</Button>
+          </Link>
+          {!user.isEmailVerified && (
+            <Button
+              color="success"
+              variant="contained"
+              onClick={onVerify}
+              loading={isVerifyLoading}
+            >
+              Verify
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            color="info"
+            onClick={onSendNotificationOpen}
+            disabled={!user?.pushToken}
+          >
+            Send Notification
+          </Button>
+          <Button
+            color="info"
+            variant="contained"
+            onClick={onSyncPayments}
+            loading={isSyncingPayments}
+          >
+            Sync Payments
+          </Button>
+          <Button variant="contained" color="warning" onClick={onClearOpen}>
+            Clear Queue
+          </Button>
+          <Button color="error" variant="contained" onClick={onDeleteOpen}>
+            Delete
+          </Button>
+        </Stack>
+      </Stack>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={currentTabIndex}>
+          {tabs.map((tab, idx) => (
+            <Tab
+              label={tab}
+              key={idx}
+              LinkComponent={Link}
+              href={`/admin/users/${user.id}/${tab}`}
+            />
+          ))}
         </Tabs>
-        <Box mt={4}>
-          <Outlet />
-        </Box>
+      </Box>
+      <Box>
+        <Outlet />
       </Box>
       <DeleteUserDialog
         userId={user.id}
@@ -305,11 +229,7 @@ export function User() {
       <ClearQueueDialog
         isOpen={isClearOpen}
         onClose={onClearClose}
-        onSubmit={doClear}
-        isLoading={isClearLoading}
-        cancelRef={cancelRefClear}
-        stopBeeping={stopBeeping}
-        setStopBeeping={setStopBeeping}
+        userId={user.id}
       />
       <SendNotificationDialog
         id={user.id}
@@ -321,6 +241,6 @@ export function User() {
         isOpen={isPhotoOpen}
         onClose={onPhotoClose}
       />
-    </>
+    </Stack>
   );
 }

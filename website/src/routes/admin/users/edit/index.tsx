@@ -40,16 +40,18 @@ export function Edit() {
       <Typography variant="h4" fontWeight="bold">
         Edit
       </Typography>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={index} onChange={(e, index) => setIndex(index)}>
-          <Tab label="Details" />
-          <Tab label="Location" />
-        </Tabs>
-      </Box>
-      <Box sx={{ mt: 2 }}>
-        {index === 0 && <EditDetails />}
-        {index === 1 && <EditLocation />}
-      </Box>
+      <Stack spacing={3}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs value={index} onChange={(e, index) => setIndex(index)}>
+            <Tab label="Details" />
+            <Tab label="Location" />
+          </Tabs>
+        </Box>
+        <Box>
+          {index === 0 && <EditDetails />}
+          {index === 1 && <EditLocation />}
+        </Box>
+      </Stack>
     </Stack>
   );
 }

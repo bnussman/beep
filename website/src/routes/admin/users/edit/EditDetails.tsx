@@ -1,19 +1,16 @@
 import React from "react";
 import {
-  Box,
-  Button,
+  Alert,
+  FormControlLabel,
   Checkbox,
-  FormControl,
-  FormLabel,
-  Input,
-  useToast,
-  FormErrorMessage,
   Stack,
-} from "@chakra-ui/react";
-import { Alert } from "@mui/material";
-import { useForm } from "react-hook-form";
+  Button,
+  TextField,
+} from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
 import { editUserRoute } from ".";
 import { RouterInput, trpc } from "../../../../utils/trpc";
+import { useToast } from "@chakra-ui/react";
 
 type Values = RouterInput["user"]["editAdmin"]["data"];
 
@@ -22,9 +19,6 @@ export function EditDetails() {
 
   const { userId } = editUserRoute.useParams();
   const { data: user } = trpc.user.user.useQuery(userId);
-
-  const { mutateAsync: editUser, error: editError } =
-    trpc.user.editAdmin.useMutation();
 
   const values = {
     first: user?.first,
@@ -40,66 +34,87 @@ export function EditDetails() {
 
   const {
     handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
+    control,
+    setError,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<Values>({
     defaultValues: values,
     values,
   });
 
-  const validationErrors = editError?.data?.zodError?.fieldErrors;
+  const { mutateAsync: editUser, error: editError } =
+    trpc.user.editAdmin.useMutation({
+      onError(errors) {
+        if (errors.data?.zodError?.fieldErrors) {
+          for (const field in errors.data?.zodError?.fieldErrors) {
+            setError(field as keyof Values, {
+              message: errors.data?.zodError?.fieldErrors[field]?.[0],
+            });
+          }
+        } else {
+          setError("root", { message: errors.message });
+        }
+      },
+    });
 
-  const onSubmit = handleSubmit(async (data) => {
-    const result = await editUser({ userId, data });
+  const onSubmit = async (data: Values) => {
+    const user = await editUser({ userId, data });
     toast({
       status: "success",
       title: "Success",
-      description: `Successfully edited ${user?.first}'s profile`,
+      description: `Successfully edited ${user.first}'s profile`,
     });
-  });
+  };
 
   const keys = values ? Object.keys(values) : [];
 
   return (
-    <Box>
-      {editError && !validationErrors && (
-        <Alert severity="error">{editError.message}</Alert>
-      )}
-      <form onSubmit={onSubmit}>
-        <Stack spacing={4}>
-          {keys.map((_key) => {
-            const key = _key as keyof Values;
-            const type = typeof user?.[key];
-            return (
-              <FormControl
-                key={key}
-                isInvalid={
-                  Boolean(errors[key]) || Boolean(validationErrors?.[key])
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack spacing={2}>
+        {errors.root?.message && (
+          <Alert severity="error">{errors.root.message}</Alert>
+        )}
+        {keys.map((_key) => {
+          const key = _key as keyof Values;
+          const type = typeof user?.[key];
+
+          return (
+            <Controller
+              control={control}
+              name={key}
+              render={({ field, fieldState }) => {
+                if (type === "boolean") {
+                  return (
+                    <FormControlLabel
+                      label={key}
+                      control={<Checkbox />}
+                      checked={Boolean(field.value)}
+                      onChange={field.onChange}
+                    />
+                  );
                 }
-              >
-                <FormLabel>{key}</FormLabel>
-                {type === "boolean" ? (
-                  <Checkbox {...register(key)} />
-                ) : (
-                  <Input
-                    type={type === "number" ? "number" : "text"}
-                    {...register(key, {
-                      valueAsNumber: type === "number",
-                    })}
+                return (
+                  <TextField
+                    label={key}
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={Boolean(fieldState.error?.message)}
+                    helperText={fieldState.error?.message}
                   />
-                )}
-                <FormErrorMessage>
-                  {errors[key] && errors[key]?.message}
-                  {validationErrors?.[key] && validationErrors[key]?.[0]}
-                </FormErrorMessage>
-              </FormControl>
-            );
-          })}
-          <Button type="submit" isLoading={isSubmitting}>
-            Update User
-          </Button>
-        </Stack>
-      </form>
-    </Box>
+                );
+              }}
+            />
+          );
+        })}
+        <Button
+          type="submit"
+          variant="contained"
+          loading={isSubmitting}
+          disabled={!isDirty}
+        >
+          Update User
+        </Button>
+      </Stack>
+    </form>
   );
 }
