@@ -1,24 +1,17 @@
 import React from "react";
-import {
-  Text,
-  Button,
-  Center,
-  Code,
-  Container,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-  Heading,
-  Input,
-  Box,
-} from "@chakra-ui/react";
-import { Card } from "../components/Card";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
 import { RouterInput, trpc } from "../utils/trpc";
-import { useForm } from "react-hook-form";
-import { Alert } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Card,
+  Stack,
+  Button,
+  TextField,
+  Alert,
+  Typography,
+  Box,
+} from "@mui/material";
 
 export const forgotPasswordRoute = createRoute({
   component: ForgotPassword,
@@ -27,16 +20,28 @@ export const forgotPasswordRoute = createRoute({
 });
 
 export function ForgotPassword() {
+  const form = useForm({
+    defaultValues: {
+      email: "",
+    },
+  });
+
   const {
     mutateAsync: sendForgotPasswordEmail,
     data,
     isPending,
     error,
-  } = trpc.auth.forgotPassword.useMutation();
-
-  const form = useForm({
-    defaultValues: {
-      email: "",
+  } = trpc.auth.forgotPassword.useMutation({
+    onError(errors) {
+      if (errors.data?.zodError?.fieldErrors) {
+        for (const field in errors.data?.zodError?.fieldErrors) {
+          form.setError(field as "email", {
+            message: errors.data?.zodError?.fieldErrors[field]?.[0],
+          });
+        }
+      } else {
+        form.setError("root", { message: errors.message });
+      }
     },
   });
 
@@ -47,47 +52,51 @@ export function ForgotPassword() {
   };
 
   return (
-    <Container maxW="container.sm" p={[0]}>
-      <Card>
-        <Center pb={4}>
-          <Heading>Forgot Password</Heading>
-        </Center>
-        {error && <Alert severity="error">{error.message}</Alert>}
-        {data && (
-          <Alert severity="success">
-            Done! If an account with the email <Code>{data}</Code> exists, you
-            will recieve an email with a link to reset your password.
-          </Alert>
-        )}
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <FormControl>
-            <FormLabel>Email address</FormLabel>
-            <Input
-              type="email"
-              required
-              {...form.register("email", {
-                required: "This is required",
-              })}
-            />
-            <FormHelperText>
-              We'll send you an email with a link to reset your password.
-            </FormHelperText>
-            <FormErrorMessage>
-              {form.formState.errors.email?.message}
-            </FormErrorMessage>
-          </FormControl>
+    <Card sx={{ p: 3 }}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Stack spacing={2}>
+          <Typography variant="h4" fontWeight="bold">
+            Forgot Password
+          </Typography>
+          {form.formState.errors.root?.message && (
+            <Alert severity="error">
+              {form.formState.errors.root?.message}
+            </Alert>
+          )}
+          {data && (
+            <Alert severity="success">
+              Done! If an account with the email "{data}" exists, you will
+              recieve an email with a link to reset your password.
+            </Alert>
+          )}
+          <Controller
+            control={form.control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Email"
+                type="email"
+                value={field.value}
+                onChange={field.onChange}
+                error={Boolean(fieldState.error?.message)}
+                helperText={
+                  fieldState.error?.message ??
+                  "We'll send you an email with a link to reset your password."
+                }
+              />
+            )}
+          />
           <Box display="flex" justifyContent="flex-end">
             <Button
-              mt={4}
               type="submit"
-              isLoading={isPending}
-              colorScheme="blue"
+              loading={form.formState.isSubmitting}
+              variant="contained"
             >
               Send Reset Password Email
             </Button>
           </Box>
-        </form>
-      </Card>
-    </Container>
+        </Stack>
+      </form>
+    </Card>
   );
 }
