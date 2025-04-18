@@ -1,21 +1,16 @@
-import React, { useState } from "react";
-import { trpc } from "../utils/trpc";
+import React from "react";
+import { RouterInput, trpc } from "../utils/trpc";
 import {
+  Alert,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Textarea,
-  useToast,
-} from "@chakra-ui/react";
-import { Alert } from "@mui/material";
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from "@mui/material";
+import { useToast } from "@chakra-ui/react";
+import { useForm, Controller } from "react-hook-form";
 
 interface Props {
   isOpen: boolean;
@@ -27,59 +22,82 @@ export function SendNotificationDialog(props: Props) {
   const { isOpen, onClose, id } = props;
   const toast = useToast();
 
-  const [title, setTitle] = useState<string>();
-  const [body, setBody] = useState<string>();
-
-  const {
-    mutateAsync: sendNotification,
-    isPending,
-    error,
-  } = trpc.notification.sendNotificationToUser.useMutation();
-
-  const onClick = async () => {
-    await sendNotification({
+  const form = useForm<RouterInput["notification"]["sendNotificationToUser"]>({
+    defaultValues: {
       userId: id,
-      title: title ?? "",
-      body: body ?? "",
+      title: "",
+      body: "",
+    },
+  });
+
+  const { mutateAsync: sendNotification } =
+    trpc.notification.sendNotificationToUser.useMutation({
+      onError(errors) {
+        if (errors.data?.zodError?.fieldErrors) {
+          for (const field in errors.data?.zodError?.fieldErrors) {
+            form.setError(
+              field as keyof RouterInput["notification"]["sendNotificationToUser"],
+              {
+                message: errors.data?.zodError?.fieldErrors[field]?.[0],
+              },
+            );
+          }
+        } else {
+          form.setError("root", { message: errors.message });
+        }
+      },
     });
+
+  const onSubmit = async (
+    values: RouterInput["notification"]["sendNotificationToUser"],
+  ) => {
+    await sendNotification(values);
     toast({ title: "Successfully sent notification!", status: "success" });
     onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Send Notification</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {error && <Alert severity="error">{error.message}</Alert>}
-          <FormControl mb={2}>
-            <FormLabel>Title</FormLabel>
-            <Input
-              name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Body</FormLabel>
-            <Textarea
-              name="body"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-            />
-          </FormControl>
-        </ModalBody>
-        <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>
-            Close
-          </Button>
-          <Button colorScheme="blue" isLoading={isPending} onClick={onClick}>
+    <Dialog open={isOpen} onClose={onClose}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <DialogTitle>Send Notification</DialogTitle>
+        <DialogContent>
+          {form.formState.errors.root?.message && (
+            <Alert severity="error">{form.formState.errors.root.message}</Alert>
+          )}
+          <Controller
+            control={form.control}
+            name="title"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Title"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="body"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Body"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Close</Button>
+          <Button
+            variant="contained"
+            loading={form.formState.isSubmitting}
+            type="submit"
+          >
             Send Notification
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogActions>
+      </form>
+    </Dialog>
   );
 }
