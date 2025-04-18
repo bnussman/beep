@@ -1,27 +1,20 @@
 import React from "react";
-import {
-  Avatar,
-  Box,
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-  Heading,
-  Input,
-  Spinner,
-  Stack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
-import { Card } from "../components/Card";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
 import { RouterInput, trpc } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
-import { Alert, CircularProgress } from "@mui/material";
+import {
+  Alert,
+  Card,
+  Typography,
+  TextField,
+  Avatar,
+  CircularProgress,
+  Stack,
+  Button,
+  Box,
+} from "@mui/material";
+import { useToast } from "@chakra-ui/react";
 
 type Values = RouterInput["user"]["edit"];
 
@@ -32,23 +25,14 @@ export const editProfileRoute = createRoute({
 });
 
 export function EditProfile() {
-  const { mutateAsync: edit, error, isPending } = trpc.user.edit.useMutation();
-  const {
-    mutateAsync: uploadPicture,
-    isPending: isUploadPending,
-    error: uploadError,
-  } = trpc.user.updatePicture.useMutation();
-
   const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
   const toast = useToast();
 
-  const validationErrors = error?.data?.zodError?.fieldErrors;
-
   const {
     handleSubmit,
-    register,
-    reset,
-    formState: { errors, isValid, isDirty },
+    control,
+    setError,
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<Values>({
     defaultValues: {
       first: user?.first,
@@ -70,8 +54,28 @@ export function EditProfile() {
       : undefined,
   });
 
+  const { mutateAsync } = trpc.user.edit.useMutation({
+    onError(errors) {
+      if (errors.data?.zodError?.fieldErrors) {
+        for (const field in errors.data?.zodError?.fieldErrors) {
+          setError(field as keyof Values, {
+            message: errors.data?.zodError?.fieldErrors[field]?.[0],
+          });
+        }
+      } else {
+        setError("root", { message: errors.message });
+      }
+    },
+  });
+
+  const {
+    mutateAsync: uploadPicture,
+    isPending: isUploadPending,
+    error: uploadError,
+  } = trpc.user.updatePicture.useMutation();
+
   const onSubmit = handleSubmit(async (variables) => {
-    await edit(variables);
+    await mutateAsync(variables);
 
     toast({
       status: "success",
@@ -115,155 +119,135 @@ export function EditProfile() {
   }
 
   return (
-    <Container maxW="container.sm" p={[0]}>
-      <Card>
-        {error && !validationErrors && (
-          <Alert severity="error">{error.message}</Alert>
-        )}
-        {isUploadPending && (
-          <Alert severity="info">
-            Uploading Profile Photo
-            <CircularProgress />
-          </Alert>
-        )}
-        {uploadError && <Alert severity="error">{uploadError.message}</Alert>}
-        <Box mb={6}>
-          <Flex align="center">
-            <Box>
-              <FormLabel cursor="pointer" htmlFor="photo">
-                <Avatar size="xl" src={user?.photo || undefined} />
-              </FormLabel>
-              <Input
-                id="photo"
-                type="file"
-                onChange={(e) => uploadPhoto(e.target.files?.[0])}
-                hidden
+    <Card sx={{ p: 3 }}>
+      <form onSubmit={onSubmit}>
+        <Stack spacing={2}>
+          {errors.root?.message && (
+            <Alert severity="error">{errors.root?.message}</Alert>
+          )}
+          {isUploadPending && (
+            <Alert severity="info">
+              Uploading Profile Photo
+              <CircularProgress />
+            </Alert>
+          )}
+          {uploadError && <Alert severity="error">{uploadError.message}</Alert>}
+          <Stack direction="row" spacing={2}>
+            <Stack spacing={2} flexGrow={1}>
+              <Controller
+                control={control}
+                name="first"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label="First Name"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={Boolean(fieldState.error?.message)}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
-            </Box>
-            <Box ml="4">
-              <Heading>
-                {user.first} {user.last}
-              </Heading>
-              <Text>@{user?.username}</Text>
-            </Box>
-          </Flex>
-        </Box>
-        <form onSubmit={onSubmit}>
-          <Stack spacing={4}>
-            <FormControl>
-              <FormLabel>Username</FormLabel>
-              <Input value={user?.username} isDisabled />
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.first) || Boolean(validationErrors?.first)
-              }
-            >
-              <FormLabel>First Name</FormLabel>
-              <Input
-                {...register("first", {
-                  required: "This is required",
-                })}
+              <Controller
+                control={control}
+                name="last"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label="Last Name"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={Boolean(fieldState.error?.message)}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
-              <FormErrorMessage>
-                {errors.first && errors.first.message}
-                {validationErrors?.first && validationErrors?.first[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.last) || Boolean(validationErrors?.last)
-              }
-            >
-              <FormLabel>Last Name</FormLabel>
-              <Input
-                {...register("last", {
-                  required: "This is required",
-                })}
+            </Stack>
+            <label style={{ cursor: "pointer" }} htmlFor="photo">
+              <Avatar
+                sx={{ width: 128, height: 128 }}
+                src={user?.photo ?? undefined}
               />
-              <FormErrorMessage>
-                {errors.last && errors.last.message}
-                {validationErrors?.last && validationErrors?.last[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.email) || Boolean(validationErrors?.email)
-              }
-            >
-              <FormLabel>Email</FormLabel>
-              <Input
-                type="email"
-                {...register("email", {
-                  required: "This is required",
-                })}
-              />
-              <FormHelperText>
-                {user.isEmailVerified
-                  ? user.isStudent
-                    ? "Your email is verified and you are a student"
-                    : "Your email is verified"
-                  : "Your email is not verified"}
-              </FormHelperText>
-              <FormErrorMessage>
-                {errors.email && errors.email.message}
-                {validationErrors?.email && validationErrors?.email[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.phone) || Boolean(validationErrors?.phone)
-              }
-            >
-              <FormLabel>Phone</FormLabel>
-              <Input
-                type="tel"
-                {...register("phone", {
-                  required: "This is required",
-                })}
-              />
-              <FormErrorMessage>
-                {errors.phone && errors.phone.message}
-                {validationErrors?.phone && validationErrors?.phone[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.venmo) || Boolean(validationErrors?.venmo)
-              }
-            >
-              <FormLabel>Venmo</FormLabel>
-              <Input {...register("venmo")} />
-              <FormErrorMessage>
-                {errors.venmo && errors.venmo.message}
-                {validationErrors?.venmo && validationErrors?.venmo[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.cashapp) || Boolean(validationErrors?.cashapp)
-              }
-            >
-              <FormLabel>Cash App</FormLabel>
-              <Input {...register("cashapp")} />
-              <FormErrorMessage>
-                {errors.cashapp && errors.cashapp.message}
-                {validationErrors?.cashapp && validationErrors?.cashapp[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <Flex justifyContent="flex-end">
-              <Button
-                type="submit"
-                colorScheme="blue"
-                isLoading={isPending}
-                isDisabled={!isValid || !isDirty}
-              >
-                Save Profile
-              </Button>
-            </Flex>
+            </label>
+            <input
+              id="photo"
+              type="file"
+              onChange={(e) => uploadPhoto(e.target.files?.[0])}
+              hidden
+            />
           </Stack>
-        </form>
-      </Card>
-    </Container>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Email"
+                type="email"
+                value={field.value}
+                onChange={field.onChange}
+                error={Boolean(fieldState.error?.message)}
+                helperText={
+                  (fieldState.error?.message ?? user.isEmailVerified)
+                    ? user.isStudent
+                      ? "Your email is verified and you are a student"
+                      : "Your email is verified"
+                    : "Your email is not verified"
+                }
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="phone"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Phone"
+                type="tel"
+                value={field.value}
+                onChange={field.onChange}
+                error={Boolean(fieldState.error?.message)}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="venmo"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Venmo"
+                type="text"
+                value={field.value}
+                onChange={field.onChange}
+                error={Boolean(fieldState.error?.message)}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="cashapp"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Cash App"
+                type="text"
+                value={field.value}
+                onChange={field.onChange}
+                error={Boolean(fieldState.error?.message)}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+          <Box display="flex" justifyContent="flex-end">
+            <Button
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+              disabled={!isDirty}
+            >
+              Save Profile
+            </Button>
+          </Box>
+        </Stack>
+      </form>
+    </Card>
   );
 }

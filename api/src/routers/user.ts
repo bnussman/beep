@@ -1,17 +1,26 @@
 import { observable } from "@trpc/server/observable";
-import { adminProcedure, authedProcedure, publicProcedure, router } from "../utils/trpc";
-import { beep, car, rating, user, verify_email } from '../../drizzle/schema';
+import {
+  adminProcedure,
+  authedProcedure,
+  publicProcedure,
+  router,
+} from "../utils/trpc";
+import { beep, car, rating, user, verify_email } from "../../drizzle/schema";
 import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
 import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { s3 } from "../utils/s3";
-import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL, WEB_BASE_URL } from "../utils/constants";
+import {
+  DEFAULT_PAGE_SIZE,
+  S3_BUCKET_URL,
+  WEB_BASE_URL,
+} from "../utils/constants";
 import { syncUserPayments } from "../utils/payments";
 import { SendMailOptions } from "nodemailer";
 import { email } from "../utils/email";
-import * as Sentry from '@sentry/bun';
+import * as Sentry from "@sentry/bun";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { isMobilePhone } from "validator";
@@ -24,8 +33,12 @@ export const userRouter = router({
   updates: authedProcedure
     .input(z.string().optional())
     .subscription(({ ctx, input }) => {
-      if (ctx.user.role === 'user' && input && input !== ctx.user.id) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "You don't have permission to subscrbe to another user's user updates." });
+      if (ctx.user.role === "user" && input && input !== ctx.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "You don't have permission to subscrbe to another user's user updates.",
+        });
       }
 
       const userId = input ?? ctx.user.id;
@@ -38,7 +51,7 @@ export const userRouter = router({
         redisSubscriber.subscribe(`user-${userId}`, onUserUpdate);
         (async () => {
           if (!input) {
-            emit.next(ctx.user)
+            emit.next(ctx.user);
           }
         })();
         return () => {
@@ -49,44 +62,48 @@ export const userRouter = router({
     }),
   edit: authedProcedure
     .input(
-      z.object({
-        first: z.string().min(1),
-        last: z.string().min(1),
-        email: z.string().email().endsWith('.edu', 'Email must end with .edu'),
-        phone: z.string().refine(isMobilePhone, 'Not a valid phone number.'),
-        venmo: z.string().nullable(),
-        cashapp: z.string().nullable(),
-        pushToken: z.string(),
-        isBeeping: z.boolean(),
-        singlesRate: z.number().min(1).max(25),
-        groupRate: z.number().min(1).max(25),
-        capacity: z.number().min(1).max(25),
-        location: z.object({
-          longitude: z.number(),
-          latitude: z.number(),
+      z
+        .object({
+          first: z.string().min(1),
+          last: z.string().min(1),
+          email: z
+            .string()
+            .email()
+            .endsWith(".edu", "Email must end with .edu"),
+          phone: z.string().refine(isMobilePhone, "Not a valid phone number."),
+          venmo: z.string().nullable(),
+          cashapp: z.string().nullable(),
+          pushToken: z.string(),
+          isBeeping: z.boolean(),
+          singlesRate: z.number().min(1).max(25),
+          groupRate: z.number().min(1).max(25),
+          capacity: z.number().min(1).max(25),
+          location: z.object({
+            longitude: z.number(),
+            latitude: z.number(),
+          }),
         })
-      }).partial()
+        .partial(),
     )
     .mutation(async ({ ctx, input }) => {
       const values = {
         ...input,
         isEmailVerified: ctx.user.isEmailVerified,
         isStudent: ctx.user.isStudent,
-      }
+      };
 
       if (values.isBeeping === false) {
         const countOfInProgressBeeps = await db
           .select({ count: count() })
           .from(beep)
-          .where(
-            and(
-              eq(beep.beeper_id, ctx.user.id),
-              inProgressBeep
-            )
-          );
+          .where(and(eq(beep.beeper_id, ctx.user.id), inProgressBeep));
 
         if (countOfInProgressBeeps[0].count > 0) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "You can't stop beeping when you have riders in your queue" })
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "You can't stop beeping when you have riders in your queue",
+          });
         }
       }
 
@@ -95,7 +112,9 @@ export const userRouter = router({
         values.isEmailVerified = false;
         values.isEmailVerified = false;
 
-        await db.delete(verify_email).where(eq(verify_email.user_id, ctx.user.id));
+        await db
+          .delete(verify_email)
+          .where(eq(verify_email.user_id, ctx.user.id));
 
         const verifyEmailEntry = {
           id: crypto.randomUUID(),
@@ -107,13 +126,13 @@ export const userRouter = router({
         await db.insert(verify_email).values(verifyEmailEntry);
 
         const mailOptions: SendMailOptions = {
-          from: 'Beep App <banks@ridebeep.app>',
+          from: "Beep App <banks@ridebeep.app>",
           to: input.email,
-          subject: 'Verify your Beep App Email!',
+          subject: "Verify your Beep App Email!",
           html: `Hey ${ctx.user.username}, <br><br>
                   Head to ${WEB_BASE_URL}/account/verify/${verifyEmailEntry.id} to verify your email. This link will expire in 5 hours. <br><br>
                   - Beep App Team
-              `
+              `,
         };
 
         try {
@@ -127,20 +146,17 @@ export const userRouter = router({
         if (!ctx.user.isStudent && !ctx.user.isEmailVerified) {
           throw new TRPCError({
             code: "UNAUTHORIZED",
-            message: "Your edu email must be verified to beep."
+            message: "Your edu email must be verified to beep.",
           });
         }
 
         const c = await db.query.car.findFirst({
-          where: and(
-            eq(car.user_id, ctx.user.id),
-            eq(car.default, true),
-          ),
+          where: and(eq(car.user_id, ctx.user.id), eq(car.default, true)),
         });
         if (!c) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "You must have a default car to beep."
+            message: "You must have a default car to beep.",
           });
         }
       }
@@ -156,7 +172,7 @@ export const userRouter = router({
       if (input.location) {
         const data = {
           id: ctx.user.id,
-          location: input.location
+          location: input.location,
         };
 
         pubSub.publishBeeperLocation(ctx.user.id, data);
@@ -168,22 +184,24 @@ export const userRouter = router({
     .input(
       z.object({
         userId: z.string(),
-        data: z.object({
-          first: z.string(),
-          last: z.string(),
-          email: z.string(),
-          phone: z.string(),
-          venmo: z.string(),
-          cashapp: z.string(),
-          isStudent: z.boolean(),
-          isEmailVerified: z.boolean(),
-          isBeeping: z.boolean(),
-          location: z.object({
-            longitude: z.number(),
-            latitude: z.number(),
+        data: z
+          .object({
+            first: z.string(),
+            last: z.string(),
+            email: z.string(),
+            phone: z.string(),
+            venmo: z.string(),
+            cashapp: z.string(),
+            isStudent: z.boolean(),
+            isEmailVerified: z.boolean(),
+            isBeeping: z.boolean(),
+            location: z.object({
+              longitude: z.number(),
+              latitude: z.number(),
+            }),
           })
-        }).partial(),
-      })
+          .partial(),
+      }),
     )
     .mutation(async ({ input }) => {
       const existingUser = await db.query.user.findFirst({
@@ -198,11 +216,15 @@ export const userRouter = router({
         throw new TRPCError({ code: "NOT_FOUND" });
       }
 
-      if (!existingUser.isEmailVerified && input.data.isEmailVerified && existingUser.pushToken) {
+      if (
+        !existingUser.isEmailVerified &&
+        input.data.isEmailVerified &&
+        existingUser.pushToken
+      ) {
         sendNotification({
           to: existingUser.pushToken,
           title: "Account Verified ✅",
-          body: "An admin has approved your account."
+          body: "An admin has approved your account.",
         });
       }
 
@@ -225,10 +247,9 @@ export const userRouter = router({
 
       return u[0];
     }),
-  syncMyPayments: authedProcedure
-    .mutation(async ({ ctx }) => {
-      return await syncUserPayments(ctx.user.id);
-    }),
+  syncMyPayments: authedProcedure.mutation(async ({ ctx }) => {
+    return await syncUserPayments(ctx.user.id);
+  }),
   syncPayments: authedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
@@ -244,9 +265,9 @@ export const userRouter = router({
       const {
         success,
         data: input,
-        error
+        error,
       } = signupSchema.safeParse({
-        photo: formData.get("photo")
+        photo: formData.get("photo"),
       });
 
       if (!success) {
@@ -258,23 +279,25 @@ export const userRouter = router({
 
       const extention = input.photo.name.substring(
         input.photo.name.lastIndexOf("."),
-        input.photo.name.length
+        input.photo.name.length,
       );
 
       const filename = ctx.user.id + "-" + Date.now() + extention;
 
       const objectKey = "images/" + filename;
 
-      await s3.write(
-        objectKey,
-        input.photo,
-        { acl: 'public-read' }
-      );
+      await s3.write(objectKey, input.photo, { acl: "public-read" });
 
       if (ctx.user.photo) {
         const key = ctx.user.photo.split(S3_BUCKET_URL)[1];
 
-        s3.delete(key);
+        if (key) {
+          s3.delete(key);
+        } else {
+          Sentry.captureMessage(
+            "Unable to delete profile photo from S3 due to invalid URL format",
+          );
+        }
       }
 
       const u = await db
@@ -293,19 +316,21 @@ export const userRouter = router({
         page: z.number().default(1),
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
         query: z.string().optional(),
-        isBeeping: z.boolean().optional()
-      })
+        isBeeping: z.boolean().optional(),
+      }),
     )
     .query(async ({ input }) => {
       const where = and(
         input.isBeeping ? eq(user.isBeeping, true) : undefined,
-        input.query ? or(
-          eq(user.id, input.query),
-          like(user.first, input.query),
-          like(user.last, input.query),
-          like(user.email, input.query),
-          like(user.username, input.query),
-        ) : undefined
+        input.query
+          ? or(
+              eq(user.id, input.query),
+              like(user.first, input.query),
+              like(user.last, input.query),
+              like(user.email, input.query),
+              like(user.username, input.query),
+            )
+          : undefined,
       );
 
       const offset = (input.page - 1) * input.pageSize;
@@ -334,7 +359,8 @@ export const userRouter = router({
         .limit(input.pageSize)
         .offset(offset);
 
-      const usersCount = await db.select({ count: count() })
+      const usersCount = await db
+        .select({ count: count() })
         .from(user)
         .where(where);
 
@@ -347,36 +373,34 @@ export const userRouter = router({
         results,
       };
     }),
-  user: authedProcedure
-    .input(z.string())
-    .query(async ({ input, ctx }) => {
-      const u = await db.query.user.findFirst({
-        where: eq(user.id, input),
-        columns: {
-          password: false,
-          passwordType: false,
-        },
-      });
+  user: authedProcedure.input(z.string()).query(async ({ input, ctx }) => {
+    const u = await db.query.user.findFirst({
+      where: eq(user.id, input),
+      columns: {
+        password: false,
+        passwordType: false,
+      },
+    });
 
-      if (!u) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
+    if (!u) {
+      throw new TRPCError({ code: "NOT_FOUND" });
+    }
 
-      if (ctx.user.role === 'user' && input !== ctx.user.id) {
-        u.phone = '';
-        u.email = '';
-        u.pushToken = null;
-        u.location = null;
-      }
+    if (ctx.user.role === "user" && input !== ctx.user.id) {
+      u.phone = "";
+      u.email = "";
+      u.pushToken = null;
+      u.location = null;
+    }
 
-      return u;
-    }),
+    return u;
+  }),
   usersWithBeeps: adminProcedure
     .input(
       z.object({
         page: z.number().default(1),
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const users = await db
@@ -387,7 +411,7 @@ export const userRouter = router({
             last: user.last,
             photo: user.photo,
           },
-          beeps: count(beep.beeper_id).as('beeps')
+          beeps: count(beep.beeper_id).as("beeps"),
         })
         .from(user)
         .leftJoin(beep, eq(user.id, beep.beeper_id))
@@ -412,7 +436,7 @@ export const userRouter = router({
       z.object({
         page: z.number().default(1),
         pageSize: z.number().default(DEFAULT_PAGE_SIZE),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const users = await db
@@ -423,7 +447,7 @@ export const userRouter = router({
             last: user.last,
             photo: user.photo,
           },
-          rides: count(beep.rider_id).as('rides')
+          rides: count(beep.rider_id).as("rides"),
         })
         .from(user)
         .leftJoin(beep, eq(user.id, beep.rider_id))
@@ -443,68 +467,66 @@ export const userRouter = router({
         pageSize: input.pageSize,
       };
     }),
-  usersByDomain: adminProcedure
-    .query(async () => {
-      return await db
-        .select({
-          domain: sql<string>`substring(email from '@(.*)$')`.as('domain'),
-          count: count()
-        })
-        .from(user)
-        .groupBy(sql`domain`)
-        .orderBy(sql`count desc`);
-    }),
-  deleteMyAccount: authedProcedure
-    .mutation(async ({ ctx }) => {
-      if (ctx.user.role === 'admin') {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Admins can't delete their own accounts."
-        });
-      }
+  usersByDomain: adminProcedure.query(async () => {
+    return await db
+      .select({
+        domain: sql<string>`substring(email from '@(.*)$')`.as("domain"),
+        count: count(),
+      })
+      .from(user)
+      .groupBy(sql`domain`)
+      .orderBy(sql`count desc`);
+  }),
+  deleteMyAccount: authedProcedure.mutation(async ({ ctx }) => {
+    if (ctx.user.role === "admin") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Admins can't delete their own accounts.",
+      });
+    }
 
-      await db.delete(user).where(eq(user.id, ctx.user.id));
-    }),
-  deleteUser: adminProcedure
-    .input(z.string())
-    .mutation(async ({ input }) => {
-      await db.delete(user).where(eq(user.id, input));
-    }),
-  reconcileUserRatings: adminProcedure
-    .mutation(async () => {
-      await db.update(user).set({ rating: null });
+    await db.delete(user).where(eq(user.id, ctx.user.id));
+  }),
+  deleteUser: adminProcedure.input(z.string()).mutation(async ({ input }) => {
+    await db.delete(user).where(eq(user.id, input));
+  }),
+  reconcileUserRatings: adminProcedure.mutation(async () => {
+    await db.update(user).set({ rating: null });
 
-      const ratings = await db
-        .select({
-          userId: rating.rated_id,
-          avgRating: avg(rating.stars)
-        })
-        .from(rating)
-        .groupBy(rating.rated_id);
+    const ratings = await db
+      .select({
+        userId: rating.rated_id,
+        avgRating: avg(rating.stars),
+      })
+      .from(rating)
+      .groupBy(rating.rated_id);
 
-      if (!ratings) {
-        throw new Error("No ratings!");
-      }
+    if (!ratings) {
+      throw new Error("No ratings!");
+    }
 
-      for (const { userId, avgRating } of ratings) {
-        await db.update(user).set({ rating: avgRating }).where(eq(user.id, userId));
-      }
+    for (const { userId, avgRating } of ratings) {
+      await db
+        .update(user)
+        .set({ rating: avgRating })
+        .where(eq(user.id, userId));
+    }
 
-      return ratings.length;
-    }),
+    return ratings.length;
+  }),
   userCount: publicProcedure.query(async () => {
     const usersCount = await db.select({ count: count() }).from(user);
     return usersCount[0].count;
   }),
   numberOfUsersSubscription: publicProcedure.subscription(() => {
-    return observable<'increment' | 'decrement'>((emit) => {
+    return observable<"increment" | "decrement">((emit) => {
       const onUserUpdate = (message: string) => {
-        emit.next(message as 'increment' | 'decrement');
+        emit.next(message as "increment" | "decrement");
       };
       redisSubscriber.subscribe("user-count", onUserUpdate);
       return () => {
         redisSubscriber.unsubscribe(`user-count`, onUserUpdate);
-      }
+      };
     });
   }),
 });
