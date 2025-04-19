@@ -1,6 +1,8 @@
 import { createTheme } from "@mui/material/styles";
+import React from 'react';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-export const muiTheme = createTheme({
+export const theme = createTheme({
   cssVariables: true,
   colorSchemes: {
     light: true,
@@ -21,6 +23,16 @@ export const muiTheme = createTheme({
       styleOverrides: {
         head: {
           fontWeight: "bold",
+        },
+      },
+    },
+    MuiAccordionSummary: {
+      defaultProps: {
+        expandIcon: <ExpandMoreIcon />
+      },
+      styleOverrides: {
+        root: {
+          fontWeight: 'bold',
         },
       },
     },
