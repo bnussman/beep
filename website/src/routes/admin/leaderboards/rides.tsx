@@ -1,22 +1,32 @@
-import React from 'react'
-import { Table } from "@chakra-ui/react"
-import { leaderboardsRoute } from '.';
-import { createRoute, Link, useNavigate } from '@tanstack/react-router';
-import { trpc } from '../../../utils/trpc';
-import { PaginationFooter } from '../../../components/PaginationFooter';
-import { Stack, Avatar, TableCell, TableContainer, TableHead, TableRow, Paper, TableBody, Typography } from '@mui/material';
-import { TableLoading } from '../../../components/TableLoading';
-import { TableError } from '../../../components/TableError';
-import { keepPreviousData } from '@tanstack/react-query';
+import React from "react";
+import { leaderboardsRoute } from ".";
+import { createRoute, Link, useNavigate } from "@tanstack/react-router";
+import { trpc } from "../../../utils/trpc";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import {
+  Table,
+  Stack,
+  Avatar,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TableBody,
+  Typography,
+} from "@mui/material";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
+import { keepPreviousData } from "@tanstack/react-query";
 
 export const ridesLeaderboard = createRoute({
   component: Rides,
-  path: 'rides',
+  path: "rides",
   getParentRoute: () => leaderboardsRoute,
   validateSearch: (search: Record<string, string>) => {
     return {
       page: Number(search?.page ?? 1),
-    }
+    };
   },
 });
 
@@ -30,7 +40,7 @@ export function Rides() {
     },
     {
       placeholderData: keepPreviousData,
-    }
+    },
   );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
@@ -61,7 +71,9 @@ export function Rides() {
                   <Link to="/admin/users/$userId" params={{ userId: user.id }}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Avatar src={user.photo ?? undefined} />
-                      <Typography>{user.first} {user.last}</Typography>
+                      <Typography>
+                        {user.first} {user.last}
+                      </Typography>
                     </Stack>
                   </Link>
                 </TableCell>

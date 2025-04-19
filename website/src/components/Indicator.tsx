@@ -1,4 +1,4 @@
-import { Box, BoxProps, Tooltip } from "@chakra-ui/react";
+import { Box, BoxProps, Tooltip, colors, useTheme } from "@mui/material";
 import React from "react";
 
 interface Props extends BoxProps {
@@ -7,20 +7,25 @@ interface Props extends BoxProps {
 }
 
 export function Indicator({ color, tooltip, ...rest }: Props) {
+  const theme = useTheme();
+
   const getColor = () => {
-    if (color === "white") {
-      return "white";
+    if (color === "green") {
+      return theme.palette.success.main;
     }
-    if (color === "black") {
-      return "black";
+    if (color === "red") {
+      return theme.palette.error.main;
     }
-    if (color === "tan") {
-      return "tan";
+    if (color === "yellow") {
+      return theme.palette.warning.main;
+    }
+    if (color === "blue") {
+      return theme.palette.info.main;
     }
     if (color === "silver") {
-      return "gray.400";
+      return "gray";
     }
-    return `${color}.400`;
+    return color;
   };
 
   const getBorderProps = () => {
@@ -30,12 +35,23 @@ export function Indicator({ color, tooltip, ...rest }: Props) {
     return {};
   };
 
-  const I = 
-    <Box display="inline-block" w={4} h={4} bgColor={getColor()} borderRadius="full" {...getBorderProps()} {...rest} />;
+  const I = (
+    <Box
+      sx={{
+        display: "inline-block",
+        width: "16px",
+        height: "16px",
+        backgroundColor: getColor(),
+        borderRadius: "50%",
+        ...getBorderProps(),
+      }}
+      {...rest}
+    />
+  );
 
   if (tooltip) {
     return (
-      <Tooltip label={tooltip} fontSize="lg" hasArrow>
+      <Tooltip title={tooltip} arrow>
         {I}
       </Tooltip>
     );

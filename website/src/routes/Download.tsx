@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { VStack, Spinner, Center, Text } from '@chakra-ui/react';
-import { getMobileOperatingSystem } from '../utils/utils';
-import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from '../utils/root';
+import React, { useEffect } from "react";
+import { getDownloadLink } from "../utils/utils";
+import { createRoute } from "@tanstack/react-router";
+import { rootRoute } from "../utils/root";
+import { CircularProgress, Typography, Stack } from "@mui/material";
 
 export const downloadRoute = createRoute({
   path: "/download",
@@ -12,18 +12,20 @@ export const downloadRoute = createRoute({
 
 export function Download() {
   useEffect(() => {
-    if (getMobileOperatingSystem() === 'Android') {
-      window.location.href = 'https://play.google.com/store/apps/details?id=app.ridebeep.App';
-    }
-    window.location.href = 'https://apps.apple.com/us/app/ride-beep-app/id1528601773';
+    window.location.href = getDownloadLink();
   }, []);
 
   return (
-    <Center h="200px">
-      <VStack spacing={4}>
-        <Text fontSize="4xl">Redirecting you to download</Text>
-        <Spinner size="xl" />
-      </VStack>
-    </Center>
+    <Stack
+      spacing={2}
+      height="200px"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Typography variant="h5" fontWeight="bold">
+        Redirecting you to download
+      </Typography>
+      <CircularProgress />
+    </Stack>
   );
 }

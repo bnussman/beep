@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Indicator } from "../../../components/Indicator";
-import { Table, Tbody } from "@chakra-ui/react";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { trpc } from "../../../utils/trpc";
@@ -10,6 +9,8 @@ import { PaginationFooter } from "../../../components/PaginationFooter";
 import {
   Paper,
   Stack,
+  Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -85,7 +86,7 @@ export function Reports() {
               <TableCell />
             </TableRow>
           </TableHead>
-          <Tbody>
+          <TableBody>
             {data?.results === 0 && <TableEmpty colSpan={6} />}
             {error && <TableError colSpan={6} error={error.message} />}
             {isLoading && <TableLoading colSpan={6} />}
@@ -106,7 +107,7 @@ export function Reports() {
                 </TableCell>
               </TableRow>
             ))}
-          </Tbody>
+          </TableBody>
         </Table>
       </TableContainer>
       <PaginationFooter

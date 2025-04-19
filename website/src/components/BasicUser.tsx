@@ -1,9 +1,14 @@
 import React from "react";
-import { Text, Avatar, Flex } from "@chakra-ui/react";
+import { Stack, Avatar, Typography } from "@mui/material";
 import { Link } from "@tanstack/react-router";
 
 interface Props {
-  user: { id: string, photo: string | null | undefined, first: string, last: string };
+  user: {
+    id: string;
+    photo: string | null | undefined;
+    first: string;
+    last: string;
+  };
 }
 
 export function BasicUser(props: Props) {
@@ -11,10 +16,12 @@ export function BasicUser(props: Props) {
 
   return (
     <Link to="/admin/users/$userId" params={{ userId: user.id }}>
-      <Flex align="center">
-        <Avatar src={user.photo ?? undefined} mr={2} />
-        <Text>{user.first} {user.last}</Text>
-      </Flex>
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Avatar src={user.photo ?? undefined} sx={{ width: 64, height: 64 }} />
+        <Typography>
+          {user.first} {user.last}
+        </Typography>
+      </Stack>
     </Link>
   );
 }

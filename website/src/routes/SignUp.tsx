@@ -1,31 +1,23 @@
 import React, { useMemo } from "react";
 import { trpc } from "../utils/trpc";
-import { Card } from "../components/Card";
-import { useForm } from "react-hook-form";
-import { PasswordInput } from "../components/PasswordInput";
-import { Link, createRoute, useNavigate } from "@tanstack/react-router";
+import { useForm, Controller } from "react-hook-form";
+import {
+  Link as RouterLink,
+  createRoute,
+  useNavigate,
+} from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
 import {
-  Link as ChakraLink,
-  Text,
+  Alert,
   Avatar,
-  Box,
+  Card,
+  TextField,
+  Link,
+  Typography,
   Button,
-  Input,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  Code,
-  Container,
-  HStack,
   Stack,
-  Spacer,
-  Center,
-  Heading,
-  FormErrorMessage,
-  useBreakpointValue,
-} from "@chakra-ui/react";
-import { Alert } from "@mui/material";
+  Box,
+} from "@mui/material";
 
 export const signupRoute = createRoute({
   component: SignUp,
@@ -46,26 +38,33 @@ interface SignUpFormValues {
 
 export function SignUp() {
   const navigate = useNavigate();
-  const avatarSize = useBreakpointValue({ base: "xl", md: "2xl" });
-
-  const {
-    mutateAsync: signup,
-    error,
-    isPending,
-  } = trpc.auth.signup.useMutation();
 
   const {
     handleSubmit,
-    register,
+    control,
     watch,
-    formState: { errors },
+    register,
+    setError,
+    formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({ mode: "onChange" });
+
+  const { mutateAsync } = trpc.auth.signup.useMutation({
+    onError(errors) {
+      if (errors.data?.zodError?.fieldErrors) {
+        for (const field in errors.data?.zodError?.fieldErrors) {
+          setError(field as keyof SignUpFormValues, {
+            message: errors.data?.zodError?.fieldErrors[field]?.[0],
+          });
+        }
+      } else {
+        setError("root", { message: errors.message });
+      }
+    },
+  });
 
   const utils = trpc.useUtils();
 
   const photo = watch("photo");
-
-  const validationErrors = error?.data?.zodError?.fieldErrors;
 
   const onSubmit = handleSubmit(async (variables, e) => {
     const formData = new FormData();
@@ -80,206 +79,162 @@ export function SignUp() {
       }
     }
 
-    const data = await signup(formData);
+    const data = await mutateAsync(formData);
 
-    if (data) {
-      localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify(data));
 
-      utils.user.me.setData(undefined, data.user);
+    utils.user.me.setData(undefined, data.user);
 
-      navigate({ to: "/" });
-    }
+    navigate({ to: "/" });
   });
 
   const Image = useMemo(
     () => (
       <Avatar
-        size={avatarSize}
         src={photo?.[0] ? URL.createObjectURL(photo?.[0]) : undefined}
-        cursor="pointer"
+        sx={{ cursor: "pointer", width: 128, height: 128 }}
       />
     ),
-    [photo, avatarSize],
+    [photo],
   );
 
   return (
-    <Container maxW="container.sm" p={[0]}>
-      <Card>
-        <Center pb={8}>
-          <Heading>Sign Up</Heading>
-        </Center>
-        {error && !validationErrors && (
-          <Alert severity="error">{error.message}</Alert>
-        )}
-        <Alert severity="info">
-          By signing up, you agree to our{" "}
-          <ChakraLink as={Link} preload="intent" to="/terms">
-            Terms of Service
-          </ChakraLink>{" "}
-          and{" "}
-          <ChakraLink as={Link} to="/privacy">
-            Privacy Policy
-          </ChakraLink>
-        </Alert>
-        <form onSubmit={onSubmit}>
-          <Stack>
-            <HStack>
-              <Stack w="full">
-                <FormControl
-                  isInvalid={
-                    Boolean(errors.first) || Boolean(validationErrors?.first)
-                  }
-                >
-                  <FormLabel>First Name</FormLabel>
-                  <Input
-                    type="text"
-                    id="first"
-                    {...register("first", {
-                      required: "This is required",
-                    })}
+    <Card sx={{ p: 3 }}>
+      <form onSubmit={onSubmit}>
+        <Stack spacing={2}>
+          <Typography variant="h4" fontWeight="bold">
+            Sign Up
+          </Typography>
+          {errors.root?.message && (
+            <Alert severity="error">{errors.root.message}</Alert>
+          )}
+          <Alert severity="info">
+            By signing up, you agree to our{" "}
+            <Link component={RouterLink} preload="intent" to="/terms">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link component={RouterLink} to="/privacy">
+              Privacy Policy
+            </Link>
+          </Alert>
+          <Stack direction="row" spacing={2}>
+            <Stack spacing={2} flexGrow={1}>
+              <Controller
+                control={control}
+                name="first"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label="First Name"
+                    onChange={field.onChange}
+                    helperText={fieldState.error?.message}
+                    error={Boolean(fieldState.error?.message)}
+                    value={field.value}
                   />
-                  <FormErrorMessage>
-                    {errors.first && errors.first.message}
-                    {validationErrors?.first && validationErrors?.first[0]}
-                  </FormErrorMessage>
-                </FormControl>
-                <FormControl
-                  isInvalid={
-                    Boolean(errors.last) || Boolean(validationErrors?.last)
-                  }
-                >
-                  <FormLabel>Last Name</FormLabel>
-                  <Input
-                    type="text"
-                    id="last"
-                    {...register("last", {
-                      required: "This is required",
-                    })}
+                )}
+              />
+              <Controller
+                control={control}
+                name="last"
+                render={({ field, fieldState }) => (
+                  <TextField
+                    label="Last Name"
+                    onChange={field.onChange}
+                    helperText={fieldState.error?.message}
+                    error={Boolean(fieldState.error?.message)}
+                    value={field.value}
                   />
-                  <FormErrorMessage>
-                    {errors.last && errors.last.message}
-                    {validationErrors?.last && validationErrors?.last[0]}
-                  </FormErrorMessage>
-                </FormControl>
-              </Stack>
-              <Spacer />
-              <Box>
-                <FormControl
-                  isInvalid={
-                    Boolean(errors.photo) || Boolean(validationErrors?.photo)
-                  }
-                >
-                  <FormLabel htmlFor="photo">{Image}</FormLabel>
-                  <Input
-                    hidden
-                    variant="unstyled"
-                    id="photo"
-                    type="file"
-                    {...register("photo", {
-                      required: "This is required",
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.photo &&
-                      (errors.photo.message as unknown as string)}
-                    {validationErrors?.photo && validationErrors?.photo[0]}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-            </HStack>
-            <FormControl
-              isInvalid={Boolean(
-                Boolean(errors.email) || validationErrors?.email,
+                )}
+              />
+            </Stack>
+            <Stack>
+              <label htmlFor="photo">{Image}</label>
+              <input hidden id="photo" type="file" {...register("photo")} />
+              {errors.photo?.message && (
+                <Alert severity="error">{errors.photo.message}</Alert>
               )}
-            >
-              <FormLabel>Email</FormLabel>
-              <Input
+            </Stack>
+          </Stack>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Email"
                 type="email"
-                id="email"
-                {...register("email", {
-                  required: "This is required",
-                })}
+                onChange={field.onChange}
+                helperText={
+                  fieldState.error?.message ??
+                  "You must use a .edu to be eligible to use the Beep App"
+                }
+                error={Boolean(fieldState.error?.message)}
+                value={field.value}
               />
-              <FormHelperText>
-                You must use a <Code>.edu</Code> to be eligible to use the Beep
-                App
-              </FormHelperText>
-              <FormErrorMessage>
-                {errors.email && errors.email.message}
-                {validationErrors?.email && validationErrors?.email[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.phone) || Boolean(validationErrors?.phone)
-              }
-            >
-              <FormLabel>Phone Number</FormLabel>
-              <Input
-                type="phone"
-                id="phone"
-                {...register("phone", {
-                  required: "This is required",
-                })}
+            )}
+          />
+          <Controller
+            control={control}
+            name="phone"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Phone Number"
+                type="tel"
+                onChange={field.onChange}
+                helperText={fieldState.error?.message}
+                error={Boolean(fieldState.error?.message)}
+                value={field.value}
               />
-              <FormErrorMessage>
-                {errors.phone && errors.phone.message}
-                {validationErrors?.phone && validationErrors?.phone[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.venmo) || Boolean(validationErrors?.venmo)
-              }
-            >
-              <FormLabel>Venmo Username</FormLabel>
-              <Input type="text" id="venmo" {...register("venmo")} />
-              <FormErrorMessage>
-                {errors.venmo && errors.venmo.message}
-                {validationErrors?.venmo && validationErrors?.venmo[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.username) || Boolean(validationErrors?.username)
-              }
-            >
-              <FormLabel>Username</FormLabel>
-              <Input
+            )}
+          />
+          <Controller
+            control={control}
+            name="venmo"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Venmo"
                 type="text"
-                id="username"
-                {...register("username", {
-                  required: "This is required",
-                })}
+                onChange={field.onChange}
+                helperText={fieldState.error?.message}
+                error={Boolean(fieldState.error?.message)}
+                value={field.value}
               />
-              <FormErrorMessage>
-                {errors.username && errors.username.message}
-                {validationErrors?.username && validationErrors?.username[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl
-              isInvalid={
-                Boolean(errors.password) || Boolean(validationErrors?.password)
-              }
-            >
-              <FormLabel>Password</FormLabel>
-              <PasswordInput
-                id="password"
-                {...register("password", {
-                  required: "This is required",
-                })}
+            )}
+          />
+          <Controller
+            control={control}
+            name="username"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Username"
+                type="text"
+                onChange={field.onChange}
+                helperText={fieldState.error?.message}
+                error={Boolean(fieldState.error?.message)}
+                value={field.value}
               />
-              <FormErrorMessage>
-                {errors.password && errors.password.message}
-                {validationErrors?.password && validationErrors?.password[0]}
-              </FormErrorMessage>
-            </FormControl>
-            <Button type="submit" isLoading={isPending}>
+            )}
+          />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Password"
+                type="password"
+                onChange={field.onChange}
+                helperText={fieldState.error?.message}
+                error={Boolean(fieldState.error?.message)}
+                value={field.value}
+              />
+            )}
+          />
+          <Box display="flex" justifyContent="flex-end">
+            <Button type="submit" loading={isSubmitting} variant="contained">
               Sign Up
             </Button>
-          </Stack>
-        </form>
-      </Card>
-    </Container>
+          </Box>
+        </Stack>
+      </form>
+    </Card>
   );
 }

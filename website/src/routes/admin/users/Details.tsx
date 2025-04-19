@@ -1,11 +1,10 @@
 import React from "react";
-import { Box, Text, Stack, Tooltip } from "@chakra-ui/react";
 import { Indicator } from "../../../components/Indicator";
 import { printStars } from "../ratings";
 import { createRoute, useParams } from "@tanstack/react-router";
 import { userRoute } from "./User";
 import { trpc } from "../../../utils/trpc";
-import { Alert } from "@mui/material";
+import { Alert, Stack, Typography, Tooltip, Box } from "@mui/material";
 
 export const userDetailsRoute = createRoute({
   component: Details,
@@ -38,56 +37,54 @@ export function Details() {
         <strong>Email:</strong>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
-          <Text>{user.email}</Text>
+          <Typography>{user.email}</Typography>
         </Stack>
       </Box>
       <Box>
         <strong>Push Notification Token:</strong>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Indicator mr={2} color={user.pushToken ? "green" : "red"} />
-          <Text>{user.pushToken ?? "N/A"}</Text>
+          <Typography>{user.pushToken ?? "N/A"}</Typography>
         </Stack>
       </Box>
       <Box>
         <strong>Rating:</strong>
         {user.rating ? (
-          <Text>
-            <Tooltip
-              label={user.rating}
-              aria-label={`User rating of ${user.rating}`}
-            >
-              {printStars(Number(user.rating))}
-            </Tooltip>
-          </Text>
+          <Tooltip
+            title={user.rating}
+            aria-label={`User rating of ${user.rating}`}
+          >
+            <Typography>{printStars(Number(user.rating))}</Typography>
+          </Tooltip>
         ) : (
-          <Text>No Rating</Text>
+          <Typography>No Rating</Typography>
         )}
       </Box>
       <Box>
         <strong>Phone:</strong>
-        <Text>{user.phone || ""}</Text>
+        <Typography>{user.phone}</Typography>
       </Box>
       <Box>
         <strong>Queue Size:</strong>
-        <Text>{user.queueSize}</Text>
+        <Typography>{user.queueSize}</Typography>
       </Box>
       <Box>
         <strong>Capacity:</strong>
-        <Text>{user.capacity}</Text>
+        <Typography>{user.capacity}</Typography>
       </Box>
       <Box>
         <strong>Rate:</strong>
-        <Text>
+        <Typography>
           ${user.singlesRate} / ${user.groupRate}
-        </Text>
+        </Typography>
       </Box>
       <Box>
         <strong>Venmo usename:</strong>
-        <Text>{user.venmo || "N/A"}</Text>
+        <Typography>{user.venmo || "N/A"}</Typography>
       </Box>
       <Box>
         <strong>CashApp usename:</strong>
-        <Text>{user.cashapp || "N/A"}</Text>
+        <Typography>{user.cashapp || "N/A"}</Typography>
       </Box>
     </Stack>
   );
