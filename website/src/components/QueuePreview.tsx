@@ -2,10 +2,10 @@ import React from 'react'
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Indicator } from './Indicator';
-import { Text, Avatar, Box, Center, HStack, Spacer, Spinner } from '@chakra-ui/react';
 import { Link } from '@tanstack/react-router';
 import { trpc } from '../utils/trpc';
 import { beepStatusMap } from '../routes/admin/beeps';
+import { Avatar, Box, CircularProgress, Stack, Typography } from '@mui/material';
 
 dayjs.extend(duration);
 
@@ -26,44 +26,43 @@ export function QueuePreview({ userId }: Props) {
 
   if (isLoading) {
     return (
-      <Center>
-        <Spinner />
-      </Center>
+      <Box display="flex" alignItems="center" justifyContent="center" height="100px">
+        <CircularProgress size={24} />
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Center>
+      <Box display="flex" alignItems="center" justifyContent="center" height="100px">
         {error.message}
-      </Center>
+      </Box>
     );
   }
 
   if (data?.length === 0) {
     return (
-      <Center h="100px">
+      <Box display="flex" alignItems="center" justifyContent="center" height="100px">
         This user's queue is empty.
-      </Center>
+      </Box>
     );
   }
 
   return (
     <Box>
       {data?.map((beep) => (
-        <HStack key={beep.id}>
+        <Stack key={beep.id} direction="row">
           <Link to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
-            <Avatar src={beep.rider.photo || ''} size="xs" />
+            <Avatar src={beep.rider.photo || ''} sx={{ width: 16, height: 16 }} />
           </Link>
           <Link to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
             <Box fontWeight="bold" whiteSpace="nowrap">{beep.rider.first} {beep.rider.last}</Box>
           </Link>
-          <Text noOfLines={1}>
-            {beep.status}
-          </Text>
-          <Spacer />
+          <Typography>
+            {beep.status.replaceAll("_", ' ')}
+          </Typography>
           <Indicator color={beepStatusMap[beep.status]} />
-        </HStack>
+        </Stack>
       ))}
     </Box>
   );

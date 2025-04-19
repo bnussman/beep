@@ -1,4 +1,4 @@
-import { Box, BoxProps, Tooltip, colors, useTheme } from "@mui/material";
+import { Box, BoxProps, Tooltip, useTheme } from "@mui/material";
 import React from "react";
 
 interface Props extends BoxProps {
@@ -11,16 +11,16 @@ export function Indicator({ color, tooltip, ...rest }: Props) {
 
   const getColor = () => {
     if (color === "green") {
-      return theme.palette.success.main;
+      return theme.palette.success.light;
     }
     if (color === "red") {
-      return theme.palette.error.main;
+      return theme.palette.error.light;
     }
     if (color === "yellow") {
-      return theme.palette.warning.main;
+      return theme.palette.warning.light;
     }
     if (color === "blue") {
-      return theme.palette.info.main;
+      return theme.palette.info.light;
     }
     if (color === "silver") {
       return "gray";

@@ -130,8 +130,10 @@ export function EditProfile() {
           )}
           {isUploadPending && (
             <Alert severity="info">
-              Uploading Profile Photo
-              <CircularProgress />
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography>Uploading Profile Photo</Typography>
+                <CircularProgress size={16} />
+              </Stack>
             </Alert>
           )}
           {uploadError && <Alert severity="error">{uploadError.message}</Alert>}

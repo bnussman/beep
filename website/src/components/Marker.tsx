@@ -3,25 +3,14 @@ import { Marker as _Marker } from 'react-map-gl/mapbox';
 import { QueuePreview } from "./QueuePreview";
 import {
   Avatar,
-  Box,
-  Text,
-  Center,
-  useClipboard,
-  useToast,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverFooter,
-  PopoverHeader,
-  PopoverTrigger,
-  Portal,
-  HStack,
+  Typography,
   Stack,
   Tooltip,
-} from "@chakra-ui/react";
+  Popover,
+  Button,
+} from "@mui/material";
 import { Link } from "@tanstack/react-router";
+import { useToast } from "@chakra-ui/react";
 
 interface Props {
   latitude: number;
@@ -34,65 +23,67 @@ interface Props {
 }
 
 export function Marker(props: Props) {
-  const { latitude, longitude, variant, userId, username, photo, name } = props;
-  const { onCopy } = useClipboard(`${latitude},${longitude}`);
   const toast = useToast();
+  const { latitude, longitude, variant, userId, username, photo, name } = props;
 
-  const copy = () => {
-    onCopy();
-    toast({ title: "Copied coordinates to clipboard", status: "info" });
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
 
   if (variant === 'queue') {
     return (
-      <_Marker longitude={longitude} latitude={latitude}>
-        <Popover isLazy>
-          <PopoverTrigger>
-            <Box width="max-content" cursor="pointer">
-              <Center>
-                <Avatar src={photo || ''} size="xs" />
-              </Center>
-              <Text fontWeight="bold">{name}</Text>
-            </Box>
-          </PopoverTrigger>
-          <Portal>
-            <PopoverContent>
-              <PopoverArrow />
-              <PopoverHeader>
-                <Link to="/admin/users/$userId/queue" params={{ userId }}>
-                  <HStack>
-                    <Avatar src={photo || ''} />
-                    <Stack spacing={0}>
-                      <Text fontWeight="extrabold">{name}</Text>
-                      <Text>@{username}</Text>
-                    </Stack>
-                  </HStack>
-                </Link>
-              </PopoverHeader>
-              <PopoverCloseButton />
-              <PopoverBody>
-                <QueuePreview userId={userId} />
-              </PopoverBody>
-              <PopoverFooter cursor="pointer" onClick={copy}>{latitude.toFixed(3)} {longitude.toFixed(3)}</PopoverFooter>
-            </PopoverContent>
-          </Portal>
+      <div>
+        <_Marker longitude={longitude} latitude={latitude}>
+          <Button onClick={handleClick}>
+            <Stack alignItems="center">
+              <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
+              <Typography>{name}</Typography>
+            </Stack>
+          </Button>
+        </_Marker>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          slotProps={{
+            paper: { sx: { p: 1 } }
+          }}
+        >
+          <Link to="/admin/users/$userId/queue" params={{ userId }}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Avatar src={photo || ''} />
+              <Stack spacing={0}>
+                <Typography fontWeight="extrabold">{name}</Typography>
+                <Typography>@{username}</Typography>
+              </Stack>
+            </Stack>
+          </Link>
+          <QueuePreview userId={userId} />
+          <Typography>{latitude.toFixed(3)} {longitude.toFixed(3)}</Typography>
         </Popover>
-      </_Marker>
+      </div>
     );
   }
 
   return (
     <_Marker latitude={latitude} longitude={longitude}>
-      <Box width="max-content" onClick={copy}>
-        <Tooltip label={`${latitude}, ${longitude}`} aria-label={`${latitude}, ${longitude}`}>
-          <Box>
-            <Center>
-              <Avatar src={photo || ''} size="xs" />
-            </Center>
-            <Text fontWeight="bold">{name}</Text>
-          </Box>
-        </Tooltip>
-      </Box>
+      <Tooltip title={`${latitude}, ${longitude}`} arrow>
+        <Stack alignItems="center">
+          <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
+          <Typography>{name}</Typography>
+        </Stack>
+      </Tooltip>
     </_Marker>
   );
 };
