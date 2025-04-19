@@ -13,7 +13,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 export function App() {
   return (
     <ThemeProvider theme={{ [THEME_ID]: theme }}>
-      <NotificationsProvider>
+      <NotificationsProvider slotProps={{ snackbar: { autoHideDuration: 5_000 } } }>
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             <CssBaseline enableColorScheme />
