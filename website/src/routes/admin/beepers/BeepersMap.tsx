@@ -1,16 +1,15 @@
 import React from "react";
-import { Box } from "@chakra-ui/react";
+import { Box } from "@mui/material";
 import { Marker } from "../../../components/Marker";
 import { Map } from "../../../components/Map";
 import { RouterOutput } from "../../../utils/trpc";
 
 interface Props {
-  beepers: RouterOutput['rider']['beepers'];
-  viewState?: { latitude: number, longitude: number, zoom: number };
+  beepers: RouterOutput["rider"]["beepers"];
+  viewState?: { latitude: number; longitude: number; zoom: number };
 }
 
 export function BeepersMap({ beepers }: Props) {
-
   return (
     <Box mb={4} mt={4} height="575px" width="100%">
       <Map
@@ -29,7 +28,7 @@ export function BeepersMap({ beepers }: Props) {
             photo={beeper.photo}
             name={`${beeper.first} ${beeper.last}`}
             username={beeper.username}
-            variant='queue'
+            variant="queue"
           />
         ))}
       </Map>

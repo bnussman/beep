@@ -122,6 +122,9 @@ export function EditProfile() {
     <Card sx={{ p: 3 }}>
       <form onSubmit={onSubmit}>
         <Stack spacing={2}>
+          <Typography variant="h4" fontWeight="bold">
+            Edit Profile
+          </Typography>
           {errors.root?.message && (
             <Alert severity="error">{errors.root?.message}</Alert>
           )}

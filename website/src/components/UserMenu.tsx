@@ -1,21 +1,22 @@
 import React from "react";
-import { LiaKeySolid, LiaSignOutAltSolid, LiaUserEditSolid } from 'react-icons/lia';
 import { Link, useNavigate } from "@tanstack/react-router";
 import { queryClient, trpc } from "../utils/trpc";
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Button,
-  Avatar,
-  AvatarBadge,
-  MenuDivider,
-  Icon,
-} from "@chakra-ui/react"
+import { Menu, MenuItem, Button, Avatar } from "@mui/material";
 
 export function UserMenu() {
-  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false, retry: false });
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const { data: user } = trpc.user.me.useQuery(undefined, {
+    enabled: false,
+    retry: false,
+  });
   const { mutateAsync: logout } = trpc.auth.logout.useMutation();
   const navigate = useNavigate();
 
@@ -23,47 +24,51 @@ export function UserMenu() {
     try {
       await logout({});
 
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
 
       queryClient.resetQueries();
 
       navigate({ to: "/" });
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return (
-    <Menu>
-      <MenuButton
-        as={Button}
-        leftIcon={
+    <div>
+      <Button
+        id="user-button"
+        aria-controls={open ? "user-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+        variant="contained"
+        startIcon={
           <Avatar
-            size='xs'
-            src={user?.photo || ''}
-          >
-            {user?.isBeeping && <AvatarBadge boxSize="0.75rem" bg="green.500" />}
-          </Avatar>
+            sx={{ width: 24, height: 24 }}
+            src={user?.photo ?? undefined}
+          />
         }
       >
         {user?.username}
-      </MenuButton>
-      <MenuList>
-        <MenuItem icon={<Icon fontSize="2xl" as={LiaUserEditSolid} />} as={Link} to="/profile/edit">
+      </Button>
+      <Menu
+        id="user-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "user-button",
+        }}
+      >
+        <MenuItem component={Link} to="/profile/edit">
           Edit Account
         </MenuItem>
-        <MenuItem icon={<Icon fontSize="2xl" as={LiaKeySolid} />} as={Link} to="/password/change">
+        <MenuItem component={Link} to="/password/change">
           Change Password
         </MenuItem>
-        <MenuDivider />
-        <MenuItem
-          onClick={handleLogout}
-          icon={<Icon fontSize="2xl" as={LiaSignOutAltSolid} />}
-        >
-          Sign out
-        </MenuItem>
-      </MenuList>
-    </Menu>
+        <MenuItem onClick={handleLogout}>Sign out</MenuItem>
+      </Menu>
+    </div>
   );
 }

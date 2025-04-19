@@ -29,7 +29,7 @@ export function Header() {
             </Stack>
           </Link>
         </Stack>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" alignItems="center" spacing={1}>
           {user?.role === "admin" && <AdminMenu />}
           {user && <UserMenu />}
           {!user && (
