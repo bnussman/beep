@@ -30,7 +30,7 @@ export function Indicator({ color, tooltip, ...rest }: Props) {
 
   const getBorderProps = () => {
     if (color === "white") {
-      return { borderWidth: 1 };
+      return { outline: 1, borderColor: 'red' };
     }
     return {};
   };
