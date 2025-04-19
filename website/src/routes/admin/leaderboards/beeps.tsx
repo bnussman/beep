@@ -1,9 +1,9 @@
 import React from 'react'
 import { leaderboardsRoute } from '.';
-import { createRoute, useNavigate, Link } from '@tanstack/react-router';
+import { createRoute, useNavigate, Link as RouterLink } from '@tanstack/react-router';
 import { trpc } from '../../../utils/trpc';
 import { PaginationFooter } from '../../../components/PaginationFooter';
-import { Avatar, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Avatar, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -57,7 +57,7 @@ export function Beeps() {
             {data?.users?.map(({ user, beeps }) => (
               <TableRow key={user.id}>
                 <TableCell>
-                  <Link to="/admin/users/$userId" params={{ userId: user.id }}>
+                  <Link component={RouterLink} to={`/admin/users/${user.id}`}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Avatar src={user.photo ?? undefined} />
                       <Typography>{user.first} {user.last}</Typography>

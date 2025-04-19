@@ -1,8 +1,11 @@
 import React from "react";
 import { leaderboardsRoute } from ".";
-import { createRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createRoute, Link as RouterLink, useNavigate } from "@tanstack/react-router";
 import { trpc } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
+import { keepPreviousData } from "@tanstack/react-query";
 import {
   Table,
   Stack,
@@ -14,10 +17,8 @@ import {
   Paper,
   TableBody,
   Typography,
+  Link,
 } from "@mui/material";
-import { TableLoading } from "../../../components/TableLoading";
-import { TableError } from "../../../components/TableError";
-import { keepPreviousData } from "@tanstack/react-query";
 
 export const ridesLeaderboard = createRoute({
   component: Rides,
@@ -68,7 +69,7 @@ export function Rides() {
             {data?.users?.map(({ user, rides }) => (
               <TableRow key={user.id}>
                 <TableCell>
-                  <Link to="/admin/users/$userId" params={{ userId: user.id }}>
+                  <Link component={RouterLink} to={`/admin/users/${user.id}`}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Avatar src={user.photo ?? undefined} />
                       <Typography>
