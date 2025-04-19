@@ -117,7 +117,7 @@ export function User() {
     <Stack spacing={2}>
       <Stack
         direction="row"
-        spacing={2}
+        gap={2}
         alignItems="center"
         justifyContent="space-between"
         flexWrap="wrap"

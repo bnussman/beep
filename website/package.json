@@ -10,9 +10,6 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@chakra-ui/icons": "1.1.7",
-    "@chakra-ui/react": "2.10.4",
-    "@chakra-ui/theme-tools": "2.2.7",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/poppins": "^5.2.5",
@@ -24,7 +21,6 @@
     "@trpc/client": "https://pkg.pr.new/trpc/trpc/@trpc/client@6640@051242049134f9f07770888e482325082271afa3",
     "@trpc/react-query": "^11.1.0",
     "dayjs": "^1.11.10",
-    "framer-motion": "^12.4.10",
     "mapbox-gl": "^3.10.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",

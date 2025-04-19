@@ -36,5 +36,16 @@ export const theme = createTheme({
         },
       },
     },
+    MuiLink: {
+      defaultProps: {
+        color: "inherit",
+        underline: 'none',
+      },
+      styleOverrides: {
+        root: {
+          color: 'inherit'
+        },
+      },
+    },
   },
 });

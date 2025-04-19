@@ -13,10 +13,11 @@ import {
   Paper,
   TextField,
   Avatar,
+  Link,
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { Indicator } from "../../../components/Indicator";
-import { createRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createRoute, Link as RouterLink, useNavigate } from "@tanstack/react-router";
 import { trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
@@ -120,7 +121,7 @@ function Users() {
               {data?.users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>
-                    <Link to="/admin/users/$userId" params={{ userId: user.id }}>
+                    <Link component={RouterLink} to={`/admin/users/${user.id}`}>
                       <Stack direction="row" alignItems="center" spacing={1}>
                         <Avatar src={user.photo ?? undefined} />
                         <Typography>{user.first} {user.last}</Typography>

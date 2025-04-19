@@ -1,7 +1,7 @@
 import React from 'react'
-import { Paper, Box, Typography, Stack, Table, TableBody, TableHead, TableRow, TableCell, TableContainer, Avatar, Chip, Tooltip } from '@mui/material';
+import { Paper, Box, Link, Typography, Stack, Table, TableBody, TableHead, TableRow, TableCell, TableContainer, Avatar, Chip, Tooltip } from '@mui/material';
 import { BeepersMap } from './BeepersMap';
-import { createRoute, Link } from '@tanstack/react-router';
+import { createRoute, Link as RouterLink } from '@tanstack/react-router';
 import { adminRoute } from '..';
 import { trpc } from '../../../utils/trpc';
 import { printStars } from '../ratings';
@@ -73,7 +73,7 @@ export function Beepers() {
             {data?.map((beeper) => (
               <TableRow key={beeper.id}>
                 <TableCell>
-                  <Link to="/admin/users/$userId" params={{ userId: beeper.id }}>
+                  <Link component={RouterLink} to={`/admin/users/${beeper.id}`}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Avatar src={beeper.photo ?? undefined} />
                       <Typography>{beeper.first} {beeper.last}</Typography>

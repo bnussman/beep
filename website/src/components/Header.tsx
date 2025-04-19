@@ -1,9 +1,9 @@
 import React from "react";
 import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
-import { Link } from "@tanstack/react-router";
+import { Link as RouterLink } from "@tanstack/react-router";
 import { trpc } from "../utils/trpc";
-import { AppBar, Stack, Toolbar, Typography, Button } from "@mui/material";
+import { AppBar, Stack, Toolbar, Typography, Button, Link } from "@mui/material";
 
 export function Header() {
   const { data: user } = trpc.user.me.useQuery(undefined, {
@@ -23,7 +23,7 @@ export function Header() {
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Stack direction="row" spacing={4} alignItems="center">
-          <Link to="/">
+          <Link component={RouterLink} to="/">
             <Stack direction="row" alignItems="center" spacing={2}>
               <Typography
                 fontWeight="bold"
@@ -42,10 +42,10 @@ export function Header() {
           {user && <UserMenu />}
           {!user && (
             <>
-              <Button component={Link} to="/login">
+              <Button component={RouterLink} to="/login">
                 Login
               </Button>
-              <Button component={Link} to="/signup">
+              <Button component={RouterLink} to="/signup">
                 Sign Up
               </Button>
             </>
