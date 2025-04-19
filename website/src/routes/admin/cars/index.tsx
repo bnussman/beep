@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Indicator } from "../../../components/Indicator";
 import { PhotoDialog } from "../../../components/PhotoDialog";
-import { DeleteIcon } from "@chakra-ui/icons";
 import { DeleteCarDialog } from "./DeleteCarDialog";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";

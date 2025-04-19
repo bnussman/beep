@@ -1,29 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Link as RouterLink,
   createRoute,
   useNavigate,
 } from "@tanstack/react-router";
-import {
-  Link,
-  Button,
-  Text,
-  Stack,
-  Heading,
-  useDisclosure,
-  Box,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogCloseButton,
-  AlertDialogBody,
-  AlertDialogFooter,
-  useToast,
-} from "@chakra-ui/react";
 import { queryClient, trpc } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
-import { Alert } from "@mui/material";
+import {
+  Link,
+  Alert,
+  Typography,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+} from "@mui/material";
+import { useToast } from "@chakra-ui/react";
 
 export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -39,11 +34,10 @@ function DeleteAccount() {
     error,
   } = trpc.user.deleteMyAccount.useMutation();
 
-  const cancelRef = React.useRef(null);
   const toast = useToast();
   const navigate = useNavigate();
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   const onDelete = async () => {
     await deleteAccount();
@@ -54,63 +48,47 @@ function DeleteAccount() {
   };
 
   return (
-    <Stack spacing={4}>
-      <Heading>Delete Account</Heading>
+    <Stack spacing={2}>
+      <Typography>Delete Account</Typography>
       <Alert severity="info">
         When your account is deleted, we do not retain any of your data,
         although it may exist in backups.
       </Alert>
       {user ? (
         <Box>
-          <Button colorScheme="red" onClick={onOpen}>
+          <Button color="error" onClick={() => setIsOpen(true)}>
             Delete Account
           </Button>
         </Box>
       ) : (
         <>
-          <Text>
-            <Link as={RouterLink} color="blue.400" to="/login">
+          <Typography>
+            <Link component={RouterLink} to="/login">
               Login
             </Link>{" "}
             to delete your account.
-          </Text>
-          <Text>
+          </Typography>
+          <Typography>
             If you are unable to login to your account and still want your
             account/data deleted, please contact{" "}
             <Link href="mailto:banks@ridebeep.app">banks@ridebeep.app</Link>.
-          </Text>
+          </Typography>
         </>
       )}
-      <AlertDialog
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-        isOpen={isOpen}
-        isCentered
-      >
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader>Delete Account?</AlertDialogHeader>
-          <AlertDialogCloseButton />
-          <AlertDialogBody>
-            {error && <Alert severity="error">{error.message}</Alert>}
-            Are you sure you want to delete your account and all of your Beep
-            data?
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              colorScheme="red"
-              ml={3}
-              isLoading={isPending}
-              onClick={onDelete}
-            >
-              Delete Account
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Dialog onClose={() => setIsOpen(false)} open={isOpen}>
+        <DialogTitle>Delete Account?</DialogTitle>
+        <DialogContent>
+          {error && <Alert severity="error">{error.message}</Alert>}
+          Are you sure you want to delete your account and all of your Beep
+          data?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsOpen(false)}>Cancel</Button>
+          <Button color="error" loading={isPending} onClick={onDelete}>
+            Delete Account
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }

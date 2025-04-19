@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { trpc } from "../../../utils/trpc";
@@ -8,7 +8,7 @@ import { SendNotificationDialog } from "../../../components/SendNotificationDial
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { DeleteUserDialog } from "./DeleteUserDialog";
 import { Link, Outlet, createRoute, useLocation } from "@tanstack/react-router";
-import { useToast, useDisclosure } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { usersRoute } from "./routes";
 import {
   Alert,
@@ -60,29 +60,13 @@ export function User() {
   const { mutateAsync: updateUser, isPending: isVerifyLoading } =
     trpc.user.editAdmin.useMutation();
 
-  const {
-    isOpen: isDeleteOpen,
-    onOpen: onDeleteOpen,
-    onClose: onDeleteClose,
-  } = useDisclosure();
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const {
-    isOpen: isClearOpen,
-    onOpen: onClearOpen,
-    onClose: onClearClose,
-  } = useDisclosure();
+  const [isClearOpen, setIsClearOpen] = useState(false);
 
-  const {
-    isOpen: isSendNotificationOpen,
-    onOpen: onSendNotificationOpen,
-    onClose: onSendNotificationClose,
-  } = useDisclosure();
+  const [isSendNotificationOpen, setIsSendNotificationOpen] = useState(false);
 
-  const {
-    isOpen: isPhotoOpen,
-    onOpen: onPhotoOpen,
-    onClose: onPhotoClose,
-  } = useDisclosure();
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
 
   const onVerify = () => {
     updateUser({
@@ -143,7 +127,7 @@ export function User() {
         <Stack direction="row" alignItems="center" spacing={2}>
           <Avatar
             src={user.photo ?? ""}
-            onClick={user.photo ? onPhotoOpen : undefined}
+            onClick={user.photo ? () => setIsPhotoOpen(true) : undefined}
             sx={{
               ...(user.photo ? { cursor: "pointer" } : {}),
               width: 120,
@@ -185,7 +169,7 @@ export function User() {
           <Button
             variant="contained"
             color="info"
-            onClick={onSendNotificationOpen}
+            onClick={() => setIsSendNotificationOpen(true)}
             disabled={!user?.pushToken}
           >
             Send Notification
@@ -198,10 +182,18 @@ export function User() {
           >
             Sync Payments
           </Button>
-          <Button variant="contained" color="warning" onClick={onClearOpen}>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={() => setIsClearOpen(true)}
+          >
             Clear Queue
           </Button>
-          <Button color="error" variant="contained" onClick={onDeleteOpen}>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => setIsDeleteOpen(true)}
+          >
             Delete
           </Button>
         </Stack>
@@ -223,23 +215,23 @@ export function User() {
       </Box>
       <DeleteUserDialog
         userId={user.id}
-        onClose={onDeleteClose}
+        onClose={() => setIsDeleteOpen(false)}
         isOpen={isDeleteOpen}
       />
       <ClearQueueDialog
         isOpen={isClearOpen}
-        onClose={onClearClose}
+        onClose={() => setIsClearOpen(false)}
         userId={user.id}
       />
       <SendNotificationDialog
         id={user.id}
         isOpen={isSendNotificationOpen}
-        onClose={onSendNotificationClose}
+        onClose={() => setIsSendNotificationOpen(false)}
       />
       <PhotoDialog
         src={user.photo}
         isOpen={isPhotoOpen}
-        onClose={onPhotoClose}
+        onClose={() => setIsPhotoOpen(false)}
       />
     </Stack>
   );

@@ -1,24 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
-import {
-  Heading,
-  Text,
-  Box,
-  Button,
-  Flex,
-  Spacer,
-  Stack,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { Typography, Button, Box, Stack, Alert } from "@mui/material";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { createRoute } from "@tanstack/react-router";
 import { beepsRoute } from ".";
 import { trpc } from "../../../utils/trpc";
-import { Alert } from "@mui/material";
 
 dayjs.extend(duration);
 
@@ -32,7 +21,7 @@ export function Beep() {
   const { beepId } = beepRoute.useParams();
   const { data: beep, isLoading, error } = trpc.beep.beep.useQuery(beepId);
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   if (isLoading || !beep) {
     return <Loading />;
@@ -43,59 +32,60 @@ export function Beep() {
   }
 
   return (
-    <Box>
-      <Flex align="center" mb={2}>
-        <Heading>Beep</Heading>
-        <Spacer />
-        <Button colorScheme="red" leftIcon={<DeleteIcon />} onClick={onOpen}>
+    <Stack spacing={2}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Typography>Beep</Typography>
+        <Button color="error" onClick={() => setIsOpen(true)}>
           Delete
         </Button>
-      </Flex>
-      <Stack spacing={4}>
-        <iframe
-          title="Map"
-          width="100%"
-          height="300"
-          src={`https://www.google.com/maps/embed/v1/directions?key=${import.meta.env.VITE_GOOGLE_API_KEY || ""}&origin=${beep.origin}&destination=${beep.destination}`}
-        ></iframe>
-        <Box>
-          <Heading>Beeper</Heading>
-          <BasicUser user={beep.beeper} />
-        </Box>
-        <Box>
-          <Heading>Rider</Heading>
-          <BasicUser user={beep.rider} />
-        </Box>
-        <Box>
-          <Heading>Origin</Heading>
-          <Text>{beep.origin}</Text>
-        </Box>
-        <Box>
-          <Heading>Destination</Heading>
-          <Text>{beep.destination}</Text>
-        </Box>
-        <Box>
-          <Heading>Group Size</Heading>
-          <Text>{beep.groupSize}</Text>
-        </Box>
-        <Box>
-          <Heading>Beep Started</Heading>
-          <Text>
-            {new Date(beep.start).toLocaleString()} - {dayjs().to(beep.start)}
-          </Text>
-        </Box>
-        <Box>
-          <Heading>Beep Ended</Heading>
-          {beep.end ? (
-            <Text>
-              {new Date(beep.end).toLocaleString()} - {dayjs().to(beep.end)}
-            </Text>
-          ) : (
-            <Text>Beep is still in progress</Text>
-          )}
-        </Box>
-        <DeleteBeepDialog id={beep.id} isOpen={isOpen} onClose={onClose} />
       </Stack>
-    </Box>
+      <iframe
+        title="Map"
+        width="100%"
+        height="300"
+        src={`https://www.google.com/maps/embed/v1/directions?key=${import.meta.env.VITE_GOOGLE_API_KEY}&origin=${beep.origin}&destination=${beep.destination}`}
+      />
+      <Box>
+        <Typography>Beeper</Typography>
+        <BasicUser user={beep.beeper} />
+      </Box>
+      <Box>
+        <Typography>Rider</Typography>
+        <BasicUser user={beep.rider} />
+      </Box>
+      <Box>
+        <Typography>Origin</Typography>
+        <Typography>{beep.origin}</Typography>
+      </Box>
+      <Box>
+        <Typography>Destination</Typography>
+        <Typography>{beep.destination}</Typography>
+      </Box>
+      <Box>
+        <Typography>Group Size</Typography>
+        <Typography>{beep.groupSize}</Typography>
+      </Box>
+      <Box>
+        <Typography>Beep Started</Typography>
+        <Typography>
+          {new Date(beep.start).toLocaleString()} - {dayjs().to(beep.start)}
+        </Typography>
+      </Box>
+      <Box>
+        <Typography>Beep Ended</Typography>
+        {beep.end ? (
+          <Typography>
+            {new Date(beep.end).toLocaleString()} - {dayjs().to(beep.end)}
+          </Typography>
+        ) : (
+          <Typography>Beep is still in progress</Typography>
+        )}
+      </Box>
+      <DeleteBeepDialog
+        id={beep.id}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
+    </Stack>
   );
 }

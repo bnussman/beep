@@ -28,6 +28,8 @@ export function UserMenu() {
 
       queryClient.resetQueries();
 
+      handleClose();
+
       navigate({ to: "/" });
     } catch (error) {
       console.error(error);
@@ -61,10 +63,10 @@ export function UserMenu() {
           "aria-labelledby": "user-button",
         }}
       >
-        <MenuItem component={Link} to="/profile/edit">
+        <MenuItem component={Link} onClick={handleClose} to="/profile/edit">
           Edit Account
         </MenuItem>
-        <MenuItem component={Link} to="/password/change">
+        <MenuItem component={Link} onClick={handleClose} to="/password/change">
           Change Password
         </MenuItem>
         <MenuItem onClick={handleLogout}>Sign out</MenuItem>

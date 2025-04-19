@@ -1,13 +1,24 @@
 import React, { useState } from "react";
-import { Pagination } from "./Pagination";
-import { Box, Center, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
-import { Loading } from "./Loading";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
 import { trpc } from "../utils/trpc";
+import { PaginationFooter } from "./PaginationFooter";
+import {
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import { TableLoading } from "./TableLoading";
+import { TableError } from "./TableError";
+import { TableEmpty } from "./TableEmpty";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -22,58 +33,55 @@ export function PaymentsTable() {
   const pageSize = 5;
   const { userId } = paymentsTableRoute.useParams();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { data, isLoading } = trpc.payment.payments.useQuery({
+  const { data, isLoading, error } = trpc.payment.payments.useQuery({
     userId,
     page: currentPage,
     pageSize,
   });
 
-  if (data?.results === 0) {
-    return <Center h="100px">This user has no payments.</Center>;
-  }
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
-    <Box>
-      <Pagination
-        resultCount={data?.results}
-        limit={pageSize}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
+    <Stack spacing={1}>
+      <PaginationFooter
+        results={data?.results}
+        pageSize={data?.pageSize ?? 0}
+        count={data?.pages}
+        page={currentPage}
+        onChange={(_e, page) => setCurrentPage(page)}
       />
-      <Box overflowX="auto">
+      <TableContainer component={Paper} variant="outlined">
         <Table>
-          <Thead>
-            <Tr>
-              <Th>RevenuCat ID</Th>
-              <Th>Product ID</Th>
-              <Th>Price</Th>
-              <Th>Purchased</Th>
-              <Th>Expires</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+          <TableHead>
+            <TableRow>
+              <TableCell>RevenuCat ID</TableCell>
+              <TableCell>Product ID</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Purchased</TableCell>
+              <TableCell>Expires</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading && <TableLoading colSpan={5} />}
+            {error && <TableError colSpan={5} error={error.message} />}
+            {data?.results === 0 && <TableEmpty colSpan={5} />}
             {data?.payments.map((payment) => (
-              <Tr key={payment.id}>
-                <Td>{payment.id}</Td>
-                <Td>{payment.productId}</Td>
-                <Td>{payment.price}</Td>
-                <Td>{payment.created}</Td>
-                <Td>{payment.expires}</Td>
-              </Tr>
+              <TableRow key={payment.id}>
+                <TableCell>{payment.id}</TableCell>
+                <TableCell>{payment.productId}</TableCell>
+                <TableCell>{payment.price}</TableCell>
+                <TableCell>{payment.created}</TableCell>
+                <TableCell>{payment.expires}</TableCell>
+              </TableRow>
             ))}
-          </Tbody>
+          </TableBody>
         </Table>
-      </Box>
-      <Pagination
-        resultCount={data?.results}
-        limit={pageSize}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
+      </TableContainer>
+      <PaginationFooter
+        results={data?.results}
+        pageSize={data?.pageSize ?? 0}
+        count={data?.pages}
+        page={currentPage}
+        onChange={(_e, page) => setCurrentPage(page)}
       />
-    </Box>
+    </Stack>
   );
 }

@@ -34,46 +34,62 @@ export function AdminMenu() {
           },
         }}
       >
-        <MenuItem component={Link} to="/admin/leaderboards/beeps">
+        <MenuItem
+          component={Link}
+          onClick={handleClose}
+          to="/admin/leaderboards/beeps"
+        >
           Leaderboards
         </MenuItem>
-        <MenuItem component={Link} to="/admin/users">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/users">
           Users
         </MenuItem>
-        <MenuItem component={Link} to="/admin/users/domain">
+        <MenuItem
+          component={Link}
+          onClick={handleClose}
+          to="/admin/users/domain"
+        >
           Users by Domain
         </MenuItem>
-        <MenuItem component={Link} to="/admin/beepers">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/beepers">
           Beepers
         </MenuItem>
-        <MenuItem component={Link} to="/admin/beeps/active">
+        <MenuItem
+          component={Link}
+          onClick={handleClose}
+          to="/admin/beeps/active"
+        >
           Beeps in progress
         </MenuItem>
-        <MenuItem component={Link} to="/admin/beeps">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/beeps">
           Beeps
         </MenuItem>
-        <MenuItem component={Link} to="/admin/reports">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/reports">
           Reports
         </MenuItem>
-        <MenuItem component={Link} to="/admin/ratings">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/ratings">
           Ratings
         </MenuItem>
-        <MenuItem component={Link} to="/admin/cars">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/cars">
           Cars
         </MenuItem>
-        <MenuItem component={Link} to="/admin/notifications">
+        <MenuItem
+          component={Link}
+          onClick={handleClose}
+          to="/admin/notifications"
+        >
           Notifications
         </MenuItem>
-        <MenuItem component={Link} to="/admin/feedback">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/feedback">
           Feedback
         </MenuItem>
-        <MenuItem component={Link} to="/admin/payments">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/payments">
           Payments
         </MenuItem>
-        <MenuItem component={Link} to="/admin/redis">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/redis">
           Redis
         </MenuItem>
-        <MenuItem component={Link} to="/admin/health">
+        <MenuItem component={Link} onClick={handleClose} to="/admin/health">
           Health
         </MenuItem>
       </Menu>
