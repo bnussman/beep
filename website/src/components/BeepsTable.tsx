@@ -10,6 +10,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { PaginationFooter } from "./PaginationFooter";
 import { TableCellUser } from "./TableCellUser";
+import { TableLoading } from "./TableLoading";
+import { TableError } from "./TableError";
+import { TableEmpty } from "./TableEmpty";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -57,6 +60,9 @@ export function BeepsTable() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {isLoading && <TableLoading colSpan={8} />}
+            {error && <TableError colSpan={8} error={error.message} />}
+            {data?.results === 0 && <TableEmpty colSpan={8} />}
             {data?.beeps.map((ride) => (
               <TableRow key={ride.id}>
                 <TableCellUser user={ride.beeper} />
