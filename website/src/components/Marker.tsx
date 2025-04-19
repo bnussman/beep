@@ -1,8 +1,9 @@
 import React from "react";
 import { Marker as _Marker } from 'react-map-gl/mapbox';
-import { Link } from "@tanstack/react-router";
+import { Link as RouterLink } from "@tanstack/react-router";
 import { QueuePreview } from "./QueuePreview";
 import {
+  Link,
   Avatar,
   Typography,
   Stack,
@@ -24,9 +25,9 @@ interface Props {
 export function Marker(props: Props) {
   const { latitude, longitude, variant, userId, username, photo, name } = props;
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -42,12 +43,10 @@ export function Marker(props: Props) {
     return (
       <div>
         <_Marker longitude={longitude} latitude={latitude}>
-          <Button onClick={handleClick}>
-            <Stack alignItems="center">
-              <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
-              <Typography>{name}</Typography>
-            </Stack>
-          </Button>
+          <Stack alignItems="center" onClick={handleClick}>
+            <Avatar src={photo ?? undefined} sx={{ width: 32, height: 32 }} />
+            <Typography>{name}</Typography>
+          </Stack>
         </_Marker>
         <Popover
           id={id}
@@ -58,13 +57,10 @@ export function Marker(props: Props) {
             paper: { sx: { p: 1 } }
           }}
         >
-          <Link to="/admin/users/$userId/queue" params={{ userId }}>
+          <Link component={RouterLink} to={`/admin/users/${userId}/queue`}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <Avatar src={photo || ''} />
-              <Stack spacing={0}>
-                <Typography fontWeight="extrabold">{name}</Typography>
-                <Typography>@{username}</Typography>
-              </Stack>
+              <Typography fontWeight="bold">{name}</Typography>
             </Stack>
           </Link>
           <QueuePreview userId={userId} />
