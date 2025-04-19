@@ -12,7 +12,15 @@ export function Header() {
   });
 
   return (
-    <AppBar>
+    <AppBar
+      color="transparent"
+      sx={(theme) => ({
+        boxShadow: 'none',
+        borderBottom: 1,
+        borderColor: theme.palette.divider,
+        backdropFilter: 'blur(10px)'
+      })}
+    >
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Stack direction="row" spacing={4} alignItems="center">
           <Link to="/">
