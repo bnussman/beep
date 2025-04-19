@@ -104,7 +104,7 @@ export function CarsTable() {
                 <TableCell>
                   <Indicator color={car.default ? "green" : "red"} />
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: 'right' }}>
                   <CarMenu carId={car.id} onDelete={() => onDelete(car.id)} />
                 </TableCell>
               </TableRow>

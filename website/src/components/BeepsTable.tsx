@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { Pagination } from './Pagination';
-import { Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Text, Spinner } from '@chakra-ui/react';
-import { TdUser } from './TdUser';
-import { Indicator } from './Indicator';
-import { beepStatusMap } from '../routes/admin/beeps';
-import { createRoute } from '@tanstack/react-router';
-import { userRoute } from '../routes/admin/users/User';
-import { trpc } from '../utils/trpc';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import React, { useState } from "react";
+import { Indicator } from "./Indicator";
+import { beepStatusMap } from "../routes/admin/beeps";
+import { createRoute } from "@tanstack/react-router";
+import { userRoute } from "../routes/admin/users/User";
+import { trpc } from "../utils/trpc";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { PaginationFooter } from "./PaginationFooter";
+import { TableCellUser } from "./TableCellUser";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
 export const beepsTableRoute = createRoute({
   component: BeepsTable,
-  path: 'beeps',
+  path: "beeps",
   getParentRoute: () => userRoute,
 });
 
@@ -27,77 +27,74 @@ export function BeepsTable() {
 
   const { userId } = beepsTableRoute.useParams();
 
-  const { data, isLoading } = trpc.beep.beeps.useQuery({
+  const { data, isLoading, error } = trpc.beep.beeps.useQuery({
     userId,
     cursor: currentPage,
-    pageSize: pageLimit
+    pageSize: pageLimit,
   });
 
-  if (data?.results === 0) {
-    return (
-      <Center h="100px">
-        This user has no ride history.
-      </Center>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <Center h="100px">
-        <Spinner size="xl" />
-      </Center>
-    );
-  }
-
   return (
-    <Box>
-      <Pagination
-        resultCount={data?.results}
-        limit={pageLimit}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
+    <Stack spacing={1}>
+      <PaginationFooter
+        results={data?.results}
+        pageSize={data?.pageSize ?? 0}
+        count={data?.pages}
+        page={currentPage}
+        onChange={(e, page) => setCurrentPage(page)}
       />
-      <Box overflowX="auto">
+      <TableContainer component={Paper} variant="outlined">
         <Table>
-          <Thead>
-            <Tr>
-              <Th>Beeper</Th>
-              <Th>Rider</Th>
-              <Th>Origin</Th>
-              <Th>Destination</Th>
-              <Th>Group Size</Th>
-              <Th>Status</Th>
-              <Th>Duration</Th>
-              <Th>When</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+          <TableHead>
+            <TableRow>
+              <TableCell>Beeper</TableCell>
+              <TableCell>Rider</TableCell>
+              <TableCell>Origin</TableCell>
+              <TableCell>Destination</TableCell>
+              <TableCell>Group Size</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Duration</TableCell>
+              <TableCell>When</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {data?.beeps.map((ride) => (
-              <Tr key={ride.id}>
-                <TdUser user={ride.beeper} />
-                <TdUser user={ride.rider} />
-                <Td>{ride.origin}</Td>
-                <Td>{ride.destination}</Td>
-                <Td>{ride.groupSize}</Td>
-                <Td>
-                  <HStack>
+              <TableRow key={ride.id}>
+                <TableCellUser user={ride.beeper} />
+                <TableCellUser user={ride.rider} />
+                <TableCell>{ride.origin}</TableCell>
+                <TableCell>{ride.destination}</TableCell>
+                <TableCell>{ride.groupSize}</TableCell>
+                <TableCell>
+                  <Stack direction="row" alignItems="center" spacing={1}>
                     <Indicator color={beepStatusMap[ride.status]} />
-                    <Text textTransform="capitalize">{ride.status.replaceAll("_", " ")}</Text>
-                  </HStack>
-                </Td>
-                <Td>{ride.end ? dayjs.duration(new Date(ride.end).getTime() - new Date(ride.start).getTime()).humanize() : "Still in progress"}</Td>
-                <Td>{dayjs().to(ride.end)}</Td>
-              </Tr>
+                    <Typography sx={{ textTransform: "capitalize" }}>
+                      {ride.status.replaceAll("_", " ")}
+                    </Typography>
+                  </Stack>
+                </TableCell>
+                <TableCell>
+                  {ride.end
+                    ? dayjs
+                        .duration(
+                          new Date(ride.end).getTime() -
+                            new Date(ride.start).getTime(),
+                        )
+                        .humanize()
+                    : "Still in progress"}
+                </TableCell>
+                <TableCell>{dayjs().to(ride.end)}</TableCell>
+              </TableRow>
             ))}
-          </Tbody>
+          </TableBody>
         </Table>
-      </Box>
-      <Pagination
-        resultCount={data?.results}
-        limit={pageLimit}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
+      </TableContainer>
+      <PaginationFooter
+        results={data?.results}
+        pageSize={data?.pageSize ?? 0}
+        count={data?.pages}
+        page={currentPage}
+        onChange={(e, page) => setCurrentPage(page)}
       />
-    </Box>
+    </Stack>
   );
 }

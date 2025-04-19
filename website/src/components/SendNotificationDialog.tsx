@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Stack,
 } from "@mui/material";
 import { useToast } from "@chakra-ui/react";
 import { useForm, Controller } from "react-hook-form";
@@ -53,6 +54,7 @@ export function SendNotificationDialog(props: Props) {
   ) => {
     await sendNotification(values);
     toast({ title: "Successfully sent notification!", status: "success" });
+    form.reset();
     onClose();
   };
 
@@ -61,31 +63,35 @@ export function SendNotificationDialog(props: Props) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogTitle>Send Notification</DialogTitle>
         <DialogContent>
-          {form.formState.errors.root?.message && (
-            <Alert severity="error">{form.formState.errors.root.message}</Alert>
-          )}
-          <Controller
-            control={form.control}
-            name="title"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Title"
-                value={field.value}
-                onChange={field.onChange}
-              />
+          <Stack spacing={2} mt={1}>
+            {form.formState.errors.root?.message && (
+              <Alert severity="error">{form.formState.errors.root.message}</Alert>
             )}
-          />
-          <Controller
-            control={form.control}
-            name="body"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Body"
-                value={field.value}
-                onChange={field.onChange}
-              />
-            )}
-          />
+            <Controller
+              control={form.control}
+              name="title"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Title"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="body"
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Body"
+                  value={field.value}
+                  onChange={field.onChange}
+                  multiline
+                  rows={2}
+                />
+              )}
+            />
+          </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Close</Button>

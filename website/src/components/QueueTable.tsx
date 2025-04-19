@@ -1,19 +1,32 @@
-import React from 'react'
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { TdUser } from './TdUser';
-import { Indicator } from './Indicator';
-import { Text, Box, Center, HStack, Table, Tbody, Td, Th, Thead, Tr, Spinner } from '@chakra-ui/react';
-import { userRoute } from '../routes/admin/users/User';
-import { beepStatusMap } from '../routes/admin/beeps';
-import { createRoute } from '@tanstack/react-router';
-import { trpc } from '../utils/trpc';
+import React from "react";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import { TableCellUser } from "./TableCellUser";
+import { Indicator } from "./Indicator";
+import {
+  Typography,
+  Table,
+  TableContainer,
+  Paper,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+  Stack,
+} from "@mui/material";
+import { userRoute } from "../routes/admin/users/User";
+import { beepStatusMap } from "../routes/admin/beeps";
+import { createRoute } from "@tanstack/react-router";
+import { trpc } from "../utils/trpc";
+import { TableLoading } from "./TableLoading";
+import { TableEmpty } from "./TableEmpty";
+import { TableError } from "./TableError";
 
 dayjs.extend(duration);
 
 export const queueRoute = createRoute({
   component: QueueTable,
-  path: 'queue',
+  path: "queue",
   getParentRoute: () => userRoute,
 });
 
@@ -27,64 +40,45 @@ export function QueueTable() {
   trpc.beeper.watchQueue.useSubscription(userId, {
     onData(queue) {
       utils.beeper.queue.setData(userId, queue);
-    }
+    },
   });
 
-  if (isLoading) {
-    return (
-      <Center>
-        <Spinner />
-      </Center>
-    );
-  }
-
-  if (error) {
-    return (
-      <Center>
-        {error.message}
-      </Center>
-    );
-  }
-
-  if (data?.length === 0) {
-    return (
-      <Center h="100px">
-        This user's queue is empty.
-      </Center>
-    );
-  }
-
   return (
-    <Box overflowX="auto">
+    <TableContainer component={Paper} variant="outlined">
       <Table>
-        <Thead>
-          <Tr>
-            <Th>Rider</Th>
-            <Th>Origin</Th>
-            <Th>Destination</Th>
-            <Th>Group Size</Th>
-            <Th>Start Time</Th>
-            <Th>Status</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
+        <TableHead>
+          <TableRow>
+            <TableCell>Rider</TableCell>
+            <TableCell>Origin</TableCell>
+            <TableCell>Destination</TableCell>
+            <TableCell>Group Size</TableCell>
+            <TableCell>Start Time</TableCell>
+            <TableCell>Status</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {isLoading && <TableLoading colSpan={6} />}
+          {error && <TableError colSpan={6} error={error.message} />}
+          {data?.length === 0 && <TableEmpty colSpan={6} />}
           {data?.map((beep) => (
-            <Tr key={beep.id}>
-              <TdUser user={beep.rider} />
-              <Td>{beep.origin}</Td>
-              <Td>{beep.destination}</Td>
-              <Td>{beep.groupSize}</Td>
-              <Td>{dayjs().to(beep.start)}</Td>
-              <Td>
-                <HStack>
+            <TableRow key={beep.id}>
+              <TableCellUser user={beep.rider} />
+              <TableCell>{beep.origin}</TableCell>
+              <TableCell>{beep.destination}</TableCell>
+              <TableCell>{beep.groupSize}</TableCell>
+              <TableCell>{dayjs().to(beep.start)}</TableCell>
+              <TableCell>
+                <Stack direction="row" spacing={1}>
                   <Indicator color={beepStatusMap[beep.status]} />
-                  <Text textTransform="capitalize">{beep.status.replaceAll("_", " ")}</Text>
-                </HStack>
-              </Td>
-            </Tr>
+                  <Typography sx={{ textTransform: "capitalize" }}>
+                    {beep.status.replaceAll("_", " ")}
+                  </Typography>
+                </Stack>
+              </TableCell>
+            </TableRow>
           ))}
-        </Tbody>
+        </TableBody>
       </Table>
-    </Box>
+    </TableContainer>
   );
 }

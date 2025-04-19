@@ -8,7 +8,6 @@ import { trpc } from "../../../utils/trpc";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
-  IconButton,
   Paper,
   Stack,
   Table,
@@ -21,11 +20,11 @@ import {
 } from "@mui/material";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { PaginationFooter } from "../../../components/PaginationFooter";
-import { Delete } from "@mui/icons-material";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
+import { CarMenu } from "./CarMenu";
 
 dayjs.extend(relativeTime);
 
@@ -91,6 +90,7 @@ export function Cars() {
               <TableCell>Model</TableCell>
               <TableCell>Year</TableCell>
               <TableCell>Color</TableCell>
+              <TableCell>Default</TableCell>
               <TableCell>Created</TableCell>
               <TableCell>Photo</TableCell>
               <TableCell></TableCell>
@@ -109,6 +109,9 @@ export function Cars() {
                 <TableCell>
                   <Indicator color={car.color} tooltip={car.color} />
                 </TableCell>
+                <TableCell>
+                  <Indicator color={car.default ? 'green' : 'red'} />
+                </TableCell>
                 <TableCell>{dayjs().to(car.created)}</TableCell>
                 <TableCell onClick={() => onPhotoClick(car.id)}>
                   <img
@@ -122,13 +125,7 @@ export function Cars() {
                   />
                 </TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
-                  <IconButton
-                    aria-label={`Delete car ${car.id}`}
-                    color="error"
-                    onClick={() => onDelete(car.id)}
-                  >
-                    <Delete />
-                  </IconButton>
+                  <CarMenu carId={car.id} onDelete={() => onDelete(car.id)} />
                 </TableCell>
               </TableRow>
             ))}
