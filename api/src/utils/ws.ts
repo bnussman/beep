@@ -120,33 +120,33 @@ export function observableToAsyncIterable<TValue>(
   };
 }
 
-export type CreateBunWSSContextFnOptions<TableRowouter extends AnyRouter> =
+export type CreateBunWSSContextFnOptions<TRouter extends AnyRouter> =
 NodeHTTPCreateContextFnOptions<
   Request,
-  ServerWebSocket<BunWSClientCtx<TableRowouter>>
+  ServerWebSocket<BunWSClientCtx<TRouter>>
 >;
 
-export type BunWSAdapterOptions<TableRowouter extends AnyRouter> = BaseHandlerOptions<
+export type BunWSAdapterOptions<TRouter extends AnyRouter> = BaseHandlerOptions<
   TRouter,
   Request
 > &
 CreateContextCallback<
-  inferRouterContext<TableRowouter>,
+  inferRouterContext<TRouter>,
   (
-    opts: CreateBunWSSContextFnOptions<TableRowouter>,
-  ) => MaybePromise<inferRouterContext<TableRowouter>>
+    opts: CreateBunWSSContextFnOptions<TRouter>,
+  ) => MaybePromise<inferRouterContext<TRouter>>
 >;
 
-export type BunWSClientCtx<TableRowouter extends AnyRouter> = {
+export type BunWSClientCtx<TRouter extends AnyRouter> = {
   req: Request;
   abortController: AbortController;
-  ctx?: Promise<inferRouterContext<TableRowouter>>;
+  ctx?: Promise<inferRouterContext<TRouter>>;
   abortControllers: Map<string | number, AbortController>;
 };
 
-export function createBunWSHandler<TableRowouter extends AnyRouter>(
-  opts: BunWSAdapterOptions<TableRowouter>,
-): WebSocketHandler<BunWSClientCtx<TableRowouter>> {
+export function createBunWSHandler<TRouter extends AnyRouter>(
+  opts: BunWSAdapterOptions<TRouter>,
+): WebSocketHandler<BunWSClientCtx<TRouter>> {
   const { router, createContext } = opts;
 
   const respond = (
@@ -164,7 +164,7 @@ export function createBunWSHandler<TableRowouter extends AnyRouter>(
   };
 
   async function createClientCtx(
-    client: ServerWebSocket<BunWSClientCtx<inferRouterContext<TableRowouter>>>,
+    client: ServerWebSocket<BunWSClientCtx<inferRouterContext<TRouter>>>,
     connectionParams: TRPCRequestInfo["connectionParams"],
   ) {
     const ctxPromise = createContext?.({
@@ -208,7 +208,7 @@ export function createBunWSHandler<TableRowouter extends AnyRouter>(
   }
 
   async function handleRequest(
-    client: ServerWebSocket<BunWSClientCtx<inferRouterContext<TableRowouter>>>,
+    client: ServerWebSocket<BunWSClientCtx<inferRouterContext<TRouter>>>,
     msg: TRPCClientOutgoingMessage,
   ) {
     const { id, jsonrpc } = msg;
