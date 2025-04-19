@@ -1,5 +1,6 @@
 import React from "react";
 import { Marker as _Marker } from 'react-map-gl/mapbox';
+import { Link } from "@tanstack/react-router";
 import { QueuePreview } from "./QueuePreview";
 import {
   Avatar,
@@ -9,8 +10,6 @@ import {
   Popover,
   Button,
 } from "@mui/material";
-import { Link } from "@tanstack/react-router";
-import { useToast } from "@chakra-ui/react";
 
 interface Props {
   latitude: number;
@@ -23,7 +22,6 @@ interface Props {
 }
 
 export function Marker(props: Props) {
-  const toast = useToast();
   const { latitude, longitude, variant, userId, username, photo, name } = props;
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);

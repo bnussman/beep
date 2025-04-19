@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { useNotifications } from "@toolpad/core";
+import { queryClient, trpc } from "../utils/trpc";
+import { rootRoute } from "../utils/root";
 import {
   Link as RouterLink,
   createRoute,
   useNavigate,
 } from "@tanstack/react-router";
-import { queryClient, trpc } from "../utils/trpc";
-import { rootRoute } from "../utils/root";
 import {
   Link,
   Alert,
@@ -18,7 +19,6 @@ import {
   Button,
   Box,
 } from "@mui/material";
-import { useToast } from "@chakra-ui/react";
 
 export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -34,14 +34,14 @@ function DeleteAccount() {
     error,
   } = trpc.user.deleteMyAccount.useMutation();
 
-  const toast = useToast();
+  const notifications = useNotifications();
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
 
   const onDelete = async () => {
     await deleteAccount();
-    toast({ title: "Account deleted.", variant: "success" });
+    notifications.show("Account deleted.", { severity: "success" });
     localStorage.removeItem("user");
     queryClient.resetQueries();
     navigate({ to: "/" });

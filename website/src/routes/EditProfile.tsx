@@ -3,6 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
 import { RouterInput, trpc } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
+import { useNotifications } from "@toolpad/core";
 import {
   Alert,
   Card,
@@ -14,7 +15,6 @@ import {
   Button,
   Box,
 } from "@mui/material";
-import { useToast } from "@chakra-ui/react";
 
 type Values = RouterInput["user"]["edit"];
 
@@ -26,7 +26,7 @@ export const editProfileRoute = createRoute({
 
 export function EditProfile() {
   const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
-  const toast = useToast();
+  const notifications = useNotifications();
 
   const {
     handleSubmit,
@@ -72,46 +72,35 @@ export function EditProfile() {
     mutateAsync: uploadPicture,
     isPending: isUploadPending,
     error: uploadError,
-  } = trpc.user.updatePicture.useMutation();
+  } = trpc.user.updatePicture.useMutation({
+    onSuccess() {
+      notifications.show("Successfully updated profile picture", {
+        severity: "success",
+      });
+    },
+    onError(error) {
+      notifications.show(error.message, {
+        severity: "error",
+      });
+    }
+  });
 
   const onSubmit = handleSubmit(async (variables) => {
     await mutateAsync(variables);
 
-    toast({
-      status: "success",
-      title: "Success",
-      description: "Successfully updated profile",
+    notifications.show("Successfully updated profile", {
+      severity: 'success'
     });
   });
 
   const uploadPhoto = async (picture: File | undefined) => {
-    if (!picture) {
-      return toast({
-        status: "error",
-        title: "Error",
-        description: "No file found when trying to start upload.",
-      });
-    }
-
     const formData = new FormData();
 
+    if (picture) {
     formData.set("photo", picture);
-
-    try {
-      await uploadPicture(formData);
-
-      toast({
-        status: "success",
-        title: "Success",
-        description: "Successfully updated profile picture",
-      });
-    } catch (error) {
-      toast({
-        status: "error",
-        title: "Error",
-        description: uploadError?.message,
-      });
     }
+
+    await uploadPicture(formData);
   };
 
   if (!user) {

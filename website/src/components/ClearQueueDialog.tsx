@@ -1,3 +1,6 @@
+import React, { useState } from "react";
+import { trpc } from "../utils/trpc";
+import { useNotifications } from "@toolpad/core";
 import {
   Alert,
   Button,
@@ -9,9 +12,6 @@ import {
   FormControlLabel,
   Stack,
 } from "@mui/material";
-import React, { useState } from "react";
-import { trpc } from "../utils/trpc";
-import { useToast } from "@chakra-ui/react";
 
 interface Props {
   isOpen: boolean;
@@ -23,18 +23,16 @@ export function ClearQueueDialog(props: Props) {
   const { isOpen, onClose, userId } = props;
 
   const [stopBeeping, setStopBeeping] = useState<boolean>(true);
-  const toast = useToast;
+  const notifications = useNotifications();
   const utils = trpc.useUtils();
 
   const { mutate, isPending, error } = trpc.beep.clearQueue.useMutation({
     onSuccess() {
       utils.beeper.queue.invalidate(userId);
 
-      toast({
-        title: "Queue Cleared",
-        description: `Users's queue has been cleared ${stopBeeping ? " and they have stopped beeping." : ""}`,
-        status: "success",
-      });
+      const message =  stopBeeping ? "Users's queue has been cleared and they are not longer beepering." : "User's queue has been cleared.";
+
+      notifications.show(message, { severity: "success" });
 
       onClose();
     },

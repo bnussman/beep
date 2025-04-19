@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { TableCellUser } from "../../../components/TableCellUser";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
+import { RatingMenu } from "./RatingMenu";
+import { DeleteRatingDialog } from "./DeleteRatingDialog";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useNotifications } from "@toolpad/core";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { trpc } from "../../../utils/trpc";
@@ -17,14 +25,6 @@ import {
   Paper,
   TableBody,
 } from "@mui/material";
-import { useToast } from "@chakra-ui/react";
-import { TableCellUser } from "../../../components/TableCellUser";
-import { TableLoading } from "../../../components/TableLoading";
-import { TableError } from "../../../components/TableError";
-import { RatingMenu } from "./RatingMenu";
-import { DeleteRatingDialog } from "./DeleteRatingDialog";
-import { TableEmpty } from "../../../components/TableEmpty";
-import { keepPreviousData } from "@tanstack/react-query";
 
 dayjs.extend(relativeTime);
 
@@ -47,7 +47,7 @@ export function Ratings() {
 
   const navigate = useNavigate({ from: ratingsListRoute.id });
 
-  const toast = useToast();
+  const notifications = useNotifications();
 
   const { data, isLoading, error } = trpc.rating.ratings.useQuery(
     {
@@ -60,17 +60,13 @@ export function Ratings() {
 
   const { mutate, isPending } = trpc.user.reconcileUserRatings.useMutation({
     onSuccess(count) {
-      toast({
-        title: "Successfully reconciled user ratings",
-        description: `${count} user ratings were updated`,
-        status: "success",
+      notifications.show(`Successfully reconciled user ratings. ${count} user ratings were updated`, {
+        severity: "success",
       });
     },
     onError(error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        status: "error",
+      notifications.show(error.message, {
+        severity: "error",
       });
     },
   });

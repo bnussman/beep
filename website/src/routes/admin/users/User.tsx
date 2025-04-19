@@ -8,7 +8,7 @@ import { SendNotificationDialog } from "../../../components/SendNotificationDial
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { DeleteUserDialog } from "./DeleteUserDialog";
 import { Link, Outlet, createRoute, useLocation } from "@tanstack/react-router";
-import { useToast } from "@chakra-ui/react";
+import { useNotifications } from "@toolpad/core";
 import { usersRoute } from "./routes";
 import {
   Alert,
@@ -44,7 +44,7 @@ export function User() {
   const { userId } = userRoute.useParams();
 
   const utils = trpc.useUtils();
-  const toast = useToast();
+  const notifications = useNotifications();
 
   const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
 
@@ -54,11 +54,25 @@ export function User() {
     },
   });
 
-  const { mutateAsync: syncPayments, isPending: isSyncingPayments } =
-    trpc.user.syncPayments.useMutation();
+  const { mutate: syncPayments, isPending: isSyncingPayments } = trpc.user.syncPayments.useMutation({
+    onSuccess(activePayments) {
+      notifications.show(`Payments synced. The user has ${activePayments.length} active payments.`, {
+        severity: "success",
+      });
+    },
+    onError(error) {
+      notifications.show(error.message, { severity: "error" });
+    },
+  });
 
-  const { mutateAsync: updateUser, isPending: isVerifyLoading } =
-    trpc.user.editAdmin.useMutation();
+  const { mutate: updateUser, isPending: isVerifyLoading } = trpc.user.editAdmin.useMutation({
+    onSuccess() {
+      notifications.show("User verified", { severity: "success" });
+    },
+    onError(error) {
+      notifications.show(error.message, { severity: "error" });
+    }
+  });
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -73,26 +87,10 @@ export function User() {
       userId,
       data: { isEmailVerified: true, isStudent: true },
     })
-      .then(() => {
-        toast({ title: "User verified", status: "success" });
-      })
-      .catch((error) => {
-        toast({ title: "Error", description: error.message, status: "error" });
-      });
   };
 
   const onSyncPayments = () => {
     syncPayments(userId)
-      .then((activePayments) => {
-        toast({
-          title: "Payments synced",
-          description: `The user has ${activePayments.length} active payments.`,
-          status: "success",
-        });
-      })
-      .catch((error) => {
-        toast({ title: "Error", description: error.message, status: "error" });
-      });
   };
 
   const pathname = useLocation({

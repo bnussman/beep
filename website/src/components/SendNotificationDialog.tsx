@@ -1,5 +1,7 @@
 import React from "react";
 import { RouterInput, trpc } from "../utils/trpc";
+import { useForm, Controller } from "react-hook-form";
+import { useNotifications } from "@toolpad/core";
 import {
   Alert,
   Button,
@@ -10,8 +12,6 @@ import {
   TextField,
   Stack,
 } from "@mui/material";
-import { useToast } from "@chakra-ui/react";
-import { useForm, Controller } from "react-hook-form";
 
 interface Props {
   isOpen: boolean;
@@ -21,7 +21,7 @@ interface Props {
 
 export function SendNotificationDialog(props: Props) {
   const { isOpen, onClose, id } = props;
-  const toast = useToast();
+  const notifications = useNotifications();
 
   const form = useForm<RouterInput["notification"]["sendNotificationToUser"]>({
     defaultValues: {
@@ -53,7 +53,7 @@ export function SendNotificationDialog(props: Props) {
     values: RouterInput["notification"]["sendNotificationToUser"],
   ) => {
     await sendNotification(values);
-    toast({ title: "Successfully sent notification!", status: "success" });
+    notifications.show("Successfully sent notification!", { severity: "success" });
     form.reset();
     onClose();
   };
@@ -75,6 +75,8 @@ export function SendNotificationDialog(props: Props) {
                   label="Title"
                   value={field.value}
                   onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
                 />
               )}
             />
@@ -86,6 +88,8 @@ export function SendNotificationDialog(props: Props) {
                   label="Body"
                   value={field.value}
                   onChange={field.onChange}
+                  error={Boolean(fieldState.error?.message)}
+                  helperText={fieldState.error?.message}
                   multiline
                   rows={2}
                 />

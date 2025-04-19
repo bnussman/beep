@@ -1,7 +1,7 @@
 import React from "react";
 import { trpc } from "../utils/trpc";
 import { Alert, Button } from "@mui/material";
-import { useToast } from "@chakra-ui/react";
+import { useNotifications } from "@toolpad/core";
 
 export function Banners() {
   const { data: user } = trpc.user.me.useQuery(undefined, {
@@ -9,27 +9,18 @@ export function Banners() {
     enabled: false,
   });
 
-  const { mutateAsync: resendVerifyEmail, isPending } =
-    trpc.auth.resendVerification.useMutation();
-
-  const toast = useToast();
-
-  async function resendVarificationEmail() {
-    try {
-      await resendVerifyEmail();
-      toast({
-        status: "success",
-        title: "Success",
-        description: "Successfully resent verification email.",
+  const { mutate: resend, isPending } = trpc.auth.resendVerification.useMutation({
+    onSuccess() {
+      notifications.show("Successfully resent verification email.", {
+        severity: "success",
       });
-    } catch (error: any) {
-      toast({
-        status: "error",
-        title: "Error",
-        description: error.message,
-      });
-    }
-  }
+    },
+    onError(error) {
+      notifications.show(error.message, { severity: "error" });
+    },
+  });
+
+  const notifications = useNotifications();
 
   if (!user || user.isEmailVerified) {
     return null;
@@ -41,7 +32,7 @@ export function Banners() {
       action={
         <Button
           loading={isPending}
-          onClick={resendVarificationEmail}
+          onClick={() => resend()}
           color="error"
           variant="outlined"
         >

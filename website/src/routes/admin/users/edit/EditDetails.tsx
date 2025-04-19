@@ -1,4 +1,8 @@
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { editUserRoute } from ".";
+import { RouterInput, trpc } from "../../../../utils/trpc";
+import { useNotifications } from "@toolpad/core";
 import {
   Alert,
   FormControlLabel,
@@ -7,15 +11,11 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { editUserRoute } from ".";
-import { RouterInput, trpc } from "../../../../utils/trpc";
-import { useToast } from "@chakra-ui/react";
 
 type Values = RouterInput["user"]["editAdmin"]["data"];
 
 export function EditDetails() {
-  const toast = useToast();
+  const notifications = useNotifications();
 
   const { userId } = editUserRoute.useParams();
   const { data: user } = trpc.user.user.useQuery(userId);
@@ -42,28 +42,27 @@ export function EditDetails() {
     values,
   });
 
-  const { mutateAsync: editUser, error: editError } =
-    trpc.user.editAdmin.useMutation({
-      onError(errors) {
-        if (errors.data?.zodError?.fieldErrors) {
-          for (const field in errors.data?.zodError?.fieldErrors) {
-            setError(field as keyof Values, {
-              message: errors.data?.zodError?.fieldErrors[field]?.[0],
-            });
-          }
-        } else {
-          setError("root", { message: errors.message });
+  const { mutateAsync: editUser } = trpc.user.editAdmin.useMutation({
+    onSuccess(user) {
+      notifications.show(`Successfully edited ${user.first}'s profile`, {
+        severity: "success",
+      });
+    },
+    onError(errors) {
+      if (errors.data?.zodError?.fieldErrors) {
+        for (const field in errors.data?.zodError?.fieldErrors) {
+          setError(field as keyof Values, {
+            message: errors.data?.zodError?.fieldErrors[field]?.[0],
+          });
         }
-      },
-    });
+      } else {
+        setError("root", { message: errors.message });
+      }
+    },
+  });
 
   const onSubmit = async (data: Values) => {
-    const user = await editUser({ userId, data });
-    toast({
-      status: "success",
-      title: "Success",
-      description: `Successfully edited ${user.first}'s profile`,
-    });
+    await editUser({ userId, data });
   };
 
   const keys = values ? Object.keys(values) : [];

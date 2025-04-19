@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { SendNotificationConfirmationDialog } from "./SendNotificationConfirmationDialog";
+import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
 import { RouterInput, trpc } from "../../../utils/trpc";
@@ -12,8 +14,6 @@ import {
   Box,
   Card,
 } from "@mui/material";
-import { useToast } from "@chakra-ui/react";
-import { SendNotificationConfirmationDialog } from "./SendNotificationConfirmationDialog";
 
 type SendNotifictionVariables = RouterInput["notification"]["sendNotification"];
 
@@ -24,7 +24,7 @@ export const notificationsRoute = createRoute({
 });
 
 export function Notifications() {
-  const toast = useToast();
+  const notifications = useNotifications();
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
@@ -49,22 +49,16 @@ export function Notifications() {
           setError("root", { message: e.message });
         }
       },
+      onSuccess(sent) {
+        notifications.show(`Sent notification to ${sent} users.`, {
+          severity: 'success',
+        });
+      },
     });
 
   const onConfirm = handleSubmit(async (values) => {
     setIsConfirmOpen(false);
-
-    try {
-      const sent = await sendNotification(values);
-
-      toast({
-        title: `Sent notification to ${sent} users.`,
-      });
-
-      reset();
-    } catch (error) {
-      // ...
-    }
+    await sendNotification(values);
   });
 
   return (
