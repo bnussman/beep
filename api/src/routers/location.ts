@@ -1,5 +1,5 @@
 import { z } from "zod";
-// import { OSRM_SECRET } from "../utils/constants";
+import { OSRM_SECRET } from "../utils/constants";
 import { authedProcedure, router } from "../utils/trpc";
 
 export const locationRouter = router({
@@ -8,9 +8,9 @@ export const locationRouter = router({
       z.object({
         start: z.string(),
         end: z.string(),
-      })
+      }),
     )
-    .query(async () => {
+    .query(async ({ input }) => {
       const username = "Admin";
       const password = OSRM_SECRET;
 
@@ -20,11 +20,16 @@ export const locationRouter = router({
 
       // http://192.168.1.104:5000/route/v1/driving/-81.6538314,36.2221064;-80.75991097845207,35.08197829130579
 
-      const result = await fetch(`https://osrm.ridebeep.app/route/v1/driving/${input.start};${input.end}`, {
-        headers: {
-          'Authorization': 'Basic ' + Buffer.from(username + ":" + password).toString('base64')
-        }
-      });
+      const result = await fetch(
+        `https://osrm.ridebeep.app/route/v1/driving/${input.start};${input.end}`,
+        {
+          headers: {
+            Authorization:
+              "Basic " +
+              Buffer.from(username + ":" + password).toString("base64"),
+          },
+        },
+      );
 
       // @todo add types for this API call
       const data = await result.json();
@@ -40,5 +45,5 @@ export const locationRouter = router({
       const etaMinutes = Math.round(eta / 60);
 
       return `${etaMinutes} min`;
-    })
+    }),
 });
