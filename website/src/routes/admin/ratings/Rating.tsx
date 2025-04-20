@@ -5,21 +5,13 @@ import { printStars, ratingsRoute } from ".";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
+import { trpc } from "../../../utils/trpc";
+import { Alert, Typography, Button, Stack, Grid, Link } from "@mui/material";
 import {
   Link as RouterLink,
   createRoute,
   useRouter,
 } from "@tanstack/react-router";
-import { trpc } from "../../../utils/trpc";
-import {
-  Alert,
-  Box,
-  Typography,
-  Button,
-  Stack,
-  Grid,
-  Link,
-} from "@mui/material";
 
 dayjs.extend(relativeTime);
 
