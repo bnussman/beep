@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, MenuItem, Button } from "@mui/material";
+import { Menu, MenuItem, Button, Divider } from "@mui/material";
 import { Link } from "@tanstack/react-router";
 
 export function AdminMenu() {
@@ -34,13 +34,6 @@ export function AdminMenu() {
           },
         }}
       >
-        <MenuItem
-          component={Link}
-          onClick={handleClose}
-          to="/admin/leaderboards/beeps"
-        >
-          Leaderboards
-        </MenuItem>
         <MenuItem component={Link} onClick={handleClose} to="/admin/users">
           Users
         </MenuItem>
@@ -50,6 +43,13 @@ export function AdminMenu() {
           to="/admin/users/domain"
         >
           Users by Domain
+        </MenuItem>
+        <MenuItem
+          component={Link}
+          onClick={handleClose}
+          to="/admin/leaderboards/beeps"
+        >
+          Leaderboards
         </MenuItem>
         <MenuItem component={Link} onClick={handleClose} to="/admin/beepers">
           Beepers
@@ -92,6 +92,7 @@ export function AdminMenu() {
         <MenuItem component={Link} onClick={handleClose} to="/admin/health">
           Health
         </MenuItem>
+        <Divider />
         <MenuItem
           component="a"
           target="_blank"
