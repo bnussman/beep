@@ -1,24 +1,33 @@
-import React, { useState } from 'react';
-import { Indicator } from './Indicator';
-import { createRoute } from '@tanstack/react-router';
-import { userRoute } from '../routes/admin/users/User';
-import { trpc } from '../utils/trpc';
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { PaginationFooter } from './PaginationFooter';
-import { TableLoading } from './TableLoading';
-import { TableCellUser } from './TableCellUser';
-import { TableError } from './TableError';
-import { TableEmpty } from './TableEmpty';
-import { ReportMenu } from '../routes/admin/reports/ReportMenu';
-import { DeleteReportDialog } from '../routes/admin/reports/DeleteReportDialog';
+import React, { useState } from "react";
+import { Indicator } from "./Indicator";
+import { createRoute } from "@tanstack/react-router";
+import { userRoute } from "../routes/admin/users/User";
+import { trpc } from "../utils/trpc";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import {
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import { PaginationFooter } from "./PaginationFooter";
+import { TableLoading } from "./TableLoading";
+import { TableCellUser } from "./TableCellUser";
+import { TableError } from "./TableError";
+import { TableEmpty } from "./TableEmpty";
+import { ReportMenu } from "../routes/admin/reports/ReportMenu";
+import { DeleteReportDialog } from "../routes/admin/reports/DeleteReportDialog";
 
 dayjs.extend(duration);
 
 export const reportsTableRoute = createRoute({
   component: ReportsTable,
-  path: 'reports',
+  path: "reports",
   getParentRoute: () => userRoute,
 });
 
@@ -31,8 +40,8 @@ export function ReportsTable() {
   const { data, isLoading, error } = trpc.report.reports.useQuery({
     userId,
     page: currentPage,
+    pageSize: 10,
   });
-
 
   return (
     <Stack spacing={1}>
@@ -65,9 +74,14 @@ export function ReportsTable() {
                 <TableCellUser user={report.reported} />
                 <TableCell>{report.reason}</TableCell>
                 <TableCell>{dayjs().to(report.timestamp)}</TableCell>
-                <TableCell><Indicator color={report.handled ? 'green' : 'red'} /></TableCell>
-                <TableCell sx={{ textAlign: 'right'}}>
-                  <ReportMenu reportId={report.id} onDelete={() => setSelectedReportId(report.id)} />
+                <TableCell>
+                  <Indicator color={report.handled ? "green" : "red"} />
+                </TableCell>
+                <TableCell sx={{ textAlign: "right" }}>
+                  <ReportMenu
+                    reportId={report.id}
+                    onDelete={() => setSelectedReportId(report.id)}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -82,7 +96,7 @@ export function ReportsTable() {
         onChange={(e, page) => setCurrentPage(page)}
       />
       <DeleteReportDialog
-        id={selectedReportId ?? ''}
+        id={selectedReportId ?? ""}
         isOpen={selectedReportId !== undefined}
         onClose={() => setSelectedReportId(undefined)}
       />

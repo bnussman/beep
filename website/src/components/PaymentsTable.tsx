@@ -6,6 +6,9 @@ import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
 import { trpc } from "../utils/trpc";
 import { PaginationFooter } from "./PaginationFooter";
+import { TableLoading } from "./TableLoading";
+import { TableError } from "./TableError";
+import { TableEmpty } from "./TableEmpty";
 import {
   Paper,
   Stack,
@@ -16,9 +19,6 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { TableLoading } from "./TableLoading";
-import { TableError } from "./TableError";
-import { TableEmpty } from "./TableEmpty";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -30,13 +30,14 @@ export const paymentsTableRoute = createRoute({
 });
 
 export function PaymentsTable() {
-  const pageSize = 5;
   const { userId } = paymentsTableRoute.useParams();
+
   const [currentPage, setCurrentPage] = useState<number>(1);
+
   const { data, isLoading, error } = trpc.payment.payments.useQuery({
     userId,
     page: currentPage,
-    pageSize,
+    pageSize: 10,
   });
 
   return (

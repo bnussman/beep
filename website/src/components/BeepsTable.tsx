@@ -7,12 +7,22 @@ import { trpc } from "../utils/trpc";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { PaginationFooter } from "./PaginationFooter";
 import { TableCellUser } from "./TableCellUser";
 import { TableLoading } from "./TableLoading";
 import { TableError } from "./TableError";
 import { TableEmpty } from "./TableEmpty";
+import {
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -24,8 +34,6 @@ export const beepsTableRoute = createRoute({
 });
 
 export function BeepsTable() {
-  const pageLimit = 5;
-
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { userId } = beepsTableRoute.useParams();
@@ -33,7 +41,7 @@ export function BeepsTable() {
   const { data, isLoading, error } = trpc.beep.beeps.useQuery({
     userId,
     cursor: currentPage,
-    pageSize: pageLimit,
+    pageSize: 10,
   });
 
   return (

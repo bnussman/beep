@@ -34,7 +34,6 @@ export const carsTableRoute = createRoute({
 });
 
 export function CarsTable() {
-  const pageLimit = 5;
   const { userId } = carsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -45,7 +44,7 @@ export function CarsTable() {
     {
       userId,
       cursor: currentPage,
-      pageSize: pageLimit,
+      pageSize: 10,
     },
     {
       placeholderData: keepPreviousData,
@@ -104,7 +103,7 @@ export function CarsTable() {
                 <TableCell>
                   <Indicator color={car.default ? "green" : "red"} />
                 </TableCell>
-                <TableCell sx={{ textAlign: 'right' }}>
+                <TableCell sx={{ textAlign: "right" }}>
                   <CarMenu carId={car.id} onDelete={() => onDelete(car.id)} />
                 </TableCell>
               </TableRow>

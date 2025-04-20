@@ -68,7 +68,7 @@ export function QueueTable() {
               <TableCell>{beep.groupSize}</TableCell>
               <TableCell>{dayjs().to(beep.start)}</TableCell>
               <TableCell>
-                <Stack direction="row" spacing={1}>
+                <Stack direction="row" spacing={1} alignItems="center">
                   <Indicator color={beepStatusMap[beep.status]} />
                   <Typography sx={{ textTransform: "capitalize" }}>
                     {beep.status.replaceAll("_", " ")}

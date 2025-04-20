@@ -32,17 +32,15 @@ export const ratingsTableRoute = createRoute({
 });
 
 export function RatingsTable() {
-  const pageLimit = 5;
-
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedRatingId, setSelectedRatingId] = useState<string>();
 
   const { userId } = ratingsTableRoute.useParams();
 
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const { data, isLoading, error } = trpc.rating.ratings.useQuery({
     userId,
     cursor: currentPage,
-    pageSize: pageLimit,
+    pageSize: 10,
   });
 
   return (
