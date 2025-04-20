@@ -11,8 +11,6 @@ export const locationRouter = router({
       })
     )
     .query(async () => {
-      return "ETA offline, sorry!";
-      /*
       const username = "Admin";
       const password = OSRM_SECRET;
 
@@ -42,6 +40,5 @@ export const locationRouter = router({
       const etaMinutes = Math.round(eta / 60);
 
       return `${etaMinutes} min`;
-      */
     })
 });
