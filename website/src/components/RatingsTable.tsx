@@ -5,12 +5,23 @@ import { printStars } from "../routes/admin/ratings";
 import { Link, createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
 import { trpc } from "../utils/trpc";
-import { Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import { PaginationFooter } from "./PaginationFooter";
 import { TableCellUser } from "./TableCellUser";
 import { TableLoading } from "./TableLoading";
 import { TableError } from "./TableError";
 import { TableEmpty } from "./TableEmpty";
+import { RatingMenu } from "../routes/admin/ratings/RatingMenu";
+import { DeleteRatingDialog } from "../routes/admin/ratings/DeleteRatingDialog";
 
 dayjs.extend(duration);
 
@@ -23,6 +34,8 @@ export const ratingsTableRoute = createRoute({
 export function RatingsTable() {
   const pageLimit = 5;
 
+  const [selectedRatingId, setSelectedRatingId] = useState<string>();
+
   const { userId } = ratingsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -31,7 +44,6 @@ export function RatingsTable() {
     cursor: currentPage,
     pageSize: pageLimit,
   });
-
 
   return (
     <Stack spacing={1}>
@@ -65,13 +77,11 @@ export function RatingsTable() {
                 <TableCell>{rating.message ?? "N/A"}</TableCell>
                 <TableCell>{printStars(rating.stars)}</TableCell>
                 <TableCell>{dayjs().to(rating.timestamp)}</TableCell>
-                <TableCell>
-                  <Link
-                    to="/admin/ratings/$ratingId"
-                    params={{ ratingId: rating.id }}
-                  >
-                    Details
-                  </Link>
+                <TableCell sx={{ textAlign: "right" }}>
+                  <RatingMenu
+                    ratingId={rating.id}
+                    onDelete={() => setSelectedRatingId(rating.id)}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -84,6 +94,11 @@ export function RatingsTable() {
         count={data?.pages}
         page={currentPage}
         onChange={(e, page) => setCurrentPage(page)}
+      />
+      <DeleteRatingDialog
+        id={selectedRatingId}
+        onClose={() => setSelectedRatingId(undefined)}
+        isOpen={selectedRatingId !== undefined}
       />
     </Stack>
   );

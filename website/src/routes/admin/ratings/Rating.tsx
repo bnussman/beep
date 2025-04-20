@@ -5,9 +5,21 @@ import { printStars, ratingsRoute } from ".";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
-import { Link, createRoute, useRouter } from "@tanstack/react-router";
+import {
+  Link as RouterLink,
+  createRoute,
+  useRouter,
+} from "@tanstack/react-router";
 import { trpc } from "../../../utils/trpc";
-import { Alert, Box, Typography, Button, Stack } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Typography,
+  Button,
+  Stack,
+  Grid,
+  Link,
+} from "@mui/material";
 
 dayjs.extend(relativeTime);
 
@@ -39,8 +51,10 @@ export function Rating() {
 
   return (
     <Stack spacing={2}>
-      <Stack justifyContent="space-between" alignItems="center">
-        <Typography>Rating</Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography variant="h4" fontWeight="bold">
+          Rating
+        </Typography>
         <Button
           color="error"
           onClick={() => setIsOpen(true)}
@@ -49,36 +63,48 @@ export function Rating() {
           Delete
         </Button>
       </Stack>
-      <Box>
-        <Typography>Rater</Typography>
-        <BasicUser user={rating.rater} />
-      </Box>
-      <Box>
-        <Typography>Rated</Typography>
-        <BasicUser user={rating.rated} />
-      </Box>
-      <Box>
-        <Typography>Stars</Typography>
-        <Typography>
-          {printStars(rating.stars)} {rating.stars}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>Message</Typography>
-        <Typography>{rating.message}</Typography>
-      </Box>
-      <Box>
-        <Typography>Created</Typography>
-        <Typography>{dayjs().to(rating.timestamp)}</Typography>
-      </Box>
-      {rating.beep_id && (
-        <Box>
-          <Typography>Beep</Typography>
+      <Grid container spacing={3}>
+        <Grid size={{ sm: 6, xs: 12 }}>
+          <Typography variant="h5" fontWeight="bold">
+            Rater
+          </Typography>
+          <BasicUser user={rating.rater} />
+        </Grid>
+        <Grid size={{ sm: 6, xs: 12 }}>
+          <Typography variant="h5" fontWeight="bold">
+            Rated
+          </Typography>
+          <BasicUser user={rating.rated} />
+        </Grid>
+        <Grid size={{ sm: 6, xs: 12 }}>
+          <Typography variant="h5" fontWeight="bold">
+            Stars
+          </Typography>
+          <Typography>
+            {printStars(rating.stars)} {rating.stars}
+          </Typography>
+        </Grid>
+        <Grid size={{ sm: 6, xs: 12 }}>
+          <Typography variant="h5" fontWeight="bold">
+            Message
+          </Typography>
+          <Typography>{rating.message ?? "N/A"}</Typography>
+        </Grid>
+        <Grid size={{ sm: 6, xs: 12 }}>
+          <Typography variant="h5" fontWeight="bold">
+            Created
+          </Typography>
+          <Typography>{dayjs().to(rating.timestamp)}</Typography>
+        </Grid>
+        <Grid size={{ sm: 6, xs: 12 }}>
+          <Typography variant="h5" fontWeight="bold">
+            Beep
+          </Typography>
           <Link to="/admin/beeps/$beepId" params={{ beepId: rating.beep_id }}>
             {rating.beep_id}
           </Link>
-        </Box>
-      )}
+        </Grid>
+      </Grid>
       <DeleteRatingDialog
         id={ratingId}
         isOpen={isOpen}

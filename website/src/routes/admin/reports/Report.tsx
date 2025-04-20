@@ -1,6 +1,12 @@
 import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Loading } from "../../../components/Loading";
+import { DeleteReportDialog } from "./DeleteReportDialog";
+import { createRoute, useRouter } from "@tanstack/react-router";
+import { reportsRoute } from ".";
+import { RouterInput, trpc } from "../../../utils/trpc";
+import { Controller, useForm } from "react-hook-form";
 import {
   Button,
   Typography,
@@ -12,12 +18,6 @@ import {
   FormControlLabel,
   Alert,
 } from "@mui/material";
-import { Loading } from "../../../components/Loading";
-import { DeleteReportDialog } from "./DeleteReportDialog";
-import { createRoute, useRouter } from "@tanstack/react-router";
-import { reportsRoute } from ".";
-import { RouterInput, trpc } from "../../../utils/trpc";
-import { Controller, useForm } from "react-hook-form";
 
 dayjs.extend(relativeTime);
 
@@ -91,7 +91,7 @@ export function Report() {
           Delete
         </Button>
       </Stack>
-      <Card sx={{ p: 2, pt: 1 }} variant="outlined">
+      <Card sx={{ p: 2, pt: 1 }}>
         <Stack spacing={2}>
           <Typography variant="h5" fontWeight="bold">
             Details
@@ -126,12 +126,30 @@ export function Report() {
           </Stack>
         </Stack>
       </Card>
-      <Card sx={{ p: 2 }} variant="outlined">
+      <Card sx={{ p: 2 }}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Stack spacing={2}>
-            <Typography variant="h5" fontWeight="bold">
-              Admin Notes
-            </Typography>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              flexWrap="wrap"
+            >
+              <Typography variant="h5" fontWeight="bold">
+                Admin Notes
+              </Typography>
+              {report.handledBy && (
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Typography fontWeight="bold">Resolved By</Typography>
+                  <Avatar
+                    src={report.handledBy.photo ?? undefined}
+                    sx={{ width: 24, height: 24 }}
+                  />
+                  <Typography>
+                    {report.handledBy.first} {report.handledBy.last}
+                  </Typography>
+                </Stack>
+              )}
+            </Stack>
             <Controller
               control={form.control}
               name="notes"
@@ -154,7 +172,7 @@ export function Report() {
                     checked={field.value ?? false}
                     onChange={field.onChange}
                     control={<Checkbox />}
-                    label="Handeled?"
+                    label="Resolved"
                   />
                 )}
               />
