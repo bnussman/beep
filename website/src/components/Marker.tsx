@@ -1,5 +1,5 @@
 import React from "react";
-import { Marker as _Marker } from 'react-map-gl/mapbox';
+import { Marker as _Marker } from "react-map-gl/mapbox";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { QueuePreview } from "./QueuePreview";
 import {
@@ -10,6 +10,7 @@ import {
   Tooltip,
   Popover,
   Button,
+  Divider,
 } from "@mui/material";
 
 interface Props {
@@ -19,7 +20,7 @@ interface Props {
   userId: string;
   photo: string | null | undefined;
   name: string;
-  variant?: 'queue' | 'default';
+  variant?: "queue" | "default";
 }
 
 export function Marker(props: Props) {
@@ -36,10 +37,9 @@ export function Marker(props: Props) {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? "simple-popover" : undefined;
 
-
-  if (variant === 'queue') {
+  if (variant === "queue") {
     return (
       <div>
         <_Marker longitude={longitude} latitude={latitude}>
@@ -54,17 +54,21 @@ export function Marker(props: Props) {
           anchorEl={anchorEl}
           onClose={handleClose}
           slotProps={{
-            paper: { sx: { p: 1 } }
+            paper: { sx: { p: 1 } },
           }}
         >
-          <Link component={RouterLink} to={`/admin/users/${userId}/queue`}>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Avatar src={photo || ''} />
-              <Typography fontWeight="bold">{name}</Typography>
-            </Stack>
-          </Link>
-          <QueuePreview userId={userId} />
-          <Typography>{latitude.toFixed(3)} {longitude.toFixed(3)}</Typography>
+          <Stack spacing={1} divider={<Divider />}>
+            <Link component={RouterLink} to={`/admin/users/${userId}/queue`}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Avatar src={photo || ""} />
+                <Typography fontWeight="bold">{name}</Typography>
+              </Stack>
+            </Link>
+            <QueuePreview userId={userId} />
+            <Typography>
+              {latitude.toFixed(3)} {longitude.toFixed(3)}
+            </Typography>
+          </Stack>
         </Popover>
       </div>
     );
@@ -80,4 +84,4 @@ export function Marker(props: Props) {
       </Tooltip>
     </_Marker>
   );
-};
+}

@@ -1,11 +1,18 @@
-import React from 'react'
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { Indicator } from './Indicator';
-import { Link } from '@tanstack/react-router';
-import { trpc } from '../utils/trpc';
-import { beepStatusMap } from '../routes/admin/beeps';
-import { Avatar, Box, CircularProgress, Stack, Typography } from '@mui/material';
+import React from "react";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import { Indicator } from "./Indicator";
+import { Link as RouterLink } from "@tanstack/react-router";
+import { trpc } from "../utils/trpc";
+import { beepStatusMap } from "../routes/admin/beeps";
+import {
+  Link,
+  Avatar,
+  Box,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 dayjs.extend(duration);
 
@@ -21,12 +28,17 @@ export function QueuePreview({ userId }: Props) {
   trpc.beeper.watchQueue.useSubscription(userId, {
     onData(queue) {
       utils.beeper.queue.setData(userId, queue);
-    }
+    },
   });
 
   if (isLoading) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" height="100px">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        height="100px"
+      >
         <CircularProgress size={24} />
       </Box>
     );
@@ -34,7 +46,12 @@ export function QueuePreview({ userId }: Props) {
 
   if (error) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" height="100px">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        height="100px"
+      >
         {error.message}
       </Box>
     );
@@ -42,28 +59,34 @@ export function QueuePreview({ userId }: Props) {
 
   if (data?.length === 0) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" height="100px">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        height="100px"
+      >
         This user's queue is empty.
       </Box>
     );
   }
 
   return (
-    <Box>
+    <Stack spacing={1}>
       {data?.map((beep) => (
-        <Stack key={beep.id} direction="row">
-          <Link to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
-            <Avatar src={beep.rider.photo || ''} sx={{ width: 16, height: 16 }} />
-          </Link>
-          <Link to="/admin/users/$userId" params={{ userId: beep.rider.id }}>
-            <Box fontWeight="bold" whiteSpace="nowrap">{beep.rider.first} {beep.rider.last}</Box>
-          </Link>
-          <Typography>
-            {beep.status.replaceAll("_", ' ')}
-          </Typography>
-          <Indicator color={beepStatusMap[beep.status]} />
-        </Stack>
+        <Link component={RouterLink} to={`/admin/users/${beep.rider.id}`}>
+          <Stack key={beep.id} direction="row" spacing={1} alignItems="center">
+            <Avatar
+              src={beep.rider.photo || ""}
+              sx={{ width: 24, height: 24 }}
+            />
+            <Box fontWeight="bold" whiteSpace="nowrap">
+              {beep.rider.first} {beep.rider.last}
+            </Box>
+            <Typography>{beep.status.replaceAll("_", " ")}</Typography>
+            <Indicator color={beepStatusMap[beep.status]} />
+          </Stack>
+        </Link>
       ))}
-    </Box>
+    </Stack>
   );
 }
