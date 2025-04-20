@@ -92,6 +92,27 @@ export function AdminMenu() {
         <MenuItem component={Link} onClick={handleClose} to="/admin/health">
           Health
         </MenuItem>
+        <MenuItem
+          component="a"
+          target="_blank"
+          href="https://osrm.ridebeep.app"
+        >
+          OSRM
+        </MenuItem>
+        <MenuItem
+          component="a"
+          target="_blank"
+          href="https://grafana.ridebeep.app"
+        >
+          Grafana
+        </MenuItem>
+        <MenuItem
+          component="a"
+          target="_blank"
+          href="https://ian-banks-llc.sentry.io"
+        >
+          Sentry
+        </MenuItem>
       </Menu>
     </div>
   );
