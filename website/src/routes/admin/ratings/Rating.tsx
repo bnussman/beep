@@ -100,7 +100,7 @@ export function Rating() {
           <Typography variant="h5" fontWeight="bold">
             Beep
           </Typography>
-          <Link to="/admin/beeps/$beepId" params={{ beepId: rating.beep_id }}>
+          <Link component={RouterLink} to={`/admin/beeps/${rating.beep_id}`}>
             {rating.beep_id}
           </Link>
         </Grid>
