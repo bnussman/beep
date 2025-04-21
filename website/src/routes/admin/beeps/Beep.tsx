@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { Typography, Button, Box, Stack, Alert } from "@mui/material";
@@ -8,8 +6,7 @@ import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { createRoute } from "@tanstack/react-router";
 import { beepsRoute } from ".";
 import { trpc } from "../../../utils/trpc";
-
-dayjs.extend(duration);
+import { DateTime } from "luxon";
 
 export const beepRoute = createRoute({
   component: Beep,
@@ -68,14 +65,16 @@ export function Beep() {
       <Box>
         <Typography>Beep Started</Typography>
         <Typography>
-          {new Date(beep.start).toLocaleString()} - {dayjs().to(beep.start)}
+          {new Date(beep.start).toLocaleString()} -{" "}
+          {DateTime.fromISO(beep.start).toRelative()}
         </Typography>
       </Box>
       <Box>
         <Typography>Beep Ended</Typography>
         {beep.end ? (
           <Typography>
-            {new Date(beep.end).toLocaleString()} - {dayjs().to(beep.end)}
+            {new Date(beep.end).toLocaleString()} -{" "}
+            {DateTime.fromISO(beep.end).toRelative()}
           </Typography>
         ) : (
           <Typography>Beep is still in progress</Typography>

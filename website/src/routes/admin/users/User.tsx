@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { trpc } from "../../../utils/trpc";
 import { Loading } from "../../../components/Loading";
 import { ClearQueueDialog } from "../../../components/ClearQueueDialog";
@@ -10,6 +8,7 @@ import { DeleteUserDialog } from "./DeleteUserDialog";
 import { Link, Outlet, createRoute, useLocation } from "@tanstack/react-router";
 import { useNotifications } from "@toolpad/core";
 import { usersRoute } from "./routes";
+import { DateTime } from "luxon";
 import {
   Alert,
   Avatar,
@@ -20,8 +19,6 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-
-dayjs.extend(relativeTime);
 
 const tabs = [
   "details",
@@ -54,25 +51,30 @@ export function User() {
     },
   });
 
-  const { mutate: syncPayments, isPending: isSyncingPayments } = trpc.user.syncPayments.useMutation({
-    onSuccess(activePayments) {
-      notifications.show(`Payments synced. The user has ${activePayments.length} active payments.`, {
-        severity: "success",
-      });
-    },
-    onError(error) {
-      notifications.show(error.message, { severity: "error" });
-    },
-  });
+  const { mutate: syncPayments, isPending: isSyncingPayments } =
+    trpc.user.syncPayments.useMutation({
+      onSuccess(activePayments) {
+        notifications.show(
+          `Payments synced. The user has ${activePayments.length} active payments.`,
+          {
+            severity: "success",
+          },
+        );
+      },
+      onError(error) {
+        notifications.show(error.message, { severity: "error" });
+      },
+    });
 
-  const { mutate: updateUser, isPending: isVerifyLoading } = trpc.user.editAdmin.useMutation({
-    onSuccess() {
-      notifications.show("User verified", { severity: "success" });
-    },
-    onError(error) {
-      notifications.show(error.message, { severity: "error" });
-    }
-  });
+  const { mutate: updateUser, isPending: isVerifyLoading } =
+    trpc.user.editAdmin.useMutation({
+      onSuccess() {
+        notifications.show("User verified", { severity: "success" });
+      },
+      onError(error) {
+        notifications.show(error.message, { severity: "error" });
+      },
+    });
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -86,11 +88,11 @@ export function User() {
     updateUser({
       userId,
       data: { isEmailVerified: true, isStudent: true },
-    })
+    });
   };
 
   const onSyncPayments = () => {
-    syncPayments(userId)
+    syncPayments(userId);
   };
 
   const pathname = useLocation({
@@ -140,7 +142,7 @@ export function User() {
             <Typography fontSize="12px">{user.id}</Typography>
             {user.created && (
               <Typography fontSize="12px">
-                Joined {dayjs().to(user.created)}
+                Joined {DateTime.fromISO(user.created).toRelative()}
               </Typography>
             )}
           </Stack>

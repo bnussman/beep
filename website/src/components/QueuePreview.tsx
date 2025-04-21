@@ -1,6 +1,4 @@
 import React from "react";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 import { Indicator } from "./Indicator";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { trpc } from "../utils/trpc";
@@ -13,8 +11,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-
-dayjs.extend(duration);
 
 interface Props {
   userId: string;

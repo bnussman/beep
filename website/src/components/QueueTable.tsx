@@ -1,8 +1,13 @@
 import React from "react";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 import { TableCellUser } from "./TableCellUser";
 import { Indicator } from "./Indicator";
+import { userRoute } from "../routes/admin/users/User";
+import { beepStatusMap } from "../routes/admin/beeps";
+import { createRoute } from "@tanstack/react-router";
+import { trpc } from "../utils/trpc";
+import { TableLoading } from "./TableLoading";
+import { TableEmpty } from "./TableEmpty";
+import { TableError } from "./TableError";
 import {
   Typography,
   Table,
@@ -14,15 +19,7 @@ import {
   TableCell,
   Stack,
 } from "@mui/material";
-import { userRoute } from "../routes/admin/users/User";
-import { beepStatusMap } from "../routes/admin/beeps";
-import { createRoute } from "@tanstack/react-router";
-import { trpc } from "../utils/trpc";
-import { TableLoading } from "./TableLoading";
-import { TableEmpty } from "./TableEmpty";
-import { TableError } from "./TableError";
-
-dayjs.extend(duration);
+import { DateTime } from "luxon";
 
 export const queueRoute = createRoute({
   component: QueueTable,
@@ -66,7 +63,7 @@ export function QueueTable() {
               <TableCell>{beep.origin}</TableCell>
               <TableCell>{beep.destination}</TableCell>
               <TableCell>{beep.groupSize}</TableCell>
-              <TableCell>{dayjs().to(beep.start)}</TableCell>
+              <TableCell>{DateTime.fromISO(beep.start).toRelative()}</TableCell>
               <TableCell>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Indicator color={beepStatusMap[beep.status]} />

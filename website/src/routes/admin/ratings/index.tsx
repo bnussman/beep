@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
@@ -12,6 +10,7 @@ import { useNotifications } from "@toolpad/core";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { trpc } from "../../../utils/trpc";
+import { DateTime } from "luxon";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import {
   TableContainer,
@@ -25,8 +24,6 @@ import {
   Paper,
   TableBody,
 } from "@mui/material";
-
-dayjs.extend(relativeTime);
 
 export const ratingsRoute = createRoute({
   path: "ratings",
@@ -60,9 +57,12 @@ export function Ratings() {
 
   const { mutate, isPending } = trpc.user.reconcileUserRatings.useMutation({
     onSuccess(count) {
-      notifications.show(`Successfully reconciled user ratings. ${count} user ratings were updated`, {
-        severity: "success",
-      });
+      notifications.show(
+        `Successfully reconciled user ratings. ${count} user ratings were updated`,
+        {
+          severity: "success",
+        },
+      );
     },
     onError(error) {
       notifications.show(error.message, {
@@ -119,7 +119,9 @@ export function Ratings() {
                 <TableCellUser user={rating.rated} />
                 <TableCell>{rating.message ?? "N/A"}</TableCell>
                 <TableCell>{printStars(rating.stars)}</TableCell>
-                <TableCell>{dayjs().to(rating.timestamp)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(rating.timestamp).toRelative()}
+                </TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
                   <RatingMenu
                     ratingId={rating.id}

@@ -1,10 +1,15 @@
 import React from "react";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 import { Indicator } from "../../../components/Indicator";
 import { beepStatusMap } from ".";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
+import { trpc } from "../../../utils/trpc";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableCellUser } from "../../../components/TableCellUser";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { TableError } from "../../../components/TableError";
+import { DateTime } from "luxon";
 import {
   TableBody,
   TableCell,
@@ -18,14 +23,6 @@ import {
   TableContainer,
   TableRow,
 } from "@mui/material";
-import { trpc } from "../../../utils/trpc";
-import { PaginationFooter } from "../../../components/PaginationFooter";
-import { TableCellUser } from "../../../components/TableCellUser";
-import { TableLoading } from "../../../components/TableLoading";
-import { TableEmpty } from "../../../components/TableEmpty";
-import { TableError } from "../../../components/TableError";
-
-dayjs.extend(duration);
 
 export const activeBeepsRoute = createRoute({
   component: ActiveBeeps,
@@ -101,7 +98,9 @@ export function ActiveBeeps() {
                 <TableCell>{beep.origin}</TableCell>
                 <TableCell>{beep.destination}</TableCell>
                 <TableCell>{beep.groupSize}</TableCell>
-                <TableCell>{dayjs().to(beep.start)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(beep.start).toRelative()}
+                </TableCell>
                 <TableCell>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Indicator color={beepStatusMap[beep.status]} />
