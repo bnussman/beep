@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
 import { trpc } from "../utils/trpc";
@@ -19,9 +16,6 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
 
 export const paymentsTableRoute = createRoute({
   component: PaymentsTable,

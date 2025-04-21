@@ -1,12 +1,16 @@
 import React, { useState } from "react";
+import { DateTime } from "luxon";
 import { Indicator } from "./Indicator";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
 import { trpc } from "../utils/trpc";
 import { DeleteCarDialog } from "../routes/admin/cars/DeleteCarDialog";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { PaginationFooter } from "./PaginationFooter";
+import { CarMenu } from "../routes/admin/cars/CarMenu";
+import { TableLoading } from "./TableLoading";
+import { TableEmpty } from "./TableEmpty";
+import { TableError } from "./TableError";
+import { keepPreviousData } from "@tanstack/react-query";
 import {
   Paper,
   TableContainer,
@@ -17,15 +21,6 @@ import {
   Stack,
   TableCell,
 } from "@mui/material";
-import { PaginationFooter } from "./PaginationFooter";
-import { CarMenu } from "../routes/admin/cars/CarMenu";
-import { TableLoading } from "./TableLoading";
-import { TableEmpty } from "./TableEmpty";
-import { TableError } from "./TableError";
-import { keepPreviousData } from "@tanstack/react-query";
-
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
 
 export const carsTableRoute = createRoute({
   component: CarsTable,
@@ -93,7 +88,9 @@ export function CarsTable() {
                 <TableCell>
                   <Indicator color={car.color} tooltip={car.color} />
                 </TableCell>
-                <TableCell>{dayjs().to(car.created)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(car.created).toRelative()}
+                </TableCell>
                 <TableCell>
                   <img
                     src={car.photo}

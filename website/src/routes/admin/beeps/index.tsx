@@ -1,11 +1,15 @@
 import React from "react";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { RouterOutput, trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableCellUser } from "../../../components/TableCellUser";
+import { TableError } from "../../../components/TableError";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { DateTime, Duration } from "luxon";
 import {
   Paper,
   Stack,
@@ -17,13 +21,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { PaginationFooter } from "../../../components/PaginationFooter";
-import { TableCellUser } from "../../../components/TableCellUser";
-import { TableError } from "../../../components/TableError";
-import { TableLoading } from "../../../components/TableLoading";
-import { TableEmpty } from "../../../components/TableEmpty";
-
-dayjs.extend(duration);
 
 export const beepStatusMap: Record<
   RouterOutput["beep"]["beep"]["status"],
@@ -120,16 +117,18 @@ export function Beeps() {
                     </Typography>
                   </Stack>
                 </TableCell>
-                <TableCell>{dayjs().to(beep.start)}</TableCell>
-                <TableCell>{beep.end ? dayjs().to(beep.end) : "N/A"}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(beep.start).toRelative()}
+                </TableCell>
+                <TableCell>
+                  {beep.end ? DateTime.fromISO(beep.end).toRelative() : "N/A"}
+                </TableCell>
                 <TableCell>
                   {beep.end
-                    ? dayjs
-                        .duration(
-                          new Date(beep.end).getTime() -
-                            new Date(beep.start).getTime(),
-                        )
-                        .humanize()
+                    ? Duration.fromMillis(
+                        new Date(beep.end).getTime() -
+                          new Date(beep.start).getTime(),
+                      ).toHuman()
                     : "N/A"}
                 </TableCell>
               </TableRow>

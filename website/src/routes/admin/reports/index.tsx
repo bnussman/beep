@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { trpc } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableCellUser } from "../../../components/TableCellUser";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { TableError } from "../../../components/TableError";
+import { TableLoading } from "../../../components/TableLoading";
+import { ReportMenu } from "./ReportMenu";
+import { DeleteReportDialog } from "./DeleteReportDialog";
+import { keepPreviousData } from "@tanstack/react-query";
+import { DateTime } from "luxon";
 import {
   Paper,
   Stack,
@@ -17,15 +23,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { TableCellUser } from "../../../components/TableCellUser";
-import { TableEmpty } from "../../../components/TableEmpty";
-import { TableError } from "../../../components/TableError";
-import { TableLoading } from "../../../components/TableLoading";
-import { ReportMenu } from "./ReportMenu";
-import { DeleteReportDialog } from "./DeleteReportDialog";
-import { keepPreviousData } from "@tanstack/react-query";
-
-dayjs.extend(relativeTime);
 
 export const reportsRoute = createRoute({
   path: "reports",
@@ -95,7 +92,9 @@ export function Reports() {
                 <TableCellUser user={report.reporter} />
                 <TableCellUser user={report.reported} />
                 <TableCell>{report.reason}</TableCell>
-                <TableCell>{dayjs().to(report.timestamp)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(report.timestamp).toRelative()}
+                </TableCell>
                 <TableCell>
                   <Indicator color={report.handled ? "green" : "red"} />
                 </TableCell>

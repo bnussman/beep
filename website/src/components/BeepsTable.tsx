@@ -4,9 +4,6 @@ import { beepStatusMap } from "../routes/admin/beeps";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
 import { trpc } from "../utils/trpc";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { PaginationFooter } from "./PaginationFooter";
 import { TableCellUser } from "./TableCellUser";
 import { TableLoading } from "./TableLoading";
@@ -23,9 +20,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
+import { DateTime, Duration } from "luxon";
 
 export const beepsTableRoute = createRoute({
   component: BeepsTable,
@@ -64,7 +59,7 @@ export function BeepsTable() {
               <TableCell>Group Size</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Duration</TableCell>
-              <TableCell>When</TableCell>
+              <TableCell>Started</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -88,15 +83,15 @@ export function BeepsTable() {
                 </TableCell>
                 <TableCell>
                   {ride.end
-                    ? dayjs
-                        .duration(
-                          new Date(ride.end).getTime() -
-                            new Date(ride.start).getTime(),
-                        )
-                        .humanize()
+                    ? Duration.fromMillis(
+                        new Date(ride.end).getTime() -
+                          new Date(ride.start).getTime(),
+                      ).toHuman()
                     : "Still in progress"}
                 </TableCell>
-                <TableCell>{dayjs().to(ride.end)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(ride.start).toRelative()}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

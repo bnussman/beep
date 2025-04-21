@@ -1,12 +1,18 @@
 import React, { useState } from "react";
+import { DateTime } from "luxon";
 import { Indicator } from "../../../components/Indicator";
 import { PhotoDialog } from "../../../components/PhotoDialog";
 import { DeleteCarDialog } from "./DeleteCarDialog";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
 import { trpc } from "../../../utils/trpc";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { TableCellUser } from "../../../components/TableCellUser";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { keepPreviousData } from "@tanstack/react-query";
+import { CarMenu } from "./CarMenu";
 import {
   Paper,
   Stack,
@@ -18,15 +24,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { TableCellUser } from "../../../components/TableCellUser";
-import { PaginationFooter } from "../../../components/PaginationFooter";
-import { TableLoading } from "../../../components/TableLoading";
-import { TableError } from "../../../components/TableError";
-import { TableEmpty } from "../../../components/TableEmpty";
-import { keepPreviousData } from "@tanstack/react-query";
-import { CarMenu } from "./CarMenu";
-
-dayjs.extend(relativeTime);
 
 export const carsRoute = createRoute({
   component: Cars,
@@ -110,9 +107,11 @@ export function Cars() {
                   <Indicator color={car.color} tooltip={car.color} />
                 </TableCell>
                 <TableCell>
-                  <Indicator color={car.default ? 'green' : 'red'} />
+                  <Indicator color={car.default ? "green" : "red"} />
                 </TableCell>
-                <TableCell>{dayjs().to(car.created)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(car.created).toRelative()}
+                </TableCell>
                 <TableCell onClick={() => onPhotoClick(car.id)}>
                   <img
                     src={car.photo}

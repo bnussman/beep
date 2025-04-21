@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { printStars, ratingsRoute } from ".";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
 import { trpc } from "../../../utils/trpc";
+import { DateTime } from "luxon";
 import { Alert, Typography, Button, Stack, Grid, Link } from "@mui/material";
 import {
   Link as RouterLink,
   createRoute,
   useRouter,
 } from "@tanstack/react-router";
-
-dayjs.extend(relativeTime);
 
 export const ratingRoute = createRoute({
   component: Rating,
@@ -86,7 +83,9 @@ export function Rating() {
           <Typography variant="h5" fontWeight="bold">
             Created
           </Typography>
-          <Typography>{dayjs().to(rating.timestamp)}</Typography>
+          <Typography>
+            {DateTime.fromISO(rating.timestamp).toRelative()}
+          </Typography>
         </Grid>
         <Grid size={{ sm: 6, xs: 12 }}>
           <Typography variant="h5" fontWeight="bold">

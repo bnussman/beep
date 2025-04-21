@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
-import { RouterOutput, trpc } from "../../../utils/trpc";
+import { trpc } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import { TableCellUser } from "../../../components/TableCellUser";
+import { Delete } from "@mui/icons-material";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { TableError } from "../../../components/TableError";
+import { TableLoading } from "../../../components/TableLoading";
+import { DeleteFeedbackDialog } from "./DeleteFeedbackDialog";
+import { DateTime } from "luxon";
 import {
   IconButton,
   Paper,
@@ -17,15 +23,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { PaginationFooter } from "../../../components/PaginationFooter";
-import { TableCellUser } from "../../../components/TableCellUser";
-import { Delete } from "@mui/icons-material";
-import { TableEmpty } from "../../../components/TableEmpty";
-import { TableError } from "../../../components/TableError";
-import { TableLoading } from "../../../components/TableLoading";
-import { DeleteFeedbackDialog } from "./DeleteFeedbackDialog";
-
-dayjs.extend(relativeTime);
 
 export const feedbackRoute = createRoute({
   component: Feedback,
@@ -97,7 +94,9 @@ export function Feedback() {
               <TableRow key={feedback.id}>
                 <TableCellUser user={feedback.user} />
                 <TableCell>{feedback.message}</TableCell>
-                <TableCell>{dayjs().to(feedback.created)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(feedback.created).toRelative()}
+                </TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
                   <IconButton
                     color="error"

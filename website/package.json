@@ -20,7 +20,7 @@
     "@toolpad/core": "^0.14.0",
     "@trpc/client": "https://pkg.pr.new/trpc/trpc/@trpc/client@6640@051242049134f9f07770888e482325082271afa3",
     "@trpc/react-query": "^11.1.0",
-    "dayjs": "^1.11.10",
+    "luxon": "^3.6.1",
     "mapbox-gl": "^3.10.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -28,6 +28,7 @@
     "react-map-gl": "^8.0.1"
   },
   "devDependencies": {
+    "@types/luxon": "^3.6.2",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.8",
     "@vitejs/plugin-react-swc": "^3.8.1",

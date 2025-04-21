@@ -3,8 +3,13 @@ import { Indicator } from "./Indicator";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
 import { trpc } from "../utils/trpc";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
+import { PaginationFooter } from "./PaginationFooter";
+import { TableLoading } from "./TableLoading";
+import { TableCellUser } from "./TableCellUser";
+import { TableError } from "./TableError";
+import { TableEmpty } from "./TableEmpty";
+import { ReportMenu } from "../routes/admin/reports/ReportMenu";
+import { DeleteReportDialog } from "../routes/admin/reports/DeleteReportDialog";
 import {
   Paper,
   Stack,
@@ -15,15 +20,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { PaginationFooter } from "./PaginationFooter";
-import { TableLoading } from "./TableLoading";
-import { TableCellUser } from "./TableCellUser";
-import { TableError } from "./TableError";
-import { TableEmpty } from "./TableEmpty";
-import { ReportMenu } from "../routes/admin/reports/ReportMenu";
-import { DeleteReportDialog } from "../routes/admin/reports/DeleteReportDialog";
-
-dayjs.extend(duration);
+import { DateTime } from "luxon";
 
 export const reportsTableRoute = createRoute({
   component: ReportsTable,
@@ -73,7 +70,9 @@ export function ReportsTable() {
                 <TableCellUser user={report.reporter} />
                 <TableCellUser user={report.reported} />
                 <TableCell>{report.reason}</TableCell>
-                <TableCell>{dayjs().to(report.timestamp)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(report.timestamp).toRelative()}
+                </TableCell>
                 <TableCell>
                   <Indicator color={report.handled ? "green" : "red"} />
                 </TableCell>

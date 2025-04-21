@@ -1,11 +1,13 @@
 import React from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from ".";
 import { trpc } from "../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../components/PaginationFooter";
+import { TableCellUser } from "../../components/TableCellUser";
+import { TableEmpty } from "../../components/TableEmpty";
+import { TableLoading } from "../../components/TableLoading";
+import { TableError } from "../../components/TableError";
 import {
   Paper,
   Stack,
@@ -17,12 +19,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { TableCellUser } from "../../components/TableCellUser";
-import { TableEmpty } from "../../components/TableEmpty";
-import { TableLoading } from "../../components/TableLoading";
-import { TableError } from "../../components/TableError";
-
-dayjs.extend(relativeTime);
 
 export const paymentsRoute = createRoute({
   component: Payments,

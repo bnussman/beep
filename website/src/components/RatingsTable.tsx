@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 import { printStars } from "../routes/admin/ratings";
-import { Link, createRoute } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
 import { trpc } from "../utils/trpc";
+import { PaginationFooter } from "./PaginationFooter";
+import { TableCellUser } from "./TableCellUser";
+import { TableLoading } from "./TableLoading";
+import { TableError } from "./TableError";
+import { TableEmpty } from "./TableEmpty";
+import { RatingMenu } from "../routes/admin/ratings/RatingMenu";
+import { DeleteRatingDialog } from "../routes/admin/ratings/DeleteRatingDialog";
 import {
   Paper,
   Stack,
@@ -15,15 +20,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { PaginationFooter } from "./PaginationFooter";
-import { TableCellUser } from "./TableCellUser";
-import { TableLoading } from "./TableLoading";
-import { TableError } from "./TableError";
-import { TableEmpty } from "./TableEmpty";
-import { RatingMenu } from "../routes/admin/ratings/RatingMenu";
-import { DeleteRatingDialog } from "../routes/admin/ratings/DeleteRatingDialog";
-
-dayjs.extend(duration);
+import { DateTime } from "luxon";
 
 export const ratingsTableRoute = createRoute({
   component: RatingsTable,
@@ -74,7 +71,9 @@ export function RatingsTable() {
                 <TableCellUser user={rating.rated} />
                 <TableCell>{rating.message ?? "N/A"}</TableCell>
                 <TableCell>{printStars(rating.stars)}</TableCell>
-                <TableCell>{dayjs().to(rating.timestamp)}</TableCell>
+                <TableCell>
+                  {DateTime.fromISO(rating.timestamp).toRelative()}
+                </TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
                   <RatingMenu
                     ratingId={rating.id}

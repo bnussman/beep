@@ -1,6 +1,4 @@
 import React from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
 import { createRoute, useRouter } from "@tanstack/react-router";
@@ -18,8 +16,6 @@ import {
   FormControlLabel,
   Alert,
 } from "@mui/material";
-
-dayjs.extend(relativeTime);
 
 export const reportRoute = createRoute({
   component: Report,
