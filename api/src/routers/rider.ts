@@ -120,6 +120,13 @@ export const riderRouter = router({
         });
       }
 
+      if (beeper.beeps.some((beep) => beep.rider_id === ctx.user.id)) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: "You are already in that beeper's queue."
+        });
+      }
+
       const newBeep = {
         beeper_id: beeper.id,
         rider_id: ctx.user.id,
