@@ -5,8 +5,8 @@ import { count, desc, eq, or, sql } from "drizzle-orm";
 import { rating, user, beep } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { newPubSub } from "../utils/pubsub";
 
 export const ratingRouter = router({
   ratings: authedProcedure
@@ -228,7 +228,7 @@ export const ratingRouter = router({
           .where(eq(user.id, u.id))
           .returning();
 
-        pubSub.publishUserUpdate(updatedUser[0].id, updatedUser[0]);
+        newPubSub.publish("user", updatedUser[0].id, { user: updatedUser[0] });
       } else {
         const numberOfRatingsForUserCount = await db
           .select({ count: count() })
@@ -245,7 +245,7 @@ export const ratingRouter = router({
           .where(eq(user.id, u.id))
           .returning();
 
-        pubSub.publishUserUpdate(updatedUser[0].id, updatedUser[0]);
+        newPubSub.publish("user", updatedUser[0].id, { user: updatedUser[0] });
       }
 
       if (u.pushToken) {

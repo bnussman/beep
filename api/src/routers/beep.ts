@@ -10,11 +10,11 @@ import { count, desc, eq, or, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
 import { inProgressBeep } from "../utils/beep";
 import { observable } from "@trpc/server/observable";
 import { redisSubscriber } from "../utils/redis";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { newPubSub } from "../utils/pubsub";
 
 export const beepRouter = router({
   beeps: authedProcedure
@@ -28,10 +28,10 @@ export const beepRouter = router({
       }),
     )
     .query(async ({ input, ctx }) => {
-      if (ctx.user.role !== 'admin' && input.userId !== ctx.user.id) {
+      if (ctx.user.role !== "admin" && input.userId !== ctx.user.id) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You cannot view beeps for other users.'
+          code: "UNAUTHORIZED",
+          message: "You cannot view beeps for other users.",
         });
       }
 
@@ -83,7 +83,7 @@ export const beepRouter = router({
         .from(beep)
         .where(where);
 
-      const results  = beepsCount[0].count;
+      const results = beepsCount[0].count;
 
       return {
         beeps,
@@ -170,7 +170,7 @@ export const beepRouter = router({
       const notifications: PushNotification[] = [];
 
       for (const beep of beeper.beeps) {
-        pubSub.publishRiderUpdate(beep.rider.id, null);
+        newPubSub.publish("ride", beep.rider.id, { ride: null });
 
         if (beep.rider.pushToken) {
           notifications.push({
@@ -200,8 +200,8 @@ export const beepRouter = router({
         .where(eq(user.id, beeper.id))
         .returning();
 
-      pubSub.publishUserUpdate(beeper.id, u[0]);
-      pubSub.publishBeeperQueue(beeper.id, []);
+      newPubSub.publish("user", u[0].id, { user: u[0] });
+      newPubSub.publish("queue", beeper.id, { queue: [] });
     }),
   beepsCount: publicProcedure.query(async () => {
     const beepsCount = await db.select({ count: count() }).from(beep);

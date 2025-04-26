@@ -1,23 +1,35 @@
-import { inferRouterOutputs } from "@trpc/server";
-import { AppRouter } from "..";
 import { getRidersCurrentRide } from "../routers/rider";
-import { redis } from "./redis";
 import { Context } from "./trpc";
-import { getBeeperQueue, getProtectedBeeperQueue } from "./beep";
+import { getBeeperQueue } from "./beep";
+import { createPubSub } from "@graphql-yoga/subscription";
+import { createRedisEventTarget } from "@graphql-yoga/redis-event-target";
+import { REDIS_HOST, REDIS_PASSWROD } from "./constants";
+import Redis from "ioredis";
 
-type RouterOutput = inferRouterOutputs<AppRouter>;
+const publishClient = new Redis({
+  host: REDIS_HOST,
+  password: REDIS_PASSWROD,
+});
+const subscribeClient = new Redis({
+  host: REDIS_HOST,
+  password: REDIS_PASSWROD,
+});
 
-export const pubSub = {
-  publishRiderUpdate(userId: string, beep: Awaited<ReturnType<typeof getRidersCurrentRide>>) {
-    redis.publish(`rider-${userId}`, JSON.stringify(beep));
-  },
-  publishBeeperQueue(userId: string, queue: Awaited<ReturnType<typeof getBeeperQueue>>) {
-    redis.publish(`beeper-${userId}`, JSON.stringify(getProtectedBeeperQueue(queue)));
-  },
-  publishUserUpdate(userId: string, user: NonNullable<Context['user']>) {
-    redis.publish(`user-${userId}`, JSON.stringify(user));
-  },
-  publishBeeperLocation(userId: string, location: RouterOutput['rider']['beeperLocationUpdates']) {
-    redis.publish(`beeper-location-${userId}`, JSON.stringify(location));
-  }
+const eventTarget = createRedisEventTarget({
+  publishClient,
+  subscribeClient,
+});
+
+type PubSubChannels = {
+  user: [userId: string, payload: { user: NonNullable<Context["user"]> }];
+  ride: [
+    userId: string,
+    payload: { ride: Awaited<ReturnType<typeof getRidersCurrentRide>> },
+  ];
+  queue: [
+    userId: string,
+    payload: { queue: Awaited<ReturnType<typeof getBeeperQueue>> },
+  ];
 };
+
+export const newPubSub = createPubSub<PubSubChannels>({ eventTarget });
