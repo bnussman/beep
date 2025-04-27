@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { getBeeperQueue, getQueueSize, getRiderBeepFromBeeperQueue } from "../utils/beep";
+import { getBeeperQueue, getProtectedBeeperQueue, getQueueSize, getRiderBeepFromBeeperQueue } from "../utils/beep";
 
 export const beeperRouter = router({
   queue: authedProcedure
@@ -20,7 +20,9 @@ export const beeperRouter = router({
         });
       }
 
-      return getBeeperQueue(input ?? ctx.user.id);
+      const queue = await getBeeperQueue(input ?? ctx.user.id)
+
+      return getProtectedBeeperQueue(queue);
     }),
   watchQueue: authedProcedure
     .input(z.string().optional())
@@ -43,13 +45,15 @@ export const beeperRouter = router({
         };
       }
 
-      yield await getBeeperQueue(id)
+      const queue = await getBeeperQueue(id);
+
+      yield getProtectedBeeperQueue(queue);
 
       const eventSource = pubSub.subscribe('queue', id);
 
       for await (const { queue } of eventSource) {
         if (signal?.aborted) return;
-        yield queue;
+        yield getProtectedBeeperQueue(queue);
       }
 
   }),
