@@ -1,12 +1,9 @@
-import { observable } from "@trpc/server/observable";
 import {
   adminProcedure,
   authedProcedure,
-  publicProcedure,
   router,
 } from "../utils/trpc";
 import { beep, car, rating, user, verify_email } from "../../drizzle/schema";
-import { redisSubscriber } from "../utils/redis";
 import { db } from "../utils/db";
 import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
 import { z } from "zod";
@@ -32,7 +29,7 @@ export const userRouter = router({
   }),
   updates: authedProcedure
     .input(z.string().optional())
-    .subscription(({ ctx, input }) => {
+    .subscription(async function* ({ ctx, input, signal }) {
       if (ctx.user.role === "user" && input && input !== ctx.user.id) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -43,22 +40,25 @@ export const userRouter = router({
 
       const userId = input ?? ctx.user.id;
 
-      return observable<typeof ctx.user>((emit) => {
-        const onUserUpdate = (message: string) => {
-          emit.next(JSON.parse(message));
-        };
-        console.log("➕ User subscribed", userId);
-        redisSubscriber.subscribe(`user-${userId}`, onUserUpdate);
-        (async () => {
-          if (!input) {
-            emit.next(ctx.user);
-          }
-        })();
-        return () => {
+      console.log("➕ User subscribed", userId);
+
+      if (ctx.user.id === userId) {
+        yield ctx.user;
+      }
+
+      const eventSource = pubSub.subscribe("user", userId);
+
+      if (signal) {
+        signal.onabort = () => {
           console.log("➖ User unsubscribed", userId);
-          redisSubscriber.unsubscribe(`user-${userId}`, onUserUpdate);
+          eventSource.return();
         };
-      });
+      }
+
+      for await (const { user } of eventSource) {
+        if (signal?.aborted) return;
+        yield user;
+      }
     }),
   edit: authedProcedure
     .input(
@@ -167,7 +167,7 @@ export const userRouter = router({
         .where(eq(user.id, ctx.user.id))
         .returning();
 
-      pubSub.publishUserUpdate(ctx.user.id, u[0]);
+      pubSub.publish('user', ctx.user.id, { user: u[0] });
 
       if (input.location) {
         const data = {
@@ -175,7 +175,7 @@ export const userRouter = router({
           location: input.location,
         };
 
-        pubSub.publishBeeperLocation(ctx.user.id, data);
+        pubSub.publish('locations', data);
       }
 
       return u[0];
@@ -234,7 +234,7 @@ export const userRouter = router({
         .where(eq(user.id, input.userId))
         .returning();
 
-      pubSub.publishUserUpdate(u[0].id, u[0]);
+      pubSub.publish('user', u[0].id, { user: u[0] });
 
       if (u[0].location) {
         const data = {
@@ -242,7 +242,7 @@ export const userRouter = router({
           location: u[0].location,
         };
 
-        pubSub.publishBeeperLocation(u[0].id, data);
+        pubSub.publish('locations', data);
       }
 
       return u[0];
@@ -306,7 +306,7 @@ export const userRouter = router({
         .where(eq(user.id, ctx.user.id))
         .returning();
 
-      pubSub.publishUserUpdate(ctx.user.id, u[0]);
+      pubSub.publish('user', ctx.user.id, { user: u[0] });
 
       return ctx.user;
     }),
@@ -513,20 +513,5 @@ export const userRouter = router({
     }
 
     return ratings.length;
-  }),
-  userCount: publicProcedure.query(async () => {
-    const usersCount = await db.select({ count: count() }).from(user);
-    return usersCount[0].count;
-  }),
-  numberOfUsersSubscription: publicProcedure.subscription(() => {
-    return observable<"increment" | "decrement">((emit) => {
-      const onUserUpdate = (message: string) => {
-        emit.next(message as "increment" | "decrement");
-      };
-      redisSubscriber.subscribe("user-count", onUserUpdate);
-      return () => {
-        redisSubscriber.unsubscribe(`user-count`, onUserUpdate);
-      };
-    });
   }),
 });

@@ -4,8 +4,6 @@ import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
 import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { observable } from "@trpc/server/observable";
-import { redis, redisSubscriber } from "../utils/redis";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
@@ -146,27 +144,26 @@ export const riderRouter = router({
         beeper,
       }));
 
-      pubSub.publishBeeperQueue(
-        beeper.id,
-        [
-          ...queue,
-          {
-            ...newBeep,
-            rider: {
-              id: ctx.user.id,
-              first: ctx.user.first,
-              last: ctx.user.last,
-              phone: ctx.user.phone,
-              venmo: ctx.user.venmo,
-              cashapp: ctx.user.cashapp,
-              rating: ctx.user.rating,
-              photo: ctx.user.photo,
-              pushToken: ctx.user.pushToken,
-            },
-            beeper
-          }
-        ]
-      );
+      const newQueue = [
+        ...queue,
+        {
+          ...newBeep,
+          rider: {
+            id: ctx.user.id,
+            first: ctx.user.first,
+            last: ctx.user.last,
+            phone: ctx.user.phone,
+            venmo: ctx.user.venmo,
+            cashapp: ctx.user.cashapp,
+            rating: ctx.user.rating,
+            photo: ctx.user.photo,
+            pushToken: ctx.user.pushToken,
+          },
+          beeper
+        }
+      ];
+
+      pubSub.publish('queue', beeper.id, { queue: newQueue });
 
       if (beeper.pushToken) {
         sendNotification({
@@ -177,8 +174,6 @@ export const riderRouter = router({
           data: { id: newBeep.id }
         });
       }
-
-      redis.publish("beep-count", "increment");
 
       return {
         ...newBeep,
@@ -200,40 +195,44 @@ export const riderRouter = router({
     .query(async ({ ctx }) => {
       return getRidersCurrentRide(ctx.user.id);
     }),
-  currentRideUpdates: authedProcedure.subscription(({ ctx }) => {
-    return observable<Awaited<ReturnType<typeof getRidersCurrentRide>>>((emit) => {
-      const onBeepUpdate = (message: string) => {
-        emit.next(JSON.parse(message));
-      };
+  currentRideUpdates: authedProcedure.subscription(async function*({ ctx, signal }) {
+    console.log("➕ Rider subscribed", ctx.user.id);
 
-      console.log("➕ Rider subscribed", ctx.user.id);
+    const eventSource = pubSub.subscribe("ride", ctx.user.id);
 
-      redisSubscriber.subscribe(`rider-${ctx.user.id}`, onBeepUpdate);
+    yield await getRidersCurrentRide(ctx.user.id);
 
-      (async () => {
-        const ride = await getRidersCurrentRide(ctx.user.id);
-        emit.next(ride);
-      })();
-
-      return () => {
+    if (signal) {
+      signal.onabort = () => {
         console.log("➖ Rider unsubscribed", ctx.user.id);
-        redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, onBeepUpdate);
+        eventSource.return();
       };
-    });
+    }
+
+    for await (const { ride } of eventSource) {
+      if (signal?.aborted) return;
+      yield ride;
+    }
   }),
   beeperLocationUpdates: authedProcedure
     .input(z.string())
-    .subscription(({ input }) => {
-      return observable<{ id: string; location: { latitude: number; longitude: number } }>((emit) => {
-        const onLocation = (message: string) => {
-          emit.next(JSON.parse(message));
+    .subscription(async function*({ input, signal }) {
+      const eventSource = pubSub.subscribe("user", input);
+
+      if (signal) {
+        signal.onabort = () => {
+          eventSource.return();
         };
-        redisSubscriber.subscribe(`beeper-location-${input}`, onLocation);
-        return () => {
-          redisSubscriber.unsubscribe(`beeper-location-${input}`, onLocation);
-        };
-      });
-  }),
+      }
+
+      for await (const { user } of eventSource) {
+        if (signal?.aborted) return;
+
+       if (user.location) {
+         yield { id: user.id, location: user.location };
+       }
+      }
+    }),
   beepersNearMe: authedProcedure
     .input(
       z.object({
@@ -276,27 +275,31 @@ export const riderRouter = router({
         admin: z.boolean().optional()
       })
     )
-    .subscription(({ input, ctx }) => {
+    .subscription(async function*({ input, ctx, signal }) {
       if (input.admin && ctx.user.role !== 'admin') {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
-      return observable<{ id: string; location: { latitude: number; longitude: number } }>((emit) => {
-        const onLocation = (message: string) => {
-          const data = JSON.parse(message) as { id: string; location: { latitude: number; longitude: number } };
-          if (input.admin) {
-            emit.next(data);
-          } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < 20) {
-            const hasher = new Bun.CryptoHasher("sha256");
-            hasher.update(data.id);
-            data.id = hasher.digest("hex");
-            emit.next(data);
-          }
+
+      const eventSource = pubSub.subscribe('locations');
+
+      if (signal) {
+        signal.onabort = () => {
+          eventSource.return();
         };
-        redisSubscriber.pSubscribe("beeper-location-*", onLocation);
-        return () => {
-          redisSubscriber.pUnsubscribe("beeper-location-*", onLocation);
-        };
-      });
+      }
+
+      for await (const data of eventSource) {
+        if (signal?.aborted) return;
+
+        if (input.admin) {
+          yield data;
+        } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < 20) {
+          const hasher = new Bun.CryptoHasher("sha256");
+          hasher.update(data.id);
+          data.id = hasher.digest("hex");
+          yield data;
+        }
+      }
     }),
   leaveQueue: authedProcedure
     .input(
@@ -362,14 +365,11 @@ export const riderRouter = router({
 
       const newQueue = beeper.beeps.filter(beep => beep.id !== entry.id).map((b) => ({ ...b, beeper }));
 
-      pubSub.publishRiderUpdate(ctx.user.id, null);
-      pubSub.publishBeeperQueue(beeper.id, newQueue);
+      pubSub.publish('ride', ctx.user.id, { ride: null });
+      pubSub.publish('queue', beeper.id, { queue: newQueue });
 
       for (const beep of newQueue) {
-        pubSub.publishRiderUpdate(
-          entry.rider_id,
-          getRiderBeepFromBeeperQueue(beep.rider_id, newQueue)
-        );
+        pubSub.publish('ride', entry.rider_id, { ride: getRiderBeepFromBeeperQueue(beep.rider_id, newQueue) });
       }
 
       await db.update(user).set({ queueSize: getQueueSize(newQueue) }).where(eq(user.id, beeper.id));

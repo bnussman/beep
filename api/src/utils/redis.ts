@@ -1,19 +1,18 @@
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 import { REDIS_HOST, REDIS_PASSWROD } from './constants';
-import * as Sentry from '@sentry/bun';
+import { createRedisEventTarget } from '@graphql-yoga/redis-event-target';
 
-export const redis = createClient({
-  url: `redis://${REDIS_HOST}`,
+export const publishClient = new Redis({
+  host: REDIS_HOST,
   password: REDIS_PASSWROD,
 });
 
-await redis.connect();
-
-export const redisSubscriber = redis.duplicate();
-
-redisSubscriber.on('error', (error) => {
-  Sentry.captureException(error);
-  console.error(error);
+export const subscribeClient = new Redis({
+  host: REDIS_HOST,
+  password: REDIS_PASSWROD,
 });
 
-await redisSubscriber.connect();
+export const eventTarget = createRedisEventTarget({
+  publishClient,
+  subscribeClient,
+});
