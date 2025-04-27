@@ -296,8 +296,7 @@ export const riderRouter = router({
         } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < 20) {
           const hasher = new Bun.CryptoHasher("sha256");
           hasher.update(data.id);
-          data.id = hasher.digest("hex");
-          yield data;
+          yield { id: hasher.digest("hex"), location: data.location };
         }
       }
     }),
