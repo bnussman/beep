@@ -5,7 +5,6 @@ import { beep, car, payment, user } from "../../drizzle/schema";
 import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
-import { redis, redisSubscriber } from "../utils/redis";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
@@ -146,27 +145,26 @@ export const riderRouter = router({
         beeper,
       }));
 
-      pubSub.publishBeeperQueue(
-        beeper.id,
-        [
-          ...queue,
-          {
-            ...newBeep,
-            rider: {
-              id: ctx.user.id,
-              first: ctx.user.first,
-              last: ctx.user.last,
-              phone: ctx.user.phone,
-              venmo: ctx.user.venmo,
-              cashapp: ctx.user.cashapp,
-              rating: ctx.user.rating,
-              photo: ctx.user.photo,
-              pushToken: ctx.user.pushToken,
-            },
-            beeper
-          }
-        ]
-      );
+      const newQueue = [
+        ...queue,
+        {
+          ...newBeep,
+          rider: {
+            id: ctx.user.id,
+            first: ctx.user.first,
+            last: ctx.user.last,
+            phone: ctx.user.phone,
+            venmo: ctx.user.venmo,
+            cashapp: ctx.user.cashapp,
+            rating: ctx.user.rating,
+            photo: ctx.user.photo,
+            pushToken: ctx.user.pushToken,
+          },
+          beeper
+        }
+      ];
+
+      pubSub.publish('queue', beeper.id, { queue: newQueue });
 
       if (beeper.pushToken) {
         sendNotification({
@@ -177,8 +175,6 @@ export const riderRouter = router({
           data: { id: newBeep.id }
         });
       }
-
-      redis.publish("beep-count", "increment");
 
       return {
         ...newBeep,
@@ -200,26 +196,24 @@ export const riderRouter = router({
     .query(async ({ ctx }) => {
       return getRidersCurrentRide(ctx.user.id);
     }),
-  currentRideUpdates: authedProcedure.subscription(({ ctx }) => {
-    return observable<Awaited<ReturnType<typeof getRidersCurrentRide>>>((emit) => {
-      const onBeepUpdate = (message: string) => {
-        emit.next(JSON.parse(message));
-      };
-
+  currentRideUpdates: authedProcedure.subscription(async function*({ ctx, signal }) {
       console.log("➕ Rider subscribed", ctx.user.id);
 
-      redisSubscriber.subscribe(`rider-${ctx.user.id}`, onBeepUpdate);
+      const eventSource = pubSub.subscribe("ride", ctx.user.id);
 
-      (async () => {
-        const ride = await getRidersCurrentRide(ctx.user.id);
-        emit.next(ride);
-      })();
+      yield await getRidersCurrentRide(ctx.user.id);
 
-      return () => {
-        console.log("➖ Rider unsubscribed", ctx.user.id);
-        redisSubscriber.unsubscribe(`rider-${ctx.user.id}`, onBeepUpdate);
-      };
-    });
+      if (signal) {
+        signal.onabort = () => {
+          console.log("➖ Rider unsubscribed", ctx.user.id);
+          eventSource.return();
+        };
+      }
+
+      for await (const { ride } of eventSource) {
+        if (signal?.aborted) return;
+        yield ride;
+      }
   }),
   beeperLocationUpdates: authedProcedure
     .input(z.string())
@@ -362,14 +356,11 @@ export const riderRouter = router({
 
       const newQueue = beeper.beeps.filter(beep => beep.id !== entry.id).map((b) => ({ ...b, beeper }));
 
-      pubSub.publishRiderUpdate(ctx.user.id, null);
-      pubSub.publishBeeperQueue(beeper.id, newQueue);
+      pubSub.publish('ride', ctx.user.id, { ride: null });
+      pubSub.publish('queue', beeper.id, { queue: newQueue });
 
       for (const beep of newQueue) {
-        pubSub.publishRiderUpdate(
-          entry.rider_id,
-          getRiderBeepFromBeeperQueue(beep.rider_id, newQueue)
-        );
+        pubSub.publish('ride', entry.rider_id, { ride: getRiderBeepFromBeeperQueue(beep.rider_id, newQueue) });
       }
 
       await db.update(user).set({ queueSize: getQueueSize(newQueue) }).where(eq(user.id, beeper.id));

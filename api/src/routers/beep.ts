@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   adminProcedure,
   authedProcedure,
-  publicProcedure,
   router,
 } from "../utils/trpc";
 import { db } from "../utils/db";
@@ -12,8 +11,6 @@ import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { inProgressBeep } from "../utils/beep";
-import { observable } from "@trpc/server/observable";
-import { redisSubscriber } from "../utils/redis";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const beepRouter = router({
@@ -170,7 +167,7 @@ export const beepRouter = router({
       const notifications: PushNotification[] = [];
 
       for (const beep of beeper.beeps) {
-        pubSub.publishRiderUpdate(beep.rider.id, null);
+        pubSub.publish('ride', beep.rider.id, { ride: null });
 
         if (beep.rider.pushToken) {
           notifications.push({
@@ -200,22 +197,7 @@ export const beepRouter = router({
         .where(eq(user.id, beeper.id))
         .returning();
 
-      pubSub.publishUserUpdate(beeper.id, u[0]);
-      pubSub.publishBeeperQueue(beeper.id, []);
+      pubSub.publish('user', beeper.id, { user: u[0] });
+      pubSub.publish('queue', beeper.id, { queue: [] });
     }),
-  beepsCount: publicProcedure.query(async () => {
-    const beepsCount = await db.select({ count: count() }).from(beep);
-    return beepsCount[0].count;
-  }),
-  numberOfBeepsSubscription: publicProcedure.subscription(() => {
-    return observable<"increment" | "decrement">((emit) => {
-      const onUserUpdate = (message: string) => {
-        emit.next(message as "increment" | "decrement");
-      };
-      redisSubscriber.subscribe("beep-count", onUserUpdate);
-      return () => {
-        redisSubscriber.unsubscribe("beep-count", onUserUpdate);
-      };
-    });
-  }),
 });

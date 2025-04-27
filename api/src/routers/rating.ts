@@ -228,7 +228,7 @@ export const ratingRouter = router({
           .where(eq(user.id, u.id))
           .returning();
 
-        pubSub.publishUserUpdate(updatedUser[0].id, updatedUser[0]);
+        pubSub.publish('user', updatedUser[0].id, { user: updatedUser[0] });
       } else {
         const numberOfRatingsForUserCount = await db
           .select({ count: count() })
@@ -245,7 +245,7 @@ export const ratingRouter = router({
           .where(eq(user.id, u.id))
           .returning();
 
-        pubSub.publishUserUpdate(updatedUser[0].id, updatedUser[0]);
+        pubSub.publish('user', updatedUser[0].id, { user: updatedUser[0] });
       }
 
       if (u.pushToken) {

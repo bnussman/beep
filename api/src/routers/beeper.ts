@@ -5,8 +5,6 @@ import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { eq } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
-import { observable } from "@trpc/server/observable";
-import { redisSubscriber } from "../utils/redis";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { getBeeperQueue, getQueueSize, getRiderBeepFromBeeperQueue } from "../utils/beep";
@@ -26,7 +24,7 @@ export const beeperRouter = router({
     }),
   watchQueue: authedProcedure
     .input(z.string().optional())
-    .subscription(({ ctx, input }) => {
+    .subscription(async function*({ ctx, input, signal }) {
       const id = input ?? ctx.user.id;
 
       if (ctx.user.role === 'user' && input && input !== ctx.user.id) {
@@ -36,21 +34,24 @@ export const beeperRouter = router({
         });
       }
 
-      return observable<Awaited<ReturnType<typeof getBeeperQueue>>>((emit) => {
-        const onUpdatedQueue = (message: string) => {
-          emit.next(JSON.parse(message));
-        };
-        redisSubscriber.subscribe(`beeper-${id}`, onUpdatedQueue);
-        console.log("➕ Beeper subscribed", id);
-        (async () => {
-          const ride = await getBeeperQueue(id);
-          emit.next(ride);
-        })();
-        return () => {
+      console.log("➕ Beeper subscribed", id);
+
+      if (signal) {
+        signal.onabort = () => {
           console.log("➖ Beeper unsubscribed", id);
-          redisSubscriber.unsubscribe(`beeper-${id}`, onUpdatedQueue);
+          eventSource.return();
         };
-      });
+      }
+
+      yield await getBeeperQueue(id)
+
+      const eventSource = pubSub.subscribe('queue', id);
+
+      for await (const { queue } of eventSource) {
+        if (signal?.aborted) return;
+        yield queue;
+      }
+
   }),
   updateBeep: authedProcedure
     .input(
@@ -98,7 +99,7 @@ export const beeperRouter = router({
       }
 
       if (input.data.status === "denied" || input.data.status === "complete" || input.data.status === "canceled") {
-        pubSub.publishRiderUpdate(queueEntry.rider_id, null);
+        pubSub.publish('ride', queueEntry.rider_id, { ride: null });
 
         await db
           .update(user)
@@ -161,13 +162,10 @@ export const beeperRouter = router({
 
       const newQueue = queue.filter((beep) => beep.status !== "complete" && beep.status !== 'denied' && beep.status !== "canceled");
 
-      pubSub.publishBeeperQueue(ctx.user.id, newQueue);
+      pubSub.publish('queue', ctx.user.id, { queue: newQueue });
 
       for (const entry of newQueue) {
-        pubSub.publishRiderUpdate(
-          entry.rider_id,
-          getRiderBeepFromBeeperQueue(entry.rider_id, newQueue)
-        );
+        pubSub.publish('ride', entry.rider_id, { ride: getRiderBeepFromBeeperQueue(entry.rider_id, newQueue) });
       }
 
       return newQueue;

@@ -12,7 +12,6 @@ import { SendMailOptions } from "nodemailer";
 import * as Sentry from '@sentry/bun';
 import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
-import { redis } from "../utils/redis";
 
 export const authRouter = router({
   login: publicProcedure
@@ -183,8 +182,6 @@ export const authRouter = router({
       } catch (error) {
         Sentry.captureException(error);
       }
-
-      redis.publish("user-count", "increment");
 
       return { user: u[0], tokens };
     }),
@@ -379,7 +376,7 @@ export const authRouter = router({
         .delete(verify_email)
         .where(eq(verify_email.id, verifyAccountEntry.id));
 
-      pubSub.publishUserUpdate(u[0].id, u[0]);
+      pubSub.publish('user', u[0].id, { user: u[0] });
 
       return u[0].email;
     }),
