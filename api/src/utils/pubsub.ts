@@ -4,16 +4,15 @@ import { getBeeperQueue } from "./beep";
 import { createPubSub } from "@graphql-yoga/subscription";
 import { eventTarget } from "./redis";
 
+type User = NonNullable<Context["user"]>;
+type Ride = Awaited<ReturnType<typeof getRidersCurrentRide>>
+type Queue = Awaited<ReturnType<typeof getBeeperQueue>>
+
 type PubSubChannels = {
-  user: [userId: string, payload: { user: NonNullable<Context["user"]> }];
-  ride: [
-    userId: string,
-    payload: { ride: Awaited<ReturnType<typeof getRidersCurrentRide>> },
-  ];
-  queue: [
-    userId: string,
-    payload: { queue: Awaited<ReturnType<typeof getBeeperQueue>> },
-  ];
+  user: [userId: string, payload: { user: User }];
+  ride: [userId: string, payload: { ride: Ride }];
+  queue: [userId: string, payload: { queue: Queue }];
+  locations: [payload: { id: string, location: { latitude: number, longitude: number } }]
 };
 
 export const pubSub = createPubSub<PubSubChannels>({ eventTarget });

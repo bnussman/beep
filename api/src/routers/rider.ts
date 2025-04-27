@@ -4,7 +4,6 @@ import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
 import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { observable } from "@trpc/server/observable";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
@@ -197,37 +196,43 @@ export const riderRouter = router({
       return getRidersCurrentRide(ctx.user.id);
     }),
   currentRideUpdates: authedProcedure.subscription(async function*({ ctx, signal }) {
-      console.log("➕ Rider subscribed", ctx.user.id);
+    console.log("➕ Rider subscribed", ctx.user.id);
 
-      const eventSource = pubSub.subscribe("ride", ctx.user.id);
+    const eventSource = pubSub.subscribe("ride", ctx.user.id);
 
-      yield await getRidersCurrentRide(ctx.user.id);
+    yield await getRidersCurrentRide(ctx.user.id);
+
+    if (signal) {
+      signal.onabort = () => {
+        console.log("➖ Rider unsubscribed", ctx.user.id);
+        eventSource.return();
+      };
+    }
+
+    for await (const { ride } of eventSource) {
+      if (signal?.aborted) return;
+      yield ride;
+    }
+  }),
+  beeperLocationUpdates: authedProcedure
+    .input(z.string())
+    .subscription(async function*({ input, signal }) {
+      const eventSource = pubSub.subscribe("user", input);
 
       if (signal) {
         signal.onabort = () => {
-          console.log("➖ Rider unsubscribed", ctx.user.id);
           eventSource.return();
         };
       }
 
-      for await (const { ride } of eventSource) {
+      for await (const { user } of eventSource) {
         if (signal?.aborted) return;
-        yield ride;
+
+       if (user.location) {
+         yield { id: user.id, location: user.location };
+       }
       }
-  }),
-  beeperLocationUpdates: authedProcedure
-    .input(z.string())
-    .subscription(({ input }) => {
-      return observable<{ id: string; location: { latitude: number; longitude: number } }>((emit) => {
-        const onLocation = (message: string) => {
-          emit.next(JSON.parse(message));
-        };
-        redisSubscriber.subscribe(`beeper-location-${input}`, onLocation);
-        return () => {
-          redisSubscriber.unsubscribe(`beeper-location-${input}`, onLocation);
-        };
-      });
-  }),
+    }),
   beepersNearMe: authedProcedure
     .input(
       z.object({
@@ -270,27 +275,31 @@ export const riderRouter = router({
         admin: z.boolean().optional()
       })
     )
-    .subscription(({ input, ctx }) => {
+    .subscription(async function*({ input, ctx, signal }) {
       if (input.admin && ctx.user.role !== 'admin') {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
-      return observable<{ id: string; location: { latitude: number; longitude: number } }>((emit) => {
-        const onLocation = (message: string) => {
-          const data = JSON.parse(message) as { id: string; location: { latitude: number; longitude: number } };
-          if (input.admin) {
-            emit.next(data);
-          } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < 20) {
-            const hasher = new Bun.CryptoHasher("sha256");
-            hasher.update(data.id);
-            data.id = hasher.digest("hex");
-            emit.next(data);
-          }
+
+      const eventSource = pubSub.subscribe('locations');
+
+      if (signal) {
+        signal.onabort = () => {
+          eventSource.return();
         };
-        redisSubscriber.pSubscribe("beeper-location-*", onLocation);
-        return () => {
-          redisSubscriber.pUnsubscribe("beeper-location-*", onLocation);
-        };
-      });
+      }
+
+      for await (const data of eventSource) {
+        if (signal?.aborted) return;
+
+        if (input.admin) {
+          yield data;
+        } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < 20) {
+          const hasher = new Bun.CryptoHasher("sha256");
+          hasher.update(data.id);
+          data.id = hasher.digest("hex");
+          yield data;
+        }
+      }
     }),
   leaveQueue: authedProcedure
     .input(
