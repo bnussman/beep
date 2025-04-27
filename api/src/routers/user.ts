@@ -169,14 +169,14 @@ export const userRouter = router({
 
       pubSub.publish('user', ctx.user.id, { user: u[0] });
 
-      // if (input.location) {
-      //   const data = {
-      //     id: ctx.user.id,
-      //     location: input.location,
-      //   };
+      if (input.location) {
+        const data = {
+          id: ctx.user.id,
+          location: input.location,
+        };
 
-      //   pubSub.publishBeeperLocation(ctx.user.id, data);
-      // }
+        pubSub.publish('locations', data);
+      }
 
       return u[0];
     }),
@@ -236,14 +236,14 @@ export const userRouter = router({
 
       pubSub.publish('user', u[0].id, { user: u[0] });
 
-      // if (u[0].location) {
-      //   const data = {
-      //     id: u[0].id,
-      //     location: u[0].location,
-      //   };
+      if (u[0].location) {
+        const data = {
+          id: u[0].id,
+          location: u[0].location,
+        };
 
-      //   pubSub.publishBeeperLocation(u[0].id, data);
-      // }
+        pubSub.publish('locations', data);
+      }
 
       return u[0];
     }),
