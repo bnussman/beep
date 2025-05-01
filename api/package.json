@@ -21,7 +21,7 @@
     "@graphql-yoga/redis-event-target": "^3.0.3",
     "@graphql-yoga/subscription": "^5.0.5",
     "@sentry/bun": "^9.9.0",
-    "@trpc/server": "^11.1.0",
+    "@trpc/server": "^11.1.2",
     "car-info": "0.2.1",
     "drizzle-orm": "^0.41.0",
     "ioredis": "^5.6.1",
