@@ -120,6 +120,7 @@ export const Drawer = createDrawerNavigator({
   screenOptions: () => {
     const colorScheme = Appearance.getColorScheme();
     return {
+      headerBackButtonDisplayMode: 'generic',
       headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
     };
