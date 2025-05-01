@@ -100,7 +100,8 @@ export function MainFindBeepScreen(props: Props) {
     SplashScreen.hideAsync();
   }, []);
 
-  const findBeep = handleSubmit((values) => {
+  const findBeep = handleSubmit(async (values) => {
+    // @ts-expect-error i don't even care
     navigate("Choose Beeper", values);
   });
 
