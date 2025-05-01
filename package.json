@@ -15,8 +15,8 @@
   },
   "private": true,
   "resolutions": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "volta": {
     "node": "19.4.0"
