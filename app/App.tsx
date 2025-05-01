@@ -47,12 +47,11 @@ if (!isWeb) {
 Notifications.addNotificationResponseReceivedListener((response) => {
   console.log(response.actionIdentifier);
   if (
-    // @ts-expect-error expo is lieing
     response.notification.request.content.categoryIdentifier === "newbeep" &&
     response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER
   ) {
     basicTrpcClient.beeper.updateBeep.mutate({
-      beepId: response.notification.request.content.data.id,
+      beepId: response.notification.request.content.data.id as string,
       data: {
         status: response.actionIdentifier === "accept"
         ? "accepted"
