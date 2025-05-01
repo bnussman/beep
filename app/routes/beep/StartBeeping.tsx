@@ -4,7 +4,7 @@ import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
 import { Logger } from "../../utils/logger";
 import { useUser } from "../../utils/useUser";
-import { isAndroid } from "../../utils/constants";
+import { isAndroid, isWeb } from "../../utils/constants";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
 import { Alert, View, Switch, ActivityIndicator } from "react-native";
@@ -149,7 +149,7 @@ export function StartBeepingScreen() {
     }
   }, [user?.isBeeping, hasLocationPermission]);
 
-  if (user?.isBeeping && !hasLocationPermission) {
+  if (user?.isBeeping && !hasLocationPermission && !isWeb) {
     return (
       <View className="flex items-center justify-center h-full">
         <Text size="2xl" weight="black">
