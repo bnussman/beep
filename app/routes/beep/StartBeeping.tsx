@@ -110,7 +110,7 @@ export function StartBeepingScreen() {
     if (willBeBeeping) {
       const hasLoactionPermission = await requestLocationPermission();
 
-      if (!hasLoactionPermission) {
+      if (!hasLoactionPermission && !isWeb) {
         alert("You must allow background location to start beeping!");
         return;
       }

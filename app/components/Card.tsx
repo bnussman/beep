@@ -11,7 +11,7 @@ export const card = cva(
         filled: null,
       },
       pressable: {
-        true: "actie:bg-neutral-50 dark:active:bg-neutral-800",
+        true: "active:bg-neutral-50 dark:active:bg-neutral-800",
       },
     },
     defaultVariants: {
