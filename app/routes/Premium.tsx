@@ -35,7 +35,7 @@ function Offering({ item, disabled }: Props) {
       <Text size="xs" style={{ marginBottom: 4 }}>
         Goes into effect immediately upon purchase and cannot be paused.
         When riders go to find a beeper, beepers are ordered by their premium status,
-        then by their distance from the beeper.
+        then by their distance.
       </Text>
       <Image
         source={PremiumImage}
