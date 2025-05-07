@@ -48,7 +48,7 @@
     "react-native-keyboard-controller": "^1.17.1",
     "react-native-maps": "1.20.1",
     "react-native-mime-types": "^2.4.0",
-    "react-native-purchases": "^7.27.1",
+    "react-native-purchases": "^8.9.6",
     "react-native-reanimated": "3.17.5",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
@@ -69,5 +69,12 @@
   "private": true,
   "volta": {
     "node": "22.0.0"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "listUnknownPackages": false
+      }
+    }
   }
 }
