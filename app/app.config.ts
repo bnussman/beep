@@ -46,7 +46,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.ridebeep.App",
-    buildNumber: "28",
+    buildNumber: "29",
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
         "The Beep App uses your location to pick origins, destinations, and predict ride times",
@@ -77,7 +77,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: "app.ridebeep.App",
-    versionCode: 48,
+    versionCode: 49,
     googleServicesFile: "./google-services.json",
     permissions: [
       "ACCESS_COARSE_LOCATION",
