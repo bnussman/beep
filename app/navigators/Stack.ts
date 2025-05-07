@@ -22,6 +22,7 @@ const RootStack = createNativeStackNavigator({
     const colorScheme = Appearance.getColorScheme();
     return {
       headerTintColor: colorScheme === "dark" ? "white" : "black",
+      headerBackButtonDisplayMode: 'generic'
     };
   },
   groups: {

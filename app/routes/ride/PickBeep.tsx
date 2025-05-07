@@ -146,12 +146,12 @@ export function PickBeepScreen({ route }: Props) {
           : { gap: 8 }
       }
       ListEmptyComponent={
-        <>
+        <View style={{ alignItems: 'center' }}>
           <Text weight="black" size="2xl" key="title">
             Nobody is beeping
           </Text>
           <Text key="message">There are no drivers within 20 miles of you</Text>
-        </>
+        </View>
       }
       refreshControl={
         <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
