@@ -188,12 +188,12 @@ export function Cars() {
           : undefined
       }
       ListEmptyComponent={
-        <>
+        <View style={{ alignItems: 'center' }}>
           <Text weight="black" key="title" size="3xl">
             No Cars
           </Text>
           <Text key="message">You have no cars on your account!</Text>
-        </>
+        </View>
       }
       onEndReached={() => fetchNextPage()}
       onEndReachedThreshold={0.1}

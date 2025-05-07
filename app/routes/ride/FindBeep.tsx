@@ -162,7 +162,6 @@ export function MainFindBeepScreen(props: Props) {
               returnKeyLabel="next"
               returnKeyType="next"
               onSubmitEditing={() => setFocus("destination")}
-              textContentType="location"
             />
           )}
         />
@@ -181,7 +180,7 @@ export function MainFindBeepScreen(props: Props) {
               ref={ref}
               returnKeyType="go"
               onSubmitEditing={() => findBeep()}
-              textContentType="location"
+              textContentType="fullStreetAddress"
             />
           )}
         />

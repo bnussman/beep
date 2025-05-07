@@ -57,6 +57,7 @@ export function LocationInput({ inputRef, ...props }: Props) {
         placeholder={isLoading ? "Loading" : undefined}
         ref={inputRef}
         className="flex-1 flex-grow"
+        textContentType="fullStreetAddress"
         {...props}
       />
       <Button isLoading={isLoading} onPress={handleGetCurrentLocation}>
