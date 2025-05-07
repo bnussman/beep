@@ -5,7 +5,7 @@ import { TouchableOpacity, View } from "react-native";
 import { getPushToken } from "../../utils/notifications";
 import { isMobile, isSimulator } from "../../utils/constants";
 import { generateRNFile, ReactNativeFile } from "../settings/EditProfile";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "@/components/Avatar";
 import { PasswordInput } from "@/components/PasswordInput";

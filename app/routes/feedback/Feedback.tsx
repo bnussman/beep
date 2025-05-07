@@ -6,7 +6,7 @@ import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Linking } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { trpc } from "@/utils/trpc";
 
 export function Feedback() {

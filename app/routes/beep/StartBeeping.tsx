@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
@@ -12,7 +12,7 @@ import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { basicTrpcClient, trpc } from "@/utils/trpc";
 import { PremiumBanner } from "./PremiumBanner";
 import { LOCATION_TRACKING, startLocationTracking, stopLocationTracking, useLocationPermissions } from "@/utils/location";

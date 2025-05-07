@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/react-native";
 import * as Notifications from 'expo-notifications';
 import { updatePushToken } from "./utils/notifications";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StatusBar } from "expo-status-bar";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
@@ -116,11 +117,13 @@ function Beep() {
 function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <Beep />
-        </QueryClientProvider>
-      </trpc.Provider>
+      <KeyboardProvider>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <Beep />
+          </QueryClientProvider>
+        </trpc.Provider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }

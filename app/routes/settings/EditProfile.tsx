@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as mime from "react-native-mime-types";
 import * as Location from "expo-location";
@@ -14,7 +14,7 @@ import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { queryClient, trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { LOCATION_TRACKING } from "@/utils/location";

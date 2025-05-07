@@ -8,7 +8,7 @@ import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { isSimulator } from "../../utils/constants";
 import { getPushToken } from "../../utils/notifications";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Logger } from "../../utils/logger";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
