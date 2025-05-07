@@ -47,3 +47,10 @@ jobs:
           cache: pnpm
       - run: pnpm i --frozen-lockfile
       - run: pnpm --filter @beep/app typecheck
+  expo-doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bunx expo-doctor --verbose
+        working-directory: app
