@@ -8,7 +8,7 @@ const config: ExpoConfig = {
   slug: "Beep",
   scheme: "beep",
   owner: "bnussman",
-  version: "2.15.0",
+  version: "2.16.0",
   githubUrl: "https://github.com/bnussman/Beep",
   primaryColor: "#575A62",
   icon: "./assets/icon.png",
