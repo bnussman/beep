@@ -41,7 +41,8 @@ const config: ExpoConfig = {
         project: "app",
         organization: "ian-banks-llc"
       }
-    ]
+    ],
+    ["expo-notifications"]
   ],
   ios: {
     supportsTablet: true,
