@@ -1,6 +1,6 @@
 {
   "name": "@beep/app",
-  "version": "2.16.0",
+  "version": "2.16.1",
   "main": "index.js",
   "scripts": {
     "dev": "EXPO_USE_FAST_RESOLVER=1 expo start --dev-client --web",
@@ -23,7 +23,7 @@
     "@trpc/react-query": "^11.1.2",
     "car-info": "0.2.1",
     "class-variance-authority": "^0.7.1",
-    "expo": "~53.0.8",
+    "expo": "~53.0.9",
     "expo-application": "^6.1.4",
     "expo-constants": "~17.1.6",
     "expo-dev-client": "~5.1.7",
