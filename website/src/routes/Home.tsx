@@ -9,6 +9,7 @@ import {
   Stack,
   Typography,
   useColorScheme,
+  Zoom,
 } from "@mui/material";
 import { rootRoute } from "../utils/root";
 import { getDownloadLink } from "../utils/utils";
@@ -46,11 +47,19 @@ export function Home() {
             </Button>
           </Box>
         </Stack>
-        <Box
-          component="img" 
-          sx={{ width: { xs: 400, md: 500 } }}
-          src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
-        />
+        <Zoom in>
+          <Box
+            component="img" 
+            sx={{
+              width: { xs: 400, md: 500 },
+              transition: 'transform 0.3s ease-in-out', // Smooth transition
+              ':hover': {
+                transform: 'rotate(5deg) scale(1.1) !important',
+              }
+            }}
+            src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
+          />
+        </Zoom>
       </Stack>
     </Container>
   );

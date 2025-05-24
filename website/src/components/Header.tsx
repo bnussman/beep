@@ -3,13 +3,15 @@ import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { trpc } from "../utils/trpc";
-import { AppBar, Stack, Toolbar, Typography, Button, Link } from "@mui/material";
+import { AppBar, Stack, Toolbar, Typography, Button, Link, useColorScheme } from "@mui/material";
 
 export function Header() {
   const { data: user } = trpc.user.me.useQuery(undefined, {
     enabled: false,
     retry: false,
   });
+
+  const { colorScheme } = useColorScheme();
 
   return (
     <AppBar
@@ -18,7 +20,11 @@ export function Header() {
         boxShadow: 'none',
         borderBottom: 1,
         borderColor: theme.palette.divider,
-        backdropFilter: 'blur(5px)'
+        backdropFilter: 'blur(5px)',
+        ...(colorScheme === 'dark' && ({
+          borderColor: 'rgba(131, 131, 131, 0.1)',
+          backgroundColor: 'rgba(44, 44, 44, 0.1)'
+        }))
       })}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
