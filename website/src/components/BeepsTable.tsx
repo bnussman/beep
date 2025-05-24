@@ -86,7 +86,7 @@ export function BeepsTable() {
                     ? Duration.fromMillis(
                         new Date(ride.end).getTime() -
                           new Date(ride.start).getTime(),
-                      ).toHuman()
+                      ).rescale().toHuman()
                     : "Still in progress"}
                 </TableCell>
                 <TableCell>

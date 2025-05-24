@@ -128,7 +128,7 @@ export function Beeps() {
                     ? Duration.fromMillis(
                         new Date(beep.end).getTime() -
                           new Date(beep.start).getTime(),
-                      ).toHuman()
+                      ).rescale().toHuman()
                     : "N/A"}
                 </TableCell>
               </TableRow>
