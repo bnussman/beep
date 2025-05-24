@@ -18,7 +18,7 @@ export function Header() {
         boxShadow: 'none',
         borderBottom: 1,
         borderColor: theme.palette.divider,
-        backdropFilter: 'blur(10px)'
+        backdropFilter: 'blur(5px)'
       })}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>

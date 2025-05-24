@@ -24,12 +24,12 @@ export function Home() {
 
   return (
     <Container>
-      <Stack direction="row" spacing={3} alignItems="center" flexWrap="wrap">
-        <Stack spacing={2}>
-          <Typography fontWeight="bold" variant="h1" fontSize="3.8rem">
+      <Stack height="calc(100vh - 150px)" width="100%" direction={{ xs: "column", md: "row" }} spacing={3} alignItems="center">
+        <Stack spacing={2} alignItems={{ xs: "center", md: 'flex-start' }}>
+          <Typography fontWeight="bold" variant="h1" fontSize={{ xs: "3.0rem", md: "3.8rem" }}>
             Ride Beep App
           </Typography>
-          <Typography>
+          <Typography textAlign={{ xs: 'center', md: 'unset' }}>
             A rideshare app for students. Ride or drive at your university
             today.
           </Typography>
@@ -46,8 +46,9 @@ export function Home() {
             </Button>
           </Box>
         </Stack>
-        <img
-          style={{ maxHeight: 800 }}
+        <Box
+          component="img" 
+          sx={{ width: { xs: 400, md: 500 } }}
           src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
         />
       </Stack>
