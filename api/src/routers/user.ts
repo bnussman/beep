@@ -210,6 +210,7 @@ export const userRouter = router({
         columns: {
           isEmailVerified: true,
           pushToken: true,
+          photo: true,
         },
       });
 
@@ -227,6 +228,12 @@ export const userRouter = router({
           title: "Account Verified ✅",
           body: "An admin has approved your account.",
         });
+      }
+
+      if (input.data.photo && existingUser.photo && existingUser.photo !== input.data.photo) {
+        // If an admin changes a user's photo URL, delete the old photo from S3
+        // to prevent storing unreferenced images.
+        await s3.delete(existingUser.photo);
       }
 
       const u = await db
