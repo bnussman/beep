@@ -25,6 +25,7 @@ export function EditDetails() {
     last: user?.last,
     email: user?.email,
     phone: user?.phone,
+    photo: user?.photo ?? undefined,
     venmo: user?.venmo ?? undefined,
     cashapp: user?.cashapp ?? undefined,
     isEmailVerified: user?.isEmailVerified,

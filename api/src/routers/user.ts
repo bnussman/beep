@@ -192,6 +192,7 @@ export const userRouter = router({
             phone: z.string(),
             venmo: z.string(),
             cashapp: z.string(),
+            photo: z.string(),
             isStudent: z.boolean(),
             isEmailVerified: z.boolean(),
             isBeeping: z.boolean(),
