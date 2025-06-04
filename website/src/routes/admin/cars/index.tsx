@@ -14,6 +14,7 @@ import { TableEmpty } from "../../../components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
 import { CarMenu } from "./CarMenu";
 import {
+  Box,
   Paper,
   Stack,
   Table,
@@ -113,13 +114,19 @@ export function Cars() {
                   {DateTime.fromISO(car.created).toRelative()}
                 </TableCell>
                 <TableCell onClick={() => onPhotoClick(car.id)}>
-                  <img
+                  <Box
+                    component="img"
                     src={car.photo}
-                    style={{
+                    sx={{
                       width: 64,
                       height: 64,
-                      borderRadius: 10,
+                      borderRadius: 2,
                       objectFit: "cover",
+                      cursor: 'pointer',
+                      transition: "all 0.2s ease-in-out",
+                      ':hover': {
+                        scale: '1.15'
+                      },
                     }}
                   />
                 </TableCell>

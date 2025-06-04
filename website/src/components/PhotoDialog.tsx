@@ -16,7 +16,7 @@ export function PhotoDialog(props: Props) {
   }
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog open={isOpen} onClose={onClose} slotProps={{ paper: { sx: { backgroundColor: 'transparent', borderRadius: '2.5%' } } }}>
       <IconButton
         aria-label="close"
         onClick={onClose}
@@ -24,13 +24,13 @@ export function PhotoDialog(props: Props) {
           position: "absolute",
           right: 8,
           top: 8,
-          color: theme.palette.grey[400],
+          color: theme.palette.grey[200],
         })}
       >
         <CloseIcon />
       </IconButton>
-      <DialogContent>
-        <Box component="img" src={src} sx={{ objectFit: 'contain', width: '100%', height: 'calc(100% - 10px)' }} />
+      <DialogContent sx={{ p: 0, overflow: 'hidden', backgroundColor: 'transparent' }}>
+        <Box component="img" src={src} sx={{ objectFit: 'cover', width: '100%', height: '100%' }} />
       </DialogContent>
     </Dialog>
   );

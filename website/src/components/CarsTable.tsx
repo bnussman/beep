@@ -94,7 +94,7 @@ export function CarsTable() {
                 <TableCell>
                   <img
                     src={car.photo}
-                    style={{ width: 24, borderRadius: 10 }}
+                    style={{ width: 84, borderRadius: 10 }}
                   />
                 </TableCell>
                 <TableCell>
