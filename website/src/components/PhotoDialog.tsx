@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, DialogContent, IconButton } from "@mui/material";
+import { Box, Dialog, DialogContent, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface Props {
@@ -29,17 +29,8 @@ export function PhotoDialog(props: Props) {
       >
         <CloseIcon />
       </IconButton>
-      <DialogContent
-        sx={{
-          p: 0,
-          minWidth: "300px",
-          minHeight: "200px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <img src={src} />
+      <DialogContent>
+        <Box component="img" src={src} sx={{ objectFit: 'contain', width: '100%', height: 'calc(100% - 10px)' }} />
       </DialogContent>
     </Dialog>
   );
