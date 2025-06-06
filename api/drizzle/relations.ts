@@ -14,6 +14,7 @@ export const relations = defineRelations(schema, (r) => ({
 		verifyEmails: r.many.verify_email(),
 		forgotPasswords: r.many.forgot_password(),
 		payments: r.many.payment(),
+    beeps: r.many.beep(),
 		ratingsRatedId: r.many.rating({
 			alias: "rating_ratedId_user_id"
 		}),
@@ -75,6 +76,16 @@ export const relations = defineRelations(schema, (r) => ({
 	beep: {
 		ratings: r.many.rating(),
 		reports: r.many.report(),
+    rider: r.one.user({
+      from: r.beep.rider_id,
+      to: r.user.id,
+      optional: false,
+    }),
+    beeper: r.one.user({
+      from: r.beep.beeper_id,
+      to: r.user.id,
+      optional: false,
+    }),
 	},
 	report: {
 		beep: r.one.beep({
