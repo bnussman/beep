@@ -8,7 +8,7 @@ export const userRole = pgEnum("user_role", ['user', 'admin'])
 
 export const car = pgTable("car", {
 	id: varchar({ length: 255 }).primaryKey().notNull(),
-	userId: varchar("user_id", { length: 255 }).notNull(),
+	user_id: varchar("user_id", { length: 255 }).notNull(),
 	make: varchar({ length: 255 }).notNull(),
 	model: varchar({ length: 255 }).notNull(),
 	color: varchar({ length: 255 }).notNull(),
@@ -19,7 +19,7 @@ export const car = pgTable("car", {
 	updated: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 }, (table) => [
 	foreignKey({
-		columns: [table.userId],
+		columns: [table.user_id],
 		foreignColumns: [user.id],
 		name: "car_user_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
@@ -27,12 +27,12 @@ export const car = pgTable("car", {
 
 export const feedback = pgTable("feedback", {
 	id: varchar({ length: 255 }).primaryKey().notNull(),
-	userId: varchar("user_id", { length: 255 }).notNull(),
+	user_id: varchar("user_id", { length: 255 }).notNull(),
 	message: varchar({ length: 255 }).notNull(),
 	created: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 }, (table) => [
 	foreignKey({
-		columns: [table.userId],
+		columns: [table.user_id],
 		foreignColumns: [user.id],
 		name: "feedback_user_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
@@ -40,8 +40,8 @@ export const feedback = pgTable("feedback", {
 
 export const beep = pgTable("beep", {
 	id: varchar({ length: 255 }).primaryKey().notNull(),
-	beeperId: varchar("beeper_id", { length: 255 }).notNull(),
-	riderId: varchar("rider_id", { length: 255 }).notNull(),
+	beeper_id: varchar("beeper_id", { length: 255 }).notNull(),
+	rider_id: varchar("rider_id", { length: 255 }).notNull(),
 	origin: varchar({ length: 255 }).notNull(),
 	destination: varchar({ length: 255 }).notNull(),
 	groupSize: integer("group_size").notNull(),
@@ -49,31 +49,31 @@ export const beep = pgTable("beep", {
 	end: timestamp({ withTimezone: true, mode: 'string' }),
 	status: beepStatus().default('waiting').notNull(),
 }, (table) => [
-	index().using("btree", table.beeperId.asc().nullsLast().op("text_ops")),
-	index().using("btree", table.beeperId.asc().nullsLast().op("text_ops"), table.riderId.asc().nullsLast().op("text_ops")),
-	index().using("btree", table.riderId.asc().nullsLast().op("text_ops")),
+	index().using("btree", table.beeper_id.asc().nullsLast().op("text_ops")),
+	index().using("btree", table.beeper_id.asc().nullsLast().op("text_ops"), table.rider_id.asc().nullsLast().op("text_ops")),
+	index().using("btree", table.rider_id.asc().nullsLast().op("text_ops")),
 	index().using("btree", table.start.asc().nullsLast().op("timestamptz_ops")),
 	index().using("btree", table.status.asc().nullsLast().op("enum_ops")),
 	foreignKey({
-		columns: [table.beeperId],
+		columns: [table.beeper_id],
 		foreignColumns: [user.id],
 		name: "beep_beeper_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
 	foreignKey({
-		columns: [table.riderId],
+		columns: [table.rider_id],
 		foreignColumns: [user.id],
 		name: "beep_rider_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
 ]);
 
-export const verifyEmail = pgTable("verify_email", {
+export const verify_email = pgTable("verify_email", {
 	id: varchar({ length: 255 }).primaryKey().notNull(),
-	userId: varchar("user_id", { length: 255 }).notNull(),
-	time: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	user_id: varchar("user_id", { length: 255 }).notNull(),
+	time: timestamp({ withTimezone: true, mode: 'date' }).notNull(),
 	email: varchar({ length: 255 }).notNull(),
 }, (table) => [
 	foreignKey({
-		columns: [table.userId],
+		columns: [table.user_id],
 		foreignColumns: [user.id],
 		name: "verify_email_user_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
@@ -102,19 +102,19 @@ export const user = pgTable("user", {
 	pushToken: varchar("push_token", { length: 255 }),
 	photo: varchar({ length: 255 }),
 	location: geometry(),
-	created: timestamp({ withTimezone: true, mode: 'string' }),
+	created: timestamp({ withTimezone: true, mode: 'date' }),
 }, (table) => [
 	unique("user_username_unique").on(table.username),
 	unique("user_email_unique").on(table.email),
 ]);
 
-export const forgotPassword = pgTable("forgot_password", {
+export const forgot_password = pgTable("forgot_password", {
 	id: varchar({ length: 255 }).primaryKey().notNull(),
-	userId: varchar("user_id", { length: 255 }).notNull(),
-	time: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	user_id: varchar("user_id", { length: 255 }).notNull(),
+	time: timestamp({ withTimezone: true, mode: 'date' }).notNull(),
 }, (table) => [
 	foreignKey({
-		columns: [table.userId],
+		columns: [table.user_id],
 		foreignColumns: [user.id],
 		name: "forgot_password_user_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
@@ -122,16 +122,16 @@ export const forgotPassword = pgTable("forgot_password", {
 
 export const payment = pgTable("payment", {
 	id: varchar({ length: 255 }).primaryKey().notNull(),
-	userId: varchar("user_id", { length: 255 }).notNull(),
-	storeId: varchar("store_id", { length: 255 }).notNull(),
-	productId: paymentProduct("product_id").notNull(),
+	user_id: varchar("user_id", { length: 255 }).notNull(),
+	store_id: varchar("store_id", { length: 255 }).notNull(),
+	product_id: paymentProduct("product_id").notNull(),
 	price: numeric().notNull(),
 	store: paymentStore().notNull(),
 	created: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 	expires: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 }, (table) => [
 	foreignKey({
-		columns: [table.userId],
+		columns: [table.user_id],
 		foreignColumns: [user.id],
 		name: "payment_user_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
@@ -139,29 +139,29 @@ export const payment = pgTable("payment", {
 
 export const rating = pgTable("rating", {
 	id: varchar({ length: 255 }).primaryKey().notNull(),
-	raterId: varchar("rater_id", { length: 255 }).notNull(),
-	ratedId: varchar("rated_id", { length: 255 }).notNull(),
+	rater_id: varchar("rater_id", { length: 255 }).notNull(),
+	rated_id: varchar("rated_id", { length: 255 }).notNull(),
 	stars: integer().notNull(),
 	message: varchar({ length: 255 }),
 	timestamp: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
-	beepId: varchar("beep_id", { length: 255 }).notNull(),
+	beep_id: varchar("beep_id", { length: 255 }).notNull(),
 }, (table) => [
 	foreignKey({
-		columns: [table.beepId],
+		columns: [table.beep_id],
 		foreignColumns: [beep.id],
 		name: "rating_beep_id_beep_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
 	foreignKey({
-		columns: [table.ratedId],
+		columns: [table.rated_id],
 		foreignColumns: [user.id],
 		name: "rating_rated_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
 	foreignKey({
-		columns: [table.raterId],
+		columns: [table.rater_id],
 		foreignColumns: [user.id],
 		name: "rating_rater_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),
-	unique("rating_beep_id_rater_id_unique").on(table.raterId, table.beepId),
+	unique("rating_beep_id_rater_id_unique").on(table.rater_id, table.beep_id),
 ]);
 
 export const report = pgTable("report", {
@@ -200,10 +200,10 @@ export const report = pgTable("report", {
 export const token = pgTable("token", {
 	id: varchar({ length: 255 }).primaryKey().notNull(),
 	tokenid: varchar({ length: 255 }).notNull(),
-	userId: varchar("user_id", { length: 255 }).notNull(),
+	user_id: varchar("user_id", { length: 255 }).notNull(),
 }, (table) => [
 	foreignKey({
-		columns: [table.userId],
+		columns: [table.user_id],
 		foreignColumns: [user.id],
 		name: "token_user_id_user_id_fk"
 	}).onUpdate("cascade").onDelete("cascade"),

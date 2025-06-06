@@ -4,15 +4,15 @@ import * as schema from "./schema";
 export const relations = defineRelations(schema, (r) => ({
 	car: {
 		user: r.one.user({
-			from: r.car.userId,
+			from: r.car.user_id,
 			to: r.user.id
 		}),
 	},
 	user: {
 		cars: r.many.car(),
 		feedbacks: r.many.feedback(),
-		verifyEmails: r.many.verifyEmail(),
-		forgotPasswords: r.many.forgotPassword(),
+		verifyEmails: r.many.verify_email(),
+		forgotPasswords: r.many.forgot_password(),
 		payments: r.many.payment(),
 		ratingsRatedId: r.many.rating({
 			alias: "rating_ratedId_user_id"
@@ -33,40 +33,41 @@ export const relations = defineRelations(schema, (r) => ({
 	},
 	feedback: {
 		user: r.one.user({
-			from: r.feedback.userId,
+			from: r.feedback.user_id,
 			to: r.user.id
 		}),
 	},
 	verifyEmail: {
 		user: r.one.user({
-			from: r.verifyEmail.userId,
-			to: r.user.id
+			from: r.verify_email.user_id,
+			to: r.user.id,
+      optional: false,
 		}),
 	},
 	forgotPassword: {
 		user: r.one.user({
-			from: r.forgotPassword.userId,
+			from: r.forgot_password.user_id,
 			to: r.user.id
 		}),
 	},
 	payment: {
 		user: r.one.user({
-			from: r.payment.userId,
+			from: r.payment.user_id,
 			to: r.user.id
 		}),
 	},
 	rating: {
 		beep: r.one.beep({
-			from: r.rating.beepId,
+			from: r.rating.beep_id,
 			to: r.beep.id
 		}),
 		userRatedId: r.one.user({
-			from: r.rating.ratedId,
+			from: r.rating.rated_id,
 			to: r.user.id,
 			alias: "rating_ratedId_user_id"
 		}),
 		userRaterId: r.one.user({
-			from: r.rating.raterId,
+			from: r.rating.rater_id,
 			to: r.user.id,
 			alias: "rating_raterId_user_id"
 		}),
@@ -98,7 +99,7 @@ export const relations = defineRelations(schema, (r) => ({
 	},
 	token: {
 		user: r.one.user({
-			from: r.token.userId,
+			from: r.token.user_id,
 			to: r.user.id,
 			optional: false,
 		}),
