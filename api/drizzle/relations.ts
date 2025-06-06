@@ -37,14 +37,14 @@ export const relations = defineRelations(schema, (r) => ({
 			to: r.user.id
 		}),
 	},
-	verifyEmail: {
+	verify_email: {
 		user: r.one.user({
 			from: r.verify_email.user_id,
 			to: r.user.id,
       optional: false,
 		}),
 	},
-	forgotPassword: {
+	forgot_password: {
 		user: r.one.user({
 			from: r.forgot_password.user_id,
 			to: r.user.id

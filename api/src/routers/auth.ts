@@ -2,7 +2,7 @@ import { authedProcedure, publicProcedure, router } from "../utils/trpc";
 import { z, ZodError } from 'zod';
 import { db } from "../utils/db";
 import { forgot_password, token, user, verify_email } from "../../drizzle/schema";
-import { and, eq, ne, or, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { password as bunPassword } from "bun";
 import { s3 } from "../utils/s3";
@@ -24,10 +24,12 @@ export const authRouter = router({
       const { username, password, pushToken } = input;
 
       const u = await db.query.user.findFirst({
-        where: or(
-          eq(user.username, username),
-          eq(sql`lower(${user.email})`, username.toLowerCase())
-        )
+        where: {
+          OR: [
+            { username },
+            { RAW: (table, { eq }) => eq(sql`lower(${table.email})` ,username.toLowerCase()) }
+          ]
+        }
       });
 
       if (!u) {
@@ -113,7 +115,7 @@ export const authRouter = router({
       }
 
       const existing = await db.query.user.findFirst({
-        where: eq(sql`lower(${user.email})`, input.email.toLowerCase())
+        where: { RAW: (table, { eq }) => eq(sql`lower(${user.email})`, input.email.toLowerCase())}
       });
 
       if (existing) {
@@ -204,7 +206,7 @@ export const authRouter = router({
     )
     .mutation(async ({ input }) => {
       const u = await db.query.user.findFirst({
-        where: eq(user.email, input.email)
+        where: { email: input.email }
       });
 
       if (!u) {
@@ -215,7 +217,7 @@ export const authRouter = router({
         .query
         .forgot_password
         .findFirst({
-          where: eq(forgot_password.user_id, u.id),
+          where: { id: u.id },
         });
 
       if (existingForgotPassword) {
@@ -284,7 +286,7 @@ export const authRouter = router({
         .query
         .forgot_password
         .findFirst({
-          where: eq(forgot_password.id, input.id)
+          where: { id: input.id }
         });
 
       if (!forgotPassword) {
@@ -326,7 +328,7 @@ export const authRouter = router({
     )
     .mutation(async ({ input }) => {
       const verifyAccountEntry = await db.query.verify_email.findFirst({
-        where: eq(verify_email.id, input.id),
+        where: { id: input.id },
         with: {
           user: true,
         },
