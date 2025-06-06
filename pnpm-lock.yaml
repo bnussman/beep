@@ -34,8 +34,8 @@ importers:
         specifier: 0.2.1
         version: 0.2.1
       drizzle-orm:
-        specifier: ^0.43.1
-        version: 0.43.1(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(bun-types@1.2.12)(gel@2.0.1)(knex@3.1.0(pg@8.15.6))(pg@8.15.6)(postgres@3.4.4)
+        specifier: 1.0.0-beta.1-c0277c0
+        version: 1.0.0-beta.1-c0277c0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(bun-types@1.2.12)(gel@2.0.1)(knex@3.1.0(pg@8.15.6))(pg@8.15.6)(postgres@3.4.4)
       ioredis:
         specifier: ^5.6.1
         version: 5.6.1
@@ -65,8 +65,8 @@ importers:
         specifier: ^13.12.2
         version: 13.15.0
       drizzle-kit:
-        specifier: ^0.31.1
-        version: 0.31.1
+        specifier: 1.0.0-beta.1-c0277c0
+        version: 1.0.0-beta.1-c0277c0
       typescript:
         specifier: ^5.8.2
         version: 5.8.3
@@ -3918,12 +3918,12 @@ packages:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
-  drizzle-kit@0.31.1:
-    resolution: {integrity: sha512-PUjYKWtzOzPtdtQlTHQG3qfv4Y0XT8+Eas6UbxCmxTj7qgMf+39dDujf1BP1I+qqZtw9uzwTh8jYtkMuCq+B0Q==}
+  drizzle-kit@1.0.0-beta.1-c0277c0:
+    resolution: {integrity: sha512-8oRt69AyPA1ONsI1/2nZCJGkp9egyQOOe/uBuNB8yxcWxIMCDI60OF4rLHUaYfpHP4zuqJwiABFIBQUViPxXTw==}
     hasBin: true
 
-  drizzle-orm@0.43.1:
-    resolution: {integrity: sha512-dUcDaZtE/zN4RV/xqGrVSMpnEczxd5cIaoDeor7Zst9wOe/HzC/7eAaulywWGYXdDEc9oBPMjayVEDg0ziTLJA==}
+  drizzle-orm@1.0.0-beta.1-c0277c0:
+    resolution: {integrity: sha512-4XnmY3CdFHUzJpbRwc6mElkpDzyZs8Ko98i+cRuuPlakFgZqItr+inoK0bFTH50Eh66E/UXbxfAW6U0JK/1wyw==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -3941,7 +3941,7 @@ packages:
       '@types/sql.js': '*'
       '@vercel/postgres': '>=0.8.0'
       '@xata.io/client': '*'
-      better-sqlite3: '>=7'
+      better-sqlite3: '>=9.3.0'
       bun-types: '*'
       expo-sqlite: '>=14.0.0'
       gel: '>=2'
@@ -11564,7 +11564,7 @@ snapshots:
 
   dotenv@16.4.7: {}
 
-  drizzle-kit@0.31.1:
+  drizzle-kit@1.0.0-beta.1-c0277c0:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
@@ -11573,7 +11573,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.43.1(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(bun-types@1.2.12)(gel@2.0.1)(knex@3.1.0(pg@8.15.6))(pg@8.15.6)(postgres@3.4.4):
+  drizzle-orm@1.0.0-beta.1-c0277c0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(bun-types@1.2.12)(gel@2.0.1)(knex@3.1.0(pg@8.15.6))(pg@8.15.6)(postgres@3.4.4):
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       '@types/pg': 8.11.10
