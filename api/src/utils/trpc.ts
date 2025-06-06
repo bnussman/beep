@@ -4,8 +4,6 @@ import { ZodError } from 'zod';
 import { AppRouter } from '..';
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
-import { token } from '../../drizzle/schema';
-import { eq } from 'drizzle-orm';
 
 /**
  * Initialization of tRPC backend
@@ -88,7 +86,7 @@ export async function createContext(data: Omit<FetchCreateContextFnOptions, 'res
   }
 
   const session = await db.query.token.findFirst({
-    where: eq(token.id, bearerToken),
+    where: { id: bearerToken },
     with: {
       user: {
         columns: {

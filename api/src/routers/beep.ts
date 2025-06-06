@@ -5,12 +5,12 @@ import {
   router,
 } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, desc, eq, or, and } from "drizzle-orm";
+import { count, eq, or, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { inProgressBeep } from "../utils/beep";
+import { inProgressBeep, inProgressBeepOld } from "../utils/beep";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const beepRouter = router({
@@ -32,15 +32,19 @@ export const beepRouter = router({
         });
       }
 
-      const where = and(
-        input.inProgress ? inProgressBeep : undefined,
-        input.userId
-          ? or(
-              eq(beep.rider_id, input.userId),
-              eq(beep.beeper_id, input.userId),
-            )
-          : undefined,
-      );
+      
+
+      const where = {
+        AND: [
+          ...(input.inProgress ? [inProgressBeep] : []),
+          ...(input.userId
+            ?
+            [{
+              OR: [{ rider_id: input.userId }, { beeper_id: input.userId }]
+            }]
+            : []),
+        ]
+      };
 
       const page = input.cursor ?? input.page ?? 1;
       const offset = (page - 1) * input.pageSize;
@@ -49,7 +53,7 @@ export const beepRouter = router({
         offset,
         limit: input.pageSize,
         where,
-        orderBy: desc(beep.start),
+        orderBy: { start: 'desc' },
         with: {
           beeper: {
             columns: {
@@ -75,10 +79,21 @@ export const beepRouter = router({
         },
       });
 
+
+      const whereOld = and(
+        input.inProgress ? inProgressBeepOld : undefined,
+        input.userId
+          ? or(
+            eq(beep.rider_id, input.userId),
+            eq(beep.beeper_id, input.userId),
+          )
+          : undefined,
+      );
+
       const beepsCount = await db
         .select({ count: count() })
         .from(beep)
-        .where(where);
+        .where(whereOld);
 
       const results  = beepsCount[0].count;
 
@@ -92,7 +107,7 @@ export const beepRouter = router({
     }),
   beep: adminProcedure.input(z.string()).query(async ({ input }) => {
     const b = await db.query.beep.findFirst({
-      where: eq(beep.id, input),
+      where: { id: input },
       with: {
         beeper: {
           columns: {
@@ -134,7 +149,7 @@ export const beepRouter = router({
     )
     .mutation(async ({ input }) => {
       const beeper = await db.query.user.findFirst({
-        where: and(eq(user.id, input.userId)),
+        where: { id: input.userId },
         with: {
           beeps: {
             where: inProgressBeep,
@@ -162,7 +177,7 @@ export const beepRouter = router({
       await db
         .update(beep)
         .set({ status: "canceled" })
-        .where(and(eq(beep.beeper_id, beeper.id), inProgressBeep));
+        .where(and(eq(beep.beeper_id, beeper.id), inProgressBeepOld));
 
       const notifications: PushNotification[] = [];
 

@@ -3,13 +3,23 @@ import { db } from "./db";
 import { beep, car } from "../../drizzle/schema";
 import { getRidersCurrentRide } from "../routers/rider";
 
-export const inProgressBeep = or(
+export const inProgressBeepOld = or(
   eq(beep.status, "waiting"),
   eq(beep.status, "accepted"),
   eq(beep.status, "here"),
   eq(beep.status, "in_progress"),
   eq(beep.status, "on_the_way"),
 );
+
+export const inProgressBeep = {
+  OR: [
+    { status: "waiting" as const },
+    { status: "accepted" as const },
+    { status: "here" as const },
+    { status: "in_progress" as const },
+    { status: "on_the_way" as const },
+  ]
+};
 
 export async function getBeeperQueue(beeperId: string) {
   const queue = await db.query.beep.findMany({

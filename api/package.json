@@ -14,7 +14,7 @@
     "@types/bun": "^1.2.12",
     "@types/nodemailer": "^6.4.17",
     "@types/validator": "^13.12.2",
-    "drizzle-kit": "^0.31.1",
+    "drizzle-kit": "1.0.0-beta.1-c0277c0",
     "typescript": "^5.8.2"
   },
   "dependencies": {
@@ -23,7 +23,7 @@
     "@sentry/bun": "^9.9.0",
     "@trpc/server": "^11.1.4",
     "car-info": "0.2.1",
-    "drizzle-orm": "^0.43.1",
+    "drizzle-orm": "1.0.0-beta.1-c0277c0",
     "ioredis": "^5.6.1",
     "nodemailer": "^7.0.2",
     "pg": "^8.14.1",
