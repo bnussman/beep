@@ -2,6 +2,7 @@ import { db as dbClient } from "../utils/db";
 import { publishClient } from "../utils/redis";
 import { publicProcedure, router } from "../utils/trpc";
 import { sql } from "drizzle-orm";
+import { totalmem, freemem } from 'os';
 
 export const healthRouter = router({
   /**
@@ -11,6 +12,11 @@ export const healthRouter = router({
     .query(async () => {
       return {
         uptime: process.uptime(),
+        system: {
+          total_memory: totalmem(),
+          free_memory: freemem(),
+          available_memory: process.availableMemory(),
+        },
         services: {
           redis: await getRedisStatus(),
           db: await getDatabaseStatus()
