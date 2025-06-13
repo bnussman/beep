@@ -23,7 +23,7 @@
     "@trpc/react-query": "^11.1.4",
     "car-info": "0.2.1",
     "class-variance-authority": "^0.7.1",
-    "expo": "~53.0.10",
+    "expo": "~53.0.11",
     "expo-application": "^6.1.4",
     "expo-constants": "~17.1.6",
     "expo-dev-client": "~5.2.0",
