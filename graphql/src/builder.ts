@@ -1,9 +1,9 @@
 import SchemaBuilder from '@pothos/core';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
-import { User } from './types';
+import type { UserTypeFromDB } from './types';
 
 interface Context {
-  user: User | null;
+  user: UserTypeFromDB | null;
 }
 
 export const builder = new SchemaBuilder<{
@@ -13,7 +13,7 @@ export const builder = new SchemaBuilder<{
     admin: boolean;
   };
   AuthContexts: {
-    loggedIn: Context & { user: User };
+    loggedIn: Context & { user: UserTypeFromDB };
   };
 }>({
   plugins: [ScopeAuthPlugin],
