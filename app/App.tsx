@@ -3,8 +3,7 @@ import React, { useEffect } from "react";
 import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
-import * as Notifications from 'expo-notifications';
-import { updatePushToken } from "./utils/notifications";
+import { setupNotifications, updatePushToken } from "./utils/notifications";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StatusBar } from "expo-status-bar";
@@ -13,56 +12,15 @@ import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./navigators/Stack";
 import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
-import { trpc, queryClient, trpcClient, basicTrpcClient } from './utils/trpc';
+import { trpc, queryClient, trpcClient } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { isWeb } from "./utils/constants";
 import "./global.css";
 
-if (!isWeb) {
-  Notifications.setNotificationCategoryAsync(
-    "newbeep",
-    [
-      {
-        identifier: "accept",
-        buttonTitle: "Accept",
-        options: {
-          opensAppToForeground: false,
-        },
-      },
-      {
-        identifier: "deny",
-        buttonTitle: "Deny",
-        options: {
-          isDestructive: true,
-          opensAppToForeground: false,
-        },
-      },
-    ],
-    {
-      allowInCarPlay: true,
-      allowAnnouncement: true,
-    },
-  );
-}
-
-Notifications.addNotificationResponseReceivedListener((response) => {
-  console.log(response.actionIdentifier);
-  if (
-    response.notification.request.content.categoryIdentifier === "newbeep" &&
-    response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER
-  ) {
-    basicTrpcClient.beeper.updateBeep.mutate({
-      beepId: response.notification.request.content.data.id as string,
-      data: {
-        status: response.actionIdentifier === "accept"
-        ? "accepted"
-        : "denied"
-      }
-    })
-  }
-});
+setupPurchase();
+setupNotifications();
 
 SplashScreen.preventAutoHideAsync();
+
 Sentry.init({
   release: config.version,
   dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
@@ -70,7 +28,6 @@ Sentry.init({
   enableAutoPerformanceTracing: true,
 });
 
-setupPurchase();
 
 function Beep() {
   const colorScheme = useColorScheme();

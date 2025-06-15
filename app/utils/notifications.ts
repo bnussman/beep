@@ -1,5 +1,5 @@
 import * as Notifications from "expo-notifications";
-import { isMobile } from "./constants";
+import { isMobile, isWeb } from "./constants";
 import { Logger } from "./logger";
 import { basicTrpcClient } from "./trpc";
 
@@ -67,4 +67,50 @@ export async function updatePushToken(currentPushToken: string | null): Promise<
       }
     }
   }
+}
+
+export function setupNotifications() {
+  if (!isWeb) {
+    Notifications.setNotificationCategoryAsync(
+      "newbeep",
+      [
+        {
+          identifier: "accept",
+          buttonTitle: "Accept",
+          options: {
+            opensAppToForeground: false,
+          },
+        },
+        {
+          identifier: "deny",
+          buttonTitle: "Deny",
+          options: {
+            isDestructive: true,
+            opensAppToForeground: false,
+          },
+        },
+      ],
+      {
+        allowInCarPlay: true,
+        allowAnnouncement: true,
+      },
+    );
+  }
+
+  Notifications.addNotificationResponseReceivedListener((response) => {
+    console.log(response.actionIdentifier);
+    if (
+      response.notification.request.content.categoryIdentifier === "newbeep" &&
+      response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      basicTrpcClient.beeper.updateBeep.mutate({
+        beepId: response.notification.request.content.data.id as string,
+        data: {
+          status: response.actionIdentifier === "accept"
+            ? "accepted"
+            : "denied"
+        }
+      })
+    }
+  });
 }
