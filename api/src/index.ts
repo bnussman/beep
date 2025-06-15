@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/bun';
+import { captureException, setUser } from '@sentry/bun';
 import { createContext, router } from './utils/trpc';
 import { userRouter } from './routers/user';
 import { authRouter } from './routers/auth';
@@ -19,6 +19,11 @@ import { createBunWSHandler } from './utils/ws';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { getHTTPStatusCodeFromError } from '@trpc/server/http';
 import { CORS_HEADERS } from './utils/cors';
+import { createYoga } from 'graphql-yoga';
+import { schema } from './graphql/schema';
+import { db } from './utils/db';
+import { eq } from 'drizzle-orm';
+import { token } from '../drizzle/schema';
 
 const appRouter = router({
   user: userRouter,
@@ -50,7 +55,36 @@ const websocket = createBunWSHandler({
   },
 });
 
+const yoga = createYoga({
+  schema,
+  async context(context) {
+    const bearerToken = context.request.headers.get('authorization')?.split(' ')[1];
+
+    if (!bearerToken) {
+      return {};
+    }
+
+    const session = await db.query.token.findFirst({
+      where: eq(token.id, bearerToken),
+      with: {
+        user: true
+      }
+    });
+
+    if (!session) {
+      return {};
+    }
+
+    setUser(session.user);
+
+    return { user: session.user, token: session };
+  },
+});
+
 Bun.serve({
+  routes: {
+    '/graphql': yoga.fetch,
+  },
   fetch(request, server) {
     if (request.method === 'OPTIONS') {
       return new Response('Departed', { headers: CORS_HEADERS });
