@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.2.12",
+    "@types/geojson": "^7946.0.16",
     "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.15.4",
     "@types/validator": "^13.12.2",

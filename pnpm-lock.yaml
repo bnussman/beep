@@ -61,6 +61,9 @@ importers:
       '@types/bun':
         specifier: ^1.2.12
         version: 1.2.12
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
       '@types/nodemailer':
         specifier: ^6.4.17
         version: 6.4.17
@@ -316,6 +319,9 @@ importers:
       '@types/bun':
         specifier: ^1.2.12
         version: 1.2.12
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
       '@types/nodemailer':
         specifier: ^6.4.17
         version: 6.4.17
