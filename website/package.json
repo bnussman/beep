@@ -28,6 +28,7 @@
     "react-map-gl": "^8.0.1"
   },
   "devDependencies": {
+    "@trpc/server": "^11.1.4",
     "@types/luxon": "^3.6.2",
     "@types/react": "19.0.10",
     "@types/react-dom": "^19.1.3",
