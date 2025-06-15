@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/bun": "^1.2.12",
     "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.15.4",
     "@types/validator": "^13.12.2",
     "drizzle-kit": "^0.31.1",
     "typescript": "^5.8.2"
@@ -25,6 +26,7 @@
     "@sentry/bun": "^9.9.0",
     "car-info": "0.2.1",
     "drizzle-orm": "^0.43.1",
+    "geojson": "^0.5.0",
     "graphql": "^16.11.0",
     "graphql-yoga": "^5.13.5",
     "ioredis": "^5.6.1",

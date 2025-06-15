@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/bun": "^1.2.12",
     "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.15.4",
     "@types/validator": "^13.12.2",
     "drizzle-kit": "^0.31.1",
     "typescript": "^5.8.2"
@@ -24,6 +25,7 @@
     "@trpc/server": "^11.1.4",
     "car-info": "0.2.1",
     "drizzle-orm": "^0.43.1",
+    "geojson": "^0.5.0",
     "ioredis": "^5.6.1",
     "nodemailer": "^7.0.2",
     "pg": "^8.14.1",
