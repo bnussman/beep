@@ -5,7 +5,7 @@ import { AppRouter } from '..';
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
 import { beep, token } from '../../drizzle/schema';
-import { and, eq, getOperators, or } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 
 /**
  * Initialization of tRPC backend
