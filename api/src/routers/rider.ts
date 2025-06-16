@@ -148,17 +148,7 @@ export const riderRouter = router({
         ...queue,
         {
           ...newBeep,
-          rider: {
-            id: ctx.user.id,
-            first: ctx.user.first,
-            last: ctx.user.last,
-            phone: ctx.user.phone,
-            venmo: ctx.user.venmo,
-            cashapp: ctx.user.cashapp,
-            rating: ctx.user.rating,
-            photo: ctx.user.photo,
-            pushToken: ctx.user.pushToken,
-          },
+          rider: ctx.user,
           beeper
         }
       ];
@@ -178,17 +168,8 @@ export const riderRouter = router({
       return {
         ...newBeep,
         position: queue.length,
-        rider: {
-          id: ctx.user.id,
-          first: ctx.user.first,
-          last: ctx.user.last,
-        },
-        beeper: {
-          ...beeper,
-          phone: null,
-          location: null,
-          cars: [],
-        },
+        rider: ctx.user,
+        beeper
       };
     }),
   currentRide: authedProcedure
@@ -464,8 +445,6 @@ export async function getRidersCurrentRide(userId: string) {
         inProgressBeep,
       )
     );
-
-  const isAcceptedBeep = getIsAcceptedBeep(b);
 
   return {
     ...b,
