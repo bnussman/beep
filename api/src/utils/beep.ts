@@ -87,6 +87,10 @@ export function getIsAcceptedBeep(beep: { status: BeepStatus }) {
   return beep.status === 'accepted' || beep.status === 'here' || beep.status === 'in_progress' || beep.status === 'on_the_way'
 }
 
+export function getIsInProgressBeep(beep: { status: BeepStatus }) {
+  return beep.status !== 'canceled' && beep.status !== 'complete' && beep.status !== 'denied';
+}
+
 export function getQueueSize(queue: { status: BeepStatus }[]) {
   return queue.filter(getIsAcceptedBeep).length
 }

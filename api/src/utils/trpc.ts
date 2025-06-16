@@ -5,8 +5,8 @@ import { AppRouter } from '..';
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
 import { beep, token } from '../../drizzle/schema';
-import { and, eq, or } from 'drizzle-orm';
-import { isAcceptedBeep } from './beep';
+import { and, desc, eq, or } from 'drizzle-orm';
+import { getIsInProgressBeep, isAcceptedBeep } from './beep';
 
 /**
  * Initialization of tRPC backend
@@ -46,37 +46,60 @@ const sentryMiddleware = t.middleware((opts) => {
   return opts.next();
 });
 
-const PROTECTED_FIELDS = ['phone', 'email', 'location', 'password', 'passwordType', 'pushToken', 'cars'];
+const PROTECTED_FIELDS = ['password', 'passwordType', 'pushToken'];
+
+const MUST_BE_IN_ACCEPTED_OR_COMPLETED_BEEP = ['phone', 'email'];
+
+const MUST_BE_IN_IN_PROGRESS_BEEP = ['location', 'cars'];
 
 async function getProtectedData(obj: any, ctx: Context) {
   if (!ctx.user) {
     console.log('aborting due to no user in ctx')
     return;
   }
+
   if (ctx.user.role === 'admin') {
     return;
   }
+
   if (typeof obj === 'object') {
     const keys = Object.keys(obj);
-    if (keys.includes('id') && keys.some(k => PROTECTED_FIELDS.includes(k))) {
-      const hasPermission = await db.query.beep.findFirst({ 
+
+    if (keys.includes('id') && obj['id'] !== ctx.user.id) {
+
+      for (const f of PROTECTED_FIELDS) {
+        if (obj[f]) {
+          delete obj[f];
+        }
+      }
+
+      const b = await db.query.beep.findFirst({ 
         where: and(
           or(isAcceptedBeep, eq(beep.status, 'complete')),
           or(
             and(eq(beep.rider_id, ctx.user.id), eq(beep.beeper_id, obj['id'])),
             and(eq(beep.rider_id, obj['id']), eq(beep.beeper_id, ctx.user.id)),
           )
-        )
+        ),
+        orderBy: desc(beep.start)
       });
 
-      if (!hasPermission) {
-        console.log('no permission for user', ctx.user.id, 'to resolve user', obj['id'])
-        for(const key of keys)  {
-          if (PROTECTED_FIELDS.includes(key)) {
-            obj[key] = null;
+      if (b) {
+        if (!getIsInProgressBeep(b)) {
+          for (const f of MUST_BE_IN_IN_PROGRESS_BEEP) {
+            if (obj[f]) {
+              obj[f] = null;
+            }
+          }
+        }
+      } else {
+        for (const f of [...MUST_BE_IN_ACCEPTED_OR_COMPLETED_BEEP, ...MUST_BE_IN_IN_PROGRESS_BEEP]) {
+          if (obj[f]) {
+            obj[f] = null;
           }
         }
       }
+
     }
   }
 
