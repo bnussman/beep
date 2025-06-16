@@ -6,7 +6,7 @@ import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-or
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
+import { getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
