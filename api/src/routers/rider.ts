@@ -6,7 +6,7 @@ import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-or
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
+import { getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -148,17 +148,7 @@ export const riderRouter = router({
         ...queue,
         {
           ...newBeep,
-          rider: {
-            id: ctx.user.id,
-            first: ctx.user.first,
-            last: ctx.user.last,
-            phone: ctx.user.phone,
-            venmo: ctx.user.venmo,
-            cashapp: ctx.user.cashapp,
-            rating: ctx.user.rating,
-            photo: ctx.user.photo,
-            pushToken: ctx.user.pushToken,
-          },
+          rider: ctx.user,
           beeper
         }
       ];
@@ -178,17 +168,8 @@ export const riderRouter = router({
       return {
         ...newBeep,
         position: queue.length,
-        rider: {
-          id: ctx.user.id,
-          first: ctx.user.first,
-          last: ctx.user.last,
-        },
-        beeper: {
-          ...beeper,
-          phone: null,
-          location: null,
-          cars: [],
-        },
+        rider: ctx.user,
+        beeper
       };
     }),
   currentRide: authedProcedure
@@ -465,15 +446,8 @@ export async function getRidersCurrentRide(userId: string) {
       )
     );
 
-  const isAcceptedBeep = getIsAcceptedBeep(b);
-
   return {
     ...b,
-    beeper: {
-      ...b.beeper,
-      location: isAcceptedBeep ? b.beeper.location : null,
-      phone: isAcceptedBeep ? b.beeper.phone : null,
-    },
     position: position[0].count
   };
 };

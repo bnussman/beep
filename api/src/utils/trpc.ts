@@ -4,8 +4,9 @@ import { ZodError } from 'zod';
 import { AppRouter } from '..';
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
-import { token } from '../../drizzle/schema';
-import { eq } from 'drizzle-orm';
+import { beep, token } from '../../drizzle/schema';
+import { and, desc, eq, or } from 'drizzle-orm';
+import { getIsInProgressBeep, isAcceptedBeep } from './beep';
 
 /**
  * Initialization of tRPC backend
@@ -45,7 +46,83 @@ const sentryMiddleware = t.middleware((opts) => {
   return opts.next();
 });
 
-export const publicProcedure = t.procedure.use(sentryMiddleware);
+const PROTECTED_FIELDS = ['password', 'passwordType', 'pushToken'];
+
+const MUST_BE_IN_ACCEPTED_OR_COMPLETED_BEEP = ['phone', 'email'];
+
+const MUST_BE_IN_IN_PROGRESS_BEEP = ['location', 'cars'];
+
+async function getProtectedData(obj: any, ctx: Context) {
+  if (!ctx.user) {
+    console.log('aborting due to no user in ctx')
+    return;
+  }
+
+  if (ctx.user.role === 'admin') {
+    return;
+  }
+
+  if (typeof obj === 'object') {
+    const keys = Object.keys(obj);
+
+    if (keys.includes('id') && obj['id'] !== ctx.user.id) {
+
+      // Don't let a user see another user's password, pushToken, etc...
+      for (const f of PROTECTED_FIELDS) {
+        delete obj[f];
+      }
+
+      // Get the most recent in progress or complete beep between the requesting user and the user in the
+      // response body.
+      const b = await db.query.beep.findFirst({ 
+        where: and(
+          or(isAcceptedBeep, eq(beep.status, 'complete')),
+          or(
+            and(eq(beep.rider_id, ctx.user.id), eq(beep.beeper_id, obj['id'])),
+            and(eq(beep.rider_id, obj['id']), eq(beep.beeper_id, ctx.user.id)),
+          )
+        ),
+        orderBy: desc(beep.start)
+      });
+
+      if (b) {
+        // If there is an in progrees or completed beep
+        if (!getIsInProgressBeep(b)) {
+          for (const f of MUST_BE_IN_IN_PROGRESS_BEEP) {
+            if (obj[f]) {
+          console.log('clearing', f, 'because there is no beep')
+              obj[f] = null;
+            }
+          }
+        }
+      } else {
+        // If there is no in progrees or completed beep between the users, null out the values
+        for (const f of [...MUST_BE_IN_ACCEPTED_OR_COMPLETED_BEEP, ...MUST_BE_IN_IN_PROGRESS_BEEP]) {
+          if (obj[f]) {
+            obj[f] = null;
+          }
+        }
+      }
+
+    }
+  }
+
+  for (const key in obj) {
+    if (typeof obj[key] === 'object' && obj[key] !== null)  {
+      await getProtectedData(obj[key], ctx);
+    }
+  }
+}
+
+const protectMiddleware = t.middleware(async (opts) => {
+  const result = await opts.next();
+  if (result.ok && result.data) {
+    await getProtectedData(result.data, opts.ctx) 
+  }
+  return result;
+});
+
+export const publicProcedure = t.procedure.use(sentryMiddleware).use(protectMiddleware);
 
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;

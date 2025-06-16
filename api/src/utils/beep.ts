@@ -11,6 +11,13 @@ export const inProgressBeep = or(
   eq(beep.status, "on_the_way"),
 );
 
+export const isAcceptedBeep = or(
+  eq(beep.status, "accepted"),
+  eq(beep.status, "here"),
+  eq(beep.status, "in_progress"),
+  eq(beep.status, "on_the_way"),
+);
+
 export async function getBeeperQueue(beeperId: string) {
   const queue = await db.query.beep.findMany({
     where: and(
@@ -66,20 +73,7 @@ export function getRiderBeepFromBeeperQueue(riderId: string, queue: Awaited<Retu
     throw new Error("Rider's beep not found in queue.")
   }
 
-  const isAccpted = getIsAcceptedBeep(beep);
   const position = queue.filter((b) => getIsAcceptedBeep(b) && b.start < beep.start).length;
-
-  if (!isAccpted) {
-    return {
-      ...beep,
-      position,
-      beeper: {
-        ...beep.beeper,
-        phone: null,
-        location: null,
-      }
-    };
-  }
 
   return {
     ...beep,
@@ -93,17 +87,10 @@ export function getIsAcceptedBeep(beep: { status: BeepStatus }) {
   return beep.status === 'accepted' || beep.status === 'here' || beep.status === 'in_progress' || beep.status === 'on_the_way'
 }
 
-export function getQueueSize(queue: { status: BeepStatus }[]) {
-  return queue.filter(getIsAcceptedBeep).length
+export function getIsInProgressBeep(beep: { status: BeepStatus }) {
+  return beep.status !== 'canceled' && beep.status !== 'complete' && beep.status !== 'denied';
 }
 
-export function getProtectedBeeperQueue(queue: Awaited<ReturnType<typeof getBeeperQueue>>): Awaited<ReturnType<typeof getBeeperQueue>> {
-  for (const beep of queue) {
-    const isAcceptedBeep = getIsAcceptedBeep(beep);
-    if (!isAcceptedBeep) {
-      beep.rider.phone = '';
-      beep.rider.pushToken = null;
-    }
-  }
-  return queue;
+export function getQueueSize(queue: { status: BeepStatus }[]) {
+  return queue.filter(getIsAcceptedBeep).length
 }
