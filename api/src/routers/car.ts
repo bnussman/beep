@@ -19,7 +19,14 @@ export const carRouter = router({
         userId: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      if (ctx.user.role !== 'admin' && input && input.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: "You can't view another user's cars."
+        });
+      }
+
       const where = input.userId ? eq(car.user_id, input.userId) : undefined;
 
       const cars = await db.query.car.findMany({

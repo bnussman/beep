@@ -68,9 +68,7 @@ async function getProtectedData(obj: any, ctx: Context) {
     if (keys.includes('id') && obj['id'] !== ctx.user.id) {
 
       for (const f of PROTECTED_FIELDS) {
-        if (obj[f]) {
           delete obj[f];
-        }
       }
 
       const b = await db.query.beep.findFirst({ 
@@ -85,14 +83,17 @@ async function getProtectedData(obj: any, ctx: Context) {
       });
 
       if (b) {
+        console.log(b)
         if (!getIsInProgressBeep(b)) {
           for (const f of MUST_BE_IN_IN_PROGRESS_BEEP) {
             if (obj[f]) {
+          console.log('clearing', f, 'because there is no beep')
               obj[f] = null;
             }
           }
         }
       } else {
+        console.log('no beep')
         for (const f of [...MUST_BE_IN_ACCEPTED_OR_COMPLETED_BEEP, ...MUST_BE_IN_IN_PROGRESS_BEEP]) {
           if (obj[f]) {
             obj[f] = null;
