@@ -67,10 +67,13 @@ async function getProtectedData(obj: any, ctx: Context) {
 
     if (keys.includes('id') && obj['id'] !== ctx.user.id) {
 
+      // Don't let a user see another user's password, pushToken, etc...
       for (const f of PROTECTED_FIELDS) {
-          delete obj[f];
+        delete obj[f];
       }
 
+      // Get the most recent in progress or complete beep between the requesting user and the user in the
+      // response body.
       const b = await db.query.beep.findFirst({ 
         where: and(
           or(isAcceptedBeep, eq(beep.status, 'complete')),
@@ -83,7 +86,7 @@ async function getProtectedData(obj: any, ctx: Context) {
       });
 
       if (b) {
-        console.log(b)
+        // If there is an in progrees or completed beep
         if (!getIsInProgressBeep(b)) {
           for (const f of MUST_BE_IN_IN_PROGRESS_BEEP) {
             if (obj[f]) {
@@ -93,7 +96,7 @@ async function getProtectedData(obj: any, ctx: Context) {
           }
         }
       } else {
-        console.log('no beep')
+        // If there is no in progrees or completed beep between the users, null out the values
         for (const f of [...MUST_BE_IN_ACCEPTED_OR_COMPLETED_BEEP, ...MUST_BE_IN_IN_PROGRESS_BEEP]) {
           if (obj[f]) {
             obj[f] = null;
