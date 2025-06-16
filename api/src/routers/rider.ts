@@ -469,11 +469,6 @@ export async function getRidersCurrentRide(userId: string) {
 
   return {
     ...b,
-    beeper: {
-      ...b.beeper,
-      location: isAcceptedBeep ? b.beeper.location : null,
-      phone: isAcceptedBeep ? b.beeper.phone : null,
-    },
     position: position[0].count
   };
 };

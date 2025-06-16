@@ -6,6 +6,7 @@ import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
 import { beep, token } from '../../drizzle/schema';
 import { and, eq, or } from 'drizzle-orm';
+import { isAcceptedBeep } from './beep';
 
 /**
  * Initialization of tRPC backend
@@ -45,7 +46,7 @@ const sentryMiddleware = t.middleware((opts) => {
   return opts.next();
 });
 
-const PROTECTED_FIELDS = ['phone', 'email', 'location', 'password', 'passwordType', 'pushToken'];
+const PROTECTED_FIELDS = ['phone', 'email', 'location', 'password', 'passwordType', 'pushToken', 'cars'];
 
 async function getProtectedData(obj: any, ctx: Context) {
   if (!ctx.user) {
@@ -60,7 +61,7 @@ async function getProtectedData(obj: any, ctx: Context) {
     if (keys.includes('id') && keys.some(k => PROTECTED_FIELDS.includes(k))) {
       const hasPermission = await db.query.beep.findFirst({ 
         where: and(
-          eq(beep.status, 'complete'),
+          or(isAcceptedBeep, eq(beep.status, 'complete')),
           or(
             and(eq(beep.rider_id, ctx.user.id), eq(beep.beeper_id, obj['id'])),
             and(eq(beep.rider_id, obj['id']), eq(beep.beeper_id, ctx.user.id)),
@@ -69,7 +70,7 @@ async function getProtectedData(obj: any, ctx: Context) {
       });
 
       if (!hasPermission) {
-        console.log('no permission')
+        console.log('no permission for user', ctx.user.id, 'to resolve user', obj['id'])
         for(const key of keys)  {
           if (PROTECTED_FIELDS.includes(key)) {
             obj[key] = null;
