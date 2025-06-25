@@ -19,9 +19,9 @@
     "react-dom": "19.0.0"
   },
   "volta": {
-    "node": "19.4.0"
+    "node": "24.3.0"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.2.0"
   }
 }
