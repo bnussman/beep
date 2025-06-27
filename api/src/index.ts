@@ -51,15 +51,15 @@ const websocket = createBunWSHandler({
 });
 
 Bun.serve({
+  routes: {
+    "/payments/webhook": handlePaymentWebook,
+  },
   fetch(request, server) {
     if (request.method === 'OPTIONS') {
       return new Response('Departed', { headers: CORS_HEADERS });
     }
     if (server.upgrade(request, { data: { req: request } })) {
       return;
-    }
-    if (request.url.endsWith("/payments/webhook")) {
-      return handlePaymentWebook(request);
     }
     return fetchRequestHandler({
       endpoint: '/',
