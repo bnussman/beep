@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../utils/beep";
+import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -44,7 +45,7 @@ export const riderRouter = router({
         .where(({ distance }) =>
           and(
             eq(user.isBeeping, true),
-            input ? lte(distance, 10 * 1609.34) : undefined
+            input ? lte(distance, DEFAULT_LOCATION_RADIUS * 1609.34) : undefined
           )
         )
         .orderBy(({ distance, isPremium }) => ([
@@ -251,7 +252,7 @@ export const riderRouter = router({
         .where(({ distance }) =>
           and(
             eq(user.isBeeping, true),
-            lte(distance, 10 * 1609.34)
+            lte(distance, DEFAULT_LOCATION_RADIUS * 1609.34)
           )
         );
 
@@ -293,7 +294,7 @@ export const riderRouter = router({
 
         if (input.admin) {
           yield data;
-        } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < 20) {
+        } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < DEFAULT_LOCATION_RADIUS) {
           const hasher = new Bun.CryptoHasher("sha256");
           hasher.update(data.id);
           yield { id: hasher.digest("hex"), location: data.location };

@@ -54,6 +54,8 @@ const urls = {
 
 export const WEB_BASE_URL = urls[ENVIRONMENT];
 
+export const DEFAULT_LOCATION_RADIUS = 20;
+
 export const CAR_COLOR_OPTIONS = [
   "Red",
   "Green",
