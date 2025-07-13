@@ -1,12 +1,12 @@
+import * as Sentry from '@sentry/react-native';
+import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { QueryClient } from '@tanstack/react-query';
 import { createTRPCClient, createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
+import { isWeb } from './constants';
 import type { AppRouter } from '../../api';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Sentry from '@sentry/react-native';
-import { isWeb } from './constants';
-import Constants from 'expo-constants';
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -17,11 +17,7 @@ function getLocalIP() {
   if (isWeb) {
     return "localhost";
   }
-  try {
-    return Constants.experienceUrl.split("//")[1].split(":")[0];
-  } catch (error) {
-    return "192.168.0.251";
-  }
+  return Constants.expoConfig?.hostUri?.split(":")[0];
 }
 
 const ip = getLocalIP();
