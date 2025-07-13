@@ -227,6 +227,11 @@ export const ratingRouter = router({
         .from(rating)
         .where(eq(rating.rated_id, u.id));
 
+      await db
+        .update(user)
+        .set({ rating: userWithRating.avgRating })
+        .where(eq(user.id, u.id));
+
       const updatedUser = { ...u, rating: userWithRating.avgRating };
 
       pubSub.publish('user', u.id, { user: updatedUser });
