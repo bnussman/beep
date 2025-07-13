@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, desc, eq, or, sql } from "drizzle-orm";
+import { avg, count, desc, eq, or, sql } from "drizzle-orm";
 import { rating, user, beep } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
@@ -218,35 +218,18 @@ export const ratingRouter = router({
           beep_id: input.beepId,
           rated_id: input.userId,
           rater_id: ctx.user.id,
+        }).returning();
+
+      const [userWithRating] = await db
+        .select({
+          avgRating: avg(rating.stars),
         })
-        .returning();
+        .from(rating)
+        .where(eq(rating.rated_id, u.id));
 
-      if (!u.rating) {
-        const updatedUser = await db
-          .update(user)
-          .set({ rating: sql`${input.stars}` })
-          .where(eq(user.id, u.id))
-          .returning();
+      const updatedUser = { ...u, rating: userWithRating.avgRating };
 
-        pubSub.publish('user', updatedUser[0].id, { user: updatedUser[0] });
-      } else {
-        const numberOfRatingsForUserCount = await db
-          .select({ count: count() })
-          .from(rating)
-          .where(eq(rating.rated_id, input.userId));
-
-        const numberOfRatingsForUser = numberOfRatingsForUserCount[0].count;
-
-        const updatedUser = await db
-          .update(user)
-          .set({
-            rating: sql`(("rating" * ${numberOfRatingsForUser}) + ${input.stars}) / (${numberOfRatingsForUser + 1})`,
-          })
-          .where(eq(user.id, u.id))
-          .returning();
-
-        pubSub.publish('user', updatedUser[0].id, { user: updatedUser[0] });
-      }
+      pubSub.publish('user', u.id, { user: updatedUser });
 
       if (u.pushToken) {
         sendNotification({
