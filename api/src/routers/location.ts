@@ -1,6 +1,6 @@
 import { z } from "zod";
-// import { OSRM_SECRET } from "../utils/constants";
 import { authedProcedure, router } from "../utils/trpc";
+import { OSRM_SECRET } from "../utils/constants";
 
 export const locationRouter = router({
   getETA: authedProcedure
@@ -10,10 +10,6 @@ export const locationRouter = router({
         end: z.string(),
       }),
     )
-    .query(() => {
-      return "ETA unavailable";
-    })
-    /*
     .query(async ({ input }) => {
       const username = "Admin";
       const password = OSRM_SECRET;
@@ -50,5 +46,4 @@ export const locationRouter = router({
 
       return `${etaMinutes} min`;
     }),
-    */
 });
