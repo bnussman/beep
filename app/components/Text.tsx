@@ -1,46 +1,40 @@
-import { Text as _Text, TextProps as _TextProps } from "react-native";
+import { Text as _Text, TextProps as _TextProps, StyleSheet } from "react-native";
 import React from "react";
+import { Theme, useTheme } from "@/utils/theme";
 
-import { cva, type VariantProps } from "class-variance-authority";
+const fontSizeMap = {
+  'xs': 12,
+  'sm': 14,
+  'md': 16,
+  'lg': 18,
+  'xl': 20,
+  '2xl': 24,
+  '3xl': 30,
+  '4xl': 36,
+  '5xl': 48,
+};
 
-export type TextVariantProps = VariantProps<typeof text>;
-
-export const text = cva(["text-black", "dark:text-white"], {
-  variants: {
-    size: {
-      xs: ["text-xs"],
-      sm: ["text-sm"],
-      md: ["text-md"],
-      lg: ["text-lg"],
-      xl: ["text-xl"],
-      "2xl": ["text-2xl"],
-      "3xl": ["text-3xl"],
-      "4xl": ["text-4xl"],
-      "5xl": ["text-5xl"],
-    },
-    weight: {
-      normal: ["font-normal"],
-      bold: ["font-bold"],
-      black: ["font-black"],
-    },
-    color: {
-      subtle: ["!text-neutral-500", "dark:!text-neutral-400"],
-      error: ["text-red-600", "dark:!text-red-400"],
-    },
-    //selectable: {
-    //  true: "select-all",
-    // },
-  },
-  defaultVariants: {
-    size: "md",
-    weight: "normal",
-  },
-});
-
-export interface TextProps extends _TextProps, TextVariantProps {}
+export interface TextProps extends _TextProps {
+  /**
+   * Set a font size
+   * @default md
+   */
+  size?: keyof typeof fontSizeMap;
+  /**
+   * Set a font weight
+   * @default normal
+   */ 
+  weight?: 'normal' | 'bold' | 'black';
+  /**
+   * Override the text color
+   */
+  color?: 'error' | 'subtle';
+}
 
 export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
   const { size, className, weight, color, ...rest } = props;
+  const theme = useTheme();
+  const styles = createStyles(theme);
 
   if (Array.isArray(rest.children) && rest.children.every((c) => !c)) {
     return null;
@@ -49,12 +43,29 @@ export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
   if (rest.children === null || rest.children === undefined) {
     return null;
   }
+  
+  const colorMap = {
+    error: theme.text.error,
+    subtle: theme.text.subtle,
+  };
 
   return (
     <_Text
       ref={ref}
-      className={text({ size, className, weight, color })}
       {...rest}
+      style={[
+        styles.default,
+        color ? { color: colorMap[color] } : {},
+        weight ? { fontWeight: weight } : {},
+        size ? { fontSize: fontSizeMap[size] } : {},
+        rest.style
+      ]}
     />
   );
+});
+
+const createStyles = (theme: Theme) => StyleSheet.create({
+  default: {
+    color: theme.text.primary, 
+  },
 });
