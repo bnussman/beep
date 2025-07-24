@@ -68,12 +68,12 @@ export function PickBeepScreen({ route }: Props) {
   }) => {
     return (
       <Card
-        className="p-4"
+        style={{ padding: 16 }}
         onPress={() => chooseBeep(item.id)}
         pressable
         variant="outlined"
       >
-        <View className="flex flex-row items-center mb-4">
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
           <View style={{ flex: 1 }}>
             <Text size="xl" weight="800">
               {item.first} {item.last}
@@ -83,11 +83,12 @@ export function PickBeepScreen({ route }: Props) {
           {item.isPremium && (
             <Text
               size="lg"
-              className="shadow-xl opacity-100 shadow-yellow-400 mr-4"
               style={{
                 shadowRadius: 10,
                 shadowColor: "#f5db73",
                 shadowOpacity: 1,
+                opacity: 1,
+                marginRight: 16,
               }}
             >
               👑
@@ -95,19 +96,19 @@ export function PickBeepScreen({ route }: Props) {
           )}
           <Avatar size="sm" src={item.photo ?? undefined} />
         </View>
-        <View className="flex flex-row justify-between">
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text weight="bold">💵 Rates</Text>
           <Text>
             ${item.singlesRate} singles / ${item.groupRate} groups
           </Text>
         </View>
-        <View className="flex flex-row justify-between">
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text weight="bold">🚙 Rider Capacity</Text>
           <Text>
             {item.capacity} rider{item.queueSize === 1 ? "" : "s"}
           </Text>
         </View>
-        <View className="flex flex-row justify-between">
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text weight="bold">⏲️ Queue Length</Text>
           <Text>
             {item.queueSize} rider{item.queueSize === 1 ? "" : "s"}
@@ -119,7 +120,7 @@ export function PickBeepScreen({ route }: Props) {
 
   if (isLoading) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator />
       </View>
     );
@@ -127,7 +128,7 @@ export function PickBeepScreen({ route }: Props) {
 
   if (!location) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text weight="800">Loading Location</Text>
         <ActivityIndicator />
       </View>
@@ -136,7 +137,7 @@ export function PickBeepScreen({ route }: Props) {
 
   if (error) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text weight="800">Error</Text>
         <Text>{error.message}</Text>
       </View>
@@ -145,7 +146,7 @@ export function PickBeepScreen({ route }: Props) {
 
   return (
     <FlatList
-      contentContainerClassName="p-3"
+      contentContainerStyle={{ padding: 12 }}
       data={beepers}
       renderItem={renderItem}
       keyExtractor={(beeper) => beeper.id}

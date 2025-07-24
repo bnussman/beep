@@ -43,7 +43,7 @@ export function BeepsScreen() {
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return (
-        <View className="flex items-center justify-center p-4">
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
           <ActivityIndicator />
         </View>
       );
@@ -54,7 +54,7 @@ export function BeepsScreen() {
 
   if (isLoading) {
     return (
-      <View className="h-full items-center justify-center">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" />
       </View >
     );
@@ -62,7 +62,7 @@ export function BeepsScreen() {
 
   if (error) {
     return (
-      <View className="h-full items-center justify-center">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>{error.message}</Text>
       </View>
     );
@@ -71,15 +71,15 @@ export function BeepsScreen() {
   return (
     <FlatList
       data={beeps}
-      className="p-2"
-      contentContainerClassName={beeps?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"}
+      style={{ padding: 8 }}
+      contentContainerStyle={beeps?.length === 0 ? { flex: 1, alignItems: 'center', justifyContent: 'center' } : { gap: 8 }}
       renderItem={(data) => <Beep {...data} />}
       keyExtractor={(beep) => beep.id}
       onEndReached={() => fetchNextPage()}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
-        <View className="items-center">
+        <View style={{ alignItems: 'center' }}>
           <Text size="3xl" weight="800">
             No Beeps
           </Text>

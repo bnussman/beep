@@ -98,7 +98,7 @@ export function AddCar() {
   });
 
   return (
-    <View className="p-3">
+    <View style={{ padding: 12 }}>
       <Controller
         name="make"
         rules={{ required: "Make is required" }}
@@ -227,15 +227,15 @@ export function AddCar() {
         rules={{ required: "Photo is required" }}
         control={control}
         render={() => (
-          <Pressable onPress={choosePhoto} className="mt-4">
+          <Pressable onPress={choosePhoto} style={{ marginTop: 16 }}>
             {photo ? (
               <Image
-                className="rounded-lg h-48 w-full"
+                style={{ borderRadius: 12, height: 192, width: '100%' }}
                 source={{ uri: photo.uri }}
                 alt="uploaded car image"
               />
             ) : (
-              <View className="rounded-lg h-48 w-full flex items-center justify-center bg-neutral-100 dark:bg-neutral-800">
+              <View style={{ borderRadius: 12, height: 192, width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f3f4f6' }}>
                 <Text weight="bold">Attach a Photo</Text>
                 <Text size="4xl">📷</Text>
               </View>
@@ -248,7 +248,7 @@ export function AddCar() {
         {validationErrors?.photo?.[0]}
       </Text>
       <Button
-        className="my-4"
+        style={{ marginVertical: 16 }}
         isLoading={isSubmitting}
         onPress={onSubmit}
         disabled={isSubmitting}
