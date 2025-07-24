@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { getBeeperQueue, getProtectedBeeperQueue, getQueueSize, getRiderBeepFromBeeperQueue } from "../utils/beep";
+import { getBeeperQueue, getProtectedBeeperQueue, getQueueSize, getRiderBeepFromBeeperQueue } from "../logic/beep";
 
 export const beeperRouter = router({
   queue: authedProcedure

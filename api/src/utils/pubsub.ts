@@ -1,6 +1,6 @@
 import { getRidersCurrentRide } from "../routers/rider";
 import { Context } from "./trpc";
-import { getBeeperQueue } from "./beep";
+import { getBeeperQueue } from "../logic/beep";
 import { createPubSub } from "@graphql-yoga/subscription";
 import { eventTarget } from "./redis";
 

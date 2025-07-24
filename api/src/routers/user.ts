@@ -21,7 +21,7 @@ import * as Sentry from "@sentry/bun";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { isMobilePhone } from "validator";
-import { inProgressBeep } from "../utils/beep";
+import { inProgressBeep } from "../logic/beep";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {

@@ -1,5 +1,5 @@
 import { and, asc, eq, or } from "drizzle-orm";
-import { db } from "./db";
+import { db } from "../utils/db";
 import { beep, car } from "../../drizzle/schema";
 import { getRidersCurrentRide } from "../routers/rider";
 

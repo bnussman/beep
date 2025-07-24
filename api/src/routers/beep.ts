@@ -10,7 +10,7 @@ import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { inProgressBeep } from "../utils/beep";
+import { inProgressBeep } from "../logic/beep";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const beepRouter = router({
