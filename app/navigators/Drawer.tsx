@@ -71,7 +71,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       <View className="gap-3">
         <View className="flex flex-row items-center justify-between px-2">
           <View className="flex-shrink">
-            <Text size="xl" weight="black">
+            <Text size="xl" weight="800">
               {user?.first} {user?.last}
             </Text>
             {user?.rating && (
@@ -88,7 +88,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               isLoading={resendLoading}
               activityIndicatorProps={{ color: "white" }}
             >
-              <Text className="text-white" weight="black">Resend Verification Email</Text>
+              <Text className="text-white" weight="800">Resend Verification Email</Text>
             </Button>
           )}
           {props.state.routeNames.map((name, index) => (

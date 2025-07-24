@@ -10,7 +10,7 @@ interface Props {
 export function PlaceInQueue({ position, firstName }: Props) {
   return (
     <Card className="w-full flex items-center gap-2 p-4" variant="outlined">
-      <Text weight="black" size="3xl">
+      <Text weight="800" size="3xl">
         {position}
       </Text>
       <Text>

@@ -74,8 +74,8 @@ export function PickBeepScreen({ route }: Props) {
         variant="outlined"
       >
         <View className="flex flex-row items-center mb-4">
-          <View className="flex-grow flex-wrap">
-            <Text size="2xl" weight="black">
+          <View style={{ flex: 1 }}>
+            <Text size="xl" weight="800">
               {item.first} {item.last}
             </Text>
             {item.rating && <Text size="xs">{printStars(Number(item.rating))}</Text>}
@@ -128,7 +128,7 @@ export function PickBeepScreen({ route }: Props) {
   if (error) {
     return (
       <View className="flex items-center justify-center h-full">
-        <Text weight="black">Error</Text>
+        <Text weight="800">Error</Text>
         <Text>{error.message}</Text>
       </View>
     );
@@ -147,7 +147,7 @@ export function PickBeepScreen({ route }: Props) {
       }
       ListEmptyComponent={
         <View style={{ alignItems: 'center' }}>
-          <Text weight="black" size="2xl" key="title">
+          <Text weight="800" size="2xl" key="title">
             Nobody is beeping
           </Text>
           <Text key="message">There are no drivers within 20 miles of you</Text>

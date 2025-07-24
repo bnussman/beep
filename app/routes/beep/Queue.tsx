@@ -42,7 +42,7 @@ export function Queue(props: Props) {
           drawerPositionIndex.current = 2;
         }
       }}>
-        <Text size="3xl" weight="black">Queue</Text>
+        <Text size="3xl" weight="800">Queue</Text>
         {hasUnacceptedBeep && <View className="rounded-full bg-blue-400 w-4 h-4 animate-pulse" />}
       </Pressable>
       <BottomSheetFlatList

@@ -199,7 +199,7 @@ export function MainFindBeepScreen(props: Props) {
       <View className="h-full p-4 gap-4 pb-8">
         <View className="flex flex-row w-full justify-between">
           <View className="flex-shrink">
-            <Text size="3xl" weight="black" className="mb-2">
+            <Text size="3xl" weight="800" className="mb-2">
               {beep.beeper.first} {beep.beeper.last}
             </Text>
             <Text>
@@ -219,7 +219,7 @@ export function MainFindBeepScreen(props: Props) {
         />
         {beep.position <= 0 && (
           <Card variant="outlined" className="p-4 gap-2">
-            <Text weight="black" size="xl">
+            <Text weight="800" size="xl">
               Current Status
             </Text>
             <Text>{getCurrentStatusMessage(beep)}</Text>
@@ -342,7 +342,7 @@ export function MainFindBeepScreen(props: Props) {
       <Avatar size="xl" src={beep.beeper.photo ?? undefined} />
       <View className="items-center gap-1">
         <Text>Waiting on</Text>
-        <Text size="4xl" weight="black">
+        <Text size="4xl" weight="800">
           {beep.beeper.first} {beep.beeper.last}
         </Text>
         <Text>to accept your request.</Text>

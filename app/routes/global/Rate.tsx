@@ -49,7 +49,7 @@ export function RateScreen({ route }: Props) {
   return (
     <View className="p-4 gap-4 pt-8">
       <View className="flex flex-row items-center gap-2 justify-between">
-        <Text size="3xl" weight="black" className="flex-shrink">
+        <Text size="3xl" weight="800" className="flex-shrink">
           {user.first} {user.last}
         </Text>
         <Avatar src={user.photo ?? undefined} />

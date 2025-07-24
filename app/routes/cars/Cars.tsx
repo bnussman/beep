@@ -150,7 +150,7 @@ export function Cars() {
                 <View className="flex flex-row flex-wrap gap-2">
                   {car.default && (
                     <Card className="px-2 py-1 !bg-neutral-500">
-                      <Text size="xs" weight="black" className="color-white">
+                      <Text size="xs" weight="800" className="color-white">
                         Default
                       </Text>
                     </Card>
@@ -189,7 +189,7 @@ export function Cars() {
       }
       ListEmptyComponent={
         <View style={{ alignItems: 'center' }}>
-          <Text weight="black" key="title" size="3xl">
+          <Text weight="800" key="title" size="3xl">
             No Cars
           </Text>
           <Text key="message">You have no cars on your account!</Text>

@@ -61,7 +61,7 @@ export function QueueItem({ item }: Props) {
           <Card variant="outlined" className="p-4" pressable>
             <View className="flex flex-row justify-between items-start">
               <View>
-                <Text weight="black" size="2xl">
+                <Text weight="800" size="2xl">
                   {item.rider.first} {item.rider.last}
                 </Text>
                 <Text size="sm">
@@ -128,7 +128,7 @@ export function QueueItem({ item }: Props) {
     <Card variant="outlined" className="p-4">
       <View className="flex flex-row justify-between items-center">
         <View>
-          <Text weight="black" size="2xl">
+          <Text weight="800" size="2xl">
             {item.rider.first} {item.rider.last}
           </Text>
           <Text size="sm">

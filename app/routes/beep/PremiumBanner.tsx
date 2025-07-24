@@ -17,7 +17,7 @@ export function PremiumBanner() {
     <Card variant="outlined" className="p-4 items-center">
     {payment ? (
       <>
-        <Text weight="black" size="xl">
+        <Text weight="800" size="xl">
           You are premium! 👑
         </Text>
         <Text className="text-center mb-4 mt-2">
@@ -26,7 +26,7 @@ export function PremiumBanner() {
       </>
     ) : (
       <>
-        <Text weight="black" size="xl">
+        <Text weight="800" size="xl">
           Want more riders?
         </Text>
         <Text className="text-center mb-4">

@@ -12,7 +12,7 @@ export function Rates({ singles, group }: Props) {
   return (
     <Card variant="outlined" className="p-4 flex flex-row justify-between w-full items-center">
       <Text>
-        <Text weight="black">Rates </Text>
+        <Text weight="800">Rates </Text>
         <Text>per person</Text>
       </Text>
       <View className="flex flex-row gap-4">

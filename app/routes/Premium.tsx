@@ -25,7 +25,7 @@ function Offering({ item, disabled }: Props) {
 
   return (
     <Card className="p-4 gap-2" variant="outlined">
-      <Text weight="black" size="2xl">
+      <Text weight="800" size="2xl">
         {item.identifier} ✨
       </Text>
       <Text>

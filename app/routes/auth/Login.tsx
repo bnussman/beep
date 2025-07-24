@@ -71,7 +71,7 @@ export function LoginScreen() {
       scrollEnabled={false}
       contentContainerClassName="flex h-full justify-center p-4 bg-white dark:bg-black"
     >
-      <Text size="4xl" weight="black" className="mb-4">
+      <Text size="4xl" weight="800" className="mb-4">
         Ride Beep App 🚕
       </Text>
       <Label htmlFor="username">Username or Email</Label>

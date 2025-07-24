@@ -48,7 +48,7 @@ export function ETA(props: Props) {
       variant="outlined"
       className="p-4 flex flex-row justify-between items-center"
     >
-      <Text size="xl" weight="black">
+      <Text size="xl" weight="800">
         ETA
       </Text>
       {renderContent()}

@@ -81,7 +81,7 @@ export function RatingsScreen() {
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
         <View className="items-center">
-          <Text weight="black" size="3xl">
+          <Text weight="800" size="3xl">
             No Ratings
           </Text>
           <Text>You have no ratings to display</Text>

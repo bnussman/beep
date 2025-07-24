@@ -13,7 +13,7 @@ export function UserHeader({ picture, name, username }: Props) {
   return (
     <View className="flex flex-row items-center justify-between">
       <View>
-        <Text size="3xl" weight="black">
+        <Text size="3xl" weight="800">
           {name}
         </Text>
         <Text color="subtle">@{username}</Text>

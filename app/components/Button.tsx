@@ -56,7 +56,7 @@ export function Button(props: Props) {
       {isLoading ? (
         <ActivityIndicator {...activityIndicatorProps} />
       ) : typeof children === "string" ? (
-        <Text weight="black">{children}</Text>
+        <Text weight="800">{children}</Text>
       ) : (
         children
       )}

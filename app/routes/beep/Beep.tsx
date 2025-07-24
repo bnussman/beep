@@ -28,7 +28,7 @@ export function Beep(props: Props) {
     <View className="h-full pb-8 gap-2">
       <View className="flex flex-row items-center justify-between">
         <View className="flex-shrink">
-          <Text weight="black" size="3xl">
+          <Text weight="800" size="3xl">
             {beep.rider.first} {beep.rider.last}
           </Text>
           {beep.rider.rating && (
@@ -37,11 +37,11 @@ export function Beep(props: Props) {
         </View>
         <Avatar src={beep.rider.photo ?? undefined} size="xl" />
       </View>
-      <Text size="xl" weight="black">Group Size</Text>
+      <Text size="xl" weight="800">Group Size</Text>
       <Text selectable>{beep.groupSize}</Text>
-      <Text size="xl" weight="black">Pick Up</Text>
+      <Text size="xl" weight="800">Pick Up</Text>
       <Text selectable>{beep.origin}</Text>
-      <Text size="xl" weight="black">Destination</Text>
+      <Text size="xl" weight="800">Destination</Text>
       <Text selectable>{beep.destination}</Text>
       <View className="flex-grow" />
       {beep.status === "waiting" ? (

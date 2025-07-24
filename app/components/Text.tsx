@@ -1,4 +1,4 @@
-import { Text as _Text, TextProps as _TextProps, StyleSheet } from "react-native";
+import { Text as _Text, TextProps as _TextProps, StyleSheet, TextStyle } from "react-native";
 import React from "react";
 import { Theme, useTheme } from "@/utils/theme";
 
@@ -24,7 +24,7 @@ export interface TextProps extends _TextProps {
    * Set a font weight
    * @default normal
    */ 
-  weight?: 'normal' | 'bold' | 'black';
+  weight?: TextStyle['fontWeight'];
   /**
    * Override the text color
    */

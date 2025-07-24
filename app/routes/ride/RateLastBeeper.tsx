@@ -27,7 +27,7 @@ export function RateLastBeeper() {
       className="flex flex-row items-center justify-between px-4 py-2 mt-4 gap-4 ease-in ease-out duration-300"
     >
       <Text className="flex-shrink">
-        Rate Your Last Beep with <Text weight="black">{otherUser.first}</Text>
+        Rate Your Last Beep with <Text weight="800">{otherUser.first}</Text>
       </Text>
       <Avatar src={otherUser.photo ?? undefined} size="sm" />
     </Card>

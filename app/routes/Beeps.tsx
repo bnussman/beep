@@ -80,7 +80,7 @@ export function BeepsScreen() {
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
         <View className="items-center">
-          <Text size="3xl" weight="black">
+          <Text size="3xl" weight="800">
             No Beeps
           </Text>
           <Text>You have no previous beeps to display</Text>

@@ -152,7 +152,7 @@ export function StartBeepingScreen() {
   if (user?.isBeeping && !hasLocationPermission && !isWeb) {
     return (
       <View className="flex items-center justify-center h-full">
-        <Text size="2xl" weight="black">
+        <Text size="2xl" weight="800">
           No Location Permission
         </Text>
         <Text className="text-center mb-8">
@@ -166,7 +166,7 @@ export function StartBeepingScreen() {
   if (user?.isBeeping && queue?.length === 0) {
     return (
       <View className="flex items-center justify-center h-full">
-        <Text size="2xl" weight="black">
+        <Text size="2xl" weight="800">
           Your queue is empty
         </Text>
         <Text className="text-center mb-8">
@@ -241,7 +241,7 @@ export function StartBeepingScreen() {
           )}
         />
         <View className="flex-grow" />
-        <Text size="sm" className="mb-10 text-center">
+        <Text size="sm" style={{ textAlign: 'center', marginBottom: 18 }}>
           Use the toggle in the top right to start beeping
         </Text>
       </KeyboardAwareScrollView>
