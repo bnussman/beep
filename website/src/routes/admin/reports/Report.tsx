@@ -16,6 +16,7 @@ import {
   FormControlLabel,
   Alert,
 } from "@mui/material";
+import { Link } from "../../../components/Link";
 
 export const reportRoute = createRoute({
   component: Report,
@@ -94,21 +95,25 @@ export function Report() {
           </Typography>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Reporter</Typography>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Avatar src={report.reporter.photo ?? undefined} />
-              <Typography>
-                {report.reporter.first} {report.reporter.last}
-              </Typography>
-            </Stack>
+            <Link to="/admin/users/$userId" params={{ userId: report.reporter_id }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Avatar src={report.reporter.photo ?? undefined} />
+                <Typography>
+                  {report.reporter.first} {report.reporter.last}
+                </Typography>
+              </Stack>
+            </Link>
           </Stack>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Reported</Typography>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Avatar src={report.reported.photo ?? undefined} />
-              <Typography>
-                {report.reported.first} {report.reported.last}
-              </Typography>
-            </Stack>
+            <Link to="/admin/users/$userId" params={{ userId: report.reported_id }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Avatar src={report.reported.photo ?? undefined} />
+                <Typography>
+                  {report.reported.first} {report.reported.last}
+                </Typography>
+              </Stack>
+            </Link>
           </Stack>
           <Stack spacing={1}>
             <Typography fontWeight="bold">Reason</Typography>

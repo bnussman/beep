@@ -4,7 +4,7 @@ import { printStars } from "../ratings";
 import { createRoute, useParams } from "@tanstack/react-router";
 import { userRoute } from "./User";
 import { trpc } from "../../../utils/trpc";
-import { Alert, Stack, Typography, Tooltip, Box } from "@mui/material";
+import { Alert, Stack, Typography, Tooltip, Box, Link } from "@mui/material";
 
 export const userDetailsRoute = createRoute({
   component: Details,
@@ -37,7 +37,7 @@ export function Details() {
         <strong>Email:</strong>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
-          <Typography>{user.email}</Typography>
+          <Link href={`mailto:${user.email}`}>{user.email}</Link>
         </Stack>
       </Box>
       <Box>
