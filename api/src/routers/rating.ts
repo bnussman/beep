@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { avg, count, desc, eq, or, sql } from "drizzle-orm";
+import { count, desc, eq, or } from "drizzle-orm";
 import { rating, user, beep } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { getUsersAverageRating } from "../logic/rating";
 
 export const ratingRouter = router({
   ratings: authedProcedure
@@ -107,13 +108,6 @@ export const ratingRouter = router({
     .mutation(async ({ input, ctx }) => {
       const r = await db.query.rating.findFirst({
         where: eq(rating.id, input.ratingId),
-        with: {
-          rated: {
-            columns: {
-              rating: true,
-            },
-          },
-        },
       });
 
       if (!r) {
@@ -130,36 +124,11 @@ export const ratingRouter = router({
         });
       }
 
-      if (!r.rated.rating) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message:
-            "You are trying to delete a rating for a user who's rating value is undefined",
-        });
-      }
-
-      const numberOfRatings = await db
-        .select({ count: count() })
-        .from(rating)
-        .where(eq(rating.rated_id, r.rated_id));
-
-      const numberOfRatingsCount = numberOfRatings[0].count;
-
-      if (numberOfRatingsCount <= 1) {
-        await db
-          .update(user)
-          .set({ rating: null })
-          .where(eq(user.id, r.rated_id));
-      } else {
-        await db
-          .update(user)
-          .set({
-            rating: sql`("rating" * ${numberOfRatingsCount} - ${r.stars}) / (${numberOfRatingsCount} - 1)`,
-          })
-          .where(eq(user.id, r.rated_id));
-      }
-
       await db.delete(rating).where(eq(rating.id, r.id));
+
+      const updatedRating = await getUsersAverageRating(r.rated_id);
+
+      await db.update(user).set({ rating: updatedRating }).where(eq(user.id, r.rated_id))
     }),
   createRating: authedProcedure
     .input(
@@ -220,19 +189,14 @@ export const ratingRouter = router({
           rater_id: ctx.user.id,
         }).returning();
 
-      const [userWithRating] = await db
-        .select({
-          avgRating: avg(rating.stars),
-        })
-        .from(rating)
-        .where(eq(rating.rated_id, u.id));
+      const avgRating = await getUsersAverageRating(u.id);
 
       await db
         .update(user)
-        .set({ rating: userWithRating.avgRating })
+        .set({ rating: avgRating })
         .where(eq(user.id, u.id));
 
-      const updatedUser = { ...u, rating: userWithRating.avgRating };
+      const updatedUser = { ...u, rating: avgRating };
 
       pubSub.publish('user', u.id, { user: updatedUser });
 
