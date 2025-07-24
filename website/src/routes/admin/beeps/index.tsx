@@ -9,7 +9,7 @@ import { TableCellUser } from "../../../components/TableCellUser";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableEmpty } from "../../../components/TableEmpty";
-import { DateTime, Duration } from "luxon";
+import { DateTime, Duration, Interval } from "luxon";
 import {
   Paper,
   Stack,
@@ -124,12 +124,7 @@ export function Beeps() {
                   {beep.end ? DateTime.fromISO(beep.end).toRelative() : "N/A"}
                 </TableCell>
                 <TableCell>
-                  {beep.end
-                    ? Duration.fromMillis(
-                        new Date(beep.end).getTime() -
-                          new Date(beep.start).getTime(),
-                      ).rescale().toHuman()
-                    : "N/A"}
+                  {beep.end ? Interval.fromDateTimes(DateTime.fromISO(beep.start), DateTime.fromISO(beep.end)).toDuration().rescale().set({ milliseconds: 0 }).rescale().toHuman() : "N/A"}
                 </TableCell>
               </TableRow>
             ))}

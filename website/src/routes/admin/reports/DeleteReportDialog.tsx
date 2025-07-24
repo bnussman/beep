@@ -20,7 +20,6 @@ interface Props {
 
 export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
   const utils = trpc.useUtils();
-  const queryClient = useQueryClient();
 
   const {
     mutateAsync: deleteReport,

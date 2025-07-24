@@ -85,7 +85,7 @@ export function Ratings() {
           loading={isPending}
           onClick={() => mutate()}
           color="warning"
-          variant="outlined"
+          variant="contained"
         >
           Reconcile
         </Button>
