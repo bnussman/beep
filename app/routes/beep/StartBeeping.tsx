@@ -90,7 +90,7 @@ export function StartBeepingScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View className="mr-2 flex flex-row gap-4">
+        <View style={{ marginRight: 8, display: 'flex', flexDirection: 'row', gap: 8 }}>
           {form.formState.isSubmitting && <ActivityIndicator size="small" />}
           <Switch
             disabled={form.formState.isSubmitting}
@@ -151,11 +151,11 @@ export function StartBeepingScreen() {
 
   if (user?.isBeeping && !hasLocationPermission && !isWeb) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         <Text size="2xl" weight="800">
           No Location Permission
         </Text>
-        <Text className="text-center mb-8">
+        <Text style={{ textAlign: 'center' }}>
           You are beeping, but you have not granted this app permission to use your location in the background.
           Please enable full time background location for the app in your settings.
         </Text>
@@ -165,11 +165,11 @@ export function StartBeepingScreen() {
 
   if (user?.isBeeping && queue?.length === 0) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 8 }}>
         <Text size="2xl" weight="800">
           Your queue is empty
         </Text>
-        <Text className="text-center mb-8">
+        <Text style={{ textAlign: 'center', paddingLeft: 8, paddingRight: 8, marginBottom: 16 }}>
           If someone wants you to beep them, it will appear here. If your app is
           closed, you will receive a push notification.
         </Text>
@@ -180,10 +180,7 @@ export function StartBeepingScreen() {
 
   if (!user?.isBeeping || !queue) {
     return (
-      <KeyboardAwareScrollView
-        scrollEnabled={false}
-        contentContainerClassName="p-4 h-full"
-      >
+      <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ padding: 16, height: '100%', gap: 8 }}>
         <Label htmlFor="capacity">Max Rider Capacity</Label>
         <Controller
           control={form.control}
@@ -240,7 +237,7 @@ export function StartBeepingScreen() {
             </>
           )}
         />
-        <View className="flex-grow" />
+        <View style={{ flexGrow: 1 }} />
         <Text size="sm" style={{ textAlign: 'center', marginBottom: 18 }}>
           Use the toggle in the top right to start beeping
         </Text>
@@ -249,7 +246,7 @@ export function StartBeepingScreen() {
   }
 
   return (
-    <View className="flex h-full p-4 pb-16">
+    <View style={{ display: 'flex', height: '100%', padding: 16, paddingBottom: 48 }}>
       {queue[0] && <Beep beep={queue[0]} />}
       <Queue
         beeps={queue.filter(beep => beep.id !== queue[0]?.id)}

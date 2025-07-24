@@ -125,6 +125,15 @@ export function PickBeepScreen({ route }: Props) {
     );
   }
 
+  if (!location) {
+    return (
+      <View className="flex items-center justify-center h-full">
+        <Text weight="800">Loading Location</Text>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   if (error) {
     return (
       <View className="flex items-center justify-center h-full">
@@ -140,6 +149,8 @@ export function PickBeepScreen({ route }: Props) {
       data={beepers}
       renderItem={renderItem}
       keyExtractor={(beeper) => beeper.id}
+      refreshing={isRefetching}
+      onRefresh={refetch}
       contentContainerStyle={
         beepers?.length === 0
           ? { flex: 1, alignItems: "center", justifyContent: "center" }
@@ -147,14 +158,11 @@ export function PickBeepScreen({ route }: Props) {
       }
       ListEmptyComponent={
         <View style={{ alignItems: 'center' }}>
-          <Text weight="800" size="2xl" key="title">
+          <Text weight="800" size="2xl">
             Nobody is beeping
           </Text>
-          <Text key="message">There are no drivers within 20 miles of you</Text>
+          <Text>There are no drivers within 20 miles of you</Text>
         </View>
-      }
-      refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
     />
   );
