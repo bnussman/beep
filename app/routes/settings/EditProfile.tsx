@@ -76,7 +76,7 @@ export function EditProfileScreen() {
       headerRight: () => (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <Text size="3xl" className="mr-2">
+            <Text size="3xl" style={{ marginRight: 8 }}>
               🧰
             </Text>
           </DropdownMenu.Trigger>
@@ -191,9 +191,9 @@ export function EditProfileScreen() {
   });
 
   return (
-    <KeyboardAwareScrollView contentContainerClassName="p-4">
-      <View className="flex flex-row gap-4 items-center">
-        <View className="flex-grow">
+    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16 }}>
+      <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+        <View style={{ flexGrow: 1 }}>
           <Label htmlFor="first">First Name</Label>
           <Controller
             name="first"

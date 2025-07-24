@@ -35,7 +35,7 @@ export function ChangePasswordScreen() {
 
   return (
     <KeyboardAwareScrollView
-      contentContainerClassName="p-4"
+      contentContainerStyle={{ padding: 16 }}
       scrollEnabled={false}
     >
       <Label htmlFor="password1">New Password</Label>
@@ -63,7 +63,7 @@ export function ChangePasswordScreen() {
         onPress={handlePasswordChange}
         disabled={!password || password !== confirmPassword}
         isLoading={isPending}
-        className="mt-4"
+        style={{ marginTop: 16 }}
       >
         Change Password
       </Button>

@@ -25,9 +25,9 @@ export function Beep(props: Props) {
   const { user } = useUser();
 
   return (
-    <View className="h-full pb-8 gap-2">
-      <View className="flex flex-row items-center justify-between">
-        <View className="flex-shrink">
+    <View style={{ flex: 1, paddingBottom: 32, gap: 8 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ flexShrink: 1 }}>
           <Text weight="800" size="3xl">
             {beep.rider.first} {beep.rider.last}
           </Text>
@@ -43,17 +43,17 @@ export function Beep(props: Props) {
       <Text selectable>{beep.origin}</Text>
       <Text size="xl" weight="800">Destination</Text>
       <Text selectable>{beep.destination}</Text>
-      <View className="flex-grow" />
+      <View style={{ flexGrow: 1 }} />
       {beep.status === "waiting" ? (
-        <View className="flex flex-row gap-4">
+        <View style={{ flexDirection: 'row', gap: 16 }}>
           <AcceptDenyButton item={beep} type="deny" />
           <AcceptDenyButton item={beep} type="accept" />
         </View>
       ) : (
         <>
-            <View className="flex flex-row gap-2">
+            <View style={{ flexDirection: 'row', gap: 8 }}>
               <Button
-                className="flex-grow"
+                style={{ flexGrow: 1 }}
                 onPress={() => {
                   Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone));
                 }}
@@ -61,7 +61,7 @@ export function Beep(props: Props) {
                 Call 📞
               </Button>
               <Button
-                className="flex-grow"
+                style={{ flexGrow: 1 }}
                 onPress={() => {
                   Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone));
                 }}

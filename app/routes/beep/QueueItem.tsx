@@ -58,8 +58,8 @@ export function QueueItem({ item }: Props) {
     return (
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <Card variant="outlined" className="p-4" pressable>
-            <View className="flex flex-row justify-between items-start">
+          <Card variant="outlined" style={{ padding: 16 }} pressable>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <View>
                 <Text weight="800" size="2xl">
                   {item.rider.first} {item.rider.last}
@@ -69,7 +69,7 @@ export function QueueItem({ item }: Props) {
                 </Text>
               </View>
               <Avatar
-                className="mr-2"
+                style={{ marginRight: 8 }}
                 size="sm"
                 src={item.rider.photo ?? undefined}
               />
