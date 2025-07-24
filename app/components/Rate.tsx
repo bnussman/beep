@@ -11,7 +11,7 @@ export interface RateBarProps {
 
 export const RateBar = (props: RateBarProps) => {
   return (
-    <View className="flex flex-row gap-2">
+    <View style={{ flexDirection: 'row', gap: 8 }}>
       {[1, 2, 3, 4, 5].map((value) => {
         const isSelected = value <= props.value;
 

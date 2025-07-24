@@ -11,7 +11,7 @@ interface Props {
 
 export function UserHeader({ picture, name, username }: Props) {
   return (
-    <View className="flex flex-row items-center justify-between">
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <View>
         <Text size="3xl" weight="800">
           {name}

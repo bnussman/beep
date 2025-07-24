@@ -37,10 +37,10 @@ export function Beep({ item }: Props) {
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
-        <Card className="p-4 gap-2" variant="outlined" pressable>
-          <View className="flex flex-row items-center gap-2">
+        <Card style={{ padding: 16, gap: 8 }} variant="outlined" pressable>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Avatar size="xs" src={otherUser.photo ?? undefined} />
-            <View className="flex-shrink">
+            <View style={{ flexShrink: 1 }}>
               <Text weight="bold" size="lg">
                 {otherUser.first} {otherUser.last}
               </Text>
@@ -52,25 +52,25 @@ export function Beep({ item }: Props) {
             </View>
           </View>
           <View>
-            <View className="flex flex-row justify-between items-center">
-              <Text className="w-24" weight="bold">Pick Up</Text>
-              <Text className="text-right flex-shrink">{item.origin}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ width: 96 }} weight="bold">Pick Up</Text>
+              <Text style={{ textAlign: 'right', flexShrink: 1 }}>{item.origin}</Text>
             </View>
-            <View className="flex flex-row justify-between items-center">
-              <Text className="w-24" weight="bold">Drop Off</Text>
-              <Text className="text-right flex-shrink">{item.destination}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ width: 96 }} weight="bold">Drop Off</Text>
+              <Text style={{ textAlign: 'right', flexShrink: 1 }}>{item.destination}</Text>
             </View>
-            <View className="flex flex-row justify-between">
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text weight="bold">Group size</Text>
               <Text>{item.groupSize}</Text>
             </View>
             {item.status === "complete" && (
               <>
-                <View className="flex flex-row justify-between">
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text weight="bold">Your Rating</Text>
                   <Text>{myRating ? printStars(myRating.stars) : "N/A"}</Text>
                 </View>
-                <View className="flex flex-row justify-between">
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text weight="bold">{otherUser.first}'s Rating</Text>
                   <Text>
                     {otherUsersRating

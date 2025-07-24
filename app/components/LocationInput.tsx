@@ -52,16 +52,16 @@ export function LocationInput({ inputRef, ...props }: Props) {
   };
 
   return (
-    <View className="flex flex-row gap-2">
+    <View style={{ flexDirection: 'row', gap: 8 }}>
       <Input
         placeholder={isLoading ? "Loading" : undefined}
         ref={inputRef}
-        className="flex-1 flex-grow"
+        style={{ flexGrow: 1 }}
         textContentType="fullStreetAddress"
         {...props}
       />
       <Button isLoading={isLoading} onPress={handleGetCurrentLocation}>
-        <Text>📍</Text>
+        📍
       </Button>
     </View>
   );

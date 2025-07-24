@@ -13,9 +13,9 @@ export function PasswordInput({ inputRef, ...props }: Props) {
   const toggleShow = () => setShow((prev) => !prev);
 
   return (
-    <View className="flex flex-row gap-2">
+    <View style={{ flexDirection: 'row', gap: 8 }}>
       <Input
-        className="flex-grow"
+        style={{ flexGrow: 1 }}
         ref={inputRef}
         textContentType="password"
         secureTextEntry={!show}
