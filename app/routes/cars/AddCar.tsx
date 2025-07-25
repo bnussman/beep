@@ -239,7 +239,7 @@ export function AddCar() {
                 alt="uploaded car image"
               />
             ) : (
-              <View style={{ backgroundColor: theme.components.card.bg, borderColor: theme.components.card.borderColor, borderWidth: 1, borderRadius: 12, height: 192, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ backgroundColor: theme.components.card.backgroundColor, borderColor: theme.components.card.borderColor, borderWidth: 1, borderRadius: 12, height: 192, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                 <Text weight="bold">Attach a Photo</Text>
                 <Text size="4xl">📷</Text>
               </View>

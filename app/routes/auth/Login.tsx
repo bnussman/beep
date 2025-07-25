@@ -67,7 +67,7 @@ export function LoginScreen() {
   });
 
   return (
-    <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ display: 'flex', justifyContent: 'center', gap: 12, height: '100%', padding: 8 }}>
+    <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ display: 'flex', justifyContent: 'center', gap: 8, height: '100%', padding: 16 }}>
       <Text size="4xl" weight="800">
         Ride Beep App 🚕
       </Text>

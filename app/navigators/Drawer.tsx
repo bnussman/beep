@@ -27,6 +27,7 @@ import {
   View,
   ActivityIndicator,
 } from "react-native";
+import { useTheme } from "@/utils/theme";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
@@ -138,6 +139,8 @@ interface Props {
 function DrawerItem(props: Props) {
   const { name, onPress, isActive, isLoading } = props;
 
+  const theme = useTheme();
+
   const getIcon = (screenName: string) => {
     if (isLoading) {
       return <ActivityIndicator size="small" />;
@@ -190,11 +193,8 @@ function DrawerItem(props: Props) {
           padding: 12,
           borderRadius: 8,
         },
-        isActive && {
-          backgroundColor: 'rgba(44, 44, 44, 0.73)',
-        },
-        pressed && {
-          backgroundColor: 'rgba(44, 44, 44, 0.5)'
+        (isActive || pressed) && {
+          backgroundColor: theme.name === 'dark' ? '#202020ff' : '#ebebeb91',
         },
       ])}
     >

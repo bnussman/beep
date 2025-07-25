@@ -37,14 +37,14 @@ export function Button(props: Props) {
   const {
     children,
     isLoading,
-    variant,
+    variant = 'primary',
     size = 'md',
     activityIndicatorProps,
     ...rest
   } = props;
 
   const theme = useTheme();
-  const style = createStyle(theme);
+  const style = createStyle(theme, variant, rest.disabled);
 
   return (
     <Pressable
@@ -52,8 +52,15 @@ export function Button(props: Props) {
       {...rest}
       style={(state) => [
         style.button,
+        style[variant],
         { padding: sizeMap[size] },
-        typeof rest.style === 'function' ? rest.style(state): rest.style
+        state.pressed && variant === 'primary' && {
+          backgroundColor: theme.components.button.primary.pressed.backgroundColor,
+        },
+        state.pressed && variant === 'secondary' && {
+          backgroundColor: theme.components.button.secondary.pressed.backgroundColor,
+        },
+        typeof rest.style === 'function' ? rest.style(state): rest.style,
       ]}
     >
       {isLoading ? (
@@ -67,13 +74,20 @@ export function Button(props: Props) {
   );
 }
 
-const createStyle = (theme: Theme) => StyleSheet.create({
+const createStyle = (
+  theme: Theme,
+  variant: Props['variant'] = 'primary',
+  disabled: boolean | null | undefined
+) => StyleSheet.create({
   button: {
     borderRadius: 12,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    cursor: 'pointer',
-    backgroundColor: theme.components.button.primary.bg
+    cursor: disabled ? 'auto' : 'pointer',
   },
+  primary: {
+    backgroundColor: theme.components.button.primary.backgroundColor
+  },
+  secondary: {},
 });

@@ -16,12 +16,15 @@ export function Image({ style, ...props }: ImageProps) {
     <>
       {loading && (
         <View
-          style={{
-            display: "flex", 
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: theme.components.card.bg,
-          }}
+          style={[
+            {
+              display: "flex",
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(117, 117, 117, 0.47)',
+            },
+            style
+          ]}
         >
           <ActivityIndicator />
         </View>

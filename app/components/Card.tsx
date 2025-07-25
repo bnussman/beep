@@ -41,9 +41,9 @@ export function Card(props: Props) {
 
 const createStyle = (theme: Theme) => StyleSheet.create({
   card: {
-    borderRadius: 12,
-    backgroundColor: theme.components.card.bg,
+    backgroundColor: theme.components.card.backgroundColor,
     borderColor: theme.components.card.borderColor,
+    borderRadius: 12,
     borderWidth: 1,
     padding: 16,
   },

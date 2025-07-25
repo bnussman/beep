@@ -14,7 +14,7 @@ export function PremiumBanner() {
   const payment = payments?.[0];
 
   return (
-    <Card variant="outlined" style={{ padding: 16, alignItems: 'center', gap: 8 }}>
+    <Card style={{ padding: 16, alignItems: 'center', gap: 8 }}>
       {payment ? (
         <>
           <Text weight="800" size="xl">
