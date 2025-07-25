@@ -185,7 +185,7 @@ export function MainFindBeepScreen(props: Props) {
           )}
         />
         <Text color="error">{errors.destination?.message}</Text>
-        <Button style={{ marginVertical: 12 }} onPress={() => findBeep()}>
+        <Button onPress={() => findBeep()}>
           Find Beep
         </Button>
         <BeepersMap />
