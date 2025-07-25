@@ -31,7 +31,7 @@ export function ReportScreen({ route }: Props) {
   }
 
   return (
-    <View className="p-4 gap-4">
+    <View style={{ padding: 16, gap: 16 }}>
       {user && (
         <UserHeader
           username={user.username}

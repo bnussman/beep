@@ -10,17 +10,17 @@ interface Props {
 
 export function Rates({ singles, group }: Props) {
   return (
-    <Card variant="outlined" className="p-4 flex flex-row justify-between w-full items-center">
+    <Card variant="outlined" style={{ padding: 16, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
       <Text>
         <Text weight="800">Rates </Text>
         <Text>per person</Text>
       </Text>
-      <View className="flex flex-row gap-4">
-        <View className="items-center">
+      <View style={{ display: 'flex', flexDirection: 'row', gap: 16 }}>
+        <View>
           <Text weight="bold">Single</Text>
           <Text>${singles}</Text>
         </View>
-        <View className="items-center">
+        <View>
           <Text weight="bold">Group</Text>
           <Text>${group}</Text>
         </View>

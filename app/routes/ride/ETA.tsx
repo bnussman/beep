@@ -46,7 +46,7 @@ export function ETA(props: Props) {
   return (
     <Card
       variant="outlined"
-      className="p-4 flex flex-row justify-between items-center"
+      style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
     >
       <Text size="xl" weight="800">
         ETA
