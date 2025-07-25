@@ -117,7 +117,7 @@ export function Cars() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator />
       </View>
     );
@@ -134,7 +134,11 @@ export function Cars() {
   return (
     <FlatList
       data={cars}
-      contentContainerStyle={{ flex: 1, padding: 12, gap: 8 }}
+      contentContainerStyle={
+        cars?.length === 0 ?
+          { alignItems: 'center', justifyContent: 'center', height: '100%' } :
+          { flex: 1, padding: 12, gap: 8 }
+      }
       renderItem={({ item: car }) => (
         <ContextMenu.Root>
           <ContextMenu.Trigger>
@@ -192,9 +196,8 @@ export function Cars() {
       onEndReached={() => fetchNextPage()}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
-      refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
-      }
+      refreshing={isRefetching}
+      onRefresh={refetch}
     />
   );
 }

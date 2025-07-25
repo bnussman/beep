@@ -189,6 +189,7 @@ function DrawerItem(props: Props) {
         {
           display: 'flex',
           flexDirection: 'row',
+          alignItems: 'center',
           gap: 16,
           padding: 12,
           borderRadius: 8,
