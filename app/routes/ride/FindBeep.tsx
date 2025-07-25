@@ -107,7 +107,7 @@ export function MainFindBeepScreen(props: Props) {
 
   if (!beep) {
     return (
-      <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ padding: 16, gap: 4 }}>
+      <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ padding: 16, gap: 8 }}>
         <Label htmlFor="groupSize">Group Size</Label>
         <Controller
           name="groupSize"

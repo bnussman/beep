@@ -191,9 +191,9 @@ export function EditProfileScreen() {
   });
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16 }}>
+    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 8 }}>
       <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
-        <View style={{ flexGrow: 1 }}>
+        <View style={{ flexGrow: 1, gap: 8 }}>
           <Label htmlFor="first">First Name</Label>
           <Controller
             name="first"

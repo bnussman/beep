@@ -102,7 +102,7 @@ export function AddCar() {
   });
 
   return (
-    <View style={{ padding: 12 }}>
+    <View style={{ padding: 16, gap: 12 }}>
       <Controller
         name="make"
         rules={{ required: "Make is required" }}
@@ -231,7 +231,7 @@ export function AddCar() {
         rules={{ required: "Photo is required" }}
         control={control}
         render={() => (
-          <Pressable onPress={choosePhoto} style={{ marginTop: 16 }}>
+          <Pressable onPress={choosePhoto}>
             {photo ? (
               <Image
                 style={{ borderRadius: 12, height: 192, width: '100%' }}
@@ -252,7 +252,6 @@ export function AddCar() {
         {validationErrors?.photo?.[0]}
       </Text>
       <Button
-        style={{ marginVertical: 16 }}
         isLoading={isSubmitting}
         onPress={onSubmit}
         disabled={isSubmitting}
