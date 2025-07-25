@@ -1,25 +1,30 @@
-import { cx } from "class-variance-authority";
 import React from "react";
-import { TextInput, TextInputProps, useColorScheme } from "react-native";
+import { Theme, useTheme } from "@/utils/theme";
+import { TextInput, TextInputProps, StyleSheet, useColorScheme } from "react-native";
 
-export const Input = React.forwardRef<TextInput, TextInputProps>(
-  (props, ref) => {
-    const { className, ...rest } = props;
+export const Input = React.forwardRef<TextInput, TextInputProps>((props, ref) => {
     const colorScheme = useColorScheme();
+    const theme = useTheme();
+    const style = createStyles(theme);
+
     return (
       <TextInput
         ref={ref}
         selectionColor={colorScheme === "dark" ? "white" : "black"}
-        className={cx(
-          "p-4 dark:text-white rounded-xl",
-          {
-            ["border-2 border-neutral-100"]: colorScheme === "light",
-            ["bg-neutral-900"]: colorScheme === "dark",
-          },
-          className,
-        )}
-        {...rest}
+        {...props}
+        style={[style.input, props.style]}
       />
     );
   },
 );
+
+const createStyles = (theme: Theme) => StyleSheet.create({
+  input: {
+    padding: 16,
+    borderRadius: 12,
+    borderColor: theme.components.input.borderColor,
+    backgroundColor: theme.components.input.backgroundColor,
+    borderWidth: 1.5,
+    color: theme.text.primary,
+  },
+});

@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "./Button";
-import { cx } from "class-variance-authority";
 import { RouterOutput, trpc } from "@/utils/trpc";
 
 interface Props {
@@ -33,10 +32,6 @@ export function AcceptDenyButton(props: Props) {
 
   return (
     <Button
-      className={cx({
-        ["flex-grow !bg-green-400 dark:!bg-green-400"]: isAccept,
-        ["!bg-red-400 dark:!bg-red-400"]: !isAccept,
-      })}
       isLoading={isPending}
       onPress={onPress}
       activityIndicatorProps={{ color: "white" }}

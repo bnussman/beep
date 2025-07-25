@@ -56,7 +56,7 @@ export function LocationInput({ inputRef, ...props }: Props) {
       <Input
         placeholder={isLoading ? "Loading" : undefined}
         ref={inputRef}
-        style={{ flexGrow: 1 }}
+        style={{ flex: 1, flexGrow: 1 }}
         textContentType="fullStreetAddress"
         {...props}
       />

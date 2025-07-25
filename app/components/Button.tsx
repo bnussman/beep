@@ -1,57 +1,60 @@
-import { VariantProps, cva } from "class-variance-authority";
 import {
   Pressable,
   PressableProps,
   ActivityIndicator,
   ActivityIndicatorProps,
+  StyleSheet
 } from "react-native";
 import { Text } from "./Text";
+import { Theme, useTheme } from "@/utils/theme";
 
-export const button = cva(["p-4 flex cursor-pointer items-center rounded-xl"], {
-  variants: {
-    size: {
-      sm: "p-2",
-      md: "p-4",
-      lg: "p-6",
-    },
-    variant: {
-      parimary: [
-        "bg-neutral-100",
-        "active:bg-neutral-200",
-        "dark:bg-neutral-900",
-        "dark:active:bg-neutral-800",
-        "dark:hover:bg-neutral-700",
-      ],
-      secondary: ["active:bg-neutral-100", "dark:active:bg-neutral-900"],
-    },
-  },
-  defaultVariants: {
-    variant: "parimary",
-    size: "md"
-  },
-});
+const sizeMap = {
+  sm: 8,
+  md: 16,
+  lg: 24,
+};
 
-interface Props extends PressableProps, VariantProps<typeof button> {
+interface Props extends PressableProps {
+  /**
+   * Shows a loading indicator instead of children
+   */
   isLoading?: boolean;
+  /**
+   * Optional props to pass to the ActivityIndicator when `isLoading` is true
+   */
   activityIndicatorProps?: ActivityIndicatorProps;
+  /**
+   * @default primary
+   */
+  variant?: 'primary' | 'secondary';
+  /**
+   * @default md
+   */
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export function Button(props: Props) {
   const {
-    className,
     children,
     isLoading,
     variant,
-    size,
+    size = 'md',
     activityIndicatorProps,
     ...rest
   } = props;
 
+  const theme = useTheme();
+  const style = createStyle(theme);
+
   return (
     <Pressable
       accessibilityRole="button"
-      className={button({ className, variant, size })}
       {...rest}
+      style={(state) => [
+        style.button,
+        { padding: sizeMap[size] },
+        typeof rest.style === 'function' ? rest.style(state): rest.style
+      ]}
     >
       {isLoading ? (
         <ActivityIndicator {...activityIndicatorProps} />
@@ -63,3 +66,14 @@ export function Button(props: Props) {
     </Pressable>
   );
 }
+
+const createStyle = (theme: Theme) => StyleSheet.create({
+  button: {
+    borderRadius: 12,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    backgroundColor: theme.components.button.primary.bg
+  },
+});

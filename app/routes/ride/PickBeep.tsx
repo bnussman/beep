@@ -6,12 +6,7 @@ import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 
 type Props = StaticScreenProps<
   Omit<RouterInput['rider']['startBeep'], "beeperId">
@@ -146,7 +141,6 @@ export function PickBeepScreen({ route }: Props) {
 
   return (
     <FlatList
-      contentContainerStyle={{ padding: 12 }}
       data={beepers}
       renderItem={renderItem}
       keyExtractor={(beeper) => beeper.id}
@@ -155,7 +149,7 @@ export function PickBeepScreen({ route }: Props) {
       contentContainerStyle={
         beepers?.length === 0
           ? { flex: 1, alignItems: "center", justifyContent: "center" }
-          : { gap: 8 }
+          : { padding: 16, gap: 8 }
       }
       ListEmptyComponent={
         <View style={{ alignItems: 'center' }}>

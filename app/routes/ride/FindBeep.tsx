@@ -107,7 +107,7 @@ export function MainFindBeepScreen(props: Props) {
 
   if (!beep) {
     return (
-      <KeyboardAwareScrollView scrollEnabled={false} contentContainerClassName="p-4">
+      <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ padding: 16, gap: 4 }}>
         <Label htmlFor="groupSize">Group Size</Label>
         <Controller
           name="groupSize"
@@ -185,7 +185,7 @@ export function MainFindBeepScreen(props: Props) {
           )}
         />
         <Text color="error">{errors.destination?.message}</Text>
-        <Button onPress={() => findBeep()} className="my-4">
+        <Button onPress={() => findBeep()}>
           Find Beep
         </Button>
         <BeepersMap />
@@ -196,10 +196,10 @@ export function MainFindBeepScreen(props: Props) {
 
   if (isAcceptedBeep) {
     return (
-      <View className="h-full p-4 gap-4 pb-8">
-        <View className="flex flex-row w-full justify-between">
-          <View className="flex-shrink">
-            <Text size="3xl" weight="800" className="mb-2">
+      <View style={{ height: '100%', padding: 16, gap: 16, paddingBottom: 8 }}>
+        <View style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}>
+          <View style={{ flexShrink: 1 }}>
+            <Text size="3xl" weight="800">
               {beep.beeper.first} {beep.beeper.last}
             </Text>
             <Text>
@@ -218,7 +218,7 @@ export function MainFindBeepScreen(props: Props) {
           group={beep.beeper.groupRate}
         />
         {beep.position <= 0 && (
-          <Card variant="outlined" className="p-4 gap-2">
+          <Card variant="outlined" style={{ gap: 8 }}>
             <Text weight="800" size="xl">
               Current Status
             </Text>
@@ -236,7 +236,7 @@ export function MainFindBeepScreen(props: Props) {
         )}
         {beep.status === "here" ? (
           <Image
-            className="flex-grow rounded-xl w-full min-h-4"
+            style={{ flexGrow: 1, borderRadius: 12, width: "100%", minHeight: 100 }}
             resizeMode="cover"
             src={beep.beeper.cars?.[0].photo}
             alt={`car-${beep.beeper.cars?.[0].id}`}
@@ -263,10 +263,10 @@ export function MainFindBeepScreen(props: Props) {
             />
           </Map>
         )}
-        <View className="gap-2">
-          <View className="flex flex-row gap-2">
+        <View style={{ gap: 8 }}>
+          <View style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
             <Button
-              className="flex-grow"
+              style={{ flexGrow: 1 }}
               onPress={() =>
                 Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
               }
@@ -274,7 +274,7 @@ export function MainFindBeepScreen(props: Props) {
               Call 📞
             </Button>
             <Button
-              className="flex-grow"
+              style={{ flexGrow: 1 }}
               onPress={() =>
                 Linking.openURL(`sms:${getRawPhoneNumber(beep.beeper.phone)}`)
               }
@@ -296,10 +296,10 @@ export function MainFindBeepScreen(props: Props) {
               Pay Beeper with Cash App 💵
             </Button>
           )}
-          <View className="flex flex-row gap-2">
+          <View style={{ flexDirection: 'row', gap: 8 }}>
             {beep.beeper.venmo && (
               <Button
-                className="flex-grow"
+                style={{ flexGrow: 1 }}
                 onPress={() =>
                   openVenmo(
                     beep.beeper.venmo,
@@ -338,16 +338,16 @@ export function MainFindBeepScreen(props: Props) {
   }
 
   return (
-    <View className="h-full p-4 gap-4 pb-8 items-center">
+    <View style={{ height: '100%', padding: 16, gap: 16, paddingBottom: 8, alignItems: 'center' }}>
       <Avatar size="xl" src={beep.beeper.photo ?? undefined} />
-      <View className="items-center gap-1">
+      <View style={{ alignItems:'center', gap: 8}}>
         <Text>Waiting on</Text>
         <Text size="4xl" weight="800">
           {beep.beeper.first} {beep.beeper.last}
         </Text>
         <Text>to accept your request.</Text>
       </View>
-      <Card className="p-4 w-full gap-2" variant="outlined">
+      <Card style={{ padding: 8, width: '100%', gap: 16 }} variant="outlined">
         <View>
           <Text weight="bold">Pick Up </Text>
           <Text>{beep.origin}</Text>
@@ -363,7 +363,7 @@ export function MainFindBeepScreen(props: Props) {
       </Card>
       <Rates singles={beep.beeper.singlesRate} group={beep.beeper.groupRate} />
       <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
-      <View className="flex flex-grow" />
+      <View style={{ flexGrow: 1 }} />
       <LeaveButton beepersId={beep.beeper.id} />
     </View>
   );

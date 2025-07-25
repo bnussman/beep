@@ -341,7 +341,6 @@ export function EditProfileScreen() {
         onPress={onSubmit}
         isLoading={isSubmitting}
         disabled={!isDirty}
-        className="mt-4"
       >
         Update Profile
       </Button>

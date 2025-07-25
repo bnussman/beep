@@ -6,8 +6,10 @@ import { MapViewProps } from "react-native-maps";
 export function Map(props: MapViewProps) {
   return (
     <Card
-      className="p-4 items-center justify-center min-h-32"
-      style={props.style}
+      style={[
+        { padding: 16, alignItems: 'center', justifyContent: 'center'},
+        props.style
+      ]}
     >
       <Text>Map not supported in web</Text>
     </Card>

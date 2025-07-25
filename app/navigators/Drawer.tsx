@@ -8,12 +8,14 @@ import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
-import { useNavigation } from "@react-navigation/native";
 import { Cars } from "../routes/cars/Cars";
 import { Premium } from "../routes/Premium";
-import {
-  StartBeepingScreen,
-} from "../routes/beep/StartBeeping";
+import { StartBeepingScreen } from "../routes/beep/StartBeeping";
+import { Text } from "@/components/Text";
+import { Button } from "@/components/Button";
+import { queryClient, trpc } from "@/utils/trpc";
+import { printStars } from "@/components/Stars";
+import { LOCATION_TRACKING } from "@/utils/location";
 import {
   createDrawerNavigator,
   DrawerContentComponentProps,
@@ -25,16 +27,9 @@ import {
   View,
   ActivityIndicator,
 } from "react-native";
-import { Text } from "@/components/Text";
-import { Button } from "@/components/Button";
-import { cx } from "class-variance-authority";
-import { queryClient, trpc } from "@/utils/trpc";
-import { printStars } from "@/components/Stars";
-import { LOCATION_TRACKING } from "@/utils/location";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
-  const { navigate } = useNavigation();
   const { mutateAsync: logout, isPending } = trpc.auth.logout.useMutation();
   const { mutateAsync: resend, isPending: resendLoading } = trpc.auth.resendVerification.useMutation();
 
@@ -68,9 +63,9 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props}>
-      <View className="gap-3">
-        <View className="flex flex-row items-center justify-between px-2">
-          <View className="flex-shrink">
+      <View style={{ gap: 12 }}>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+          <View style={{ flexShrink: 1 }}>
             <Text size="xl" weight="800">
               {user?.first} {user?.last}
             </Text>
@@ -80,15 +75,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
           </View>
           <Avatar src={user?.photo ?? undefined} />
         </View>
-        <View className="flex gap-3">
+        <View style={{ display: 'flex', gap: 8 }}>
           {!user?.isEmailVerified && (
-            <Button
-              onPress={handleResendVerification}
-              className="text-gray-50 !bg-red-400 active:!bg-red-500"
-              isLoading={resendLoading}
-              activityIndicatorProps={{ color: "white" }}
-            >
-              <Text className="text-white" weight="800">Resend Verification Email</Text>
+            <Button onPress={handleResendVerification} isLoading={resendLoading}>
+              Resend Verification Email
             </Button>
           )}
           {props.state.routeNames.map((name, index) => (
@@ -99,17 +89,12 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               isActive={index === props.state.index}
             />
           ))}
-          <Pressable
+          <DrawerItem
+            name="Logout"
             onPress={handleLogout}
-            className="px-5 py-3 rounded-lg flex flex-row items-center gap-6 active:bg-gray-300/5"
-          >
-            {isPending ? (
-              <ActivityIndicator />
-            ) : (
-              <Text style={{ fontSize: 18 }}>↩️</Text>
-            )}
-            <Text>Logout</Text>
-          </Pressable>
+            isLoading={isPending}
+            isActive={false}
+          />
         </View>
       </View>
     </DrawerContentScrollView>
@@ -147,13 +132,19 @@ interface Props {
   name: string;
   onPress: () => void;
   isActive: boolean;
+  isLoading?: boolean;
 }
 
 function DrawerItem(props: Props) {
-  const { name, onPress, isActive } = props;
+  const { name, onPress, isActive, isLoading } = props;
 
   const getIcon = (screenName: string) => {
+    if (isLoading) {
+      return <ActivityIndicator size="small" />;
+    }
     switch (screenName) {
+      case "Logout":
+        return <Text size="lg">↩️</Text>;
       case "Ride":
         return <Text size="lg">🚗</Text>;
       case "Beep":
@@ -172,7 +163,6 @@ function DrawerItem(props: Props) {
         return (
           <Text
             size="lg"
-            className="shadow-xl opacity-100 shadow-yellow-400"
             style={{
               shadowRadius: 10,
               shadowColor: "#f5db73",
@@ -191,13 +181,22 @@ function DrawerItem(props: Props) {
 
   return (
     <Pressable
-      className={cx(
-        "px-5 py-3 rounded-lg flex flex-row items-center gap-6 active:bg-gray-600/5 active:dark:bg-gray-300/5",
-        {
-          "bg-gray-600/5 dark:bg-gray-300/5": isActive,
-        },
-      )}
       onPress={onPress}
+      style={({ pressed }) => ([
+        {
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 16,
+          padding: 12,
+          borderRadius: 8,
+        },
+        isActive && {
+          backgroundColor: 'rgba(44, 44, 44, 0.73)',
+        },
+        pressed && {
+          backgroundColor: 'rgba(44, 44, 44, 0.5)'
+        },
+      ])}
     >
       {Icon}
       <Text>{name}</Text>

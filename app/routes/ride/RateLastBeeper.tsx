@@ -23,10 +23,16 @@ export function RateLastBeeper() {
         userId: otherUser.id,
         beepId: beep.id,
       })}
-      variant="outlined"
-      className="flex flex-row items-center justify-between px-4 py-2 mt-4 gap-4 ease-in ease-out duration-300"
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 8,
+        paddingVertical: 8,
+      }}
     >
-      <Text className="flex-shrink">
+      <Text style={{ flexShrink: 1 }}>
         Rate Your Last Beep with <Text weight="800">{otherUser.first}</Text>
       </Text>
       <Avatar src={otherUser.photo ?? undefined} size="sm" />

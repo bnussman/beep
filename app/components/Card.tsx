@@ -1,30 +1,50 @@
-import { VariantProps, cva } from "class-variance-authority";
+import { Theme, useTheme } from "@/utils/theme";
 import React from "react";
-import { Pressable, PressableProps } from "react-native";
+import { Pressable, PressableProps, StyleSheet } from "react-native";
 
-export const card = cva(
-  "rounded-xl bg-white dark:bg-neutral-900 dark:border-neutral-800",
-  {
-    variants: {
-      variant: {
-        outlined: "border-[2px] border-gray-100",
-        filled: null,
-      },
-      pressable: {
-        true: "active:bg-neutral-50 dark:active:bg-neutral-800",
-      },
-    },
-    defaultVariants: {
-      variant: "filled",
-    },
-  },
-);
-
-interface Props extends PressableProps, VariantProps<typeof card> {}
+interface Props extends PressableProps {
+  /**
+   * Applies styles to make card look pressable
+   *
+   * @default false
+   */
+  pressable?: boolean;
+  /**
+   * Variant for the card
+   * 
+   * @default 'filled'
+   */
+  variant?: 'outlined' | 'filled';
+}
 
 export function Card(props: Props) {
-  const { className, pressable, variant, ...rest } = props;
+  const { pressable, variant = 'filled', ...rest } = props;
+
+  const theme  = useTheme();
+  const styles = createStyle(theme);
+
   return (
-    <Pressable className={card({ className, pressable, variant })} {...rest} />
+    <Pressable
+      {...rest}
+      style={(options) => (
+        [
+          styles.card,
+          variant === 'outlined' && {
+            backgroundColor: 'transparent',
+          },
+          typeof rest.style === 'function' ? rest.style(options) : rest.style
+        ]
+      )}
+    />
   );
 }
+
+const createStyle = (theme: Theme) => StyleSheet.create({
+  card: {
+    borderRadius: 12,
+    backgroundColor: theme.components.card.bg,
+    borderColor: theme.components.card.borderColor,
+    borderWidth: 1,
+    padding: 16,
+  },
+});

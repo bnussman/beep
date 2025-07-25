@@ -14,7 +14,6 @@ import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
 import { trpc, queryClient, trpcClient } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
-import "./global.css";
 
 setupPurchase();
 setupNotifications();

@@ -47,8 +47,8 @@ export function RateScreen({ route }: Props) {
   }
 
   return (
-    <View className="p-4 gap-4 pt-8">
-      <View className="flex flex-row items-center gap-2 justify-between">
+    <View style={{ padding: 16, gap: 8 }}>
+      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text size="3xl" weight="800" className="flex-shrink">
           {user.first} {user.last}
         </Text>
@@ -56,15 +56,15 @@ export function RateScreen({ route }: Props) {
       </View>
       <Text weight="bold">Stars</Text>
       <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-      <Text className="mt-4">
+      <Text>
         <Text weight="bold">Message</Text>{' '}
         (optional)
       </Text>
       <Input
         multiline
-        className="h-24"
         onChangeText={(text) => setMessage(text)}
         onSubmitEditing={onSubmit}
+        style={{ height: 100 }}
         autoFocus
       />
       <Button onPress={onSubmit} disabled={stars < 1} isLoading={isPending}>

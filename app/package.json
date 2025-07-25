@@ -1,7 +1,7 @@
 {
   "name": "@beep/app",
   "version": "2.16.1",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "EXPO_USE_FAST_RESOLVER=1 expo start --dev-client --web",
     "android": "expo start --android",
@@ -37,7 +37,6 @@
     "expo-status-bar": "~2.2.3",
     "expo-task-manager": "~13.1.6",
     "expo-updates": "~0.28.17",
-    "nativewind": "4.1.23",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.56.2",

@@ -9,6 +9,7 @@ import type {
   PurchasesOffering,
   PurchasesPackage,
 } from "react-native-purchases";
+// @ts-expect-error idk
 import PremiumImage from "../assets/premium.png";
 import { Logger } from "../utils/logger";
 import { Countdown } from "../components/CountDown";
@@ -24,7 +25,7 @@ function Offering({ item, disabled }: Props) {
   const packages = item.availablePackages;
 
   return (
-    <Card className="p-4 gap-2" variant="outlined">
+    <Card style={{ padding: 16, gap: 8 }} variant="outlined">
       <Text weight="800" size="2xl">
         {item.identifier} ✨
       </Text>
@@ -39,7 +40,7 @@ function Offering({ item, disabled }: Props) {
       </Text>
       <Image
         source={PremiumImage}
-        className="h-64 w-full"
+        style={{ width: '100%', height: 256 }}
         resizeMode="contain"
         alt="beep screenshot of premium"
       />
@@ -87,7 +88,7 @@ function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
 
   return (
     <Card
-      className="py-2 px-4 flex flex-row items-center gap-2"
+      style={{ paddingHorizontal: 8, paddingVertical: 8, gap: 8, flexDirection: 'row', alignItems: 'center' }}
       variant="outlined"
     >
       <Text weight="bold">{p.identifier}</Text>
@@ -96,13 +97,12 @@ function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
           Expires in <Countdown date={new Date(payment.expires)} />
         </Text>
       )}
-      <View className="flex-grow" />
+      <View style={{ flexGrow: 1 }} />
       {Boolean(payment) && <Text>✅</Text>}
       <Button
         isLoading={isPurchasing}
         onPress={() => onBuy(p)}
         disabled={disabled}
-        className="dark:bg-stone-800 dark:active:!bg-stone-700"
       >
         {p.product.priceString}
       </Button>
@@ -179,7 +179,7 @@ export function Premium() {
 
   if (isLoadingActivePayments || isLoadingPackages) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
         <ActivityIndicator />
       </View>
     );
@@ -187,7 +187,7 @@ export function Premium() {
 
   if (packagesError) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
         <Text>{packagesError}</Text>
       </View>
     );
@@ -195,7 +195,7 @@ export function Premium() {
 
   if (activePaymentsError) {
     return (
-      <View className="flex items-center justify-center h-full">
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
         <Text>{activePaymentsError.message}</Text>
       </View>
     );
@@ -206,7 +206,7 @@ export function Premium() {
   return (
     <FlatList
       data={offerings}
-      contentContainerClassName="p-4"
+      contentContainerStyle={{ padding: 16 }}
       renderItem={({ item }) => <Offering item={item} disabled={numberOfActivePayments > 0} />}
       onRefresh={refetch}
       refreshing={isRefetchingAppPackages || isRefetchingActivePayments}

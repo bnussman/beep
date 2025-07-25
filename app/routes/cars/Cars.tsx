@@ -77,7 +77,7 @@ export function Cars() {
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return (
-        <View className="flex items-center p-4">
+        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
           <ActivityIndicator />
         </View>
       );
@@ -104,9 +104,9 @@ export function Cars() {
       headerRight: () => {
         return (
           <Pressable
-            className="pr-3"
             onPress={() => navigation.navigate("Add Car")}
             aria-label="Add a car"
+            style={{ paddingRight: 12 }}
           >
             <Text size="3xl">➕</Text>
           </Pressable>
@@ -117,7 +117,7 @@ export function Cars() {
 
   if (isLoading) {
     return (
-      <View className="h-full flex items-center justify-center">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator />
       </View>
     );
@@ -125,7 +125,7 @@ export function Cars() {
 
   if (error) {
     return (
-      <View className="h-full flex items-center justify-center">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>{error.message}</Text>
       </View>
     );
@@ -134,23 +134,23 @@ export function Cars() {
   return (
     <FlatList
       data={cars}
-      contentContainerClassName="h-full p-3 gap-2"
+      contentContainerStyle={{ flex: 1, padding: 12, gap: 8 }}
       renderItem={({ item: car }) => (
         <ContextMenu.Root>
           <ContextMenu.Trigger>
             <Card
               pressable
               variant="outlined"
-              className="p-4 gap-4 flex flex-row items-center justify-between"
+              style={{ padding: 16, gap: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
             >
-              <View className="gap-2 flex-shrink">
-                <Text weight="bold" className="capitalize flex-wrap">
+              <View style={{ gap: 8, flexShrink: 1 }}>
+                <Text weight="bold" style={{ textTransform: 'capitalize', flexWrap: 'wrap' }}>
                   {car.color} {car.make} {car.model} {car.year}
                 </Text>
-                <View className="flex flex-row flex-wrap gap-2">
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                   {car.default && (
-                    <Card className="px-2 py-1 !bg-neutral-500">
-                      <Text size="xs" weight="800" className="color-white">
+                    <Card style={{ paddingHorizontal: 8, paddingVertical: 4, backgroundColor: '#737373' }}>
+                      <Text size="xs" weight="800" style={{ color: 'white' }}>
                         Default
                       </Text>
                     </Card>
@@ -158,7 +158,7 @@ export function Cars() {
                 </View>
               </View>
               <Image
-                className="rounded-lg w-32 h-20"
+                style={{ borderRadius: 12, width: 128, height: 80 }}
                 source={{ uri: car.photo }}
                 alt={`car-${car.id}`}
               />
@@ -182,11 +182,6 @@ export function Cars() {
         </ContextMenu.Root>
       )}
       keyExtractor={(car) => car.id}
-      contentContainerStyle={
-        cars?.length === 0
-          ? { flex: 1, alignItems: "center", justifyContent: "center" }
-          : undefined
-      }
       ListEmptyComponent={
         <View style={{ alignItems: 'center' }}>
           <Text weight="800" key="title" size="3xl">

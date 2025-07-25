@@ -9,7 +9,6 @@ import { Avatar } from "@/components/Avatar";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { RouterOutput, trpc } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 
 interface Props {
   item: RouterOutput['beeper']['queue'][number];
@@ -125,8 +124,8 @@ export function QueueItem({ item }: Props) {
   }
 
   return (
-    <Card variant="outlined" className="p-4">
-      <View className="flex flex-row justify-between items-center">
+    <Card variant="outlined">
+      <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <View>
           <Text weight="800" size="2xl">
             {item.rider.first} {item.rider.last}
@@ -136,7 +135,6 @@ export function QueueItem({ item }: Props) {
           </Text>
         </View>
         <Avatar
-          className="mr-2"
           size="sm"
           src={item.rider.photo ?? undefined}
         />
@@ -150,7 +148,7 @@ export function QueueItem({ item }: Props) {
       <Text>
         <Text weight="bold">Drop Off</Text> <Text>{item.destination}</Text>
       </Text>
-      <View className="flex flex-row gap-2 mt-4">
+      <View style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
         <AcceptDenyButton type="deny" item={item} />
         <AcceptDenyButton type="accept" item={item} />
       </View>
