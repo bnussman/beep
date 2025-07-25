@@ -2,7 +2,7 @@ import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { useNavigation } from "@react-navigation/native";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { isMobile } from "@/utils/constants";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
@@ -15,7 +15,6 @@ import { colors, years } from "./utils";
 import { Pressable, View } from "react-native";
 import { trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
-import { Card } from "@/components/Card";
 import { useTheme } from "@/utils/theme";
 
 const makes = getMakes();
@@ -37,17 +36,16 @@ export function AddCar() {
     control,
     handleSubmit,
     setValue,
-    watch,
     formState: { isSubmitting, errors },
   } = useForm<Values>();
 
   const theme = useTheme();
 
-  const photo: any = watch("photo");
-  const make = watch("make");
+  const [photo, make] = useWatch({ control, name: ["photo", "make"] });
+  const models = getModels(make)
 
   const utils = trpc.useUtils();
-  const { mutateAsync: addCar, error, isPending } = trpc.car.createCar.useMutation();
+  const { mutateAsync: addCar, error } = trpc.car.createCar.useMutation();
 
   const validationErrors = error?.data?.zodError?.fieldErrors;
 
@@ -146,7 +144,7 @@ export function AddCar() {
               </View>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content>
-              {getModels(make).map((make) => (
+              {models.map((make) => (
                 <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
                   <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
                 </DropdownMenu.Item>
