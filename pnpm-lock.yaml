@@ -106,9 +106,6 @@ importers:
       car-info:
         specifier: 0.2.1
         version: 0.2.1
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
       expo:
         specifier: ~53.0.20
         version: 53.0.20(@babel/core@7.27.1)(@expo/metro-runtime@5.0.4(react-native@0.79.5(@babel/core@7.27.1)(@types/react@19.0.10)(react@19.0.0)))(graphql@15.8.0)(react-native@0.79.5(@babel/core@7.27.1)(@types/react@19.0.10)(react@19.0.0))(react@19.0.0)
@@ -3439,9 +3436,6 @@ packages:
 
   cjs-module-lexer@1.4.3:
     resolution: {integrity: sha512-9z8TZaGM1pfswYeXrUpzPrkx8UnWYdhJclsiYMm6x/w5+nN+8Tf/LnAgfLGQCm59qAOxU8WwHEq2vNwF6i4j+Q==}
-
-  class-variance-authority@0.7.1:
-    resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
 
   clean-stack@2.2.0:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
@@ -10630,10 +10624,6 @@ snapshots:
   ci-info@3.9.0: {}
 
   cjs-module-lexer@1.4.3: {}
-
-  class-variance-authority@0.7.1:
-    dependencies:
-      clsx: 2.1.1
 
   clean-stack@2.2.0: {}
 
