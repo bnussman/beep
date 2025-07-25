@@ -18,7 +18,7 @@ export const RateBar = (props: RateBarProps) => {
         return (
           <Button
             key={value}
-            variant="parimary"
+            variant="primary"
             onPress={() => props.onValueChange(value)}
             style={{ padding: 8 }}
           >

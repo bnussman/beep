@@ -1,6 +1,7 @@
 import React from "react";
 import { Image } from "react-native";
 import type { ImageProps } from "react-native";
+// @ts-expect-error image
 import AvatarImage from "../assets/avatar.png";
 
 type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';

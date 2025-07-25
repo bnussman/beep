@@ -43,7 +43,7 @@ export function RatingsScreen() {
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return (
-        <View className="flex items-center p-4">
+        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
           <ActivityIndicator />
         </View>
       );
@@ -53,7 +53,7 @@ export function RatingsScreen() {
 
   if (isLoading) {
     return (
-      <View className="h-full items-center justify-center">
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -61,7 +61,7 @@ export function RatingsScreen() {
 
   if (error) {
     return (
-      <View className="h-full items-center justify-center">
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
         <Text>{error.message}</Text>
       </View>
     );
@@ -69,9 +69,15 @@ export function RatingsScreen() {
 
   return (
     <FlatList
-      className="p-2"
-      contentContainerClassName={
-        ratings?.length === 0 ? "flex-1 items-center justify-center" : "gap-2"
+      contentContainerStyle={
+        ratings?.length === 0 ? {
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        } : {
+          padding: 16,
+          gap: 8,
+        }
       }
       data={ratings}
       renderItem={(data) => <Rating {...data} />}
@@ -80,16 +86,15 @@ export function RatingsScreen() {
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
-        <View className="items-center">
+        <View style={{ gap: 16 }}>
           <Text weight="800" size="3xl">
             No Ratings
           </Text>
           <Text>You have no ratings to display</Text>
         </View>
       }
-      refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
-      }
+      refreshing={isRefetching}
+      onRefresh={refetch}
     />
   );
 }

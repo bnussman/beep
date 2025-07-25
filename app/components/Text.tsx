@@ -32,7 +32,7 @@ export interface TextProps extends _TextProps {
 }
 
 export const Text = React.forwardRef<_Text, TextProps>((props, ref) => {
-  const { size, className, weight, color, ...rest } = props;
+  const { size, weight, color, ...rest } = props;
   const theme = useTheme();
   const styles = createStyles(theme);
 

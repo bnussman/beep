@@ -1,4 +1,4 @@
-import { cx } from "class-variance-authority";
+import { useTheme } from "@/utils/theme";
 import React, { useState } from "react";
 import {
   ImageProps,
@@ -7,26 +7,32 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-export function Image(props: ImageProps) {
-  const { className, ...rest } = props;
+export function Image({ style, ...props }: ImageProps) {
   const [loading, setLoading] = useState(true);
+
+  const theme = useTheme();
 
   return (
     <>
       {loading && (
         <View
-          className={cx(
-            ["bg-neutral-100 dark:bg-neutral-800 justify-center"],
-            className,
-          )}
+          style={{
+            display: "flex", 
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.components.card.bg,
+          }}
         >
           <ActivityIndicator />
         </View>
       )}
       <_Image
         onLoad={() => setLoading(false)}
-        className={cx({ ["absolute"]: loading }, className)}
-        {...rest}
+        style={[
+          loading && { position: 'absolute' },
+          style,
+        ]}
+        {...props}
       />
     </>
   );
