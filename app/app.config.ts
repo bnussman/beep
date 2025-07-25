@@ -2,7 +2,8 @@ import type { ExpoConfig } from 'expo/config';
 
 const config: ExpoConfig = {
   experiments: {
-    tsconfigPaths: true
+    tsconfigPaths: true,
+    reactCompiler: true,
   },
   name: "Beep",
   slug: "Beep",
