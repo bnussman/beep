@@ -33,17 +33,20 @@ export function Queue(props: Props) {
       backgroundStyle={colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}}
       handleIndicatorStyle={colorScheme === "dark" ? { backgroundColor: "white" } : {}}
     >
-      <Pressable className="px-4 pb-4 justify-between flex-row" onPress={() => {
-        if (drawerPositionIndex.current > 0) {
-          ref.current?.snapToIndex(0);
-          drawerPositionIndex.current = 0;
-        } else {
-          ref.current?.snapToIndex(2);
-          drawerPositionIndex.current = 2;
-        }
-      }}>
+      <Pressable
+        style={{ paddingHorizontal: 16, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        onPress={() => {
+          if (drawerPositionIndex.current > 0) {
+            ref.current?.snapToIndex(0);
+            drawerPositionIndex.current = 0;
+          } else {
+            ref.current?.snapToIndex(2);
+            drawerPositionIndex.current = 2;
+          }
+        }}
+      >
         <Text size="3xl" weight="800">Queue</Text>
-        {hasUnacceptedBeep && <View className="rounded-full bg-blue-400 w-4 h-4 animate-pulse" />}
+        {hasUnacceptedBeep && <View style={{ borderRadius: '50%', backgroundColor: 'blue', width: 16, height: 16 }} />}
       </Pressable>
       <BottomSheetFlatList
         data={beeps}
@@ -53,9 +56,8 @@ export function Queue(props: Props) {
         )}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        className="px-2"
         contentContainerStyle={{ gap: 4 }}
-        ListEmptyComponent={<Text className="px-2">If more riders join your queue, they will show here!</Text>}
+        ListEmptyComponent={<Text>If more riders join your queue, they will show here!</Text>}
       />
     </BottomSheet>
   );

@@ -140,7 +140,6 @@ export function Cars() {
           <ContextMenu.Trigger>
             <Card
               pressable
-              variant="outlined"
               style={{ padding: 16, gap: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
             >
               <View style={{ gap: 8, flexShrink: 1 }}>

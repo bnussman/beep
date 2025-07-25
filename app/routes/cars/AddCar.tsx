@@ -15,6 +15,7 @@ import { colors, years } from "./utils";
 import { Pressable, View } from "react-native";
 import { trpc } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
+import { Card } from "@/components/Card";
 
 const makes = getMakes();
 
@@ -235,10 +236,10 @@ export function AddCar() {
                 alt="uploaded car image"
               />
             ) : (
-              <View style={{ borderRadius: 12, height: 192, width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f3f4f6' }}>
+              <Card style={{ borderRadius: 12, height: 192, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                 <Text weight="bold">Attach a Photo</Text>
                 <Text size="4xl">📷</Text>
-              </View>
+              </Card>
             )}
           </Pressable>
         )}

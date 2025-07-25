@@ -38,8 +38,8 @@ export function Rating(props: Props) {
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
-        <Card variant="outlined" pressable style={{ padding: 16, gap: 16, display: 'flex' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Card pressable style={{ padding: 16, gap: 16, display: 'flex' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
               <Avatar size="xs" src={otherUser.photo ?? undefined} />
               <View style={{ flexShrink: 1 }}>

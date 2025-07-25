@@ -37,7 +37,7 @@ export function Beep({ item }: Props) {
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
-        <Card style={{ padding: 16, gap: 8 }} variant="outlined" pressable>
+        <Card style={{ padding: 16, gap: 8 }} pressable>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Avatar size="xs" src={otherUser.photo ?? undefined} />
             <View style={{ flexShrink: 1 }}>

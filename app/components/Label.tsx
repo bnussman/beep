@@ -28,7 +28,6 @@ export function Label(props: Props) {
     <Text
       id={id}
       weight="bold"
-      style={{ paddingVertical: 8 }}
       {...rest}
       {...webProps}
     />

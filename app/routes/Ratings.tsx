@@ -75,7 +75,7 @@ export function RatingsScreen() {
           alignItems: 'center',
           justifyContent: 'center',
         } : {
-          padding: 16,
+          padding: 8,
           gap: 8,
         }
       }
