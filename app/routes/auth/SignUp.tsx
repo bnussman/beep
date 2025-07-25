@@ -108,9 +108,9 @@ export function SignUpScreen() {
   };
 
   return (
-    <KeyboardAwareScrollView contentContainerClassName="flex p-4 bg-white dark:bg-black">
-      <View className="flex flex-row items-center gap-4">
-        <View className="flex-grow">
+    <KeyboardAwareScrollView contentContainerStyle={{ flex: 1, padding: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+        <View style={{ flexGrow: 1 }}>
           <Label htmlFor="first">First Name</Label>
           <Controller
             name="first"
@@ -128,7 +128,7 @@ export function SignUpScreen() {
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("last")}
                 textContentType="givenName"
-                className="mb-1"
+                style={{ marginBottom: 4 }}
               />
             )}
           />
@@ -152,7 +152,7 @@ export function SignUpScreen() {
                 returnKeyLabel="next"
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("email")}
-                className="mb-1"
+                style={{ marginBottom: 4 }}
               />
             )}
           />
@@ -174,7 +174,7 @@ export function SignUpScreen() {
               </TouchableOpacity>
             )}
           />
-          <Text color="error" className="max-w-32">
+          <Text color="error" style={{ maxWidth: 128 }}>
             {errors.photo?.message}
           </Text>
         </View>
@@ -197,11 +197,11 @@ export function SignUpScreen() {
             returnKeyType="next"
             onSubmitEditing={() => setFocus("phone")}
             autoCapitalize="none"
-            className="mb-1"
+            style={{ marginBottom: 4 }}
           />
         )}
       />
-      <Text size="sm" className="mb-1">
+      <Text size="sm" style={{ marginBottom: 4 }}>
         You must a .edu email address
       </Text>
       <Text color="error">
@@ -224,7 +224,7 @@ export function SignUpScreen() {
             returnKeyLabel="next"
             returnKeyType="next"
             onSubmitEditing={() => setFocus("venmo")}
-            className="mb-1"
+            style={{ marginBottom: 4 }}
           />
         )}
       />
@@ -249,7 +249,7 @@ export function SignUpScreen() {
             textContentType="username"
             onSubmitEditing={() => setFocus("username")}
             autoCapitalize="none"
-            className="mb-1"
+            style={{ marginBottom: 4 }}
           />
         )}
       />
@@ -274,7 +274,7 @@ export function SignUpScreen() {
             autoCapitalize="none"
             textContentType="username"
             onSubmitEditing={() => setFocus("password")}
-            className="mb-1"
+            style={{ marginBottom: 4 }}
           />
         )}
       />
@@ -303,7 +303,7 @@ export function SignUpScreen() {
       <Text color="error">
         {errors.password?.message}
       </Text>
-      <Button isLoading={isSubmitting} onPress={onSubmit} className="my-4">
+      <Button isLoading={isSubmitting} onPress={onSubmit} style={{ marginVertical: 16 }}>
         Sign Up
       </Button>
     </KeyboardAwareScrollView>

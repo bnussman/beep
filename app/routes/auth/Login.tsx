@@ -67,11 +67,8 @@ export function LoginScreen() {
   });
 
   return (
-    <KeyboardAwareScrollView
-      scrollEnabled={false}
-      contentContainerClassName="flex h-full justify-center p-4 bg-white dark:bg-black"
-    >
-      <Text size="4xl" weight="800" className="mb-4">
+    <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ display: 'flex', justifyContent: 'center', gap: 12, height: '100%', padding: 8 }}>
+      <Text size="4xl" weight="800">
         Ride Beep App 🚕
       </Text>
       <Label htmlFor="username">Username or Email</Label>
@@ -95,7 +92,7 @@ export function LoginScreen() {
           />
         )}
       />
-      <Text className="text-red-400 dark:!text-red-400 mt-1">
+      <Text color="error">
         {errors.username?.message}
         {validationErrors?.username?.[0]}
       </Text>
@@ -120,14 +117,14 @@ export function LoginScreen() {
           />
         )}
       />
-      <Text className="text-red-400 dark:!text-red-400 mt-1">
+      <Text color="error">
         {errors.password?.message}
         {validationErrors?.password?.[0]}
       </Text>
-      <Button isLoading={isSubmitting} onPress={onLogin} className="my-4">
+      <Button isLoading={isSubmitting} onPress={onLogin}>
         Login
       </Button>
-      <View className="flex flex-row justify-between">
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <Button
           variant="secondary"
           onPress={() => navigation.navigate("Sign Up")}

@@ -18,7 +18,7 @@ export function ForgotPasswordScreen() {
   };
 
   return (
-    <KeyboardAwareScrollView scrollEnabled={false} className="p-4">
+    <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ padding: 16, gap: 16 }}>
       <Label>Email</Label>
       <Input
         textContentType="emailAddress"
@@ -31,7 +31,6 @@ export function ForgotPasswordScreen() {
         isLoading={isPending}
         disabled={!email}
         onPress={handleForgotPassword}
-        className="mt-4"
       >
         Send Password Reset Email
       </Button>
