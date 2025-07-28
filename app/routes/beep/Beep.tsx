@@ -25,7 +25,7 @@ export function Beep(props: Props) {
   const { user } = useUser();
 
   return (
-    <View style={{ flex: 1, paddingBottom: 32, gap: 8 }}>
+    <View style={{ flex: 1, paddingBottom: 42, gap: 8 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flexShrink: 1 }}>
           <Text weight="800" size="3xl">
@@ -45,9 +45,9 @@ export function Beep(props: Props) {
       <Text selectable>{beep.destination}</Text>
       <View style={{ flexGrow: 1 }} />
       {beep.status === "waiting" ? (
-        <View style={{ flexDirection: 'row', gap: 16 }}>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
           <AcceptDenyButton item={beep} type="deny" />
-          <AcceptDenyButton item={beep} type="accept" />
+          <AcceptDenyButton style={{ flexGrow: 1 }} item={beep} type="accept" />
         </View>
       ) : (
         <>

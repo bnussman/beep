@@ -32,6 +32,9 @@ export function Card(props: Props) {
           variant === 'outlined' && {
             backgroundColor: 'transparent',
           },
+          pressable && options.pressed && {
+            backgroundColor: theme.components.button.primary.pressed.backgroundColor,
+          },
           typeof rest.style === 'function' ? rest.style(options) : rest.style
         ]
       )}
@@ -44,7 +47,7 @@ const createStyle = (theme: Theme) => StyleSheet.create({
     backgroundColor: theme.components.card.backgroundColor,
     borderColor: theme.components.card.borderColor,
     borderRadius: 12,
-    borderWidth: 1,
+    borderWidth: theme.name === "light" ? 1.5 : 1,
     padding: 16,
   },
 });

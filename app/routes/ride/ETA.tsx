@@ -44,10 +44,7 @@ export function ETA(props: Props) {
   };
 
   return (
-    <Card
-      variant="outlined"
-      style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-    >
+    <Card style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
       <Text size="xl" weight="800">
         ETA
       </Text>

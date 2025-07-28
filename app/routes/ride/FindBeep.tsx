@@ -196,7 +196,7 @@ export function MainFindBeepScreen(props: Props) {
 
   if (isAcceptedBeep) {
     return (
-      <View style={{ height: '100%', padding: 16, gap: 16, paddingBottom: 8 }}>
+      <View style={{ height: '100%', padding: 16, gap: 16, paddingBottom: 20 }}>
         <View style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}>
           <View style={{ flexShrink: 1 }}>
             <Text size="3xl" weight="800">
@@ -218,7 +218,7 @@ export function MainFindBeepScreen(props: Props) {
           group={beep.beeper.groupRate}
         />
         {beep.position <= 0 && (
-          <Card variant="outlined" style={{ gap: 8 }}>
+          <Card style={{ gap: 8 }}>
             <Text weight="800" size="xl">
               Current Status
             </Text>
@@ -338,16 +338,16 @@ export function MainFindBeepScreen(props: Props) {
   }
 
   return (
-    <View style={{ height: '100%', padding: 16, gap: 16, paddingBottom: 8, alignItems: 'center' }}>
+    <View style={{ height: '100%', padding: 16, gap: 16, paddingBottom: 20, alignItems: 'center' }}>
       <Avatar size="xl" src={beep.beeper.photo ?? undefined} />
       <View style={{ alignItems:'center', gap: 8}}>
         <Text>Waiting on</Text>
-        <Text size="4xl" weight="800">
+        <Text size="3xl" weight="800">
           {beep.beeper.first} {beep.beeper.last}
         </Text>
         <Text>to accept your request.</Text>
       </View>
-      <Card style={{ padding: 8, width: '100%', gap: 16 }} variant="outlined">
+      <Card style={{ width: '100%', gap: 16 }}>
         <View>
           <Text weight="bold">Pick Up </Text>
           <Text>{beep.origin}</Text>

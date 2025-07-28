@@ -71,7 +71,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
               {user?.first} {user?.last}
             </Text>
             {user?.rating && (
-              <Text color="subtle" size="sm">{printStars(Number(user.rating))} ({rating})</Text>
+              <Text color="subtle" size="xs">{printStars(Number(user.rating))} ({rating})</Text>
             )}
           </View>
           <Avatar src={user?.photo ?? undefined} />

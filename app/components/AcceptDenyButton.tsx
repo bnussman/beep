@@ -1,10 +1,12 @@
 import React from "react";
 import { Button } from "./Button";
 import { RouterOutput, trpc } from "@/utils/trpc";
+import { PressableProps } from "react-native";
 
 interface Props {
   type: "accept" | "deny";
   item: RouterOutput['beeper']['queue'][number];
+  style?: PressableProps['style'];
 }
 
 export function AcceptDenyButton(props: Props) {
@@ -35,6 +37,7 @@ export function AcceptDenyButton(props: Props) {
       isLoading={isPending}
       onPress={onPress}
       activityIndicatorProps={{ color: "white" }}
+      style={props.style}
     >
       {isAccept ? "Accept" : "Deny"}
     </Button>

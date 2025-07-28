@@ -25,7 +25,7 @@ function Offering({ item, disabled }: Props) {
   const packages = item.availablePackages;
 
   return (
-    <Card style={{ padding: 16, gap: 8 }} variant="outlined">
+    <Card style={{ padding: 16, gap: 8 }}>
       <Text weight="800" size="2xl">
         {item.identifier} ✨
       </Text>

@@ -42,12 +42,10 @@ export function Feedback() {
 
   return (
     <KeyboardAwareScrollView
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={{ padding: 16, gap: 12  }}
       scrollEnabled={false}
     >
       <Card
-        variant="outlined"
-        style={{ padding: 16, marginBottom: 16 }}
         onPress={() =>
           Linking.openURL(
             "https://apps.apple.com/us/app/ride-beep-app/id1528601773",
@@ -79,7 +77,7 @@ export function Feedback() {
       <Text color="error">
         {errors.message?.message ?? validationErrors?.message?.[0]}
       </Text>
-      <Button onPress={onSubmit} isLoading={isPending} style={{ marginTop: 16 }}>
+      <Button onPress={onSubmit} isLoading={isPending}>
         Submit
       </Button>
     </KeyboardAwareScrollView>

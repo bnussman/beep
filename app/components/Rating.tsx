@@ -46,7 +46,7 @@ export function Rating(props: Props) {
                 <Text weight="bold">
                   {otherUser.first} {otherUser.last}
                 </Text>
-                <Text color="subtle" size="sm">
+                <Text color="subtle" size="xs">
                   {`${isRater ? "You rated" : "Rated you"} - ${new Date(
                     item.timestamp as string,
                   ).toLocaleString(undefined, {

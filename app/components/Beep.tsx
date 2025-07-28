@@ -44,7 +44,7 @@ export function Beep({ item }: Props) {
               <Text weight="bold" size="lg">
                 {otherUser.first} {otherUser.last}
               </Text>
-              <Text color="subtle" size="sm">
+              <Text color="subtle" size="xs">
                 {`${isRider ? "Ride" : "Beep"} - ${new Date(
                   item.start as string,
                 ).toLocaleString()}`}

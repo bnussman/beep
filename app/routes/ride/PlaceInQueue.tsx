@@ -9,7 +9,7 @@ interface Props {
 
 export function PlaceInQueue({ position, firstName }: Props) {
   return (
-    <Card style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8 }} variant="outlined">
+    <Card style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 8 }}>
       <Text weight="800" size="3xl">
         {position}
       </Text>

@@ -62,12 +62,7 @@ export function PickBeepScreen({ route }: Props) {
     index: number;
   }) => {
     return (
-      <Card
-        style={{ padding: 16 }}
-        onPress={() => chooseBeep(item.id)}
-        pressable
-        variant="outlined"
-      >
+      <Card onPress={() => chooseBeep(item.id)} pressable>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
           <View style={{ flex: 1 }}>
             <Text size="xl" weight="800">
@@ -149,7 +144,7 @@ export function PickBeepScreen({ route }: Props) {
       contentContainerStyle={
         beepers?.length === 0
           ? { flex: 1, alignItems: "center", justifyContent: "center" }
-          : { padding: 16, gap: 8 }
+          : { padding: 10, gap: 8 }
       }
       ListEmptyComponent={
         <View style={{ alignItems: 'center' }}>

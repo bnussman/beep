@@ -16,7 +16,7 @@ export const lightTheme = {
     },
     button: {
       primary: {
-        backgroundColor: '#f0f0f0ff',
+        backgroundColor: '#f3f3f3ff',
         pressed: {
           backgroundColor: '#e7e7e7ff',
         },
@@ -51,9 +51,9 @@ export const darkTheme = {
     },
     button: {
       primary: {
-        backgroundColor: '#202020ff',
+        backgroundColor: '#292929ff',
         pressed: {
-          backgroundColor: '#181818ff',
+          backgroundColor: '#353535ff',
         },
       },
       secondary: {

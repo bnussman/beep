@@ -6,6 +6,7 @@ import {
   View,
   ActivityIndicator,
 } from "react-native";
+import { Card } from "./Card";
 
 export function Image({ style, ...props }: ImageProps) {
   const [loading, setLoading] = useState(true);
@@ -15,19 +16,9 @@ export function Image({ style, ...props }: ImageProps) {
   return (
     <>
       {loading && (
-        <View
-          style={[
-            {
-              display: "flex",
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(117, 117, 117, 0.47)',
-            },
-            style
-          ]}
-        >
+        <Card style={[style, { alignItems: 'center', justifyContent: 'center' }]}>
           <ActivityIndicator />
-        </View>
+        </Card>
       )}
       <_Image
         onLoad={() => setLoading(false)}

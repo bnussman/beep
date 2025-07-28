@@ -47,26 +47,30 @@ export function RateScreen({ route }: Props) {
   }
 
   return (
-    <View style={{ padding: 16, gap: 8 }}>
+    <View style={{ padding: 16, gap: 16 }}>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text size="3xl" weight="800">
+        <Text size="3xl" weight="800" style={{ flexShrink: 1 }}>
           {user.first} {user.last}
         </Text>
         <Avatar src={user.photo ?? undefined} />
       </View>
-      <Text weight="bold">Stars</Text>
-      <RateBar hint="Stars" value={stars} onValueChange={setStars} />
-      <Text>
-        <Text weight="bold">Message</Text>{' '}
-        (optional)
-      </Text>
-      <Input
-        multiline
-        onChangeText={(text) => setMessage(text)}
-        onSubmitEditing={onSubmit}
-        style={{ height: 100 }}
-        autoFocus
-      />
+      <View style={{ gap: 12 }}>
+        <Text weight="bold">Stars</Text>
+        <RateBar hint="Stars" value={stars} onValueChange={setStars} />
+      </View>
+      <View style={{ gap: 12 }}>
+        <Text>
+          <Text weight="bold">Message</Text>{' '}
+          (optional)
+        </Text>
+        <Input
+          multiline
+          onChangeText={(text) => setMessage(text)}
+          onSubmitEditing={onSubmit}
+          style={{ height: 100 }}
+          autoFocus
+        />
+      </View>
       <Button onPress={onSubmit} disabled={stars < 1} isLoading={isPending}>
         Rate User
       </Button>
