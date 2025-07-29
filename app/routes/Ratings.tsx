@@ -31,7 +31,7 @@ export function RatingsScreen() {
       pageSize: PAGE_SIZE,
     },
     {
-      initialCursor: 0,
+      initialCursor: 1,
       getNextPageParam(page) {
         if (page.page === page.pages) {
           return undefined;
