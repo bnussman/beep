@@ -8,6 +8,7 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "pretty": true,
+    "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true
