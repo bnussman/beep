@@ -3,9 +3,7 @@ import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { QueryClient } from '@tanstack/react-query';
 import {
-  createTRPCClient,
   createWSClient,
-  httpBatchLink,
   httpLink,
   splitLink,
   wsLink,

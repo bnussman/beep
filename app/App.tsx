@@ -11,7 +11,7 @@ import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./navigators/Stack";
 import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
-import { useTRPC, queryClient, trpcClient } from './utils/trpc';
+import { useTRPC, queryClient, trpcClient, TRPCProvider } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
 
 import { useQuery } from "@tanstack/react-query";
