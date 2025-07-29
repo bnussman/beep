@@ -1,4 +1,3 @@
-import "react-native-gesture-handler";
 import React, { useEffect } from "react";
 import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
@@ -72,7 +71,7 @@ function Beep() {
 
 function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView>
       <KeyboardProvider>
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
