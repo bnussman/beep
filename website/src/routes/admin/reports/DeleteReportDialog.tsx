@@ -1,5 +1,5 @@
 import React from "react";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Alert,
@@ -11,6 +11,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -19,17 +21,18 @@ interface Props {
 }
 
 export function DeleteReportDialog({ isOpen, onClose, id, onSuccess }: Props) {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const {
     mutateAsync: deleteReport,
     isPending,
     error,
-  } = trpc.report.deleteReport.useMutation({
+  } = useMutation(trpc.report.deleteReport.mutationOptions({
     onSuccess() {
-      utils.report.reports.invalidate();
+      queryClient.invalidateQueries(trpc.report.reports.pathFilter());
     },
-  });
+  }));
 
   const onDelete = async () => {
     await deleteReport(id);

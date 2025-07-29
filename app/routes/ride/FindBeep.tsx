@@ -18,7 +18,7 @@ import { PlaceInQueue } from "./PlaceInQueue";
 import { BeeperMarker } from "../../components/Marker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { RouterInput, trpc } from "@/utils/trpc";
+import { RouterInput, useTRPC } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";
 import {
@@ -29,15 +29,20 @@ import {
 } from "../../utils/links";
 import { RateLastBeeper } from "./RateLastBeeper";
 
+import { useQuery } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
 >;
 
 export function MainFindBeepScreen(props: Props) {
+  const trpc = useTRPC();
   const { navigate } = useNavigation();
 
-  const utils = trpc.useUtils();
-  const { data: beep } = trpc.rider.currentRide.useQuery();
+  const queryClient = useQueryClient();
+  const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
 
   const isAcceptedBeep =
@@ -46,33 +51,35 @@ export function MainFindBeepScreen(props: Props) {
     beep?.status === "here" ||
     beep?.status === "on_the_way";
 
-  trpc.rider.currentRideUpdates.useSubscription(undefined, {
+  useSubscription(trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
     onData(data) {
       if (data === null) {
-        utils.rider.getLastBeepToRate.invalidate();
+        queryClient.invalidateQueries(trpc.rider.getLastBeepToRate.pathFilter());
       }
-      utils.rider.currentRide.setData(undefined, data);
+      queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
     },
     enabled: Boolean(beep),
-  });
+  }));
 
-  trpc.rider.beeperLocationUpdates.useSubscription(beep?.beeper.id ?? "", {
-    enabled: isAcceptedBeep,
-    onData(updatedLocation) {
-      utils.rider.currentRide.setData(undefined, (prev) => {
-        if (!prev) {
-          return undefined;
-        }
-        return {
-          ...prev,
-          beeper: {
-            ...prev.beeper,
-            location: updatedLocation.location,
-          },
-        };
-      });
-    },
-  });
+  useSubscription(
+    trpc.rider.beeperLocationUpdates.subscriptionOptions(beep?.beeper.id ?? "", {
+      enabled: isAcceptedBeep,
+      onData(updatedLocation) {
+        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), (prev) => {
+          if (!prev) {
+            return undefined;
+          }
+          return {
+            ...prev,
+            beeper: {
+              ...prev.beeper,
+              location: updatedLocation.location,
+            },
+          };
+        });
+      },
+    })
+  );
 
 
   const {

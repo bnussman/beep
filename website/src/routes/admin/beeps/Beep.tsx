@@ -5,8 +5,10 @@ import { Typography, Button, Box, Stack, Alert } from "@mui/material";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { createRoute } from "@tanstack/react-router";
 import { beepsRoute } from ".";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
+
+import { useQuery } from "@tanstack/react-query";
 
 export const beepRoute = createRoute({
   component: Beep,
@@ -15,8 +17,9 @@ export const beepRoute = createRoute({
 });
 
 export function Beep() {
+  const trpc = useTRPC();
   const { beepId } = beepRoute.useParams();
-  const { data: beep, isLoading, error } = trpc.beep.beep.useQuery(beepId);
+  const { data: beep, isLoading, error } = useQuery(trpc.beep.beep.queryOptions(beepId));
 
   const [isOpen, setIsOpen] = useState(false);
 

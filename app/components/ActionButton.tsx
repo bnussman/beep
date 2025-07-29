@@ -1,6 +1,9 @@
 import React from "react";
 import { Button } from "@/components/Button";
-import { RouterOutput, trpc } from "@/utils/trpc";
+import { RouterOutput, useTRPC } from "@/utils/trpc";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Status = RouterOutput['beeper']['queue'][number]['status'];
 
@@ -22,20 +25,21 @@ interface Props {
 }
 
 export function ActionButton(props: Props) {
+  const trpc = useTRPC();
   const { beep } = props;
-  const utils = trpc.useUtils();
-  const { mutate, isPending } = trpc.beeper.updateBeep.useMutation({
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation(trpc.beeper.updateBeep.mutationOptions({
     onSuccess(data, vars) {
       if (vars.data.status === 'complete') {
-        utils.rider.getLastBeepToRate.invalidate();
+        queryClient.invalidateQueries(trpc.rider.getLastBeepToRate.pathFilter());
       }
-      utils.beep.beeps.invalidate();
-      utils.beeper.queue.setData(undefined, data);
+      queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
+      queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
     },
     onError(error) {
       alert(error.message);
     }
-  });
+  }));
 
   const getMessage = () => {
     switch (beep.status) {

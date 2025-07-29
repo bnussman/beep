@@ -5,7 +5,7 @@ import { PhotoDialog } from "../../../components/PhotoDialog";
 import { DeleteCarDialog } from "./DeleteCarDialog";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
@@ -26,6 +26,8 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const carsRoute = createRoute({
   component: Cars,
   path: "/cars",
@@ -36,6 +38,7 @@ export const carsRoute = createRoute({
 });
 
 export function Cars() {
+  const trpc = useTRPC();
   const { page } = carsRoute.useSearch();
 
   const navigate = useNavigate({ from: carsRoute.id });
@@ -44,12 +47,12 @@ export function Cars() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
-  const { data, isLoading, error } = trpc.car.cars.useQuery(
+  const { data, isLoading, error } = useQuery(trpc.car.cars.queryOptions(
     {
       cursor: page,
     },
     { placeholderData: keepPreviousData },
-  );
+  ));
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
 

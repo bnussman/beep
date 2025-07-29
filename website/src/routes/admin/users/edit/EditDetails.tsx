@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { editUserRoute } from ".";
-import { RouterInput, trpc } from "../../../../utils/trpc";
+import { RouterInput, useTRPC } from "../../../../utils/trpc";
 import { useNotifications } from "@toolpad/core";
 import {
   Alert,
@@ -12,13 +12,17 @@ import {
   TextField,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+
 type Values = RouterInput["user"]["editAdmin"]["data"];
 
 export function EditDetails() {
+  const trpc = useTRPC();
   const notifications = useNotifications();
 
   const { userId } = editUserRoute.useParams();
-  const { data: user } = trpc.user.user.useQuery(userId);
+  const { data: user } = useQuery(trpc.user.user.queryOptions(userId));
 
   const values = {
     first: user?.first,
@@ -43,7 +47,7 @@ export function EditDetails() {
     values,
   });
 
-  const { mutateAsync: editUser } = trpc.user.editAdmin.useMutation({
+  const { mutateAsync: editUser } = useMutation(trpc.user.editAdmin.mutationOptions({
     onSuccess(user) {
       notifications.show(`Successfully edited ${user.first}'s profile`, {
         severity: "success",
@@ -60,7 +64,7 @@ export function EditDetails() {
         setError("root", { message: error.message });
       }
     },
-  });
+  }));
 
   const onSubmit = async (data: Values) => {
     await editUser({ userId, data });

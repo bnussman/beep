@@ -1,13 +1,23 @@
 import { QueryClient } from '@tanstack/react-query';
-import { createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trpc/client';
-import { createTRPCReact } from '@trpc/react-query';
+import {
+  createWSClient,
+  httpBatchLink,
+  httpLink,
+  splitLink,
+  wsLink,
+  createTRPCClient,
+} from '@trpc/client';
+import { createTRPCContext } from "@trpc/tanstack-react-query";
 import type { AppRouter } from '../../../api';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
 
-export const trpc = createTRPCReact<AppRouter>();
+export const {
+  TRPCProvider,
+  useTRPC
+} = createTRPCContext<AppRouter>();
 
 function getUrl() {
   if (import.meta.env.VITE_ENVIRONMENT_NAME === "production") {
@@ -67,7 +77,7 @@ const wsClient = createWSClient({
   }
 });
 
-export const trpcClient = trpc.createClient({
+export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     splitLink<AppRouter>({
       condition: (op) => op.type === 'subscription',

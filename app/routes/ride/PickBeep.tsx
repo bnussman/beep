@@ -5,19 +5,24 @@ import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { RouterInput, RouterOutput, trpc } from "@/utils/trpc";
+import { RouterInput, RouterOutput, useTRPC } from "@/utils/trpc";
 import { ActivityIndicator, FlatList, View } from "react-native";
+
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = StaticScreenProps<
   Omit<RouterInput['rider']['startBeep'], "beeperId">
 >;
 
 export function PickBeepScreen({ route }: Props) {
+  const trpc = useTRPC();
   const { location } = useLocation();
   const navigation = useNavigation();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
-  const { data: beepers, isLoading, error, refetch, isRefetching } = trpc.rider.beepers.useQuery(
+  const { data: beepers, isLoading, error, refetch, isRefetching } = useQuery(trpc.rider.beepers.queryOptions(
     {
       latitude: location?.coords.latitude ?? 0,
       longitude: location?.coords.longitude ?? 0,
@@ -25,17 +30,17 @@ export function PickBeepScreen({ route }: Props) {
     {
       enabled: location !== undefined
     }
-  );
+  ));
 
-  const { mutate: startBeep, isPending: isPickBeeperLoading } = trpc.rider.startBeep.useMutation({
+  const { mutate: startBeep, isPending: isPickBeeperLoading } = useMutation(trpc.rider.startBeep.mutationOptions({
     onSuccess(data) {
-      utils.rider.currentRide.setData(undefined, data);
+      queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
       navigation.goBack();
     },
      onError(error) {
       alert(error.message);
      },
-  });
+  }));
 
   useEffect(() => {
     navigation.setOptions({

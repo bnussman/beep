@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RouterOutput, trpc } from "../../../utils/trpc";
+import { RouterOutput, useTRPC } from "../../../utils/trpc";
 import {
   Alert,
   Button,
@@ -10,6 +10,9 @@ import {
   TextField,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 interface Props {
   isOpen: boolean;
   feedback:
@@ -19,12 +22,13 @@ interface Props {
 }
 
 export function DeleteFeedbackDialog(props: Props) {
+  const trpc = useTRPC();
   const { isOpen, onClose, feedback } = props;
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const { mutateAsync, isPending, error, reset } =
-    trpc.feedback.deleteFeedback.useMutation();
+    useMutation(trpc.feedback.deleteFeedback.mutationOptions());
 
   const handleClose = () => {
     reset();
@@ -34,7 +38,7 @@ export function DeleteFeedbackDialog(props: Props) {
   const onDelete = async () => {
     await mutateAsync(feedback?.id ?? "");
     onClose();
-    utils.feedback.feedback.invalidate();
+    queryClient.invalidateQueries(trpc.feedback.feedback.pathFilter());
   };
 
   return (

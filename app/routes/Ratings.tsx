@@ -9,9 +9,12 @@ import { useUser } from "../utils/useUser";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
 import { Text } from "@/components/Text";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
+
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 export function RatingsScreen() {
+  const trpc = useTRPC();
   const { user } = useUser();
 
   const {
@@ -22,13 +25,13 @@ export function RatingsScreen() {
     refetch,
     isFetchingNextPage,
     isRefetching,
-  } = trpc.rating.ratings.useInfiniteQuery(
+  } = useInfiniteQuery(trpc.rating.ratings.infiniteQueryOptions(
     {
       userId: user?.id,
       pageSize: PAGE_SIZE,
     },
     {
-      initialCursor: 0,
+      initialCursor: 1,
       getNextPageParam(page) {
         if (page.page === page.pages) {
           return undefined;
@@ -36,7 +39,7 @@ export function RatingsScreen() {
         return page.page + 1;
       },
     },
-  );
+  ));
 
   const ratings = data?.pages.flatMap((ratings) => ratings.ratings);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { RouterInput, trpc } from "../utils/trpc";
+import { RouterInput, useTRPC } from "../utils/trpc";
 import { useForm, Controller } from "react-hook-form";
 import { useNotifications } from "@toolpad/core";
 import {
@@ -13,6 +13,8 @@ import {
   Stack,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -20,6 +22,7 @@ interface Props {
 }
 
 export function SendNotificationDialog(props: Props) {
+  const trpc = useTRPC();
   const { isOpen, onClose, id } = props;
   const notifications = useNotifications();
 
@@ -32,7 +35,7 @@ export function SendNotificationDialog(props: Props) {
   });
 
   const { mutateAsync: sendNotification } =
-    trpc.notification.sendNotificationToUser.useMutation({
+    useMutation(trpc.notification.sendNotificationToUser.mutationOptions({
       onError(error) {
         if (error.data?.fieldErrors) {
           for (const field in error.data?.fieldErrors) {
@@ -47,7 +50,7 @@ export function SendNotificationDialog(props: Props) {
           form.setError("root", { message: error.message });
         }
       },
-    });
+    }));
 
   const onSubmit = async (
     values: RouterInput["notification"]["sendNotificationToUser"],

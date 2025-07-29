@@ -3,9 +3,11 @@ import { Marker } from "../../../components/Marker";
 import { Map } from "../../../components/Map";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "./User";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { Loading } from "../../../components/Loading";
 import { Alert, Box } from "@mui/material";
+
+import { useQuery } from "@tanstack/react-query";
 
 export const locationRoute = createRoute({
   component: LocationView,
@@ -14,9 +16,10 @@ export const locationRoute = createRoute({
 });
 
 export function LocationView() {
+  const trpc = useTRPC();
   const { userId } = locationRoute.useParams();
 
-  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
+  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
 
   if (isLoading) {
     return <Loading />;

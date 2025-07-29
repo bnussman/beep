@@ -3,7 +3,7 @@ import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
 import { createRoute, useRouter } from "@tanstack/react-router";
 import { reportsRoute } from ".";
-import { RouterInput, trpc } from "../../../utils/trpc";
+import { RouterInput, useTRPC } from "../../../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import {
   Button,
@@ -18,6 +18,10 @@ import {
 } from "@mui/material";
 import { Link } from "../../../components/Link";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 export const reportRoute = createRoute({
   component: Report,
   path: "$reportId",
@@ -25,26 +29,27 @@ export const reportRoute = createRoute({
 });
 
 export function Report() {
+  const trpc = useTRPC();
   const { reportId } = reportRoute.useParams();
   const { history } = useRouter();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const {
     data: report,
     isLoading,
     error,
-  } = trpc.report.report.useQuery(reportId);
+  } = useQuery(trpc.report.report.queryOptions(reportId));
 
   const {
     mutateAsync: updateReport,
     isPending,
     error: updateError,
-  } = trpc.report.updateReport.useMutation({
+  } = useMutation(trpc.report.updateReport.mutationOptions({
     onSuccess(report) {
-      utils.report.report.invalidate(reportId);
-      utils.report.reports.invalidate();
+      queryClient.invalidateQueries(trpc.report.report.queryFilter(reportId));
+      queryClient.invalidateQueries(trpc.report.reports.pathFilter());
     },
-  });
+  }));
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);

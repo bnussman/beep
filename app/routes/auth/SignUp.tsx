@@ -13,7 +13,10 @@ import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 let picture: File | ReactNativeFile;
 
@@ -29,6 +32,7 @@ interface Values {
 }
 
 export function SignUpScreen() {
+  const trpc = useTRPC();
   const {
     control,
     handleSubmit,
@@ -38,7 +42,7 @@ export function SignUpScreen() {
     formState: { errors, isSubmitting },
   } = useForm<Values>();
 
-  const { mutateAsync: signup } = trpc.auth.signup.useMutation({
+  const { mutateAsync: signup } = useMutation(trpc.auth.signup.mutationOptions({
     onError(error) {
       const fieldErrors = error.data?.fieldErrors;
       if (!fieldErrors) {
@@ -49,9 +53,9 @@ export function SignUpScreen() {
         }
       }
     }
-  });
+  }));
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const onSubmit = handleSubmit(async (variables) => {
     const formData = new FormData();
@@ -75,7 +79,7 @@ export function SignUpScreen() {
 
     await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-    utils.user.me.setData(undefined, data.user);
+    queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
   });
 
   const chooseProfilePhoto = async () => {

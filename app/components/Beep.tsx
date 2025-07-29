@@ -7,8 +7,11 @@ import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
 import { useUser } from "../utils/useUser";
 import { openVenmo } from "@/utils/links";
-import { RouterOutput, trpc } from "@/utils/trpc";
+import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { printStars } from "./Stars";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   item: RouterOutput["beep"]["beeps"]["beeps"][number];
@@ -16,6 +19,7 @@ interface Props {
 }
 
 export function Beep({ item }: Props) {
+  const trpc = useTRPC();
   const { user } = useUser();
   const navigation = useNavigation();
   const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
@@ -26,13 +30,13 @@ export function Beep({ item }: Props) {
   const otherUsersRating = item.ratings.find(
     (r) => r.rater_id === otherUser.id,
   );
-  const utils = trpc.useUtils();
-  const { mutateAsync: deleteRating } = trpc.rating.deleteRating.useMutation({
+  const queryClient = useQueryClient();
+  const { mutateAsync: deleteRating } = useMutation(trpc.rating.deleteRating.mutationOptions({
     onSuccess() {
-      utils.beep.beeps.invalidate();
-      utils.rating.ratings.invalidate();
+      queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
+      queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
     },
-  });
+  }));
 
   return (
     <ContextMenu.Root>

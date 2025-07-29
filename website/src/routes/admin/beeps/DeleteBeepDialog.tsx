@@ -1,5 +1,5 @@
 import React from "react";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import {
   Alert,
   Button,
@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -16,11 +18,12 @@ interface Props {
 }
 
 export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
+  const trpc = useTRPC();
   const {
     mutateAsync: deleteBeep,
     isPending,
     error,
-  } = trpc.beep.deleteBeep.useMutation();
+  } = useMutation(trpc.beep.deleteBeep.mutationOptions());
 
   const onDelete = async () => {
     await deleteBeep(id);

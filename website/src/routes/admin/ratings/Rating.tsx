@@ -3,7 +3,7 @@ import { printStars, ratingsRoute } from ".";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 import { Alert, Typography, Button, Stack, Grid, Link } from "@mui/material";
 import {
@@ -12,6 +12,8 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const ratingRoute = createRoute({
   component: Rating,
   path: "$ratingId",
@@ -19,6 +21,7 @@ export const ratingRoute = createRoute({
 });
 
 export function Rating() {
+  const trpc = useTRPC();
   const { ratingId } = ratingRoute.useParams();
   const router = useRouter();
 
@@ -28,7 +31,7 @@ export function Rating() {
     data: rating,
     isLoading,
     error,
-  } = trpc.rating.rating.useQuery(ratingId);
+  } = useQuery(trpc.rating.rating.queryOptions(ratingId));
 
   if (isLoading || !rating) {
     return <Loading />;

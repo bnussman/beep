@@ -3,7 +3,7 @@ import { SendNotificationConfirmationDialog } from "./SendNotificationConfirmati
 import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
-import { RouterInput, trpc } from "../../../utils/trpc";
+import { RouterInput, useTRPC } from "../../../utils/trpc";
 import { adminRoute } from "..";
 import {
   Alert,
@@ -15,6 +15,8 @@ import {
   Card,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+
 type SendNotifictionVariables = RouterInput["notification"]["sendNotification"];
 
 export const notificationsRoute = createRoute({
@@ -24,6 +26,7 @@ export const notificationsRoute = createRoute({
 });
 
 export function Notifications() {
+  const trpc = useTRPC();
   const notifications = useNotifications();
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -37,7 +40,7 @@ export function Notifications() {
   } = useForm<SendNotifictionVariables>({ mode: "onChange" });
 
   const { mutateAsync: sendNotification } =
-    trpc.notification.sendNotification.useMutation({
+    useMutation(trpc.notification.sendNotification.mutationOptions({
       onError(e) {
         if (e.data?.fieldErrors) {
           for (const key in e.data?.fieldErrors ?? {}) {
@@ -54,7 +57,7 @@ export function Notifications() {
           severity: 'success',
         });
       },
-    });
+    }));
 
   const onConfirm = handleSubmit(async (values) => {
     setIsConfirmOpen(false);

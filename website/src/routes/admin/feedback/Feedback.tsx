@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
@@ -24,6 +24,10 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 export const feedbackRoute = createRoute({
   component: Feedback,
   path: "feedback",
@@ -34,27 +38,28 @@ export const feedbackRoute = createRoute({
 });
 
 export function Feedback() {
+  const trpc = useTRPC();
   const { page } = feedbackRoute.useSearch();
   const navigate = useNavigate({ from: feedbackRoute.id });
 
   const [selectedFeedbackId, setSelectedFeedbackId] = useState<string>();
 
-  const { data, isLoading, error } = trpc.feedback.feedback.useQuery(
+  const { data, isLoading, error } = useQuery(trpc.feedback.feedback.queryOptions(
     {
       page,
     },
     {
       placeholderData: keepPreviousData,
     },
-  );
+  ));
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
-  const { mutate, isPending } = trpc.feedback.deleteFeedback.useMutation({
+  const { mutate, isPending } = useMutation(trpc.feedback.deleteFeedback.mutationOptions({
     onSuccess() {
-      utils.feedback.invalidate();
+      queryClient.invalidateQueries(trpc.feedback.pathFilter());
     },
-  });
+  }));
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });

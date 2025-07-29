@@ -1,22 +1,27 @@
 import React from "react";
 import { Stack, Box, CircularProgress, Container } from "@mui/material";
-import { trpc } from "./utils/trpc";
+import { useTRPC } from "./utils/trpc";
 import { Header } from "./components/Header";
 import { Banners } from "./components/Banners";
 import { Outlet } from "@tanstack/react-router";
 
-export function Entry() {
-  const { data: user, isPending } = trpc.user.me.useQuery(undefined, {
-    retry: false,
-  });
-  const utils = trpc.useUtils();
+import { useQuery } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
-  trpc.user.updates.useSubscription(undefined, {
+export function Entry() {
+  const trpc = useTRPC();
+  const { data: user, isPending } = useQuery(trpc.user.me.queryOptions(undefined, {
+    retry: false,
+  }));
+  const queryClient = useQueryClient();
+
+  useSubscription(trpc.user.updates.subscriptionOptions(undefined, {
     enabled: user !== undefined,
     onData(user) {
-      utils.user.me.setData(undefined, user);
+      queryClient.setQueryData(trpc.user.me.queryKey(), user);
     },
-  });
+  }));
 
   if (isPending) {
     return (

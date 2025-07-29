@@ -5,33 +5,38 @@ import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
 import { ActivityIndicator } from "react-native";
 import { Avatar } from "@/components/Avatar";
+
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = StaticScreenProps<{ userId: string; beepId: string }>;
 
 export function RateScreen({ route }: Props) {
+  const trpc = useTRPC();
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
 
   const { goBack } = useNavigation();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
-  const { data: user } = trpc.user.user.useQuery(route.params.userId);
-  const { mutateAsync: rate, isPending } = trpc.rating.createRating.useMutation(
+  const { data: user } = useQuery(trpc.user.user.queryOptions(route.params.userId));
+  const { mutateAsync: rate, isPending } = useMutation(trpc.rating.createRating.mutationOptions(
     {
       onSuccess() {
-        utils.beep.beeps.invalidate();
-        utils.rating.ratings.invalidate();
-        utils.rider.getLastBeepToRate.invalidate();
+        queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
+        queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+        queryClient.invalidateQueries(trpc.rider.getLastBeepToRate.pathFilter());
         goBack();
       },
       onError(error) {
         alert(error.message);
       },
     },
-  );
+  ));
 
   const onSubmit = () => {
     rate({

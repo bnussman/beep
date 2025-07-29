@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableEmpty } from "../../../components/TableEmpty";
@@ -24,6 +24,8 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const reportsRoute = createRoute({
   path: "reports",
   getParentRoute: () => adminRoute,
@@ -39,6 +41,7 @@ export const reportsListRoute = createRoute({
 });
 
 export function Reports() {
+  const trpc = useTRPC();
   const { page } = reportsListRoute.useSearch();
   const navigate = useNavigate({ from: reportsListRoute.id });
 
@@ -48,12 +51,12 @@ export function Reports() {
     setSelectedReportId(id);
   };
 
-  const { data, isLoading, error } = trpc.report.reports.useQuery(
+  const { data, isLoading, error } = useQuery(trpc.report.reports.queryOptions(
     {
       page,
     },
     { placeholderData: keepPreviousData },
-  );
+  ));
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });

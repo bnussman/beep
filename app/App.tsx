@@ -11,8 +11,12 @@ import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./navigators/Stack";
 import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
-import { trpc, queryClient, trpcClient } from './utils/trpc';
+import { useTRPC, queryClient, trpcClient, TRPCProvider } from './utils/trpc';
 import { QueryClientProvider } from '@tanstack/react-query';
+
+import { useQuery } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 setupPurchase();
 setupNotifications();
@@ -28,20 +32,21 @@ Sentry.init({
 
 
 function Beep() {
+  const trpc = useTRPC();
   const colorScheme = useColorScheme();
-  const utils = trpc.useUtils();
-  const { data: user, isLoading } = trpc.user.me.useQuery(undefined, {
+  const queryClient = useQueryClient();
+  const { data: user, isLoading } = useQuery(trpc.user.me.queryOptions(undefined, {
     retry: false,
-  });
+  }));
 
   useAutoUpdate();
 
-  trpc.user.updates.useSubscription(undefined, {
+  useSubscription(trpc.user.updates.subscriptionOptions(undefined, {
     enabled: user !== undefined,
     onData(user) {
-      utils.user.me.setData(undefined, user);
+      queryClient.setQueryData(trpc.user.me.queryKey(), user);
     }
-  });
+  }));
 
   useEffect(() => {
     if (user) {
@@ -73,11 +78,11 @@ function App() {
   return (
     <GestureHandlerRootView>
       <KeyboardProvider>
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             <Beep />
           </QueryClientProvider>
-        </trpc.Provider>
+        </TRPCProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
   );

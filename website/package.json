@@ -19,7 +19,7 @@
     "@tanstack/react-router": "^1.130.2",
     "@toolpad/core": "^0.16.0",
     "@trpc/client": "^11.4.3",
-    "@trpc/react-query": "^11.4.3",
+    "@trpc/tanstack-react-query": "^11.4.3",
     "luxon": "^3.7.1",
     "mapbox-gl": "^3.13.0",
     "react": "19.0.0",

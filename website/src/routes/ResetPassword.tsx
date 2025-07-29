@@ -2,7 +2,7 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import {
   Typography,
   Alert,
@@ -11,6 +11,8 @@ import {
   Button,
   Stack,
 } from "@mui/material";
+
+import { useMutation } from "@tanstack/react-query";
 
 export const resetPasswordRoute = createRoute({
   component: ResetPassword,
@@ -23,6 +25,7 @@ interface Values {
 }
 
 export function ResetPassword() {
+  const trpc = useTRPC();
   const { id } = resetPasswordRoute.useParams();
 
   const {
@@ -34,7 +37,7 @@ export function ResetPassword() {
   } = useForm<Values>({ mode: "onChange" });
 
   const { mutateAsync: resetPassword, data } =
-    trpc.auth.resetPassword.useMutation({
+    useMutation(trpc.auth.resetPassword.mutationOptions({
       onError(error) {
         if (error.data?.fieldErrors) {
           for (const field in error.data?.fieldErrors) {
@@ -46,7 +49,7 @@ export function ResetPassword() {
           setError("root", { message: error.message });
         }
       },
-    });
+    }));
 
   const onSubmit = async (values: Values) => {
     await resetPassword({ id, ...values });

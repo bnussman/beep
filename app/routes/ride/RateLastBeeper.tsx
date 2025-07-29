@@ -1,14 +1,17 @@
 import { Avatar } from "@/components/Avatar";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
 import { useNavigation } from "@react-navigation/native";
 
+import { useQuery } from "@tanstack/react-query";
+
 export function RateLastBeeper() {
+  const trpc = useTRPC();
   const { user } = useUser();
   const navigation = useNavigation();
-  const { data: beep } = trpc.rider.getLastBeepToRate.useQuery();
+  const { data: beep } = useQuery(trpc.rider.getLastBeepToRate.queryOptions());
 
   if (!beep) {
     return null;

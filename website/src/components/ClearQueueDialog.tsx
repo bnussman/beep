@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { useNotifications } from "@toolpad/core";
 import {
   Alert,
@@ -13,6 +13,9 @@ import {
   Stack,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -20,15 +23,16 @@ interface Props {
 }
 
 export function ClearQueueDialog(props: Props) {
+  const trpc = useTRPC();
   const { isOpen, onClose, userId } = props;
 
   const [stopBeeping, setStopBeeping] = useState<boolean>(true);
   const notifications = useNotifications();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
-  const { mutate, isPending, error } = trpc.beep.clearQueue.useMutation({
+  const { mutate, isPending, error } = useMutation(trpc.beep.clearQueue.mutationOptions({
     onSuccess() {
-      utils.beeper.queue.invalidate(userId);
+      queryClient.invalidateQueries(trpc.beeper.queue.queryFilter(userId));
 
       const message =  stopBeeping ? "Users's queue has been cleared and they are not longer beepering." : "User's queue has been cleared.";
 
@@ -36,7 +40,7 @@ export function ClearQueueDialog(props: Props) {
 
       onClose();
     },
-  });
+  }));
 
   return (
     <Dialog open={isOpen} onClose={onClose}>

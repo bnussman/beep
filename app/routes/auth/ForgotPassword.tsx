@@ -3,11 +3,14 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 
+import { useMutation } from "@tanstack/react-query";
+
 export function ForgotPasswordScreen() {
-  const { mutateAsync: sendForgotEmail, isPending } = trpc.auth.forgotPassword.useMutation();
+  const trpc = useTRPC();
+  const { mutateAsync: sendForgotEmail, isPending } = useMutation(trpc.auth.forgotPassword.mutationOptions());
 
   const [email, setEmail] = useState<string>("");
 

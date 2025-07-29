@@ -1,9 +1,11 @@
 import React from "react";
-import { trpc } from "../../utils/trpc";
+import { useTRPC } from "../../utils/trpc";
 import { createRoute } from "@tanstack/react-router";
 import { adminRoute } from ".";
 import { Loading } from "../../components/Loading";
 import { Alert } from "@mui/material";
+
+import { useQuery } from "@tanstack/react-query";
 
 export const healthRoute = createRoute({
   component: Health,
@@ -12,12 +14,13 @@ export const healthRoute = createRoute({
 });
 
 export function Health() {
-  const { data, isLoading, error } = trpc.health.healthcheck.useQuery(
+  const trpc = useTRPC();
+  const { data, isLoading, error } = useQuery(trpc.health.healthcheck.queryOptions(
     undefined,
     {
       refetchInterval: 250,
     },
-  );
+  ));
 
   if (isLoading) {
     return <Loading />;

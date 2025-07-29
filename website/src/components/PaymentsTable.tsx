@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { PaginationFooter } from "./PaginationFooter";
 import { TableLoading } from "./TableLoading";
 import { TableError } from "./TableError";
@@ -17,6 +17,8 @@ import {
   TableRow,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const paymentsTableRoute = createRoute({
   component: PaymentsTable,
   path: "payments",
@@ -24,15 +26,16 @@ export const paymentsTableRoute = createRoute({
 });
 
 export function PaymentsTable() {
+  const trpc = useTRPC();
   const { userId } = paymentsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data, isLoading, error } = trpc.payment.payments.useQuery({
+  const { data, isLoading, error } = useQuery(trpc.payment.payments.queryOptions({
     userId,
     page: currentPage,
     pageSize: 10,
-  });
+  }));
 
   return (
     <Stack spacing={1}>

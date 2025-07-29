@@ -7,7 +7,10 @@ import { useUser } from "../utils/useUser";
 import { Avatar } from "@/components/Avatar";
 import { printStars } from "./Stars";
 import { View } from "react-native";
-import { RouterOutput, trpc } from "@/utils/trpc";
+import { RouterOutput, useTRPC } from "@/utils/trpc";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Rating = RouterOutput["rating"]["ratings"]["ratings"][number];
 
@@ -17,6 +20,7 @@ interface Props {
 }
 
 export function Rating(props: Props) {
+  const trpc = useTRPC();
   const { item } = props;
   const { user } = useUser();
   const navigation = useNavigation();
@@ -24,16 +28,16 @@ export function Rating(props: Props) {
 
   const isRater = user?.id === item.rater.id;
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
-  const { mutateAsync: deleteRating } = trpc.rating.deleteRating.useMutation({
+  const { mutateAsync: deleteRating } = useMutation(trpc.rating.deleteRating.mutationOptions({
     onSuccess() {
-      utils.rating.ratings.invalidate();
+      queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
     },
     onError(error) {
       alert(error.message);
     },
-  });
+  }));
 
   return (
     <ContextMenu.Root>

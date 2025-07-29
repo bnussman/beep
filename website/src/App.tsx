@@ -4,7 +4,7 @@ import "@fontsource/poppins/700.css";
 import { theme } from "./utils/theme";
 import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./utils/router";
-import { trpc, queryClient, trpcClient } from "./utils/trpc";
+import { queryClient, trpcClient, TRPCProvider } from "./utils/trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@mui/material/styles";
 import { NotificationsProvider } from "@toolpad/core";
@@ -16,12 +16,12 @@ export function App() {
       <NotificationsProvider
         slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
       >
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             <CssBaseline enableColorScheme />
             <RouterProvider router={router} />
           </QueryClientProvider>
-        </trpc.Provider>
+        </TRPCProvider>
       </NotificationsProvider>
     </ThemeProvider>
   );

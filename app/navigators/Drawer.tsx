@@ -13,7 +13,7 @@ import { Premium } from "../routes/Premium";
 import { StartBeepingScreen } from "../routes/beep/StartBeeping";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
-import { queryClient, trpc } from "@/utils/trpc";
+import { queryClient, useTRPC } from "@/utils/trpc";
 import { printStars } from "@/components/Stars";
 import { LOCATION_TRACKING } from "@/utils/location";
 import {
@@ -29,10 +29,13 @@ import {
 } from "react-native";
 import { useTheme } from "@/utils/theme";
 
+import { useMutation } from "@tanstack/react-query";
+
 function CustomDrawerContent(props: DrawerContentComponentProps) {
+  const trpc = useTRPC();
   const { user } = useUser();
-  const { mutateAsync: logout, isPending } = trpc.auth.logout.useMutation();
-  const { mutateAsync: resend, isPending: resendLoading } = trpc.auth.resendVerification.useMutation();
+  const { mutateAsync: logout, isPending } = useMutation(trpc.auth.logout.mutationOptions());
+  const { mutateAsync: resend, isPending: resendLoading } = useMutation(trpc.auth.resendVerification.mutationOptions());
 
   const handleLogout = async () => {
     await logout({

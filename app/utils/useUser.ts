@@ -1,13 +1,17 @@
-import { trpc } from "./trpc";
+import { useTRPC } from "./trpc";
+
+import { useQuery } from "@tanstack/react-query";
 
 export function useUser() {
-  const { data: user, ...query } = trpc.user.me.useQuery(undefined, { enabled: false, retry: false });
+  const trpc = useTRPC();
+  const { data: user, ...query } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false, retry: false }));
 
   return { user, ...query };
 }
 
 export function useIsSignedIn() {
-  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
+  const trpc = useTRPC();
+  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
 
   return user !== undefined;
 }
@@ -19,7 +23,8 @@ export function useIsSignedOut() {
 }
 
 export function useIsUserNotBeeping() {
-  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
+  const trpc = useTRPC();
+  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
 
   return !Boolean(user?.isBeeping);
 }

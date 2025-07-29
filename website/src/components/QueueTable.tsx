@@ -4,7 +4,7 @@ import { Indicator } from "./Indicator";
 import { userRoute } from "../routes/admin/users/User";
 import { beepStatusMap } from "../routes/admin/beeps";
 import { createRoute } from "@tanstack/react-router";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { TableLoading } from "./TableLoading";
 import { TableEmpty } from "./TableEmpty";
 import { TableError } from "./TableError";
@@ -21,6 +21,10 @@ import {
 } from "@mui/material";
 import { DateTime } from "luxon";
 
+import { useQuery } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 export const queueRoute = createRoute({
   component: QueueTable,
   path: "queue",
@@ -28,17 +32,18 @@ export const queueRoute = createRoute({
 });
 
 export function QueueTable() {
+  const trpc = useTRPC();
   const { userId } = queueRoute.useParams();
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = trpc.beeper.queue.useQuery(userId);
+  const { data, isLoading, error } = useQuery(trpc.beeper.queue.queryOptions(userId));
 
-  trpc.beeper.watchQueue.useSubscription(userId, {
+  useSubscription(trpc.beeper.watchQueue.subscriptionOptions(userId, {
     onData(queue) {
-      utils.beeper.queue.setData(userId, queue);
+      queryClient.setQueryData(trpc.beeper.queue.queryKey(userId), queue);
     },
-  });
+  }));
 
   return (
     <TableContainer component={Paper} variant="outlined">

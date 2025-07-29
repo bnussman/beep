@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { useForm, Controller } from "react-hook-form";
 import {
   Link as RouterLink,
@@ -19,6 +19,9 @@ import {
   Box,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 export const signupRoute = createRoute({
   component: SignUp,
   path: "/signup",
@@ -37,6 +40,7 @@ interface SignUpFormValues {
 }
 
 export function SignUp() {
+  const trpc = useTRPC();
   const navigate = useNavigate();
 
   const {
@@ -48,7 +52,7 @@ export function SignUp() {
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({ mode: "onChange" });
 
-  const { mutateAsync } = trpc.auth.signup.useMutation({
+  const { mutateAsync } = useMutation(trpc.auth.signup.mutationOptions({
     onError(error) {
       if (error.data?.fieldErrors) {
         for (const field in error.data?.fieldErrors) {
@@ -60,9 +64,9 @@ export function SignUp() {
         setError("root", { message: error.message });
       }
     },
-  });
+  }));
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const photo = watch("photo");
 
@@ -83,7 +87,7 @@ export function SignUp() {
 
     localStorage.setItem("user", JSON.stringify(data));
 
-    utils.user.me.setData(undefined, data.user);
+    queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
 
     navigate({ to: "/" });
   });

@@ -8,7 +8,10 @@ import { printStars } from "@/components/Stars";
 import { Avatar } from "@/components/Avatar";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import { RouterOutput, trpc } from "@/utils/trpc";
+import { RouterOutput, useTRPC } from "@/utils/trpc";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   item: RouterOutput['beeper']['queue'][number];
@@ -16,16 +19,17 @@ interface Props {
 }
 
 export function QueueItem({ item }: Props) {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  const { mutate } = trpc.beeper.updateBeep.useMutation({
+  const { mutate } = useMutation(trpc.beeper.updateBeep.mutationOptions({
     onSuccess(data) {
-      utils.beeper.queue.setData(undefined, data);
+      queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
     },
     onError(error) {
       alert(error.message);
     }
-  });
+  }));
 
   const onPromptCancel = () => {
     if (isMobile) {

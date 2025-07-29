@@ -2,32 +2,37 @@ import { Map } from "../../components/Map";
 import { useLocation } from "../../utils/location";
 import { type Region } from "react-native-maps";
 import { BeeperMarker } from "../../components/Marker";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
+
+import { useQuery } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function BeepersMap() {
+  const trpc = useTRPC();
   const { location } = useLocation();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const input = {
     latitude: location?.coords.latitude ?? 0,
     longitude: location?.coords.longitude ?? 0,
   };
 
-  const { data: beepers } = trpc.rider.beepersNearMe.useQuery(
+  const { data: beepers } = useQuery(trpc.rider.beepersNearMe.queryOptions(
     input,
     {
       enabled: location !== undefined,
       refetchInterval: 15_000
     }
-  );
+  ));
 
-  trpc.rider.beepersLocations.useSubscription(
+  useSubscription(trpc.rider.beepersLocations.subscriptionOptions(
     input,
     {
       enabled: location !== undefined,
       onData(locationUpdate) {
         console.log(locationUpdate)
-        utils.rider.beepersNearMe.setData(input, (prev) => {
+        queryClient.setQueryData(trpc.rider.beepersNearMe.queryKey(input), (prev) => {
           if (!prev) {
             return undefined;
           }
@@ -42,7 +47,7 @@ export function BeepersMap() {
         });
       }
     }
-  );
+  ));
 
   const initialRegion: Region | undefined = location
     ? {
