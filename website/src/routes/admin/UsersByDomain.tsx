@@ -1,10 +1,12 @@
 import React from "react";
 import { createRoute } from "@tanstack/react-router";
-import { trpc } from "../../utils/trpc";
+import { useTRPC } from "../../utils/trpc";
 import { usersRoute } from "./users/routes";
 import { TableContainer, Stack, TableHead, Paper, Typography, Table, TableCell, TableRow, TableBody } from "@mui/material";
 import { TableLoading } from "../../components/TableLoading";
 import { TableError } from "../../components/TableError";
+
+import { useQuery } from "@tanstack/react-query";
 
 export const usersByDomainRoute = createRoute({
   component: UsersByDomain,
@@ -13,7 +15,8 @@ export const usersByDomainRoute = createRoute({
 });
 
 export function UsersByDomain() {
-  const { data, isLoading, error } = trpc.user.usersByDomain.useQuery();
+  const trpc = useTRPC();
+  const { data, isLoading, error } = useQuery(trpc.user.usersByDomain.queryOptions());
 
   return (
     <Stack spacing={2}>

@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 import { Indicator } from "./Indicator";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { DeleteCarDialog } from "../routes/admin/cars/DeleteCarDialog";
 import { PaginationFooter } from "./PaginationFooter";
 import { CarMenu } from "../routes/admin/cars/CarMenu";
@@ -22,6 +22,8 @@ import {
   TableCell,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const carsTableRoute = createRoute({
   component: CarsTable,
   path: "cars",
@@ -29,13 +31,14 @@ export const carsTableRoute = createRoute({
 });
 
 export function CarsTable() {
+  const trpc = useTRPC();
   const { userId } = carsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedCarId, setSelectedCarId] = useState<string>();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const { data, isLoading, error } = trpc.car.cars.useQuery(
+  const { data, isLoading, error } = useQuery(trpc.car.cars.queryOptions(
     {
       userId,
       cursor: currentPage,
@@ -44,7 +47,7 @@ export function CarsTable() {
     {
       placeholderData: keepPreviousData,
     },
-  );
+  ));
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
 

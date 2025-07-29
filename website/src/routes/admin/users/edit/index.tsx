@@ -3,7 +3,7 @@ import { EditDetails } from "./EditDetails";
 import { EditLocation } from "./EditLocation";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../User";
-import { trpc } from "../../../../utils/trpc";
+import { useTRPC } from "../../../../utils/trpc";
 import {
   Alert,
   Box,
@@ -14,6 +14,8 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const editUserRoute = createRoute({
   component: Edit,
   path: "edit",
@@ -21,9 +23,10 @@ export const editUserRoute = createRoute({
 });
 
 export function Edit() {
+  const trpc = useTRPC();
   const { userId } = editUserRoute.useParams();
 
-  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
+  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
 
   const [index, setIndex] = useState(0);
 

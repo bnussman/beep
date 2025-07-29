@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { RouterInput, trpc } from "../utils/trpc";
+import { RouterInput, useTRPC } from "../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import {
   Card,
@@ -13,6 +13,8 @@ import {
   Box,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+
 export const forgotPasswordRoute = createRoute({
   component: ForgotPassword,
   path: "/password/forgot",
@@ -20,6 +22,7 @@ export const forgotPasswordRoute = createRoute({
 });
 
 export function ForgotPassword() {
+  const trpc = useTRPC();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -31,7 +34,7 @@ export function ForgotPassword() {
     data,
     isPending,
     error,
-  } = trpc.auth.forgotPassword.useMutation({
+  } = useMutation(trpc.auth.forgotPassword.mutationOptions({
     onError(error) {
       if (error.data?.fieldErrors) {
         for (const field in error.data?.fieldErrors) {
@@ -43,7 +46,7 @@ export function ForgotPassword() {
         form.setError("root", { message: error.message });
       }
     },
-  });
+  }));
 
   const onSubmit = async (values: RouterInput["auth"]["forgotPassword"]) => {
     await sendForgotPasswordEmail(values);

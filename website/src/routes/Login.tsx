@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, createRoute, useNavigate } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { RouterInput, trpc } from "../utils/trpc";
+import { RouterInput, useTRPC } from "../utils/trpc";
 import {
   Alert,
   Button,
@@ -12,6 +12,9 @@ import {
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 export const loginRoute = createRoute({
   component: Login,
   path: "/login",
@@ -19,8 +22,9 @@ export const loginRoute = createRoute({
 });
 
 export function Login() {
+  const trpc = useTRPC();
   const navigate = useNavigate();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const form = useForm<RouterInput["auth"]["login"]>({
     defaultValues: {
@@ -29,18 +33,18 @@ export function Login() {
     },
   });
 
-  const { mutateAsync: login } = trpc.auth.login.useMutation({
+  const { mutateAsync: login } = useMutation(trpc.auth.login.mutationOptions({
     onError(error) {
       form.setError("root", { message: error.message });
     },
-  });
+  }));
 
   const onSubmit = async (values: RouterInput["auth"]["login"]) => {
     const result = await login(values);
 
     localStorage.setItem("user", JSON.stringify(result));
 
-    utils.user.me.setData(undefined, result.user);
+    queryClient.setQueryData(trpc.user.me.queryKey(), result.user);
 
     navigate({ to: "/" });
   };

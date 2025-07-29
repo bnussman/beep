@@ -2,14 +2,17 @@ import React from "react";
 import { UserMenu } from "./UserMenu";
 import { AdminMenu } from "./AdminMenu";
 import { Link as RouterLink } from "@tanstack/react-router";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { AppBar, Stack, Toolbar, Typography, Button, Link, useColorScheme } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+
 export function Header() {
-  const { data: user } = trpc.user.me.useQuery(undefined, {
+  const trpc = useTRPC();
+  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, {
     enabled: false,
     retry: false,
-  });
+  }));
 
   const { colorScheme } = useColorScheme();
 

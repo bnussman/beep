@@ -4,19 +4,23 @@ import { Marker } from "../../../../components/Marker";
 import { Loading } from "../../../../components/Loading";
 import { Map } from "../../../../components/Map";
 import { editUserRoute } from ".";
-import { trpc } from "../../../../utils/trpc";
+import { useTRPC } from "../../../../utils/trpc";
 import type { MapLayerMouseEvent } from "react-map-gl/maplibre";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+
 export function EditLocation() {
+  const trpc = useTRPC();
   const { userId } = editUserRoute.useParams();
 
-  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
+  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
 
   const {
     mutateAsync: updateUser,
     error: mutateError,
     isPending: mutateLoading,
-  } = trpc.user.editAdmin.useMutation();
+  } = useMutation(trpc.user.editAdmin.mutationOptions());
 
   const [longitude, setLongitude] = useState<number>();
   const [latitude, setLatitude] = useState<number>();

@@ -1,5 +1,5 @@
 import React from "react";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import {
   Dialog,
   Alert,
@@ -9,6 +9,9 @@ import {
   DialogTitle,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 interface Props {
   isOpen: boolean;
   id: string | undefined;
@@ -17,16 +20,17 @@ interface Props {
 }
 
 export function DeleteRatingDialog({ isOpen, onClose, id, onSuccess }: Props) {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const {
     mutateAsync: deleteRating,
     isPending,
     error,
-  } = trpc.rating.deleteRating.useMutation({
+  } = useMutation(trpc.rating.deleteRating.mutationOptions({
     onSuccess() {
-      utils.rating.ratings.invalidate();
+      queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
     },
-  });
+  }));
 
   const onDelete = async () => {
     await deleteRating({ ratingId: id ?? "" });

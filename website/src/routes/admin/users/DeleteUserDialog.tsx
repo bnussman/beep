@@ -1,5 +1,5 @@
 import React from "react";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { useRouter } from "@tanstack/react-router";
 import Dialog from "@mui/material/Dialog";
 import {
@@ -10,6 +10,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+
 interface Props {
   userId: string;
   isOpen: boolean;
@@ -17,12 +19,13 @@ interface Props {
 }
 
 export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
+  const trpc = useTRPC();
   const router = useRouter();
   const {
     mutateAsync: deleteUser,
     isPending,
     error,
-  } = trpc.user.deleteUser.useMutation();
+  } = useMutation(trpc.user.deleteUser.mutationOptions());
 
   const onDelete = async () => {
     await deleteUser(userId);

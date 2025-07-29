@@ -9,7 +9,7 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { useNotifications } from "@toolpad/core";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import {
@@ -24,6 +24,9 @@ import {
   Paper,
   TableBody,
 } from "@mui/material";
+
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export const ratingsRoute = createRoute({
   path: "ratings",
@@ -40,22 +43,23 @@ export const ratingsListRoute = createRoute({
 });
 
 export function Ratings() {
+  const trpc = useTRPC();
   const { page } = ratingsListRoute.useSearch();
 
   const navigate = useNavigate({ from: ratingsListRoute.id });
 
   const notifications = useNotifications();
 
-  const { data, isLoading, error } = trpc.rating.ratings.useQuery(
+  const { data, isLoading, error } = useQuery(trpc.rating.ratings.queryOptions(
     {
       cursor: page,
     },
     { placeholderData: keepPreviousData },
-  );
+  ));
 
   const [selectedRatingId, setSelectedRatingId] = useState<string>();
 
-  const { mutate, isPending } = trpc.user.reconcileUserRatings.useMutation({
+  const { mutate, isPending } = useMutation(trpc.user.reconcileUserRatings.mutationOptions({
     onSuccess(count) {
       notifications.show(
         `Successfully reconciled user ratings. ${count} user ratings were updated`,
@@ -69,7 +73,7 @@ export function Ratings() {
         severity: "error",
       });
     },
-  });
+  }));
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });

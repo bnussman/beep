@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Indicator } from "./Indicator";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { PaginationFooter } from "./PaginationFooter";
 import { TableLoading } from "./TableLoading";
 import { TableCellUser } from "./TableCellUser";
@@ -22,6 +22,8 @@ import {
 } from "@mui/material";
 import { DateTime } from "luxon";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const reportsTableRoute = createRoute({
   component: ReportsTable,
   path: "reports",
@@ -29,16 +31,17 @@ export const reportsTableRoute = createRoute({
 });
 
 export function ReportsTable() {
+  const trpc = useTRPC();
   const { userId } = reportsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedReportId, setSelectedReportId] = useState<string>();
 
-  const { data, isLoading, error } = trpc.report.reports.useQuery({
+  const { data, isLoading, error } = useQuery(trpc.report.reports.queryOptions({
     userId,
     page: currentPage,
     pageSize: 10,
-  });
+  }));
 
   return (
     <Stack spacing={1}>

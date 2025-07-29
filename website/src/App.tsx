@@ -16,12 +16,12 @@ export function App() {
       <NotificationsProvider
         slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
       >
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             <CssBaseline enableColorScheme />
             <RouterProvider router={router} />
           </QueryClientProvider>
-        </trpc.Provider>
+        </TRPCProvider>
       </NotificationsProvider>
     </ThemeProvider>
   );

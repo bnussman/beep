@@ -2,7 +2,7 @@ import React from "react";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
-import { RouterOutput, trpc } from "../../../utils/trpc";
+import { RouterOutput, useTRPC } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
@@ -21,6 +21,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+
+import { useQuery } from "@tanstack/react-query";
 
 export const beepStatusMap: Record<
   RouterOutput["beep"]["beep"]["status"],
@@ -53,10 +55,11 @@ export const beepsListRoute = createRoute({
 });
 
 export function Beeps() {
+  const trpc = useTRPC();
   const { page } = beepsListRoute.useSearch();
   const navigate = useNavigate({ from: beepsListRoute.id });
 
-  const { data, isLoading, error } = trpc.beep.beeps.useQuery(
+  const { data, isLoading, error } = useQuery(trpc.beep.beeps.queryOptions(
     {
       page,
     },
@@ -65,7 +68,7 @@ export function Beeps() {
       refetchOnMount: true,
       placeholderData: keepPreviousData,
     },
-  );
+  ));
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { Loading } from "../../../components/Loading";
 import { ClearQueueDialog } from "../../../components/ClearQueueDialog";
 import { SendNotificationDialog } from "../../../components/SendNotificationDialog";
@@ -20,6 +20,11 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 const tabs = [
   "details",
   "location",
@@ -38,21 +43,22 @@ export const userRoute = createRoute({
 });
 
 export function User() {
+  const trpc = useTRPC();
   const { userId } = userRoute.useParams();
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
   const notifications = useNotifications();
 
-  const { data: user, isLoading, error } = trpc.user.user.useQuery(userId);
+  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
 
-  trpc.user.updates.useSubscription(userId, {
+  useSubscription(trpc.user.updates.subscriptionOptions(userId, {
     onData(user) {
-      utils.user.user.setData(userId, user);
+      queryClient.setQueryData(trpc.user.user.queryKey(userId), user);
     },
-  });
+  }));
 
   const { mutate: syncPayments, isPending: isSyncingPayments } =
-    trpc.user.syncPayments.useMutation({
+    useMutation(trpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments) {
         notifications.show(
           `Payments synced. The user has ${activePayments.length} active payments.`,
@@ -64,17 +70,17 @@ export function User() {
       onError(error) {
         notifications.show(error.message, { severity: "error" });
       },
-    });
+    }));
 
   const { mutate: updateUser, isPending: isVerifyLoading } =
-    trpc.user.editAdmin.useMutation({
+    useMutation(trpc.user.editAdmin.mutationOptions({
       onSuccess() {
         notifications.show("User verified", { severity: "success" });
       },
       onError(error) {
         notifications.show(error.message, { severity: "error" });
       },
-    });
+    }));
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 

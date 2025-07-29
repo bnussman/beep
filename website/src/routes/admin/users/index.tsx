@@ -18,12 +18,14 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, Link as RouterLink, useNavigate } from "@tanstack/react-router";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { usersRoute } from "./routes";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
+
+import { useQuery } from "@tanstack/react-query";
 
 export interface PaginationSearchParams {
   page: number;
@@ -43,18 +45,19 @@ export const usersListRoute = createRoute({
 });
 
 function Users() {
+  const trpc = useTRPC();
   const PAGE_SIZE = 20;
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
 
-  const { isLoading, isFetching, error, data } = trpc.user.users.useQuery(
+  const { isLoading, isFetching, error, data } = useQuery(trpc.user.users.queryOptions(
     {
       page,
       pageSize: PAGE_SIZE,
       query: !query ? undefined : query,
     },
     { placeholderData: keepPreviousData },
-  );
+  ));
 
   const setCurrentPage = (event: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: (prev) => ({ ...prev, page }) });

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RouterOutput, trpc } from "../../../utils/trpc";
+import { RouterOutput, useTRPC } from "../../../utils/trpc";
 import {
   Alert,
   Button,
@@ -10,6 +10,9 @@ import {
   TextField,
 } from "@mui/material";
 
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 interface Props {
   isOpen: boolean;
   car: RouterOutput["car"]["cars"]["cars"][number] | undefined;
@@ -17,9 +20,10 @@ interface Props {
 }
 
 export function DeleteCarDialog(props: Props) {
+  const trpc = useTRPC();
   const { isOpen, onClose, car } = props;
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const [reason, setReason] = useState("");
 
@@ -28,7 +32,7 @@ export function DeleteCarDialog(props: Props) {
     isPending,
     error,
     reset,
-  } = trpc.car.deleteCar.useMutation();
+  } = useMutation(trpc.car.deleteCar.mutationOptions());
 
   const handleClose = () => {
     reset();
@@ -38,7 +42,7 @@ export function DeleteCarDialog(props: Props) {
   const doDelete = () => {
     deleteCar({ carId: car?.id ?? "", reason }).then(() => {
       onClose();
-      utils.car.cars.invalidate();
+      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
     });
   };
 

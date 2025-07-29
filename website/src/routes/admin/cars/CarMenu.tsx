@@ -1,8 +1,11 @@
 import React from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { trpc } from "../../../utils/trpc";
+import { useTRPC } from "../../../utils/trpc";
 import { useNotifications } from "@toolpad/core";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   carId: string;
@@ -10,10 +13,11 @@ interface Props {
 }
 
 export function CarMenu(props: Props) {
+  const trpc = useTRPC();
   const { carId, onDelete } = props;
 
   const notifications = useNotifications();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -25,16 +29,16 @@ export function CarMenu(props: Props) {
   };
 
 
-  const { mutateAsync: updateCar } = trpc.car.updateCar.useMutation({
+  const { mutateAsync: updateCar } = useMutation(trpc.car.updateCar.mutationOptions({
     onSuccess() {
-      utils.car.cars.invalidate();
+      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
       notifications.show("Sucessfully made car default for user", { severity: 'success' });
       handleClose();
     },
     onError(error) {
       notifications.show(error.message, { severity: 'error' });
     }
-  });
+  }));
 
   return (
     <>

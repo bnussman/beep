@@ -3,11 +3,15 @@ import { Paper, Box, Link, Typography, Stack, Table, TableBody, TableHead, Table
 import { BeepersMap } from './BeepersMap';
 import { createRoute, Link as RouterLink } from '@tanstack/react-router';
 import { adminRoute } from '..';
-import { trpc } from '../../../utils/trpc';
+import { useTRPC } from '../../../utils/trpc';
 import { printStars } from '../ratings';
 import { TableEmpty } from '../../../components/TableEmpty';
 import { TableError } from '../../../components/TableError';
 import { TableLoading } from '../../../components/TableLoading';
+
+import { useQuery } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const beepersRoute = createRoute({
   component: Beepers,
@@ -16,11 +20,12 @@ export const beepersRoute = createRoute({
 });
 
 export function Beepers() {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = trpc.rider.beepers.useQuery();
+  const { data, isLoading, error } = useQuery(trpc.rider.beepers.queryOptions());
 
-  trpc.rider.beepersLocations.useSubscription(
+  useSubscription(trpc.rider.beepersLocations.subscriptionOptions(
     {
       longitude: 0,
       latitude: 0,
@@ -29,7 +34,7 @@ export function Beepers() {
     {
       enabled: location !== undefined,
       onData(locationUpdate) {
-        utils.rider.beepers.setData(undefined, (oldUsers) => {
+        queryClient.setQueryData(trpc.rider.beepers.queryKey(), (oldUsers) => {
           if (!oldUsers)  {
             return undefined;
           }
@@ -46,7 +51,7 @@ export function Beepers() {
         })
       }
     }
-  );
+  ));
 
   return (
     <Box>

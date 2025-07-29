@@ -1,15 +1,19 @@
 import React from "react";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { Alert, Button } from "@mui/material";
 import { useNotifications } from "@toolpad/core";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+
 export function Banners() {
-  const { data: user } = trpc.user.me.useQuery(undefined, {
+  const trpc = useTRPC();
+  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, {
     retry: false,
     enabled: false,
-  });
+  }));
 
-  const { mutate: resend, isPending } = trpc.auth.resendVerification.useMutation({
+  const { mutate: resend, isPending } = useMutation(trpc.auth.resendVerification.mutationOptions({
     onSuccess() {
       notifications.show("Successfully resent verification email.", {
         severity: "success",
@@ -18,7 +22,7 @@ export function Banners() {
     onError(error) {
       notifications.show(error.message, { severity: "error" });
     },
-  });
+  }));
 
   const notifications = useNotifications();
 

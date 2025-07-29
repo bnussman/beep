@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import {
   Alert,
   Box,
@@ -12,6 +12,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
+
+import { useMutation } from "@tanstack/react-query";
 
 export const changePasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -25,6 +27,7 @@ interface Values {
 }
 
 export function ChangePassword() {
+  const trpc = useTRPC();
   const form = useForm<Values>({
     defaultValues: {
       password: "",
@@ -44,7 +47,7 @@ export function ChangePassword() {
   const {
     mutateAsync: changePassword,
     data,
-  } = trpc.auth.changePassword.useMutation({
+  } = useMutation(trpc.auth.changePassword.mutationOptions({
     onError(error) {
       if (error.data?.fieldErrors) {
         for (const field in error.data?.fieldErrors) {
@@ -56,7 +59,7 @@ export function ChangePassword() {
         form.setError("root", { message: error.message });
       }
     },
-  });
+  }));
 
   const onSubmit = async (values: Values) => {
     await changePassword(values);

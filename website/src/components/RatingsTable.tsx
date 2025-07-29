@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { printStars } from "../routes/admin/ratings";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
-import { trpc } from "../utils/trpc";
+import { useTRPC } from "../utils/trpc";
 import { PaginationFooter } from "./PaginationFooter";
 import { TableCellUser } from "./TableCellUser";
 import { TableLoading } from "./TableLoading";
@@ -22,6 +22,8 @@ import {
 } from "@mui/material";
 import { DateTime } from "luxon";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const ratingsTableRoute = createRoute({
   component: RatingsTable,
   path: "ratings",
@@ -29,16 +31,17 @@ export const ratingsTableRoute = createRoute({
 });
 
 export function RatingsTable() {
+  const trpc = useTRPC();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedRatingId, setSelectedRatingId] = useState<string>();
 
   const { userId } = ratingsTableRoute.useParams();
 
-  const { data, isLoading, error } = trpc.rating.ratings.useQuery({
+  const { data, isLoading, error } = useQuery(trpc.rating.ratings.queryOptions({
     userId,
     cursor: currentPage,
     pageSize: 10,
-  });
+  }));
 
   return (
     <Stack spacing={1}>

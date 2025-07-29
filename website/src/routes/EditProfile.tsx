@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
-import { RouterInput, trpc } from "../utils/trpc";
+import { RouterInput, useTRPC } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
 import { useNotifications } from "@toolpad/core";
 import {
@@ -16,6 +16,9 @@ import {
   Box,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+
 type Values = RouterInput["user"]["edit"];
 
 export const editProfileRoute = createRoute({
@@ -25,7 +28,8 @@ export const editProfileRoute = createRoute({
 });
 
 export function EditProfile() {
-  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
+  const trpc = useTRPC();
+  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
   const notifications = useNotifications();
 
   const {
@@ -54,7 +58,7 @@ export function EditProfile() {
       : undefined,
   });
 
-  const { mutateAsync } = trpc.user.edit.useMutation({
+  const { mutateAsync } = useMutation(trpc.user.edit.mutationOptions({
     onError(error) {
       if (error.data?.fieldErrors) {
         for (const field in error.data?.fieldErrors) {
@@ -66,13 +70,13 @@ export function EditProfile() {
         setError("root", { message: error.message });
       }
     },
-  });
+  }));
 
   const {
     mutateAsync: uploadPicture,
     isPending: isUploadPending,
     error: uploadError,
-  } = trpc.user.updatePicture.useMutation({
+  } = useMutation(trpc.user.updatePicture.mutationOptions({
     onSuccess() {
       notifications.show("Successfully updated profile picture", {
         severity: "success",
@@ -83,7 +87,7 @@ export function EditProfile() {
         severity: "error",
       });
     }
-  });
+  }));
 
   const onSubmit = handleSubmit(async (variables) => {
     await mutateAsync(variables);

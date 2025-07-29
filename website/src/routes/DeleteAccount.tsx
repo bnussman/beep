@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNotifications } from "@toolpad/core";
-import { queryClient, trpc } from "../utils/trpc";
+import { queryClient, useTRPC } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
 import {
   Link as RouterLink,
@@ -20,6 +20,9 @@ import {
   Box,
 } from "@mui/material";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+
 export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/account/delete",
@@ -27,12 +30,13 @@ export const deleteAccountRoute = createRoute({
 });
 
 function DeleteAccount() {
-  const { data: user } = trpc.user.me.useQuery(undefined, { enabled: false });
+  const trpc = useTRPC();
+  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
   const {
     mutateAsync: deleteAccount,
     isPending,
     error,
-  } = trpc.user.deleteMyAccount.useMutation();
+  } = useMutation(trpc.user.deleteMyAccount.mutationOptions());
 
   const notifications = useNotifications();
   const navigate = useNavigate();
