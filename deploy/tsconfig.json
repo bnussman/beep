@@ -1,17 +1,11 @@
 {
   "compilerOptions": {
     "strict": true,
-    "outDir": "bin",
-    "target": "es2020",
-    "module": "commonjs",
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "experimentalDecorators": true,
-    "pretty": true,
     "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "forceConsistentCasingInFileNames": true
+    "noEmit": true
   },
   "files": [
     "index.ts"
