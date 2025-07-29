@@ -32,7 +32,7 @@ export function ClearQueueDialog(props: Props) {
 
   const { mutate, isPending, error } = useMutation(trpc.beep.clearQueue.mutationOptions({
     onSuccess() {
-      queryClient.invalidateQueries(trpc.beeper.queue.invalidate(userId));
+      queryClient.invalidateQueries(trpc.beeper.queue.queryFilter(userId));
 
       const message =  stopBeeping ? "Users's queue has been cleared and they are not longer beepering." : "User's queue has been cleared.";
 

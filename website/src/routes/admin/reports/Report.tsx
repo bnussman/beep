@@ -46,7 +46,7 @@ export function Report() {
     error: updateError,
   } = useMutation(trpc.report.updateReport.mutationOptions({
     onSuccess(report) {
-      queryClient.invalidateQueries(trpc.report.report.invalidate(reportId));
+      queryClient.invalidateQueries(trpc.report.report.queryFilter(reportId));
       queryClient.invalidateQueries(trpc.report.reports.pathFilter());
     },
   }));
