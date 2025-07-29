@@ -13,14 +13,19 @@ import { View } from "react-native";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import * as ContextMenu from "zeego/context-menu";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 export function Cars() {
+  const trpc = useTRPC();
   const navigation = useNavigation();
   const { user } = useUser();
 
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
   const {
     data,
     isLoading,
@@ -29,7 +34,7 @@ export function Cars() {
     isFetchingNextPage,
     fetchNextPage,
     isRefetching,
-  } = trpc.car.cars.useInfiniteQuery(
+  } = useInfiniteQuery(trpc.car.cars.infiniteQueryOptions(
     {
       userId: user?.id,
       pageSize: PAGE_SIZE,
@@ -43,18 +48,18 @@ export function Cars() {
         return page.page + 1;
       },
     },
-  );
+  ));
 
-  const { mutateAsync: deleteCar } = trpc.car.deleteCar.useMutation({
+  const { mutateAsync: deleteCar } = useMutation(trpc.car.deleteCar.mutationOptions({
     onSuccess() {
-      utils.car.cars.invalidate();
+      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
     },
-  });
+  }));
 
-  const { mutateAsync: updateCar } = trpc.car.updateCar.useMutation({
+  const { mutateAsync: updateCar } = useMutation(trpc.car.updateCar.mutationOptions({
     onMutate(vars) {
-      utils.car.cars.setInfiniteData(
-        { userId: user?.id, pageSize: PAGE_SIZE },
+      queryClient.setQueryData(
+        trpc.car.cars.infiniteQueryKey({ userId: user?.id, pageSize: PAGE_SIZE }),
         (oldData) => {
           if (!oldData) {
             return undefined;
@@ -67,10 +72,10 @@ export function Cars() {
           }
 
           return oldData;
-        },
+        }
       );
     },
-  });
+  }));
 
   const cars = data?.pages.flatMap((page) => page.cars);
 

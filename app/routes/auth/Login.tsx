@@ -13,14 +13,18 @@ import { Logger } from "../../utils/logger";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
-import { RouterInput, trpc } from "@/utils/trpc";
+import { RouterInput, useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Values = RouterInput['auth']['login'];
 
 export function LoginScreen() {
-  const utils = trpc.useUtils();
-  const { mutateAsync: login, error } = trpc.auth.login.useMutation();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { mutateAsync: login, error } = useMutation(trpc.auth.login.mutationOptions());
 
   const validationErrors = error?.data?.fieldErrors;
 
@@ -59,7 +63,7 @@ export function LoginScreen() {
 
       await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-      utils.user.me.setData(undefined, data.user);
+      queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
 
     } catch (error) {
       alert((error as TRPCClientError<any>).message);

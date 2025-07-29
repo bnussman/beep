@@ -9,9 +9,12 @@ import { Text } from "@/components/Text";
 import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
+
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 export function BeepsScreen() {
+  const trpc = useTRPC();
   const { user } = useUser();
 
   const {
@@ -22,7 +25,7 @@ export function BeepsScreen() {
     isRefetching,
     fetchNextPage,
     isFetchingNextPage,
-  } = trpc.beep.beeps.useInfiniteQuery(
+  } = useInfiniteQuery(trpc.beep.beeps.infiniteQueryOptions(
     {
       userId: user?.id,
       pageSize: PAGE_SIZE
@@ -36,7 +39,7 @@ export function BeepsScreen() {
         return page.page + 1;
       }
     }
-  );
+  ));
 
   const beeps = data?.pages.flatMap((page) => page.beeps);
 

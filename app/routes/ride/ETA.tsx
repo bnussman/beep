@@ -1,8 +1,10 @@
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
 import { useLocation } from "@/utils/location";
 import { ActivityIndicator } from 'react-native';
+
+import { useQuery } from "@tanstack/react-query";
 
 interface Location {
   latitude: number;
@@ -14,10 +16,11 @@ interface Props {
 }
 
 export function ETA(props: Props) {
+  const trpc = useTRPC();
   const { beeperLocation } = props;
   const { location } = useLocation();
 
-  const { data, error, isLoading } = trpc.location.getETA.useQuery(
+  const { data, error, isLoading } = useQuery(trpc.location.getETA.queryOptions(
     {
       start: `${beeperLocation?.longitude},${beeperLocation?.latitude}`,
       end: `${location?.coords.longitude},${location?.coords.latitude}`,
@@ -25,7 +28,7 @@ export function ETA(props: Props) {
     {
       enabled: Boolean(beeperLocation) && Boolean(location)
     },
-  );
+  ));
 
   const renderContent = () => {
     if (isLoading) {

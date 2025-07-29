@@ -14,7 +14,10 @@ import PremiumImage from "../assets/premium.png";
 import { Logger } from "../utils/logger";
 import { Countdown } from "../components/CountDown";
 import { FlatList, RefreshControl } from "react-native";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   item: PurchasesOffering;
@@ -52,9 +55,10 @@ function Offering({ item, disabled }: Props) {
 }
 
 function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
+  const trpc = useTRPC();
   const [isPurchasing, setIsPurchasing] = useState(false);
 
-  const { mutateAsync: checkVerificationStatus } = trpc.user.syncMyPayments.useMutation();
+  const { mutateAsync: checkVerificationStatus } = useMutation(trpc.user.syncMyPayments.mutationOptions());
 
   const { data, refetch } = useActivePayments();
 
@@ -216,7 +220,8 @@ export function Premium() {
 
 
 export function useActivePayments() {
-  const query = trpc.payment.activePayments.useQuery(undefined, {
+  const trpc = useTRPC();
+  const query = useQuery(trpc.payment.activePayments.queryOptions(undefined, {
     // Refetches payments when the user's first payment expires so the UI updates
     // to reflect that their premium expired
     refetchInterval(query) {
@@ -236,7 +241,7 @@ export function useActivePayments() {
 
       return false;
     },
-  });
+  }));
 
   return query;
 }

@@ -13,16 +13,22 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { basicTrpcClient, trpc } from "@/utils/trpc";
+import { basicTrpcClient, useTRPC } from "@/utils/trpc";
 import { PremiumBanner } from "./PremiumBanner";
 import { LOCATION_TRACKING, startLocationTracking, stopLocationTracking, useLocationPermissions } from "@/utils/location";
 import { Controller, useForm } from "react-hook-form";
 
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useSubscription } from "@trpc/tanstack-react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
 export function StartBeepingScreen() {
+  const trpc = useTRPC();
   const { user } = useUser();
 
   const navigation = useNavigation();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const form = useForm({
     values: {
@@ -38,20 +44,20 @@ export function StartBeepingScreen() {
     data: queue,
     refetch,
     isRefetching,
-  } = trpc.beeper.queue.useQuery(undefined, {
+  } = useQuery(trpc.beeper.queue.queryOptions(undefined, {
     enabled: user && user.isBeeping
-  });
+  }));
 
-  trpc.beeper.watchQueue.useSubscription(undefined, {
+  useSubscription(trpc.beeper.watchQueue.subscriptionOptions(undefined, {
     onData(data) {
-      utils.beeper.queue.setData(undefined, data);
+      queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
     },
     enabled: user && user.isBeeping,
-  })
+  }))
 
-  const { mutate: updateBeepSettings } = trpc.user.edit.useMutation({
+  const { mutate: updateBeepSettings } = useMutation(trpc.user.edit.mutationOptions({
     onSuccess(data) {
-      utils.user.me.setData(undefined, data);
+      queryClient.setQueryData(trpc.user.me.queryKey(), data);
     },
     onError(error) {
       const fieldErrors = error.data?.fieldErrors;
@@ -63,7 +69,7 @@ export function StartBeepingScreen() {
         }
       }
     }
-  });
+  }));
 
   const onToggleIsBeeping = (value: boolean) => {
     if (isAndroid && value) {

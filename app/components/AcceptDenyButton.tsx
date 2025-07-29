@@ -1,7 +1,10 @@
 import React from "react";
 import { Button } from "./Button";
-import { RouterOutput, trpc } from "@/utils/trpc";
+import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { PressableProps } from "react-native";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   type: "accept" | "deny";
@@ -10,16 +13,17 @@ interface Props {
 }
 
 export function AcceptDenyButton(props: Props) {
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
-  const { mutate, isPending } = trpc.beeper.updateBeep.useMutation({
+  const { mutate, isPending } = useMutation(trpc.beeper.updateBeep.mutationOptions({
     onSuccess(data) {
-      utils.beeper.queue.setData(undefined, data);
+      queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
     },
     onError(error) {
       alert(error.message);
     }
-  });
+  }));
 
   const isAccept = props.type === "accept";
 

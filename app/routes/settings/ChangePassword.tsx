@@ -3,10 +3,13 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
 import type { TextInput } from "react-native";
 
+import { useMutation } from "@tanstack/react-query";
+
 export function ChangePasswordScreen() {
+  const trpc = useTRPC();
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const confirmPasswordRef = useRef<TextInput>(null);
@@ -14,7 +17,7 @@ export function ChangePasswordScreen() {
   const {
     mutateAsync: changePassword,
     isPending
-  } = trpc.auth.changePassword.useMutation({
+  } = useMutation(trpc.auth.changePassword.mutationOptions({
     onSuccess() {
       alert("Successfully changed password.");
       setPassword("");
@@ -23,7 +26,7 @@ export function ChangePasswordScreen() {
     onError(error) {
       alert(error.message)
     }
-  });
+  }));
 
   const handlePasswordChange = () => {
     if (password !== confirmPassword) {

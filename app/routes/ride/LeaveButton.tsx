@@ -2,23 +2,27 @@ import React, { useState } from "react";
 import { Alert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { Button } from "@/components/Button";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   beepersId: string;
 }
 
 export function LeaveButton(props: Props) {
+  const trpc = useTRPC();
   const { beepersId } = props;
-  const utils = trpc.useUtils();
-  const { mutate, isPending } = trpc.rider.leaveQueue.useMutation({
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation(trpc.rider.leaveQueue.mutationOptions({
     onSuccess() {
-      utils.rider.currentRide.setData(undefined, null);
+      queryClient.setQueryData(trpc.rider.currentRide.queryKey(), null);
     },
     onError(error) {
       alert(error.message);
     }
-  });
+  }));
 
   function leaveQueueWrapper(): void {
     if (isMobile) {

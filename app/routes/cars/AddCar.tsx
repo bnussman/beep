@@ -13,9 +13,12 @@ import { generateRNFile } from "../settings/EditProfile";
 import { getMakes, getModels } from "car-info";
 import { colors, years } from "./utils";
 import { Pressable, View } from "react-native";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { useTheme } from "@/utils/theme";
+
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const makes = getMakes();
 
@@ -27,9 +30,10 @@ interface Values {
   model: string;
   color: string;
   photo: any;
-};
+}
 
 export function AddCar() {
+  const trpc = useTRPC();
   const navigation = useNavigation();
 
   const {
@@ -44,8 +48,8 @@ export function AddCar() {
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
   const models = getModels(make)
 
-  const utils = trpc.useUtils();
-  const { mutateAsync: addCar, error } = trpc.car.createCar.useMutation();
+  const queryClient = useQueryClient();
+  const { mutateAsync: addCar, error } = useMutation(trpc.car.createCar.mutationOptions());
 
   const validationErrors = error?.data?.fieldErrors;
 
@@ -91,7 +95,7 @@ export function AddCar() {
     try {
       await addCar(formData);
 
-      utils.car.invalidate();
+      queryClient.invalidateQueries(trpc.car.pathFilter());
 
       navigation.goBack();
     } catch (error) {

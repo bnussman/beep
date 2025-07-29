@@ -2,8 +2,16 @@ import * as Sentry from '@sentry/react-native';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { QueryClient } from '@tanstack/react-query';
-import { createTRPCClient, createWSClient, httpBatchLink, httpLink, splitLink, wsLink } from '@trpc/client';
-import { createTRPCReact } from '@trpc/react-query';
+import {
+  createTRPCClient,
+  createWSClient,
+  httpBatchLink,
+  httpLink,
+  splitLink,
+  wsLink,
+  createTRPCClient,
+} from '@trpc/client';
+import { createTRPCContext } from "@trpc/tanstack-react-query";
 import { isWeb } from './constants';
 import type { AppRouter } from '../../api';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
@@ -11,7 +19,10 @@ import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
 
-export const trpc = createTRPCReact<AppRouter>();
+export const {
+  TRPCProvider,
+  useTRPC
+} = createTRPCContext<AppRouter>();
 
 function getLocalIP() {
   if (isWeb) {
@@ -84,7 +95,7 @@ const trpcHttpLink = httpLink({
   }
 });
 
-export const trpcClient = trpc.createClient({
+export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     splitLink<AppRouter>({
       condition: (op) => op.type === 'subscription',

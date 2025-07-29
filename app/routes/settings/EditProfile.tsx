@@ -15,9 +15,11 @@ import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { queryClient, trpc } from "@/utils/trpc";
+import { queryClient, useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { LOCATION_TRACKING } from "@/utils/location";
+
+import { useMutation } from "@tanstack/react-query";
 
 export class ReactNativeFile {
   uri: string;
@@ -40,6 +42,7 @@ export function generateRNFile(uri: string, name: string) {
 }
 
 export function EditProfileScreen() {
+  const trpc = useTRPC();
   const { user } = useUser();
   const navigation = useNavigation();
 
@@ -55,8 +58,8 @@ export function EditProfileScreen() {
     [user],
   );
 
-  const { mutateAsync: edit, error } = trpc.user.edit.useMutation();
-  const { mutateAsync: deleteAccount }  = trpc.user.deleteMyAccount.useMutation();
+  const { mutateAsync: edit, error } = useMutation(trpc.user.edit.mutationOptions());
+  const { mutateAsync: deleteAccount }  = useMutation(trpc.user.deleteMyAccount.mutationOptions());
 
   const {
     control,
@@ -67,7 +70,7 @@ export function EditProfileScreen() {
 
   const validationErrors = error?.data?.fieldErrors;
 
-  const { mutateAsync: upload, isPending: uploadLoading } = trpc.user.updatePicture.useMutation();
+  const { mutateAsync: upload, isPending: uploadLoading } = useMutation(trpc.user.updatePicture.mutationOptions());
 
   const [photo, setPhoto] = useState<any>();
 

@@ -7,14 +7,17 @@ import { Label } from "@/components/Label";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Linking } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { trpc } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
+
+import { useMutation } from "@tanstack/react-query";
 
 export function Feedback() {
+  const trpc = useTRPC();
   const {
     mutateAsync: createFeedback,
     isPending,
     error
-  } = trpc.feedback.createFeedback.useMutation({
+  } = useMutation(trpc.feedback.createFeedback.mutationOptions({
     onSuccess() {
       Alert.alert(
         "Thank you for your feedback!",
@@ -25,7 +28,7 @@ export function Feedback() {
     onError(error) {
       alert(error.message);
     }
-  });
+  }));
 
   const {
     control,
