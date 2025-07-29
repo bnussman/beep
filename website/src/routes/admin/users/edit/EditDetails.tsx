@@ -49,15 +49,15 @@ export function EditDetails() {
         severity: "success",
       });
     },
-    onError(errors) {
-      if (errors.data?.zodError?.fieldErrors) {
-        for (const field in errors.data?.zodError?.fieldErrors) {
+    onError(error) {
+      if (error.data?.fieldErrors) {
+        for (const field in error.data?.fieldErrors) {
           setError(field as keyof Values, {
-            message: errors.data?.zodError?.fieldErrors[field]?.[0],
+            message: error.data?.fieldErrors[field]?.[0],
           });
         }
       } else {
-        setError("root", { message: errors.message });
+        setError("root", { message: error.message });
       }
     },
   });

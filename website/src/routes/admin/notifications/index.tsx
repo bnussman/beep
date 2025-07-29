@@ -39,10 +39,10 @@ export function Notifications() {
   const { mutateAsync: sendNotification } =
     trpc.notification.sendNotification.useMutation({
       onError(e) {
-        if (e.data?.zodError?.fieldErrors) {
-          for (const key in e.data?.zodError?.fieldErrors ?? {}) {
+        if (e.data?.fieldErrors) {
+          for (const key in e.data?.fieldErrors ?? {}) {
             setError(key as keyof SendNotifictionVariables, {
-              message: e.data?.zodError?.fieldErrors?.[key]?.[0],
+              message: e.data?.fieldErrors?.[key]?.[0],
             });
           }
         } else {

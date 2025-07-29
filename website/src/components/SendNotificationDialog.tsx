@@ -33,18 +33,18 @@ export function SendNotificationDialog(props: Props) {
 
   const { mutateAsync: sendNotification } =
     trpc.notification.sendNotificationToUser.useMutation({
-      onError(errors) {
-        if (errors.data?.zodError?.fieldErrors) {
-          for (const field in errors.data?.zodError?.fieldErrors) {
+      onError(error) {
+        if (error.data?.fieldErrors) {
+          for (const field in error.data?.fieldErrors) {
             form.setError(
               field as keyof RouterInput["notification"]["sendNotificationToUser"],
               {
-                message: errors.data?.zodError?.fieldErrors[field]?.[0],
+                message: error.data?.fieldErrors[field]?.[0],
               },
             );
           }
         } else {
-          form.setError("root", { message: errors.message });
+          form.setError("root", { message: error.message });
         }
       },
     });

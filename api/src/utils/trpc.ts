@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/bun';
 import { TRPCError, inferRouterInputs, initTRPC } from '@trpc/server';
-import { ZodError } from 'zod';
+import z, { ZodError } from 'zod';
 import { AppRouter } from '..';
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from './db';
@@ -14,13 +14,14 @@ import { eq } from 'drizzle-orm';
 const t = initTRPC.context<Context>().create({
   errorFormatter(opts) {
     const { shape, error } = opts;
+
     return {
       ...shape,
       data: {
         ...shape.data,
-        zodError:
+        fieldErrors:
           error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
-            ? error.cause.flatten()
+            ? z.flattenError(error.cause).fieldErrors as Record<string, string[]>
             : null,
       },
     };

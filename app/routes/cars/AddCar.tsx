@@ -47,7 +47,7 @@ export function AddCar() {
   const utils = trpc.useUtils();
   const { mutateAsync: addCar, error } = trpc.car.createCar.useMutation();
 
-  const validationErrors = error?.data?.zodError?.fieldErrors;
+  const validationErrors = error?.data?.fieldErrors;
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({

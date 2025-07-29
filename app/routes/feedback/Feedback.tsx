@@ -36,7 +36,7 @@ export function Feedback() {
     defaultValues: { message: "" }
   });
 
-  const validationErrors = error?.data?.zodError?.fieldErrors;
+  const validationErrors = error?.data?.fieldErrors;
 
   const onSubmit = handleSubmit((values) => createFeedback(values));
 

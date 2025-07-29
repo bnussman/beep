@@ -40,12 +40,12 @@ export function SignUpScreen() {
 
   const { mutateAsync: signup } = trpc.auth.signup.useMutation({
     onError(error) {
-      const fieldErrors = error.data?.zodError?.fieldErrors;
+      const fieldErrors = error.data?.fieldErrors;
       if (!fieldErrors) {
         alert(error.message);
       } else {
         for (const key in fieldErrors) {
-          setError(key as keyof Values, { message: fieldErrors[key as keyof Values]?.[0] });
+          setError(key as keyof Values, { message: fieldErrors[key]?.[0] });
         }
       }
     }

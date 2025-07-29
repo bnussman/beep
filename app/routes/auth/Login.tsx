@@ -22,7 +22,7 @@ export function LoginScreen() {
   const utils = trpc.useUtils();
   const { mutateAsync: login, error } = trpc.auth.login.useMutation();
 
-  const validationErrors = error?.data?.zodError?.fieldErrors;
+  const validationErrors = error?.data?.fieldErrors;
 
   const navigation = useNavigation();
 

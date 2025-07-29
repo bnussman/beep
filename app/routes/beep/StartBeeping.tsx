@@ -53,8 +53,8 @@ export function StartBeepingScreen() {
     onSuccess(data) {
       utils.user.me.setData(undefined, data);
     },
-    onError(error, variables) {
-      const fieldErrors = error.data?.zodError?.fieldErrors;
+    onError(error) {
+      const fieldErrors = error.data?.fieldErrors;
       if (!fieldErrors) {
         alert(error.message);
       } else {

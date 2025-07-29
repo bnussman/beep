@@ -65,7 +65,7 @@ export function EditProfileScreen() {
     formState: { errors, isDirty, isSubmitting },
   } = useForm({ defaultValues: values, values });
 
-  const validationErrors = error?.data?.zodError?.fieldErrors;
+  const validationErrors = error?.data?.fieldErrors;
 
   const { mutateAsync: upload, isPending: uploadLoading } = trpc.user.updatePicture.useMutation();
 
