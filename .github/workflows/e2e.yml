@@ -22,9 +22,6 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         cache: pnpm
-    - uses: oven-sh/setup-bun@v1
-      with:
-        bun-version: latest
     - run: docker compose up -d
     - run: pnpm i --frozen-lockfile
     - run: pnpm drizzle-kit push --force
