@@ -15,10 +15,10 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.54.0-noble
     steps:
     - uses: actions/checkout@v4
-    - run: apt install sudo
-    - uses: docker/setup-docker-action@v4
-      with: 
-        rootless: true
+    - run: apt install docker
+    # - uses: docker/setup-docker-action@v4
+    #   with: 
+    #     rootless: true
     - uses: pnpm/action-setup@v4
       with:
         version: latest
