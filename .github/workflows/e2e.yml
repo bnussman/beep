@@ -11,8 +11,6 @@ jobs:
   test:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.54.0-noble
     steps:
     - uses: actions/checkout@v4
     - uses: pnpm/action-setup@v4
@@ -26,8 +24,11 @@ jobs:
     - run: pnpm i --frozen-lockfile
     - run: pnpm drizzle-kit push --force
       working-directory: ./api
-    - name: Run Playwright tests
-      uses: docker://mcr.microsoft.com/playwright:v1.34.3-jammy
-      working-directory: ./test
+    - run: pnpm --filter @beep/test test
+      uses: docker://mcr.microsoft.com/playwright:v1.54.0-noble
+    - uses: actions/upload-artifact@v4
+      if: always()
       with:
-        args: npx playwright test 
+        name: playwright-report
+        path: test/playwright-report/
+        retention-days: 10
