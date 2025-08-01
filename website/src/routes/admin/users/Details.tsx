@@ -53,12 +53,7 @@ export function Details() {
       <Box>
         <strong>Rating:</strong>
         {user.rating ? (
-          <Tooltip
-            title={user.rating}
-            aria-label={`User rating of ${user.rating}`}
-          >
-            <Typography>{printStars(Number(user.rating))}</Typography>
-          </Tooltip>
+          <Typography>{printStars(Number(user.rating))} ({user.rating})</Typography>
         ) : (
           <Typography>No Rating</Typography>
         )}
