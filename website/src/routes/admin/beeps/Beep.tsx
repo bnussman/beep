@@ -34,8 +34,8 @@ export function Beep() {
   return (
     <Stack spacing={2}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography>Beep</Typography>
-        <Button color="error" onClick={() => setIsOpen(true)}>
+        <Typography variant="h4" fontWeight="bold">Beep</Typography>
+        <Button variant="contained" color="error" onClick={() => setIsOpen(true)}>
           Delete
         </Button>
       </Stack>
@@ -43,37 +43,38 @@ export function Beep() {
         title="Map"
         width="100%"
         height="300"
+        style={{ borderRadius: 15 }}
         src={`https://www.google.com/maps/embed/v1/directions?key=${import.meta.env.VITE_GOOGLE_API_KEY}&origin=${beep.origin}&destination=${beep.destination}`}
       />
       <Box>
-        <Typography>Beeper</Typography>
+        <Typography><b>Beeper</b></Typography>
         <BasicUser user={beep.beeper} />
       </Box>
       <Box>
-        <Typography>Rider</Typography>
+        <Typography><b>Rider</b></Typography>
         <BasicUser user={beep.rider} />
       </Box>
       <Box>
-        <Typography>Origin</Typography>
-        <Typography>{beep.origin}</Typography>
+        <Typography><b>Origin</b></Typography>
+        <Typography><b>{beep.origin}</b></Typography>
       </Box>
       <Box>
-        <Typography>Destination</Typography>
+        <Typography><b>Destination</b></Typography>
         <Typography>{beep.destination}</Typography>
       </Box>
       <Box>
-        <Typography>Group Size</Typography>
+        <Typography><b>Group Size</b></Typography>
         <Typography>{beep.groupSize}</Typography>
       </Box>
       <Box>
-        <Typography>Beep Started</Typography>
+        <Typography><b>Beep Started</b></Typography>
         <Typography>
           {new Date(beep.start).toLocaleString()} -{" "}
           {DateTime.fromISO(beep.start).toRelative()}
         </Typography>
       </Box>
       <Box>
-        <Typography>Beep Ended</Typography>
+        <Typography><b>Beep Ended</b></Typography>
         {beep.end ? (
           <Typography>
             {new Date(beep.end).toLocaleString()} -{" "}
