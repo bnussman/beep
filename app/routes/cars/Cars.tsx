@@ -16,7 +16,7 @@ import * as ContextMenu from "zeego/context-menu";
 import { useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -40,6 +40,7 @@ export function Cars() {
       pageSize: PAGE_SIZE,
     },
     {
+      placeholderData: keepPreviousData,
       initialCursor: 1,
       getNextPageParam(page) {
         if (page.page === page.pages) {
@@ -57,23 +58,8 @@ export function Cars() {
   }));
 
   const { mutateAsync: updateCar } = useMutation(trpc.car.updateCar.mutationOptions({
-    onMutate(vars) {
-      queryClient.setQueryData(
-        trpc.car.cars.infiniteQueryKey({ userId: user?.id, pageSize: PAGE_SIZE }),
-        (oldData) => {
-          if (!oldData) {
-            return undefined;
-          }
-
-          for (const page of oldData.pages) {
-            for (const car of page.cars) {
-              car.default = car.id === vars.carId;
-            }
-          }
-
-          return oldData;
-        }
-      );
+    onSuccess() {
+      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
     },
   }));
 

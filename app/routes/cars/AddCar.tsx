@@ -95,7 +95,7 @@ export function AddCar() {
     try {
       await addCar(formData);
 
-      queryClient.invalidateQueries(trpc.car.pathFilter());
+      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
 
       navigation.goBack();
     } catch (error) {
