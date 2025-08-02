@@ -34,6 +34,10 @@ export function Details() {
     return <Alert severity="error">{error.message}</Alert>;
   }
 
+  const formattedRating = Number(user.rating).toLocaleString("en-US", {
+    maximumFractionDigits: 3,
+  });
+
   return (
     <Stack spacing={2}>
       <Box>
@@ -53,7 +57,7 @@ export function Details() {
       <Box>
         <strong>Rating:</strong>
         {user.rating ? (
-          <Typography>{printStars(Number(user.rating))} ({user.rating})</Typography>
+          <Typography>{printStars(Number(user.rating))} ({formattedRating})</Typography>
         ) : (
           <Typography>No Rating</Typography>
         )}

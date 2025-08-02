@@ -156,7 +156,7 @@ export function Ratings() {
 export function printStars(rating: number): string {
   let stars = "";
 
-  for (let i = 0; i < rating; i++) {
+  for (let i = 0; i < Math.round(rating); i++) {
     stars += "⭐️";
   }
 
