@@ -4,7 +4,6 @@ import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity, View } from "react-native";
 import { getPushToken } from "../../utils/notifications";
 import { isMobile, isSimulator } from "../../utils/constants";
-import { generateRNFile, ReactNativeFile } from "../settings/EditProfile";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "@/components/Avatar";
@@ -14,11 +13,9 @@ import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
 import { useTRPC } from "@/utils/trpc";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-
-let picture: File | ReactNativeFile;
+import { getFile } from "@/utils/files";
 
 interface Values {
   first: string;
@@ -43,6 +40,11 @@ export function SignUpScreen() {
   } = useForm<Values>();
 
   const { mutateAsync: signup } = useMutation(trpc.auth.signup.mutationOptions({
+    async onSuccess(data) {
+      await AsyncStorage.setItem("auth", JSON.stringify(data));
+
+      queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
+    },
     onError(error) {
       const fieldErrors = error.data?.fieldErrors;
       if (!fieldErrors) {
@@ -61,7 +63,9 @@ export function SignUpScreen() {
     const formData = new FormData();
 
     for (const key in variables) {
-      if (key !== 'photo') {
+      if (key === 'photo') {
+        formData.append("photo", await getFile(variables[key as 'photo']) as Blob);
+      } else {
         formData.append(key, variables[key as keyof typeof variables] as string);
       }
     }
@@ -73,13 +77,8 @@ export function SignUpScreen() {
       }
     }
 
-    formData.append("photo", picture as File);
+    await signup(formData).catch();
 
-    const data = await signup(formData);
-
-    await AsyncStorage.setItem("auth", JSON.stringify(data));
-
-    queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
   });
 
   const chooseProfilePhoto = async () => {
@@ -94,21 +93,8 @@ export function SignUpScreen() {
     if (result.canceled) {
       return;
     }
-
-    if (!isMobile) {
-      const res = await fetch(result.assets[0].uri);
-      const blob = await res.blob();
-      const fileType = blob.type.split("/")[1];
-      const file = new File([blob], "photo." + fileType);
-      picture = file;
-      setValue('photo', result.assets[0], { shouldValidate: true });
-    } else {
-      if (!result.canceled) {
-        setValue('photo', result.assets[0], { shouldValidate: true });
-        const file = generateRNFile(result.assets[0].uri, "file.jpg");
-        picture = file;
-      }
-    }
+    
+    setValue('photo', result.assets[0], { shouldValidate: true });
   };
 
   return (

@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as mime from "react-native-mime-types";
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
 import * as DropdownMenu from "zeego/dropdown-menu";
@@ -16,30 +15,9 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { queryClient, useTRPC } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 import { LOCATION_TRACKING } from "@/utils/location";
-
 import { useMutation } from "@tanstack/react-query";
-
-export class ReactNativeFile {
-  uri: string;
-  name: string;
-  type: string;
-
-  constructor({ uri, name, type }: { uri: string, name: string, type: string }) {
-    this.uri = uri;
-    this.name = name;
-    this.type = type;
-  }
-}
-
-export function generateRNFile(uri: string, name: string) {
-  return new ReactNativeFile({
-    uri,
-    type: mime.lookup(uri) || "image",
-    name,
-  });
-}
+import { getFile } from "@/utils/files";
 
 export function EditProfileScreen() {
   const trpc = useTRPC();
@@ -57,22 +35,53 @@ export function EditProfileScreen() {
     }),
     [user],
   );
-
-  const { mutateAsync: edit, error } = useMutation(trpc.user.edit.mutationOptions());
-  const { mutateAsync: deleteAccount }  = useMutation(trpc.user.deleteMyAccount.mutationOptions());
-
+  
   const {
     control,
     handleSubmit,
     setFocus,
+    setError,
     formState: { errors, isDirty, isSubmitting },
   } = useForm({ defaultValues: values, values });
 
-  const validationErrors = error?.data?.fieldErrors;
+  const { mutateAsync: edit } = useMutation(trpc.user.edit.mutationOptions({
+    onError(error) {
+      if (error.data?.fieldErrors) {
+        for (const key in error.data.fieldErrors) {
+          setError(key as keyof typeof errors, { message: error.data.fieldErrors[key][0] });
+        }
+      } else {
+        alert(error.message);
+      }
+    }
+  }));
 
-  const { mutateAsync: upload, isPending: uploadLoading } = useMutation(trpc.user.updatePicture.mutationOptions());
+  const { mutate: deleteAccount }  = useMutation(trpc.user.deleteMyAccount.mutationOptions({
+    onSuccess() {
+      AsyncStorage.clear();
 
-  const [photo, setPhoto] = useState<any>();
+      if (!__DEV__) {
+        Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+      }
+
+      queryClient.resetQueries();
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  }));
+
+  const { mutate: upload, isPending: uploadLoading } = useMutation(trpc.user.updatePicture.mutationOptions({
+    onSuccess() {
+      setPhoto(undefined);
+    },
+    onError(error) {
+      alert(error.message);
+      setPhoto(undefined);
+    },
+  }));
+
+  const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset>();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -115,27 +124,13 @@ export function EditProfileScreen() {
             text: "Cancel",
             style: "cancel",
           },
-          { text: "Delete", onPress: handleDelete, style: "destructive" },
+          { text: "Delete", onPress: () => deleteAccount(), style: "destructive" },
         ],
         { cancelable: true },
       );
     } else {
-      handleDelete();
+      deleteAccount();
     }
-  };
-
-  const handleDelete = () => {
-    deleteAccount()
-      .then(() => {
-        AsyncStorage.clear();
-
-        if (!__DEV__) {
-          Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
-        }
-
-        queryClient.resetQueries();
-      })
-      .catch((error: TRPCClientError<any>) => alert(error.message));
   };
 
   const handleUpdatePhoto = async () => {
@@ -151,46 +146,17 @@ export function EditProfileScreen() {
       return;
     }
 
-    let picture;
-
-    if (isMobile) {
-      setPhoto(result.assets[0]);
-      const fileType = result.assets[0].uri.split(".")[1];
-      const file = generateRNFile(result.assets[0].uri, `file.${fileType}`);
-      picture = file;
-    } else {
-      const res = await fetch(result.assets[0].uri);
-      const blob = await res.blob();
-      const fileType = blob.type.split("/")[1];
-      const file = new File([blob], "photo." + fileType);
-      picture = file;
-      setPhoto(result.assets[0]);
-    }
-
-    if (!picture) {
-      return alert('Error when picking photo');
-    }
+    setPhoto(result.assets[0]);
 
     const formData = new FormData();
 
-    // @ts-expect-error need to fix
-    formData.append('photo', picture);
+    formData.append('photo', await getFile(result.assets[0]) as Blob);
 
-    try {
-      await upload(formData);
-    } catch (error) {
-      alert((error as TRPCClientError<any>).message);
-    }
-
-    setPhoto(undefined);
+    upload(formData);
   };
 
   const onSubmit = handleSubmit(async (variables) => {
-    try {
-      await edit(variables);
-    } catch (error) {
-      alert((error as TRPCClientError<any>).message);
-    }
+    await edit(variables).catch();
   });
 
   return (
@@ -218,7 +184,6 @@ export function EditProfileScreen() {
           />
           <Text color="error">
             {errors.first?.message}
-            {validationErrors?.first?.[0]}
           </Text>
           <Label htmlFor="last">Last Name</Label>
           <Controller
@@ -239,13 +204,12 @@ export function EditProfileScreen() {
               />
             )}
           />
-          <Text>
+          <Text color="error">
             {errors.last?.message}
-            {validationErrors?.last?.[0]}
           </Text>
         </View>
         <Pressable onPress={() => handleUpdatePhoto()}>
-          <Avatar size="xl" src={photo?.uri ?? user?.photo} />
+          <Avatar size="xl" src={photo?.uri ?? user?.photo ?? undefined} />
           {uploadLoading ? <ActivityIndicator /> : null}
         </Pressable>
       </View>
@@ -270,7 +234,6 @@ export function EditProfileScreen() {
       />
       <Text color="error">
         {errors.email?.message}
-        {validationErrors?.email?.[0]}
       </Text>
       <Label htmlFor="bold">Phone Number</Label>
       <Controller
@@ -293,7 +256,6 @@ export function EditProfileScreen() {
       />
       <Text color="error">
         {errors.phone?.message}
-        {validationErrors?.phone?.[0]}
       </Text>
       <Label htmlFor="venmo">Venmo Username</Label>
       <Controller
@@ -315,7 +277,6 @@ export function EditProfileScreen() {
       />
       <Text color="error">
         {errors.venmo?.message}
-        {validationErrors?.venmo?.[0]}
       </Text>
       <Label htmlFor="cashapp">Cash App Username</Label>
       <Controller
@@ -338,7 +299,6 @@ export function EditProfileScreen() {
       />
       <Text color="error">
         {errors.cashapp?.message}
-        {validationErrors?.cashapp?.[0]}
       </Text>
       <Button
         onPress={onSubmit}

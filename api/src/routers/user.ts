@@ -20,7 +20,7 @@ import { email } from "../utils/email";
 import * as Sentry from "@sentry/bun";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { isMobilePhone } from "validator";
+import { isAlpha, isMobilePhone } from "validator";
 import { inProgressBeep } from "../logic/beep";
 
 export const userRouter = router({
@@ -64,8 +64,8 @@ export const userRouter = router({
     .input(
       z
         .object({
-          first: z.string().min(1),
-          last: z.string().min(1),
+          first: z.string().refine(isAlpha, "Must be letters only.").min(1),
+          last: z.string().refine(isAlpha, "Must be letters only.").min(1),
           email: z
             .string()
             .email()

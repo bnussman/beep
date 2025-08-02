@@ -3,33 +3,28 @@ import * as ImagePicker from "expo-image-picker";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller, useWatch } from "react-hook-form";
-import { isMobile } from "@/utils/constants";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
 import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
-import { generateRNFile } from "../settings/EditProfile";
 import { getMakes, getModels } from "car-info";
 import { colors, years } from "./utils";
 import { Pressable, View } from "react-native";
 import { useTRPC } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 import { useTheme } from "@/utils/theme";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { getFile } from "@/utils/files";
 
 const makes = getMakes();
-
-let picture: any;
 
 interface Values {
   year: number;
   make: string;
   model: string;
   color: string;
-  photo: any;
+  photo: ImagePicker.ImagePickerAsset;
 }
 
 export function AddCar() {
@@ -49,7 +44,15 @@ export function AddCar() {
   const models = getModels(make)
 
   const queryClient = useQueryClient();
-  const { mutateAsync: addCar, error } = useMutation(trpc.car.createCar.mutationOptions());
+  const { mutateAsync: addCar, error } = useMutation(trpc.car.createCar.mutationOptions({
+    onSuccess() {
+      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+      navigation.goBack();
+    },
+    onError(error) {
+      alert(error.message);
+    }
+  }));
 
   const validationErrors = error?.data?.fieldErrors;
 
@@ -67,17 +70,6 @@ export function AddCar() {
     }
 
     setValue("photo", result.assets[0]);
-
-    if (!isMobile) {
-      const res = await fetch(result.assets[0].uri);
-      const blob = await res.blob();
-      const fileType = blob.type.split("/")[1];
-      const file = new File([blob], "photo." + fileType);
-      picture = file;
-    } else {
-      const file = generateRNFile(result.assets[0].uri, "file.jpg");
-      picture = file;
-    }
   };
 
   const onSubmit = handleSubmit(async (variables) => {
@@ -85,22 +77,13 @@ export function AddCar() {
 
     for (const key in variables) {
       if (key === 'photo') {
-        continue;
+        formData.append("photo", await getFile(variables[key]) as Blob);
+      } else {
+        formData.append(key, variables[key as keyof typeof variables] as string);
       }
-      formData.append(key, variables[key as keyof typeof variables]);
     }
 
-    formData.append("photo", picture);
-
-    try {
-      await addCar(formData);
-
-      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
-
-      navigation.goBack();
-    } catch (error) {
-      alert((error as TRPCClientError<any>).message)
-    }
+    await addCar(formData).catch();
   });
 
   return (
