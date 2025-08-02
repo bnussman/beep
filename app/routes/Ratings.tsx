@@ -1,16 +1,10 @@
 import React from "react";
-import {
-  FlatList,
-  RefreshControl,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { FlatList, View, ActivityIndicator } from "react-native";
 import { useUser } from "../utils/useUser";
 import { Rating } from "../components/Rating";
 import { PAGE_SIZE } from "../utils/constants";
 import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
-
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export function RatingsScreen() {
@@ -75,6 +69,7 @@ export function RatingsScreen() {
       contentContainerStyle={
         ratings?.length === 0 ? {
           display: 'flex',
+          height: '100%',
           alignItems: 'center',
           justifyContent: 'center',
         } : {
@@ -89,7 +84,7 @@ export function RatingsScreen() {
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter()}
       ListEmptyComponent={
-        <View style={{ gap: 16 }}>
+        <View style={{ display: 'flex', alignItems: 'center' }}>
           <Text weight="800" size="3xl">
             No Ratings
           </Text>

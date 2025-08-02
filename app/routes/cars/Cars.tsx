@@ -1,21 +1,15 @@
 import React, { useLayoutEffect } from "react";
+import * as ContextMenu from "zeego/context-menu";
 import { useNavigation } from "@react-navigation/native";
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-} from "react-native";
+import { ActivityIndicator, FlatList, Pressable } from "react-native";
 import { PAGE_SIZE } from "@/utils/constants";
 import { useUser } from "@/utils/useUser";
 import { Image } from "@/components/Image";
 import { View } from "react-native";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import * as ContextMenu from "zeego/context-menu";
 import { useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
-
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
