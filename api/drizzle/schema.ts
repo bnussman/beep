@@ -77,12 +77,10 @@ export const user = pgTable("user", {
 	location: geography("location"),
 	created: timestamp("created", { withTimezone: true, mode: 'date' }),
 },
-(table) => {
-	return {
-		user_username_unique: unique("user_username_unique").on(table.username),
-		user_email_unique: unique("user_email_unique").on(table.email),
-	}
-});
+(table) => [
+	unique("user_username_unique").on(table.username),
+	unique("user_email_unique").on(table.email),
+]);
 
 export const token = pgTable("token", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
@@ -160,15 +158,13 @@ export const beep = pgTable("beep", {
 	end: timestamp("end", { withTimezone: true, mode: 'date' }),
 	status: beepStatusEnum("status").default('waiting').notNull(),
 },
-(table) => {
-	return {
-		beeper_id_idx: index().using("btree", table.beeper_id),
-		beeper_id_rider_id_idx: index().using("btree", table.beeper_id, table.rider_id),
-		rider_id_idx: index().using("btree", table.rider_id),
-		start_idx: index().using("btree", table.start),
-		status_idx: index().using("btree", table.status),
-	}
-});
+(table) => [
+	index("beeper_id_idx").using("btree", table.beeper_id),
+	index("beeper_id_rider_id_idx").using("btree", table.beeper_id, table.rider_id),
+	index("rider_id_idx").using("btree", table.rider_id),
+	index("start_idx").using("btree", table.start),
+	index("status_idx").using("btree", table.status),
+]);
 
 export const report = pgTable("report", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
@@ -191,11 +187,9 @@ export const rating = pgTable("rating", {
 	timestamp: timestamp("timestamp", { withTimezone: true, mode: 'date' }).notNull(),
 	beep_id: varchar("beep_id", { length: 255 }).notNull().references(() => beep.id, { onUpdate: "cascade", onDelete: "cascade" }),
 },
-(table) => {
-	return {
-		rating_beep_id_rater_id_unique: unique("rating_beep_id_rater_id_unique").on(table.rater_id, table.beep_id),
-	}
-});
+(table) => [
+	unique("rating_beep_id_rater_id_unique").on(table.rater_id, table.beep_id),
+]);
 
 export const verify_email = pgTable("verify_email", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
