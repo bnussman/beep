@@ -4,14 +4,16 @@ services:
     ports:
       - 6379:6379
   db:
-    image: postgis/postgis
+    image: kartoza/postgis
     ports:
       - 5432:5432
     volumes:
       - data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: beep
-      POSTGRES_PASSWORD: beep
+      POSTGRES_PASS: beep
+      POSTGRES_DBNAME: beep
+      POSTGRES_MULTIPLE_EXTENSIONS: postgis
       TZ: America/New_York
   s3:
     image: minio/minio
