@@ -32,6 +32,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await fileChooser.setFiles("../app/assets/icon.png");
 
   await beeperPage.getByRole("button", { name: "Add Car" }).click();
+  await expect(beeperPage.getByText("Add Car")).not.toBeVisible();
   await beeperPage.getByRole("button").first().click(); // click drawer button
   await beeperPage.getByText("Beep", { exact: true }).click();
   await beeperPage.getByRole("switch").first().click();
@@ -218,40 +219,72 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   // Accept the first rider
   await beeperPage.getByRole("button", { name: "Accept" }).first().click();
 
-  await expect(rider1Page.getByText("Beeper is getting ready to come get you. They will be on the way soon.")).toBeVisible();
+  await expect(
+    rider1Page.getByText(
+      "Beeper is getting ready to come get you. They will be on the way soon.",
+    ),
+  ).toBeVisible();
 
   await expect(rider2Page.getByText("1").first()).toBeVisible();
-  await expect(rider2Page.getByText("person is ahead of you in User's queue.")).toBeVisible();
+  await expect(
+    rider2Page.getByText("person is ahead of you in User's queue."),
+  ).toBeVisible();
 
   await expect(rider3Page.getByText("1").first()).toBeVisible();
-  await expect(rider3Page.getByText("person is ahead of you in User's queue.")).toBeVisible();
+  await expect(
+    rider3Page.getByText("person is ahead of you in User's queue."),
+  ).toBeVisible();
 
   // Accept the second rider
   await beeperPage.getByText("Queue").click();
   await beeperPage.getByRole("button", { name: "Accept" }).first().click();
 
-  await expect(rider1Page.getByText("Beeper is getting ready to come get you. They will be on the way soon.")).toBeVisible();
+  await expect(
+    rider1Page.getByText(
+      "Beeper is getting ready to come get you. They will be on the way soon.",
+    ),
+  ).toBeVisible();
 
   await expect(rider2Page.getByText("1").first()).toBeVisible();
-  await expect(rider2Page.getByText("person is ahead of you in User's queue.")).toBeVisible();
-  await expect(rider2Page.getByRole("button", { name: "Leave Queue"})).toBeVisible(); // the rider should be allowed to leave the queue
+  await expect(
+    rider2Page.getByText("person is ahead of you in User's queue."),
+  ).toBeVisible();
+  await expect(
+    rider2Page.getByRole("button", { name: "Leave Queue" }),
+  ).toBeVisible(); // the rider should be allowed to leave the queue
 
   await expect(rider3Page.getByText("2")).toBeVisible();
-  await expect(rider3Page.getByText("people are ahead of you in User's queue.")).toBeVisible();
-  await expect(rider3Page.getByRole("button", { name: "Leave Queue"})).toBeVisible(); // the rider should be allowed to leave the queue
+  await expect(
+    rider3Page.getByText("people are ahead of you in User's queue."),
+  ).toBeVisible();
+  await expect(
+    rider3Page.getByRole("button", { name: "Leave Queue" }),
+  ).toBeVisible(); // the rider should be allowed to leave the queue
 
   // Accept the third rider
   await beeperPage.getByRole("button", { name: "Accept" }).first().click();
 
-  await expect(rider1Page.getByText("Beeper is getting ready to come get you. They will be on the way soon.")).toBeVisible();
+  await expect(
+    rider1Page.getByText(
+      "Beeper is getting ready to come get you. They will be on the way soon.",
+    ),
+  ).toBeVisible();
 
   await expect(rider2Page.getByText("1").first()).toBeVisible();
-  await expect(rider2Page.getByText("person is ahead of you in User's queue.")).toBeVisible();
-  await expect(rider2Page.getByRole("button", { name: "Leave Queue"})).toBeVisible(); // the rider should be allowed to leave the queue
+  await expect(
+    rider2Page.getByText("person is ahead of you in User's queue."),
+  ).toBeVisible();
+  await expect(
+    rider2Page.getByRole("button", { name: "Leave Queue" }),
+  ).toBeVisible(); // the rider should be allowed to leave the queue
 
   await expect(rider3Page.getByText("2")).toBeVisible();
-  await expect(rider3Page.getByText("people are ahead of you in User's queue.")).toBeVisible();
-  await expect(rider3Page.getByRole("button", { name: "Leave Queue"})).toBeVisible(); // the rider should be allowed to leave the queue
+  await expect(
+    rider3Page.getByText("people are ahead of you in User's queue."),
+  ).toBeVisible();
+  await expect(
+    rider3Page.getByRole("button", { name: "Leave Queue" }),
+  ).toBeVisible(); // the rider should be allowed to leave the queue
 
   // Close the Queue bottom sheet so the beeper can see the current beep
   await beeperPage.getByText("Queue").click();
@@ -259,5 +292,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   // Actually being the first beep
   await beeperPage.getByText("I'm on the way 🚕").click();
 
-  await expect(rider1Page.getByText("Beeper is on their way to get you.")).toBeVisible();
+  await expect(
+    rider1Page.getByText("Beeper is on their way to get you."),
+  ).toBeVisible();
 });
