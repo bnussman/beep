@@ -31,18 +31,26 @@ export function Beep({ item }: Props) {
     (r) => r.rater_id === otherUser.id,
   );
   const queryClient = useQueryClient();
-  const { mutateAsync: deleteRating } = useMutation(trpc.rating.deleteRating.mutationOptions({
-    onSuccess() {
-      queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
-      queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
-    },
-  }));
+  const { mutateAsync: deleteRating } = useMutation(
+    trpc.rating.deleteRating.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
+        queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+      },
+    }),
+  );
 
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
-        <Card style={{ padding: 16, gap: 8 }} pressable>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Card
+          style={{ padding: 16, gap: 8 }}
+          pressable
+          onPress={() =>
+            navigation.navigate("Beep Details", { beepId: item.id })
+          }
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Avatar size="xs" src={otherUser.photo ?? undefined} />
             <View style={{ flexShrink: 1 }}>
               <Text weight="bold" size="lg">
@@ -56,25 +64,57 @@ export function Beep({ item }: Props) {
             </View>
           </View>
           <View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ width: 96 }} weight="bold">Pick Up</Text>
-              <Text style={{ textAlign: 'right', flexShrink: 1 }}>{item.origin}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ width: 96 }} weight="bold">
+                Pick Up
+              </Text>
+              <Text style={{ textAlign: "right", flexShrink: 1 }}>
+                {item.origin}
+              </Text>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ width: 96 }} weight="bold">Drop Off</Text>
-              <Text style={{ textAlign: 'right', flexShrink: 1 }}>{item.destination}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ width: 96 }} weight="bold">
+                Drop Off
+              </Text>
+              <Text style={{ textAlign: "right", flexShrink: 1 }}>
+                {item.destination}
+              </Text>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
               <Text weight="bold">Group size</Text>
               <Text>{item.groupSize}</Text>
             </View>
             {item.status === "complete" && (
               <>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text weight="bold">Your Rating</Text>
                   <Text>{myRating ? printStars(myRating.stars) : "N/A"}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text weight="bold">{otherUser.first}'s Rating</Text>
                   <Text>
                     {otherUsersRating

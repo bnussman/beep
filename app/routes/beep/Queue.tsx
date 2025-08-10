@@ -1,14 +1,14 @@
-import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { Text } from '@/components/Text';
-import { QueueItem } from './QueueItem';
-import { Pressable, useColorScheme } from 'react-native';
-import { View } from 'react-native';
-import { useRef } from 'react';
-import { isWeb } from '@/utils/constants';
-import { RouterOutput } from '@/utils/trpc';
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import { Text } from "@/components/Text";
+import { QueueItem } from "./QueueItem";
+import { Pressable, useColorScheme } from "react-native";
+import { View } from "react-native";
+import { useRef } from "react";
+import { isWeb } from "@/utils/constants";
+import { RouterOutput } from "@/utils/trpc";
 
 interface Props {
-  beeps: RouterOutput['beeper']['queue'];
+  beeps: RouterOutput["beeper"]["queue"];
   onRefresh: () => void;
   refreshing: boolean;
 }
@@ -20,7 +20,7 @@ export function Queue(props: Props) {
   const ref = useRef<BottomSheet>(null);
   const drawerPositionIndex = useRef<number>(0);
 
-  const hasUnacceptedBeep = beeps.some(beep => beep.status === "waiting");
+  const hasUnacceptedBeep = beeps.some((beep) => beep.status === "waiting");
 
   return (
     <BottomSheet
@@ -30,11 +30,21 @@ export function Queue(props: Props) {
       }}
       enableDynamicSizing={false}
       snapPoints={["10%", "50%", isWeb ? "90%" : "100%"]}
-      backgroundStyle={colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}}
-      handleIndicatorStyle={colorScheme === "dark" ? { backgroundColor: "white" } : {}}
+      backgroundStyle={
+        colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}
+      }
+      handleIndicatorStyle={
+        colorScheme === "dark" ? { backgroundColor: "white" } : {}
+      }
     >
       <Pressable
-        style={{ paddingHorizontal: 16, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        style={{
+          paddingHorizontal: 16,
+          paddingBottom: 16,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
         onPress={() => {
           if (drawerPositionIndex.current > 0) {
             ref.current?.snapToIndex(0);
@@ -45,8 +55,19 @@ export function Queue(props: Props) {
           }
         }}
       >
-        <Text size="3xl" weight="800">Queue</Text>
-        {hasUnacceptedBeep && <View style={{ borderRadius: '50%', backgroundColor: 'blue', width: 16, height: 16 }} />}
+        <Text size="3xl" weight="800">
+          Queue
+        </Text>
+        {hasUnacceptedBeep && (
+          <View
+            style={{
+              borderRadius: 16 / 2,
+              backgroundColor: "blue",
+              width: 16,
+              height: 16,
+            }}
+          />
+        )}
       </Pressable>
       <BottomSheetFlatList
         data={beeps}
@@ -57,7 +78,9 @@ export function Queue(props: Props) {
         onRefresh={onRefresh}
         refreshing={refreshing}
         contentContainerStyle={{ gap: 4 }}
-        ListEmptyComponent={<Text>If more riders join your queue, they will show here!</Text>}
+        ListEmptyComponent={
+          <Text>If more riders join your queue, they will show here!</Text>
+        }
       />
     </BottomSheet>
   );

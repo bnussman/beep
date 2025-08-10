@@ -15,6 +15,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
 import { Appearance } from "react-native";
 import { isWeb } from "@/utils/constants";
+import { BeepDetails } from "@/routes/Beep";
 
 const RootStack = createNativeStackNavigator({
   screens: {},
@@ -22,7 +23,7 @@ const RootStack = createNativeStackNavigator({
     const colorScheme = Appearance.getColorScheme();
     return {
       headerTintColor: colorScheme === "dark" ? "white" : "black",
-      headerBackButtonDisplayMode: 'generic'
+      headerBackButtonDisplayMode: "generic",
     };
   },
   groups: {
@@ -54,12 +55,13 @@ const RootStack = createNativeStackNavigator({
         "Change Password": ChangePasswordScreen,
         "Choose Beeper": PickBeepScreen,
         "Add Car": AddCar,
+        "Beep Details": BeepDetails,
       },
     },
     SignedOut: {
       if: useIsSignedOut,
       screens: {
-        "Login": {
+        Login: {
           screen: LoginScreen,
           options: {
             headerShown: false,
