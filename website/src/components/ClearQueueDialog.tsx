@@ -30,31 +30,33 @@ export function ClearQueueDialog(props: Props) {
   const notifications = useNotifications();
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, error } = useMutation(trpc.beep.clearQueue.mutationOptions({
-    onSuccess() {
-      queryClient.invalidateQueries(trpc.beeper.queue.queryFilter(userId));
+  const { mutate, isPending, error } = useMutation(
+    trpc.beep.clearQueue.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries(trpc.beeper.queue.queryFilter(userId));
 
-      const message =  stopBeeping ? "Users's queue has been cleared and they are not longer beepering." : "User's queue has been cleared.";
+        const message = stopBeeping
+          ? "Users's queue has been cleared and they are not longer beepering."
+          : "User's queue has been cleared.";
 
-      notifications.show(message, { severity: "success" });
+        notifications.show(message, { severity: "success" });
 
-      onClose();
-    },
-  }));
+        onClose();
+      },
+    }),
+  );
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Clear user's queue?</DialogTitle>
       <DialogContent>
-        <Stack spacing={1}>
-          {error && <Alert severity="error">{error.message}</Alert>}
-          <FormControlLabel
-            control={<Checkbox />}
-            label="Turn off user's Beeping status after clear?"
-            checked={stopBeeping}
-            onChange={() => setStopBeeping(!stopBeeping)}
-          />
-        </Stack>
+        {error && <Alert severity="error">{error.message}</Alert>}
+        <FormControlLabel
+          control={<Checkbox />}
+          label="Turn off user's Beeping status after clear?"
+          checked={stopBeeping}
+          onChange={() => setStopBeeping(!stopBeeping)}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

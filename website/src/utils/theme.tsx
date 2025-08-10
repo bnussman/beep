@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material/styles";
-import React from 'react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import React from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export const theme = createTheme({
   cssVariables: true,
@@ -19,13 +19,28 @@ export const theme = createTheme({
         },
       },
     },
+    MuiPopover: {
+      defaultProps: {
+        elevation: 0,
+      },
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          border: `1px solid ${theme.palette.Skeleton.bg}`,
+        }),
+      },
+    },
+    MuiCard: {
+      defaultProps: {
+        variant: "outlined",
+      },
+    },
     MuiButton: {
       defaultProps: {
-        disableElevation: true
+        disableElevation: true,
       },
       styleOverrides: {
         root: {
-          textTransform: 'none'
+          textTransform: "none",
         },
       },
     },
@@ -38,22 +53,22 @@ export const theme = createTheme({
     },
     MuiAccordionSummary: {
       defaultProps: {
-        expandIcon: <ExpandMoreIcon />
+        expandIcon: <ExpandMoreIcon />,
       },
       styleOverrides: {
         root: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       },
     },
     MuiLink: {
       defaultProps: {
         color: "inherit",
-        underline: 'none',
+        underline: "none",
       },
       styleOverrides: {
         root: {
-          color: 'inherit'
+          color: "inherit",
         },
       },
     },
