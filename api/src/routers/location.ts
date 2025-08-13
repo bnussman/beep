@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
-import { OSRM } from "../utils/osrm";
+import { getCoordinatesFromAddress, getRoute } from "../logic/location";
 
 export const locationRouter = router({
   getETA: authedProcedure
@@ -11,22 +11,26 @@ export const locationRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const result = await fetch(
-        `https://osrm.ridebeep.app/route/v1/driving/${input.start};${input.end}`,
-      );
+      const route = await getRoute(input.start, input.end);
 
-      const data: OSRM["/route/{version}/{profile}/{coordinates}"]["get"]["responses"]["200"]["content"]["application/json"] =
-        await result.json();
-
-      const eta = data?.routes?.[0]?.duration;
+      const eta = route?.routes?.[0]?.duration;
 
       if (eta === undefined) {
-        // Sentry.captureMessage("ETA from https://osrm.ridebeep.app was undefined");
-        throw new Error("ETA Unavailable");
+        throw new Error("No route found.");
       }
 
       const etaMinutes = Math.round(eta / 60);
 
       return `${etaMinutes} min`;
+    }),
+  getCoordinatesFromAddress: authedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const coordinates = await getCoordinatesFromAddress(
+        input,
+        ctx.user.location,
+      );
+
+      return coordinates;
     }),
 });
