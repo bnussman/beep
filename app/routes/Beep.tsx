@@ -20,18 +20,11 @@ export function BeepDetails(props: Props) {
     error,
   } = useQuery(trpc.beep.beep.queryOptions(props.route.params.beepId));
 
-  const data = "Oakwood pizza box";
-
-  const test = useQuery({
-    queryFn: () =>
-      fetch(
-        `https://nominatim.openstreetmap.org/search?q=${data}&format=json&addressdetails=1`,
-      ).then((result) => result.json()),
-    queryKey: ["geocode-v4", data],
-  });
-
-  console.log("Data", JSON.stringify(test.data, null, 2));
-  console.log("Error", test.error);
+  const { data: originCoordinates } = useQuery(
+    trpc.location.getCoordinatesFromAddress.queryOptions(beep?.origin ?? "", {
+      enabled: !!beep,
+    }),
+  );
 
   if (error) {
     return (
@@ -76,6 +69,11 @@ export function BeepDetails(props: Props) {
           <View>
             <Text weight="800">Origin</Text>
             <Text>{beep.origin}</Text>
+            {originCoordinates && (
+              <Text>
+                {originCoordinates.latitude}, {originCoordinates.longitude}
+              </Text>
+            )}
           </View>
           <View>
             <Text weight="800">Destination</Text>

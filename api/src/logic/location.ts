@@ -19,6 +19,7 @@ export async function getCoordinatesFromAddress(
 ) {
   const queryParams = new URLSearchParams({
     q: address,
+    zoom: "10",
   });
 
   if (bias) {
