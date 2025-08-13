@@ -26,6 +26,15 @@ export function BeepDetails(props: Props) {
     }),
   );
 
+  const { data: destinationCoordinates } = useQuery(
+    trpc.location.getCoordinatesFromAddress.queryOptions(
+      beep?.destination ?? "",
+      {
+        enabled: !!beep,
+      },
+    ),
+  );
+
   if (error) {
     return (
       <View
@@ -78,6 +87,12 @@ export function BeepDetails(props: Props) {
           <View>
             <Text weight="800">Destination</Text>
             <Text>{beep.destination}</Text>
+            {destinationCoordinates && (
+              <Text>
+                {destinationCoordinates.latitude},{" "}
+                {destinationCoordinates.longitude}
+              </Text>
+            )}
           </View>
           <View>
             <Text weight="800">Group Size</Text>
