@@ -1,5 +1,6 @@
 import { Map } from "@/components/Map";
 import { Text } from "@/components/Text";
+import { decodePolyline } from "@/utils/location";
 import { useTheme } from "@/utils/theme";
 import { useTRPC } from "@/utils/trpc";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
@@ -37,10 +38,8 @@ export function BeepDetails(props: Props) {
 
   const r = route?.routes?.[0].legs
     ?.flatMap((leg) => leg.steps)
-    .map((step) => ({
-      latitude: step!.maneuver!.location?.[1],
-      longitude: step!.maneuver!.location?.[0],
-    }));
+    .map((step) => decodePolyline(step?.geometry as unknown as string))
+    .flat();
 
   console.log(JSON.stringify(r, null, 2));
 
@@ -78,7 +77,14 @@ export function BeepDetails(props: Props) {
   return (
     <View style={{ gap: 8, height: "100%" }}>
       <Map style={{ height: "100%" }}>
-        {route && <Polyline coordinates={r ?? []} />}
+        {route && (
+          <Polyline
+            coordinates={r ?? []}
+            strokeWidth={5}
+            strokeColor="#3d8ae3"
+            lineCap="round"
+          />
+        )}
       </Map>
       <BottomSheet
         snapPoints={["20%", "100%"]}

@@ -62,7 +62,8 @@ export const LOCATION_TRACKING = "location-tracking";
 
 export async function startLocationTracking() {
   try {
-    const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
+    const hasStarted =
+      await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
 
     if (hasStarted) {
       return;
@@ -81,37 +82,43 @@ export async function startLocationTracking() {
       },
     });
   } catch (error) {
-    console.error("Unable to start location tracking", error)
+    console.error("Unable to start location tracking", error);
     Sentry.captureException(error);
   }
 }
 
 export async function stopLocationTracking() {
   try {
-    const hasStarted = await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
+    const hasStarted =
+      await Location.hasStartedLocationUpdatesAsync(LOCATION_TRACKING);
 
     if (hasStarted) {
       await Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
   } catch (error) {
-    console.error("Unable to stop location tracking", error)
+    console.error("Unable to stop location tracking", error);
     Sentry.captureException(error);
   }
 }
 
 export function useLocationPermissions() {
-  const [foregroundPermission, requestForegroundPermission] = Location.useForegroundPermissions();
-  const [backgroundPermission, requestBackgroundPermission] = Location.useBackgroundPermissions();
+  const [foregroundPermission, requestForegroundPermission] =
+    Location.useForegroundPermissions();
+  const [backgroundPermission, requestBackgroundPermission] =
+    Location.useBackgroundPermissions();
 
-  const hasLocationPermission = foregroundPermission?.granted && backgroundPermission?.granted;
+  const hasLocationPermission =
+    foregroundPermission?.granted && backgroundPermission?.granted;
 
   const requestLocationPermission = async () => {
     try {
       await requestForegroundPermission();
       await requestBackgroundPermission();
 
-      const { granted: foregroundGranted } = await Location.getForegroundPermissionsAsync();
-      const { granted: backgroundGranted } = await Location.getBackgroundPermissionsAsync();
+      const { granted: foregroundGranted } =
+        await Location.getForegroundPermissionsAsync();
+      const { granted: backgroundGranted } =
+        await Location.getBackgroundPermissionsAsync();
 
       return foregroundGranted && backgroundGranted;
     } catch (error) {
@@ -130,3 +137,37 @@ export function useLocationPermissions() {
     requestLocationPermission,
   };
 }
+
+export const decodePolyline = (polyline: string) => {
+  const points = [];
+  const encoded = polyline;
+  let index = 0;
+  const len = encoded.length;
+  let lat = 0;
+  let lng = 0;
+  while (index < len) {
+    let b: number;
+    let shift = 0;
+    let result = 0;
+    do {
+      b = encoded.charAt(index++).charCodeAt(0) - 63;
+      result |= (b & 0x1f) << shift;
+      shift += 5;
+    } while (b >= 0x20);
+
+    const dLat = (result & 1) !== 0 ? ~(result >> 1) : result >> 1;
+    lat += dLat;
+    shift = 0;
+    result = 0;
+    do {
+      b = encoded.charAt(index++).charCodeAt(0) - 63;
+      result |= (b & 0x1f) << shift;
+      shift += 5;
+    } while (b >= 0x20);
+    const dLng = (result & 1) !== 0 ? ~(result >> 1) : result >> 1;
+    lng += dLng;
+
+    points.push({ latitude: lat / 1e5, longitude: lng / 1e5 });
+  }
+  return points;
+};
