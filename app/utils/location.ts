@@ -138,6 +138,9 @@ export function useLocationPermissions() {
   };
 }
 
+/**
+ * Full credit to https://github.com/huextrat/react-native-maps-routes/blob/main/src/utils/decoder.ts
+ */
 export const decodePolyline = (polyline: string) => {
   const points = [];
   const encoded = polyline;
