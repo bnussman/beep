@@ -2,9 +2,13 @@ import type { OSRM } from "../utils/osrm";
 import { Photon } from "../utils/photon";
 import { user } from "../../drizzle/schema";
 
-export async function getRoute(start: string, end: string) {
+export async function getRoute(
+  start: string,
+  end: string,
+  steps: boolean = false,
+) {
   const result = await fetch(
-    `https://osrm.ridebeep.app/route/v1/driving/${start};${end}`,
+    `https://osrm.ridebeep.app/route/v1/driving/${start};${end}?steps=${steps}`,
   );
 
   const data: OSRM["/route/{version}/{profile}/{coordinates}"]["get"]["responses"]["200"]["content"]["application/json"] =

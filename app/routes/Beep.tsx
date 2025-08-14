@@ -6,6 +6,7 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator, useColorScheme, View } from "react-native";
+import { Polyline } from "react-native-maps";
 
 type Props = StaticScreenProps<{ beepId: string }>;
 
@@ -20,20 +21,28 @@ export function BeepDetails(props: Props) {
     error,
   } = useQuery(trpc.beep.beep.queryOptions(props.route.params.beepId));
 
-  const { data: originCoordinates } = useQuery(
-    trpc.location.getCoordinatesFromAddress.queryOptions(beep?.origin ?? "", {
-      enabled: !!beep,
-    }),
-  );
-
-  const { data: destinationCoordinates } = useQuery(
-    trpc.location.getCoordinatesFromAddress.queryOptions(
-      beep?.destination ?? "",
+  const { data: route } = useQuery(
+    trpc.location.getRoute.queryOptions(
+      {
+        origin: beep?.origin ?? "",
+        destination: beep?.destination ?? "",
+      },
       {
         enabled: !!beep,
       },
     ),
   );
+
+  // console.log(JSON.stringify(route, null, 2));
+
+  const r = route?.routes?.[0].legs
+    ?.flatMap((leg) => leg.steps)
+    .map((step) => ({
+      latitude: step!.maneuver!.location?.[1],
+      longitude: step!.maneuver!.location?.[0],
+    }));
+
+  console.log(JSON.stringify(r, null, 2));
 
   if (error) {
     return (
@@ -68,7 +77,9 @@ export function BeepDetails(props: Props) {
 
   return (
     <View style={{ gap: 8, height: "100%" }}>
-      <Map style={{ height: "100%" }} />
+      <Map style={{ height: "100%" }}>
+        {route && <Polyline coordinates={r ?? []} />}
+      </Map>
       <BottomSheet
         snapPoints={["20%", "100%"]}
         backgroundStyle={{ backgroundColor: theme.bg.main }}
@@ -78,21 +89,10 @@ export function BeepDetails(props: Props) {
           <View>
             <Text weight="800">Origin</Text>
             <Text>{beep.origin}</Text>
-            {originCoordinates && (
-              <Text>
-                {originCoordinates.latitude}, {originCoordinates.longitude}
-              </Text>
-            )}
           </View>
           <View>
             <Text weight="800">Destination</Text>
             <Text>{beep.destination}</Text>
-            {destinationCoordinates && (
-              <Text>
-                {destinationCoordinates.latitude},{" "}
-                {destinationCoordinates.longitude}
-              </Text>
-            )}
           </View>
           <View>
             <Text weight="800">Group Size</Text>

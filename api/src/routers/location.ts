@@ -33,4 +33,35 @@ export const locationRouter = router({
 
       return coordinates;
     }),
+  getRoute: authedProcedure
+    .input(
+      z.object({
+        origin: z.string(),
+        destination: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const [originCoordinates, destinationCoordinates] = await Promise.all([
+        getCoordinatesFromAddress(input.origin, ctx.user.location),
+        getCoordinatesFromAddress(input.destination, ctx.user.location),
+      ]);
+
+      if (!originCoordinates) {
+        throw new Error(
+          "Unable to determine coordinates for the origin location.",
+        );
+      }
+
+      if (!destinationCoordinates) {
+        throw new Error(
+          "Unable to determine coordinates for the destination location.",
+        );
+      }
+
+      return await getRoute(
+        `${originCoordinates.longitude},${originCoordinates.latitude}`,
+        `${destinationCoordinates.longitude},${destinationCoordinates.latitude}`,
+        true,
+      );
+    }),
 });
