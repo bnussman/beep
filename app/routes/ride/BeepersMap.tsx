@@ -1,7 +1,7 @@
 import { Map } from "../../components/Map";
 import { useLocation } from "../../utils/location";
 import { type Region } from "react-native-maps";
-import { BeeperMarker } from "../../components/Marker";
+import { AnimatedMarker } from "../../components/AnimatedMarker";
 import { useTRPC } from "@/utils/trpc";
 
 import { useQuery } from "@tanstack/react-query";
@@ -18,36 +18,42 @@ export function BeepersMap() {
     longitude: location?.coords.longitude ?? 0,
   };
 
-  const { data: beepers } = useQuery(trpc.rider.beepersNearMe.queryOptions(
-    input,
-    {
+  const { data: beepers } = useQuery(
+    trpc.rider.beepersNearMe.queryOptions(input, {
       enabled: location !== undefined,
-      refetchInterval: 15_000
-    }
-  ));
+      refetchInterval: 15_000,
+    }),
+  );
 
-  useSubscription(trpc.rider.beepersLocations.subscriptionOptions(
-    input,
-    {
+  useSubscription(
+    trpc.rider.beepersLocations.subscriptionOptions(input, {
       enabled: location !== undefined,
       onData(locationUpdate) {
-        console.log(locationUpdate)
-        queryClient.setQueryData(trpc.rider.beepersNearMe.queryKey(input), (prev) => {
-          if (!prev) {
-            return undefined;
-          }
+        console.log(locationUpdate);
+        queryClient.setQueryData(
+          trpc.rider.beepersNearMe.queryKey(input),
+          (prev) => {
+            if (!prev) {
+              return undefined;
+            }
 
-          const indexOfItem = prev.findIndex(beeper => beeper.id === locationUpdate.id)
+            const indexOfItem = prev.findIndex(
+              (beeper) => beeper.id === locationUpdate.id,
+            );
 
-          if (indexOfItem !== -1)  {
-            const newData = [...prev];
-            newData[indexOfItem] = { ...prev[indexOfItem], location: locationUpdate.location };
-            return newData;
-          }
-        });
-      }
-    }
-  ));
+            if (indexOfItem !== -1) {
+              const newData = [...prev];
+              newData[indexOfItem] = {
+                ...prev[indexOfItem],
+                location: locationUpdate.location,
+              };
+              return newData;
+            }
+          },
+        );
+      },
+    }),
+  );
 
   const initialRegion: Region | undefined = location
     ? {
@@ -75,7 +81,11 @@ export function BeepersMap() {
         }
 
         return (
-          <BeeperMarker key={beeper.id} latitude={beeper.location.latitude} longitude={beeper.location.longitude} />
+          <AnimatedMarker
+            key={beeper.id}
+            latitude={beeper.location.latitude}
+            longitude={beeper.location.longitude}
+          />
         );
       })}
     </Map>

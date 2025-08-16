@@ -1,4 +1,6 @@
 import { Map } from "@/components/Map";
+import { Marker2 } from "@/components/Marker2";
+import { Polyline } from "@/components/Polyline";
 import { Text } from "@/components/Text";
 import { decodePolyline } from "@/utils/location";
 import { useTheme } from "@/utils/theme";
@@ -7,7 +9,6 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator, View } from "react-native";
-import { Marker, Polyline } from "react-native-maps";
 
 type Props = StaticScreenProps<{ beepId: string }>;
 
@@ -33,12 +34,20 @@ export function BeepDetails(props: Props) {
     ),
   );
 
-  // console.log(JSON.stringify(route, null, 2));
-
   const r = route?.routes?.[0].legs
     ?.flatMap((leg) => leg.steps)
     .map((step) => decodePolyline(step?.geometry as unknown as string))
     .flat();
+
+  const origin = {
+    latitude: route?.waypoints?.[0].location?.[1] ?? 0,
+    longitude: route?.waypoints?.[0].location?.[0] ?? 0,
+  };
+
+  const destination = {
+    latitude: route?.waypoints?.[1].location?.[1] ?? 0,
+    longitude: route?.waypoints?.[1].location?.[0] ?? 0,
+  };
 
   const middlePointInRoute = r && {
     ...r[Math.floor(r.length / 2)],
@@ -83,6 +92,8 @@ export function BeepDetails(props: Props) {
     <View style={{ gap: 8, height: "100%" }}>
       {r && middlePointInRoute && (
         <Map style={{ height: "100%" }} initialRegion={middlePointInRoute}>
+          <Marker2 coordinate={origin} />
+          <Marker2 coordinate={destination} />
           <Polyline
             coordinates={r ?? []}
             strokeWidth={5}

@@ -15,7 +15,7 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
-import { BeeperMarker } from "../../components/Marker";
+import { AnimatedMarker } from "../../components/AnimatedMarker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
@@ -44,43 +44,51 @@ export function MainFindBeepScreen(props: Props) {
   const queryClient = useQueryClient();
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
-
   const isAcceptedBeep =
     beep?.status === "accepted" ||
     beep?.status === "in_progress" ||
     beep?.status === "here" ||
     beep?.status === "on_the_way";
 
-  useSubscription(trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
-    onData(data) {
-      if (data === null) {
-        queryClient.invalidateQueries(trpc.rider.getLastBeepToRate.pathFilter());
-      }
-      queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
-    },
-    enabled: Boolean(beep),
-  }));
-
   useSubscription(
-    trpc.rider.beeperLocationUpdates.subscriptionOptions(beep?.beeper.id ?? "", {
-      enabled: isAcceptedBeep,
-      onData(updatedLocation) {
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), (prev) => {
-          if (!prev) {
-            return undefined;
-          }
-          return {
-            ...prev,
-            beeper: {
-              ...prev.beeper,
-              location: updatedLocation.location,
-            },
-          };
-        });
+    trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
+      onData(data) {
+        if (data === null) {
+          queryClient.invalidateQueries(
+            trpc.rider.getLastBeepToRate.pathFilter(),
+          );
+        }
+        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
       },
-    })
+      enabled: Boolean(beep),
+    }),
   );
 
+  useSubscription(
+    trpc.rider.beeperLocationUpdates.subscriptionOptions(
+      beep?.beeper.id ?? "",
+      {
+        enabled: isAcceptedBeep,
+        onData(updatedLocation) {
+          queryClient.setQueryData(
+            trpc.rider.currentRide.queryKey(),
+            (prev) => {
+              if (!prev) {
+                return undefined;
+              }
+              return {
+                ...prev,
+                beeper: {
+                  ...prev.beeper,
+                  location: updatedLocation.location,
+                },
+              };
+            },
+          );
+        },
+      },
+    ),
+  );
 
   const {
     control,
@@ -114,7 +122,10 @@ export function MainFindBeepScreen(props: Props) {
 
   if (!beep) {
     return (
-      <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ padding: 16, gap: 8 }}>
+      <KeyboardAwareScrollView
+        scrollEnabled={false}
+        contentContainerStyle={{ padding: 16, gap: 8 }}
+      >
         <Label htmlFor="groupSize">Group Size</Label>
         <Controller
           name="groupSize"
@@ -203,8 +214,15 @@ export function MainFindBeepScreen(props: Props) {
 
   if (isAcceptedBeep) {
     return (
-      <View style={{ height: '100%', padding: 16, gap: 16, paddingBottom: 20 }}>
-        <View style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}>
+      <View style={{ height: "100%", padding: 16, gap: 16, paddingBottom: 20 }}>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            justifyContent: "space-between",
+          }}
+        >
           <View style={{ flexShrink: 1 }}>
             <Text size="3xl" weight="800">
               {beep.beeper.first} {beep.beeper.last}
@@ -243,7 +261,12 @@ export function MainFindBeepScreen(props: Props) {
         )}
         {beep.status === "here" ? (
           <Image
-            style={{ flexGrow: 1, borderRadius: 12, width: "100%", minHeight: 100 }}
+            style={{
+              flexGrow: 1,
+              borderRadius: 12,
+              width: "100%",
+              minHeight: 100,
+            }}
             resizeMode="cover"
             src={beep.beeper.cars?.[0].photo}
             alt={`car-${beep.beeper.cars?.[0].id}`}
@@ -264,14 +287,14 @@ export function MainFindBeepScreen(props: Props) {
               latitudeDelta: 0.05,
             }}
           >
-            <BeeperMarker
+            <AnimatedMarker
               latitude={beep.beeper.location?.latitude ?? 0}
               longitude={beep.beeper.location?.longitude ?? 0}
             />
           </Map>
         )}
         <View style={{ gap: 8 }}>
-          <View style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Button
               style={{ flexGrow: 1 }}
               onPress={() =>
@@ -303,7 +326,7 @@ export function MainFindBeepScreen(props: Props) {
               Pay Beeper with Cash App 💵
             </Button>
           )}
-          <View style={{ flexDirection: 'row', gap: 8 }}>
+          <View style={{ flexDirection: "row", gap: 8 }}>
             {beep.beeper.venmo && (
               <Button
                 style={{ flexGrow: 1 }}
@@ -345,16 +368,24 @@ export function MainFindBeepScreen(props: Props) {
   }
 
   return (
-    <View style={{ height: '100%', padding: 16, gap: 16, paddingBottom: 20, alignItems: 'center' }}>
+    <View
+      style={{
+        height: "100%",
+        padding: 16,
+        gap: 16,
+        paddingBottom: 20,
+        alignItems: "center",
+      }}
+    >
       <Avatar size="xl" src={beep.beeper.photo ?? undefined} />
-      <View style={{ alignItems:'center', gap: 8}}>
+      <View style={{ alignItems: "center", gap: 8 }}>
         <Text>Waiting on</Text>
         <Text size="3xl" weight="800">
           {beep.beeper.first} {beep.beeper.last}
         </Text>
         <Text>to accept your request.</Text>
       </View>
-      <Card style={{ width: '100%', gap: 16 }}>
+      <Card style={{ width: "100%", gap: 16 }}>
         <View>
           <Text weight="bold">Pick Up </Text>
           <Text>{beep.origin}</Text>

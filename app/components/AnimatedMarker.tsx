@@ -1,20 +1,20 @@
 import React, { useEffect, useRef } from "react";
 import { Text } from "@/components/Text";
 import { getBeeperIcon } from "@/utils/emojis";
-import { MapMarker, Marker } from 'react-native-maps';
+import { MapMarker, Marker } from "react-native-maps";
 import {
   runOnJS,
   useDerivedValue,
   useSharedValue,
   withTiming,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
 interface BeeperMakerProps {
   longitude: number;
   latitude: number;
 }
 
-export const BeeperMarker = (props: BeeperMakerProps) => {
+export const AnimatedMarker = (props: BeeperMakerProps) => {
   const markerRef = useRef<MapMarker>(null);
   // Shared values for latitude and longitude
   const latitude = useSharedValue(props.latitude);
@@ -24,7 +24,7 @@ export const BeeperMarker = (props: BeeperMakerProps) => {
   const updateMarkerPosition = (lat: number, lng: number) => {
     if (markerRef && markerRef.current) {
       markerRef.current.setNativeProps({
-        coordinate: {latitude: lat, longitude: lng},
+        coordinate: { latitude: lat, longitude: lng },
       });
     }
   };
