@@ -1,5 +1,5 @@
 import type { MapMarkerProps } from "react-native-maps";
 
-export const Marker2 = (props: MapMarkerProps) => {
+export const Marker = (props: MapMarkerProps) => {
   return <div>Marker</div>;
 };

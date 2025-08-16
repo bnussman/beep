@@ -1,10 +1,12 @@
+import { Avatar } from "@/components/Avatar";
 import { Map } from "@/components/Map";
-import { Marker2 } from "@/components/Marker2";
+import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { Text } from "@/components/Text";
 import { decodePolyline } from "@/utils/location";
 import { useTheme } from "@/utils/theme";
 import { useTRPC } from "@/utils/trpc";
+import { useUser } from "@/utils/useUser";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +17,7 @@ type Props = StaticScreenProps<{ beepId: string }>;
 export function BeepDetails(props: Props) {
   const trpc = useTRPC();
   const theme = useTheme();
+  const { user } = useUser();
 
   const {
     data: beep,
@@ -55,7 +58,7 @@ export function BeepDetails(props: Props) {
     longitudeDelta: 0.05,
   };
 
-  console.log(JSON.stringify(r, null, 2));
+  const otherUser = beep?.rider_id === user?.id ? beep?.beeper : beep?.rider;
 
   if (error) {
     return (
@@ -92,8 +95,8 @@ export function BeepDetails(props: Props) {
     <View style={{ gap: 8, height: "100%" }}>
       {r && middlePointInRoute && (
         <Map style={{ height: "100%" }} initialRegion={middlePointInRoute}>
-          <Marker2 coordinate={origin} />
-          <Marker2 coordinate={destination} />
+          <Marker coordinate={origin} />
+          <Marker coordinate={destination} />
           <Polyline
             coordinates={r ?? []}
             strokeWidth={5}
@@ -108,6 +111,27 @@ export function BeepDetails(props: Props) {
         handleIndicatorStyle={{ backgroundColor: theme.text.primary }}
       >
         <BottomSheetView style={{ gap: 8, paddingHorizontal: 16 }}>
+          <View>
+            <Text weight="800">
+              {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
+            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <Text>
+                {otherUser?.first} {otherUser?.last}
+              </Text>
+              <Avatar
+                src={otherUser?.photo ?? undefined}
+                style={{ width: 16, height: 16 }}
+              />
+            </View>
+          </View>
           <View>
             <Text weight="800">Origin</Text>
             <Text>{beep.origin}</Text>

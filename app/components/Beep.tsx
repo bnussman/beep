@@ -46,6 +46,7 @@ export function Beep({ item }: Props) {
         <Card
           style={{ padding: 16, gap: 8 }}
           pressable
+          onLongPress={() => {}}
           onPress={() =>
             navigation.navigate("Beep Details", { beepId: item.id })
           }
