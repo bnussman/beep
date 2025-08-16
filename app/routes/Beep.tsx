@@ -6,7 +6,7 @@ import { useTRPC } from "@/utils/trpc";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { ActivityIndicator, useColorScheme, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { Marker, Polyline } from "react-native-maps";
 
 type Props = StaticScreenProps<{ beepId: string }>;
@@ -14,7 +14,6 @@ type Props = StaticScreenProps<{ beepId: string }>;
 export function BeepDetails(props: Props) {
   const trpc = useTRPC();
   const theme = useTheme();
-  const colorScheme = useColorScheme();
 
   const {
     data: beep,
