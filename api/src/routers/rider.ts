@@ -2,26 +2,46 @@ import { z } from "zod";
 import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
-import { and, asc, count, desc, eq, gte, lte, ne, sql, lt, or } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  ne,
+  sql,
+  lt,
+  or,
+} from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { getIsAcceptedBeep, getQueueSize, getRiderBeepFromBeeperQueue, inProgressBeep } from "../logic/beep";
+import {
+  getIsAcceptedBeep,
+  getQueueSize,
+  getRiderBeepFromBeeperQueue,
+  inProgressBeep,
+} from "../logic/beep";
 import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
     .input(
-      z.object({
-        longitude: z.number(),
-        latitude: z.number(),
-      }).optional()
+      z
+        .object({
+          longitude: z.number(),
+          latitude: z.number(),
+        })
+        .optional(),
     )
     .query(async ({ input, ctx }) => {
       if (ctx.user.role === "user" && input === undefined) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: "You must pass location infromation to get beepers. Only admins can pass no location."
+          code: "BAD_REQUEST",
+          message:
+            "You must pass location infromation to get beepers. Only admins can pass no location.",
         });
       }
 
@@ -38,31 +58,33 @@ export const riderRouter = router({
           queueSize: user.queueSize,
           capacity: user.capacity,
           ...(ctx.user.role === "admin" && { location: user.location }),
-          distance: sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input?.latitude ?? 0},${input?.longitude ?? 0}))`.as('distance'),
+          distance:
+            sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input?.latitude ?? 0},${input?.longitude ?? 0}))`.as(
+              "distance",
+            ),
           isPremium: sql<boolean>`${payment.id} IS NOT NULL`,
         })
         .from(user)
         .where(({ distance }) =>
           and(
             eq(user.isBeeping, true),
-            input ? lte(distance, DEFAULT_LOCATION_RADIUS * 1609.34) : undefined
-          )
+            input
+              ? lte(distance, DEFAULT_LOCATION_RADIUS * 1609.34)
+              : undefined,
+          ),
         )
-        .orderBy(({ distance, isPremium }) => ([
-          desc(isPremium),
-          asc(distance)
-        ]))
+        .orderBy(({ distance, isPremium }) => [desc(isPremium), asc(distance)])
         .leftJoin(
           payment,
           and(
             eq(payment.user_id, user.id),
             gte(payment.expires, new Date()),
             or(
-              eq(payment.productId, 'top_of_beeper_list_1_hour'),
-              eq(payment.productId, 'top_of_beeper_list_2_hours'),
-              eq(payment.productId, 'top_of_beeper_list_3_hours'),
-            )
-          )
+              eq(payment.productId, "top_of_beeper_list_1_hour"),
+              eq(payment.productId, "top_of_beeper_list_2_hours"),
+              eq(payment.productId, "top_of_beeper_list_3_hours"),
+            ),
+          ),
         );
 
       return beepers;
@@ -73,14 +95,25 @@ export const riderRouter = router({
         beeperId: z.string(),
         origin: z.string(),
         destination: z.string(),
-        groupSize: z.number().min(1).max(25)
-      })
+        groupSize: z.number().min(1).max(25),
+        latitude: z.number().optional(),
+        longitude: z.number().optional(),
+      }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (input.latitude !== undefined && input.longitude !== undefined) {
+        await db
+          .update(user)
+          .set({
+            location: { latitude: input.latitude, longitude: input.longitude },
+          })
+          .where(eq(user.id, ctx.user.id));
+      }
+
       if (ctx.user.isBeeping) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: "You can't get a beep when you are beeping"
+          code: "BAD_REQUEST",
+          message: "You can't get a beep when you are beeping",
         });
       }
 
@@ -101,28 +134,28 @@ export const riderRouter = router({
             with: {
               rider: true,
             },
-          }
+          },
         },
       });
 
       if (!beeper) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: "Beeper not found"
+          code: "NOT_FOUND",
+          message: "Beeper not found",
         });
       }
 
       if (!beeper.isBeeping) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: "That user is not beeping. Maybe they stopped beeping."
+          code: "BAD_REQUEST",
+          message: "That user is not beeping. Maybe they stopped beeping.",
         });
       }
 
       if (beeper.beeps.some((beep) => beep.rider_id === ctx.user.id)) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: "You are already in that beeper's queue."
+          code: "BAD_REQUEST",
+          message: "You are already in that beeper's queue.",
         });
       }
 
@@ -134,7 +167,7 @@ export const riderRouter = router({
         groupSize: input.groupSize,
         id: crypto.randomUUID(),
         start: new Date(),
-        status: 'waiting',
+        status: "waiting",
         end: null,
       } as const;
 
@@ -160,11 +193,11 @@ export const riderRouter = router({
             photo: ctx.user.photo,
             pushToken: ctx.user.pushToken,
           },
-          beeper
-        }
+          beeper,
+        },
       ];
 
-      pubSub.publish('queue', beeper.id, { queue: newQueue });
+      pubSub.publish("queue", beeper.id, { queue: newQueue });
 
       if (beeper.pushToken) {
         sendNotification({
@@ -172,7 +205,7 @@ export const riderRouter = router({
           title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
           body: "Please accept or deny this rider.",
           categoryId: "newbeep",
-          data: { id: newBeep.id }
+          data: { id: newBeep.id },
         });
       }
 
@@ -192,11 +225,13 @@ export const riderRouter = router({
         },
       };
     }),
-  currentRide: authedProcedure
-    .query(async ({ ctx }) => {
-      return getRidersCurrentRide(ctx.user.id);
-    }),
-  currentRideUpdates: authedProcedure.subscription(async function*({ ctx, signal }) {
+  currentRide: authedProcedure.query(async ({ ctx }) => {
+    return getRidersCurrentRide(ctx.user.id);
+  }),
+  currentRideUpdates: authedProcedure.subscription(async function* ({
+    ctx,
+    signal,
+  }) {
     console.log("➕ Rider subscribed", ctx.user.id);
 
     const eventSource = pubSub.subscribe("ride", ctx.user.id);
@@ -217,7 +252,7 @@ export const riderRouter = router({
   }),
   beeperLocationUpdates: authedProcedure
     .input(z.string())
-    .subscription(async function*({ input, signal }) {
+    .subscription(async function* ({ input, signal }) {
       const eventSource = pubSub.subscribe("user", input);
 
       if (signal) {
@@ -229,9 +264,9 @@ export const riderRouter = router({
       for await (const { user } of eventSource) {
         if (signal?.aborted) return;
 
-       if (user.location) {
-         yield { id: user.id, location: user.location };
-       }
+        if (user.location) {
+          yield { id: user.id, location: user.location };
+        }
       }
     }),
   beepersNearMe: authedProcedure
@@ -239,21 +274,24 @@ export const riderRouter = router({
       z.object({
         latitude: z.number(),
         longitude: z.number(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const users = await db
         .select({
           id: user.id,
           location: user.location,
-          distance: sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude}))`.as('distance'),
+          distance:
+            sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input.latitude},${input.longitude}))`.as(
+              "distance",
+            ),
         })
         .from(user)
         .where(({ distance }) =>
           and(
             eq(user.isBeeping, true),
-            lte(distance, DEFAULT_LOCATION_RADIUS * 1609.34)
-          )
+            lte(distance, DEFAULT_LOCATION_RADIUS * 1609.34),
+          ),
         );
 
       return users.map((user) => {
@@ -264,7 +302,7 @@ export const riderRouter = router({
         return {
           id: hashedId,
           location: user.location,
-          distance: user.distance
+          distance: user.distance,
         };
       });
     }),
@@ -273,15 +311,15 @@ export const riderRouter = router({
       z.object({
         latitude: z.number(),
         longitude: z.number(),
-        admin: z.boolean().optional()
-      })
+        admin: z.boolean().optional(),
+      }),
     )
-    .subscription(async function*({ input, ctx, signal }) {
-      if (input.admin && ctx.user.role !== 'admin') {
+    .subscription(async function* ({ input, ctx, signal }) {
+      if (input.admin && ctx.user.role !== "admin") {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const eventSource = pubSub.subscribe('locations');
+      const eventSource = pubSub.subscribe("locations");
 
       if (signal) {
         signal.onabort = () => {
@@ -294,7 +332,14 @@ export const riderRouter = router({
 
         if (input.admin) {
           yield data;
-        } else if (getDistance(input.latitude, input.longitude, data.location.latitude, data.location.longitude) < DEFAULT_LOCATION_RADIUS) {
+        } else if (
+          getDistance(
+            input.latitude,
+            input.longitude,
+            data.location.latitude,
+            data.location.longitude,
+          ) < DEFAULT_LOCATION_RADIUS
+        ) {
           const hasher = new Bun.CryptoHasher("sha256");
           hasher.update(data.id);
           yield { id: hasher.digest("hex"), location: data.location };
@@ -305,7 +350,7 @@ export const riderRouter = router({
     .input(
       z.object({
         beeperId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const beeper = await db.query.user.findFirst({
@@ -330,14 +375,14 @@ export const riderRouter = router({
                 },
               },
             },
-          }
+          },
         },
       });
 
       if (!beeper) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Beeper not found."
+          message: "Beeper not found.",
         });
       }
 
@@ -346,7 +391,7 @@ export const riderRouter = router({
       if (!entry) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "You are not in that beepers queue."
+          message: "You are not in that beepers queue.",
         });
       }
 
@@ -354,7 +399,7 @@ export const riderRouter = router({
         sendNotification({
           to: beeper.pushToken,
           title: `${ctx.user.first} ${ctx.user.last} left your queue 🥹`,
-          body: "They decided they did not want a beep from you!"
+          body: "They decided they did not want a beep from you!",
         });
       }
 
@@ -363,68 +408,73 @@ export const riderRouter = router({
         .set({ status: "canceled", end: new Date() })
         .where(eq(beep.id, entry.id));
 
-      const newQueue = beeper.beeps.filter(beep => beep.id !== entry.id).map((b) => ({ ...b, beeper }));
+      const newQueue = beeper.beeps
+        .filter((beep) => beep.id !== entry.id)
+        .map((b) => ({ ...b, beeper }));
 
-      pubSub.publish('ride', ctx.user.id, { ride: null });
-      pubSub.publish('queue', beeper.id, { queue: newQueue });
+      pubSub.publish("ride", ctx.user.id, { ride: null });
+      pubSub.publish("queue", beeper.id, { queue: newQueue });
 
       for (const beep of newQueue) {
-        pubSub.publish('ride', entry.rider_id, { ride: getRiderBeepFromBeeperQueue(beep.rider_id, newQueue) });
+        pubSub.publish("ride", entry.rider_id, {
+          ride: getRiderBeepFromBeeperQueue(beep.rider_id, newQueue),
+        });
       }
 
-      await db.update(user).set({ queueSize: getQueueSize(newQueue) }).where(eq(user.id, beeper.id));
+      await db
+        .update(user)
+        .set({ queueSize: getQueueSize(newQueue) })
+        .where(eq(user.id, beeper.id));
 
       return true;
     }),
-    getLastBeepToRate: authedProcedure.query(async ({ ctx }) => {
-      const mostRecentCompletedBeep = await db.query.beep.findFirst({
-        orderBy: desc(beep.start),
-        where: and(
-          or(
-             eq(beep.rider_id, ctx.user.id),
-             eq(beep.beeper_id, ctx.user.id)
-          ),
-          eq(beep.status, 'complete')
-        ),
-        with: {
-          ratings: true,
-          beeper: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
-            },
+  getLastBeepToRate: authedProcedure.query(async ({ ctx }) => {
+    const mostRecentCompletedBeep = await db.query.beep.findFirst({
+      orderBy: desc(beep.start),
+      where: and(
+        or(eq(beep.rider_id, ctx.user.id), eq(beep.beeper_id, ctx.user.id)),
+        eq(beep.status, "complete"),
+      ),
+      with: {
+        ratings: true,
+        beeper: {
+          columns: {
+            id: true,
+            first: true,
+            last: true,
+            photo: true,
           },
-          rider: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
-            },
+        },
+        rider: {
+          columns: {
+            id: true,
+            first: true,
+            last: true,
+            photo: true,
           },
-        }
-      });
+        },
+      },
+    });
 
-      if (!mostRecentCompletedBeep) {
-        return null;
-      }
+    if (!mostRecentCompletedBeep) {
+      return null;
+    }
 
-      if (mostRecentCompletedBeep.ratings.some((rating) => rating.rater_id === ctx.user.id)) {
-        return null;
-      }
+    if (
+      mostRecentCompletedBeep.ratings.some(
+        (rating) => rating.rater_id === ctx.user.id,
+      )
+    ) {
+      return null;
+    }
 
-      return mostRecentCompletedBeep;
-    })
+    return mostRecentCompletedBeep;
+  }),
 });
 
 export async function getRidersCurrentRide(userId: string) {
   const b = await db.query.beep.findFirst({
-    where: and(
-      eq(beep.rider_id, userId),
-      inProgressBeep
-    ),
+    where: and(eq(beep.rider_id, userId), inProgressBeep),
     with: {
       beeper: {
         columns: {
@@ -443,7 +493,7 @@ export async function getRidersCurrentRide(userId: string) {
         with: {
           cars: {
             where: eq(car.default, true),
-            limit: 1
+            limit: 1,
           },
         },
       },
@@ -461,9 +511,9 @@ export async function getRidersCurrentRide(userId: string) {
       and(
         eq(beep.beeper_id, b.beeper_id),
         lt(beep.start, b.start),
-        ne(beep.status, 'waiting'),
+        ne(beep.status, "waiting"),
         inProgressBeep,
-      )
+      ),
     );
 
   const isAcceptedBeep = getIsAcceptedBeep(b);
@@ -475,15 +525,15 @@ export async function getRidersCurrentRide(userId: string) {
       location: isAcceptedBeep ? b.beeper.location : null,
       phone: isAcceptedBeep ? b.beeper.phone : null,
     },
-    position: position[0].count
+    position: position[0].count,
   };
-};
+}
 
 export function getDistance(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ): number {
   const R = 6371;
   const dLat = deg2rad(lat2 - lat1);
