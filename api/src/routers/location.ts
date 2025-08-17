@@ -30,6 +30,7 @@ export const locationRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `${error.code} ${error.message}`,
+          cause: error,
         });
       }
 
@@ -93,6 +94,7 @@ export const locationRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: `${error.code} ${error.message}`,
+          cause: error,
         });
       }
 
