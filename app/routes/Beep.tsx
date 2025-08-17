@@ -37,23 +37,23 @@ export function BeepDetails(props: Props) {
     ),
   );
 
-  const r = route?.routes?.[0].legs
-    ?.flatMap((leg) => leg.steps)
-    .map((step) => decodePolyline(step?.geometry as unknown as string))
+  const polylineCoordinates = route?.routes[0].legs
+    .flatMap((leg) => leg.steps)
+    .map((step) => decodePolyline(step.geometry as unknown as string))
     .flat();
 
-  const origin = {
-    latitude: route?.waypoints?.[0].location?.[1] ?? 0,
-    longitude: route?.waypoints?.[0].location?.[0] ?? 0,
+  const origin = route && {
+    latitude: route.waypoints[0].location[1],
+    longitude: route.waypoints[0].location[0],
   };
 
-  const destination = {
-    latitude: route?.waypoints?.[1].location?.[1] ?? 0,
-    longitude: route?.waypoints?.[1].location?.[0] ?? 0,
+  const destination = route && {
+    latitude: route.waypoints[1].location[1],
+    longitude: route.waypoints[1].location[0],
   };
 
-  const middlePointInRoute = r && {
-    ...r[Math.floor(r.length / 2)],
+  const middlePointInRoute = polylineCoordinates && {
+    ...polylineCoordinates[Math.floor(polylineCoordinates.length / 2)],
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   };
@@ -93,12 +93,12 @@ export function BeepDetails(props: Props) {
 
   return (
     <View style={{ gap: 8, height: "100%" }}>
-      {r && middlePointInRoute && (
+      {polylineCoordinates && middlePointInRoute && origin && destination && (
         <Map style={{ height: "100%" }} initialRegion={middlePointInRoute}>
           <Marker coordinate={origin} />
           <Marker coordinate={destination} />
           <Polyline
-            coordinates={r ?? []}
+            coordinates={polylineCoordinates ?? []}
             strokeWidth={5}
             strokeColor="#3d8ae3"
             lineCap="round"
