@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  adminProcedure,
-  authedProcedure,
-  router,
-} from "../utils/trpc";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, desc, eq, or, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
@@ -25,10 +21,10 @@ export const beepRouter = router({
       }),
     )
     .query(async ({ input, ctx }) => {
-      if (ctx.user.role !== 'admin' && input.userId !== ctx.user.id) {
+      if (ctx.user.role !== "admin" && input.userId !== ctx.user.id) {
         throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You cannot view beeps for other users.'
+          code: "UNAUTHORIZED",
+          message: "You cannot view beeps for other users.",
         });
       }
 
@@ -80,7 +76,7 @@ export const beepRouter = router({
         .from(beep)
         .where(where);
 
-      const results  = beepsCount[0].count;
+      const results = beepsCount[0].count;
 
       return {
         beeps,
@@ -90,7 +86,7 @@ export const beepRouter = router({
         results,
       };
     }),
-  beep: adminProcedure.input(z.string()).query(async ({ input }) => {
+  beep: authedProcedure.input(z.string()).query(async ({ input, ctx }) => {
     const b = await db.query.beep.findFirst({
       where: eq(beep.id, input),
       with: {
@@ -117,6 +113,16 @@ export const beepRouter = router({
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Beep not found",
+      });
+    }
+
+    if (
+      ctx.user.role === "user" &&
+      ![b.beeper_id, b.rider_id].includes(ctx.user.id)
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You can't view a beep that you are not involved in.",
       });
     }
 
@@ -167,7 +173,7 @@ export const beepRouter = router({
       const notifications: PushNotification[] = [];
 
       for (const beep of beeper.beeps) {
-        pubSub.publish('ride', beep.rider.id, { ride: null });
+        pubSub.publish("ride", beep.rider.id, { ride: null });
 
         if (beep.rider.pushToken) {
           notifications.push({
@@ -197,7 +203,7 @@ export const beepRouter = router({
         .where(eq(user.id, beeper.id))
         .returning();
 
-      pubSub.publish('user', beeper.id, { user: u[0] });
-      pubSub.publish('queue', beeper.id, { queue: [] });
+      pubSub.publish("user", beeper.id, { user: u[0] });
+      pubSub.publish("queue", beeper.id, { queue: [] });
     }),
 });
