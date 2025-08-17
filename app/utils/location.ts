@@ -174,3 +174,16 @@ export const decodePolyline = (polyline: string) => {
   }
   return points;
 };
+
+export function getMiles(meters: number, round = false) {
+  const miles = meters * 0.000621;
+
+  if (round) {
+    return new Intl.NumberFormat(undefined, {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 0,
+    }).format(miles);
+  }
+
+  return miles;
+}

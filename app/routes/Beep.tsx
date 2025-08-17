@@ -3,7 +3,7 @@ import { Map } from "@/components/Map";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { Text } from "@/components/Text";
-import { decodePolyline } from "@/utils/location";
+import { decodePolyline, getMiles } from "@/utils/location";
 import { useTheme } from "@/utils/theme";
 import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
@@ -39,7 +39,7 @@ export function BeepDetails(props: Props) {
 
   const polylineCoordinates = route?.routes[0].legs
     .flatMap((leg) => leg.steps)
-    .map((step) => decodePolyline(step.geometry as unknown as string))
+    .map((step) => decodePolyline(step.geometry))
     .flat();
 
   const origin = route && {
@@ -140,6 +140,15 @@ export function BeepDetails(props: Props) {
             <Text weight="800">Destination</Text>
             <Text>{beep.destination}</Text>
           </View>
+          {route && (
+            <View>
+              <Text weight="800">Distance</Text>
+              <Text>
+                {getMiles(route.routes[0].distance, true)} miles (~
+                {Math.round(route.routes[0].duration / 60)} min)
+              </Text>
+            </View>
+          )}
           <View>
             <Text weight="800">Group Size</Text>
             <Text>{beep.groupSize}</Text>
