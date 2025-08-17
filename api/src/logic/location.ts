@@ -9,7 +9,7 @@ export async function getCoordinatesFromAddress(
     params: {
       query: {
         q: address,
-        // zoom: "10",
+        zoom: 10,
         ...(bias && { lat: bias.latitude, lon: bias.longitude }),
       },
     },
