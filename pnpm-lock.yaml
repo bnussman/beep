@@ -21,6 +21,9 @@ importers:
       '@banksnussman/osrm':
         specifier: ^0.0.1
         version: 0.0.1
+      '@banksnussman/photon':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@graphql-yoga/redis-event-target':
         specifier: ^3.0.3
         version: 3.0.3(ioredis@5.7.0)
@@ -893,6 +896,9 @@ packages:
 
   '@banksnussman/osrm@0.0.1':
     resolution: {integrity: sha512-IBtKNUAP3qhVE4yhLbeZCMFi88KNnVo1CBslzvwpo5t/49HbcRMsH/UCMzuZ1z4wL+T54TA9ck4hP49nuJNGNA==}
+
+  '@banksnussman/photon@0.0.1':
+    resolution: {integrity: sha512-5Rt7sOe4HT2dFnQ+RNpX3IqZfsbsLGP8Z5/CLJac6+Oj/xl/ML+y1elodNaudA6KRvOVDl5tguQSw/rG9KsRSw==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -7483,6 +7489,10 @@ snapshots:
       '@babel/helper-validator-identifier': 7.27.1
 
   '@banksnussman/osrm@0.0.1':
+    dependencies:
+      openapi-fetch: 0.14.0
+
+  '@banksnussman/photon@0.0.1':
     dependencies:
       openapi-fetch: 0.14.0
 
