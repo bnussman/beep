@@ -10,7 +10,7 @@ import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 
 import { useQuery } from "@tanstack/react-query";
-import { Layer, Source } from "react-map-gl/maplibre";
+import { Layer, Marker, Source } from "react-map-gl/maplibre";
 
 export const beepRoute = createRoute({
   component: Beep,
@@ -78,8 +78,12 @@ export function Beep() {
           Delete
         </Button>
       </Stack>
-      <Box height="400px">
+      <Box height="500px">
         <Map>
+          {origin && <Marker latitude={origin.lat} longitude={origin.lng} />}
+          {destination && (
+            <Marker latitude={destination.lat} longitude={destination.lng} />
+          )}
           <Source
             type="geojson"
             data={{
