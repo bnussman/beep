@@ -10,14 +10,7 @@ import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 
 import { useQuery } from "@tanstack/react-query";
-import {
-  MapContainer,
-  Marker,
-  Polyline,
-  Popup,
-  TileLayer,
-} from "react-leaflet";
-import { Layer, Source } from "react-map-gl/mapbox";
+import { Layer, Source } from "react-map-gl/maplibre";
 
 export const beepRoute = createRoute({
   component: Beep,
@@ -100,26 +93,6 @@ export function Beep() {
             />
           </Source>
         </Map>
-      </Box>
-      <Box>
-        <MapContainer
-          style={{ height: "400px" }}
-          center={[36.215735, -81.674205]}
-          zoom={13}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {origin && (
-            <Marker position={origin}>
-              <Popup>{beep.origin}</Popup>
-            </Marker>
-          )}
-          {destination && (
-            <Marker position={destination}>
-              <Popup>{beep.destination}</Popup>
-            </Marker>
-          )}
-          <Polyline positions={polylineCoordinates ?? []} />
-        </MapContainer>
       </Box>
       <Box>
         <Typography>

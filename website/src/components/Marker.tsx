@@ -1,5 +1,5 @@
 import React from "react";
-import { Marker as _Marker } from "react-map-gl/mapbox";
+import { Marker as _Marker } from "react-map-gl/maplibre";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { QueuePreview } from "./QueuePreview";
 import {

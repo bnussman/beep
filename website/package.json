@@ -20,17 +20,14 @@
     "@toolpad/core": "^0.16.0",
     "@trpc/client": "^11.4.3",
     "@trpc/tanstack-react-query": "^11.4.3",
-    "leaflet": "^1.9.4",
     "luxon": "^3.7.1",
-    "mapbox-gl": "^3.14.0",
+    "maplibre-gl": "^5.6.2",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.56.2",
-    "react-leaflet": "5.0.0-rc.2",
     "react-map-gl": "^8.0.1"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.20",
     "@types/luxon": "^3.7.1",
     "@types/react": "19.0.10",
     "@types/react-dom": "^19.1.3",
