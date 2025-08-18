@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   isOpen: boolean;
@@ -19,16 +19,20 @@ interface Props {
 
 export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
   const {
     mutateAsync: deleteBeep,
     isPending,
     error,
-  } = useMutation(trpc.beep.deleteBeep.mutationOptions());
-
-  const onDelete = async () => {
-    await deleteBeep(id);
-    onClose();
-  };
+  } = useMutation(
+    trpc.beep.deleteBeep.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries(trpc.beep.beeps.queryFilter());
+        onClose();
+      },
+    }),
+  );
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
@@ -41,7 +45,7 @@ export function DeleteBeepDialog({ isOpen, onClose, id }: Props) {
         <Button onClick={onClose}>Cancel</Button>
         <Button
           loading={isPending}
-          onClick={onDelete}
+          onClick={() => deleteBeep(id)}
           color="error"
           variant="contained"
         >

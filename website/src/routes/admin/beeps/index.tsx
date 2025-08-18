@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
@@ -9,7 +9,7 @@ import { TableCellUser } from "../../../components/TableCellUser";
 import { TableError } from "../../../components/TableError";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableEmpty } from "../../../components/TableEmpty";
-import { DateTime, Duration, Interval } from "luxon";
+import { DateTime, Interval } from "luxon";
 import {
   Paper,
   Stack,
@@ -23,6 +23,8 @@ import {
 } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
+import { BeepMenu } from "./BeepMenu";
+import { DeleteBeepDialog } from "./DeleteBeepDialog";
 
 export const beepStatusMap: Record<
   RouterOutput["beep"]["beep"]["status"],
@@ -59,16 +61,21 @@ export function Beeps() {
   const { page } = beepsListRoute.useSearch();
   const navigate = useNavigate({ from: beepsListRoute.id });
 
-  const { data, isLoading, error } = useQuery(trpc.beep.beeps.queryOptions(
-    {
-      page,
-    },
-    {
-      refetchInterval: 5_000,
-      refetchOnMount: true,
-      placeholderData: keepPreviousData,
-    },
-  ));
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedBeepId, setSelectedBeepId] = useState<string | null>(null);
+
+  const { data, isLoading, error } = useQuery(
+    trpc.beep.beeps.queryOptions(
+      {
+        page,
+      },
+      {
+        refetchInterval: 5_000,
+        refetchOnMount: true,
+        placeholderData: keepPreviousData,
+      },
+    ),
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
@@ -99,6 +106,7 @@ export function Beeps() {
               <TableCell>Start</TableCell>
               <TableCell>End</TableCell>
               <TableCell>Duration</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -127,7 +135,26 @@ export function Beeps() {
                   {beep.end ? DateTime.fromISO(beep.end).toRelative() : "N/A"}
                 </TableCell>
                 <TableCell>
-                  {beep.end ? Interval.fromDateTimes(DateTime.fromISO(beep.start), DateTime.fromISO(beep.end)).toDuration().rescale().set({ milliseconds: 0 }).rescale().toHuman() : "N/A"}
+                  {beep.end
+                    ? Interval.fromDateTimes(
+                        DateTime.fromISO(beep.start),
+                        DateTime.fromISO(beep.end),
+                      )
+                        .toDuration()
+                        .rescale()
+                        .set({ milliseconds: 0 })
+                        .rescale()
+                        .toHuman()
+                    : "N/A"}
+                </TableCell>
+                <TableCell>
+                  <BeepMenu
+                    beepId={beep.id}
+                    onDelete={() => {
+                      setIsDeleteOpen(true);
+                      setSelectedBeepId(beep.id);
+                    }}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -140,6 +167,11 @@ export function Beeps() {
         page={page}
         results={data?.results}
         onChange={setCurrentPage}
+      />
+      <DeleteBeepDialog
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        id={selectedBeepId ?? ""}
       />
     </Stack>
   );
