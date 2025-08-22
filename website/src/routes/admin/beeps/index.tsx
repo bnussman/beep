@@ -110,9 +110,9 @@ export function Beeps() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {error && <TableError colSpan={9} error="Unable to fetch beeps" />}
-            {isLoading && <TableLoading colSpan={9} />}
-            {data?.results === 0 && <TableEmpty colSpan={9} />}
+            {error && <TableError colSpan={10} error="Unable to fetch beeps" />}
+            {isLoading && <TableLoading colSpan={10} />}
+            {data?.results === 0 && <TableEmpty colSpan={10} />}
             {data?.beeps.map((beep) => (
               <TableRow key={beep.id}>
                 <TableCellUser user={beep.beeper} />
