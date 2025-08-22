@@ -21,9 +21,12 @@ export const S3_ENDPOINT = process.env.S3_ENDPOINT ?? "http://localhost:9000";
 
 export const isLocalS3 = S3_ACCESS_KEY_SECRET === "beepbeepbeep";
 
-export const S3_BUCKET_URL = isLocalS3
-  ? "http://localhost:9000/beep/"
-  : "https://objects.ridebeep.app/";
+/**
+ * The user-facing root URL of the S3 bucket.
+ * Should start with something like `https://` and end with a `/`
+ */
+export const S3_BUCKET_URL =
+  process.env.S3_BUCKET_URL ?? "http://localhost:9000/beep/";
 
 export const S3_BUCKET = process.env.S3_BUCKET ?? "beep";
 
