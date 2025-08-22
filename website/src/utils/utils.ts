@@ -26,3 +26,9 @@ export function getDownloadLink() {
   }
   return "https://apps.apple.com/us/app/ride-beep-app/id1528601773";
 }
+
+export function getFormattedRating(rating: string | number) {
+  return Number(rating).toLocaleString("en-US", {
+    maximumFractionDigits: 3,
+  });
+}

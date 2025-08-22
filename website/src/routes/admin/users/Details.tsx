@@ -7,6 +7,7 @@ import { useTRPC } from "../../../utils/trpc";
 import { Alert, Stack, Typography, Tooltip, Box, Link } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
+import { getFormattedRating } from "../../../utils/utils";
 
 export const userDetailsRoute = createRoute({
   component: Details,
@@ -24,7 +25,11 @@ export function Details() {
   const trpc = useTRPC();
   const { userId } = useParams({ from: "/admin/users/$userId" });
 
-  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery(trpc.user.user.queryOptions(userId));
 
   if (isLoading || !user) {
     return null;
@@ -33,10 +38,6 @@ export function Details() {
   if (error) {
     return <Alert severity="error">{error.message}</Alert>;
   }
-
-  const formattedRating = Number(user.rating).toLocaleString("en-US", {
-    maximumFractionDigits: 3,
-  });
 
   return (
     <Stack spacing={2}>
@@ -57,7 +58,10 @@ export function Details() {
       <Box>
         <strong>Rating:</strong>
         {user.rating ? (
-          <Typography>{printStars(Number(user.rating))} ({formattedRating})</Typography>
+          <Typography>
+            {printStars(Number(user.rating))} ({getFormattedRating(user.rating)}
+            )
+          </Typography>
         ) : (
           <Typography>No Rating</Typography>
         )}

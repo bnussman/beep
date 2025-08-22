@@ -1,21 +1,37 @@
-import React from 'react'
-import { Paper, Box, Link, Typography, Stack, Table, TableBody, TableHead, TableRow, TableCell, TableContainer, Avatar, Chip, Tooltip } from '@mui/material';
-import { BeepersMap } from './BeepersMap';
-import { createRoute, Link as RouterLink } from '@tanstack/react-router';
-import { adminRoute } from '..';
-import { useTRPC } from '../../../utils/trpc';
-import { printStars } from '../ratings';
-import { TableEmpty } from '../../../components/TableEmpty';
-import { TableError } from '../../../components/TableError';
-import { TableLoading } from '../../../components/TableLoading';
+import React from "react";
+import {
+  Paper,
+  Box,
+  Link,
+  Typography,
+  Stack,
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableContainer,
+  Avatar,
+  Chip,
+  Tooltip,
+} from "@mui/material";
+import { BeepersMap } from "./BeepersMap";
+import { createRoute, Link as RouterLink } from "@tanstack/react-router";
+import { adminRoute } from "..";
+import { useTRPC } from "../../../utils/trpc";
+import { printStars } from "../ratings";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { TableError } from "../../../components/TableError";
+import { TableLoading } from "../../../components/TableLoading";
 
 import { useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { getFormattedRating } from "../../../utils/utils";
 
 export const beepersRoute = createRoute({
   component: Beepers,
-  path: 'beepers',
+  path: "beepers",
   getParentRoute: () => adminRoute,
 });
 
@@ -23,41 +39,59 @@ export function Beepers() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery(trpc.rider.beepers.queryOptions());
+  const { data, isLoading, error } = useQuery(
+    trpc.rider.beepers.queryOptions(),
+  );
 
-  useSubscription(trpc.rider.beepersLocations.subscriptionOptions(
-    {
-      longitude: 0,
-      latitude: 0,
-      admin: true,
-    },
-    {
-      enabled: location !== undefined,
-      onData(locationUpdate) {
-        queryClient.setQueryData(trpc.rider.beepers.queryKey(), (oldUsers) => {
-          if (!oldUsers)  {
-            return undefined;
-          }
+  useSubscription(
+    trpc.rider.beepersLocations.subscriptionOptions(
+      {
+        longitude: 0,
+        latitude: 0,
+        admin: true,
+      },
+      {
+        enabled: location !== undefined,
+        onData(locationUpdate) {
+          queryClient.setQueryData(
+            trpc.rider.beepers.queryKey(),
+            (oldUsers) => {
+              if (!oldUsers) {
+                return undefined;
+              }
 
-          const indexOfUser = oldUsers.findIndex((user) => user.id === locationUpdate.id);
+              const indexOfUser = oldUsers.findIndex(
+                (user) => user.id === locationUpdate.id,
+              );
 
-          if (indexOfUser !== -1) {
-            const newData = [...oldUsers];
+              if (indexOfUser !== -1) {
+                const newData = [...oldUsers];
 
-            newData[indexOfUser] = { ...oldUsers[indexOfUser], location: locationUpdate.location }
+                newData[indexOfUser] = {
+                  ...oldUsers[indexOfUser],
+                  location: locationUpdate.location,
+                };
 
-            return newData;
-          }
-        })
-      }
-    }
-  ));
+                return newData;
+              }
+            },
+          );
+        },
+      },
+    ),
+  );
 
   return (
     <Box>
       <Stack direction="row" alignItems="center" spacing={2}>
-        <Typography fontWeight="bold" variant="h4">Beepers</Typography>
-        <Chip variant="outlined" label={`${data?.length ?? 0} beepers`} size="small" />
+        <Typography fontWeight="bold" variant="h4">
+          Beepers
+        </Typography>
+        <Chip
+          variant="outlined"
+          label={`${data?.length ?? 0} beepers`}
+          size="small"
+        />
       </Stack>
       <BeepersMap beepers={data ?? []} />
       <TableContainer component={Paper} variant="outlined">
@@ -81,7 +115,9 @@ export function Beepers() {
                   <Link component={RouterLink} to={`/admin/users/${beeper.id}`}>
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Avatar src={beeper.photo ?? undefined} />
-                      <Typography>{beeper.first} {beeper.last}</Typography>
+                      <Typography>
+                        {beeper.first} {beeper.last}
+                      </Typography>
                       <Box flexGrow={1} />
                       {beeper.isPremium && (
                         <Chip label="Premium 👑" size="small" />
@@ -91,18 +127,20 @@ export function Beepers() {
                 </TableCell>
                 <TableCell>{beeper.queueSize} riders</TableCell>
                 <TableCell>{beeper.capacity} riders</TableCell>
-                <TableCell>${beeper.singlesRate} / ${beeper.groupRate}</TableCell>
+                <TableCell>
+                  ${beeper.singlesRate} / ${beeper.groupRate}
+                </TableCell>
                 <TableCell>
                   {beeper.rating ? (
-                    <Tooltip title={`User rating of ${beeper.rating}`}>
+                    <Tooltip
+                      title={`User rating of ${getFormattedRating(beeper.rating)}`}
+                    >
                       <Typography>
                         {printStars(Number(beeper.rating))}
                       </Typography>
                     </Tooltip>
                   ) : (
-                    <Typography>
-                      N/A
-                    </Typography>
+                    <Typography>N/A</Typography>
                   )}
                 </TableCell>
               </TableRow>
