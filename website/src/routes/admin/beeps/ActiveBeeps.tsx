@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
+import { BeepMenu } from "./BeepMenu";
 
 export const activeBeepsRoute = createRoute({
   component: ActiveBeeps,
@@ -42,16 +43,18 @@ export function ActiveBeeps() {
   const { page } = activeBeepsRoute.useSearch();
   const navigate = useNavigate({ from: activeBeepsRoute.id });
 
-  const { data, isLoading, error } = useQuery(trpc.beep.beeps.queryOptions(
-    {
-      page,
-      inProgress: true,
-    },
-    {
-      refetchOnMount: true,
-      refetchInterval: 5_000,
-    },
-  ));
+  const { data, isLoading, error } = useQuery(
+    trpc.beep.beeps.queryOptions(
+      {
+        page,
+        inProgress: true,
+      },
+      {
+        refetchOnMount: true,
+        refetchInterval: 5_000,
+      },
+    ),
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });
@@ -88,12 +91,13 @@ export function ActiveBeeps() {
               <TableCell>Group Size</TableCell>
               <TableCell>Start Time</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading && <TableLoading colSpan={7} />}
-            {error && <TableError colSpan={7} error={error.message} />}
-            {data?.results === 0 && <TableEmpty colSpan={7} />}
+            {isLoading && <TableLoading colSpan={8} />}
+            {error && <TableError colSpan={8} error={error.message} />}
+            {data?.results === 0 && <TableEmpty colSpan={8} />}
             {data?.beeps.map((beep) => (
               <TableRow key={beep.id}>
                 <TableCellUser user={beep.beeper} />
@@ -111,6 +115,9 @@ export function ActiveBeeps() {
                       {beep.status.replaceAll("_", " ")}
                     </Typography>
                   </Stack>
+                </TableCell>
+                <TableCell>
+                  <BeepMenu beepId={beep.id} />
                 </TableCell>
               </TableRow>
             ))}

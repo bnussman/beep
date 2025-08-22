@@ -23,6 +23,7 @@ import {
 import { DateTime, Duration } from "luxon";
 
 import { useQuery } from "@tanstack/react-query";
+import { BeepMenu } from "../routes/admin/beeps/BeepMenu";
 
 export const beepsTableRoute = createRoute({
   component: BeepsTable,
@@ -36,11 +37,13 @@ export function BeepsTable() {
 
   const { userId } = beepsTableRoute.useParams();
 
-  const { data, isLoading, error } = useQuery(trpc.beep.beeps.queryOptions({
-    userId,
-    cursor: currentPage,
-    pageSize: 10,
-  }));
+  const { data, isLoading, error } = useQuery(
+    trpc.beep.beeps.queryOptions({
+      userId,
+      cursor: currentPage,
+      pageSize: 10,
+    }),
+  );
 
   return (
     <Stack spacing={1}>
@@ -63,37 +66,43 @@ export function BeepsTable() {
               <TableCell>Status</TableCell>
               <TableCell>Duration</TableCell>
               <TableCell>Started</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading && <TableLoading colSpan={8} />}
-            {error && <TableError colSpan={8} error={error.message} />}
-            {data?.results === 0 && <TableEmpty colSpan={8} />}
-            {data?.beeps.map((ride) => (
-              <TableRow key={ride.id}>
-                <TableCellUser user={ride.beeper} />
-                <TableCellUser user={ride.rider} />
-                <TableCell>{ride.origin}</TableCell>
-                <TableCell>{ride.destination}</TableCell>
-                <TableCell>{ride.groupSize}</TableCell>
+            {isLoading && <TableLoading colSpan={9} />}
+            {error && <TableError colSpan={9} error={error.message} />}
+            {data?.results === 0 && <TableEmpty colSpan={9} />}
+            {data?.beeps.map((beep) => (
+              <TableRow key={beep.id}>
+                <TableCellUser user={beep.beeper} />
+                <TableCellUser user={beep.rider} />
+                <TableCell>{beep.origin}</TableCell>
+                <TableCell>{beep.destination}</TableCell>
+                <TableCell>{beep.groupSize}</TableCell>
                 <TableCell>
                   <Stack direction="row" alignItems="center" spacing={1}>
-                    <Indicator color={beepStatusMap[ride.status]} />
+                    <Indicator color={beepStatusMap[beep.status]} />
                     <Typography sx={{ textTransform: "capitalize" }}>
-                      {ride.status.replaceAll("_", " ")}
+                      {beep.status.replaceAll("_", " ")}
                     </Typography>
                   </Stack>
                 </TableCell>
                 <TableCell>
-                  {ride.end
+                  {beep.end
                     ? Duration.fromMillis(
-                        new Date(ride.end).getTime() -
-                          new Date(ride.start).getTime(),
-                      ).rescale().toHuman()
+                        new Date(beep.end).getTime() -
+                          new Date(beep.start).getTime(),
+                      )
+                        .rescale()
+                        .toHuman()
                     : "Still in progress"}
                 </TableCell>
                 <TableCell>
-                  {DateTime.fromISO(ride.start).toRelative()}
+                  {DateTime.fromISO(beep.start).toRelative()}
+                </TableCell>
+                <TableCell>
+                  <BeepMenu beepId={beep.id} />
                 </TableCell>
               </TableRow>
             ))}

@@ -4,7 +4,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "../../../components/Link";
 
 interface Props {
-  onDelete: () => void;
+  onDelete?: () => void;
   beepId: string;
 }
 
@@ -45,7 +45,7 @@ export function BeepMenu(props: Props) {
         <MenuItem component={Link} to={`/admin/beeps/${beepId}`}>
           Details
         </MenuItem>
-        <MenuItem onClick={onDelete}>Delete</MenuItem>
+        {onDelete && <MenuItem onClick={onDelete}>Delete</MenuItem>}
       </Menu>
     </>
   );
