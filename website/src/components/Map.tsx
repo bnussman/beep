@@ -11,7 +11,7 @@ const getStyle = (theme: "light" | "dark") => ({
       tiles:
         theme === "dark"
           ? ["https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"]
-          : ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+          : ["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"],
       tileSize: 256,
     },
   },

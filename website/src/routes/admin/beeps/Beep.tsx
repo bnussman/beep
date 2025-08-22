@@ -1,8 +1,17 @@
 import React, { useState } from "react";
+import LocationPinIcon from "@mui/icons-material/LocationPin";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
-import { Typography, Button, Box, Stack, Alert } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Box,
+  Stack,
+  Alert,
+  useTheme,
+  Tooltip,
+} from "@mui/material";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { createRoute } from "@tanstack/react-router";
 import { beepsRoute } from ".";
@@ -20,6 +29,8 @@ export const beepRoute = createRoute({
 
 export function Beep() {
   const trpc = useTRPC();
+  const theme = useTheme();
+
   const { beepId } = beepRoute.useParams();
   const {
     data: beep,
@@ -80,9 +91,19 @@ export function Beep() {
       </Stack>
       <Box height="500px">
         <Map>
-          {origin && <Marker latitude={origin.lat} longitude={origin.lng} />}
+          {origin && (
+            <Marker latitude={origin.lat} longitude={origin.lng}>
+              <Tooltip title={beep.origin} arrow>
+                <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
+              </Tooltip>
+            </Marker>
+          )}
           {destination && (
-            <Marker latitude={destination.lat} longitude={destination.lng} />
+            <Marker latitude={destination.lat} longitude={destination.lng}>
+              <Tooltip title={beep.destination} arrow>
+                <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
+              </Tooltip>
+            </Marker>
           )}
           <Source
             type="geojson"
@@ -93,7 +114,10 @@ export function Beep() {
           >
             <Layer
               type="line"
-              paint={{ "line-color": "blue", "line-width": 5 }}
+              paint={{
+                "line-color": theme.palette.primary.main,
+                "line-width": 5,
+              }}
             />
           </Source>
         </Map>
