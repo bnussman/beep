@@ -1,0 +1,18 @@
+{
+    "name": "@beep/deploy",
+    "main": "index.ts",
+    "scripts": {
+        "typecheck": "tsc"
+    },
+    "devDependencies": {
+        "@types/node": "^24.2.1",
+        "typescript": "^5.8.2"
+    },
+    "dependencies": {
+        "@pulumi/docker": "^4.8.0",
+        "@pulumi/kubernetes": "^4.23.0",
+        "@pulumi/linode": "^5.1.1",
+        "@pulumi/pulumi": "^3.188.0",
+        "@pulumi/tls-self-signed-cert": "^0.1.3"
+    }
+}
