@@ -125,21 +125,21 @@ const db = new k8s.apiextensions.CustomResource(
   { provider: k8sProvider },
 );
 
-const dbService = new k8s.core.v1.Service(
-  "db",
-  {
-    metadata: {
-      name: "db",
-      namespace: namespaceName,
-    },
-    spec: {
-      type: "ClusterIP",
-      ports: [{ port: 5432 }],
-      selector: { app: "db" },
-    },
-  },
-  { provider: k8sProvider },
-);
+// const dbService = new k8s.core.v1.Service(
+//   "db",
+//   {
+//     metadata: {
+//       name: "db",
+//       namespace: namespaceName,
+//     },
+//     spec: {
+//       type: "ClusterIP",
+//       ports: [{ port: 5432 }],
+//       selector: { app: "db" },
+//     },
+//   },
+//   { provider: k8sProvider },
+// );
 
 const apiDeployment = new k8s.apps.v1.Deployment(
   apiAppName,
@@ -166,7 +166,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
                   name: "DB_HOST",
                   valueFrom: {
                     secretKeyRef: {
-                      name: `${db.metadata.name}-app`,
+                      name: "db-app",
                       key: "host",
                     },
                   },
@@ -175,7 +175,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
                   name: "DB_DATABASE",
                   valueFrom: {
                     secretKeyRef: {
-                      name: `${db.metadata.name}-app`,
+                      name: "db-app",
                       key: "dbname",
                     },
                   },
@@ -184,7 +184,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
                   name: "DB_USER",
                   valueFrom: {
                     secretKeyRef: {
-                      name: `${db.metadata.name}-app`,
+                      name: "db-app",
                       key: "user",
                     },
                   },
@@ -193,7 +193,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
                   name: "DB_PASSWORD",
                   valueFrom: {
                     secretKeyRef: {
-                      name: `${db.metadata.name}-app`,
+                      name: "db-app",
                       key: "password",
                     },
                   },
