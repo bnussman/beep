@@ -17,6 +17,8 @@ jobs:
     environment:
       name: dev
       url: https://dev.ridebeep.app
+    container:
+      image: ghcr.io/actions/actions-runner
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
