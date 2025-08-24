@@ -50,7 +50,7 @@ const apiService = new k8s.core.v1.Service(
     },
     spec: {
       type: "ClusterIP",
-      ports: [{ port: 3000 }],
+      ports: [{ port: 3000, targetPort: 3000 }],
       selector: { app: apiAppName },
     },
   },
