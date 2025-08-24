@@ -19,6 +19,7 @@ jobs:
       url: https://dev.ridebeep.app
     container:
       image: ghcr.io/actions/actions-runner
+      options: --user root
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
