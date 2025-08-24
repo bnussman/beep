@@ -41,36 +41,6 @@ const namespace = new k8s.core.v1.Namespace(
   { provider: k8sProvider },
 );
 
-const apiDeployment = new k8s.apps.v1.Deployment(
-  apiAppName,
-  {
-    metadata: {
-      name: apiAppName,
-      namespace: namespace.metadata.name,
-      labels: { app: apiAppName },
-    },
-    spec: {
-      selector: { matchLabels: { app: apiAppName } },
-      replicas: 4,
-      template: {
-        metadata: { labels: { app: apiAppName } },
-        spec: {
-          containers: [
-            {
-              name: apiAppName,
-              image: apiImageResource.repoDigest,
-              imagePullPolicy: "Always",
-              ports: [{ containerPort: 3000 }],
-              envFrom: [{ configMapRef: { name: apiAppName } }],
-            },
-          ],
-        },
-      },
-    },
-  },
-  { provider: k8sProvider },
-);
-
 const apiService = new k8s.core.v1.Service(
   apiAppName,
   {
@@ -171,6 +141,74 @@ const dbService = new k8s.core.v1.Service(
   { provider: k8sProvider },
 );
 
+const apiDeployment = new k8s.apps.v1.Deployment(
+  apiAppName,
+  {
+    metadata: {
+      name: apiAppName,
+      namespace: namespace.metadata.name,
+      labels: { app: apiAppName },
+    },
+    spec: {
+      selector: { matchLabels: { app: apiAppName } },
+      replicas: 4,
+      template: {
+        metadata: { labels: { app: apiAppName } },
+        spec: {
+          containers: [
+            {
+              name: apiAppName,
+              image: apiImageResource.repoDigest,
+              imagePullPolicy: "Always",
+              ports: [{ containerPort: 3000 }],
+              env: [
+                {
+                  name: "DB_HOST",
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: `${db.metadata.name}-app`,
+                      key: "host",
+                    },
+                  },
+                },
+                {
+                  name: "DB_DATABASE",
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: `${db.metadata.name}-app`,
+                      key: "dbname",
+                    },
+                  },
+                },
+                {
+                  name: "DB_USER",
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: `${db.metadata.name}-app`,
+                      key: "user",
+                    },
+                  },
+                },
+                {
+                  name: "DB_PASSWORD",
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: `${db.metadata.name}-app`,
+                      key: "password",
+                    },
+                  },
+                },
+              ],
+              envFrom: [{ configMapRef: { name: apiAppName } }],
+            },
+          ],
+        },
+      },
+    },
+  },
+  { provider: k8sProvider },
+);
+
 const config = new k8s.core.v1.ConfigMap(
   apiAppName,
   {
@@ -181,6 +219,7 @@ const config = new k8s.core.v1.ConfigMap(
     data: {
       ...env,
       REDIS_HOST: "redis.beep",
+      DB_HOST: "db.beep",
     },
   },
   { provider: k8sProvider },
