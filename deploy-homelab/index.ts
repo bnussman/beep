@@ -147,7 +147,7 @@ const db = new k8s.apiextensions.CustomResource(
 
       // Persistent storage configuration
       storage: {
-        storageClass: "standard",
+        storageClass: "local-path",
         size: "25Gi",
       },
     },
