@@ -23,7 +23,7 @@
     "@trpc/tanstack-react-query": "^11.4.3",
     "babel-plugin-react-compiler": "19.1.0-rc.2",
     "car-info": "0.2.1",
-    "expo": "~53.0.20",
+    "expo": "~53.0.22",
     "expo-application": "^6.1.5",
     "expo-constants": "~17.1.7",
     "expo-dev-client": "~5.2.4",
