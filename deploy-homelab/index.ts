@@ -57,33 +57,37 @@ const apiService = new k8s.core.v1.Service(
   { provider: k8sProvider },
 );
 
-const apiIngress = new k8s.networking.v1.Ingress("api-ingress", {
-  metadata: {
-    name: "api-ingress",
-    namespace: namespaceName,
-  },
-  spec: {
-    rules: [
-      {
-        host: "api.dev.ridebeep.app",
-        http: {
-          paths: [
-            {
-              path: "/",
-              pathType: "Prefix",
-              backend: {
-                service: {
-                  name: apiAppName,
-                  port: { number: 3000 },
+const apiIngress = new k8s.networking.v1.Ingress(
+  "api-ingress",
+  {
+    metadata: {
+      name: "api-ingress",
+      namespace: namespaceName,
+    },
+    spec: {
+      rules: [
+        {
+          host: "api.dev.ridebeep.app",
+          http: {
+            paths: [
+              {
+                path: "/",
+                pathType: "Prefix",
+                backend: {
+                  service: {
+                    name: apiAppName,
+                    port: { number: 3000 },
+                  },
                 },
               },
-            },
-          ],
+            ],
+          },
         },
-      },
-    ],
+      ],
+    },
   },
-});
+  { provider: k8sProvider },
+);
 
 const redisDeployment = new k8s.apps.v1.Deployment(
   "redis",
