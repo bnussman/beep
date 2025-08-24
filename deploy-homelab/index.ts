@@ -131,6 +131,46 @@ const redisService = new k8s.core.v1.Service(
   { provider: k8sProvider },
 );
 
+const db = new k8s.apiextensions.CustomResource(
+  "db",
+  {
+    apiVersion: "postgresql.cnpg.io/v1",
+    kind: "Cluster",
+    metadata: {
+      name: "db",
+      namespace: namespaceName,
+      labels: { app: "db" },
+    },
+    spec: {
+      instances: 3,
+      primaryUpdateStrategy: "unsupervised",
+
+      // Persistent storage configuration
+      storage: {
+        storageClass: "standard",
+        size: "25Gi",
+      },
+    },
+  },
+  { provider: k8sProvider },
+);
+
+const dbService = new k8s.core.v1.Service(
+  "db",
+  {
+    metadata: {
+      name: "db",
+      namespace: namespaceName,
+    },
+    spec: {
+      type: "ClusterIP",
+      ports: [{ port: 5432 }],
+      selector: { app: "db" },
+    },
+  },
+  { provider: k8sProvider },
+);
+
 const config = new k8s.core.v1.ConfigMap(
   apiAppName,
   {
