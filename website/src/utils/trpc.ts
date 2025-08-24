@@ -1,49 +1,25 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from "@tanstack/react-query";
 import {
   createWSClient,
-  httpBatchLink,
   httpLink,
   splitLink,
   wsLink,
   createTRPCClient,
-} from '@trpc/client';
+} from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
-import type { AppRouter } from '../../../api';
-import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
+import type { AppRouter } from "../../../api";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
 
-export const {
-  TRPCProvider,
-  useTRPC
-} = createTRPCContext<AppRouter>();
-
-function getUrl() {
-  if (import.meta.env.VITE_ENVIRONMENT_NAME === "production") {
-    return "https://api.ridebeep.app";
-  }
-  if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
-    return "https://api.staging.ridebeep.app";
-  }
-  return 'http://localhost:3000';
-}
-
-function getWSUrl() {
-  if (import.meta.env.VITE_ENVIRONMENT_NAME === "production") {
-    return "wss://api.ridebeep.app/subscriptions";
-  }
-  if (import.meta.env.VITE_ENVIRONMENT_NAME === "preview") {
-    return "wss://api.staging.ridebeep.app/subscriptions";
-  }
-  return "ws://localhost:3000/subscriptions";
-}
+export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
 
 export function getAuthToken() {
   const stored = localStorage.getItem("user");
   if (stored) {
     try {
-      const auth = JSON.parse(stored) as RouterOutput['auth']['login'];
+      const auth = JSON.parse(stored) as RouterOutput["auth"]["login"];
       return auth.tokens.id;
     } catch (error) {
       // @todo log to Sentry
@@ -62,7 +38,9 @@ export const queryClient = new QueryClient({
 });
 
 const wsClient = createWSClient({
-  url: getWSUrl(),
+  url: import.meta.env.VITE_API_ROOT
+    ? `wss://${import.meta.env.VITE_API_ROOT}/subscriptions`
+    : "ws://localhost:3000/subscriptions",
   retryDelayMs: () => 1_000,
   lazy: {
     enabled: true,
@@ -74,26 +52,28 @@ const wsClient = createWSClient({
       return { token };
     }
     return {};
-  }
+  },
 });
 
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     splitLink<AppRouter>({
-      condition: (op) => op.type === 'subscription',
+      condition: (op) => op.type === "subscription",
       true: wsLink<AppRouter>({
-        client: wsClient
+        client: wsClient,
       }),
       false: httpLink({
-        url: getUrl(),
+        url: import.meta.env.VITE_API_ROOT
+          ? `https://${import.meta.env.VITE_API_ROOT}`
+          : "http://localhost:3000",
         headers() {
           const token = getAuthToken();
           if (token) {
             return { Authorization: `Bearer ${token}` };
           }
           return {};
-        }
+        },
       }),
-    })
+    }),
   ],
 });
