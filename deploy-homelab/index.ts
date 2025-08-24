@@ -49,13 +49,41 @@ const apiService = new k8s.core.v1.Service(
       namespace: namespaceName,
     },
     spec: {
-      type: "LoadBalancer",
-      ports: [{ port: 443, targetPort: 3000 }],
+      type: "ClusterIP",
+      ports: [{ port: 3000 }],
       selector: { app: apiAppName },
     },
   },
   { provider: k8sProvider },
 );
+
+const apiIngress = new k8s.networking.v1.Ingress("api-ingress", {
+  metadata: {
+    name: "api-ingress",
+    namespace: namespaceName,
+  },
+  spec: {
+    rules: [
+      {
+        host: "api.dev.ridebeep.app",
+        http: {
+          paths: [
+            {
+              path: "/",
+              pathType: "Prefix",
+              backend: {
+                service: {
+                  name: apiAppName,
+                  port: { number: 3000 },
+                },
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+});
 
 const redisDeployment = new k8s.apps.v1.Deployment(
   "redis",
@@ -223,8 +251,4 @@ const config = new k8s.core.v1.ConfigMap(
     },
   },
   { provider: k8sProvider },
-);
-
-export const apiIp = apiService.status.loadBalancer.apply(
-  (lb) => lb.ingress[0].ip || lb.ingress[0].hostname,
 );
