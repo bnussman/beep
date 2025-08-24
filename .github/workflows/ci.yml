@@ -60,5 +60,6 @@ jobs:
         with:
           cache: pnpm
       - run: pnpm i --frozen-lockfile
+      - run: cp pnpm-lock.yaml app/pnpm-lock.yaml
       - run: bunx expo-doctor --verbose
         working-directory: app
