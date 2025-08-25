@@ -147,6 +147,13 @@ const db = new k8s.apiextensions.CustomResource(
       instances: 3,
       primaryUpdateStrategy: "unsupervised",
 
+      bootstrap: {
+        initdb: {
+          database: "beep",
+          owner: "beep",
+        },
+      },
+
       // Persistent storage configuration
       storage: {
         storageClass: "local-path",
