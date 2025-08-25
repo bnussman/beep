@@ -164,6 +164,22 @@ const db = new k8s.apiextensions.CustomResource(
   { provider: k8sProvider },
 );
 
+const dbNodePort = new k8s.core.v1.Service(
+  "db-expose",
+  {
+    metadata: {
+      name: "db-expose",
+      namespace: namespaceName,
+    },
+    spec: {
+      type: "NodePort",
+      ports: [{ port: 5432 }],
+      selector: { "cnpg.io/instanceRole": "primary" },
+    },
+  },
+  { provider: k8sProvider },
+);
+
 // const dbService = new k8s.core.v1.Service(
 //   "db",
 //   {
