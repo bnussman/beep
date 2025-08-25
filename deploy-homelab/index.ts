@@ -151,6 +151,7 @@ const db = new k8s.apiextensions.CustomResource(
         initdb: {
           database: "beep",
           owner: "beep",
+          postInitTemplateSQL: ["CREATE EXTENSION postgis;"],
         },
       },
 
