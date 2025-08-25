@@ -146,7 +146,7 @@ const db = new k8s.apiextensions.CustomResource(
     spec: {
       instances: 3,
       primaryUpdateStrategy: "unsupervised",
-
+      imageName: "ghcr.io/cloudnative-pg/postgis:17",
       bootstrap: {
         initdb: {
           database: "beep",
