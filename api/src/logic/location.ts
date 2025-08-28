@@ -9,8 +9,12 @@ export async function getCoordinatesFromAddress(
     params: {
       query: {
         q: address,
-        zoom: 10,
-        ...(bias && { lat: bias.latitude, lon: bias.longitude }),
+        ...(bias && {
+          zoom: 10,
+          location_bias_scale: 0.5,
+          lat: bias.latitude,
+          lon: bias.longitude,
+        }),
       },
     },
   });
