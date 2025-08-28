@@ -133,53 +133,53 @@ const redisService = new k8s.core.v1.Service(
   { provider: k8sProvider },
 );
 
-const db = new k8s.apiextensions.CustomResource(
-  "db",
-  {
-    apiVersion: "postgresql.cnpg.io/v1",
-    kind: "Cluster",
-    metadata: {
-      name: "db",
-      namespace: namespaceName,
-      labels: { app: "db" },
-    },
-    spec: {
-      instances: 3,
-      primaryUpdateStrategy: "unsupervised",
-      imageName: "ghcr.io/cloudnative-pg/postgis:17",
-      bootstrap: {
-        initdb: {
-          database: "beep",
-          owner: "beep",
-          postInitTemplateSQL: ["CREATE EXTENSION postgis;"],
-        },
-      },
+// const db = new k8s.apiextensions.CustomResource(
+//   "db",
+//   {
+//     apiVersion: "postgresql.cnpg.io/v1",
+//     kind: "Cluster",
+//     metadata: {
+//       name: "db",
+//       namespace: namespaceName,
+//       labels: { app: "db" },
+//     },
+//     spec: {
+//       instances: 3,
+//       primaryUpdateStrategy: "unsupervised",
+//       imageName: "ghcr.io/cloudnative-pg/postgis:17",
+//       bootstrap: {
+//         initdb: {
+//           database: "beep",
+//           owner: "beep",
+//           postInitTemplateSQL: ["CREATE EXTENSION postgis;"],
+//         },
+//       },
 
-      // Persistent storage configuration
-      storage: {
-        storageClass: "local-path",
-        size: "25Gi",
-      },
-    },
-  },
-  { provider: k8sProvider },
-);
+//       // Persistent storage configuration
+//       storage: {
+//         storageClass: "local-path",
+//         size: "25Gi",
+//       },
+//     },
+//   },
+//   { provider: k8sProvider },
+// );
 
-const dbNodePort = new k8s.core.v1.Service(
-  "db-expose",
-  {
-    metadata: {
-      name: "db-expose",
-      namespace: namespaceName,
-    },
-    spec: {
-      type: "NodePort",
-      ports: [{ port: 5432 }],
-      selector: { "cnpg.io/instanceRole": "primary" },
-    },
-  },
-  { provider: k8sProvider },
-);
+// const dbNodePort = new k8s.core.v1.Service(
+//   "db-expose",
+//   {
+//     metadata: {
+//       name: "db-expose",
+//       namespace: namespaceName,
+//     },
+//     spec: {
+//       type: "NodePort",
+//       ports: [{ port: 5432 }],
+//       selector: { "cnpg.io/instanceRole": "primary" },
+//     },
+//   },
+//   { provider: k8sProvider },
+// );
 
 // const dbService = new k8s.core.v1.Service(
 //   "db",
@@ -218,42 +218,42 @@ const apiDeployment = new k8s.apps.v1.Deployment(
               imagePullPolicy: "Always",
               ports: [{ containerPort: 3000 }],
               env: [
-                {
-                  name: "DB_HOST",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: "db-app",
-                      key: "host",
-                    },
-                  },
-                },
-                {
-                  name: "DB_DATABASE",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: "db-app",
-                      key: "dbname",
-                    },
-                  },
-                },
-                {
-                  name: "DB_USER",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: "db-app",
-                      key: "user",
-                    },
-                  },
-                },
-                {
-                  name: "DB_PASSWORD",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: "db-app",
-                      key: "password",
-                    },
-                  },
-                },
+                // {
+                //   name: "DB_HOST",
+                //   valueFrom: {
+                //     secretKeyRef: {
+                //       name: "db-app",
+                //       key: "host",
+                //     },
+                //   },
+                // },
+                // {
+                //   name: "DB_DATABASE",
+                //   valueFrom: {
+                //     secretKeyRef: {
+                //       name: "db-app",
+                //       key: "dbname",
+                //     },
+                //   },
+                // },
+                // {
+                //   name: "DB_USER",
+                //   valueFrom: {
+                //     secretKeyRef: {
+                //       name: "db-app",
+                //       key: "user",
+                //     },
+                //   },
+                // },
+                // {
+                //   name: "DB_PASSWORD",
+                //   valueFrom: {
+                //     secretKeyRef: {
+                //       name: "db-app",
+                //       key: "password",
+                //     },
+                //   },
+                // },
               ],
               envFrom: [{ configMapRef: { name: apiAppName } }],
             },
@@ -275,7 +275,7 @@ const config = new k8s.core.v1.ConfigMap(
     data: {
       ...env,
       REDIS_HOST: "redis.beep",
-      DB_HOST: "db.beep",
+      // DB_HOST: "db.beep",
     },
   },
   { provider: k8sProvider },
