@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@banksnussman/osrm": "^0.0.2",
-    "@banksnussman/photon": "^0.0.2",
+    "@banksnussman/photon": "^0.0.3",
     "@graphql-yoga/redis-event-target": "^3.0.3",
     "@graphql-yoga/subscription": "^5.0.5",
     "@sentry/bun": "^10.3.0",

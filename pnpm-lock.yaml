@@ -22,8 +22,8 @@ importers:
         specifier: ^0.0.2
         version: 0.0.2
       '@banksnussman/photon':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.3
+        version: 0.0.3
       '@graphql-yoga/redis-event-target':
         specifier: ^3.0.3
         version: 3.0.3(ioredis@5.7.0)
@@ -893,8 +893,8 @@ packages:
   '@banksnussman/osrm@0.0.2':
     resolution: {integrity: sha512-SypYMvDgWQW7PmGOGkHU5c0wvvXIov+DnUDcXf886oDDeRtGNoDH55LHJrE1WL8b5bgnJBD9eiwXMmhRX2u4cg==}
 
-  '@banksnussman/photon@0.0.2':
-    resolution: {integrity: sha512-vNiHD5n8O0Pqe3uti8fwJ+87vAKE7J8xjm25ZaBvNHS2T+BCgXc///+AJPh85rfrwPb5DRQloyRIvvYmtesgsQ==}
+  '@banksnussman/photon@0.0.3':
+    resolution: {integrity: sha512-CLwWaKBGL0XsVIj0G1SuonrdvXxxCJz7GSGjGpMhGhIe2iDEHfsTl1gAycq8nVi2OnWJf+FDgVEro0AmZlEiYA==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -7518,7 +7518,7 @@ snapshots:
     dependencies:
       openapi-fetch: 0.14.0
 
-  '@banksnussman/photon@0.0.2':
+  '@banksnussman/photon@0.0.3':
     dependencies:
       openapi-fetch: 0.14.0
 
