@@ -1,11 +1,11 @@
-import * as Sentry from '@sentry/bun';
-import { TRPCError, inferRouterInputs, initTRPC } from '@trpc/server';
-import z, { ZodError } from 'zod';
-import { AppRouter } from '..';
-import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
-import { db } from './db';
-import { token } from '../../drizzle/schema';
-import { eq } from 'drizzle-orm';
+import * as Sentry from "@sentry/bun";
+import { TRPCError, inferRouterInputs, initTRPC } from "@trpc/server";
+import z, { ZodError } from "zod";
+import { AppRouter } from "..";
+import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import { db } from "./db";
+import { token } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 /**
  * Initialization of tRPC backend
@@ -20,8 +20,11 @@ const t = initTRPC.context<Context>().create({
       data: {
         ...shape.data,
         fieldErrors:
-          error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
-            ? z.flattenError(error.cause).fieldErrors as Record<string, string[]>
+          error.code === "BAD_REQUEST" && error.cause instanceof ZodError
+            ? (z.flattenError(error.cause).fieldErrors as Record<
+                string,
+                string[]
+              >)
             : null,
       },
     };
@@ -46,13 +49,24 @@ const sentryMiddleware = t.middleware((opts) => {
   return opts.next();
 });
 
-export const publicProcedure = t.procedure.use(sentryMiddleware);
+export const publicProcedure = t.procedure
+  .use(sentryMiddleware)
+  .use(function isMaintenanceMode(opts) {
+    if (opts.type === "mutation") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Beep app is undergoing maintenance. brb!",
+      });
+    }
+
+    return opts.next(opts);
+  });
 
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
 
   if (!ctx.user || !ctx.token) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return opts.next({ ctx });
@@ -63,8 +77,8 @@ export const verifiedProcedure = authedProcedure.use(function isVerified(opts) {
 
   if (!ctx.user.isStudent || !ctx.user.isEmailVerified) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'Your edu email must be verified.'
+      code: "UNAUTHORIZED",
+      message: "Your edu email must be verified.",
     });
   }
 
@@ -74,15 +88,19 @@ export const verifiedProcedure = authedProcedure.use(function isVerified(opts) {
 export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
   const { ctx } = opts;
 
-    if (ctx.user.role !== 'admin') {
-      throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
+  if (ctx.user.role !== "admin") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
 
-    return opts.next({ ctx });
-})
+  return opts.next({ ctx });
+});
 
-export async function createContext(data: Omit<FetchCreateContextFnOptions, 'resHeaders'>) {
-  const bearerToken = data.req?.headers.get('authorization')?.split(' ')[1] ?? data.info?.connectionParams?.token;
+export async function createContext(
+  data: Omit<FetchCreateContextFnOptions, "resHeaders">,
+) {
+  const bearerToken =
+    data.req?.headers.get("authorization")?.split(" ")[1] ??
+    data.info?.connectionParams?.token;
 
   if (!bearerToken) {
     return {};
@@ -96,8 +114,8 @@ export async function createContext(data: Omit<FetchCreateContextFnOptions, 'res
           password: false,
           passwordType: false,
         },
-      }
-    }
+      },
+    },
   });
 
   if (!session) {
