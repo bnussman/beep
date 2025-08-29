@@ -65,7 +65,10 @@ const apiIngress = new k8s.networking.v1.Ingress(
     spec: {
       rules: [
         {
-          host: "api.dev.ridebeep.app",
+          host:
+            envName === "production"
+              ? "api.ridebeep.app"
+              : "api.dev.ridebeep.app",
           http: {
             paths: [
               {
