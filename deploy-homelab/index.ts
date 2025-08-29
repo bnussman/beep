@@ -66,7 +66,7 @@ const apiIngress = new k8s.networking.v1.Ingress(
       rules: [
         {
           host:
-            envName === "production"
+            envName === "production" || envName === "production-homelab"
               ? "api.ridebeep.app"
               : "api.dev.ridebeep.app",
           http: {
