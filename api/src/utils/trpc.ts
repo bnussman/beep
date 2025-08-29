@@ -52,12 +52,12 @@ const sentryMiddleware = t.middleware((opts) => {
 export const publicProcedure = t.procedure
   .use(sentryMiddleware)
   .use(function isMaintenanceMode(opts) {
-    if (opts.type === "mutation") {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "Beep app is undergoing maintenance. brb!",
-      });
-    }
+    // if (opts.type === "mutation") {
+    //   throw new TRPCError({
+    //     code: "BAD_REQUEST",
+    //     message: "Beep app is undergoing maintenance. brb!",
+    //   });
+    // }
 
     return opts.next(opts);
   });
