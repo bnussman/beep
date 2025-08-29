@@ -1,17 +1,15 @@
 import * as pulumi from "@pulumi/pulumi";
-import * as linode from "@pulumi/linode";
 import * as docker from "@pulumi/docker";
 import * as k8s from "@pulumi/kubernetes";
-import * as selfSignedCert from "@pulumi/tls-self-signed-cert";
 
 const env = process.env.secrets ? JSON.parse(process.env.secrets) : {};
 const ACTOR = process.env.ACTOR;
 
 const envName = pulumi.getStack();
 
-const namespaceName = "beep";
+const namespaceName = `beep-${envName}`;
 const apiAppName = "api";
-const apiImageName = `ghcr.io/bnussman/api:${envName === "staging" ? "main" : envName}`;
+const apiImageName = `ghcr.io/bnussman/api:${envName}`;
 
 const apiImageResource = new docker.Image("apiImageResource", {
   imageName: apiImageName,
@@ -274,7 +272,7 @@ const config = new k8s.core.v1.ConfigMap(
     },
     data: {
       ...env,
-      REDIS_HOST: "redis.beep",
+      REDIS_HOST: `redis.${namespaceName}`,
       // DB_HOST: "db.beep",
     },
   },
