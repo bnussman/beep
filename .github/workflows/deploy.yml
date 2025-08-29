@@ -5,9 +5,11 @@ on:
   push:
     branches:
       - main
+      - production
 
 jobs:
-  deploy:
+  dev:
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       packages: write
@@ -37,7 +39,47 @@ jobs:
       - uses: pulumi/actions@v4
         with:
           command: up
-          stack-name: ${{ secrets.ENVIRONMENT_NAME }}
+          stack-name: dev
+          work-dir: deploy-homelab
+        env:
+          PULUMI_K8S_ENABLE_PATCH_FORCE: true
+          PULUMI_K8S_DELETE_UNREACHABLE: true
+          secrets: ${{ toJSON(secrets) }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  production:
+    if: github.ref == 'refs/heads/production'
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    runs-on: self-hosted
+    environment:
+      name: production
+      url: https://ridebeep.app
+    container:
+      image: ghcr.io/actions/actions-runner
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+          node-version: latest
+      - run: pnpm i --frozen-lockfile
+      - uses: pulumi/actions@v4
+        with:
+          command: up
+          stack-name: production-homelab
           work-dir: deploy-homelab
         env:
           PULUMI_K8S_ENABLE_PATCH_FORCE: true
