@@ -13,7 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
 type Props = StaticScreenProps<
-  Omit<RouterInput['rider']['startBeep'], "beeperId">
+  Omit<RouterInput["rider"]["startBeep"], "beeperId">
 >;
 
 export function PickBeepScreen({ route }: Props) {
@@ -22,25 +22,35 @@ export function PickBeepScreen({ route }: Props) {
   const navigation = useNavigation();
   const queryClient = useQueryClient();
 
-  const { data: beepers, isLoading, error, refetch, isRefetching } = useQuery(trpc.rider.beepers.queryOptions(
-    {
-      latitude: location?.coords.latitude ?? 0,
-      longitude: location?.coords.longitude ?? 0,
-    },
-    {
-      enabled: location !== undefined
-    }
-  ));
+  const {
+    data: beepers,
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+  } = useQuery(
+    trpc.rider.beepers.queryOptions(
+      {
+        latitude: location?.coords.latitude ?? 0,
+        longitude: location?.coords.longitude ?? 0,
+      },
+      {
+        enabled: location !== undefined,
+      },
+    ),
+  );
 
-  const { mutate: startBeep, isPending: isPickBeeperLoading } = useMutation(trpc.rider.startBeep.mutationOptions({
-    onSuccess(data) {
-      queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
-      navigation.goBack();
-    },
-     onError(error) {
-      alert(error.message);
-     },
-  }));
+  const { mutate: startBeep, isPending: isPickBeeperLoading } = useMutation(
+    trpc.rider.startBeep.mutationOptions({
+      onSuccess(data) {
+        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
+        navigation.goBack();
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
 
   useEffect(() => {
     navigation.setOptions({
@@ -55,25 +65,37 @@ export function PickBeepScreen({ route }: Props) {
     }
 
     startBeep({
-      ...route.params,
       beeperId,
+      ...route.params,
+      ...(location && {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      }),
     });
   };
 
   const renderItem = ({
     item,
   }: {
-    item: RouterOutput['rider']['beepers'][number];
+    item: RouterOutput["rider"]["beepers"][number];
     index: number;
   }) => {
     return (
       <Card onPress={() => chooseBeep(item.id)} pressable>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 16,
+          }}
+        >
           <View style={{ flex: 1 }}>
             <Text size="xl" weight="800">
               {item.first} {item.last}
             </Text>
-            {item.rating && <Text size="xs">{printStars(Number(item.rating))}</Text>}
+            {item.rating && (
+              <Text size="xs">{printStars(Number(item.rating))}</Text>
+            )}
           </View>
           {item.isPremium && (
             <Text
@@ -91,19 +113,19 @@ export function PickBeepScreen({ route }: Props) {
           )}
           <Avatar size="sm" src={item.photo ?? undefined} />
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text weight="bold">💵 Rates</Text>
           <Text>
             ${item.singlesRate} singles / ${item.groupRate} groups
           </Text>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text weight="bold">🚙 Rider Capacity</Text>
           <Text>
             {item.capacity} rider{item.queueSize === 1 ? "" : "s"}
           </Text>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text weight="bold">⏲️ Queue Length</Text>
           <Text>
             {item.queueSize} rider{item.queueSize === 1 ? "" : "s"}
@@ -115,7 +137,7 @@ export function PickBeepScreen({ route }: Props) {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ActivityIndicator />
       </View>
     );
@@ -123,7 +145,7 @@ export function PickBeepScreen({ route }: Props) {
 
   if (!location) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text weight="800">Loading Location</Text>
         <ActivityIndicator />
       </View>
@@ -132,7 +154,7 @@ export function PickBeepScreen({ route }: Props) {
 
   if (error) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text weight="800">Error</Text>
         <Text>{error.message}</Text>
       </View>
@@ -152,7 +174,7 @@ export function PickBeepScreen({ route }: Props) {
           : { padding: 10, gap: 8 }
       }
       ListEmptyComponent={
-        <View style={{ alignItems: 'center' }}>
+        <View style={{ alignItems: "center" }}>
           <Text weight="800" size="2xl">
             Nobody is beeping
           </Text>
