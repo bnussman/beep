@@ -154,44 +154,6 @@ const apiDeployment = new k8s.apps.v1.Deployment(
               image: apiImageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [{ containerPort: 3000 }],
-              env: [
-                // {
-                //   name: "DB_HOST",
-                //   valueFrom: {
-                //     secretKeyRef: {
-                //       name: "db-app",
-                //       key: "host",
-                //     },
-                //   },
-                // },
-                // {
-                //   name: "DB_DATABASE",
-                //   valueFrom: {
-                //     secretKeyRef: {
-                //       name: "db-app",
-                //       key: "dbname",
-                //     },
-                //   },
-                // },
-                // {
-                //   name: "DB_USER",
-                //   valueFrom: {
-                //     secretKeyRef: {
-                //       name: "db-app",
-                //       key: "user",
-                //     },
-                //   },
-                // },
-                // {
-                //   name: "DB_PASSWORD",
-                //   valueFrom: {
-                //     secretKeyRef: {
-                //       name: "db-app",
-                //       key: "password",
-                //     },
-                //   },
-                // },
-              ],
               envFrom: [{ configMapRef: { name: apiAppName } }],
             },
           ],
