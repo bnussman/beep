@@ -1,6 +1,0 @@
-name: beep
-runtime:
-  name: nodejs
-  options:
-    packagemanager: pnpm
-description: Beep Linode Deployment

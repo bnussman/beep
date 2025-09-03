@@ -1,19 +1,15 @@
 import * as pulumi from "@pulumi/pulumi";
-import * as linode from "@pulumi/linode";
 import * as docker from "@pulumi/docker";
 import * as k8s from "@pulumi/kubernetes";
-import * as selfSignedCert from "@pulumi/tls-self-signed-cert";
 
 const env = process.env.secrets ? JSON.parse(process.env.secrets) : {};
 const ACTOR = process.env.ACTOR;
 
 const envName = pulumi.getStack();
 
-const linodeProvider = new linode.Provider("linodeProvider", {
-  token: env.LINODE_TOKEN,
-});
-
-const apiImageName = `ghcr.io/bnussman/api:${envName === 'staging' ? 'main' : envName}`;
+const namespaceName = `beep-${envName}`;
+const apiAppName = "api";
+const apiImageName = `ghcr.io/bnussman/api:${envName}`;
 
 const apiImageResource = new docker.Image("apiImageResource", {
   imageName: apiImageName,
@@ -28,97 +24,19 @@ const apiImageResource = new docker.Image("apiImageResource", {
   },
 });
 
-const lkeCluster = new linode.LkeCluster(
-  "cluster",
-  {
-    region: "us-southeast",
-    k8sVersion: "1.33",
-    controlPlane: {
-      highAvailability: envName === "production",
-    },
-    label: envName,
-    pools: [
-      {
-        type: envName === "production" ? 'g6-dedicated-2' : 'g6-standard-1',
-        count: 3,
-      }
-    ],
-  },
-  { provider: linodeProvider }
-);
-
-const namespaceName = "beep";
-const apiAppName = "api";
-
 const k8sProvider = new k8s.Provider("k8sProvider", {
-  kubeconfig: lkeCluster.kubeconfig.apply(x => Buffer.from(x, 'base64').toString()),
+  kubeconfig: env.KUBECONFIG,
 });
 
-const namespace = new k8s.core.v1.Namespace(namespaceName, {
-  metadata:
-  {
-    name: namespaceName,
-    labels: { name: namespaceName }
-  }
-},
-  { provider: k8sProvider }
-);
-
-const apiDeployment = new k8s.apps.v1.Deployment(
-  apiAppName,
+const namespace = new k8s.core.v1.Namespace(
+  namespaceName,
   {
     metadata: {
-      name: apiAppName,
-      namespace: namespace.metadata.name,
-      labels: { app: apiAppName }
-    },
-    spec: {
-      selector: { matchLabels: { app: apiAppName } },
-      replicas: 4,
-      template: {
-        metadata: { labels: { app: apiAppName } },
-        spec: {
-          containers: [
-            {
-              name: apiAppName,
-              image: apiImageResource.repoDigest,
-              imagePullPolicy: "Always",
-              ports: [
-                { containerPort: 3000 }
-              ],
-              envFrom: [
-                { configMapRef: { name: apiAppName } }
-              ]
-            }
-          ]
-        }
-      }
-    }
-  },
-  { provider: k8sProvider }
-);
-
-const cert = new selfSignedCert.SelfSignedCertificate("cert", {
-  dnsName: "api.dev.ridebeep.app",
-  validityPeriodHours: 807660,
-  localValidityPeriodHours: 17520,
-  subject: {
-    commonName: "beep-api-cert",
-    organization: "Ride Beep App",
-  },
-});
-
-const secret = new k8s.core.v1.Secret(
-  apiAppName,
-  {
-    metadata: { name: "cert", namespace: namespace.metadata.name },
-    type: "kubernetes.io/tls",
-    stringData: {
-      ['tls.crt']: cert.pem,
-      ['tls.key']: cert.privateKey
+      name: namespaceName,
+      labels: { name: namespaceName },
     },
   },
-  { provider: k8sProvider }
+  { provider: k8sProvider },
 );
 
 const apiService = new k8s.core.v1.Service(
@@ -127,19 +45,49 @@ const apiService = new k8s.core.v1.Service(
     metadata: {
       name: apiAppName,
       namespace: namespaceName,
-      annotations: {
-        ['service.beta.kubernetes.io/linode-loadbalancer-default-protocol']: 'https',
-        ['service.beta.kubernetes.io/linode-loadbalancer-check-type']: 'connection',
-        ['service.beta.kubernetes.io/linode-loadbalancer-port-443']: `{ "tls-secret-name": "cert", "protocol": "https" }`
-      }
     },
     spec: {
-      type: "LoadBalancer",
-      ports: [{ port: 443, targetPort: 3000 }],
-      selector: { app: apiAppName }
-    }
+      type: "ClusterIP",
+      ports: [{ port: 3000, targetPort: 3000 }],
+      selector: { app: apiAppName },
+    },
   },
-  { provider: k8sProvider }
+  { provider: k8sProvider },
+);
+
+const apiIngress = new k8s.networking.v1.Ingress(
+  "api-ingress",
+  {
+    metadata: {
+      name: "api-ingress",
+      namespace: namespaceName,
+    },
+    spec: {
+      rules: [
+        {
+          host:
+            envName === "production" || envName === "production-homelab"
+              ? "api.ridebeep.app"
+              : "api.dev.ridebeep.app",
+          http: {
+            paths: [
+              {
+                path: "/",
+                pathType: "Prefix",
+                backend: {
+                  service: {
+                    name: apiAppName,
+                    port: { number: 3000 },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
+  { provider: k8sProvider },
 );
 
 const redisDeployment = new k8s.apps.v1.Deployment(
@@ -148,7 +96,7 @@ const redisDeployment = new k8s.apps.v1.Deployment(
     metadata: {
       name: "redis",
       namespace: namespace.metadata.name,
-      labels: { app: "redis" }
+      labels: { app: "redis" },
     },
     spec: {
       selector: { matchLabels: { app: "redis" } },
@@ -160,16 +108,14 @@ const redisDeployment = new k8s.apps.v1.Deployment(
             {
               name: "redis",
               image: "redis:latest",
-              ports: [
-                { containerPort: 6379 }
-              ],
-            }
-          ]
-        }
-      }
-    }
+              ports: [{ containerPort: 6379 }],
+            },
+          ],
+        },
+      },
+    },
   },
-  { provider: k8sProvider }
+  { provider: k8sProvider },
 );
 
 const redisService = new k8s.core.v1.Service(
@@ -182,10 +128,142 @@ const redisService = new k8s.core.v1.Service(
     spec: {
       type: "ClusterIP",
       ports: [{ port: 6379 }],
-      selector: { app: "redis" }
-    }
+      selector: { app: "redis" },
+    },
   },
-  { provider: k8sProvider }
+  { provider: k8sProvider },
+);
+
+// const db = new k8s.apiextensions.CustomResource(
+//   "db",
+//   {
+//     apiVersion: "postgresql.cnpg.io/v1",
+//     kind: "Cluster",
+//     metadata: {
+//       name: "db",
+//       namespace: namespaceName,
+//       labels: { app: "db" },
+//     },
+//     spec: {
+//       instances: 3,
+//       primaryUpdateStrategy: "unsupervised",
+//       imageName: "ghcr.io/cloudnative-pg/postgis:17",
+//       bootstrap: {
+//         initdb: {
+//           database: "beep",
+//           owner: "beep",
+//           postInitTemplateSQL: ["CREATE EXTENSION postgis;"],
+//         },
+//       },
+
+//       // Persistent storage configuration
+//       storage: {
+//         storageClass: "local-path",
+//         size: "25Gi",
+//       },
+//     },
+//   },
+//   { provider: k8sProvider },
+// );
+
+// const dbNodePort = new k8s.core.v1.Service(
+//   "db-expose",
+//   {
+//     metadata: {
+//       name: "db-expose",
+//       namespace: namespaceName,
+//     },
+//     spec: {
+//       type: "NodePort",
+//       ports: [{ port: 5432 }],
+//       selector: { "cnpg.io/instanceRole": "primary" },
+//     },
+//   },
+//   { provider: k8sProvider },
+// );
+
+// const dbService = new k8s.core.v1.Service(
+//   "db",
+//   {
+//     metadata: {
+//       name: "db",
+//       namespace: namespaceName,
+//     },
+//     spec: {
+//       type: "ClusterIP",
+//       ports: [{ port: 5432 }],
+//       selector: { app: "db" },
+//     },
+//   },
+//   { provider: k8sProvider },
+// );
+
+const apiDeployment = new k8s.apps.v1.Deployment(
+  apiAppName,
+  {
+    metadata: {
+      name: apiAppName,
+      namespace: namespace.metadata.name,
+      labels: { app: apiAppName },
+    },
+    spec: {
+      selector: { matchLabels: { app: apiAppName } },
+      replicas: 4,
+      template: {
+        metadata: { labels: { app: apiAppName } },
+        spec: {
+          containers: [
+            {
+              name: apiAppName,
+              image: apiImageResource.repoDigest,
+              imagePullPolicy: "Always",
+              ports: [{ containerPort: 3000 }],
+              env: [
+                // {
+                //   name: "DB_HOST",
+                //   valueFrom: {
+                //     secretKeyRef: {
+                //       name: "db-app",
+                //       key: "host",
+                //     },
+                //   },
+                // },
+                // {
+                //   name: "DB_DATABASE",
+                //   valueFrom: {
+                //     secretKeyRef: {
+                //       name: "db-app",
+                //       key: "dbname",
+                //     },
+                //   },
+                // },
+                // {
+                //   name: "DB_USER",
+                //   valueFrom: {
+                //     secretKeyRef: {
+                //       name: "db-app",
+                //       key: "user",
+                //     },
+                //   },
+                // },
+                // {
+                //   name: "DB_PASSWORD",
+                //   valueFrom: {
+                //     secretKeyRef: {
+                //       name: "db-app",
+                //       key: "password",
+                //     },
+                //   },
+                // },
+              ],
+              envFrom: [{ configMapRef: { name: apiAppName } }],
+            },
+          ],
+        },
+      },
+    },
+  },
+  { provider: k8sProvider },
 );
 
 const config = new k8s.core.v1.ConfigMap(
@@ -197,12 +275,9 @@ const config = new k8s.core.v1.ConfigMap(
     },
     data: {
       ...env,
-      REDIS_HOST: "redis.beep",
+      REDIS_HOST: `redis.${namespaceName}`,
+      // DB_HOST: "db.beep",
     },
   },
-  { provider: k8sProvider }
+  { provider: k8sProvider },
 );
-
-export const clusterLabel = lkeCluster.label;
-
-export const apiIp = apiService.status.loadBalancer.apply((lb) => lb.ingress[0].ip || lb.ingress[0].hostname);
