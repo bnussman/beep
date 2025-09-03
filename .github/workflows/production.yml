@@ -36,7 +36,7 @@ jobs:
       - run: pnpm i --frozen-lockfile
       - uses: pulumi/actions@v4
         with:
-          command: up
+          command: refresh
           stack-name: production
           work-dir: deploy
         env:
