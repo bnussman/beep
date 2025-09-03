@@ -174,7 +174,6 @@ const config = new k8s.core.v1.ConfigMap(
     data: {
       ...env,
       REDIS_HOST: `redis.${namespaceName}`,
-      // DB_HOST: "db.beep",
     },
   },
   { provider: k8sProvider },

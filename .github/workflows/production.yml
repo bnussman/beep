@@ -37,7 +37,7 @@ jobs:
       - uses: pulumi/actions@v4
         with:
           command: up
-          stack-name: production-homelab
+          stack-name: production
           work-dir: deploy
         env:
           PULUMI_K8S_ENABLE_PATCH_FORCE: true
