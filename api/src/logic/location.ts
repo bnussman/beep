@@ -10,8 +10,8 @@ export async function getCoordinatesFromAddress(
       query: {
         q: address,
         ...(bias && {
-          zoom: 10,
-          location_bias_scale: 0.5,
+          // zoom: 10,
+          // location_bias_scale: 0.5,
           lat: bias.latitude,
           lon: bias.longitude,
         }),
