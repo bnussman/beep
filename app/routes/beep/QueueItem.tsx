@@ -10,8 +10,12 @@ import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { RouterOutput, useTRPC } from "@/utils/trpc";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { decodePolyline, getMiles } from "@/utils/location";
+import { Map } from "@/components/Map";
+import { Marker } from "@/components/Marker";
+import { Polyline } from "@/components/Polyline";
 
 interface Props {
   item: RouterOutput["beeper"]["queue"][number];
@@ -32,6 +36,36 @@ export function QueueItem({ item: beep }: Props) {
       },
     }),
   );
+
+  const { data: beepRoute } = useQuery(
+    trpc.location.getRoute.queryOptions({
+      origin: beep.origin,
+      destination: beep.destination,
+    }),
+  );
+
+  const route = beepRoute?.routes[0];
+
+  const polylineCoordinates = route?.legs
+    .flatMap((leg) => leg.steps)
+    .map((step) => decodePolyline(step.geometry))
+    .flat();
+
+  const origin = beepRoute && {
+    latitude: beepRoute.waypoints[0].location[1],
+    longitude: beepRoute.waypoints[0].location[0],
+  };
+
+  const destination = beepRoute && {
+    latitude: beepRoute.waypoints[1].location[1],
+    longitude: beepRoute.waypoints[1].location[0],
+  };
+
+  const middlePointInRoute = polylineCoordinates && {
+    ...polylineCoordinates[Math.floor(polylineCoordinates.length / 2)],
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  };
 
   const onPromptCancel = () => {
     if (isMobile) {
@@ -62,33 +96,138 @@ export function QueueItem({ item: beep }: Props) {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
-        <Card variant="filled" style={{ padding: 16 }} pressable>
+        <Card variant="filled" style={{ padding: 16, gap: 16 }} pressable>
           <View
             style={{
               flexDirection: "row",
               gap: 16,
               justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <View>
               <Text weight="800" size="2xl">
                 {beep.rider.first} {beep.rider.last}
               </Text>
-              {beep.rider.rating && (
-                <Text size="xs">{printStars(Number(beep.rider.rating))}</Text>
-              )}
+              <Text size="xs" color="subtle">
+                {beep.rider.rating
+                  ? printStars(Number(beep.rider.rating))
+                  : "No Rating"}
+              </Text>
             </View>
-            <Avatar size="sm" src={beep.rider.photo ?? undefined} />
+            <Avatar size="xs" src={beep.rider.photo ?? undefined} />
           </View>
-          <Text>
-            <Text weight="bold">Group Size</Text> <Text>{beep.groupSize}</Text>
-          </Text>
-          <Text>
-            <Text weight="bold">Pick Up</Text> <Text>{beep.origin}</Text>
-          </Text>
-          <Text>
-            <Text weight="bold">Drop Off</Text> <Text>{beep.destination}</Text>
-          </Text>
+          <View style={{ gap: 4 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text weight="bold" style={{ width: 90 }}>
+                Status
+              </Text>
+              <Text
+                style={{
+                  textTransform: "capitalize",
+                  flexShrink: 1,
+                  textAlign: "right",
+                }}
+              >
+                {beep.status === "waiting"
+                  ? "Waiting for you to accept or deny"
+                  : beep.status}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text weight="bold" style={{ width: 120 }}>
+                Group Size
+              </Text>
+              <Text>{beep.groupSize}</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text weight="bold" style={{ width: 120 }}>
+                Pick Up
+              </Text>
+              <Text style={{ flexShrink: 1, textAlign: "right" }}>
+                {beep.origin}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text weight="bold" style={{ width: 120 }}>
+                Drop Off
+              </Text>{" "}
+              <Text style={{ flexShrink: 1, textAlign: "right" }}>
+                {beep.destination}
+              </Text>
+            </View>
+            {route && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text weight="bold" style={{ width: 120 }}>
+                  Beep Distance
+                </Text>
+                <Text style={{ flexShrink: 1, textAlign: "right" }}>
+                  {getMiles(route.distance, true)} miles (about a{" "}
+                  {Math.round(route.duration / 60)} min drive)
+                </Text>
+              </View>
+            )}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text weight="bold" style={{ width: 120 }}>
+                Joined Queue At
+              </Text>
+              <Text>
+                {new Date(beep.start).toLocaleTimeString(undefined, {
+                  timeStyle: "short",
+                })}
+              </Text>
+            </View>
+          </View>
+          {polylineCoordinates &&
+            middlePointInRoute &&
+            origin &&
+            destination && (
+              <Map
+                style={{ height: 200, borderRadius: 8 }}
+                initialRegion={middlePointInRoute}
+                onStartShouldSetResponder={(event) => true}
+              >
+                <Marker coordinate={origin} />
+                <Marker coordinate={destination} />
+                <Polyline
+                  coordinates={polylineCoordinates ?? []}
+                  strokeWidth={5}
+                  strokeColor="#3d8ae3"
+                  lineCap="round"
+                />
+              </Map>
+            )}
         </Card>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
@@ -100,7 +239,7 @@ export function QueueItem({ item: beep }: Props) {
                 mutate({ beepId: beep.id, data: { status: "accepted" } })
               }
             >
-              <DropdownMenu.ItemTitle>Accept Beep</DropdownMenu.ItemTitle>
+              <DropdownMenu.ItemTitle>Accept</DropdownMenu.ItemTitle>
             </DropdownMenu.Item>
             <DropdownMenu.Item
               key="deny"
@@ -109,7 +248,7 @@ export function QueueItem({ item: beep }: Props) {
               }
               destructive
             >
-              <DropdownMenu.ItemTitle>Deny Beep</DropdownMenu.ItemTitle>
+              <DropdownMenu.ItemTitle>Deny</DropdownMenu.ItemTitle>
             </DropdownMenu.Item>
           </>
         ) : (

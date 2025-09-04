@@ -15,7 +15,12 @@ import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { basicTrpcClient, useTRPC } from "@/utils/trpc";
 import { PremiumBanner } from "./PremiumBanner";
-import { LOCATION_TRACKING, startLocationTracking, stopLocationTracking, useLocationPermissions } from "@/utils/location";
+import {
+  LOCATION_TRACKING,
+  startLocationTracking,
+  stopLocationTracking,
+  useLocationPermissions,
+} from "@/utils/location";
 import { Controller, useForm } from "react-hook-form";
 
 import { useQuery } from "@tanstack/react-query";
@@ -38,38 +43,45 @@ export function StartBeepingScreen() {
     },
   });
 
-  const { hasLocationPermission, requestLocationPermission } = useLocationPermissions();
+  const { hasLocationPermission, requestLocationPermission } =
+    useLocationPermissions();
 
   const {
     data: queue,
     refetch,
     isRefetching,
-  } = useQuery(trpc.beeper.queue.queryOptions(undefined, {
-    enabled: user && user.isBeeping
-  }));
+  } = useQuery(
+    trpc.beeper.queue.queryOptions(undefined, {
+      enabled: user && user.isBeeping,
+    }),
+  );
 
-  useSubscription(trpc.beeper.watchQueue.subscriptionOptions(undefined, {
-    onData(data) {
-      queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
-    },
-    enabled: user && user.isBeeping,
-  }))
+  useSubscription(
+    trpc.beeper.watchQueue.subscriptionOptions(undefined, {
+      onData(data) {
+        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+      },
+      enabled: user && user.isBeeping,
+    }),
+  );
 
-  const { mutate: updateBeepSettings } = useMutation(trpc.user.edit.mutationOptions({
-    onSuccess(data) {
-      queryClient.setQueryData(trpc.user.me.queryKey(), data);
-    },
-    onError(error) {
-      const fieldErrors = error.data?.fieldErrors;
-      if (!fieldErrors) {
-        alert(error.message);
-      } else {
-        for (const key in fieldErrors) {
-          form.setError(key as any, { message: fieldErrors[key]?.[0] });
+  const { mutate: updateBeepSettings } = useMutation(
+    trpc.user.edit.mutationOptions({
+      onSuccess(data) {
+        queryClient.setQueryData(trpc.user.me.queryKey(), data);
+      },
+      onError(error) {
+        const fieldErrors = error.data?.fieldErrors;
+        if (!fieldErrors) {
+          alert(error.message);
+        } else {
+          for (const key in fieldErrors) {
+            form.setError(key as any, { message: fieldErrors[key]?.[0] });
+          }
         }
-      }
-    }
-  }));
+      },
+    }),
+  );
 
   const onToggleIsBeeping = (value: boolean) => {
     if (isAndroid && value) {
@@ -83,7 +95,7 @@ export function StartBeepingScreen() {
           },
           {
             text: "OK",
-            onPress: () => handleIsBeepingChange()
+            onPress: () => handleIsBeepingChange(),
           },
         ],
         { cancelable: true },
@@ -91,12 +103,19 @@ export function StartBeepingScreen() {
     } else {
       handleIsBeepingChange();
     }
-  }
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ marginRight: 8, display: 'flex', flexDirection: 'row', gap: 8 }}>
+        <View
+          style={{
+            marginRight: 8,
+            display: "flex",
+            flexDirection: "row",
+            gap: 8,
+          }}
+        >
           {form.formState.isSubmitting && <ActivityIndicator size="small" />}
           <Switch
             disabled={form.formState.isSubmitting}
@@ -111,7 +130,8 @@ export function StartBeepingScreen() {
   const handleIsBeepingChange = form.handleSubmit(async (values) => {
     const willBeBeeping = !user?.isBeeping;
 
-    let location: { latitude: number, longitude: number } | undefined = undefined;
+    let location: { latitude: number; longitude: number } | undefined =
+      undefined;
 
     if (willBeBeeping) {
       const hasLoactionPermission = await requestLocationPermission();
@@ -132,14 +152,14 @@ export function StartBeepingScreen() {
 
       location = {
         longitude: lastKnowLocation.coords.longitude,
-        latitude: lastKnowLocation.coords.latitude
+        latitude: lastKnowLocation.coords.latitude,
       };
     }
 
     updateBeepSettings({
       isBeeping: willBeBeeping,
       ...values,
-      location
+      location,
     });
   });
 
@@ -157,13 +177,21 @@ export function StartBeepingScreen() {
 
   if (user?.isBeeping && !hasLocationPermission && !isWeb) {
     return (
-      <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <View
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
         <Text size="2xl" weight="800">
           No Location Permission
         </Text>
-        <Text style={{ textAlign: 'center' }}>
-          You are beeping, but you have not granted this app permission to use your location in the background.
-          Please enable full time background location for the app in your settings.
+        <Text style={{ textAlign: "center" }}>
+          You are beeping, but you have not granted this app permission to use
+          your location in the background. Please enable full time background
+          location for the app in your settings.
         </Text>
       </View>
     );
@@ -171,11 +199,26 @@ export function StartBeepingScreen() {
 
   if (user?.isBeeping && queue?.length === 0) {
     return (
-      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 8 }}>
+      <View
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          gap: 8,
+        }}
+      >
         <Text size="2xl" weight="800">
           Your queue is empty
         </Text>
-        <Text style={{ textAlign: 'center', paddingLeft: 8, paddingRight: 8, marginBottom: 16 }}>
+        <Text
+          style={{
+            textAlign: "center",
+            paddingLeft: 8,
+            paddingRight: 8,
+            marginBottom: 16,
+          }}
+        >
           If someone wants you to beep them, it will appear here. If your app is
           closed, you will receive a push notification.
         </Text>
@@ -186,7 +229,10 @@ export function StartBeepingScreen() {
 
   if (!user?.isBeeping || !queue) {
     return (
-      <KeyboardAwareScrollView scrollEnabled={false} contentContainerStyle={{ padding: 16, height: '100%', gap: 8 }}>
+      <KeyboardAwareScrollView
+        scrollEnabled={false}
+        contentContainerStyle={{ padding: 16, height: "100%", gap: 8 }}
+      >
         <Label htmlFor="capacity">Max Rider Capacity</Label>
         <Controller
           control={form.control}
@@ -203,7 +249,9 @@ export function StartBeepingScreen() {
               <Text size="sm">
                 Maximum number of riders you can safely fit in your car
               </Text>
-              <Text size="sm" color="error">{fieldState.error?.message}</Text>
+              <Text size="sm" color="error">
+                {fieldState.error?.message}
+              </Text>
             </>
           )}
         />
@@ -221,7 +269,9 @@ export function StartBeepingScreen() {
                 onChangeText={(value) => field.onChange(Number(value))}
               />
               <Text size="sm">Price for a single person riding alone</Text>
-              <Text size="sm" color="error">{fieldState.error?.message}</Text>
+              <Text size="sm" color="error">
+                {fieldState.error?.message}
+              </Text>
             </>
           )}
         />
@@ -239,12 +289,14 @@ export function StartBeepingScreen() {
                 onChangeText={(value) => field.onChange(Number(value))}
               />
               <Text size="sm">Price per person in a group</Text>
-              <Text size="sm" color="error">{fieldState.error?.message}</Text>
+              <Text size="sm" color="error">
+                {fieldState.error?.message}
+              </Text>
             </>
           )}
         />
         <View style={{ flexGrow: 1 }} />
-        <Text size="sm" style={{ textAlign: 'center', marginBottom: 18 }}>
+        <Text size="sm" style={{ textAlign: "center", marginBottom: 18 }}>
           Use the toggle in the top right to start beeping
         </Text>
       </KeyboardAwareScrollView>
@@ -252,10 +304,16 @@ export function StartBeepingScreen() {
   }
 
   return (
-    <View style={{ display: 'flex', height: '100%', padding: 16, paddingBottom: 48 }}>
+    <View
+      style={{
+        display: "flex",
+        height: "100%",
+        padding: 12,
+      }}
+    >
       {queue[0] && <Beep beep={queue[0]} />}
       <Queue
-        beeps={queue.filter(beep => beep.id !== queue[0]?.id)}
+        beeps={queue.filter((beep) => beep.id !== queue[0]?.id)}
         onRefresh={refetch}
         refreshing={isRefetching}
       />
@@ -273,7 +331,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
     const { locations } = data;
     try {
       await basicTrpcClient.user.edit.mutate({
-        location: locations[0].coords
+        location: locations[0].coords,
       });
     } catch (e) {
       Logger.error(e);
