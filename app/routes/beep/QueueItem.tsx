@@ -14,22 +14,24 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
-  item: RouterOutput['beeper']['queue'][number];
+  item: RouterOutput["beeper"]["queue"][number];
   index: number;
 }
 
-export function QueueItem({ item }: Props) {
+export function QueueItem({ item: beep }: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation(trpc.beeper.updateBeep.mutationOptions({
-    onSuccess(data) {
-      queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
-    },
-    onError(error) {
-      alert(error.message);
-    }
-  }));
+  const { mutate } = useMutation(
+    trpc.beeper.updateBeep.mutationOptions({
+      onSuccess(data) {
+        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
 
   const onPromptCancel = () => {
     if (isMobile) {
@@ -54,108 +56,99 @@ export function QueueItem({ item }: Props) {
   };
 
   const onCancel = () => {
-    mutate({ beepId: item.id, data: { status: 'canceled' } });
+    mutate({ beepId: beep.id, data: { status: "canceled" } });
   };
 
-  if (item.status !== "waiting") {
-    return (
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <Card variant="outlined" style={{ padding: 16 }} pressable>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <View>
-                <Text weight="800" size="2xl">
-                  {item.rider.first} {item.rider.last}
-                </Text>
-                <Text size="sm">
-                  {item.rider.rating && printStars(Number(item.rider.rating))}
-                </Text>
-              </View>
-              <Avatar
-                style={{ marginRight: 8 }}
-                size="sm"
-                src={item.rider.photo ?? undefined}
-              />
-            </View>
-            <Text>
-              <Text weight="bold">Group Size</Text> <Text>{item.groupSize}</Text>
-            </Text>
-            <Text>
-              <Text weight="bold">Pick Up</Text> <Text>{item.origin}</Text>
-            </Text>
-            <Text>
-              <Text weight="bold">Drop Off</Text> <Text>{item.destination}</Text>
-            </Text>
-          </Card>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-          <DropdownMenu.Item
-            key="Call"
-            onSelect={() =>
-              Linking.openURL("tel:" + getRawPhoneNumber(item.rider.phone))
-            }
-          >
-            <DropdownMenu.ItemTitle>Call</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            key="Text"
-            onSelect={() =>
-              Linking.openURL("sms:" + getRawPhoneNumber(item.rider.phone))
-            }
-          >
-            <DropdownMenu.ItemTitle>Text</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            key="directions-to-rider"
-            onSelect={() => openDirections("Current+Location", item.origin)}
-          >
-            <DropdownMenu.ItemTitle>
-              Directions to Rider
-            </DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            key="cancel"
-            onSelect={onPromptCancel}
-            destructive
-          >
-            <DropdownMenu.ItemTitle>Cancel Beep</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          <DropdownMenu.Separator />
-          <DropdownMenu.Arrow />
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-    );
-  }
-
   return (
-    <Card variant="outlined">
-      <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-        <View>
-          <Text weight="800" size="2xl">
-            {item.rider.first} {item.rider.last}
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        <Card variant="filled" style={{ padding: 16 }} pressable>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 16,
+              justifyContent: "space-between",
+            }}
+          >
+            <View>
+              <Text weight="800" size="2xl">
+                {beep.rider.first} {beep.rider.last}
+              </Text>
+              {beep.rider.rating && (
+                <Text size="xs">{printStars(Number(beep.rider.rating))}</Text>
+              )}
+            </View>
+            <Avatar size="sm" src={beep.rider.photo ?? undefined} />
+          </View>
+          <Text>
+            <Text weight="bold">Group Size</Text> <Text>{beep.groupSize}</Text>
           </Text>
-          <Text size="sm">
-            {item.rider.rating && printStars(Number(item.rider.rating))}
+          <Text>
+            <Text weight="bold">Pick Up</Text> <Text>{beep.origin}</Text>
           </Text>
-        </View>
-        <Avatar
-          size="sm"
-          src={item.rider.photo ?? undefined}
-        />
-      </View>
-      <Text>
-        <Text weight="bold">Group Size</Text> <Text>{item.groupSize}</Text>
-      </Text>
-      <Text>
-        <Text weight="bold">Pick Up</Text> <Text>{item.origin}</Text>
-      </Text>
-      <Text>
-        <Text weight="bold">Drop Off</Text> <Text>{item.destination}</Text>
-      </Text>
-      <View style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
-        <AcceptDenyButton type="deny" item={item} />
-        <AcceptDenyButton type="accept" item={item} />
-      </View>
-    </Card>
+          <Text>
+            <Text weight="bold">Drop Off</Text> <Text>{beep.destination}</Text>
+          </Text>
+        </Card>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        {beep.status === "waiting" ? (
+          <>
+            <DropdownMenu.Item
+              key="accept"
+              onSelect={() =>
+                mutate({ beepId: beep.id, data: { status: "accepted" } })
+              }
+            >
+              <DropdownMenu.ItemTitle>Accept Beep</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              key="deny"
+              onSelect={() =>
+                mutate({ beepId: beep.id, data: { status: "denied" } })
+              }
+              destructive
+            >
+              <DropdownMenu.ItemTitle>Deny Beep</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+          </>
+        ) : (
+          <>
+            <DropdownMenu.Item
+              key="Call"
+              onSelect={() =>
+                Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone))
+              }
+            >
+              <DropdownMenu.ItemTitle>Call</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              key="Text"
+              onSelect={() =>
+                Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone))
+              }
+            >
+              <DropdownMenu.ItemTitle>Text</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              key="directions-to-rider"
+              onSelect={() => openDirections("Current+Location", beep.origin)}
+            >
+              <DropdownMenu.ItemTitle>
+                Directions to Rider
+              </DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Item
+              key="cancel"
+              onSelect={onPromptCancel}
+              destructive
+            >
+              <DropdownMenu.ItemTitle>Cancel Beep</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+          </>
+        )}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   );
 }

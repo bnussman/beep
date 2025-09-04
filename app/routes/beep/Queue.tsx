@@ -62,7 +62,7 @@ export function Queue(props: Props) {
           <View
             style={{
               borderRadius: 16 / 2,
-              backgroundColor: "blue",
+              backgroundColor: "#1f75ed",
               width: 16,
               height: 16,
             }}
@@ -77,7 +77,7 @@ export function Queue(props: Props) {
         )}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        contentContainerStyle={{ gap: 4 }}
+        contentContainerStyle={{ gap: 4, paddingHorizontal: 8 }}
         ListEmptyComponent={
           <Text>If more riders join your queue, they will show here!</Text>
         }
