@@ -14,6 +14,12 @@
         "buildType": "apk"
       }
     },
+    "simulator": {
+      "developmentClient": true,
+      "ios": {
+        "simulator": true
+      }
+    },
     "production": {
       "channel": "production"
     }
