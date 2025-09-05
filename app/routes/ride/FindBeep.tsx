@@ -377,7 +377,7 @@ export function MainFindBeepScreen(props: Props) {
         alignItems: "center",
       }}
     >
-      <Avatar size="xl" src={beep.beeper.photo ?? undefined} />
+      <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
       <View style={{ alignItems: "center", gap: 8 }}>
         <Text>Waiting on</Text>
         <Text size="3xl" weight="800">
