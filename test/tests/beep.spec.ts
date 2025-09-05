@@ -71,10 +71,10 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await expect(riderPage.getByText("Pay with Venmo")).toBeVisible();
   await expect(riderPage.getByText("Share Venmo")).toBeVisible();
 
-  await beeperPage.getByText("More Options").click();
+  await beeperPage.getByText("Options").click();
   await expect(beeperPage.getByText("Directions to Rider")).toBeVisible();
   await expect(beeperPage.getByText("Cancel Beep")).toBeVisible();
-  await beeperPage.getByText("More Options").click();
+  await beeperPage.getByText("Options").click();
 
   await beeperPage.getByText("I'm on the way").click();
 
@@ -85,10 +85,10 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
 
   await beeperPage.getByText("I'm here").click();
 
-  await beeperPage.getByText("More Options").click();
+  await beeperPage.getByText("Options").click();
   await expect(beeperPage.getByText("Directions for Beep")).toBeVisible();
   await expect(beeperPage.getByText("Request Money with Venmo")).toBeVisible();
-  await beeperPage.getByText("More Options").click();
+  await beeperPage.getByText("Options").click();
 
   await expect(
     riderPage.getByText(`Beeper is here to pick you up in a white Ford Aspire`),

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import * as DropdownMenu from "zeego/dropdown-menu";
-import { AcceptDenyButton } from "@/components/AcceptDenyButton";
 import { Alert, Linking, View } from "react-native";
 import { isMobile } from "@/utils/constants";
 import { getRawPhoneNumber, openDirections } from "@/utils/links";
