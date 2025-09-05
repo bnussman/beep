@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { AcceptDenyButton } from "@/components/AcceptDenyButton";
 import { Alert, Linking, View } from "react-native";
@@ -16,6 +16,7 @@ import { decodePolyline, getMiles } from "@/utils/location";
 import { Map } from "@/components/Map";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
+import MapView from "react-native-maps";
 
 interface Props {
   item: RouterOutput["beeper"]["queue"][number];
@@ -37,6 +38,8 @@ export function QueueItem({ item: beep }: Props) {
     }),
   );
 
+  const mapRef = useRef<MapView>(null);
+
   const { data: beepRoute } = useQuery(
     trpc.location.getRoute.queryOptions({
       origin: beep.origin,
@@ -45,6 +48,15 @@ export function QueueItem({ item: beep }: Props) {
   );
 
   const route = beepRoute?.routes[0];
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
+    }
+  }, [beepRoute]);
 
   const polylineCoordinates = route?.legs
     .flatMap((leg) => leg.steps)
@@ -59,12 +71,6 @@ export function QueueItem({ item: beep }: Props) {
   const destination = beepRoute && {
     latitude: beepRoute.waypoints[1].location[1],
     longitude: beepRoute.waypoints[1].location[0],
-  };
-
-  const middlePointInRoute = polylineCoordinates && {
-    ...polylineCoordinates[Math.floor(polylineCoordinates.length / 2)],
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
   };
 
   const onPromptCancel = () => {
@@ -171,7 +177,7 @@ export function QueueItem({ item: beep }: Props) {
             >
               <Text weight="bold" style={{ width: 120 }}>
                 Drop Off
-              </Text>{" "}
+              </Text>
               <Text style={{ flexShrink: 1, textAlign: "right" }}>
                 {beep.destination}
               </Text>
@@ -209,25 +215,22 @@ export function QueueItem({ item: beep }: Props) {
               </Text>
             </View>
           </View>
-          {polylineCoordinates &&
-            middlePointInRoute &&
-            origin &&
-            destination && (
-              <Map
-                style={{ height: 200, borderRadius: 8 }}
-                initialRegion={middlePointInRoute}
-                onStartShouldSetResponder={(event) => true}
-              >
-                <Marker coordinate={origin} />
-                <Marker coordinate={destination} />
-                <Polyline
-                  coordinates={polylineCoordinates ?? []}
-                  strokeWidth={5}
-                  strokeColor="#3d8ae3"
-                  lineCap="round"
-                />
-              </Map>
-            )}
+          {polylineCoordinates && origin && destination && (
+            <Map
+              ref={mapRef}
+              style={{ height: 200, borderRadius: 8 }}
+              onStartShouldSetResponder={(event) => true}
+            >
+              <Marker coordinate={origin} identifier="origin" />
+              <Marker coordinate={destination} identifier="destination" />
+              <Polyline
+                coordinates={polylineCoordinates ?? []}
+                strokeWidth={5}
+                strokeColor="#3d8ae3"
+                lineCap="round"
+              />
+            </Map>
+          )}
         </Card>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>

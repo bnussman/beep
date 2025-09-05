@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useUser } from "../../utils/useUser";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { ActionButton } from "../../components/ActionButton";
@@ -22,6 +22,7 @@ import { decodePolyline, getMiles } from "@/utils/location";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { isMobile } from "@/utils/constants";
+import MapView from "react-native-maps";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -56,14 +57,8 @@ export function Beep(props: Props) {
     longitude: beepRoute.waypoints[1].location[0],
   };
 
-  const middlePointInRoute = polylineCoordinates && {
-    ...polylineCoordinates[Math.floor(polylineCoordinates.length / 2)],
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  };
-
   const queryClient = useQueryClient();
-  const { mutate: cancel, isPending } = useMutation(
+  const { mutate: cancel } = useMutation(
     trpc.beeper.updateBeep.mutationOptions({
       onSuccess(data) {
         queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
@@ -73,6 +68,17 @@ export function Beep(props: Props) {
       },
     }),
   );
+
+  const ref = useRef<MapView>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.fitToSuppliedMarkers(["origin", "destination"], {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
+    }
+  }, [beepRoute]);
 
   const onPress = () => {
     if (isMobile) {
@@ -111,7 +117,7 @@ export function Beep(props: Props) {
             alignItems: "center",
           }}
         >
-          <View>
+          <View style={{ flexShrink: 1 }}>
             <Text color="subtle">Your current rider is</Text>
             <Text weight="800" size="2xl">
               {beep.rider.first} {beep.rider.last}
@@ -125,11 +131,12 @@ export function Beep(props: Props) {
           <Avatar size="md" src={beep.rider.photo ?? undefined} />
         </View>
       </Card>
-      {polylineCoordinates && middlePointInRoute && origin && destination && (
-        <Card style={{ flexGrow: 1, gap: 8 }}>
-          <Text size="xl" weight="800">
-            Beep Details
-          </Text>
+
+      <Card style={{ flexGrow: 1, gap: 8 }}>
+        <Text size="xl" weight="800">
+          Beep Details
+        </Text>
+        <View style={{ gap: 4 }}>
           <View
             style={{
               flexDirection: "row",
@@ -147,7 +154,7 @@ export function Beep(props: Props) {
               }}
             >
               {beep.status === "waiting"
-                ? "Waiting for you to accept or deny"
+                ? "Waiting for accept or deny"
                 : beep.status.replaceAll("_", " ")}
             </Text>
           </View>
@@ -220,15 +227,27 @@ export function Beep(props: Props) {
               </Text>
             </View>
           )}
+        </View>
+        {polylineCoordinates && origin && destination && (
           <Map
             key={beep.id}
+            ref={ref}
             style={{ borderRadius: 8, flexGrow: 1 }}
-            initialRegion={middlePointInRoute}
             onStartShouldSetResponder={(event) => true}
             showsUserLocation
           >
-            <Marker coordinate={origin} />
-            <Marker coordinate={destination} />
+            <Marker
+              coordinate={origin}
+              title="Pick Up"
+              description={beep.origin}
+              identifier="origin"
+            />
+            <Marker
+              coordinate={destination}
+              title="Drop Off"
+              description={beep.destination}
+              identifier="destination"
+            />
             <Polyline
               coordinates={polylineCoordinates ?? []}
               strokeWidth={5}
@@ -236,29 +255,33 @@ export function Beep(props: Props) {
               lineCap="round"
             />
           </Map>
-        </Card>
-      )}
+        )}
+      </Card>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <Button>More Options</Button>
+          <Button>Options</Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Item
-            key="Call"
-            onSelect={() =>
-              Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone))
-            }
-          >
-            <DropdownMenu.ItemTitle>Call</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            key="Text"
-            onSelect={() =>
-              Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone))
-            }
-          >
-            <DropdownMenu.ItemTitle>Text</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
+          {beep.rider.phone && (
+            <DropdownMenu.Item
+              key="Call"
+              onSelect={() =>
+                Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone))
+              }
+            >
+              <DropdownMenu.ItemTitle>Call</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+          )}
+          {beep.rider.phone && (
+            <DropdownMenu.Item
+              key="Text"
+              onSelect={() =>
+                Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone))
+              }
+            >
+              <DropdownMenu.ItemTitle>Text</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+          )}
           <DropdownMenu.Item
             key="directions-to-rider"
             onSelect={() => openDirections("Current+Location", beep.origin)}
@@ -310,7 +333,7 @@ export function Beep(props: Props) {
               )}
             </>
           )}
-          {beep.status !== "waiting" && (
+          {beep.status !== "waiting" && beep.status !== "in_progress" && (
             <DropdownMenu.Item key="cancel" onSelect={onPress} destructive>
               <DropdownMenu.ItemTitle>Cancel Beep</DropdownMenu.ItemTitle>
             </DropdownMenu.Item>
