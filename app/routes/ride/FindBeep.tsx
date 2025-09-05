@@ -377,22 +377,32 @@ export function MainFindBeepScreen(props: Props) {
         alignItems: "center",
       }}
     >
-      <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
-      <View style={{ alignItems: "center", gap: 4 }}>
-        <Text>Waiting on</Text>
-        <Text size="3xl" weight="800">
-          {beep.beeper.first} {beep.beeper.last}
-        </Text>
-        <Text>to accept your request.</Text>
-      </View>
+      <Card
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <View style={{ flexShrink: 1 }}>
+          <Text color="subtle">Waiting on</Text>
+          <Text size="xl" weight="800">
+            {beep.beeper.first} {beep.beeper.last}
+          </Text>
+          <Text color="subtle">to accept your request.</Text>
+        </View>
+        <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
+      </Card>
       <Card style={{ width: "100%", gap: 16 }}>
         <View>
           <Text weight="bold">Pick Up </Text>
-          <Text>{beep.origin}</Text>
+          <Text selectable>{beep.origin}</Text>
         </View>
         <View>
           <Text weight="bold">Destination </Text>
-          <Text>{beep.destination}</Text>
+          <Text selectable>{beep.destination}</Text>
         </View>
         <View>
           <Text weight="bold">Number of Riders </Text>
