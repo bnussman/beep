@@ -10,7 +10,9 @@ import { useUser } from "@/utils/useUser";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
+import MapView from "react-native-maps";
 
 type Props = StaticScreenProps<{ beepId: string }>;
 
@@ -18,6 +20,8 @@ export function BeepDetails(props: Props) {
   const trpc = useTRPC();
   const theme = useTheme();
   const { user } = useUser();
+
+  const mapRef = useRef<MapView>(null);
 
   const {
     data: beep,
@@ -37,6 +41,10 @@ export function BeepDetails(props: Props) {
     ),
   );
 
+  useEffect(() => {
+    mapRef.current?.fitToSuppliedMarkers(["origin", "destination"]);
+  }, [route]);
+
   const polylineCoordinates = route?.routes[0].legs
     .flatMap((leg) => leg.steps)
     .map((step) => decodePolyline(step.geometry))
@@ -50,12 +58,6 @@ export function BeepDetails(props: Props) {
   const destination = route && {
     latitude: route.waypoints[1].location[1],
     longitude: route.waypoints[1].location[0],
-  };
-
-  const middlePointInRoute = polylineCoordinates && {
-    ...polylineCoordinates[Math.floor(polylineCoordinates.length / 2)],
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
   };
 
   const otherUser = beep?.rider_id === user?.id ? beep?.beeper : beep?.rider;
@@ -93,10 +95,10 @@ export function BeepDetails(props: Props) {
 
   return (
     <View style={{ gap: 8, height: "100%" }}>
-      {polylineCoordinates && middlePointInRoute && origin && destination && (
-        <Map style={{ height: "100%" }} initialRegion={middlePointInRoute}>
-          <Marker coordinate={origin} />
-          <Marker coordinate={destination} />
+      {polylineCoordinates && origin && destination && (
+        <Map ref={mapRef} style={{ height: "100%" }}>
+          <Marker coordinate={origin} identifier="origin" />
+          <Marker coordinate={destination} identifier="destination" />
           <Polyline
             coordinates={polylineCoordinates ?? []}
             strokeWidth={5}
