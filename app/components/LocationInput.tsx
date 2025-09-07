@@ -24,35 +24,43 @@ export function LocationInput({ inputRef, ...props }: Props) {
       return alert("You must enable location to use this feature.");
     }
 
-    const position = await Location.getCurrentPositionAsync();
-    const location = await Location.reverseGeocodeAsync({
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-    });
+    try {
+      const position = await Location.getCurrentPositionAsync();
+      const locations = await Location.reverseGeocodeAsync({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      });
 
-    let string;
+      if (locations.length === 0) {
+        props.onChangeText?.(
+          `${position.coords.latitude}, ${position.coords.longitude}`,
+        );
+      } else {
+        const location = locations[0];
+        const parts = Array.from(
+          new Set(
+            [
+              location.name,
+              `${location.streetNumber} ${location.street}`,
+              `${location.city}, ${location.region}`,
+              location.postalCode,
+            ].filter(Boolean),
+          ),
+        );
 
-    if (!location?.[0]?.name) {
-      string = position.coords.latitude + ", " + position.coords.longitude;
-    } else {
-      string =
-        location[0].name +
-        " " +
-        location[0].street +
-        " " +
-        location[0].city +
-        ", " +
-        location[0].region +
-        " " +
-        location[0].postalCode;
+        console.log(parts);
+
+        props.onChangeText?.(parts.join(" "));
+      }
+    } catch (error) {
+      alert("Unable to get your location");
+    } finally {
+      setIsLoading(false);
     }
-
-    props.onChangeText?.(string);
-    setIsLoading(false);
   };
 
   return (
-    <View style={{ flexDirection: 'row', gap: 8 }}>
+    <View style={{ flexDirection: "row", gap: 8 }}>
       <Input
         placeholder={isLoading ? "Loading" : undefined}
         ref={inputRef}
