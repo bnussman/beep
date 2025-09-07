@@ -396,13 +396,6 @@ export const userRouter = router({
       throw new TRPCError({ code: "NOT_FOUND" });
     }
 
-    if (ctx.user.role === "user" && input !== ctx.user.id) {
-      u.phone = "";
-      u.email = "";
-      u.pushToken = null;
-      u.location = null;
-    }
-
     return u;
   }),
   usersWithBeeps: adminProcedure

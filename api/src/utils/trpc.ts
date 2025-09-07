@@ -4,8 +4,8 @@ import z, { ZodError } from "zod";
 import { AppRouter } from "..";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { db } from "./db";
-import { token } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { beep, token } from "../../drizzle/schema";
+import { and, eq, or } from "drizzle-orm";
 
 /**
  * Initialization of tRPC backend
@@ -49,7 +49,111 @@ const sentryMiddleware = t.middleware((opts) => {
   return opts.next();
 });
 
-export const publicProcedure = t.procedure.use(sentryMiddleware);
+const replacementMap = {
+  phone: "",
+  email: "",
+  password: "",
+  passwordType: "",
+  role: "",
+  pushToken: null,
+  location: null,
+  created: null,
+};
+
+const inProgressBeepFields = ["phone", "location"];
+const adminOnlyFields = [
+  "email",
+  "pushToken",
+  "password",
+  "passwordType",
+  "role",
+  "created",
+];
+
+async function removePersonalData(data: any, requestingUser: Context["user"]) {
+  if (Array.isArray(data)) {
+    for (let i = 0; i < data.length; i++) {
+      await removePersonalData(data[i], requestingUser);
+    }
+  } else if (typeof data === "object") {
+    let hasBeepedWithUser: boolean | null = null;
+
+    for (const key in data) {
+      if (
+        adminOnlyFields.includes(key) &&
+        (!requestingUser || requestingUser.role !== "admin")
+      ) {
+        data[key] = replacementMap[key as keyof typeof replacementMap];
+      }
+      if (inProgressBeepFields.includes(key)) {
+        const userId = data.id;
+        if (!userId) {
+          throw new Error(
+            "No user ID in object so we can't perform permission checks",
+          );
+        }
+        if (requestingUser && requestingUser.id === userId) {
+          continue;
+        }
+        if (requestingUser?.role === "admin") {
+          continue;
+        }
+        if (hasBeepedWithUser === null && requestingUser) {
+          console.log(
+            "Checking Permissions when resolving",
+            userId,
+            "'s ",
+            key,
+            "for requesting user",
+            requestingUser.username,
+          );
+          hasBeepedWithUser =
+            (await db.$count(
+              beep,
+              and(
+                or(
+                  and(
+                    eq(beep.beeper_id, requestingUser.id),
+                    eq(beep.rider_id, userId),
+                  ),
+                  and(
+                    eq(beep.rider_id, requestingUser.id),
+                    eq(beep.beeper_id, userId),
+                  ),
+                ),
+                or(
+                  eq(beep.status, "accepted"),
+                  eq(beep.status, "on_the_way"),
+                  eq(beep.status, "here"),
+                  eq(beep.status, "in_progress"),
+                  // eq(beep.status, "complete"),
+                  // eq(beep.status, "canceled"),
+                ),
+              ),
+            )) > 0;
+        }
+        if (!hasBeepedWithUser) {
+          data[key] = replacementMap[key as keyof typeof replacementMap];
+        }
+      }
+    }
+  }
+}
+
+const protectUserInfoMiddleware = t.middleware(async (opts) => {
+  const result = await opts.next(opts);
+
+  if (result.ok && opts.path !== "rider.beepersNearMe") {
+    await removePersonalData(result.data, opts.ctx.user);
+    console.log("-> Protecting", opts.path, " - ", result);
+  }
+
+  return result;
+});
+
+export const publicProcedure = t.procedure
+  .use(sentryMiddleware)
+  .use(protectUserInfoMiddleware);
 
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
