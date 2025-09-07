@@ -48,8 +48,6 @@ export function LocationInput({ inputRef, ...props }: Props) {
           ),
         );
 
-        console.log(parts);
-
         props.onChangeText?.(parts.join(" "));
       }
     } catch (error) {
