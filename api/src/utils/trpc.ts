@@ -49,18 +49,7 @@ const sentryMiddleware = t.middleware((opts) => {
   return opts.next();
 });
 
-export const publicProcedure = t.procedure
-  .use(sentryMiddleware)
-  .use(function isMaintenanceMode(opts) {
-    // if (opts.type === "mutation") {
-    //   throw new TRPCError({
-    //     code: "BAD_REQUEST",
-    //     message: "Beep app is undergoing maintenance. brb!",
-    //   });
-    // }
-
-    return opts.next(opts);
-  });
+export const publicProcedure = t.procedure.use(sentryMiddleware);
 
 export const authedProcedure = publicProcedure.use(function isAuthed(opts) {
   const { ctx } = opts;
