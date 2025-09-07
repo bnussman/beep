@@ -18,6 +18,7 @@ import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
 import { inProgressBeep } from "../logic/beep";
+import { getUserColumns } from "../logic/user";
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
@@ -87,19 +88,15 @@ export const userRouter = router({
         .partial(),
     )
     .mutation(async ({ ctx, input }) => {
-      const values = {
-        ...input,
-        isEmailVerified: ctx.user.isEmailVerified,
-        isStudent: ctx.user.isStudent,
-      };
+      const values: Partial<typeof user.$inferInsert> = input;
 
       if (values.isBeeping === false) {
-        const countOfInProgressBeeps = await db
-          .select({ count: count() })
-          .from(beep)
-          .where(and(eq(beep.beeper_id, ctx.user.id), inProgressBeep));
+        const countOfInProgressBeeps = await db.$count(
+          beep,
+          and(eq(beep.beeper_id, ctx.user.id), inProgressBeep),
+        );
 
-        if (countOfInProgressBeeps[0].count > 0) {
+        if (countOfInProgressBeeps > 0) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message:
@@ -166,7 +163,7 @@ export const userRouter = router({
         .update(user)
         .set(values)
         .where(eq(user.id, ctx.user.id))
-        .returning();
+        .returning(getUserColumns());
 
       pubSub.publish("user", ctx.user.id, { user: u[0] });
 
