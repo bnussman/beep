@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import LocationPinIcon from "@mui/icons-material/LocationPin";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
+import { Marker as BeeperMarker } from "../../../components/Marker";
 import {
   Typography,
   Button,
@@ -20,6 +20,7 @@ import { DateTime } from "luxon";
 
 import { useQuery } from "@tanstack/react-query";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
+import { useSubscription } from "@trpc/tanstack-react-query";
 
 export const beepRoute = createRoute({
   component: Beep,
@@ -37,6 +38,11 @@ export function Beep() {
     isPending,
     error,
   } = useQuery(trpc.beep.beep.queryOptions(beepId));
+
+  const { data: beeper } = useSubscription({
+    ...trpc.user.updates.subscriptionOptions(beep?.beeper_id),
+    enabled: beep?.beeper_id !== undefined,
+  });
 
   const { data: route } = useQuery(
     trpc.location.getRoute.queryOptions(
@@ -104,6 +110,16 @@ export function Beep() {
                 <Typography sx={{ fontSize: "32px", mb: 2.5 }}>📍</Typography>
               </Tooltip>
             </Marker>
+          )}
+          {beeper?.location && (
+            <BeeperMarker
+              latitude={beeper.location?.latitude}
+              longitude={beeper.location?.longitude}
+              username={beeper.username}
+              userId={beeper.id}
+              photo={beeper.photo}
+              name={`${beeper.first} ${beeper.last}`}
+            />
           )}
           <Source
             type="geojson"

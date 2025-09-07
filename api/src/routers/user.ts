@@ -1,8 +1,4 @@
-import {
-  adminProcedure,
-  authedProcedure,
-  router,
-} from "../utils/trpc";
+import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { beep, car, rating, user, verify_email } from "../../drizzle/schema";
 import { db } from "../utils/db";
 import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
@@ -44,6 +40,11 @@ export const userRouter = router({
 
       if (ctx.user.id === userId) {
         yield ctx.user;
+      } else {
+        yield await db.query.user.findFirst({
+          where: eq(user.id, userId),
+          columns: { password: false, passwordType: false },
+        });
       }
 
       const eventSource = pubSub.subscribe("user", userId);
@@ -167,7 +168,7 @@ export const userRouter = router({
         .where(eq(user.id, ctx.user.id))
         .returning();
 
-      pubSub.publish('user', ctx.user.id, { user: u[0] });
+      pubSub.publish("user", ctx.user.id, { user: u[0] });
 
       if (input.location) {
         const data = {
@@ -175,7 +176,7 @@ export const userRouter = router({
           location: input.location,
         };
 
-        pubSub.publish('locations', data);
+        pubSub.publish("locations", data);
       }
 
       return u[0];
@@ -230,7 +231,11 @@ export const userRouter = router({
         });
       }
 
-      if (input.data.photo && existingUser.photo && existingUser.photo !== input.data.photo) {
+      if (
+        input.data.photo &&
+        existingUser.photo &&
+        existingUser.photo !== input.data.photo
+      ) {
         // If an admin changes a user's photo URL, delete the old photo from S3
         // to prevent storing unreferenced images.
         await s3.delete(existingUser.photo);
@@ -242,7 +247,7 @@ export const userRouter = router({
         .where(eq(user.id, input.userId))
         .returning();
 
-      pubSub.publish('user', u[0].id, { user: u[0] });
+      pubSub.publish("user", u[0].id, { user: u[0] });
 
       if (u[0].location) {
         const data = {
@@ -250,7 +255,7 @@ export const userRouter = router({
           location: u[0].location,
         };
 
-        pubSub.publish('locations', data);
+        pubSub.publish("locations", data);
       }
 
       return u[0];
@@ -314,7 +319,7 @@ export const userRouter = router({
         .where(eq(user.id, ctx.user.id))
         .returning();
 
-      pubSub.publish('user', ctx.user.id, { user: u[0] });
+      pubSub.publish("user", ctx.user.id, { user: u[0] });
 
       return ctx.user;
     }),
