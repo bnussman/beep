@@ -93,132 +93,133 @@ export function AddCar() {
 
   return (
     <View style={{ padding: 16, gap: 8 }}>
-      <View style={{ gap: 4 }}>
-        <Label>Make</Label>
-        <Controller
-          name="make"
-          rules={{ required: "Make is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
+      <Controller
+        name="make"
+        rules={{ required: "Make is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <View style={{ gap: 4 }}>
+                <Label>Make</Label>
                 <Input readOnly value={value} placeholder="Select a make" />
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {makes.map((make) => (
-                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator />
-                <DropdownMenu.Arrow />
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          )}
-        />
-        <Text color="error">
-          {errors.make?.message}
-          {validationErrors?.make?.[0]}
-        </Text>
-      </View>
+                <Text color="error">
+                  {errors.make?.message}
+                  {validationErrors?.make?.[0]}
+                </Text>
+              </View>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {makes.map((make) => (
+                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              ))}
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      />
 
-      <View style={{ gap: 4 }}>
-        <Label>Model</Label>
-        <Controller
-          name="model"
-          rules={{ required: "Model is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
+      <Controller
+        name="model"
+        rules={{ required: "Model is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <View style={{ gap: 4 }}>
+                <Label>Model</Label>
                 <Input readOnly value={value} placeholder="Select a model" />
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {models.map((make) => (
-                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator />
-                <DropdownMenu.Arrow />
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          )}
-        />
-        <Text color="error">
-          {errors.model?.message}
-          {validationErrors?.model?.[0]}
-        </Text>
-      </View>
+                <Text color="error">
+                  {errors.model?.message}
+                  {validationErrors?.model?.[0]}
+                </Text>
+              </View>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {models.map((make) => (
+                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              ))}
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      />
 
-      <View style={{ gap: 4 }}>
-        <Label>Year</Label>
-        <Controller
-          name="year"
-          rules={{ required: "Year is required" }}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
+      <Controller
+        name="year"
+        rules={{ required: "Year is required" }}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <View style={{ gap: 4 }}>
+                <Label>Year</Label>
                 <Input
                   readOnly
                   value={value ? String(value) : ""}
                   placeholder="Select a year"
                 />
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {years.map((year) => (
-                  <DropdownMenu.Item key={year} onSelect={() => onChange(year)}>
-                    <DropdownMenu.ItemTitle>{year}</DropdownMenu.ItemTitle>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator />
-                <DropdownMenu.Arrow />
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          )}
-        />
-        <Text color="error">
-          {errors.year?.message}
-          {validationErrors?.year?.[0]}
-        </Text>
-      </View>
 
-      <View style={{ gap: 4 }}>
-        <Label>Color</Label>
-        <Controller
-          name="color"
-          rules={{ required: "Color is required" }}
-          defaultValue=""
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
+                <Text color="error">
+                  {errors.year?.message}
+                  {validationErrors?.year?.[0]}
+                </Text>
+              </View>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {years.map((year) => (
+                <DropdownMenu.Item key={year} onSelect={() => onChange(year)}>
+                  <DropdownMenu.ItemTitle>{year}</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              ))}
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      />
+
+      <Controller
+        name="color"
+        rules={{ required: "Color is required" }}
+        defaultValue=""
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <View style={{ gap: 4 }}>
+                <Label>Color</Label>
                 <Input
                   readOnly
                   value={value ? String(value) : ""}
                   placeholder="Select a color"
                 />
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                {colors.map((make) => (
-                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                  </DropdownMenu.Item>
-                ))}
-                <DropdownMenu.Separator />
-                <DropdownMenu.Arrow />
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          )}
-        />
-        <Text color="error">
-          {errors.color?.message}
-          {validationErrors?.color?.[0]}
-        </Text>
-      </View>
+                <Text color="error">
+                  {errors.color?.message}
+                  {validationErrors?.color?.[0]}
+                </Text>
+              </View>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {colors.map((make) => (
+                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              ))}
+              <DropdownMenu.Separator />
+              <DropdownMenu.Arrow />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      />
 
       <View style={{ gap: 4 }}>
         <Controller
