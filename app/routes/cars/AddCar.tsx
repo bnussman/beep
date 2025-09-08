@@ -41,18 +41,20 @@ export function AddCar() {
   const theme = useTheme();
 
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
-  const models = getModels(make)
+  const models = getModels(make);
 
   const queryClient = useQueryClient();
-  const { mutateAsync: addCar, error } = useMutation(trpc.car.createCar.mutationOptions({
-    onSuccess() {
-      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
-      navigation.goBack();
-    },
-    onError(error) {
-      alert(error.message);
-    }
-  }));
+  const { mutateAsync: addCar, error } = useMutation(
+    trpc.car.createCar.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        navigation.goBack();
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
 
   const validationErrors = error?.data?.fieldErrors;
 
@@ -76,10 +78,13 @@ export function AddCar() {
     const formData = new FormData();
 
     for (const key in variables) {
-      if (key === 'photo') {
-        formData.append("photo", await getFile(variables[key]) as Blob);
+      if (key === "photo") {
+        formData.append("photo", (await getFile(variables[key])) as Blob);
       } else {
-        formData.append(key, variables[key as keyof typeof variables] as string);
+        formData.append(
+          key,
+          variables[key as keyof typeof variables] as string,
+        );
       }
     }
 
@@ -87,155 +92,172 @@ export function AddCar() {
   });
 
   return (
-    <View style={{ padding: 16, gap: 12 }}>
-      <Controller
-        name="make"
-        rules={{ required: "Make is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <View>
-                <Label>Make</Label>
+    <View style={{ padding: 16, gap: 8 }}>
+      <View style={{ gap: 4 }}>
+        <Label>Make</Label>
+        <Controller
+          name="make"
+          rules={{ required: "Make is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
                 <Input readOnly value={value} placeholder="Select a make" />
-              </View>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              {makes.map((make) => (
-                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              ))}
-              <DropdownMenu.Separator />
-              <DropdownMenu.Arrow />
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        )}
-      />
-      <Text color="error">
-        {errors.make?.message}
-        {validationErrors?.make?.[0]}
-      </Text>
-      <Controller
-        name="model"
-        rules={{ required: "Model is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <View>
-                <Label>Model</Label>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {makes.map((make) => (
+                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          )}
+        />
+        <Text color="error">
+          {errors.make?.message}
+          {validationErrors?.make?.[0]}
+        </Text>
+      </View>
+
+      <View style={{ gap: 4 }}>
+        <Label>Model</Label>
+        <Controller
+          name="model"
+          rules={{ required: "Model is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
                 <Input readOnly value={value} placeholder="Select a model" />
-              </View>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              {models.map((make) => (
-                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              ))}
-              <DropdownMenu.Separator />
-              <DropdownMenu.Arrow />
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        )}
-      />
-      <Text color="error">
-        {errors.model?.message}
-        {validationErrors?.model?.[0]}
-      </Text>
-      <Controller
-        name="year"
-        rules={{ required: "Year is required" }}
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <View>
-                <Label>Year</Label>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {models.map((make) => (
+                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          )}
+        />
+        <Text color="error">
+          {errors.model?.message}
+          {validationErrors?.model?.[0]}
+        </Text>
+      </View>
+
+      <View style={{ gap: 4 }}>
+        <Label>Year</Label>
+        <Controller
+          name="year"
+          rules={{ required: "Year is required" }}
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
                 <Input
                   readOnly
                   value={value ? String(value) : ""}
                   placeholder="Select a year"
                 />
-              </View>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              {years.map((year) => (
-                <DropdownMenu.Item key={year} onSelect={() => onChange(year)}>
-                  <DropdownMenu.ItemTitle>{year}</DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              ))}
-              <DropdownMenu.Separator />
-              <DropdownMenu.Arrow />
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        )}
-      />
-      <Text color="error">
-        {errors.year?.message}
-        {validationErrors?.year?.[0]}
-      </Text>
-      <Controller
-        name="color"
-        rules={{ required: "Color is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <View>
-                <Label>Color</Label>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {years.map((year) => (
+                  <DropdownMenu.Item key={year} onSelect={() => onChange(year)}>
+                    <DropdownMenu.ItemTitle>{year}</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          )}
+        />
+        <Text color="error">
+          {errors.year?.message}
+          {validationErrors?.year?.[0]}
+        </Text>
+      </View>
+
+      <View style={{ gap: 4 }}>
+        <Label>Color</Label>
+        <Controller
+          name="color"
+          rules={{ required: "Color is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
                 <Input
                   readOnly
                   value={value ? String(value) : ""}
                   placeholder="Select a color"
                 />
-              </View>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              {colors.map((make) => (
-                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              ))}
-              <DropdownMenu.Separator />
-              <DropdownMenu.Arrow />
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        )}
-      />
-      <Text color="error">
-        {errors.color?.message}
-        {validationErrors?.color?.[0]}
-      </Text>
-      <Controller
-        name="photo"
-        rules={{ required: "Photo is required" }}
-        control={control}
-        render={() => (
-          <Pressable onPress={choosePhoto}>
-            {photo ? (
-              <Image
-                style={{ borderRadius: 12, height: 192, width: '100%' }}
-                source={{ uri: photo.uri }}
-                alt="uploaded car image"
-              />
-            ) : (
-              <View style={{ backgroundColor: theme.components.card.backgroundColor, borderColor: theme.components.card.borderColor, borderWidth: 1, borderRadius: 12, height: 192, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                <Text weight="bold">Attach a Photo</Text>
-                <Text size="4xl">📷</Text>
-              </View>
-            )}
-          </Pressable>
-        )}
-      />
-      <Text color="error">
-        {errors.photo?.message as string}
-        {validationErrors?.photo?.[0]}
-      </Text>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {colors.map((make) => (
+                  <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
+                    <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                ))}
+                <DropdownMenu.Separator />
+                <DropdownMenu.Arrow />
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          )}
+        />
+        <Text color="error">
+          {errors.color?.message}
+          {validationErrors?.color?.[0]}
+        </Text>
+      </View>
+
+      <View style={{ gap: 4 }}>
+        <Controller
+          name="photo"
+          rules={{ required: "Photo is required" }}
+          control={control}
+          render={() => (
+            <Pressable onPress={choosePhoto}>
+              {photo ? (
+                <Image
+                  style={{ borderRadius: 12, height: 192, width: "100%" }}
+                  source={{ uri: photo.uri }}
+                  alt="uploaded car image"
+                />
+              ) : (
+                <View
+                  style={{
+                    backgroundColor: theme.components.card.backgroundColor,
+                    borderColor: theme.components.card.borderColor,
+                    borderWidth: 1,
+                    borderRadius: 12,
+                    height: 192,
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text weight="bold">Attach a Photo</Text>
+                  <Text size="4xl">📷</Text>
+                </View>
+              )}
+            </Pressable>
+          )}
+        />
+        <Text color="error">
+          {errors.photo?.message as string}
+          {validationErrors?.photo?.[0]}
+        </Text>
+      </View>
       <Button
         isLoading={isSubmitting}
         onPress={onSubmit}

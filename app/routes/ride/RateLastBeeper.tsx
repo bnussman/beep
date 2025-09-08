@@ -22,16 +22,18 @@ export function RateLastBeeper() {
   return (
     <Card
       pressable
-      onPress={() => navigation.navigate("Rate", {
-        userId: otherUser.id,
-        beepId: beep.id,
-      })}
+      onPress={() =>
+        navigation.navigate("Rate", {
+          userId: otherUser.id,
+          beepId: beep.id,
+        })
+      }
       style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 8,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 12,
         paddingVertical: 8,
       }}
     >
@@ -40,5 +42,5 @@ export function RateLastBeeper() {
       </Text>
       <Avatar src={otherUser.photo ?? undefined} size="sm" />
     </Card>
-  )
+  );
 }

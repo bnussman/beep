@@ -5,9 +5,9 @@ import { Button } from "@/components/Button";
 import { UserHeader } from "@/components/UserHeader";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { useTRPC } from "@/utils/trpc";
-
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { Label } from "@/components/Label";
 
 type Props = StaticScreenProps<{ userId: string; beepId?: string }>;
 
@@ -16,15 +16,19 @@ export function ReportScreen({ route }: Props) {
   const [reason, setReason] = useState<string>("");
   const { goBack } = useNavigation();
 
-  const { data: user } = useQuery(trpc.user.user.queryOptions(route.params.userId));
-  const { mutateAsync: report, isPending } = useMutation(trpc.report.createReport.mutationOptions({
-    onSuccess() {
-      goBack();
-    },
-    onError(error) {
-      alert(error.message);
-    }
-  }));
+  const { data: user } = useQuery(
+    trpc.user.user.queryOptions(route.params.userId),
+  );
+  const { mutateAsync: report, isPending } = useMutation(
+    trpc.report.createReport.mutationOptions({
+      onSuccess() {
+        goBack();
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
 
   const handleReport = () => {
     report({
@@ -32,10 +36,10 @@ export function ReportScreen({ route }: Props) {
       beepId: route.params.beepId,
       reason: reason,
     });
-  }
+  };
 
   return (
-    <View style={{ padding: 16, gap: 16 }}>
+    <View style={{ padding: 16, gap: 8 }}>
       {user && (
         <UserHeader
           username={user.username}
@@ -43,21 +47,19 @@ export function ReportScreen({ route }: Props) {
           picture={user.photo}
         />
       )}
-      <Input
-        multiline={true}
-        numberOfLines={4}
-        placeholder="Your reason for reporting here"
-        returnKeyType="go"
-        style={{ minHeight: 150 }}
-        onChangeText={(text) => setReason(text)}
-        onSubmitEditing={handleReport}
-        blurOnSubmit={true}
-      />
-      <Button
-        onPress={handleReport}
-        disabled={!reason}
-        isLoading={isPending}
-      >
+      <View style={{ gap: 4 }}>
+        <Label>Reason</Label>
+        <Input
+          multiline={true}
+          numberOfLines={4}
+          placeholder="Your reason for reporting here"
+          returnKeyType="go"
+          style={{ minHeight: 150 }}
+          onChangeText={(text) => setReason(text)}
+          onSubmitEditing={handleReport}
+        />
+      </View>
+      <Button onPress={handleReport} disabled={!reason} isLoading={isPending}>
         Report User
       </Button>
     </View>

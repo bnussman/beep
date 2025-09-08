@@ -233,68 +233,80 @@ export function StartBeepingScreen() {
         scrollEnabled={false}
         contentContainerStyle={{ padding: 16, height: "100%", gap: 8 }}
       >
-        <Label htmlFor="capacity">Max Rider Capacity</Label>
-        <Controller
-          control={form.control}
-          name="capacity"
-          render={({ field, fieldState }) => (
-            <>
-              <Input
-                id="capacity"
-                placeholder="Max Capacity"
-                inputMode="numeric"
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(Number(value))}
-              />
-              <Text size="sm">
-                Maximum number of riders you can safely fit in your car
-              </Text>
-              <Text size="sm" color="error">
-                {fieldState.error?.message}
-              </Text>
-            </>
-          )}
-        />
-        <Label htmlFor="singles">Singles Rate</Label>
-        <Controller
-          control={form.control}
-          name="singlesRate"
-          render={({ field, fieldState }) => (
-            <>
-              <Input
-                id="singles"
-                placeholder="Singles Rate"
-                keyboardType="numeric"
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(Number(value))}
-              />
-              <Text size="sm">Price for a single person riding alone</Text>
-              <Text size="sm" color="error">
-                {fieldState.error?.message}
-              </Text>
-            </>
-          )}
-        />
-        <Label htmlFor="groups">Group Rate</Label>
-        <Controller
-          control={form.control}
-          name="groupRate"
-          render={({ field, fieldState }) => (
-            <>
-              <Input
-                id="groups"
-                placeholder="Group Rate"
-                keyboardType="numeric"
-                value={String(field.value)}
-                onChangeText={(value) => field.onChange(Number(value))}
-              />
-              <Text size="sm">Price per person in a group</Text>
-              <Text size="sm" color="error">
-                {fieldState.error?.message}
-              </Text>
-            </>
-          )}
-        />
+        <View style={{ gap: 4 }}>
+          <Label htmlFor="capacity">Max Rider Capacity</Label>
+          <Controller
+            control={form.control}
+            name="capacity"
+            render={({ field, fieldState }) => (
+              <>
+                <Input
+                  id="capacity"
+                  placeholder="Max Capacity"
+                  inputMode="numeric"
+                  value={String(field.value)}
+                  onChangeText={(value) => field.onChange(Number(value))}
+                />
+                <Text color="subtle" size="sm">
+                  Maximum number of riders you can safely fit in your car
+                </Text>
+                <Text size="sm" color="error">
+                  {fieldState.error?.message}
+                </Text>
+              </>
+            )}
+          />
+        </View>
+
+        <View style={{ gap: 4 }}>
+          <Label htmlFor="singles">Singles Rate</Label>
+          <Controller
+            control={form.control}
+            name="singlesRate"
+            render={({ field, fieldState }) => (
+              <>
+                <Input
+                  id="singles"
+                  placeholder="Singles Rate"
+                  keyboardType="numeric"
+                  value={String(field.value)}
+                  onChangeText={(value) => field.onChange(Number(value))}
+                />
+                <Text color="subtle" size="sm">
+                  Price for a single person riding alone
+                </Text>
+                <Text size="sm" color="error">
+                  {fieldState.error?.message}
+                </Text>
+              </>
+            )}
+          />
+        </View>
+
+        <View style={{ gap: 4 }}>
+          <Label htmlFor="groups">Group Rate</Label>
+          <Controller
+            control={form.control}
+            name="groupRate"
+            render={({ field, fieldState }) => (
+              <>
+                <Input
+                  id="groups"
+                  placeholder="Group Rate"
+                  keyboardType="numeric"
+                  value={String(field.value)}
+                  onChangeText={(value) => field.onChange(Number(value))}
+                />
+                <Text color="subtle" size="sm">
+                  Price per person in a group
+                </Text>
+                <Text size="sm" color="error">
+                  {fieldState.error?.message}
+                </Text>
+              </>
+            )}
+          />
+        </View>
         <View style={{ flexGrow: 1 }} />
         <Text size="sm" style={{ textAlign: "center", marginBottom: 18 }}>
           Use the toggle in the top right to start beeping

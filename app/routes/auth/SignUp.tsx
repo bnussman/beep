@@ -39,23 +39,25 @@ export function SignUpScreen() {
     formState: { errors, isSubmitting },
   } = useForm<Values>();
 
-  const { mutateAsync: signup } = useMutation(trpc.auth.signup.mutationOptions({
-    async onSuccess(data) {
-      await AsyncStorage.setItem("auth", JSON.stringify(data));
+  const { mutateAsync: signup } = useMutation(
+    trpc.auth.signup.mutationOptions({
+      async onSuccess(data) {
+        await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-      queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
-    },
-    onError(error) {
-      const fieldErrors = error.data?.fieldErrors;
-      if (!fieldErrors) {
-        alert(error.message);
-      } else {
-        for (const key in fieldErrors) {
-          setError(key as keyof Values, { message: fieldErrors[key]?.[0] });
+        queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
+      },
+      onError(error) {
+        const fieldErrors = error.data?.fieldErrors;
+        if (!fieldErrors) {
+          alert(error.message);
+        } else {
+          for (const key in fieldErrors) {
+            setError(key as keyof Values, { message: fieldErrors[key]?.[0] });
+          }
         }
-      }
-    }
-  }));
+      },
+    }),
+  );
 
   const queryClient = useQueryClient();
 
@@ -63,10 +65,16 @@ export function SignUpScreen() {
     const formData = new FormData();
 
     for (const key in variables) {
-      if (key === 'photo') {
-        formData.append("photo", await getFile(variables[key as 'photo']) as Blob);
+      if (key === "photo") {
+        formData.append(
+          "photo",
+          (await getFile(variables[key as "photo"])) as Blob,
+        );
       } else {
-        formData.append(key, variables[key as keyof typeof variables] as string);
+        formData.append(
+          key,
+          variables[key as keyof typeof variables] as string,
+        );
       }
     }
 
@@ -78,7 +86,6 @@ export function SignUpScreen() {
     }
 
     await signup(formData).catch();
-
   });
 
   const chooseProfilePhoto = async () => {
@@ -93,64 +100,64 @@ export function SignUpScreen() {
     if (result.canceled) {
       return;
     }
-    
-    setValue('photo', result.assets[0], { shouldValidate: true });
+
+    setValue("photo", result.assets[0], { shouldValidate: true });
   };
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={{ flex: 1, padding: 16 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-        <View style={{ flexGrow: 1 }}>
-          <Label htmlFor="first">First Name</Label>
-          <Controller
-            name="first"
-            rules={{ required: "First name is required" }}
-            defaultValue=""
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="first"
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("last")}
-                textContentType="givenName"
-                style={{ marginBottom: 4 }}
-              />
-            )}
-          />
-          <Text color="error">
-            {errors.first?.message}
-          </Text>
-          <Label htmlFor="last">Last Name</Label>
-          <Controller
-            name="last"
-            rules={{ required: "Last name is required" }}
-            defaultValue=""
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="last"
-                onBlur={onBlur}
-                textContentType="familyName"
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("email")}
-                style={{ marginBottom: 4 }}
-              />
-            )}
-          />
-          <Text color="error">
-            {errors.last?.message}
-          </Text>
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ flex: 1, padding: 16, gap: 8 }}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+        <View style={{ flexGrow: 1, gap: 8 }}>
+          <View style={{ gap: 4 }}>
+            <Label htmlFor="first">First Name</Label>
+            <Controller
+              name="first"
+              rules={{ required: "First name is required" }}
+              defaultValue=""
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  id="first"
+                  onBlur={onBlur}
+                  onChangeText={(val) => onChange(val)}
+                  value={value}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("last")}
+                  textContentType="givenName"
+                />
+              )}
+            />
+            <Text color="error">{errors.first?.message}</Text>
+          </View>
+          <View style={{ gap: 4 }}>
+            <Label htmlFor="last">Last Name</Label>
+            <Controller
+              name="last"
+              rules={{ required: "Last name is required" }}
+              defaultValue=""
+              control={control}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  id="last"
+                  onBlur={onBlur}
+                  textContentType="familyName"
+                  onChangeText={(val) => onChange(val)}
+                  value={value}
+                  ref={ref}
+                  returnKeyLabel="next"
+                  returnKeyType="next"
+                  onSubmitEditing={() => setFocus("email")}
+                />
+              )}
+            />
+            <Text color="error">{errors.last?.message}</Text>
+          </View>
         </View>
-        <View>
+        <View style={{ gap: 4, alignItems: "center" }}>
           <Controller
             control={control}
             rules={{ required: "Profile picture is required" }}
@@ -164,136 +171,134 @@ export function SignUpScreen() {
               </TouchableOpacity>
             )}
           />
-          <Text color="error" style={{ maxWidth: 128 }}>
+          <Text color="error" style={{ maxWidth: 100, textAlign: "center" }}>
             {errors.photo?.message}
           </Text>
         </View>
       </View>
-      <Label htmlFor="email">Email</Label>
-      <Controller
-        name="email"
-        rules={{ required: "Email is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field: { onChange, onBlur, value, ref } }) => (
-          <Input
-            id="email"
-            onBlur={onBlur}
-            textContentType="emailAddress"
-            onChangeText={(val) => onChange(val)}
-            value={value}
-            ref={ref}
-            returnKeyLabel="next"
-            returnKeyType="next"
-            onSubmitEditing={() => setFocus("phone")}
-            autoCapitalize="none"
-            style={{ marginBottom: 4 }}
-          />
-        )}
-      />
-      <Text size="sm" style={{ marginBottom: 4 }}>
-        You must a .edu email address
-      </Text>
-      <Text color="error">
-        {errors.email?.message}
-      </Text>
-      <Label htmlFor="phone">Phone</Label>
-      <Controller
-        name="phone"
-        rules={{ required: "Phone number is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field: { onChange, onBlur, value, ref } }) => (
-          <Input
-            id="phone"
-            onBlur={onBlur}
-            textContentType="telephoneNumber"
-            onChangeText={(val) => onChange(val)}
-            value={value}
-            ref={ref}
-            returnKeyLabel="next"
-            returnKeyType="next"
-            onSubmitEditing={() => setFocus("venmo")}
-            style={{ marginBottom: 4 }}
-          />
-        )}
-      />
-      <Text color="error">
-        {errors.phone?.message}
-      </Text>
-      <Label htmlFor="venmo">Venmo Username</Label>
-      <Controller
-        name="venmo"
-        rules={{ required: "Venmo username is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field: { onChange, onBlur, value, ref } }) => (
-          <Input
-            id="venmo"
-            onBlur={onBlur}
-            onChangeText={(val) => onChange(val)}
-            value={value as string | undefined}
-            ref={ref}
-            returnKeyLabel="next"
-            returnKeyType="next"
-            textContentType="username"
-            onSubmitEditing={() => setFocus("username")}
-            autoCapitalize="none"
-            style={{ marginBottom: 4 }}
-          />
-        )}
-      />
-      <Text color="error">
-        {errors.venmo?.message}
-      </Text>
-      <Label htmlFor="username-input">Username</Label>
-      <Controller
-        name="username"
-        rules={{ required: "Username is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field: { onChange, onBlur, value, ref } }) => (
-          <Input
-            id="username-input"
-            onBlur={onBlur}
-            onChangeText={(val) => onChange(val)}
-            value={value}
-            ref={ref}
-            returnKeyLabel="next"
-            returnKeyType="next"
-            autoCapitalize="none"
-            textContentType="username"
-            onSubmitEditing={() => setFocus("password")}
-            style={{ marginBottom: 4 }}
-          />
-        )}
-      />
-      <Text color="error">
-        {errors.username?.message}
-      </Text>
-      <Label htmlFor="password-input">Password</Label>
-      <Controller
-        name="password"
-        defaultValue=""
-        rules={{ required: "Password is required" }}
-        control={control}
-        render={({ field: { onChange, onBlur, value, ref } }) => (
-          <PasswordInput
-            id="password-input"
-            onBlur={onBlur}
-            onChangeText={(val) => onChange(val)}
-            value={value}
-            inputRef={ref}
-            returnKeyLabel="sign up"
-            returnKeyType="go"
-            onSubmitEditing={onSubmit}
-          />
-        )}
-      />
-      <Text color="error">
-        {errors.password?.message}
-      </Text>
-      <Button isLoading={isSubmitting} onPress={onSubmit} style={{ marginVertical: 16 }}>
+
+      <View style={{ gap: 4 }}>
+        <Label htmlFor="email">Email</Label>
+        <Controller
+          name="email"
+          rules={{ required: "Email is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="email"
+              onBlur={onBlur}
+              textContentType="emailAddress"
+              onChangeText={(val) => onChange(val)}
+              value={value}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("phone")}
+              autoCapitalize="none"
+            />
+          )}
+        />
+        <Text size="sm">You must a .edu email address</Text>
+        <Text color="error">{errors.email?.message}</Text>
+      </View>
+
+      <View style={{ gap: 4 }}>
+        <Label htmlFor="phone">Phone</Label>
+        <Controller
+          name="phone"
+          rules={{ required: "Phone number is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="phone"
+              onBlur={onBlur}
+              textContentType="telephoneNumber"
+              onChangeText={(val) => onChange(val)}
+              value={value}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              onSubmitEditing={() => setFocus("venmo")}
+            />
+          )}
+        />
+        <Text color="error">{errors.phone?.message}</Text>
+      </View>
+      <View style={{ gap: 4 }}>
+        <Label htmlFor="venmo">Venmo Username</Label>
+        <Controller
+          name="venmo"
+          rules={{ required: "Venmo username is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="venmo"
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value as string | undefined}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              textContentType="username"
+              onSubmitEditing={() => setFocus("username")}
+              autoCapitalize="none"
+            />
+          )}
+        />
+        <Text color="error">{errors.venmo?.message}</Text>
+      </View>
+
+      <View style={{ gap: 4 }}>
+        <Label htmlFor="username-input">Username</Label>
+        <Controller
+          name="username"
+          rules={{ required: "Username is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              id="username-input"
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value}
+              ref={ref}
+              returnKeyLabel="next"
+              returnKeyType="next"
+              autoCapitalize="none"
+              textContentType="username"
+              onSubmitEditing={() => setFocus("password")}
+            />
+          )}
+        />
+        <Text color="error">{errors.username?.message}</Text>
+      </View>
+
+      <View style={{ gap: 4 }}>
+        <Label htmlFor="password-input">Password</Label>
+        <Controller
+          name="password"
+          defaultValue=""
+          rules={{ required: "Password is required" }}
+          control={control}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <PasswordInput
+              id="password-input"
+              onBlur={onBlur}
+              onChangeText={(val) => onChange(val)}
+              value={value}
+              inputRef={ref}
+              returnKeyLabel="sign up"
+              returnKeyType="go"
+              onSubmitEditing={onSubmit}
+            />
+          )}
+        />
+        <Text color="error">{errors.password?.message}</Text>
+      </View>
+      <Button isLoading={isSubmitting} onPress={onSubmit}>
         Sign Up
       </Button>
     </KeyboardAwareScrollView>
