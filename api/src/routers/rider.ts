@@ -2,26 +2,14 @@ import { z } from "zod";
 import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
-import {
-  and,
-  asc,
-  count,
-  desc,
-  eq,
-  gte,
-  lte,
-  ne,
-  sql,
-  lt,
-  or,
-} from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import {
-  getIsAcceptedBeep,
   getQueueSize,
   getRiderBeepFromBeeperQueue,
+  getRidersCurrentRide,
   inProgressBeep,
 } from "../logic/beep";
 import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
@@ -100,131 +88,138 @@ export const riderRouter = router({
         longitude: z.number().optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
-      if (input.latitude !== undefined && input.longitude !== undefined) {
-        await db
-          .update(user)
-          .set({
-            location: { latitude: input.latitude, longitude: input.longitude },
-          })
-          .where(eq(user.id, ctx.user.id));
-      }
+    .mutation<Awaited<ReturnType<typeof getRidersCurrentRide>>>(
+      async ({ input, ctx }) => {
+        if (input.latitude !== undefined && input.longitude !== undefined) {
+          await db
+            .update(user)
+            .set({
+              location: {
+                latitude: input.latitude,
+                longitude: input.longitude,
+              },
+            })
+            .where(eq(user.id, ctx.user.id));
+        }
 
-      if (ctx.user.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You can't get a beep when you are beeping",
-        });
-      }
+        if (ctx.user.isBeeping) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You can't get a beep when you are beeping",
+          });
+        }
 
-      const beeper = await db.query.user.findFirst({
-        columns: {
-          password: false,
-          passwordType: false,
-        },
-        where: eq(user.id, input.beeperId),
-        with: {
-          cars: {
-            where: eq(car.default, true),
-            limit: 1,
+        const beeper = await db.query.user.findFirst({
+          columns: {
+            password: false,
+            passwordType: false,
           },
-          beeps: {
-            where: inProgressBeep,
-            orderBy: asc(beep.start),
-            with: {
-              rider: true,
+          where: eq(user.id, input.beeperId),
+          with: {
+            cars: {
+              where: eq(car.default, true),
+              limit: 1,
+            },
+            beeps: {
+              where: inProgressBeep,
+              orderBy: asc(beep.start),
+              with: {
+                rider: true,
+              },
             },
           },
-        },
-      });
-
-      if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Beeper not found",
         });
-      }
 
-      if (!beeper.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "That user is not beeping. Maybe they stopped beeping.",
-        });
-      }
+        if (!beeper) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Beeper not found",
+          });
+        }
 
-      if (beeper.beeps.some((beep) => beep.rider_id === ctx.user.id)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You are already in that beeper's queue.",
-        });
-      }
+        if (!beeper.isBeeping) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "That user is not beeping. Maybe they stopped beeping.",
+          });
+        }
 
-      const newBeep = {
-        beeper_id: beeper.id,
-        rider_id: ctx.user.id,
-        destination: input.destination,
-        origin: input.origin,
-        groupSize: input.groupSize,
-        id: crypto.randomUUID(),
-        start: new Date(),
-        status: "waiting",
-        end: null,
-      } as const;
+        if (beeper.beeps.some((beep) => beep.rider_id === ctx.user.id)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You are already in that beeper's queue.",
+          });
+        }
 
-      await db.insert(beep).values(newBeep);
+        const newBeep = {
+          beeper_id: beeper.id,
+          rider_id: ctx.user.id,
+          destination: input.destination,
+          origin: input.origin,
+          groupSize: input.groupSize,
+          id: crypto.randomUUID(),
+          start: new Date(),
+          status: "waiting",
+          end: null,
+        } as const;
 
-      const queue = beeper?.beeps.map((beep) => ({
-        ...beep,
-        beeper,
-      }));
+        await db.insert(beep).values(newBeep);
 
-      const newQueue = [
-        ...queue,
-        {
-          ...newBeep,
-          rider: {
-            id: ctx.user.id,
-            first: ctx.user.first,
-            last: ctx.user.last,
-            phone: ctx.user.phone,
-            venmo: ctx.user.venmo,
-            cashapp: ctx.user.cashapp,
-            rating: ctx.user.rating,
-            photo: ctx.user.photo,
-            pushToken: ctx.user.pushToken,
-          },
+        const queue = beeper?.beeps.map((beep) => ({
+          ...beep,
           beeper,
-        },
-      ];
+        }));
 
-      pubSub.publish("queue", beeper.id, { queue: newQueue });
+        const newQueue = [
+          ...queue,
+          {
+            ...newBeep,
+            rider: {
+              id: ctx.user.id,
+              first: ctx.user.first,
+              last: ctx.user.last,
+              phone: ctx.user.phone,
+              venmo: ctx.user.venmo,
+              cashapp: ctx.user.cashapp,
+              rating: ctx.user.rating,
+              photo: ctx.user.photo,
+              pushToken: ctx.user.pushToken,
+            },
+            beeper,
+          },
+        ];
 
-      if (beeper.pushToken) {
-        sendNotification({
-          to: beeper.pushToken,
-          title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
-          body: "Please accept or deny this rider.",
-          categoryId: "newbeep",
-          data: { id: newBeep.id },
-        });
-      }
+        pubSub.publish("queue", beeper.id, { queue: newQueue });
 
-      return {
-        ...newBeep,
-        position: queue.length,
-        rider: {
-          id: ctx.user.id,
-          first: ctx.user.first,
-          last: ctx.user.last,
-        },
-        beeper: {
-          ...beeper,
-          phone: null,
-          location: null,
-          cars: [],
-        },
-      };
-    }),
+        if (beeper.pushToken) {
+          sendNotification({
+            to: beeper.pushToken,
+            title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
+            body: "Please accept or deny this rider.",
+            categoryId: "newbeep",
+            data: { id: newBeep.id },
+          });
+        }
+
+        return {
+          ...newBeep,
+          position: queue.length,
+          beeper: {
+            id: beeper.id,
+            first: beeper.first,
+            last: beeper.last,
+            photo: beeper.photo,
+            singlesRate: beeper.singlesRate,
+            groupRate: beeper.groupRate,
+            cashapp: beeper.cashapp,
+            venmo: beeper.venmo,
+            phone: null,
+            location: null,
+            car: null,
+          },
+        };
+      },
+    ),
   currentRide: authedProcedure.query(async ({ ctx }) => {
     return getRidersCurrentRide(ctx.user.id);
   }),
@@ -471,63 +466,6 @@ export const riderRouter = router({
     return mostRecentCompletedBeep;
   }),
 });
-
-export async function getRidersCurrentRide(userId: string) {
-  const b = await db.query.beep.findFirst({
-    where: and(eq(beep.rider_id, userId), inProgressBeep),
-    with: {
-      beeper: {
-        columns: {
-          id: true,
-          first: true,
-          last: true,
-          photo: true,
-          location: true,
-          singlesRate: true,
-          groupRate: true,
-          capacity: true,
-          phone: true,
-          cashapp: true,
-          venmo: true,
-        },
-        with: {
-          cars: {
-            where: eq(car.default, true),
-            limit: 1,
-          },
-        },
-      },
-    },
-  });
-
-  if (!b) {
-    return null;
-  }
-
-  const position = await db
-    .select({ count: count() })
-    .from(beep)
-    .where(
-      and(
-        eq(beep.beeper_id, b.beeper_id),
-        lt(beep.start, b.start),
-        ne(beep.status, "waiting"),
-        inProgressBeep,
-      ),
-    );
-
-  const isAcceptedBeep = getIsAcceptedBeep(b);
-
-  return {
-    ...b,
-    beeper: {
-      ...b.beeper,
-      location: isAcceptedBeep ? b.beeper.location : null,
-      phone: isAcceptedBeep ? b.beeper.phone : null,
-    },
-    position: position[0].count,
-  };
-}
 
 export function getDistance(
   lat1: number,

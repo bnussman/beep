@@ -1,7 +1,6 @@
-import { and, asc, eq, or } from "drizzle-orm";
+import { and, asc, count, eq, lt, ne, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep, car } from "../../drizzle/schema";
-import { getRidersCurrentRide } from "../routers/rider";
 
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),
@@ -12,11 +11,8 @@ export const inProgressBeep = or(
 );
 
 export async function getBeeperQueue(beeperId: string) {
-  const queue = await db.query.beep.findMany({
-    where: and(
-      inProgressBeep,
-      eq(beep.beeper_id, beeperId)
-    ),
+  return await db.query.beep.findMany({
+    where: and(inProgressBeep, eq(beep.beeper_id, beeperId)),
     orderBy: asc(beep.start),
     with: {
       beeper: {
@@ -38,7 +34,7 @@ export async function getBeeperQueue(beeperId: string) {
             where: eq(car.default, true),
             limit: 1,
           },
-        }
+        },
       },
       rider: {
         columns: {
@@ -53,57 +49,143 @@ export async function getBeeperQueue(beeperId: string) {
           pushToken: true,
         },
       },
-    }
+    },
   });
-
-  return queue;
 }
 
-export function getRiderBeepFromBeeperQueue(riderId: string, queue: Awaited<ReturnType<typeof getBeeperQueue>>): Awaited<ReturnType<typeof getRidersCurrentRide>> {
+export function getRiderBeepFromBeeperQueue(
+  riderId: string,
+  queue: Awaited<ReturnType<typeof getBeeperQueue>>,
+): Awaited<ReturnType<typeof getRidersCurrentRide>> {
   const beep = queue.find((beep) => beep.rider_id === riderId);
 
   if (!beep) {
-    throw new Error("Rider's beep not found in queue.")
+    throw new Error("Rider's beep not found in queue.");
   }
 
   const isAccpted = getIsAcceptedBeep(beep);
-  const position = queue.filter((b) => getIsAcceptedBeep(b) && b.start < beep.start).length;
+  const position = queue.filter(
+    (b) => getIsAcceptedBeep(b) && b.start < beep.start,
+  ).length;
 
-  if (!isAccpted) {
-    return {
-      ...beep,
-      position,
-      beeper: {
-        ...beep.beeper,
-        phone: null,
-        location: null,
-      }
-    };
-  }
+  const { rider, ...values } = beep;
 
   return {
-    ...beep,
-    position
+    ...values,
+    beeper: {
+      id: beep.beeper.id,
+      first: beep.beeper.first,
+      last: beep.beeper.last,
+      photo: beep.beeper.photo,
+      singlesRate: beep.beeper.singlesRate,
+      groupRate: beep.beeper.groupRate,
+      cashapp: beep.beeper.cashapp,
+      venmo: beep.beeper.venmo,
+      location: isAccpted ? beep.beeper.location : null,
+      phone: isAccpted ? beep.beeper.phone : null,
+      car: isAccpted ? beep.beeper.cars[0] : null,
+    },
+    position,
   };
 }
 
-type BeepStatus = typeof beep.$inferSelect['status'];
+type BeepStatus = (typeof beep.$inferSelect)["status"];
 
 export function getIsAcceptedBeep(beep: { status: BeepStatus }) {
-  return beep.status === 'accepted' || beep.status === 'here' || beep.status === 'in_progress' || beep.status === 'on_the_way'
+  return (
+    beep.status === "accepted" ||
+    beep.status === "here" ||
+    beep.status === "in_progress" ||
+    beep.status === "on_the_way"
+  );
 }
 
 export function getQueueSize(queue: { status: BeepStatus }[]) {
-  return queue.filter(getIsAcceptedBeep).length
+  return queue.filter(getIsAcceptedBeep).length;
 }
 
-export function getProtectedBeeperQueue(queue: Awaited<ReturnType<typeof getBeeperQueue>>): Awaited<ReturnType<typeof getBeeperQueue>> {
-  for (const beep of queue) {
-    const isAcceptedBeep = getIsAcceptedBeep(beep);
-    if (!isAcceptedBeep) {
-      beep.rider.phone = '';
-      beep.rider.pushToken = null;
-    }
+export function getProtectedBeeperQueue(
+  queue: Awaited<ReturnType<typeof getBeeperQueue>>,
+) {
+  return queue.map(({ beeper, ...beep }) => {
+    const isAccepted = getIsAcceptedBeep(beep);
+    return {
+      ...beep,
+      rider: {
+        id: beep.rider.id,
+        first: beep.rider.first,
+        last: beep.rider.last,
+        venmo: beep.rider.venmo,
+        cashapp: beep.rider.cashapp,
+        phone: isAccepted ? beep.rider.phone : null,
+        photo: beep.rider.photo,
+        rating: beep.rider.rating,
+      },
+    };
+  });
+}
+
+export async function getRidersCurrentRide(userId: string) {
+  const b = await db.query.beep.findFirst({
+    where: and(eq(beep.rider_id, userId), inProgressBeep),
+    with: {
+      beeper: {
+        columns: {
+          id: true,
+          first: true,
+          last: true,
+          photo: true,
+          location: true,
+          singlesRate: true,
+          groupRate: true,
+          capacity: true,
+          phone: true,
+          cashapp: true,
+          venmo: true,
+        },
+        with: {
+          cars: {
+            where: eq(car.default, true),
+            limit: 1,
+          },
+        },
+      },
+    },
+  });
+
+  if (!b) {
+    return null;
   }
-  return queue;
+
+  const position = await db
+    .select({ count: count() })
+    .from(beep)
+    .where(
+      and(
+        eq(beep.beeper_id, b.beeper_id),
+        lt(beep.start, b.start),
+        ne(beep.status, "waiting"),
+        inProgressBeep,
+      ),
+    );
+
+  const isAcceptedBeep = getIsAcceptedBeep(b);
+
+  return {
+    ...b,
+    beeper: {
+      id: b.beeper.id,
+      first: b.beeper.first,
+      last: b.beeper.last,
+      photo: b.beeper.photo,
+      singlesRate: b.beeper.singlesRate,
+      groupRate: b.beeper.groupRate,
+      cashapp: b.beeper.cashapp,
+      venmo: b.beeper.venmo,
+      location: isAcceptedBeep ? b.beeper.location : null,
+      phone: isAcceptedBeep ? b.beeper.phone : null,
+      car: isAcceptedBeep ? b.beeper.cars[0] : null,
+    },
+    position: position[0].count,
+  };
 }

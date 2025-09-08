@@ -263,7 +263,7 @@ export function MainFindBeepScreen(props: Props) {
             position={beep.position}
           />
         )}
-        {beep.status === "here" ? (
+        {beep.status === "here" && beep.beeper.car ? (
           <Image
             style={{
               flexGrow: 1,
@@ -272,8 +272,8 @@ export function MainFindBeepScreen(props: Props) {
               minHeight: 100,
             }}
             resizeMode="cover"
-            src={beep.beeper.cars?.[0].photo}
-            alt={`car-${beep.beeper.cars?.[0].id}`}
+            src={beep.beeper.car.photo}
+            alt={`car-${beep.beeper.car.id}`}
           />
         ) : (
           <Map
