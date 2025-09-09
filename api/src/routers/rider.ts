@@ -174,17 +174,7 @@ export const riderRouter = router({
           ...queue,
           {
             ...newBeep,
-            rider: {
-              id: ctx.user.id,
-              first: ctx.user.first,
-              last: ctx.user.last,
-              phone: ctx.user.phone,
-              venmo: ctx.user.venmo,
-              cashapp: ctx.user.cashapp,
-              rating: ctx.user.rating,
-              photo: ctx.user.photo,
-              pushToken: ctx.user.pushToken,
-            },
+            rider: ctx.user,
             beeper,
           },
         ];

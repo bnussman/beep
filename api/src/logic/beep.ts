@@ -10,6 +10,26 @@ export const inProgressBeep = or(
   eq(beep.status, "on_the_way"),
 );
 
+type BeepStatus = (typeof beep.$inferSelect)["status"];
+
+export function getIsAcceptedBeep(beep: { status: BeepStatus }) {
+  return (
+    beep.status === "accepted" ||
+    beep.status === "here" ||
+    beep.status === "in_progress" ||
+    beep.status === "on_the_way"
+  );
+}
+
+export function getQueueSize(queue: { status: BeepStatus }[]) {
+  return queue.filter(getIsAcceptedBeep).length;
+}
+
+/**
+ *  Gets a beeper's queue.
+ *
+ * @note This queries for all beeper and rider details. Fields should be masked / protected before returned to users.
+ */
 export async function getBeeperQueue(beeperId: string) {
   return await db.query.beep.findMany({
     where: and(inProgressBeep, eq(beep.beeper_id, beeperId)),
@@ -53,6 +73,11 @@ export async function getBeeperQueue(beeperId: string) {
   });
 }
 
+/**
+ * Given a beep and the beeper's whole queue, this returns the rider's beep.
+ *
+ * @note is masks fields like `car`, `location`, `phone` so that they can only see the beeper's personal info if the beep is accepted
+ */
 export function getRiderBeepFromBeeperQueue(
   beep: Awaited<ReturnType<typeof getBeeperQueue>>[number],
   queue: Awaited<ReturnType<typeof getBeeperQueue>>,
@@ -84,21 +109,10 @@ export function getRiderBeepFromBeeperQueue(
   };
 }
 
-type BeepStatus = (typeof beep.$inferSelect)["status"];
-
-export function getIsAcceptedBeep(beep: { status: BeepStatus }) {
-  return (
-    beep.status === "accepted" ||
-    beep.status === "here" ||
-    beep.status === "in_progress" ||
-    beep.status === "on_the_way"
-  );
-}
-
-export function getQueueSize(queue: { status: BeepStatus }[]) {
-  return queue.filter(getIsAcceptedBeep).length;
-}
-
+/**
+ * Given a raw beepers queue, this function does some output transformation to ensure a beeper
+ * can only see rider details when they are allowed to.
+ */
 export function getProtectedBeeperQueue(
   queue: Awaited<ReturnType<typeof getBeeperQueue>>,
 ) {
@@ -120,6 +134,11 @@ export function getProtectedBeeperQueue(
   });
 }
 
+/**
+ * Gets a rider's current ride
+ *
+ * @note this function masks beeper's info like `cars`, `phone`, and `location` so that rider can't see sensitive information when they are not allowed to
+ */
 export async function getRidersCurrentRide(userId: string) {
   const b = await db.query.beep.findFirst({
     where: and(eq(beep.rider_id, userId), inProgressBeep),
