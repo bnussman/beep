@@ -1,4 +1,4 @@
-import { and, asc, count, eq, lt, ne, or } from "drizzle-orm";
+import { and, asc, eq, lt, ne, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep, car } from "../../drizzle/schema";
 
@@ -157,17 +157,15 @@ export async function getRidersCurrentRide(userId: string) {
     return null;
   }
 
-  const position = await db
-    .select({ count: count() })
-    .from(beep)
-    .where(
-      and(
-        eq(beep.beeper_id, b.beeper_id),
-        lt(beep.start, b.start),
-        ne(beep.status, "waiting"),
-        inProgressBeep,
-      ),
-    );
+  const position = await db.$count(
+    beep,
+    and(
+      eq(beep.beeper_id, b.beeper_id),
+      lt(beep.start, b.start),
+      ne(beep.status, "waiting"),
+      inProgressBeep,
+    ),
+  );
 
   const isAcceptedBeep = getIsAcceptedBeep(b);
 
@@ -186,6 +184,6 @@ export async function getRidersCurrentRide(userId: string) {
       phone: isAcceptedBeep ? b.beeper.phone : null,
       car: isAcceptedBeep ? b.beeper.cars[0] : null,
     },
-    position: position[0].count,
+    position,
   };
 }
