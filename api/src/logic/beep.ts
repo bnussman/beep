@@ -54,16 +54,11 @@ export async function getBeeperQueue(beeperId: string) {
 }
 
 export function getRiderBeepFromBeeperQueue(
-  riderId: string,
+  beep: Awaited<ReturnType<typeof getBeeperQueue>>[number],
   queue: Awaited<ReturnType<typeof getBeeperQueue>>,
 ): Awaited<ReturnType<typeof getRidersCurrentRide>> {
-  const beep = queue.find((beep) => beep.rider_id === riderId);
-
-  if (!beep) {
-    throw new Error("Rider's beep not found in queue.");
-  }
-
   const isAccpted = getIsAcceptedBeep(beep);
+
   const position = queue.filter(
     (b) => getIsAcceptedBeep(b) && b.start < beep.start,
   ).length;

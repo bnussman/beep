@@ -411,8 +411,8 @@ export const riderRouter = router({
       pubSub.publish("queue", beeper.id, { queue: newQueue });
 
       for (const beep of newQueue) {
-        pubSub.publish("ride", entry.rider_id, {
-          ride: getRiderBeepFromBeeperQueue(beep.rider_id, newQueue),
+        pubSub.publish("ride", beep.rider_id, {
+          ride: getRiderBeepFromBeeperQueue(beep, newQueue),
         });
       }
 
