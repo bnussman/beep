@@ -11,7 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@gorhom/bottom-sheet": "5.1.8",
+    "@gorhom/bottom-sheet": "5.2.6",
     "@react-native-async-storage/async-storage": "~2.2.0",
     "@react-native-menu/menu": "1.2.3",
     "@react-navigation/drawer": "7.3.11",

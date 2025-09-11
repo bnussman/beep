@@ -80,8 +80,8 @@ importers:
   app:
     dependencies:
       '@gorhom/bottom-sheet':
-        specifier: 5.1.8
-        version: 5.1.8(@types/react@19.1.12)(react-native-gesture-handler@2.28.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.0(@babel/core@7.27.1)(react-native-worklets@0.5.1(@babel/core@7.27.1)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
+        specifier: 5.2.6
+        version: 5.2.6(@types/react@19.1.12)(react-native-gesture-handler@2.28.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.0(@babel/core@7.27.1)(react-native-worklets@0.5.1(@babel/core@7.27.1)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       '@react-native-async-storage/async-storage':
         specifier: ~2.2.0
         version: 2.2.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
@@ -1406,8 +1406,8 @@ packages:
   '@fontsource/poppins@5.2.6':
     resolution: {integrity: sha512-NFr0121+vWCfzLDVvSZOzwAjRUaNj6QHA9gtUh/KHHoWf1Qn23EkwVFs63XZ6UtF5K1b3UNmCx77YEMGgV7BOQ==}
 
-  '@gorhom/bottom-sheet@5.1.8':
-    resolution: {integrity: sha512-QuYIVjn3K9bW20n5bgOSjvxBYoWG4YQXiLGOheEAMgISuoT6sMcA270ViSkkb0fenPxcIOwzCnFNuxmr739T9A==}
+  '@gorhom/bottom-sheet@5.2.6':
+    resolution: {integrity: sha512-vmruJxdiUGDg+ZYcDmS30XDhq/h/+QkINOI5LY/uGjx8cPGwgJW0H6AB902gNTKtccbiKe/rr94EwdmIEz+LAQ==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-native': '*'
@@ -8106,7 +8106,7 @@ snapshots:
 
   '@fontsource/poppins@5.2.6': {}
 
-  '@gorhom/bottom-sheet@5.1.8(@types/react@19.1.12)(react-native-gesture-handler@2.28.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.0(@babel/core@7.27.1)(react-native-worklets@0.5.1(@babel/core@7.27.1)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)':
+  '@gorhom/bottom-sheet@5.2.6(@types/react@19.1.12)(react-native-gesture-handler@2.28.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.0(@babel/core@7.27.1)(react-native-worklets@0.5.1(@babel/core@7.27.1)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@gorhom/portal': 1.0.14(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       invariant: 2.2.4
