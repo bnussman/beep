@@ -1,5 +1,4 @@
 import React from "react";
-import * as ContextMenu from "zeego/context-menu";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
@@ -11,6 +10,7 @@ import { RouterOutput, useTRPC } from "@/utils/trpc";
 
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { Menu } from "./Menu";
 
 type Rating = RouterOutput["rating"]["ratings"]["ratings"][number];
 
@@ -30,21 +30,55 @@ export function Rating(props: Props) {
 
   const queryClient = useQueryClient();
 
-  const { mutateAsync: deleteRating } = useMutation(trpc.rating.deleteRating.mutationOptions({
-    onSuccess() {
-      queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
-    },
-    onError(error) {
-      alert(error.message);
-    },
-  }));
+  const { mutateAsync: deleteRating } = useMutation(
+    trpc.rating.deleteRating.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
 
   return (
-    <ContextMenu.Root>
-      <ContextMenu.Trigger>
-        <Card pressable style={{ padding: 16, gap: 16, display: 'flex' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+    <Menu
+      options={[
+        {
+          title: "Report",
+          onClick: () =>
+            navigation.navigate("Report", {
+              userId: otherUser.id,
+              beepId: item.beep_id,
+            }),
+        },
+        ...(isRater
+          ? [
+              {
+                title: "Delete Rating",
+                onClick: () => deleteRating({ ratingId: item.id }),
+              },
+            ]
+          : []),
+      ]}
+      trigger={
+        <Card pressable style={{ padding: 16, gap: 16, display: "flex" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+                flex: 1,
+              }}
+            >
               <Avatar size="xs" src={otherUser.photo ?? undefined} />
               <View style={{ flexShrink: 1 }}>
                 <Text weight="bold">
@@ -64,29 +98,7 @@ export function Rating(props: Props) {
           </View>
           {item.message && <Text>{item.message}</Text>}
         </Card>
-      </ContextMenu.Trigger>
-      <ContextMenu.Content>
-        <ContextMenu.Item
-          key="report"
-          onSelect={() =>
-            navigation.navigate("Report", {
-              userId: otherUser.id,
-              beepId: item.beep_id,
-            })
-          }
-        >
-          <ContextMenu.ItemTitle>Report</ContextMenu.ItemTitle>
-        </ContextMenu.Item>
-        {isRater && (
-          <ContextMenu.Item
-            key="delete-rating"
-            onSelect={() => deleteRating({ ratingId: item.id })}
-            destructive
-          >
-            <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>
-          </ContextMenu.Item>
-        )}
-      </ContextMenu.Content>
-    </ContextMenu.Root>
+      }
+    />
   );
 }

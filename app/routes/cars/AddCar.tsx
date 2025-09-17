@@ -1,6 +1,5 @@
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
-import * as DropdownMenu from "zeego/dropdown-menu";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import { Label } from "@/components/Label";
@@ -16,6 +15,7 @@ import { useTheme } from "@/utils/theme";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
+import { Menu } from "@/components/Menu";
 
 const makes = getMakes();
 
@@ -99,8 +99,8 @@ export function AddCar() {
         defaultValue=""
         control={control}
         render={({ field: { onChange, value } }) => (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
+          <Menu
+            trigger={
               <View style={{ gap: 4 }}>
                 <Label>Make</Label>
                 <Input readOnly value={value} placeholder="Select a make" />
@@ -109,17 +109,12 @@ export function AddCar() {
                   {validationErrors?.make?.[0]}
                 </Text>
               </View>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              {makes.map((make) => (
-                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              ))}
-              <DropdownMenu.Separator />
-              <DropdownMenu.Arrow />
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+            }
+            options={makes.map((make) => ({
+              title: make,
+              onClick: () => onChange(make),
+            }))}
+          />
         )}
       />
 
@@ -129,8 +124,8 @@ export function AddCar() {
         defaultValue=""
         control={control}
         render={({ field: { onChange, value } }) => (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
+          <Menu
+            trigger={
               <View style={{ gap: 4 }}>
                 <Label>Model</Label>
                 <Input readOnly value={value} placeholder="Select a model" />
@@ -139,17 +134,12 @@ export function AddCar() {
                   {validationErrors?.model?.[0]}
                 </Text>
               </View>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              {models.map((make) => (
-                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              ))}
-              <DropdownMenu.Separator />
-              <DropdownMenu.Arrow />
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+            }
+            options={models.map((model) => ({
+              title: model,
+              onClick: () => onChange(model),
+            }))}
+          />
         )}
       />
 
@@ -158,8 +148,8 @@ export function AddCar() {
         rules={{ required: "Year is required" }}
         control={control}
         render={({ field: { onChange, value } }) => (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
+          <Menu
+            trigger={
               <View style={{ gap: 4 }}>
                 <Label>Year</Label>
                 <Input
@@ -173,17 +163,12 @@ export function AddCar() {
                   {validationErrors?.year?.[0]}
                 </Text>
               </View>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              {years.map((year) => (
-                <DropdownMenu.Item key={year} onSelect={() => onChange(year)}>
-                  <DropdownMenu.ItemTitle>{year}</DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              ))}
-              <DropdownMenu.Separator />
-              <DropdownMenu.Arrow />
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+            }
+            options={years.map((year) => ({
+              title: year,
+              onClick: () => onChange(year),
+            }))}
+          />
         )}
       />
 
@@ -193,8 +178,8 @@ export function AddCar() {
         defaultValue=""
         control={control}
         render={({ field: { onChange, value } }) => (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
+          <Menu
+            trigger={
               <View style={{ gap: 4 }}>
                 <Label>Color</Label>
                 <Input
@@ -207,17 +192,12 @@ export function AddCar() {
                   {validationErrors?.color?.[0]}
                 </Text>
               </View>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              {colors.map((make) => (
-                <DropdownMenu.Item key={make} onSelect={() => onChange(make)}>
-                  <DropdownMenu.ItemTitle>{make}</DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              ))}
-              <DropdownMenu.Separator />
-              <DropdownMenu.Arrow />
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+            }
+            options={colors.map((color) => ({
+              title: color,
+              onClick: () => onChange(color),
+            }))}
+          />
         )}
       />
 
