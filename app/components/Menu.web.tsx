@@ -11,7 +11,7 @@ export function Menu(props: MenuProps) {
       </button>
       <div popover="" popoverTargetAction="toggle" id={id}>
         {props.options.map((option, index) => (
-          <button key={index} onClick={option.onClick}>
+          <button role="menuitem" key={index} onClick={option.onClick}>
             {option.title}
           </button>
         ))}
