@@ -88,9 +88,6 @@ importers:
       '@react-native-async-storage/async-storage':
         specifier: ~2.2.0
         version: 2.2.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
-      '@react-native-menu/menu':
-        specifier: 1.2.3
-        version: 1.2.3(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       '@react-navigation/drawer':
         specifier: 7.3.11
         version: 7.3.11(@react-navigation/native@7.1.8(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-gesture-handler@2.28.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.0(@babel/core@7.27.1)(react-native-worklets@0.5.1(@babel/core@7.27.1)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.1(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-screens@4.16.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
@@ -175,12 +172,6 @@ importers:
       react-native-gesture-handler:
         specifier: ~2.28.0
         version: 2.28.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
-      react-native-ios-context-menu:
-        specifier: 3.1.2
-        version: 3.1.2(react-native-ios-utilities@5.1.8(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
-      react-native-ios-utilities:
-        specifier: 5.1.8
-        version: 5.1.8(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       react-native-keyboard-controller:
         specifier: ^1.18.5
         version: 1.18.5(react-native-reanimated@4.1.0(@babel/core@7.27.1)(react-native-worklets@0.5.1(@babel/core@7.27.1)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
@@ -902,9 +893,6 @@ packages:
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
-
-  '@dominicstop/ts-event-emitter@1.1.0':
-    resolution: {integrity: sha512-CcxmJIvUb1vsFheuGGVSQf4KdPZC44XolpUT34+vlal+LyQoBUOn31pjFET5M9ctOxEpt8xa0M3/2M7uUiAoJw==}
 
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
@@ -2141,12 +2129,6 @@ packages:
     resolution: {integrity: sha512-gvRvjR5JAaUZF8tv2Kcq/Gbt3JHwbKFYfmb445rhOj6NUMx3qPLixmDx5pZAyb9at1bYvJ4/eTUipU5aki45xw==}
     peerDependencies:
       react-native: ^0.0.0-0 || >=0.65 <1.0
-
-  '@react-native-menu/menu@1.2.3':
-    resolution: {integrity: sha512-sEfiVIivsa0lSelFm9Wbm/RAi+XoEHc75GGhjwvSrj9KSCVvNNXwr9F8l42e1t/lzYvVYzmkYxLG6VKxrDYJiw==}
-    peerDependencies:
-      react: 19.1.0
-      react-native: '*'
 
   '@react-native/assets-registry@0.81.4':
     resolution: {integrity: sha512-AMcDadefBIjD10BRqkWw+W/VdvXEomR6aEZ0fhQRAv7igrBzb4PTn4vHKYg+sUK0e3wa74kcMy2DLc/HtnGcMA==}
@@ -5440,19 +5422,6 @@ packages:
       react: 19.1.0
       react-native: '*'
 
-  react-native-ios-context-menu@3.1.2:
-    resolution: {integrity: sha512-xmwdygAlmEofBzQvIhJd5qa+2DzPznmWuwkkqkI9NJbe+cfOmIzbvLdVD5RkiayewnCX9Mp8v/muf3BRWq/T1A==}
-    peerDependencies:
-      react: 19.1.0
-      react-native: '*'
-      react-native-ios-utilities: '*'
-
-  react-native-ios-utilities@5.1.8:
-    resolution: {integrity: sha512-2lWerAkd0Kn18kUAc/RaBzHnOGG1VjbKVfTR4eEXvwYFYqCS709gOg0tGUaVLsm6CAyMe7/jA+AvKMMztzHf4g==}
-    peerDependencies:
-      react: 19.1.0
-      react-native: '*'
-
   react-native-is-edge-to-edge@1.2.1:
     resolution: {integrity: sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==}
     peerDependencies:
@@ -7157,8 +7126,6 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.9
     optional: true
 
-  '@dominicstop/ts-event-emitter@1.1.0': {}
-
   '@drizzle-team/brocli@0.10.2': {}
 
   '@egjs/hammerjs@2.0.17':
@@ -8702,11 +8669,6 @@ snapshots:
   '@react-native-async-storage/async-storage@2.2.0(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))':
     dependencies:
       merge-options: 3.0.4
-      react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
-
-  '@react-native-menu/menu@1.2.3(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      react: 19.1.0
       react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
 
   '@react-native/assets-registry@0.81.4': {}
@@ -12290,18 +12252,6 @@ snapshots:
       '@egjs/hammerjs': 2.0.17
       hoist-non-react-statics: 3.3.2
       invariant: 2.2.4
-      react: 19.1.0
-      react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
-
-  react-native-ios-context-menu@3.1.2(react-native-ios-utilities@5.1.8(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0):
-    dependencies:
-      '@dominicstop/ts-event-emitter': 1.1.0
-      react: 19.1.0
-      react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
-      react-native-ios-utilities: 5.1.8(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
-
-  react-native-ios-utilities@5.1.8(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0):
-    dependencies:
       react: 19.1.0
       react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
 
