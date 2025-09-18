@@ -1,16 +1,21 @@
 import { Button, ContextMenu, Host } from "@expo/ui/swift-ui";
 import { MenuProps } from "./Menu";
+import { View } from "react-native";
 
 export function Menu(props: MenuProps) {
   return (
-    <Host matchContents>
-      <ContextMenu activationMethod="singlePress">
+    <Host matchContents={{ horizontal: true, vertical: false }}>
+      <ContextMenu activationMethod={props.activationMethod ?? "singlePress"}>
         <ContextMenu.Items>
           {props.options.map((option) => (
             <Button onPress={option.onClick}>{option.title}</Button>
           ))}
         </ContextMenu.Items>
-        <ContextMenu.Trigger>{props.trigger}</ContextMenu.Trigger>
+        <ContextMenu.Trigger>
+          <View>
+            <Host>{props.trigger}</Host>
+          </View>
+        </ContextMenu.Trigger>
       </ContextMenu>
     </Host>
   );

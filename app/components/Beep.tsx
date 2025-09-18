@@ -100,6 +100,7 @@ export function Beep({ item }: Props) {
   return (
     <Menu
       options={options}
+      activationMethod="longPress"
       trigger={
         <Card
           style={{ padding: 16, gap: 8 }}

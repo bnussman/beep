@@ -1,9 +1,11 @@
+import { ContextMenuProps } from "@expo/ui/swift-ui";
+
 interface Option {
   title: string;
   onClick: () => void;
 }
 
-export interface MenuProps {
+export interface MenuProps extends Omit<ContextMenuProps, "children"> {
   /**
    * The trigger for the men
    */
