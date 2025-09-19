@@ -11,6 +11,7 @@ import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
+import { designName } from "expo-device";
 
 type Rating = RouterOutput["rating"]["ratings"]["ratings"][number];
 
@@ -43,6 +44,7 @@ export function Rating(props: Props) {
 
   return (
     <Menu
+      activationMethod="longPress"
       options={[
         {
           title: "Report",
@@ -57,6 +59,7 @@ export function Rating(props: Props) {
               {
                 title: "Delete Rating",
                 onClick: () => deleteRating({ ratingId: item.id }),
+                destructive: true,
               },
             ]
           : []),

@@ -140,6 +140,7 @@ export function Cars() {
       }
       renderItem={({ item: car }) => (
         <Menu
+          activationMethod="longPress"
           trigger={
             <Card
               pressable
@@ -191,6 +192,7 @@ export function Cars() {
             {
               title: "Delete",
               onClick: () => onDelete(car.id),
+              destructive: true,
             },
           ]}
         />

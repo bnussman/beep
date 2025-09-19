@@ -125,6 +125,7 @@ export function AddCar() {
         control={control}
         render={({ field: { onChange, value } }) => (
           <Menu
+            disabled={!make}
             trigger={
               <View style={{ gap: 4 }}>
                 <Label>Model</Label>

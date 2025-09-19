@@ -100,6 +100,7 @@ export function QueueItem({ item: beep }: Props) {
 
   return (
     <Menu
+      activationMethod="longPress"
       trigger={
         <Card variant="filled" style={{ padding: 16, gap: 16 }} pressable>
           <View
@@ -242,6 +243,7 @@ export function QueueItem({ item: beep }: Props) {
               },
               {
                 title: "Deny",
+                destructive: true,
                 onClick: () =>
                   mutate({ beepId: beep.id, data: { status: "denied" } }),
               },
@@ -264,6 +266,7 @@ export function QueueItem({ item: beep }: Props) {
               {
                 title: "Cancel Beep",
                 onClick: onPromptCancel,
+                destructive: true,
               },
             ]
       }

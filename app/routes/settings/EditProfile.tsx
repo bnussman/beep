@@ -95,7 +95,11 @@ export function EditProfileScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Menu
-          trigger={<Text size="3xl">🧰</Text>}
+          trigger={
+            <Text size="3xl" style={{ marginRight: 8 }}>
+              🧰
+            </Text>
+          }
           options={[
             {
               title: "Change Password",
@@ -104,6 +108,7 @@ export function EditProfileScreen() {
             {
               title: "Delete Account",
               onClick: handleDeleteWrapper,
+              destructive: true,
             },
           ]}
         />
