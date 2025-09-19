@@ -122,14 +122,14 @@ importers:
         specifier: ^7.0.7
         version: 7.0.7(expo@54.0.7)
       expo-constants:
-        specifier: ~18.0.8
-        version: 18.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
+        specifier: ~18.0.9
+        version: 18.0.9(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
       expo-dev-client:
         specifier: ~6.0.12
         version: 6.0.12(expo@54.0.7)
       expo-device:
-        specifier: ~8.0.7
-        version: 8.0.7(expo@54.0.7)
+        specifier: ~8.0.8
+        version: 8.0.8(expo@54.0.7)
       expo-image-picker:
         specifier: ~17.0.8
         version: 17.0.8(expo@54.0.7)
@@ -155,8 +155,8 @@ importers:
         specifier: ~14.0.7
         version: 14.0.7(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
       expo-updates:
-        specifier: ~29.0.10
-        version: 29.0.10(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
+        specifier: ~29.0.11
+        version: 29.0.11(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
@@ -1267,20 +1267,11 @@ packages:
   '@expo/code-signing-certificates@0.0.5':
     resolution: {integrity: sha512-BNhXkY1bblxKZpltzAx98G2Egj9g1Q+JRcvR7E99DOj862FTCX+ZPsAUtPTr7aHxwtrL7+fL3r0JSmM9kBm+Bw==}
 
-  '@expo/config-plugins@54.0.0':
-    resolution: {integrity: sha512-b2yFNKwaiHjDfh7K+zhMvRKA09gdaP/raqIzB112qeacVJaT66vka8m6cffYbbiXMe1srqofSJvyvr+g3H6+nA==}
-
   '@expo/config-plugins@54.0.1':
     resolution: {integrity: sha512-NyBChhiWFL6VqSgU+LzK4R1vC397tEG2XFewVt4oMr4Pnalq/mJxBANQrR+dyV1RHhSyhy06RNiJIkQyngVWeg==}
 
-  '@expo/config-types@54.0.7':
-    resolution: {integrity: sha512-f0UehgPd2gUqUtQ6euHAL6MqTT/A07r847Ztw2yZYWTUr0hRZr4nCP4U+lr8/pPtsHQYMKoPB1mOeAaTO25ruw==}
-
   '@expo/config-types@54.0.8':
     resolution: {integrity: sha512-lyIn/x/Yz0SgHL7IGWtgTLg6TJWC9vL7489++0hzCHZ4iGjVcfZmPTUfiragZ3HycFFj899qN0jlhl49IHa94A==}
-
-  '@expo/config@12.0.8':
-    resolution: {integrity: sha512-yFadXa5Cmja57EVOSyEYV1hF7kCaSbPnd1twx0MfvTr1Yj2abIbrEu2MUZqcvElNQOtgADnLRP0YJiuEdgoO5A==}
 
   '@expo/config@12.0.9':
     resolution: {integrity: sha512-HiDVVaXYKY57+L1MxSF3TaYjX6zZlGBnuWnOKZG+7mtsLD+aNTtW4bZM0pZqZfoRumyOU0SfTCwT10BWtUUiJQ==}
@@ -3743,8 +3734,8 @@ packages:
       react: 19.1.0
       react-native: '*'
 
-  expo-constants@18.0.8:
-    resolution: {integrity: sha512-Tetphsx6RVImCTZeBAclRQMy0WOODY3y6qrUoc88YGUBVm8fAKkErCSWxLTCc6nFcJxdoOMYi62LgNIUFjZCLA==}
+  expo-constants@18.0.9:
+    resolution: {integrity: sha512-sqoXHAOGDcr+M9NlXzj1tGoZyd3zxYDy215W6E0Z0n8fgBaqce9FAYQE2bu5X4G629AYig5go7U6sQz7Pjcm8A==}
     peerDependencies:
       expo: '*'
       react-native: '*'
@@ -3769,8 +3760,8 @@ packages:
     peerDependencies:
       expo: '*'
 
-  expo-device@8.0.7:
-    resolution: {integrity: sha512-4psIFiFQbkcr2VAaOgCBsC0q7FPLtqsd0gjJmpCccxstvHMd9dmh7A+jSIwkFkEAcrkz+t1KxTp7McJAL+8sYA==}
+  expo-device@8.0.8:
+    resolution: {integrity: sha512-t515WOkeVgIeO3izj+FoXodKTHiSxZ2uF5E9YvCwiR4kANAjvyjFP3vSls2Utjx5ss8y652pZTgh3tOYQmwuZA==}
     peerDependencies:
       expo: '*'
 
@@ -3874,8 +3865,8 @@ packages:
     peerDependencies:
       expo: '*'
 
-  expo-updates@29.0.10:
-    resolution: {integrity: sha512-W2/6xRgKZUZ2wTQr+EPJPhcPQCvSOF3+tdolS2kwLEuGjqypoFVT3+6r0XwKRSI1d3zFMxGWLRPzQTn1q8Fd2w==}
+  expo-updates@29.0.11:
+    resolution: {integrity: sha512-zD7Zxe3P61WA6fyTdKRckmTFr7h/0BaSSD+Ssr73YiOLOak7GJUb19B+ysADjJP1L0IIOUR9U/UkMLv0r8k9dA==}
     hasBin: true
     peerDependencies:
       expo: '*'
@@ -7448,25 +7439,6 @@ snapshots:
       node-forge: 1.3.1
       nullthrows: 1.1.1
 
-  '@expo/config-plugins@54.0.0':
-    dependencies:
-      '@expo/config-types': 54.0.8
-      '@expo/json-file': 10.0.7
-      '@expo/plist': 0.4.7
-      '@expo/sdk-runtime-versions': 1.0.0
-      chalk: 4.1.2
-      debug: 4.4.1
-      getenv: 2.0.0
-      glob: 10.4.5
-      resolve-from: 5.0.0
-      semver: 7.7.2
-      slash: 3.0.0
-      slugify: 1.6.6
-      xcode: 3.0.1
-      xml2js: 0.6.0
-    transitivePeerDependencies:
-      - supports-color
-
   '@expo/config-plugins@54.0.1':
     dependencies:
       '@expo/config-types': 54.0.8
@@ -7486,27 +7458,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@expo/config-types@54.0.7': {}
-
   '@expo/config-types@54.0.8': {}
-
-  '@expo/config@12.0.8':
-    dependencies:
-      '@babel/code-frame': 7.10.4
-      '@expo/config-plugins': 54.0.0
-      '@expo/config-types': 54.0.7
-      '@expo/json-file': 10.0.7
-      deepmerge: 4.3.1
-      getenv: 2.0.0
-      glob: 10.4.5
-      require-from-string: 2.0.2
-      resolve-from: 5.0.0
-      resolve-workspace-root: 2.0.0
-      semver: 7.7.2
-      slugify: 1.6.6
-      sucrase: 3.35.0
-    transitivePeerDependencies:
-      - supports-color
 
   '@expo/config@12.0.9':
     dependencies:
@@ -10398,15 +10350,15 @@ snapshots:
     dependencies:
       '@expo/image-utils': 0.8.7
       expo: 54.0.7(@babel/core@7.27.1)(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
-      expo-constants: 18.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
+      expo-constants: 18.0.9(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
       react: 19.1.0
       react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
     transitivePeerDependencies:
       - supports-color
 
-  expo-constants@18.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)):
+  expo-constants@18.0.9(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)):
     dependencies:
-      '@expo/config': 12.0.8
+      '@expo/config': 12.0.9
       '@expo/env': 2.0.7
       expo: 54.0.7(@babel/core@7.27.1)(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
@@ -10441,7 +10393,7 @@ snapshots:
       expo: 54.0.7(@babel/core@7.27.1)(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       expo-dev-menu-interface: 2.0.0(expo@54.0.7)
 
-  expo-device@8.0.7(expo@54.0.7):
+  expo-device@8.0.8(expo@54.0.7):
     dependencies:
       expo: 54.0.7(@babel/core@7.27.1)(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       ua-parser-js: 0.7.33
@@ -10484,7 +10436,7 @@ snapshots:
 
   expo-linking@8.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0):
     dependencies:
-      expo-constants: 18.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
+      expo-constants: 18.0.9(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
       invariant: 2.2.4
       react: 19.1.0
       react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
@@ -10528,7 +10480,7 @@ snapshots:
       badgin: 1.2.3
       expo: 54.0.7(@babel/core@7.27.1)(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       expo-application: 7.0.7(expo@54.0.7)
-      expo-constants: 18.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
+      expo-constants: 18.0.9(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
       react: 19.1.0
       react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
     transitivePeerDependencies:
@@ -10559,7 +10511,7 @@ snapshots:
     dependencies:
       expo: 54.0.7(@babel/core@7.27.1)(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
 
-  expo-updates@29.0.10(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0):
+  expo-updates@29.0.11(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0):
     dependencies:
       '@expo/code-signing-certificates': 0.0.5
       '@expo/plist': 0.4.7
@@ -10595,7 +10547,7 @@ snapshots:
       '@ungap/structured-clone': 1.3.0
       babel-preset-expo: 54.0.1(@babel/core@7.27.1)(@babel/runtime@7.28.2)(expo@54.0.7)(react-refresh@0.14.2)
       expo-asset: 12.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
-      expo-constants: 18.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
+      expo-constants: 18.0.9(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
       expo-file-system: 19.0.14(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))
       expo-font: 14.0.8(expo@54.0.7)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
       expo-keep-awake: 15.0.7(expo@54.0.7)(react@19.1.0)

@@ -318,7 +318,7 @@ export function Beep(props: Props) {
               ]
             : []),
           ...(beep.status !== "waiting" && beep.status !== "in_progress"
-            ? [{ title: "Cancel Beep", onClick: onPress }]
+            ? [{ title: "Cancel Beep", onClick: onPress, destructive: true }]
             : []),
         ]}
       />
