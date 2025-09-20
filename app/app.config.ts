@@ -1,4 +1,4 @@
-import type { ExpoConfig } from 'expo/config';
+import type { ExpoConfig } from "expo/config";
 
 const config: ExpoConfig = {
   experiments: {
@@ -23,7 +23,7 @@ const config: ExpoConfig = {
     fallbackToCacheTimeout: 10_000,
   },
   runtimeVersion: {
-    policy: "sdkVersion"
+    policy: "sdkVersion",
   },
   extra: {
     eas: {
@@ -38,11 +38,19 @@ const config: ExpoConfig = {
   plugins: [
     ["expo-notifications"],
     [
+      "expo-location",
+      {
+        isIosBackgroundLocationEnabled: true,
+        isAndroidBackgroundLocationEnabled: true,
+        isAndroidForegroundServiceEnabled: true,
+      },
+    ],
+    [
       "@sentry/react-native/expo",
       {
         project: "app",
-        organization: "ian-banks-llc"
-      }
+        organization: "ian-banks-llc",
+      },
     ],
   ],
   ios: {
@@ -62,9 +70,9 @@ const config: ExpoConfig = {
       googleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0",
     },
     icon: {
-      light: './assets/icon.png',
-      dark: './assets/icon-transparent.png',
-      tinted: './assets/icon-tinted.png'
+      light: "./assets/icon.png",
+      dark: "./assets/icon-transparent.png",
+      tinted: "./assets/icon-tinted.png",
     },
     splash: {
       image: "./assets/splash.png",
@@ -74,7 +82,7 @@ const config: ExpoConfig = {
         image: "./assets/splash.png",
         resizeMode: "cover",
         backgroundColor: "#000000",
-      }
+      },
     },
   },
   android: {
@@ -85,6 +93,7 @@ const config: ExpoConfig = {
       "ACCESS_COARSE_LOCATION",
       "ACCESS_FINE_LOCATION",
       "ACCESS_BACKGROUND_LOCATION",
+      "FOREGROUND_SERVICE_LOCATION",
       "FOREGROUND_SERVICE",
       "VIBRATE",
     ],
@@ -101,7 +110,7 @@ const config: ExpoConfig = {
         image: "./assets/splash.png",
         resizeMode: "cover",
         backgroundColor: "#000000",
-      }
+      },
     },
   },
   assetBundlePatterns: ["**/*"],
