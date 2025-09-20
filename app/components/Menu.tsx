@@ -21,4 +21,6 @@ export interface MenuProps extends Omit<ContextMenuProps, "children"> {
   disabled?: boolean;
 }
 
-export const Menu = (props: MenuProps) => null;
+export const Menu = (props: MenuProps) => {
+  return props.trigger;
+};
