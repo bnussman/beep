@@ -14,14 +14,16 @@ export function LocationInput({ inputRef, ...props }: Props) {
 
   const handleGetCurrentLocation = async () => {
     setIsLoading(true);
-    // props.onChangeText?.("");
 
-    const { status } = await Location.requestForegroundPermissionsAsync();
+    const { granted } = await Location.getForegroundPermissionsAsync();
 
-    if (status !== "granted") {
-      props.onChangeText?.("");
-      setIsLoading(false);
-      return alert("You must enable location to use this feature.");
+    if (!granted) {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        setIsLoading(false);
+        return alert("You must enable location to use this feature.");
+      }
     }
 
     try {
