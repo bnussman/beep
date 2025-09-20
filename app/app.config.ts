@@ -38,6 +38,14 @@ const config: ExpoConfig = {
   plugins: [
     ["expo-notifications"],
     [
+      "expo-location",
+      {
+        isIosBackgroundLocationEnabled: true,
+        isAndroidBackgroundLocationEnabled: true,
+        isAndroidForegroundServiceEnabled: true,
+      },
+    ],
+    [
       "@sentry/react-native/expo",
       {
         url: "https://sentry.io/",
@@ -87,6 +95,7 @@ const config: ExpoConfig = {
       "ACCESS_COARSE_LOCATION",
       "ACCESS_FINE_LOCATION",
       "ACCESS_BACKGROUND_LOCATION",
+      "FOREGROUND_SERVICE_LOCATION",
       "FOREGROUND_SERVICE",
       "VIBRATE",
     ],

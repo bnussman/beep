@@ -43,8 +43,7 @@ export function StartBeepingScreen() {
     },
   });
 
-  const { hasLocationPermission, requestLocationPermission } =
-    useLocationPermissions();
+  const { requestLocationPermission } = useLocationPermissions();
 
   const {
     data: queue,
@@ -137,7 +136,6 @@ export function StartBeepingScreen() {
       const hasLoactionPermission = await requestLocationPermission();
 
       if (!hasLoactionPermission && !isWeb) {
-        alert("You must allow background location to start beeping!");
         return;
       }
 
@@ -168,34 +166,34 @@ export function StartBeepingScreen() {
   }, []);
 
   useEffect(() => {
-    if (user?.isBeeping && hasLocationPermission) {
+    if (user?.isBeeping) {
       startLocationTracking();
     } else {
       stopLocationTracking();
     }
-  }, [user?.isBeeping, hasLocationPermission]);
+  }, [user?.isBeeping]);
 
-  if (user?.isBeeping && !hasLocationPermission && !isWeb) {
-    return (
-      <View
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100%",
-        }}
-      >
-        <Text size="2xl" weight="800">
-          No Location Permission
-        </Text>
-        <Text style={{ textAlign: "center" }}>
-          You are beeping, but you have not granted this app permission to use
-          your location in the background. Please enable full time background
-          location for the app in your settings.
-        </Text>
-      </View>
-    );
-  }
+  // if (user?.isBeeping && !hasLocationPermission && !isWeb) {
+  //   return (
+  //     <View
+  //       style={{
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         height: "100%",
+  //       }}
+  //     >
+  //       <Text size="2xl" weight="800">
+  //         No Location Permission
+  //       </Text>
+  //       <Text style={{ textAlign: "center" }}>
+  //         You are beeping, but you have not granted this app permission to use
+  //         your location in the background. Please enable full time background
+  //         location for the app in your settings.
+  //       </Text>
+  //     </View>
+  //   );
+  // }
 
   if (user?.isBeeping && queue?.length === 0) {
     return (

@@ -6,9 +6,19 @@ export function useLocation(enabled = true) {
   const [location, setLocation] = useState<Location.LocationObject>();
 
   const getHasPermission = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
+    // Get the current permissions status so we can skip requesting permission if we already have it.
+    // On Andriod, if we request permission when we already have it, `requestForegroundPermissionsAsync` will hang,
+    // so that's why we check this first.
+    const permission = await Location.getForegroundPermissionsAsync();
+    let hasLocationPermission = permission.granted;
 
-    return status === "granted";
+    if (!hasLocationPermission) {
+      // If we don't have location permission, request it...
+      const permission = await Location.requestForegroundPermissionsAsync();
+      hasLocationPermission = permission.granted;
+    }
+
+    return hasLocationPermission;
   };
 
   const updateLocation = async () => {
@@ -102,38 +112,39 @@ export async function stopLocationTracking() {
 }
 
 export function useLocationPermissions() {
-  const [foregroundPermission, requestForegroundPermission] =
-    Location.useForegroundPermissions();
-  const [backgroundPermission, requestBackgroundPermission] =
-    Location.useBackgroundPermissions();
-
-  const hasLocationPermission =
-    foregroundPermission?.granted && backgroundPermission?.granted;
-
   const requestLocationPermission = async () => {
-    try {
-      await requestForegroundPermission();
-      await requestBackgroundPermission();
+    const foregroundPermission = await Location.getForegroundPermissionsAsync();
+    const backgroundPermission = await Location.getBackgroundPermissionsAsync();
 
-      const { granted: foregroundGranted } =
-        await Location.getForegroundPermissionsAsync();
-      const { granted: backgroundGranted } =
-        await Location.getBackgroundPermissionsAsync();
+    let hasForgroundPermission = foregroundPermission.granted;
+    let hasBackgroundPermission = backgroundPermission.granted;
 
-      return foregroundGranted && backgroundGranted;
-    } catch (error) {
-      console.error("Unable to get location permission", error);
-      Sentry.captureException(error);
+    if (!hasForgroundPermission) {
+      const permission = await Location.requestForegroundPermissionsAsync();
+      hasForgroundPermission = permission.granted;
+    }
+
+    if (!hasForgroundPermission) {
+      alert("You must allow beep to access your location.");
       return false;
     }
+
+    if (!hasBackgroundPermission) {
+      const permission = await Location.requestBackgroundPermissionsAsync();
+      hasBackgroundPermission = permission.granted;
+    }
+
+    if (!hasBackgroundPermission) {
+      alert(
+        "Please allow beep to use your location when beep is in the background.",
+      );
+      return false;
+    }
+
+    return true;
   };
 
   return {
-    foregroundPermission,
-    backgroundPermission,
-    hasLocationPermission,
-    requestForegroundPermission,
-    requestBackgroundPermission,
     requestLocationPermission,
   };
 }

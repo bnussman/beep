@@ -14,17 +14,24 @@ export function LocationInput({ inputRef, ...props }: Props) {
 
   const handleGetCurrentLocation = async () => {
     setIsLoading(true);
-    // props.onChangeText?.("");
-
-    const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      props.onChangeText?.("");
-      setIsLoading(false);
-      return alert("You must enable location to use this feature.");
-    }
-
     try {
+      // Get the current permissions status so we can skip requesting permission if we already have it.
+      // On Andriod, if we request permission when we already have it, `requestForegroundPermissionsAsync` will hang,
+      // so that's why we check this first.
+      const permission = await Location.getForegroundPermissionsAsync();
+      let hasLocationPermission = permission.granted;
+
+      if (!hasLocationPermission) {
+        // If we don't have location permission, request it...
+        const permission = await Location.requestForegroundPermissionsAsync();
+        hasLocationPermission = permission.granted;
+      }
+
+      if (!hasLocationPermission) {
+        setIsLoading(false);
+        return alert("You must allow beep to access your location.");
+      }
+
       const position = await Location.getCurrentPositionAsync();
       const locations = await Location.reverseGeocodeAsync({
         latitude: position.coords.latitude,
