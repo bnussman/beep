@@ -71,7 +71,9 @@ export function Queue(props: Props) {
       </Pressable>
       <BottomSheetFlatList
         data={beeps}
+        // @ts-expect-error bottom sheet types are broken
         keyExtractor={(beep) => beep.id}
+        // @ts-expect-error bottom sheet types are broken
         renderItem={({ item, index }) => (
           <QueueItem item={item} index={index} />
         )}

@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
-import * as DropdownMenu from "zeego/dropdown-menu";
 import { View, Alert, Pressable, ActivityIndicator } from "react-native";
 import { isMobile } from "@/utils/constants";
 import { Avatar } from "@/components/Avatar";
@@ -18,6 +17,7 @@ import { queryClient, useTRPC } from "@/utils/trpc";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
+import { Menu } from "@/components/Menu";
 
 export function EditProfileScreen() {
   const trpc = useTRPC();
@@ -94,30 +94,24 @@ export function EditProfileScreen() {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
+        <Menu
+          trigger={
             <Text size="3xl" style={{ marginRight: 8 }}>
               🧰
             </Text>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            <DropdownMenu.Item
-              key="change-password"
-              onSelect={() => navigation.navigate("Change Password")}
-            >
-              <DropdownMenu.ItemTitle>Change Password</DropdownMenu.ItemTitle>
-            </DropdownMenu.Item>
-            <DropdownMenu.Item
-              destructive
-              key="delete-account"
-              onSelect={handleDeleteWrapper}
-            >
-              <DropdownMenu.ItemTitle>Delete Account</DropdownMenu.ItemTitle>
-            </DropdownMenu.Item>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Arrow />
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+          }
+          options={[
+            {
+              title: "Change Password",
+              onClick: () => navigation.navigate("Change Password"),
+            },
+            {
+              title: "Delete Account",
+              onClick: handleDeleteWrapper,
+              destructive: true,
+            },
+          ]}
+        />
       ),
     });
   }, [navigation]);

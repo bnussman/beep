@@ -21,12 +21,7 @@ import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import {
-  Pressable,
-  Appearance,
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
 
 import { useMutation } from "@tanstack/react-query";
@@ -34,8 +29,12 @@ import { useMutation } from "@tanstack/react-query";
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
   const { user } = useUser();
-  const { mutateAsync: logout, isPending } = useMutation(trpc.auth.logout.mutationOptions());
-  const { mutateAsync: resend, isPending: resendLoading } = useMutation(trpc.auth.resendVerification.mutationOptions());
+  const { mutateAsync: logout, isPending } = useMutation(
+    trpc.auth.logout.mutationOptions(),
+  );
+  const { mutateAsync: resend, isPending: resendLoading } = useMutation(
+    trpc.auth.resendVerification.mutationOptions(),
+  );
 
   const handleLogout = async () => {
     await logout({
@@ -61,27 +60,39 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       .catch((error) => alert(error.message));
   };
 
-  const rating = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 2 }).format(
-    Number(user?.rating ?? 0),
-  )
+  const rating = new Intl.NumberFormat("en-US", {
+    maximumSignificantDigits: 2,
+  }).format(Number(user?.rating ?? 0));
 
   return (
     <DrawerContentScrollView {...props}>
       <View style={{ gap: 12 }}>
-        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <View style={{ flexShrink: 1 }}>
             <Text size="xl" weight="800">
               {user?.first} {user?.last}
             </Text>
             {user?.rating && (
-              <Text color="subtle" size="xs">{printStars(Number(user.rating))} ({rating})</Text>
+              <Text color="subtle" size="xs">
+                {printStars(Number(user.rating))} ({rating})
+              </Text>
             )}
           </View>
           <Avatar src={user?.photo ?? undefined} />
         </View>
-        <View style={{ display: 'flex', gap: 8 }}>
+        <View style={{ display: "flex", gap: 8 }}>
           {!user?.isEmailVerified && (
-            <Button onPress={handleResendVerification} isLoading={resendLoading}>
+            <Button
+              onPress={handleResendVerification}
+              isLoading={resendLoading}
+            >
               Resend Verification Email
             </Button>
           )}
@@ -109,7 +120,7 @@ export const Drawer = createDrawerNavigator({
   screenOptions: () => {
     const colorScheme = Appearance.getColorScheme();
     return {
-      headerBackButtonDisplayMode: 'generic',
+      headerBackButtonDisplayMode: "generic",
       headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
     };
@@ -188,19 +199,19 @@ function DrawerItem(props: Props) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => ([
+      style={({ pressed }) => [
         {
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
           gap: 16,
           padding: 12,
           borderRadius: 8,
         },
         (isActive || pressed) && {
-          backgroundColor: theme.name === 'dark' ? '#202020ff' : '#ebebeb91',
+          backgroundColor: theme.name === "dark" ? "#202020ff" : "#ebebeb91",
         },
-      ])}
+      ]}
     >
       {Icon}
       <Text>{name}</Text>

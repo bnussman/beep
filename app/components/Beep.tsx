@@ -1,5 +1,4 @@
 import React from "react";
-import * as ContextMenu from "zeego/context-menu";
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
@@ -12,6 +11,7 @@ import { printStars } from "./Stars";
 
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { Menu, MenuProps } from "./Menu";
 
 interface Props {
   item: RouterOutput["beep"]["beeps"]["beeps"][number];
@@ -40,9 +40,68 @@ export function Beep({ item }: Props) {
     }),
   );
 
+  const options: MenuProps["options"] = [];
+
+  if (isRider && item.beeper.venmo) {
+    options.push({
+      title: "Pay Beeper With Venmo",
+      onClick: () =>
+        openVenmo(
+          item.beeper.venmo,
+          item.groupSize,
+          item.beeper.groupRate,
+          item.beeper.singlesRate,
+          "pay",
+        ),
+    });
+  }
+
+  if (isBeeper && item.rider.venmo && item.status === "complete") {
+    options.push({
+      title: "Charge Rider with Venmo",
+      onClick: () =>
+        openVenmo(
+          item.rider.venmo,
+          item.groupSize,
+          item.beeper.groupRate,
+          item.beeper.singlesRate,
+          "charge",
+        ),
+    });
+  }
+
+  if (myRating) {
+    options.push({
+      onClick: () => deleteRating({ ratingId: myRating.id }),
+      title: "Delete Rating",
+    });
+  }
+
+  if (!myRating && item.status === "complete") {
+    options.push({
+      title: "Rate",
+      onClick: () =>
+        navigation.navigate("Rate", {
+          userId: otherUser.id,
+          beepId: item.id,
+        }),
+    });
+  }
+
+  options.push({
+    title: "Report",
+    onClick: () =>
+      navigation.navigate("Report", {
+        userId: otherUser.id,
+        beepId: item.id,
+      }),
+  });
+
   return (
-    <ContextMenu.Root>
-      <ContextMenu.Trigger>
+    <Menu
+      options={options}
+      activationMethod="longPress"
+      trigger={
         <Card
           style={{ padding: 16, gap: 8 }}
           pressable
@@ -127,80 +186,7 @@ export function Beep({ item }: Props) {
             )}
           </View>
         </Card>
-      </ContextMenu.Trigger>
-      <ContextMenu.Content>
-        {isRider && item.beeper.venmo && (
-          <ContextMenu.Item
-            key="pay-beeper"
-            onSelect={() =>
-              openVenmo(
-                item.beeper.venmo,
-                item.groupSize,
-                item.beeper.groupRate,
-                item.beeper.singlesRate,
-                "pay",
-              )
-            }
-          >
-            <ContextMenu.ItemTitle>Pay Beeper with Venmo</ContextMenu.ItemTitle>
-          </ContextMenu.Item>
-        )}
-        {isBeeper && item.rider.venmo && item.status === "complete" && (
-          <ContextMenu.Item
-            key="request-rider"
-            onSelect={() =>
-              openVenmo(
-                item.rider.venmo,
-                item.groupSize,
-                item.beeper.groupRate,
-                item.beeper.singlesRate,
-                "charge",
-              )
-            }
-          >
-            <ContextMenu.ItemTitle>
-              Charge Rider with Venmo
-            </ContextMenu.ItemTitle>
-          </ContextMenu.Item>
-        )}
-        {myRating && (
-          <ContextMenu.Item
-            key="delete-rating"
-            destructive
-            onSelect={() => {
-              if (myRating) {
-                deleteRating({ ratingId: myRating.id });
-              }
-            }}
-          >
-            <ContextMenu.ItemTitle>Delete Rating</ContextMenu.ItemTitle>
-          </ContextMenu.Item>
-        )}
-        {!myRating && item.status === "complete" && (
-          <ContextMenu.Item
-            key="rate"
-            onSelect={() =>
-              navigation.navigate("Rate", {
-                userId: otherUser.id,
-                beepId: item.id,
-              })
-            }
-          >
-            <ContextMenu.ItemTitle>Rate</ContextMenu.ItemTitle>
-          </ContextMenu.Item>
-        )}
-        <ContextMenu.Item
-          key="report"
-          onSelect={() =>
-            navigation.navigate("Report", {
-              userId: otherUser.id,
-              beepId: item.id,
-            })
-          }
-        >
-          <ContextMenu.ItemTitle>Report</ContextMenu.ItemTitle>
-        </ContextMenu.Item>
-      </ContextMenu.Content>
-    </ContextMenu.Root>
+      }
+    />
   );
 }

@@ -48,6 +48,7 @@ const config: ExpoConfig = {
     [
       "@sentry/react-native/expo",
       {
+        url: "https://sentry.io/",
         project: "app",
         organization: "ian-banks-llc",
       },
@@ -58,6 +59,7 @@ const config: ExpoConfig = {
     bundleIdentifier: "app.ridebeep.App",
     buildNumber: "32",
     infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
         "The Beep App uses your location to pick origins, destinations, and predict ride times",
       NSLocationAlwaysUsageDescription:

@@ -1,5 +1,4 @@
 import React, { useLayoutEffect } from "react";
-import * as ContextMenu from "zeego/context-menu";
 import { useNavigation } from "@react-navigation/native";
 import { ActivityIndicator, FlatList, Pressable } from "react-native";
 import { PAGE_SIZE } from "@/utils/constants";
@@ -13,6 +12,7 @@ import { TRPCClientError } from "@trpc/client";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { Menu } from "@/components/Menu";
 
 export function Cars() {
   const trpc = useTRPC();
@@ -28,41 +28,49 @@ export function Cars() {
     isFetchingNextPage,
     fetchNextPage,
     isRefetching,
-  } = useInfiniteQuery(trpc.car.cars.infiniteQueryOptions(
-    {
-      userId: user?.id,
-      pageSize: PAGE_SIZE,
-    },
-    {
-      placeholderData: keepPreviousData,
-      initialCursor: 1,
-      getNextPageParam(page) {
-        if (page.page === page.pages) {
-          return undefined;
-        }
-        return page.page + 1;
+  } = useInfiniteQuery(
+    trpc.car.cars.infiniteQueryOptions(
+      {
+        userId: user?.id,
+        pageSize: PAGE_SIZE,
       },
-    },
-  ));
+      {
+        placeholderData: keepPreviousData,
+        initialCursor: 1,
+        getNextPageParam(page) {
+          if (page.page === page.pages) {
+            return undefined;
+          }
+          return page.page + 1;
+        },
+      },
+    ),
+  );
 
-  const { mutateAsync: deleteCar } = useMutation(trpc.car.deleteCar.mutationOptions({
-    onSuccess() {
-      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
-    },
-  }));
+  const { mutateAsync: deleteCar } = useMutation(
+    trpc.car.deleteCar.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+      },
+    }),
+  );
 
-  const { mutateAsync: updateCar } = useMutation(trpc.car.updateCar.mutationOptions({
-    onSuccess() {
-      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
-    },
-  }));
+  const { mutateAsync: updateCar } = useMutation(
+    trpc.car.updateCar.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+      },
+    }),
+  );
 
   const cars = data?.pages.flatMap((page) => page.cars);
 
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", padding: 16 }}
+        >
           <ActivityIndicator />
         </View>
       );
@@ -102,7 +110,13 @@ export function Cars() {
 
   if (isLoading) {
     return (
-      <View style={{ height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <ActivityIndicator />
       </View>
     );
@@ -110,7 +124,7 @@ export function Cars() {
 
   if (error) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>{error.message}</Text>
       </View>
     );
@@ -120,25 +134,43 @@ export function Cars() {
     <FlatList
       data={cars}
       contentContainerStyle={
-        cars?.length === 0 ?
-          { alignItems: 'center', justifyContent: 'center', height: '100%' } :
-          { flex: 1, padding: 12, gap: 8 }
+        cars?.length === 0
+          ? { alignItems: "center", justifyContent: "center", height: "100%" }
+          : { flex: 1, padding: 12, gap: 8 }
       }
       renderItem={({ item: car }) => (
-        <ContextMenu.Root>
-          <ContextMenu.Trigger>
+        <Menu
+          activationMethod="longPress"
+          trigger={
             <Card
               pressable
-              style={{ padding: 16, gap: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+              style={{
+                padding: 16,
+                gap: 16,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
             >
               <View style={{ gap: 8, flexShrink: 1 }}>
-                <Text weight="bold" style={{ textTransform: 'capitalize', flexWrap: 'wrap' }}>
+                <Text
+                  weight="bold"
+                  style={{ textTransform: "capitalize", flexWrap: "wrap" }}
+                >
                   {car.color} {car.make} {car.model} {car.year}
                 </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                <View
+                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+                >
                   {car.default && (
-                    <Card style={{ paddingHorizontal: 8, paddingVertical: 4, backgroundColor: '#737373' }}>
-                      <Text size="xs" weight="800" style={{ color: 'white' }}>
+                    <Card
+                      style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        backgroundColor: "#737373",
+                      }}
+                    >
+                      <Text size="xs" weight="800" style={{ color: "white" }}>
                         Default
                       </Text>
                     </Card>
@@ -151,27 +183,23 @@ export function Cars() {
                 alt={`car-${car.id}`}
               />
             </Card>
-          </ContextMenu.Trigger>
-          <ContextMenu.Content>
-            <ContextMenu.Item
-              key="make-default"
-              onSelect={() => setDefault(car.id)}
-            >
-              <ContextMenu.ItemTitle>Make Default</ContextMenu.ItemTitle>
-            </ContextMenu.Item>
-            <ContextMenu.Item
-              key="delete-car"
-              onSelect={() => onDelete(car.id)}
-              destructive
-            >
-              <ContextMenu.ItemTitle>Delete Car</ContextMenu.ItemTitle>
-            </ContextMenu.Item>
-          </ContextMenu.Content>
-        </ContextMenu.Root>
+          }
+          options={[
+            {
+              title: "Make Default",
+              onClick: () => setDefault(car.id),
+            },
+            {
+              title: "Delete",
+              onClick: () => onDelete(car.id),
+              destructive: true,
+            },
+          ]}
+        />
       )}
       keyExtractor={(car) => car.id}
       ListEmptyComponent={
-        <View style={{ alignItems: 'center' }}>
+        <View style={{ alignItems: "center" }}>
           <Text weight="800" key="title" size="3xl">
             No Cars
           </Text>

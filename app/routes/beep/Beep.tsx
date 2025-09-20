@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { useUser } from "../../utils/useUser";
-import * as DropdownMenu from "zeego/dropdown-menu";
 import { ActionButton } from "../../components/ActionButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Alert, Linking, View } from "react-native";
@@ -23,6 +22,7 @@ import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { isMobile } from "@/utils/constants";
 import MapView from "react-native-maps";
+import { Menu } from "@/components/Menu";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -257,89 +257,71 @@ export function Beep(props: Props) {
           </Map>
         )}
       </Card>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <Button>Options</Button>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-          {beep.rider.phone && (
-            <DropdownMenu.Item
-              key="Call"
-              onSelect={() =>
-                Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone))
-              }
-            >
-              <DropdownMenu.ItemTitle>Call</DropdownMenu.ItemTitle>
-            </DropdownMenu.Item>
-          )}
-          {beep.rider.phone && (
-            <DropdownMenu.Item
-              key="Text"
-              onSelect={() =>
-                Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone))
-              }
-            >
-              <DropdownMenu.ItemTitle>Text</DropdownMenu.ItemTitle>
-            </DropdownMenu.Item>
-          )}
-          <DropdownMenu.Item
-            key="directions-to-rider"
-            onSelect={() => openDirections("Current+Location", beep.origin)}
-          >
-            <DropdownMenu.ItemTitle>Directions to Rider</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            key="directions-for-beep"
-            onSelect={() => openDirections(beep.origin, beep.destination)}
-          >
-            <DropdownMenu.ItemTitle>Directions for Beep</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          {(beep.status === "here" || beep.status === "in_progress") && (
-            <>
-              {beep.rider.venmo && (
-                <DropdownMenu.Item
-                  key="request-money-with-venmo"
-                  onSelect={() =>
+      <Menu
+        trigger={<Button>Options</Button>}
+        options={[
+          ...(beep.rider.phone
+            ? [
+                {
+                  title: "Call",
+                  onClick: () =>
+                    Linking.openURL(
+                      "tel:" + getRawPhoneNumber(beep.rider.phone),
+                    ),
+                },
+                {
+                  title: "Text",
+                  onClick: () =>
+                    Linking.openURL(
+                      "sms:" + getRawPhoneNumber(beep.rider.phone),
+                    ),
+                },
+              ]
+            : []),
+          {
+            title: "Directions to Rider",
+            onClick: () => openDirections("Current+Location", beep.origin),
+          },
+          {
+            title: "Directions for Beep",
+            onClick: () => openDirections(beep.origin, beep.destination),
+          },
+          ...((beep.status === "here" || beep.status === "in_progress") &&
+          beep.rider.venmo
+            ? [
+                {
+                  title: "Request Money with Venmo",
+                  onClick: () =>
                     openVenmo(
                       beep.rider.venmo,
                       beep.groupSize,
                       user?.groupRate,
                       user?.singlesRate,
                       "charge",
-                    )
-                  }
-                >
-                  <DropdownMenu.ItemTitle>
-                    Request Money with Venmo
-                  </DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              )}
-              {beep.rider.cashapp && (
-                <DropdownMenu.Item
-                  key="request-money-with-cash-app"
-                  onSelect={() =>
+                    ),
+                },
+              ]
+            : []),
+          ...((beep.status === "here" || beep.status === "in_progress") &&
+          beep.rider.cashapp
+            ? [
+                {
+                  title: "Request Money with Cash App",
+                  onClick: () =>
                     openCashApp(
                       beep.rider.cashapp,
                       beep.groupSize,
                       user?.groupRate,
                       user?.singlesRate,
-                    )
-                  }
-                >
-                  <DropdownMenu.ItemTitle>
-                    Request Money with Cash App
-                  </DropdownMenu.ItemTitle>
-                </DropdownMenu.Item>
-              )}
-            </>
-          )}
-          {beep.status !== "waiting" && beep.status !== "in_progress" && (
-            <DropdownMenu.Item key="cancel" onSelect={onPress} destructive>
-              <DropdownMenu.ItemTitle>Cancel Beep</DropdownMenu.ItemTitle>
-            </DropdownMenu.Item>
-          )}
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+                    ),
+                },
+              ]
+            : []),
+          ...(beep.status !== "waiting" && beep.status !== "in_progress"
+            ? [{ title: "Cancel Beep", onClick: onPress, destructive: true }]
+            : []),
+        ]}
+      />
       {beep.status === "waiting" ? (
         <View style={{ flexDirection: "row", gap: 8 }}>
           <AcceptDenyButton item={beep} type="deny" />
