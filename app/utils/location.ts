@@ -6,9 +6,19 @@ export function useLocation(enabled = true) {
   const [location, setLocation] = useState<Location.LocationObject>();
 
   const getHasPermission = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
+    // Get the current permissions status so we can skip requesting permission if we already have it.
+    // On Andriod, if we request permission when we already have it, `requestForegroundPermissionsAsync` will hang,
+    // so that's why we check this first.
+    const permission = await Location.getForegroundPermissionsAsync();
+    let hasLocationPermission = permission.granted;
 
-    return status === "granted";
+    if (!hasLocationPermission) {
+      // If we don't have location permission, request it...
+      const permission = await Location.requestForegroundPermissionsAsync();
+      hasLocationPermission = permission.granted;
+    }
+
+    return hasLocationPermission;
   };
 
   const updateLocation = async () => {

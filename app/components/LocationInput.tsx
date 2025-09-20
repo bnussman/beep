@@ -15,15 +15,20 @@ export function LocationInput({ inputRef, ...props }: Props) {
   const handleGetCurrentLocation = async () => {
     setIsLoading(true);
 
-    const { granted } = await Location.getForegroundPermissionsAsync();
+    // Get the current permissions status so we can skip requesting permission if we already have it.
+    // On Andriod, if we request permission when we already have it, `requestForegroundPermissionsAsync` will hang,
+    // so that's why we check this first.
+    const permission = await Location.getForegroundPermissionsAsync();
+    let hasLocationPermission = permission.granted;
 
-    if (!granted) {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+    if (!hasLocationPermission) {
+      // If we don't have location permission, request it...
+      const permission = await Location.requestForegroundPermissionsAsync();
+      hasLocationPermission = permission.granted;
+    }
 
-      if (status !== "granted") {
-        setIsLoading(false);
-        return alert("You must enable location to use this feature.");
-      }
+    if (!hasLocationPermission) {
+      return alert("You must allow beep to access your location.");
     }
 
     try {
