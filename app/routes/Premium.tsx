@@ -11,13 +11,12 @@ import type {
 } from "react-native-purchases";
 // @ts-expect-error idk
 import PremiumImage from "../assets/premium.png";
-import { Logger } from "../utils/logger";
 import { Countdown } from "../components/CountDown";
-import { FlatList, RefreshControl } from "react-native";
+import { FlatList } from "react-native";
 import { useTRPC } from "@/utils/trpc";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
+import { captureException } from "@sentry/react-native";
 
 interface Props {
   item: PurchasesOffering;
@@ -37,13 +36,13 @@ function Offering({ item, disabled }: Props) {
         joining your queue
       </Text>
       <Text size="xs" style={{ marginBottom: 4 }}>
-        Goes into effect immediately upon purchase and cannot be paused.
-        When riders go to find a beeper, beepers are ordered by their premium status,
+        Goes into effect immediately upon purchase and cannot be paused. When
+        riders go to find a beeper, beepers are ordered by their premium status,
         then by their distance.
       </Text>
       <Image
         source={PremiumImage}
-        style={{ width: '100%', height: 256 }}
+        style={{ width: "100%", height: 256 }}
         resizeMode="contain"
         alt="beep screenshot of premium"
       />
@@ -54,17 +53,17 @@ function Offering({ item, disabled }: Props) {
   );
 }
 
-function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
+function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
   const trpc = useTRPC();
   const [isPurchasing, setIsPurchasing] = useState(false);
 
-  const { mutateAsync: checkVerificationStatus } = useMutation(trpc.user.syncMyPayments.mutationOptions());
+  const { mutateAsync: checkVerificationStatus } = useMutation(
+    trpc.user.syncMyPayments.mutationOptions(),
+  );
 
   const { data, refetch } = useActivePayments();
 
-  const payment = data?.find(
-    (sub) => sub.productId === p.product.identifier,
-  );
+  const payment = data?.find((sub) => sub.productId === p.product.identifier);
 
   const onBuy = async (item: PurchasesPackage) => {
     if (Boolean(payment)) {
@@ -80,7 +79,7 @@ function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
       await checkVerificationStatus();
     } catch (e: any) {
       if (!e.userCancelled) {
-        Logger.error(e);
+        captureException(e);
         alert(`Error purchasing package ${e.message}`);
       }
     } finally {
@@ -92,7 +91,13 @@ function Package({ p, disabled }: { p: PurchasesPackage, disabled: boolean }) {
 
   return (
     <Card
-      style={{ paddingHorizontal: 8, paddingVertical: 8, gap: 8, flexDirection: 'row', alignItems: 'center' }}
+      style={{
+        paddingHorizontal: 8,
+        paddingVertical: 8,
+        gap: 8,
+        flexDirection: "row",
+        alignItems: "center",
+      }}
       variant="outlined"
     >
       <Text weight="bold">{p.identifier}</Text>
@@ -139,7 +144,8 @@ function usePackages() {
         setOfferings(topOfBeeperListPackages);
       }
     } catch (e) {
-      Logger.error(e);
+      captureException(e);
+      console.error(e);
       setError("Unable to load offerings.");
     } finally {
       setIsLoading(false);
@@ -155,7 +161,7 @@ function usePackages() {
     error,
     isLoading: isLoading && offerings === undefined,
     refetch: getOfferings,
-    isRefreshing
+    isRefreshing,
   };
 }
 
@@ -183,7 +189,14 @@ export function Premium() {
 
   if (isLoadingActivePayments || isLoadingPackages) {
     return (
-      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      <View
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+        }}
+      >
         <ActivityIndicator />
       </View>
     );
@@ -191,7 +204,14 @@ export function Premium() {
 
   if (packagesError) {
     return (
-      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      <View
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+        }}
+      >
         <Text>{packagesError}</Text>
       </View>
     );
@@ -199,7 +219,14 @@ export function Premium() {
 
   if (activePaymentsError) {
     return (
-      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      <View
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+        }}
+      >
         <Text>{activePaymentsError.message}</Text>
       </View>
     );
@@ -211,37 +238,40 @@ export function Premium() {
     <FlatList
       data={offerings}
       contentContainerStyle={{ padding: 16 }}
-      renderItem={({ item }) => <Offering item={item} disabled={numberOfActivePayments > 0} />}
+      renderItem={({ item }) => (
+        <Offering item={item} disabled={numberOfActivePayments > 0} />
+      )}
       onRefresh={refetch}
       refreshing={isRefetchingAppPackages || isRefetchingActivePayments}
     />
   );
 }
 
-
 export function useActivePayments() {
   const trpc = useTRPC();
-  const query = useQuery(trpc.payment.activePayments.queryOptions(undefined, {
-    // Refetches payments when the user's first payment expires so the UI updates
-    // to reflect that their premium expired
-    refetchInterval(query) {
-      const payments = query.state.data;
+  const query = useQuery(
+    trpc.payment.activePayments.queryOptions(undefined, {
+      // Refetches payments when the user's first payment expires so the UI updates
+      // to reflect that their premium expired
+      refetchInterval(query) {
+        const payments = query.state.data;
 
-      if (payments && payments[0]) {
-        const expiresAt = new Date(payments[0].expires).getTime();
-        const now = new Date().getTime();
-        const timeUntilExpires = expiresAt - now;
+        if (payments && payments[0]) {
+          const expiresAt = new Date(payments[0].expires).getTime();
+          const now = new Date().getTime();
+          const timeUntilExpires = expiresAt - now;
 
-       if (timeUntilExpires <= 0)  {
-         return 1_000;
-       } else {
-         return timeUntilExpires;
-       }
-      }
+          if (timeUntilExpires <= 0) {
+            return 1_000;
+          } else {
+            return timeUntilExpires;
+          }
+        }
 
-      return false;
-    },
-  }));
+        return false;
+      },
+    }),
+  );
 
   return query;
 }

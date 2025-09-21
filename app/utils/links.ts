@@ -1,5 +1,5 @@
+import { captureException } from "@sentry/react-native";
 import { Linking, Platform, Share } from "react-native";
-import { Logger } from "./logger";
 
 export function openDirections(origin: string, dest: string): void {
   if (Platform.OS == "ios") {
@@ -13,7 +13,7 @@ export function getCashAppLink(
   username: string,
   groupSize: number,
   groupRate: number,
-  singlesRate: number
+  singlesRate: number,
 ) {
   if (groupSize > 1) {
     return `https://cash.app/$${username}/${Number(groupSize) * groupRate}`;
@@ -26,7 +26,7 @@ export function openCashApp(
   username: string | null | undefined,
   groupSize: number,
   groupRate: number | undefined,
-  singlesRate: number | undefined
+  singlesRate: number | undefined,
 ) {
   if (!username || groupRate === undefined || singlesRate === undefined) {
     return;
@@ -40,7 +40,7 @@ export function getVenmoLink(
   groupSize: number,
   groupRate: number,
   singlesRate: number,
-  transaction: "pay" | "charge"
+  transaction: "pay" | "charge",
 ) {
   if (groupSize > 1) {
     return `venmo://paycharge?txn=${transaction}&recipients=${username}&amount=${
@@ -56,14 +56,14 @@ export function openVenmo(
   groupSize: number,
   groupRate: number | undefined,
   singlesRate: number | undefined,
-  transaction: "pay" | "charge"
+  transaction: "pay" | "charge",
 ) {
   if (!username || groupRate === undefined || singlesRate === undefined) {
     return;
   }
 
   Linking.openURL(
-    getVenmoLink(username, groupSize, groupRate, singlesRate, transaction)
+    getVenmoLink(username, groupSize, groupRate, singlesRate, transaction),
   );
 }
 
@@ -71,9 +71,10 @@ export function shareVenmoInformation(
   venmo: string | null | undefined,
   groupSize: number,
   groupRate: number,
-  singlesRate: number
+  singlesRate: number,
 ): void {
   if (!venmo) {
+    alert("User does not have a Venmo username setup.");
     return;
   }
 
@@ -83,7 +84,9 @@ export function shareVenmoInformation(
       url: getVenmoLink(venmo, groupSize, groupRate, singlesRate, "pay"),
     });
   } catch (error) {
-    Logger.error(error);
+    captureException(error);
+    console.error(error);
+    alert("Unable to open share. Sorry!");
   }
 }
 

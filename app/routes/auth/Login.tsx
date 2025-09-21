@@ -6,16 +6,13 @@ import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
-import { isSimulator } from "../../utils/constants";
 import { getPushToken } from "../../utils/notifications";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { Logger } from "../../utils/logger";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -48,19 +45,10 @@ export function LoginScreen() {
   }, []);
 
   const onLogin = handleSubmit(async (variables) => {
-    let pushToken: string | null;
-    try {
-      pushToken = !isSimulator ? await getPushToken() : null;
-    } catch (error) {
-      alert(error);
-      Logger.error(error);
-      pushToken = null;
-    }
-
     try {
       const data = await login({
         ...variables,
-        pushToken,
+        pushToken: await getPushToken(),
       });
 
       await AsyncStorage.setItem("auth", JSON.stringify(data));

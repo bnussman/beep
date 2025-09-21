@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
-import { Logger } from "../../utils/logger";
 import { useUser } from "../../utils/useUser";
 import { isAndroid, isWeb } from "../../utils/constants";
 import { Beep } from "./Beep";
@@ -22,11 +21,11 @@ import {
   useLocationPermissions,
 } from "@/utils/location";
 import { Controller, useForm } from "react-hook-form";
-
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { captureException } from "@sentry/react-native";
 
 export function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -331,20 +330,27 @@ export function StartBeepingScreen() {
   );
 }
 
-TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
-  if (error) {
-    return Logger.error(error);
-  }
-
-  if (data) {
-    // @ts-expect-error dumb
-    const { locations } = data;
-    try {
-      await basicTrpcClient.user.edit.mutate({
-        location: locations[0].coords,
-      });
-    } catch (e) {
-      Logger.error(e);
+TaskManager.defineTask<{ locations: Location.LocationObject[] }>(
+  LOCATION_TRACKING,
+  async ({ data, error }) => {
+    if (error) {
+      console.error(error);
+      captureException(error);
+      return;
     }
-  }
-});
+
+    if (data) {
+      try {
+        await basicTrpcClient.user.edit.mutate({
+          location: data.locations[0].coords,
+        });
+      } catch (e) {
+        captureException(e);
+        console.error(
+          "Background task errored when sending location to the API",
+          e,
+        );
+      }
+    }
+  },
+);

@@ -1,9 +1,9 @@
-import { Logger } from "./logger";
 import { Platform } from "react-native";
 import { isRunningInExpoGo, isWeb } from "./constants";
 import { RouterOutput } from "./trpc";
+import { captureException } from "@sentry/react-native";
 
-export async function setPurchaseUser(user: RouterOutput['user']['me']) {
+export async function setPurchaseUser(user: RouterOutput["user"]["me"]) {
   if (isRunningInExpoGo || isWeb) {
     return;
   }
@@ -19,7 +19,8 @@ export async function setPurchaseUser(user: RouterOutput['user']['me']) {
       username: user.username,
     });
   } catch (error) {
-    Logger.error(error);
+    console.error(error);
+    captureException(error);
   }
 }
 
@@ -41,6 +42,7 @@ export async function setupPurchase() {
       Purchases.configure({ apiKey: "goog_LdhRLvXtGjDlpznOgEIWWUdsokX" });
     }
   } catch (error) {
-    Logger.error(error);
+    console.error(error);
+    captureException(error);
   }
 }

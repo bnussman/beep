@@ -1,7 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { isMobile, isWeb } from "./constants";
-import { Logger } from "./logger";
 import { basicTrpcClient } from "./trpc";
+import { captureException } from "@sentry/react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -17,21 +17,21 @@ Notifications.setNotificationHandler({
  * push token to be used
  */
 export async function getPushToken(): Promise<string | null> {
-  const hasPermission = await getNotificationPermission();
-
-  if (!hasPermission) {
-    return null;
-  }
-
   try {
+    const hasPermission = await getNotificationPermission();
+
+    if (!hasPermission) {
+      return null;
+    }
+
     const pushToken = await Notifications.getExpoPushTokenAsync({
       projectId: "2c7a6adb-2579-43f1-962e-b23c7e541ec4",
     });
 
     return pushToken.data;
   } catch (error) {
-    console.log("error", error);
-    Logger.error(error);
+    console.error(error);
+    captureException(error);
 
     return null;
   }
@@ -73,13 +73,12 @@ export async function updatePushToken(
 ): Promise<void> {
   if (isMobile) {
     const token = await getPushToken();
-    console.log("token", token);
     if (token && token !== currentPushToken) {
       try {
         await basicTrpcClient.user.edit.mutate({ pushToken: token });
       } catch (error) {
-        alert(error);
-        Logger.error(error);
+        console.error(error);
+        captureException(error);
       }
     }
   }

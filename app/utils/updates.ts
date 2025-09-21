@@ -1,6 +1,10 @@
 import { useEffect } from "react";
-import { checkForUpdateAsync, fetchUpdateAsync, reloadAsync } from "expo-updates";
-import { Logger } from "./logger";
+import {
+  checkForUpdateAsync,
+  fetchUpdateAsync,
+  reloadAsync,
+} from "expo-updates";
+import { captureException } from "@sentry/react-native";
 
 async function checkForUpdates() {
   if (__DEV__) return;
@@ -13,7 +17,8 @@ async function checkForUpdates() {
       await reloadAsync();
     }
   } catch (error) {
-    Logger.error(error);
+    console.log(error);
+    captureException(error);
   }
 }
 
