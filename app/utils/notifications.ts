@@ -25,11 +25,12 @@ export async function getPushToken(): Promise<string | null> {
 
   try {
     const pushToken = await Notifications.getExpoPushTokenAsync({
-      projectId: "2c7a6adb-2579-43f1-962e-b23c7e541ec4"
+      projectId: "2c7a6adb-2579-43f1-962e-b23c7e541ec4",
     });
 
     return pushToken.data;
-  } catch(error) {
+  } catch (error) {
+    console.log("error", error);
     Logger.error(error);
 
     return null;
@@ -41,23 +42,38 @@ export async function getPushToken(): Promise<string | null> {
  * @returns boolean true if client has location permissions
  */
 async function getNotificationPermission(): Promise<boolean> {
-  const settings = await Notifications.requestPermissionsAsync({
-    ios: {
-      allowAlert: true,
-      allowBadge: true,
-      allowSound: true,
-    },
-  });
+  let permission = await Notifications.getPermissionsAsync();
 
+  if (!isNotificationPermissionGranted(permission)) {
+    // if we don't have permission, request it
+    permission = await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: true,
+        allowSound: true,
+      },
+    });
+  }
+
+  return isNotificationPermissionGranted(permission);
+}
+
+function isNotificationPermissionGranted(
+  permissionStatus: Notifications.NotificationPermissionsStatus,
+) {
   return (
-    settings.granted ||
-    settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+    permissionStatus.granted ||
+    permissionStatus.ios?.status ===
+      Notifications.IosAuthorizationStatus.PROVISIONAL
   );
 }
 
-export async function updatePushToken(currentPushToken: string | null): Promise<void> {
+export async function updatePushToken(
+  currentPushToken: string | null,
+): Promise<void> {
   if (isMobile) {
     const token = await getPushToken();
+    console.log("token", token);
     if (token && token !== currentPushToken) {
       try {
         await basicTrpcClient.user.edit.mutate({ pushToken: token });
@@ -106,11 +122,10 @@ export function setupNotifications() {
       basicTrpcClient.beeper.updateBeep.mutate({
         beepId: response.notification.request.content.data.id as string,
         data: {
-          status: response.actionIdentifier === "accept"
-            ? "accepted"
-            : "denied"
-        }
-      })
+          status:
+            response.actionIdentifier === "accept" ? "accepted" : "denied",
+        },
+      });
     }
   });
 }
