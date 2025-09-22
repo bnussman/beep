@@ -47,12 +47,14 @@ export function Cars() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedCarId, setSelectedCarId] = useState<string>();
 
-  const { data, isLoading, error } = useQuery(trpc.car.cars.queryOptions(
-    {
-      cursor: page,
-    },
-    { placeholderData: keepPreviousData },
-  ));
+  const { data, isLoading, error } = useQuery(
+    trpc.car.cars.queryOptions(
+      {
+        cursor: page,
+      },
+      { placeholderData: keepPreviousData },
+    ),
+  );
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
 
@@ -98,9 +100,9 @@ export function Cars() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading && <TableLoading colSpan={8} />}
-            {error && <TableError colSpan={8} error={error.message} />}
-            {data?.results === 0 && <TableEmpty colSpan={8} />}
+            {isLoading && <TableLoading colSpan={9} />}
+            {error && <TableError colSpan={9} error={error.message} />}
+            {data?.results === 0 && <TableEmpty colSpan={9} />}
             {data?.cars.map((car) => (
               <TableRow key={car.id}>
                 <TableCellUser user={car.user} />
@@ -125,10 +127,10 @@ export function Cars() {
                       height: 64,
                       borderRadius: 2,
                       objectFit: "cover",
-                      cursor: 'pointer',
+                      cursor: "pointer",
                       transition: "all 0.2s ease-in-out",
-                      ':hover': {
-                        scale: '1.15'
+                      ":hover": {
+                        scale: "1.15",
                       },
                     }}
                   />
