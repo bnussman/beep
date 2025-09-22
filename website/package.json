@@ -12,27 +12,27 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@fontsource/poppins": "^5.2.6",
-    "@mui/icons-material": "^7.3.1",
-    "@mui/material": "^7.3.1",
-    "@tanstack/react-query": "^5.83.0",
-    "@tanstack/react-router": "^1.131.2",
+    "@fontsource/poppins": "^5.2.7",
+    "@mui/icons-material": "^7.3.2",
+    "@mui/material": "^7.3.2",
+    "@tanstack/react-query": "^5.89.0",
+    "@tanstack/react-router": "^1.131.50",
     "@toolpad/core": "^0.16.0",
-    "@trpc/client": "^11.5.0",
-    "@trpc/tanstack-react-query": "^11.5.0",
-    "luxon": "^3.7.1",
-    "maplibre-gl": "^5.6.2",
+    "@trpc/client": "^11.5.1",
+    "@trpc/tanstack-react-query": "^11.5.1",
+    "luxon": "^3.7.2",
+    "maplibre-gl": "^5.7.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-hook-form": "^7.56.2",
+    "react-hook-form": "^7.63.0",
     "react-map-gl": "^8.0.1"
   },
   "devDependencies": {
     "@types/luxon": "^3.7.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "^19.1.9",
-    "@vitejs/plugin-react-swc": "^4.0.0",
+    "@vitejs/plugin-react-swc": "^4.1.0",
     "typescript": "^5.8.2",
-    "vite": "^7.1.1"
+    "vite": "^7.1.6"
   }
 }

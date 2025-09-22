@@ -5,12 +5,12 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
-    "@types/node": "^24.2.1",
+    "@types/node": "^24.5.2",
     "typescript": "^5.8.2"
   },
   "dependencies": {
     "@pulumi/docker": "^4.8.2",
     "@pulumi/kubernetes": "^4.23.0",
-    "@pulumi/pulumi": "^3.192.0"
+    "@pulumi/pulumi": "^3.197.0"
   }
 }
