@@ -73,6 +73,7 @@ export function Beep({ item }: Props) {
   if (myRating) {
     options.push({
       onClick: () => deleteRating({ ratingId: myRating.id }),
+      destructive: true,
       title: "Delete Rating",
     });
   }

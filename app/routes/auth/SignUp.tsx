@@ -106,7 +106,8 @@ export function SignUpScreen() {
 
   return (
     <KeyboardAwareScrollView
-      contentContainerStyle={{ flex: 1, padding: 16, gap: 8 }}
+      contentContainerStyle={{ padding: 16, gap: 8 }}
+      bottomOffset={64}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
         <View style={{ flexGrow: 1, gap: 8 }}>

@@ -1,5 +1,5 @@
 import * as Notifications from "expo-notifications";
-import { isMobile, isWeb } from "./constants";
+import { isMobile, isSimulator, isWeb } from "./constants";
 import { basicTrpcClient } from "./trpc";
 import { captureException } from "@sentry/react-native";
 
@@ -17,6 +17,9 @@ Notifications.setNotificationHandler({
  * push token to be used
  */
 export async function getPushToken(): Promise<string | null> {
+  if (isSimulator) {
+    return null;
+  }
   try {
     const hasPermission = await getNotificationPermission();
 
