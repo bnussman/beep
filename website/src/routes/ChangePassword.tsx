@@ -36,30 +36,34 @@ export function ChangePassword() {
     resolver(values) {
       if (values.password !== values.confirmPassword) {
         return {
-          values,
-          errors: { confirmPassword: { message: "Password must match." } },
+          values: {} as Record<string, never>,
+          errors: {
+            confirmPassword: {
+              message: "Password must match.",
+              type: "validate",
+            },
+          },
         };
       }
-      return { values, errors: {} };
+      return { values, errors: {} as Record<string, never> };
     },
   });
 
-  const {
-    mutateAsync: changePassword,
-    data,
-  } = useMutation(trpc.auth.changePassword.mutationOptions({
-    onError(error) {
-      if (error.data?.fieldErrors) {
-        for (const field in error.data?.fieldErrors) {
-          form.setError(field as keyof Values, {
-            message: error.data?.fieldErrors[field]?.[0],
-          });
+  const { mutateAsync: changePassword, data } = useMutation(
+    trpc.auth.changePassword.mutationOptions({
+      onError(error) {
+        if (error.data?.fieldErrors) {
+          for (const field in error.data?.fieldErrors) {
+            form.setError(field as keyof Values, {
+              message: error.data?.fieldErrors[field]?.[0],
+            });
+          }
+        } else {
+          form.setError("root", { message: error.message });
         }
-      } else {
-        form.setError("root", { message: error.message });
-      }
-    },
-  }));
+      },
+    }),
+  );
 
   const onSubmit = async (values: Values) => {
     await changePassword(values);
