@@ -8,10 +8,9 @@ import { useUser } from "../utils/useUser";
 import { openVenmo } from "@/utils/links";
 import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { printStars } from "./Stars";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { Menu, MenuProps } from "./Menu";
+import { Menu } from "./Menu";
 
 interface Props {
   item: RouterOutput["beep"]["beeps"]["beeps"][number];
@@ -40,67 +39,58 @@ export function Beep({ item }: Props) {
     }),
   );
 
-  const options: MenuProps["options"] = [];
-
-  if (isRider && item.beeper.venmo) {
-    options.push({
-      title: "Pay Beeper With Venmo",
-      onClick: () =>
-        openVenmo(
-          item.beeper.venmo,
-          item.groupSize,
-          item.beeper.groupRate,
-          item.beeper.singlesRate,
-          "pay",
-        ),
-    });
-  }
-
-  if (isBeeper && item.rider.venmo && item.status === "complete") {
-    options.push({
-      title: "Charge Rider with Venmo",
-      onClick: () =>
-        openVenmo(
-          item.rider.venmo,
-          item.groupSize,
-          item.beeper.groupRate,
-          item.beeper.singlesRate,
-          "charge",
-        ),
-    });
-  }
-
-  if (myRating) {
-    options.push({
-      onClick: () => deleteRating({ ratingId: myRating.id }),
-      destructive: true,
-      title: "Delete Rating",
-    });
-  }
-
-  if (!myRating && item.status === "complete") {
-    options.push({
-      title: "Rate",
-      onClick: () =>
-        navigation.navigate("Rate", {
-          userId: otherUser.id,
-          beepId: item.id,
-        }),
-    });
-  }
-
-  options.push({
-    title: "Report",
-    onClick: () =>
-      navigation.navigate("Report", {
-        userId: otherUser.id,
-        beepId: item.id,
-      }),
-  });
-
   return (
     <Menu
-      options={options}
+      options={[
+        {
+          title: "Pay Beeper With Venmo",
+          show: isRider && Boolean(item.beeper.venmo),
+          onClick: () =>
+            openVenmo(
+              item.beeper.venmo,
+              item.groupSize,
+              item.beeper.groupRate,
+              item.beeper.singlesRate,
+              "pay",
+            ),
+        },
+        {
+          title: "Charge Rider with Venmo",
+          show:
+            isBeeper && Boolean(item.rider.venmo) && item.status === "complete",
+          onClick: () =>
+            openVenmo(
+              item.rider.venmo,
+              item.groupSize,
+              item.beeper.groupRate,
+              item.beeper.singlesRate,
+              "charge",
+            ),
+        },
+        {
+          title: "Rate",
+          show: !myRating && item.status === "complete", // only allow rating if you haven't already left a rating and the beep is complete
+          onClick: () =>
+            navigation.navigate("Rate", {
+              userId: otherUser.id,
+              beepId: item.id,
+            }),
+        },
+        {
+          onClick: () => deleteRating({ ratingId: myRating!.id }),
+          show: Boolean(myRating),
+          destructive: true,
+          title: "Delete Rating",
+        },
+        {
+          title: "Report",
+          onClick: () =>
+            navigation.navigate("Report", {
+              userId: otherUser.id,
+              beepId: item.id,
+            }),
+        },
+      ]}
       activationMethod="longPress"
       trigger={
         <Card

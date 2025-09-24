@@ -17,11 +17,13 @@ export function Menu(props: MenuProps) {
           );
           option?.onClick();
         }}
-        actions={props.options.map((option) => ({
-          id: option.title,
-          title: option.title,
-          attributes: option.destructive ? { destructive: true } : {},
-        }))}
+        actions={props.options
+          .filter((option) => option.show === undefined || option.show)
+          .map((option) => ({
+            id: option.title,
+            title: option.title,
+            attributes: option.destructive ? { destructive: true } : {},
+          }))}
         shouldOpenOnLongPress={props.activationMethod === "longPress"}
       >
         {props.trigger}

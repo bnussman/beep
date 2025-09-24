@@ -7,11 +7,9 @@ import { Avatar } from "@/components/Avatar";
 import { printStars } from "./Stars";
 import { View } from "react-native";
 import { RouterOutput, useTRPC } from "@/utils/trpc";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
-import { designName } from "expo-device";
 
 type Rating = RouterOutput["rating"]["ratings"]["ratings"][number];
 
@@ -54,15 +52,12 @@ export function Rating(props: Props) {
               beepId: item.beep_id,
             }),
         },
-        ...(isRater
-          ? [
-              {
-                title: "Delete Rating",
-                onClick: () => deleteRating({ ratingId: item.id }),
-                destructive: true,
-              },
-            ]
-          : []),
+        {
+          title: "Delete Rating",
+          onClick: () => deleteRating({ ratingId: item.id }),
+          destructive: true,
+          show: isRater,
+        },
       ]}
       trigger={
         <Card pressable style={{ padding: 16, gap: 16, display: "flex" }}>

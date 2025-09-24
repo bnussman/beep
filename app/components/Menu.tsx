@@ -1,9 +1,23 @@
 import { ContextMenuProps } from "@expo/ui/swift-ui";
 
 interface Option {
+  /**
+   * The text content of the option
+   */
   title: string;
+  /**
+   * Called when the option is chosen/clicked/pressed
+   */
   onClick: () => void;
+  /**
+   * Makes the item show as destructive. (Red on iOS and Andriod)
+   */
   destructive?: boolean;
+  /**
+   * If provided, the option will only show if show is true.
+   * @default true
+   */
+  show?: boolean;
 }
 
 export interface MenuProps extends Omit<ContextMenuProps, "children"> {

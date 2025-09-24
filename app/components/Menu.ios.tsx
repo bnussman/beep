@@ -11,14 +11,16 @@ export function Menu(props: MenuProps) {
     <Host matchContents={{ horizontal: true, vertical: false }}>
       <ContextMenu activationMethod={props.activationMethod ?? "singlePress"}>
         <ContextMenu.Items>
-          {props.options.map((option) => (
-            <Button
-              role={option.destructive ? "destructive" : undefined}
-              onPress={option.onClick}
-            >
-              {option.title}
-            </Button>
-          ))}
+          {props.options
+            .filter((option) => option.show === undefined || option.show)
+            .map((option) => (
+              <Button
+                role={option.destructive ? "destructive" : undefined}
+                onPress={option.onClick}
+              >
+                {option.title}
+              </Button>
+            ))}
         </ContextMenu.Items>
         <ContextMenu.Trigger>
           <View>

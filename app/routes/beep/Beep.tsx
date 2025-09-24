@@ -260,24 +260,18 @@ export function Beep(props: Props) {
       <Menu
         trigger={<Button>Options</Button>}
         options={[
-          ...(beep.rider.phone
-            ? [
-                {
-                  title: "Call",
-                  onClick: () =>
-                    Linking.openURL(
-                      "tel:" + getRawPhoneNumber(beep.rider.phone),
-                    ),
-                },
-                {
-                  title: "Text",
-                  onClick: () =>
-                    Linking.openURL(
-                      "sms:" + getRawPhoneNumber(beep.rider.phone),
-                    ),
-                },
-              ]
-            : []),
+          {
+            title: "Call",
+            show: Boolean(beep.rider.phone),
+            onClick: () =>
+              Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone)),
+          },
+          {
+            title: "Text",
+            show: Boolean(beep.rider.phone),
+            onClick: () =>
+              Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone)),
+          },
           {
             title: "Directions to Rider",
             onClick: () => openDirections("Current+Location", beep.origin),
@@ -286,40 +280,39 @@ export function Beep(props: Props) {
             title: "Directions for Beep",
             onClick: () => openDirections(beep.origin, beep.destination),
           },
-          ...((beep.status === "here" || beep.status === "in_progress") &&
-          beep.rider.venmo
-            ? [
-                {
-                  title: "Request Money with Venmo",
-                  onClick: () =>
-                    openVenmo(
-                      beep.rider.venmo,
-                      beep.groupSize,
-                      user?.groupRate,
-                      user?.singlesRate,
-                      "charge",
-                    ),
-                },
-              ]
-            : []),
-          ...((beep.status === "here" || beep.status === "in_progress") &&
-          beep.rider.cashapp
-            ? [
-                {
-                  title: "Request Money with Cash App",
-                  onClick: () =>
-                    openCashApp(
-                      beep.rider.cashapp,
-                      beep.groupSize,
-                      user?.groupRate,
-                      user?.singlesRate,
-                    ),
-                },
-              ]
-            : []),
-          ...(beep.status !== "waiting" && beep.status !== "in_progress"
-            ? [{ title: "Cancel Beep", onClick: onPress, destructive: true }]
-            : []),
+          {
+            title: "Request Money with Venmo",
+            show:
+              (beep.status === "here" || beep.status === "in_progress") &&
+              Boolean(beep.rider.venmo),
+            onClick: () =>
+              openVenmo(
+                beep.rider.venmo,
+                beep.groupSize,
+                user?.groupRate,
+                user?.singlesRate,
+                "charge",
+              ),
+          },
+          {
+            title: "Request Money with Cash App",
+            show:
+              (beep.status === "here" || beep.status === "in_progress") &&
+              Boolean(beep.rider.cashapp),
+            onClick: () =>
+              openCashApp(
+                beep.rider.cashapp,
+                beep.groupSize,
+                user?.groupRate,
+                user?.singlesRate,
+              ),
+          },
+          {
+            title: "Cancel Beep",
+            onClick: onPress,
+            destructive: true,
+            show: beep.status !== "waiting" && beep.status !== "in_progress",
+          },
         ]}
       />
       {beep.status === "waiting" ? (
