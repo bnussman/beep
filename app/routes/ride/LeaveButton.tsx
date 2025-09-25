@@ -15,14 +15,16 @@ export function LeaveButton(props: Props) {
   const trpc = useTRPC();
   const { beepersId } = props;
   const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation(trpc.rider.leaveQueue.mutationOptions({
-    onSuccess() {
-      queryClient.setQueryData(trpc.rider.currentRide.queryKey(), null);
-    },
-    onError(error) {
-      alert(error.message);
-    }
-  }));
+  const { mutate, isPending } = useMutation(
+    trpc.rider.leaveQueue.mutationOptions({
+      onSuccess() {
+        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), null);
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
 
   function leaveQueueWrapper(): void {
     if (isMobile) {
@@ -34,7 +36,11 @@ export function LeaveButton(props: Props) {
             text: "No",
             style: "cancel",
           },
-          { text: "Yes", onPress: () => mutate({ beeperId: beepersId }) },
+          {
+            text: "Yes",
+            onPress: () => mutate({ beeperId: beepersId }),
+            style: "destructive",
+          },
         ],
         { cancelable: true },
       );
