@@ -330,18 +330,21 @@ export const userRouter = router({
       }),
     )
     .query(async ({ input }) => {
+      const lowercaseQuery = input.query?.toLowerCase();
+
       const where = and(
         input.isBeeping ? eq(user.isBeeping, true) : undefined,
         input.query
           ? or(
               eq(user.id, input.query),
-              like(user.first, `%${input.query}%`),
-              like(user.last, `%${input.query}%`),
-              like(user.email, `%${input.query}%`),
-              like(user.username, `%${input.query}%`),
+              like(sql`lower(${user.first})`, `%${lowercaseQuery}%`),
+              like(sql`lower(${user.last})`, `%${lowercaseQuery}%`),
+              like(sql`lower(${user.email})`, `%${lowercaseQuery}%`),
+              like(sql`lower(${user.phone})`, `%${lowercaseQuery}%`),
+              like(sql`lower(${user.username})`, `%${lowercaseQuery}%`),
               like(
-                sql`${user.first} || ' ' || ${user.last}`,
-                `%${input.query}%`,
+                sql`lower(${user.first} || ' ' || ${user.last})`,
+                `%${lowercaseQuery}%`,
               ),
             )
           : undefined,
