@@ -15,17 +15,21 @@ import {
   Avatar,
   Link,
 } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
 import { Indicator } from "../../../components/Indicator";
-import { createRoute, Link as RouterLink, useNavigate } from "@tanstack/react-router";
+import {
+  createRoute,
+  Link as RouterLink,
+  useNavigate,
+} from "@tanstack/react-router";
 import { useTRPC } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { usersRoute } from "./routes";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
-
 import { useQuery } from "@tanstack/react-query";
+import { TableEmpty } from "../../../components/TableEmpty";
 
 export interface PaginationSearchParams {
   page: number;
@@ -50,14 +54,16 @@ function Users() {
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
 
-  const { isLoading, isFetching, error, data } = useQuery(trpc.user.users.queryOptions(
-    {
-      page,
-      pageSize: PAGE_SIZE,
-      query: !query ? undefined : query,
-    },
-    { placeholderData: keepPreviousData },
-  ));
+  const { isLoading, isFetching, error, data } = useQuery(
+    trpc.user.users.queryOptions(
+      {
+        page,
+        pageSize: PAGE_SIZE,
+        query: !query ? undefined : query,
+      },
+      { placeholderData: keepPreviousData },
+    ),
+  );
 
   const setCurrentPage = (event: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: (prev) => ({ ...prev, page }) });
@@ -77,7 +83,9 @@ function Users() {
 
   return (
     <Stack>
-      <Typography variant="h4" fontWeight="bold">Users</Typography>
+      <Typography variant="h4" fontWeight="bold">
+        Users
+      </Typography>
       <Stack spacing={1}>
         <PaginationFooter
           pageSize={PAGE_SIZE}
@@ -103,8 +111,8 @@ function Users() {
                 <InputAdornment position="start">
                   <SearchIcon />
                 </InputAdornment>
-              )
-            }
+              ),
+            },
           }}
         />
         <TableContainer component={Paper} variant="outlined">
@@ -119,6 +127,7 @@ function Users() {
               </TableRow>
             </TableHead>
             <TableBody>
+              {data?.results === 0 && <TableEmpty colSpan={5} />}
               {isLoading && <TableLoading colSpan={5} />}
               {error && <TableError colSpan={5} error={error.message} />}
               {data?.users.map((user) => (
@@ -127,7 +136,9 @@ function Users() {
                     <Link component={RouterLink} to={`/admin/users/${user.id}`}>
                       <Stack direction="row" alignItems="center" spacing={1}>
                         <Avatar src={user.photo ?? undefined} />
-                        <Typography>{user.first} {user.last}</Typography>
+                        <Typography>
+                          {user.first} {user.last}
+                        </Typography>
                       </Stack>
                     </Link>
                   </TableCell>
