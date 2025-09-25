@@ -335,10 +335,14 @@ export const userRouter = router({
         input.query
           ? or(
               eq(user.id, input.query),
-              like(user.first, input.query),
-              like(user.last, input.query),
-              like(user.email, input.query),
-              like(user.username, input.query),
+              like(user.first, `%${input.query}%`),
+              like(user.last, `%${input.query}%`),
+              like(user.email, `%${input.query}%`),
+              like(user.username, `%${input.query}%`),
+              like(
+                sql`${user.first} || ' ' || ${user.last}`,
+                `%${input.query}%`,
+              ),
             )
           : undefined,
       );
