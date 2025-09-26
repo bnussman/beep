@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Alert } from "react-native";
 import { isMobile } from "../../utils/constants";
 import { Button } from "@/components/Button";
 import { useTRPC } from "@/utils/trpc";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
