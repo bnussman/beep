@@ -33,11 +33,13 @@ export function Login() {
     },
   });
 
-  const { mutateAsync: login } = useMutation(trpc.auth.login.mutationOptions({
-    onError(error) {
-      form.setError("root", { message: error.message });
-    },
-  }));
+  const { mutateAsync: login } = useMutation(
+    trpc.auth.login.mutationOptions({
+      onError(error) {
+        form.setError("root", { message: error.message });
+      },
+    }),
+  );
 
   const onSubmit = async (values: RouterInput["auth"]["login"]) => {
     const result = await login(values);
@@ -70,6 +72,7 @@ export function Login() {
                 onChange={field.onChange}
                 error={Boolean(fieldState.error?.message)}
                 helperText={fieldState.error?.message}
+                required
               />
             )}
           />
@@ -84,6 +87,7 @@ export function Login() {
                 onChange={field.onChange}
                 error={Boolean(fieldState.error?.message)}
                 helperText={fieldState.error?.message}
+                required
               />
             )}
           />

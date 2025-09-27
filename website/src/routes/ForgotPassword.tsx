@@ -12,7 +12,6 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-
 import { useMutation } from "@tanstack/react-query";
 
 export const forgotPasswordRoute = createRoute({
@@ -34,19 +33,21 @@ export function ForgotPassword() {
     data,
     isPending,
     error,
-  } = useMutation(trpc.auth.forgotPassword.mutationOptions({
-    onError(error) {
-      if (error.data?.fieldErrors) {
-        for (const field in error.data?.fieldErrors) {
-          form.setError(field as "email", {
-            message: error.data?.fieldErrors[field]?.[0],
-          });
+  } = useMutation(
+    trpc.auth.forgotPassword.mutationOptions({
+      onError(error) {
+        if (error.data?.fieldErrors) {
+          for (const field in error.data?.fieldErrors) {
+            form.setError(field as "email", {
+              message: error.data?.fieldErrors[field]?.[0],
+            });
+          }
+        } else {
+          form.setError("root", { message: error.message });
         }
-      } else {
-        form.setError("root", { message: error.message });
-      }
-    },
-  }));
+      },
+    }),
+  );
 
   const onSubmit = async (values: RouterInput["auth"]["forgotPassword"]) => {
     await sendForgotPasswordEmail(values);
@@ -86,6 +87,7 @@ export function ForgotPassword() {
                   fieldState.error?.message ??
                   "We'll send you an email with a link to reset your password."
                 }
+                required
               />
             )}
           />

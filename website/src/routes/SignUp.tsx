@@ -52,19 +52,21 @@ export function SignUp() {
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({ mode: "onChange" });
 
-  const { mutateAsync } = useMutation(trpc.auth.signup.mutationOptions({
-    onError(error) {
-      if (error.data?.fieldErrors) {
-        for (const field in error.data?.fieldErrors) {
-          setError(field as keyof SignUpFormValues, {
-            message: error.data?.fieldErrors[field]?.[0],
-          });
+  const { mutateAsync } = useMutation(
+    trpc.auth.signup.mutationOptions({
+      onError(error) {
+        if (error.data?.fieldErrors) {
+          for (const field in error.data?.fieldErrors) {
+            setError(field as keyof SignUpFormValues, {
+              message: error.data?.fieldErrors[field]?.[0],
+            });
+          }
+        } else {
+          setError("root", { message: error.message });
         }
-      } else {
-        setError("root", { message: error.message });
-      }
-    },
-  }));
+      },
+    }),
+  );
 
   const queryClient = useQueryClient();
 
@@ -109,19 +111,24 @@ export function SignUp() {
           <Typography variant="h4" fontWeight="bold">
             Sign Up
           </Typography>
-          {errors.root?.message && (
-            <Alert severity="error">{errors.root.message}</Alert>
-          )}
-          <Alert severity="info">
-            By signing up, you agree to our{" "}
-            <Link component={RouterLink} preload="intent" to="/terms">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link component={RouterLink} to="/privacy">
-              Privacy Policy
-            </Link>
-          </Alert>
+          <Stack spacing={1}>
+            <Alert severity="info">
+              By signing up, you agree to our{" "}
+              <Link component={RouterLink} preload="intent" to="/terms">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link component={RouterLink} to="/privacy">
+                Privacy Policy
+              </Link>
+            </Alert>
+            {errors.root?.message && (
+              <Alert severity="error">{errors.root.message}</Alert>
+            )}
+            {errors.photo?.message && (
+              <Alert severity="error">{errors.photo.message}</Alert>
+            )}
+          </Stack>
           <Stack direction="row" spacing={2}>
             <Stack spacing={2} flexGrow={1}>
               <Controller
@@ -134,6 +141,7 @@ export function SignUp() {
                     helperText={fieldState.error?.message}
                     error={Boolean(fieldState.error?.message)}
                     value={field.value}
+                    required
                   />
                 )}
               />
@@ -147,6 +155,7 @@ export function SignUp() {
                     helperText={fieldState.error?.message}
                     error={Boolean(fieldState.error?.message)}
                     value={field.value}
+                    required
                   />
                 )}
               />
@@ -154,9 +163,6 @@ export function SignUp() {
             <Stack>
               <label htmlFor="photo">{Image}</label>
               <input hidden id="photo" type="file" {...register("photo")} />
-              {errors.photo?.message && (
-                <Alert severity="error">{errors.photo.message}</Alert>
-              )}
             </Stack>
           </Stack>
           <Controller
@@ -173,6 +179,7 @@ export function SignUp() {
                 }
                 error={Boolean(fieldState.error?.message)}
                 value={field.value}
+                required
               />
             )}
           />
@@ -187,20 +194,7 @@ export function SignUp() {
                 helperText={fieldState.error?.message}
                 error={Boolean(fieldState.error?.message)}
                 value={field.value}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="venmo"
-            render={({ field, fieldState }) => (
-              <TextField
-                label="Venmo"
-                type="text"
-                onChange={field.onChange}
-                helperText={fieldState.error?.message}
-                error={Boolean(fieldState.error?.message)}
-                value={field.value}
+                required
               />
             )}
           />
@@ -215,6 +209,7 @@ export function SignUp() {
                 helperText={fieldState.error?.message}
                 error={Boolean(fieldState.error?.message)}
                 value={field.value}
+                required
               />
             )}
           />
@@ -229,6 +224,7 @@ export function SignUp() {
                 helperText={fieldState.error?.message}
                 error={Boolean(fieldState.error?.message)}
                 value={field.value}
+                required
               />
             )}
           />
