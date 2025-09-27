@@ -7,17 +7,14 @@ import { Input } from "@/components/Input";
 import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
-import { getMakes, getModels } from "car-info";
-import { colors, years } from "./utils";
+import { years } from "./utils";
 import { Pressable, View } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { useTheme } from "@/utils/theme";
-import { useMutation } from "@tanstack/react-query";
+import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { Menu } from "@/components/Menu";
-
-const makes = getMakes();
 
 interface Values {
   year: number;
@@ -29,19 +26,33 @@ interface Values {
 
 export function AddCar() {
   const trpc = useTRPC();
+  const theme = useTheme();
   const navigation = useNavigation();
 
   const {
     control,
     handleSubmit,
     setValue,
+    setError,
     formState: { isSubmitting, errors },
   } = useForm<Values>();
 
-  const theme = useTheme();
-
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
-  const models = getModels(make);
+
+  const { data: colors } = useQuery({
+    ...trpc.car.getColors.queryOptions(),
+    initialData: [],
+  });
+
+  const { data: models } = useQuery({
+    ...trpc.car.getModels.queryOptions(make ? make : skipToken),
+    initialData: [],
+  });
+
+  const { data: makes } = useQuery({
+    ...trpc.car.getMakes.queryOptions(),
+    initialData: [],
+  });
 
   const queryClient = useQueryClient();
   const { mutateAsync: addCar, error } = useMutation(
@@ -51,12 +62,18 @@ export function AddCar() {
         navigation.goBack();
       },
       onError(error) {
-        alert(error.message);
+        if (error.data?.fieldErrors) {
+          for (const key in error.data.fieldErrors) {
+            setError(key as keyof Values, {
+              message: error.data.fieldErrors[key][0],
+            });
+          }
+        } else {
+          alert(error.message);
+        }
       },
     }),
   );
-
-  const validationErrors = error?.data?.fieldErrors;
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -98,110 +115,102 @@ export function AddCar() {
         rules={{ required: "Make is required" }}
         defaultValue=""
         control={control}
-        render={({ field: { onChange, value } }) => (
+        render={({ field, fieldState }) => (
           <Menu
             trigger={
               <View style={{ gap: 4 }}>
                 <Label>Make</Label>
-                <Input readOnly value={value} placeholder="Select a make" />
-                <Text color="error">
-                  {errors.make?.message}
-                  {validationErrors?.make?.[0]}
-                </Text>
+                <Input
+                  readOnly
+                  value={field.value}
+                  placeholder="Select a make"
+                />
+                <Text color="error">{fieldState.error?.message}</Text>
               </View>
             }
             options={makes.map((make) => ({
               title: make,
-              onClick: () => onChange(make),
+              onClick: () => field.onChange(make),
             }))}
           />
         )}
       />
-
       <Controller
         name="model"
         rules={{ required: "Model is required" }}
         defaultValue=""
         control={control}
-        render={({ field: { onChange, value } }) => (
+        render={({ field, fieldState }) => (
           <Menu
             disabled={!make}
             trigger={
               <View style={{ gap: 4 }}>
                 <Label>Model</Label>
-                <Input readOnly value={value} placeholder="Select a model" />
-                <Text color="error">
-                  {errors.model?.message}
-                  {validationErrors?.model?.[0]}
-                </Text>
+                <Input
+                  readOnly
+                  value={field.value}
+                  placeholder="Select a model"
+                />
+                <Text color="error">{fieldState.error?.message}</Text>
               </View>
             }
-            options={models.map((model) => ({
+            options={models!.map((model) => ({
               title: model,
-              onClick: () => onChange(model),
+              onClick: () => field.onChange(model),
             }))}
           />
         )}
       />
-
       <Controller
         name="year"
         rules={{ required: "Year is required" }}
         control={control}
-        render={({ field: { onChange, value } }) => (
+        render={({ field, fieldState }) => (
           <Menu
             trigger={
               <View style={{ gap: 4 }}>
                 <Label>Year</Label>
                 <Input
                   readOnly
-                  value={value ? String(value) : ""}
+                  value={field.value ? String(field.value) : ""}
                   placeholder="Select a year"
                 />
 
-                <Text color="error">
-                  {errors.year?.message}
-                  {validationErrors?.year?.[0]}
-                </Text>
+                <Text color="error">{fieldState.error?.message}</Text>
               </View>
             }
             options={years.map((year) => ({
-              title: year,
-              onClick: () => onChange(year),
+              title: String(year),
+              onClick: () => field.onChange(year),
             }))}
           />
         )}
       />
-
       <Controller
         name="color"
         rules={{ required: "Color is required" }}
         defaultValue=""
         control={control}
-        render={({ field: { onChange, value } }) => (
+        render={({ field, fieldState }) => (
           <Menu
             trigger={
               <View style={{ gap: 4 }}>
                 <Label>Color</Label>
                 <Input
                   readOnly
-                  value={value ? String(value) : ""}
+                  value={field.value ? String(field.value) : ""}
                   placeholder="Select a color"
                 />
-                <Text color="error">
-                  {errors.color?.message}
-                  {validationErrors?.color?.[0]}
-                </Text>
+                <Text color="error">{fieldState.error?.message}</Text>
               </View>
             }
             options={colors.map((color) => ({
               title: color,
-              onClick: () => onChange(color),
+              onClick: () => field.onChange(color),
             }))}
           />
         )}
       />
-
       <View style={{ gap: 4 }}>
         <Controller
           name="photo"
@@ -235,10 +244,7 @@ export function AddCar() {
             </Pressable>
           )}
         />
-        <Text color="error">
-          {errors.photo?.message as string}
-          {validationErrors?.photo?.[0]}
-        </Text>
+        <Text color="error">{errors.photo?.message}</Text>
       </View>
       <Button
         isLoading={isSubmitting}

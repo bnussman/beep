@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
+import {
+  authedProcedure,
+  publicProcedure,
+  router,
+  verifiedProcedure,
+} from "../utils/trpc";
 import { db } from "../utils/db";
 import { car } from "../../drizzle/schema";
 import { and, count, desc, eq, ne } from "drizzle-orm";
@@ -7,7 +12,7 @@ import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
 import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL } from "../utils/constants";
-import { data as cars, getModels } from "car-info";
+import { getMakes, getModels } from "car-info";
 import { CAR_COLOR_OPTIONS } from "../utils/constants";
 
 export const carRouter = router({
@@ -114,10 +119,10 @@ export const carRouter = router({
     .input(z.instanceof(FormData))
     .mutation(async ({ input: formData, ctx }) => {
       const carSchema = z.object({
-        make: z.string(),
+        make: z.enum(getMakes()),
         model: z.string(),
         year: z.string(),
-        color: z.string().toLowerCase(),
+        color: z.enum(CAR_COLOR_OPTIONS),
         photo: z.instanceof(File),
       });
 
@@ -134,30 +139,12 @@ export const carRouter = router({
         });
       }
 
-      if (!(input.make in cars)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid make.",
-        });
-      }
-
-      const validModels = getModels(input.make) as string[];
+      const validModels = getModels(input.make as string) as string[];
 
       if (!validModels.includes(input.model)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invalid make.",
-        });
-      }
-
-      if (
-        !CAR_COLOR_OPTIONS.map((color: string) => color.toLowerCase()).includes(
-          input.color,
-        )
-      ) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid color.",
+          message: `The selected model (${input.model}) is not valid for the selected make (${input.make}).`,
         });
       }
 
@@ -218,4 +205,13 @@ export const carRouter = router({
 
       return c[0];
     }),
+  getColors: publicProcedure.query(() => {
+    return CAR_COLOR_OPTIONS;
+  }),
+  getMakes: publicProcedure.query(() => {
+    return getMakes();
+  }),
+  getModels: publicProcedure.input(z.string()).query(({ input }) => {
+    return getModels(input) as string[];
+  }),
 });

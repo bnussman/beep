@@ -65,19 +65,19 @@ export const WEB_BASE_URL = urls[ENVIRONMENT];
 export const DEFAULT_LOCATION_RADIUS = 20;
 
 export const CAR_COLOR_OPTIONS = [
-  "Red",
-  "Green",
-  "Blue",
-  "Purple",
-  "Black",
-  "Gray",
-  "Pink",
-  "White",
-  "Orange",
-  "Tan",
-  "Brown",
-  "Silver",
-  "Yellow",
+  "red",
+  "green",
+  "blue",
+  "purple",
+  "black",
+  "gray",
+  "pink",
+  "white",
+  "orange",
+  "tan",
+  "brown",
+  "silver",
+  "yellow",
 ];
 
 export const DEFAULT_PAGE_SIZE = 25;
