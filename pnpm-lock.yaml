@@ -112,12 +112,6 @@ importers:
       '@trpc/tanstack-react-query':
         specifier: ^11.6.0
         version: 11.6.0(@tanstack/react-query@5.90.2(react@19.1.0))(@trpc/client@11.6.0(@trpc/server@11.6.0(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.6.0(typescript@5.9.2))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.2)
-      babel-plugin-react-compiler:
-        specifier: 19.1.0-rc.3
-        version: 19.1.0-rc.3
-      car-info:
-        specifier: 0.2.1
-        version: 0.2.1
       expo:
         specifier: ~54.0.10
         version: 54.0.10(@babel/core@7.27.1)(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
@@ -181,9 +175,6 @@ importers:
       react-native-maps:
         specifier: 1.20.1
         version: 1.20.1(react-native-web@0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
-      react-native-mime-types:
-        specifier: ^2.4.0
-        version: 2.5.0
       react-native-purchases:
         specifier: ^9.1.0
         version: 9.1.0(react-native-web@0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
@@ -215,6 +206,9 @@ importers:
       '@types/react-dom':
         specifier: ~19.1.9
         version: 19.1.9(@types/react@19.1.12)
+      babel-plugin-react-compiler:
+        specifier: 19.1.0-rc.3
+        version: 19.1.0-rc.3
       babel-preset-expo:
         specifier: ~54.0.0
         version: 54.0.0(@babel/core@7.27.1)(@babel/runtime@7.28.4)(expo@54.0.10)(react-refresh@0.14.2)
@@ -5778,10 +5772,6 @@ packages:
     peerDependenciesMeta:
       react-native-web:
         optional: true
-
-  react-native-mime-types@2.5.0:
-    resolution: {integrity: sha512-l1NIGxa0MBFPGBFDd3yeGe2f8+Qb+U4M1FEK7l3Fob0R7kOecwgRau2CCCmu6W5QzyhKdBxRC8SOTuTIEKKAUw==}
-    engines: {node: '>= 0.6'}
 
   react-native-purchases@9.1.0:
     resolution: {integrity: sha512-7/TFvTcOJB/JIwNUqrV+3B8qs09F+mb3eb30ZwinZDtIDabYkjdNNhxsUf45U+YkJSrTYU40XhNMMZdPqajRRQ==}
@@ -13274,10 +13264,6 @@ snapshots:
       react-native: 0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0)
     optionalDependencies:
       react-native-web: 0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-
-  react-native-mime-types@2.5.0:
-    dependencies:
-      mime-db: 1.52.0
 
   react-native-purchases@9.1.0(react-native-web@0.21.1(encoding@0.1.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.27.1)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0):
     dependencies:
