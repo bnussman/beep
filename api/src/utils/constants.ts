@@ -54,13 +54,16 @@ export const isDevelopment =
   ENVIRONMENT !== "staging" &&
   DB_PASSWORD === "beep";
 
-const urls = {
-  development: "http://localhost:5173",
-  staging: "https://staging.ridebeep.app",
-  production: "https://ridebeep.app",
-};
-
-export const WEB_BASE_URL = urls[ENVIRONMENT];
+/**
+ * The base URL of the Beep App website.
+ *
+ * Should start with `http://` or `https://` and should not end with a `/`
+ *
+ * @example https://ridebeep.app
+ * @example https://dev.ridebeep.app
+ * @example http://localhost:5173
+ */
+export const WEB_BASE_URL = process.env.WEB_BASE_URL ?? "http://localhost:5173";
 
 export const DEFAULT_LOCATION_RADIUS = 20;
 
