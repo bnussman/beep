@@ -44,14 +44,17 @@ export const REVENUE_CAT_SECRET = process.env.REVENUE_CAT_SECRET;
 
 export const SENTRY_DSN = process.env.SENTRY_DSN;
 
-export const isProduction = process.env.NODE_ENV === "production";
-
-export const ENVIRONMENT: "staging" | "production" | "development" =
-  (process.env.ENVIRONMENT_NAME as "staging" | "production") ?? "development";
+/**
+ * A name for the environment.
+ *
+ * This is used for identifying the environment in Sentry
+ */
+export const ENVIRONMENT: "dev" | "production" =
+  (process.env.ENVIRONMENT_NAME as "dev" | "production") ?? "local";
 
 export const isDevelopment =
   ENVIRONMENT !== "production" &&
-  ENVIRONMENT !== "staging" &&
+  ENVIRONMENT !== "dev" &&
   DB_PASSWORD === "beep";
 
 /**
@@ -64,6 +67,8 @@ export const isDevelopment =
  * @example http://localhost:5173
  */
 export const WEB_BASE_URL = process.env.WEB_BASE_URL ?? "http://localhost:5173";
+
+export const DEFAULT_PAGE_SIZE = 25;
 
 export const DEFAULT_LOCATION_RADIUS = 20;
 
@@ -82,5 +87,3 @@ export const CAR_COLOR_OPTIONS = [
   "silver",
   "yellow",
 ];
-
-export const DEFAULT_PAGE_SIZE = 25;
