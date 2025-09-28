@@ -14,7 +14,7 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
 import { Appearance } from "react-native";
-import { isWeb } from "@/utils/constants";
+import { isIOS, isWeb } from "@/utils/constants";
 import { BeepDetails } from "@/routes/Beep";
 
 const RootStack = createNativeStackNavigator({
@@ -55,7 +55,15 @@ const RootStack = createNativeStackNavigator({
         "Change Password": ChangePasswordScreen,
         "Choose Beeper": PickBeepScreen,
         "Add Car": AddCar,
-        "Beep Details": BeepDetails,
+        "Beep Details": {
+          screen: BeepDetails,
+          options: isIOS
+            ? {
+                headerTransparent: true,
+                title: "",
+              }
+            : {},
+        },
       },
     },
     SignedOut: {

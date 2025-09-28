@@ -11,7 +11,7 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, useColorScheme, View } from "react-native";
 import MapView from "react-native-maps";
 
 type Props = StaticScreenProps<{ beepId: string }>;
@@ -19,6 +19,7 @@ type Props = StaticScreenProps<{ beepId: string }>;
 export function BeepDetails(props: Props) {
   const trpc = useTRPC();
   const theme = useTheme();
+  const colorScheme = useColorScheme();
   const { user } = useUser();
 
   const mapRef = useRef<MapView>(null);
@@ -108,8 +109,10 @@ export function BeepDetails(props: Props) {
         </Map>
       )}
       <BottomSheet
-        snapPoints={["20%", "100%"]}
-        backgroundStyle={{ backgroundColor: theme.bg.main }}
+        snapPoints={["20%", "85%"]}
+        backgroundStyle={
+          colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}
+        }
         handleIndicatorStyle={{ backgroundColor: theme.text.primary }}
       >
         <BottomSheetView style={{ gap: 8, paddingHorizontal: 16 }}>
