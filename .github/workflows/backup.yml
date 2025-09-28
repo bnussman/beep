@@ -22,7 +22,7 @@ jobs:
           echo "${{ env.file_name }}"
 
       - name: Dump database
-        run: pg_dump postgresql://${{ env.DB_USER }}:$( printf %s '${{ env.DB_PASSWORD }}'| jq -sRr @uri)@${{ env.DB_HOST }}:5432/beep?sslmode=require | gzip > ${{ env.file_name }}
+        run: pg_dump postgresql://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@${{ env.DB_HOST }}:5432/beep?sslmode=require | gzip > ${{ env.file_name }}
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
