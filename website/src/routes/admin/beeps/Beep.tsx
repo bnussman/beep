@@ -152,6 +152,12 @@ export function Beep() {
       </Box>
       <Box>
         <Typography>
+          <b>Status</b>
+        </Typography>
+        <Typography>{beep.status.replaceAll("_", " ")}</Typography>
+      </Box>
+      <Box>
+        <Typography>
           <b>Origin</b>
         </Typography>
         <Typography>{beep.origin}</Typography>
