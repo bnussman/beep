@@ -5,16 +5,23 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 export const theme = createTheme({
   cssVariables: true,
   colorSchemes: {
-    light: true,
-    dark: true,
+    light: {
+      palette: {
+        primary: {
+          main: "#000",
+        },
+      },
+    },
+    dark: {
+      palette: {
+        primary: {
+          main: "#fff",
+        },
+      },
+    },
   },
   typography: {
     fontFamily: "Poppins",
-  },
-  palette: {
-    primary: {
-      main: "#000",
-    },
   },
   components: {
     MuiTableRow: {
