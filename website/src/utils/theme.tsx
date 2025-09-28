@@ -11,6 +11,11 @@ export const theme = createTheme({
   typography: {
     fontFamily: "Poppins",
   },
+  palette: {
+    primary: {
+      main: "#000",
+    },
+  },
   components: {
     MuiTableRow: {
       styleOverrides: {

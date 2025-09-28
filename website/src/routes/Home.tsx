@@ -25,12 +25,22 @@ export function Home() {
 
   return (
     <Container>
-      <Stack height="calc(100vh - 150px)" width="100%" direction={{ xs: "column", md: "row" }} spacing={3} alignItems="center">
-        <Stack spacing={2} alignItems={{ xs: "center", md: 'flex-start' }}>
-          <Typography fontWeight="bold" variant="h1" fontSize={{ xs: "3.0rem", md: "3.8rem" }}>
+      <Stack
+        height="calc(100vh - 150px)"
+        width="100%"
+        direction={{ xs: "column", md: "row" }}
+        spacing={3}
+        alignItems="center"
+      >
+        <Stack spacing={2} alignItems={{ xs: "center", md: "flex-start" }}>
+          <Typography
+            fontWeight="bold"
+            variant="h1"
+            fontSize={{ xs: "3.0rem", md: "3.8rem" }}
+          >
             Ride Beep App
           </Typography>
-          <Typography textAlign={{ xs: 'center', md: 'unset' }}>
+          <Typography textAlign={{ xs: "center", md: "unset" }}>
             A rideshare app for students. Ride or drive at your university
             today.
           </Typography>
@@ -40,7 +50,7 @@ export function Home() {
               href={getDownloadLink()}
               target="_blank"
               size="large"
-              color="info"
+              color="primary"
               variant="contained"
             >
               Download
@@ -49,13 +59,13 @@ export function Home() {
         </Stack>
         <Zoom in>
           <Box
-            component="img" 
+            component="img"
             sx={{
-              width: { xs: 400, md: 500 },
-              transition: 'transform 0.3s ease-in-out', // Smooth transition
-              ':hover': {
-                transform: 'rotate(5deg) scale(1.1) !important',
-              }
+              width: { xs: 250, sm: 250, md: 400, lg: 400, xl: 500 },
+              transition: "transform 0.3s ease-in-out", // Smooth transition
+              ":hover": {
+                transform: "rotate(5deg) scale(1.1) !important",
+              },
             }}
             src={colorScheme === "light" ? iPhoneLight : iPhoneDark}
           />
