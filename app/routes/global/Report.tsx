@@ -50,13 +50,11 @@ export function ReportScreen({ route }: Props) {
       <View style={{ gap: 4 }}>
         <Label>Reason</Label>
         <Input
-          multiline={true}
+          multiline
           numberOfLines={4}
           placeholder="Your reason for reporting here"
-          returnKeyType="go"
           style={{ minHeight: 150 }}
           onChangeText={(text) => setReason(text)}
-          onSubmitEditing={handleReport}
         />
       </View>
       <Button onPress={handleReport} disabled={!reason} isLoading={isPending}>
