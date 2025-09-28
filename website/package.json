@@ -31,8 +31,10 @@
     "@types/luxon": "^3.7.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "^19.1.9",
-    "@vitejs/plugin-react-swc": "^4.1.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "react-compiler-runtime": "19.1.0-rc.3",
+    "babel-plugin-react-compiler": "19.1.0-rc.3",
     "typescript": "^5.8.2",
-    "vite": "^7.1.7"
+    "vite": "npm:rolldown-vite@latest"
   }
 }
