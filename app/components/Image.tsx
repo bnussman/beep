@@ -11,23 +11,27 @@ import { Card } from "./Card";
 export function Image({ style, ...props }: ImageProps) {
   const [loading, setLoading] = useState(true);
 
-  const theme = useTheme();
-
   return (
-    <>
+    <Card style={[style, { padding: 0 }]}>
       {loading && (
-        <Card style={[style, { alignItems: 'center', justifyContent: 'center' }]}>
+        <View
+          style={{
+            position: "relative",
+            zIndex: 100,
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <ActivityIndicator />
-        </Card>
+        </View>
       )}
       <_Image
+        style={[style, { position: "absolute" }]}
         onLoad={() => setLoading(false)}
-        style={[
-          loading && { position: 'absolute' },
-          style,
-        ]}
         {...props}
       />
-    </>
+    </Card>
   );
 }
