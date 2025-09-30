@@ -5,9 +5,16 @@ import { beep, car } from "../../drizzle/schema";
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),
   eq(beep.status, "accepted"),
+  eq(beep.status, "on_the_way"),
   eq(beep.status, "here"),
   eq(beep.status, "in_progress"),
+);
+
+export const isAcceptedBeep = or(
+  eq(beep.status, "accepted"),
   eq(beep.status, "on_the_way"),
+  eq(beep.status, "here"),
+  eq(beep.status, "in_progress"),
 );
 
 type BeepStatus = (typeof beep.$inferSelect)["status"];

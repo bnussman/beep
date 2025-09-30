@@ -11,6 +11,7 @@ import {
   getRiderBeepFromBeeperQueue,
   getRidersCurrentRide,
   inProgressBeep,
+  isAcceptedBeep,
 } from "../logic/beep";
 import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
 import { getDistance } from "../logic/location";
@@ -238,7 +239,25 @@ export const riderRouter = router({
   }),
   beeperLocationUpdates: authedProcedure
     .input(z.string())
-    .subscription(async function* ({ input, signal }) {
+    .subscription(async function* ({ input, signal, ctx }) {
+      if (ctx.user.role !== "admin") {
+        const acceptedBeep = db.query.beep.findFirst({
+          where: and(
+            eq(beep.rider_id, ctx.user.id),
+            eq(beep.beeper_id, input),
+            isAcceptedBeep,
+          ),
+        });
+
+        if (!acceptedBeep) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message:
+              "You must be in an accepted beep with the user to subscribe to their location.",
+          });
+        }
+      }
+
       const eventSource = pubSub.subscribe("user", input);
 
       if (signal) {
