@@ -17,8 +17,9 @@ export function ReportScreen({ route }: Props) {
   const { goBack } = useNavigation();
 
   const { data: user } = useQuery(
-    trpc.user.user.queryOptions(route.params.userId),
+    trpc.user.publicUser.queryOptions(route.params.userId),
   );
+
   const { mutateAsync: report, isPending } = useMutation(
     trpc.report.createReport.mutationOptions({
       onSuccess() {

@@ -390,7 +390,25 @@ export const userRouter = router({
         results,
       };
     }),
-  user: authedProcedure.input(z.string()).query(async ({ input, ctx }) => {
+  publicUser: authedProcedure.input(z.string()).query(async ({ input }) => {
+    const u = await db.query.user.findFirst({
+      where: eq(user.id, input),
+      columns: {
+        id: true,
+        first: true,
+        last: true,
+        photo: true,
+        username: true,
+      },
+    });
+
+    if (!u) {
+      throw new TRPCError({ code: "NOT_FOUND" });
+    }
+
+    return u;
+  }),
+  user: adminProcedure.input(z.string()).query(async ({ input }) => {
     const u = await db.query.user.findFirst({
       where: eq(user.id, input),
       columns: {
@@ -401,13 +419,6 @@ export const userRouter = router({
 
     if (!u) {
       throw new TRPCError({ code: "NOT_FOUND" });
-    }
-
-    if (ctx.user.role === "user" && input !== ctx.user.id) {
-      u.phone = "";
-      u.email = "";
-      u.pushToken = null;
-      u.location = null;
     }
 
     return u;

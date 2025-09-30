@@ -23,20 +23,25 @@ export function RateScreen({ route }: Props) {
   const { goBack } = useNavigation();
   const queryClient = useQueryClient();
 
-  const { data: user } = useQuery(trpc.user.user.queryOptions(route.params.userId));
-  const { mutateAsync: rate, isPending } = useMutation(trpc.rating.createRating.mutationOptions(
-    {
+  const { data: user } = useQuery(
+    trpc.user.publicUser.queryOptions(route.params.userId),
+  );
+
+  const { mutateAsync: rate, isPending } = useMutation(
+    trpc.rating.createRating.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
         queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
-        queryClient.invalidateQueries(trpc.rider.getLastBeepToRate.pathFilter());
+        queryClient.invalidateQueries(
+          trpc.rider.getLastBeepToRate.pathFilter(),
+        );
         goBack();
       },
       onError(error) {
         alert(error.message);
       },
-    },
-  ));
+    }),
+  );
 
   const onSubmit = () => {
     rate({
@@ -53,7 +58,14 @@ export function RateScreen({ route }: Props) {
 
   return (
     <View style={{ padding: 16, gap: 16 }}>
-      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Text size="3xl" weight="800" style={{ flexShrink: 1 }}>
           {user.first} {user.last}
         </Text>
@@ -65,8 +77,7 @@ export function RateScreen({ route }: Props) {
       </View>
       <View style={{ gap: 12 }}>
         <Text>
-          <Text weight="bold">Message</Text>{' '}
-          (optional)
+          <Text weight="bold">Message</Text> (optional)
         </Text>
         <Input
           multiline
