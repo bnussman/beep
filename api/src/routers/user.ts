@@ -413,6 +413,22 @@ export const userRouter = router({
 
     return u;
   }),
+  getUserPrivateDetails: authedProcedure
+    .concat(mustHaveBeenInAcceptedBeep)
+    .query(async ({ input }) => {
+      const u = await db.query.user.findFirst({
+        where: eq(user.id, input),
+        columns: {
+          phone: true,
+        },
+      });
+
+      if (!u) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return u;
+    }),
   user: adminProcedure.input(z.string()).query(async ({ input }) => {
     const u = await db.query.user.findFirst({
       where: eq(user.id, input),
