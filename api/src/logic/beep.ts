@@ -39,6 +39,27 @@ export const rideResponseSchema = z.object({
   position: z.number(),
 });
 
+export const queueResponseSchema = z.array(
+  z.object({
+    id: z.string(),
+    start: z.union([z.string(), z.date()]),
+    end: z.union([z.string(), z.date()]).nullable(),
+    origin: z.string(),
+    destination: z.string(),
+    groupSize: z.number(),
+    status: z.enum(beepStatuses),
+    rider: z.object({
+      id: z.string(),
+      first: z.string(),
+      last: z.string(),
+      venmo: z.string().nullable(),
+      cashapp: z.string().nullable(),
+      photo: z.string().nullable(),
+      rating: z.string().nullable(),
+    }),
+  }),
+);
+
 type BeepStatus = (typeof beep.$inferSelect)["status"];
 
 export function getIsAcceptedBeep(beep: { status: BeepStatus }) {

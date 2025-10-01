@@ -37,7 +37,7 @@ export function QueueItem({ item: beep }: Props) {
   );
 
   const { data: riderDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(beep.rider_id, {
+    trpc.user.getUserPrivateDetails.queryOptions(beep.rider.id, {
       enabled: beep.status !== "waiting",
     }),
   );

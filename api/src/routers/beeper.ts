@@ -11,10 +11,13 @@ import {
   getBeeperQueue,
   getQueueSize,
   getRiderBeepFromBeeperQueue,
+  queueResponseSchema,
 } from "../logic/beep";
+import { zAsyncIterable } from "../utils/zAsyncIterable";
 
 export const beeperRouter = router({
   queue: authedProcedure
+    .output(queueResponseSchema)
     .input(z.string().optional())
     .query(async ({ input, ctx }) => {
       if (input && input !== ctx.user.id && ctx.user.role !== "admin") {
@@ -28,6 +31,12 @@ export const beeperRouter = router({
     }),
   watchQueue: authedProcedure
     .input(z.string().optional())
+    .output(
+      zAsyncIterable({
+        yield: queueResponseSchema,
+        return: queueResponseSchema,
+      }),
+    )
     .subscription(async function* ({ ctx, input, signal }) {
       const id = input ?? ctx.user.id;
 
@@ -77,6 +86,7 @@ export const beeperRouter = router({
         }),
       }),
     )
+    .output(queueResponseSchema)
     .mutation(async ({ input, ctx }) => {
       const queue = await getBeeperQueue(ctx.user.id);
 
