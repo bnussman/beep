@@ -1,6 +1,6 @@
 import { and, asc, eq, lt, ne, or } from "drizzle-orm";
 import { db } from "../utils/db";
-import { beep, car } from "../../drizzle/schema";
+import { beep } from "../../drizzle/schema";
 
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),
@@ -56,12 +56,6 @@ export async function getBeeperQueue(beeperId: string) {
           cashapp: true,
           venmo: true,
         },
-        with: {
-          cars: {
-            where: eq(car.default, true),
-            limit: 1,
-          },
-        },
       },
       rider: {
         columns: {
@@ -110,7 +104,6 @@ export function getRiderBeepFromBeeperQueue(
       venmo: beep.beeper.venmo,
       location: isAccpted ? beep.beeper.location : null,
       phone: isAccpted ? beep.beeper.phone : null,
-      car: isAccpted ? beep.beeper.cars[0] : null,
     },
     position,
   };
@@ -164,12 +157,6 @@ export async function getRidersCurrentRide(userId: string) {
           cashapp: true,
           venmo: true,
         },
-        with: {
-          cars: {
-            where: eq(car.default, true),
-            limit: 1,
-          },
-        },
       },
     },
   });
@@ -203,7 +190,6 @@ export async function getRidersCurrentRide(userId: string) {
       venmo: b.beeper.venmo,
       location: isAcceptedBeep ? b.beeper.location : null,
       phone: isAcceptedBeep ? b.beeper.phone : null,
-      car: isAcceptedBeep ? b.beeper.cars[0] : null,
     },
     position,
   };

@@ -2,6 +2,7 @@ import { RouterOutput } from "@/utils/trpc";
 
 export function getCurrentStatusMessage(
   beep: RouterOutput["rider"]["currentRide"],
+  car: RouterOutput["user"]["getUsersDefaultCar"] | undefined,
 ): string {
   switch (beep?.status) {
     case "waiting":
@@ -11,8 +12,8 @@ export function getCurrentStatusMessage(
     case "on_the_way":
       return "Beeper is on their way to get you.";
     case "here":
-      if (beep.beeper.car) {
-        return `Beeper is here to pick you up in a ${beep.beeper.car.color} ${beep.beeper.car.make} ${beep.beeper.car.model}.`;
+      if (car) {
+        return `Beeper is here to pick you up in a ${car.color} ${car.make} ${car.model}.`;
       }
       return `Beeper is here to pick you up.`;
     case "in_progress":

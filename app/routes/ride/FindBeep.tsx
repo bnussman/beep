@@ -28,8 +28,7 @@ import {
   shareVenmoInformation,
 } from "../../utils/links";
 import { RateLastBeeper } from "./RateLastBeeper";
-
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -39,9 +38,9 @@ type Props = StaticScreenProps<
 
 export function MainFindBeepScreen(props: Props) {
   const trpc = useTRPC();
-  const { navigate } = useNavigation();
-
   const queryClient = useQueryClient();
+
+  const { navigate } = useNavigation();
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
   const isAcceptedBeep =
@@ -49,6 +48,12 @@ export function MainFindBeepScreen(props: Props) {
     beep?.status === "in_progress" ||
     beep?.status === "here" ||
     beep?.status === "on_the_way";
+
+  const { data: car } = useQuery(
+    trpc.user.getUsersDefaultCar.queryOptions(
+      beep ? beep.beeper_id : skipToken,
+    ),
+  );
 
   useSubscription(
     trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
@@ -251,7 +256,7 @@ export function MainFindBeepScreen(props: Props) {
             <Text weight="800" size="xl">
               Current Status
             </Text>
-            <Text>{getCurrentStatusMessage(beep)}</Text>
+            <Text>{getCurrentStatusMessage(beep, car)}</Text>
           </Card>
         )}
         {beep.status === "on_the_way" && (
@@ -263,7 +268,7 @@ export function MainFindBeepScreen(props: Props) {
             position={beep.position}
           />
         )}
-        {beep.status === "here" && beep.beeper.car ? (
+        {beep.status === "here" && car ? (
           <Image
             style={{
               flexGrow: 1,
@@ -272,8 +277,8 @@ export function MainFindBeepScreen(props: Props) {
               minHeight: 100,
             }}
             resizeMode="cover"
-            src={beep.beeper.car.photo}
-            alt={`car-${beep.beeper.car.id}`}
+            src={car.photo}
+            alt={`car-${car.id}`}
           />
         ) : (
           <Map

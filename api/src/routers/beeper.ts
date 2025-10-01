@@ -3,8 +3,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { eq } from "drizzle-orm";
-import { beep, user } from "../../drizzle/schema";
+import { and, eq } from "drizzle-orm";
+import { beep, car, user } from "../../drizzle/schema";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import {
@@ -163,20 +163,42 @@ export const beeperRouter = router({
               body: "You will receive another notification when they are on their way to pick you up",
             });
             break;
-          case "on_the_way":
+          case "on_the_way": {
+            const c = await db.query.car.findFirst({
+              where: and(eq(car.user_id, ctx.user.id), eq(car.default, true)),
+            });
+
+            let body = "Your beeper is on their way.";
+
+            if (c) {
+              body = `Your beeper is on their way in a ${c.color} ${c.make} ${c.model}`;
+            }
+
             sendNotification({
               to: queueEntry.rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} is on their way 🚕`,
-              body: `Your beeper is on their way in a ${queueEntry.beeper.cars[0]?.color} ${queueEntry.beeper.cars[0]?.make} ${queueEntry.beeper.cars[0]?.model}`,
+              body,
             });
             break;
-          case "here":
+          }
+          case "here": {
+            const c = await db.query.car.findFirst({
+              where: and(eq(car.user_id, ctx.user.id), eq(car.default, true)),
+            });
+
+            let body = "Your beeper is here to pick you up.";
+
+            if (c) {
+              body = `Look for a ${c.color} ${c.make} ${c.model}`;
+            }
+
             sendNotification({
               to: queueEntry.rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} is here 📍`,
-              body: `Look for a ${queueEntry.beeper.cars[0]?.color} ${queueEntry.beeper.cars[0]?.make} ${queueEntry.beeper.cars[0]?.model}`,
+              body,
             });
             break;
+          }
           case "in_progress":
             // Beep is in progress - no notification needed at this stage.
             break;

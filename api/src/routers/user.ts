@@ -1,4 +1,9 @@
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import {
+  adminProcedure,
+  authedProcedure,
+  mustHaveBeenInAcceptedBeep,
+  router,
+} from "../utils/trpc";
 import { beep, car, rating, user, verify_email } from "../../drizzle/schema";
 import { db } from "../utils/db";
 import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
@@ -542,4 +547,17 @@ export const userRouter = router({
 
     return ratings.length;
   }),
+  getUsersDefaultCar: authedProcedure
+    .concat(mustHaveBeenInAcceptedBeep)
+    .query(async ({ input }) => {
+      const c = await db.query.car.findFirst({
+        where: and(eq(car.user_id, input), eq(car.default, true)),
+      });
+
+      if (!c) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return c;
+    }),
 });
