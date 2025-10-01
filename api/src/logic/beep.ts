@@ -32,11 +32,6 @@ export function getQueueSize(queue: { status: BeepStatus }[]) {
   return queue.filter(getIsAcceptedBeep).length;
 }
 
-/**
- *  Gets a beeper's queue.
- *
- * @note This queries for all beeper and rider details. Fields should be masked / protected before returned to users.
- */
 export async function getBeeperQueue(beeperId: string) {
   return await db.query.beep.findMany({
     where: and(inProgressBeep, eq(beep.beeper_id, beeperId)),
@@ -82,16 +77,6 @@ export function getRiderBeepFromBeeperQueue(
 
   return {
     ...values,
-    beeper: {
-      id: beep.beeper.id,
-      first: beep.beeper.first,
-      last: beep.beeper.last,
-      photo: beep.beeper.photo,
-      singlesRate: beep.beeper.singlesRate,
-      groupRate: beep.beeper.groupRate,
-      cashapp: beep.beeper.cashapp,
-      venmo: beep.beeper.venmo,
-    },
     position,
   };
 }
