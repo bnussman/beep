@@ -28,7 +28,7 @@ export function Image({ style, ...props }: ImageProps) {
         </View>
       )}
       <_Image
-        style={[style, { position: "absolute" }]}
+        style={[style, { position: "absolute", height: "100%" }]}
         onLoad={() => setLoading(false)}
         {...props}
       />
