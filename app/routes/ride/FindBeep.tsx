@@ -245,7 +245,7 @@ export function MainFindBeepScreen(props: Props) {
           </Card>
         )}
         {beep.status === "on_the_way" && (
-          <ETA beeperLocation={beepersLocation?.location} />
+          <ETA beeperLocation={beepersLocation} />
         )}
         {beep.position > 0 && (
           <PlaceInQueue
@@ -275,15 +275,15 @@ export function MainFindBeepScreen(props: Props) {
               overflow: "hidden",
             }}
             initialRegion={{
-              latitude: beepersLocation?.location.latitude ?? 0,
-              longitude: beepersLocation?.location.longitude ?? 0,
+              latitude: beepersLocation?.latitude ?? 0,
+              longitude: beepersLocation?.longitude ?? 0,
               longitudeDelta: 0.05,
               latitudeDelta: 0.05,
             }}
           >
             <AnimatedMarker
-              latitude={beepersLocation?.location.latitude ?? 0}
-              longitude={beepersLocation?.location.longitude ?? 0}
+              latitude={beepersLocation?.latitude ?? 0}
+              longitude={beepersLocation?.longitude ?? 0}
             />
           </Map>
         )}

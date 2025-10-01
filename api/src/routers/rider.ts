@@ -253,11 +253,24 @@ export const riderRouter = router({
         };
       }
 
+      const beeper = await db.query.user.findFirst({
+        where: eq(user.id, input),
+        columns: { location: true },
+      });
+
+      if (!beeper) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (beeper.location) {
+        yield beeper.location;
+      }
+
       for await (const { user } of eventSource) {
         if (signal?.aborted) return;
 
         if (user.location) {
-          yield { id: user.id, location: user.location };
+          yield user.location;
         }
       }
     }),
