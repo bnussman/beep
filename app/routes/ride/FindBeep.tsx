@@ -52,6 +52,7 @@ export function MainFindBeepScreen(props: Props) {
   const { data: car } = useQuery(
     trpc.user.getUsersDefaultCar.queryOptions(
       beep ? beep.beeper_id : skipToken,
+      { enabled: isAcceptedBeep },
     ),
   );
 

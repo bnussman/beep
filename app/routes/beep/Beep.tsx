@@ -92,6 +92,7 @@ export function Beep(props: Props) {
           },
           {
             text: "Yes",
+            style: "destructive",
             onPress: onCancel,
           },
         ],
