@@ -42,20 +42,8 @@ export function MainFindBeepScreen(props: Props) {
   const queryClient = useQueryClient();
 
   const { navigate } = useNavigation();
+
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
-
-  const isAcceptedBeep =
-    beep?.status === "accepted" ||
-    beep?.status === "in_progress" ||
-    beep?.status === "here" ||
-    beep?.status === "on_the_way";
-
-  const { data: car } = useQuery(
-    trpc.user.getUsersDefaultCar.queryOptions(
-      beep ? beep.beeper_id : skipToken,
-      { enabled: isAcceptedBeep },
-    ),
-  );
 
   useSubscription(
     trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
@@ -69,6 +57,19 @@ export function MainFindBeepScreen(props: Props) {
       },
       enabled: Boolean(beep),
     }),
+  );
+
+  const isAcceptedBeep =
+    beep?.status === "accepted" ||
+    beep?.status === "in_progress" ||
+    beep?.status === "here" ||
+    beep?.status === "on_the_way";
+
+  const { data: car } = useQuery(
+    trpc.user.getUsersDefaultCar.queryOptions(
+      beep ? beep.beeper.id : skipToken,
+      { enabled: isAcceptedBeep },
+    ),
   );
 
   const { data: beepersLocation } = useSubscription(
@@ -295,7 +296,7 @@ export function MainFindBeepScreen(props: Props) {
                 try {
                   const details = await queryClient.ensureQueryData(
                     trpc.user.getUserPrivateDetails.queryOptions(
-                      beep.beeper_id,
+                      beep.beeper.id,
                     ),
                   );
                   Linking.openURL(`tel:${getRawPhoneNumber(details.phone)}`);
@@ -312,7 +313,7 @@ export function MainFindBeepScreen(props: Props) {
                 try {
                   const details = await queryClient.ensureQueryData(
                     trpc.user.getUserPrivateDetails.queryOptions(
-                      beep.beeper_id,
+                      beep.beeper.id,
                     ),
                   );
                   Linking.openURL(`sms:${getRawPhoneNumber(details.phone)}`);

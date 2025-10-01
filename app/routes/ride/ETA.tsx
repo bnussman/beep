@@ -4,7 +4,7 @@ import { useTRPC } from "@/utils/trpc";
 import { useLocation } from "@/utils/location";
 import { ActivityIndicator } from "react-native";
 
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 
 interface Location {
   latitude: number;
@@ -20,20 +20,19 @@ export function ETA(props: Props) {
   const { beeperLocation } = props;
   const { location } = useLocation();
 
-  const { data, error, isLoading } = useQuery(
+  const { data, error, isPending } = useQuery(
     trpc.location.getETA.queryOptions(
-      {
-        start: `${beeperLocation?.longitude},${beeperLocation?.latitude}`,
-        end: `${location?.coords.longitude},${location?.coords.latitude}`,
-      },
-      {
-        enabled: Boolean(beeperLocation) && Boolean(location),
-      },
+      beeperLocation && location
+        ? {
+            start: `${beeperLocation.longitude},${beeperLocation.latitude}`,
+            end: `${location.coords.longitude},${location.coords.latitude}`,
+          }
+        : skipToken,
     ),
   );
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isPending) {
       return <ActivityIndicator />;
     }
 
@@ -41,11 +40,7 @@ export function ETA(props: Props) {
       return <Text>{error.message}</Text>;
     }
 
-    if (data) {
-      return <Text>{data}</Text>;
-    }
-
-    return null;
+    return <Text>{data}</Text>;
   };
 
   return (

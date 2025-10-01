@@ -1,6 +1,7 @@
 import { and, asc, eq, lt, ne, or } from "drizzle-orm";
 import { db } from "../utils/db";
-import { beep } from "../../drizzle/schema";
+import { beep, beepStatuses } from "../../drizzle/schema";
+import z from "zod";
 
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),
@@ -16,6 +17,27 @@ export const isAcceptedBeep = or(
   eq(beep.status, "here"),
   eq(beep.status, "in_progress"),
 );
+
+export const rideResponseSchema = z.object({
+  id: z.string(),
+  start: z.union([z.string(), z.date()]),
+  end: z.union([z.string(), z.date()]).nullable(),
+  origin: z.string(),
+  destination: z.string(),
+  groupSize: z.number(),
+  status: z.enum(beepStatuses),
+  beeper: z.object({
+    id: z.string(),
+    first: z.string(),
+    last: z.string(),
+    venmo: z.string().nullable(),
+    cashapp: z.string().nullable(),
+    groupRate: z.number(),
+    singlesRate: z.number(),
+    photo: z.string().nullable(),
+  }),
+  position: z.number(),
+});
 
 type BeepStatus = (typeof beep.$inferSelect)["status"];
 

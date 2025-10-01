@@ -12,13 +12,16 @@ import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import {
+  getBeeperQueue,
   getQueueSize,
   getRiderBeepFromBeeperQueue,
   getRidersCurrentRide,
   inProgressBeep,
+  rideResponseSchema,
 } from "../logic/beep";
 import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
 import { getDistance } from "../logic/location";
+import { zAsyncIterable } from "../utils/zAsyncIterable";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -94,153 +97,126 @@ export const riderRouter = router({
         longitude: z.number().optional(),
       }),
     )
-    .mutation<Awaited<ReturnType<typeof getRidersCurrentRide>>>(
-      async ({ input, ctx }) => {
-        if (input.latitude !== undefined && input.longitude !== undefined) {
-          await db
-            .update(user)
-            .set({
-              location: {
-                latitude: input.latitude,
-                longitude: input.longitude,
-              },
-            })
-            .where(eq(user.id, ctx.user.id));
-        }
-
-        if (ctx.user.isBeeping) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "You can't get a beep when you are beeping",
-          });
-        }
-
-        const beeper = await db.query.user.findFirst({
-          columns: {
-            password: false,
-            passwordType: false,
-          },
-          where: eq(user.id, input.beeperId),
-          with: {
-            cars: {
-              where: eq(car.default, true),
-              limit: 1,
+    .output(rideResponseSchema)
+    .mutation(async ({ input, ctx }) => {
+      if (input.latitude !== undefined && input.longitude !== undefined) {
+        await db
+          .update(user)
+          .set({
+            location: {
+              latitude: input.latitude,
+              longitude: input.longitude,
             },
-            beeps: {
-              where: inProgressBeep,
-              orderBy: asc(beep.start),
-              with: {
-                rider: true,
-              },
-            },
-          },
+          })
+          .where(eq(user.id, ctx.user.id));
+      }
+
+      if (ctx.user.isBeeping) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You can't get a beep when you are beeping",
         });
+      }
 
-        if (!beeper) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Beeper not found",
-          });
-        }
+      const beeper = await db.query.user.findFirst({
+        where: eq(user.id, input.beeperId),
+      });
 
-        if (!beeper.isBeeping) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "That user is not beeping. Maybe they stopped beeping.",
-          });
-        }
+      const queue = await getBeeperQueue(input.beeperId);
 
-        if (beeper.beeps.some((beep) => beep.rider_id === ctx.user.id)) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "You are already in that beeper's queue.",
-          });
-        }
+      if (!beeper) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Beeper not found",
+        });
+      }
 
-        const newBeep = {
-          beeper_id: beeper.id,
-          rider_id: ctx.user.id,
-          destination: input.destination,
-          origin: input.origin,
-          groupSize: input.groupSize,
-          id: crypto.randomUUID(),
-          start: new Date(),
-          status: "waiting",
-          end: null,
-        } as const;
+      if (!beeper.isBeeping) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "That user is not beeping. Maybe they stopped beeping.",
+        });
+      }
 
-        await db.insert(beep).values(newBeep);
+      if (queue.some((beep) => beep.rider_id === ctx.user.id)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You are already in that beeper's queue.",
+        });
+      }
 
-        const queue = beeper?.beeps.map((beep) => ({
-          ...beep,
-          beeper,
-        }));
+      const newBeep = {
+        beeper_id: beeper.id,
+        rider_id: ctx.user.id,
+        destination: input.destination,
+        origin: input.origin,
+        groupSize: input.groupSize,
+        id: crypto.randomUUID(),
+        start: new Date(),
+        status: "waiting",
+        end: null,
+      } as const;
 
-        const newQueue = [
-          ...queue,
-          {
-            ...newBeep,
-            rider: ctx.user,
-            beeper,
-          },
-        ];
+      await db.insert(beep).values(newBeep);
 
-        pubSub.publish("queue", beeper.id, { queue: newQueue });
-
-        if (beeper.pushToken) {
-          sendNotification({
-            to: beeper.pushToken,
-            title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
-            body: "Please accept or deny this rider.",
-            categoryId: "newbeep",
-            data: { id: newBeep.id },
-          });
-        }
-
-        return {
+      const newQueue = [
+        ...queue,
+        {
           ...newBeep,
-          position: queue.length,
-          beeper: {
-            id: beeper.id,
-            first: beeper.first,
-            last: beeper.last,
-            photo: beeper.photo,
-            singlesRate: beeper.singlesRate,
-            groupRate: beeper.groupRate,
-            cashapp: beeper.cashapp,
-            venmo: beeper.venmo,
-            phone: null,
-            location: null,
-            car: null,
-          },
-        };
-      },
-    ),
-  currentRide: authedProcedure.query(async ({ ctx }) => {
-    return getRidersCurrentRide(ctx.user.id);
-  }),
-  currentRideUpdates: authedProcedure.subscription(async function* ({
-    ctx,
-    signal,
-  }) {
-    console.log("➕ Rider subscribed", ctx.user.id);
+          rider: ctx.user,
+          beeper,
+        },
+      ];
 
-    const eventSource = pubSub.subscribe("ride", ctx.user.id);
+      pubSub.publish("queue", beeper.id, { queue: newQueue });
 
-    yield await getRidersCurrentRide(ctx.user.id);
+      if (beeper.pushToken) {
+        sendNotification({
+          to: beeper.pushToken,
+          title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
+          body: "Please accept or deny this rider.",
+          categoryId: "newbeep",
+          data: { id: newBeep.id },
+        });
+      }
 
-    if (signal) {
-      signal.onabort = () => {
-        console.log("➖ Rider unsubscribed", ctx.user.id);
-        eventSource.return();
+      return {
+        ...newBeep,
+        position: queue.length,
+        beeper,
       };
-    }
+    }),
+  currentRide: authedProcedure
+    .output(rideResponseSchema.nullable())
+    .query(({ ctx }) => {
+      return getRidersCurrentRide(ctx.user.id);
+    }),
+  currentRideUpdates: authedProcedure
+    .output(
+      zAsyncIterable({
+        yield: rideResponseSchema.nullable(),
+        return: rideResponseSchema.nullable(),
+      }),
+    )
+    .subscription(async function* ({ ctx, signal }) {
+      console.log("➕ Rider subscribed", ctx.user.id);
 
-    for await (const { ride } of eventSource) {
-      if (signal?.aborted) return;
-      yield ride;
-    }
-  }),
+      const eventSource = pubSub.subscribe("ride", ctx.user.id);
+
+      yield await getRidersCurrentRide(ctx.user.id);
+
+      if (signal) {
+        signal.onabort = () => {
+          console.log("➖ Rider unsubscribed", ctx.user.id);
+          eventSource.return();
+        };
+      }
+
+      for await (const { ride } of eventSource) {
+        if (signal?.aborted) return;
+        yield ride;
+      }
+    }),
   beeperLocationUpdates: authedProcedure
     .concat(mustHaveBeenInAcceptedBeep)
     .subscription(async function* ({ input, signal }) {
