@@ -4,8 +4,9 @@ import z, { ZodError } from "zod";
 import { AppRouter } from "..";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { db } from "./db";
-import { token } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { beep, token } from "../../drizzle/schema";
+import { and, eq } from "drizzle-orm";
+import { isAcceptedBeep } from "../logic/beep";
 
 /**
  * Initialization of tRPC backend
@@ -83,6 +84,36 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
 
   return opts.next({ ctx });
 });
+
+export const mustHaveBeenInAcceptedBeep = t.procedure
+  .input(z.string())
+  .use(async function checkIfUserHasBeenInAnAcceptedBeep(opts) {
+    if (!opts.ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    if (opts.ctx.user.role === "admin") {
+      return opts.next(opts);
+    }
+
+    const acceptedBeep = await db.query.beep.findFirst({
+      where: and(
+        eq(beep.rider_id, opts.ctx.user.id),
+        eq(beep.beeper_id, opts.input),
+        isAcceptedBeep,
+      ),
+    });
+
+    if (!acceptedBeep) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "You must be in an accepted beep with the user to subscribe to their location.",
+      });
+    }
+
+    return opts.next(opts);
+  });
 
 export async function createContext(
   data: Omit<FetchCreateContextFnOptions, "resHeaders">,

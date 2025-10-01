@@ -85,6 +85,7 @@ export function QueueItem({ item: beep }: Props) {
           {
             text: "Yes",
             onPress: onCancel,
+            style: "destructive",
           },
         ],
         { cancelable: true },

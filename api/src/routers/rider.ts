@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { authedProcedure, router, verifiedProcedure } from "../utils/trpc";
+import {
+  authedProcedure,
+  mustHaveBeenInAcceptedBeep,
+  router,
+  verifiedProcedure,
+} from "../utils/trpc";
 import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
@@ -238,26 +243,9 @@ export const riderRouter = router({
     }
   }),
   beeperLocationUpdates: authedProcedure
-    .input(z.string())
-    .subscription(async function* ({ input, signal, ctx }) {
-      if (ctx.user.role !== "admin") {
-        const acceptedBeep = db.query.beep.findFirst({
-          where: and(
-            eq(beep.rider_id, ctx.user.id),
-            eq(beep.beeper_id, input),
-            isAcceptedBeep,
-          ),
-        });
-
-        if (!acceptedBeep) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message:
-              "You must be in an accepted beep with the user to subscribe to their location.",
-          });
-        }
-      }
-
+    .concat(mustHaveBeenInAcceptedBeep)
+    .subscription(async function* ({ input, signal }) {
+      console.log("Input", input);
       const eventSource = pubSub.subscribe("user", input);
 
       if (signal) {
