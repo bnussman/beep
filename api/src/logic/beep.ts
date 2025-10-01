@@ -1,7 +1,7 @@
+import z from "zod";
 import { and, asc, eq, lt, ne, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep, beepStatuses } from "../../drizzle/schema";
-import z from "zod";
 
 export const inProgressBeep = or(
   eq(beep.status, "waiting"),
@@ -60,9 +60,9 @@ export const queueResponseSchema = z.array(
   }),
 );
 
-type BeepStatus = (typeof beep.$inferSelect)["status"];
-
-export function getIsAcceptedBeep(beep: { status: BeepStatus }) {
+export function getIsAcceptedBeep(beep: {
+  status: (typeof beepStatuses)[number];
+}) {
   return (
     beep.status === "accepted" ||
     beep.status === "here" ||
@@ -71,7 +71,9 @@ export function getIsAcceptedBeep(beep: { status: BeepStatus }) {
   );
 }
 
-export function getQueueSize(queue: { status: BeepStatus }[]) {
+export function getQueueSize(
+  queue: { status: (typeof beepStatuses)[number] }[],
+) {
   return queue.filter(getIsAcceptedBeep).length;
 }
 
@@ -80,66 +82,17 @@ export async function getBeeperQueue(beeperId: string) {
     where: and(inProgressBeep, eq(beep.beeper_id, beeperId)),
     orderBy: asc(beep.start),
     with: {
-      beeper: {
-        columns: {
-          id: true,
-          first: true,
-          last: true,
-          photo: true,
-          singlesRate: true,
-          groupRate: true,
-          capacity: true,
-          cashapp: true,
-          venmo: true,
-        },
-      },
-      rider: {
-        columns: {
-          id: true,
-          first: true,
-          last: true,
-          venmo: true,
-          cashapp: true,
-          photo: true,
-          rating: true,
-        },
-      },
+      beeper: true,
+      rider: true,
     },
   });
-}
-
-export function getRiderBeepFromBeeperQueue(
-  beep: Awaited<ReturnType<typeof getBeeperQueue>>[number],
-  queue: Awaited<ReturnType<typeof getBeeperQueue>>,
-): Awaited<ReturnType<typeof getRidersCurrentRide>> {
-  const position = queue.filter(
-    (b) => getIsAcceptedBeep(b) && b.start < beep.start,
-  ).length;
-
-  const { rider, ...values } = beep;
-
-  return {
-    ...values,
-    position,
-  };
 }
 
 export async function getRidersCurrentRide(userId: string) {
   const b = await db.query.beep.findFirst({
     where: and(eq(beep.rider_id, userId), inProgressBeep),
     with: {
-      beeper: {
-        columns: {
-          id: true,
-          first: true,
-          last: true,
-          photo: true,
-          singlesRate: true,
-          groupRate: true,
-          cashapp: true,
-          venmo: true,
-        },
-      },
+      beeper: true,
     },
   });
 

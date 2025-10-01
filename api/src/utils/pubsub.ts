@@ -1,11 +1,12 @@
 import { Context } from "./trpc";
-import { getBeeperQueue, getRidersCurrentRide } from "../logic/beep";
+import { queueResponseSchema, rideResponseSchema } from "../logic/beep";
 import { createPubSub } from "@graphql-yoga/subscription";
 import { eventTarget } from "./redis";
+import z from "zod";
 
 type User = NonNullable<Context["user"]>;
-type Ride = Awaited<ReturnType<typeof getRidersCurrentRide>>;
-type Queue = Awaited<ReturnType<typeof getBeeperQueue>>;
+type Ride = z.infer<typeof rideResponseSchema> | null;
+type Queue = z.infer<typeof queueResponseSchema>;
 
 type PubSubChannels = {
   user: [userId: string, payload: { user: User }];

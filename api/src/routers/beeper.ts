@@ -9,8 +9,8 @@ import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import {
   getBeeperQueue,
+  getIsAcceptedBeep,
   getQueueSize,
-  getRiderBeepFromBeeperQueue,
   queueResponseSchema,
 } from "../logic/beep";
 import { zAsyncIterable } from "../utils/zAsyncIterable";
@@ -236,8 +236,12 @@ export const beeperRouter = router({
       pubSub.publish("queue", ctx.user.id, { queue: newQueue });
 
       for (const beep of newQueue) {
+        const position = newQueue.filter(
+          (b) => getIsAcceptedBeep(b) && b.start < beep.start,
+        ).length;
+
         pubSub.publish("ride", beep.rider_id, {
-          ride: getRiderBeepFromBeeperQueue(beep, newQueue),
+          ride: { ...beep, position },
         });
       }
 
