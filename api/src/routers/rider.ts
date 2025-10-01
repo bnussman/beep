@@ -16,7 +16,6 @@ import {
   getRiderBeepFromBeeperQueue,
   getRidersCurrentRide,
   inProgressBeep,
-  isAcceptedBeep,
 } from "../logic/beep";
 import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
 import { getDistance } from "../logic/location";
