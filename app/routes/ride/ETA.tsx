@@ -2,7 +2,7 @@ import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useLocation } from "@/utils/location";
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from "react-native";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -12,7 +12,7 @@ interface Location {
 }
 
 interface Props {
-  beeperLocation: Location | null;
+  beeperLocation: Location | null | undefined;
 }
 
 export function ETA(props: Props) {
@@ -20,15 +20,17 @@ export function ETA(props: Props) {
   const { beeperLocation } = props;
   const { location } = useLocation();
 
-  const { data, error, isLoading } = useQuery(trpc.location.getETA.queryOptions(
-    {
-      start: `${beeperLocation?.longitude},${beeperLocation?.latitude}`,
-      end: `${location?.coords.longitude},${location?.coords.latitude}`,
-    },
-    {
-      enabled: Boolean(beeperLocation) && Boolean(location)
-    },
-  ));
+  const { data, error, isLoading } = useQuery(
+    trpc.location.getETA.queryOptions(
+      {
+        start: `${beeperLocation?.longitude},${beeperLocation?.latitude}`,
+        end: `${location?.coords.longitude},${location?.coords.latitude}`,
+      },
+      {
+        enabled: Boolean(beeperLocation) && Boolean(location),
+      },
+    ),
+  );
 
   const renderContent = () => {
     if (isLoading) {
@@ -47,7 +49,14 @@ export function ETA(props: Props) {
   };
 
   return (
-    <Card style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Card
+      style={{
+        padding: 16,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
       <Text size="xl" weight="800">
         ETA
       </Text>

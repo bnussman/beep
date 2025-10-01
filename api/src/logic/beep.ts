@@ -48,11 +48,9 @@ export async function getBeeperQueue(beeperId: string) {
           first: true,
           last: true,
           photo: true,
-          location: true,
           singlesRate: true,
           groupRate: true,
           capacity: true,
-          phone: true,
           cashapp: true,
           venmo: true,
         },
@@ -64,27 +62,18 @@ export async function getBeeperQueue(beeperId: string) {
           last: true,
           venmo: true,
           cashapp: true,
-          phone: true,
           photo: true,
           rating: true,
-          pushToken: true,
         },
       },
     },
   });
 }
 
-/**
- * Given a beep and the beeper's whole queue, this returns the rider's beep.
- *
- * @note is masks fields like `car`, `location`, `phone` so that they can only see the beeper's personal info if the beep is accepted
- */
 export function getRiderBeepFromBeeperQueue(
   beep: Awaited<ReturnType<typeof getBeeperQueue>>[number],
   queue: Awaited<ReturnType<typeof getBeeperQueue>>,
 ): Awaited<ReturnType<typeof getRidersCurrentRide>> {
-  const isAccpted = getIsAcceptedBeep(beep);
-
   const position = queue.filter(
     (b) => getIsAcceptedBeep(b) && b.start < beep.start,
   ).length;
@@ -102,43 +91,11 @@ export function getRiderBeepFromBeeperQueue(
       groupRate: beep.beeper.groupRate,
       cashapp: beep.beeper.cashapp,
       venmo: beep.beeper.venmo,
-      location: isAccpted ? beep.beeper.location : null,
-      phone: isAccpted ? beep.beeper.phone : null,
     },
     position,
   };
 }
 
-/**
- * Given a raw beepers queue, this function does some output transformation to ensure a beeper
- * can only see rider details when they are allowed to.
- */
-export function getProtectedBeeperQueue(
-  queue: Awaited<ReturnType<typeof getBeeperQueue>>,
-) {
-  return queue.map(({ beeper, ...beep }) => {
-    const isAccepted = getIsAcceptedBeep(beep);
-    return {
-      ...beep,
-      rider: {
-        id: beep.rider.id,
-        first: beep.rider.first,
-        last: beep.rider.last,
-        venmo: beep.rider.venmo,
-        cashapp: beep.rider.cashapp,
-        phone: isAccepted ? beep.rider.phone : null,
-        photo: beep.rider.photo,
-        rating: beep.rider.rating,
-      },
-    };
-  });
-}
-
-/**
- * Gets a rider's current ride
- *
- * @note this function masks beeper's info like `cars`, `phone`, and `location` so that rider can't see sensitive information when they are not allowed to
- */
 export async function getRidersCurrentRide(userId: string) {
   const b = await db.query.beep.findFirst({
     where: and(eq(beep.rider_id, userId), inProgressBeep),
@@ -149,11 +106,8 @@ export async function getRidersCurrentRide(userId: string) {
           first: true,
           last: true,
           photo: true,
-          location: true,
           singlesRate: true,
           groupRate: true,
-          capacity: true,
-          phone: true,
           cashapp: true,
           venmo: true,
         },
@@ -175,22 +129,8 @@ export async function getRidersCurrentRide(userId: string) {
     ),
   );
 
-  const isAcceptedBeep = getIsAcceptedBeep(b);
-
   return {
     ...b,
-    beeper: {
-      id: b.beeper.id,
-      first: b.beeper.first,
-      last: b.beeper.last,
-      photo: b.beeper.photo,
-      singlesRate: b.beeper.singlesRate,
-      groupRate: b.beeper.groupRate,
-      cashapp: b.beeper.cashapp,
-      venmo: b.beeper.venmo,
-      location: isAcceptedBeep ? b.beeper.location : null,
-      phone: isAcceptedBeep ? b.beeper.phone : null,
-    },
     position,
   };
 }

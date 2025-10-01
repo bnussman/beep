@@ -7,7 +7,6 @@ import { Avatar } from "@/components/Avatar";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { RouterOutput, useTRPC } from "@/utils/trpc";
-
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { decodePolyline, getMiles } from "@/utils/location";
@@ -34,6 +33,12 @@ export function QueueItem({ item: beep }: Props) {
       onError(error) {
         alert(error.message);
       },
+    }),
+  );
+
+  const { data: riderDetails } = useQuery(
+    trpc.user.getUserPrivateDetails.queryOptions(beep.rider_id, {
+      enabled: beep.status !== "waiting",
     }),
   );
 
@@ -252,13 +257,19 @@ export function QueueItem({ item: beep }: Props) {
           : [
               {
                 title: "Call",
+                show: Boolean(riderDetails?.phone),
                 onClick: () =>
-                  Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone)),
+                  Linking.openURL(
+                    "tel:" + getRawPhoneNumber(riderDetails?.phone),
+                  ),
               },
               {
                 title: "Text",
+                show: Boolean(riderDetails?.phone),
                 onClick: () =>
-                  Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone)),
+                  Linking.openURL(
+                    "sms:" + getRawPhoneNumber(riderDetails?.phone),
+                  ),
               },
               {
                 title: "Directions to Rider",

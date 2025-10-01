@@ -31,6 +31,7 @@ import { RateLastBeeper } from "./RateLastBeeper";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { TRPCClientError } from "@trpc/client";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -70,28 +71,11 @@ export function MainFindBeepScreen(props: Props) {
     }),
   );
 
-  useSubscription(
+  const { data: beepersLocation } = useSubscription(
     trpc.rider.beeperLocationUpdates.subscriptionOptions(
-      beep?.beeper.id ?? "",
+      beep ? beep.beeper.id : skipToken,
       {
         enabled: isAcceptedBeep,
-        onData(updatedLocation) {
-          queryClient.setQueryData(
-            trpc.rider.currentRide.queryKey(),
-            (prev) => {
-              if (!prev) {
-                return undefined;
-              }
-              return {
-                ...prev,
-                beeper: {
-                  ...prev.beeper,
-                  location: updatedLocation.location,
-                },
-              };
-            },
-          );
-        },
       },
     ),
   );
@@ -261,7 +245,7 @@ export function MainFindBeepScreen(props: Props) {
           </Card>
         )}
         {beep.status === "on_the_way" && (
-          <ETA beeperLocation={beep.beeper.location} />
+          <ETA beeperLocation={beepersLocation?.location} />
         )}
         {beep.position > 0 && (
           <PlaceInQueue
@@ -291,15 +275,15 @@ export function MainFindBeepScreen(props: Props) {
               overflow: "hidden",
             }}
             initialRegion={{
-              latitude: beep.beeper.location?.latitude ?? 0,
-              longitude: beep.beeper.location?.longitude ?? 0,
+              latitude: beepersLocation?.location.latitude ?? 0,
+              longitude: beepersLocation?.location.longitude ?? 0,
               longitudeDelta: 0.05,
               latitudeDelta: 0.05,
             }}
           >
             <AnimatedMarker
-              latitude={beep.beeper.location?.latitude ?? 0}
-              longitude={beep.beeper.location?.longitude ?? 0}
+              latitude={beepersLocation?.location.latitude ?? 0}
+              longitude={beepersLocation?.location.longitude ?? 0}
             />
           </Map>
         )}
@@ -307,17 +291,35 @@ export function MainFindBeepScreen(props: Props) {
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Button
               style={{ flexGrow: 1 }}
-              onPress={() =>
-                Linking.openURL(`tel:${getRawPhoneNumber(beep.beeper.phone)}`)
-              }
+              onPress={async () => {
+                try {
+                  const details = await queryClient.ensureQueryData(
+                    trpc.user.getUserPrivateDetails.queryOptions(
+                      beep.beeper_id,
+                    ),
+                  );
+                  Linking.openURL(`tel:${getRawPhoneNumber(details.phone)}`);
+                } catch (error) {
+                  alert((error as TRPCClientError<any>).message);
+                }
+              }}
             >
               Call 📞
             </Button>
             <Button
               style={{ flexGrow: 1 }}
-              onPress={() =>
-                Linking.openURL(`sms:${getRawPhoneNumber(beep.beeper.phone)}`)
-              }
+              onPress={async () => {
+                try {
+                  const details = await queryClient.ensureQueryData(
+                    trpc.user.getUserPrivateDetails.queryOptions(
+                      beep.beeper_id,
+                    ),
+                  );
+                  Linking.openURL(`sms:${getRawPhoneNumber(details.phone)}`);
+                } catch (error) {
+                  alert((error as TRPCClientError<any>).message);
+                }
+              }}
             >
               Text 💬
             </Button>

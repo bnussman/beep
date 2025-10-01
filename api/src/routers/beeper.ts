@@ -9,7 +9,6 @@ import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import {
   getBeeperQueue,
-  getProtectedBeeperQueue,
   getQueueSize,
   getRiderBeepFromBeeperQueue,
 } from "../logic/beep";
@@ -25,9 +24,7 @@ export const beeperRouter = router({
         });
       }
 
-      const queue = await getBeeperQueue(input ?? ctx.user.id);
-
-      return getProtectedBeeperQueue(queue);
+      return await getBeeperQueue(input ?? ctx.user.id);
     }),
   watchQueue: authedProcedure
     .input(z.string().optional())
@@ -53,13 +50,13 @@ export const beeperRouter = router({
 
       const queue = await getBeeperQueue(id);
 
-      yield getProtectedBeeperQueue(queue);
+      yield queue;
 
       const eventSource = pubSub.subscribe("queue", id);
 
       for await (const { queue } of eventSource) {
         if (signal?.aborted) return;
-        yield getProtectedBeeperQueue(queue);
+        yield queue;
       }
     }),
   updateBeep: authedProcedure
@@ -140,25 +137,32 @@ export const beeperRouter = router({
           .where(eq(beep.id, queueEntry.id));
       }
 
-      if (queueEntry.rider.pushToken) {
+      const rider = await db.query.user.findFirst({
+        columns: {
+          pushToken: true,
+        },
+        where: eq(user.id, queueEntry.rider_id),
+      });
+
+      if (rider?.pushToken) {
         switch (queueEntry.status) {
           case "canceled":
             sendNotification({
-              to: queueEntry.rider.pushToken,
+              to: rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} has canceled your beep 🚫`,
               body: "Open your app to find a new beep",
             });
             break;
           case "denied":
             sendNotification({
-              to: queueEntry.rider.pushToken,
+              to: rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} has denied your beep request 🚫`,
               body: "Open your app to find a different beeper",
             });
             break;
           case "accepted":
             sendNotification({
-              to: queueEntry.rider.pushToken,
+              to: rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} has accepted your beep request ✅`,
               body: "You will receive another notification when they are on their way to pick you up",
             });
@@ -175,7 +179,7 @@ export const beeperRouter = router({
             }
 
             sendNotification({
-              to: queueEntry.rider.pushToken,
+              to: rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} is on their way 🚕`,
               body,
             });
@@ -193,7 +197,7 @@ export const beeperRouter = router({
             }
 
             sendNotification({
-              to: queueEntry.rider.pushToken,
+              to: rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} is here 📍`,
               body,
             });
@@ -227,6 +231,6 @@ export const beeperRouter = router({
         });
       }
 
-      return getProtectedBeeperQueue(newQueue);
+      return newQueue;
     }),
 });

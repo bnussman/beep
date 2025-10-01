@@ -58,6 +58,13 @@ export function Beep(props: Props) {
   };
 
   const queryClient = useQueryClient();
+
+  const { data: riderDetails } = useQuery(
+    trpc.user.getUserPrivateDetails.queryOptions(beep.rider_id, {
+      enabled: beep.status !== "waiting",
+    }),
+  );
+
   const { mutate: cancel } = useMutation(
     trpc.beeper.updateBeep.mutationOptions({
       onSuccess(data) {
@@ -263,15 +270,15 @@ export function Beep(props: Props) {
         options={[
           {
             title: "Call",
-            show: Boolean(beep.rider.phone),
+            show: Boolean(riderDetails?.phone),
             onClick: () =>
-              Linking.openURL("tel:" + getRawPhoneNumber(beep.rider.phone)),
+              Linking.openURL("tel:" + getRawPhoneNumber(riderDetails?.phone)),
           },
           {
             title: "Text",
-            show: Boolean(beep.rider.phone),
+            show: Boolean(riderDetails?.phone),
             onClick: () =>
-              Linking.openURL("sms:" + getRawPhoneNumber(beep.rider.phone)),
+              Linking.openURL("sms:" + getRawPhoneNumber(riderDetails?.phone)),
           },
           {
             title: "Directions to Rider",
