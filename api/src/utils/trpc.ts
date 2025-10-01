@@ -5,7 +5,7 @@ import { AppRouter } from "..";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { db } from "./db";
 import { beep, token } from "../../drizzle/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { isAcceptedBeep } from "../logic/beep";
 
 /**
@@ -96,15 +96,23 @@ export const mustHaveBeenInAcceptedBeep = t.procedure
       return opts.next(opts);
     }
 
-    const acceptedBeep = await db.query.beep.findFirst({
+    const acceptedOrCompleteBeep = await db.query.beep.findFirst({
       where: and(
-        eq(beep.rider_id, opts.ctx.user.id),
-        eq(beep.beeper_id, opts.input),
-        isAcceptedBeep,
+        or(
+          and(
+            eq(beep.rider_id, opts.ctx.user.id),
+            eq(beep.beeper_id, opts.input),
+          ),
+          and(
+            eq(beep.rider_id, opts.input),
+            eq(beep.beeper_id, opts.ctx.user.id),
+          ),
+        ),
+        or(isAcceptedBeep, eq(beep.status, "complete")),
       ),
     });
 
-    if (!acceptedBeep) {
+    if (!acceptedOrCompleteBeep) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message:
