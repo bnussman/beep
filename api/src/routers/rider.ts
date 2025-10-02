@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   authedProcedure,
+  mustBeInAcceptedBeep,
   mustHaveBeenInAcceptedBeep,
   router,
   verifiedProcedure,
@@ -218,17 +219,8 @@ export const riderRouter = router({
       }
     }),
   beeperLocationUpdates: authedProcedure
-    .concat(mustHaveBeenInAcceptedBeep)
+    .concat(mustBeInAcceptedBeep)
     .subscription(async function* ({ input, signal }) {
-      console.log("Input", input);
-      const eventSource = pubSub.subscribe("user", input);
-
-      if (signal) {
-        signal.onabort = () => {
-          eventSource.return();
-        };
-      }
-
       const beeper = await db.query.user.findFirst({
         where: eq(user.id, input),
         columns: { location: true },
@@ -240,6 +232,14 @@ export const riderRouter = router({
 
       if (beeper.location) {
         yield beeper.location;
+      }
+
+      const eventSource = pubSub.subscribe("user", input);
+
+      if (signal) {
+        signal.onabort = () => {
+          eventSource.return();
+        };
       }
 
       for await (const { user } of eventSource) {

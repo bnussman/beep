@@ -116,7 +116,45 @@ export const mustHaveBeenInAcceptedBeep = t.procedure
       throw new TRPCError({
         code: "FORBIDDEN",
         message:
-          "You must be in an accepted beep with the user to subscribe to their location.",
+          "You be in an accepted beep with that user or have completed a beep with them in the past to perform this action.",
+      });
+    }
+
+    return opts.next(opts);
+  });
+
+export const mustBeInAcceptedBeep = t.procedure
+  .input(z.string())
+  .use(async function checkIfUserHasBeenInAnAcceptedBeep(opts) {
+    if (!opts.ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    if (opts.ctx.user.role === "admin") {
+      return opts.next(opts);
+    }
+
+    const acceptedBeep = await db.query.beep.findFirst({
+      where: and(
+        or(
+          and(
+            eq(beep.rider_id, opts.ctx.user.id),
+            eq(beep.beeper_id, opts.input),
+          ),
+          and(
+            eq(beep.rider_id, opts.input),
+            eq(beep.beeper_id, opts.ctx.user.id),
+          ),
+        ),
+        isAcceptedBeep,
+      ),
+    });
+
+    if (!acceptedBeep) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "You must be in an accepted beep with the user to perform this action.",
       });
     }
 
