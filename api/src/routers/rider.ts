@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   authedProcedure,
   mustBeInAcceptedBeep,
-  mustHaveBeenInAcceptedBeep,
   router,
   verifiedProcedure,
 } from "../utils/trpc";
