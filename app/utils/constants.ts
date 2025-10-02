@@ -15,6 +15,4 @@ export const isIOS: boolean = Platform.OS === "ios";
 
 export const isWeb: boolean = Platform.OS === "web";
 
-export type Unpacked<T> = T extends (infer U)[] ? U : T;
-
 export const PAGE_SIZE = 10;
