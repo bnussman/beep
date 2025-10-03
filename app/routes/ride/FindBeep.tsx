@@ -209,7 +209,7 @@ export function MainFindBeepScreen(props: Props) {
 
   if (isAcceptedBeep) {
     return (
-      <View style={{ height: "100%", padding: 16, gap: 16, paddingBottom: 20 }}>
+      <View style={{ height: "100%", padding: 16, gap: 16, paddingBottom: 32 }}>
         <View
           style={{
             display: "flex",
@@ -387,7 +387,6 @@ export function MainFindBeepScreen(props: Props) {
         padding: 16,
         gap: 16,
         paddingBottom: 32,
-        alignItems: "center",
       }}
     >
       <Card

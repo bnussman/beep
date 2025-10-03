@@ -49,11 +49,7 @@ export function LeaveButton(props: Props) {
   }
 
   return (
-    <Button
-      isLoading={isPending}
-      onPress={() => leaveQueueWrapper()}
-      activityIndicatorProps={{ color: "white" }}
-    >
+    <Button isLoading={isPending} onPress={() => leaveQueueWrapper()}>
       Leave Queue
     </Button>
   );
