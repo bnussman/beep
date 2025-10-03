@@ -14,18 +14,18 @@ import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { basicTrpcClient, useTRPC } from "@/utils/trpc";
 import { PremiumBanner } from "./PremiumBanner";
-import {
-  LOCATION_TRACKING,
-  startLocationTracking,
-  stopLocationTracking,
-  useLocationPermissions,
-} from "@/utils/location";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { captureException } from "@sentry/react-native";
+import {
+  LOCATION_TRACKING,
+  startLocationTracking,
+  stopLocationTracking,
+  useLocationPermissions,
+} from "@/utils/location";
 
 export function StartBeepingScreen() {
   const trpc = useTRPC();
