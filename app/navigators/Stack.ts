@@ -39,7 +39,11 @@ const RootStack = createNativeStackNavigator({
         Report: {
           screen: ReportScreen,
           options: {
-            presentation: "modal",
+            presentation: "formSheet",
+            headerShown: isWeb,
+            sheetGrabberVisible: true,
+            sheetInitialDetentIndex: 0,
+            sheetAllowedDetents: [0.5, 1] as number[],
           },
         },
         Rate: {

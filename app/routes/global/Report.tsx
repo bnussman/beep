@@ -53,6 +53,7 @@ export function ReportScreen({ route }: Props) {
         <Input
           multiline
           numberOfLines={4}
+          autoFocus
           placeholder="Your reason for reporting here"
           style={{ minHeight: 150 }}
           onChangeText={(text) => setReason(text)}

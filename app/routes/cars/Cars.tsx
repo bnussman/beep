@@ -187,6 +187,7 @@ export function Cars() {
           options={[
             {
               title: "Make Default",
+              show: !car.default,
               onClick: () => setDefault(car.id),
             },
             {
