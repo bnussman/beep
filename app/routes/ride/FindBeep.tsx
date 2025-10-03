@@ -283,8 +283,8 @@ export function MainFindBeepScreen(props: Props) {
             }}
           >
             <AnimatedMarker
-              latitude={beepersLocation?.latitude ?? 0}
-              longitude={beepersLocation?.longitude ?? 0}
+              latitude={beepersLocation.latitude}
+              longitude={beepersLocation.longitude}
             />
           </Map>
         ) : null}
