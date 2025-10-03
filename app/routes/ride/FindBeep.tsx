@@ -266,7 +266,7 @@ export function MainFindBeepScreen(props: Props) {
             src={car.photo}
             alt={`car-${car.id}`}
           />
-        ) : (
+        ) : beepersLocation ? (
           <Map
             showsUserLocation
             style={{
@@ -276,8 +276,8 @@ export function MainFindBeepScreen(props: Props) {
               overflow: "hidden",
             }}
             initialRegion={{
-              latitude: beepersLocation?.latitude ?? 0,
-              longitude: beepersLocation?.longitude ?? 0,
+              latitude: beepersLocation.latitude,
+              longitude: beepersLocation.longitude,
               longitudeDelta: 0.05,
               latitudeDelta: 0.05,
             }}
@@ -287,7 +287,7 @@ export function MainFindBeepScreen(props: Props) {
               longitude={beepersLocation?.longitude ?? 0}
             />
           </Map>
-        )}
+        ) : null}
         <View style={{ gap: 8 }}>
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Button
