@@ -216,8 +216,8 @@ export function StartBeepingScreen() {
             marginBottom: 16,
           }}
         >
-          If someone wants you to beep them, it will appear here. If your app is
-          closed, you will receive a push notification.
+          If a rider wants a ride, it will appear here. If your app is closed,
+          you will receive a push notification.
         </Text>
         <PremiumBanner />
       </View>
