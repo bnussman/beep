@@ -1,56 +1,67 @@
-import * as Sentry from '@sentry/bun';
+import * as Sentry from "@sentry/bun";
 
 export interface PushNotification {
   to: string;
   title: string;
   body: string;
-  categoryId?: 'newbeep';
+  categoryId?: "newbeep";
+  richContent?: {
+    image?: string;
+  };
   data?: Record<string, string>;
 }
 
 const DEFAULT_NOTIFICATION_OPTIONS = {
-  sound: 'default',
+  sound: "default",
   _displayInForeground: true,
 };
 
 export async function sendNotification(notification: PushNotification) {
-  await sendNotifications([notification])
+  await sendNotifications([notification]);
 }
 
-export async function sendNotifications(notifications: PushNotification[]): Promise<void> {
+export async function sendNotifications(
+  notifications: PushNotification[],
+): Promise<void> {
   try {
-    await fetch('https://api.expo.dev/v2/push/send', {
+    await fetch("https://api.expo.dev/v2/push/send", {
       method: "POST",
       headers: {
-        Accept: 'application/json',
-        'Accept-encoding': 'gzip, deflate',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(notifications.map(n => ({ ...n, ...DEFAULT_NOTIFICATION_OPTIONS })))
+      body: JSON.stringify(
+        notifications.map((n) => ({ ...n, ...DEFAULT_NOTIFICATION_OPTIONS })),
+      ),
     });
   } catch (error) {
     Sentry.captureException(error);
   }
 }
 
-export async function sendNotificationsBatch(to: string[], title: string, body: string): Promise<void> {
+export async function sendNotificationsBatch(
+  to: string[],
+  title: string,
+  body: string,
+): Promise<void> {
   const batches = chunkArrayInGroups(to, 100);
 
   for (const batch of batches) {
     try {
-      await fetch('https://api.expo.dev/v2/push/send', {
+      await fetch("https://api.expo.dev/v2/push/send", {
         method: "POST",
         headers: {
-          Accept: 'application/json',
-          'Accept-encoding': 'gzip, deflate',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Accept-encoding": "gzip, deflate",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           to: batch,
           title,
           body,
-          ...DEFAULT_NOTIFICATION_OPTIONS
-        })
+          ...DEFAULT_NOTIFICATION_OPTIONS,
+        }),
       });
     } catch (error) {
       Sentry.captureException(error);
@@ -62,8 +73,8 @@ export async function sendNotificationsBatch(to: string[], title: string, body: 
 
 function chunkArrayInGroups<T>(arr: T[], size: number) {
   const myArray = [];
-  for(let i = 0; i < arr.length; i += size) {
-    myArray.push(arr.slice(i, i+size));
+  for (let i = 0; i < arr.length; i += size) {
+    myArray.push(arr.slice(i, i + size));
   }
   return myArray;
 }

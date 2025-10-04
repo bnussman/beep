@@ -209,6 +209,9 @@ export const beeperRouter = router({
             sendNotification({
               to: rider.pushToken,
               title: `${ctx.user.first} ${ctx.user.last} is here 📍`,
+              richContent: {
+                image: c?.photo,
+              },
               body,
             });
             break;
