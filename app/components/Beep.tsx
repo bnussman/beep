@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Linking, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
@@ -8,7 +8,7 @@ import { useUser } from "../utils/useUser";
 import { openVenmo } from "@/utils/links";
 import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { printStars } from "./Stars";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
 
@@ -18,9 +18,12 @@ interface Props {
 }
 
 export function Beep({ item }: Props) {
-  const trpc = useTRPC();
   const { user } = useUser();
+
+  const trpc = useTRPC();
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
+
   const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
   const isRider = user?.id === item.rider.id;
   const isBeeper = user?.id === item.beeper.id;
@@ -29,7 +32,11 @@ export function Beep({ item }: Props) {
   const otherUsersRating = item.ratings.find(
     (r) => r.rater_id === otherUser.id,
   );
-  const queryClient = useQueryClient();
+
+  const { data: otherUserDetails } = useQuery(
+    trpc.user.getUserPrivateDetails.queryOptions(otherUser.id),
+  );
+
   const { mutateAsync: deleteRating } = useMutation(
     trpc.rating.deleteRating.mutationOptions({
       onSuccess() {
@@ -42,6 +49,20 @@ export function Beep({ item }: Props) {
   return (
     <Menu
       options={[
+        {
+          onClick: () => {
+            Linking.openURL(`tel:${otherUserDetails?.phone}`);
+          },
+          title: "Call",
+          show: Boolean(otherUserDetails?.phone),
+        },
+        {
+          onClick: () => {
+            Linking.openURL(`sms:${otherUserDetails?.phone}`);
+          },
+          title: "Text",
+          show: Boolean(otherUserDetails?.phone),
+        },
         {
           title: "Pay Beeper With Venmo",
           show: isRider && Boolean(item.beeper.venmo),
