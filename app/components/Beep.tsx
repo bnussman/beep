@@ -1,14 +1,14 @@
 import React from "react";
-import { Linking, View } from "react-native";
+import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
 import { useUser } from "../utils/useUser";
-import { openVenmo } from "@/utils/links";
+import { call, openVenmo, sms } from "@/utils/links";
 import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { printStars } from "./Stars";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
 
@@ -33,9 +33,10 @@ export function Beep({ item }: Props) {
     (r) => r.rater_id === otherUser.id,
   );
 
-  const { data: otherUserDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(otherUser.id),
-  );
+  const isAcceptedOrComplete =
+    item.status !== "waiting" &&
+    item.status !== "canceled" &&
+    item.status !== "denied";
 
   const { mutateAsync: deleteRating } = useMutation(
     trpc.rating.deleteRating.mutationOptions({
@@ -50,18 +51,14 @@ export function Beep({ item }: Props) {
     <Menu
       options={[
         {
-          onClick: () => {
-            Linking.openURL(`tel:${otherUserDetails?.phone}`);
-          },
+          onClick: () => call(otherUser.id),
           title: "Call",
-          show: Boolean(otherUserDetails?.phone),
+          show: isAcceptedOrComplete,
         },
         {
-          onClick: () => {
-            Linking.openURL(`sms:${otherUserDetails?.phone}`);
-          },
+          onClick: () => sms(otherUser.id),
           title: "Text",
-          show: Boolean(otherUserDetails?.phone),
+          show: isAcceptedOrComplete,
         },
         {
           title: "Pay Beeper With Venmo",

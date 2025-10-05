@@ -1,5 +1,7 @@
 import { captureException } from "@sentry/react-native";
 import { Linking, Platform, Share } from "react-native";
+import { trpcClient } from "./trpc";
+import { tryCatch } from "./errors";
 
 export function openDirections(origin: string, dest: string): void {
   if (Platform.OS == "ios") {
@@ -90,7 +92,45 @@ export function shareVenmoInformation(
   }
 }
 
-export function getRawPhoneNumber(phone: string | null | undefined) {
+export async function call(userId: string) {
+  const { data, error } = await tryCatch(
+    trpcClient.user.getUserPrivateDetails.query(userId),
+  );
+
+  if (error) {
+    return alert(error.message);
+  }
+
+  const { error: callError } = await tryCatch(
+    Linking.openURL(`tel:${getRawPhoneNumber(data.phone)}`),
+  );
+
+  if (callError) {
+    captureException(callError);
+    alert(callError.message);
+  }
+}
+
+export async function sms(userId: string) {
+  const { data, error } = await tryCatch(
+    trpcClient.user.getUserPrivateDetails.query(userId),
+  );
+
+  if (error) {
+    return alert(error.message);
+  }
+
+  const { error: smsError } = await tryCatch(
+    Linking.openURL(`sms:${getRawPhoneNumber(data.phone)}`),
+  );
+
+  if (smsError) {
+    captureException(smsError);
+    alert(smsError.message);
+  }
+}
+
+export function getRawPhoneNumber(phone: string) {
   if (!phone) {
     return null;
   }

@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { BeepersMap } from "./BeepersMap";
 import { Map } from "../../components/Map";
 import { LeaveButton } from "./LeaveButton";
-import { View, Linking } from "react-native";
+import { View } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
 import { Card } from "@/components/Card";
@@ -21,17 +21,17 @@ import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";
-import {
-  getRawPhoneNumber,
-  openCashApp,
-  openVenmo,
-  shareVenmoInformation,
-} from "../../utils/links";
 import { RateLastBeeper } from "./RateLastBeeper";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { TRPCClientError } from "@trpc/client";
+import {
+  call,
+  openCashApp,
+  openVenmo,
+  shareVenmoInformation,
+  sms,
+} from "../../utils/links";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -292,36 +292,11 @@ export function MainFindBeepScreen(props: Props) {
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Button
               style={{ flexGrow: 1 }}
-              onPress={async () => {
-                try {
-                  const details = await queryClient.ensureQueryData(
-                    trpc.user.getUserPrivateDetails.queryOptions(
-                      beep.beeper.id,
-                    ),
-                  );
-                  Linking.openURL(`tel:${getRawPhoneNumber(details.phone)}`);
-                } catch (error) {
-                  alert((error as TRPCClientError<any>).message);
-                }
-              }}
+              onPress={() => call(beep.beeper.id)}
             >
               Call 📞
             </Button>
-            <Button
-              style={{ flexGrow: 1 }}
-              onPress={async () => {
-                try {
-                  const details = await queryClient.ensureQueryData(
-                    trpc.user.getUserPrivateDetails.queryOptions(
-                      beep.beeper.id,
-                    ),
-                  );
-                  Linking.openURL(`sms:${getRawPhoneNumber(details.phone)}`);
-                } catch (error) {
-                  alert((error as TRPCClientError<any>).message);
-                }
-              }}
-            >
+            <Button style={{ flexGrow: 1 }} onPress={() => sms(beep.beeper.id)}>
               Text 💬
             </Button>
           </View>

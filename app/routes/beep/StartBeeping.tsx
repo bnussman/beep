@@ -12,7 +12,7 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { basicTrpcClient, useTRPC } from "@/utils/trpc";
+import { trpcClient, useTRPC } from "@/utils/trpc";
 import { PremiumBanner } from "./PremiumBanner";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
@@ -341,7 +341,7 @@ TaskManager.defineTask<{ locations: Location.LocationObject[] }>(
 
     if (data) {
       try {
-        await basicTrpcClient.user.edit.mutate({
+        await trpcClient.user.edit.mutate({
           location: data.locations[0].coords,
         });
       } catch (e) {

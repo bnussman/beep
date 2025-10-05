@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { Alert, Linking, View } from "react-native";
+import MapView from "react-native-maps";
+import { Alert, View } from "react-native";
 import { isMobile } from "@/utils/constants";
-import { getRawPhoneNumber, openDirections } from "@/utils/links";
+import { call, openDirections, sms } from "@/utils/links";
 import { printStars } from "@/components/Stars";
 import { Avatar } from "@/components/Avatar";
 import { Card } from "@/components/Card";
@@ -13,7 +14,6 @@ import { decodePolyline, getMiles } from "@/utils/location";
 import { Map } from "@/components/Map";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
-import MapView from "react-native-maps";
 import { Menu } from "@/components/Menu";
 
 interface Props {
@@ -33,12 +33,6 @@ export function QueueItem({ item: beep }: Props) {
       onError(error) {
         alert(error.message);
       },
-    }),
-  );
-
-  const { data: riderDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(beep.rider.id, {
-      enabled: beep.status !== "waiting",
     }),
   );
 
@@ -257,19 +251,11 @@ export function QueueItem({ item: beep }: Props) {
           : [
               {
                 title: "Call",
-                show: Boolean(riderDetails?.phone),
-                onClick: () =>
-                  Linking.openURL(
-                    "tel:" + getRawPhoneNumber(riderDetails?.phone),
-                  ),
+                onClick: () => call(beep.rider.id),
               },
               {
                 title: "Text",
-                show: Boolean(riderDetails?.phone),
-                onClick: () =>
-                  Linking.openURL(
-                    "sms:" + getRawPhoneNumber(riderDetails?.phone),
-                  ),
+                onClick: () => sms(beep.rider.id),
               },
               {
                 title: "Directions to Rider",

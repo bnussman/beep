@@ -1,26 +1,23 @@
-import * as Sentry from '@sentry/react-native';
-import Constants from 'expo-constants';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { QueryClient } from '@tanstack/react-query';
+import * as Sentry from "@sentry/react-native";
+import Constants from "expo-constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { QueryClient } from "@tanstack/react-query";
+import { createTRPCContext } from "@trpc/tanstack-react-query";
+import { isWeb } from "./constants";
+import type { AppRouter } from "../../api";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import {
   createWSClient,
   httpLink,
   splitLink,
   wsLink,
   createTRPCClient,
-} from '@trpc/client';
-import { createTRPCContext } from "@trpc/tanstack-react-query";
-import { isWeb } from './constants';
-import type { AppRouter } from '../../api';
-import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
+} from "@trpc/client";
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
 
-export const {
-  TRPCProvider,
-  useTRPC
-} = createTRPCContext<AppRouter>();
+export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
 
 function getLocalIP() {
   if (isWeb) {
@@ -34,9 +31,7 @@ const ip = getLocalIP();
 const wsUrl = __DEV__
   ? `ws://${ip}:3000/subscriptions`
   : "wss://api.ridebeep.app/subscriptions";
-const url = __DEV__
-  ? `http://${ip}:3000`
-  : "https://api.ridebeep.app";
+const url = __DEV__ ? `http://${ip}:3000` : "https://api.ridebeep.app";
 
 export async function getAuthToken() {
   const tokens = await AsyncStorage.getItem("auth");
@@ -45,11 +40,15 @@ export async function getAuthToken() {
     try {
       // When we login, we just store the response in AsyncStorage.
       // We get the token from there.
-      const auth = JSON.parse(tokens) as RouterOutput['auth']['login'];
+      const auth = JSON.parse(tokens) as RouterOutput["auth"]["login"];
 
       return auth.tokens.id;
     } catch (error) {
-      Sentry.captureException(error, { extra: { hint: "Error when parsing authentication token from AsyncStorage" } });
+      Sentry.captureException(error, {
+        extra: {
+          hint: "Error when parsing authentication token from AsyncStorage",
+        },
+      });
 
       return null;
     }
@@ -62,7 +61,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
-    }
+    },
   },
 });
 
@@ -79,7 +78,7 @@ const wsClient = createWSClient({
       return { token };
     }
     return {};
-  }
+  },
 });
 
 const trpcHttpLink = httpLink({
@@ -90,21 +89,17 @@ const trpcHttpLink = httpLink({
       return { Authorization: `Bearer ${token}` };
     }
     return {};
-  }
+  },
 });
 
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     splitLink<AppRouter>({
-      condition: (op) => op.type === 'subscription',
+      condition: (op) => op.type === "subscription",
       true: wsLink<AppRouter>({
-        client: wsClient
+        client: wsClient,
       }),
       false: trpcHttpLink,
-    })
+    }),
   ],
-});
-
-export const basicTrpcClient = createTRPCClient<AppRouter>({
-  links: [trpcHttpLink]
 });

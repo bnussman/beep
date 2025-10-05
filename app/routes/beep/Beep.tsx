@@ -1,19 +1,14 @@
 import React, { useEffect, useRef } from "react";
+import MapView from "react-native-maps";
 import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Alert, Linking, View } from "react-native";
+import { Alert, View } from "react-native";
 import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { Map } from "@/components/Map";
 import { printStars } from "../../components/Stars";
-import {
-  getRawPhoneNumber,
-  openCashApp,
-  openDirections,
-  openVenmo,
-} from "../../utils/links";
 import { useTRPC, type RouterOutput } from "@/utils/trpc";
 import { Card } from "@/components/Card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,8 +16,14 @@ import { decodePolyline, getMiles } from "@/utils/location";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { isMobile } from "@/utils/constants";
-import MapView from "react-native-maps";
 import { Menu } from "@/components/Menu";
+import {
+  call,
+  openCashApp,
+  openDirections,
+  openVenmo,
+  sms,
+} from "../../utils/links";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -58,12 +59,6 @@ export function Beep(props: Props) {
   };
 
   const queryClient = useQueryClient();
-
-  const { data: riderDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(beep.rider.id, {
-      enabled: beep.status !== "waiting",
-    }),
-  );
 
   const { mutate: cancel } = useMutation(
     trpc.beeper.updateBeep.mutationOptions({
@@ -270,15 +265,13 @@ export function Beep(props: Props) {
         options={[
           {
             title: "Call",
-            show: Boolean(riderDetails?.phone),
-            onClick: () =>
-              Linking.openURL("tel:" + getRawPhoneNumber(riderDetails?.phone)),
+            show: beep.status !== "waiting",
+            onClick: () => call(beep.rider.id),
           },
           {
             title: "Text",
-            show: Boolean(riderDetails?.phone),
-            onClick: () =>
-              Linking.openURL("sms:" + getRawPhoneNumber(riderDetails?.phone)),
+            show: beep.status !== "waiting",
+            onClick: () => sms(beep.rider.id),
           },
           {
             title: "Directions to Rider",
