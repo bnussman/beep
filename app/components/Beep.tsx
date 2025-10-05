@@ -62,7 +62,7 @@ export function Beep({ item }: Props) {
         },
         {
           title: "Pay Beeper With Venmo",
-          show: isRider && Boolean(item.beeper.venmo),
+          show: isRider && Boolean(item.beeper.venmo) && isAcceptedOrComplete,
           onClick: () =>
             openVenmo(
               item.beeper.venmo,
@@ -74,8 +74,7 @@ export function Beep({ item }: Props) {
         },
         {
           title: "Charge Rider with Venmo",
-          show:
-            isBeeper && Boolean(item.rider.venmo) && item.status === "complete",
+          show: isBeeper && Boolean(item.rider.venmo) && isAcceptedOrComplete,
           onClick: () =>
             openVenmo(
               item.rider.venmo,
@@ -95,18 +94,18 @@ export function Beep({ item }: Props) {
             }),
         },
         {
-          onClick: () => deleteRating({ ratingId: myRating!.id }),
-          show: Boolean(myRating),
-          destructive: true,
-          title: "Delete Rating",
-        },
-        {
           title: "Report",
           onClick: () =>
             navigation.navigate("Report", {
               userId: otherUser.id,
               beepId: item.id,
             }),
+        },
+        {
+          onClick: () => deleteRating({ ratingId: myRating!.id }),
+          show: Boolean(myRating),
+          destructive: true,
+          title: "Delete Rating",
         },
       ]}
       activationMethod="longPress"
@@ -127,7 +126,7 @@ export function Beep({ item }: Props) {
               </Text>
               <Text color="subtle" size="xs">
                 {`${isRider ? "Ride" : "Beep"} - ${new Date(
-                  item.start as string,
+                  item.start,
                 ).toLocaleString()}`}
               </Text>
             </View>
