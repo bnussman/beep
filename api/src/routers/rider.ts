@@ -333,30 +333,10 @@ export const riderRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      let queue = await getBeeperQueue(input.beeperId);
+
       const beeper = await db.query.user.findFirst({
-        columns: {
-          password: false,
-          passwordType: false,
-        },
         where: eq(user.id, input.beeperId),
-        with: {
-          cars: {
-            where: eq(car.default, true),
-            limit: 1,
-          },
-          beeps: {
-            where: inProgressBeep,
-            orderBy: asc(beep.start),
-            with: {
-              rider: {
-                columns: {
-                  password: false,
-                  passwordType: false,
-                },
-              },
-            },
-          },
-        },
       });
 
       if (!beeper) {
@@ -366,7 +346,7 @@ export const riderRouter = router({
         });
       }
 
-      const entry = beeper.beeps.find((beep) => beep.rider.id === ctx.user.id);
+      const entry = queue.find((beep) => beep.rider.id === ctx.user.id);
 
       if (!entry) {
         throw new TRPCError({
@@ -388,22 +368,20 @@ export const riderRouter = router({
         .set({ status: "canceled", end: new Date() })
         .where(eq(beep.id, entry.id));
 
-      const newQueue = beeper.beeps
-        .filter((beep) => beep.id !== entry.id)
-        .map((b) => ({ ...b, beeper }));
+      queue = queue.filter((beep) => beep.id !== entry.id);
 
       pubSub.publish("ride", ctx.user.id, { ride: null });
-      pubSub.publish("queue", beeper.id, { queue: newQueue });
+      pubSub.publish("queue", beeper.id, { queue });
 
-      for (const beep of newQueue) {
+      for (const beep of queue) {
         pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, position: getPositionInQueue(beep, newQueue) },
+          ride: { ...beep, position: getPositionInQueue(beep, queue) },
         });
       }
 
       await db
         .update(user)
-        .set({ queueSize: getQueueSize(newQueue) })
+        .set({ queueSize: getQueueSize(queue) })
         .where(eq(user.id, beeper.id));
 
       return true;
