@@ -7,13 +7,13 @@ import { and, eq } from "drizzle-orm";
 import { beep, car, user } from "../../drizzle/schema";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
+import { zAsyncIterable } from "../utils/zAsyncIterable";
 import {
   getBeeperQueue,
-  getIsAcceptedBeep,
+  getPositionInQueue,
   getQueueSize,
   queueResponseSchema,
 } from "../logic/beep";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
 
 export const beeperRouter = router({
   queue: authedProcedure
@@ -239,12 +239,8 @@ export const beeperRouter = router({
       pubSub.publish("queue", ctx.user.id, { queue: newQueue });
 
       for (const beep of newQueue) {
-        const position = newQueue.filter(
-          (b) => getIsAcceptedBeep(b) && b.start < beep.start,
-        ).length;
-
         pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, position },
+          ride: { ...beep, position: getPositionInQueue(beep, newQueue) },
         });
       }
 

@@ -1,27 +1,27 @@
 import { z } from "zod";
-import {
-  authedProcedure,
-  mustBeInAcceptedBeep,
-  router,
-  verifiedProcedure,
-} from "../utils/trpc";
 import { db } from "../utils/db";
 import { beep, car, payment, user } from "../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
+import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
+import { getDistance } from "../logic/location";
+import { zAsyncIterable } from "../utils/zAsyncIterable";
+import {
+  authedProcedure,
+  mustBeInAcceptedBeep,
+  router,
+  verifiedProcedure,
+} from "../utils/trpc";
 import {
   getBeeperQueue,
-  getIsAcceptedBeep,
+  getPositionInQueue,
   getQueueSize,
   getRidersCurrentRide,
   inProgressBeep,
   rideResponseSchema,
 } from "../logic/beep";
-import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
-import { getDistance } from "../logic/location";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -188,8 +188,8 @@ export const riderRouter = router({
     }),
   currentRide: authedProcedure
     .output(rideResponseSchema.nullable())
-    .query(({ ctx }) => {
-      return getRidersCurrentRide(ctx.user.id);
+    .query(async ({ ctx }) => {
+      return await getRidersCurrentRide(ctx.user.id);
     }),
   currentRideUpdates: authedProcedure
     .output(
@@ -396,12 +396,8 @@ export const riderRouter = router({
       pubSub.publish("queue", beeper.id, { queue: newQueue });
 
       for (const beep of newQueue) {
-        const position = newQueue.filter(
-          (b) => getIsAcceptedBeep(b) && b.start < beep.start,
-        ).length;
-
         pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, position },
+          ride: { ...beep, position: getPositionInQueue(beep, newQueue) },
         });
       }
 

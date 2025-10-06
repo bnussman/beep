@@ -1,5 +1,5 @@
 import z from "zod";
-import { and, asc, eq, lt, ne, or } from "drizzle-orm";
+import { and, asc, eq, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep, beepStatuses } from "../../drizzle/schema";
 
@@ -77,6 +77,15 @@ export function getQueueSize(
   return queue.filter(getIsAcceptedBeep).length;
 }
 
+export function getPositionInQueue(
+  b: { start: Date },
+  queue: (typeof beep.$inferSelect)[],
+) {
+  return queue.filter(
+    (queueBeep) => getIsAcceptedBeep(queueBeep) && queueBeep.start < b.start,
+  ).length;
+}
+
 export async function getBeeperQueue(beeperId: string) {
   return await db.query.beep.findMany({
     where: and(inProgressBeep, eq(beep.beeper_id, beeperId)),
@@ -100,18 +109,10 @@ export async function getRidersCurrentRide(userId: string) {
     return null;
   }
 
-  const position = await db.$count(
-    beep,
-    and(
-      eq(beep.beeper_id, b.beeper_id),
-      lt(beep.start, b.start),
-      ne(beep.status, "waiting"),
-      inProgressBeep,
-    ),
-  );
+  const queue = await getBeeperQueue(b.beeper.id);
 
   return {
     ...b,
-    position,
+    position: getPositionInQueue(b, queue),
   };
 }
