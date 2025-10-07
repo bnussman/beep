@@ -5,15 +5,15 @@ import { View } from "react-native";
 
 interface Props {
   riders_before_accepted: number;
-  // riders_before_unaccepted: number;
+  riders_before_unaccepted: number;
   // riders_before_total: number;
-  total_riders_waiting: number;
+  // total_riders_waiting: number;
   firstName: string;
 }
 
 export function PlaceInQueue({
   riders_before_accepted,
-  total_riders_waiting,
+  riders_before_unaccepted,
   firstName,
 }: Props) {
   const items = [
@@ -22,8 +22,8 @@ export function PlaceInQueue({
       message: `${riders_before_accepted === 1 ? "person is" : "people are"} ahead of you in ${firstName}'s queue`,
     },
     {
-      value: total_riders_waiting - 1,
-      message: `${total_riders_waiting - 1 === 1 ? "person is" : "people are"} also waiting to be accepted or denied`,
+      value: riders_before_unaccepted,
+      message: `${riders_before_unaccepted === 1 ? "person" : "people"} ahead of you ${riders_before_unaccepted === 1 ? "is" : "are"} waiting to be accepted or denied`,
     },
   ];
 
@@ -33,6 +33,7 @@ export function PlaceInQueue({
         .filter((item) => item.value)
         .map((item) => (
           <Card
+            key={item.message}
             style={{
               width: "100%",
               display: "flex",
