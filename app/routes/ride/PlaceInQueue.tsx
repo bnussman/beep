@@ -6,8 +6,6 @@ import { View } from "react-native";
 interface Props {
   riders_before_accepted: number;
   riders_before_unaccepted: number;
-  // riders_before_total: number;
-  // total_riders_waiting: number;
   firstName: string;
 }
 
@@ -19,11 +17,11 @@ export function PlaceInQueue({
   const items = [
     {
       value: riders_before_accepted,
-      message: `${riders_before_accepted === 1 ? "person is" : "people are"} ahead of you in ${firstName}'s queue`,
+      message: `${riders_before_accepted === 1 ? "person is" : "people are"} ahead of you in ${firstName}'s queue.`,
     },
     {
       value: riders_before_unaccepted,
-      message: `${riders_before_unaccepted === 1 ? "person" : "people"} ahead of you ${riders_before_unaccepted === 1 ? "is" : "are"} waiting to be accepted or denied`,
+      message: `${riders_before_unaccepted === 1 ? "person" : "people"} ahead of you ${riders_before_unaccepted === 1 ? "is" : "are"} waiting to be accepted or denied.`,
     },
   ];
 
