@@ -251,7 +251,8 @@ export function MainFindBeepScreen(props: Props) {
         {beep.riders_before_accepted > 0 && (
           <PlaceInQueue
             firstName={beep.beeper.first}
-            position={beep.riders_before_accepted}
+            riders_before_accepted={beep.riders_before_accepted}
+            total_riders_waiting={beep.riders_before_accepted}
           />
         )}
         {beep.status === "here" && car ? (
@@ -400,7 +401,8 @@ export function MainFindBeepScreen(props: Props) {
       <Rates singles={beep.beeper.singlesRate} group={beep.beeper.groupRate} />
       <PlaceInQueue
         firstName={beep.beeper.first}
-        position={beep.riders_before_accepted}
+        riders_before_accepted={beep.riders_before_accepted}
+        total_riders_waiting={beep.total_riders_waiting}
       />
       <View style={{ flexGrow: 1 }} />
       <LeaveButton beepersId={beep.beeper.id} />
