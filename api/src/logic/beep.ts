@@ -36,7 +36,10 @@ export const rideResponseSchema = z.object({
     singlesRate: z.number(),
     photo: z.string().nullable(),
   }),
-  position: z.number(),
+  riders_before_accepted: z.number(),
+  riders_before_unaccepted: z.number(),
+  riders_before_total: z.number(),
+  total_riders_waiting: z.number(),
 });
 
 export const queueResponseSchema = z.array(
@@ -77,13 +80,33 @@ export function getQueueSize(
   return queue.filter(getIsAcceptedBeep).length;
 }
 
-export function getPositionInQueue(
+export function getTotalRidersBefore(
+  b: { start: Date },
+  queue: (typeof beep.$inferSelect)[],
+) {
+  return queue.filter((queueBeep) => queueBeep.start < b.start).length;
+}
+
+export function getAccptedRidersBefore(
   b: { start: Date },
   queue: (typeof beep.$inferSelect)[],
 ) {
   return queue.filter(
     (queueBeep) => getIsAcceptedBeep(queueBeep) && queueBeep.start < b.start,
   ).length;
+}
+
+export function getUnacceptedRidersBefore(
+  b: { start: Date },
+  queue: (typeof beep.$inferSelect)[],
+) {
+  return queue.filter(
+    (queueBeep) => !getIsAcceptedBeep(queueBeep) && queueBeep.start < b.start,
+  ).length;
+}
+
+export function getRidesWaiting(queue: (typeof beep.$inferSelect)[]) {
+  return queue.filter((queueBeep) => !getIsAcceptedBeep(queueBeep)).length;
 }
 
 export async function getBeeperQueue(beeperId: string) {
@@ -95,6 +118,19 @@ export async function getBeeperQueue(beeperId: string) {
       rider: { columns: { password: false, passwordType: false } },
     },
   });
+}
+
+export function getRidersDerivedFields(
+  b: { start: Date },
+  queue: (typeof beep.$inferSelect)[],
+) {
+  return {
+    riders_before_accepted: getAccptedRidersBefore(b, queue),
+    riders_before_unaccepted: getUnacceptedRidersBefore(b, queue),
+    riders_before_total: getTotalRidersBefore(b, queue),
+    total_riders_waiting: queue.filter((beep) => beep.status === "waiting")
+      .length,
+  };
 }
 
 export async function getRidersCurrentRide(userId: string) {
@@ -113,6 +149,6 @@ export async function getRidersCurrentRide(userId: string) {
 
   return {
     ...b,
-    position: getPositionInQueue(b, queue),
+    ...getRidersDerivedFields(b, queue),
   };
 }

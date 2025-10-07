@@ -16,9 +16,9 @@ import {
 } from "../utils/trpc";
 import {
   getBeeperQueue,
-  getPositionInQueue,
   getQueueSize,
   getRidersCurrentRide,
+  getRidersDerivedFields,
   rideResponseSchema,
 } from "../logic/beep";
 
@@ -181,7 +181,7 @@ export const riderRouter = router({
 
       return {
         ...newBeep,
-        position: getPositionInQueue(newBeep, queue),
+        ...getRidersDerivedFields(newBeep, queue),
         beeper,
       };
     }),
@@ -374,7 +374,7 @@ export const riderRouter = router({
 
       for (const beep of queue) {
         pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, position: getPositionInQueue(beep, queue) },
+          ride: { ...beep, ...getRidersDerivedFields(beep, queue) },
         });
       }
 

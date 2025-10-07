@@ -10,8 +10,8 @@ import { pubSub } from "../utils/pubsub";
 import { zAsyncIterable } from "../utils/zAsyncIterable";
 import {
   getBeeperQueue,
-  getPositionInQueue,
   getQueueSize,
+  getRidersDerivedFields,
   queueResponseSchema,
 } from "../logic/beep";
 
@@ -240,7 +240,7 @@ export const beeperRouter = router({
 
       for (const beep of newQueue) {
         pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, position: getPositionInQueue(beep, newQueue) },
+          ride: { ...beep, ...getRidersDerivedFields(beep, newQueue) },
         });
       }
 

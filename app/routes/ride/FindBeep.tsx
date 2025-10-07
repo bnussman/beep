@@ -237,7 +237,7 @@ export function MainFindBeepScreen(props: Props) {
           singles={beep.beeper.singlesRate}
           group={beep.beeper.groupRate}
         />
-        {beep.position <= 0 && (
+        {beep.riders_before_accepted === 0 && (
           <Card style={{ gap: 8 }}>
             <Text weight="800" size="xl">
               Current Status
@@ -248,10 +248,10 @@ export function MainFindBeepScreen(props: Props) {
         {beep.status === "on_the_way" && (
           <ETA beeperLocation={beepersLocation} />
         )}
-        {beep.position > 0 && (
+        {beep.riders_before_accepted > 0 && (
           <PlaceInQueue
             firstName={beep.beeper.first}
-            position={beep.position}
+            position={beep.riders_before_accepted}
           />
         )}
         {beep.status === "here" && car ? (
@@ -347,8 +347,9 @@ export function MainFindBeepScreen(props: Props) {
             )}
           </View>
         </View>
-        {(beep.position >= 1 ||
-          (beep.position === 0 && beep.status === "accepted")) && (
+        {(beep.riders_before_accepted >= 1 ||
+          (beep.riders_before_accepted === 0 &&
+            beep.status === "accepted")) && (
           <LeaveButton beepersId={beep.beeper.id} />
         )}
       </View>
@@ -397,7 +398,10 @@ export function MainFindBeepScreen(props: Props) {
         </View>
       </Card>
       <Rates singles={beep.beeper.singlesRate} group={beep.beeper.groupRate} />
-      <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
+      <PlaceInQueue
+        firstName={beep.beeper.first}
+        position={beep.riders_before_accepted}
+      />
       <View style={{ flexGrow: 1 }} />
       <LeaveButton beepersId={beep.beeper.id} />
     </View>
