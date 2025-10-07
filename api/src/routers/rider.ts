@@ -121,7 +121,7 @@ export const riderRouter = router({
         where: eq(user.id, input.beeperId),
       });
 
-      const queue = await getBeeperQueue(input.beeperId);
+      let queue = await getBeeperQueue(input.beeperId);
 
       if (!beeper) {
         throw new TRPCError({
@@ -158,7 +158,7 @@ export const riderRouter = router({
 
       await db.insert(beep).values(newBeep);
 
-      const newQueue = [
+      queue = [
         ...queue,
         {
           ...newBeep,
@@ -167,7 +167,7 @@ export const riderRouter = router({
         },
       ];
 
-      pubSub.publish("queue", beeper.id, { queue: newQueue });
+      pubSub.publish("queue", beeper.id, { queue });
 
       if (beeper.pushToken) {
         sendNotification({
@@ -181,7 +181,7 @@ export const riderRouter = router({
 
       return {
         ...newBeep,
-        position: queue.length,
+        position: getPositionInQueue(newBeep, queue),
         beeper,
       };
     }),
