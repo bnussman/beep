@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db } from "../utils/db";
-import { beep, car, payment, user } from "../../drizzle/schema";
+import { beep, payment, user } from "../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
@@ -19,7 +19,6 @@ import {
   getPositionInQueue,
   getQueueSize,
   getRidersCurrentRide,
-  inProgressBeep,
   rideResponseSchema,
 } from "../logic/beep";
 
