@@ -418,6 +418,7 @@ export function MainFindBeepScreen(props: Props) {
         firstName={beep.beeper.first}
         riders_before_accepted={beep.riders_before_accepted}
         riders_before_unaccepted={beep.riders_before_unaccepted}
+        total_riders_waiting={beep.total_riders_waiting}
       />
       <View style={{ flexGrow: 1 }} />
       <LeaveButton beepersId={beep.beeper.id} />

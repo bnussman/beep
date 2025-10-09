@@ -40,6 +40,7 @@ export const rideResponseSchema = z.object({
   riders_before_unaccepted: z.number(),
   riders_before_total: z.number(),
   total_riders_waiting: z.number(),
+  queue: z.array(z.object({ id: z.string(), status: z.enum(beepStatuses) })),
 });
 
 export const queueResponseSchema = z.array(
@@ -130,6 +131,7 @@ export function getRidersDerivedFields(
     riders_before_total: getTotalRidersBefore(b, queue),
     total_riders_waiting: queue.filter((beep) => beep.status === "waiting")
       .length,
+    queue: queue.map((beep) => ({ status: beep.status, id: beep.id })),
   };
 }
 
