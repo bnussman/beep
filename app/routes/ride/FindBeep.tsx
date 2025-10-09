@@ -209,37 +209,49 @@ export function MainFindBeepScreen(props: Props) {
 
   if (isAcceptedBeep) {
     return (
-      <View style={{ height: "100%", padding: 16, gap: 16, paddingBottom: 32 }}>
-        <View
+      <View
+        style={{
+          height: "100%",
+          paddingHorizontal: 16,
+          paddingTop: 16,
+          gap: 8,
+          paddingBottom: 32,
+        }}
+      >
+        <Card
           style={{
             display: "flex",
             flexDirection: "row",
             width: "100%",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <View style={{ flexShrink: 1 }}>
-            <Text size="3xl" weight="800">
+            <Text size="xl" weight="800">
               {beep.beeper.first} {beep.beeper.last}
             </Text>
-            <Text>
-              <Text weight="bold">Pick Up </Text>
-              <Text>{beep.origin}</Text>
-            </Text>
-            <Text>
-              <Text weight="bold">Destination </Text>
-              <Text>{beep.destination}</Text>
-            </Text>
+            <Text color="subtle">is your beeper</Text>
           </View>
-          <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
-        </View>
-        <Rates
-          singles={beep.beeper.singlesRate}
-          group={beep.beeper.groupRate}
-        />
+          <Avatar size="md" src={beep.beeper.photo ?? undefined} />
+        </Card>
+        <Card style={{ gap: 8 }}>
+          <View>
+            <Text weight="bold">Pick Up</Text>
+            <Text>{beep.origin}</Text>
+          </View>
+          <View>
+            <Text weight="bold">Destination </Text>
+            <Text>{beep.destination}</Text>
+          </View>
+          <Rates
+            singles={beep.beeper.singlesRate}
+            group={beep.beeper.groupRate}
+          />
+        </Card>
         {beep.riders_before_accepted === 0 && (
           <Card style={{ gap: 8 }}>
-            <Text weight="800" size="xl">
+            <Text weight="800" size="lg">
               Current Status
             </Text>
             <Text>{getCurrentStatusMessage(beep, car)}</Text>
@@ -382,7 +394,7 @@ export function MainFindBeepScreen(props: Props) {
           </Text>
           <Text color="subtle">to accept your request.</Text>
         </View>
-        <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
+        <Avatar size="md" src={beep.beeper.photo ?? undefined} />
       </Card>
       <Card style={{ width: "100%", gap: 16 }}>
         <View>
@@ -397,8 +409,11 @@ export function MainFindBeepScreen(props: Props) {
           <Text weight="bold">Number of Riders </Text>
           <Text>{beep.groupSize}</Text>
         </View>
+        <Rates
+          singles={beep.beeper.singlesRate}
+          group={beep.beeper.groupRate}
+        />
       </Card>
-      <Rates singles={beep.beeper.singlesRate} group={beep.beeper.groupRate} />
       <PlaceInQueue
         firstName={beep.beeper.first}
         riders_before_accepted={beep.riders_before_accepted}
