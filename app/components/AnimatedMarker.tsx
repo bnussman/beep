@@ -10,6 +10,7 @@ import {
 } from "react-native-reanimated";
 
 interface BeeperMakerProps {
+  identifier?: string;
   longitude: number;
   latitude: number;
 }
@@ -46,6 +47,7 @@ export const AnimatedMarker = (props: BeeperMakerProps) => {
   return (
     <Marker
       ref={markerRef}
+      identifier={props.identifier}
       coordinate={{ latitude: latitude.value, longitude: longitude.value }}
     >
       <Text size="3xl">{getBeeperIcon()}</Text>

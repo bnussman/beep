@@ -8,7 +8,7 @@ interface Option {
   /**
    * Called when the option is chosen/clicked/pressed
    */
-  onClick: () => void;
+  onClick?: () => void;
   /**
    * Makes the item show as destructive. (Red on iOS and Andriod)
    */
@@ -18,6 +18,14 @@ interface Option {
    * @default true
    */
   show?: boolean;
+  /**
+   * @default button
+   */
+  type?: "button" | "submenu";
+  /**
+   * Only works if type is `submenu`
+   */
+  options?: Option[];
 }
 
 export interface MenuProps extends Omit<ContextMenuProps, "children"> {

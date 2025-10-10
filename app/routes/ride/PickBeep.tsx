@@ -11,10 +11,13 @@ import { ActivityIndicator, FlatList, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { isIOS } from "@/utils/constants";
 
-type Props = StaticScreenProps<
-  Omit<RouterInput["rider"]["startBeep"], "beeperId">
->;
+type Props = StaticScreenProps<{
+  origin: string;
+  destination: string;
+  groupSize: string;
+}>;
 
 export function PickBeepScreen({ route }: Props) {
   const trpc = useTRPC();
@@ -54,7 +57,10 @@ export function PickBeepScreen({ route }: Props) {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (isPickBeeperLoading ? <ActivityIndicator /> : null),
+      headerRight: () =>
+        isPickBeeperLoading ? (
+          <ActivityIndicator style={isIOS ? { marginLeft: 8 } : null} />
+        ) : null,
     });
   }, [isPickBeeperLoading]);
 
@@ -67,6 +73,7 @@ export function PickBeepScreen({ route }: Props) {
     startBeep({
       beeperId,
       ...route.params,
+      groupSize: Number(route.params.groupSize),
       ...(location && {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
