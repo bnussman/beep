@@ -31,7 +31,8 @@ export function PlaceInQueue({
     },
     {
       show:
-        otherRidersWaiting && otherRidersWaiting !== riders_before_unaccepted,
+        otherRidersWaiting > 0 &&
+        otherRidersWaiting !== riders_before_unaccepted,
       value: otherRidersWaiting,
       message: `other ${otherRidersWaiting === 1 ? "person is" : "people are"} waiting to be accepted or denied.`,
     },
