@@ -24,6 +24,7 @@ export function RideStatus({ beep, car }: Props) {
     return (
       <View>
         <Text>Waiting for beeper to accept or deny you</Text>
+        <Text color="subtle">{status}</Text>
         {numberOfOtherRidersWaiting > 0 && (
           <Text color="subtle">
             {numberOfOtherRidersWaiting} other{" "}
@@ -37,7 +38,6 @@ export function RideStatus({ beep, car }: Props) {
             {ridersAhead === 1 ? "is" : "are"} ahead of you
           </Text>
         )}
-        <Text color="subtle">{status}</Text>
       </View>
     );
   }
