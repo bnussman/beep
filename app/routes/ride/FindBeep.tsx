@@ -16,7 +16,9 @@ import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { StartBeepForm } from "./StartBeepForm";
-import { useLocation } from "@/utils/location";
+import { decodePolyline, useLocation } from "@/utils/location";
+import { Marker } from "@/components/Marker";
+import { Polyline } from "@/components/Polyline";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -59,7 +61,7 @@ export function MainFindBeepScreen(props: Props) {
     ),
   );
 
-  const { data: beepersLocation } = useSubscription(
+  const { data: beepersLocationRaw } = useSubscription(
     trpc.rider.beeperLocationUpdates.subscriptionOptions(
       beep ? beep.beeper.id : skipToken,
       {
@@ -68,6 +70,36 @@ export function MainFindBeepScreen(props: Props) {
     ),
   );
 
+  const beepersLocation = isAcceptedBeep ? beepersLocationRaw : null;
+
+  const { data: beepRoute } = useQuery(
+    trpc.location.getRoute.queryOptions(
+      beep
+        ? {
+            origin: beep.origin,
+            destination: beep.destination,
+          }
+        : skipToken,
+    ),
+  );
+
+  const route = beepRoute?.routes[0];
+
+  const polylineCoordinates = route?.legs
+    .flatMap((leg) => leg.steps)
+    .map((step) => decodePolyline(step.geometry))
+    .flat();
+
+  const origin = beepRoute && {
+    latitude: beepRoute.waypoints[0].location[1],
+    longitude: beepRoute.waypoints[0].location[0],
+  };
+
+  const destination = beepRoute && {
+    latitude: beepRoute.waypoints[1].location[1],
+    longitude: beepRoute.waypoints[1].location[0],
+  };
+
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
@@ -75,15 +107,28 @@ export function MainFindBeepScreen(props: Props) {
   const { location } = useLocation();
 
   useEffect(() => {
-    if (beepersLocation && mapRef.current) {
-      mapRef.current.fitToCoordinates(
-        location ? [beepersLocation, location.coords] : [beepersLocation],
-        {
-          edgePadding: { bottom: 200, left: 100, right: 100, top: 20 },
-        },
-      );
+    if (mapRef.current) {
+      if (beepersLocation) {
+        mapRef.current.fitToCoordinates(
+          location ? [beepersLocation, location.coords] : [beepersLocation],
+          {
+            edgePadding: { bottom: 200, left: 100, right: 100, top: 20 },
+          },
+        );
+      }
+
+      if (!beepersLocation && origin && destination) {
+        mapRef.current.fitToCoordinates(
+          location
+            ? [origin, destination, location.coords]
+            : [origin, destination],
+          {
+            edgePadding: { bottom: 200, left: 100, right: 100, top: 20 },
+          },
+        );
+      }
     }
-  }, [beepersLocation]);
+  }, [beepersLocation, origin, destination]);
 
   if (!beep) {
     return <StartBeepForm {...props.route.params} />;
@@ -96,6 +141,30 @@ export function MainFindBeepScreen(props: Props) {
           <AnimatedMarker
             latitude={beepersLocation.latitude}
             longitude={beepersLocation.longitude}
+          />
+        )}
+        {origin && (
+          <Marker
+            coordinate={origin}
+            title="Pick Up"
+            description={beep.origin}
+            identifier="origin"
+          />
+        )}
+        {destination && (
+          <Marker
+            coordinate={destination}
+            title="Drop Off"
+            description={beep.destination}
+            identifier="destination"
+          />
+        )}
+        {polylineCoordinates && (
+          <Polyline
+            coordinates={polylineCoordinates ?? []}
+            strokeWidth={5}
+            strokeColor="#3d8ae3"
+            lineCap="round"
           />
         )}
       </Map>
