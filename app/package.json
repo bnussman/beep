@@ -42,7 +42,7 @@
     "react-native": "0.81.4",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-keyboard-controller": "1.18.5",
-    "react-native-maps": "1.20.1",
+    "react-native-maps": "1.26.14",
     "react-native-purchases": "^9.1.0",
     "react-native-reanimated": "4.1.1",
     "react-native-safe-area-context": "5.6.1",
