@@ -96,18 +96,20 @@ export function BeepDetails(props: Props) {
 
   return (
     <View style={{ gap: 8, height: "100%" }}>
-      {polylineCoordinates && origin && destination && (
-        <Map ref={mapRef} style={{ height: "100%" }}>
-          <Marker coordinate={origin} identifier="origin" />
+      <Map ref={mapRef} style={{ height: "100%" }}>
+        {origin && <Marker coordinate={origin} identifier="origin" />}
+        {destination && (
           <Marker coordinate={destination} identifier="destination" />
+        )}
+        {polylineCoordinates && (
           <Polyline
             coordinates={polylineCoordinates ?? []}
             strokeWidth={5}
             strokeColor="#3d8ae3"
             lineCap="round"
           />
-        </Map>
-      )}
+        )}
+      </Map>
       <BottomSheet
         snapPoints={["20%", "85%"]}
         backgroundStyle={
