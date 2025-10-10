@@ -38,6 +38,13 @@ const config: ExpoConfig = {
   plugins: [
     ["expo-notifications"],
     [
+      "react-native-maps",
+      {
+        iosGoogleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0",
+        androidGoogleMapsApiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
+      },
+    ],
+    [
       "expo-location",
       {
         isIosBackgroundLocationEnabled: true,
