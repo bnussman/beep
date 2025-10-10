@@ -1,23 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import MapView from "react-native-maps";
+import BottomSheet from "@gorhom/bottom-sheet";
 import * as SplashScreen from "expo-splash-screen";
 import { Map } from "../../components/Map";
-import { LeaveButton } from "./LeaveButton";
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
-import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import { Rates } from "./Rates";
-import { PlaceInQueue } from "./PlaceInQueue";
 import { AnimatedMarker } from "../../components/AnimatedMarker";
-import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { StaticScreenProps, useTheme } from "@react-navigation/native";
 import { useTRPC } from "@/utils/trpc";
-import { getCurrentStatusMessage } from "./utils";
+import { RideStatus } from "./RideStatus";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { StartBeepForm } from "./StartBeepForm";
+import { useLocation } from "@/utils/location";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -26,6 +25,10 @@ type Props = StaticScreenProps<
 export function MainFindBeepScreen(props: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const colorScheme = useColorScheme();
+  const theme = useTheme();
+
+  const mapRef = useRef<MapView>(null);
 
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
@@ -69,162 +72,111 @@ export function MainFindBeepScreen(props: Props) {
     SplashScreen.hideAsync();
   }, []);
 
+  const { location } = useLocation();
+
+  useEffect(() => {
+    if (beepersLocation && mapRef.current) {
+      mapRef.current.fitToCoordinates(
+        location ? [beepersLocation, location.coords] : [beepersLocation],
+        {
+          edgePadding: { bottom: 200, left: 100, right: 100, top: 20 },
+        },
+      );
+    }
+  }, [beepersLocation]);
+
   if (!beep) {
     return <StartBeepForm {...props.route.params} />;
   }
 
-  if (isAcceptedBeep) {
-    return (
-      <View
-        style={{
-          height: "100%",
-          paddingHorizontal: 16,
-          paddingTop: 16,
-          gap: 8,
-          paddingBottom: 32,
-        }}
+  return (
+    <View style={{ height: "100%" }}>
+      <Map showsUserLocation style={{ flexGrow: 1 }} ref={mapRef}>
+        {beepersLocation && (
+          <AnimatedMarker
+            latitude={beepersLocation.latitude}
+            longitude={beepersLocation.longitude}
+          />
+        )}
+      </Map>
+      <BottomSheet
+        enableDynamicSizing={false}
+        snapPoints={[200, "50%", "100%"]}
+        backgroundStyle={
+          colorScheme === "dark" ? { backgroundColor: theme.colors.card } : {}
+        }
+        handleIndicatorStyle={
+          colorScheme === "dark" ? { backgroundColor: "white" } : {}
+        }
       >
-        <Card
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            width: "100%",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <View style={{ flexShrink: 1 }}>
-            <Text size="xl" weight="800">
-              {beep.beeper.first} {beep.beeper.last}
-            </Text>
-            <Text color="subtle">is your beeper</Text>
+        <View style={{ paddingHorizontal: 16, gap: 10 }}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <View style={{ flexShrink: 1 }}>
+              <Text weight="800">Beeper</Text>
+              <Text>
+                {beep.beeper.first} {beep.beeper.last}
+              </Text>
+            </View>
+            <Avatar size="sm" src={beep.beeper.photo ?? undefined} />
           </View>
-          <Avatar size="md" src={beep.beeper.photo ?? undefined} />
-        </Card>
-        <Card style={{ gap: 8 }}>
           <View>
-            <Text weight="bold">Pick Up</Text>
+            <Text weight="800">Current Status</Text>
+            <Text>
+              <RideStatus beep={beep} car={car} />
+            </Text>
+          </View>
+          {beep.status === "on_the_way" && (
+            <ETA beeperLocation={beepersLocation} />
+          )}
+          <View>
+            <Text weight="800">Pick Up</Text>
             <Text selectable>{beep.origin}</Text>
           </View>
           <View>
-            <Text weight="bold">Destination </Text>
+            <Text weight="800">Destination</Text>
             <Text selectable>{beep.destination}</Text>
           </View>
-          <Rates
-            singles={beep.beeper.singlesRate}
-            group={beep.beeper.groupRate}
-          />
-        </Card>
-        {beep.riders_before_accepted === 0 && (
-          <Card style={{ gap: 8 }}>
-            <Text weight="800" size="lg">
-              Current Status
+          <View>
+            <Text>
+              <Text weight="800">Rates</Text>{" "}
+              <Text color="subtle">(per person)</Text>
             </Text>
-            <Text>{getCurrentStatusMessage(beep, car)}</Text>
-          </Card>
-        )}
-        {beep.status === "on_the_way" && (
-          <ETA beeperLocation={beepersLocation} />
-        )}
-        {beep.riders_before_accepted > 0 && (
-          <PlaceInQueue
-            firstName={beep.beeper.first}
-            riders_before_accepted={beep.riders_before_accepted}
-            riders_before_unaccepted={beep.riders_before_unaccepted}
-            total_riders_waiting={beep.total_riders_waiting}
-          />
-        )}
-        {beep.status === "here" && car ? (
-          <Image
-            style={{
-              flexGrow: 1,
-              borderRadius: 12,
-              width: "100%",
-              minHeight: 100,
-            }}
-            resizeMode="cover"
-            src={car.photo}
-            alt={`car-${car.id}`}
-          />
-        ) : beepersLocation ? (
-          <Map
-            showsUserLocation
-            style={{
-              flexGrow: 1,
-              width: "100%",
-              borderRadius: 15,
-              overflow: "hidden",
-            }}
-            initialRegion={{
-              latitude: beepersLocation.latitude,
-              longitude: beepersLocation.longitude,
-              longitudeDelta: 0.05,
-              latitudeDelta: 0.05,
-            }}
-          >
-            <AnimatedMarker
-              latitude={beepersLocation.latitude}
-              longitude={beepersLocation.longitude}
-            />
-          </Map>
-        ) : null}
-      </View>
-    );
-  }
-
-  return (
-    <View
-      style={{
-        height: "100%",
-        padding: 16,
-        gap: 16,
-        paddingBottom: 32,
-      }}
-    >
-      <Card
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <View style={{ flexShrink: 1 }}>
-          <Text color="subtle">Waiting on</Text>
-          <Text size="xl" weight="800">
-            {beep.beeper.first} {beep.beeper.last}
-          </Text>
-          <Text color="subtle">to accept your request.</Text>
+            <Text>
+              <Text>${beep.beeper.singlesRate} for singles</Text> /{" "}
+              <Text>${beep.beeper.groupRate} for groups</Text>
+            </Text>
+          </View>
+          {car && (
+            <View>
+              <Text weight="800">Car</Text>
+              <View style={{ gap: 4 }}>
+                <Text>
+                  {car.make} {car.model} {car.year} ({car.color})
+                </Text>
+                <Image
+                  style={{
+                    flexGrow: 1,
+                    borderRadius: 12,
+                    width: "100%",
+                    minHeight: 200,
+                  }}
+                  resizeMode="cover"
+                  src={car.photo}
+                  alt={`car-${car.id}`}
+                />
+              </View>
+            </View>
+          )}
         </View>
-        <Avatar size="md" src={beep.beeper.photo ?? undefined} />
-      </Card>
-      <Card style={{ width: "100%", gap: 16 }}>
-        <View>
-          <Text weight="bold">Pick Up </Text>
-          <Text selectable>{beep.origin}</Text>
-        </View>
-        <View>
-          <Text weight="bold">Destination </Text>
-          <Text selectable>{beep.destination}</Text>
-        </View>
-        <View>
-          <Text weight="bold">Number of Riders </Text>
-          <Text>{beep.groupSize}</Text>
-        </View>
-        <Rates
-          singles={beep.beeper.singlesRate}
-          group={beep.beeper.groupRate}
-        />
-      </Card>
-      <PlaceInQueue
-        firstName={beep.beeper.first}
-        riders_before_accepted={beep.riders_before_accepted}
-        riders_before_unaccepted={beep.riders_before_unaccepted}
-        total_riders_waiting={beep.total_riders_waiting}
-      />
-      <View style={{ flexGrow: 1 }} />
-      <LeaveButton beepersId={beep.beeper.id} />
+      </BottomSheet>
     </View>
   );
 }

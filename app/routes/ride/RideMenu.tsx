@@ -65,6 +65,7 @@ export function RideMenu() {
         {
           title: "Contact",
           type: "submenu",
+          show: beep.status !== "waiting",
           options: [
             { title: "Call", onClick: () => call(beep.beeper.id) },
             { title: "Text", onClick: () => sms(beep.beeper.id) },
@@ -73,6 +74,7 @@ export function RideMenu() {
         {
           title: "Pay",
           type: "submenu",
+          show: beep.status !== "waiting",
           options: [
             {
               title: "Venmo",
