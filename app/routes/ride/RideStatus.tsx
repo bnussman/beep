@@ -14,6 +14,12 @@ export function RideStatus({ beep, car }: Props) {
 
   if (beep.status === "waiting") {
     const numberOfOtherRidersWaiting = beep.total_riders_waiting - 1;
+    const ridersAhead =
+      beep.riders_before_accepted + beep.riders_before_unaccepted;
+
+    const status = beep.queue[0]
+      ? getStatusOfBeepersCurrentRider(beep.queue[0].status)
+      : null;
 
     return (
       <View>
@@ -25,6 +31,13 @@ export function RideStatus({ beep, car }: Props) {
             {numberOfOtherRidersWaiting === 1 ? "is" : "are"} also waiting
           </Text>
         )}
+        {ridersAhead > 0 && numberOfOtherRidersWaiting !== ridersAhead && (
+          <Text color="subtle">
+            {ridersAhead} {ridersAhead === 1 ? "person" : "people"}{" "}
+            {ridersAhead === 1 ? "is" : "are"} ahead of you
+          </Text>
+        )}
+        <Text color="subtle">{status}</Text>
       </View>
     );
   }
@@ -79,7 +92,7 @@ function getStatusOfBeepersCurrentRider(
 ) {
   switch (status) {
     case "accepted":
-      return "They accepted their rider and will be on the way to pick them up soon.";
+      return "They accepted their current rider and will be on the way to pick them up soon.";
     case "on_the_way":
       return "They are on their way to get their current rider.";
     case "here":
