@@ -1,6 +1,6 @@
 {
   "name": "@beep/app",
-  "version": "2.18.0",
+  "version": "2.18.1",
   "main": "index.ts",
   "scripts": {
     "dev": "expo start --dev-client --web",
@@ -11,7 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@expo/ui": "0.2.0-beta.3",
+    "@expo/ui": "0.2.0-beta.7",
     "@gorhom/bottom-sheet": "5.2.6",
     "@react-native-async-storage/async-storage": "~2.2.0",
     "@react-native-menu/menu": "^2.0.0",
