@@ -31,7 +31,7 @@ export function RideStatus({ beep, car }: Props) {
             {numberOfOtherRidersWaiting === 1 ? "is" : "are"} also waiting
           </Text>
         )}
-        {ridersAhead > 0 && numberOfOtherRidersWaiting !== ridersAhead && (
+        {ridersAhead > 0 && (
           <Text color="subtle">
             {ridersAhead} {ridersAhead === 1 ? "person" : "people"}{" "}
             {ridersAhead === 1 ? "is" : "are"} ahead of you
