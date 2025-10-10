@@ -15,6 +15,7 @@ export function Menu(props: MenuProps) {
             .filter((option) => option.show === undefined || option.show)
             .map((option) => (
               <Button
+                key={option.title}
                 role={option.destructive ? "destructive" : undefined}
                 onPress={option.onClick}
               >

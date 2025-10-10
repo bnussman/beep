@@ -21,7 +21,7 @@ export function Menu(props: MenuProps) {
         {props.options
           .filter((option) => option.show === undefined || option.show)
           .map((option, index) => (
-            <button role="menuitem" key={index} onClick={option.onClick}>
+            <button role="menuitem" key={option.title} onClick={option.onClick}>
               {option.title}
             </button>
           ))}
