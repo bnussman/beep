@@ -82,8 +82,8 @@ export async function getBeeperQueue(beeperId: string) {
     where: and(inProgressBeep, eq(beep.beeper_id, beeperId)),
     orderBy: asc(beep.start),
     with: {
-      beeper: true,
-      rider: true,
+      beeper: { columns: { password: false, passwordType: false } },
+      rider: { columns: { password: false, passwordType: false } },
     },
   });
 }
