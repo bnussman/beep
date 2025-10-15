@@ -9,7 +9,7 @@ const config: ExpoConfig = {
   slug: "Beep",
   scheme: "beep",
   owner: "bnussman",
-  version: "2.18.0",
+  version: "2.18.1",
   githubUrl: "https://github.com/bnussman/Beep",
   primaryColor: "#575A62",
   icon: "./assets/icon.png",
@@ -38,6 +38,13 @@ const config: ExpoConfig = {
   plugins: [
     ["expo-notifications"],
     [
+      "react-native-maps",
+      {
+        iosGoogleMapsApiKey: "AIzaSyDpCZoq8gSeOxpqHzk1VBoC3XgajTcSjf0",
+        androidGoogleMapsApiKey: "AIzaSyCZGVtB12HMoeJ_9aIW9jdyue8Vc_XMNxc",
+      },
+    ],
+    [
       "expo-location",
       {
         isIosBackgroundLocationEnabled: true,
@@ -57,7 +64,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.ridebeep.App",
-    buildNumber: "33",
+    buildNumber: "34",
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
@@ -89,7 +96,7 @@ const config: ExpoConfig = {
   },
   android: {
     package: "app.ridebeep.App",
-    versionCode: 53,
+    versionCode: 54,
     googleServicesFile: "./google-services.json",
     permissions: [
       "ACCESS_COARSE_LOCATION",
