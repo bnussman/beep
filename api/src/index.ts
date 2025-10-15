@@ -1,7 +1,7 @@
-import { captureException } from '@sentry/bun';
-import { createContext, router } from './utils/trpc';
-import { userRouter } from './routers/user';
-import { authRouter } from './routers/auth';
+import { captureException } from "@sentry/bun";
+import { createContext, router } from "./utils/trpc";
+import { userRouter } from "./routers/user";
+import { authRouter } from "./routers/auth";
 import { reportRouter } from "./routers/report";
 import { ratingRouter } from "./routers/rating";
 import { carRouter } from "./routers/car";
@@ -15,10 +15,10 @@ import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
-import { createBunWSHandler } from './utils/ws';
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { getHTTPStatusCodeFromError } from '@trpc/server/http';
-import { CORS_HEADERS } from './utils/cors';
+import { createBunWSHandler } from "./utils/ws";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { getHTTPStatusCodeFromError } from "@trpc/server/http";
+import { CORS_HEADERS } from "./utils/cors";
 
 const appRouter = router({
   user: userRouter,
@@ -45,7 +45,7 @@ const websocket = createBunWSHandler({
   onError(error) {
     console.error(error.error);
     captureException(error.error, {
-      extra: { input: error.input, type: error }
+      extra: { input: error.input, type: error },
     });
   },
 });
@@ -55,14 +55,22 @@ Bun.serve({
     "/payments/webhook": handlePaymentWebook,
   },
   fetch(request, server) {
-    if (request.method === 'OPTIONS') {
-      return new Response('Departed', { headers: CORS_HEADERS });
+    if (request.method === "OPTIONS") {
+      return new Response("Departed", { headers: CORS_HEADERS });
     }
-    if (server.upgrade(request, { data: { req: request } })) {
+    if (
+      server.upgrade(request, {
+        data: {
+          req: request,
+          abortController: new AbortController(),
+          abortControllers: new Map(),
+        },
+      })
+    ) {
       return;
     }
     return fetchRequestHandler({
-      endpoint: '/',
+      endpoint: "/",
       req: request,
       router: appRouter,
       createContext,
@@ -70,16 +78,16 @@ Bun.serve({
         if (getHTTPStatusCodeFromError(error.error) >= 500) {
           console.error(error.error);
           captureException(error.error, {
-            extra: { input: error.input, type: error.type }
+            extra: { input: error.input, type: error.type },
           });
         }
       },
       responseMeta() {
         return { headers: CORS_HEADERS };
-      }
+      },
     });
   },
-  websocket
+  websocket,
 });
 
 console.info("🚕 Beep API Server Started");
