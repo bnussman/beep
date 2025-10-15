@@ -1,27 +1,26 @@
 import { z } from "zod";
+import { db } from "../utils/db";
+import { beep, payment, user } from "../../drizzle/schema";
+import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { sendNotification } from "../utils/notifications";
+import { pubSub } from "../utils/pubsub";
+import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
+import { getDistance } from "../logic/location";
+import { zAsyncIterable } from "../utils/zAsyncIterable";
 import {
   authedProcedure,
   mustBeInAcceptedBeep,
   router,
   verifiedProcedure,
 } from "../utils/trpc";
-import { db } from "../utils/db";
-import { beep, car, payment, user } from "../../drizzle/schema";
-import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
-import { sendNotification } from "../utils/notifications";
-import { pubSub } from "../utils/pubsub";
 import {
   getBeeperQueue,
-  getIsAcceptedBeep,
   getQueueSize,
   getRidersCurrentRide,
-  inProgressBeep,
+  getRidersDerivedFields,
   rideResponseSchema,
 } from "../logic/beep";
-import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
-import { getDistance } from "../logic/location";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -122,7 +121,7 @@ export const riderRouter = router({
         where: eq(user.id, input.beeperId),
       });
 
-      const queue = await getBeeperQueue(input.beeperId);
+      let queue = await getBeeperQueue(input.beeperId);
 
       if (!beeper) {
         throw new TRPCError({
@@ -159,7 +158,7 @@ export const riderRouter = router({
 
       await db.insert(beep).values(newBeep);
 
-      const newQueue = [
+      queue = [
         ...queue,
         {
           ...newBeep,
@@ -168,7 +167,13 @@ export const riderRouter = router({
         },
       ];
 
-      pubSub.publish("queue", beeper.id, { queue: newQueue });
+      pubSub.publish("queue", beeper.id, { queue });
+
+      for (const beep of queue) {
+        pubSub.publish("ride", beep.rider_id, {
+          ride: { ...beep, ...getRidersDerivedFields(beep, queue) },
+        });
+      }
 
       if (beeper.pushToken) {
         sendNotification({
@@ -182,14 +187,14 @@ export const riderRouter = router({
 
       return {
         ...newBeep,
-        position: queue.length,
+        ...getRidersDerivedFields(newBeep, queue),
         beeper,
       };
     }),
   currentRide: authedProcedure
     .output(rideResponseSchema.nullable())
-    .query(({ ctx }) => {
-      return getRidersCurrentRide(ctx.user.id);
+    .query(async ({ ctx }) => {
+      return await getRidersCurrentRide(ctx.user.id);
     }),
   currentRideUpdates: authedProcedure
     .output(
@@ -333,30 +338,10 @@ export const riderRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      let queue = await getBeeperQueue(input.beeperId);
+
       const beeper = await db.query.user.findFirst({
-        columns: {
-          password: false,
-          passwordType: false,
-        },
         where: eq(user.id, input.beeperId),
-        with: {
-          cars: {
-            where: eq(car.default, true),
-            limit: 1,
-          },
-          beeps: {
-            where: inProgressBeep,
-            orderBy: asc(beep.start),
-            with: {
-              rider: {
-                columns: {
-                  password: false,
-                  passwordType: false,
-                },
-              },
-            },
-          },
-        },
       });
 
       if (!beeper) {
@@ -366,7 +351,7 @@ export const riderRouter = router({
         });
       }
 
-      const entry = beeper.beeps.find((beep) => beep.rider.id === ctx.user.id);
+      const entry = queue.find((beep) => beep.rider.id === ctx.user.id);
 
       if (!entry) {
         throw new TRPCError({
@@ -388,26 +373,20 @@ export const riderRouter = router({
         .set({ status: "canceled", end: new Date() })
         .where(eq(beep.id, entry.id));
 
-      const newQueue = beeper.beeps
-        .filter((beep) => beep.id !== entry.id)
-        .map((b) => ({ ...b, beeper }));
+      queue = queue.filter((beep) => beep.id !== entry.id);
 
       pubSub.publish("ride", ctx.user.id, { ride: null });
-      pubSub.publish("queue", beeper.id, { queue: newQueue });
+      pubSub.publish("queue", beeper.id, { queue });
 
-      for (const beep of newQueue) {
-        const position = newQueue.filter(
-          (b) => getIsAcceptedBeep(b) && b.start < beep.start,
-        ).length;
-
+      for (const beep of queue) {
         pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, position },
+          ride: { ...beep, ...getRidersDerivedFields(beep, queue) },
         });
       }
 
       await db
         .update(user)
-        .set({ queueSize: getQueueSize(newQueue) })
+        .set({ queueSize: getQueueSize(queue) })
         .where(eq(user.id, beeper.id));
 
       return true;

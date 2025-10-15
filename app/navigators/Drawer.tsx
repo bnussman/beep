@@ -25,6 +25,7 @@ import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
 
 import { useMutation } from "@tanstack/react-query";
+import { RideMenu } from "@/routes/ride/RideMenu";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
@@ -132,6 +133,9 @@ export const Drawer = createDrawerNavigator({
     Ride: {
       screen: MainFindBeepScreen,
       if: useIsUserNotBeeping,
+      options: {
+        headerRight: () => <RideMenu />,
+      },
     },
     Beep: StartBeepingScreen,
     Cars: Cars,

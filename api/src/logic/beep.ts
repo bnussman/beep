@@ -1,5 +1,5 @@
 import z from "zod";
-import { and, asc, eq, lt, ne, or } from "drizzle-orm";
+import { and, asc, eq, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep, beepStatuses } from "../../drizzle/schema";
 
@@ -36,7 +36,11 @@ export const rideResponseSchema = z.object({
     singlesRate: z.number(),
     photo: z.string().nullable(),
   }),
-  position: z.number(),
+  riders_before_accepted: z.number(),
+  riders_before_unaccepted: z.number(),
+  riders_before_total: z.number(),
+  total_riders_waiting: z.number(),
+  queue: z.array(z.object({ id: z.string(), status: z.enum(beepStatuses) })),
 });
 
 export const queueResponseSchema = z.array(
@@ -77,15 +81,58 @@ export function getQueueSize(
   return queue.filter(getIsAcceptedBeep).length;
 }
 
+export function getTotalRidersBefore(
+  b: { start: Date },
+  queue: (typeof beep.$inferSelect)[],
+) {
+  return queue.filter((queueBeep) => queueBeep.start < b.start).length;
+}
+
+export function getAccptedRidersBefore(
+  b: { start: Date },
+  queue: (typeof beep.$inferSelect)[],
+) {
+  return queue.filter(
+    (queueBeep) => getIsAcceptedBeep(queueBeep) && queueBeep.start < b.start,
+  ).length;
+}
+
+export function getUnacceptedRidersBefore(
+  b: { start: Date },
+  queue: (typeof beep.$inferSelect)[],
+) {
+  return queue.filter(
+    (queueBeep) => !getIsAcceptedBeep(queueBeep) && queueBeep.start < b.start,
+  ).length;
+}
+
+export function getRidesWaiting(queue: (typeof beep.$inferSelect)[]) {
+  return queue.filter((queueBeep) => !getIsAcceptedBeep(queueBeep)).length;
+}
+
 export async function getBeeperQueue(beeperId: string) {
   return await db.query.beep.findMany({
     where: and(inProgressBeep, eq(beep.beeper_id, beeperId)),
     orderBy: asc(beep.start),
     with: {
-      beeper: true,
-      rider: true,
+      beeper: { columns: { password: false, passwordType: false } },
+      rider: { columns: { password: false, passwordType: false } },
     },
   });
+}
+
+export function getRidersDerivedFields(
+  b: { start: Date },
+  queue: (typeof beep.$inferSelect)[],
+) {
+  return {
+    riders_before_accepted: getAccptedRidersBefore(b, queue),
+    riders_before_unaccepted: getUnacceptedRidersBefore(b, queue),
+    riders_before_total: getTotalRidersBefore(b, queue),
+    total_riders_waiting: queue.filter((beep) => beep.status === "waiting")
+      .length,
+    queue: queue.map((beep) => ({ status: beep.status, id: beep.id })),
+  };
 }
 
 export async function getRidersCurrentRide(userId: string) {
@@ -100,18 +147,10 @@ export async function getRidersCurrentRide(userId: string) {
     return null;
   }
 
-  const position = await db.$count(
-    beep,
-    and(
-      eq(beep.beeper_id, b.beeper_id),
-      lt(beep.start, b.start),
-      ne(beep.status, "waiting"),
-      inProgressBeep,
-    ),
-  );
+  const queue = await getBeeperQueue(b.beeper.id);
 
   return {
     ...b,
-    position,
+    ...getRidersDerivedFields(b, queue),
   };
 }

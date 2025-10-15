@@ -1,8 +1,7 @@
-import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useLocation } from "@/utils/location";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 import { skipToken, useQuery } from "@tanstack/react-query";
 
@@ -33,7 +32,7 @@ export function ETA(props: Props) {
 
   const renderContent = () => {
     if (isPending) {
-      return <ActivityIndicator />;
+      return <ActivityIndicator size="small" />;
     }
 
     if (error) {
@@ -44,18 +43,9 @@ export function ETA(props: Props) {
   };
 
   return (
-    <Card
-      style={{
-        padding: 16,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <Text size="xl" weight="800">
-        ETA
-      </Text>
+    <View>
+      <Text weight="800">ETA</Text>
       {renderContent()}
-    </Card>
+    </View>
   );
 }
