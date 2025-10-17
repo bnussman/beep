@@ -71,29 +71,32 @@ export function RideDetails() {
   if (isAcceptedBeep) {
     return (
       <View style={{ height: "100%", padding: 16, gap: 16, paddingBottom: 32 }}>
-        <View
+        <Card
           style={{
             display: "flex",
             flexDirection: "row",
-            width: "100%",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <View style={{ flexShrink: 1 }}>
-            <Text size="3xl" weight="800">
+            <Text size="xl" weight="800">
               {beep.beeper.first} {beep.beeper.last}
             </Text>
-            <Text>
-              <Text weight="bold">Pick Up </Text>
-              <Text>{beep.origin}</Text>
-            </Text>
-            <Text>
-              <Text weight="bold">Destination </Text>
-              <Text>{beep.destination}</Text>
-            </Text>
+            <Text color="subtle">is your beeper</Text>
           </View>
-          <Avatar size="lg" src={beep.beeper.photo ?? undefined} />
-        </View>
+          <Avatar size="md" src={beep.beeper.photo ?? undefined} />
+        </Card>
+        <Card style={{ gap: 8 }}>
+          <View>
+            <Text weight="800">Pick Up </Text>
+            <Text>{beep.origin}</Text>
+          </View>
+          <View>
+            <Text weight="800">Destination </Text>
+            <Text>{beep.destination}</Text>
+          </View>
+        </Card>
         <Rates
           singles={beep.beeper.singlesRate}
           group={beep.beeper.groupRate}

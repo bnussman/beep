@@ -71,7 +71,7 @@ export function RideMap() {
 
       mapRef.current?.fitToCoordinates(locations, {
         animated: true,
-        edgePadding: { bottom: 200, left: 50, right: 50, top: 50 },
+        edgePadding: { bottom: 200, left: 100, right: 100, top: 100 },
       });
     } else {
       const locations = [
@@ -83,7 +83,7 @@ export function RideMap() {
 
       mapRef.current?.fitToCoordinates(locations, {
         animated: true,
-        edgePadding: { bottom: 200, left: 50, right: 50, top: 50 },
+        edgePadding: { bottom: 200, left: 100, right: 100, top: 100 },
       });
     }
   }, [beepersLocation, location, origin, destination, beep]);
