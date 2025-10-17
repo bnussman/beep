@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/Avatar";
+import { BottomSheet } from "@/components/BottomSheet";
 import { Map } from "@/components/Map";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
@@ -7,7 +8,7 @@ import { decodePolyline, getMiles } from "@/utils/location";
 import { useTheme } from "@/utils/theme";
 import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
@@ -110,13 +111,7 @@ export function BeepDetails(props: Props) {
           />
         )}
       </Map>
-      <BottomSheet
-        snapPoints={["20%", "85%"]}
-        backgroundStyle={
-          colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}
-        }
-        handleIndicatorStyle={{ backgroundColor: theme.text.primary }}
-      >
+      <BottomSheet snapPoints={["20%", "85%"]}>
         <BottomSheetView style={{ gap: 8, paddingHorizontal: 16 }}>
           <View>
             <Text weight="800">

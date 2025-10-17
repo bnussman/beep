@@ -3,7 +3,6 @@ import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useLocation } from "@/utils/location";
 import { ActivityIndicator } from "react-native";
-
 import { skipToken, useQuery } from "@tanstack/react-query";
 
 interface Location {

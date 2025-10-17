@@ -1,11 +1,13 @@
-import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Text } from "@/components/Text";
 import { QueueItem } from "./QueueItem";
-import { Pressable, useColorScheme } from "react-native";
+import { Pressable } from "react-native";
 import { View } from "react-native";
 import { useRef } from "react";
 import { isWeb } from "@/utils/constants";
 import { RouterOutput } from "@/utils/trpc";
+import { BottomSheet } from "@/components/BottomSheet";
+import BottomSheetRef from "@gorhom/bottom-sheet";
 
 interface Props {
   beeps: RouterOutput["beeper"]["queue"];
@@ -15,9 +17,8 @@ interface Props {
 
 export function Queue(props: Props) {
   const { beeps, onRefresh, refreshing } = props;
-  const colorScheme = useColorScheme();
 
-  const ref = useRef<BottomSheet>(null);
+  const ref = useRef<BottomSheetRef>(null);
   const drawerPositionIndex = useRef<number>(0);
 
   const hasUnacceptedBeep = beeps.some((beep) => beep.status === "waiting");
@@ -30,12 +31,6 @@ export function Queue(props: Props) {
       }}
       enableDynamicSizing={false}
       snapPoints={["10%", "50%", isWeb ? "90%" : "100%"]}
-      backgroundStyle={
-        colorScheme === "dark" ? { backgroundColor: "#1c1c1c" } : {}
-      }
-      handleIndicatorStyle={
-        colorScheme === "dark" ? { backgroundColor: "white" } : {}
-      }
     >
       <Pressable
         style={{
