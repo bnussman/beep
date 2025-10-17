@@ -13,14 +13,15 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment:
       name: dev
       url: https://dev.ridebeep.app
-    container:
-      image: ghcr.io/actions/actions-runner
-      options: --user root
     steps:
+      - name: Set up WireGuard Connection
+        uses: niklaskeerl/easy-wireguard-action@v2
+        with:
+          WG_CONFIG_FILE: ${{ secrets.WG_CONFIG_FILE }}
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
         with:
