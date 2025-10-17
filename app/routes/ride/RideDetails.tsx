@@ -1,5 +1,4 @@
 import React from "react";
-import { Map } from "../../components/Map";
 import { LeaveButton } from "./LeaveButton";
 import { View } from "react-native";
 import { Avatar } from "@/components/Avatar";
@@ -9,7 +8,6 @@ import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
-import { AnimatedMarker } from "../../components/AnimatedMarker";
 import { useTRPC } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";

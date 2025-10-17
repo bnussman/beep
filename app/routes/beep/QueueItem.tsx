@@ -47,15 +47,6 @@ export function QueueItem({ item: beep }: Props) {
 
   const route = beepRoute?.routes[0];
 
-  useEffect(() => {
-    if (mapRef.current) {
-      mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
-        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-        animated: true,
-      });
-    }
-  }, [beepRoute]);
-
   const polylineCoordinates = route?.legs
     .flatMap((leg) => leg.steps)
     .map((step) => decodePolyline(step.geometry))
@@ -70,6 +61,15 @@ export function QueueItem({ item: beep }: Props) {
     latitude: beepRoute.waypoints[1].location[1],
     longitude: beepRoute.waypoints[1].location[0],
   };
+
+  useEffect(() => {
+    if (mapRef.current && origin && destination) {
+      mapRef.current.fitToCoordinates([origin, destination], {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
+    }
+  }, [origin, destination]);
 
   const onPromptCancel = () => {
     if (isMobile) {
@@ -218,7 +218,7 @@ export function QueueItem({ item: beep }: Props) {
           {polylineCoordinates && origin && destination && (
             <Map
               ref={mapRef}
-              style={{ height: 200, borderRadius: 8 }}
+              style={{ height: 200, borderRadius: 10, overflow: "hidden" }}
               onStartShouldSetResponder={(event) => true}
             >
               <Marker coordinate={origin} identifier="origin" />

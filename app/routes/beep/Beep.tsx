@@ -74,13 +74,13 @@ export function Beep(props: Props) {
   const ref = useRef<MapView>(null);
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.fitToSuppliedMarkers(["origin", "destination"], {
+    if (ref.current && origin && destination) {
+      ref.current.fitToCoordinates([origin, destination], {
         edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
         animated: true,
       });
     }
-  }, [beepRoute]);
+  }, [origin, destination]);
 
   const onPress = () => {
     if (isMobile) {
@@ -235,7 +235,7 @@ export function Beep(props: Props) {
           <Map
             key={beep.id}
             ref={ref}
-            style={{ borderRadius: 8, flexGrow: 1 }}
+            style={{ borderRadius: 10, flexGrow: 1, overflow: "hidden" }}
             onStartShouldSetResponder={(event) => true}
             showsUserLocation
           >
