@@ -7,13 +7,13 @@ import { and, eq } from "drizzle-orm";
 import { beep, car, user } from "../../drizzle/schema";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
+import { zAsyncIterable } from "../utils/zAsyncIterable";
 import {
   getBeeperQueue,
   getIsAcceptedBeep,
   getQueueSize,
   queueResponseSchema,
 } from "../logic/beep";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
 
 export const beeperRouter = router({
   queue: authedProcedure
@@ -88,7 +88,7 @@ export const beeperRouter = router({
     )
     .output(queueResponseSchema)
     .mutation(async ({ input, ctx }) => {
-      const queue = await getBeeperQueue(ctx.user.id);
+      let queue = await getBeeperQueue(ctx.user.id);
 
       const queueEntry = queue.find((entry) => entry.id === input.beepId);
 
@@ -229,17 +229,17 @@ export const beeperRouter = router({
         }
       }
 
-      const newQueue = queue.filter(
+      queue = queue.filter(
         (beep) =>
           beep.status !== "complete" &&
           beep.status !== "denied" &&
           beep.status !== "canceled",
       );
 
-      pubSub.publish("queue", ctx.user.id, { queue: newQueue });
+      pubSub.publish("queue", ctx.user.id, { queue });
 
-      for (const beep of newQueue) {
-        const position = newQueue.filter(
+      for (const beep of queue) {
+        const position = queue.filter(
           (b) => getIsAcceptedBeep(b) && b.start < beep.start,
         ).length;
 
@@ -248,6 +248,6 @@ export const beeperRouter = router({
         });
       }
 
-      return newQueue;
+      return queue;
     }),
 });

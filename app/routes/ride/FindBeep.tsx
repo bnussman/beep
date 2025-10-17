@@ -1,27 +1,21 @@
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
-import { LocationInput } from "../../components/LocationInput";
-import { Controller, useForm } from "react-hook-form";
-import { BeepersMap } from "./BeepersMap";
 import { Map } from "../../components/Map";
 import { LeaveButton } from "./LeaveButton";
 import { View } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
 import { Card } from "@/components/Card";
-import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
-import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
 import { AnimatedMarker } from "../../components/AnimatedMarker";
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { RouterInput, useTRPC } from "@/utils/trpc";
+import { RiderForm } from "./RiderForm";
+import { StaticScreenProps } from "@react-navigation/native";
+import { useTRPC } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";
-import { RateLastBeeper } from "./RateLastBeeper";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -40,8 +34,6 @@ type Props = StaticScreenProps<
 export function MainFindBeepScreen(props: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-
-  const { navigate } = useNavigation();
 
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
@@ -81,130 +73,12 @@ export function MainFindBeepScreen(props: Props) {
     ),
   );
 
-  const {
-    control,
-    handleSubmit,
-    setFocus,
-    formState: { errors },
-  } = useForm<Omit<RouterInput["rider"]["startBeep"], "beeperId">>({
-    defaultValues: {
-      groupSize: undefined,
-      origin: props.route.params?.origin ?? "",
-      destination: props.route.params?.destination ?? "",
-    },
-    values: {
-      // @ts-expect-error we don't want a default group size
-      groupSize: props.route.params?.groupSize
-        ? Number(props.route.params.groupSize)
-        : undefined,
-      origin: props.route.params?.origin ?? "",
-      destination: props.route.params?.destination ?? "",
-    },
-  });
-
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
 
-  const findBeep = handleSubmit((values) => {
-    // @ts-expect-error i don't even care
-    navigate("Choose Beeper", values);
-  });
-
   if (!beep) {
-    return (
-      <KeyboardAwareScrollView
-        scrollEnabled={false}
-        contentContainerStyle={{ padding: 16, gap: 12 }}
-      >
-        <View style={{ gap: 4 }}>
-          <Label htmlFor="groupSize">Group Size</Label>
-          <Controller
-            name="groupSize"
-            rules={{
-              required: "Group size is required",
-              validate: (value) => {
-                if (value > 100) {
-                  return "Too large";
-                }
-                if (value < 1) {
-                  return "Too small";
-                }
-                return true;
-              },
-            }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="groupSize"
-                inputMode="numeric"
-                onBlur={onBlur}
-                onChangeText={(value) => {
-                  if (value === "") {
-                    onChange("");
-                  } else if (value.length > 3) {
-                    onChange(Number(value.substring(0, 3)));
-                  } else {
-                    onChange(Number(value));
-                  }
-                }}
-                value={value === undefined ? "" : String(value)}
-                ref={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("origin")}
-              />
-            )}
-          />
-          <Text color="error">{errors.groupSize?.message}</Text>
-        </View>
-        <View style={{ gap: 4 }}>
-          <Label htmlFor="origin">Pick Up Location</Label>
-          <Controller
-            name="origin"
-            rules={{ required: "Pick up location is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <LocationInput
-                id="origin"
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                inputRef={ref}
-                returnKeyLabel="next"
-                returnKeyType="next"
-                onSubmitEditing={() => setFocus("destination")}
-              />
-            )}
-          />
-          <Text color="error">{errors.origin?.message}</Text>
-        </View>
-        <View style={{ gap: 4 }}>
-          <Label htmlFor="destination">Destination Location</Label>
-          <Controller
-            name="destination"
-            rules={{ required: "Destination location is required" }}
-            control={control}
-            render={({ field: { onChange, onBlur, value, ref } }) => (
-              <Input
-                id="destination"
-                onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
-                value={value}
-                ref={ref}
-                returnKeyType="go"
-                onSubmitEditing={() => findBeep()}
-                textContentType="fullStreetAddress"
-              />
-            )}
-          />
-          <Text color="error">{errors.destination?.message}</Text>
-        </View>
-        <Button onPress={() => findBeep()}>Find Beep</Button>
-        <BeepersMap />
-        <RateLastBeeper />
-      </KeyboardAwareScrollView>
-    );
+    return <RiderForm />;
   }
 
   if (isAcceptedBeep) {
