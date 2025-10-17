@@ -7,9 +7,14 @@ on:
 
 jobs:
   backup-and-upload:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Set up WireGuard Connection
+        uses: niklaskeerl/easy-wireguard-action@v2
+        with:
+          WG_CONFIG_FILE: ${{ secrets.WG_CONFIG_FILE }}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
