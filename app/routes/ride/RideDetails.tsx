@@ -117,7 +117,7 @@ export function RideDetails() {
             position={beep.position}
           />
         )}
-        {beep.status === "here" && car ? (
+        {beep.status === "here" && car && (
           <Image
             style={{
               flexGrow: 1,
@@ -129,28 +129,7 @@ export function RideDetails() {
             src={car.photo}
             alt={`car-${car.id}`}
           />
-        ) : beepersLocation ? (
-          <Map
-            showsUserLocation
-            style={{
-              flexGrow: 1,
-              width: "100%",
-              borderRadius: 15,
-              overflow: "hidden",
-            }}
-            initialRegion={{
-              latitude: beepersLocation.latitude,
-              longitude: beepersLocation.longitude,
-              longitudeDelta: 0.05,
-              latitudeDelta: 0.05,
-            }}
-          >
-            <AnimatedMarker
-              latitude={beepersLocation.latitude}
-              longitude={beepersLocation.longitude}
-            />
-          </Map>
-        ) : null}
+        )}
         <View style={{ gap: 8 }}>
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Button
@@ -261,7 +240,6 @@ export function RideDetails() {
       </Card>
       <Rates singles={beep.beeper.singlesRate} group={beep.beeper.groupRate} />
       <PlaceInQueue firstName={beep.beeper.first} position={beep.position} />
-      <View style={{ flexGrow: 1 }} />
       <LeaveButton beepersId={beep.beeper.id} />
     </View>
   );

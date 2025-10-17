@@ -5,22 +5,19 @@ import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { Text } from "@/components/Text";
 import { decodePolyline, getMiles } from "@/utils/location";
-import { useTheme } from "@/utils/theme";
 import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { ActivityIndicator, useColorScheme, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import MapView from "react-native-maps";
 
 type Props = StaticScreenProps<{ beepId: string }>;
 
 export function BeepDetails(props: Props) {
   const trpc = useTRPC();
-  const theme = useTheme();
-  const colorScheme = useColorScheme();
   const { user } = useUser();
 
   const mapRef = useRef<MapView>(null);
@@ -33,13 +30,12 @@ export function BeepDetails(props: Props) {
 
   const { data: route } = useQuery(
     trpc.location.getRoute.queryOptions(
-      {
-        origin: beep?.origin ?? "",
-        destination: beep?.destination ?? "",
-      },
-      {
-        enabled: !!beep,
-      },
+      beep
+        ? {
+            origin: beep.origin,
+            destination: beep.destination,
+          }
+        : skipToken,
     ),
   );
 

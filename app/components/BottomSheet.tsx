@@ -13,6 +13,7 @@ export function BottomSheet(props: Props) {
     <GorhomBottomSheet
       backgroundStyle={{ backgroundColor: theme.colors.card }}
       handleIndicatorStyle={{ backgroundColor: theme.colors.text }}
+      enableDynamicSizing={false}
       {...props}
     />
   );

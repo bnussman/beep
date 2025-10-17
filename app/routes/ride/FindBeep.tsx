@@ -8,6 +8,10 @@ import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { RideDetails } from "./RideDetails";
 import { BottomSheet } from "@/components/BottomSheet";
+import { View } from "react-native";
+import { Map } from "@/components/Map";
+import { RideMap } from "./RideMap";
+import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -42,8 +46,13 @@ export function MainFindBeepScreen(props: Props) {
   }
 
   return (
-    <BottomSheet snapPoints={["20%", "85%"]}>
-      <RideDetails />
-    </BottomSheet>
+    <View style={{ flex: 1 }}>
+      <RideMap />
+      <BottomSheet enableDynamicSizing snapPoints={["30%"]}>
+        <BottomSheetView>
+          <RideDetails />
+        </BottomSheetView>
+      </BottomSheet>
+    </View>
   );
 }
