@@ -103,6 +103,10 @@ export function RideMenu() {
           title: "Cancel Ride",
           destructive: true,
           onClick: leaveQueue,
+          show:
+            beep.status === "waiting" ||
+            beep.position >= 1 ||
+            (beep.position === 0 && beep.status === "accepted"),
         },
       ]}
     />

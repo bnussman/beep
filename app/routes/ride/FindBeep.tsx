@@ -3,7 +3,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { RiderForm } from "./RiderForm";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useTRPC } from "@/utils/trpc";
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { RideDetails } from "./RideDetails";
@@ -23,6 +23,12 @@ export function MainFindBeepScreen(props: Props) {
 
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
+  const isAcceptedBeep =
+    beep?.status === "accepted" ||
+    beep?.status === "in_progress" ||
+    beep?.status === "here" ||
+    beep?.status === "on_the_way";
+
   useSubscription(
     trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
       onData(data) {
@@ -35,6 +41,15 @@ export function MainFindBeepScreen(props: Props) {
       },
       enabled: Boolean(beep),
     }),
+  );
+
+  const { data: beepersLocation } = useSubscription(
+    trpc.rider.beeperLocationUpdates.subscriptionOptions(
+      beep ? beep.beeper.id : skipToken,
+      {
+        enabled: isAcceptedBeep,
+      },
+    ),
   );
 
   useEffect(() => {
@@ -50,7 +65,7 @@ export function MainFindBeepScreen(props: Props) {
       <RideMap />
       <BottomSheet enableDynamicSizing snapPoints={["30%"]}>
         <BottomSheetView>
-          <RideDetails />
+          <RideDetails beepersLocation={beepersLocation} />
         </BottomSheetView>
       </BottomSheet>
     </View>

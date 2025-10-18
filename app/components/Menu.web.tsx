@@ -5,6 +5,19 @@ export function Menu(props: MenuProps) {
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
 
+  const renderOption = (
+    option: MenuProps["options"][number],
+  ): React.ReactNode => {
+    if (option.type === "submenu") {
+      return option.options?.map(renderOption);
+    }
+    return (
+      <button key={option.title} role="menuitem" onClick={option.onClick}>
+        {option.title}
+      </button>
+    );
+  };
+
   return (
     <>
       <button
@@ -20,11 +33,7 @@ export function Menu(props: MenuProps) {
       <div popover="" popoverTargetAction="toggle" id={id} ref={ref}>
         {props.options
           .filter((option) => option.show === undefined || option.show)
-          .map((option, index) => (
-            <button role="menuitem" key={option.title} onClick={option.onClick}>
-              {option.title}
-            </button>
-          ))}
+          .map(renderOption)}
       </div>
     </>
   );

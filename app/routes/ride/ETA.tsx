@@ -1,4 +1,3 @@
-import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useLocation } from "@/utils/location";

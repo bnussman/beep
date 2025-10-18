@@ -4,7 +4,6 @@ import { View } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
 import { Card } from "@/components/Card";
-import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
@@ -12,35 +11,20 @@ import { useTRPC } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  call,
-  openCashApp,
-  openVenmo,
-  shareVenmoInformation,
-  sms,
-} from "../../utils/links";
 
-export function RideDetails() {
+interface Props {
+  beepersLocation:
+    | {
+        latitude: number;
+        longitude: number;
+      }
+    | undefined;
+}
+
+export function RideDetails(props: Props) {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
 
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
-
-  useSubscription(
-    trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
-      onData(data) {
-        if (data === null) {
-          queryClient.invalidateQueries(
-            trpc.rider.getLastBeepToRate.pathFilter(),
-          );
-        }
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
-      },
-      enabled: Boolean(beep),
-    }),
-  );
 
   const isAcceptedBeep =
     beep?.status === "accepted" ||
@@ -52,15 +36,6 @@ export function RideDetails() {
     trpc.user.getUsersDefaultCar.queryOptions(
       beep ? beep.beeper.id : skipToken,
       { enabled: isAcceptedBeep },
-    ),
-  );
-
-  const { data: beepersLocation } = useSubscription(
-    trpc.rider.beeperLocationUpdates.subscriptionOptions(
-      beep ? beep.beeper.id : skipToken,
-      {
-        enabled: isAcceptedBeep,
-      },
     ),
   );
 
@@ -129,77 +104,13 @@ export function RideDetails() {
           group={beep.beeper.groupRate}
         />
         {beep.status === "on_the_way" && (
-          <ETA beeperLocation={beepersLocation} />
+          <ETA beeperLocation={props.beepersLocation} />
         )}
         {beep.position > 0 && (
           <PlaceInQueue
             firstName={beep.beeper.first}
             position={beep.position}
           />
-        )}
-
-        <View style={{ gap: 8 }}>
-          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-            <Button
-              style={{ flexGrow: 1 }}
-              onPress={() => call(beep.beeper.id)}
-            >
-              Call 📞
-            </Button>
-            <Button style={{ flexGrow: 1 }} onPress={() => sms(beep.beeper.id)}>
-              Text 💬
-            </Button>
-          </View>
-          {beep.beeper.cashapp && (
-            <Button
-              onPress={() =>
-                openCashApp(
-                  beep.beeper.cashapp,
-                  beep.groupSize,
-                  beep.beeper.groupRate,
-                  beep.beeper.singlesRate,
-                )
-              }
-            >
-              Pay Beeper with Cash App 💵
-            </Button>
-          )}
-          <View style={{ flexDirection: "row", gap: 8 }}>
-            {beep.beeper.venmo && (
-              <Button
-                style={{ flexGrow: 1 }}
-                onPress={() =>
-                  openVenmo(
-                    beep.beeper.venmo,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate,
-                    "pay",
-                  )
-                }
-              >
-                Pay with Venmo 💵
-              </Button>
-            )}
-            {beep.beeper.venmo && beep.groupSize > 1 && (
-              <Button
-                onPress={() =>
-                  shareVenmoInformation(
-                    beep.beeper.venmo,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate,
-                  )
-                }
-              >
-                Share Venmo 🔗
-              </Button>
-            )}
-          </View>
-        </View>
-        {(beep.position >= 1 ||
-          (beep.position === 0 && beep.status === "accepted")) && (
-          <LeaveButton beepersId={beep.beeper.id} />
         )}
       </View>
     );

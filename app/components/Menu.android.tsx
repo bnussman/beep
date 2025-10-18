@@ -23,6 +23,11 @@ export function Menu(props: MenuProps) {
             id: option.title,
             title: option.title,
             attributes: option.destructive ? { destructive: true } : {},
+            subactions: option.options?.map((o) => ({
+              id: option.title,
+              title: option.title,
+              attributes: option.destructive ? { destructive: true } : {},
+            })),
           }))}
         shouldOpenOnLongPress={props.activationMethod === "longPress"}
       >
