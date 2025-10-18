@@ -137,38 +137,37 @@ export const Drawer = createDrawerNavigator({
       headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
       header: ({}) => (
-        <View>
-          <Host>
-            <HStack modifiers={[padding({ horizontal: 12 })]}>
-              <IOSButton variant="glass" modifiers={[fixedSize()]}>
-                <IOSImage
-                  systemName="line.3.horizontal"
-                  modifiers={[
-                    frame({
-                      height: 40,
-                      width: 32,
-                      alignment: "center",
-                    }),
-                  ]}
-                />
-              </IOSButton>
-              <Spacer />
-              <IOSButton variant="glass" modifiers={[fixedSize()]}>
-                <IOSImage
-                  systemName="ellipsis"
-                  modifiers={[
-                    // cornerRadius(32 / 2),
-                    frame({
-                      height: 40,
-                      width: 32,
-                      alignment: "center",
-                    }),
-                  ]}
-                />
-              </IOSButton>
-            </HStack>
-          </Host>
-        </View>
+        <Host>
+          <HStack
+            modifiers={[padding({ top: 48 }), padding({ horizontal: 12 })]}
+          >
+            <IOSButton variant="glass" modifiers={[fixedSize()]}>
+              <IOSImage
+                systemName="line.3.horizontal"
+                modifiers={[
+                  frame({
+                    height: 40,
+                    width: 32,
+                    alignment: "center",
+                  }),
+                ]}
+              />
+            </IOSButton>
+            <Spacer />
+            <IOSButton variant="glassProminent" modifiers={[fixedSize()]}>
+              <IOSImage
+                systemName="ellipsis"
+                modifiers={[
+                  frame({
+                    height: 40,
+                    width: 32,
+                    alignment: "center",
+                  }),
+                ]}
+              />
+            </IOSButton>
+          </HStack>
+        </Host>
       ),
     };
   },
