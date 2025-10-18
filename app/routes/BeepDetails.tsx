@@ -39,10 +39,6 @@ export function BeepDetails(props: Props) {
     ),
   );
 
-  useEffect(() => {
-    mapRef.current?.fitToSuppliedMarkers(["origin", "destination"]);
-  }, [route]);
-
   const polylineCoordinates = route?.routes[0].legs
     .flatMap((leg) => leg.steps)
     .map((step) => decodePolyline(step.geometry))
@@ -57,6 +53,14 @@ export function BeepDetails(props: Props) {
     latitude: route.waypoints[1].location[1],
     longitude: route.waypoints[1].location[0],
   };
+
+  useEffect(() => {
+    const locations = [origin, destination].filter((l) => l !== undefined);
+    mapRef.current?.fitToCoordinates(locations, {
+      animated: true,
+      edgePadding: { bottom: 100, left: 50, right: 50, top: 50 },
+    });
+  }, [origin, destination]);
 
   const otherUser = beep?.rider_id === user?.id ? beep?.beeper : beep?.rider;
 
