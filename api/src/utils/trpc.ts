@@ -125,7 +125,7 @@ export const mustHaveBeenInAcceptedBeep = t.procedure
 
 export const mustBeInAcceptedBeep = t.procedure
   .input(z.string())
-  .use(async function checkIfUserHasBeenInAnAcceptedBeep(opts) {
+  .use(async function checkIfUserIsInAnAcceptedBeep(opts) {
     if (!opts.ctx.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
