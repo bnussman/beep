@@ -23,7 +23,19 @@ import {
 } from "@react-navigation/drawer";
 import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
-
+import {
+  Button as IOSButton,
+  Host,
+  HStack,
+  Spacer,
+  Image as IOSImage,
+} from "@expo/ui/swift-ui";
+import {
+  fixedSize,
+  padding,
+  frame,
+  cornerRadius,
+} from "@expo/ui/swift-ui/modifiers";
 import { useMutation } from "@tanstack/react-query";
 import { RideMenu } from "@/routes/ride/RideMenu";
 
@@ -124,6 +136,40 @@ export const Drawer = createDrawerNavigator({
       headerBackButtonDisplayMode: "generic",
       headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
+      header: ({}) => (
+        <View>
+          <Host>
+            <HStack modifiers={[padding({ horizontal: 12 })]}>
+              <IOSButton variant="glass" modifiers={[fixedSize()]}>
+                <IOSImage
+                  systemName="line.3.horizontal"
+                  modifiers={[
+                    frame({
+                      height: 40,
+                      width: 32,
+                      alignment: "center",
+                    }),
+                  ]}
+                />
+              </IOSButton>
+              <Spacer />
+              <IOSButton variant="glass" modifiers={[fixedSize()]}>
+                <IOSImage
+                  systemName="ellipsis"
+                  modifiers={[
+                    // cornerRadius(32 / 2),
+                    frame({
+                      height: 40,
+                      width: 32,
+                      alignment: "center",
+                    }),
+                  ]}
+                />
+              </IOSButton>
+            </HStack>
+          </Host>
+        </View>
+      ),
     };
   },
   drawerContent: (props: DrawerContentComponentProps) => (
