@@ -82,7 +82,7 @@ export function RideMap({ beepersLocation }: Props) {
   }, [beepersLocation, location, origin, destination, beep]);
 
   return (
-    <Map style={{ flex: 1 }} ref={mapRef} showsMyLocationButton>
+    <Map style={{ flex: 1 }} ref={mapRef} showsUserLocation>
       {beepersLocation && <AnimatedMarker {...beepersLocation} />}
       {origin && (
         <Marker
