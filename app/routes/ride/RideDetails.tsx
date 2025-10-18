@@ -70,45 +70,64 @@ export function RideDetails() {
 
   if (isAcceptedBeep) {
     return (
-      <View style={{ height: "100%", padding: 16, gap: 16, paddingBottom: 32 }}>
-        <Card
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <View style={{ flexShrink: 1 }}>
-            <Text size="xl" weight="800">
+      <View
+        style={{
+          height: "100%",
+          padding: 16,
+          gap: 16,
+          paddingBottom: 32,
+          paddingTop: 0,
+        }}
+      >
+        <View>
+          <Text weight="800">Beeper</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Text>
               {beep.beeper.first} {beep.beeper.last}
             </Text>
-            <Text color="subtle">is your beeper</Text>
+            <Avatar
+              style={{ width: 24, height: 24 }}
+              src={beep.beeper.photo ?? undefined}
+            />
           </View>
-          <Avatar size="md" src={beep.beeper.photo ?? undefined} />
-        </Card>
-        <Card style={{ gap: 8 }}>
+        </View>
+        {beep.position <= 0 && (
           <View>
-            <Text weight="800">Pick Up </Text>
-            <Text>{beep.origin}</Text>
+            <Text weight="800">Current Status</Text>
+            <Text>{getCurrentStatusMessage(beep, car)}</Text>
           </View>
+        )}
+        {beep.status === "here" && car && (
           <View>
-            <Text weight="800">Destination </Text>
-            <Text>{beep.destination}</Text>
+            <Text weight="800">Car</Text>
+            <Text style={{ marginBottom: 8 }}>
+              <Text style={{ textTransform: "capitalize" }}>{car.color}</Text>{" "}
+              {car.make} {car.model}
+            </Text>
+            <Image
+              style={{
+                borderRadius: 10,
+                width: "100%",
+                minHeight: 150,
+              }}
+              resizeMode="cover"
+              src={car.photo}
+              alt={`car-${car.id}`}
+            />
           </View>
-        </Card>
+        )}
+        <View>
+          <Text weight="800">Pick Up </Text>
+          <Text selectable>{beep.origin}</Text>
+        </View>
+        <View>
+          <Text weight="800">Destination </Text>
+          <Text selectable>{beep.destination}</Text>
+        </View>
         <Rates
           singles={beep.beeper.singlesRate}
           group={beep.beeper.groupRate}
         />
-        {beep.position <= 0 && (
-          <Card style={{ gap: 8 }}>
-            <Text weight="800" size="xl">
-              Current Status
-            </Text>
-            <Text>{getCurrentStatusMessage(beep, car)}</Text>
-          </Card>
-        )}
         {beep.status === "on_the_way" && (
           <ETA beeperLocation={beepersLocation} />
         )}
@@ -118,19 +137,7 @@ export function RideDetails() {
             position={beep.position}
           />
         )}
-        {beep.status === "here" && car && (
-          <Image
-            style={{
-              flexGrow: 1,
-              borderRadius: 12,
-              width: "100%",
-              minHeight: 100,
-            }}
-            resizeMode="cover"
-            src={car.photo}
-            alt={`car-${car.id}`}
-          />
-        )}
+
         <View style={{ gap: 8 }}>
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Button
