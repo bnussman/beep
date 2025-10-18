@@ -3,7 +3,6 @@ import { useLocation } from "../../utils/location";
 import { type Region } from "react-native-maps";
 import { AnimatedMarker } from "../../components/AnimatedMarker";
 import { useTRPC } from "@/utils/trpc";
-
 import { useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";

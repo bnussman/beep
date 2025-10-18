@@ -15,7 +15,7 @@ export function Menu(props: MenuProps) {
           const option = props.options.find(
             (option) => option.title === nativeEvent.event,
           );
-          option?.onClick();
+          option?.onClick?.();
         }}
         actions={props.options
           .filter((option) => option.show === undefined || option.show)
@@ -23,6 +23,11 @@ export function Menu(props: MenuProps) {
             id: option.title,
             title: option.title,
             attributes: option.destructive ? { destructive: true } : {},
+            subactions: option.options?.map((o) => ({
+              id: option.title,
+              title: option.title,
+              attributes: option.destructive ? { destructive: true } : {},
+            })),
           }))}
         shouldOpenOnLongPress={props.activationMethod === "longPress"}
       >

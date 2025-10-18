@@ -19,6 +19,7 @@ import {
   getIsAcceptedBeep,
   getQueueSize,
   getRidersCurrentRide,
+  inProgressBeep,
   rideResponseSchema,
 } from "../logic/beep";
 
@@ -99,8 +100,7 @@ export const riderRouter = router({
     .output(rideResponseSchema)
     .mutation(async ({ input, ctx }) => {
       if (input.latitude !== undefined && input.longitude !== undefined) {
-        await db
-          .update(user)
+        db.update(user)
           .set({
             location: {
               latitude: input.latitude,
@@ -155,6 +155,18 @@ export const riderRouter = router({
         status: "waiting",
         end: null,
       } as const;
+
+      const r = await db.query.beep.findFirst({
+        where: and(eq(beep.rider_id, ctx.user.id), inProgressBeep),
+        with: { beeper: { columns: { first: true, last: true } } },
+      });
+
+      if (r) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `You are already in an active beep with ${r.beeper.first} ${r.beeper.last}. You can't begin another beep until you end that one...`,
+        });
+      }
 
       await db.insert(beep).values(newBeep);
 
