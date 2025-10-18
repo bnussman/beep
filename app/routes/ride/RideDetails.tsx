@@ -102,7 +102,7 @@ export function RideDetails() {
             <Text weight="800">Car</Text>
             <Text style={{ marginBottom: 8 }}>
               <Text style={{ textTransform: "capitalize" }}>{car.color}</Text>{" "}
-              {car.make} {car.model}
+              {car.year} {car.make} {car.model}
             </Text>
             <Image
               style={{
