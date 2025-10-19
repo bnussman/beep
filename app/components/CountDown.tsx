@@ -27,7 +27,21 @@ export function getTimeRemainingString(date: Date) {
 
   const { hours, minutes, seconds } = reminaing;
 
-  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  const parts = [];
+
+  if (hours) {
+    parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
+  }
+
+  if (minutes) {
+    parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
+  }
+
+  if (seconds) {
+    parts.push(`${seconds} ${seconds === 1 ? "second" : "seconds"}`);
+  }
+
+  return parts.join(" ");
 }
 
 export const Countdown = ({ date }: { date: Date }) => {
