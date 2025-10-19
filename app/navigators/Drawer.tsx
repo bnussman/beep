@@ -26,6 +26,7 @@ import { useTheme } from "@/utils/theme";
 
 import { useMutation } from "@tanstack/react-query";
 import { RideMenu } from "@/routes/ride/RideMenu";
+import { AddCarButton } from "@/routes/cars/AddCarButton";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
@@ -138,7 +139,12 @@ export const Drawer = createDrawerNavigator({
       },
     },
     Beep: StartBeepingScreen,
-    Cars: Cars,
+    Cars: {
+      screen: Cars,
+      options: {
+        headerRight: () => <AddCarButton />,
+      },
+    },
     Premium: Premium,
     Profile: EditProfileScreen,
     Beeps: BeepsScreen,

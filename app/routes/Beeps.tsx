@@ -5,12 +5,7 @@ import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
 import { useTRPC } from "@/utils/trpc";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 
 export function BeepsScreen() {
   const trpc = useTRPC();
@@ -101,9 +96,8 @@ export function BeepsScreen() {
           <Text>You have no previous beeps to display</Text>
         </View>
       }
-      refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
-      }
+      refreshing={isRefetching}
+      onRefresh={refetch}
     />
   );
 }

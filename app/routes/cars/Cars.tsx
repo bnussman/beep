@@ -92,22 +92,6 @@ export function Cars() {
     });
   };
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => {
-        return (
-          <Pressable
-            onPress={() => navigation.navigate("Add Car")}
-            aria-label="Add a car"
-            style={{ paddingRight: 12 }}
-          >
-            <Text size="3xl">➕</Text>
-          </Pressable>
-        );
-      },
-    });
-  }, [navigation]);
-
   if (isLoading) {
     return (
       <View

@@ -5,7 +5,6 @@ import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useTRPC } from "@/utils/trpc";
 import { View, type TextInput } from "react-native";
-
 import { useMutation } from "@tanstack/react-query";
 
 export function ChangePasswordScreen() {
