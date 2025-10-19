@@ -7,7 +7,7 @@ import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { ActivityIndicator, FlatList, View } from "react-native";
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -31,13 +31,12 @@ export function PickBeepScreen({ route }: Props) {
     isRefetching,
   } = useQuery(
     trpc.rider.beepers.queryOptions(
-      {
-        latitude: location?.coords.latitude ?? 0,
-        longitude: location?.coords.longitude ?? 0,
-      },
-      {
-        enabled: location !== undefined,
-      },
+      location
+        ? {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          }
+        : skipToken,
     ),
   );
 
@@ -54,9 +53,17 @@ export function PickBeepScreen({ route }: Props) {
   );
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (isPickBeeperLoading ? <ActivityIndicator /> : null),
-    });
+    if (isPickBeeperLoading) {
+      navigation.setOptions({
+        headerRight: () => (
+          <View style={{ paddingHorizontal: 8 }}>
+            <ActivityIndicator />
+          </View>
+        ),
+      });
+    } else {
+      navigation.setOptions({ headerRight: null });
+    }
   }, [isPickBeeperLoading]);
 
   const chooseBeep = async (beeperId: string) => {
