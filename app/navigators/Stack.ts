@@ -7,15 +7,15 @@ import { AddCar } from "../routes/cars/AddCar";
 import { LoginScreen } from "../routes/auth/Login";
 import { SignUpScreen } from "../routes/auth/SignUp";
 import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
-import {
-  StaticParamList,
-  createStaticNavigation,
-} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
 import { Appearance } from "react-native";
 import { isIOS, isWeb } from "@/utils/constants";
 import { BeepDetails } from "@/routes/BeepDetails";
+import {
+  StaticParamList,
+  createStaticNavigation,
+} from "@react-navigation/native";
 
 const RootStack = createNativeStackNavigator({
   screens: {},

@@ -16,16 +16,17 @@ import { Button } from "@/components/Button";
 import { queryClient, useTRPC } from "@/utils/trpc";
 import { printStars } from "@/components/Stars";
 import { LOCATION_TRACKING } from "@/utils/location";
+import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
+import { useTheme } from "@/utils/theme";
+import { useMutation } from "@tanstack/react-query";
+import { RideMenu } from "@/routes/ride/RideMenu";
+import { AddCarButton } from "@/routes/cars/AddCarButton";
+import { ProfileMenu } from "@/routes/settings/ProfileMenu";
 import {
   createDrawerNavigator,
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
-import { useTheme } from "@/utils/theme";
-
-import { useMutation } from "@tanstack/react-query";
-import { RideMenu } from "@/routes/ride/RideMenu";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
@@ -138,9 +139,19 @@ export const Drawer = createDrawerNavigator({
       },
     },
     Beep: StartBeepingScreen,
-    Cars: Cars,
+    Cars: {
+      screen: Cars,
+      options: {
+        headerRight: () => <AddCarButton />,
+      },
+    },
     Premium: Premium,
-    Profile: EditProfileScreen,
+    Profile: {
+      screen: EditProfileScreen,
+      options: {
+        headerRight: () => <ProfileMenu />,
+      },
+    },
     Beeps: BeepsScreen,
     Ratings: RatingsScreen,
     Feedback: Feedback,

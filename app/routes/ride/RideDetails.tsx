@@ -64,7 +64,7 @@ export function RideDetails(props: Props) {
         </View>
       </View>
       <View>
-        <Text weight="800">Current Status</Text>
+        <Text weight="800">Status</Text>
         {beep.status === "waiting" ? (
           <>
             <Text>Waiting on {beep.beeper.first} to accept your request.</Text>

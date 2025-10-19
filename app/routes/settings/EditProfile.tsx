@@ -1,9 +1,6 @@
 import React, { useMemo, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
-import { View, Alert, Pressable, ActivityIndicator } from "react-native";
-import { isMobile } from "@/utils/constants";
+import { View, Pressable, ActivityIndicator } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
@@ -11,18 +8,14 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { queryClient, useTRPC } from "@/utils/trpc";
-import { LOCATION_TRACKING } from "@/utils/location";
+import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
-import { Menu } from "@/components/Menu";
 
 export function EditProfileScreen() {
   const trpc = useTRPC();
   const { user } = useUser();
-  const navigation = useNavigation();
 
   const values = useMemo(
     () => ({
@@ -60,23 +53,6 @@ export function EditProfileScreen() {
     }),
   );
 
-  const { mutate: deleteAccount } = useMutation(
-    trpc.user.deleteMyAccount.mutationOptions({
-      onSuccess() {
-        AsyncStorage.clear();
-
-        if (!__DEV__) {
-          Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
-        }
-
-        queryClient.resetQueries();
-      },
-      onError(error) {
-        alert(error.message);
-      },
-    }),
-  );
-
   const { mutate: upload, isPending: uploadLoading } = useMutation(
     trpc.user.updatePicture.mutationOptions({
       onSuccess() {
@@ -90,54 +66,6 @@ export function EditProfileScreen() {
   );
 
   const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset>();
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Menu
-          trigger={
-            <Text size="3xl" style={{ marginRight: 8 }}>
-              🧰
-            </Text>
-          }
-          options={[
-            {
-              title: "Change Password",
-              onClick: () => navigation.navigate("Change Password"),
-            },
-            {
-              title: "Delete Account",
-              onClick: handleDeleteWrapper,
-              destructive: true,
-            },
-          ]}
-        />
-      ),
-    });
-  }, [navigation]);
-
-  const handleDeleteWrapper = () => {
-    if (isMobile) {
-      Alert.alert(
-        "Delete Your Account?",
-        "Are you sure you want to delete your account? We will delete all of your account data. It will not be kept.",
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-          {
-            text: "Delete",
-            onPress: () => deleteAccount(),
-            style: "destructive",
-          },
-        ],
-        { cancelable: true },
-      );
-    } else {
-      deleteAccount();
-    }
-  };
 
   const handleUpdatePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({

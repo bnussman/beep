@@ -3,6 +3,14 @@ import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
 import { Marker as BeeperMarker } from "../../../components/Marker";
+import { DeleteBeepDialog } from "./DeleteBeepDialog";
+import { createRoute } from "@tanstack/react-router";
+import { beepsRoute } from ".";
+import { useTRPC } from "../../../utils/trpc";
+import { DateTime } from "luxon";
+import { useQuery } from "@tanstack/react-query";
+import { Layer, Marker, Source } from "react-map-gl/maplibre";
+import { useSubscription } from "@trpc/tanstack-react-query";
 import {
   Typography,
   Button,
@@ -12,15 +20,6 @@ import {
   useTheme,
   Tooltip,
 } from "@mui/material";
-import { DeleteBeepDialog } from "./DeleteBeepDialog";
-import { createRoute } from "@tanstack/react-router";
-import { beepsRoute } from ".";
-import { useTRPC } from "../../../utils/trpc";
-import { DateTime } from "luxon";
-
-import { useQuery } from "@tanstack/react-query";
-import { Layer, Marker, Source } from "react-map-gl/maplibre";
-import { useSubscription } from "@trpc/tanstack-react-query";
 
 export const beepRoute = createRoute({
   component: Beep,

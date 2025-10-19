@@ -8,7 +8,6 @@ import { Controller, useForm } from "react-hook-form";
 import { Alert, Linking, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useTRPC } from "@/utils/trpc";
-
 import { useMutation } from "@tanstack/react-query";
 
 export function Feedback() {

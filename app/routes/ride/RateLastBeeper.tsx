@@ -4,7 +4,6 @@ import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
 import { useNavigation } from "@react-navigation/native";
-
 import { useQuery } from "@tanstack/react-query";
 
 export function RateLastBeeper() {
