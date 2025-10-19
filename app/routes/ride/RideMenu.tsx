@@ -30,8 +30,8 @@ export function RideMenu() {
 
     if (isMobile) {
       Alert.alert(
-        "Leave Queue?",
-        "Are you sure you want to cancel your ride?",
+        "Cancel this ride?",
+        `Are you sure you want to cancel your ride with ${beep.beeper.first}?`,
         [
           {
             text: "No",

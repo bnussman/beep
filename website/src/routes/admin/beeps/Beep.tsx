@@ -131,7 +131,7 @@ export function Beep() {
             <Layer
               type="line"
               paint={{
-                "line-color": theme.palette.primary.main,
+                "line-color": theme.palette.info.main,
                 "line-width": 5,
               }}
             />

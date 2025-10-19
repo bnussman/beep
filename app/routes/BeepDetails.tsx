@@ -39,10 +39,6 @@ export function BeepDetails(props: Props) {
     ),
   );
 
-  useEffect(() => {
-    mapRef.current?.fitToSuppliedMarkers(["origin", "destination"]);
-  }, [route]);
-
   const polylineCoordinates = route?.routes[0].legs
     .flatMap((leg) => leg.steps)
     .map((step) => decodePolyline(step.geometry))
@@ -57,6 +53,14 @@ export function BeepDetails(props: Props) {
     latitude: route.waypoints[1].location[1],
     longitude: route.waypoints[1].location[0],
   };
+
+  useEffect(() => {
+    const locations = [origin, destination].filter((l) => l !== undefined);
+    mapRef.current?.fitToCoordinates(locations, {
+      animated: true,
+      edgePadding: { bottom: 100, left: 50, right: 50, top: 50 },
+    });
+  }, [origin, destination]);
 
   const otherUser = beep?.rider_id === user?.id ? beep?.beeper : beep?.rider;
 
@@ -107,8 +111,10 @@ export function BeepDetails(props: Props) {
           />
         )}
       </Map>
-      <BottomSheet snapPoints={["20%", "85%"]}>
-        <BottomSheetView style={{ gap: 8, paddingHorizontal: 16 }}>
+      <BottomSheet snapPoints={["20%"]} enableDynamicSizing>
+        <BottomSheetView
+          style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
+        >
           <View>
             <Text weight="800">
               {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
@@ -154,7 +160,7 @@ export function BeepDetails(props: Props) {
           <View>
             <Text weight="800">Status</Text>
             <Text style={{ textTransform: "capitalize" }}>
-              {beep.status.replace("_", " ")}
+              {beep.status.replaceAll("_", " ")}
             </Text>
           </View>
           <View>

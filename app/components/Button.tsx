@@ -3,7 +3,7 @@ import {
   PressableProps,
   ActivityIndicator,
   ActivityIndicatorProps,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import { Text } from "./Text";
 import { Theme, useTheme } from "@/utils/theme";
@@ -26,19 +26,19 @@ interface Props extends PressableProps {
   /**
    * @default primary
    */
-  variant?: 'primary' | 'secondary';
+  variant?: "primary" | "secondary";
   /**
    * @default md
    */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
 export function Button(props: Props) {
   const {
     children,
     isLoading,
-    variant = 'primary',
-    size = 'md',
+    variant = "primary",
+    size = "md",
     activityIndicatorProps,
     ...rest
   } = props;
@@ -54,13 +54,17 @@ export function Button(props: Props) {
         style.button,
         style[variant],
         { padding: sizeMap[size] },
-        state.pressed && variant === 'primary' && {
-          backgroundColor: theme.components.button.primary.pressed.backgroundColor,
-        },
-        state.pressed && variant === 'secondary' && {
-          backgroundColor: theme.components.button.secondary.pressed.backgroundColor,
-        },
-        typeof rest.style === 'function' ? rest.style(state): rest.style,
+        state.pressed &&
+          variant === "primary" && {
+            backgroundColor:
+              theme.components.button.primary.pressed.backgroundColor,
+          },
+        state.pressed &&
+          variant === "secondary" && {
+            backgroundColor:
+              theme.components.button.secondary.pressed.backgroundColor,
+          },
+        typeof rest.style === "function" ? rest.style(state) : rest.style,
       ]}
     >
       {isLoading ? (
@@ -76,18 +80,19 @@ export function Button(props: Props) {
 
 const createStyle = (
   theme: Theme,
-  variant: Props['variant'] = 'primary',
-  disabled: boolean | null | undefined
-) => StyleSheet.create({
-  button: {
-    borderRadius: 12,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: disabled ? 'auto' : 'pointer',
-  },
-  primary: {
-    backgroundColor: theme.components.button.primary.backgroundColor
-  },
-  secondary: {},
-});
+  variant: Props["variant"] = "primary",
+  disabled: boolean | null | undefined,
+) =>
+  StyleSheet.create({
+    button: {
+      borderRadius: 12,
+      // display: 'flex',
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: disabled ? "auto" : "pointer",
+    },
+    primary: {
+      backgroundColor: theme.components.button.primary.backgroundColor,
+    },
+    secondary: {},
+  });
