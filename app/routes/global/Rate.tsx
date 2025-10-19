@@ -8,7 +8,6 @@ import { View } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { ActivityIndicator } from "react-native";
 import { Avatar } from "@/components/Avatar";
-
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
