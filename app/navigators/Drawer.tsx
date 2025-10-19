@@ -136,12 +136,16 @@ export const Drawer = createDrawerNavigator({
       headerBackButtonDisplayMode: "generic",
       headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
-      header: ({}) => (
+      header: ({ navigation }) => (
         <Host>
           <HStack
             modifiers={[padding({ top: 48 }), padding({ horizontal: 12 })]}
           >
-            <IOSButton variant="glass" modifiers={[fixedSize()]}>
+            <IOSButton
+              variant="glass"
+              modifiers={[fixedSize()]}
+              onPress={() => navigation.toggleDrawer()}
+            >
               <IOSImage
                 systemName="line.3.horizontal"
                 modifiers={[
