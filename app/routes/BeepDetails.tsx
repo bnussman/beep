@@ -111,8 +111,10 @@ export function BeepDetails(props: Props) {
           />
         )}
       </Map>
-      <BottomSheet snapPoints={["20%", "85%"]}>
-        <BottomSheetView style={{ gap: 8, paddingHorizontal: 16 }}>
+      <BottomSheet snapPoints={["20%"]} enableDynamicSizing>
+        <BottomSheetView
+          style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
+        >
           <View>
             <Text weight="800">
               {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
@@ -158,7 +160,7 @@ export function BeepDetails(props: Props) {
           <View>
             <Text weight="800">Status</Text>
             <Text style={{ textTransform: "capitalize" }}>
-              {beep.status.replace("_", " ")}
+              {beep.status.replaceAll("_", " ")}
             </Text>
           </View>
           <View>
