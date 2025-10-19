@@ -35,6 +35,7 @@ import {
   padding,
   frame,
   cornerRadius,
+  zIndex,
 } from "@expo/ui/swift-ui/modifiers";
 import { useMutation } from "@tanstack/react-query";
 import { RideMenu } from "@/routes/ride/RideMenu";
@@ -138,41 +139,48 @@ export const Drawer = createDrawerNavigator({
       headerTintColor: colorScheme === "dark" ? "white" : "black",
       drawerType: "front",
       header: ({ navigation }) => (
-        <Host>
-          <HStack
-            modifiers={[padding({ top: 48 }), padding({ horizontal: 12 })]}
-          >
-            <IOSButton
-              variant="glass"
-              modifiers={[fixedSize()]}
-              onPress={() => navigation.toggleDrawer()}
+        <>
+          <Host>
+            <HStack
+              modifiers={[
+                padding({ top: 48 }),
+                padding({ horizontal: 12 }),
+                zIndex(20),
+              ]}
             >
-              <IOSImage
-                systemName="line.3.horizontal"
-                modifiers={[
-                  frame({
-                    height: 40,
-                    width: 32,
-                    alignment: "center",
-                  }),
-                ]}
-              />
-            </IOSButton>
-            <Spacer />
-            <IOSButton variant="glassProminent" modifiers={[fixedSize()]}>
-              <IOSImage
-                systemName="ellipsis"
-                modifiers={[
-                  frame({
-                    height: 40,
-                    width: 32,
-                    alignment: "center",
-                  }),
-                ]}
-              />
-            </IOSButton>
-          </HStack>
-        </Host>
+              <IOSButton
+                variant="glass"
+                modifiers={[fixedSize()]}
+                onPress={() => alert("hey")}
+              >
+                <IOSImage
+                  systemName="line.3.horizontal"
+                  modifiers={[
+                    frame({
+                      height: 40,
+                      width: 32,
+                      alignment: "center",
+                    }),
+                  ]}
+                />
+              </IOSButton>
+              <Spacer />
+              <IOSButton variant="glassProminent" modifiers={[fixedSize()]}>
+                <IOSImage
+                  systemName="ellipsis"
+                  modifiers={[
+                    frame({
+                      height: 40,
+                      width: 32,
+                      alignment: "center",
+                    }),
+                  ]}
+                />
+              </IOSButton>
+            </HStack>
+          </Host>
+          <View style={{ height: 110 }} />
+        </>
       ),
     };
   },
