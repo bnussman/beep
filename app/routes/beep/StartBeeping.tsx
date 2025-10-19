@@ -26,6 +26,11 @@ import {
   stopLocationTracking,
   useLocationPermissions,
 } from "@/utils/location";
+import { useActivePayments } from "../Premium";
+import {
+  calculateTimeRemaining,
+  getTimeRemainingString,
+} from "@/components/CountDown";
 
 export function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -103,6 +108,8 @@ export function StartBeepingScreen() {
     }
   };
 
+  const { data: payments } = useActivePayments();
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -112,8 +119,22 @@ export function StartBeepingScreen() {
             display: "flex",
             flexDirection: "row",
             gap: 8,
+            alignItems: "center",
           }}
         >
+          {payments?.[0] && (
+            <Text
+              size="xl"
+              onPress={() =>
+                Alert.alert(
+                  "You are premium!",
+                  `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+                )
+              }
+            >
+              👑
+            </Text>
+          )}
           {form.formState.isSubmitting && <ActivityIndicator size="small" />}
           <Switch
             disabled={form.formState.isSubmitting}
@@ -123,7 +144,7 @@ export function StartBeepingScreen() {
         </View>
       ),
     });
-  }, [navigation, user?.isBeeping, form.formState.isSubmitting]);
+  }, [navigation, user?.isBeeping, form.formState.isSubmitting, payments]);
 
   const handleIsBeepingChange = form.handleSubmit(async (values) => {
     const willBeBeeping = !user?.isBeeping;
