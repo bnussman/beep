@@ -1,7 +1,7 @@
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Menu } from "@/components/Menu";
-import { Alert } from "react-native";
+import { Alert, View } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -53,19 +53,21 @@ export function ProfileMenu() {
   };
 
   return (
-    <Menu
-      trigger={<Elipsis />}
-      options={[
-        {
-          title: "Change Password",
-          onClick: () => navigation.navigate("Change Password"),
-        },
-        {
-          title: "Delete Account",
-          onClick: handleDeleteWrapper,
-          destructive: true,
-        },
-      ]}
-    />
+    <View style={{ marginRight: 8 }}>
+      <Menu
+        trigger={<Elipsis />}
+        options={[
+          {
+            title: "Change Password",
+            onClick: () => navigation.navigate("Change Password"),
+          },
+          {
+            title: "Delete Account",
+            onClick: handleDeleteWrapper,
+            destructive: true,
+          },
+        ]}
+      />
+    </View>
   );
 }
