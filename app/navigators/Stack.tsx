@@ -16,6 +16,8 @@ import {
   StaticParamList,
   createStaticNavigation,
 } from "@react-navigation/native";
+import { User } from "@/routes/global/User";
+import { UserMenu } from "@/routes/global/UserMenu";
 
 const RootStack = createNativeStackNavigator({
   screens: {},
@@ -55,6 +57,16 @@ const RootStack = createNativeStackNavigator({
             sheetInitialDetentIndex: 0,
             sheetAllowedDetents: [0.5, 1] as number[],
           },
+        },
+        User: {
+          screen: User,
+          options: ({ route }) => ({
+            headerRight: () => (
+              <UserMenu userId={(route.params as { id: string })?.id} />
+            ),
+            title: "",
+            headerTransparent: true,
+          }),
         },
         "Change Password": ChangePasswordScreen,
         "Choose Beeper": PickBeepScreen,
