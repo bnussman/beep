@@ -1,13 +1,13 @@
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Menu } from "@/components/Menu";
-import { Text } from "@/components/Text";
 import { Alert } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { isMobile } from "@/utils/constants";
+import { Elipsis } from "@/components/Elipsis";
 
 export function ProfileMenu() {
   const trpc = useTRPC();
@@ -54,11 +54,7 @@ export function ProfileMenu() {
 
   return (
     <Menu
-      trigger={
-        <Text size="3xl" style={{ marginRight: 8 }}>
-          🧰
-        </Text>
-      }
+      trigger={<Elipsis />}
       options={[
         {
           title: "Change Password",

@@ -8,19 +8,20 @@ import { decodePolyline, getMiles } from "@/utils/location";
 import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { StaticScreenProps } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Pressable, View } from "react-native";
 import MapView from "react-native-maps";
 
 type Props = StaticScreenProps<{ beepId: string }>;
 
 export function BeepDetails(props: Props) {
   const trpc = useTRPC();
-  const { user } = useUser();
-
   const mapRef = useRef<MapView>(null);
+  const navigation = useNavigation();
+
+  const { user } = useUser();
 
   const {
     data: beep,
@@ -115,7 +116,11 @@ export function BeepDetails(props: Props) {
         <BottomSheetView
           style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
         >
-          <View>
+          <Pressable
+            onPress={() =>
+              navigation.navigate("User", { id: otherUser?.id ?? "" })
+            }
+          >
             <Text weight="800">
               {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
             </Text>
@@ -135,7 +140,7 @@ export function BeepDetails(props: Props) {
                 style={{ width: 16, height: 16 }}
               />
             </View>
-          </View>
+          </Pressable>
           <View>
             <Text weight="800">Origin</Text>
             <Text>{beep.origin}</Text>

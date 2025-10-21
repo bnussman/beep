@@ -404,6 +404,13 @@ export const userRouter = router({
         last: true,
         photo: true,
         username: true,
+        venmo: true,
+        cashapp: true,
+        singlesRate: true,
+        groupRate: true,
+        capacity: true,
+        isBeeping: true,
+        rating: true,
       },
     });
 

@@ -27,9 +27,11 @@ import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
+import { useNavigation } from "@react-navigation/native";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
+  const navigation = useNavigation();
   const { user } = useUser();
   const { mutateAsync: logout, isPending } = useMutation(
     trpc.auth.logout.mutationOptions(),
@@ -62,33 +64,31 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       .catch((error) => alert(error.message));
   };
 
-  const rating = new Intl.NumberFormat("en-US", {
-    maximumSignificantDigits: 2,
-  }).format(Number(user?.rating ?? 0));
-
   return (
     <DrawerContentScrollView {...props}>
       <View style={{ gap: 12 }}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
+        <Pressable
+          onPress={() => navigation.navigate("User", { id: user?.id ?? "" })}
         >
-          <View style={{ flexShrink: 1 }}>
-            <Text size="xl" weight="800">
-              {user?.first} {user?.last}
-            </Text>
-            {user?.rating && (
-              <Text color="subtle" size="xs">
-                {printStars(Number(user.rating))} ({rating})
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ flexShrink: 1 }}>
+              <Text size="xl" weight="800">
+                {user?.first} {user?.last}
               </Text>
-            )}
+              <Text size="xs" color="subtle" weight="300">
+                {user?.email}
+              </Text>
+            </View>
+            <Avatar src={user?.photo ?? undefined} />
           </View>
-          <Avatar src={user?.photo ?? undefined} />
-        </View>
+        </Pressable>
         <View style={{ display: "flex", gap: 8 }}>
           {!user?.isEmailVerified && (
             <Button
