@@ -92,7 +92,7 @@ export const mustHaveBeenInAcceptedBeep = t.procedure
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    if (opts.ctx.user.role === "admin") {
+    if (opts.ctx.user.role === "admin" || opts.input === opts.ctx.user.id) {
       return opts.next(opts);
     }
 
@@ -130,7 +130,7 @@ export const mustBeInAcceptedBeep = t.procedure
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    if (opts.ctx.user.role === "admin") {
+    if (opts.ctx.user.role === "admin" || opts.input === opts.ctx.user.id) {
       return opts.next(opts);
     }
 
