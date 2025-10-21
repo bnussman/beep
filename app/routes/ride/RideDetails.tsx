@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
 import { Text } from "@/components/Text";
@@ -9,6 +9,7 @@ import { useTRPC } from "@/utils/trpc";
 import { getCurrentStatusMessage } from "./utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   beepersLocation:
@@ -21,6 +22,7 @@ interface Props {
 
 export function RideDetails(props: Props) {
   const trpc = useTRPC();
+  const navigation = useNavigation();
 
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
@@ -51,7 +53,9 @@ export function RideDetails(props: Props) {
         paddingTop: 0,
       }}
     >
-      <View>
+      <Pressable
+        onPress={() => navigation.navigate("User", { id: beep.beeper.id })}
+      >
         <Text weight="800">Beeper</Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Text>
@@ -62,7 +66,7 @@ export function RideDetails(props: Props) {
             src={beep.beeper.photo ?? undefined}
           />
         </View>
-      </View>
+      </Pressable>
       <View>
         <Text weight="800">Status</Text>
         {beep.status === "waiting" ? (
