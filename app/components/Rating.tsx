@@ -60,7 +60,11 @@ export function Rating(props: Props) {
         },
       ]}
       trigger={
-        <Card pressable style={{ padding: 16, gap: 16, display: "flex" }}>
+        <Card
+          pressable
+          style={{ padding: 16, gap: 16, display: "flex" }}
+          onPress={() => navigation.navigate("User", { id: otherUser.id })}
+        >
           <View
             style={{
               flexDirection: "row",

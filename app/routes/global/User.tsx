@@ -4,8 +4,6 @@ import { Text } from "@/components/Text";
 import { useQuery } from "@tanstack/react-query";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { useTRPC } from "@/utils/trpc";
-import { Avatar } from "@/components/Avatar";
-import { Card } from "@/components/Card";
 import { getFormattedRatingString, printStars } from "@/components/Stars";
 import { Image } from "@/components/Image";
 
@@ -82,18 +80,22 @@ export function User({ route }: Props) {
         <>
           <View>
             <Text weight="800">Phone Number</Text>
-            <Text>{userDetails.phone}</Text>
+            <Text selectable>{userDetails.phone}</Text>
           </View>
         </>
       )}
-      <View>
-        <Text weight="800">Venmo</Text>
-        <Text>{user.venmo}</Text>
-      </View>
-      <View>
-        <Text weight="800">Cash App</Text>
-        <Text>{user.cashapp}</Text>
-      </View>
+      {user.venmo && (
+        <View>
+          <Text weight="800">Venmo</Text>
+          <Text selectable>{user.venmo}</Text>
+        </View>
+      )}
+      {user.cashapp && (
+        <View>
+          <Text weight="800">Cash App</Text>
+          <Text selectable>{user.cashapp}</Text>
+        </View>
+      )}
       {car && (
         <View>
           <Text weight="800">Car</Text>

@@ -64,7 +64,6 @@ const RootStack = createNativeStackNavigator({
             headerRight: () => (
               <UserMenu userId={(route.params as { id: string })?.id} />
             ),
-            title: "",
             headerTransparent: true,
           }),
         },
