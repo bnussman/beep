@@ -1,4 +1,4 @@
-import { Button, ContextMenu, Host, Submenu } from "@expo/ui/swift-ui";
+import { Button, ContextMenu, Host } from "@expo/ui/swift-ui";
 import { MenuProps } from "./Menu";
 import { View } from "react-native";
 
@@ -10,9 +10,14 @@ export function Menu(props: MenuProps) {
   const renderOption = (option: MenuProps["options"][number]) => {
     if (option.type === "submenu") {
       return (
-        <Submenu button={<Button>{option.title}</Button>} key={option.title}>
-          {option.options?.map((subOption) => renderOption(subOption))}
-        </Submenu>
+        <ContextMenu key={option.title}>
+          <ContextMenu.Items>
+            {option.options?.map((subOption) => renderOption(subOption))}
+          </ContextMenu.Items>
+          <ContextMenu.Trigger>
+            <Button>{option.title}</Button>
+          </ContextMenu.Trigger>
+        </ContextMenu>
       );
     }
     return (
