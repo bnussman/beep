@@ -9,7 +9,7 @@ import { SignUpScreen } from "../routes/auth/SignUp";
 import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
-import { Appearance, View } from "react-native";
+import { Appearance } from "react-native";
 import { isIOS, isWeb } from "@/utils/constants";
 import { BeepDetails } from "@/routes/BeepDetails";
 import {

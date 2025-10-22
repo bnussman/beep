@@ -28,7 +28,7 @@ interface Option {
 
 export interface MenuProps {
   /**
-   * The trigger for the men
+   * The trigger for the menu
    */
   trigger: React.ReactNode;
   /**
@@ -39,6 +39,9 @@ export interface MenuProps {
    * If the Menu is disabled, the tigger will just be returned
    */
   disabled?: boolean;
+  /**
+   * Changes how the menu is activated
+   */
   activationMethod?: "singlePress" | "longPress";
 }
 
