@@ -1,12 +1,12 @@
 import {
-  Pressable,
-  PressableProps,
   ActivityIndicator,
   ActivityIndicatorProps,
+  PressableProps,
   StyleSheet,
 } from "react-native";
 import { Text } from "./Text";
 import { Theme, useTheme } from "@/utils/theme";
+import { Pressable } from "./Pressable";
 
 const sizeMap = {
   sm: 8,
