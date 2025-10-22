@@ -9,7 +9,7 @@ import { SignUpScreen } from "../routes/auth/SignUp";
 import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
-import { Appearance } from "react-native";
+import { Appearance, View } from "react-native";
 import { isIOS, isWeb } from "@/utils/constants";
 import { BeepDetails } from "@/routes/BeepDetails";
 import {
@@ -18,6 +18,8 @@ import {
 } from "@react-navigation/native";
 import { User } from "@/routes/global/User";
 import { UserMenu } from "@/routes/global/UserMenu";
+import { HeaderButton } from "@react-navigation/elements";
+import { Host } from "@expo/ui/swift-ui";
 
 const RootStack = createNativeStackNavigator({
   screens: {},
@@ -62,7 +64,9 @@ const RootStack = createNativeStackNavigator({
           screen: User,
           options: ({ route }) => ({
             headerRight: () => (
-              <UserMenu userId={(route.params as { id: string })?.id} />
+              <Host>
+                <UserMenu userId={(route.params as { id: string })?.id} />
+              </Host>
             ),
             headerTransparent: true,
           }),
