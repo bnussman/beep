@@ -18,8 +18,6 @@ import {
 } from "@react-navigation/native";
 import { User } from "@/routes/global/User";
 import { UserMenu } from "@/routes/global/UserMenu";
-import { HeaderButton } from "@react-navigation/elements";
-import { Host } from "@expo/ui/swift-ui";
 
 const RootStack = createNativeStackNavigator({
   screens: {},
@@ -64,9 +62,7 @@ const RootStack = createNativeStackNavigator({
           screen: User,
           options: ({ route }) => ({
             headerRight: () => (
-              <Host>
-                <UserMenu userId={(route.params as { id: string })?.id} />
-              </Host>
+              <UserMenu userId={(route.params as { id: string })?.id} />
             ),
             headerTransparent: true,
           }),
