@@ -1,6 +1,6 @@
 import { Button, ContextMenu, Host } from "@expo/ui/swift-ui";
 import { MenuProps } from "./Menu";
-import { View } from "react-native";
+import { fixedSize } from "@expo/ui/swift-ui/modifiers";
 
 export function Menu(props: MenuProps) {
   if (props.disabled) {
@@ -32,18 +32,17 @@ export function Menu(props: MenuProps) {
   };
 
   return (
-    <Host matchContents={{ horizontal: true, vertical: false }}>
+    <Host
+      matchContents={{ horizontal: true, vertical: false }}
+      modifiers={[fixedSize()]}
+    >
       <ContextMenu activationMethod={props.activationMethod ?? "singlePress"}>
         <ContextMenu.Items>
           {props.options
             .filter((option) => option.show === undefined || option.show)
             .map(renderOption)}
         </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <View>
-            <Host>{props.trigger}</Host>
-          </View>
-        </ContextMenu.Trigger>
+        <ContextMenu.Trigger>{props.trigger}</ContextMenu.Trigger>
       </ContextMenu>
     </Host>
   );
