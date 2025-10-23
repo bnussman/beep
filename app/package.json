@@ -70,6 +70,12 @@
       "reactNativeDirectoryCheck": {
         "listUnknownPackages": false
       }
+    },
+    "install": {
+      "exclude": [
+        "react-native-maps",
+        "react-native-screens"
+      ]
     }
   }
 }
