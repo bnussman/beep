@@ -61,9 +61,35 @@ const RootStack = createNativeStackNavigator({
         User: {
           screen: User,
           options: ({ route }) => ({
-            headerRight: () => (
-              <UserMenu userId={(route.params as { id: string })?.id} />
-            ),
+            // unstable_headerRightItems: () => [
+            //   {
+            //     type: "menu",
+            //     icon: { name: "ellipsis", type: "sfSymbol" },
+            //     label: "...",
+            //     menu: {
+            //       title: "",
+            //       items: [
+            //         {
+            //           type: "action",
+            //           label: "Call",
+            //           onPress: () => alert("Call"),
+            //         },
+            //       ],
+            //     },
+            //   },
+            // ],
+            unstable_headerRightItems: () => [
+              {
+                type: "custom" as const,
+                width: 32,
+                element: (
+                  <UserMenu userId={(route.params as { id: string })?.id} />
+                ),
+              },
+            ],
+            // headerRight: () => (
+            //   <UserMenu userId={(route.params as { id: string })?.id} />
+            // ),
             headerTransparent: true,
           }),
         },

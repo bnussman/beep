@@ -1,5 +1,3 @@
-import { ContextMenuProps } from "@expo/ui/swift-ui";
-
 interface Option {
   /**
    * The text content of the option
@@ -28,9 +26,9 @@ interface Option {
   options?: Option[];
 }
 
-export interface MenuProps extends Omit<ContextMenuProps, "children"> {
+export interface MenuProps {
   /**
-   * The trigger for the men
+   * The trigger for the menu
    */
   trigger: React.ReactNode;
   /**
@@ -41,6 +39,10 @@ export interface MenuProps extends Omit<ContextMenuProps, "children"> {
    * If the Menu is disabled, the tigger will just be returned
    */
   disabled?: boolean;
+  /**
+   * Changes how the menu is activated
+   */
+  activationMethod?: "singlePress" | "longPress";
 }
 
 export const Menu = (props: MenuProps) => {
