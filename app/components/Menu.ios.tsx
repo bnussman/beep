@@ -39,11 +39,7 @@ export function Menu(props: MenuProps) {
             .filter((option) => option.show === undefined || option.show)
             .map(renderOption)}
         </ContextMenu.Items>
-        <ContextMenu.Trigger>
-          <View>
-            <Host>{props.trigger}</Host>
-          </View>
-        </ContextMenu.Trigger>
+        <ContextMenu.Trigger>{props.trigger}</ContextMenu.Trigger>
       </ContextMenu>
     </Host>
   );
