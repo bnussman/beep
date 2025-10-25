@@ -178,7 +178,7 @@ export const withLock = t.middleware(async function handleLock(opts) {
 
   const handle = await lock.acquire();
 
-  const result = await opts.next(opts);
+  const result = await opts.next({ ctx: opts.ctx });
 
   await lock.release(handle);
 
