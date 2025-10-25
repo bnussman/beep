@@ -67,10 +67,13 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
     ),
   ).toBeVisible();
 
-  await riderPage.getByText("🧰").click();
+  await riderPage.getByText("...").click();
+  await riderPage.getByText("Contact").click();
 
   await expect(riderPage.getByText("Call")).toBeVisible();
   await expect(riderPage.getByText("Text")).toBeVisible();
+
+  await riderPage.getByText("Pay").click();
   await expect(riderPage.getByText("Venmo")).toBeVisible();
   // await expect(riderPage.getByText("Share Venmo")).toBeVisible(); removed for now
 
