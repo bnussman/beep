@@ -9,6 +9,31 @@ interface Props {
   userId: string;
 }
 
+export function useUserMenuOptions(userId: string) {
+  const navigation = useNavigation();
+  const trpc = useTRPC();
+
+  const { data: userDetails } = useQuery(
+    trpc.user.getUserPrivateDetails.queryOptions(userId),
+  );
+  return [
+    {
+      title: "Call",
+      show: !!userDetails,
+      onClick: () => call(userId),
+    },
+    {
+      title: "Text",
+      show: !!userDetails,
+      onClick: () => sms(userId),
+    },
+    {
+      title: "Report",
+      onClick: () => navigation.navigate("Report", { userId }),
+    },
+  ];
+}
+
 export function UserMenu({ userId }: Props) {
   const navigation = useNavigation();
   const trpc = useTRPC();

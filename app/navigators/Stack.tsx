@@ -17,7 +17,7 @@ import {
   createStaticNavigation,
 } from "@react-navigation/native";
 import { User } from "@/routes/global/User";
-import { UserMenu } from "@/routes/global/UserMenu";
+import { UserMenu, useUserMenuOptions } from "@/routes/global/UserMenu";
 
 const RootStack = createNativeStackNavigator({
   screens: {},
@@ -64,6 +64,31 @@ const RootStack = createNativeStackNavigator({
             headerRight: () => (
               <UserMenu userId={(route.params as { id: string })?.id} />
             ),
+            // unstable_headerRightItems: () => {
+            //   const options = useUserMenuOptions(
+            //     (route.params as { id: string }).id,
+            //   );
+            //   return options.map((option) => ({
+            //     type: "button",
+            //     label: option.title,
+            //     title: option.title,
+            //     onPress: option.onClick,
+            //   }));
+            //   return [
+            //     {
+            //       type: "menu",
+            //       label: "idk",
+            //       icon: { name: "ellipses", type: "sfSymbol" },
+            //       menu: {
+            //         title: "",
+            //         items: options.map((option) => ({
+            //           label: option.title,
+            //           type: "action",
+            //         })),
+            //       },
+            //     },
+            //   ];
+            // },
             headerTransparent: true,
           }),
         },
