@@ -1,4 +1,5 @@
-import { ContextMenuProps } from "@expo/ui/swift-ui";
+import * as DropdownMenu from "zeego/dropdown-menu";
+import * as ContextMenu from "zeego/context-menu";
 
 interface Option {
   /**
@@ -28,7 +29,7 @@ interface Option {
   options?: Option[];
 }
 
-export interface MenuProps extends Omit<ContextMenuProps, "children"> {
+export interface MenuProps {
   /**
    * The trigger for the men
    */
@@ -41,8 +42,48 @@ export interface MenuProps extends Omit<ContextMenuProps, "children"> {
    * If the Menu is disabled, the tigger will just be returned
    */
   disabled?: boolean;
+  /**
+   *
+   */
+  activationMethod?: "longPress" | "singlePress";
 }
 
 export const Menu = (props: MenuProps) => {
-  return props.trigger;
+  const Component =
+    props.activationMethod === "longPress" ? ContextMenu : DropdownMenu;
+
+  const renderOption = (option: Option) => {
+    if (option.show !== undefined && !option.show) {
+      return null;
+    }
+
+    if (option.options) {
+      return (
+        <Component.Sub>
+          <Component.SubTrigger key={option.title}>
+            {option.title}
+          </Component.SubTrigger>
+          <Component.SubContent>
+            {option.options.map(renderOption)}
+          </Component.SubContent>
+        </Component.Sub>
+      );
+    }
+    return (
+      <Component.Item
+        key={option.title}
+        destructive={option.destructive}
+        onSelect={option.onClick}
+      >
+        {option.title}
+      </Component.Item>
+    );
+  };
+
+  return (
+    <Component.Root>
+      <Component.Trigger>{props.trigger}</Component.Trigger>
+      <Component.Content>{props.options.map(renderOption)}</Component.Content>
+    </Component.Root>
+  );
 };
