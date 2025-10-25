@@ -18,11 +18,6 @@ jobs:
       name: production
       url: https://ridebeep.app
     steps:
-      - name: Set up WireGuard Connection
-        uses: niklaskeerl/easy-wireguard-action@v2
-        with:
-          WG_CONFIG_FILE: ${{ secrets.WG_CONFIG_FILE }}
-
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
         with:
@@ -36,6 +31,10 @@ jobs:
           cache: pnpm
           node-version: latest
       - run: pnpm i --frozen-lockfile
+      - name: Set up WireGuard Connection
+        uses: niklaskeerl/easy-wireguard-action@v2
+        with:
+          WG_CONFIG_FILE: ${{ secrets.WG_CONFIG_FILE }}
       - uses: pulumi/actions@v4
         with:
           command: up
