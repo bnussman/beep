@@ -90,6 +90,8 @@ const createStyle = (
       alignItems: "center",
       justifyContent: "center",
       cursor: disabled ? "auto" : "pointer",
+      overflow: "hidden",
+      overlayColor: "transparent",
     },
     primary: {
       backgroundColor: theme.components.button.primary.backgroundColor,

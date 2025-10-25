@@ -7,6 +7,8 @@ import { db } from "./db";
 import { beep, token } from "../../drizzle/schema";
 import { and, eq, or } from "drizzle-orm";
 import { isAcceptedBeep } from "../logic/beep";
+import { createLock, IoredisAdapter } from "redlock-universal";
+import { redis } from "./redis";
 
 /**
  * Initialization of tRPC backend
@@ -160,6 +162,28 @@ export const mustBeInAcceptedBeep = t.procedure
 
     return opts.next(opts);
   });
+
+export const withLock = t.middleware(async function handleLock(opts) {
+  if (!opts.ctx.user) {
+    throw new Error(
+      "This middleware should only be used for authenticated procedures.",
+    );
+  }
+
+  const lock = createLock({
+    adapter: new IoredisAdapter(redis),
+    key: `${opts.path}-${opts.ctx.user.id}`,
+    ttl: 5_000,
+  });
+
+  const handle = await lock.acquire();
+
+  const result = await opts.next(opts);
+
+  await lock.release(handle);
+
+  return result;
+});
 
 export async function createContext(
   data: Omit<FetchCreateContextFnOptions, "resHeaders">,

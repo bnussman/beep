@@ -51,6 +51,9 @@ importers:
       pg:
         specifier: ^8.16.3
         version: 8.16.3
+      redlock-universal:
+        specifier: ^0.6.5
+        version: 0.6.5(ioredis@5.8.1)
       validator:
         specifier: ^13.15.15
         version: 13.15.15
@@ -5936,6 +5939,18 @@ packages:
   redis-parser@3.0.0:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
     engines: {node: '>=4'}
+
+  redlock-universal@0.6.5:
+    resolution: {integrity: sha512-g+P6BZCQ9qZ1kSydikqac92eXxDNrepHQMNF7fVl9+AkwM165rGAt59X8EsWC0pV1ZYVvuUTk13jopTxURTgKw==}
+    engines: {node: '>=22.0.0'}
+    peerDependencies:
+      ioredis: '>=5.0.0'
+      redis: '>=4.0.0'
+    peerDependenciesMeta:
+      ioredis:
+        optional: true
+      redis:
+        optional: true
 
   regenerate-unicode-properties@10.2.0:
     resolution: {integrity: sha512-DqHn3DwbmmPVzeKj9woBadqmXxLvQoQIwu7nopMc72ztvxVmVk2SBhSnx67zuye5TP+lJsb/TBQsjLKhnDf3MA==}
@@ -13641,6 +13656,10 @@ snapshots:
   redis-parser@3.0.0:
     dependencies:
       redis-errors: 1.2.0
+
+  redlock-universal@0.6.5(ioredis@5.8.1):
+    optionalDependencies:
+      ioredis: 5.8.1
 
   regenerate-unicode-properties@10.2.0:
     dependencies:

@@ -13,6 +13,7 @@ import {
   mustBeInAcceptedBeep,
   router,
   verifiedProcedure,
+  withLock,
 } from "../utils/trpc";
 import {
   getBeeperQueue,
@@ -87,6 +88,7 @@ export const riderRouter = router({
       return beepers;
     }),
   startBeep: verifiedProcedure
+    .use(withLock)
     .input(
       z.object({
         beeperId: z.string(),
