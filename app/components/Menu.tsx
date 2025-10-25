@@ -49,6 +49,10 @@ export interface MenuProps {
 }
 
 export const Menu = (props: MenuProps) => {
+  if (props.disabled) {
+    return props.trigger;
+  }
+
   const Component =
     props.activationMethod === "longPress" ? ContextMenu : DropdownMenu;
 
