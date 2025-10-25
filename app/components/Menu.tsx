@@ -1,7 +1,7 @@
 import * as DropdownMenu from "zeego/dropdown-menu";
 import * as ContextMenu from "zeego/context-menu";
 
-interface Option {
+export interface Option {
   /**
    * The text content of the option
    */

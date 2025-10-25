@@ -8,9 +8,9 @@ export function AddCarButton() {
     <Pressable
       onPress={() => navigation.navigate("Add Car")}
       aria-label="Add a car"
-      style={{ paddingRight: 12 }}
+      style={{ paddingRight: 12, transform: [{ translateY: -4 }] }}
     >
-      <Text size="3xl">➕</Text>
+      <Text size="4xl">+</Text>
     </Pressable>
   );
 }
