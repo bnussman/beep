@@ -61,7 +61,6 @@ export function RideMenu() {
         options={[
           {
             title: "Contact",
-            type: "submenu",
             show: beep.status !== "waiting",
             options: [
               { title: "Call", onClick: () => call(beep.beeper.id) },
@@ -70,11 +69,11 @@ export function RideMenu() {
           },
           {
             title: "Pay",
-            type: "submenu",
             show: beep.status !== "waiting",
             options: [
               {
                 title: "Venmo",
+                show: Boolean(beep.beeper.venmo),
                 onClick: () =>
                   openVenmo(
                     beep.beeper.venmo,
@@ -86,6 +85,7 @@ export function RideMenu() {
               },
               {
                 title: "Cash app",
+                show: Boolean(beep.beeper.cashapp),
                 onClick: () =>
                   openCashApp(
                     beep.beeper.cashapp,

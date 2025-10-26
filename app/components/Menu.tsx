@@ -15,23 +15,24 @@ export interface Option {
    */
   destructive?: boolean;
   /**
-   * If provided, the option will only show if show is true.
+   * Whether or not the option is disabled
+   * @default false
+   */
+  disabled?: boolean;
+  /**
+   * If provided, the option will only show if the value is truthy.
    * @default true
    */
   show?: boolean;
   /**
-   * @default button
-   */
-  type?: "button" | "submenu";
-  /**
-   * Only works if type is `submenu`
+   * If you want the item to be a submenu, provide options
    */
   options?: Option[];
 }
 
 export interface MenuProps {
   /**
-   * The trigger for the men
+   * The trigger for the menu
    */
   trigger: React.ReactNode;
   /**
@@ -43,7 +44,8 @@ export interface MenuProps {
    */
   disabled?: boolean;
   /**
-   *
+   * If `singlePress` (or not provided), a dropdown menu is rendered
+   * If `longPress`, a context menu is rendered
    */
   activationMethod?: "longPress" | "singlePress";
 }
@@ -73,10 +75,12 @@ export const Menu = (props: MenuProps) => {
         </Component.Sub>
       );
     }
+
     return (
       <Component.Item
         key={option.title}
         destructive={option.destructive}
+        disabled={option.disabled}
         onSelect={option.onClick}
       >
         {option.title}
