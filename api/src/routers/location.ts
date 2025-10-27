@@ -54,12 +54,25 @@ export const locationRouter = router({
       z.object({
         origin: z.string(),
         destination: z.string(),
+        bias: z
+          .object({
+            latitude: z.number(),
+            longitude: z.number(),
+          })
+          .optional()
+          .nullable(),
       }),
     )
     .query(async ({ input, ctx }) => {
       const [originCoordinates, destinationCoordinates] = await Promise.all([
-        getCoordinatesFromAddress(input.origin, ctx.user.location),
-        getCoordinatesFromAddress(input.destination, ctx.user.location),
+        getCoordinatesFromAddress(
+          input.origin,
+          input.bias ?? ctx.user.location,
+        ),
+        getCoordinatesFromAddress(
+          input.destination,
+          input.bias ?? ctx.user.location,
+        ),
       ]);
 
       if (!originCoordinates) {

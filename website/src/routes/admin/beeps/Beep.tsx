@@ -8,7 +8,7 @@ import { createRoute } from "@tanstack/react-router";
 import { beepsRoute } from ".";
 import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import {
@@ -32,6 +32,7 @@ export function Beep() {
   const theme = useTheme();
 
   const { beepId } = beepRoute.useParams();
+
   const {
     data: beep,
     isPending,
@@ -39,17 +40,18 @@ export function Beep() {
   } = useQuery(trpc.beep.beep.queryOptions(beepId));
 
   const { data: beeper } = useSubscription({
-    ...trpc.user.updates.subscriptionOptions(beep?.beeper_id),
-    enabled: beep?.beeper_id !== undefined,
+    ...trpc.user.updates.subscriptionOptions(beep ? beep.beeper_id : skipToken),
   });
 
   const { data: route } = useQuery(
     trpc.location.getRoute.queryOptions(
-      {
-        origin: beep?.origin ?? "",
-        destination: beep?.destination ?? "",
-      },
-      { enabled: !!beep },
+      beep
+        ? {
+            origin: beep.origin,
+            destination: beep.destination,
+            bias: beeper?.location,
+          }
+        : skipToken,
     ),
   );
 
