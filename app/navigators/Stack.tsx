@@ -17,7 +17,8 @@ import {
   createStaticNavigation,
 } from "@react-navigation/native";
 import { User } from "@/routes/global/User";
-import { UserMenu } from "@/routes/global/UserMenu";
+import { UserMenu, useUserMenuOptions } from "@/routes/global/UserMenu";
+import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 
 const RootStack = createNativeStackNavigator({
   screens: {},
@@ -64,6 +65,12 @@ const RootStack = createNativeStackNavigator({
             headerRight: () => (
               <UserMenu userId={(route.params as { id: string })?.id} />
             ),
+            unstable_headerRightItems: () => {
+              const options = useUserMenuOptions(
+                (route.params as { id: string }).id,
+              );
+              return getNavigationMenuFromOptions(options);
+            },
             headerTransparent: true,
           }),
         },
