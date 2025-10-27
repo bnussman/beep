@@ -147,17 +147,18 @@ export function Cars() {
                   style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
                 >
                   {car.default && (
-                    <Card
+                    <View
                       style={{
                         paddingHorizontal: 8,
                         paddingVertical: 4,
+                        borderRadius: 16,
                         backgroundColor: "#737373",
                       }}
                     >
                       <Text size="xs" weight="800" style={{ color: "white" }}>
                         Default
                       </Text>
-                    </Card>
+                    </View>
                   )}
                 </View>
               </View>
