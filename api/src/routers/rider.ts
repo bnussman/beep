@@ -18,7 +18,6 @@ import {
 import {
   getBeeperQueue,
   getDerivedRiderFields,
-  getPositionInQueue,
   getQueueSize,
   getRidersCurrentRide,
   inProgressBeep,

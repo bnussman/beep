@@ -10,7 +10,6 @@ import {
   getBeeperQueue,
   getDerivedRiderFields,
   getIsInProgressBeep,
-  getPositionInQueue,
   getQueueSize,
   queueResponseSchema,
   sendBeepUpdateNotificationToRider,
