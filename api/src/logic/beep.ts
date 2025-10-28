@@ -133,6 +133,12 @@ export function getPositionInQueue(beep: Beep, queue: Beep[]) {
     .length;
 }
 
+export function getDerivedRiderFields(beep: Beep, queue: Beep[]) {
+  return {
+    position: getPositionInQueue(beep, queue),
+  };
+}
+
 export async function sendBeepUpdateNotificationToRider(
   riderId: string,
   status: BeepStatus,
