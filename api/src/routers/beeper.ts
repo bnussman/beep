@@ -1,18 +1,18 @@
-import * as Sentry from "@sentry/bun";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { and, eq } from "drizzle-orm";
-import { beep, car, user } from "../../drizzle/schema";
-import { sendNotification } from "../utils/notifications";
+import { eq } from "drizzle-orm";
+import { beep, beepStatuses, user } from "../../drizzle/schema";
 import { pubSub } from "../utils/pubsub";
 import { zAsyncIterable } from "../utils/zAsyncIterable";
 import {
   getBeeperQueue,
-  getIsAcceptedBeep,
+  getIsInProgressBeep,
+  getPositionInQueue,
   getQueueSize,
   queueResponseSchema,
+  sendBeepUpdateNotificationToRider,
 } from "../logic/beep";
 
 export const beeperRouter = router({
@@ -73,16 +73,7 @@ export const beeperRouter = router({
       z.object({
         beepId: z.string(),
         data: z.object({
-          status: z.enum([
-            "canceled",
-            "denied",
-            "waiting",
-            "accepted",
-            "on_the_way",
-            "here",
-            "in_progress",
-            "complete",
-          ]),
+          status: z.enum(beepStatuses),
         }),
       }),
     )
@@ -115,133 +106,43 @@ export const beeperRouter = router({
         });
       }
 
-      await db
-        .update(beep)
-        .set({ status: input.data.status })
-        .where(eq(beep.id, queueEntry.id));
+      const isStartingBeep = input.data.status === "accepted";
+      const isEndingBeep =
+        input.data.status === "denied" ||
+        input.data.status === "complete" ||
+        input.data.status === "canceled";
+
+      const values = {
+        status: input.data.status,
+        ...(isEndingBeep && {
+          end: new Date(),
+        }),
+      };
+
+      await db.update(beep).set(values).where(eq(beep.id, queueEntry.id));
 
       queueEntry.status = input.data.status;
 
-      if (input.data.status === "accepted") {
+      if (isStartingBeep || isEndingBeep) {
         await db
           .update(user)
           .set({ queueSize: getQueueSize(queue) })
           .where(eq(user.id, ctx.user.id));
       }
 
-      if (
-        input.data.status === "denied" ||
-        input.data.status === "complete" ||
-        input.data.status === "canceled"
-      ) {
-        pubSub.publish("ride", queueEntry.rider_id, { ride: null });
-
-        await db
-          .update(user)
-          .set({ queueSize: getQueueSize(queue) })
-          .where(eq(user.id, ctx.user.id));
-
-        await db
-          .update(beep)
-          .set({ end: new Date() })
-          .where(eq(beep.id, queueEntry.id));
-      }
-
-      const rider = await db.query.user.findFirst({
-        columns: {
-          pushToken: true,
-        },
-        where: eq(user.id, queueEntry.rider_id),
-      });
-
-      if (rider?.pushToken) {
-        switch (queueEntry.status) {
-          case "canceled":
-            sendNotification({
-              to: rider.pushToken,
-              title: `${ctx.user.first} ${ctx.user.last} has canceled your beep 🚫`,
-              body: "Open your app to find a new beep",
-            });
-            break;
-          case "denied":
-            sendNotification({
-              to: rider.pushToken,
-              title: `${ctx.user.first} ${ctx.user.last} has denied your beep request 🚫`,
-              body: "Open your app to find a different beeper",
-            });
-            break;
-          case "accepted":
-            sendNotification({
-              to: rider.pushToken,
-              title: `${ctx.user.first} ${ctx.user.last} has accepted your beep request ✅`,
-              body: "You will receive another notification when they are on their way to pick you up",
-            });
-            break;
-          case "on_the_way": {
-            const c = await db.query.car.findFirst({
-              where: and(eq(car.user_id, ctx.user.id), eq(car.default, true)),
-            });
-
-            let body = "Your beeper is on their way.";
-
-            if (c) {
-              body = `Your beeper is on their way in a ${c.color} ${c.make} ${c.model}`;
-            }
-
-            sendNotification({
-              to: rider.pushToken,
-              title: `${ctx.user.first} ${ctx.user.last} is on their way 🚕`,
-              body,
-            });
-            break;
-          }
-          case "here": {
-            const c = await db.query.car.findFirst({
-              where: and(eq(car.user_id, ctx.user.id), eq(car.default, true)),
-            });
-
-            let body = "Your beeper is here to pick you up.";
-
-            if (c) {
-              body = `Look for a ${c.color} ${c.make} ${c.model}`;
-            }
-
-            sendNotification({
-              to: rider.pushToken,
-              title: `${ctx.user.first} ${ctx.user.last} is here 📍`,
-              richContent: {
-                image: c?.photo,
-              },
-              body,
-            });
-            break;
-          }
-          case "in_progress":
-            // Beep is in progress - no notification needed at this stage.
-            break;
-          case "complete":
-            // Beep is complete.
-            break;
-          default:
-            Sentry.captureException(
-              "Our beeper's state notification switch statement reached a point that is should not have",
-            );
-        }
-      }
-
-      queue = queue.filter(
-        (beep) =>
-          beep.status !== "complete" &&
-          beep.status !== "denied" &&
-          beep.status !== "canceled",
+      sendBeepUpdateNotificationToRider(
+        queueEntry.rider.id,
+        queueEntry.status,
+        ctx.user,
       );
 
+      queue = queue.filter(getIsInProgressBeep);
+
       pubSub.publish("queue", ctx.user.id, { queue });
+      pubSub.publish("ride", queueEntry.rider_id, { ride: null });
 
       for (const beep of queue) {
-        const position = queue.filter(
-          (b) => getIsAcceptedBeep(b) && b.start < beep.start,
-        ).length;
+        const position = getPositionInQueue(beep, queue);
 
         pubSub.publish("ride", beep.rider_id, {
           ride: { ...beep, position },

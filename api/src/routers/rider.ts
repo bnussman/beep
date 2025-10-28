@@ -17,7 +17,7 @@ import {
 } from "../utils/trpc";
 import {
   getBeeperQueue,
-  getIsAcceptedBeep,
+  getPositionInQueue,
   getQueueSize,
   getRidersCurrentRide,
   inProgressBeep,
@@ -391,9 +391,7 @@ export const riderRouter = router({
       pubSub.publish("queue", beeper.id, { queue });
 
       for (const beep of queue) {
-        const position = queue.filter(
-          (b) => getIsAcceptedBeep(b) && b.start < beep.start,
-        ).length;
+        const position = getPositionInQueue(beep, queue);
 
         pubSub.publish("ride", beep.rider_id, {
           ride: { ...beep, position },
