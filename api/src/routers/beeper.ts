@@ -130,6 +130,10 @@ export const beeperRouter = router({
           .where(eq(user.id, ctx.user.id));
       }
 
+      if (isEndingBeep) {
+        pubSub.publish("ride", queueEntry.rider.id, { ride: null });
+      }
+
       sendBeepUpdateNotificationToRider(
         queueEntry.rider.id,
         queueEntry.status,
@@ -138,9 +142,6 @@ export const beeperRouter = router({
 
       queue = queue.filter(getIsInProgressBeep);
 
-      pubSub.publish("queue", ctx.user.id, { queue });
-      pubSub.publish("ride", queueEntry.rider_id, { ride: null });
-
       for (const beep of queue) {
         const position = getPositionInQueue(beep, queue);
 
@@ -148,6 +149,8 @@ export const beeperRouter = router({
           ride: { ...beep, position },
         });
       }
+
+      pubSub.publish("queue", ctx.user.id, { queue });
 
       return queue;
     }),
