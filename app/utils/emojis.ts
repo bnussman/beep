@@ -39,12 +39,12 @@ export function getBeeperIcon() {
   }
 
   // Halloween
-  if (month === 10 && day === 31) {
-    return getRandom(["🎃", "👻", "🕷️"]);
+  if (true) {
+    return getRandom(["🎃", "👻"]);
   }
 
   // Christmas and Chirtmas Eve
-  if ((month === 12 && day === 25) || (month === 12 && day === 24))  {
+  if ((month === 12 && day === 25) || (month === 12 && day === 24)) {
     return getRandom(["🎄", "🎅", "🦌"]);
   }
 

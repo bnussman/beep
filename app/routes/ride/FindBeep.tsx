@@ -62,7 +62,7 @@ export function MainFindBeepScreen(props: Props) {
   return (
     <View style={{ flex: 1 }}>
       <RideMap beepersLocation={beepersLocation} />
-      <BottomSheet enableDynamicSizing snapPoints={["30%"]}>
+      <BottomSheet enableDynamicSizing snapPoints={["30%", "50%"]}>
         <BottomSheetView>
           <RideDetails beepersLocation={beepersLocation} />
         </BottomSheetView>
