@@ -4,7 +4,7 @@ import { createPubSub } from "@graphql-yoga/subscription";
 import { eventTarget } from "./redis";
 import z from "zod";
 
-type User = NonNullable<Context["user"]>;
+export type User = NonNullable<Context["user"]>;
 type Ride = z.infer<typeof rideResponseSchema> | null;
 type Queue = z.infer<typeof queueResponseSchema>;
 
