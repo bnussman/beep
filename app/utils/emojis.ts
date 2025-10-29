@@ -33,14 +33,18 @@ export function getBeeperIcon() {
     return getRandom(["🇺🇸", "🎆"]);
   }
 
+  // Halloween
+  if (
+    (month === 10 && day === 30) || // Halloween Eve
+    (month === 10 && day === 31) || // Halloween
+    (month === 11 && day === 1) // Day after Halloween
+  ) {
+    return getRandom(["🎃", "👻"]);
+  }
+
   // Thanksgiving
   if (month === 11 && day > 20) {
     return "🦃";
-  }
-
-  // Halloween
-  if (true) {
-    return getRandom(["🎃", "👻"]);
   }
 
   // Christmas and Chirtmas Eve
