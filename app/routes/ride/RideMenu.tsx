@@ -29,9 +29,33 @@ export function RideMenu() {
     }
 
     if (isMobile) {
+      const message = [
+        `Are you sure you want to cancel your ride with ${beep.beeper.first}?`,
+      ];
+
+      const messageMap = {
+        on_the_way: "They are on the way",
+        here: "They are here to pick you up",
+        in_progress: "Your beep is in progress",
+        canceled: null,
+        accepted: null,
+        denied: null,
+        waiting: null,
+        complete: null,
+      };
+
+      const prefix = messageMap[beep.status];
+
+      if (prefix) {
+        message.push(
+          `${prefix}, so it would a major asshole move to cancel now if you haven't otherwise communicated with them.`,
+          "Canceling at this stage of the beep can result in punishment.",
+        );
+      }
+
       Alert.alert(
         "Cancel this ride?",
-        `Are you sure you want to cancel your ride with ${beep.beeper.first}?`,
+        message.join("\n\n"),
         [
           {
             text: "No",
@@ -100,10 +124,6 @@ export function RideMenu() {
             title: "Cancel Ride",
             destructive: true,
             onClick: leaveQueue,
-            show:
-              beep.status === "waiting" ||
-              beep.position >= 1 ||
-              (beep.position === 0 && beep.status === "accepted"),
           },
         ]}
       />
