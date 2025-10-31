@@ -144,7 +144,7 @@ const apiDeployment = new k8s.apps.v1.Deployment(
     },
     spec: {
       selector: { matchLabels: { app: apiAppName } },
-      replicas: 4,
+      replicas: envName === "production" ? 5 : 3,
       template: {
         metadata: { labels: { app: apiAppName } },
         spec: {
