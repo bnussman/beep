@@ -11,6 +11,14 @@ export function openDirections(origin: string, dest: string): void {
   }
 }
 
+export function openMaps(query: string) {
+  if (Platform.OS == "ios") {
+    Linking.openURL(`http://maps.apple.com/?q=${query}`);
+  } else {
+    Linking.openURL(`https://www.google.com/maps?q=${query}`);
+  }
+}
+
 export function getCashAppLink(
   username: string,
   groupSize: number,

@@ -3,10 +3,11 @@ import {
   PressableProps,
   ActivityIndicator,
   ActivityIndicatorProps,
-  StyleSheet,
+  PressableStateCallbackType,
+  ViewStyle,
 } from "react-native";
 import { Text } from "./Text";
-import { Theme, useTheme } from "@/utils/theme";
+import { useTheme } from "@/utils/theme";
 
 const sizeMap = {
   sm: 8,
@@ -31,6 +32,11 @@ interface Props extends PressableProps {
    * @default md
    */
   size?: "sm" | "md" | "lg";
+  /**
+   * The color of the button
+   * If no color is provided, the button will be a netral color
+   */
+  color?: "red" | "green";
 }
 
 export function Button(props: Props) {
@@ -39,60 +45,83 @@ export function Button(props: Props) {
     isLoading,
     variant = "primary",
     size = "md",
+    color,
     activityIndicatorProps,
     ...rest
   } = props;
 
   const theme = useTheme();
-  const style = createStyle(theme, variant, rest.disabled);
 
+  const getStyle = (state: PressableStateCallbackType): ViewStyle[] => {
+    const style = [
+      {
+        borderRadius: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: props.disabled ? "auto" : "pointer",
+        padding: sizeMap[size],
+      },
+    ] as ViewStyle[];
+
+    if (variant === "primary") {
+      style.push({
+        backgroundColor: theme.components.button.primary.backgroundColor,
+      });
+
+      if (state.pressed) {
+        style.push({
+          backgroundColor:
+            theme.components.button.primary.pressed.backgroundColor,
+        });
+      }
+    }
+
+    if (variant === "secondary") {
+      style.push({});
+
+      if (state.pressed) {
+        style.push({
+          backgroundColor:
+            theme.components.button.secondary.pressed.backgroundColor,
+        });
+      }
+    }
+
+    if (color === "red" || color === "green") {
+      style.push({
+        backgroundColor: theme.components.button[color].backgroundColor,
+        borderColor: theme.components.button[color].borderColor,
+        borderWidth: 1,
+      });
+
+      if (state.pressed) {
+        style.push({
+          backgroundColor:
+            theme.components.button[color].pressed.backgroundColor,
+        });
+      }
+    }
+
+    return style;
+  };
   return (
     <Pressable
       accessibilityRole="button"
       {...rest}
       style={(state) => [
-        style.button,
-        style[variant],
-        { padding: sizeMap[size] },
-        state.pressed &&
-          variant === "primary" && {
-            backgroundColor:
-              theme.components.button.primary.pressed.backgroundColor,
-          },
-        state.pressed &&
-          variant === "secondary" && {
-            backgroundColor:
-              theme.components.button.secondary.pressed.backgroundColor,
-          },
+        ...getStyle(state),
         typeof rest.style === "function" ? rest.style(state) : rest.style,
       ]}
     >
       {isLoading ? (
         <ActivityIndicator {...activityIndicatorProps} />
       ) : typeof children === "string" ? (
-        <Text weight="800">{children}</Text>
+        <Text weight="800" style={color ? {} : {}}>
+          {children}
+        </Text>
       ) : (
         children
       )}
     </Pressable>
   );
 }
-
-const createStyle = (
-  theme: Theme,
-  variant: Props["variant"] = "primary",
-  disabled: boolean | null | undefined,
-) =>
-  StyleSheet.create({
-    button: {
-      borderRadius: 12,
-      // display: 'flex',
-      alignItems: "center",
-      justifyContent: "center",
-      cursor: disabled ? "auto" : "pointer",
-    },
-    primary: {
-      backgroundColor: theme.components.button.primary.backgroundColor,
-    },
-    secondary: {},
-  });
