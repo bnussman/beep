@@ -221,7 +221,7 @@ export function Beep(props: Props) {
         <Menu
           trigger={
             <Button
-              style={{ paddingHorizontal: 16, paddingVertical: 4 }}
+              style={{ paddingHorizontal: 16, paddingVertical: 6 }}
               size="md"
             >
               <Elipsis />

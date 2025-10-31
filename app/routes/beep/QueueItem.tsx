@@ -112,10 +112,10 @@ export function QueueItem({ item: beep }: Props) {
             }}
           >
             <View>
-              <Text weight="800" size="2xl">
+              <Text weight="800" size="xl">
                 {beep.rider.first} {beep.rider.last}
               </Text>
-              <Text size="xs" color="subtle">
+              <Text color="subtle" style={{ fontSize: 10 }}>
                 {beep.rider.rating
                   ? printStars(Number(beep.rider.rating))
                   : "No Rating"}
