@@ -21,9 +21,12 @@ import {
   call,
   openCashApp,
   openDirections,
+  openMaps,
   openVenmo,
   sms,
 } from "../../utils/links";
+import { Elipsis } from "@/components/Elipsis";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -32,6 +35,7 @@ interface Props {
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
+  const navigation = useNavigation();
   const trpc = useTRPC();
 
   const { data: beepRoute } = useQuery(
@@ -111,7 +115,12 @@ export function Beep(props: Props) {
 
   return (
     <View style={{ gap: 8, height: "100%", paddingBottom: 76 }}>
-      <Card variant="filled" style={{ padding: 16, gap: 16 }}>
+      <Card
+        variant="filled"
+        style={{ padding: 16, gap: 16 }}
+        pressable
+        onPress={() => navigation.navigate("User", { id: beep.rider.id })}
+      >
         <View
           style={{
             flexDirection: "row",
@@ -125,117 +134,65 @@ export function Beep(props: Props) {
             <Text weight="800" size="2xl">
               {beep.rider.first} {beep.rider.last}
             </Text>
-            <Text size="xs" color="subtle">
-              {beep.rider.rating
-                ? printStars(Number(beep.rider.rating))
-                : "No Rating"}
-            </Text>
           </View>
           <Avatar size="md" src={beep.rider.photo ?? undefined} />
         </View>
       </Card>
-
-      <Card style={{ flexGrow: 1, gap: 8 }}>
-        <Text size="xl" weight="800">
-          Beep Details
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 8,
+        }}
+      >
+        <Card style={{ flex: 1, justifyContent: "center" }}>
+          <Text weight="bold">Group Size</Text>
+          <Text>{beep.groupSize}</Text>
+        </Card>
+        <Card style={{ flex: 1, justifyContent: "center" }}>
+          <Text weight="bold">Started at</Text>
+          <Text>
+            {new Date(beep.start).toLocaleTimeString(undefined, {
+              timeStyle: "short",
+            })}
+          </Text>
+        </Card>
+        {route && (
+          <Card style={{ flexShrink: 1, justifyContent: "center" }}>
+            <Text weight="bold" style={{ flexShrink: 1 }}>
+              Beep Distance
+            </Text>
+            <Text style={{ flexShrink: 1 }}>
+              {Math.round(route.duration / 60)} min
+            </Text>
+          </Card>
+        )}
+      </View>
+      <Card
+        pressable
+        onPress={() => openMaps(beep.origin)}
+        onLongPress={() => null}
+      >
+        <Text weight="bold">Pick Up</Text>
+        <Text style={{ flexShrink: 1 }} selectable>
+          {beep.origin}
         </Text>
-        <View style={{ gap: 4 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text weight="bold" style={{ width: 120 }}>
-              Current Status
-            </Text>
-            <Text
-              style={{
-                textTransform: "capitalize",
-                flexShrink: 1,
-                textAlign: "right",
-              }}
-            >
-              {beep.status === "waiting"
-                ? "Waiting for accept or deny"
-                : beep.status.replaceAll("_", " ")}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text weight="bold" style={{ width: 120 }}>
-              Group Size
-            </Text>
-            <Text>{beep.groupSize}</Text>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text weight="bold" style={{ width: 120 }}>
-              Joined Queue At
-            </Text>
-            <Text>
-              {new Date(beep.start).toLocaleTimeString(undefined, {
-                timeStyle: "short",
-              })}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text weight="bold" style={{ width: 120 }}>
-              Pick Up
-            </Text>
-            <Text style={{ flexShrink: 1, textAlign: "right" }} selectable>
-              {beep.origin}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text weight="bold" style={{ width: 120 }}>
-              Drop Off
-            </Text>
-            <Text style={{ flexShrink: 1, textAlign: "right" }} selectable>
-              {beep.destination}
-            </Text>
-          </View>
-          {route && (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text weight="bold" style={{ width: 120 }}>
-                Beep Distance
-              </Text>
-              <Text style={{ flexShrink: 1, textAlign: "right" }}>
-                {getMiles(route.distance, true)} miles (about a{" "}
-                {Math.round(route.duration / 60)} min drive)
-              </Text>
-            </View>
-          )}
-        </View>
+      </Card>
+      <Card
+        pressable
+        onPress={() => openMaps(beep.destination)}
+        onLongPress={() => null}
+      >
+        <Text weight="bold">Drop Off</Text>
+        <Text style={{ flexShrink: 1 }} selectable>
+          {beep.destination}
+        </Text>
+      </Card>
+      <View style={{ flexGrow: 1 }}>
         {polylineCoordinates && origin && destination && (
           <Map
             key={beep.id}
             ref={ref}
-            style={{ borderRadius: 10, flexGrow: 1, overflow: "hidden" }}
+            style={{ borderRadius: 16, flexGrow: 1, overflow: "hidden" }}
             onStartShouldSetResponder={(event) => true}
             showsUserLocation
           >
@@ -259,71 +216,84 @@ export function Beep(props: Props) {
             />
           </Map>
         )}
-      </Card>
-      <Menu
-        trigger={<Button>Options</Button>}
-        options={[
-          {
-            title: "Call",
-            show: beep.status !== "waiting",
-            onClick: () => call(beep.rider.id),
-          },
-          {
-            title: "Text",
-            show: beep.status !== "waiting",
-            onClick: () => sms(beep.rider.id),
-          },
-          {
-            title: "Directions to Rider",
-            onClick: () => openDirections("Current+Location", beep.origin),
-          },
-          {
-            title: "Directions for Beep",
-            onClick: () => openDirections(beep.origin, beep.destination),
-          },
-          {
-            title: "Request Money with Venmo",
-            show:
-              (beep.status === "here" || beep.status === "in_progress") &&
-              Boolean(beep.rider.venmo),
-            onClick: () =>
-              openVenmo(
-                beep.rider.venmo,
-                beep.groupSize,
-                user?.groupRate,
-                user?.singlesRate,
-                "charge",
-              ),
-          },
-          {
-            title: "Request Money with Cash App",
-            show:
-              (beep.status === "here" || beep.status === "in_progress") &&
-              Boolean(beep.rider.cashapp),
-            onClick: () =>
-              openCashApp(
-                beep.rider.cashapp,
-                beep.groupSize,
-                user?.groupRate,
-                user?.singlesRate,
-              ),
-          },
-          {
-            title: "Cancel Beep",
-            onClick: onPress,
-            destructive: true,
-            show: beep.status !== "waiting" && beep.status !== "in_progress",
-          },
-        ]}
-      />
-      {beep.status === "waiting" ? (
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <AcceptDenyButton item={beep} type="deny" />
-          <AcceptDenyButton style={{ flexGrow: 1 }} item={beep} type="accept" />
-        </View>
-      ) : (
-        <ActionButton beep={beep} />
-      )}
+      </View>
+      <View style={{ flexDirection: "row", gap: 8 }}>
+        <Menu
+          trigger={
+            <Button
+              style={{ paddingHorizontal: 16, paddingVertical: 4 }}
+              size="md"
+            >
+              <Elipsis />
+            </Button>
+          }
+          options={[
+            {
+              title: "Call",
+              show: beep.status !== "waiting",
+              onClick: () => call(beep.rider.id),
+            },
+            {
+              title: "Text",
+              show: beep.status !== "waiting",
+              onClick: () => sms(beep.rider.id),
+            },
+            {
+              title: "Directions to Rider",
+              onClick: () => openDirections("Current+Location", beep.origin),
+            },
+            {
+              title: "Directions for Beep",
+              onClick: () => openDirections(beep.origin, beep.destination),
+            },
+            {
+              title: "Request Money with Venmo",
+              show:
+                (beep.status === "here" || beep.status === "in_progress") &&
+                Boolean(beep.rider.venmo),
+              onClick: () =>
+                openVenmo(
+                  beep.rider.venmo,
+                  beep.groupSize,
+                  user?.groupRate,
+                  user?.singlesRate,
+                  "charge",
+                ),
+            },
+            {
+              title: "Request Money with Cash App",
+              show:
+                (beep.status === "here" || beep.status === "in_progress") &&
+                Boolean(beep.rider.cashapp),
+              onClick: () =>
+                openCashApp(
+                  beep.rider.cashapp,
+                  beep.groupSize,
+                  user?.groupRate,
+                  user?.singlesRate,
+                ),
+            },
+            {
+              title: "Cancel Beep",
+              onClick: onPress,
+              destructive: true,
+              show: beep.status !== "waiting" && beep.status !== "in_progress",
+            },
+          ]}
+        />
+        {beep.status === "waiting" ? (
+          <View style={{ flexDirection: "row", gap: 8, flexGrow: 1 }}>
+            <AcceptDenyButton item={beep} type="deny" />
+            <AcceptDenyButton
+              style={{ flexGrow: 1 }}
+              item={beep}
+              type="accept"
+            />
+          </View>
+        ) : (
+          <ActionButton beep={beep} />
+        )}
+      </View>
     </View>
   );
 }

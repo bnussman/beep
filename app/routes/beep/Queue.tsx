@@ -76,7 +76,21 @@ export function Queue(props: Props) {
         refreshing={refreshing}
         contentContainerStyle={{ gap: 4, paddingHorizontal: 8 }}
         ListEmptyComponent={
-          <Text>If more riders join your queue, they will show here!</Text>
+          <View
+            style={{
+              padding: 16,
+              gap: 4,
+              alignItems: "center",
+            }}
+          >
+            <Text size="5xl">⏳</Text>
+            <Text weight="800" size="lg">
+              Your queue is empty!
+            </Text>
+            <Text style={{ textAlign: "center", maxWidth: "80%" }}>
+              If additional riders join your queue, they will show up here!
+            </Text>
+          </View>
         }
       />
     </BottomSheet>
