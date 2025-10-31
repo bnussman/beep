@@ -43,6 +43,7 @@ export const rideResponseSchema = z.object({
     photo: z.string().nullable(),
   }),
   position: z.number(),
+  riders_waiting: z.number(),
 });
 
 export const queueResponseSchema = z.array(
@@ -133,9 +134,14 @@ export function getPositionInQueue(beep: Beep, queue: Beep[]) {
     .length;
 }
 
+export function getNumberOfRidersWaiting(queue: Beep[]) {
+  return queue.filter((beep) => beep.status === "waiting").length;
+}
+
 export function getDerivedRiderFields(beep: Beep, queue: Beep[]) {
   return {
     position: getPositionInQueue(beep, queue),
+    riders_waiting: getNumberOfRidersWaiting(queue),
   };
 }
 

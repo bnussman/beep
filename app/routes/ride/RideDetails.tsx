@@ -71,11 +71,20 @@ export function RideDetails(props: Props) {
         <Text weight="800">Status</Text>
         {beep.status === "waiting" ? (
           <>
-            <Text>Waiting on {beep.beeper.first} to accept your request.</Text>
+            <Text style={{ marginBottom: 4 }}>
+              Waiting on {beep.beeper.first} to accept your request.
+            </Text>
             <PlaceInQueue
               position={beep.position}
               firstName={beep.beeper.first}
             />
+            {beep.riders_waiting - 1 > 0 && (
+              <Text>
+                {beep.riders_waiting - 1} other{" "}
+                {beep.riders_waiting - 1 === 1 ? "person is" : "people are"}{" "}
+                also waiting to be accepted
+              </Text>
+            )}
           </>
         ) : beep.position > 0 ? (
           <Text>
