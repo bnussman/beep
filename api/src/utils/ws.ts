@@ -13,129 +13,34 @@ import {
 import { parseConnectionParamsFromUnknown } from "@trpc/server/http";
 import type { TRPCRequestInfo } from "@trpc/server/http";
 import {
-  isObservable,
-  Observable,
-  Unsubscribable,
-} from "@trpc/server/observable";
-import {
   type TRPCClientOutgoingMessage,
   type TRPCResponseMessage,
   type TRPCResultMessage,
   parseTRPCMessage,
 } from "@trpc/server/rpc";
 import type { CreateContextCallback } from "@trpc/server";
-import {
-  type BaseHandlerOptions,
-} from "@trpc/server/http";
+import { type BaseHandlerOptions } from "@trpc/server/http";
 import type { TRPCConnectionParamsMessage } from "@trpc/server/rpc";
-import type { MaybePromise, Result } from "@trpc/server/unstable-core-do-not-import";
+import type { MaybePromise } from "@trpc/server/unstable-core-do-not-import";
 import type { ServerWebSocket, WebSocketHandler } from "bun";
 import { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
-import * as Sentry from '@sentry/bun';
-
-/**
- * @internal
- */
-function observableToReadableStream<TValue>(
-  observable: Observable<TValue, unknown>,
-  signal: AbortSignal,
-): ReadableStream<Result<TValue>> {
-  let unsub: Unsubscribable | null = null;
-
-  const onAbort = () => {
-    unsub?.unsubscribe();
-    unsub = null;
-    signal.removeEventListener('abort', onAbort);
-  };
-
-  return new ReadableStream<Result<TValue>>({
-    start(controller) {
-      unsub = observable.subscribe({
-        next(data) {
-          try {
-            controller.enqueue({ ok: true, value: data });
-          } catch (error) {
-            Sentry.captureException(error);
-          }
-        },
-        error(error) {
-          controller.enqueue({ ok: false, error });
-          controller.close();
-        },
-        complete() {
-          controller.close();
-        },
-      });
-
-      if (signal.aborted) {
-        onAbort();
-      } else {
-        signal.addEventListener('abort', onAbort, { once: true });
-      }
-    },
-    cancel() {
-      onAbort();
-    },
-  });
-}
-
-
-export function observableToAsyncIterable<TValue>(
-  observable: Observable<TValue, unknown>,
-  signal: AbortSignal,
-): AsyncIterable<TValue> {
-  const stream = observableToReadableStream(observable, signal);
-
-  const reader = stream.getReader();
-  const iterator: AsyncIterator<TValue> = {
-    async next() {
-      const value = await reader.read();
-      if (value.done) {
-        return {
-          value: undefined,
-          done: true,
-        };
-      }
-      const { value: result } = value;
-      if (!result.ok) {
-        throw result.error;
-      }
-      return {
-        value: result.value,
-        done: false,
-      };
-    },
-    async return() {
-      await reader.cancel();
-      return {
-        value: undefined,
-        done: true,
-      };
-    },
-  };
-  return {
-    [Symbol.asyncIterator]() {
-      return iterator;
-    },
-  };
-}
 
 export type CreateBunWSSContextFnOptions<TRouter extends AnyRouter> =
-NodeHTTPCreateContextFnOptions<
-  Request,
-  ServerWebSocket<BunWSClientCtx<TRouter>>
->;
+  NodeHTTPCreateContextFnOptions<
+    Request,
+    ServerWebSocket<BunWSClientCtx<TRouter>>
+  >;
 
 export type BunWSAdapterOptions<TRouter extends AnyRouter> = BaseHandlerOptions<
   TRouter,
   Request
 > &
-CreateContextCallback<
-  inferRouterContext<TRouter>,
-  (
-    opts: CreateBunWSSContextFnOptions<TRouter>,
-  ) => MaybePromise<inferRouterContext<TRouter>>
->;
+  CreateContextCallback<
+    inferRouterContext<TRouter>,
+    (
+      opts: CreateBunWSSContextFnOptions<TRouter>,
+    ) => MaybePromise<inferRouterContext<TRouter>>
+  >;
 
 export type BunWSClientCtx<TRouter extends AnyRouter> = {
   req: Request;
@@ -155,10 +60,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
   ) => {
     client.send(
       JSON.stringify(
-        transformTRPCResponse(
-          opts.router._def._config,
-          untransformedJSON,
-        ),
+        transformTRPCResponse(opts.router._def._config, untransformedJSON),
       ),
     );
   };
@@ -177,7 +79,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
         accept: null,
         type: "unknown",
         signal: client.data.abortController.signal,
-        url: null
+        url: null,
       },
     });
 
@@ -257,14 +159,13 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
         signal: abortController.signal,
       });
 
-      const isIterableResult =
-        isAsyncIterable(result) || isObservable(result);
+      const isIterableResult = isAsyncIterable(result);
 
       if (type !== "subscription") {
         if (isIterableResult) {
           throw new TRPCError({
             code: "UNSUPPORTED_MEDIA_TYPE",
-            message: `Cannot return an async iterable or observable from a ${type} procedure with WebSockets`,
+            message: `Cannot return an async iterable from a ${type} procedure with WebSockets`,
           });
         }
         // send the value as data if the method is not a subscription
@@ -281,7 +182,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
 
       if (!isIterableResult) {
         throw new TRPCError({
-          message: `Subscription ${path} did not return an observable or a AsyncGenerator`,
+          message: `Subscription ${path} did not return an AsyncGenerator`,
           code: "INTERNAL_SERVER_ERROR",
         });
       }
@@ -300,9 +201,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
         });
       }
 
-      const iterable = isObservable(result)
-        ? observableToAsyncIterable(result, abortController.signal)
-        : result;
+      const iterable = result;
 
       run(async () => {
         const iterator: AsyncIterator<unknown> =
@@ -318,9 +217,9 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
           | null
           | TRPCError
           | Awaited<
-            typeof abortPromise | ReturnType<(typeof iterator)['next']>
-          >;
-        let result: null | TRPCResultMessage<unknown>['result'];
+              typeof abortPromise | ReturnType<(typeof iterator)["next"]>
+            >;
+        let result: null | TRPCResultMessage<unknown>["result"];
 
         while (true) {
           next = await Promise.race([
@@ -394,24 +293,23 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
             type: "stopped",
           },
         });
-      })
-        .catch((cause) => {
-          const error = getTRPCErrorFromUnknown(cause);
-          opts.onError?.({ error, path, type, ctx, req, input });
-          respond(client, {
-            id,
-            jsonrpc,
-            error: getErrorShape({
-              config: router._def._config,
-              error,
-              type,
-              path,
-              input,
-              ctx,
-            }),
-          });
-          abortController.abort();
+      }).catch((cause) => {
+        const error = getTRPCErrorFromUnknown(cause);
+        opts.onError?.({ error, path, type, ctx, req, input });
+        respond(client, {
+          id,
+          jsonrpc,
+          error: getErrorShape({
+            config: router._def._config,
+            error,
+            type,
+            path,
+            input,
+            ctx,
+          }),
         });
+        abortController.abort();
+      });
 
       client.data.abortControllers.set(id!, abortController);
 
@@ -447,11 +345,9 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
       client.data.abortControllers = new Map();
 
       if (client.data.req.url) {
-
         const connectionParams =
-          new URL(client.data.req.url).searchParams.get(
-            "connectionParams",
-          ) === "1";
+          new URL(client.data.req.url).searchParams.get("connectionParams") ===
+          "1";
 
         if (!connectionParams) {
           client.data.ctx = createClientCtx(client, null);
@@ -481,9 +377,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
 
       try {
         const msgJSON: unknown = JSON.parse(msgStr);
-        const msgs: unknown[] = Array.isArray(msgJSON)
-          ? msgJSON
-          : [msgJSON];
+        const msgs: unknown[] = Array.isArray(msgJSON) ? msgJSON : [msgJSON];
 
         if (!client.data.ctx) {
           const msg = msgs.shift() as TRPCConnectionParamsMessage;
@@ -497,10 +391,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
         const promises = [];
 
         for (const raw of msgs) {
-          const msg = parseTRPCMessage(
-            raw,
-            router._def._config.transformer,
-          );
+          const msg = parseTRPCMessage(raw, router._def._config.transformer);
           promises.push(handleRequest(client, msg));
         }
 
