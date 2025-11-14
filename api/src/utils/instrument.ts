@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/bun';
-import { ENVIRONMENT, SENTRY_DSN } from './constants';
+import * as Sentry from "@sentry/bun";
+import { ENVIRONMENT, SENTRY_DSN } from "./constants";
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -13,6 +13,6 @@ Sentry.init({
       ...integrations,
       Sentry.postgresIntegration(),
       Sentry.redisIntegration(),
-    ]
+    ];
   },
 });
