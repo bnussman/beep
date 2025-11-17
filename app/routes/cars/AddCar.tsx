@@ -110,107 +110,108 @@ export function AddCar() {
 
   return (
     <View style={{ padding: 16, gap: 8 }}>
-      <Controller
-        name="make"
-        rules={{ required: "Make is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field, fieldState }) => (
-          <Menu
-            trigger={
-              <View style={{ gap: 4 }}>
-                <Label>Make</Label>
+      <View style={{ gap: 4 }}>
+        <Label>Make</Label>
+        <Controller
+          name="make"
+          rules={{ required: "Make is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field, fieldState }) => (
+            <Menu
+              trigger={
                 <Input
                   readOnly
                   value={field.value}
                   placeholder="Select a make"
                 />
-                <Text color="error">{fieldState.error?.message}</Text>
-              </View>
-            }
-            options={makes.map((make) => ({
-              title: make,
-              onClick: () => field.onChange(make),
-            }))}
-          />
-        )}
-      />
-      <Controller
-        name="model"
-        rules={{ required: "Model is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field, fieldState }) => (
-          <Menu
-            disabled={!make}
-            trigger={
-              <View style={{ gap: 4 }}>
-                <Label>Model</Label>
+              }
+              options={makes.map((make) => ({
+                title: make,
+                onClick: () => field.onChange(make),
+              }))}
+            />
+          )}
+        />
+        <Text color="error">{errors.make?.message}</Text>
+      </View>
+      <View style={{ gap: 4 }}>
+        <Label>Model</Label>
+        <Controller
+          name="model"
+          rules={{ required: "Model is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field, fieldState }) => (
+            <Menu
+              disabled={!make}
+              trigger={
                 <Input
                   readOnly
                   value={field.value}
                   placeholder="Select a model"
                 />
-                <Text color="error">{fieldState.error?.message}</Text>
-              </View>
-            }
-            options={models!.map((model) => ({
-              title: model,
-              onClick: () => field.onChange(model),
-            }))}
-          />
-        )}
-      />
-      <Controller
-        name="year"
-        rules={{ required: "Year is required" }}
-        control={control}
-        render={({ field, fieldState }) => (
-          <Menu
-            trigger={
-              <View style={{ gap: 4 }}>
-                <Label>Year</Label>
+              }
+              options={models!.map((model) => ({
+                title: model,
+                onClick: () => field.onChange(model),
+              }))}
+            />
+          )}
+        />
+
+        <Text color="error">{errors.model?.message}</Text>
+      </View>
+      <View style={{ gap: 4 }}>
+        <Label>Year</Label>
+        <Controller
+          name="year"
+          rules={{ required: "Year is required" }}
+          control={control}
+          render={({ field, fieldState }) => (
+            <Menu
+              trigger={
                 <Input
                   readOnly
                   value={field.value ? String(field.value) : ""}
                   placeholder="Select a year"
                 />
+              }
+              options={years.map((year) => ({
+                title: String(year),
+                onClick: () => field.onChange(year),
+              }))}
+            />
+          )}
+        />
 
-                <Text color="error">{fieldState.error?.message}</Text>
-              </View>
-            }
-            options={years.map((year) => ({
-              title: String(year),
-              onClick: () => field.onChange(year),
-            }))}
-          />
-        )}
-      />
-      <Controller
-        name="color"
-        rules={{ required: "Color is required" }}
-        defaultValue=""
-        control={control}
-        render={({ field, fieldState }) => (
-          <Menu
-            trigger={
-              <View style={{ gap: 4 }}>
-                <Label>Color</Label>
+        <Text color="error">{errors.year?.message}</Text>
+      </View>
+      <View style={{ gap: 4 }}>
+        <Label>Color</Label>
+        <Controller
+          name="color"
+          rules={{ required: "Color is required" }}
+          defaultValue=""
+          control={control}
+          render={({ field, fieldState }) => (
+            <Menu
+              trigger={
                 <Input
                   readOnly
                   value={field.value ? String(field.value) : ""}
                   placeholder="Select a color"
                 />
-                <Text color="error">{fieldState.error?.message}</Text>
-              </View>
-            }
-            options={colors.map((color) => ({
-              title: color,
-              onClick: () => field.onChange(color),
-            }))}
-          />
-        )}
-      />
+              }
+              options={colors.map((color) => ({
+                title: color,
+                onClick: () => field.onChange(color),
+              }))}
+            />
+          )}
+        />
+        <Text color="error">{errors.color?.message}</Text>
+      </View>
       <View style={{ gap: 4 }}>
         <Controller
           name="photo"
