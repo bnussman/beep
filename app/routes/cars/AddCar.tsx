@@ -55,7 +55,8 @@ export function AddCar() {
   });
 
   const queryClient = useQueryClient();
-  const { mutateAsync: addCar, error } = useMutation(
+
+  const { mutateAsync: addCar } = useMutation(
     trpc.car.createCar.mutationOptions({
       onSuccess() {
         queryClient.invalidateQueries(trpc.car.cars.pathFilter());
@@ -77,7 +78,7 @@ export function AddCar() {
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsMultipleSelection: false,
       allowsEditing: true,
       aspect: [5, 3],
@@ -142,7 +143,7 @@ export function AddCar() {
           rules={{ required: "Model is required" }}
           defaultValue=""
           control={control}
-          render={({ field, fieldState }) => (
+          render={({ field }) => (
             <Menu
               disabled={!make}
               trigger={
@@ -168,7 +169,7 @@ export function AddCar() {
           name="year"
           rules={{ required: "Year is required" }}
           control={control}
-          render={({ field, fieldState }) => (
+          render={({ field }) => (
             <Menu
               trigger={
                 <Input
@@ -194,7 +195,7 @@ export function AddCar() {
           rules={{ required: "Color is required" }}
           defaultValue=""
           control={control}
-          render={({ field, fieldState }) => (
+          render={({ field }) => (
             <Menu
               trigger={
                 <Input
