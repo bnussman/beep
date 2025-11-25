@@ -36,6 +36,9 @@ importers:
       '@trpc/server':
         specifier: ^11.7.2
         version: 11.7.2(typescript@5.9.2)
+      '@types/pg':
+        specifier: ^8.15.6
+        version: 8.15.6
       car-info:
         specifier: 0.2.2
         version: 0.2.2
@@ -107,11 +110,11 @@ importers:
         specifier: ^5.90.2
         version: 5.90.2(react@19.1.0)
       '@trpc/client':
-        specifier: ^11.6.0
-        version: 11.6.0(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)
+        specifier: ^11.7.2
+        version: 11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)
       '@trpc/tanstack-react-query':
-        specifier: ^11.6.0
-        version: 11.6.0(@tanstack/react-query@5.90.2(react@19.1.0))(@trpc/client@11.6.0(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.7.2(typescript@5.9.2))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.2)
+        specifier: ^11.7.2
+        version: 11.7.2(@tanstack/react-query@5.90.2(react@19.1.0))(@trpc/client@11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.7.2(typescript@5.9.2))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.2)
       expo:
         specifier: ~54.0.20
         version: 54.0.20(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(graphql@15.8.0)(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
@@ -209,6 +212,9 @@ importers:
       '@expo/metro-runtime':
         specifier: ~6.1.2
         version: 6.1.2(expo@54.0.20)(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
+      '@trpc/server':
+        specifier: ^11.7.2
+        version: 11.7.2(typescript@5.9.2)
       '@types/react':
         specifier: 19.1.12
         version: 19.1.12
@@ -280,11 +286,11 @@ importers:
         specifier: ^0.16.0
         version: 0.16.0(2c86d7673ae76a8f6a86eebd4bd82d05)
       '@trpc/client':
-        specifier: ^11.6.0
-        version: 11.6.0(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)
+        specifier: ^11.7.2
+        version: 11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)
       '@trpc/tanstack-react-query':
-        specifier: ^11.6.0
-        version: 11.6.0(@tanstack/react-query@5.90.2(react@19.1.0))(@trpc/client@11.6.0(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.7.2(typescript@5.9.2))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.2)
+        specifier: ^11.7.2
+        version: 11.7.2(@tanstack/react-query@5.90.2(react@19.1.0))(@trpc/client@11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.7.2(typescript@5.9.2))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.2)
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
@@ -304,6 +310,9 @@ importers:
         specifier: ^8.0.1
         version: 8.0.4(mapbox-gl@3.14.0)(maplibre-gl@5.7.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
+      '@trpc/server':
+        specifier: ^11.7.2
+        version: 11.7.2(typescript@5.9.2)
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.1
@@ -3214,10 +3223,10 @@ packages:
     peerDependencies:
       react: 19.1.0
 
-  '@trpc/client@11.6.0':
-    resolution: {integrity: sha512-DyWbYk2hd50BaVrXWVkaUnaSwgAF5g/lfBkXtkF1Aqlk6BtSzGUo3owPkgqQO2I5LwWy1+ra9TsSfBBvIZpTwg==}
+  '@trpc/client@11.7.2':
+    resolution: {integrity: sha512-OQxqUMfpDvjcszo9dbnqWQXnW2L5IbrKSz2H7l8s+mVM3EvYw7ztQ/gjFIN3iy0NcamiQfd4eE6qjcb9Lm+63A==}
     peerDependencies:
-      '@trpc/server': 11.6.0
+      '@trpc/server': 11.7.2
       typescript: '>=5.7.2'
 
   '@trpc/server@11.7.2':
@@ -3225,12 +3234,12 @@ packages:
     peerDependencies:
       typescript: '>=5.7.2'
 
-  '@trpc/tanstack-react-query@11.6.0':
-    resolution: {integrity: sha512-254OpGV2RT9Djl6HRJmokDMT4pZz3beLs+8/T35ySfBxiC5OdEsOeESIJpC302YaZcCGwkOZ+d+FKFXgpy0YtQ==}
+  '@trpc/tanstack-react-query@11.7.2':
+    resolution: {integrity: sha512-3XrY0b8lV0Fhj4Z2hVn1d1ZJzq2/stbc2F1e9Y6RrUWOfLmOKHlEVHYO1QfDGM6rqj66DkUj7eA593hAI0VTkQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.80.3
-      '@trpc/client': 11.6.0
-      '@trpc/server': 11.6.0
+      '@trpc/client': 11.7.2
+      '@trpc/server': 11.7.2
       react: 19.1.0
       react-dom: 19.1.0
       typescript: '>=5.7.2'
@@ -8774,14 +8783,14 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
       jest-mock: 29.7.0
 
   '@jest/fake-timers@29.7.0':
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.2.0
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -8815,7 +8824,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
       '@types/yargs': 17.0.24
       chalk: 4.1.2
 
@@ -10736,7 +10745,7 @@ snapshots:
       yaml: 2.5.1
       yaml-diff-patch: 2.0.0
 
-  '@trpc/client@11.6.0(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)':
+  '@trpc/client@11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)':
     dependencies:
       '@trpc/server': 11.7.2(typescript@5.9.2)
       typescript: 5.9.2
@@ -10745,10 +10754,10 @@ snapshots:
     dependencies:
       typescript: 5.9.2
 
-  '@trpc/tanstack-react-query@11.6.0(@tanstack/react-query@5.90.2(react@19.1.0))(@trpc/client@11.6.0(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.7.2(typescript@5.9.2))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.2)':
+  '@trpc/tanstack-react-query@11.7.2(@tanstack/react-query@5.90.2(react@19.1.0))(@trpc/client@11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.7.2(typescript@5.9.2))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.9.2)':
     dependencies:
       '@tanstack/react-query': 5.90.2(react@19.1.0)
-      '@trpc/client': 11.6.0(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)
+      '@trpc/client': 11.7.2(@trpc/server@11.7.2(typescript@5.9.2))(typescript@5.9.2)
       '@trpc/server': 11.7.2(typescript@5.9.2)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -10807,7 +10816,7 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.0.4
       '@types/keyv': 3.1.4
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
       '@types/responselike': 1.0.3
 
   '@types/connect@3.4.38':
@@ -10842,7 +10851,7 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
 
   '@types/luxon@3.7.1': {}
 
@@ -10899,7 +10908,7 @@ snapshots:
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
 
   '@types/semver@7.7.1': {}
 
@@ -12529,7 +12538,7 @@ snapshots:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -12566,7 +12575,7 @@ snapshots:
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
       jest-util: 29.7.0
 
   jest-regex-util@29.6.3: {}
@@ -12574,7 +12583,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -13584,7 +13593,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 24.7.2
+      '@types/node': 24.10.1
       long: 5.3.2
 
   protocol-buffers-schema@3.6.0: {}

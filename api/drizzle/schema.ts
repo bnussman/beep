@@ -12,7 +12,6 @@ import {
 import { relations } from "drizzle-orm/relations";
 import type { CustomTypeValues } from "drizzle-orm/pg-core";
 import { customType } from "drizzle-orm/pg-core";
-import type { Point } from "geojson";
 import { Geometry } from "wkx";
 
 export const geography = (dbName: string, fieldConfig?: CustomTypeValues) => {
@@ -35,7 +34,7 @@ export const geography = (dbName: string, fieldConfig?: CustomTypeValues) => {
       }
 
       if (typeof value === "object") {
-        const point = value as Point;
+        const point = value as any;
         return {
           latitude: point.coordinates[0],
           longitude: point.coordinates[1],
