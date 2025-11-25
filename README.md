@@ -9,7 +9,7 @@
 
 ## 📚 Introduction
 
-This is the monorepo for the Beep App. The *Beep App* is a full stack ride share application. This app is built for students at college campuses and currently is mostly used by students at Appalachian State University. This application is not afilliated with any university and is independently developed and maintained.
+This is the monorepo for the Beep App. The *Beep App* is a full stack ride share application. This app is built for students at any college campus but is mostly used by students at Appalachian State University. This application is not afilliated with any university and is independently developed and maintained.
 
 ## ⌨️ Developing Locally
 
