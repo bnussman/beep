@@ -17,13 +17,13 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await beeperPage.getByRole("button").nth(0).click();
   await beeperPage.getByText("Cars").click();
   await beeperPage.getByLabel("Add a car").click();
-  await beeperPage.getByText("Make").click();
+  await beeperPage.getByPlaceholder("Select a make").click();
   await beeperPage.getByText("Ford").click();
-  await beeperPage.getByText("Model").click();
+  await beeperPage.getByPlaceholder("Select a model").click();
   await beeperPage.getByText("Aspire").click();
-  await beeperPage.getByText("Year").click();
+  await beeperPage.getByPlaceholder("Select a year").click();
   await beeperPage.getByText("2023").click();
-  await beeperPage.getByText("Color").click();
+  await beeperPage.getByPlaceholder("Select a color").click();
   await beeperPage.getByText("white").click();
 
   const fileChooserPromise = beeperPage.waitForEvent("filechooser");
@@ -136,14 +136,14 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await beeperPage.getByRole("button").nth(0).click();
   await beeperPage.getByText("Cars").click();
   await beeperPage.getByLabel("Add a car").click();
-  await beeperPage.getByText("Make").click();
+  await beeperPage.getByPlaceholder("Select a make").click();
   await beeperPage.getByText("Ford").click();
-  await beeperPage.getByText("Model").click();
+  await beeperPage.getByPlaceholder("Select a model").click();
   await beeperPage.getByText("Aspire").click();
-  await beeperPage.getByText("Year").click();
-  await beeperPage.getByText("2021").click();
-  await beeperPage.getByText("Color").click();
-  await beeperPage.getByText("gray").click();
+  await beeperPage.getByPlaceholder("Select a year").click();
+  await beeperPage.getByText("2023").click();
+  await beeperPage.getByPlaceholder("Select a color").click();
+  await beeperPage.getByText("white").click();
 
   const fileChooserPromise = beeperPage.waitForEvent("filechooser");
   await beeperPage.getByText("Attach a Photo").click();

@@ -112,7 +112,7 @@ export function AddCar() {
   return (
     <View style={{ padding: 16, gap: 8 }}>
       <View style={{ gap: 4 }}>
-        <Label>Make</Label>
+        <Label htmlFor="make">Make</Label>
         <Controller
           name="make"
           rules={{ required: "Make is required" }}
@@ -122,6 +122,7 @@ export function AddCar() {
             <Menu
               trigger={
                 <Input
+                  id="make"
                   readOnly
                   value={field.value}
                   placeholder="Select a make"
@@ -137,7 +138,7 @@ export function AddCar() {
         <Text color="error">{errors.make?.message}</Text>
       </View>
       <View style={{ gap: 4 }}>
-        <Label>Model</Label>
+        <Label htmlFor="model">Model</Label>
         <Controller
           name="model"
           rules={{ required: "Model is required" }}
@@ -148,6 +149,7 @@ export function AddCar() {
               disabled={!make}
               trigger={
                 <Input
+                  id="model"
                   readOnly
                   value={field.value}
                   placeholder="Select a model"
@@ -164,7 +166,7 @@ export function AddCar() {
         <Text color="error">{errors.model?.message}</Text>
       </View>
       <View style={{ gap: 4 }}>
-        <Label>Year</Label>
+        <Label htmlFor="year">Year</Label>
         <Controller
           name="year"
           rules={{ required: "Year is required" }}
@@ -173,6 +175,7 @@ export function AddCar() {
             <Menu
               trigger={
                 <Input
+                  id="year"
                   readOnly
                   value={field.value ? String(field.value) : ""}
                   placeholder="Select a year"
@@ -189,7 +192,7 @@ export function AddCar() {
         <Text color="error">{errors.year?.message}</Text>
       </View>
       <View style={{ gap: 4 }}>
-        <Label>Color</Label>
+        <Label htmlFor="color">Color</Label>
         <Controller
           name="color"
           rules={{ required: "Color is required" }}
@@ -199,6 +202,7 @@ export function AddCar() {
             <Menu
               trigger={
                 <Input
+                  id="color"
                   readOnly
                   value={field.value ? String(field.value) : ""}
                   placeholder="Select a color"
