@@ -29,6 +29,7 @@
     "expo-image-picker": "~17.0.8",
     "expo-linear-gradient": "~15.0.7",
     "expo-linking": "~8.0.8",
+    "expo-live-activity": "^0.4.2",
     "expo-location": "~19.0.7",
     "expo-notifications": "~0.32.12",
     "expo-splash-screen": "~31.0.10",
@@ -53,9 +54,9 @@
     "zeego": "^3.0.6"
   },
   "devDependencies": {
-    "@trpc/server": "^11.7.2",
     "@babel/core": "^7.24.4",
     "@expo/metro-runtime": "~6.1.2",
+    "@trpc/server": "^11.7.2",
     "@types/react": "19.1.12",
     "@types/react-dom": "~19.1.9",
     "babel-plugin-react-compiler": "19.1.0-rc.3",
