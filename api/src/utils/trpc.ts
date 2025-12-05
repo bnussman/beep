@@ -197,7 +197,8 @@ export async function createContext(
   }
 
   const session = await db.query.token.findFirst({
-    where: eq(token.id, bearerToken),
+    // where: eq(token.id, bearerToken),
+    where: { id: bearerToken },
     with: {
       user: {
         columns: {

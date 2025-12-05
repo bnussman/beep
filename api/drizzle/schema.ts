@@ -9,7 +9,7 @@ import {
   index,
   pgEnum,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm/relations";
+import { defineRelations } from "drizzle-orm";
 import type { CustomTypeValues } from "drizzle-orm/pg-core";
 import { customType } from "drizzle-orm/pg-core";
 import { Geometry } from "wkx";
@@ -257,11 +257,13 @@ export const verify_email = pgTable("verify_email", {
   email: varchar("email", { length: 255 }).notNull(),
 });
 
-export const tokenRelations = relations(token, ({ one }) => ({
-  user: one(user, {
-    fields: [token.user_id],
-    references: [user.id],
-  }),
+export const relations = defineRelations({ user, token }, (r) => ({
+  token: {
+    user: r.one.user({ from: r.token.user_id, to: r.user.id, optional: false }),
+  },
+  user: {
+    tokens: r.many.token({ from: r.user.id, to: r.token.user_id }),
+  },
 }));
 
 export const userRelations = relations(user, ({ many }) => ({
