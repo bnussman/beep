@@ -328,30 +328,48 @@ export const relations = defineRelations(
       }),
     },
     payment: {
-      user: r.one.user({ from: r.payment.user_id, to: r.user.id }),
+      user: r.one.user({
+        from: r.payment.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
     },
     forgot_password: {
-      user: r.one.user({ from: r.forgot_password.user_id, to: r.user.id }),
+      user: r.one.user({
+        from: r.forgot_password.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
     },
     verify_email: {
-      user: r.one.user({ from: r.verify_email.user_id, to: r.user.id }),
+      user: r.one.user({
+        from: r.verify_email.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
     },
     feedback: {
-      user: r.one.user({ from: r.feedback.user_id, to: r.user.id }),
+      user: r.one.user({
+        from: r.feedback.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
     },
     car: {
-      user: r.one.user({ from: r.car.user_id, to: r.user.id }),
+      user: r.one.user({ from: r.car.user_id, to: r.user.id, optional: false }),
     },
     beep: {
       beeper: r.one.user({
         from: r.beep.beeper_id,
         to: r.user.id,
         alias: "beeper",
+        optional: false,
       }),
       rider: r.one.user({
         from: r.beep.rider_id,
         to: r.user.id,
         alias: "rider",
+        optional: false,
       }),
       ratings: r.many.rating({ from: r.beep.id, to: r.rating.beep_id }),
       reports: r.many.report({ from: r.beep.id, to: r.report.beep_id }),
@@ -361,11 +379,13 @@ export const relations = defineRelations(
         from: r.report.reporter_id,
         to: r.user.id,
         alias: "reporter",
+        optional: false,
       }),
       reported: r.one.user({
         from: r.report.reported_id,
         to: r.user.id,
         alias: "reported",
+        optional: false,
       }),
       handledBy: r.one.user({
         from: r.report.handled_by_id,
@@ -379,11 +399,13 @@ export const relations = defineRelations(
         from: r.rating.rater_id,
         to: r.user.id,
         alias: "rater",
+        optional: false,
       }),
       rated: r.one.user({
         from: r.rating.rated_id,
         to: r.user.id,
         alias: "rated",
+        optional: false,
       }),
       beep: r.one.user({ from: r.rating.beep_id, to: r.beep.id }),
     },

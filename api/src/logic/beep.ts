@@ -24,6 +24,15 @@ export const isAcceptedBeep = or(
   eq(beep.status, "in_progress"),
 );
 
+export const isAcceptedBeepNew = {
+  OR: [
+    { status: "accepted" as const },
+    { status: "here" as const },
+    { status: "in_progress" as const },
+    { status: "on_the_way" as const },
+  ],
+};
+
 export const rideResponseSchema = z.object({
   id: z.string(),
   start: z.union([z.string(), z.date()]),
