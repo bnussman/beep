@@ -291,12 +291,41 @@ export const relations = defineRelations(
       }),
       feedbacks: r.many.feedback({ from: r.user.id, to: r.feedback.user_id }),
       cars: r.many.car({ from: r.user.id, to: r.car.user_id }),
-      beeps: r.many.beep({ from: r.user.id, to: r.beep.beeper_id }),
-      rides: r.many.beep({ from: r.user.id, to: r.beep.rider_id }),
-      reports: r.many.report({ from: r.user.id, to: r.report.reporter_id }),
-      complaints: r.many.report({ from: r.user.id, to: r.report.reported_id }),
-      ratings: r.many.rating({ from: r.user.id, to: r.rating.rater_id }),
-      reviews: r.many.rating({ from: r.user.id, to: r.rating.rated_id }),
+      beeps: r.many.beep({
+        from: r.user.id,
+        to: r.beep.beeper_id,
+        alias: "beeper",
+      }),
+      rides: r.many.beep({
+        from: r.user.id,
+        to: r.beep.rider_id,
+        alias: "rider",
+      }),
+      reports: r.many.report({
+        from: r.user.id,
+        to: r.report.reporter_id,
+        alias: "reporter",
+      }),
+      complaints: r.many.report({
+        from: r.user.id,
+        to: r.report.reported_id,
+        alias: "reported",
+      }),
+      ratings: r.many.rating({
+        from: r.user.id,
+        to: r.rating.rater_id,
+        alias: "rater",
+      }),
+      reviews: r.many.rating({
+        from: r.user.id,
+        to: r.rating.rated_id,
+        alias: "rated",
+      }),
+      handledRatings: r.many.rating({
+        from: r.user.id,
+        to: r.rating.rated_id,
+        alias: "handler",
+      }),
     },
     payment: {
       user: r.one.user({ from: r.payment.user_id, to: r.user.id }),
@@ -317,52 +346,46 @@ export const relations = defineRelations(
       beeper: r.one.user({
         from: r.beep.beeper_id,
         to: r.user.id,
+        alias: "beeper",
       }),
       rider: r.one.user({
         from: r.beep.rider_id,
         to: r.user.id,
+        alias: "rider",
       }),
       ratings: r.many.rating({ from: r.beep.id, to: r.rating.beep_id }),
       reports: r.many.report({ from: r.beep.id, to: r.report.beep_id }),
     },
+    report: {
+      reporter: r.one.user({
+        from: r.report.reporter_id,
+        to: r.user.id,
+        alias: "reporter",
+      }),
+      reported: r.one.user({
+        from: r.report.reported_id,
+        to: r.user.id,
+        alias: "reported",
+      }),
+      handledBy: r.one.user({
+        from: r.report.handled_by_id,
+        to: r.user.id,
+        alias: "handler",
+      }),
+      beep: r.one.beep({ from: r.report.beep_id, to: r.user.id }),
+    },
+    rating: {
+      rater: r.one.user({
+        from: r.rating.rater_id,
+        to: r.user.id,
+        alias: "rater",
+      }),
+      rated: r.one.user({
+        from: r.rating.rated_id,
+        to: r.user.id,
+        alias: "rated",
+      }),
+      beep: r.one.user({ from: r.rating.beep_id, to: r.beep.id }),
+    },
   }),
 );
-
-export const reportRelations = relations(report, ({ one }) => ({
-  reporter: one(user, {
-    fields: [report.reporter_id],
-    references: [user.id],
-    relationName: "report_reporter_id_user_id",
-  }),
-  reported: one(user, {
-    fields: [report.reported_id],
-    references: [user.id],
-    relationName: "report_reported_id_user_id",
-  }),
-  handledBy: one(user, {
-    fields: [report.handled_by_id],
-    references: [user.id],
-    relationName: "report_handled_by_id_user_id",
-  }),
-  beep: one(beep, {
-    fields: [report.beep_id],
-    references: [beep.id],
-  }),
-}));
-
-export const ratingRelations = relations(rating, ({ one }) => ({
-  rater: one(user, {
-    fields: [rating.rater_id],
-    references: [user.id],
-    relationName: "rating_rater_id_user_id",
-  }),
-  rated: one(user, {
-    fields: [rating.rated_id],
-    references: [user.id],
-    relationName: "rating_rated_id_user_id",
-  }),
-  beep: one(beep, {
-    fields: [rating.beep_id],
-    references: [beep.id],
-  }),
-}));
