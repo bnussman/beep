@@ -407,7 +407,7 @@ export const relations = defineRelations(
         alias: "rated",
         optional: false,
       }),
-      beep: r.one.user({ from: r.rating.beep_id, to: r.beep.id }),
+      beep: r.one.beep({ from: r.rating.beep_id, to: r.beep.id }),
     },
   }),
 );
