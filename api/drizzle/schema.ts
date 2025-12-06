@@ -9,7 +9,7 @@ import {
   index,
   pgEnum,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm/relations";
+import { defineRelations } from "drizzle-orm";
 import type { CustomTypeValues } from "drizzle-orm/pg-core";
 import { customType } from "drizzle-orm/pg-core";
 import { Geometry } from "wkx";
@@ -257,131 +257,157 @@ export const verify_email = pgTable("verify_email", {
   email: varchar("email", { length: 255 }).notNull(),
 });
 
-export const tokenRelations = relations(token, ({ one }) => ({
-  user: one(user, {
-    fields: [token.user_id],
-    references: [user.id],
-  }),
-}));
-
-export const userRelations = relations(user, ({ many }) => ({
-  tokens: many(token),
-  payments: many(payment),
-  forgot_passwords: many(forgot_password),
-  feedbacks: many(feedback),
-  cars: many(car),
-  beeps: many(beep, {
-    relationName: "beep_beeper_id_user_id",
-  }),
-  rides: many(beep, {
-    relationName: "beep_rider_id_user_id",
-  }),
-  reports_reporter_id: many(report, {
-    relationName: "report_reporter_id_user_id",
-  }),
-  reports_reported_id: many(report, {
-    relationName: "report_reported_id_user_id",
-  }),
-  reports_handled_by_id: many(report, {
-    relationName: "report_handled_by_id_user_id",
-  }),
-  ratings_rater_id: many(rating, {
-    relationName: "rating_rater_id_user_id",
-  }),
-  ratings_rated_id: many(rating, {
-    relationName: "rating_rated_id_user_id",
-  }),
-  verify_emails: many(verify_email),
-}));
-
-export const paymentRelations = relations(payment, ({ one }) => ({
-  user: one(user, {
-    fields: [payment.user_id],
-    references: [user.id],
-  }),
-}));
-
-export const forgot_passwordRelations = relations(
-  forgot_password,
-  ({ one }) => ({
-    user: one(user, {
-      fields: [forgot_password.user_id],
-      references: [user.id],
-    }),
+export const relations = defineRelations(
+  {
+    user,
+    token,
+    payment,
+    forgot_password,
+    feedback,
+    car,
+    beep,
+    report,
+    verify_email,
+    rating,
+  },
+  (r) => ({
+    token: {
+      user: r.one.user({
+        from: r.token.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
+    },
+    user: {
+      tokens: r.many.token({ from: r.user.id, to: r.token.user_id }),
+      payments: r.many.payment({ from: r.user.id, to: r.payment.user_id }),
+      forgot_passwords: r.many.forgot_password({
+        from: r.user.id,
+        to: r.forgot_password.user_id,
+      }),
+      verify_emails: r.many.verify_email({
+        from: r.user.id,
+        to: r.verify_email.user_id,
+      }),
+      feedbacks: r.many.feedback({ from: r.user.id, to: r.feedback.user_id }),
+      cars: r.many.car({ from: r.user.id, to: r.car.user_id }),
+      beeps: r.many.beep({
+        from: r.user.id,
+        to: r.beep.beeper_id,
+        alias: "beeper",
+      }),
+      rides: r.many.beep({
+        from: r.user.id,
+        to: r.beep.rider_id,
+        alias: "rider",
+      }),
+      reports: r.many.report({
+        from: r.user.id,
+        to: r.report.reporter_id,
+        alias: "reporter",
+      }),
+      complaints: r.many.report({
+        from: r.user.id,
+        to: r.report.reported_id,
+        alias: "reported",
+      }),
+      ratings: r.many.rating({
+        from: r.user.id,
+        to: r.rating.rater_id,
+        alias: "rater",
+      }),
+      reviews: r.many.rating({
+        from: r.user.id,
+        to: r.rating.rated_id,
+        alias: "rated",
+      }),
+      handledRatings: r.many.rating({
+        from: r.user.id,
+        to: r.rating.rated_id,
+        alias: "handler",
+      }),
+    },
+    payment: {
+      user: r.one.user({
+        from: r.payment.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
+    },
+    forgot_password: {
+      user: r.one.user({
+        from: r.forgot_password.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
+    },
+    verify_email: {
+      user: r.one.user({
+        from: r.verify_email.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
+    },
+    feedback: {
+      user: r.one.user({
+        from: r.feedback.user_id,
+        to: r.user.id,
+        optional: false,
+      }),
+    },
+    car: {
+      user: r.one.user({ from: r.car.user_id, to: r.user.id, optional: false }),
+    },
+    beep: {
+      beeper: r.one.user({
+        from: r.beep.beeper_id,
+        to: r.user.id,
+        alias: "beeper",
+        optional: false,
+      }),
+      rider: r.one.user({
+        from: r.beep.rider_id,
+        to: r.user.id,
+        alias: "rider",
+        optional: false,
+      }),
+      ratings: r.many.rating({ from: r.beep.id, to: r.rating.beep_id }),
+      reports: r.many.report({ from: r.beep.id, to: r.report.beep_id }),
+    },
+    report: {
+      reporter: r.one.user({
+        from: r.report.reporter_id,
+        to: r.user.id,
+        alias: "reporter",
+        optional: false,
+      }),
+      reported: r.one.user({
+        from: r.report.reported_id,
+        to: r.user.id,
+        alias: "reported",
+        optional: false,
+      }),
+      handledBy: r.one.user({
+        from: r.report.handled_by_id,
+        to: r.user.id,
+        alias: "handler",
+      }),
+      beep: r.one.beep({ from: r.report.beep_id, to: r.beep.id }),
+    },
+    rating: {
+      rater: r.one.user({
+        from: r.rating.rater_id,
+        to: r.user.id,
+        alias: "rater",
+        optional: false,
+      }),
+      rated: r.one.user({
+        from: r.rating.rated_id,
+        to: r.user.id,
+        alias: "rated",
+        optional: false,
+      }),
+      beep: r.one.beep({ from: r.rating.beep_id, to: r.beep.id }),
+    },
   }),
 );
-
-export const feedbackRelations = relations(feedback, ({ one }) => ({
-  user: one(user, {
-    fields: [feedback.user_id],
-    references: [user.id],
-  }),
-}));
-
-export const carRelations = relations(car, ({ one }) => ({
-  user: one(user, {
-    fields: [car.user_id],
-    references: [user.id],
-  }),
-}));
-
-export const beepRelations = relations(beep, ({ one, many }) => ({
-  beeper: one(user, {
-    fields: [beep.beeper_id],
-    references: [user.id],
-    relationName: "beep_beeper_id_user_id",
-  }),
-  rider: one(user, {
-    fields: [beep.rider_id],
-    references: [user.id],
-    relationName: "beep_rider_id_user_id",
-  }),
-  reports: many(report),
-  ratings: many(rating),
-}));
-
-export const reportRelations = relations(report, ({ one }) => ({
-  reporter: one(user, {
-    fields: [report.reporter_id],
-    references: [user.id],
-    relationName: "report_reporter_id_user_id",
-  }),
-  reported: one(user, {
-    fields: [report.reported_id],
-    references: [user.id],
-    relationName: "report_reported_id_user_id",
-  }),
-  handledBy: one(user, {
-    fields: [report.handled_by_id],
-    references: [user.id],
-    relationName: "report_handled_by_id_user_id",
-  }),
-  beep: one(beep, {
-    fields: [report.beep_id],
-    references: [beep.id],
-  }),
-}));
-
-export const ratingRelations = relations(rating, ({ one }) => ({
-  rater: one(user, {
-    fields: [rating.rater_id],
-    references: [user.id],
-    relationName: "rating_rater_id_user_id",
-  }),
-  rated: one(user, {
-    fields: [rating.rated_id],
-    references: [user.id],
-    relationName: "rating_rated_id_user_id",
-  }),
-  beep: one(beep, {
-    fields: [rating.beep_id],
-    references: [beep.id],
-  }),
-}));
-
-export const verify_emailRelations = relations(verify_email, ({ one }) => ({
-  user: one(user, {
-    fields: [verify_email.user_id],
-    references: [user.id],
-  }),
-}));

@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { beep, car, rating, user, verify_email } from "../../drizzle/schema";
+import { beep, rating, user, verify_email } from "../../drizzle/schema";
 import { db } from "../utils/db";
 import { count, eq, sql, like, and, or, avg } from "drizzle-orm";
 import { z } from "zod";
@@ -48,7 +48,7 @@ export const userRouter = router({
         yield ctx.user;
       } else {
         yield await db.query.user.findFirst({
-          where: eq(user.id, userId),
+          where: { id: userId },
           columns: { password: false, passwordType: false },
         });
       }
@@ -154,7 +154,7 @@ export const userRouter = router({
         }
 
         const c = await db.query.car.findFirst({
-          where: and(eq(car.user_id, ctx.user.id), eq(car.default, true)),
+          where: { user_id: ctx.user.id, default: true },
         });
         if (!c) {
           throw new TRPCError({
@@ -209,7 +209,7 @@ export const userRouter = router({
     )
     .mutation(async ({ input }) => {
       const existingUser = await db.query.user.findFirst({
-        where: eq(user.id, input.userId),
+        where: { id: input.userId },
         columns: {
           isEmailVerified: true,
           pushToken: true,
@@ -397,7 +397,7 @@ export const userRouter = router({
     }),
   publicUser: authedProcedure.input(z.string()).query(async ({ input }) => {
     const u = await db.query.user.findFirst({
-      where: eq(user.id, input),
+      where: { id: input },
       columns: {
         id: true,
         first: true,
@@ -424,7 +424,7 @@ export const userRouter = router({
     .concat(mustHaveBeenInAcceptedBeep)
     .query(async ({ input }) => {
       const u = await db.query.user.findFirst({
-        where: eq(user.id, input),
+        where: { id: input },
         columns: {
           phone: true,
         },
@@ -438,7 +438,7 @@ export const userRouter = router({
     }),
   user: adminProcedure.input(z.string()).query(async ({ input }) => {
     const u = await db.query.user.findFirst({
-      where: eq(user.id, input),
+      where: { id: input },
       columns: {
         password: false,
         passwordType: false,
@@ -574,7 +574,7 @@ export const userRouter = router({
     .concat(mustHaveBeenInAcceptedBeep)
     .query(async ({ input }) => {
       const c = await db.query.car.findFirst({
-        where: and(eq(car.user_id, input), eq(car.default, true)),
+        where: { user_id: input, default: true },
       });
 
       if (!c) {
