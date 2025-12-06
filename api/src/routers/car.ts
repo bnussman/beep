@@ -7,7 +7,7 @@ import {
 } from "../utils/trpc";
 import { db } from "../utils/db";
 import { car } from "../../drizzle/schema";
-import { and, count, desc, eq, ne } from "drizzle-orm";
+import { and, count, eq, ne } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { s3 } from "../utils/s3";
@@ -30,8 +30,8 @@ export const carRouter = router({
       const cars = await db.query.car.findMany({
         limit: input.pageSize,
         offset: (input.cursor - 1) * input.pageSize,
-        orderBy: desc(car.created),
-        where,
+        orderBy: { created: "desc" },
+        where: input.userId ? { user_id: input.userId } : {},
         with: {
           user: {
             columns: {
@@ -75,7 +75,7 @@ export const carRouter = router({
       }
 
       const c = await db.query.car.findFirst({
-        where: eq(car.id, input.carId),
+        where: { id: input.carId },
         with: {
           user: true,
         },
