@@ -1,8 +1,8 @@
 import * as Sentry from "@sentry/bun";
 import z from "zod";
-import { and, asc, eq, lt, ne, or } from "drizzle-orm";
+import { and, eq, lt, ne, or } from "drizzle-orm";
 import { db } from "../utils/db";
-import { beep, beepStatuses, car, user } from "../../drizzle/schema";
+import { beep, beepStatuses } from "../../drizzle/schema";
 import { User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
 
@@ -17,12 +17,15 @@ export const inProgressBeep = or(
   eq(beep.status, "in_progress"),
 );
 
-export const isAcceptedBeep = or(
-  eq(beep.status, "accepted"),
-  eq(beep.status, "on_the_way"),
-  eq(beep.status, "here"),
-  eq(beep.status, "in_progress"),
-);
+export const inProgressBeepNew = {
+  OR: [
+    { status: "waiting" as const },
+    { status: "accepted" as const },
+    { status: "on_the_way" as const },
+    { status: "here" as const },
+    { status: "in_progress" as const },
+  ],
+};
 
 export const isAcceptedBeepNew = {
   OR: [
@@ -100,8 +103,8 @@ export function getQueueSize(queue: Beep[]) {
 
 export async function getBeeperQueue(beeperId: string) {
   return await db.query.beep.findMany({
-    where: and(inProgressBeep, eq(beep.beeper_id, beeperId)),
-    orderBy: asc(beep.start),
+    where: { AND: [inProgressBeepNew, { beeper_id: beeperId }] },
+    orderBy: { start: "asc" },
     with: {
       beeper: { columns: { password: false, passwordType: false } },
       rider: { columns: { password: false, passwordType: false } },
@@ -111,7 +114,7 @@ export async function getBeeperQueue(beeperId: string) {
 
 export async function getRidersCurrentRide(userId: string) {
   const b = await db.query.beep.findFirst({
-    where: and(eq(beep.rider_id, userId), inProgressBeep),
+    where: { AND: [inProgressBeepNew, { rider_id: userId }] },
     with: {
       beeper: true,
     },
@@ -157,7 +160,7 @@ export async function sendBeepUpdateNotificationToRider(
     columns: {
       pushToken: true,
     },
-    where: eq(user.id, riderId),
+    where: { id: riderId },
   });
 
   if (!rider?.pushToken) {
@@ -188,7 +191,7 @@ export async function sendBeepUpdateNotificationToRider(
       break;
     case "on_the_way": {
       const c = await db.query.car.findFirst({
-        where: and(eq(car.user_id, beeper.id), eq(car.default, true)),
+        where: { user_id: beeper.id, default: true },
       });
 
       let body = "Your beeper is on their way.";
@@ -206,7 +209,7 @@ export async function sendBeepUpdateNotificationToRider(
     }
     case "here": {
       const c = await db.query.car.findFirst({
-        where: and(eq(car.user_id, beeper.id), eq(car.default, true)),
+        where: { user_id: beeper.id, default: true },
       });
 
       let body = "Your beeper is here to pick you up.";
