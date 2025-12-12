@@ -1,10 +1,4 @@
 import { z } from "zod";
-import {
-  authedProcedure,
-  publicProcedure,
-  router,
-  verifiedProcedure,
-} from "../utils/trpc";
 import { db } from "../utils/db";
 import { car } from "../../drizzle/schema";
 import { and, count, eq, ne } from "drizzle-orm";
@@ -14,6 +8,12 @@ import { s3 } from "../utils/s3";
 import { DEFAULT_PAGE_SIZE, S3_BUCKET_URL } from "../utils/constants";
 import { getMakes, getModels } from "car-info";
 import { CAR_COLOR_OPTIONS } from "../utils/constants";
+import {
+  authedProcedure,
+  publicProcedure,
+  router,
+  verifiedProcedure,
+} from "../utils/trpc";
 
 export const carRouter = router({
   cars: authedProcedure
@@ -25,31 +25,33 @@ export const carRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const where = input.userId ? eq(car.user_id, input.userId) : undefined;
+      const where = input.userId ? { user_id: input.userId } : {};
 
-      const cars = await db.query.car.findMany({
-        limit: input.pageSize,
-        offset: (input.cursor - 1) * input.pageSize,
-        orderBy: { created: "desc" },
-        where: input.userId ? { user_id: input.userId } : {},
-        with: {
-          user: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
+      const [cars, countData] = await Promise.all([
+        db.query.car.findMany({
+          limit: input.pageSize,
+          offset: (input.cursor - 1) * input.pageSize,
+          orderBy: { created: "desc" },
+          where: input.userId ? { user_id: input.userId } : {},
+          with: {
+            user: {
+              columns: {
+                id: true,
+                first: true,
+                last: true,
+                photo: true,
+              },
             },
           },
-        },
-      });
+        }),
+        db.query.car.findMany({
+          columns: {},
+          extras: { count: count() },
+          where,
+        }),
+      ]);
 
-      const carsCount = await db
-        .select({ count: count() })
-        .from(car)
-        .where(where);
-
-      const results = carsCount[0].count;
+      const results = countData[0].count;
 
       return {
         cars,
