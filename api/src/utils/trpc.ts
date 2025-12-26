@@ -4,7 +4,7 @@ import z, { ZodError } from "zod";
 import { AppRouter } from "..";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { db } from "./db";
-import { isAcceptedBeep } from "../logic/beep";
+import { isAcceptedBeepNew } from "../logic/beep";
 import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 
@@ -99,7 +99,7 @@ export const mustHaveBeenInAcceptedBeep = t.procedure
     const acceptedOrCompleteBeep = await db.query.beep.findFirst({
       where: {
         AND: [
-          { OR: [isAcceptedBeep, { status: "complete" }] },
+          { OR: [isAcceptedBeepNew, { status: "complete" }] },
           {
             OR: [
               {
@@ -145,7 +145,7 @@ export const mustBeInAcceptedBeep = t.procedure
     const acceptedBeep = await db.query.beep.findFirst({
       where: {
         AND: [
-          isAcceptedBeep,
+          isAcceptedBeepNew,
           {
             OR: [
               {

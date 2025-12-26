@@ -32,7 +32,7 @@ export const carRouter = router({
           limit: input.pageSize,
           offset: (input.cursor - 1) * input.pageSize,
           orderBy: { created: "desc" },
-          where,
+          where: input.userId ? { user_id: input.userId } : {},
           with: {
             user: {
               columns: {
