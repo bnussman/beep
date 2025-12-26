@@ -4,9 +4,7 @@ import z, { ZodError } from "zod";
 import { AppRouter } from "..";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { db } from "./db";
-import { beep, token } from "../../drizzle/schema";
-import { and, eq, or } from "drizzle-orm";
-import { isAcceptedBeep } from "../logic/beep";
+import { isAcceptedBeepNew } from "../logic/beep";
 import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 
@@ -99,19 +97,27 @@ export const mustHaveBeenInAcceptedBeep = t.procedure
     }
 
     const acceptedOrCompleteBeep = await db.query.beep.findFirst({
-      where: and(
-        or(
-          and(
-            eq(beep.rider_id, opts.ctx.user.id),
-            eq(beep.beeper_id, opts.input),
-          ),
-          and(
-            eq(beep.rider_id, opts.input),
-            eq(beep.beeper_id, opts.ctx.user.id),
-          ),
-        ),
-        or(isAcceptedBeep, eq(beep.status, "complete")),
-      ),
+      where: {
+        AND: [
+          { OR: [isAcceptedBeepNew, { status: "complete" }] },
+          {
+            OR: [
+              {
+                AND: [
+                  { rider_id: opts.ctx.user.id },
+                  { beeper_id: opts.input },
+                ],
+              },
+              {
+                AND: [
+                  { rider_id: opts.input },
+                  { beeper_id: opts.ctx.user.id },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     });
 
     if (!acceptedOrCompleteBeep) {
@@ -137,19 +143,27 @@ export const mustBeInAcceptedBeep = t.procedure
     }
 
     const acceptedBeep = await db.query.beep.findFirst({
-      where: and(
-        or(
-          and(
-            eq(beep.rider_id, opts.ctx.user.id),
-            eq(beep.beeper_id, opts.input),
-          ),
-          and(
-            eq(beep.rider_id, opts.input),
-            eq(beep.beeper_id, opts.ctx.user.id),
-          ),
-        ),
-        isAcceptedBeep,
-      ),
+      where: {
+        AND: [
+          isAcceptedBeepNew,
+          {
+            OR: [
+              {
+                AND: [
+                  { rider_id: opts.ctx.user.id },
+                  { beeper_id: opts.input },
+                ],
+              },
+              {
+                AND: [
+                  { rider_id: opts.input },
+                  { beeper_id: opts.ctx.user.id },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     });
 
     if (!acceptedBeep) {
@@ -197,7 +211,7 @@ export async function createContext(
   }
 
   const session = await db.query.token.findFirst({
-    where: eq(token.id, bearerToken),
+    where: { id: bearerToken },
     with: {
       user: {
         columns: {
