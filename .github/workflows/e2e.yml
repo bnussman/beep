@@ -3,8 +3,8 @@ name: e2e
 on:
   push:
     branches:
-        - main
-        - production
+      - main
+      - production
   pull_request:
 
 jobs:
@@ -12,26 +12,27 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: pnpm/action-setup@v4
-      with:
-        version: latest
-        run_install: false
-    - uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: latest
-    - uses: actions/setup-node@v4
-      with:
-        cache: pnpm
-    - run: docker compose up -d
-    - run: pnpm i --frozen-lockfile
-    - run: pnpm exec playwright install --with-deps chromium
-    - run: pnpm drizzle-kit push --force
-      working-directory: ./api
-    - run: pnpm --filter @beep/test test
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: test/playwright-report/
-        retention-days: 10
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          run_install: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+      - run: docker compose up -d
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: ./test
+      - run: pnpm drizzle-kit push --force
+        working-directory: ./api
+      - run: pnpm --filter @beep/test test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: test/playwright-report/
+          retention-days: 10

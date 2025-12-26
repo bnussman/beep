@@ -24,6 +24,7 @@
     "@graphql-yoga/subscription": "^5.0.5",
     "@sentry/bun": "^10.27.0",
     "@trpc/server": "^11.7.2",
+    "@types/pg": "^8.15.6",
     "car-info": "0.2.2",
     "drizzle-orm": "^0.44.7",
     "ioredis": "^5.8.2",

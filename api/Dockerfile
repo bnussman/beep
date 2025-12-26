@@ -4,7 +4,7 @@ WORKDIR /usr/api
 
 COPY package.json ./
 
-RUN bun install
+RUN bun install --production
 
 COPY / .
 

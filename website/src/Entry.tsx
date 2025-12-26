@@ -11,19 +11,24 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export function Entry() {
   const trpc = useTRPC();
-  const { data: user, isPending } = useQuery(trpc.user.me.queryOptions(undefined, {
-    retry: false,
-  }));
+  const { data: user, isLoading } = useQuery(
+    trpc.user.me.queryOptions(undefined, {
+      retry: false,
+      refetchOnWindowFocus: false,
+    }),
+  );
   const queryClient = useQueryClient();
 
-  useSubscription(trpc.user.updates.subscriptionOptions(undefined, {
-    enabled: user !== undefined,
-    onData(user) {
-      queryClient.setQueryData(trpc.user.me.queryKey(), user);
-    },
-  }));
+  useSubscription(
+    trpc.user.updates.subscriptionOptions(undefined, {
+      enabled: user !== undefined,
+      onData(user) {
+        queryClient.setQueryData(trpc.user.me.queryKey(), user);
+      },
+    }),
+  );
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <Box
         display="flex"
