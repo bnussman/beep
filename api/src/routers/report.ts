@@ -17,24 +17,16 @@ export const reportRouter = router({
     )
     .query(async ({ input }) => {
       const where = input.userId
-        ? or(
-            eq(report.reported_id, input.userId),
-            eq(report.reporter_id, input.userId),
-          )
-        : undefined;
+        ? {
+            OR: [{ reporter_id: input.userId }, { reported_id: input.userId }],
+          }
+        : {};
 
       const reports = await db.query.report.findMany({
         offset: (input.page - 1) * input.pageSize,
         limit: input.pageSize,
         orderBy: { timestamp: "desc" },
-        where: input.userId
-          ? {
-              OR: [
-                { reporter_id: input.userId },
-                { reported_id: input.userId },
-              ],
-            }
-          : {},
+        where,
         columns: {
           reported_id: false,
           reporter_id: false,
@@ -67,12 +59,13 @@ export const reportRouter = router({
         },
       });
 
-      const reportsCount = await db
-        .select({ count: count() })
-        .from(report)
-        .where(where);
+      const data = await db.query.report.findMany({
+        columns: {},
+        extras: { count: count() },
+        where,
+      });
 
-      const results = reportsCount[0].count;
+      const results = data[0].count;
 
       return {
         reports,

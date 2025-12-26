@@ -20,20 +20,15 @@ export const ratingRouter = router({
     )
     .query(async ({ input }) => {
       const where = input.userId
-        ? or(
-            eq(rating.rated_id, input.userId),
-            eq(rating.rater_id, input.userId),
-          )
-        : undefined;
+        ? {
+            OR: [{ rated_id: input.userId }, { rater_id: input.userId }],
+          }
+        : {};
 
       const ratings = await db.query.rating.findMany({
         offset: (input.cursor - 1) * input.pageSize,
         limit: input.pageSize,
-        where: input.userId
-          ? {
-              OR: [{ rated_id: input.userId }, { rater_id: input.userId }],
-            }
-          : {},
+        where,
         columns: {
           rated_id: false,
           rater_id: false,
@@ -59,12 +54,13 @@ export const ratingRouter = router({
         },
       });
 
-      const ratingsCount = await db
-        .select({ count: count() })
-        .from(rating)
-        .where(where);
+      const data = await db.query.rating.findMany({
+        columns: {},
+        extras: { count: count() },
+        where,
+      });
 
-      const results = ratingsCount[0].count;
+      const results = data[0].count;
 
       return {
         ratings,

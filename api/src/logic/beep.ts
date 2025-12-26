@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/bun";
 import z from "zod";
-import { and, eq, lt, ne, or } from "drizzle-orm";
+import { and, count, eq, lt, ne, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep, beepStatuses } from "../../drizzle/schema";
 import { User } from "../utils/pubsub";
@@ -9,15 +9,7 @@ import { sendNotification } from "../utils/notifications";
 type Beep = typeof beep.$inferSelect;
 type BeepStatus = Beep["status"];
 
-export const inProgressBeep = or(
-  eq(beep.status, "waiting"),
-  eq(beep.status, "accepted"),
-  eq(beep.status, "on_the_way"),
-  eq(beep.status, "here"),
-  eq(beep.status, "in_progress"),
-);
-
-export const inProgressBeepNew = {
+export const inProgressBeep = {
   OR: [
     { status: "waiting" as const },
     { status: "accepted" as const },
@@ -27,7 +19,7 @@ export const inProgressBeepNew = {
   ],
 };
 
-export const isAcceptedBeepNew = {
+export const isAcceptedBeep = {
   OR: [
     { status: "accepted" as const },
     { status: "here" as const },
@@ -103,7 +95,7 @@ export function getQueueSize(queue: Beep[]) {
 
 export async function getBeeperQueue(beeperId: string) {
   return await db.query.beep.findMany({
-    where: { AND: [inProgressBeepNew, { beeper_id: beeperId }] },
+    where: { AND: [inProgressBeep, { beeper_id: beeperId }] },
     orderBy: { start: "asc" },
     with: {
       beeper: { columns: { password: false, passwordType: false } },
@@ -114,7 +106,7 @@ export async function getBeeperQueue(beeperId: string) {
 
 export async function getRidersCurrentRide(userId: string) {
   const b = await db.query.beep.findFirst({
-    where: { AND: [inProgressBeepNew, { rider_id: userId }] },
+    where: { AND: [inProgressBeep, { rider_id: userId }] },
     with: {
       beeper: true,
     },
@@ -124,15 +116,18 @@ export async function getRidersCurrentRide(userId: string) {
     return null;
   }
 
-  const position = await db.$count(
-    beep,
-    and(
-      eq(beep.beeper_id, b.beeper_id),
-      lt(beep.start, b.start),
-      ne(beep.status, "waiting"),
-      inProgressBeep,
-    ),
-  );
+  const data = await db.query.beep.findMany({
+    columns: {},
+    extras: { count: count() },
+    where: {
+      beeper_id: b.beeper_id,
+      start: { lt: b.start },
+      status: { ne: "waiting" },
+      ...inProgressBeep,
+    },
+  });
+
+  const position = data[0].count;
 
   return {
     ...b,

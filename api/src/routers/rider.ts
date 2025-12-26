@@ -20,7 +20,7 @@ import {
   getDerivedRiderFields,
   getQueueSize,
   getRidersCurrentRide,
-  inProgressBeepNew,
+  inProgressBeep,
   rideResponseSchema,
 } from "../logic/beep";
 
@@ -159,7 +159,7 @@ export const riderRouter = router({
       } as const;
 
       const r = await db.query.beep.findFirst({
-        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] },
+        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeep] },
         with: { beeper: { columns: { first: true, last: true } } },
       });
 

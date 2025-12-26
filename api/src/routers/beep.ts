@@ -6,7 +6,7 @@ import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { inProgressBeep, inProgressBeepNew } from "../logic/beep";
+import { inProgressBeep, inProgressBeep } from "../logic/beep";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const beepRouter = router({
@@ -28,28 +28,20 @@ export const beepRouter = router({
         });
       }
 
-      const where = and(
-        input.inProgress ? inProgressBeep : undefined,
-        input.userId
-          ? or(
-              eq(beep.rider_id, input.userId),
-              eq(beep.beeper_id, input.userId),
-            )
-          : undefined,
-      );
-
       const page = input.cursor ?? input.page ?? 1;
       const offset = (page - 1) * input.pageSize;
+
+      const where = {
+        ...(input.inProgress ? inProgressBeep : {}),
+        ...(input.userId && {
+          OR: [{ rider_id: input.userId }, { beeper_id: input.userId }],
+        }),
+      };
 
       const beeps = await db.query.beep.findMany({
         offset,
         limit: input.pageSize,
-        where: {
-          ...(input.inProgress && inProgressBeepNew),
-          ...(input.userId && {
-            OR: [{ rider_id: input.userId }, { beeper_id: input.userId }],
-          }),
-        },
+        where,
         orderBy: { start: "desc" },
         with: {
           beeper: {
@@ -76,12 +68,13 @@ export const beepRouter = router({
         },
       });
 
-      const beepsCount = await db
-        .select({ count: count() })
-        .from(beep)
-        .where(where);
+      const data = await db.query.beep.findMany({
+        columns: {},
+        extras: { count: count() },
+        where,
+      });
 
-      const results = beepsCount[0].count;
+      const results = data[0].count;
 
       return {
         beeps,
@@ -148,7 +141,7 @@ export const beepRouter = router({
         where: { id: input.userId },
         with: {
           beeps: {
-            where: inProgressBeepNew,
+            where: inProgressBeep,
             with: {
               rider: true,
             },
