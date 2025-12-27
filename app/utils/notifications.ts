@@ -75,6 +75,8 @@ export async function updatePushToken(
   currentPushToken: string | null,
 ): Promise<void> {
   if (isMobile) {
+    const deviceToken = await Notifications.getDevicePushTokenAsync();
+    console.log("Device Token:", deviceToken);
     const token = await getPushToken();
     if (token && token !== currentPushToken) {
       try {
