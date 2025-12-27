@@ -23,6 +23,7 @@ import {
   inProgressBeep,
   rideResponseSchema,
 } from "../logic/beep";
+import { startLiveActivity } from "../utils/apns";
 
 export const riderRouter = router({
   beepers: verifiedProcedure
@@ -177,6 +178,10 @@ export const riderRouter = router({
         rider: ctx.user,
         beeper,
       });
+
+      startLiveActivity(
+        "85c9bc1c70c443bbc066b96086a2461e37ba24772d41cd0fa600d579d52eb2f3",
+      );
 
       pubSub.publish("queue", beeper.id, { queue });
 
