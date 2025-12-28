@@ -16,7 +16,8 @@ export async function startLiveActivity(deviceToken: string) {
   const headers = {
     ":method": "POST",
     ":scheme": "https",
-    "apns-topic": "app.ridebeep.App",
+    "apns-topic": "app.ridebeep.App.push-type.liveactivity",
+    "apns-push-type": "liveactivity",
     ":path": "/3/device/" + deviceToken,
     authorization: `bearer ${token}`,
   };
@@ -30,9 +31,8 @@ export async function startLiveActivity(deviceToken: string) {
       aps: {
         event: "start",
         "content-state": {
-          title: "Live Activity title!",
-          subtitle: "Live Activity subtitle.",
-          timerEndDateInMilliseconds: Date.now() + 2 * 60 * 1000, // 2 minutes from now
+          title: "Beep with Banks Nussman",
+          subtitle: "Your driver is arriving soon",
           progress: 0.5,
           imageName: "taxi",
           dynamicIslandImageName: "taxi",
@@ -41,16 +41,16 @@ export async function startLiveActivity(deviceToken: string) {
         "attributes-type": "LiveActivityAttributes",
         attributes: {
           name: "Test",
-          backgroundColor: "001A72",
-          titleColor: "EBEBF0",
+          backgroundColor: "19191a",
+          titleColor: "FFF",
           subtitleColor: "FFFFFF75",
           progressViewTint: "38ACDD",
           progressViewLabelColor: "FFFFFF",
-          deepLinkUrl: "/dashboard",
           timerType: "digital",
-          padding: 24, // or use object to control each side: { "horizontal": 20, "top": 16, "bottom": 16 }
+          padding: 24,
+          imageSize: { width: 32, height: 32 },
           imagePosition: "right",
-          imageSize: "default",
+          contentFit: "contain",
         },
         alert: {
           title: "",

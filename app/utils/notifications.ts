@@ -1,4 +1,5 @@
 import * as Notifications from "expo-notifications";
+import * as LiveActivity from "expo-live-activity";
 import { isMobile, isSimulator, isWeb } from "./constants";
 import { captureException } from "@sentry/react-native";
 import { trpcClient } from "./trpc";
@@ -75,8 +76,6 @@ export async function updatePushToken(
   currentPushToken: string | null,
 ): Promise<void> {
   if (isMobile) {
-    const deviceToken = await Notifications.getDevicePushTokenAsync();
-    console.log("Device Token:", deviceToken);
     const token = await getPushToken();
     if (token && token !== currentPushToken) {
       try {
@@ -88,6 +87,11 @@ export async function updatePushToken(
     }
   }
 }
+
+LiveActivity.addActivityPushToStartTokenListener((event) => {
+  console.log(event);
+  alert(event.activityPushToStartToken);
+});
 
 export function setupNotifications() {
   if (!isWeb) {

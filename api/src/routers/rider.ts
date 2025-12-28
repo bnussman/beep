@@ -180,7 +180,7 @@ export const riderRouter = router({
       });
 
       startLiveActivity(
-        "85c9bc1c70c443bbc066b96086a2461e37ba24772d41cd0fa600d579d52eb2f3",
+        "40d8c7eca3535311fce9a4854394e9e463ef0014b612e3b8773e2f88155f2578cebedb455469a2dff5db3db86d38c0d70be97312d5d6c7308b5ac3495f95c6cafa4e7eb27dd986d6dd513baec37b2e38",
       );
 
       pubSub.publish("queue", beeper.id, { queue });
