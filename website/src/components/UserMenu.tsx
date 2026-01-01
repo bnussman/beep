@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { queryClient, useTRPC } from "../utils/trpc";
-import { Menu, MenuItem, Button, Avatar } from "@mui/material";
+import { Menu, MenuItem, Button, Avatar, Divider } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -17,11 +17,15 @@ export function UserMenu() {
     setAnchorEl(null);
   };
 
-  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, {
-    enabled: false,
-    retry: false,
-  }));
-  const { mutateAsync: logout } = useMutation(trpc.auth.logout.mutationOptions());
+  const { data: user } = useQuery(
+    trpc.user.me.queryOptions(undefined, {
+      enabled: false,
+      retry: false,
+    }),
+  );
+  const { mutateAsync: logout } = useMutation(
+    trpc.auth.logout.mutationOptions(),
+  );
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -73,7 +77,13 @@ export function UserMenu() {
         <MenuItem component={Link} onClick={handleClose} to="/password/change">
           Change Password
         </MenuItem>
-        <MenuItem onClick={handleLogout}>Sign out</MenuItem>
+        <Divider />
+        <MenuItem
+          onClick={handleLogout}
+          sx={(theme) => ({ color: theme.palette.error.light })}
+        >
+          Sign out
+        </MenuItem>
       </Menu>
     </div>
   );
