@@ -60,6 +60,12 @@ const config: ExpoConfig = {
         organization: "ian-banks-llc",
       },
     ],
+    [
+      "expo-live-activity",
+      {
+        enablePushNotifications: true,
+      },
+    ],
   ],
   ios: {
     supportsTablet: true,
