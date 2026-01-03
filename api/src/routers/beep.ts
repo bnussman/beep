@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, eq, or, and } from "drizzle-orm";
+import { count, eq, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { PushNotification, sendNotifications } from "../utils/notifications";
@@ -28,60 +28,56 @@ export const beepRouter = router({
         });
       }
 
-      const where = and(
-        input.inProgress ? inProgressBeep : undefined,
-        input.userId
-          ? or(
-              eq(beep.rider_id, input.userId),
-              eq(beep.beeper_id, input.userId),
-            )
-          : undefined,
-      );
+      const where = {
+        ...(input.inProgress && inProgressBeepNew),
+        ...(input.userId && {
+          OR: [{ rider_id: input.userId }, { beeper_id: input.userId }],
+        }),
+      };
 
       const page = input.cursor ?? input.page ?? 1;
       const offset = (page - 1) * input.pageSize;
 
-      const beeps = await db.query.beep.findMany({
-        offset,
-        limit: input.pageSize,
-        where: {
-          ...(input.inProgress && inProgressBeepNew),
-          ...(input.userId && {
-            OR: [{ rider_id: input.userId }, { beeper_id: input.userId }],
-          }),
-        },
-        orderBy: { start: "desc" },
-        with: {
-          beeper: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
-              venmo: true,
-              groupRate: true,
-              singlesRate: true,
+      const [beeps, countData] = await Promise.all([
+        db.query.beep.findMany({
+          offset,
+          limit: input.pageSize,
+          where,
+          orderBy: { start: "desc" },
+          with: {
+            beeper: {
+              columns: {
+                id: true,
+                first: true,
+                last: true,
+                photo: true,
+                venmo: true,
+                groupRate: true,
+                singlesRate: true,
+              },
             },
-          },
-          rider: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
-              venmo: true,
+            rider: {
+              columns: {
+                id: true,
+                first: true,
+                last: true,
+                photo: true,
+                venmo: true,
+              },
             },
+            ratings: true,
           },
-          ratings: true,
-        },
-      });
+        }),
+        db.query.beep.findMany({
+          columns: {},
+          extras: {
+            count: count(),
+          },
+          where,
+        }),
+      ]);
 
-      const beepsCount = await db
-        .select({ count: count() })
-        .from(beep)
-        .where(where);
-
-      const results = beepsCount[0].count;
+      const results = countData[0].count;
 
       return {
         beeps,

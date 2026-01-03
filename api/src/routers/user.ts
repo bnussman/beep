@@ -357,34 +357,32 @@ export const userRouter = router({
 
       const offset = (input.page - 1) * input.pageSize;
 
-      const users = await db
-        .select({
-          id: user.id,
-          first: user.first,
-          last: user.last,
-          photo: user.photo,
-          email: user.email,
-          username: user.username,
-          isStudent: user.isStudent,
-          isEmailVerified: user.isEmailVerified,
-          isBeeping: user.isBeeping,
-          created: user.created,
-          location: user.location,
-          queueSize: user.queueSize,
-          groupRate: user.groupRate,
-          singlesRate: user.singlesRate,
-          capacity: user.capacity,
-        })
-        .from(user)
-        .where(where)
-        .orderBy(sql`${user.created} desc nulls last`)
-        .limit(input.pageSize)
-        .offset(offset);
-
-      const usersCount = await db
-        .select({ count: count() })
-        .from(user)
-        .where(where);
+      const [users, usersCount] = await Promise.all([
+        db
+          .select({
+            id: user.id,
+            first: user.first,
+            last: user.last,
+            photo: user.photo,
+            email: user.email,
+            username: user.username,
+            isStudent: user.isStudent,
+            isEmailVerified: user.isEmailVerified,
+            isBeeping: user.isBeeping,
+            created: user.created,
+            location: user.location,
+            queueSize: user.queueSize,
+            groupRate: user.groupRate,
+            singlesRate: user.singlesRate,
+            capacity: user.capacity,
+          })
+          .from(user)
+          .where(where)
+          .orderBy(sql`${user.created} desc nulls last`)
+          .limit(input.pageSize)
+          .offset(offset),
+        db.select({ count: count() }).from(user).where(where),
+      ]);
 
       const results = usersCount[0].count;
 
