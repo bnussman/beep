@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { and, count, desc, eq, gte } from "drizzle-orm";
+import { and, count, eq, gte } from "drizzle-orm";
 import { payment } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
@@ -30,10 +30,13 @@ export const paymentRouter = router({
       );
 
       const payments = await db.query.payment.findMany({
-        orderBy: desc(payment.created),
+        orderBy: { created: "desc" },
         limit: input.pageSize,
         offset: (input.page - 1) * input.pageSize,
-        where,
+        where: {
+          user_id: input.userId,
+          ...(input.active ? { expires: { gte: new Date() } } : {}),
+        },
         with: {
           user: {
             columns: {
@@ -63,10 +66,7 @@ export const paymentRouter = router({
     }),
   activePayments: authedProcedure.query(async ({ ctx }) => {
     return await db.query.payment.findMany({
-      where: and(
-        eq(payment.user_id, ctx.user.id),
-        gte(payment.expires, new Date()),
-      ),
+      where: { user_id: ctx.user.id, expires: { gte: new Date() } },
     });
   }),
 });

@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, desc, eq, or } from "drizzle-orm";
-import { rating, user, beep } from "../../drizzle/schema";
+import { count, eq, or } from "drizzle-orm";
+import { rating, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
@@ -29,12 +29,16 @@ export const ratingRouter = router({
       const ratings = await db.query.rating.findMany({
         offset: (input.cursor - 1) * input.pageSize,
         limit: input.pageSize,
-        where,
+        where: input.userId
+          ? {
+              OR: [{ rated_id: input.userId }, { rater_id: input.userId }],
+            }
+          : {},
         columns: {
           rated_id: false,
           rater_id: false,
         },
-        orderBy: desc(rating.timestamp),
+        orderBy: { timestamp: "desc" },
         with: {
           rater: {
             columns: {
@@ -72,7 +76,7 @@ export const ratingRouter = router({
     }),
   rating: adminProcedure.input(z.string()).query(async ({ input }) => {
     const r = await db.query.rating.findFirst({
-      where: eq(rating.id, input),
+      where: { id: input },
       with: {
         rater: {
           columns: {
@@ -107,7 +111,7 @@ export const ratingRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const r = await db.query.rating.findFirst({
-        where: eq(rating.id, input.ratingId),
+        where: { id: input.ratingId },
       });
 
       if (!r) {
@@ -128,7 +132,10 @@ export const ratingRouter = router({
 
       const updatedRating = await getUsersAverageRating(r.rated_id);
 
-      await db.update(user).set({ rating: updatedRating }).where(eq(user.id, r.rated_id))
+      await db
+        .update(user)
+        .set({ rating: updatedRating })
+        .where(eq(user.id, r.rated_id));
     }),
   createRating: authedProcedure
     .input(
@@ -141,7 +148,7 @@ export const ratingRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const u = await db.query.user.findFirst({
-        where: eq(user.id, input.userId),
+        where: { id: input.userId },
       });
 
       if (!u) {
@@ -152,7 +159,7 @@ export const ratingRouter = router({
       }
 
       const b = await db.query.beep.findFirst({
-        where: eq(beep.id, input.beepId),
+        where: { id: input.beepId },
       });
 
       if (!b) {
@@ -187,18 +194,16 @@ export const ratingRouter = router({
           beep_id: input.beepId,
           rated_id: input.userId,
           rater_id: ctx.user.id,
-        }).returning();
+        })
+        .returning();
 
       const avgRating = await getUsersAverageRating(u.id);
 
-      await db
-        .update(user)
-        .set({ rating: avgRating })
-        .where(eq(user.id, u.id));
+      await db.update(user).set({ rating: avgRating }).where(eq(user.id, u.id));
 
       const updatedUser = { ...u, rating: avgRating };
 
-      pubSub.publish('user', u.id, { user: updatedUser });
+      pubSub.publish("user", u.id, { user: updatedUser });
 
       if (u.pushToken) {
         sendNotification({

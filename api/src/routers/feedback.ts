@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, desc, eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { feedback } from "../../drizzle/schema";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
@@ -15,7 +15,7 @@ export const feedbackRouter = router({
     )
     .query(async ({ input }) => {
       const feedbackItems = await db.query.feedback.findMany({
-        orderBy: desc(feedback.created),
+        orderBy: { created: "desc" },
         offset: (input.page - 1) * input.pageSize,
         limit: input.pageSize,
         with: {
