@@ -114,6 +114,28 @@ export function AdminMenu() {
         >
           Sentry
         </MenuItem>
+        <Divider />
+        <MenuItem
+          component="a"
+          target="_blank"
+          href="https://mail.ridebeep.app"
+        >
+          Email
+        </MenuItem>
+        <MenuItem
+          component="a"
+          target="_blank"
+          href="https://calendar.ridebeep.app"
+        >
+          Calendar
+        </MenuItem>
+        <MenuItem
+          component="a"
+          target="_blank"
+          href="https://drive.ridebeep.app"
+        >
+          Drive
+        </MenuItem>
       </Menu>
     </div>
   );
