@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { count, eq, or } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { rating, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
