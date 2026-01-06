@@ -14,27 +14,29 @@ export const feedbackRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const feedbackItems = await db.query.feedback.findMany({
-        orderBy: { created: "desc" },
-        offset: (input.page - 1) * input.pageSize,
-        limit: input.pageSize,
-        with: {
-          user: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
+      const [feedbacks, countData] = await Promise.all([
+        db.query.feedback.findMany({
+          orderBy: { created: "desc" },
+          offset: (input.page - 1) * input.pageSize,
+          limit: input.pageSize,
+          with: {
+            user: {
+              columns: {
+                id: true,
+                first: true,
+                last: true,
+                photo: true,
+              },
             },
           },
-        },
-      });
+        }),
+        db.select({ count: count() }).from(feedback),
+      ]);
 
-      const feedbackCount = await db.select({ count: count() }).from(feedback);
-      const results = feedbackCount[0].count;
+      const results = countData[0].count;
 
       return {
-        feedback: feedbackItems,
+        feedback: feedbacks,
         page: input.page,
         pageSize: input.pageSize,
         pages: Math.ceil(results / input.pageSize),

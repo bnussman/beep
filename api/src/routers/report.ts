@@ -1,4 +1,4 @@
-import { count, eq, or } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { report } from "../../drizzle/schema";
 import { db } from "../utils/db";
 import { adminProcedure, authedProcedure, router } from "../utils/trpc";
@@ -17,60 +17,54 @@ export const reportRouter = router({
     )
     .query(async ({ input }) => {
       const where = input.userId
-        ? or(
-            eq(report.reported_id, input.userId),
-            eq(report.reporter_id, input.userId),
-          )
-        : undefined;
+        ? {
+            OR: [{ reporter_id: input.userId }, { reported_id: input.userId }],
+          }
+        : {};
 
-      const reports = await db.query.report.findMany({
-        offset: (input.page - 1) * input.pageSize,
-        limit: input.pageSize,
-        orderBy: { timestamp: "desc" },
-        where: input.userId
-          ? {
-              OR: [
-                { reporter_id: input.userId },
-                { reported_id: input.userId },
-              ],
-            }
-          : {},
-        columns: {
-          reported_id: false,
-          reporter_id: false,
-        },
-        with: {
-          reported: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
+      const [reports, reportsCount] = await Promise.all([
+        db.query.report.findMany({
+          offset: (input.page - 1) * input.pageSize,
+          limit: input.pageSize,
+          orderBy: { timestamp: "desc" },
+          where,
+          columns: {
+            reported_id: false,
+            reporter_id: false,
+          },
+          with: {
+            reported: {
+              columns: {
+                id: true,
+                first: true,
+                last: true,
+                photo: true,
+              },
+            },
+            reporter: {
+              columns: {
+                id: true,
+                first: true,
+                last: true,
+                photo: true,
+              },
+            },
+            handledBy: {
+              columns: {
+                id: true,
+                first: true,
+                last: true,
+                photo: true,
+              },
             },
           },
-          reporter: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
-            },
-          },
-          handledBy: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
-            },
-          },
-        },
-      });
-
-      const reportsCount = await db
-        .select({ count: count() })
-        .from(report)
-        .where(where);
+        }),
+        db.query.report.findMany({
+          extras: { count: count() },
+          columns: {},
+          where,
+        }),
+      ]);
 
       const results = reportsCount[0].count;
 
