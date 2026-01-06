@@ -8,7 +8,7 @@ import { createRoute } from "@tanstack/react-router";
 import { beepsRoute } from ".";
 import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
-import { skipToken, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import {
@@ -52,6 +52,9 @@ export function Beep() {
             bias: beeper?.location,
           }
         : skipToken,
+      {
+        placeholderData: keepPreviousData,
+      },
     ),
   );
 

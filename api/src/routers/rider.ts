@@ -20,7 +20,7 @@ import {
   getDerivedRiderFields,
   getQueueSize,
   getRidersCurrentRide,
-  inProgressBeep,
+  inProgressBeepNew,
   rideResponseSchema,
 } from "../logic/beep";
 
@@ -120,7 +120,7 @@ export const riderRouter = router({
       }
 
       const beeper = await db.query.user.findFirst({
-        where: eq(user.id, input.beeperId),
+        where: { id: input.beeperId },
       });
 
       const queue = await getBeeperQueue(input.beeperId);
@@ -159,7 +159,7 @@ export const riderRouter = router({
       } as const;
 
       const r = await db.query.beep.findFirst({
-        where: and(eq(beep.rider_id, ctx.user.id), inProgressBeep),
+        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] },
         with: { beeper: { columns: { first: true, last: true } } },
       });
 
@@ -231,7 +231,7 @@ export const riderRouter = router({
     .concat(mustBeInAcceptedBeep)
     .subscription(async function* ({ input, signal }) {
       const beeper = await db.query.user.findFirst({
-        where: eq(user.id, input),
+        where: { id: input },
         columns: { location: true },
       });
 
@@ -344,7 +344,7 @@ export const riderRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const beeper = await db.query.user.findFirst({
-        where: eq(user.id, input.beeperId),
+        where: { id: input.beeperId },
       });
 
       if (!beeper) {
@@ -405,11 +405,11 @@ export const riderRouter = router({
     }),
   getLastBeepToRate: authedProcedure.query(async ({ ctx }) => {
     const mostRecentCompletedBeep = await db.query.beep.findFirst({
-      orderBy: desc(beep.start),
-      where: and(
-        or(eq(beep.rider_id, ctx.user.id), eq(beep.beeper_id, ctx.user.id)),
-        eq(beep.status, "complete"),
-      ),
+      orderBy: { start: "desc" },
+      where: {
+        OR: [{ rider_id: ctx.user.id }, { beeper_id: ctx.user.id }],
+        status: "complete",
+      },
       with: {
         ratings: true,
         beeper: {
