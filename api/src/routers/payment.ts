@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
-import { and, count, eq, gte } from "drizzle-orm";
-import { payment } from "../../drizzle/schema";
+import { count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
@@ -24,35 +23,34 @@ export const paymentRouter = router({
         });
       }
 
-      const where = and(
-        input.userId ? eq(payment.user_id, input.userId) : undefined,
-        input.active ? gte(payment.expires, new Date()) : undefined,
-      );
+      const where = {
+        user_id: input.userId,
+        ...(input.active ? { expires: { gte: new Date() } } : {}),
+      };
 
-      const payments = await db.query.payment.findMany({
-        orderBy: { created: "desc" },
-        limit: input.pageSize,
-        offset: (input.page - 1) * input.pageSize,
-        where: {
-          user_id: input.userId,
-          ...(input.active ? { expires: { gte: new Date() } } : {}),
-        },
-        with: {
-          user: {
-            columns: {
-              id: true,
-              first: true,
-              last: true,
-              photo: true,
+      const [payments, paymentsCount] = await Promise.all([
+        db.query.payment.findMany({
+          orderBy: { created: "desc" },
+          limit: input.pageSize,
+          offset: (input.page - 1) * input.pageSize,
+          where,
+          with: {
+            user: {
+              columns: {
+                id: true,
+                first: true,
+                last: true,
+                photo: true,
+              },
             },
           },
-        },
-      });
-
-      const paymentsCount = await db
-        .select({ count: count() })
-        .from(payment)
-        .where(where);
+        }),
+        db.query.payment.findMany({
+          columns: {},
+          extras: { count: count() },
+          where,
+        }),
+      ]);
 
       const results = paymentsCount[0].count;
 
