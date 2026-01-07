@@ -24,7 +24,12 @@ import FeedbackIcon from "@mui/icons-material/Feedback";
 import PaymentIcon from "@mui/icons-material/Payment";
 import StorageIcon from "@mui/icons-material/Storage";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import MapIcon from "@mui/icons-material/Map";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import BugReportIcon from "@mui/icons-material/BugReport";
+import EmailIcon from "@mui/icons-material/Email";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import CloudIcon from "@mui/icons-material/Cloud";
 
 const drawerWidth = 240;
 
@@ -36,7 +41,6 @@ interface NavItem {
   label: string;
   href: string;
   icon: React.ReactNode;
-  external?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -57,15 +61,15 @@ const navItems: NavItem[] = [
 ];
 
 const externalLinks: NavItem[] = [
-  { label: "OSRM", href: "https://osrm.ridebeep.app", icon: <OpenInNewIcon />, external: true },
-  { label: "Grafana", href: "https://grafana.ridebeep.app", icon: <OpenInNewIcon />, external: true },
-  { label: "Sentry", href: "https://ian-banks-llc.sentry.io", icon: <OpenInNewIcon />, external: true },
+  { label: "OSRM", href: "https://osrm.ridebeep.app", icon: <MapIcon /> },
+  { label: "Grafana", href: "https://grafana.ridebeep.app", icon: <BarChartIcon /> },
+  { label: "Sentry", href: "https://ian-banks-llc.sentry.io", icon: <BugReportIcon /> },
 ];
 
 const externalLinks2: NavItem[] = [
-  { label: "Email", href: "https://mail.ridebeep.app", icon: <OpenInNewIcon />, external: true },
-  { label: "Calendar", href: "https://calendar.ridebeep.app", icon: <OpenInNewIcon />, external: true },
-  { label: "Drive", href: "https://drive.ridebeep.app", icon: <OpenInNewIcon />, external: true },
+  { label: "Email", href: "https://mail.ridebeep.app", icon: <EmailIcon /> },
+  { label: "Calendar", href: "https://calendar.ridebeep.app", icon: <CalendarTodayIcon /> },
+  { label: "Drive", href: "https://drive.ridebeep.app", icon: <CloudIcon /> },
 ];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
