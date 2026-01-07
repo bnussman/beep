@@ -7,9 +7,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar,
   Divider,
-  Typography,
 } from "@mui/material";
 import { Link, useLocation } from "@tanstack/react-router";
 import PeopleIcon from "@mui/icons-material/People";
@@ -17,6 +15,8 @@ import DomainIcon from "@mui/icons-material/Domain";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import DriveEtaIcon from "@mui/icons-material/DriveEta";
+import CommuteIcon from "@mui/icons-material/Commute";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import StarIcon from "@mui/icons-material/Star";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -44,8 +44,8 @@ const navItems: NavItem[] = [
   { label: "Users by Domain", href: "/admin/users/domain", icon: <DomainIcon /> },
   { label: "Leaderboards", href: "/admin/leaderboards/beeps", icon: <EmojiEventsIcon /> },
   { label: "Beepers", href: "/admin/beepers", icon: <LocationOnIcon /> },
-  { label: "Beeps in progress", href: "/admin/beeps/active", icon: <DirectionsCarIcon /> },
-  { label: "Beeps", href: "/admin/beeps", icon: <DirectionsCarIcon /> },
+  { label: "Beeps in progress", href: "/admin/beeps/active", icon: <DriveEtaIcon /> },
+  { label: "Beeps", href: "/admin/beeps", icon: <CommuteIcon /> },
   { label: "Reports", href: "/admin/reports", icon: <AssessmentIcon /> },
   { label: "Ratings", href: "/admin/ratings", icon: <StarIcon /> },
   { label: "Cars", href: "/admin/cars", icon: <DirectionsCarIcon /> },
@@ -73,6 +73,25 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     select: (location) => location.pathname,
   });
 
+  // Helper function to check if a nav item should be highlighted
+  const isActive = (itemHref: string): boolean => {
+    if (pathname === itemHref) {
+      return true;
+    }
+    // Check if this is a parent route (but not if there's a more specific match)
+    if (pathname.startsWith(itemHref + "/")) {
+      // Make sure there isn't a more specific nav item that matches
+      const moreSpecificMatch = navItems.some(
+        (navItem) =>
+          navItem.href !== itemHref &&
+          navItem.href.startsWith(itemHref) &&
+          (pathname === navItem.href || pathname.startsWith(navItem.href + "/"))
+      );
+      return !moreSpecificMatch;
+    }
+    return false;
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <Drawer
@@ -95,7 +114,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <ListItemButton
                   component={Link}
                   to={item.href}
-                  selected={pathname === item.href || pathname.startsWith(item.href + "/")}
+                  selected={isActive(item.href)}
                 >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.label} />
