@@ -24,7 +24,6 @@ import {
   Typography,
 } from "@mui/material";
 
-
 const tabs = [
   "details",
   "location",
@@ -49,16 +48,22 @@ export function User() {
   const queryClient = useQueryClient();
   const notifications = useNotifications();
 
-  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery(trpc.user.user.queryOptions(userId));
 
-  useSubscription(trpc.user.updates.subscriptionOptions(userId, {
-    onData(user) {
-      queryClient.setQueryData(trpc.user.user.queryKey(userId), user);
-    },
-  }));
+  useSubscription(
+    trpc.user.updates.subscriptionOptions(userId, {
+      onData(user) {
+        queryClient.setQueryData(trpc.user.user.queryKey(userId), user);
+      },
+    }),
+  );
 
-  const { mutate: syncPayments, isPending: isSyncingPayments } =
-    useMutation(trpc.user.syncPayments.mutationOptions({
+  const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
+    trpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments) {
         notifications.show(
           `Payments synced. The user has ${activePayments.length} active payments.`,
@@ -70,17 +75,30 @@ export function User() {
       onError(error) {
         notifications.show(error.message, { severity: "error" });
       },
-    }));
+    }),
+  );
 
-  const { mutate: updateUser, isPending: isVerifyLoading } =
-    useMutation(trpc.user.editAdmin.mutationOptions({
+  const { mutate: updateUser, isPending: isVerifyLoading } = useMutation(
+    trpc.user.editAdmin.mutationOptions({
       onSuccess() {
         notifications.show("User verified", { severity: "success" });
       },
       onError(error) {
         notifications.show(error.message, { severity: "error" });
       },
-    }));
+    }),
+  );
+
+  const { mutate: sendTestEmail, isPending: isSendingTestEmail } = useMutation(
+    trpc.user.sendTestEmail.mutationOptions({
+      onSuccess() {
+        notifications.show("Email sent", { severity: "success" });
+      },
+      onError(error) {
+        notifications.show(error.message, { severity: "error" });
+      },
+    }),
+  );
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -160,12 +178,15 @@ export function User() {
           justifyContent="flex-end"
         >
           <Link to="/admin/users/$userId/edit" params={{ userId }}>
-            <Button variant="contained">Edit</Button>
+            <Button variant="contained" size="small">
+              Edit
+            </Button>
           </Link>
           {!user.isEmailVerified && (
             <Button
               color="success"
               variant="contained"
+              size="small"
               onClick={onVerify}
               loading={isVerifyLoading}
             >
@@ -174,30 +195,38 @@ export function User() {
           )}
           <Button
             variant="contained"
-            color="info"
             onClick={() => setIsSendNotificationOpen(true)}
             disabled={!user?.pushToken}
+            size="small"
           >
             Send Notification
           </Button>
           <Button
-            color="info"
             variant="contained"
             onClick={onSyncPayments}
             loading={isSyncingPayments}
+            size="small"
           >
             Sync Payments
           </Button>
           <Button
             variant="contained"
-            color="warning"
+            size="small"
             onClick={() => setIsClearOpen(true)}
           >
             Clear Queue
           </Button>
           <Button
+            variant="contained"
+            size="small"
+            onClick={() => sendTestEmail({ userId })}
+          >
+            Send Test Email
+          </Button>
+          <Button
             color="error"
             variant="contained"
+            size="small"
             onClick={() => setIsDeleteOpen(true)}
           >
             Delete
