@@ -581,4 +581,28 @@ export const userRouter = router({
 
       return c;
     }),
+  sendTestEmail: adminProcedure
+    .input(z.object({ userId: z.uuid() }))
+    .mutation(async ({ input }) => {
+      const user = await db.query.user.findFirst({
+        where: { id: input.userId },
+        columns: { email: true, username: true },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const mailOptions: SendMailOptions = {
+        from: "Beep App <banks@ridebeep.app>",
+        to: user.email,
+        subject: "Beep App Test Email",
+        html: `Hey ${user.username}, <br><br>
+        This is a test email!<br><br>
+        - Beep App Team
+        `,
+      };
+
+      await email.sendMail(mailOptions);
+    }),
 });
