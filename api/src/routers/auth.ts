@@ -17,6 +17,7 @@ import { SendMailOptions } from "nodemailer";
 import * as Sentry from "@sentry/bun";
 import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
+import { userSchema } from "../schemas/user";
 
 export const authRouter = router({
   login: publicProcedure
@@ -25,6 +26,15 @@ export const authRouter = router({
         username: z.string(),
         password: z.string(),
         pushToken: z.string().nullable().optional(),
+      }),
+    )
+    .output(
+      z.object({
+        tokens: z.object({
+          id: z.string(),
+          tokenid: z.string(),
+        }),
+        user: userSchema,
       }),
     )
     .mutation(async ({ input }) => {
@@ -48,6 +58,7 @@ export const authRouter = router({
           message: "User does not exist or credentials are incorrect.",
         });
       }
+
       let isPasswordCorrect = false;
 
       switch (u.passwordType) {

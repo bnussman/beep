@@ -24,9 +24,10 @@ import {
   S3_BUCKET_URL,
   WEB_BASE_URL,
 } from "../utils/constants";
+import { userSchema } from "../schemas/user";
 
 export const userRouter = router({
-  me: authedProcedure.query(async ({ ctx }) => {
+  me: authedProcedure.output(userSchema).query(async ({ ctx }) => {
     return ctx.user;
   }),
   updates: authedProcedure
