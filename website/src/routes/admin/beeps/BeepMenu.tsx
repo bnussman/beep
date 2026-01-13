@@ -45,7 +45,14 @@ export function BeepMenu(props: Props) {
         <MenuItem component={Link} to={`/admin/beeps/${beepId}`}>
           Details
         </MenuItem>
-        {onDelete && <MenuItem onClick={onDelete}>Delete</MenuItem>}
+        {onDelete && (
+          <MenuItem
+            sx={(theme) => ({ color: theme.palette.error.light })}
+            onClick={onDelete}
+          >
+            Delete
+          </MenuItem>
+        )}
       </Menu>
     </>
   );

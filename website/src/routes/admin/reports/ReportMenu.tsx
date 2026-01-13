@@ -46,7 +46,12 @@ export function ReportMenu(props: Props) {
         <MenuItem component={Link} to={`/admin/reports/${props.reportId}`}>
           Details
         </MenuItem>
-        <MenuItem onClick={props.onDelete}>Delete</MenuItem>
+        <MenuItem
+          sx={(theme) => ({ color: theme.palette.error.light })}
+          onClick={props.onDelete}
+        >
+          Delete
+        </MenuItem>
       </Menu>
     </>
   );
