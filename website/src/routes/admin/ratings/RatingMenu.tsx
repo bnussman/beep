@@ -46,7 +46,12 @@ export function RatingMenu(props: Props) {
         <MenuItem component={Link} to={`/admin/ratings/${props.ratingId}`}>
           Details
         </MenuItem>
-        <MenuItem onClick={props.onDelete}>Delete</MenuItem>
+        <MenuItem
+          sx={(theme) => ({ color: theme.palette.error.light })}
+          onClick={props.onDelete}
+        >
+          Delete
+        </MenuItem>
       </Menu>
     </>
   );

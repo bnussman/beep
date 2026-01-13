@@ -178,15 +178,12 @@ export function User() {
           justifyContent="flex-end"
         >
           <Link to="/admin/users/$userId/edit" params={{ userId }}>
-            <Button variant="contained" size="small">
-              Edit
-            </Button>
+            <Button variant="contained">Edit</Button>
           </Link>
           {!user.isEmailVerified && (
             <Button
               color="success"
               variant="contained"
-              size="small"
               onClick={onVerify}
               loading={isVerifyLoading}
             >
@@ -197,7 +194,7 @@ export function User() {
             variant="contained"
             onClick={() => setIsSendNotificationOpen(true)}
             disabled={!user?.pushToken}
-            size="small"
+            color="info"
           >
             Send Notification
           </Button>
@@ -205,28 +202,27 @@ export function User() {
             variant="contained"
             onClick={onSyncPayments}
             loading={isSyncingPayments}
-            size="small"
+            color="secondary"
           >
             Sync Payments
           </Button>
           <Button
             variant="contained"
-            size="small"
             onClick={() => setIsClearOpen(true)}
+            color="warning"
           >
             Clear Queue
           </Button>
           <Button
             variant="contained"
-            size="small"
             onClick={() => sendTestEmail({ userId })}
+            color="warning"
           >
             Send Test Email
           </Button>
           <Button
             color="error"
             variant="contained"
-            size="small"
             onClick={() => setIsDeleteOpen(true)}
           >
             Delete

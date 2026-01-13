@@ -28,17 +28,20 @@ export function CarMenu(props: Props) {
     setAnchorEl(null);
   };
 
-
-  const { mutateAsync: updateCar } = useMutation(trpc.car.updateCar.mutationOptions({
-    onSuccess() {
-      queryClient.invalidateQueries(trpc.car.cars.pathFilter());
-      notifications.show("Sucessfully made car default for user", { severity: 'success' });
-      handleClose();
-    },
-    onError(error) {
-      notifications.show(error.message, { severity: 'error' });
-    }
-  }));
+  const { mutateAsync: updateCar } = useMutation(
+    trpc.car.updateCar.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        notifications.show("Sucessfully made car default for user", {
+          severity: "success",
+        });
+        handleClose();
+      },
+      onError(error) {
+        notifications.show(error.message, { severity: "error" });
+      },
+    }),
+  );
 
   return (
     <>
@@ -65,7 +68,12 @@ export function CarMenu(props: Props) {
         <MenuItem onClick={() => updateCar({ carId, data: { default: true } })}>
           Make Default
         </MenuItem>
-        <MenuItem onClick={onDelete}>Delete</MenuItem>
+        <MenuItem
+          sx={(theme) => ({ color: theme.palette.error.light })}
+          onClick={onDelete}
+        >
+          Delete
+        </MenuItem>
       </Menu>
     </>
   );
