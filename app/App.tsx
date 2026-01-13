@@ -53,7 +53,7 @@ function Beep() {
   useEffect(() => {
     if (user) {
       Sentry.setUser(user);
-      updatePushToken(user.pushToken);
+      updatePushToken();
       setPurchaseUser(user);
     }
   }, [user]);

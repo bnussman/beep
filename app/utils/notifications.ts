@@ -71,12 +71,10 @@ function isNotificationPermissionGranted(
   );
 }
 
-export async function updatePushToken(
-  currentPushToken: string | null,
-): Promise<void> {
+export async function updatePushToken() {
   if (isMobile) {
     const token = await getPushToken();
-    if (token && token !== currentPushToken) {
+    if (token) {
       try {
         await trpcClient.user.edit.mutate({ pushToken: token });
       } catch (error) {
