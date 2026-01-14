@@ -53,6 +53,12 @@ const config: ExpoConfig = {
       },
     ],
     [
+      "voltra",
+      {
+        enablePushNotifications: true,
+      },
+    ],
+    [
       "@sentry/react-native/expo",
       {
         url: "https://sentry.io/",
