@@ -54,6 +54,7 @@
     "zeego": "^3.0.6"
   },
   "devDependencies": {
+    "@sentry/cli": "3.1.0",
     "@babel/core": "^7.24.4",
     "@expo/metro-runtime": "~6.1.2",
     "@trpc/server": "^11.8.1",
