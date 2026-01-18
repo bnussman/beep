@@ -56,6 +56,7 @@ const config: ExpoConfig = {
       "voltra",
       {
         enablePushNotifications: true,
+        groupIdentifier: 'app.ridebeep.App'
       },
     ],
     [
