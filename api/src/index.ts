@@ -1,5 +1,3 @@
-import { captureException } from "@sentry/bun";
-import { createContext, router } from "./utils/trpc";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth";
 import { reportRouter } from "./routers/report";
@@ -15,12 +13,9 @@ import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
-import { createBunWSHandler } from "./utils/ws";
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
-import { CORS_HEADERS } from "./utils/cors";
+import { RPCHandler } from '@orpc/server/fetch'
 
-const appRouter = router({
+const appRouter = {
   user: userRouter,
   auth: authRouter,
   report: reportRouter,
@@ -35,59 +30,34 @@ const appRouter = router({
   beeper: beeperRouter,
   location: locationRouter,
   health: healthRouter,
-});
+};
 
 export type AppRouter = typeof appRouter;
 
-const websocket = createBunWSHandler({
-  router: appRouter,
-  createContext,
-  onError(error) {
-    console.error(error.error);
-    captureException(error.error, {
-      extra: { input: error.input, type: error },
-    });
-  },
-});
+const handler = new RPCHandler(appRouter);
+
+// const websocket = createBunWSHandler({
+//   router: appRouter,
+//   createContext,
+//   onError(error) {
+//     console.error(error.error);
+//     captureException(error.error, {
+//       extra: { input: error.input, type: error },
+//     });
+//   },
+// });
 
 Bun.serve({
   routes: {
     "/payments/webhook": handlePaymentWebook,
   },
-  fetch(request, server) {
-    if (request.method === "OPTIONS") {
-      return new Response("Departed", { headers: CORS_HEADERS });
+  async fetch(request) {
+    const { matched, response } = await handler.handle(request)
+    if (matched) {
+    return response;
     }
-    if (
-      server.upgrade(request, {
-        data: {
-          req: request,
-          abortController: new AbortController(),
-          abortControllers: new Map(),
-        },
-      })
-    ) {
-      return;
-    }
-    return fetchRequestHandler({
-      endpoint: "/",
-      req: request,
-      router: appRouter,
-      createContext,
-      onError(error) {
-        if (getHTTPStatusCodeFromError(error.error) >= 500) {
-          console.error(error.error);
-          captureException(error.error, {
-            extra: { input: error.input, type: error.type },
-          });
-        }
-      },
-      responseMeta() {
-        return { headers: CORS_HEADERS };
-      },
-    });
+    return new Response('Not found', { status: 404 })
   },
-  websocket,
 });
 
 console.info("🚕 Beep API Server Started");

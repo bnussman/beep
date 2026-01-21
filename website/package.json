@@ -15,11 +15,12 @@
     "@fontsource/poppins": "^5.2.7",
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
+    "@orpc/client": "^1.13.4",
+    "@orpc/server": "^1.13.4",
+    "@orpc/tanstack-query": "^1.13.4",
     "@tanstack/react-query": "^5.90.16",
     "@tanstack/react-router": "^1.147.3",
     "@toolpad/core": "^0.16.0",
-    "@trpc/client": "^11.8.1",
-    "@trpc/tanstack-react-query": "^11.8.1",
     "luxon": "^3.7.2",
     "maplibre-gl": "^5.16.0",
     "react": "19.1.0",
@@ -28,7 +29,6 @@
     "react-map-gl": "^8.1.0"
   },
   "devDependencies": {
-    "@trpc/server": "^11.8.1",
     "@types/luxon": "^3.7.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "^19.1.9",
