@@ -38,7 +38,7 @@ const link = new RPCLink({
   headers() {
     const token = getAuthToken();
     if (token) {
-      return { token };
+      return { "Authorization": `Bearer ${token}` };
     }
     return {};
   },

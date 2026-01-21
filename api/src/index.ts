@@ -15,6 +15,7 @@ import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
 import { RPCHandler } from '@orpc/server/fetch'
 import { createContext } from "./utils/trpc";
+import { CORSPlugin } from "@orpc/server/plugins";
 
 const appRouter = {
   auth: authRouter,
@@ -35,7 +36,13 @@ const appRouter = {
 
 export type AppRouter = typeof appRouter;
 
-const handler = new RPCHandler(appRouter);
+const handler = new RPCHandler(appRouter, {
+  plugins: [new CORSPlugin({
+      origin: (origin, options) => origin,
+      allowMethods: ['GET', 'HEAD', 'PUT', 'POST', 'DELETE', 'PATCH'],
+      // ...
+    })]
+});
 
 // const websocket = createBunWSHandler({
 //   router: appRouter,
