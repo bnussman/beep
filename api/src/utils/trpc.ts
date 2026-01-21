@@ -5,12 +5,8 @@ import { isAcceptedBeepNew } from "../logic/beep";
 import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 
-export async function createRPCContext(
-  data: any,
-) {
-  const bearerToken =
-    data.req?.headers.get("authorization")?.split(" ")[1] ??
-    data.info?.connectionParams?.token;
+export async function createContext(request: Request) {
+  const bearerToken = request.headers.get("authorization")?.split(" ")[1]
 
   if (!bearerToken) {
     return {};
@@ -37,9 +33,7 @@ export async function createRPCContext(
   return { user: session.user, token: session };
 }
 
-export const o = os.$context<Awaited<ReturnType<typeof createRPCContext>>>()
-
-
+export const o = os.$context<Awaited<ReturnType<typeof createContext>>>()
 
 export const authedProcedure = o.use(function isAuthed(opts) {
   const { context, next } = opts;

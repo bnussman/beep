@@ -14,6 +14,7 @@ import { locationRouter } from "./routers/location";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
 import { RPCHandler } from '@orpc/server/fetch'
+import { createContext } from "./utils/trpc";
 
 const appRouter = {
   user: userRouter,
@@ -52,7 +53,9 @@ Bun.serve({
     "/payments/webhook": handlePaymentWebook,
   },
   async fetch(request) {
-    const { matched, response } = await handler.handle(request)
+    const { matched, response } = await handler.handle(request, {
+      context: await createContext(request)
+    })
     if (matched) {
     return response;
     }
