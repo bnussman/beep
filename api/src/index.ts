@@ -17,20 +17,20 @@ import { RPCHandler } from '@orpc/server/fetch'
 import { createContext } from "./utils/trpc";
 
 const appRouter = {
-  user: userRouter,
   auth: authRouter,
-  report: reportRouter,
-  rating: ratingRouter,
-  car: carRouter,
-  beep: beepRouter,
-  payment: paymentRouter,
-  feedback: feedbackRouter,
-  notification: notificationRouter,
-  redis: redisRouter,
-  rider: riderRouter,
-  beeper: beeperRouter,
-  location: locationRouter,
-  health: healthRouter,
+  user: userRouter,
+  // report: reportRouter,
+  // rating: ratingRouter,
+  // car: carRouter,
+  // beep: beepRouter,
+  // payment: paymentRouter,
+  // feedback: feedbackRouter,
+  // notification: notificationRouter,
+  // redis: redisRouter,
+  // rider: riderRouter,
+  // beeper: beeperRouter,
+  // location: locationRouter,
+  // health: healthRouter,
 };
 
 export type AppRouter = typeof appRouter;
@@ -54,7 +54,7 @@ Bun.serve({
   },
   async fetch(request) {
     const { matched, response } = await handler.handle(request, {
-      context: await createContext(request)
+      context: await createContext(request),
     })
     if (matched) {
     return response;

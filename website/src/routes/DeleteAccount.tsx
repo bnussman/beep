@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNotifications } from "@toolpad/core";
-import { queryClient, useTRPC } from "../utils/trpc";
+import { orpc, queryClient } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
 import {
   Link as RouterLink,
@@ -30,13 +30,12 @@ export const deleteAccountRoute = createRoute({
 });
 
 function DeleteAccount() {
-  const trpc = useTRPC();
-  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
+  const { data: user } = useQuery(orpc.user.me.queryOptions({ enabled: false }));
   const {
     mutateAsync: deleteAccount,
     isPending,
     error,
-  } = useMutation(trpc.user.deleteMyAccount.mutationOptions());
+  } = useMutation(orpc.user.deleteMyAccount.mutationOptions());
 
   const notifications = useNotifications();
   const navigate = useNavigate();
@@ -44,7 +43,7 @@ function DeleteAccount() {
   const [isOpen, setIsOpen] = useState(false);
 
   const onDelete = async () => {
-    await deleteAccount();
+    await deleteAccount({});
     notifications.show("Account deleted.", { severity: "success" });
     localStorage.removeItem("user");
     queryClient.resetQueries();
