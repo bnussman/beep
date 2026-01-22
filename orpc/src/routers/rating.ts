@@ -1,15 +1,15 @@
 import { z } from "zod";
-import { adminProcedure, authedProcedure, router } from "../utils/trpc";
+import { adminProcedure, authedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count, eq } from "drizzle-orm";
 import { rating, user } from "../../drizzle/schema";
-import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 import { getUsersAverageRating } from "../logic/rating";
+import { ORPCError } from "@orpc/server";
 
-export const ratingRouter = router({
+export const ratingRouter = {
   ratings: authedProcedure
     .input(
       z.object({
@@ -18,7 +18,7 @@ export const ratingRouter = router({
         userId: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const where = input.userId
         ? {
             OR: [{ rated_id: input.userId }, { rater_id: input.userId }],
@@ -71,7 +71,7 @@ export const ratingRouter = router({
         results,
       };
     }),
-  rating: adminProcedure.input(z.string()).query(async ({ input }) => {
+  rating: adminProcedure.input(z.string()).handler(async ({ input }) => {
     const r = await db.query.rating.findFirst({
       where: { id: input },
       with: {
@@ -95,7 +95,7 @@ export const ratingRouter = router({
     });
 
     if (!r) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new ORPCError("NOT_FOUND");
     }
 
     return r;
@@ -106,21 +106,19 @@ export const ratingRouter = router({
         ratingId: z.string(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .handler(async ({ input, context }) => {
       const r = await db.query.rating.findFirst({
         where: { id: input.ratingId },
       });
 
       if (!r) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Rating not found",
         });
       }
 
-      if (ctx.user.role === "user" && r.rater_id !== ctx.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+      if (context.user.role === "user" && r.rater_id !== context.user.id) {
+        throw new ORPCError('FORBIDDEN', {
           message: "You can't delete a rating that you didn't create.",
         });
       }
@@ -143,16 +141,13 @@ export const ratingRouter = router({
         userId: z.string().uuid(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .handler(async ({ context, input }) => {
       const u = await db.query.user.findFirst({
         where: { id: input.userId },
       });
 
       if (!u) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "User not found",
-        });
+        throw new ORPCError( "NOT_FOUND", { message: "User not found" });
       }
 
       const b = await db.query.beep.findFirst({
@@ -160,23 +155,20 @@ export const ratingRouter = router({
       });
 
       if (!b) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Beep not found",
         });
       }
 
-      if (![b.rider_id, b.beeper_id].includes(ctx.user.id)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+      if (![b.rider_id, b.beeper_id].includes(context.user.id)) {
+        throw new ORPCError("BAD_REQUEST", {
           message:
             "You must be the rider or beeper of this beep to leave a rating about it.",
         });
       }
 
       if (b.status !== "complete") {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: `You can only leave a rating once the beep is complete. That this beep has a status of ${b.status}`,
         });
       }
@@ -190,7 +182,7 @@ export const ratingRouter = router({
           message: input.message,
           beep_id: input.beepId,
           rated_id: input.userId,
-          rater_id: ctx.user.id,
+          rater_id: context.user.id,
         })
         .returning();
 
@@ -206,10 +198,10 @@ export const ratingRouter = router({
         sendNotification({
           to: u.pushToken,
           title: `You got rated ⭐️`,
-          body: `${ctx.user.first} ${ctx.user.last} rated you ${input.stars} stars!`,
+          body: `${context.user.first} ${context.user.last} rated you ${input.stars} stars!`,
         });
       }
 
       return r[0];
     }),
-});
+};

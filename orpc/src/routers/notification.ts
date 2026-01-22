@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { adminProcedure, router } from "../utils/trpc";
+import { adminProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { user } from "../../drizzle/schema";
 import { like, and, isNotNull } from "drizzle-orm";
@@ -7,9 +7,9 @@ import {
   sendNotification,
   sendNotificationsBatch,
 } from "../utils/notifications";
-import { TRPCError } from "@trpc/server";
+import { ORPCError } from "@orpc/server";
 
-export const notificationRouter = router({
+export const notificationRouter = {
   sendNotification: adminProcedure
     .input(
       z.object({
@@ -18,7 +18,7 @@ export const notificationRouter = router({
         emailMatch: z.string().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const users = await db
         .select({ pushToken: user.pushToken })
         .from(user)
@@ -45,21 +45,18 @@ export const notificationRouter = router({
         userId: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .handler(async ({ input }) => {
       const u = await db.query.user.findFirst({
         where: { id: input.userId },
       });
 
       if (!u) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "User not found.",
-        });
+        throw new ORPCError("NOT_FOUND", { message: "User not found." });
       }
 
       if (!u.pushToken) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError(
+          "BAD_REQUEST", {
           message:
             "User does not have a push token. Can't send them a notification.",
         });
@@ -71,4 +68,4 @@ export const notificationRouter = router({
         body: input.body,
       });
     }),
-});
+};

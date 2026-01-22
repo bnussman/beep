@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
+import { authedProcedure } from "../utils/trpc";
 import { getCoordinatesFromAddress } from "../logic/location";
 import { osrm } from "@banksnussman/osrm";
-import { TRPCError } from "@trpc/server";
+import { ORPCError } from "@orpc/server";
 
-export const locationRouter = router({
+export const locationRouter = {
   getETA: authedProcedure
     .input(
       z.object({
@@ -12,7 +12,7 @@ export const locationRouter = router({
         end: z.string(),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const { data, error } = await osrm.GET(
         "/route/{version}/{profile}/{coordinates}",
         {
@@ -27,8 +27,7 @@ export const locationRouter = router({
       );
 
       if (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+        throw new ORPCError("INTERNAL_SERVER_ERROR", {
           message: `${error.code} ${error.message}`,
           cause: error,
         });
@@ -37,8 +36,7 @@ export const locationRouter = router({
       const route = data.routes[0];
 
       if (!route) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+        throw new ORPCError("INTERNAL_SERVER_ERROR", {
           message: "Unabe to find a route.",
         });
       }
@@ -63,15 +61,15 @@ export const locationRouter = router({
           .nullable(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .handler(async ({ input, context }) => {
       const [originCoordinates, destinationCoordinates] = await Promise.all([
         getCoordinatesFromAddress(
           input.origin,
-          input.bias ?? ctx.user.location,
+          input.bias ?? context.user.location,
         ),
         getCoordinatesFromAddress(
           input.destination,
-          input.bias ?? ctx.user.location,
+          input.bias ?? context.user.location,
         ),
       ]);
 
@@ -104,8 +102,7 @@ export const locationRouter = router({
       );
 
       if (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+        throw new ORPCError("INTERNAL_SERVER_ERROR", {
           message: `${error.code} ${error.message}`,
           cause: error,
         });
@@ -113,4 +110,4 @@ export const locationRouter = router({
 
       return data;
     }),
-});
+};

@@ -1,9 +1,9 @@
 import { publishClient } from "../utils/redis";
-import { adminProcedure, router } from "../utils/trpc";
+import { adminProcedure } from "../utils/trpc";
 
-export const redisRouter = router({
+export const redisRouter = {
   channels: adminProcedure
-    .query(async () => {
+    .handler(async () => {
       return await publishClient.pubsub('CHANNELS') as string[];
     })
-});
+};

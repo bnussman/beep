@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../utils/trpc";
+import { authedProcedure } from "../utils/trpc";
 import { db } from "../utils/db";
 import { count } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { ORPCError } from "@orpc/server";
 
-export const paymentRouter = router({
+export const paymentRouter = {
   payments: authedProcedure
     .input(
       z.object({
@@ -15,10 +15,9 @@ export const paymentRouter = router({
         active: z.boolean().optional(),
       }),
     )
-    .query(async ({ input, ctx }) => {
-      if (ctx.user.role === "user" && input.userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
+    .handler(async ({ input, context }) => {
+      if (context.user.role === "user" && input.userId !== context.user.id) {
+        throw new ORPCError("FORBIDDEN", {
           message: "You must be an admin to get purchases for other users",
         });
       }
@@ -62,9 +61,9 @@ export const paymentRouter = router({
         results,
       };
     }),
-  activePayments: authedProcedure.query(async ({ ctx }) => {
+  activePayments: authedProcedure.handler(async ({ context }) => {
     return await db.query.payment.findMany({
-      where: { user_id: ctx.user.id, expires: { gte: new Date() } },
+      where: { user_id: context.user.id, expires: { gte: new Date() } },
     });
   }),
-});
+};

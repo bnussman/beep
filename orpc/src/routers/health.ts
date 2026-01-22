@@ -1,15 +1,15 @@
 import { db as dbClient } from "../utils/db";
 import { publishClient } from "../utils/redis";
-import { publicProcedure, router } from "../utils/trpc";
 import { sql } from "drizzle-orm";
 import { totalmem, freemem } from 'os';
+import { o } from "../utils/trpc";
 
-export const healthRouter = router({
+export const healthRouter = {
   /**
    *  Access this at http://localhost:3000/health.healthcheck or (https://api.ridebeep.app/health.healthcheck)
    */
-  healthcheck: publicProcedure
-    .query(async () => {
+  healthcheck: o
+    .handler(async () => {
       return {
         uptime: process.uptime(),
         system: {
@@ -23,7 +23,7 @@ export const healthRouter = router({
         }
       };
     })
-});
+};
 
 async function getRedisStatus() {
   const start = performance.now();
