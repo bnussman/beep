@@ -1,0 +1,15 @@
+FROM oven/bun:alpine
+
+WORKDIR /usr/api
+
+COPY package.json ./
+
+RUN bun install --production
+
+COPY / .
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+
+CMD ["bun", "run", "--preload", "./src/utils/instrument.ts", "src/index.ts"]
