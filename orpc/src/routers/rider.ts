@@ -2,16 +2,13 @@ import { z } from "zod";
 import { db } from "../utils/db";
 import { beep, payment, user } from "../../drizzle/schema";
 import { and, asc, desc, eq, gte, lte, sql, or } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { DEFAULT_LOCATION_RADIUS } from "../utils/constants";
 import { getDistance } from "../logic/location";
-import { zAsyncIterable } from "../utils/zAsyncIterable";
 import {
   authedProcedure,
   mustBeInAcceptedBeep,
-  router,
   verifiedProcedure,
   withLock,
 } from "../utils/trpc";
@@ -23,8 +20,9 @@ import {
   inProgressBeepNew,
   rideResponseSchema,
 } from "../logic/beep";
+import { eventIterator, ORPCError } from "@orpc/server";
 
-export const riderRouter = router({
+export const riderRouter = {
   beepers: verifiedProcedure
     .input(
       z
@@ -34,10 +32,9 @@ export const riderRouter = router({
         })
         .optional(),
     )
-    .query(async ({ input, ctx }) => {
-      if (ctx.user.role === "user" && input === undefined) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+    .handler(async ({ input, context }) => {
+      if (context.user.role === "user" && input === undefined) {
+        throw new ORPCError("BAD_REQUEST", {
           message:
             "You must pass location infromation to get beepers. Only admins can pass no location.",
         });
@@ -55,7 +52,7 @@ export const riderRouter = router({
           groupRate: user.groupRate,
           queueSize: user.queueSize,
           capacity: user.capacity,
-          ...(ctx.user.role === "admin" && { location: user.location }),
+          ...(context.user.role === "admin" && { location: user.location }),
           distance:
             sql<number>`ST_DistanceSphere(location, ST_MakePoint(${input?.latitude ?? 0},${input?.longitude ?? 0}))`.as(
               "distance",
@@ -100,7 +97,7 @@ export const riderRouter = router({
       }),
     )
     .output(rideResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .handler(async ({ input, context }) => {
       if (input.latitude !== undefined && input.longitude !== undefined) {
         db.update(user)
           .set({
@@ -109,12 +106,11 @@ export const riderRouter = router({
               longitude: input.longitude,
             },
           })
-          .where(eq(user.id, ctx.user.id));
+          .where(eq(user.id, context.user.id));
       }
 
-      if (ctx.user.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+      if (context.user.isBeeping) {
+        throw new ORPCError("BAD_REQUEST", {
           message: "You can't get a beep when you are beeping",
         });
       }
@@ -126,29 +122,24 @@ export const riderRouter = router({
       const queue = await getBeeperQueue(input.beeperId);
 
       if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Beeper not found",
-        });
+        throw new ORPCError("NOT_FOUND", { message: "Beeper not found" });
       }
 
       if (!beeper.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: "That user is not beeping. Maybe they stopped beeping.",
         });
       }
 
-      if (queue.some((beep) => beep.rider_id === ctx.user.id)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+      if (queue.some((beep) => beep.rider_id === context.user.id)) {
+        throw new ORPCError("BAD_REQUEST", {
           message: "You are already in that beeper's queue.",
         });
       }
 
       const newBeep = {
         beeper_id: beeper.id,
-        rider_id: ctx.user.id,
+        rider_id: context.user.id,
         destination: input.destination,
         origin: input.origin,
         groupSize: input.groupSize,
@@ -159,13 +150,12 @@ export const riderRouter = router({
       } as const;
 
       const r = await db.query.beep.findFirst({
-        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] },
+        where: { AND: [{ rider_id: context.user.id }, inProgressBeepNew] },
         with: { beeper: { columns: { first: true, last: true } } },
       });
 
       if (r) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
+        throw new ORPCError("BAD_REQUEST", {
           message: `You are already in an active beep with ${r.beeper.first} ${r.beeper.last}. You can't begin another beep until you end that one...`,
         });
       }
@@ -174,7 +164,7 @@ export const riderRouter = router({
 
       queue.push({
         ...newBeep,
-        rider: ctx.user,
+        rider: context.user,
         beeper,
       });
 
@@ -183,7 +173,7 @@ export const riderRouter = router({
       if (beeper.pushToken) {
         sendNotification({
           to: beeper.pushToken,
-          title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
+          title: `${context.user.first} ${context.user.last} has entered your queue 🚕`,
           body: "Please accept or deny this rider.",
           categoryId: "newbeep",
           data: { id: newBeep.id },
@@ -198,26 +188,23 @@ export const riderRouter = router({
     }),
   currentRide: authedProcedure
     .output(rideResponseSchema.nullable())
-    .query(({ ctx }) => {
-      return getRidersCurrentRide(ctx.user.id);
+    .handler(({ context }) => {
+      return getRidersCurrentRide(context.user.id);
     }),
   currentRideUpdates: authedProcedure
     .output(
-      zAsyncIterable({
-        yield: rideResponseSchema.nullable(),
-        return: rideResponseSchema.nullable(),
-      }),
+      eventIterator(rideResponseSchema.nullable())
     )
-    .subscription(async function* ({ ctx, signal }) {
-      console.log("➕ Rider subscribed", ctx.user.id);
+    .handler(async function* ({ context, signal }) {
+      console.log("➕ Rider subscribed", context.user.id);
 
-      const eventSource = pubSub.subscribe("ride", ctx.user.id);
+      const eventSource = pubSub.subscribe("ride", context.user.id);
 
-      yield await getRidersCurrentRide(ctx.user.id);
+      yield await getRidersCurrentRide(context.user.id);
 
       if (signal) {
         signal.onabort = () => {
-          console.log("➖ Rider unsubscribed", ctx.user.id);
+          console.log("➖ Rider unsubscribed", context.user.id);
           eventSource.return();
         };
       }
@@ -228,15 +215,16 @@ export const riderRouter = router({
       }
     }),
   beeperLocationUpdates: authedProcedure
-    .concat(mustBeInAcceptedBeep)
-    .subscription(async function* ({ input, signal }) {
+    .input(z.string())
+    .use(mustBeInAcceptedBeep)
+    .handler(async function* ({ input, signal }) {
       const beeper = await db.query.user.findFirst({
         where: { id: input },
         columns: { location: true },
       });
 
       if (!beeper) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new ORPCError("NOT_FOUND");
       }
 
       if (beeper.location) {
@@ -266,7 +254,7 @@ export const riderRouter = router({
         longitude: z.number(),
       }),
     )
-    .query(async ({ input }) => {
+    .handler(async ({ input }) => {
       const users = await db
         .select({
           id: user.id,
@@ -304,9 +292,9 @@ export const riderRouter = router({
         admin: z.boolean().optional(),
       }),
     )
-    .subscription(async function* ({ input, ctx, signal }) {
-      if (input.admin && ctx.user.role !== "admin") {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+    .handler(async function* ({ input, context, signal }) {
+      if (input.admin && context.user.role !== "admin") {
+        throw new ORPCError("UNAUTHORIZED");
       }
 
       const eventSource = pubSub.subscribe("locations");
@@ -342,14 +330,13 @@ export const riderRouter = router({
         beeperId: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .handler(async ({ context, input }) => {
       const beeper = await db.query.user.findFirst({
         where: { id: input.beeperId },
       });
 
       if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Beeper not found.",
         });
       }
@@ -357,17 +344,15 @@ export const riderRouter = router({
       let queue = await getBeeperQueue(input.beeperId);
 
       if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "Beeper not found.",
         });
       }
 
-      const entry = queue.find((beep) => beep.rider.id === ctx.user.id);
+      const entry = queue.find((beep) => beep.rider.id === context.user.id);
 
       if (!entry) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
+        throw new ORPCError("NOT_FOUND", {
           message: "You are not in that beepers queue.",
         });
       }
@@ -375,7 +360,7 @@ export const riderRouter = router({
       if (beeper.pushToken) {
         sendNotification({
           to: beeper.pushToken,
-          title: `${ctx.user.first} ${ctx.user.last} left your queue 🥹`,
+          title: `${context.user.first} ${context.user.last} left your queue 🥹`,
           body: "They decided they did not want a beep from you!",
         });
       }
@@ -387,7 +372,7 @@ export const riderRouter = router({
 
       queue = queue.filter((beep) => beep.id !== entry.id);
 
-      pubSub.publish("ride", ctx.user.id, { ride: null });
+      pubSub.publish("ride", context.user.id, { ride: null });
       pubSub.publish("queue", beeper.id, { queue });
 
       for (const beep of queue) {
@@ -403,11 +388,11 @@ export const riderRouter = router({
 
       return true;
     }),
-  getLastBeepToRate: authedProcedure.query(async ({ ctx }) => {
+  getLastBeepToRate: authedProcedure.handler(async ({ context }) => {
     const mostRecentCompletedBeep = await db.query.beep.findFirst({
       orderBy: { start: "desc" },
       where: {
-        OR: [{ rider_id: ctx.user.id }, { beeper_id: ctx.user.id }],
+        OR: [{ rider_id: context.user.id }, { beeper_id: context.user.id }],
         status: "complete",
       },
       with: {
@@ -437,7 +422,7 @@ export const riderRouter = router({
 
     if (
       mostRecentCompletedBeep.ratings.some(
-        (rating) => rating.rater_id === ctx.user.id,
+        (rating) => rating.rater_id === context.user.id,
       )
     ) {
       return null;
@@ -445,4 +430,4 @@ export const riderRouter = router({
 
     return mostRecentCompletedBeep;
   }),
-});
+};
