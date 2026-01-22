@@ -41,9 +41,9 @@ Bun.serve({
   routes: {
     "/payments/webhook": handlePaymentWebook,
   },
-  async fetch(request, server) {
+  async fetch(request) {
     const { response } = await handler.handle(request, {
-      prefix: '/api/orpc',
+      prefix: '/',
       context: await createContext(request)
     })
 

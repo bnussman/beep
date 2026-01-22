@@ -38,6 +38,7 @@ export async function createContext(
 
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
+export type AuthenticatedContext = Extract<Context, { user: {} }>;
 
 export const o = os.$context<Context>()
 
@@ -69,7 +70,9 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
   return opts.next({ context });
 });
 
-export const mustHaveBeenInAcceptedBeep = o.middleware(async function checkIfUserHasBeenInAnAcceptedBeep(opts, userId: string) {
+export const mustHaveBeenInAcceptedBeep = o
+  .$context<AuthenticatedContext>()
+  .middleware(async function checkIfUserHasBeenInAnAcceptedBeep(opts, userId: string) {
     if (!opts.context.user) {
       throw new ORPCError("UNAUTHORIZED");
     }
@@ -112,7 +115,9 @@ export const mustHaveBeenInAcceptedBeep = o.middleware(async function checkIfUse
     return opts.next(opts);
   });
 
-export const mustBeInAcceptedBeep = o.middleware(async function checkIfUserIsInAnAcceptedBeep(opts, userId: string) {
+export const mustBeInAcceptedBeep = o
+  .$context<AuthenticatedContext>()
+  .middleware(async function checkIfUserIsInAnAcceptedBeep(opts, userId: string) {
     if (!opts.context.user) {
       throw new ORPCError("UNAUTHORIZED");
     }
@@ -155,26 +160,28 @@ export const mustBeInAcceptedBeep = o.middleware(async function checkIfUserIsInA
     return opts.next(opts);
   });
 
-export const withLock = o.middleware(async function handleLock(opts) {
-  if (!opts.context.user) {
-    throw new Error(
-      "This middleware should only be used for authenticated procedures.",
-    );
-  }
+export const withLock = o
+  .$context<AuthenticatedContext>()
+  .middleware(async function handleLock(opts) {
+    if (!opts.context.user) {
+      throw new Error(
+        "This middleware should only be used for authenticated procedures.",
+      );
+    }
 
-  const lock = createLock({
-    adapter: new IoredisAdapter(redis),
-    key: `${opts.path}-${opts.context.user.id}`,
-    ttl: 5_000,
+    const lock = createLock({
+      adapter: new IoredisAdapter(redis),
+      key: `${opts.path}-${opts.context.user.id}`,
+      ttl: 5_000,
+    });
+
+    const handle = await lock.acquire();
+
+    const result = await opts.next(opts);
+
+    await lock.release(handle);
+
+    return result;
   });
-
-  const handle = await lock.acquire();
-
-  const result = await opts.next(opts);
-
-  await lock.release(handle);
-
-  return result;
-});
 
 
