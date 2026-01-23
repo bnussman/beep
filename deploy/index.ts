@@ -27,7 +27,7 @@ const apiImageResource = new docker.Image("apiImageResource", {
   },
 });
 
-const orpcImageResource = new docker.Image("apiImageResource", {
+const orpcImageResource = new docker.Image("orpcImageResource", {
   imageName: orpcImageName,
   build: {
     context: "../orpc",
