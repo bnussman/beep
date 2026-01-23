@@ -38,6 +38,7 @@ export type AppRouter = typeof appRouter;
 const handler = new RPCHandler(appRouter)
 
 Bun.serve({
+  port: 3001,
   routes: {
     "/payments/webhook": handlePaymentWebook,
   },
@@ -52,5 +53,5 @@ Bun.serve({
 });
 
 console.info("🚕 Beep API Server Started");
-console.info("➡️  Listening on http://0.0.0.0:3000");
-console.info("➡️  Listening on ws://0.0.0.0:3000");
+console.info("➡️  Listening on http://0.0.0.0:3001");
+console.info("➡️  Listening on ws://0.0.0.0:3001");

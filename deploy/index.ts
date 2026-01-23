@@ -11,11 +11,27 @@ const namespaceName = `beep-${envName}`;
 const apiAppName = "api";
 const apiImageName = `ghcr.io/bnussman/api:${envName}`;
 
+const orpcAppName = "orpc";
+const orpcImageName = `ghcr.io/bnussman/orpc:${envName}`;
+
 const apiImageResource = new docker.Image("apiImageResource", {
   imageName: apiImageName,
   build: {
     context: "../api",
     dockerfile: "../api/Dockerfile",
+  },
+  registry: {
+    password: process.env.GITHUB_TOKEN,
+    server: "ghcr.io",
+    username: ACTOR,
+  },
+});
+
+const orpcImageResource = new docker.Image("apiImageResource", {
+  imageName: orpcImageName,
+  build: {
+    context: "../orpc",
+    dockerfile: "../orpc/Dockerfile",
   },
   registry: {
     password: process.env.GITHUB_TOKEN,
@@ -55,6 +71,22 @@ const apiService = new k8s.core.v1.Service(
   { provider: k8sProvider },
 );
 
+const orpcService = new k8s.core.v1.Service(
+  orpcAppName,
+  {
+    metadata: {
+      name: orpcAppName,
+      namespace: namespaceName,
+    },
+    spec: {
+      type: "ClusterIP",
+      ports: [{ port: 3001, targetPort: 3001 }],
+      selector: { app: orpcAppName },
+    },
+  },
+  { provider: k8sProvider },
+);
+
 const apiIngress = new k8s.networking.v1.Ingress(
   "api-ingress",
   {
@@ -66,7 +98,7 @@ const apiIngress = new k8s.networking.v1.Ingress(
       rules: [
         {
           host:
-            envName === "production" || envName === "production-homelab"
+            envName === "production"
               ? "api.ridebeep.app"
               : "api.dev.ridebeep.app",
           http: {
@@ -78,6 +110,26 @@ const apiIngress = new k8s.networking.v1.Ingress(
                   service: {
                     name: apiAppName,
                     port: { number: 3000 },
+                  },
+                },
+              },
+            ],
+          },
+        },
+        {
+          host:
+            envName === "production"
+              ? "orpc.ridebeep.app"
+              : "orpc.dev.ridebeep.app",
+          http: {
+            paths: [
+              {
+                path: "/",
+                pathType: "Prefix",
+                backend: {
+                  service: {
+                    name: orpcAppName,
+                    port: { number: 3001 },
                   },
                 },
               },
@@ -154,6 +206,36 @@ const apiDeployment = new k8s.apps.v1.Deployment(
               image: apiImageResource.repoDigest,
               imagePullPolicy: "Always",
               ports: [{ containerPort: 3000 }],
+              envFrom: [{ configMapRef: { name: apiAppName } }],
+            },
+          ],
+        },
+      },
+    },
+  },
+  { provider: k8sProvider },
+);
+
+const orpcDeployment = new k8s.apps.v1.Deployment(
+  orpcAppName,
+  {
+    metadata: {
+      name: orpcAppName,
+      namespace: namespace.metadata.name,
+      labels: { app: orpcAppName },
+    },
+    spec: {
+      selector: { matchLabels: { app: orpcAppName } },
+      replicas: envName === "production" ? 5 : 3,
+      template: {
+        metadata: { labels: { app: orpcAppName } },
+        spec: {
+          containers: [
+            {
+              name: orpcAppName,
+              image: orpcImageResource.repoDigest,
+              imagePullPolicy: "Always",
+              ports: [{ containerPort: 3001 }],
               envFrom: [{ configMapRef: { name: apiAppName } }],
             },
           ],
