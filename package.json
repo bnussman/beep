@@ -6,7 +6,7 @@
   },
   "author": "Banks Nussman",
   "scripts": {
-    "dev": "concurrently --raw \"pnpm --filter @beep/app dev\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
+    "dev": "concurrently --raw \"pnpm --filter @beep/app dev\" \"pnpm --filter @beep/orpc dev\" \"pnpm --filter @beep/api dev\" \"pnpm --filter @beep/website dev\"",
     "start:api": "pnpm --filter @beep/api start",
     "start:app": "pnpm --filter @beep/app start",
     "start:website": "pnpm --filter @beep/website dev",
