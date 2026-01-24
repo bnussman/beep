@@ -44,7 +44,7 @@ export function SignUpScreen() {
       async onSuccess(data) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-        queryClient.setQueryData(orpc.user.me.queryKey(), data.user);
+        queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), data.user);
       },
       onError(error) {
         if (error instanceof ORPCError && error.data?.issues) {
