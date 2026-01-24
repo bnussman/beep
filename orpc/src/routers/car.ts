@@ -109,28 +109,14 @@ export const carRouter = {
       }
     }),
   createCar: verifiedProcedure
-    .input(z.instanceof(FormData))
-    .handler(async ({ input: formData, context }) => {
-      const carSchema = z.object({
-        make: z.enum(getMakes()),
-        model: z.string(),
-        year: z.string(),
-        color: z.enum(CAR_COLOR_OPTIONS),
-        photo: z.instanceof(File),
-      });
-
-      const {
-        success,
-        data: input,
-        error,
-      } = carSchema.safeParse(Object.fromEntries(formData.entries()));
-
-      if (!success) {
-        throw new ORPCError("BAD_REQUEST", {
-          cause: error,
-        });
-      }
-
+    .input(z.object({
+      make: z.enum(getMakes()),
+      model: z.string(),
+      year: z.number(),
+      color: z.enum(CAR_COLOR_OPTIONS),
+      photo: z.instanceof(File),
+    }))
+    .handler(async ({ input, context }) => {
       const validModels = getModels(input.make as string) as string[];
 
       if (!validModels.includes(input.model)) {

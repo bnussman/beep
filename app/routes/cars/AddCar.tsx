@@ -14,16 +14,10 @@ import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { Menu } from "@/components/Menu";
-import { orpc } from "@/utils/orpc";
+import { Inputs, orpc } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
 
-interface Values {
-  year: number;
-  make: string;
-  model: string;
-  color: string;
-  photo: ImagePicker.ImagePickerAsset;
-}
+type Values = { photo: ImagePicker.ImagePickerAsset } & Omit<Inputs['car']['createCar'], 'photo'>;
 
 export function AddCar() {
   const theme = useTheme();
@@ -93,20 +87,9 @@ export function AddCar() {
   };
 
   const onSubmit = handleSubmit(async (variables) => {
-    const formData = new FormData();
+    const photo = await getFile(variables.photo) as File;
 
-    for (const key in variables) {
-      if (key === "photo") {
-        formData.append("photo", (await getFile(variables[key])) as Blob);
-      } else {
-        formData.append(
-          key,
-          variables[key as keyof typeof variables] as string,
-        );
-      }
-    }
-
-    await addCar(formData).catch();
+    await addCar({ ...variables, photo }).catch();
   });
 
   return (
@@ -116,7 +99,6 @@ export function AddCar() {
         <Controller
           name="make"
           rules={{ required: "Make is required" }}
-          defaultValue=""
           control={control}
           render={({ field, fieldState }) => (
             <Menu
