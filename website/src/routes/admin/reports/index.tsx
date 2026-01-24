@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "../../../utils/orpc";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
-import { useTRPC } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
 import { TableEmpty } from "../../../components/TableEmpty";
@@ -24,8 +25,6 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
 export const reportsRoute = createRoute({
   path: "reports",
   getParentRoute: () => adminRoute,
@@ -41,7 +40,6 @@ export const reportsListRoute = createRoute({
 });
 
 export function Reports() {
-  const trpc = useTRPC();
   const { page } = reportsListRoute.useSearch();
   const navigate = useNavigate({ from: reportsListRoute.id });
 
@@ -51,11 +49,11 @@ export function Reports() {
     setSelectedReportId(id);
   };
 
-  const { data, isLoading, error } = useQuery(trpc.report.reports.queryOptions(
+  const { data, isLoading, error } = useQuery(orpc.report.reports.queryOptions(
     {
-      page,
+      input: { page },
+      placeholderData: keepPreviousData,
     },
-    { placeholderData: keepPreviousData },
   ));
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
@@ -96,7 +94,7 @@ export function Reports() {
                 <TableCellUser user={report.reported} />
                 <TableCell>{report.reason}</TableCell>
                 <TableCell>
-                  {DateTime.fromISO(report.timestamp).toRelative()}
+                  {DateTime.fromJSDate(report.timestamp).toRelative()}
                 </TableCell>
                 <TableCell>
                   <Indicator color={report.handled ? "green" : "red"} />

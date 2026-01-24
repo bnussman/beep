@@ -2,10 +2,9 @@ import React from "react";
 import { Loading } from "../../components/Loading";
 import { createRoute } from "@tanstack/react-router";
 import { adminRoute } from ".";
-import { useTRPC } from "../../utils/trpc";
 import { Stack, Alert, Typography } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
+import { orpc } from "../../utils/orpc";
 
 export const redisRoute = createRoute({
   component: Redis,
@@ -14,8 +13,7 @@ export const redisRoute = createRoute({
 });
 
 export function Redis() {
-  const trpc = useTRPC();
-  const { data, isLoading, error } = useQuery(trpc.redis.channels.queryOptions(undefined, {
+  const { data, isLoading, error } = useQuery(orpc.redis.channels.queryOptions({
     refetchInterval: 2_000,
   }));
 
