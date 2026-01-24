@@ -16,6 +16,7 @@ export const userSchema = z.object({
   singlesRate: z.number(),
   capacity: z.number(),
   queueSize: z.number(),
+  created: z.date().nullable(),
   rating: z.string().nullable(),
   role: z.enum(["user", "admin"]),
   photo: z.string().nullable(),

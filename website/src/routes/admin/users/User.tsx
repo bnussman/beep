@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useTRPC } from "../../../utils/trpc";
 import { Loading } from "../../../components/Loading";
 import { ClearQueueDialog } from "../../../components/ClearQueueDialog";
 import { SendNotificationDialog } from "../../../components/SendNotificationDialog";
@@ -23,6 +22,7 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
+import { orpc } from "../../../utils/orpc";
 
 const tabs = [
   "details",
@@ -42,28 +42,18 @@ export const userRoute = createRoute({
 });
 
 export function User() {
-  const trpc = useTRPC();
   const { userId } = userRoute.useParams();
 
-  const queryClient = useQueryClient();
   const notifications = useNotifications();
 
   const {
     data: user,
     isLoading,
     error,
-  } = useQuery(trpc.user.user.queryOptions(userId));
-
-  useSubscription(
-    trpc.user.updates.subscriptionOptions(userId, {
-      onData(user) {
-        queryClient.setQueryData(trpc.user.user.queryKey(userId), user);
-      },
-    }),
-  );
+  } = useQuery(orpc.user.updates.experimental_liveOptions({ input: userId }));
 
   const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
-    trpc.user.syncPayments.mutationOptions({
+    orpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments) {
         notifications.show(
           `Payments synced. The user has ${activePayments.length} active payments.`,
@@ -79,7 +69,7 @@ export function User() {
   );
 
   const { mutate: updateUser, isPending: isVerifyLoading } = useMutation(
-    trpc.user.editAdmin.mutationOptions({
+    orpc.user.editAdmin.mutationOptions({
       onSuccess() {
         notifications.show("User verified", { severity: "success" });
       },
@@ -90,7 +80,7 @@ export function User() {
   );
 
   const { mutate: sendTestEmail, isPending: isSendingTestEmail } = useMutation(
-    trpc.user.sendTestEmail.mutationOptions({
+    orpc.user.sendTestEmail.mutationOptions({
       onSuccess() {
         notifications.show("Email sent", { severity: "success" });
       },
@@ -166,7 +156,7 @@ export function User() {
             <Typography fontSize="12px">{user.id}</Typography>
             {user.created && (
               <Typography fontSize="12px">
-                Joined {DateTime.fromISO(user.created).toRelative()}
+                Joined {DateTime.fromJSDate(user.created).toRelative()}
               </Typography>
             )}
           </Stack>
@@ -193,7 +183,6 @@ export function User() {
           <Button
             variant="contained"
             onClick={() => setIsSendNotificationOpen(true)}
-            disabled={!user?.pushToken}
             color="info"
           >
             Send Notification

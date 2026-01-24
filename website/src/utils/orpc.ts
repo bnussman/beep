@@ -1,7 +1,6 @@
 import { createORPCClient, onError } from '@orpc/client'
 import { RPCLink } from '@orpc/client/fetch'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
-import { getAuthToken } from './trpc';
 import { useQuery } from '@tanstack/react-query';
 import type { AppRouter } from '../../../orpc/src/index'
 import type { InferRouterInputs, InferRouterOutputs, RouterClient } from '@orpc/server'
@@ -9,6 +8,20 @@ import type { InferRouterInputs, InferRouterOutputs, RouterClient } from '@orpc/
 const url = import.meta.env.VITE_API_ROOT
   ? `https://${import.meta.env.VITE_API_ROOT.replace('api.', 'orpc.')}`
   : "http://localhost:3001";
+
+function getAuthToken() {
+  const stored = localStorage.getItem("user");
+  if (stored) {
+    try {
+      const auth = JSON.parse(stored) as Outputs["auth"]["login"];
+      return auth.tokens.id;
+    } catch (error) {
+      // @todo log to Sentry
+      return undefined;
+    }
+  }
+  return undefined;
+}
 
 const link = new RPCLink({
   url,

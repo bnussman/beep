@@ -1,4 +1,19 @@
 import React from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import { orpc } from "../../../utils/orpc";
+import { Indicator } from "../../../components/Indicator";
+import { keepPreviousData } from "@tanstack/react-query";
+import { PaginationFooter } from "../../../components/PaginationFooter";
+import { usersRoute } from "./routes";
+import { TableLoading } from "../../../components/TableLoading";
+import { TableError } from "../../../components/TableError";
+import { useQuery } from "@tanstack/react-query";
+import { TableEmpty } from "../../../components/TableEmpty";
+import {
+  createRoute,
+  Link as RouterLink,
+  useNavigate,
+} from "@tanstack/react-router";
 import {
   Table,
   TableHead,
@@ -15,21 +30,6 @@ import {
   Avatar,
   Link,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { Indicator } from "../../../components/Indicator";
-import {
-  createRoute,
-  Link as RouterLink,
-  useNavigate,
-} from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
-import { keepPreviousData } from "@tanstack/react-query";
-import { PaginationFooter } from "../../../components/PaginationFooter";
-import { usersRoute } from "./routes";
-import { TableLoading } from "../../../components/TableLoading";
-import { TableError } from "../../../components/TableError";
-import { useQuery } from "@tanstack/react-query";
-import { TableEmpty } from "../../../components/TableEmpty";
 
 export interface PaginationSearchParams {
   page: number;
@@ -49,19 +49,20 @@ export const usersListRoute = createRoute({
 });
 
 function Users() {
-  const trpc = useTRPC();
   const PAGE_SIZE = 20;
   const { page, query } = usersListRoute.useSearch();
   const navigate = useNavigate({ from: usersListRoute.id });
 
   const { isLoading, isFetching, error, data } = useQuery(
-    trpc.user.users.queryOptions(
+    orpc.user.users.queryOptions(
       {
+        input: {
         page,
         pageSize: PAGE_SIZE,
         query: !query ? undefined : query,
+        },
+        placeholderData: keepPreviousData 
       },
-      { placeholderData: keepPreviousData },
     ),
   );
 

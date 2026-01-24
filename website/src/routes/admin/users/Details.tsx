@@ -3,11 +3,10 @@ import { Indicator } from "../../../components/Indicator";
 import { printStars } from "../ratings";
 import { createRoute, useParams } from "@tanstack/react-router";
 import { userRoute } from "./User";
-import { useTRPC } from "../../../utils/trpc";
 import { Alert, Stack, Typography, Tooltip, Box, Link } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedRating } from "../../../utils/utils";
+import { orpc } from "../../../utils/orpc";
 
 export const userDetailsRoute = createRoute({
   component: Details,
@@ -22,14 +21,13 @@ export const userDetailsInitalRoute = createRoute({
 });
 
 export function Details() {
-  const trpc = useTRPC();
   const { userId } = useParams({ from: "/admin/users/$userId" });
 
   const {
     data: user,
     isLoading,
     error,
-  } = useQuery(trpc.user.user.queryOptions(userId));
+  } = useQuery(orpc.user.updates.experimental_liveOptions(userId));
 
   if (isLoading || !user) {
     return null;
@@ -48,13 +46,13 @@ export function Details() {
           <Link href={`mailto:${user.email}`}>{user.email}</Link>
         </Stack>
       </Box>
-      <Box>
+      {/* <Box>
         <strong>Push Notification Token:</strong>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Indicator mr={2} color={user.pushToken ? "green" : "red"} />
           <Typography>{user.pushToken ?? "N/A"}</Typography>
         </Stack>
-      </Box>
+      </Box> */}
       <Box>
         <strong>Rating:</strong>
         {user.rating ? (

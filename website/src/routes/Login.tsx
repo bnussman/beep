@@ -1,8 +1,7 @@
 import React from "react";
-import { orpc } from "../utils/orpc";
+import { Inputs, orpc } from "../utils/orpc";
 import { Link, createRoute, useNavigate } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { RouterInput } from "../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,11 +20,13 @@ export const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
 });
 
+type Values = Inputs['auth']['login'];
+
 export function Login() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const form = useForm<RouterInput["auth"]["login"]>({
+  const form = useForm<Values>({
     defaultValues: {
       username: "",
       password: "",
@@ -40,7 +41,7 @@ export function Login() {
     }),
   );
 
-  const onSubmit = async (values: RouterInput["auth"]["login"]) => {
+  const onSubmit = async (values: Values) => {
     const result = await login(values);
 
     localStorage.setItem("user", JSON.stringify(result));

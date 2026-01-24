@@ -2,11 +2,10 @@ import React from "react";
 import { ORPCError } from "@orpc/client";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
-import { RouterInput, useTRPC } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
 import { useNotifications } from "@toolpad/core";
 import { useMutation } from "@tanstack/react-query";
-import { orpc, useUser } from "../utils/orpc";
+import { Inputs, orpc, useUser } from "../utils/orpc";
 import {
   Alert,
   Card,
@@ -19,7 +18,7 @@ import {
   Box,
 } from "@mui/material";
 
-type Values = RouterInput["user"]["edit"];
+type Values = Inputs["user"]["edit"];
 
 export const editProfileRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -28,7 +27,6 @@ export const editProfileRoute = createRoute({
 });
 
 export function EditProfile() {
-  const trpc = useTRPC();
   const { data: user } = useUser();
   const notifications = useNotifications();
 

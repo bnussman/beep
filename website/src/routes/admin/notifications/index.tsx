@@ -4,8 +4,7 @@ import { SendNotificationConfirmationDialog } from "./SendNotificationConfirmati
 import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
-import { RouterInput, useTRPC } from "../../../utils/trpc";
-import { orpc } from "../../../utils/orpc";
+import { Inputs, orpc } from "../../../utils/orpc";
 import { ORPCError } from "@orpc/client";
 import { adminRoute } from "..";
 import {
@@ -18,7 +17,7 @@ import {
   Card,
 } from "@mui/material";
 
-type SendNotifictionVariables = RouterInput["notification"]["sendNotification"];
+type SendNotifictionVariables = Inputs["notification"]["sendNotification"];
 
 export const notificationsRoute = createRoute({
   component: Notifications,

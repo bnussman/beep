@@ -1,11 +1,10 @@
 import React from "react";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { RouterInput } from "../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { ORPCError } from "@orpc/client";
-import { orpc } from "../utils/orpc";
+import { Inputs, orpc } from "../utils/orpc";
 import {
   Card,
   Stack,
@@ -48,7 +47,7 @@ export function ForgotPassword() {
     }),
   );
 
-  const onSubmit = async (values: RouterInput["auth"]["forgotPassword"]) => {
+  const onSubmit = async (values: Inputs["auth"]["forgotPassword"]) => {
     await sendForgotPasswordEmail(values);
 
     form.reset();

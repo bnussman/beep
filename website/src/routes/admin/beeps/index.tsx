@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { orpc } from "../../../utils/orpc";
+import { orpc, Outputs } from "../../../utils/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { BeepMenu } from "./BeepMenu";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
-import { RouterOutput, useTRPC } from "../../../utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableCellUser } from "../../../components/TableCellUser";
@@ -27,7 +26,7 @@ import {
 } from "@mui/material";
 
 export const beepStatusMap: Record<
-  RouterOutput["beep"]["beep"]["status"],
+  Outputs["beep"]["beep"]["status"],
   string
 > = {
   waiting: "orange",

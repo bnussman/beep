@@ -1,10 +1,9 @@
 import React from "react";
-import { orpc } from "../../../utils/orpc";
+import { Inputs, orpc } from "../../../utils/orpc";
 import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
 import { createRoute, useRouter } from "@tanstack/react-router";
 import { reportsRoute } from ".";
-import { RouterInput } from "../../../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "../../../components/Link";
 import { useQuery } from "@tanstack/react-query";
@@ -65,7 +64,7 @@ export function Report() {
     values,
   });
 
-  const onSubmit = (values: RouterInput["report"]["updateReport"]["data"]) => {
+  const onSubmit = (values: Inputs["report"]["updateReport"]["data"]) => {
     updateReport({
       reportId,
       data: values,

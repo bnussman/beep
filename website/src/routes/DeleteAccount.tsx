@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNotifications } from "@toolpad/core";
-import { queryClient } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
 import { useMutation } from "@tanstack/react-query";
 import { orpc, useUser } from "../utils/orpc";
@@ -21,6 +20,7 @@ import {
   Button,
   Box,
 } from "@mui/material";
+import { queryClient } from "../utils/tanstack-query";
 
 export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,

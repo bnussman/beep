@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { queryClient } from "../utils/trpc";
 import { Menu, MenuItem, Button, Avatar, Divider } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { orpc, useUser } from "../utils/orpc";
+import { queryClient } from "../utils/tanstack-query";
 
 export function UserMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
