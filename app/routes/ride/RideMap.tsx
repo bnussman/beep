@@ -3,7 +3,7 @@ import { Map } from "@/components/Map";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { decodePolyline, useLocation } from "@/utils/location";
-import { useTRPC } from "@/utils/trpc";
+import { orpc } from "@/utils/orpc";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import MapView from "react-native-maps";
@@ -18,23 +18,22 @@ interface Props {
 }
 
 export function RideMap({ beepersLocation }: Props) {
-  const trpc = useTRPC();
-
   const mapRef = useRef<MapView>(null);
 
   const { location } = useLocation();
 
-  const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
+  const { data: beep } = useQuery(orpc.rider.currentRide.queryOptions());
 
   const { data: route } = useQuery(
-    trpc.location.getRoute.queryOptions(
-      beep
-        ? {
+    orpc.location.getRoute.queryOptions({
+      input:
+        beep
+          ? {
             origin: beep.origin,
             destination: beep.destination,
           }
-        : skipToken,
-    ),
+          : skipToken,
+    }),
   );
 
   const polylineCoordinates = route?.routes[0].legs

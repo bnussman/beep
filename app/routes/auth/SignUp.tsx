@@ -12,10 +12,11 @@ import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 interface Values {
   first: string;
@@ -29,7 +30,6 @@ interface Values {
 }
 
 export function SignUpScreen() {
-  const trpc = useTRPC();
   const {
     control,
     handleSubmit,
@@ -40,20 +40,21 @@ export function SignUpScreen() {
   } = useForm<Values>();
 
   const { mutateAsync: signup } = useMutation(
-    trpc.auth.signup.mutationOptions({
+    orpc.auth.signup.mutationOptions({
       async onSuccess(data) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-        queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
+        queryClient.setQueryData(orpc.user.me.queryKey(), data.user);
       },
       onError(error) {
-        const fieldErrors = error.data?.fieldErrors;
-        if (!fieldErrors) {
-          alert(error.message);
-        } else {
-          for (const key in fieldErrors) {
-            setError(key as keyof Values, { message: fieldErrors[key]?.[0] });
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
+            });
           }
+        } else {
+          alert(error.message);
         }
       },
     }),
@@ -62,30 +63,18 @@ export function SignUpScreen() {
   const queryClient = useQueryClient();
 
   const onSubmit = handleSubmit(async (variables) => {
-    const formData = new FormData();
-
-    for (const key in variables) {
-      if (key === "photo") {
-        formData.append(
-          "photo",
-          (await getFile(variables[key as "photo"])) as Blob,
-        );
-      } else {
-        formData.append(
-          key,
-          variables[key as keyof typeof variables] as string,
-        );
-      }
-    }
+    let pushToken = undefined;
 
     if (isMobile && !isSimulator) {
-      const pushToken = await getPushToken();
-      if (pushToken) {
-        formData.append("pushToken", pushToken);
+      const token = await getPushToken();
+      if (token) {
+        pushToken = token;
       }
     }
 
-    await signup(formData).catch();
+    const photo = (await getFile(variables.photo)) as File;
+
+    await signup({ ...variables, pushToken, photo }).catch();
   });
 
   const chooseProfilePhoto = async () => {

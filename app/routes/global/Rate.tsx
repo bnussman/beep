@@ -5,17 +5,16 @@ import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
-import { useTRPC } from "@/utils/trpc";
 import { ActivityIndicator } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/utils/orpc";
 
 type Props = StaticScreenProps<{ userId: string; beepId: string }>;
 
 export function RateScreen({ route }: Props) {
-  const trpc = useTRPC();
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
 
@@ -23,17 +22,17 @@ export function RateScreen({ route }: Props) {
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery(
-    trpc.user.publicUser.queryOptions(route.params.userId),
+    orpc.user.publicUser.queryOptions({ input: route.params.userId }),
   );
 
   const { mutateAsync: rate, isPending } = useMutation(
-    trpc.rating.createRating.mutationOptions({
+    orpc.rating.createRating.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
-        queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
-        queryClient.invalidateQueries(
-          trpc.rider.getLastBeepToRate.pathFilter(),
-        );
+        queryClient.invalidateQueries({ queryKey: orpc.beep.beeps.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.rating.ratings.key() });
+        queryClient.invalidateQueries({
+          queryKey: orpc.rider.getLastBeepToRate.queryKey(),
+        });
         goBack();
       },
       onError(error) {

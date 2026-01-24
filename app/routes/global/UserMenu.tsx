@@ -1,7 +1,7 @@
 import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import { call, sms } from "@/utils/links";
-import { useTRPC } from "@/utils/trpc";
+import { orpc } from "@/utils/orpc";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 
@@ -11,11 +11,11 @@ interface Props {
 
 export function useUserMenuOptions(userId: string) {
   const navigation = useNavigation();
-  const trpc = useTRPC();
 
   const { data: userDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(userId),
+    orpc.user.getUserPrivateDetails.queryOptions({ input: userId }),
   );
+
   return [
     {
       title: "Call",
@@ -36,10 +36,9 @@ export function useUserMenuOptions(userId: string) {
 
 export function UserMenu({ userId }: Props) {
   const navigation = useNavigation();
-  const trpc = useTRPC();
 
   const { data: userDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(userId),
+    orpc.user.getUserPrivateDetails.queryOptions({ input: userId }),
   );
 
   return (

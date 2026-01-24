@@ -9,12 +9,13 @@ import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
 import { years } from "./utils";
 import { Pressable, View } from "react-native";
-import { useTRPC } from "@/utils/trpc";
 import { useTheme } from "@/utils/theme";
 import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { Menu } from "@/components/Menu";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 interface Values {
   year: number;
@@ -25,7 +26,6 @@ interface Values {
 }
 
 export function AddCar() {
-  const trpc = useTRPC();
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -40,33 +40,33 @@ export function AddCar() {
   const [photo, make] = useWatch({ control, name: ["photo", "make"] });
 
   const { data: colors } = useQuery({
-    ...trpc.car.getColors.queryOptions(),
+    ...orpc.car.getColors.queryOptions(),
     initialData: [],
   });
 
   const { data: models } = useQuery({
-    ...trpc.car.getModels.queryOptions(make ? make : skipToken),
+    ...orpc.car.getModels.queryOptions({ input: make ? make : skipToken }),
     initialData: [],
   });
 
   const { data: makes } = useQuery({
-    ...trpc.car.getMakes.queryOptions(),
+    ...orpc.car.getMakes.queryOptions(),
     initialData: [],
   });
 
   const queryClient = useQueryClient();
 
   const { mutateAsync: addCar } = useMutation(
-    trpc.car.createCar.mutationOptions({
+    orpc.car.createCar.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        queryClient.invalidateQueries({ queryKey: orpc.car.cars.key() });
         navigation.goBack();
       },
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const key in error.data.fieldErrors) {
-            setError(key as keyof Values, {
-              message: error.data.fieldErrors[key][0],
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
             });
           }
         } else {

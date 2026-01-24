@@ -88,6 +88,12 @@ importers:
       '@gorhom/bottom-sheet':
         specifier: 5.2.8
         version: 5.2.8(@types/react@19.1.12)(react-native-gesture-handler@2.28.0(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native-reanimated@4.1.1(@babel/core@7.28.4)(react-native-worklets@0.5.1(@babel/core@7.28.4)(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
+      '@orpc/client':
+        specifier: ^1.13.4
+        version: 1.13.4(@opentelemetry/api@1.9.0)
+      '@orpc/tanstack-query':
+        specifier: ^1.13.4
+        version: 1.13.4(@opentelemetry/api@1.9.0)(@orpc/client@1.13.4(@opentelemetry/api@1.9.0))(@tanstack/query-core@5.90.16)
       '@react-native-async-storage/async-storage':
         specifier: ~2.2.0
         version: 2.2.0(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))
@@ -212,6 +218,9 @@ importers:
       '@expo/metro-runtime':
         specifier: ~6.1.2
         version: 6.1.2(expo@54.0.20)(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.12)(react@19.1.0))(react@19.1.0)
+      '@orpc/server':
+        specifier: ^1.13.4
+        version: 1.13.4(@opentelemetry/api@1.9.0)(ws@8.18.3)
       '@sentry/cli':
         specifier: 3.1.0
         version: 3.1.0
@@ -8092,9 +8101,9 @@ snapshots:
 
   '@babel/helper-wrap-function@7.25.9':
     dependencies:
-      '@babel/template': 7.27.2
+      '@babel/template': 7.28.6
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.28.6
     transitivePeerDependencies:
       - supports-color
 

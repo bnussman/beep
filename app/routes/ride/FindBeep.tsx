@@ -2,25 +2,23 @@ import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { RiderForm } from "./RiderForm";
 import { StaticScreenProps } from "@react-navigation/native";
-import { useTRPC } from "@/utils/trpc";
 import { skipToken, useQuery } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { RideDetails } from "./RideDetails";
 import { BottomSheet } from "@/components/BottomSheet";
 import { View } from "react-native";
 import { RideMap } from "./RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { orpc } from "@/utils/orpc";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
 >;
 
 export function MainFindBeepScreen(props: Props) {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
+  const { data: beep } = useQuery(orpc.rider.currentRide.queryOptions());
 
   const isAcceptedBeep =
     beep?.status === "accepted" ||
@@ -28,24 +26,25 @@ export function MainFindBeepScreen(props: Props) {
     beep?.status === "here" ||
     beep?.status === "on_the_way";
 
-  useSubscription(
-    trpc.rider.currentRideUpdates.subscriptionOptions(undefined, {
-      onData(data) {
-        if (data === null) {
-          queryClient.invalidateQueries(
-            trpc.rider.getLastBeepToRate.pathFilter(),
-          );
-        }
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
-      },
-      enabled: Boolean(beep),
-    }),
+  const { data: updates } = useQuery(
+    orpc.rider.currentRideUpdates.experimental_liveOptions({
+      enabled: Boolean(beep)
+    })
   );
 
-  const { data: beepersLocation } = useSubscription(
-    trpc.rider.beeperLocationUpdates.subscriptionOptions(
-      beep ? beep.beeper.id : skipToken,
+  useEffect(() => {
+    if (updates === null) {
+      queryClient.invalidateQueries({
+        queryKey: orpc.rider.getLastBeepToRate.queryKey(),
+      });
+    }
+    queryClient.setQueryData(orpc.rider.currentRide.queryKey(), updates);
+  }, [updates]);
+
+  const { data: beepersLocation } = useQuery(
+    orpc.rider.beeperLocationUpdates.experimental_liveOptions(
       {
+        input: beep ? beep.beeper.id : skipToken,
         enabled: isAcceptedBeep,
       },
     ),

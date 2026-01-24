@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "5.2.8",
+    "@orpc/client": "^1.13.4",
+    "@orpc/tanstack-query": "^1.13.4",
     "@react-native-async-storage/async-storage": "~2.2.0",
     "@react-native-menu/menu": "^2.0.0",
     "@react-navigation/drawer": "7.6.0",
@@ -53,9 +55,10 @@
     "zeego": "^3.0.6"
   },
   "devDependencies": {
-    "@sentry/cli": "3.1.0",
     "@babel/core": "^7.24.4",
     "@expo/metro-runtime": "~6.1.2",
+    "@orpc/server": "^1.13.4",
+    "@sentry/cli": "3.1.0",
     "@trpc/server": "^11.8.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "~19.1.9",

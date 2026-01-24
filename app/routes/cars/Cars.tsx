@@ -1,23 +1,19 @@
-import React, { useLayoutEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { ActivityIndicator, FlatList, Pressable } from "react-native";
+import React from "react";
+import { ActivityIndicator, FlatList } from "react-native";
 import { PAGE_SIZE } from "@/utils/constants";
-import { useUser } from "@/utils/useUser";
 import { Image } from "@/components/Image";
 import { View } from "react-native";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "@/components/Menu";
+import { orpc, useUser } from "@/utils/orpc";
 
 export function Cars() {
-  const trpc = useTRPC();
-  const navigation = useNavigation();
-  const { user } = useUser();
+  const { data: user } = useUser();
 
   const queryClient = useQueryClient();
   const {
@@ -29,14 +25,15 @@ export function Cars() {
     fetchNextPage,
     isRefetching,
   } = useInfiniteQuery(
-    trpc.car.cars.infiniteQueryOptions(
+    orpc.car.cars.infiniteOptions(
       {
-        userId: user?.id,
-        pageSize: PAGE_SIZE,
-      },
-      {
+        input: (page) => ({
+          userId: user?.id,
+          pageSize: PAGE_SIZE,
+          page
+        }),
         placeholderData: keepPreviousData,
-        initialCursor: 1,
+        initialPageParam: 1,
         getNextPageParam(page) {
           if (page.page === page.pages) {
             return undefined;
@@ -48,17 +45,17 @@ export function Cars() {
   );
 
   const { mutateAsync: deleteCar } = useMutation(
-    trpc.car.deleteCar.mutationOptions({
+    orpc.car.deleteCar.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        queryClient.invalidateQueries({ queryKey: orpc.car.cars.key() });
       },
     }),
   );
 
   const { mutateAsync: updateCar } = useMutation(
-    trpc.car.updateCar.mutationOptions({
+    orpc.car.updateCar.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        queryClient.invalidateQueries({ queryKey: orpc.car.cars.key() });
       },
     }),
   );

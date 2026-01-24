@@ -2,20 +2,19 @@ import { Elipsis } from "@/components/Elipsis";
 import { Menu } from "@/components/Menu";
 import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
-import { useTRPC } from "@/utils/trpc";
+import { orpc } from "@/utils/orpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert, View } from "react-native";
 
 export function RideMenu() {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
+  const { data: beep } = useQuery(orpc.rider.currentRide.queryOptions());
 
   const { mutate } = useMutation(
-    trpc.rider.leaveQueue.mutationOptions({
+    orpc.rider.leaveQueue.mutationOptions({
       onSuccess() {
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), null);
+        queryClient.setQueryData(orpc.rider.currentRide.queryKey(), null);
       },
       onError(error) {
         alert(error.message);

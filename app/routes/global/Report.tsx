@@ -4,24 +4,23 @@ import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { UserHeader } from "@/components/UserHeader";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Label } from "@/components/Label";
+import { orpc } from "@/utils/orpc";
 
 type Props = StaticScreenProps<{ userId: string; beepId?: string }>;
 
 export function ReportScreen({ route }: Props) {
-  const trpc = useTRPC();
   const [reason, setReason] = useState<string>("");
   const { goBack } = useNavigation();
 
   const { data: user } = useQuery(
-    trpc.user.publicUser.queryOptions(route.params.userId),
+    orpc.user.publicUser.queryOptions({ input: route.params.userId }),
   );
 
   const { mutateAsync: report, isPending } = useMutation(
-    trpc.report.createReport.mutationOptions({
+    orpc.report.createReport.mutationOptions({
       onSuccess() {
         goBack();
       },

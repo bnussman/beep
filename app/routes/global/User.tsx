@@ -3,28 +3,27 @@ import { ActivityIndicator, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useQuery } from "@tanstack/react-query";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { useTRPC } from "@/utils/trpc";
 import { getFormattedRatingString, printStars } from "@/components/Stars";
 import { Image } from "@/components/Image";
+import { orpc } from "@/utils/orpc";
 
 type Props = StaticScreenProps<{ id: string }>;
 
 export function User({ route }: Props) {
-  const trpc = useTRPC();
   const navigation = useNavigation();
 
   const {
     data: user,
     isPending: userPending,
     error: userError,
-  } = useQuery(trpc.user.publicUser.queryOptions(route.params.id));
+  } = useQuery(orpc.user.publicUser.queryOptions({ input: route.params.id }));
 
   const { data: userDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(route.params.id),
+    orpc.user.getUserPrivateDetails.queryOptions({ input: route.params.id }),
   );
 
   const { data: car } = useQuery(
-    trpc.user.getUsersDefaultCar.queryOptions(route.params.id),
+    orpc.user.getUsersDefaultCar.queryOptions({ input: route.params.id }),
   );
 
   useLayoutEffect(() => {

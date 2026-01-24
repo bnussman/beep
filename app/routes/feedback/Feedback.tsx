@@ -7,17 +7,17 @@ import { Label } from "@/components/Label";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Linking, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
+import { orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 export function Feedback() {
-  const trpc = useTRPC();
   const {
     mutateAsync: createFeedback,
     isPending,
     error,
   } = useMutation(
-    trpc.feedback.createFeedback.mutationOptions({
+    orpc.feedback.createFeedback.mutationOptions({
       onSuccess() {
         Alert.alert(
           "Thank you for your feedback!",
@@ -26,7 +26,15 @@ export function Feedback() {
         reset();
       },
       onError(error) {
-        alert(error.message);
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
+            });
+          }
+        } else {
+          alert(error.message);
+        }
       },
     }),
   );
@@ -35,12 +43,10 @@ export function Feedback() {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    setError,
   } = useForm({
     defaultValues: { message: "" },
   });
-
-  const validationErrors = error?.data?.fieldErrors;
 
   const onSubmit = handleSubmit((values) => createFeedback(values));
 
@@ -69,21 +75,23 @@ export function Feedback() {
           name="message"
           rules={{ required: "Message is required" }}
           control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              id="feeback-input"
-              multiline
-              numberOfLines={4}
-              style={{ minHeight: 150 }}
-              onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
-              value={value}
-            />
+          render={({ field: { onChange, onBlur, value }, fieldState }) => (
+            <>
+              <Input
+                id="feeback-input"
+                multiline
+                numberOfLines={4}
+                style={{ minHeight: 150 }}
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+              />
+              <Text color="error">
+                {fieldState.error?.message}
+              </Text>
+            </>
           )}
         />
-        <Text color="error">
-          {errors.message?.message ?? validationErrors?.message?.[0]}
-        </Text>
       </View>
       <Button onPress={onSubmit} isLoading={isPending}>
         Submit

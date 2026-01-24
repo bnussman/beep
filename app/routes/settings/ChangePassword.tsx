@@ -3,18 +3,17 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useTRPC } from "@/utils/trpc";
 import { View, type TextInput } from "react-native";
 import { useMutation } from "@tanstack/react-query";
+import { orpc } from "@/utils/orpc";
 
 export function ChangePasswordScreen() {
-  const trpc = useTRPC();
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const confirmPasswordRef = useRef<TextInput>(null);
 
   const { mutateAsync: changePassword, isPending } = useMutation(
-    trpc.auth.changePassword.mutationOptions({
+    orpc.auth.changePassword.mutationOptions({
       onSuccess() {
         alert("Successfully changed password.");
         setPassword("");

@@ -2,20 +2,19 @@ import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Menu } from "@/components/Menu";
 import { Alert, View } from "react-native";
-import { useTRPC } from "@/utils/trpc";
 import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { isMobile } from "@/utils/constants";
 import { Elipsis } from "@/components/Elipsis";
+import { orpc } from "@/utils/orpc";
 
 export function ProfileMenu() {
-  const trpc = useTRPC();
   const navigation = useNavigation();
   const queryClient = useQueryClient();
 
   const { mutate: deleteAccount } = useMutation(
-    trpc.user.deleteMyAccount.mutationOptions({
+    orpc.user.deleteMyAccount.mutationOptions({
       onSuccess() {
         AsyncStorage.clear();
 
@@ -41,14 +40,14 @@ export function ProfileMenu() {
           },
           {
             text: "Delete",
-            onPress: () => deleteAccount(),
+            onPress: () => deleteAccount({}),
             style: "destructive",
           },
         ],
         { cancelable: true },
       );
     } else {
-      deleteAccount();
+      deleteAccount({});
     }
   };
 

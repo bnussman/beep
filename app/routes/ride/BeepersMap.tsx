@@ -2,13 +2,12 @@ import { Map } from "../../components/Map";
 import { useLocation } from "../../utils/location";
 import { type Region } from "react-native-maps";
 import { AnimatedMarker } from "../../components/AnimatedMarker";
-import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/utils/orpc";
+import { useEffect } from "react";
 
 export function BeepersMap() {
-  const trpc = useTRPC();
   const { location } = useLocation();
   const queryClient = useQueryClient();
 
@@ -18,41 +17,45 @@ export function BeepersMap() {
   };
 
   const { data: beepers } = useQuery(
-    trpc.rider.beepersNearMe.queryOptions(input, {
+    orpc.rider.beepersNearMe.queryOptions({
+      input,
       enabled: location !== undefined,
       refetchInterval: 15_000,
     }),
   );
 
-  useSubscription(
-    trpc.rider.beepersLocations.subscriptionOptions(input, {
+  const { data: locationUpdate } = useQuery(
+    orpc.rider.beepersLocations.experimental_liveOptions({
+      input,
       enabled: location !== undefined,
-      onData(locationUpdate) {
-        console.log(locationUpdate);
-        queryClient.setQueryData(
-          trpc.rider.beepersNearMe.queryKey(input),
-          (prev) => {
-            if (!prev) {
-              return undefined;
-            }
-
-            const indexOfItem = prev.findIndex(
-              (beeper) => beeper.id === locationUpdate.id,
-            );
-
-            if (indexOfItem !== -1) {
-              const newData = [...prev];
-              newData[indexOfItem] = {
-                ...prev[indexOfItem],
-                location: locationUpdate.location,
-              };
-              return newData;
-            }
-          },
-        );
-      },
-    }),
+    })
   );
+
+  useEffect(() => {
+    if (locationUpdate) {
+      queryClient.setQueryData(
+        orpc.rider.beepersNearMe.queryKey({ input }),
+        (prev) => {
+          if (!prev) {
+            return undefined;
+          }
+
+          const indexOfItem = prev.findIndex(
+            (beeper) => beeper.id === locationUpdate.id,
+          );
+
+          if (indexOfItem !== -1) {
+            const newData = [...prev];
+            newData[indexOfItem] = {
+              ...prev[indexOfItem],
+              location: locationUpdate.location,
+            };
+            return newData;
+          }
+        },
+      );
+    }
+  }, [locationUpdate]);
 
   const initialRegion: Region | undefined = location
     ? {
