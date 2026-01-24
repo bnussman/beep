@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { orpc } from "../../../utils/orpc";
+import { useQuery } from "@tanstack/react-query";
 import { printStars, ratingsRoute } from ".";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
-import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 import { Alert, Typography, Button, Stack, Grid, Link } from "@mui/material";
 import {
@@ -12,8 +13,6 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 
-import { useQuery } from "@tanstack/react-query";
-
 export const ratingRoute = createRoute({
   component: Rating,
   path: "$ratingId",
@@ -21,7 +20,6 @@ export const ratingRoute = createRoute({
 });
 
 export function Rating() {
-  const trpc = useTRPC();
   const { ratingId } = ratingRoute.useParams();
   const router = useRouter();
 
@@ -29,11 +27,11 @@ export function Rating() {
 
   const {
     data: rating,
-    isLoading,
+    isPending,
     error,
-  } = useQuery(trpc.rating.rating.queryOptions(ratingId));
+  } = useQuery(orpc.rating.rating.queryOptions({ input: ratingId }));
 
-  if (isLoading || !rating) {
+  if (isPending) {
     return <Loading />;
   }
 
@@ -87,7 +85,7 @@ export function Rating() {
             Created
           </Typography>
           <Typography>
-            {DateTime.fromISO(rating.timestamp).toRelative()}
+            {DateTime.fromJSDate(rating.timestamp).toRelative()}
           </Typography>
         </Grid>
         <Grid size={{ sm: 6, xs: 12 }}>

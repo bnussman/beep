@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { SendNotificationConfirmationDialog } from "./SendNotificationConfirmationDialog";
 import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
 import { RouterInput, useTRPC } from "../../../utils/trpc";
+import { orpc } from "../../../utils/orpc";
+import { ORPCError } from "@orpc/client";
 import { adminRoute } from "..";
 import {
   Alert,
@@ -15,8 +18,6 @@ import {
   Card,
 } from "@mui/material";
 
-import { useMutation } from "@tanstack/react-query";
-
 type SendNotifictionVariables = RouterInput["notification"]["sendNotification"];
 
 export const notificationsRoute = createRoute({
@@ -26,7 +27,6 @@ export const notificationsRoute = createRoute({
 });
 
 export function Notifications() {
-  const trpc = useTRPC();
   const notifications = useNotifications();
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -36,26 +36,33 @@ export function Notifications() {
     control,
     reset,
     setError,
-    formState: { errors, isSubmitting, isValid },
-  } = useForm<SendNotifictionVariables>({ mode: "onChange" });
+    formState: { errors, isSubmitting },
+  } = useForm<SendNotifictionVariables>({
+    defaultValues: {
+      title: '',
+      body: '',
+      emailMatch: '',
+    }
+  });
 
   const { mutateAsync: sendNotification } =
-    useMutation(trpc.notification.sendNotification.mutationOptions({
-      onError(e) {
-        if (e.data?.fieldErrors) {
-          for (const key in e.data?.fieldErrors ?? {}) {
-            setError(key as keyof SendNotifictionVariables, {
-              message: e.data?.fieldErrors?.[key]?.[0],
+    useMutation(orpc.notification.sendNotification.mutationOptions({
+      onError(error) {
+       if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
             });
           }
         } else {
-          setError("root", { message: e.message });
+          setError("root", { message: error.message });
         }
       },
       onSuccess(sent) {
         notifications.show(`Sent notification to ${sent} users.`, {
           severity: 'success',
         });
+        reset();
       },
     }));
 

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import { orpc } from "../utils/orpc";
+import { useQuery } from "@tanstack/react-query";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
-import { useTRPC } from "../utils/trpc";
 import { PaginationFooter } from "./PaginationFooter";
 import { TableLoading } from "./TableLoading";
 import { TableError } from "./TableError";
@@ -17,8 +18,6 @@ import {
   TableRow,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
 export const paymentsTableRoute = createRoute({
   component: PaymentsTable,
   path: "payments",
@@ -26,16 +25,19 @@ export const paymentsTableRoute = createRoute({
 });
 
 export function PaymentsTable() {
-  const trpc = useTRPC();
   const { userId } = paymentsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const { data, isLoading, error } = useQuery(trpc.payment.payments.queryOptions({
-    userId,
-    page: currentPage,
-    pageSize: 10,
-  }));
+  const { data, isLoading, error } = useQuery(
+    orpc.payment.payments.queryOptions({
+      input: {
+        userId,
+        page: currentPage,
+        pageSize: 10,
+      }
+    })
+  );
 
   return (
     <Stack spacing={1}>
@@ -66,8 +68,8 @@ export function PaymentsTable() {
                 <TableCell>{payment.id}</TableCell>
                 <TableCell>{payment.productId}</TableCell>
                 <TableCell>{payment.price}</TableCell>
-                <TableCell>{payment.created}</TableCell>
-                <TableCell>{payment.expires}</TableCell>
+                <TableCell>{payment.created.toLocaleString()}</TableCell>
+                <TableCell>{payment.expires.toLocaleString()}</TableCell>
               </TableRow>
             ))}
           </TableBody>

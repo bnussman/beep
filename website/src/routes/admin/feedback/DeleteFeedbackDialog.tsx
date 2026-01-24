@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import { RouterOutput, useTRPC } from "../../../utils/trpc";
+import React from "react";
+import { orpc, Outputs } from "../../../utils/orpc";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { RouterOutput } from "../../../utils/trpc";
 import {
   Alert,
   Button,
@@ -10,25 +13,21 @@ import {
   TextField,
 } from "@mui/material";
 
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-
 interface Props {
   isOpen: boolean;
   feedback:
-    | RouterOutput["feedback"]["feedback"]["feedback"][number]
+    | Outputs["feedback"]["feedback"]["feedback"][number]
     | undefined;
   onClose: () => void;
 }
 
 export function DeleteFeedbackDialog(props: Props) {
-  const trpc = useTRPC();
   const { isOpen, onClose, feedback } = props;
 
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending, error, reset } =
-    useMutation(trpc.feedback.deleteFeedback.mutationOptions());
+    useMutation(orpc.feedback.deleteFeedback.mutationOptions());
 
   const handleClose = () => {
     reset();
@@ -38,7 +37,7 @@ export function DeleteFeedbackDialog(props: Props) {
   const onDelete = async () => {
     await mutateAsync(feedback?.id ?? "");
     onClose();
-    queryClient.invalidateQueries(trpc.feedback.feedback.pathFilter());
+    queryClient.invalidateQueries({ queryKey: orpc.feedback.feedback.key() });
   };
 
   return (

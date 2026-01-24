@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { useTRPC } from "../utils/trpc";
+import { orpc } from "../utils/orpc";
 import { useNotifications } from "@toolpad/core";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Alert,
   Button,
@@ -10,11 +12,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControlLabel,
-  Stack,
 } from "@mui/material";
-
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   isOpen: boolean;
@@ -23,7 +21,6 @@ interface Props {
 }
 
 export function ClearQueueDialog(props: Props) {
-  const trpc = useTRPC();
   const { isOpen, onClose, userId } = props;
 
   const [stopBeeping, setStopBeeping] = useState<boolean>(true);
@@ -31,9 +28,9 @@ export function ClearQueueDialog(props: Props) {
   const queryClient = useQueryClient();
 
   const { mutate, isPending, error } = useMutation(
-    trpc.beep.clearQueue.mutationOptions({
+    orpc.beep.clearQueue.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.beeper.queue.queryFilter(userId));
+        queryClient.invalidateQueries({ queryKey: orpc.beeper.watchQueue.experimental_liveKey({ input: userId }) });
 
         const message = stopBeeping
           ? "Users's queue has been cleared and they are not longer beepering."

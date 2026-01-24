@@ -60,7 +60,7 @@ export const rideResponseSchema = z.object({
 export const queueResponseSchema = z.array(
   z.object({
     id: z.string(),
-    start: z.union([z.string(), z.date()]),
+    start: z.date(),
     end: z.union([z.string(), z.date()]).nullable(),
     origin: z.string(),
     destination: z.string(),

@@ -1,10 +1,15 @@
 import React from "react";
+import { orpc } from "../../../utils/orpc";
 import { Loading } from "../../../components/Loading";
 import { DeleteReportDialog } from "./DeleteReportDialog";
 import { createRoute, useRouter } from "@tanstack/react-router";
 import { reportsRoute } from ".";
-import { RouterInput, useTRPC } from "../../../utils/trpc";
+import { RouterInput } from "../../../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
+import { Link } from "../../../components/Link";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Typography,
@@ -16,11 +21,6 @@ import {
   FormControlLabel,
   Alert,
 } from "@mui/material";
-import { Link } from "../../../components/Link";
-
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const reportRoute = createRoute({
   component: Report,
@@ -29,7 +29,6 @@ export const reportRoute = createRoute({
 });
 
 export function Report() {
-  const trpc = useTRPC();
   const { reportId } = reportRoute.useParams();
   const { history } = useRouter();
   const queryClient = useQueryClient();
@@ -38,18 +37,20 @@ export function Report() {
     data: report,
     isLoading,
     error,
-  } = useQuery(trpc.report.report.queryOptions(reportId));
+  } = useQuery(orpc.report.report.queryOptions({ input: reportId }));
 
   const {
     mutateAsync: updateReport,
     isPending,
     error: updateError,
-  } = useMutation(trpc.report.updateReport.mutationOptions({
-    onSuccess(report) {
-      queryClient.invalidateQueries(trpc.report.report.queryFilter(reportId));
-      queryClient.invalidateQueries(trpc.report.reports.pathFilter());
-    },
-  }));
+  } = useMutation(
+    orpc.report.updateReport.mutationOptions({
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: orpc.report.report.queryKey({ input: reportId }) });
+        queryClient.invalidateQueries({ queryKey: orpc.report.reports.key() });
+      },
+    })
+  );
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
@@ -93,6 +94,7 @@ export function Report() {
           Delete
         </Button>
       </Stack>
+      {updateError && <Alert severity="error">{updateError.message}</Alert>}
       <Card sx={{ p: 2, pt: 1 }}>
         <Stack spacing={2}>
           <Typography variant="h5" fontWeight="bold">

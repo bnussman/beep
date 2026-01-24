@@ -13,8 +13,8 @@ export const notificationRouter = {
   sendNotification: adminProcedure
     .input(
       z.object({
-        title: z.string(),
-        body: z.string(),
+        title: z.string().min(3),
+        body: z.string().min(5),
         emailMatch: z.string().optional(),
       }),
     )

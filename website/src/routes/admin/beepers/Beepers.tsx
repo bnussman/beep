@@ -1,4 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { orpc } from "../../../utils/orpc";
+import { BeepersMap } from "./BeepersMap";
+import { createRoute, Link as RouterLink } from "@tanstack/react-router";
+import { adminRoute } from "..";
+import { printStars } from "../ratings";
+import { TableEmpty } from "../../../components/TableEmpty";
+import { TableError } from "../../../components/TableError";
+import { TableLoading } from "../../../components/TableLoading";
+import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { getFormattedRating } from "../../../utils/utils";
 import {
   Paper,
   Box,
@@ -15,19 +26,6 @@ import {
   Chip,
   Tooltip,
 } from "@mui/material";
-import { BeepersMap } from "./BeepersMap";
-import { createRoute, Link as RouterLink } from "@tanstack/react-router";
-import { adminRoute } from "..";
-import { useTRPC } from "../../../utils/trpc";
-import { printStars } from "../ratings";
-import { TableEmpty } from "../../../components/TableEmpty";
-import { TableError } from "../../../components/TableError";
-import { TableLoading } from "../../../components/TableLoading";
-
-import { useQuery } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import { getFormattedRating } from "../../../utils/utils";
 
 export const beepersRoute = createRoute({
   component: Beepers,
@@ -36,50 +34,45 @@ export const beepersRoute = createRoute({
 });
 
 export function Beepers() {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery(
-    trpc.rider.beepers.queryOptions(),
+    orpc.rider.beepers.queryOptions(),
   );
 
-  useSubscription(
-    trpc.rider.beepersLocations.subscriptionOptions(
-      {
-        longitude: 0,
-        latitude: 0,
-        admin: true,
-      },
-      {
-        enabled: location !== undefined,
-        onData(locationUpdate) {
-          queryClient.setQueryData(
-            trpc.rider.beepers.queryKey(),
-            (oldUsers) => {
-              if (!oldUsers) {
-                return undefined;
-              }
+  const { data: locationUpdate } = useQuery(
+    orpc.rider.beepersLocations.experimental_liveOptions({
+      input: { longitude: 0, latitude: 0, admin: true },
+    })
+  );
 
-              const indexOfUser = oldUsers.findIndex(
-                (user) => user.id === locationUpdate.id,
-              );
+  useEffect(() => {
+    if (locationUpdate) {
+      queryClient.setQueryData(
+        orpc.rider.beepers.queryKey(),
+        (oldUsers) => {
+          if (!oldUsers) {
+            return undefined;
+          }
 
-              if (indexOfUser !== -1) {
-                const newData = [...oldUsers];
-
-                newData[indexOfUser] = {
-                  ...oldUsers[indexOfUser],
-                  location: locationUpdate.location,
-                };
-
-                return newData;
-              }
-            },
+          const indexOfUser = oldUsers.findIndex(
+            (user) => user.id === locationUpdate.id,
           );
+
+          if (indexOfUser !== -1) {
+            const newData = [...oldUsers];
+
+            newData[indexOfUser] = {
+              ...oldUsers[indexOfUser],
+              location: locationUpdate.location,
+            };
+
+            return newData;
+          }
         },
-      },
-    ),
-  );
+      );
+    }
+  }, [locationUpdate]);
 
   return (
     <Box>

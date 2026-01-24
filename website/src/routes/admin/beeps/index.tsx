@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { orpc } from "../../../utils/orpc";
+import { useQuery } from "@tanstack/react-query";
+import { BeepMenu } from "./BeepMenu";
+import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { Indicator } from "../../../components/Indicator";
 import { createRoute, useNavigate } from "@tanstack/react-router";
 import { adminRoute } from "..";
@@ -21,10 +25,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-
-import { useQuery } from "@tanstack/react-query";
-import { BeepMenu } from "./BeepMenu";
-import { DeleteBeepDialog } from "./DeleteBeepDialog";
 
 export const beepStatusMap: Record<
   RouterOutput["beep"]["beep"]["status"],
@@ -57,7 +57,6 @@ export const beepsListRoute = createRoute({
 });
 
 export function Beeps() {
-  const trpc = useTRPC();
   const { page } = beepsListRoute.useSearch();
   const navigate = useNavigate({ from: beepsListRoute.id });
 
@@ -65,11 +64,9 @@ export function Beeps() {
   const [selectedBeepId, setSelectedBeepId] = useState<string | null>(null);
 
   const { data, isLoading, error } = useQuery(
-    trpc.beep.beeps.queryOptions(
+    orpc.beep.beeps.queryOptions(
       {
-        page,
-      },
-      {
+        input: { page },
         refetchInterval: 5_000,
         refetchOnMount: true,
         placeholderData: keepPreviousData,
@@ -129,16 +126,16 @@ export function Beeps() {
                   </Stack>
                 </TableCell>
                 <TableCell>
-                  {DateTime.fromISO(beep.start).toRelative()}
+                  {DateTime.fromJSDate(beep.start).toRelative()}
                 </TableCell>
                 <TableCell>
-                  {beep.end ? DateTime.fromISO(beep.end).toRelative() : "N/A"}
+                  {beep.end ? DateTime.fromJSDate(beep.end).toRelative() : "N/A"}
                 </TableCell>
                 <TableCell>
                   {beep.end
                     ? Interval.fromDateTimes(
-                        DateTime.fromISO(beep.start),
-                        DateTime.fromISO(beep.end),
+                        DateTime.fromJSDate(beep.start),
+                        DateTime.fromJSDate(beep.end),
                       )
                         .toDuration()
                         .rescale()

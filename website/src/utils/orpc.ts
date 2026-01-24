@@ -1,10 +1,10 @@
 import { createORPCClient, onError } from '@orpc/client'
 import { RPCLink } from '@orpc/client/fetch'
-import { RouterClient } from '@orpc/server'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { getAuthToken } from './trpc';
-import type { AppRouter } from '../../../orpc/src/index'
 import { useQuery } from '@tanstack/react-query';
+import type { AppRouter } from '../../../orpc/src/index'
+import type { InferRouterInputs, InferRouterOutputs, RouterClient } from '@orpc/server'
 
 const url = import.meta.env.VITE_API_ROOT
   ? `https://${import.meta.env.VITE_API_ROOT.replace('api.', 'orpc.')}`
@@ -28,10 +28,11 @@ const link = new RPCLink({
 
 export const client: RouterClient<AppRouter> = createORPCClient(link);
 export const orpc = createTanstackQueryUtils(client);
-
 export const useUser = () => useQuery(
   orpc.user.updates.experimental_liveOptions({
     enabled: false,
   })
 )
 
+export type Outputs = InferRouterOutputs<AppRouter>;
+export type Inputs = InferRouterInputs<AppRouter>;
