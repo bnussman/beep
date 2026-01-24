@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
-import { useUser } from "../../utils/useUser";
 import { isAndroid, isWeb } from "../../utils/constants";
 import { Beep } from "./Beep";
 import { useNavigation } from "@react-navigation/native";
@@ -12,29 +11,25 @@ import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { trpcClient, useTRPC } from "@/utils/trpc";
 import { PremiumBanner } from "./PremiumBanner";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { captureException } from "@sentry/react-native";
+import { useActivePayments } from "../Premium";
+import { getTimeRemainingString, } from "@/components/CountDown";
+import { client, orpc, useUser } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 import {
   LOCATION_TRACKING,
   startLocationTracking,
   stopLocationTracking,
   useLocationPermissions,
 } from "@/utils/location";
-import { useActivePayments } from "../Premium";
-import {
-  calculateTimeRemaining,
-  getTimeRemainingString,
-} from "@/components/CountDown";
 
 export function StartBeepingScreen() {
-  const trpc = useTRPC();
-  const { user } = useUser();
+  const { data: user } = useUser();
 
   const navigation = useNavigation();
   const queryClient = useQueryClient();
@@ -54,33 +49,25 @@ export function StartBeepingScreen() {
     refetch,
     isRefetching,
   } = useQuery(
-    trpc.beeper.queue.queryOptions(undefined, {
-      enabled: user && user.isBeeping,
-    }),
-  );
-
-  useSubscription(
-    trpc.beeper.watchQueue.subscriptionOptions(undefined, {
-      onData(data) {
-        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
-      },
+    orpc.beeper.watchQueue.experimental_liveOptions({
       enabled: user && user.isBeeping,
     }),
   );
 
   const { mutate: updateBeepSettings } = useMutation(
-    trpc.user.edit.mutationOptions({
+    orpc.user.edit.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.user.me.queryKey(), data);
+        queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), data);
       },
       onError(error) {
-        const fieldErrors = error.data?.fieldErrors;
-        if (!fieldErrors) {
-          alert(error.message);
-        } else {
-          for (const key in fieldErrors) {
-            form.setError(key as any, { message: fieldErrors[key]?.[0] });
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            form.setError(issue.path[0], {
+              message: issue.message,
+            });
           }
+        } else {
+          alert(error.message);
         }
       },
     }),
@@ -362,7 +349,7 @@ TaskManager.defineTask<{ locations: Location.LocationObject[] }>(
 
     if (data) {
       try {
-        await trpcClient.user.edit.mutate({
+        await client.user.edit({
           location: data.locations[0].coords,
         });
       } catch (e) {

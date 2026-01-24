@@ -11,23 +11,20 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
-import { RouterInput, useTRPC } from "@/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { Inputs, orpc } from "@/utils/orpc";
 
-type Values = RouterInput["auth"]["login"];
+type Values = Inputs["auth"]["login"];
 
 export function LoginScreen() {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { mutateAsync: login, error } = useMutation(
-    trpc.auth.login.mutationOptions(),
-  );
-
-  const validationErrors = error?.data?.fieldErrors;
-
   const navigation = useNavigation();
+
+  const { mutateAsync: login } = useMutation(
+    orpc.auth.login.mutationOptions(),
+  );
 
   const {
     control,
@@ -53,7 +50,7 @@ export function LoginScreen() {
 
       await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-      queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
+      queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), data.user);
     } catch (error) {
       alert((error as TRPCClientError<any>).message);
     }
@@ -97,7 +94,6 @@ export function LoginScreen() {
         />
         <Text color="error">
           {errors.username?.message}
-          {validationErrors?.username?.[0]}
         </Text>
       </View>
 
@@ -125,7 +121,6 @@ export function LoginScreen() {
         />
         <Text color="error">
           {errors.password?.message}
-          {validationErrors?.password?.[0]}
         </Text>
       </View>
       <Button isLoading={isSubmitting} onPress={onLogin}>

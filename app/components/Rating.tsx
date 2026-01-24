@@ -2,16 +2,15 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import { useUser } from "../utils/useUser";
 import { Avatar } from "@/components/Avatar";
 import { printStars } from "./Stars";
 import { View } from "react-native";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
+import { orpc, Outputs, useUser } from "@/utils/orpc";
 
-type Rating = RouterOutput["rating"]["ratings"]["ratings"][number];
+type Rating = Outputs["rating"]["ratings"]["ratings"][number];
 
 interface Props {
   item: Rating;
@@ -19,9 +18,8 @@ interface Props {
 }
 
 export function Rating(props: Props) {
-  const trpc = useTRPC();
   const { item } = props;
-  const { user } = useUser();
+  const { data: user } = useUser();
   const navigation = useNavigation();
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
@@ -30,9 +28,10 @@ export function Rating(props: Props) {
   const queryClient = useQueryClient();
 
   const { mutateAsync: deleteRating } = useMutation(
-    trpc.rating.deleteRating.mutationOptions({
+    orpc.rating.deleteRating.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+        queryClient.invalidateQueries({ queryKey: orpc.rating.ratings.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.beep.beeps.key() });
       },
       onError(error) {
         alert(error.message);
@@ -87,9 +86,7 @@ export function Rating(props: Props) {
                   {otherUser.first} {otherUser.last}
                 </Text>
                 <Text color="subtle" size="xs">
-                  {`${isRater ? "You rated" : "Rated you"} - ${new Date(
-                    item.timestamp as string,
-                  ).toLocaleString(undefined, {
+                  {`${isRater ? "You rated" : "Rated you"} - ${item.timestamp.toLocaleString(undefined, {
                     dateStyle: "short",
                     timeStyle: "short",
                   })}`}
