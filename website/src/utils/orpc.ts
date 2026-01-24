@@ -31,9 +31,7 @@ export const orpc = createTanstackQueryUtils(client);
 
 export const useUser = () => useQuery(
   orpc.user.updates.experimental_liveOptions({
-    retry(failureCount, error) {
-      return error.message !== 'Unauthorized';
-    },
+    enabled: false,
   })
 )
 

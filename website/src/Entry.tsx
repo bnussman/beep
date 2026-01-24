@@ -3,10 +3,17 @@ import { Stack, Box, CircularProgress, Container } from "@mui/material";
 import { Header } from "./components/Header";
 import { Banners } from "./components/Banners";
 import { Outlet } from "@tanstack/react-router";
-import { useUser } from "./utils/orpc";
+import { orpc, useUser } from "./utils/orpc";
+import { useQuery } from "@tanstack/react-query";
 
 export function Entry() {
-  const { isLoading } = useUser();
+  const { isLoading } = useQuery(
+    orpc.user.updates.experimental_liveOptions({
+      retry(failureCount, error) {
+        return error.message !== "Unauthorized";
+      },
+    })
+  );
 
   if (isLoading) {
     return (

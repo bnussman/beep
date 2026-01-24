@@ -23,7 +23,7 @@ import {
   WEB_BASE_URL,
 } from "../utils/constants";
 import { userSchema } from "../schemas/user";
-import { ORPCError } from "@orpc/server";
+import { eventIterator, ORPCError } from "@orpc/server";
 
 export const userRouter = {
   me: authedProcedure.output(userSchema).handler(async ({ context }) => {
@@ -31,6 +31,7 @@ export const userRouter = {
   }),
   updates: authedProcedure
     .input(z.string().optional())
+    .output(eventIterator(userSchema))
     .handler(async function* ({ context, input, signal }) {
       if (context.user.role === "user" && input && input !== context.user.id) {
         throw new ORPCError(
@@ -47,10 +48,13 @@ export const userRouter = {
       if (context.user.id === userId) {
         yield context.user;
       } else {
-        yield await db.query.user.findFirst({
+        const user = await db.query.user.findFirst({
           where: { id: userId },
           columns: { password: false, passwordType: false },
-        });
+        })
+        if (user) {
+          yield user;
+        }
       }
 
       const eventSource = pubSub.subscribe("user", userId);

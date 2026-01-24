@@ -2,6 +2,9 @@ import React from "react";
 import { Link, createRoute, useNavigate } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
 import { RouterInput, useTRPC } from "../utils/trpc";
+import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Alert,
   Button,
@@ -10,10 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
+import { orpc } from "../utils/orpc";
 
 export const loginRoute = createRoute({
   component: Login,
@@ -46,7 +46,7 @@ export function Login() {
 
     localStorage.setItem("user", JSON.stringify(result));
 
-    queryClient.setQueryData(trpc.user.me.queryKey(), result.user);
+    queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), result.user);
 
     navigate({ to: "/" });
   };
