@@ -57,7 +57,7 @@ export const beeperRouter = {
 
       for await (const { queue } of eventSource) {
         if (signal?.aborted) return;
-        yield queue;
+        yield queue.map((item) => ({ ...item, start: new Date(item.start), end: item.end ? new Date(item.end) : null }));
       }
     }),
   updateBeep: authedProcedure

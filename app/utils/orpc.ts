@@ -46,8 +46,8 @@ const url = __DEV__ ? `http://${ip}:3001` : "https://orpc.ridebeep.app";
 
 const link = new RPCLink({
   url,
-  headers() {
-    const token = getAuthToken();
+  async headers() {
+    const token = await getAuthToken();
     if (token) {
       return { Authorization: `Bearer ${token}` };
     }

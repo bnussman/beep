@@ -61,7 +61,7 @@ export const queueResponseSchema = z.array(
   z.object({
     id: z.string(),
     start: z.date(),
-    end: z.union([z.string(), z.date()]).nullable(),
+    end: z.date().nullable(),
     origin: z.string(),
     destination: z.string(),
     groupSize: z.number(),
