@@ -1,7 +1,8 @@
 import React from "react";
+import { orpc } from "../utils/orpc";
 import { Link, createRoute, useNavigate } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { RouterInput, useTRPC } from "../utils/trpc";
+import { RouterInput } from "../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,7 +14,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { orpc } from "../utils/orpc";
 
 export const loginRoute = createRoute({
   component: Login,
@@ -22,7 +22,6 @@ export const loginRoute = createRoute({
 });
 
 export function Login() {
-  const trpc = useTRPC();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -34,7 +33,7 @@ export function Login() {
   });
 
   const { mutateAsync: login } = useMutation(
-    trpc.auth.login.mutationOptions({
+    orpc.auth.login.mutationOptions({
       onError(error) {
         form.setError("root", { message: error.message });
       },

@@ -1,8 +1,11 @@
 import React from "react";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { RouterInput, useTRPC } from "../utils/trpc";
+import { RouterInput } from "../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { ORPCError } from "@orpc/client";
+import { orpc } from "../utils/orpc";
 import {
   Card,
   Stack,
@@ -12,7 +15,6 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
 
 export const forgotPasswordRoute = createRoute({
   component: ForgotPassword,
@@ -21,7 +23,6 @@ export const forgotPasswordRoute = createRoute({
 });
 
 export function ForgotPassword() {
-  const trpc = useTRPC();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -31,15 +32,13 @@ export function ForgotPassword() {
   const {
     mutateAsync: sendForgotPasswordEmail,
     data,
-    isPending,
-    error,
   } = useMutation(
-    trpc.auth.forgotPassword.mutationOptions({
+    orpc.auth.forgotPassword.mutationOptions({
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const field in error.data?.fieldErrors) {
-            form.setError(field as "email", {
-              message: error.data?.fieldErrors[field]?.[0],
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            form.setError(issue.path[0], {
+              message: issue.message,
             });
           }
         } else {

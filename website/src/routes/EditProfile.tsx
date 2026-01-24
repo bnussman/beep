@@ -1,11 +1,12 @@
 import React from "react";
+import { ORPCError } from "@orpc/client";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
 import { RouterInput, useTRPC } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
 import { useNotifications } from "@toolpad/core";
 import { useMutation } from "@tanstack/react-query";
-import { useUser } from "../utils/orpc";
+import { orpc, useUser } from "../utils/orpc";
 import {
   Alert,
   Card,
@@ -57,12 +58,12 @@ export function EditProfile() {
       : undefined,
   });
 
-  const { mutateAsync } = useMutation(trpc.user.edit.mutationOptions({
+  const { mutateAsync } = useMutation(orpc.user.edit.mutationOptions({
     onError(error) {
-      if (error.data?.fieldErrors) {
-        for (const field in error.data?.fieldErrors) {
-          setError(field as keyof Values, {
-            message: error.data?.fieldErrors[field]?.[0],
+      if (error instanceof ORPCError && error.data?.issues) {
+        for (const issue of error.data?.issues) {
+          setError(issue.path[0], {
+            message: issue.message,
           });
         }
       } else {
@@ -75,7 +76,7 @@ export function EditProfile() {
     mutateAsync: uploadPicture,
     isPending: isUploadPending,
     error: uploadError,
-  } = useMutation(trpc.user.updatePicture.mutationOptions({
+  } = useMutation(orpc.user.updatePicture.mutationOptions({
     onSuccess() {
       notifications.show("Successfully updated profile picture", {
         severity: "success",
@@ -97,13 +98,9 @@ export function EditProfile() {
   });
 
   const uploadPhoto = async (picture: File | undefined) => {
-    const formData = new FormData();
-
     if (picture) {
-    formData.set("photo", picture);
+      uploadPicture(picture);
     }
-
-    await uploadPicture(formData);
   };
 
   if (!user) {

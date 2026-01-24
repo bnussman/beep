@@ -275,36 +275,18 @@ export const userRouter = {
       return await syncUserPayments(input);
     }),
   updatePicture: authedProcedure
-    .input(z.instanceof(FormData))
-    .handler(async ({ context, input: formData }) => {
-      const signupSchema = z.object({
-        photo: z.instanceof(File),
-      });
-
-      const {
-        success,
-        data: input,
-        error,
-      } = signupSchema.safeParse({
-        photo: formData.get("photo"),
-      });
-
-      if (!success) {
-        throw new ORPCError("BAD_REQUEST", {
-          cause: error,
-        });
-      }
-
-      const extention = input.photo.name.substring(
-        input.photo.name.lastIndexOf("."),
-        input.photo.name.length,
+    .input(z.instanceof(File))
+    .handler(async ({ context, input }) => {
+      const extention = input.name.substring(
+        input.name.lastIndexOf("."),
+        input.name.length,
       );
 
       const filename = context.user.id + "-" + Date.now() + extention;
 
       const objectKey = "images/" + filename;
 
-      await s3.write(objectKey, input.photo, { acl: "public-read" });
+      await s3.write(objectKey, input, { acl: "public-read" });
 
       if (context.user.photo) {
         const key = context.user.photo.split(S3_BUCKET_URL)[1];

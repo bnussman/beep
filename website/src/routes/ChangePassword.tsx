@@ -1,7 +1,8 @@
 import React from "react";
+import { orpc } from "../utils/orpc";
+import { ORPCError } from "@orpc/client";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { useTRPC } from "../utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -26,7 +27,6 @@ interface Values {
 }
 
 export function ChangePassword() {
-  const trpc = useTRPC();
   const form = useForm<Values>({
     defaultValues: {
       password: "",
@@ -49,12 +49,12 @@ export function ChangePassword() {
   });
 
   const { mutateAsync: changePassword, data } = useMutation(
-    trpc.auth.changePassword.mutationOptions({
+    orpc.auth.changePassword.mutationOptions({
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const field in error.data?.fieldErrors) {
-            form.setError(field as keyof Values, {
-              message: error.data?.fieldErrors[field]?.[0],
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            form.setError(issue.path[0], {
+              message: issue.message,
             });
           }
         } else {

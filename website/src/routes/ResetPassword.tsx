@@ -1,8 +1,10 @@
 import React from "react";
+import { orpc } from "../utils/orpc";
+import { ORPCError } from "@orpc/client";
+import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { useTRPC } from "../utils/trpc";
 import {
   Typography,
   Alert,
@@ -11,8 +13,6 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-
-import { useMutation } from "@tanstack/react-query";
 
 export const resetPasswordRoute = createRoute({
   component: ResetPassword,
@@ -25,7 +25,6 @@ interface Values {
 }
 
 export function ResetPassword() {
-  const trpc = useTRPC();
   const { id } = resetPasswordRoute.useParams();
 
   const {
@@ -34,15 +33,15 @@ export function ResetPassword() {
     reset,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<Values>({ mode: "onChange" });
+  } = useForm<Values>({ mode: "onChange", defaultValues: { password: '' } });
 
   const { mutateAsync: resetPassword, data } =
-    useMutation(trpc.auth.resetPassword.mutationOptions({
+    useMutation(orpc.auth.resetPassword.mutationOptions({
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const field in error.data?.fieldErrors) {
-            setError(field as keyof Values, {
-              message: error.data?.fieldErrors[field]?.[0],
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
             });
           }
         } else {
@@ -62,6 +61,9 @@ export function ResetPassword() {
         <Stack spacing={2}>
           <Typography variant="h4" fontWeight="bold">
             Reset Password
+          </Typography>
+          <Typography>
+            Enter a new password for your account.
           </Typography>
           {errors.root?.message && (
             <Alert severity="error">{errors.root.message}</Alert>
