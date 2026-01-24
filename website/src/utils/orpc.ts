@@ -7,7 +7,7 @@ import type { AppRouter } from '../../../orpc/src/index'
 import { useQuery } from '@tanstack/react-query';
 
 const url = import.meta.env.VITE_API_ROOT
-  ? `https://${import.meta.env.VITE_API_ROOT}`
+  ? `https://${import.meta.env.VITE_API_ROOT.replace('api.', 'orpc.')}`
   : "http://localhost:3001";
 
 const link = new RPCLink({
