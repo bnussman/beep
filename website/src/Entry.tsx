@@ -12,6 +12,7 @@ export function Entry() {
       retry(failureCount, error) {
         return error.message !== "Unauthorized";
       },
+      refetchOnWindowFocus: false,
     })
   );
 

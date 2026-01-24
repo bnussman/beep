@@ -105,11 +105,7 @@ export const authRouter = {
       return { user: u, tokens };
     }),
   signup: o
-    .input(z.instanceof(FormData))
-    .handler(async ({ input: formData }) => {
-      const userId = crypto.randomUUID();
-
-      const signupSchema = z.object({
+    .input(z.object({
         first: z
           .string()
           .min(1)
@@ -130,19 +126,9 @@ export const authRouter = {
         photo: z.instanceof(File, {
           message: "You must add a profile picture",
         }),
-      });
-
-      const {
-        success,
-        data: input,
-        error,
-      } = signupSchema.safeParse(Object.fromEntries(formData.entries()));
-
-      if (!success) {
-        throw new ORPCError("BAD_REQUEST", {
-          cause: error,
-        });
-      }
+      }))
+    .handler(async ({ input }) => {
+      const userId = crypto.randomUUID();
 
       const existing = await db.query.user.findFirst({
         where: {

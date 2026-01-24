@@ -1,12 +1,15 @@
 import React, { useMemo } from "react";
-import { useTRPC } from "../utils/trpc";
 import { useForm, Controller } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { rootRoute } from "../utils/root";
+import { orpc } from "../utils/orpc";
+import { ORPCError } from "@orpc/client";
 import {
   Link as RouterLink,
   createRoute,
   useNavigate,
 } from "@tanstack/react-router";
-import { rootRoute } from "../utils/root";
 import {
   Alert,
   Avatar,
@@ -18,9 +21,6 @@ import {
   Stack,
   Box,
 } from "@mui/material";
-
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const signupRoute = createRoute({
   component: SignUp,
@@ -36,29 +36,27 @@ interface SignUpFormValues {
   email: string;
   venmo: string;
   phone: string;
-  photo: FileList;
+  photo: File;
 }
 
 export function SignUp() {
-  const trpc = useTRPC();
   const navigate = useNavigate();
 
   const {
     handleSubmit,
     control,
     watch,
-    register,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({ mode: "onChange" });
 
   const { mutateAsync } = useMutation(
-    trpc.auth.signup.mutationOptions({
+    orpc.auth.signup.mutationOptions({
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const field in error.data?.fieldErrors) {
-            setError(field as keyof SignUpFormValues, {
-              message: error.data?.fieldErrors[field]?.[0],
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
             });
           }
         } else {
@@ -73,23 +71,11 @@ export function SignUp() {
   const photo = watch("photo");
 
   const onSubmit = handleSubmit(async (variables, e) => {
-    const formData = new FormData();
-    for (const key in variables) {
-      if (key === "photo") {
-        formData.set(
-          key,
-          (variables[key as keyof typeof variables] as FileList)[0],
-        );
-      } else {
-        formData.set(key, variables[key as keyof typeof variables] as string);
-      }
-    }
-
-    const data = await mutateAsync(formData);
+    const data = await mutateAsync(variables);
 
     localStorage.setItem("user", JSON.stringify(data));
 
-    queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
+    queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), data.user);
 
     navigate({ to: "/" });
   });
@@ -97,7 +83,7 @@ export function SignUp() {
   const Image = useMemo(
     () => (
       <Avatar
-        src={photo?.[0] ? URL.createObjectURL(photo?.[0]) : undefined}
+        src={photo ? URL.createObjectURL(photo) : undefined}
         sx={{ cursor: "pointer", width: 128, height: 128 }}
       />
     ),
@@ -162,7 +148,13 @@ export function SignUp() {
             </Stack>
             <Stack>
               <label htmlFor="photo">{Image}</label>
-              <input hidden id="photo" type="file" {...register("photo")} />
+              <Controller
+                control={control}
+                name="photo"
+                render={({ field, fieldState }) =>
+                  <input hidden id="photo" type="file" onChange={e => field.onChange(e.target.files?.item(0))} />
+                }
+              />
             </Stack>
           </Stack>
           <Controller
