@@ -8,6 +8,7 @@ import { queryClient, trpcClient, TRPCProvider } from "./utils/trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@mui/material/styles";
 import { NotificationsProvider } from "@toolpad/core";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import CssBaseline from "@mui/material/CssBaseline";
 
 export function App() {
@@ -20,6 +21,7 @@ export function App() {
           <QueryClientProvider client={queryClient}>
             <CssBaseline enableColorScheme />
             <RouterProvider router={router} />
+            <ReactQueryDevtools />
           </QueryClientProvider>
         </TRPCProvider>
       </NotificationsProvider>

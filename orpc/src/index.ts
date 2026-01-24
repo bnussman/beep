@@ -15,6 +15,7 @@ import { locationRouter } from "./routers/location";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
 import { RPCHandler } from '@orpc/server/fetch'
+import { CORSPlugin } from "@orpc/server/plugins";
 
 const appRouter = {
   user: userRouter,
@@ -35,7 +36,11 @@ const appRouter = {
 
 export type AppRouter = typeof appRouter;
 
-const handler = new RPCHandler(appRouter)
+const handler = new RPCHandler(appRouter, {
+  plugins: [
+    new CORSPlugin()
+  ]
+})
 
 Bun.serve({
   port: 3001,

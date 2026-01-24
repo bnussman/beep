@@ -4,6 +4,8 @@ import { createRoute } from "@tanstack/react-router";
 import { RouterInput, useTRPC } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
 import { useNotifications } from "@toolpad/core";
+import { useMutation } from "@tanstack/react-query";
+import { useUser } from "../utils/orpc";
 import {
   Alert,
   Card,
@@ -16,9 +18,6 @@ import {
   Box,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-
 type Values = RouterInput["user"]["edit"];
 
 export const editProfileRoute = createRoute({
@@ -29,7 +28,7 @@ export const editProfileRoute = createRoute({
 
 export function EditProfile() {
   const trpc = useTRPC();
-  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
+  const { data: user } = useUser();
   const notifications = useNotifications();
 
   const {

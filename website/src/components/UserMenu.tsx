@@ -2,9 +2,8 @@ import React from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { queryClient, useTRPC } from "../utils/trpc";
 import { Menu, MenuItem, Button, Avatar, Divider } from "@mui/material";
-
-import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { useUser } from "../utils/orpc";
 
 export function UserMenu() {
   const trpc = useTRPC();
@@ -17,12 +16,8 @@ export function UserMenu() {
     setAnchorEl(null);
   };
 
-  const { data: user } = useQuery(
-    trpc.user.me.queryOptions(undefined, {
-      enabled: false,
-      retry: false,
-    }),
-  );
+  const { data: user } = useUser();
+
   const { mutateAsync: logout } = useMutation(
     trpc.auth.logout.mutationOptions(),
   );

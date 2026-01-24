@@ -15,7 +15,10 @@
     "@fontsource/poppins": "^5.2.7",
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
+    "@orpc/client": "^1.13.4",
+    "@orpc/tanstack-query": "^1.13.4",
     "@tanstack/react-query": "^5.90.16",
+    "@tanstack/react-query-devtools": "^5.91.2",
     "@tanstack/react-router": "^1.147.3",
     "@toolpad/core": "^0.16.0",
     "@trpc/client": "^11.8.1",
@@ -28,6 +31,7 @@
     "react-map-gl": "^8.1.0"
   },
   "devDependencies": {
+    "@orpc/server": "^1.13.4",
     "@trpc/server": "^11.8.1",
     "@types/luxon": "^3.7.1",
     "@types/react": "19.1.12",
