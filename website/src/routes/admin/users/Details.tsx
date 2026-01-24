@@ -25,11 +25,11 @@ export function Details() {
 
   const {
     data: user,
-    isLoading,
+    isPending,
     error,
-  } = useQuery(orpc.user.updates.experimental_liveOptions(userId));
+  } = useQuery(orpc.user.updates.experimental_liveOptions({ input: userId }));
 
-  if (isLoading || !user) {
+  if (isPending) {
     return null;
   }
 

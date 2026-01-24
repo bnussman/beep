@@ -16,6 +16,7 @@ import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
 import { RPCHandler } from '@orpc/server/fetch'
 import { CORSPlugin } from "@orpc/server/plugins";
+import { onError } from "@orpc/server";
 
 const appRouter = {
   user: userRouter,
@@ -39,6 +40,11 @@ export type AppRouter = typeof appRouter;
 const handler = new RPCHandler(appRouter, {
   plugins: [
     new CORSPlugin()
+  ],
+  interceptors: [
+    onError((error) => {
+      console.error(error)
+    }),
   ]
 })
 

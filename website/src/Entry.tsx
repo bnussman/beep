@@ -3,7 +3,7 @@ import { Stack, Box, CircularProgress, Container } from "@mui/material";
 import { Header } from "./components/Header";
 import { Banners } from "./components/Banners";
 import { Outlet } from "@tanstack/react-router";
-import { orpc, useUser } from "./utils/orpc";
+import { orpc } from "./utils/orpc";
 import { useQuery } from "@tanstack/react-query";
 
 export function Entry() {

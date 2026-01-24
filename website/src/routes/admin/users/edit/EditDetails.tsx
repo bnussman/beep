@@ -21,7 +21,9 @@ export function EditDetails() {
   const notifications = useNotifications();
 
   const { userId } = editUserRoute.useParams();
-  const { data: user } = useQuery(orpc.user.updates.experimental_liveOptions(userId));
+  const { data: user } = useQuery(
+    orpc.user.updates.experimental_liveOptions({ input: userId })
+  );
 
   const values = {
     first: user?.first,

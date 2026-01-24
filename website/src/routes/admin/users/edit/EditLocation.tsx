@@ -13,7 +13,7 @@ export function EditLocation() {
   const { userId } = editUserRoute.useParams();
 
   const { data: user, isLoading, error } = useQuery(
-    orpc.user.updates.experimental_liveOptions(userId)
+    orpc.user.updates.experimental_liveOptions({ input: userId })
   );
 
   const {

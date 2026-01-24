@@ -38,7 +38,7 @@ export function Beep() {
   } = useQuery(orpc.beep.beep.queryOptions({ input: beepId }));
 
   const { data: beeper } = useQuery(
-    orpc.user.updates.experimental_liveOptions(beep ? beep.beeper_id : skipToken),
+    orpc.user.updates.experimental_liveOptions({ input: beep ? beep.beeper_id : skipToken }),
   );
 
   const { data: route } = useQuery(

@@ -68,7 +68,7 @@ export const userRouter = {
 
       for await (const { user } of eventSource) {
         if (signal?.aborted) return;
-        yield user;
+        yield { ...user, created: user.created ? new Date(user.created) : null };
       }
     }),
   edit: authedProcedure
