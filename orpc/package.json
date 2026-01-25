@@ -22,6 +22,7 @@
     "@banksnussman/photon": "^0.0.4",
     "@graphql-yoga/redis-event-target": "^3.0.3",
     "@graphql-yoga/subscription": "^5.0.5",
+    "@orpc/otel": "^1.13.4",
     "@orpc/server": "^1.13.4",
     "@sentry/bun": "^10.34.0",
     "@types/pg": "^8.16.0",
