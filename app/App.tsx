@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
-import * as Notifications from 'expo-notifications';
 import { setupNotifications, updatePushToken } from "./utils/notifications";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -14,7 +13,7 @@ import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { client, orpc } from "./utils/orpc";
+import { orpc } from "./utils/orpc";
 import { queryClient } from "./utils/tanstack-query";
 
 setupPurchase();

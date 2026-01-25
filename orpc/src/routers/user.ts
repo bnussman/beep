@@ -26,9 +26,6 @@ import { userSchema } from "../schemas/user";
 import { eventIterator, ORPCError } from "@orpc/server";
 
 export const userRouter = {
-  me: authedProcedure.output(userSchema).handler(async ({ context }) => {
-    return context.user;
-  }),
   updates: authedProcedure
     .input(z.string().optional())
     .output(eventIterator(userSchema))

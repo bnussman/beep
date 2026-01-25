@@ -1,9 +1,9 @@
 import { Platform } from "react-native";
 import { isRunningInExpoGo, isWeb } from "./constants";
 import { captureException } from "@sentry/react-native";
-import { Outputs } from "./orpc";
+import type { Outputs, UnwrapAsyncIterator } from "./orpc";
 
-export async function setPurchaseUser(user: Outputs["user"]["me"]) {
+export async function setPurchaseUser(user: UnwrapAsyncIterator<Outputs["user"]["updates"]>) {
   if (isRunningInExpoGo || isWeb) {
     return;
   }

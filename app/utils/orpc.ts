@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { isWeb } from './constants';
 import { fetch } from 'expo/fetch';
 import type { AppRouter } from '../../orpc/src/index'
-import type { InferRouterInputs, InferRouterOutputs, RouterClient } from '@orpc/server'
+import type { AsyncIteratorClass, InferRouterInputs, InferRouterOutputs, RouterClient } from '@orpc/server'
 
 function getLocalIP() {
   if (isWeb) {
@@ -82,3 +82,7 @@ export const useUser = () => useQuery(
 
 export type Outputs = InferRouterOutputs<AppRouter>;
 export type Inputs = InferRouterInputs<AppRouter>;
+export type UnwrapAsyncIterator<T> =
+  T extends AsyncIteratorClass<infer TValue, any, any>
+    ? TValue
+    : never;

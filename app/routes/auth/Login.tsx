@@ -11,10 +11,10 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
-import { TRPCClientError } from "@trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Inputs, orpc } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 type Values = Inputs["auth"]["login"];
 
@@ -22,16 +22,34 @@ export function LoginScreen() {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
 
-  const { mutateAsync: login } = useMutation(
-    orpc.auth.login.mutationOptions(),
-  );
-
   const {
     control,
     handleSubmit,
     setFocus,
+    setError,
     formState: { errors, isSubmitting },
-  } = useForm<Omit<Values, "pushToken">>();
+  } = useForm<Values>();
+
+  const { mutateAsync: login } = useMutation(
+    orpc.auth.login.mutationOptions({
+      async onSuccess(data) {
+        await AsyncStorage.setItem("auth", JSON.stringify(data));
+
+        queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), data.user);
+      },
+      onError(error) {
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
+            });
+          }
+        } else {
+          alert(error.message);
+        }
+      },
+    }),
+  );
 
   useEffect(() => {
     try {
@@ -42,18 +60,10 @@ export function LoginScreen() {
   }, []);
 
   const onLogin = handleSubmit(async (variables) => {
-    try {
-      const data = await login({
-        ...variables,
-        pushToken: await getPushToken(),
-      });
-
-      await AsyncStorage.setItem("auth", JSON.stringify(data));
-
-      queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), data.user);
-    } catch (error) {
-      alert((error as TRPCClientError<any>).message);
-    }
+    await login({
+      ...variables,
+      pushToken: await getPushToken(),
+    });
   });
 
   return (
