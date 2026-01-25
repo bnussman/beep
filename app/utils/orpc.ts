@@ -6,6 +6,7 @@ import { RPCLink } from '@orpc/client/fetch'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { useQuery } from '@tanstack/react-query';
 import { isWeb } from './constants';
+import { fetch } from 'expo/fetch';
 import type { AppRouter } from '../../orpc/src/index'
 import type { InferRouterInputs, InferRouterOutputs, RouterClient } from '@orpc/server'
 
@@ -46,6 +47,17 @@ const url = __DEV__ ? `http://${ip}:3001` : "https://orpc.ridebeep.app";
 
 const link = new RPCLink({
   url,
+  async fetch(request, init) {
+    const resp = await fetch(request.url, {
+      body: await request.blob(),
+      headers: request.headers,
+      method: request.method,
+      signal: request.signal,
+      ...init,
+    })
+
+    return resp
+  },
   async headers() {
     const token = await getAuthToken();
     if (token) {

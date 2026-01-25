@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
+import * as Notifications from 'expo-notifications';
 import { setupNotifications, updatePushToken } from "./utils/notifications";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -13,7 +14,7 @@ import { useAutoUpdate } from "./utils/updates";
 import { useColorScheme } from "react-native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { orpc } from "./utils/orpc";
+import { client, orpc } from "./utils/orpc";
 import { queryClient } from "./utils/tanstack-query";
 
 setupPurchase();
@@ -36,16 +37,22 @@ function Beep() {
       retry(failureCount, error) {
         return error.message !== "Unauthorized";
       },
-      refetchOnWindowFocus: false,
     })
   );
 
   useAutoUpdate();
 
+  const isLoggedIn = user !== undefined;
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      updatePushToken();
+    }
+  }, [isLoggedIn]);
+
   useEffect(() => {
     if (user) {
       Sentry.setUser(user);
-      updatePushToken();
       setPurchaseUser(user);
     }
   }, [user]);
