@@ -71,6 +71,12 @@ await signup({ ...variables, photo });
 
 The `photo` File object is automatically serialized to Base64 when sent to the server, and the server receives it as a proper File object.
 
+## Performance Considerations
+
+- **File Size Limitations**: The Base64 encoding approach loads the entire file into memory. For optimal performance and to avoid memory issues, it's recommended to limit file uploads to a reasonable size (e.g., < 10MB for profile photos).
+- **Error Handling**: The serializers include validation and error handling to prevent runtime errors from malformed data.
+- **Base64 Overhead**: Base64 encoding increases the payload size by approximately 33%. This is a tradeoff for React Native compatibility.
+
 ## References
 
 - [oRPC React Native Adapter Documentation](https://orpc.dev/docs/adapters/react-native)
