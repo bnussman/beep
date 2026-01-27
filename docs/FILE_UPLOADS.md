@@ -10,7 +10,7 @@ React Native's Fetch API has limitations with binary data like `File` and `Blob`
 
 ### Custom Serializers
 
-Two custom serializers have been implemented to handle File and Blob objects:
+Three custom serializers have been implemented to handle File, Blob, and ReactNativeFile objects:
 
 1. **File Serializer** (`app/utils/base64Serializers.ts` and `orpc/src/utils/base64Serializers.ts`)
    - Encodes File objects as Base64 strings with metadata (name, type, size, lastModified)
@@ -20,17 +20,22 @@ Two custom serializers have been implemented to handle File and Blob objects:
    - Encodes Blob objects as Base64 strings with metadata (type, size)
    - Type ID: 22
 
+3. **ReactNativeFile Serializer** (`app/utils/base64Serializers.ts`)
+   - Encodes ReactNativeFile objects (used on React Native mobile) as Base64 with metadata
+   - Reads file data from the local URI using fetch
+   - Type ID: 21 (same as File, deserializes to File on server)
+
 ### Configuration
 
 The custom serializers are configured on both client and server:
 
 **Client** (`app/utils/orpc.ts`):
 ```typescript
-import { fileSerializer, blobSerializer } from './base64Serializers';
+import { fileSerializer, blobSerializer, reactNativeFileSerializer } from './base64Serializers';
 
 const link = new RPCLink({
   url,
-  customJsonSerializers: [fileSerializer, blobSerializer],
+  customJsonSerializers: [reactNativeFileSerializer, fileSerializer, blobSerializer],
   // ... other options
 });
 ```
@@ -47,8 +52,9 @@ const handler = new RPCHandler(appRouter, {
 
 ## How It Works
 
-1. When a File or Blob is sent from the React Native client:
-   - The serializer converts the binary data to Base64
+1. When a File, Blob, or ReactNativeFile is sent from the React Native client:
+   - On mobile, the `ReactNativeFile` serializer converts the file URI to Base64
+   - On web, the `File` or `Blob` serializer handles standard browser objects
    - Additional metadata (name, type, size) is preserved
    - The data is sent as JSON
 

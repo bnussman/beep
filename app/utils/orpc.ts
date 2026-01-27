@@ -7,7 +7,7 @@ import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { useQuery } from '@tanstack/react-query';
 import { isWeb } from './constants';
 import { fetch } from 'expo/fetch';
-import { fileSerializer, blobSerializer } from './base64Serializers';
+import { fileSerializer, blobSerializer, reactNativeFileSerializer } from './base64Serializers';
 import type { AppRouter } from '../../orpc/src/index'
 import type { AsyncIteratorClass, InferRouterInputs, InferRouterOutputs, RouterClient } from '@orpc/server'
 
@@ -66,7 +66,7 @@ const link = new RPCLink({
     }
     return {};
   },
-  customJsonSerializers: [fileSerializer, blobSerializer],
+  customJsonSerializers: [reactNativeFileSerializer, fileSerializer, blobSerializer],
   interceptors: [
     onError((error) => {
       console.error(error)

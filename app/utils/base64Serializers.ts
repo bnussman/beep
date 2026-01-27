@@ -1,4 +1,5 @@
 import type { StandardRPCCustomJsonSerializer } from '@orpc/client/standard';
+import { ReactNativeFile } from './files';
 
 /**
  * Convert a Blob to a Base64 string
@@ -15,6 +16,16 @@ async function blobToBase64(blob: Blob): Promise<string> {
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
+}
+
+/**
+ * Convert a ReactNativeFile URI to Base64 string
+ */
+async function reactNativeFileToBase64(file: ReactNativeFile): Promise<string> {
+  // Use fetch to read the file from the URI
+  const response = await fetch(file.uri);
+  const blob = await response.blob();
+  return blobToBase64(blob);
 }
 
 /**
@@ -109,5 +120,39 @@ export const blobSerializer: StandardRPCCustomJsonSerializer = {
     }
 
     return base64ToBlob(data.base64, data.type);
+  },
+};
+
+/**
+ * Custom serializer for ReactNativeFile type
+ * Encodes ReactNativeFile as Base64 for React Native compatibility
+ * This is used when File/Blob are not available (React Native mobile)
+ */
+export const reactNativeFileSerializer: StandardRPCCustomJsonSerializer = {
+  type: 21, // Use same type as File since it should deserialize to File on server
+  condition: (data) => data instanceof ReactNativeFile,
+  serialize: async (data: ReactNativeFile) => {
+    const base64 = await reactNativeFileToBase64(data);
+    return {
+      name: data.name,
+      type: data.type,
+      size: 0, // Size not available from ReactNativeFile
+      lastModified: Date.now(),
+      base64,
+    };
+  },
+  deserialize: (data: {
+    name: string;
+    type: string;
+    size: number;
+    lastModified: number;
+    base64: string;
+  }) => {
+    // This shouldn't be called on client, but implement for completeness
+    const blob = base64ToBlob(data.base64, data.type);
+    return new File([blob], data.name, {
+      type: data.type,
+      lastModified: data.lastModified,
+    });
   },
 };
