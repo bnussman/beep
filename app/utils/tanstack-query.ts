@@ -23,7 +23,6 @@ export function useCancelableQuery<
 
   useEffect(() => {
     if (enabled === false) {
-      alert(`Canceling ${JSON.stringify(queryKey)}`)
       queryClient.cancelQueries({ queryKey })
     }
   }, [enabled, queryKey, queryClient])
