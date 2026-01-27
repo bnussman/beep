@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
 import { useEffect } from "react";
+import { useCancelableQuery } from "@/utils/tanstack-query";
 
 export function BeepersMap() {
   const { location } = useLocation();
@@ -24,7 +25,7 @@ export function BeepersMap() {
     }),
   );
 
-  const { data: locationUpdate } = useQuery(
+  const { data: locationUpdate } = useCancelableQuery(
     orpc.rider.beepersLocations.experimental_liveOptions({
       input,
       enabled: location !== undefined,

@@ -13,7 +13,6 @@ import { Queue } from "./Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { PremiumBanner } from "./PremiumBanner";
 import { Controller, useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { captureException } from "@sentry/react-native";
@@ -21,6 +20,7 @@ import { useActivePayments } from "../Premium";
 import { getTimeRemainingString, } from "@/components/CountDown";
 import { client, orpc, useUser } from "@/utils/orpc";
 import { ORPCError } from "@orpc/client";
+import { useCancelableQuery } from "@/utils/tanstack-query";
 import {
   LOCATION_TRACKING,
   startLocationTracking,
@@ -48,7 +48,7 @@ export function StartBeepingScreen() {
     data: queue,
     refetch,
     isRefetching,
-  } = useQuery(
+  } = useCancelableQuery(
     orpc.beeper.watchQueue.experimental_liveOptions({
       enabled: user && user.isBeeping,
     }),

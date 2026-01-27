@@ -10,6 +10,7 @@ import { View } from "react-native";
 import { RideMap } from "./RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { orpc } from "@/utils/orpc";
+import { useCancelableQuery } from "@/utils/tanstack-query";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -26,7 +27,7 @@ export function MainFindBeepScreen(props: Props) {
     beep?.status === "here" ||
     beep?.status === "on_the_way";
 
-  const { data: updates } = useQuery(
+  const { data: updates } = useCancelableQuery(
     orpc.rider.currentRideUpdates.experimental_liveOptions({
       enabled: Boolean(beep)
     })
@@ -41,7 +42,7 @@ export function MainFindBeepScreen(props: Props) {
     queryClient.setQueryData(orpc.rider.currentRide.queryKey(), updates);
   }, [updates]);
 
-  const { data: beepersLocation } = useQuery(
+  const { data: beepersLocation } = useCancelableQuery(
     orpc.rider.beeperLocationUpdates.experimental_liveOptions(
       {
         input: beep ? beep.beeper.id : skipToken,
