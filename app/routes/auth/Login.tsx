@@ -35,6 +35,7 @@ export function LoginScreen() {
       async onSuccess(data) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
 
+        queryClient.resetQueries({ queryKey: orpc.user.updates.experimental_liveKey() });
         queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), data.user);
       },
       onError(error) {

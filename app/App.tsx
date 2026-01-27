@@ -33,9 +33,9 @@ function Beep() {
 
   const { data: user, isLoading } = useQuery(
     orpc.user.updates.experimental_liveOptions({
-      retry(failureCount, error) {
-        return error.message !== "Unauthorized";
-      },
+      // retry(failureCount, error) {
+      //   return error.message !== "Unauthorized";
+      // },
     })
   );
 
