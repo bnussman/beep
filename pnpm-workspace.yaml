@@ -7,4 +7,4 @@ packages:
   - deploy
 
 patchedDependencies:
-  '@orpc/client@1.13.4': patches/@orpc__client@1.13.4.patch
+  '@orpc/client': patches/@orpc__client.patch
