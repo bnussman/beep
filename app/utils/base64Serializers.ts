@@ -22,10 +22,18 @@ async function blobToBase64(blob: Blob): Promise<string> {
  * Convert a ReactNativeFile URI to Base64 string
  */
 async function reactNativeFileToBase64(file: ReactNativeFile): Promise<string> {
-  // Use fetch to read the file from the URI
-  const response = await fetch(file.uri);
-  const blob = await response.blob();
-  return blobToBase64(blob);
+  try {
+    // Use fetch to read the file from the URI
+    const response = await fetch(file.uri);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch file from URI: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    return blobToBase64(blob);
+  } catch (error) {
+    console.error('Failed to read ReactNativeFile:', error);
+    throw new Error(`Failed to read file from URI ${file.uri}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 }
 
 /**
@@ -148,7 +156,20 @@ export const reactNativeFileSerializer: StandardRPCCustomJsonSerializer = {
     lastModified: number;
     base64: string;
   }) => {
-    // This shouldn't be called on client, but implement for completeness
+    // Validate incoming data structure (same as fileSerializer)
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid data for File deserialization: expected object');
+    }
+    if (typeof data.name !== 'string') {
+      throw new Error('Invalid data for File deserialization: name must be a string');
+    }
+    if (typeof data.type !== 'string') {
+      throw new Error('Invalid data for File deserialization: type must be a string');
+    }
+    if (typeof data.base64 !== 'string') {
+      throw new Error('Invalid data for File deserialization: base64 must be a string');
+    }
+
     const blob = base64ToBlob(data.base64, data.type);
     return new File([blob], data.name, {
       type: data.type,
