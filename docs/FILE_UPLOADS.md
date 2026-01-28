@@ -8,66 +8,56 @@ React Native's Fetch API has limitations with binary data like `File` and `Blob`
 
 ## Implementation
 
-### Custom Serializers
+### Custom Serializer
 
-Three custom serializers have been implemented to handle File, Blob, and ReactNativeFile objects:
+A single custom serializer handles both regular File objects and ReactNativeFile objects:
 
-1. **File Serializer** (`app/utils/base64Serializers.ts` and `orpc/src/utils/base64Serializers.ts`)
-   - Encodes File objects as Base64 strings with metadata (name, type, size, lastModified)
-   - Type ID: 21
+**File Serializer** (`app/utils/base64Serializers.ts` and `orpc/src/utils/base64Serializers.ts`)
+- Client: Encodes File/ReactNativeFile objects as Base64 strings with metadata
+- Server: Decodes Base64 strings back to File objects
+- Type ID: 21
 
-2. **Blob Serializer** (`app/utils/base64Serializers.ts` and `orpc/src/utils/base64Serializers.ts`)
-   - Encodes Blob objects as Base64 strings with metadata (type, size)
-   - Type ID: 22
-
-3. **ReactNativeFile Serializer** (`app/utils/base64Serializers.ts`)
-   - Encodes ReactNativeFile objects (used on React Native mobile) as Base64 with metadata
-   - Reads file data from the local URI using fetch
-   - Type ID: 21 (same as File, deserializes to File on server)
+The serializer automatically detects ReactNativeFile objects (which have a `uri` property) and reads the file data from the local filesystem.
 
 ### Configuration
 
-The custom serializers are configured on both client and server:
-
 **Client** (`app/utils/orpc.ts`):
 ```typescript
-import { fileSerializer, blobSerializer, reactNativeFileSerializer } from './base64Serializers';
+import { fileSerializer } from './base64Serializers';
 
 const link = new RPCLink({
   url,
-  customJsonSerializers: [reactNativeFileSerializer, fileSerializer, blobSerializer],
+  customJsonSerializers: [fileSerializer],
   // ... other options
 });
 ```
 
 **Server** (`orpc/src/index.ts`):
 ```typescript
-import { fileSerializer, blobSerializer } from "./utils/base64Serializers";
+import { fileSerializer } from "./utils/base64Serializers";
 
 const handler = new RPCHandler(appRouter, {
-  customJsonSerializers: [fileSerializer, blobSerializer],
+  customJsonSerializers: [fileSerializer],
   // ... other options
 });
 ```
 
 ## How It Works
 
-1. When a File, Blob, or ReactNativeFile is sent from the React Native client:
-   - On mobile, the `ReactNativeFile` serializer converts the file URI to Base64
-   - On web, the `File` or `Blob` serializer handles standard browser objects
-   - Additional metadata (name, type, size) is preserved
-   - The data is sent as JSON
+1. When a File or ReactNativeFile is sent from the client:
+   - The serializer detects if it's a ReactNativeFile (has `uri` property)
+   - If ReactNativeFile: fetches the file data from the URI
+   - If File: uses the file directly
+   - Converts to Base64 with metadata (name, type, size, lastModified)
+   - Sends as JSON
 
 2. When the server receives the request:
-   - The serializer converts the Base64 string back to a File or Blob object
-   - The original metadata is restored
-   - The handler processes it like a normal File/Blob
-
-3. The reverse process happens for responses containing File or Blob objects
+   - The serializer converts Base64 back to a File object
+   - The handler processes it like a normal File
 
 ## Usage Example
 
-This implementation is used in the signup flow where users upload a profile photo:
+File uploads work automatically without code changes:
 
 ```typescript
 // In SignUp.tsx
@@ -75,13 +65,12 @@ const photo = (await getFile(variables.photo)) as File;
 await signup({ ...variables, photo });
 ```
 
-The `photo` File object is automatically serialized to Base64 when sent to the server, and the server receives it as a proper File object.
+The serializer handles both web File objects and mobile ReactNativeFile objects transparently.
 
 ## Performance Considerations
 
-- **File Size Limitations**: The Base64 encoding approach loads the entire file into memory. For optimal performance and to avoid memory issues, it's recommended to limit file uploads to a reasonable size (e.g., < 10MB for profile photos).
-- **Error Handling**: The serializers include validation and error handling to prevent runtime errors from malformed data.
-- **Base64 Overhead**: Base64 encoding increases the payload size by approximately 33%. This is a tradeoff for React Native compatibility.
+- **File Size**: Base64 encoding increases payload size by ~33%. Recommended for files < 10MB.
+- **Memory**: The entire file is loaded into memory during encoding.
 
 ## References
 

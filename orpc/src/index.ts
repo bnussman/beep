@@ -17,7 +17,7 @@ import { healthRouter } from "./routers/health";
 import { RPCHandler } from '@orpc/server/fetch'
 import { CORSPlugin } from "@orpc/server/plugins";
 import { onError } from "@orpc/server";
-import { fileSerializer, blobSerializer } from "./utils/base64Serializers";
+import { fileSerializer } from "./utils/base64Serializers";
 
 const appRouter = {
   user: userRouter,
@@ -42,7 +42,7 @@ const handler = new RPCHandler(appRouter, {
   plugins: [
     new CORSPlugin()
   ],
-  customJsonSerializers: [fileSerializer, blobSerializer],
+  customJsonSerializers: [fileSerializer],
   interceptors: [
     onError((error) => {
       console.error(error)
