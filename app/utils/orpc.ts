@@ -54,8 +54,10 @@ const link = new RPCLink({
   url,
   async fetch(request, init, context) {
     console.log(request, init, context);
+    // @ts-expect-error hacky workaround
     if (request._bodyFormData) {
       const resp = await fetch(request.url, {
+        // @ts-expect-error hacky workaround
         body: request._bodyFormData,
         headers: request.headers,
         method: request.method,
