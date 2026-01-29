@@ -6,32 +6,20 @@ export class ReactNativeFile {
   name: string;
   type: string;
 
-  constructor({
-    uri,
-    name,
-    type,
-  }: {
-    uri: string;
-    name: string;
-    type: string;
-  }) {
+  constructor({ uri, name, type, }: { uri: string; name: string; type: string; }) {
     this.uri = uri;
     this.name = name;
     this.type = type;
   }
 }
 
-export async function getFile(
-  asset: ImagePicker.ImagePickerAsset,
-): Promise<Blob | ReactNativeFile> {
+export async function getFile(asset: ImagePicker.ImagePickerAsset): Promise<Blob | ReactNativeFile> {
   if (isMobile) {
-    const f = new ReactNativeFile({
+    return new ReactNativeFile({
       name: asset.fileName ?? asset.uri,
       uri: asset.uri,
       type: asset.mimeType ?? "image/jpeg",
     });
-    console.log("is rn file an instance of blob?", f instanceof Blob);
-    return f;
   }
   const res = await fetch(asset.uri);
   const blob = await res.blob();
