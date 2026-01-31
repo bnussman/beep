@@ -1,4 +1,6 @@
-import { createContext } from "./utils/trpc";
+import { RPCHandler } from '@orpc/server/fetch'
+import { RPCHandler as WSRPCHandler } from '@orpc/server/bun-ws'
+import { createContext, createWsContext } from "./utils/trpc";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth";
 import { reportRouter } from "./routers/report";
@@ -14,7 +16,6 @@ import { beeperRouter } from "./routers/beeper";
 import { locationRouter } from "./routers/location";
 import { handlePaymentWebook } from "./utils/payments";
 import { healthRouter } from "./routers/health";
-import { RPCHandler } from '@orpc/server/fetch'
 import { CORSPlugin } from "@orpc/server/plugins";
 import { onError } from "@orpc/server";
 
@@ -48,18 +49,46 @@ const handler = new RPCHandler(appRouter, {
   ]
 })
 
+const wsHandler = new WSRPCHandler(appRouter, {
+  interceptors: [
+    onError((error) => {
+      console.error(error)
+    }),
+  ],
+});
+
+interface WebSocketData {
+  token: string | null;
+}
+
 Bun.serve({
   port: 3001,
   routes: {
     "/payments/webhook": handlePaymentWebook,
   },
-  async fetch(request) {
+  async fetch(request, server) {
+    if (server.upgrade(request, { data: { token: request.headers.get('Sec-WebSocket-Protocol') } })) {
+      return
+    }
+
     const { response } = await handler.handle(request, {
       prefix: '/',
       context: await createContext(request)
     })
 
     return response ?? new Response('Not found', { status: 404 })
+  },
+  websocket: {
+    data: {} as WebSocketData,
+    async message(ws, message) {
+      console.log(ws, message)
+      wsHandler.message(ws, message, {
+        context: await createWsContext(ws.data.token),
+      })
+    },
+    close(ws) {
+      wsHandler.close(ws)
+    },
   },
 });
 

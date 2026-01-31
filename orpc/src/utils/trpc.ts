@@ -36,6 +36,34 @@ export async function createContext(
   return { user: session.user, token: session };
 }
 
+export async function createWsContext(
+  bearerToken: string | null
+) {
+  if (!bearerToken) {
+    return {};
+  }
+
+  const session = await db.query.token.findFirst({
+    where: { id: bearerToken },
+    with: {
+      user: {
+        columns: {
+          password: false,
+          passwordType: false,
+        },
+      },
+    },
+  });
+
+  if (!session) {
+    return {};
+  }
+
+  Sentry.setUser(session.user);
+
+  return { user: session.user, token: session };
+}
+
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
 export type AuthenticatedContext = Extract<Context, { user: {} }>;

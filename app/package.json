@@ -35,6 +35,7 @@
     "expo-status-bar": "~3.0.8",
     "expo-task-manager": "~14.0.8",
     "expo-updates": "~29.0.12",
+    "partysocket": "^1.1.11",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.69.0",
