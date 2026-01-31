@@ -1,0 +1,13 @@
+diff --git a/dist/shared/client.CRfRve1v.mjs b/dist/shared/client.CRfRve1v.mjs
+index 35ed8408c45d128f07f6335c8b00ad9c1781b142..a251ff57e8c3943bc9b83d22ac25a8f80f23cb30 100644
+--- a/dist/shared/client.CRfRve1v.mjs
++++ b/dist/shared/client.CRfRve1v.mjs
+@@ -103,7 +103,7 @@ class StandardRPCJsonSerializer {
+         return result;
+       }
+     }
+-    if (data instanceof Blob) {
++    if (data instanceof Blob || (data && typeof data === "object" && 'uri' in data)) {
+       maps.push(segments);
+       blobs.push(data);
+       return [data, meta, maps, blobs];

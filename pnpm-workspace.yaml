@@ -1,7 +1,10 @@
 packages:
-  - "app"
-  - "website"
-  - "api"
-  - "orpc"
-  - "test"
-  - "deploy"
+  - app
+  - website
+  - api
+  - orpc
+  - test
+  - deploy
+
+patchedDependencies:
+  '@orpc/client': patches/@orpc__client.patch

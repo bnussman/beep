@@ -1,14 +1,19 @@
 import * as Sentry from "@sentry/react-native";
-import Constants from 'expo-constants';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createORPCClient, onError } from '@orpc/client'
-import { RPCLink } from '@orpc/client/fetch'
-import { createTanstackQueryUtils } from '@orpc/tanstack-query'
-import { useQuery } from '@tanstack/react-query';
-import { isWeb } from './constants';
-import { fetch } from 'expo/fetch';
-import type { AppRouter } from '../../orpc/src/index'
-import type { AsyncIteratorClass, InferRouterInputs, InferRouterOutputs, RouterClient } from '@orpc/server'
+import Constants from "expo-constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createORPCClient, onError } from "@orpc/client";
+import { RPCLink } from "@orpc/client/fetch";
+import { createTanstackQueryUtils } from "@orpc/tanstack-query";
+import { useQuery } from "@tanstack/react-query";
+import { isWeb } from "./constants";
+import { fetch as expoFetch } from "expo/fetch";
+import type { AppRouter } from "../../orpc/src/index";
+import type {
+  AsyncIteratorClass,
+  InferRouterInputs,
+  InferRouterOutputs,
+  RouterClient,
+} from "@orpc/server";
 
 function getLocalIP() {
   if (isWeb) {
@@ -47,16 +52,29 @@ const url = __DEV__ ? `http://${ip}:3001` : "https://orpc.ridebeep.app";
 
 const link = new RPCLink({
   url,
-  async fetch(request, init) {
-    const resp = await fetch(request.url, {
+  async fetch(request, init, context) {
+    // @ts-expect-error using hacky workaround to send FormData if it is present
+    if (request._bodyFormData) {
+      const resp = await fetch(request.url, {
+        // @ts-expect-error using hacky workaround to send FormData if it is present
+        body: request._bodyFormData,
+        headers: request.headers,
+        method: request.method,
+        signal: request.signal,
+        ...init,
+      });
+
+      return resp;
+    }
+    const resp = await expoFetch(request.url, {
       body: await request.blob(),
       headers: request.headers,
       method: request.method,
       signal: request.signal,
       ...init,
-    })
+    });
 
-    return resp
+    return resp;
   },
   async headers() {
     const token = await getAuthToken();
@@ -67,8 +85,8 @@ const link = new RPCLink({
   },
   interceptors: [
     onError((error) => {
-      console.error(error)
-    })
+      console.error(error);
+    }),
   ],
 });
 
