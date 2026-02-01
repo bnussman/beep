@@ -14,7 +14,7 @@ import { useColorScheme } from "react-native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "./utils/orpc";
-import { queryClient } from "./utils/tanstack-query";
+import { queryClient, useCancelableQuery } from "./utils/tanstack-query";
 
 setupPurchase();
 setupNotifications();
@@ -31,7 +31,7 @@ Sentry.init({
 function Beep() {
   const colorScheme = useColorScheme();
 
-  const { data: user, isLoading } = useQuery(
+  const { data: user, isLoading } = useCancelableQuery(
     orpc.user.updates.experimental_liveOptions({
       // retry(failureCount, error) {
       //   return error.message !== "Unauthorized";

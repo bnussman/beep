@@ -1,5 +1,6 @@
 import { QueryClient, QueryKey, useQuery, useQueryClient, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { AppState, AppStateStatus } from "react-native";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -9,6 +10,22 @@ export const queryClient = new QueryClient({
   },
 });
 
+const useAppState = () => {
+  const [appState, setAppState] = useState<AppStateStatus>('active');
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      setAppState(nextAppState);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  return appState;
+}
+
 export function useCancelableQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -17,15 +34,18 @@ export function useCancelableQuery<
 >(
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
 ): UseQueryResult<TData, TError> {
-  const queryClient = useQueryClient()
+  const appState = useAppState();
+  const queryClient = useQueryClient();
 
-  const { enabled, queryKey } = options
+  const enabled = appState === 'active' && (options.enabled === undefined || options.enabled)
+
+  // console.log(options.queryKey, enabled, appState)
 
   useEffect(() => {
-    if (enabled === false) {
-      queryClient.cancelQueries({ queryKey })
+    if (!enabled) {
+      queryClient.cancelQueries({ queryKey: options.queryKey })
     }
-  }, [enabled, queryKey, queryClient])
+  }, [enabled, options.queryKey, queryClient])
 
-  return useQuery(options)
+  return useQuery({ ...options, enabled })
 }
