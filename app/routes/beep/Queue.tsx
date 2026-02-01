@@ -72,8 +72,8 @@ export function Queue(props: Props) {
         renderItem={({ item, index }) => (
           <QueueItem item={item} index={index} />
         )}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
+        // onRefresh={onRefresh}
+        // refreshing={refreshing}
         contentContainerStyle={{ gap: 4, paddingHorizontal: 8 }}
         ListEmptyComponent={
           <View
