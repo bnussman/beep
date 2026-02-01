@@ -1,18 +1,18 @@
 import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createORPCClient, DynamicLink, onError } from "@orpc/client";
+import { createORPCClient, DynamicLink, onError, on, onStart } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { useQuery } from "@tanstack/react-query";
 import { isWeb } from "./constants";
 import { fetch as expoFetch } from "expo/fetch";
 import { RPCLink as WSRPCLink } from '@orpc/client/websocket'
+// import 'partysocket/event-target-polyfill';
+// import { WebSocket } from "partysocket";
 import type { AppRouter } from "../../orpc/src/index";
-import { WebSocket } from "partysocket";
 import type {
   AsyncIteratorClass,
-  ClientContext,
   InferRouterInputs,
   InferRouterOutputs,
   RouterClient,
@@ -49,15 +49,27 @@ async function getAuthToken() {
   return null;
 }
 
-const websocket = new WebSocket('ws://localhost:3001', async () => {
-  return await getAuthToken();
-})
+const ip = getLocalIP();
+
+interface ClientContext {
+  websocket?: boolean
+}
+
+// const websocket = new WebSocket(`ws://${ip}:3001`, async () => {
+//   return await getAuthToken();
+// })
+const websocket = new WebSocket(`ws://${ip}:3001`)
 
 const wsLink = new WSRPCLink({
-  websocket
+  websocket,
+  async headers() {
+    const token = await getAuthToken();
+    if (token) {
+      return { Authorization: `Bearer ${token}` };
+    }
+    return {};
+  },
 })
-
-const ip = getLocalIP();
 
 const url = __DEV__ ? `http://${ip}:3001` : "https://orpc.ridebeep.app";
 
@@ -103,16 +115,14 @@ const httpLink = new RPCLink({
 
 
 const link = new DynamicLink<ClientContext>((options, path, input) => {
-  console.log("Dynatmic Link", options.context.ORPC_OPERATION_CONTEXT)
-  return wsLink
-  if (options.context?.cache) {
+  if (options.context?.websocket) {
     return wsLink
   }
 
   return httpLink;
 })
 
-export const client: RouterClient<AppRouter> = createORPCClient(link);
+export const client: RouterClient<AppRouter, ClientContext> = createORPCClient(link);
 export const orpc = createTanstackQueryUtils(client);
 export const useUser = () => useQuery(
   orpc.user.updates.experimental_liveOptions({

@@ -29,6 +29,7 @@ export function BeepersMap() {
     orpc.rider.beepersLocations.experimental_liveOptions({
       input,
       enabled: location !== undefined,
+      context: { websocket: true }
     })
   );
 

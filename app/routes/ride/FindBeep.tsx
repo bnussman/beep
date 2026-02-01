@@ -29,7 +29,8 @@ export function MainFindBeepScreen(props: Props) {
 
   const { data: updates } = useCancelableQuery(
     orpc.rider.currentRideUpdates.experimental_liveOptions({
-      enabled: Boolean(beep)
+      enabled: Boolean(beep),
+      context: { websocket: true }
     })
   );
 
@@ -47,6 +48,7 @@ export function MainFindBeepScreen(props: Props) {
       {
         input: beep ? beep.beeper.id : skipToken,
         enabled: isAcceptedBeep,
+        context: { websocket: true }
       },
     ),
   );

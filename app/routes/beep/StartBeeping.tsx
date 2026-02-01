@@ -51,6 +51,7 @@ export function StartBeepingScreen() {
   } = useCancelableQuery(
     orpc.beeper.watchQueue.experimental_liveOptions({
       enabled: user && user.isBeeping,
+      context: { websocket: true }
     }),
   );
 

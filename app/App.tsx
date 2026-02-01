@@ -31,13 +31,17 @@ Sentry.init({
 function Beep() {
   const colorScheme = useColorScheme();
 
-  const { data: user, isLoading } = useQuery(
+  const { data: user, error } = useQuery(
     orpc.user.updates.experimental_liveOptions({
+      context: { websocket: true },
+      retryDelay: 1000
       // retry(failureCount, error) {
       //   return error.message !== "Unauthorized";
       // },
     })
   );
+
+  // alert(`User ${JSON.stringify(user)}\nError ${JSON.stringify(error)}`)
 
   useAutoUpdate();
 
@@ -56,9 +60,9 @@ function Beep() {
     }
   }, [user]);
 
-  if (isLoading) {
-    return null;
-  }
+  // if (isLoading) {
+  //   return null;
+  // }
 
   return (
     <>

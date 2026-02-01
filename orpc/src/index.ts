@@ -67,7 +67,7 @@ Bun.serve({
     "/payments/webhook": handlePaymentWebook,
   },
   async fetch(request, server) {
-    if (server.upgrade(request, { data: { token: request.headers.get('Sec-WebSocket-Protocol') } })) {
+    if (server.upgrade(request)) {
       return
     }
 
@@ -79,11 +79,12 @@ Bun.serve({
     return response ?? new Response('Not found', { status: 404 })
   },
   websocket: {
-    data: {} as WebSocketData,
+    // data: {} as WebSocketData,
     async message(ws, message) {
-      console.log(ws, message)
+      const token = JSON.parse(message as string)['p']['h']['Authorization']?.split(" ")[1];
+      console.log()
       wsHandler.message(ws, message, {
-        context: await createWsContext(ws.data.token),
+        context: await createWsContext(token),
       })
     },
     close(ws) {
