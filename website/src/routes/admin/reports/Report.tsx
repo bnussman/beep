@@ -130,6 +130,16 @@ export function Report() {
               {new Date(report.timestamp).toLocaleString()}
             </Typography>
           </Stack>
+          <Stack spacing={1}>
+            <Typography fontWeight="bold">Beep</Typography>
+            <Typography>
+              {report.beep_id ? (
+                <Link to="/admin/beeps/$beepId" params={{ beepId: report.beep_id }}>{report.beep_id}</Link>
+              )
+                : 'N/A'
+              }
+            </Typography>
+          </Stack>
         </Stack>
       </Card>
       <Card sx={{ p: 2 }}>
