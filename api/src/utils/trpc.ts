@@ -124,7 +124,7 @@ export const mustHaveBeenInAcceptedBeep = t.procedure
       throw new TRPCError({
         code: "FORBIDDEN",
         message:
-          "You be in an accepted beep with that user or have completed a beep with them in the past to perform this action.",
+          "You must be in an accepted beep with that user or have completed a beep with them in the past to perform this action.",
       });
     }
 
