@@ -1,23 +1,32 @@
-import * as Sentry from "@sentry/bun";
-import { ENVIRONMENT, SENTRY_DSN } from "./constants";
 import { ORPCInstrumentation } from '@orpc/otel';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import {
+  PeriodicExportingMetricReader,
+  ConsoleMetricExporter,
+} from '@opentelemetry/sdk-metrics';
 
-Sentry.init({
-  dsn: SENTRY_DSN,
-  environment: ENVIRONMENT,
-  sendDefaultPii: true,
-  tracesSampleRate: 1.0,
-  tracesSampler(samplingContext) {
-    return true;
+const traceExporter = new OTLPTraceExporter({
+  url: 'https://us-east-1.aws.edge.axiom.co/v1/traces',
+  headers: {
+    'Authorization': `Bearer ${process.env.AXIOM_TOKEN}`,
+    'X-Axiom-Dataset': 'beep'
   },
-  integrations(integrations) {
-    return [
-      ...integrations,
-      Sentry.postgresIntegration(),
-      Sentry.redisIntegration(),
-    ];
-  },
-  openTelemetryInstrumentations: [
-    new ORPCInstrumentation()
-  ]
 });
+
+const sdk = new NodeSDK({
+  // traceExporter: new ConsoleSpanExporter(),
+  spanProcessor: new BatchSpanProcessor(traceExporter),
+  metricReader: new PeriodicExportingMetricReader({
+    exporter: new ConsoleMetricExporter(),
+  }),
+  instrumentations: [
+    getNodeAutoInstrumentations(),
+    new ORPCInstrumentation(), 
+  ],
+});
+
+sdk.start();
