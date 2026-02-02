@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { orpc } from "../../../utils/orpc";
 import { BasicUser } from "../../../components/BasicUser";
 import { Loading } from "../../../components/Loading";
 import { Map } from "../../../components/Map";
@@ -6,11 +7,9 @@ import { Marker as BeeperMarker } from "../../../components/Marker";
 import { DeleteBeepDialog } from "./DeleteBeepDialog";
 import { createRoute } from "@tanstack/react-router";
 import { beepsRoute } from ".";
-import { useTRPC } from "../../../utils/trpc";
 import { DateTime } from "luxon";
 import { keepPreviousData, skipToken, useQuery } from "@tanstack/react-query";
 import { Layer, Marker, Source } from "react-map-gl/maplibre";
-import { useSubscription } from "@trpc/tanstack-react-query";
 import {
   Typography,
   Button,
@@ -28,7 +27,6 @@ export const beepRoute = createRoute({
 });
 
 export function Beep() {
-  const trpc = useTRPC();
   const theme = useTheme();
 
   const { beepId } = beepRoute.useParams();
@@ -37,22 +35,22 @@ export function Beep() {
     data: beep,
     isPending,
     error,
-  } = useQuery(trpc.beep.beep.queryOptions(beepId));
+  } = useQuery(orpc.beep.beep.queryOptions({ input: beepId }));
 
-  const { data: beeper } = useSubscription({
-    ...trpc.user.updates.subscriptionOptions(beep ? beep.beeper_id : skipToken),
-  });
+  const { data: beeper } = useQuery(
+    orpc.user.updates.experimental_liveOptions({ input: beep ? beep.beeper_id : skipToken }),
+  );
 
   const { data: route } = useQuery(
-    trpc.location.getRoute.queryOptions(
-      beep
+    orpc.location.getRoute.queryOptions(
+      {
+        input: beep
         ? {
             origin: beep.origin,
             destination: beep.destination,
             bias: beeper?.location,
           }
         : skipToken,
-      {
         placeholderData: keepPreviousData,
       },
     ),
@@ -184,7 +182,7 @@ export function Beep() {
         </Typography>
         <Typography>
           {new Date(beep.start).toLocaleString()} -{" "}
-          {DateTime.fromISO(beep.start).toRelative()}
+          {DateTime.fromJSDate(beep.start).toRelative()}
         </Typography>
       </Box>
       <Box>
@@ -194,7 +192,7 @@ export function Beep() {
         {beep.end ? (
           <Typography>
             {new Date(beep.end).toLocaleString()} -{" "}
-            {DateTime.fromISO(beep.end).toRelative()}
+            {DateTime.fromJSDate(beep.end).toRelative()}
           </Typography>
         ) : (
           <Typography>Beep is still in progress</Typography>

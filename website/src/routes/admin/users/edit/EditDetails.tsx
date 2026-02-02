@@ -1,7 +1,10 @@
 import React from "react";
+import { ORPCError } from "@orpc/client";
+import { Inputs, orpc } from "../../../../utils/orpc";
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { editUserRoute } from ".";
-import { RouterInput, useTRPC } from "../../../../utils/trpc";
 import { useNotifications } from "@toolpad/core";
 import {
   Alert,
@@ -12,17 +15,15 @@ import {
   TextField,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-
-type Values = RouterInput["user"]["editAdmin"]["data"];
+type Values = Inputs["user"]["editAdmin"]["data"];
 
 export function EditDetails() {
-  const trpc = useTRPC();
   const notifications = useNotifications();
 
   const { userId } = editUserRoute.useParams();
-  const { data: user } = useQuery(trpc.user.user.queryOptions(userId));
+  const { data: user } = useQuery(
+    orpc.user.updates.experimental_liveOptions({ input: userId })
+  );
 
   const values = {
     first: user?.first,
@@ -47,17 +48,17 @@ export function EditDetails() {
     values,
   });
 
-  const { mutateAsync: editUser } = useMutation(trpc.user.editAdmin.mutationOptions({
+  const { mutateAsync: editUser } = useMutation(orpc.user.editAdmin.mutationOptions({
     onSuccess(user) {
       notifications.show(`Successfully edited ${user.first}'s profile`, {
         severity: "success",
       });
     },
     onError(error) {
-      if (error.data?.fieldErrors) {
-        for (const field in error.data?.fieldErrors) {
-          setError(field as keyof Values, {
-            message: error.data?.fieldErrors[field]?.[0],
+      if (error instanceof ORPCError && error.data?.issues) {
+        for (const issue of error.data?.issues) {
+          setError(issue.path[0], {
+            message: issue.message,
           });
         }
       } else {

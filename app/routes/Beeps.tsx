@@ -1,15 +1,13 @@
 import React from "react";
 import { Text } from "@/components/Text";
-import { useUser } from "../utils/useUser";
 import { Beep } from "../components/Beep";
 import { PAGE_SIZE } from "../utils/constants";
-import { useTRPC } from "@/utils/trpc";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ActivityIndicator, FlatList, View } from "react-native";
+import { orpc, useUser } from "@/utils/orpc";
 
 export function BeepsScreen() {
-  const trpc = useTRPC();
-  const { user } = useUser();
+  const { data: user } = useUser();
 
   const {
     data,
@@ -20,13 +18,14 @@ export function BeepsScreen() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    trpc.beep.beeps.infiniteQueryOptions(
+    orpc.beep.beeps.infiniteOptions(
       {
-        userId: user?.id,
-        pageSize: PAGE_SIZE,
-      },
-      {
-        initialCursor: 1,
+        input: (page) => ({
+          userId: user?.id,
+          pageSize: PAGE_SIZE,
+          page
+        }),
+        initialPageParam: 1,
         getNextPageParam(page) {
           if (page.page === page.pages) {
             return undefined;

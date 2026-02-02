@@ -3,11 +3,10 @@ import { Marker } from "../../../components/Marker";
 import { Map } from "../../../components/Map";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "./User";
-import { useTRPC } from "../../../utils/trpc";
 import { Loading } from "../../../components/Loading";
 import { Alert, Box } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
+import { orpc } from "../../../utils/orpc";
 
 export const locationRoute = createRoute({
   component: LocationView,
@@ -16,10 +15,11 @@ export const locationRoute = createRoute({
 });
 
 export function LocationView() {
-  const trpc = useTRPC();
   const { userId } = locationRoute.useParams();
 
-  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
+  const { data: user, isLoading, error } = useQuery(
+    orpc.user.updates.experimental_liveOptions({ input: userId })
+  );
 
   if (isLoading) {
     return <Loading />;

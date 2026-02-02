@@ -2,10 +2,10 @@ import React from "react";
 import { Box } from "@mui/material";
 import { Marker } from "../../../components/Marker";
 import { Map } from "../../../components/Map";
-import { RouterOutput } from "../../../utils/trpc";
+import { Outputs } from "../../../utils/orpc";
 
 interface Props {
-  beepers: RouterOutput["rider"]["beepers"];
+  beepers: Outputs["rider"]["beepers"];
   viewState?: { latitude: number; longitude: number; zoom: number };
 }
 

@@ -1,7 +1,8 @@
 import React from "react";
+import { orpc } from "../../../utils/orpc";
+import { useQuery } from "@tanstack/react-query";
 import { leaderboardsRoute } from ".";
 import { createRoute, Link as RouterLink, useNavigate } from "@tanstack/react-router";
-import { useTRPC } from "../../../utils/trpc";
 import { PaginationFooter } from "../../../components/PaginationFooter";
 import { TableLoading } from "../../../components/TableLoading";
 import { TableError } from "../../../components/TableError";
@@ -20,8 +21,6 @@ import {
   Link,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
 export const ridesLeaderboard = createRoute({
   component: Rides,
   path: "rides",
@@ -34,15 +33,12 @@ export const ridesLeaderboard = createRoute({
 });
 
 export function Rides() {
-  const trpc = useTRPC();
   const { page } = ridesLeaderboard.useSearch();
   const navigate = useNavigate({ from: "/admin/leaderboards/rides" });
 
-  const { isLoading, error, data } = useQuery(trpc.user.usersWithRides.queryOptions(
+  const { isLoading, error, data } = useQuery(orpc.user.usersWithRides.queryOptions(
     {
-      page,
-    },
-    {
+      input: { page },
       placeholderData: keepPreviousData,
     },
   ));

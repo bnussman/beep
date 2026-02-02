@@ -4,23 +4,20 @@ import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
-import { useUser } from "../utils/useUser";
 import { call, openVenmo, sms } from "@/utils/links";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { printStars } from "./Stars";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
+import { orpc, Outputs, useUser } from "@/utils/orpc";
 
 interface Props {
-  item: RouterOutput["beep"]["beeps"]["beeps"][number];
+  item: Outputs["beep"]["beeps"]["beeps"][number];
   index: number;
 }
 
 export function Beep({ item }: Props) {
-  const { user } = useUser();
-
-  const trpc = useTRPC();
+  const { data: user } = useUser();
   const navigation = useNavigation();
   const queryClient = useQueryClient();
 
@@ -39,10 +36,10 @@ export function Beep({ item }: Props) {
     item.status !== "denied";
 
   const { mutateAsync: deleteRating } = useMutation(
-    trpc.rating.deleteRating.mutationOptions({
+    orpc.rating.deleteRating.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.beep.beeps.pathFilter());
-        queryClient.invalidateQueries(trpc.rating.ratings.pathFilter());
+        queryClient.invalidateQueries({ queryKey: orpc.beep.beeps.key() });
+        queryClient.invalidateQueries({ queryKey: orpc.rating.ratings.key() });
       },
     }),
   );

@@ -6,16 +6,15 @@ import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
-import { useUser } from "@/utils/useUser";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
+import { orpc, useUser } from "@/utils/orpc";
+import { ORPCError } from "@orpc/client";
 
 export function EditProfileScreen() {
-  const trpc = useTRPC();
-  const { user } = useUser();
+  const { data: user } = useUser();
 
   const values = useMemo(
     () => ({
@@ -38,23 +37,23 @@ export function EditProfileScreen() {
   } = useForm({ defaultValues: values, values });
 
   const { mutateAsync: edit } = useMutation(
-    trpc.user.edit.mutationOptions({
+    orpc.user.edit.mutationOptions({
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const key in error.data.fieldErrors) {
-            setError(key as keyof typeof errors, {
-              message: error.data.fieldErrors[key][0],
+         if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            setError(issue.path[0], {
+              message: issue.message,
             });
           }
         } else {
-          alert(error.message);
+          setError("root", { message: error.message });
         }
       },
     }),
   );
 
   const { mutate: upload, isPending: uploadLoading } = useMutation(
-    trpc.user.updatePicture.mutationOptions({
+    orpc.user.updatePicture.mutationOptions({
       onSuccess() {
         setPhoto(undefined);
       },
@@ -82,11 +81,9 @@ export function EditProfileScreen() {
 
     setPhoto(result.assets[0]);
 
-    const formData = new FormData();
+    const file = (await getFile(result.assets[0])) as File;
 
-    formData.append("photo", (await getFile(result.assets[0])) as Blob);
-
-    upload(formData);
+    upload(file);
   };
 
   const onSubmit = handleSubmit(async (variables) => {

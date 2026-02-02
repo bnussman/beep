@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { orpc } from "../utils/orpc";
+import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import { Indicator } from "./Indicator";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../routes/admin/users/User";
-import { useTRPC } from "../utils/trpc";
 import { DeleteCarDialog } from "../routes/admin/cars/DeleteCarDialog";
 import { PaginationFooter } from "./PaginationFooter";
 import { CarMenu } from "../routes/admin/cars/CarMenu";
@@ -22,8 +23,6 @@ import {
   TableCell,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
 export const carsTableRoute = createRoute({
   component: CarsTable,
   path: "cars",
@@ -31,23 +30,24 @@ export const carsTableRoute = createRoute({
 });
 
 export function CarsTable() {
-  const trpc = useTRPC();
   const { userId } = carsTableRoute.useParams();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedCarId, setSelectedCarId] = useState<string>();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const { data, isLoading, error } = useQuery(trpc.car.cars.queryOptions(
-    {
-      userId,
-      cursor: currentPage,
-      pageSize: 10,
-    },
-    {
-      placeholderData: keepPreviousData,
-    },
-  ));
+  const { data, isLoading, error } = useQuery(
+    orpc.car.cars.queryOptions(
+      {
+        input: {
+          userId,
+          cursor: currentPage,
+          pageSize: 10,
+        },
+        placeholderData: keepPreviousData,
+      },
+    )
+  );
 
   const selectedCar = data?.cars.find((car) => car.id === selectedCarId);
 
@@ -92,7 +92,7 @@ export function CarsTable() {
                   <Indicator color={car.color} tooltip={car.color} />
                 </TableCell>
                 <TableCell>
-                  {DateTime.fromISO(car.created).toRelative()}
+                  {DateTime.fromJSDate(car.created).toRelative()}
                 </TableCell>
                 <TableCell>
                   <img

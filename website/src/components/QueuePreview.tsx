@@ -1,7 +1,8 @@
 import React from "react";
+import { orpc } from "../utils/orpc";
+import { useQuery } from "@tanstack/react-query";
 import { Indicator } from "./Indicator";
 import { Link as RouterLink } from "@tanstack/react-router";
-import { useTRPC } from "../utils/trpc";
 import { beepStatusMap } from "../routes/admin/beeps";
 import {
   Link,
@@ -12,25 +13,14 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-import { useSubscription } from "@trpc/tanstack-react-query";
-import { useQueryClient } from "@tanstack/react-query";
-
 interface Props {
   userId: string;
 }
 
 export function QueuePreview({ userId }: Props) {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-
-  const { data, isLoading, error } = useQuery(trpc.beeper.queue.queryOptions(userId));
-
-  useSubscription(trpc.beeper.watchQueue.subscriptionOptions(userId, {
-    onData(queue) {
-      queryClient.setQueryData(trpc.beeper.queue.queryKey(userId), queue);
-    },
-  }));
+  const { data, isLoading, error } = useQuery(
+    orpc.beeper.watchQueue.experimental_liveOptions({ input: userId })
+  );
 
   if (isLoading) {
     return (

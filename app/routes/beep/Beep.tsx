@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import MapView from "react-native-maps";
-import { useUser } from "../../utils/useUser";
+import { orpc, Outputs, useUser } from "@/utils/orpc";
+import { Elipsis } from "@/components/Elipsis";
+import { useNavigation } from "@react-navigation/native";
 import { ActionButton } from "../../components/ActionButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
 import { Alert, View } from "react-native";
@@ -8,8 +10,6 @@ import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { Map } from "@/components/Map";
-import { printStars } from "../../components/Stars";
-import { useTRPC, type RouterOutput } from "@/utils/trpc";
 import { Card } from "@/components/Card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { decodePolyline, getMiles } from "@/utils/location";
@@ -25,23 +25,22 @@ import {
   openVenmo,
   sms,
 } from "../../utils/links";
-import { Elipsis } from "@/components/Elipsis";
-import { useNavigation } from "@react-navigation/native";
 
 interface Props {
-  beep: RouterOutput["beeper"]["queue"][number];
+  beep: Outputs["beeper"]["queue"][number];
 }
 
 export function Beep(props: Props) {
   const { beep } = props;
-  const { user } = useUser();
+  const { data: user } = useUser();
   const navigation = useNavigation();
-  const trpc = useTRPC();
 
   const { data: beepRoute } = useQuery(
-    trpc.location.getRoute.queryOptions({
-      origin: beep.origin,
-      destination: beep.destination,
+    orpc.location.getRoute.queryOptions({
+      input: {
+        origin: beep.origin,
+        destination: beep.destination,
+      }
     }),
   );
 
@@ -65,9 +64,12 @@ export function Beep(props: Props) {
   const queryClient = useQueryClient();
 
   const { mutate: cancel } = useMutation(
-    trpc.beeper.updateBeep.mutationOptions({
+    orpc.beeper.updateBeep.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+        queryClient.setQueryData(
+          orpc.beeper.watchQueue.experimental_liveKey(),
+          data
+        );
       },
       onError(error) {
         alert(error.message);

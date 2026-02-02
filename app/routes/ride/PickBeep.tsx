@@ -5,11 +5,11 @@ import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { orpc, Outputs } from "@/utils/orpc";
 
 type Props = StaticScreenProps<{
   origin: string;
@@ -18,7 +18,6 @@ type Props = StaticScreenProps<{
 }>;
 
 export function PickBeepScreen({ route }: Props) {
-  const trpc = useTRPC();
   const { location } = useLocation();
   const navigation = useNavigation();
   const queryClient = useQueryClient();
@@ -30,20 +29,20 @@ export function PickBeepScreen({ route }: Props) {
     refetch,
     isRefetching,
   } = useQuery(
-    trpc.rider.beepers.queryOptions(
-      location
+    orpc.rider.beepers.queryOptions({
+      input: location
         ? {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           }
         : skipToken,
-    ),
+    }),
   );
 
   const { mutate: startBeep, isPending: isPickBeeperLoading } = useMutation(
-    trpc.rider.startBeep.mutationOptions({
+    orpc.rider.startBeep.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
+        queryClient.setQueryData(orpc.rider.currentRide.queryKey(), data);
         navigation.goBack();
       },
       onError(error) {
@@ -86,7 +85,7 @@ export function PickBeepScreen({ route }: Props) {
   const renderItem = ({
     item,
   }: {
-    item: RouterOutput["rider"]["beepers"][number];
+    item: Outputs["rider"]["beepers"][number];
     index: number;
   }) => {
     return (

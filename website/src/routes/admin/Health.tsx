@@ -1,11 +1,10 @@
 import React from "react";
-import { useTRPC } from "../../utils/trpc";
 import { createRoute } from "@tanstack/react-router";
 import { adminRoute } from ".";
 import { Loading } from "../../components/Loading";
 import { Alert } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
+import { orpc } from "../../utils/orpc";
 
 export const healthRoute = createRoute({
   component: Health,
@@ -14,9 +13,7 @@ export const healthRoute = createRoute({
 });
 
 export function Health() {
-  const trpc = useTRPC();
-  const { data, isLoading, error } = useQuery(trpc.health.healthcheck.queryOptions(
-    undefined,
+  const { data, isLoading, error } = useQuery(orpc.health.healthcheck.queryOptions(
     {
       refetchInterval: 250,
     },

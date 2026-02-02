@@ -6,15 +6,13 @@ import { Feedback } from "../routes/feedback/Feedback";
 import { RatingsScreen } from "../routes/Ratings";
 import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
-import { useIsUserNotBeeping, useUser } from "../utils/useUser";
+import { useIsUserNotBeeping } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
 import { Cars } from "../routes/cars/Cars";
 import { Premium } from "../routes/Premium";
 import { StartBeepingScreen } from "../routes/beep/StartBeeping";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
-import { queryClient, useTRPC } from "@/utils/trpc";
-import { printStars } from "@/components/Stars";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
@@ -28,16 +26,17 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
+import { orpc, useUser } from "@/utils/orpc";
+import { queryClient } from "@/utils/tanstack-query";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
-  const trpc = useTRPC();
   const navigation = useNavigation();
-  const { user } = useUser();
+  const { data: user } = useUser();
   const { mutateAsync: logout, isPending } = useMutation(
-    trpc.auth.logout.mutationOptions(),
+    orpc.auth.logout.mutationOptions(),
   );
   const { mutateAsync: resend, isPending: resendLoading } = useMutation(
-    trpc.auth.resendVerification.mutationOptions(),
+    orpc.auth.resendVerification.mutationOptions(),
   );
 
   const handleLogout = async () => {
@@ -55,7 +54,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   };
 
   const handleResendVerification = () => {
-    resend()
+    resend({})
       .then(() =>
         alert(
           "Successfully resent verification email. Please check your email for further instructions.",

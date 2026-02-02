@@ -1,3 +1,4 @@
+import React from "react";
 import { Close } from "@mui/icons-material";
 import {
   Button,
@@ -7,7 +8,6 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
-import React from "react";
 
 interface Props {
   open: boolean;

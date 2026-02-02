@@ -1,14 +1,13 @@
 import React from 'react'
 import { leaderboardsRoute } from '.';
 import { createRoute, useNavigate, Link as RouterLink } from '@tanstack/react-router';
-import { useTRPC } from '../../../utils/trpc';
 import { PaginationFooter } from '../../../components/PaginationFooter';
 import { Avatar, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { TableLoading } from '../../../components/TableLoading';
 import { TableError } from '../../../components/TableError';
 import { keepPreviousData } from '@tanstack/react-query';
-
 import { useQuery } from "@tanstack/react-query";
+import { orpc } from '../../../utils/orpc';
 
 export const beepsLeaderboard = createRoute({
   component: Beeps,
@@ -22,18 +21,17 @@ export const beepsLeaderboard = createRoute({
 });
 
 export function Beeps() {
-  const trpc = useTRPC();
   const { page } = beepsLeaderboard.useSearch();
   const navigate = useNavigate({ from: "/admin/leaderboards/beeps" });
 
-  const { isLoading, error, data } = useQuery(trpc.user.usersWithBeeps.queryOptions(
-    {
-      page,
-    },
-    {
-      placeholderData: keepPreviousData,
-    }
-  ));
+  const { isLoading, error, data } = useQuery(
+    orpc.user.usersWithBeeps.queryOptions(
+      {
+        input: { page },
+        placeholderData: keepPreviousData,
+      }
+    )
+  );
 
   const setCurrentPage = (e: React.ChangeEvent<unknown>, page: number) => {
     navigate({ search: { page } });

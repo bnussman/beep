@@ -1,5 +1,7 @@
 import React from "react";
-import { RouterInput, useTRPC } from "../utils/trpc";
+import { ORPCError } from "@orpc/client";
+import { Inputs, orpc } from "../utils/orpc";
+import { useMutation } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import { useNotifications } from "@toolpad/core";
 import {
@@ -13,20 +15,19 @@ import {
   Stack,
 } from "@mui/material";
 
-import { useMutation } from "@tanstack/react-query";
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   id: string;
 }
 
+type Values = Inputs["notification"]["sendNotificationToUser"];
+
 export function SendNotificationDialog(props: Props) {
-  const trpc = useTRPC();
   const { isOpen, onClose, id } = props;
   const notifications = useNotifications();
 
-  const form = useForm<RouterInput["notification"]["sendNotificationToUser"]>({
+  const form = useForm<Values>({
     defaultValues: {
       userId: id,
       title: "",
@@ -34,31 +35,29 @@ export function SendNotificationDialog(props: Props) {
     },
   });
 
-  const { mutateAsync: sendNotification } =
-    useMutation(trpc.notification.sendNotificationToUser.mutationOptions({
+  const { mutateAsync: sendNotification } = useMutation(
+    orpc.notification.sendNotificationToUser.mutationOptions({
+      onSuccess() {
+        notifications.show("Successfully sent notification!", { severity: "success" });
+        form.reset();
+        onClose();
+      },
       onError(error) {
-        if (error.data?.fieldErrors) {
-          for (const field in error.data?.fieldErrors) {
-            form.setError(
-              field as keyof RouterInput["notification"]["sendNotificationToUser"],
-              {
-                message: error.data?.fieldErrors[field]?.[0],
-              },
-            );
+        if (error instanceof ORPCError && error.data?.issues) {
+          for (const issue of error.data?.issues) {
+            form.setError(issue.path[0], {
+              message: issue.message,
+            });
           }
         } else {
           form.setError("root", { message: error.message });
         }
       },
-    }));
+    })
+  );
 
-  const onSubmit = async (
-    values: RouterInput["notification"]["sendNotificationToUser"],
-  ) => {
+  const onSubmit = async (values: Values) => {
     await sendNotification(values);
-    notifications.show("Successfully sent notification!", { severity: "success" });
-    form.reset();
-    onClose();
   };
 
   return (

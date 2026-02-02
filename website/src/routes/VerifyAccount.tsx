@@ -3,10 +3,9 @@ import { useEffect } from "react";
 import { Loading } from "../components/Loading";
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { useTRPC } from "../utils/trpc";
 import { Box, Alert } from "@mui/material";
-
 import { useMutation } from "@tanstack/react-query";
+import { orpc } from "../utils/orpc";
 
 export const verifyAccountRoute = createRoute({
   component: VerifyAccount,
@@ -15,7 +14,6 @@ export const verifyAccountRoute = createRoute({
 });
 
 export function VerifyAccount() {
-  const trpc = useTRPC();
   const { id } = verifyAccountRoute.useParams();
 
   const {
@@ -23,7 +21,7 @@ export function VerifyAccount() {
     data,
     isPending,
     error,
-  } = useMutation(trpc.auth.verifyAccount.mutationOptions());
+  } = useMutation(orpc.auth.verifyAccount.mutationOptions());
 
   const handleVerify = async () => {
     try {

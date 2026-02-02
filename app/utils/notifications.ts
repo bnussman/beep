@@ -1,7 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { isMobile, isSimulator, isWeb } from "./constants";
 import { captureException } from "@sentry/react-native";
-import { trpcClient } from "./trpc";
+import { client } from "./orpc";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -76,7 +76,7 @@ export async function updatePushToken() {
     const token = await getPushToken();
     if (token) {
       try {
-        await trpcClient.user.edit.mutate({ pushToken: token });
+        await client.user.edit({ pushToken: token });
       } catch (error) {
         console.error(error);
         captureException(error);
@@ -119,7 +119,7 @@ export function setupNotifications() {
       response.notification.request.content.categoryIdentifier === "newbeep" &&
       response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER
     ) {
-      trpcClient.beeper.updateBeep.mutate({
+      client.beeper.updateBeep({
         beepId: response.notification.request.content.data.id as string,
         data: {
           status:

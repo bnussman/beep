@@ -1,8 +1,8 @@
 import { Text } from "@/components/Text";
-import { useTRPC } from "@/utils/trpc";
 import { useLocation } from "@/utils/location";
 import { ActivityIndicator, View } from "react-native";
 import { skipToken, useQuery } from "@tanstack/react-query";
+import { orpc } from "@/utils/orpc";
 
 interface Location {
   latitude: number;
@@ -14,19 +14,18 @@ interface Props {
 }
 
 export function ETA(props: Props) {
-  const trpc = useTRPC();
   const { beeperLocation } = props;
   const { location } = useLocation();
 
   const { data, error, isPending } = useQuery(
-    trpc.location.getETA.queryOptions(
-      beeperLocation && location
+    orpc.location.getETA.queryOptions({
+      input: beeperLocation && location
         ? {
             start: `${beeperLocation.longitude},${beeperLocation.latitude}`,
             end: `${location.coords.longitude},${location.coords.latitude}`,
           }
         : skipToken,
-    ),
+    }),
   );
 
   const renderContent = () => {

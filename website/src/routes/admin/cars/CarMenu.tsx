@@ -1,11 +1,10 @@
 import React from "react";
-import { IconButton, Menu, MenuItem } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useTRPC } from "../../../utils/trpc";
+import { IconButton, Menu, MenuItem } from "@mui/material";
 import { useNotifications } from "@toolpad/core";
-
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { orpc } from "../../../utils/orpc";
 
 interface Props {
   carId: string;
@@ -13,7 +12,6 @@ interface Props {
 }
 
 export function CarMenu(props: Props) {
-  const trpc = useTRPC();
   const { carId, onDelete } = props;
 
   const notifications = useNotifications();
@@ -29,9 +27,9 @@ export function CarMenu(props: Props) {
   };
 
   const { mutateAsync: updateCar } = useMutation(
-    trpc.car.updateCar.mutationOptions({
+    orpc.car.updateCar.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(trpc.car.cars.pathFilter());
+        queryClient.invalidateQueries({ queryKey: orpc.car.cars.key() });
         notifications.show("Sucessfully made car default for user", {
           severity: "success",
         });

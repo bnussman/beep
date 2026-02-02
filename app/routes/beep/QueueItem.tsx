@@ -7,7 +7,6 @@ import { printStars } from "@/components/Stars";
 import { Avatar } from "@/components/Avatar";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
-import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { decodePolyline, getMiles } from "@/utils/location";
@@ -15,20 +14,22 @@ import { Map } from "@/components/Map";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { Menu } from "@/components/Menu";
+import { orpc, Outputs } from "@/utils/orpc";
 
 interface Props {
-  item: RouterOutput["beeper"]["queue"][number];
+  item: Outputs["beeper"]["queue"][number];
   index: number;
 }
 
 export function QueueItem({ item: beep }: Props) {
-  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation(
-    trpc.beeper.updateBeep.mutationOptions({
+    orpc.beeper.updateBeep.mutationOptions({
       onSuccess(data) {
-        queryClient.setQueryData(trpc.beeper.queue.queryKey(), data);
+        queryClient.setQueryData(
+          orpc.beeper.watchQueue.experimental_liveKey(), data
+        );
       },
       onError(error) {
         alert(error.message);
@@ -39,9 +40,11 @@ export function QueueItem({ item: beep }: Props) {
   const mapRef = useRef<MapView>(null);
 
   const { data: beepRoute } = useQuery(
-    trpc.location.getRoute.queryOptions({
-      origin: beep.origin,
-      destination: beep.destination,
+    orpc.location.getRoute.queryOptions({
+      input: {
+        origin: beep.origin,
+        destination: beep.destination,
+      }
     }),
   );
 

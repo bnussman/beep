@@ -1,7 +1,10 @@
 import React from "react";
+import { Inputs, orpc } from "../utils/orpc";
 import { Link, createRoute, useNavigate } from "@tanstack/react-router";
 import { rootRoute } from "../utils/root";
-import { RouterInput, useTRPC } from "../utils/trpc";
+import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Alert,
   Button,
@@ -10,10 +13,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const loginRoute = createRoute({
   component: Login,
@@ -21,12 +20,13 @@ export const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
 });
 
+type Values = Inputs['auth']['login'];
+
 export function Login() {
-  const trpc = useTRPC();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const form = useForm<RouterInput["auth"]["login"]>({
+  const form = useForm<Values>({
     defaultValues: {
       username: "",
       password: "",
@@ -34,19 +34,19 @@ export function Login() {
   });
 
   const { mutateAsync: login } = useMutation(
-    trpc.auth.login.mutationOptions({
+    orpc.auth.login.mutationOptions({
       onError(error) {
         form.setError("root", { message: error.message });
       },
     }),
   );
 
-  const onSubmit = async (values: RouterInput["auth"]["login"]) => {
+  const onSubmit = async (values: Values) => {
     const result = await login(values);
 
     localStorage.setItem("user", JSON.stringify(result));
 
-    queryClient.setQueryData(trpc.user.me.queryKey(), result.user);
+    queryClient.setQueryData(orpc.user.updates.experimental_liveKey(), result.user);
 
     navigate({ to: "/" });
   };

@@ -5,8 +5,7 @@ import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { Text } from "@/components/Text";
 import { decodePolyline, getMiles } from "@/utils/location";
-import { useTRPC } from "@/utils/trpc";
-import { useUser } from "@/utils/useUser";
+import { orpc, useUser } from "@/utils/orpc";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { skipToken, useQuery } from "@tanstack/react-query";
@@ -17,27 +16,27 @@ import MapView from "react-native-maps";
 type Props = StaticScreenProps<{ beepId: string }>;
 
 export function BeepDetails(props: Props) {
-  const trpc = useTRPC();
   const mapRef = useRef<MapView>(null);
   const navigation = useNavigation();
 
-  const { user } = useUser();
+  const { data: user } = useUser();
 
   const {
     data: beep,
     isPending,
     error,
-  } = useQuery(trpc.beep.beep.queryOptions(props.route.params.beepId));
+  } = useQuery(orpc.beep.beep.queryOptions({ input: props.route.params.beepId }));
 
   const { data: route } = useQuery(
-    trpc.location.getRoute.queryOptions(
-      beep
-        ? {
+    orpc.location.getRoute.queryOptions({
+      input:
+        beep
+          ? {
             origin: beep.origin,
             destination: beep.destination,
           }
-        : skipToken,
-    ),
+          : skipToken,
+    }),
   );
 
   const polylineCoordinates = route?.routes[0].legs

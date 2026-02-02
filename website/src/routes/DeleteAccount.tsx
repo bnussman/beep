@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNotifications } from "@toolpad/core";
-import { queryClient, useTRPC } from "../utils/trpc";
 import { rootRoute } from "../utils/root";
+import { useMutation } from "@tanstack/react-query";
+import { orpc, useUser } from "../utils/orpc";
 import {
   Link as RouterLink,
   createRoute,
@@ -19,9 +20,7 @@ import {
   Button,
   Box,
 } from "@mui/material";
-
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "../utils/tanstack-query";
 
 export const deleteAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -30,13 +29,12 @@ export const deleteAccountRoute = createRoute({
 });
 
 function DeleteAccount() {
-  const trpc = useTRPC();
-  const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
+  const { data: user } = useUser();
   const {
     mutateAsync: deleteAccount,
     isPending,
     error,
-  } = useMutation(trpc.user.deleteMyAccount.mutationOptions());
+  } = useMutation(orpc.user.deleteMyAccount.mutationOptions());
 
   const notifications = useNotifications();
   const navigate = useNavigate();
@@ -44,7 +42,7 @@ function DeleteAccount() {
   const [isOpen, setIsOpen] = useState(false);
 
   const onDelete = async () => {
-    await deleteAccount();
+    await deleteAccount({});
     notifications.show("Account deleted.", { severity: "success" });
     localStorage.removeItem("user");
     queryClient.resetQueries();
@@ -60,7 +58,7 @@ function DeleteAccount() {
       </Alert>
       {user ? (
         <Box>
-          <Button color="error" onClick={() => setIsOpen(true)}>
+          <Button color="error" variant="contained" onClick={() => setIsOpen(true)}>
             Delete Account
           </Button>
         </Box>

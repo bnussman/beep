@@ -23,10 +23,6 @@ import { redisRoute } from "../routes/admin/Redis";
 import { reportsRoute, reportsListRoute } from "../routes/admin/reports";
 import { reportRoute } from "../routes/admin/reports/Report";
 import { usersListRoute } from "../routes/admin/users";
-import {
-  userDetailsInitalRoute,
-  userDetailsRoute,
-} from "../routes/admin/users/Details";
 import { editUserRoute } from "../routes/admin/users/edit";
 import { locationRoute } from "../routes/admin/users/Location";
 import { usersRoute } from "../routes/admin/users/routes";
@@ -42,8 +38,13 @@ import { loginRoute } from "../routes/Login";
 import { privacyRoute } from "../routes/Privacy";
 import { resetPasswordRoute } from "../routes/ResetPassword";
 import { signupRoute } from "../routes/SignUp";
+import { termsRoute } from "../routes/Terms";
 import { verifyAccountRoute } from "../routes/VerifyAccount";
-import { rootRoute, termsRoute } from "./root";
+import { rootRoute } from "./root";
+import {
+  userDetailsInitalRoute,
+  userDetailsRoute,
+} from "../routes/admin/users/Details";
 
 export const routeTree = rootRoute.addChildren([
   indexRoute,

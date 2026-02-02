@@ -12,13 +12,13 @@ import { Drawer } from "../navigators/Drawer";
 import { Appearance } from "react-native";
 import { isIOS, isWeb } from "@/utils/constants";
 import { BeepDetails } from "@/routes/BeepDetails";
+import { User } from "@/routes/global/User";
+import { UserMenu, useUserMenuOptions } from "@/routes/global/UserMenu";
+import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import {
   StaticParamList,
   createStaticNavigation,
 } from "@react-navigation/native";
-import { User } from "@/routes/global/User";
-import { UserMenu, useUserMenuOptions } from "@/routes/global/UserMenu";
-import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 
 const RootStack = createNativeStackNavigator({
   screens: {},

@@ -1,3 +1,4 @@
+import BottomSheetRef from "@gorhom/bottom-sheet";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Text } from "@/components/Text";
 import { QueueItem } from "./QueueItem";
@@ -5,12 +6,11 @@ import { Pressable } from "react-native";
 import { View } from "react-native";
 import { useRef } from "react";
 import { isWeb } from "@/utils/constants";
-import { RouterOutput } from "@/utils/trpc";
 import { BottomSheet } from "@/components/BottomSheet";
-import BottomSheetRef from "@gorhom/bottom-sheet";
+import { Outputs } from "@/utils/orpc";
 
 interface Props {
-  beeps: RouterOutput["beeper"]["queue"];
+  beeps: Outputs["beeper"]["queue"];
   onRefresh: () => void;
   refreshing: boolean;
 }
@@ -72,8 +72,8 @@ export function Queue(props: Props) {
         renderItem={({ item, index }) => (
           <QueueItem item={item} index={index} />
         )}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
+        // onRefresh={onRefresh}
+        // refreshing={refreshing}
         contentContainerStyle={{ gap: 4, paddingHorizontal: 8 }}
         ListEmptyComponent={
           <View

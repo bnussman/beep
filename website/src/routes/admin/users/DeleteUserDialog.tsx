@@ -1,7 +1,7 @@
 import React from "react";
-import { useTRPC } from "../../../utils/trpc";
-import { useRouter } from "@tanstack/react-router";
 import Dialog from "@mui/material/Dialog";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import {
   Alert,
   Button,
@@ -9,8 +9,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-
-import { useMutation } from "@tanstack/react-query";
+import { orpc } from "../../../utils/orpc";
 
 interface Props {
   userId: string;
@@ -19,13 +18,13 @@ interface Props {
 }
 
 export function DeleteUserDialog({ isOpen, onClose, userId }: Props) {
-  const trpc = useTRPC();
   const router = useRouter();
+
   const {
     mutateAsync: deleteUser,
     isPending,
     error,
-  } = useMutation(trpc.user.deleteUser.mutationOptions());
+  } = useMutation(orpc.user.deleteUser.mutationOptions());
 
   const onDelete = async () => {
     await deleteUser(userId);

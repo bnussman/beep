@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { orpc } from "../../../../utils/orpc";
+import { useQuery } from "@tanstack/react-query";
 import { EditDetails } from "./EditDetails";
 import { EditLocation } from "./EditLocation";
 import { createRoute } from "@tanstack/react-router";
 import { userRoute } from "../User";
-import { useTRPC } from "../../../../utils/trpc";
 import {
   Alert,
   Box,
@@ -14,8 +15,6 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-
 export const editUserRoute = createRoute({
   component: Edit,
   path: "edit",
@@ -23,10 +22,9 @@ export const editUserRoute = createRoute({
 });
 
 export function Edit() {
-  const trpc = useTRPC();
   const { userId } = editUserRoute.useParams();
 
-  const { data: user, isLoading, error } = useQuery(trpc.user.user.queryOptions(userId));
+  const { isLoading, error } = useQuery(orpc.user.updates.queryOptions(userId));
 
   const [index, setIndex] = useState(0);
 
