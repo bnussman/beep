@@ -43,7 +43,7 @@ export const router = t.router;
 const sentryMiddleware = t.middleware(
   Sentry.trpcMiddleware({
     attachRpcInput: true,
-    // forceTransaction: true,
+    forceTransaction: true,
   }),
 );
 
