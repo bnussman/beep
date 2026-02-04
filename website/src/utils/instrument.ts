@@ -9,4 +9,9 @@ Sentry.init({
     Sentry.tanstackRouterBrowserTracingIntegration(router),
   ],
   tracesSampleRate: 1.0,
+  tracePropagationTargets: [
+    "localhost",
+    "https://api.dev.ridebeep.app",
+    "https://api.ridebeep.app",
+  ]
 });
