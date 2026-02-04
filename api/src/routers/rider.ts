@@ -21,8 +21,8 @@ import {
   getQueueSize,
   getRidersCurrentRide,
   inProgressBeepNew,
-  rideResponseSchema,
 } from "../logic/beep";
+import { rideResponseSchema } from "../schemas/beep";
 
 export const riderRouter = router({
   beepers: verifiedProcedure

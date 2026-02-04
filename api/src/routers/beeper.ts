@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { queueResponseSchema } from "../schemas/beep";
 import { z } from "zod";
 import { authedProcedure, router } from "../utils/trpc";
 import { db } from "../utils/db";
@@ -11,7 +12,6 @@ import {
   getDerivedRiderFields,
   getIsInProgressBeep,
   getQueueSize,
-  queueResponseSchema,
   sendBeepUpdateNotificationToRider,
 } from "../logic/beep";
 

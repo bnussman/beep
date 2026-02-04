@@ -1,8 +1,7 @@
 import * as Sentry from "@sentry/bun";
-import z from "zod";
 import { and, eq, lt, ne, or } from "drizzle-orm";
 import { db } from "../utils/db";
-import { beep, beepStatuses } from "../../drizzle/schema";
+import { beep } from "../../drizzle/schema";
 import { User } from "../utils/pubsub";
 import { sendNotification } from "../utils/notifications";
 
@@ -35,48 +34,6 @@ export const isAcceptedBeepNew = {
     { status: "on_the_way" as const },
   ],
 };
-
-export const rideResponseSchema = z.object({
-  id: z.string(),
-  start: z.union([z.string(), z.date()]),
-  end: z.union([z.string(), z.date()]).nullable(),
-  origin: z.string(),
-  destination: z.string(),
-  groupSize: z.number(),
-  status: z.enum(beepStatuses),
-  beeper: z.object({
-    id: z.string(),
-    first: z.string(),
-    last: z.string(),
-    venmo: z.string().nullable(),
-    cashapp: z.string().nullable(),
-    groupRate: z.number(),
-    singlesRate: z.number(),
-    photo: z.string().nullable(),
-  }),
-  position: z.number(),
-});
-
-export const queueResponseSchema = z.array(
-  z.object({
-    id: z.string(),
-    start: z.union([z.string(), z.date()]),
-    end: z.union([z.string(), z.date()]).nullable(),
-    origin: z.string(),
-    destination: z.string(),
-    groupSize: z.number(),
-    status: z.enum(beepStatuses),
-    rider: z.object({
-      id: z.string(),
-      first: z.string(),
-      last: z.string(),
-      venmo: z.string().nullable(),
-      cashapp: z.string().nullable(),
-      photo: z.string().nullable(),
-      rating: z.string().nullable(),
-    }),
-  }),
-);
 
 export function getIsAcceptedBeep(beep: Beep) {
   return (

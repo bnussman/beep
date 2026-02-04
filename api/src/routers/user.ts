@@ -12,7 +12,6 @@ import { sendNotification } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
 import { inProgressBeep } from "../logic/beep";
-import { getUserColumns } from "../logic/user";
 import {
   adminProcedure,
   authedProcedure,
@@ -169,7 +168,7 @@ export const userRouter = router({
         .update(user)
         .set(values)
         .where(eq(user.id, ctx.user.id))
-        .returning(getUserColumns());
+        .returning();
 
       pubSub.publish("user", ctx.user.id, { user: u[0] });
 
