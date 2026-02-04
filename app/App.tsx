@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import config from "./package.json";
 import * as SplashScreen from "expo-splash-screen";
 import * as Sentry from "@sentry/react-native";
 import { setupNotifications, updatePushToken } from "./utils/notifications";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StatusBar } from "expo-status-bar";
-import { DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { createNavigationContainerRef, DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { setPurchaseUser, setupPurchase } from "./utils/purchase";
 import { Navigation } from "./navigators/Stack";
 import { useAutoUpdate } from "./utils/updates";
@@ -16,20 +15,15 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { navigationIntegration } from "./utils/instrument";
+
+SplashScreen.preventAutoHideAsync();
 
 setupPurchase();
 setupNotifications();
 
-SplashScreen.preventAutoHideAsync();
-
-Sentry.init({
-  release: config.version,
-  dsn: "https://22da81efd1744791aa86cfd4bf8ea5eb@o1155818.ingest.sentry.io/6358990",
-  enableAutoSessionTracking: true,
-  enableAutoPerformanceTracing: true,
-});
-
 function Beep() {
+  const containerRef = createNavigationContainerRef();
   const trpc = useTRPC();
   const colorScheme = useColorScheme();
   const queryClient = useQueryClient();
@@ -66,6 +60,8 @@ function Beep() {
     <>
       <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       <Navigation
+        ref={containerRef}
+        onReady={() => navigationIntegration.registerNavigationContainer(containerRef)}
         linking={{
           enabled: "auto",
           prefixes: ["beep://", "https://app.ridebeep.app"],
