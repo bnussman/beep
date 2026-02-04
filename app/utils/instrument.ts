@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/react-native";
 import config from "../package.json";
+import { isWeb } from "./constants";
 
 export const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: true,
@@ -13,7 +14,11 @@ Sentry.init({
   enableUserInteractionTracing: true,
   sendDefaultPii: true,
   tracesSampleRate: 1.0,
-  integrations: [
-    navigationIntegration
-  ],
+  integrations: [navigationIntegration],
+  tracePropagationTargets:
+    isWeb ? [
+      "localhost",
+      "https://api.dev.ridebeep.app",
+      "https://api.ridebeep.app",
+    ] : undefined
 });
