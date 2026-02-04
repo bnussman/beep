@@ -47,13 +47,12 @@ export function SignUpScreen() {
         queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
       },
       onError(error) {
-        const fieldErrors = error.data?.fieldErrors;
-        if (!fieldErrors) {
-          alert(error.message);
-        } else {
-          for (const key in fieldErrors) {
-            setError(key as keyof Values, { message: fieldErrors[key]?.[0] });
+        if (error.data?.fieldErrors) {
+          for (const key in error.data.fieldErrors) {
+            setError(key as keyof Values, { message: error.data.fieldErrors[key]?.[0] });
           }
+        } else {
+          alert(error.message);
         }
       },
     }),

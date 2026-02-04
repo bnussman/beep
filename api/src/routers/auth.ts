@@ -125,7 +125,7 @@ export const authRouter = router({
           .refine(isAlpha, "Must only contain letters"),
         username: z.string().min(3).max(64),
         password: z.string().min(6).max(255),
-        email: z.string().email().endsWith(".edu", "You must use a .edu email"),
+        email: z.email().endsWith(".edu", "You must use a .edu email"),
         phone: z.string().refine(isMobilePhone, "Invalid phone number"),
         venmo: z.string().max(30).optional(),
         cashapp: z.string().max(40).optional(),

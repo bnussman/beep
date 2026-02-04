@@ -8,10 +8,17 @@ import { isAcceptedBeepNew } from "../logic/beep";
 import { createLock, IoredisAdapter } from "redlock-universal";
 import { redis } from "./redis";
 
-/**
- * Initialization of tRPC backend
- * Should be done only once per backend!
- */
+function getErrorData(error: TRPCError) {
+  return {
+    fieldErrors: error.code === "BAD_REQUEST" && error.cause instanceof ZodError
+      ? (z.flattenError(error.cause).fieldErrors as Record<
+        string,
+        string[]
+      >)
+      : undefined
+  }
+}
+
 const t = initTRPC.context<Context>().create({
   errorFormatter(opts) {
     const { shape, error } = opts;
@@ -20,13 +27,7 @@ const t = initTRPC.context<Context>().create({
       ...shape,
       data: {
         ...shape.data,
-        fieldErrors:
-          error.code === "BAD_REQUEST" && error.cause instanceof ZodError
-            ? (z.flattenError(error.cause).fieldErrors as Record<
-                string,
-                string[]
-              >)
-            : null,
+        ...getErrorData(error),
       },
     };
   },
