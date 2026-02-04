@@ -4,14 +4,13 @@ import { ENVIRONMENT, SENTRY_DSN } from "./constants";
 Sentry.init({
   dsn: SENTRY_DSN,
   environment: ENVIRONMENT,
-  debug: false,
+  debug: true,
   tracesSampler(samplingContext) {
     return true;
   },
-  parentSpanIsAlwaysRootSpan: false,
   integrations(integrations) {
     return [
-      ...integrations,
+      Sentry.bunServerIntegration(),
       Sentry.postgresIntegration(),
       Sentry.redisIntegration(),
     ];
