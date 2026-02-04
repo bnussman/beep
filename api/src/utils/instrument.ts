@@ -8,6 +8,7 @@ Sentry.init({
   tracesSampler(samplingContext) {
     return true;
   },
+  parentSpanIsAlwaysRootSpan: false,
   integrations(integrations) {
     return [
       ...integrations,
