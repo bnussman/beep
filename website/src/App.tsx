@@ -1,4 +1,5 @@
 import React from "react";
+import './utils/instrument';
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/700.css";
 import { theme } from "./utils/theme";

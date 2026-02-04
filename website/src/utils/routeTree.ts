@@ -42,8 +42,9 @@ import { loginRoute } from "../routes/Login";
 import { privacyRoute } from "../routes/Privacy";
 import { resetPasswordRoute } from "../routes/ResetPassword";
 import { signupRoute } from "../routes/SignUp";
+import { termsRoute } from "../routes/Terms";
 import { verifyAccountRoute } from "../routes/VerifyAccount";
-import { rootRoute, termsRoute } from "./root";
+import { rootRoute } from "./root";
 
 export const routeTree = rootRoute.addChildren([
   indexRoute,

@@ -1,9 +1,12 @@
 import React from 'react';
-import { Link as RouterLink, createLazyRoute } from '@tanstack/react-router';
+import { Link as RouterLink, createLazyRoute, createRoute } from '@tanstack/react-router';
 import { Typography, Stack, Accordion, AccordionDetails, AccordionSummary, Link, Box } from '@mui/material';
+import { rootRoute } from '../utils/root';
 
-export const termsRoute = createLazyRoute('/terms')({
+export const termsRoute = createRoute({
+  path: '/terms',
   component: Terms,
+  getParentRoute: () => rootRoute,
 });
 
 export function Terms() {
