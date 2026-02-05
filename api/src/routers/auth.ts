@@ -17,6 +17,7 @@ import { SendMailOptions } from "nodemailer";
 import * as Sentry from "@sentry/bun";
 import { pubSub } from "../utils/pubsub";
 import { isAlpha, isMobilePhone } from "validator";
+import { authSchema } from "../schemas/auth";
 import { userSchema } from "../schemas/user";
 
 export const authRouter = router({
@@ -28,15 +29,7 @@ export const authRouter = router({
         pushToken: z.string().nullable().optional(),
       }),
     )
-    .output(
-      z.object({
-        tokens: z.object({
-          id: z.string(),
-          tokenid: z.string(),
-        }),
-        user: userSchema,
-      }),
-    )
+    .output(authSchema)
     .mutation(async ({ input }) => {
       const { username, password, pushToken } = input;
 
@@ -109,6 +102,7 @@ export const authRouter = router({
     }),
   signup: publicProcedure
     .input(z.instanceof(FormData))
+    .output(authSchema)
     .mutation(async ({ input: formData }) => {
       const userId = crypto.randomUUID();
 
@@ -465,6 +459,7 @@ export const authRouter = router({
         password: z.string().min(6),
       }),
     )
+    .output(userSchema)
     .mutation(async ({ input, ctx }) => {
       const password = await bunPassword.hash(input.password, "bcrypt");
 
