@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SplashScreen from "expo-splash-screen";
 import { PasswordInput } from "@/components/PasswordInput";
 import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
@@ -12,29 +12,41 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 
 type Values = RouterInput["auth"]["login"];
 
 export function LoginScreen() {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  const { mutateAsync: login, error } = useMutation(
-    trpc.auth.login.mutationOptions(),
-  );
-
-  const validationErrors = error?.data?.fieldErrors;
-
   const navigation = useNavigation();
 
   const {
     control,
     handleSubmit,
     setFocus,
+    setError,
     formState: { errors, isSubmitting },
-  } = useForm<Omit<Values, "pushToken">>();
+  } = useForm<Values>();
+
+  const { mutate: login } = useMutation(
+    trpc.auth.login.mutationOptions({
+      async onSuccess(data, variables, result, context) {
+        await AsyncStorage.setItem("auth", JSON.stringify(data));
+
+        context.client.setQueryData(trpc.user.me.queryKey(), data.user);
+      },
+      onError(error) {
+        if (error.data?.fieldErrors) {
+          for (const key in error.data.fieldErrors) {
+            setError(key as keyof Values, { message: error.data.fieldErrors[key]?.[0] });
+          }
+        } else {
+          alert(error.message);
+        }
+      },
+    }),
+  );
+
 
   useEffect(() => {
     try {
@@ -45,18 +57,10 @@ export function LoginScreen() {
   }, []);
 
   const onLogin = handleSubmit(async (variables) => {
-    try {
-      const data = await login({
-        ...variables,
-        pushToken: await getPushToken(),
-      });
-
-      await AsyncStorage.setItem("auth", JSON.stringify(data));
-
-      queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
-    } catch (error) {
-      alert((error as TRPCClientError<any>).message);
-    }
+    login({
+      ...variables,
+      pushToken: await getPushToken(),
+    });
   });
 
   return (
@@ -85,7 +89,7 @@ export function LoginScreen() {
               id="username"
               autoCapitalize="none"
               onBlur={onBlur}
-              onChangeText={(val) => onChange(val)}
+              onChangeText={onChange}
               value={value}
               ref={ref}
               returnKeyLabel="next"
@@ -97,10 +101,8 @@ export function LoginScreen() {
         />
         <Text color="error">
           {errors.username?.message}
-          {validationErrors?.username?.[0]}
         </Text>
       </View>
-
       <View style={{ gap: 4 }}>
         <Label htmlFor="password">Password</Label>
         <Controller
@@ -113,7 +115,7 @@ export function LoginScreen() {
               id="password"
               autoCapitalize="none"
               onBlur={onBlur}
-              onChangeText={(val: string) => onChange(val)}
+              onChangeText={onChange}
               value={value}
               inputRef={ref}
               returnKeyLabel="login"
@@ -125,7 +127,6 @@ export function LoginScreen() {
         />
         <Text color="error">
           {errors.password?.message}
-          {validationErrors?.password?.[0]}
         </Text>
       </View>
       <Button isLoading={isSubmitting} onPress={onLogin}>
