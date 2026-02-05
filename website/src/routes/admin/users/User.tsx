@@ -193,7 +193,6 @@ export function User() {
           <Button
             variant="contained"
             onClick={() => setIsSendNotificationOpen(true)}
-            disabled={!user?.pushToken}
             color="info"
           >
             Send Notification

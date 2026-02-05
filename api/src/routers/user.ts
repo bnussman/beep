@@ -442,6 +442,7 @@ export const userRouter = router({
       columns: {
         password: false,
         passwordType: false,
+        pushToken: false,
       },
     });
 

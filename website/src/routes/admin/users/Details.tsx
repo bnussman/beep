@@ -48,13 +48,13 @@ export function Details() {
           <Link href={`mailto:${user.email}`}>{user.email}</Link>
         </Stack>
       </Box>
-      <Box>
+      {/* <Box>
         <strong>Push Notification Token:</strong>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Indicator mr={2} color={user.pushToken ? "green" : "red"} />
           <Typography>{user.pushToken ?? "N/A"}</Typography>
         </Stack>
-      </Box>
+      </Box> */}
       <Box>
         <strong>Rating:</strong>
         {user.rating ? (
