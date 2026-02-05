@@ -24,6 +24,7 @@ import {
   WEB_BASE_URL,
 } from "../utils/constants";
 import { userSchema } from "../schemas/user";
+import { zAsyncIterable } from "../utils/zAsyncIterable";
 
 export const userRouter = router({
   me: authedProcedure.output(userSchema).query(async ({ ctx }) => {
@@ -31,6 +32,7 @@ export const userRouter = router({
   }),
   updates: authedProcedure
     .input(z.string().optional())
+    .output(zAsyncIterable({ yield: userSchema, return: userSchema }))
     .subscription(async function* ({ ctx, input, signal }) {
       if (ctx.user.role === "user" && input && input !== ctx.user.id) {
         throw new TRPCError({
