@@ -29,7 +29,7 @@ import { isAndroid, isWeb } from "@/utils/constants";
 import { useActivePayments } from "@/app/(app)/(drawer)/premium";
 import { useUser } from "@/utils/useUser";
 import { PremiumBanner } from "@/components/PremiumBanner";
-import { Beep } from "@/components/Beep";
+import { Beep } from "@/components/beeper/Beep";
 import { Queue } from "@/components/beeper/Queue";
 
 export default function StartBeepingScreen() {

@@ -10,6 +10,7 @@ import { getCurrentStatusMessage } from "../utils/utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
 interface Props {
   beepersLocation:
@@ -22,7 +23,7 @@ interface Props {
 
 export function RideDetails(props: Props) {
   const trpc = useTRPC();
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
@@ -54,7 +55,7 @@ export function RideDetails(props: Props) {
       }}
     >
       <Pressable
-        onPress={() => navigation.navigate("User", { id: beep.beeper.id })}
+        onPress={() => router.push({ pathname: '/user/[id]', params: { id: beep.beeper.id }})}
       >
         <Text weight="800">Beeper</Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

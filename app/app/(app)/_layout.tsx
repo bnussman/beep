@@ -7,18 +7,17 @@ export default function Layout() {
     <Stack>
       <Stack.Screen options={{ headerShown: false }} name="(drawer)" />
       <Stack.Screen
-        options={(route) => ({
+        options={(route) => {
+          const params = route.route.params as { id: string };
+          return {
           headerRight: () => {
-            console.log("ROUTE", route)
-            return <UserMenu userId={route.route.params.id} />;
+            return <UserMenu userId={params.id} />;
           },
           unstable_headerRightItems: () => {
-            const options = useUserMenuOptions(
-              route.route.params.id,
-            );
+            const options = useUserMenuOptions(params.id);
             return getNavigationMenuFromOptions(options);
           },
-        })}
+        }}}
         name="user/[id]"
       />
     </Stack>

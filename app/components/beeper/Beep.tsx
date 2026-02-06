@@ -27,6 +27,7 @@ import {
 } from "../../utils/links";
 import { Elipsis } from "@/components/Elipsis";
 import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -35,7 +36,7 @@ interface Props {
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
-  const navigation = useNavigation();
+  const router = useRouter();
   const trpc = useTRPC();
 
   const { data: beepRoute } = useQuery(
@@ -119,7 +120,7 @@ export function Beep(props: Props) {
         variant="filled"
         style={{ padding: 16, gap: 16 }}
         pressable
-        onPress={() => navigation.navigate("User", { id: beep.rider.id })}
+        onPress={() => router.push({ pathname: '/user/[id]', params: { id: beep.rider.id } })}
       >
         <View
           style={{

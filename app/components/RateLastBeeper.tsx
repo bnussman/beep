@@ -5,11 +5,12 @@ import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 
 export function RateLastBeeper() {
   const trpc = useTRPC();
   const { user } = useUser();
-  const navigation = useNavigation();
+  const router = useRouter();
   const { data: beep } = useQuery(trpc.rider.getLastBeepToRate.queryOptions());
 
   if (!beep) {
@@ -22,9 +23,12 @@ export function RateLastBeeper() {
     <Card
       pressable
       onPress={() =>
-        navigation.navigate("Rate", {
-          userId: otherUser.id,
-          beepId: beep.id,
+        router.push({
+          pathname: '/user/[id]/rate',
+          params: {
+            id: otherUser.id,
+            beepId: beep.id,
+          }
         })
       }
       style={{
