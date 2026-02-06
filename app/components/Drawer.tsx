@@ -1,67 +1,116 @@
 import * as React from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsUserNotBeeping, useUser } from "../utils/useUser";
+import { Href, usePathname, useRouter } from "expo-router";
+import { capitalize } from "@/utils/strings";
+import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { queryClient, useTRPC } from "@/utils/trpc";
 import { LOCATION_TRACKING } from "@/utils/location";
-import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
+import { Pressable, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
 import { useMutation } from "@tanstack/react-query";
-import { AddCarButton } from "@/components/AddCarButton";
-import { ProfileMenu } from "@/components/ProfileMenu";
 import {
-  createDrawerNavigator,
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import { RideMenu } from "@/components/RideMenu";
-import MainFindBeepScreen from "@/app/(app)/(drawer)/ride";
-import BeepsScreen from "@/app/(app)/(drawer)/beeps";
-import RatingsScreen from "@/app/(app)/(drawer)/ratings";
-import Cars from "@/app/(app)/(drawer)/cars";
-import Premium from "@/app/(app)/(drawer)/premium";
-import EditProfileScreen from "@/app/(app)/(drawer)/profile";
-import Feedback from "@/app/(app)/(drawer)/feedback";
-import StartBeepingScreen from "@/app/(app)/(drawer)/beep";
-import { useRouter } from "expo-router";
+
+interface Route {
+  name: string;
+  icon: string | React.JSX.Element;
+  href: Href;
+  isLoading?: boolean;
+  onPress?: () => void;
+}
+
+const routes: Route[] = [
+  {
+    name: "Ride",
+    icon: "🚗",
+    href: '/ride',
+  },
+  {
+    name: "Beep",
+    icon: "🚕",
+    href: '/beep',
+  },
+  {
+    name: "Cars",
+    icon: "🚙",
+    href: '/cars',
+  },
+ {
+    name: "Premium",
+    icon: (
+      <Text
+        size="lg"
+        style={{
+          shadowRadius: 10,
+          shadowColor: "#f5db73",
+          shadowOpacity: 1,
+        }}
+      >
+        👑
+      </Text>
+    ),
+    href: '/premium',
+  },
+  {
+    name: "Profile",
+    icon: "👤",
+    href: '/profile',
+  },
+  {
+    name: "Beeps",
+    icon: "🚖",
+    href: '/beeps',
+  },
+  {
+    name: "Ratings",
+    icon: "⭐️",
+    href: '/ratings',
+  },
+  {
+    name: "Feedback",
+    icon: "💬",
+    href: '/feedback',
+  },
+];
 
 export function BeepDrawer(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
   const router = useRouter();
   const { user } = useUser();
-  const { mutateAsync: logout, isPending } = useMutation(
-    trpc.auth.logout.mutationOptions(),
+
+  const { mutate: logout, isPending } = useMutation(
+    trpc.auth.logout.mutationOptions({
+      onSuccess() {
+        AsyncStorage.clear();
+
+        if (!__DEV__) {
+          Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+        }
+
+        queryClient.resetQueries();
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
   );
-  const { mutateAsync: resend, isPending: resendLoading } = useMutation(
-    trpc.auth.resendVerification.mutationOptions(),
+
+  const { mutate: resend, isPending: resendLoading } = useMutation(
+    trpc.auth.resendVerification.mutationOptions({
+      onSuccess() {
+        alert("Successfully resent verification email. Please check your email for further instructions.");
+      },
+      onError(error) {
+        alert(error.message) ;
+      },
+    }),
   );
-
-  const handleLogout = async () => {
-    await logout({
-      isApp: true,
-    });
-
-    AsyncStorage.clear();
-
-    if (!__DEV__) {
-      Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
-    }
-
-    queryClient.resetQueries();
-  };
-
-  const handleResendVerification = () => {
-    resend()
-      .then(() =>
-        alert(
-          "Successfully resent verification email. Please check your email for further instructions.",
-        ),
-      )
-      .catch((error) => alert(error.message));
-  };
 
   return (
     <DrawerContentScrollView {...props}>
@@ -91,25 +140,21 @@ export function BeepDrawer(props: DrawerContentComponentProps) {
         <View style={{ display: "flex", gap: 8 }}>
           {!user?.isEmailVerified && (
             <Button
-              onPress={handleResendVerification}
+              onPress={() => resend()}
               isLoading={resendLoading}
             >
               Resend Verification Email
             </Button>
           )}
-          {props.state.routeNames.map((name, index) => (
-            <DrawerItem
-              name={name}
-              key={name}
-              onPress={() => props.navigation.navigate(name)}
-              isActive={index === props.state.index}
-            />
+          {routes.map((route) => (
+            <DrawerItem key={route.name} {...route} />
           ))}
           <DrawerItem
             name="Logout"
-            onPress={handleLogout}
+            onPress={() => logout({ isApp: true })}
+            icon="↩️"
             isLoading={isPending}
-            isActive={false}
+            href="/login"
           />
         </View>
       </View>
@@ -117,102 +162,19 @@ export function BeepDrawer(props: DrawerContentComponentProps) {
   );
 }
 
-export const Drawer = createDrawerNavigator({
-  screenOptions: () => {
-    const colorScheme = Appearance.getColorScheme();
-    return {
-      headerBackButtonDisplayMode: "generic",
-      headerTintColor: colorScheme === "dark" ? "white" : "black",
-      drawerType: "front",
-    };
-  },
-  drawerContent: (props) => (
-    <BeepDrawer {...props} />
-  ),
-  screens: {
-    Ride: {
-      screen: MainFindBeepScreen,
-      if: useIsUserNotBeeping,
-      options: {
-        headerRight: () => <RideMenu />,
-      },
-    },
-    Beep: StartBeepingScreen,
-    Cars: {
-      screen: Cars,
-      options: {
-        headerRight: () => <AddCarButton />,
-      },
-    },
-    Premium: Premium,
-    Profile: {
-      screen: EditProfileScreen,
-      options: {
-        headerRight: () => <ProfileMenu />,
-      },
-    },
-    Beeps: BeepsScreen,
-    Ratings: RatingsScreen,
-    Feedback: Feedback,
-  },
-});
 
-interface Props {
-  name: string;
-  onPress: () => void;
-  isActive: boolean;
-  isLoading?: boolean;
-}
+function DrawerItem(props: Route) {
+  const { name, href, isLoading, onPress } = props;
 
-function DrawerItem(props: Props) {
-  const { name, onPress, isActive, isLoading } = props;
-
+  const router = useRouter();
+  const pathname = usePathname();
   const theme = useTheme();
 
-  const getIcon = (screenName: string) => {
-    if (isLoading) {
-      return <ActivityIndicator size="small" />;
-    }
-    switch (screenName) {
-      case "Logout":
-        return <Text size="lg">↩️</Text>;
-      case "Ride":
-        return <Text size="lg">🚗</Text>;
-      case "Beep":
-        return <Text size="lg">🚕</Text>;
-      case "Profile":
-        return <Text size="lg">👤</Text>;
-      case "Beeps":
-        return <Text size="lg">🚗</Text>;
-      case "Ratings":
-        return <Text size="lg">⭐</Text>;
-      case "Cars":
-        return <Text size="lg">🚙</Text>;
-      case "Feedback":
-        return <Text size="lg">💬</Text>;
-      case "Premium":
-        return (
-          <Text
-            size="lg"
-            style={{
-              shadowRadius: 10,
-              shadowColor: "#f5db73",
-              shadowOpacity: 1,
-            }}
-          >
-            👑
-          </Text>
-        );
-      default:
-        return <Text size="lg">🚗</Text>;
-    }
-  };
-
-  const Icon = getIcon(name);
+  const isActive = pathname === href;
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={onPress ? onPress : () => router.navigate(href)}
       style={({ pressed }) => [
         {
           display: "flex",
@@ -227,8 +189,15 @@ function DrawerItem(props: Props) {
         },
       ]}
     >
-      {Icon}
-      <Text>{name}</Text>
+      {isLoading ?
+        <ActivityIndicator size="small" />
+        :
+        typeof props.icon === 'string' ?
+          <Text size="lg">{props.icon}</Text>
+          :
+          props.icon
+      }
+      <Text>{capitalize(name)}</Text>
     </Pressable>
   );
 }

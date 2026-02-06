@@ -18,7 +18,7 @@ export default function Layout() {
       drawerContent={(props) => <BeepDrawer {...props} />}
     >
       <Drawer.Screen
-        options={{ headerRight: () => <RideMenu /> }}
+        options={{ headerRight: () => <RideMenu />, headerTitle: "Ride" }}
         name="ride"
       />
       <Drawer.Screen
