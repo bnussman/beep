@@ -4,7 +4,7 @@ import { Card } from "@/components/Card";
 import { Countdown } from "@/components/CountDown";
 import { Text } from "@/components/Text";
 import { useNavigation } from "@react-navigation/native";
-import { useActivePayments } from '@/app/(app)/premium';
+import { useActivePayments } from '@/app/(app)/(drawer)/premium';
 
 export function PremiumBanner() {
   const navigation = useNavigation();

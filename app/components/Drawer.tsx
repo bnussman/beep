@@ -1,12 +1,8 @@
 import * as React from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Feedback } from "../routes/feedback/Feedback";
-import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { useIsUserNotBeeping, useUser } from "../utils/useUser";
-import { Avatar } from "../components/Avatar";
-import { Cars } from "../routes/cars/Cars";
-import { Premium } from "../app/(app)/premium";
+import { Avatar } from "./Avatar";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { queryClient, useTRPC } from "@/utils/trpc";
@@ -15,8 +11,8 @@ import { LOCATION_TRACKING } from "@/utils/location";
 import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
 import { useMutation } from "@tanstack/react-query";
-import { AddCarButton } from "@/routes/cars/AddCarButton";
-import { ProfileMenu } from "@/routes/settings/ProfileMenu";
+import { AddCarButton } from "@/components/AddCarButton";
+import { ProfileMenu } from "@/components/ProfileMenu";
 import {
   createDrawerNavigator,
   DrawerContentComponentProps,
@@ -24,12 +20,16 @@ import {
 } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
 import { RideMenu } from "@/components/RideMenu";
-import MainFindBeepScreen from "@/app/(app)/ride";
-import StartBeepingScreen from "@/app/(app)/beep";
-import BeepsScreen from "@/app/(app)/beeps";
-import RatingsScreen from "@/app/(app)/ratings";
+import MainFindBeepScreen from "@/app/(app)/(drawer)/ride";
+import BeepsScreen from "@/app/(app)/(drawer)/beeps";
+import RatingsScreen from "@/app/(app)/(drawer)/ratings";
+import Cars from "@/app/(app)/(drawer)/cars";
+import Premium from "@/app/(app)/(drawer)/premium";
+import EditProfileScreen from "@/app/(app)/(drawer)/profile";
+import Feedback from "@/app/(app)/(drawer)/feedback";
+import StartBeepingScreen from "@/app/(app)/(drawer)/beep";
 
-export function CustomDrawerContent(props: DrawerContentComponentProps) {
+export function BeepDrawer(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
   const navigation = useNavigation();
   const { user } = useUser();
@@ -128,7 +128,7 @@ export const Drawer = createDrawerNavigator({
     };
   },
   drawerContent: (props) => (
-    <CustomDrawerContent {...props} />
+    <BeepDrawer {...props} />
   ),
   screens: {
     Ride: {

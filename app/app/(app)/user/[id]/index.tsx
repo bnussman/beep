@@ -6,25 +6,25 @@ import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { useTRPC } from "@/utils/trpc";
 import { getFormattedRatingString, printStars } from "@/components/Stars";
 import { Image } from "@/components/Image";
+import { useLocalSearchParams } from "expo-router";
 
-type Props = StaticScreenProps<{ id: string }>;
-
-export function User({ route }: Props) {
+export default function User() {
   const trpc = useTRPC();
   const navigation = useNavigation();
+  const { id } = useLocalSearchParams<{ id: string }>();
 
   const {
     data: user,
     isPending: userPending,
     error: userError,
-  } = useQuery(trpc.user.publicUser.queryOptions(route.params.id));
+  } = useQuery(trpc.user.publicUser.queryOptions(id));
 
   const { data: userDetails } = useQuery(
-    trpc.user.getUserPrivateDetails.queryOptions(route.params.id),
+    trpc.user.getUserPrivateDetails.queryOptions(id),
   );
 
   const { data: car } = useQuery(
-    trpc.user.getUsersDefaultCar.queryOptions(route.params.id),
+    trpc.user.getUsersDefaultCar.queryOptions(id),
   );
 
   useLayoutEffect(() => {

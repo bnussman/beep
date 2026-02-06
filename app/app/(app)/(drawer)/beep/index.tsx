@@ -2,16 +2,13 @@ import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
-import { Beep } from "../../../components/beeper/Beep";
 import { useNavigation } from "@react-navigation/native";
 import { Alert, View, Switch, ActivityIndicator } from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
-import { Queue } from "../../../components/beeper/Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { trpcClient, useTRPC } from "@/utils/trpc";
-import { PremiumBanner } from "../../../components/PremiumBanner";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -29,8 +26,11 @@ import {
   getTimeRemainingString,
 } from "@/components/CountDown";
 import { isAndroid, isWeb } from "@/utils/constants";
-import { useActivePayments } from "@/app/(app)/premium";
+import { useActivePayments } from "@/app/(app)/(drawer)/premium";
 import { useUser } from "@/utils/useUser";
+import { PremiumBanner } from "@/components/PremiumBanner";
+import { Beep } from "@/components/Beep";
+import { Queue } from "@/components/beeper/Queue";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();

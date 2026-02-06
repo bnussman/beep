@@ -7,7 +7,7 @@ import { useTRPC } from "@/utils/trpc";
 import { View, type TextInput } from "react-native";
 import { useMutation } from "@tanstack/react-query";
 
-export function ChangePasswordScreen() {
+export default function ChangePasswordScreen() {
   const trpc = useTRPC();
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");

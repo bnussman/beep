@@ -11,6 +11,7 @@ import { useAutoUpdate } from "@/utils/updates";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { setupNotifications, updatePushToken } from "@/utils/notifications";
 import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -56,9 +57,11 @@ function App() {
   console.log(user, isLoggedIn)
 
   return (
+
    <Stack screenOptions={{
       headerTintColor: colorScheme === "dark" ? "white" : "black",
       headerBackButtonDisplayMode: "generic",
+      headerShown: false,
     }}>
       <Stack.Protected guard={isLoggedIn}>
         <Stack.Screen name="(app)" />
@@ -72,12 +75,15 @@ function App() {
 }
 
 export default function Layout() {
+  const colorScheme = useColorScheme();
   return (
     <GestureHandlerRootView>
       <KeyboardProvider>
         <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
-            <App />
+            <ThemeProvider value={colorScheme === 'light' ? DefaultTheme : DarkTheme}>
+              <App />
+            </ThemeProvider>
           </QueryClientProvider>
         </TRPCProvider>
       </KeyboardProvider>

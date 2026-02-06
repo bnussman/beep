@@ -7,7 +7,7 @@ import { Input } from "@/components/Input";
 import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
-import { years } from "./utils";
+import { years } from "../../../utils/cars";
 import { Pressable, View } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { useTheme } from "@/utils/theme";
@@ -24,7 +24,7 @@ interface Values {
   photo: ImagePicker.ImagePickerAsset;
 }
 
-export function AddCar() {
+export default function AddCar() {
   const trpc = useTRPC();
   const theme = useTheme();
   const navigation = useNavigation();

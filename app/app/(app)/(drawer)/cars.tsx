@@ -14,7 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "@/components/Menu";
 
-export function Cars() {
+export default function Cars() {
   const trpc = useTRPC();
   const navigation = useNavigation();
   const { user } = useUser();

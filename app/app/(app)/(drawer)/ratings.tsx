@@ -1,8 +1,8 @@
 import React from "react";
 import { FlatList, View, ActivityIndicator } from "react-native";
-import { useUser } from "../../utils/useUser";
-import { Rating } from "../../components/Rating";
-import { PAGE_SIZE } from "../../utils/constants";
+import { useUser } from "../../../utils/useUser";
+import { Rating } from "../../../components/Rating";
+import { PAGE_SIZE } from "../../../utils/constants";
 import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useInfiniteQuery } from "@tanstack/react-query";

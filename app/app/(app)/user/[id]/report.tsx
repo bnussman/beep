@@ -11,7 +11,7 @@ import { Label } from "@/components/Label";
 
 type Props = StaticScreenProps<{ userId: string; beepId?: string }>;
 
-export function ReportScreen({ route }: Props) {
+export default function ReportScreen({ route }: Props) {
   const trpc = useTRPC();
   const [reason, setReason] = useState<string>("");
   const { goBack } = useNavigation();

@@ -14,7 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 type Props = StaticScreenProps<{ userId: string; beepId: string }>;
 
-export function RateScreen({ route }: Props) {
+export default function RateScreen({ route }: Props) {
   const trpc = useTRPC();
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();

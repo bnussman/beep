@@ -1,14 +1,14 @@
 import { useIsSignedIn, useIsSignedOut } from "../utils/useUser";
-import { ReportScreen } from "../routes/global/Report";
-import { RateScreen } from "../routes/global/Rate";
-import { ChangePasswordScreen } from "../routes/settings/ChangePassword";
+import { ReportScreen } from "../app/(app)/user/[id]/report";
+import { RateScreen } from "../app/(app)/user/[id]/rate";
+import { ChangePasswordScreen } from "../app/(app)/profile/change-password";
 import { PickBeepScreen } from "../routes/ride/PickBeep";
-import { AddCar } from "../routes/cars/AddCar";
+import { AddCar } from "../app/(app)/cars/create";
 import { LoginScreen } from "../routes/auth/Login";
 import { SignUpScreen } from "../routes/auth/SignUp";
 import { ForgotPasswordScreen } from "../routes/auth/ForgotPassword";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Drawer } from "../navigators/Drawer";
+import { Drawer } from "../components/Drawer";
 import { Appearance } from "react-native";
 import { isIOS, isWeb } from "@/utils/constants";
 import { BeepDetails } from "@/app/(app)/beeps/[id]";
@@ -16,8 +16,8 @@ import {
   StaticParamList,
   createStaticNavigation,
 } from "@react-navigation/native";
-import { User } from "@/routes/global/User";
-import { UserMenu, useUserMenuOptions } from "@/routes/global/UserMenu";
+import { User } from "@/app/(app)/user/[id]";
+import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 
 const RootStack = createNativeStackNavigator({

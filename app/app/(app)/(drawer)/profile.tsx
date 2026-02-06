@@ -13,7 +13,7 @@ import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 
-export function EditProfileScreen() {
+export default function EditProfileScreen() {
   const trpc = useTRPC();
   const { user } = useUser();
 

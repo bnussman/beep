@@ -9,7 +9,7 @@ import type {
   PurchasesOffering,
   PurchasesPackage,
 } from "react-native-purchases";
-import PremiumImage from "../../assets/premium.png";
+import PremiumImage from "../../../assets/premium.png";
 import { Countdown } from "@/components/CountDown";
 import { FlatList } from "react-native";
 import { useTRPC } from "@/utils/trpc";
