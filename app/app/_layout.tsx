@@ -64,11 +64,10 @@ function App() {
       }}
     >
       <Stack.Protected guard={isLoggedIn}>
-        <Stack.Screen name="(app)" />
+        <Stack.Screen options={{ headerShown: false }} name="(app)" />
       </Stack.Protected>
       <Stack.Protected guard={!isLoggedIn}>
         <Stack.Screen options={{ headerShown: false }} name="login" />
-        <Stack.Screen name="sign-up" />
       </Stack.Protected>
     </Stack> 
   );
@@ -90,3 +89,7 @@ export default function Layout() {
     </GestureHandlerRootView>
   );
 }
+
+export const unstable_settings = {
+  initialRouteName: '(app)',
+};

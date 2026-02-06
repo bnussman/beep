@@ -8,9 +8,9 @@ import { decodePolyline, getMiles } from "@/utils/location";
 import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { skipToken, useQuery } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import MapView from "react-native-maps";
@@ -116,11 +116,7 @@ export default function BeepDetails() {
         <BottomSheetView
           style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
         >
-          <Pressable
-            onPress={() =>
-              navigation.navigate("User", { id: otherUser?.id ?? "" })
-            }
-          >
+          <Link href={`/(app)/user/${otherUser?.id}`}>
             <Text weight="800">
               {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
             </Text>
@@ -140,7 +136,7 @@ export default function BeepDetails() {
                 style={{ width: 16, height: 16 }}
               />
             </View>
-          </Pressable>
+          </Link>
           <View>
             <Text weight="800">Origin</Text>
             <Text>{beep.origin}</Text>
