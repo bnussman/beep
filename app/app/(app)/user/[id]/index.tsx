@@ -67,7 +67,7 @@ export default function User() {
   }
 
   return (
-    <View style={{ padding: 16, paddingTop: 116, gap: 8 }}>
+    <View style={{ padding: 16, gap: 8 }}>
       <View>
         <Text weight="800">Rating</Text>
         <Text>
@@ -77,12 +77,10 @@ export default function User() {
         </Text>
       </View>
       {userDetails && (
-        <>
-          <View>
-            <Text weight="800">Phone Number</Text>
-            <Text selectable>{userDetails.phone}</Text>
-          </View>
-        </>
+        <View>
+          <Text weight="800">Phone Number</Text>
+          <Text selectable>{userDetails.phone}</Text>
+        </View>
       )}
       {user.venmo && (
         <View>

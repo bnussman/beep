@@ -6,7 +6,6 @@ import { Avatar } from "./Avatar";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { queryClient, useTRPC } from "@/utils/trpc";
-import { printStars } from "@/components/Stars";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
@@ -18,7 +17,6 @@ import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import { useNavigation } from "@react-navigation/native";
 import { RideMenu } from "@/components/RideMenu";
 import MainFindBeepScreen from "@/app/(app)/(drawer)/ride";
 import BeepsScreen from "@/app/(app)/(drawer)/beeps";
@@ -28,10 +26,11 @@ import Premium from "@/app/(app)/(drawer)/premium";
 import EditProfileScreen from "@/app/(app)/(drawer)/profile";
 import Feedback from "@/app/(app)/(drawer)/feedback";
 import StartBeepingScreen from "@/app/(app)/(drawer)/beep";
+import { useRouter } from "expo-router";
 
 export function BeepDrawer(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
-  const navigation = useNavigation();
+  const router = useRouter();
   const { user } = useUser();
   const { mutateAsync: logout, isPending } = useMutation(
     trpc.auth.logout.mutationOptions(),
@@ -68,7 +67,7 @@ export function BeepDrawer(props: DrawerContentComponentProps) {
     <DrawerContentScrollView {...props}>
       <View style={{ gap: 12 }}>
         <Pressable
-          onPress={() => navigation.navigate("User", { id: user?.id ?? "" })}
+          onPress={() => router.push({ pathname: '/user/[id]', params: { id: user?.id ?? '' } })}
         >
           <View
             style={{

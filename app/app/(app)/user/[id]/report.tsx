@@ -8,16 +8,16 @@ import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Label } from "@/components/Label";
+import { useLocalSearchParams } from "expo-router";
 
-type Props = StaticScreenProps<{ userId: string; beepId?: string }>;
-
-export default function ReportScreen({ route }: Props) {
+export default function ReportScreen() {
   const trpc = useTRPC();
+  const { id, beepId } = useLocalSearchParams<{ id: string, beepId: string }>();
   const [reason, setReason] = useState<string>("");
   const { goBack } = useNavigation();
 
   const { data: user } = useQuery(
-    trpc.user.publicUser.queryOptions(route.params.userId),
+    trpc.user.publicUser.queryOptions(id),
   );
 
   const { mutateAsync: report, isPending } = useMutation(
@@ -33,8 +33,8 @@ export default function ReportScreen({ route }: Props) {
 
   const handleReport = () => {
     report({
-      userId: route.params.userId,
-      beepId: route.params.beepId,
+      userId: id,
+      beepId,
       reason: reason,
     });
   };

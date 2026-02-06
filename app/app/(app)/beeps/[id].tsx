@@ -10,7 +10,7 @@ import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { skipToken, useQuery } from "@tanstack/react-query";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import MapView from "react-native-maps";
@@ -19,7 +19,7 @@ export default function BeepDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const trpc = useTRPC();
   const mapRef = useRef<MapView>(null);
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const { user } = useUser();
 
@@ -116,7 +116,7 @@ export default function BeepDetails() {
         <BottomSheetView
           style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
         >
-          <Link href={`/(app)/user/${otherUser?.id}`}>
+          <Pressable onPress={() => router.navigate(`/user/${otherUser?.id}`)}>
             <Text weight="800">
               {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
             </Text>
@@ -136,7 +136,7 @@ export default function BeepDetails() {
                 style={{ width: 16, height: 16 }}
               />
             </View>
-          </Link>
+          </Pressable>
           <View>
             <Text weight="800">Origin</Text>
             <Text>{beep.origin}</Text>

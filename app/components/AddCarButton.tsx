@@ -1,12 +1,13 @@
-import { useNavigation } from "@react-navigation/native";
 import { Pressable } from "react-native";
 import { Text } from "@/components/Text";
+import { useRouter } from "expo-router";
 
 export function AddCarButton() {
-  const navigation = useNavigation();
+  const router = useRouter();
+
   return (
     <Pressable
-      onPress={() => navigation.navigate("Add Car")}
+      onPress={() => router.push("/(app)/cars/create")}
       aria-label="Add a car"
       style={{ paddingRight: 12, transform: [{ translateY: -4 }] }}
     >

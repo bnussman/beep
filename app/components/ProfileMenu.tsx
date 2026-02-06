@@ -3,15 +3,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Menu } from "@/components/Menu";
 import { Alert, View } from "react-native";
 import { useTRPC } from "@/utils/trpc";
-import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { isMobile } from "@/utils/constants";
 import { Elipsis } from "@/components/Elipsis";
+import { useRouter } from "expo-router";
 
 export function ProfileMenu() {
   const trpc = useTRPC();
-  const navigation = useNavigation();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { mutate: deleteAccount } = useMutation(
@@ -59,7 +59,7 @@ export function ProfileMenu() {
         options={[
           {
             title: "Change Password",
-            onClick: () => navigation.navigate("Change Password"),
+            onClick: () => router.navigate("/profile/change-password"),
           },
           {
             title: "Delete Account",

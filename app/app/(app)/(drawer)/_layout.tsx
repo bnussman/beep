@@ -1,4 +1,7 @@
+import { AddCarButton } from '@/components/AddCarButton';
 import { BeepDrawer } from '@/components/Drawer';
+import { ProfileMenu } from '@/components/ProfileMenu';
+import { RideMenu } from '@/components/RideMenu';
 import { Drawer } from 'expo-router/drawer';
 import { useColorScheme } from 'react-native';
 
@@ -13,6 +16,19 @@ export default function Layout() {
         drawerType: "front",
       }}
       drawerContent={(props) => <BeepDrawer {...props} />}
-    />
+    >
+      <Drawer.Screen
+        options={{ headerRight: () => <RideMenu /> }}
+        name="ride"
+      />
+      <Drawer.Screen
+        options={{ headerRight: () => <ProfileMenu /> }}
+        name="profile"
+      />
+      <Drawer.Screen
+        options={{ headerRight: () => <AddCarButton /> }}
+        name="cars"
+      />
+    </Drawer>
   );
 }

@@ -1,6 +1,5 @@
 import React from "react";
 import { View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
@@ -89,17 +88,23 @@ export function Beep({ item }: Props) {
           title: "Rate",
           show: !myRating && item.status === "complete", // only allow rating if you haven't already left a rating and the beep is complete
           onClick: () =>
-            navigation.navigate("Rate", {
-              userId: otherUser.id,
-              beepId: item.id,
+            router.push({
+              pathname: "/user/[id]/rate",
+              params: {
+                id: otherUser.id,
+                beepId: item.id,
+              }
             }),
         },
         {
           title: "Report",
           onClick: () =>
-            navigation.navigate("Report", {
-              userId: otherUser.id,
-              beepId: item.id,
+            router.push({
+              pathname: '/user/[id]/report',
+              params: {
+                id: otherUser.id,
+                beepId: item.id,
+              }
             }),
         },
         {

@@ -3,7 +3,6 @@ import { RateBar } from "@/components/Rate";
 import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
-import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { ActivityIndicator } from "react-native";
@@ -11,19 +10,20 @@ import { Avatar } from "@/components/Avatar";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
-type Props = StaticScreenProps<{ userId: string; beepId: string }>;
-
-export default function RateScreen({ route }: Props) {
+export default function RateScreen() {
   const trpc = useTRPC();
+  const { id, beepId } = useLocalSearchParams<{ id: string, beepId: string }>();
+
   const [stars, setStars] = useState<number>(0);
   const [message, setMessage] = useState<string>();
 
-  const { goBack } = useNavigation();
+  const { back } = useRouter();
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery(
-    trpc.user.publicUser.queryOptions(route.params.userId),
+    trpc.user.publicUser.queryOptions(id),
   );
 
   const { mutateAsync: rate, isPending } = useMutation(
@@ -34,7 +34,7 @@ export default function RateScreen({ route }: Props) {
         queryClient.invalidateQueries(
           trpc.rider.getLastBeepToRate.pathFilter(),
         );
-        goBack();
+        back();
       },
       onError(error) {
         alert(error.message);
@@ -44,8 +44,8 @@ export default function RateScreen({ route }: Props) {
 
   const onSubmit = () => {
     rate({
-      userId: route.params.userId,
-      beepId: route.params.beepId,
+      userId: id,
+      beepId,
       message: message,
       stars: stars,
     });

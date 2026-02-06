@@ -9,7 +9,6 @@ import { Label } from "@/components/Label";
 import { getPushToken } from "../utils/notifications";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
