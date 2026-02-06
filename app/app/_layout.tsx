@@ -80,7 +80,14 @@ export default function Layout() {
       <KeyboardProvider>
         <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
-            <ThemeProvider value={colorScheme === 'light' ? DefaultTheme : DarkTheme}>
+            <ThemeProvider value={
+              colorScheme === "dark"
+                ? DarkTheme
+                : {
+                  ...DefaultTheme,
+                  colors: { ...DefaultTheme.colors, background: "white" },
+                }}
+            >
               <App />
             </ThemeProvider>
           </QueryClientProvider>

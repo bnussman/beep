@@ -18,7 +18,7 @@ export default function Layout() {
             return getNavigationMenuFromOptions(options);
           },
         }}}
-        name="user/[id]"
+        name="user/[id]/index"
       />
     </Stack>
   );
