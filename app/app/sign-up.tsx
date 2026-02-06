@@ -39,7 +39,7 @@ export default function SignUpScreen() {
     formState: { errors, isSubmitting },
   } = useForm<Values>();
 
-  const { mutateAsync: signup } = useMutation(
+  const { mutate: signup } = useMutation(
     trpc.auth.signup.mutationOptions({
       async onSuccess(data) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
@@ -84,7 +84,7 @@ export default function SignUpScreen() {
       }
     }
 
-    await signup(formData).catch();
+    signup(formData);
   });
 
   const chooseProfilePhoto = async () => {
