@@ -10,18 +10,18 @@ import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { printStars } from "@/components/Stars";
+import { useLocalSearchParams } from "expo-router";
 
-type Props = StaticScreenProps<{
-  origin: string;
-  destination: string;
-  groupSize: string;
-}>;
-
-export default function PickBeepScreen({ route }: Props) {
-  const trpc = useTRPC();
+export default function PickBeepScreen() {
   const { location } = useLocation();
+  const trpc = useTRPC();
   const navigation = useNavigation();
   const queryClient = useQueryClient();
+  const params = useLocalSearchParams<{
+    origin: string;
+    destination: string;
+    groupSize: string;
+  }>();
 
   const {
     data: beepers,
@@ -74,8 +74,8 @@ export default function PickBeepScreen({ route }: Props) {
 
     startBeep({
       beeperId,
-      ...route.params,
-      groupSize: Number(route.params.groupSize),
+      ...params,
+      groupSize: Number(params.groupSize),
       ...(location && {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,

@@ -68,6 +68,7 @@ function App() {
       </Stack.Protected>
       <Stack.Protected guard={!isLoggedIn}>
         <Stack.Screen options={{ headerShown: false }} name="login" />
+        <Stack.Screen name="sign-up" />
       </Stack.Protected>
     </Stack> 
   );

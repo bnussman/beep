@@ -41,10 +41,10 @@ export default function SignUpScreen() {
 
   const { mutate: signup } = useMutation(
     trpc.auth.signup.mutationOptions({
-      async onSuccess(data) {
+      async onSuccess(data, variables, result, context) {
         await AsyncStorage.setItem("auth", JSON.stringify(data));
 
-        queryClient.setQueryData(trpc.user.me.queryKey(), data.user);
+        context.client.setQueryData(trpc.user.me.queryKey(), data.user);
       },
       onError(error) {
         if (error.data?.fieldErrors) {
@@ -57,8 +57,6 @@ export default function SignUpScreen() {
       },
     }),
   );
-
-  const queryClient = useQueryClient();
 
   const onSubmit = handleSubmit(async (variables) => {
     const formData = new FormData();
