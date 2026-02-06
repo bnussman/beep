@@ -22,12 +22,32 @@ export default function Layout() {
         name="ride"
       />
       <Drawer.Screen
-        options={{ headerRight: () => <ProfileMenu /> }}
+        options={{ headerTitle: "Beep" }}
+        name="beep"
+      />
+      <Drawer.Screen
+        options={{ headerRight: () => <AddCarButton />, headerTitle: "Cars" }}
+        name="cars"
+      />
+      <Drawer.Screen
+        options={{ headerTitle: "Premium" }}
+        name="premium"
+      />
+      <Drawer.Screen
+        options={{ headerRight: () => <ProfileMenu />, headerTitle: "Profile" }}
         name="profile"
       />
       <Drawer.Screen
-        options={{ headerRight: () => <AddCarButton /> }}
-        name="cars"
+        options={{ headerTitle: "Beeps" }}
+        name="beeps"
+      />
+      <Drawer.Screen
+        options={{ headerTitle: "Ratings" }}
+        name="ratings"
+      />
+      <Drawer.Screen
+        options={{ headerTitle: "Feedback" }}
+        name="feedback"
       />
     </Drawer>
   );
