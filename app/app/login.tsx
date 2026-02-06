@@ -13,12 +13,13 @@ import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 
 type Values = RouterInput["auth"]["login"];
 
 export default function LoginScreen() {
   const trpc = useTRPC();
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const {
     control,
@@ -135,13 +136,13 @@ export default function LoginScreen() {
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Button
           variant="secondary"
-          onPress={() => navigation.navigate("Sign Up")}
+          onPress={() => router.push("/sign-up")}
         >
           Sign Up
         </Button>
         <Button
           variant="secondary"
-          onPress={() => navigation.navigate("Forgot Password")}
+          onPress={() => router.push("/forgot-password")}
         >
           Forgot Password
         </Button>

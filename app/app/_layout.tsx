@@ -48,27 +48,27 @@ function App() {
     }
   }, [user]);
 
-  if (isLoading) {
-    return null;
-  }
+  // if (isLoading) {
+  //   return null;
+  // }
 
   const isLoggedIn = user !== undefined;
 
   console.log(user, isLoggedIn)
 
   return (
-
-   <Stack screenOptions={{
-      headerTintColor: colorScheme === "dark" ? "white" : "black",
-      headerBackButtonDisplayMode: "generic",
-      headerShown: false,
-    }}>
+    <Stack
+      screenOptions={{
+        headerTintColor: colorScheme === "dark" ? "white" : "black",
+        headerBackButtonDisplayMode: "generic",
+      }}
+    >
       <Stack.Protected guard={isLoggedIn}>
         <Stack.Screen name="(app)" />
       </Stack.Protected>
       <Stack.Protected guard={!isLoggedIn}>
-        <Stack.Screen name="sign-in" />
-        <Stack.Screen name="create-account" />
+        <Stack.Screen options={{ headerShown: false }} name="login" />
+        <Stack.Screen name="sign-up" />
       </Stack.Protected>
     </Stack> 
   );
