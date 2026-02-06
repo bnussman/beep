@@ -1,13 +1,13 @@
 import React from "react";
 import { Text } from "@/components/Text";
-import { useUser } from "../utils/useUser";
-import { Beep } from "../components/Beep";
-import { PAGE_SIZE } from "../utils/constants";
+import { useUser } from "../../../utils/useUser";
+import { Beep } from "../../../components/Beep";
+import { PAGE_SIZE } from "../../../utils/constants";
 import { useTRPC } from "@/utils/trpc";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ActivityIndicator, FlatList, View } from "react-native";
 
-export function BeepsScreen() {
+export default function BeepsScreen() {
   const trpc = useTRPC();
   const { user } = useUser();
 

@@ -1,7 +1,7 @@
-import { Map } from "../../components/Map";
-import { useLocation } from "../../utils/location";
+import { Map } from "./Map";
+import { useLocation } from "../utils/location";
 import { type Region } from "react-native-maps";
-import { AnimatedMarker } from "../../components/AnimatedMarker";
+import { AnimatedMarker } from "./AnimatedMarker";
 import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";

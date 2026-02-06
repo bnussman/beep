@@ -10,7 +10,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 
-export function Feedback() {
+export default function Feedback() {
   const trpc = useTRPC();
   const {
     mutateAsync: createFeedback,

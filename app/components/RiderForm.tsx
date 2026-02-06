@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Controller, useForm } from "react-hook-form";
@@ -17,7 +18,7 @@ interface Props {
 }
 
 export function RiderForm(props: Props) {
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const {
     control,
@@ -38,7 +39,7 @@ export function RiderForm(props: Props) {
   });
 
   const findBeep = handleSubmit((values) => {
-    navigation.navigate("Choose Beeper", values);
+    router.navigate({ pathname: '/ride/pick', params: values });
   });
 
   return (

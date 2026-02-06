@@ -1,16 +1,12 @@
 import * as React from "react";
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MainFindBeepScreen } from "../routes/ride/FindBeep";
 import { Feedback } from "../routes/feedback/Feedback";
-import { RatingsScreen } from "../routes/Ratings";
-import { BeepsScreen } from "../routes/Beeps";
 import { EditProfileScreen } from "../routes/settings/EditProfile";
 import { useIsUserNotBeeping, useUser } from "../utils/useUser";
 import { Avatar } from "../components/Avatar";
 import { Cars } from "../routes/cars/Cars";
-import { Premium } from "../routes/Premium";
-import { StartBeepingScreen } from "../routes/beep/StartBeeping";
+import { Premium } from "../app/(app)/premium";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
 import { queryClient, useTRPC } from "@/utils/trpc";
@@ -19,7 +15,6 @@ import { LOCATION_TRACKING } from "@/utils/location";
 import { Pressable, Appearance, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
 import { useMutation } from "@tanstack/react-query";
-import { RideMenu } from "@/routes/ride/RideMenu";
 import { AddCarButton } from "@/routes/cars/AddCarButton";
 import { ProfileMenu } from "@/routes/settings/ProfileMenu";
 import {
@@ -28,8 +23,13 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
+import { RideMenu } from "@/components/RideMenu";
+import MainFindBeepScreen from "@/app/(app)/ride";
+import StartBeepingScreen from "@/app/(app)/beep";
+import BeepsScreen from "@/app/(app)/beeps";
+import RatingsScreen from "@/app/(app)/ratings";
 
-function CustomDrawerContent(props: DrawerContentComponentProps) {
+export function CustomDrawerContent(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
   const navigation = useNavigation();
   const { user } = useUser();
@@ -127,7 +127,7 @@ export const Drawer = createDrawerNavigator({
       drawerType: "front",
     };
   },
-  drawerContent: (props: DrawerContentComponentProps) => (
+  drawerContent: (props) => (
     <CustomDrawerContent {...props} />
   ),
   screens: {

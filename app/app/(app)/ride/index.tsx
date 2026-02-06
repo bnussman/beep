@@ -1,22 +1,22 @@
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
-import { RiderForm } from "./RiderForm";
+import { RiderForm } from "../../../components/RiderForm";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useTRPC } from "@/utils/trpc";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { RideDetails } from "./RideDetails";
+import { RideDetails } from "../../../components/RideDetails";
 import { BottomSheet } from "@/components/BottomSheet";
 import { View } from "react-native";
-import { RideMap } from "./RideMap";
+import { RideMap } from "../../../components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
 >;
 
-export function MainFindBeepScreen(props: Props) {
+export default function MainFindBeepScreen(props: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 

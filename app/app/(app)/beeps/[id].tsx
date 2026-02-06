@@ -10,13 +10,13 @@ import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { skipToken, useQuery } from "@tanstack/react-query";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import MapView from "react-native-maps";
 
-type Props = StaticScreenProps<{ beepId: string }>;
-
-export function BeepDetails(props: Props) {
+export default function BeepDetails() {
+  const { id } = useLocalSearchParams<{ id: string }>();
   const trpc = useTRPC();
   const mapRef = useRef<MapView>(null);
   const navigation = useNavigation();
@@ -27,7 +27,7 @@ export function BeepDetails(props: Props) {
     data: beep,
     isPending,
     error,
-  } = useQuery(trpc.beep.beep.queryOptions(props.route.params.beepId));
+  } = useQuery(trpc.beep.beep.queryOptions(id));
 
   const { data: route } = useQuery(
     trpc.location.getRoute.queryOptions(

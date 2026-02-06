@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
-import { printStars } from "../../components/Stars";
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
@@ -10,6 +9,7 @@ import { ActivityIndicator, FlatList, View } from "react-native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
+import { printStars } from "@/components/Stars";
 
 type Props = StaticScreenProps<{
   origin: string;
@@ -17,7 +17,7 @@ type Props = StaticScreenProps<{
   groupSize: string;
 }>;
 
-export function PickBeepScreen({ route }: Props) {
+export default function PickBeepScreen({ route }: Props) {
   const trpc = useTRPC();
   const { location } = useLocation();
   const navigation = useNavigation();

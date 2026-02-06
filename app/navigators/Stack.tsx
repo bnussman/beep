@@ -11,7 +11,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Drawer } from "../navigators/Drawer";
 import { Appearance } from "react-native";
 import { isIOS, isWeb } from "@/utils/constants";
-import { BeepDetails } from "@/routes/BeepDetails";
+import { BeepDetails } from "@/app/(app)/beeps/[id]";
 import {
   StaticParamList,
   createStaticNavigation,

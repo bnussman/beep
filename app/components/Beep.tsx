@@ -11,6 +11,7 @@ import { printStars } from "./Stars";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
+import { useRouter } from "expo-router";
 
 interface Props {
   item: RouterOutput["beep"]["beeps"]["beeps"][number];
@@ -21,7 +22,7 @@ export function Beep({ item }: Props) {
   const { user } = useUser();
 
   const trpc = useTRPC();
-  const navigation = useNavigation();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
@@ -114,9 +115,7 @@ export function Beep({ item }: Props) {
           style={{ padding: 16, gap: 8 }}
           pressable
           onLongPress={() => {}}
-          onPress={() =>
-            navigation.navigate("Beep Details", { beepId: item.id })
-          }
+          onPress={() => router.navigate(`/beeps/${item.id}`)}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Avatar size="xs" src={otherUser.photo ?? undefined} />

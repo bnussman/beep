@@ -6,7 +6,7 @@ import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
-import { getPushToken } from "../../utils/notifications";
+import { getPushToken } from "../utils/notifications";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
@@ -16,7 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 
 type Values = RouterInput["auth"]["login"];
 
-export function LoginScreen() {
+export default function LoginScreen() {
   const trpc = useTRPC();
   const navigation = useNavigation();
 

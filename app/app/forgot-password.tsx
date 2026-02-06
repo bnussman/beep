@@ -9,7 +9,7 @@ import { TRPCClientError } from "@trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { View } from "react-native";
 
-export function ForgotPasswordScreen() {
+export default function ForgotPasswordScreen() {
   const trpc = useTRPC();
   const { mutateAsync: sendForgotEmail, isPending } = useMutation(
     trpc.auth.forgotPassword.mutationOptions(),

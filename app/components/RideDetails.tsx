@@ -6,7 +6,7 @@ import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
 import { PlaceInQueue } from "./PlaceInQueue";
 import { useTRPC } from "@/utils/trpc";
-import { getCurrentStatusMessage } from "./utils";
+import { getCurrentStatusMessage } from "../utils/utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@react-navigation/native";

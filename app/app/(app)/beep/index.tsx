@@ -2,18 +2,16 @@ import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as SplashScreen from "expo-splash-screen";
-import { useUser } from "../../utils/useUser";
-import { isAndroid, isWeb } from "../../utils/constants";
-import { Beep } from "./Beep";
+import { Beep } from "../../../components/beeper/Beep";
 import { useNavigation } from "@react-navigation/native";
 import { Alert, View, Switch, ActivityIndicator } from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
-import { Queue } from "./Queue";
+import { Queue } from "../../../components/beeper/Queue";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { trpcClient, useTRPC } from "@/utils/trpc";
-import { PremiumBanner } from "./PremiumBanner";
+import { PremiumBanner } from "../../../components/PremiumBanner";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
@@ -26,13 +24,15 @@ import {
   stopLocationTracking,
   useLocationPermissions,
 } from "@/utils/location";
-import { useActivePayments } from "../Premium";
 import {
   calculateTimeRemaining,
   getTimeRemainingString,
 } from "@/components/CountDown";
+import { isAndroid, isWeb } from "@/utils/constants";
+import { useActivePayments } from "@/app/(app)/premium";
+import { useUser } from "@/utils/useUser";
 
-export function StartBeepingScreen() {
+export default function StartBeepingScreen() {
   const trpc = useTRPC();
   const { user } = useUser();
 

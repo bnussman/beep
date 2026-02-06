@@ -9,9 +9,8 @@ import type {
   PurchasesOffering,
   PurchasesPackage,
 } from "react-native-purchases";
-// @ts-expect-error idk
-import PremiumImage from "../assets/premium.png";
-import { Countdown } from "../components/CountDown";
+import PremiumImage from "../../assets/premium.png";
+import { Countdown } from "@/components/CountDown";
 import { FlatList } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
@@ -165,7 +164,7 @@ function usePackages() {
   };
 }
 
-export function Premium() {
+export default function Premium() {
   const {
     data: activePayments,
     error: activePaymentsError,
