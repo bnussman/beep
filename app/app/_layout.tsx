@@ -1,6 +1,7 @@
+import '../utils/instrument';
 import React, { useEffect } from "react";
 import * as Sentry from "@sentry/react-native";
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, useNavigationContainerRef } from 'expo-router';
 import { queryClient, trpcClient, TRPCProvider, useTRPC } from "@/utils/trpc";
 import { QueryClientProvider, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -11,6 +12,7 @@ import { useSubscription } from "@trpc/tanstack-react-query";
 import { setupNotifications, updatePushToken } from "@/utils/notifications";
 import { setPurchaseUser, setupPurchase } from "@/utils/purchase";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { navigationIntegration } from '../utils/instrument';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -71,8 +73,16 @@ function App() {
   );
 }
 
-export default function Layout() {
+function Layout() {
+  const ref = useNavigationContainerRef();
   const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    if (ref) {
+      navigationIntegration.registerNavigationContainer(ref);
+    }
+  }, [ref]);
+
   return (
     <GestureHandlerRootView>
       <KeyboardProvider>
@@ -94,6 +104,8 @@ export default function Layout() {
     </GestureHandlerRootView>
   );
 }
+
+export default Sentry.wrap(Layout);
 
 export const unstable_settings = {
   initialRouteName: '(auth)/index',
