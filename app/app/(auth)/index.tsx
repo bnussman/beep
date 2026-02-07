@@ -5,7 +5,7 @@ import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Label } from "@/components/Label";
-import { getPushToken } from "../utils/notifications";
+import { getPushToken } from "../../utils/notifications";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";

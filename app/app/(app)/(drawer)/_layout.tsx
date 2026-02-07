@@ -19,7 +19,7 @@ export default function Layout() {
     >
       <Drawer.Screen
         options={{ headerRight: () => <RideMenu />, headerTitle: "Ride" }}
-        name="ride"
+        name="index"
       />
       <Drawer.Screen
         options={{ headerTitle: "Beep" }}

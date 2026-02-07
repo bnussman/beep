@@ -29,7 +29,7 @@ const routes: Route[] = [
   {
     name: "Ride",
     icon: "🚗",
-    href: '/ride',
+    href: '/',
   },
   {
     name: "Beep",
@@ -154,7 +154,7 @@ export function BeepDrawer(props: DrawerContentComponentProps) {
             onPress={() => logout({ isApp: true })}
             icon="↩️"
             isLoading={isPending}
-            href="/login"
+            href="/sign-up"
           />
         </View>
       </View>

@@ -53,8 +53,6 @@ function App() {
 
   const isLoggedIn = user !== undefined;
 
-  console.log(user, isLoggedIn)
-
   return (
     <Stack
       screenOptions={{
@@ -66,7 +64,7 @@ function App() {
         <Stack.Screen options={{ headerShown: false }} name="(app)" />
       </Stack.Protected>
       <Stack.Protected guard={!isLoggedIn}>
-        <Stack.Screen options={{ headerShown: false }} name="login" />
+        <Stack.Screen options={{ headerShown: false }} name="(auth)/index" />
         <Stack.Screen name="sign-up" />
       </Stack.Protected>
     </Stack> 
@@ -98,6 +96,6 @@ export default function Layout() {
 }
 
 export const unstable_settings = {
-  initialRouteName: 'login',
+  initialRouteName: '(auth)/index',
 };
 

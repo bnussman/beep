@@ -16,7 +16,6 @@ import { Menu } from "@/components/Menu";
 
 export default function Cars() {
   const trpc = useTRPC();
-  const navigation = useNavigation();
   const { user } = useUser();
 
   const queryClient = useQueryClient();

@@ -2,8 +2,8 @@ import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity, View } from "react-native";
-import { getPushToken } from "../utils/notifications";
-import { isMobile, isSimulator } from "../utils/constants";
+import { getPushToken } from "../../utils/notifications";
+import { isMobile, isSimulator } from "../../utils/constants";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "@/components/Avatar";
@@ -14,7 +14,6 @@ import { Label } from "@/components/Label";
 import { Input } from "@/components/Input";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 
 interface Values {
