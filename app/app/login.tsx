@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SplashScreen from "expo-splash-screen";
 import { PasswordInput } from "@/components/PasswordInput";
 import { Text } from "@/components/Text";
 import { Input } from "@/components/Input";
@@ -12,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { RouterInput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
+import { SplashScreen, useRouter } from "expo-router";
 
 type Values = RouterInput["auth"]["login"];
 
@@ -49,11 +48,7 @@ export default function LoginScreen() {
 
 
   useEffect(() => {
-    try {
-      SplashScreen.hideAsync();
-    } catch (error) {
-      // ...
-    }
+    SplashScreen.hide();
   }, []);
 
   const onLogin = handleSubmit(async (variables) => {

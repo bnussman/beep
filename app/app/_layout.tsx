@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import * as Sentry from "@sentry/react-native";
-import * as SplashScreen from "expo-splash-screen";
-import { Stack } from 'expo-router';
+import { SplashScreen, Stack } from 'expo-router';
 import { queryClient, trpcClient, TRPCProvider, useTRPC } from "@/utils/trpc";
 import { QueryClientProvider, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";

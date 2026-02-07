@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import * as SplashScreen from "expo-splash-screen";
 import { useNavigation } from "@react-navigation/native";
 import { Alert, View, Switch, ActivityIndicator } from "react-native";
 import { Input } from "@/components/Input";
@@ -15,22 +14,20 @@ import { useMutation } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { captureException } from "@sentry/react-native";
-import {
-  LOCATION_TRACKING,
-  startLocationTracking,
-  stopLocationTracking,
-  useLocationPermissions,
-} from "@/utils/location";
-import {
-  calculateTimeRemaining,
-  getTimeRemainingString,
-} from "@/components/CountDown";
+import { getTimeRemainingString } from "@/components/CountDown";
 import { isAndroid, isWeb } from "@/utils/constants";
 import { useActivePayments } from "@/app/(app)/(drawer)/premium";
 import { useUser } from "@/utils/useUser";
 import { PremiumBanner } from "@/components/PremiumBanner";
 import { Beep } from "@/components/beeper/Beep";
 import { Queue } from "@/components/beeper/Queue";
+import { SplashScreen } from "expo-router";
+import {
+  LOCATION_TRACKING,
+  startLocationTracking,
+  stopLocationTracking,
+  useLocationPermissions,
+} from "@/utils/location";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -182,7 +179,7 @@ export default function StartBeepingScreen() {
   });
 
   useEffect(() => {
-    SplashScreen.hideAsync();
+    SplashScreen.hide();
   }, []);
 
   useEffect(() => {

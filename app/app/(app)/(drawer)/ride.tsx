@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import * as SplashScreen from "expo-splash-screen";
 import { RiderForm } from "../../../components/RiderForm";
 import { StaticScreenProps } from "@react-navigation/native";
 import { useTRPC } from "@/utils/trpc";
@@ -11,6 +10,7 @@ import { BottomSheet } from "@/components/BottomSheet";
 import { View } from "react-native";
 import { RideMap } from "../../../components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { SplashScreen } from "expo-router";
 
 type Props = StaticScreenProps<
   { origin?: string; destination?: string; groupSize?: string } | undefined
@@ -52,7 +52,7 @@ export default function MainFindBeepScreen(props: Props) {
   );
 
   useEffect(() => {
-    SplashScreen.hideAsync();
+    SplashScreen.hide();
   }, []);
 
   if (!beep) {
