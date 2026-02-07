@@ -23,3 +23,7 @@ export default function Layout() {
     </Stack>
   );
 }
+
+export const unstable_settings = {
+  initialRouteName: '(drawer)',
+};

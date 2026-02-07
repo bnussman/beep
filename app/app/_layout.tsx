@@ -47,9 +47,9 @@ function App() {
     }
   }, [user]);
 
-  // if (isLoading) {
-  //   return null;
-  // }
+  if (isLoading) {
+    return null;
+  }
 
   const isLoggedIn = user !== undefined;
 
@@ -98,5 +98,6 @@ export default function Layout() {
 }
 
 export const unstable_settings = {
-  initialRouteName: '(app)',
+  initialRouteName: 'login',
 };
+
