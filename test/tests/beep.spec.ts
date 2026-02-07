@@ -33,7 +33,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
 
   await beeperPage.getByRole("button", { name: "Add Car" }).click();
   await expect(beeperPage.getByText("Add Car")).not.toBeVisible();
-  await beeperPage.getByRole("button").first().click(); // click drawer button
+  await beeperPage.getByLabel("Show navigation menu").nth(1).click(); // click drawer button
   await beeperPage.getByText("Beep", { exact: true }).click();
   await beeperPage.getByRole("switch").first().click();
 

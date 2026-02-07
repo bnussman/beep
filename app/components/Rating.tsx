@@ -10,6 +10,7 @@ import { RouterOutput, useTRPC } from "@/utils/trpc";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
+import { useRouter } from "expo-router";
 
 type Rating = RouterOutput["rating"]["ratings"]["ratings"][number];
 
@@ -22,7 +23,7 @@ export function Rating(props: Props) {
   const trpc = useTRPC();
   const { item } = props;
   const { user } = useUser();
-  const navigation = useNavigation();
+  const router = useRouter();
   const otherUser = user?.id === item.rater.id ? item.rated : item.rater;
 
   const isRater = user?.id === item.rater.id;
@@ -47,9 +48,12 @@ export function Rating(props: Props) {
         {
           title: "Report",
           onClick: () =>
-            navigation.navigate("Report", {
-              userId: otherUser.id,
-              beepId: item.beep_id,
+            router.push({
+              pathname: '/user/[id]/report',
+              params: {
+                id: otherUser.id,
+                beepId: item.beep_id,
+              }
             }),
         },
         {
@@ -63,7 +67,8 @@ export function Rating(props: Props) {
         <Card
           pressable
           style={{ padding: 16, gap: 16, display: "flex" }}
-          onPress={() => navigation.navigate("User", { id: otherUser.id })}
+          onLongPress={() => {}}
+          onPress={() => router.push({ pathname: '/user/[id]', params: { id: otherUser.id }})}
         >
           <View
             style={{

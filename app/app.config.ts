@@ -4,6 +4,7 @@ const config: ExpoConfig = {
   experiments: {
     tsconfigPaths: true,
     reactCompiler: true,
+    typedRoutes: true
   },
   name: "Beep",
   slug: "Beep",

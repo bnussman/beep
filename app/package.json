@@ -1,7 +1,7 @@
 {
   "name": "@beep/app",
   "version": "2.18.2",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "dev": "expo start --dev-client --web",
     "android": "expo start --android",
@@ -31,6 +31,7 @@
     "expo-linking": "~8.0.8",
     "expo-location": "~19.0.7",
     "expo-notifications": "~0.32.12",
+    "expo-router": "^6.0.23",
     "expo-splash-screen": "~31.0.10",
     "expo-status-bar": "~3.0.8",
     "expo-task-manager": "~14.0.8",
@@ -53,9 +54,9 @@
     "zeego": "^3.0.6"
   },
   "devDependencies": {
-    "@sentry/cli": "3.1.0",
     "@babel/core": "^7.24.4",
     "@expo/metro-runtime": "~6.1.2",
+    "@sentry/cli": "3.1.0",
     "@trpc/server": "^11.8.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "~19.1.9",

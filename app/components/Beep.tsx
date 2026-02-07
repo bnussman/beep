@@ -1,6 +1,5 @@
 import React from "react";
 import { View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { Card } from "@/components/Card";
 import { Text } from "@/components/Text";
 import { Avatar } from "@/components/Avatar";
@@ -11,6 +10,7 @@ import { printStars } from "./Stars";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
+import { useRouter } from "expo-router";
 
 interface Props {
   item: RouterOutput["beep"]["beeps"]["beeps"][number];
@@ -21,7 +21,7 @@ export function Beep({ item }: Props) {
   const { user } = useUser();
 
   const trpc = useTRPC();
-  const navigation = useNavigation();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
@@ -88,17 +88,23 @@ export function Beep({ item }: Props) {
           title: "Rate",
           show: !myRating && item.status === "complete", // only allow rating if you haven't already left a rating and the beep is complete
           onClick: () =>
-            navigation.navigate("Rate", {
-              userId: otherUser.id,
-              beepId: item.id,
+            router.push({
+              pathname: "/user/[id]/rate",
+              params: {
+                id: otherUser.id,
+                beepId: item.id,
+              }
             }),
         },
         {
           title: "Report",
           onClick: () =>
-            navigation.navigate("Report", {
-              userId: otherUser.id,
-              beepId: item.id,
+            router.push({
+              pathname: '/user/[id]/report',
+              params: {
+                id: otherUser.id,
+                beepId: item.id,
+              }
             }),
         },
         {
@@ -114,9 +120,7 @@ export function Beep({ item }: Props) {
           style={{ padding: 16, gap: 8 }}
           pressable
           onLongPress={() => {}}
-          onPress={() =>
-            navigation.navigate("Beep Details", { beepId: item.id })
-          }
+          onPress={() => router.navigate(`/beeps/${item.id}`)}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Avatar size="xs" src={otherUser.photo ?? undefined} />
