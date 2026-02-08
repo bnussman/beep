@@ -6,6 +6,7 @@ export default function Layout() {
   return (
     <Stack>
       <Stack.Screen options={{ headerShown: false }} name="(drawer)" />
+      <Stack.Screen options={{ headerTransparent: true, title: '' }} name="beeps/[id]" />
       <Stack.Screen
         options={(route) => {
           const params = route.route.params as { id: string };
