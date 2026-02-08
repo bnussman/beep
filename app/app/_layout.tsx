@@ -67,7 +67,8 @@ function App() {
       </Stack.Protected>
       <Stack.Protected guard={!isLoggedIn}>
         <Stack.Screen options={{ headerShown: false }} name="(auth)/index" />
-        <Stack.Screen name="(auth)/sign-up" />
+        <Stack.Screen options={{ headerTitle: "Sign Up"}} name="(auth)/sign-up" />
+        <Stack.Screen options={{ headerTitle: "Forgot Password"}} name="(auth)/forgot-password" />
       </Stack.Protected>
     </Stack> 
   );

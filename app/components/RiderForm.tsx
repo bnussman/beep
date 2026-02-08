@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { Controller, useForm } from "react-hook-form";
@@ -7,18 +7,16 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { RateLastBeeper } from "./RateLastBeeper";
 import { BeepersMap } from "./BeepersMap";
 import { Button } from "@/components/Button";
-import { useNavigation } from "@react-navigation/native";
 import { Input } from "@/components/Input";
 import { LocationInput } from "@/components/LocationInput";
 
-interface Props {
-  groupSize?: string;
-  origin?: string;
-  destination?: string;
-}
-
-export function RiderForm(props: Props) {
+export function RiderForm() {
   const router = useRouter();
+  const params = useLocalSearchParams<{
+    groupSize?: string;
+    origin?: string;
+    destination?: string;
+  }>();
 
   const {
     control,
@@ -26,15 +24,10 @@ export function RiderForm(props: Props) {
     setFocus,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      groupSize: "",
-      origin: props.origin ?? "",
-      destination: props.destination ?? "",
-    },
     values: {
-      groupSize: props.groupSize ?? "",
-      origin: props.origin ?? "",
-      destination: props.destination ?? "",
+      groupSize: params.groupSize ? String(params.groupSize) : "",
+      origin: params.origin ?? "",
+      destination: params.destination ?? "",
     },
   });
 
