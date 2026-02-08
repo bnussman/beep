@@ -116,27 +116,32 @@ export default function BeepDetails() {
         <BottomSheetView
           style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
         >
-          <Pressable onPress={() => router.navigate(`/user/${otherUser?.id}`)}>
-            <Text weight="800">
-              {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
-            </Text>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
-              <Text>
-                {otherUser?.first} {otherUser?.last}
-              </Text>
-              <Avatar
-                src={otherUser?.photo ?? undefined}
-                style={{ width: 16, height: 16 }}
-              />
-            </View>
-          </Pressable>
+          <Link href={{pathname: "/user/[id]", params: { id: otherUser?.id ?? '' }}} asChild>
+            <Link.Trigger>
+              <Pressable>
+                <Text weight="800">
+                  {beep?.rider_id === user?.id ? "Beeper" : "Rider"}
+                </Text>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <Text>
+                    {otherUser?.first} {otherUser?.last}
+                  </Text>
+                  <Avatar
+                    src={otherUser?.photo ?? undefined}
+                    style={{ width: 16, height: 16 }}
+                  />
+                </View>
+              </Pressable>
+            </Link.Trigger>
+            <Link.Preview />
+          </Link>
           <View>
             <Text weight="800">Origin</Text>
             <Text>{beep.origin}</Text>
