@@ -54,6 +54,13 @@ const config: ExpoConfig = {
       },
     ],
     [
+      "voltra",
+      {
+        enablePushNotifications: true,
+        groupIdentifier: 'group.app.ridebeep.App'
+      },
+    ],
+    [
       "@sentry/react-native/expo",
       {
         url: "https://sentry.io/",
