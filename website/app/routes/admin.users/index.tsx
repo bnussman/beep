@@ -1,0 +1,167 @@
+import React from "react";
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Typography,
+  CircularProgress,
+  Stack,
+  InputAdornment,
+  TableContainer,
+  Paper,
+  TextField,
+  Avatar,
+  Link,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import { Indicator } from "../../../src/components/Indicator";
+import {
+  createFileRoute,
+  Link as RouterLink,
+  useNavigate,
+} from "@tanstack/react-router";
+import { useTRPC } from "../../../src/utils/trpc";
+import { keepPreviousData } from "@tanstack/react-query";
+import { PaginationFooter } from "../../../src/components/PaginationFooter";
+import { TableLoading } from "../../../src/components/TableLoading";
+import { TableError } from "../../../src/components/TableError";
+import { useQuery } from "@tanstack/react-query";
+import { TableEmpty } from "../../../src/components/TableEmpty";
+
+export interface PaginationSearchParams {
+  page: number;
+  query?: string;
+}
+
+export const Route = createFileRoute("/admin/users/")({
+  component: Users,
+  validateSearch: (search: Record<string, string>): PaginationSearchParams => {
+    return {
+      page: Number(search?.page ?? 1),
+      query: search.query ? search.query : undefined,
+    };
+  },
+});
+
+function Users() {
+  const trpc = useTRPC();
+  const PAGE_SIZE = 20;
+  const { page, query } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.id });
+
+  const { isLoading, isFetching, error, data } = useQuery(
+    trpc.user.users.queryOptions(
+      {
+        page,
+        pageSize: PAGE_SIZE,
+        query: !query ? undefined : query,
+      },
+      { placeholderData: keepPreviousData },
+    ),
+  );
+
+  const setCurrentPage = (event: React.ChangeEvent<unknown>, page: number) => {
+    navigate({ search: (prev) => ({ ...prev, page }) });
+  };
+
+  const setQuery = (query: string) => {
+    if (!query) {
+      navigate({
+        search: (prev) => ({ ...prev, query: undefined }),
+      });
+    } else {
+      navigate({
+        search: (prev) => ({ ...prev, query, page: 1 }),
+      });
+    }
+  };
+
+  return (
+    <Stack>
+      <Typography variant="h4" fontWeight="bold">
+        Users
+      </Typography>
+      <Stack spacing={1}>
+        <PaginationFooter
+          pageSize={PAGE_SIZE}
+          results={data?.results}
+          count={data?.pages}
+          page={page}
+          onChange={setCurrentPage}
+        />
+        <TextField
+          size="small"
+          type="text"
+          placeholder="Search"
+          value={query ?? ""}
+          onChange={(e) => setQuery(e.target.value)}
+          slotProps={{
+            input: {
+              endAdornment: isFetching && (
+                <InputAdornment position="end">
+                  <CircularProgress size="16px" />
+                </InputAdornment>
+              ),
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+        <TableContainer component={Paper} variant="outlined">
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>User</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Student</TableCell>
+                <TableCell>Email Verified</TableCell>
+                <TableCell>Beeping</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data?.results === 0 && <TableEmpty colSpan={5} />}
+              {isLoading && <TableLoading colSpan={5} />}
+              {error && <TableError colSpan={5} error={error.message} />}
+              {data?.users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Link component={RouterLink} to={`/admin/users/${user.id}`}>
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <Avatar src={user.photo ?? undefined} />
+                        <Typography>
+                          {user.first} {user.last}
+                        </Typography>
+                      </Stack>
+                    </Link>
+                  </TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <Indicator color={user.isStudent ? "green" : "red"} />
+                  </TableCell>
+                  <TableCell>
+                    <Indicator color={user.isEmailVerified ? "green" : "red"} />
+                  </TableCell>
+                  <TableCell>
+                    <Indicator color={user.isBeeping ? "green" : "red"} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <PaginationFooter
+          pageSize={PAGE_SIZE}
+          results={data?.results}
+          count={data?.pages}
+          page={page}
+          onChange={setCurrentPage}
+        />
+      </Stack>
+    </Stack>
+  );
+}

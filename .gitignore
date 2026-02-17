@@ -13,3 +13,4 @@ build/**
 **/tsconfig.tsbuildinfo
 test/playwright-report/**
 test/playwright/.cache/
+**/routeTree.gen.ts
