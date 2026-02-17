@@ -69,11 +69,11 @@ export function Details() {
         </Typography>
       </Box>
       <Box>
-        <strong>Venmo usename:</strong>
+        <strong>Venmo username:</strong>
         <Typography>{user.venmo || "N/A"}</Typography>
       </Box>
       <Box>
-        <strong>CashApp usename:</strong>
+        <strong>CashApp username:</strong>
         <Typography>{user.cashapp || "N/A"}</Typography>
       </Box>
     </Stack>

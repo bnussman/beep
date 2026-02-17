@@ -50,7 +50,7 @@ export function EditLocation() {
   };
 
   if (isLoading) {
-    <Loading />;
+    return <Loading />;
   }
 
   if (error) {

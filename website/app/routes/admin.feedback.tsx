@@ -102,7 +102,7 @@ export function Feedback() {
                 <TableCell sx={{ textAlign: "right" }}>
                   <IconButton
                     color="error"
-                    aria-label={`Delete feeback ${feedback.id}`}
+                    aria-label={`Delete feedback ${feedback.id}`}
                     loading={isPending}
                     onClick={() => setSelectedFeedbackId(feedback.id)}
                   >

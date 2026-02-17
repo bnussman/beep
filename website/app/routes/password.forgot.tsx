@@ -67,7 +67,7 @@ export function ForgotPassword() {
           {data && (
             <Alert severity="success">
               Done! If an account with the email "{data}" exists, you will
-              recieve an email with a link to reset your password.
+              receive an email with a link to reset your password.
             </Alert>
           )}
           <Controller

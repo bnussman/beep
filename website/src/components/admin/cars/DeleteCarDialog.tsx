@@ -58,7 +58,7 @@ export function DeleteCarDialog(props: Props) {
           label="Notification Message"
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          helperText="Type a message here if you want the user to recieve a notification about why their car was removed"
+          helperText="Type a message here if you want the user to receive a notification about why their car was removed"
           multiline
           rows={3}
           slotProps={{
