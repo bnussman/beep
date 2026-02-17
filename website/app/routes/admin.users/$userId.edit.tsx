@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { EditDetails } from "../../../../src/routes/admin/users/edit/EditDetails";
-import { EditLocation } from "../../../../src/routes/admin/users/edit/EditLocation";
+import { EditDetails } from "../../../src/components/admin/users/edit/EditDetails";
+import { EditLocation } from "../../../src/components/admin/users/edit/EditLocation";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../../src/utils/trpc";
+import { useTRPC } from "../../../src/utils/trpc";
 import {
   Alert,
   Box,

@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import * as Sentry from '@sentry/react';
 import { Stack, Box, CircularProgress, Container } from "@mui/material";
-import { useTRPC } from "../src/utils/trpc";
-import { Header } from "../src/components/Header";
-import { Banners } from "../src/components/Banners";
+import { useTRPC } from "../../src/utils/trpc";
+import { Header } from "../../src/components/Header";
+import { Banners } from "../../src/components/Banners";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";

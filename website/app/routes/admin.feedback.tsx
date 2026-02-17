@@ -8,7 +8,7 @@ import { Delete } from "@mui/icons-material";
 import { TableEmpty } from "../../../src/components/TableEmpty";
 import { TableError } from "../../../src/components/TableError";
 import { TableLoading } from "../../../src/components/TableLoading";
-import { DeleteFeedbackDialog } from "../../../src/routes/admin/feedback/DeleteFeedbackDialog";
+import { DeleteFeedbackDialog } from "../../../src/components/admin/feedback/DeleteFeedbackDialog";
 import { DateTime } from "luxon";
 import {
   IconButton,

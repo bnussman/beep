@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { editUserRoute } from ".";
+import { Route as editUserRoute } from "../../../../../app/routes/admin.users/$userId.edit";
 import { RouterInput, useTRPC } from "../../../../utils/trpc";
 import { useNotifications } from "@toolpad/core";
 import {

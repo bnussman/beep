@@ -15,10 +15,10 @@ import {
   Chip,
   Tooltip,
 } from "@mui/material";
-import { BeepersMap } from "../../../src/routes/admin/beepers/BeepersMap";
+import { BeepersMap } from "../../../src/components/admin/beepers/BeepersMap";
 import { createFileRoute, Link as RouterLink } from "@tanstack/react-router";
 import { useTRPC } from "../../../src/utils/trpc";
-import { printStars } from "../../../src/routes/admin/ratings";
+import { printStars } from "./admin.ratings/index";
 import { TableEmpty } from "../../../src/components/TableEmpty";
 import { TableError } from "../../../src/components/TableError";
 import { TableLoading } from "../../../src/components/TableLoading";

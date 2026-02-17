@@ -1,6 +1,6 @@
 import React from "react";
 import { Loading } from "../../../src/components/Loading";
-import { DeleteReportDialog } from "../../../src/routes/admin/reports/DeleteReportDialog";
+import { DeleteReportDialog } from "../../../src/components/admin/reports/DeleteReportDialog";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { RouterInput, useTRPC } from "../../../src/utils/trpc";
 import { Controller, useForm } from "react-hook-form";

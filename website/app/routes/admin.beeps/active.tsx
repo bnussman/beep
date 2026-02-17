@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
-import { BeepMenu } from "../../../src/routes/admin/beeps/BeepMenu";
+import { BeepMenu } from "../../../src/components/admin/beeps/BeepMenu";
 
 export const Route = createFileRoute("/admin/beeps/active")({
   component: ActiveBeeps,

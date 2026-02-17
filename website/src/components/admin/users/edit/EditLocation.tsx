@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Stack, TextField } from "@mui/material";
-import { Marker } from "../../../../components/Marker";
-import { Loading } from "../../../../components/Loading";
-import { Map } from "../../../../components/Map";
-import { editUserRoute } from ".";
+import { Marker } from "../../../Marker";
+import { Loading } from "../../../Loading";
+import { Map } from "../../../Map";
+import { Route as editUserRoute } from "../../../../../app/routes/admin.users/$userId.edit";
 import { useTRPC } from "../../../../utils/trpc";
 import type { MapLayerMouseEvent } from "react-map-gl/maplibre";
 

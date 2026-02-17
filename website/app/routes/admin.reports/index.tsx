@@ -7,8 +7,8 @@ import { TableCellUser } from "../../../src/components/TableCellUser";
 import { TableEmpty } from "../../../src/components/TableEmpty";
 import { TableError } from "../../../src/components/TableError";
 import { TableLoading } from "../../../src/components/TableLoading";
-import { ReportMenu } from "../../../src/routes/admin/reports/ReportMenu";
-import { DeleteReportDialog } from "../../../src/routes/admin/reports/DeleteReportDialog";
+import { ReportMenu } from "../../../src/components/admin/reports/ReportMenu";
+import { DeleteReportDialog } from "../../../src/components/admin/reports/DeleteReportDialog";
 import { keepPreviousData } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import {

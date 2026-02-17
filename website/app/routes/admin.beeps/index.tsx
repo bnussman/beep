@@ -22,8 +22,8 @@ import {
 } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
-import { BeepMenu } from "../../../src/routes/admin/beeps/BeepMenu";
-import { DeleteBeepDialog } from "../../../src/routes/admin/beeps/DeleteBeepDialog";
+import { BeepMenu } from "../../../src/components/admin/beeps/BeepMenu";
+import { DeleteBeepDialog } from "../../../src/components/admin/beeps/DeleteBeepDialog";
 
 export const beepStatusMap: Record<
   RouterOutput["beep"]["beep"]["status"],

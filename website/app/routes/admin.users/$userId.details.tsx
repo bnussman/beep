@@ -1,12 +1,12 @@
 import React from "react";
-import { Indicator } from "../../../../src/components/Indicator";
+import { Indicator } from "../../../src/components/Indicator";
 import { printStars } from "../../admin.ratings/index";
 import { createFileRoute, useParams } from "@tanstack/react-router";
-import { useTRPC } from "../../../../src/utils/trpc";
+import { useTRPC } from "../../../src/utils/trpc";
 import { Alert, Stack, Typography, Box, Link } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
-import { getFormattedRating } from "../../../../src/utils/utils";
+import { getFormattedRating } from "../../../src/utils/utils";
 
 export const Route = createFileRoute("/admin/users/$userId/details")({
   component: Details,

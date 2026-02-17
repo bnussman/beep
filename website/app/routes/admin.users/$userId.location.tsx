@@ -1,9 +1,9 @@
 import React from "react";
-import { Marker } from "../../../../src/components/Marker";
-import { Map } from "../../../../src/components/Map";
+import { Marker } from "../../../src/components/Marker";
+import { Map } from "../../../src/components/Map";
 import { createFileRoute } from "@tanstack/react-router";
-import { useTRPC } from "../../../../src/utils/trpc";
-import { Loading } from "../../../../src/components/Loading";
+import { useTRPC } from "../../../src/utils/trpc";
+import { Loading } from "../../../src/components/Loading";
 import { Alert, Box } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";

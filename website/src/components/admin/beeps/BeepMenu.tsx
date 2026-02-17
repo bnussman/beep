@@ -1,7 +1,7 @@
 import React from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "../../../components/Link";
+import { Link } from "../../Link";
 
 interface Props {
   onDelete?: () => void;

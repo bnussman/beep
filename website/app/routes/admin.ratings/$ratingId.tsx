@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { printStars } from "./index";
 import { BasicUser } from "../../../src/components/BasicUser";
 import { Loading } from "../../../src/components/Loading";
-import { DeleteRatingDialog } from "../../../src/routes/admin/ratings/DeleteRatingDialog";
+import { DeleteRatingDialog } from "../../../src/components/admin/ratings/DeleteRatingDialog";
 import { useTRPC } from "../../../src/utils/trpc";
 import { DateTime } from "luxon";
 import { Alert, Typography, Button, Stack, Grid, Link } from "@mui/material";

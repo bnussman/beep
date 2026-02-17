@@ -1,5 +1,7 @@
 import * as Sentry from "@sentry/react";
-import { router } from "./router";
+import { createRouter } from "../../app/router";
+
+const router = createRouter();
 
 Sentry.init({
   dsn: "https://c0555c6729c4fab83598fea838e4e4ef@o1155818.ingest.us.sentry.io/4510825354428416",

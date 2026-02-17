@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { Marker } from "../../../components/Marker";
-import { Map } from "../../../components/Map";
+import { Marker } from "../../Marker";
+import { Map } from "../../Map";
 import { RouterOutput } from "../../../utils/trpc";
 
 interface Props {

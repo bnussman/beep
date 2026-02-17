@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DateTime } from "luxon";
 import { Indicator } from "../../../src/components/Indicator";
 import { PhotoDialog } from "../../../src/components/PhotoDialog";
-import { DeleteCarDialog } from "../../../src/routes/admin/cars/DeleteCarDialog";
+import { DeleteCarDialog } from "../../../src/components/admin/cars/DeleteCarDialog";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTRPC } from "../../../src/utils/trpc";
 import { TableCellUser } from "../../../src/components/TableCellUser";
@@ -11,7 +11,7 @@ import { TableLoading } from "../../../src/components/TableLoading";
 import { TableError } from "../../../src/components/TableError";
 import { TableEmpty } from "../../../src/components/TableEmpty";
 import { keepPreviousData } from "@tanstack/react-query";
-import { CarMenu } from "../../../src/routes/admin/cars/CarMenu";
+import { CarMenu } from "../../../src/components/admin/cars/CarMenu";
 import {
   Box,
   Paper,

@@ -4,7 +4,7 @@ import { Loading } from "../../../src/components/Loading";
 import { ClearQueueDialog } from "../../../src/components/ClearQueueDialog";
 import { SendNotificationDialog } from "../../../src/components/SendNotificationDialog";
 import { PhotoDialog } from "../../../src/components/PhotoDialog";
-import { DeleteUserDialog } from "../../../src/routes/admin/users/DeleteUserDialog";
+import { DeleteUserDialog } from "../../../src/components/admin/users/DeleteUserDialog";
 import { Link, Outlet, createFileRoute, useLocation } from "@tanstack/react-router";
 import { useNotifications } from "@toolpad/core";
 import { DateTime } from "luxon";

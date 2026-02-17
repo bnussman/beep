@@ -3,7 +3,7 @@ import { BasicUser } from "../../../src/components/BasicUser";
 import { Loading } from "../../../src/components/Loading";
 import { Map } from "../../../src/components/Map";
 import { Marker as BeeperMarker } from "../../../src/components/Marker";
-import { DeleteBeepDialog } from "../../../src/routes/admin/beeps/DeleteBeepDialog";
+import { DeleteBeepDialog } from "../../../src/components/admin/beeps/DeleteBeepDialog";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTRPC } from "../../../src/utils/trpc";
 import { DateTime } from "luxon";
