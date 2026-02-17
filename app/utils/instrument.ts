@@ -13,7 +13,7 @@ Sentry.init({
   enableAutoPerformanceTracing: true,
   enableUserInteractionTracing: true,
   sendDefaultPii: true,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0,
   integrations: [navigationIntegration],
   tracePropagationTargets:
     isWeb ? [

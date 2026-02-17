@@ -6,13 +6,13 @@ Sentry.init({
   environment: ENVIRONMENT,
   debug: false,
   tracesSampler(samplingContext) {
-    return false;
+    return true;
   },
   integrations(integrations) {
     return [
-      // Sentry.bunServerIntegration(),
-      // Sentry.postgresIntegration(),
-      // Sentry.redisIntegration(),
+      Sentry.bunServerIntegration(),
+      Sentry.postgresIntegration(),
+      Sentry.redisIntegration(),
     ];
   },
 });
