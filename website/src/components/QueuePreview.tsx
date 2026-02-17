@@ -2,7 +2,7 @@ import React from "react";
 import { Indicator } from "./Indicator";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { useTRPC } from "../utils/trpc";
-import { beepStatusMap } from "../routes/admin/beeps";
+import { beepStatusMap } from "../../app/routes/admin.beeps/index";
 import {
   Link,
   Avatar,

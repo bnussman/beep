@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { SendNotificationConfirmationDialog } from "../../../src/components/admin/notifications/SendNotificationConfirmationDialog";
+import { SendNotificationConfirmationDialog } from "../../src/components/admin/notifications/SendNotificationConfirmationDialog";
 import { useNotifications } from "@toolpad/core";
 import { Controller, useForm } from "react-hook-form";
 import { createFileRoute } from "@tanstack/react-router";
-import { RouterInput, useTRPC } from "../../../src/utils/trpc";
+import { RouterInput, useTRPC } from "../../src/utils/trpc";
 import {
   Alert,
   TextField,

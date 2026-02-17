@@ -15,18 +15,18 @@ import {
   Chip,
   Tooltip,
 } from "@mui/material";
-import { BeepersMap } from "../../../src/components/admin/beepers/BeepersMap";
+import { BeepersMap } from "../../src/components/admin/beepers/BeepersMap";
 import { createFileRoute, Link as RouterLink } from "@tanstack/react-router";
-import { useTRPC } from "../../../src/utils/trpc";
+import { useTRPC } from "../../src/utils/trpc";
 import { printStars } from "./admin.ratings/index";
-import { TableEmpty } from "../../../src/components/TableEmpty";
-import { TableError } from "../../../src/components/TableError";
-import { TableLoading } from "../../../src/components/TableLoading";
+import { TableEmpty } from "../../src/components/TableEmpty";
+import { TableError } from "../../src/components/TableError";
+import { TableLoading } from "../../src/components/TableLoading";
 
 import { useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { getFormattedRating } from "../../../src/utils/utils";
+import { getFormattedRating } from "../../src/utils/utils";
 
 export const Route = createFileRoute("/admin/beepers")({
   component: Beepers,

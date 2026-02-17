@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useTRPC } from "../../../src/utils/trpc";
+import { useTRPC } from "../../src/utils/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
-import { PaginationFooter } from "../../../src/components/PaginationFooter";
-import { TableCellUser } from "../../../src/components/TableCellUser";
+import { PaginationFooter } from "../../src/components/PaginationFooter";
+import { TableCellUser } from "../../src/components/TableCellUser";
 import { Delete } from "@mui/icons-material";
-import { TableEmpty } from "../../../src/components/TableEmpty";
-import { TableError } from "../../../src/components/TableError";
-import { TableLoading } from "../../../src/components/TableLoading";
-import { DeleteFeedbackDialog } from "../../../src/components/admin/feedback/DeleteFeedbackDialog";
+import { TableEmpty } from "../../src/components/TableEmpty";
+import { TableError } from "../../src/components/TableError";
+import { TableLoading } from "../../src/components/TableLoading";
+import { DeleteFeedbackDialog } from "../../src/components/admin/feedback/DeleteFeedbackDialog";
 import { DateTime } from "luxon";
 import {
   IconButton,
