@@ -51,7 +51,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   // await expect(riderPage.getByText(`User ${beeper.name}`)).toBeVisible();
   await expect(riderPage.getByText("to accept your request.")).toBeVisible();
   await expect(
-    riderPage.getByText("people are ahead of you in User's queue."),
+    riderPage.getByText("people are ahead of you."),
   ).toBeVisible();
 
   await expect(beeperPage.getByText(rider.name)).toBeVisible();
@@ -96,9 +96,9 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await expect(beeperPage.getByText("Request Money with Venmo")).toBeVisible();
   await beeperPage.getByText("...").click();
 
-  await expect(
-    riderPage.getByText(`Beeper is here to pick you up in a white Ford Aspire`),
-  ).toBeVisible();
+  await expect(riderPage.getByText("Beeper is here to pick you up")).toBeVisible();
+
+  await expect(riderPage.getByText("white 2023 Ford Aspire")).toBeVisible();
 
   await beeperPage.getByText("I'm now beeping this rider").click();
 
@@ -171,7 +171,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
   await expect(rider1Page.getByText("to accept your request.")).toBeVisible();
   await expect(rider1Page.getByText("0")).toBeVisible();
   await expect(
-    rider1Page.getByText("people are ahead of you in User's queue."),
+    rider1Page.getByText("people are ahead of you."),
   ).toBeVisible();
 
   // As the beeper, verify rider 1 shows up
@@ -235,12 +235,12 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
 
   await expect(rider2Page.getByText("1").first()).toBeVisible();
   await expect(
-    rider2Page.getByText("person is ahead of you in User's queue."),
+    rider2Page.getByText("person is ahead of you."),
   ).toBeVisible();
 
   await expect(rider3Page.getByText("1").first()).toBeVisible();
   await expect(
-    rider3Page.getByText("person is ahead of you in User's queue."),
+    rider3Page.getByText("person is ahead of you."),
   ).toBeVisible();
 
   // Accept the second rider
@@ -256,7 +256,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
 
   await expect(rider2Page.getByText("1").first()).toBeVisible();
   await expect(
-    rider2Page.getByText("person is ahead of you in User's queue."),
+    rider2Page.getByText("person is ahead of you."),
   ).toBeVisible();
 
   await rider2Page.getByText("...").click();
@@ -267,7 +267,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
 
   await expect(rider3Page.getByText("2")).toBeVisible();
   await expect(
-    rider3Page.getByText("people are ahead of you in User's queue."),
+    rider3Page.getByText("people are ahead of you."),
   ).toBeVisible();
 
   await rider3Page.getByText("...").click();
@@ -287,7 +287,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
 
   await expect(rider2Page.getByText("1").first()).toBeVisible();
   await expect(
-    rider2Page.getByText("person is ahead of you in User's queue."),
+    rider2Page.getByText("person is ahead of you."),
   ).toBeVisible();
 
   // await rider2Page.getByText("🧰").click();
@@ -297,7 +297,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
 
   await expect(rider3Page.getByText("2")).toBeVisible();
   await expect(
-    rider3Page.getByText("people are ahead of you in User's queue."),
+    rider3Page.getByText("people are ahead of you."),
   ).toBeVisible();
 
   // await rider3Page.getByText("🧰").click();

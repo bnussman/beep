@@ -12,5 +12,3 @@ export const s3 = new S3Client({
   accessKeyId: S3_ACCESS_KEY_ID,
   bucket: S3_BUCKET,
 });
-
-// make api deploy
