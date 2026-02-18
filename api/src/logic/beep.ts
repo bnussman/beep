@@ -70,31 +70,22 @@ export async function getBeeperQueue(beeperId: string) {
 }
 
 export async function getRidersCurrentRide(userId: string) {
-  const b = await db.query.beep.findFirst({
-    where: { AND: [inProgressBeepNew, { rider_id: userId }] },
+  const beep = await db.query.beep.findFirst({
+    where: {
+      AND: [inProgressBeepNew, { rider_id: userId }]
+    },
     with: {
       beeper: true,
-    },
+    }
   });
 
-  if (!b) {
+  if (!beep) {
     return null;
   }
 
-  const position = await db.$count(
-    beep,
-    and(
-      eq(beep.beeper_id, b.beeper_id),
-      lt(beep.start, b.start),
-      ne(beep.status, "waiting"),
-      inProgressBeep,
-    ),
-  );
+  const queue = await getBeeperQueue(beep.beeper_id)
 
-  return {
-    ...b,
-    position,
-  };
+  return { ...beep, ...getDerivedRiderFields(beep, queue) };
 }
 
 export function getPositionInQueue(beep: Beep, queue: Beep[]) {
