@@ -180,6 +180,12 @@ export const riderRouter = router({
 
       pubSub.publish("queue", beeper.id, { queue });
 
+      for (const beep of queue) {
+        pubSub.publish("ride", beep.rider_id, {
+          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
+        });
+      }
+
       if (beeper.pushToken) {
         sendNotification({
           to: beeper.pushToken,

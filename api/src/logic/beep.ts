@@ -96,6 +96,9 @@ export function getPositionInQueue(beep: Beep, queue: Beep[]) {
 export function getDerivedRiderFields(beep: Beep, queue: Beep[]) {
   return {
     position: getPositionInQueue(beep, queue),
+    queue: queue.map((beep) => ({ status: beep.status })),
+    index_in_queue: queue.findIndex((beep) => beep.id === beep.id),
+    riders_waiting: queue.filter((beep) => !getIsAcceptedBeep(beep)).length
   };
 }
 

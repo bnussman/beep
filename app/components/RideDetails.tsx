@@ -4,12 +4,10 @@ import { Avatar } from "@/components/Avatar";
 import { Image } from "@/components/Image";
 import { Text } from "@/components/Text";
 import { Rates } from "./Rates";
-import { PlaceInQueue } from "./PlaceInQueue";
 import { useTRPC } from "@/utils/trpc";
-import { getCurrentStatusMessage } from "../utils/utils";
+import { getCurrentStatusMessage, statusToDescription } from "../utils/utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
-import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 
 interface Props {
@@ -73,21 +71,31 @@ export function RideDetails(props: Props) {
         {beep.status === "waiting" ? (
           <>
             <Text>Waiting on {beep.beeper.first} to accept your request.</Text>
-            <PlaceInQueue
-              position={beep.position}
-              firstName={beep.beeper.first}
-            />
+            <Text>
+              {beep.position} {beep.position === 1 ? "person is" : "people are"} ahead of you.
+            </Text>
+            {beep.riders_waiting - 1 > 0 && (
+              <Text>
+                {beep.riders_waiting - 1}  {beep.riders_waiting - 1 === 1 ? "person is" : "people are"} also waiting.
+              </Text>
+            )}
           </>
         ) : beep.position > 0 ? (
-          <Text>
-            <Text>Beeper has accepted you but </Text>
-            <PlaceInQueue
-              position={beep.position}
-              firstName={beep.beeper.first}
-            />
-          </Text>
+            <View style={{ gap: 6 }}>
+              <Text>
+                <Text>Beeper has accepted you but </Text>
+                <Text style={{ fontWeight: 'bold' }}>
+                  {beep.position} {beep.position === 1 ? "person is" : "people are"} ahead of you.
+                </Text>
+              </Text>
+              {statusToDescription[beep.queue[0].status] && (
+                <Text>
+                  {statusToDescription[beep.queue[0].status]}
+                </Text>
+              )}
+            </View>
         ) : (
-          <Text>{getCurrentStatusMessage(beep, car)}</Text>
+          <Text>{getCurrentStatusMessage(beep)}</Text>
         )}
       </View>
       {beep.status === "on_the_way" && (

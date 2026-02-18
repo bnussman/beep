@@ -2,7 +2,6 @@ import { RouterOutput } from "@/utils/trpc";
 
 export function getCurrentStatusMessage(
   beep: RouterOutput["rider"]["currentRide"],
-  car: RouterOutput["user"]["getUsersDefaultCar"] | undefined,
 ): string {
   switch (beep?.status) {
     case "waiting":
@@ -12,9 +11,6 @@ export function getCurrentStatusMessage(
     case "on_the_way":
       return "Beeper is on their way to get you.";
     case "here":
-      if (car) {
-        return `Beeper is here to pick you up in a ${car.color} ${car.make} ${car.model}.`;
-      }
       return `Beeper is here to pick you up.`;
     case "in_progress":
       return "You are currently in the car with your beeper.";
@@ -22,3 +18,14 @@ export function getCurrentStatusMessage(
       return "Unknown";
   }
 }
+
+export const statusToDescription: Record<RouterOutput['beep']['beep']['status'], string> = {
+  canceled: "",
+  denied: "",
+  waiting: "",
+  accepted: "",
+  on_the_way: "They are on their way to their current rider.",
+  here: "They are picking up their current rider.",
+  in_progress: "They are taking their current rider to their destination.",
+  complete: ""
+};
