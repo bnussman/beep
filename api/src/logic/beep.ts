@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/bun";
-import { and, eq, lt, ne, or } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { db } from "../utils/db";
 import { beep } from "../../drizzle/schema";
 import { User } from "../utils/pubsub";
