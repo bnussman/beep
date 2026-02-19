@@ -95,22 +95,20 @@ export const riderRouter = router({
         origin: z.string(),
         destination: z.string(),
         groupSize: z.number().min(1).max(25),
-        latitude: z.number().optional(),
-        longitude: z.number().optional(),
+        latitude: z.number(),
+        longitude: z.number(),
       }),
     )
     .output(rideResponseSchema)
     .mutation(async ({ input, ctx }) => {
-      if (input.latitude !== undefined && input.longitude !== undefined) {
-        db.update(user)
-          .set({
-            location: {
-              latitude: input.latitude,
-              longitude: input.longitude,
-            },
-          })
-          .where(eq(user.id, ctx.user.id));
-      }
+      const location = {
+        latitude: input.latitude,
+        longitude: input.longitude,
+      };
+
+      db.update(user).set({ location }).where(eq(user.id, ctx.user.id));
+
+      pubSub.publish("user", ctx.user.id, { user: { ...ctx.user, location } });
 
       if (ctx.user.isBeeping) {
         throw new TRPCError({
