@@ -15,12 +15,6 @@ export const userDetailsRoute = createRoute({
   getParentRoute: () => userRoute,
 });
 
-export const userDetailsInitalRoute = createRoute({
-  component: Details,
-  path: "/",
-  getParentRoute: () => userRoute,
-});
-
 export function Details() {
   const trpc = useTRPC();
   const { userId } = useParams({ from: "/admin/users/$userId" });

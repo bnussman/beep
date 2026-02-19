@@ -23,12 +23,11 @@ import { redisRoute } from "../routes/admin/Redis";
 import { reportsRoute, reportsListRoute } from "../routes/admin/reports";
 import { reportRoute } from "../routes/admin/reports/Report";
 import { usersListRoute } from "../routes/admin/users";
-import {
-  userDetailsInitalRoute,
-  userDetailsRoute,
-} from "../routes/admin/users/Details";
+import { userDetailsRoute } from "../routes/admin/users/Details";
 import { editUserRoute } from "../routes/admin/users/edit";
+import { userDetailsInitalRoute } from "../routes/admin/users/IndexTab";
 import { locationRoute } from "../routes/admin/users/Location";
+import { rideRoute } from "../routes/admin/users/Ride";
 import { usersRoute } from "../routes/admin/users/routes";
 import { userRoute } from "../routes/admin/users/User";
 import { usersByDomainRoute } from "../routes/admin/UsersByDomain";
@@ -78,6 +77,7 @@ export const routeTree = rootRoute.addChildren([
       usersByDomainRoute,
       userRoute.addChildren([
         userDetailsInitalRoute,
+        rideRoute,
         userDetailsRoute,
         editUserRoute,
         locationRoute,

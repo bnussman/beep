@@ -39,9 +39,9 @@ export function Beep() {
     error,
   } = useQuery(trpc.beep.beep.queryOptions(beepId));
 
-  const { data: beeper } = useSubscription({
-    ...trpc.user.updates.subscriptionOptions(beep ? beep.beeper_id : skipToken),
-  });
+  const { data: beeper } = useSubscription(
+    trpc.user.updates.subscriptionOptions(beep ? beep.beeper_id : skipToken)
+  );
 
   const { data: route } = useQuery(
     trpc.location.getRoute.queryOptions(

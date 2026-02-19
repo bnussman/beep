@@ -1,4 +1,5 @@
 import React from "react";
+import CssBaseline from "@mui/material/CssBaseline";
 import './utils/instrument';
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/700.css";
@@ -9,18 +10,17 @@ import { queryClient, trpcClient, TRPCProvider } from "./utils/trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@mui/material/styles";
 import { NotificationsProvider } from "@toolpad/core";
-import CssBaseline from "@mui/material/CssBaseline";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 export function App() {
   return (
     <ThemeProvider theme={theme}>
-      <NotificationsProvider
-        slotProps={{ snackbar: { autoHideDuration: 5_000 } }}
-      >
+      <NotificationsProvider slotProps={{ snackbar: { autoHideDuration: 5_000 } }}>
         <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
             <CssBaseline enableColorScheme />
             <RouterProvider router={router} />
+            <ReactQueryDevtools />
           </QueryClientProvider>
         </TRPCProvider>
       </NotificationsProvider>

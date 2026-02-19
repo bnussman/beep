@@ -25,6 +25,7 @@ import {
 } from "@mui/material";
 
 const tabs = [
+  "ride",
   "details",
   "location",
   "queue",
@@ -193,7 +194,6 @@ export function User() {
           <Button
             variant="contained"
             onClick={() => setIsSendNotificationOpen(true)}
-            color="info"
           >
             Send Notification
           </Button>
@@ -201,24 +201,22 @@ export function User() {
             variant="contained"
             onClick={onSyncPayments}
             loading={isSyncingPayments}
-            color="secondary"
           >
             Sync Payments
           </Button>
           <Button
             variant="contained"
             onClick={() => setIsClearOpen(true)}
-            color="warning"
           >
             Clear Queue
           </Button>
-          <Button
+          {/* <Button
             variant="contained"
             onClick={() => sendTestEmail({ userId })}
             color="warning"
           >
             Send Test Email
-          </Button>
+          </Button> */}
           <Button
             color="error"
             variant="contained"

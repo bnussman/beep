@@ -17,10 +17,10 @@ export function BasicUser(props: Props) {
   return (
     <Link component={RouterLink} to={`/admin/users/${user.id}`}>
       <Stack direction="row" alignItems="center" spacing={1}>
-        <Avatar src={user.photo ?? undefined} sx={{ width: 42, height: 42 }} />
         <Typography>
           {user.first} {user.last}
         </Typography>
+        <Avatar src={user.photo ?? undefined} sx={{ width: 32, height: 32 }} />
       </Stack>
     </Link>
   );

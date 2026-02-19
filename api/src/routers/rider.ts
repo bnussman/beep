@@ -203,27 +203,41 @@ export const riderRouter = router({
       };
     }),
   currentRide: authedProcedure
+    .input(z.string().optional())
     .output(rideResponseSchema.nullable())
-    .query(({ ctx }) => {
-      return getRidersCurrentRide(ctx.user.id);
+    .query(({ input, ctx }) => {
+      const userId = input ?? ctx.user.id;
+
+      if (ctx.user.role === 'user' && userId !== ctx.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "You must be an admin to view the current ride of another user"});
+      }
+
+      return getRidersCurrentRide(userId);
     }),
   currentRideUpdates: authedProcedure
+    .input(z.string().optional())
     .output(
       zAsyncIterable({
         yield: rideResponseSchema.nullable(),
         return: rideResponseSchema.nullable(),
       }),
     )
-    .subscription(async function* ({ ctx, signal }) {
-      console.log("➕ Rider subscribed", ctx.user.id);
+    .subscription(async function* ({ ctx, signal, input }) {
+      const userId = input ?? ctx.user.id;
 
-      const eventSource = pubSub.subscribe("ride", ctx.user.id);
+      if (ctx.user.role === 'user' && userId !== ctx.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "You must be an admin to view the current ride of another user" });
+      }
 
-      yield await getRidersCurrentRide(ctx.user.id);
+      console.log("➕ Rider subscribed", userId);
+
+      const eventSource = pubSub.subscribe("ride", userId);
+
+      yield await getRidersCurrentRide(userId);
 
       if (signal) {
         signal.onabort = () => {
-          console.log("➖ Rider unsubscribed", ctx.user.id);
+          console.log("➖ Rider unsubscribed", userId);
           eventSource.return();
         };
       }
