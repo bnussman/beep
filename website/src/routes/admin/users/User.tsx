@@ -24,18 +24,6 @@ import {
   Typography,
 } from "@mui/material";
 
-const tabs = [
-  "ride",
-  "details",
-  "location",
-  "queue",
-  "beeps",
-  "ratings",
-  "reports",
-  "cars",
-  "payments",
-] as const;
-
 export const userRoute = createRoute({
   component: User,
   path: "$userId",
@@ -62,6 +50,8 @@ export function User() {
       },
     }),
   );
+
+  const { data: ride } = useSubscription(trpc.rider.currentRideUpdates.subscriptionOptions(userId));
 
   const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
     trpc.user.syncPayments.mutationOptions({
@@ -123,6 +113,18 @@ export function User() {
   const pathname = useLocation({
     select: (location) => location.pathname,
   });
+
+  const tabs = [
+    ...(ride ? ["ride"] : []),
+    "details",
+    "location",
+    "queue",
+    "beeps",
+    "ratings",
+    "reports",
+    "cars",
+    "payments",
+  ] as const;
 
   const foundTabIndex = tabs.findIndex((tab) => pathname.endsWith(tab));
 

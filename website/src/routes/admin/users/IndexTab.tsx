@@ -18,8 +18,6 @@ function TabIndex() {
   const { userId } = userDetailsInitalRoute.useParams();
   const { data: ride } = useSubscription(trpc.rider.currentRideUpdates.subscriptionOptions(userId));
 
-  console.log(ride)
-
   if (ride) {
     return <Ride />;
   }
