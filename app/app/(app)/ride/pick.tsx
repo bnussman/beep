@@ -72,14 +72,17 @@ export default function PickBeepScreen() {
       return;
     }
 
+    if (!location) {
+      alert("We can't identiy your location. We need it to start a beep. Please check your location settings.");
+      return;
+    }
+
     startBeep({
       beeperId,
       ...params,
       groupSize: Number(params.groupSize),
-      ...(location && {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      }),
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
     });
   };
 
