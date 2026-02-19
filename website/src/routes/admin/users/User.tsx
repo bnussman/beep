@@ -51,8 +51,6 @@ export function User() {
     }),
   );
 
-  const { data: ride } = useSubscription(trpc.rider.currentRideUpdates.subscriptionOptions(userId));
-
   const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
     trpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments) {
@@ -115,9 +113,9 @@ export function User() {
   });
 
   const tabs = [
-    ...(ride ? ["ride"] : []),
     "details",
     "location",
+    "ride",
     "queue",
     "beeps",
     "ratings",

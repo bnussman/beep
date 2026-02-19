@@ -31,8 +31,8 @@ export function LocationView() {
 
   if (!user?.location) {
     return (
-      <Box textAlign="center" height="100px">
-        This user has no Location data.
+      <Box display="flex" alignItems="center" justifyContent="center" py={2}>
+        This user does not have location data.
       </Box>
     );
   }

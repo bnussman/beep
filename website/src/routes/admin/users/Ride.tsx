@@ -78,7 +78,11 @@ export function Ride() {
   }
 
   if (!ride) {
-    return <Box>User is not in a beep!</Box>;
+    return (
+      <Box display="flex" alignItems="center" justifyContent="center" py={2}>
+        User is not in a beep!
+      </Box>
+    );
   }
 
   return (
