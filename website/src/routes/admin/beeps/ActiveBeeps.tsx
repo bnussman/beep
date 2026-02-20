@@ -14,7 +14,6 @@ import {
   TableBody,
   TableCell,
   Paper,
-  Box,
   Chip,
   Stack,
   Table,
@@ -100,8 +99,8 @@ export function ActiveBeeps() {
             {data?.results === 0 && <TableEmpty colSpan={8} />}
             {data?.beeps.map((beep) => (
               <TableRow key={beep.id}>
-                <TableCellUser user={beep.beeper} />
-                <TableCellUser user={beep.rider} />
+                <TableCellUser user={beep.beeper} linkProps={{ to: "/admin/users/$userId/queue" }} />
+                <TableCellUser user={beep.rider} linkProps={{ to: "/admin/users/$userId/ride" }} />
                 <TableCell>{beep.origin}</TableCell>
                 <TableCell>{beep.destination}</TableCell>
                 <TableCell>{beep.groupSize}</TableCell>
