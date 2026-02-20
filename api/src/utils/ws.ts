@@ -112,6 +112,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
   async function handleRequest(
     client: ServerWebSocket<BunWSClientCtx<inferRouterContext<TRouter>>>,
     msg: TRPCClientOutgoingMessage,
+    batchIndex: number
   ) {
     const { id, jsonrpc } = msg;
 
@@ -157,6 +158,7 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
         ctx,
         type,
         signal: abortController.signal,
+        batchIndex
       });
 
       const isIterableResult = isAsyncIterable(result);
@@ -385,12 +387,10 @@ export function createBunWSHandler<TRouter extends AnyRouter>(
           );
         }
 
-        const promises = [];
-
-        for (const raw of msgs) {
+        const promises = msgs.map((raw, index) => {
           const msg = parseTRPCMessage(raw, router._def._config.transformer);
-          promises.push(handleRequest(client, msg));
-        }
+          return  handleRequest(client, msg, index)
+        });
 
         await Promise.all(promises);
       } catch (cause) {
