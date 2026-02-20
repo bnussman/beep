@@ -3,7 +3,7 @@ import { isRunningInExpoGo, isWeb } from "./constants";
 import { RouterOutput } from "./trpc";
 import { captureException } from "@sentry/react-native";
 
-export async function setPurchaseUser(user: RouterOutput["user"]["me"]) {
+export async function setPurchaseUser(user: RouterOutput["user"]["me"] | null) {
   if (isRunningInExpoGo || isWeb) {
     return;
   }
@@ -11,13 +11,17 @@ export async function setPurchaseUser(user: RouterOutput["user"]["me"]) {
   try {
     const Purchases: typeof import("react-native-purchases").default =
       require("react-native-purchases").default;
-    await Purchases.logIn(user.id);
-    await Purchases.setAttributes({
-      $displayName: `${user.first} ${user.last}`,
-      $email: user.email ?? "unknown",
-      $phoneNumber: user.phone ?? "unknown",
-      username: user.username,
-    });
+    if (user) {
+      await Purchases.logIn(user.id);
+      await Purchases.setAttributes({
+        $displayName: `${user.first} ${user.last}`,
+        $email: user.email ?? "unknown",
+        $phoneNumber: user.phone ?? "unknown",
+        username: user.username,
+      });
+    } else {
+      await Purchases.logOut();
+    }
   } catch (error) {
     console.error(error);
     captureException(error);

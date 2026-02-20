@@ -42,10 +42,8 @@ function App() {
   );
 
   useEffect(() => {
-    if (user) {
-      Sentry.setUser(user);
-      setPurchaseUser(user);
-    }
+    Sentry.setUser(user ?? null);
+    setPurchaseUser(user ?? null);
   }, [user]);
 
   useEffect(() => {
