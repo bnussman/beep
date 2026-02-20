@@ -1,6 +1,7 @@
 import React from 'react';
 import { Avatar, Stack, TableCell, Typography } from "@mui/material";
-import { Link, LinkProps } from '@tanstack/react-router';
+import { LinkProps } from '@tanstack/react-router';
+import { Link } from './Link';
 
 interface Props {
   user: { first: string, last: string, id: string, photo: string | null };
