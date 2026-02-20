@@ -44,10 +44,15 @@ function App() {
   useEffect(() => {
     if (user) {
       Sentry.setUser(user);
-      updatePushToken();
       setPurchaseUser(user);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      updatePushToken();
+    }
+  }, [isLoading]);
 
   if (isLoading) {
     return null;
