@@ -12,7 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { printStars } from "@/components/Stars";
 import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
-import { captureException } from "@sentry/react-native";
+import { captureException, captureMessage } from "@sentry/react-native";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
@@ -81,6 +81,8 @@ export default function PickBeepScreen() {
       captureException(error);
       return;
     }
+
+    captureMessage("User is starting a beep", { extra: { location: location.coords }})
 
     startBeep({
       beeperId,
