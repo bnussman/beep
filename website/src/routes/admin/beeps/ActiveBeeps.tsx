@@ -10,6 +10,9 @@ import { TableLoading } from "../../../components/TableLoading";
 import { TableEmpty } from "../../../components/TableEmpty";
 import { TableError } from "../../../components/TableError";
 import { DateTime } from "luxon";
+import { useQuery } from "@tanstack/react-query";
+import { BeepMenu } from "./BeepMenu";
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import {
   TableBody,
   TableCell,
@@ -22,9 +25,6 @@ import {
   TableContainer,
   TableRow,
 } from "@mui/material";
-
-import { useQuery } from "@tanstack/react-query";
-import { BeepMenu } from "./BeepMenu";
 
 export const activeBeepsRoute = createRoute({
   component: ActiveBeeps,
@@ -42,6 +42,8 @@ export function ActiveBeeps() {
   const { page } = activeBeepsRoute.useSearch();
   const navigate = useNavigate({ from: activeBeepsRoute.id });
 
+  const [parent] = useAutoAnimate();
+
   const { data, isLoading, error } = useQuery(
     trpc.beep.beeps.queryOptions(
       {
@@ -50,7 +52,7 @@ export function ActiveBeeps() {
       },
       {
         refetchOnMount: true,
-        refetchInterval: 5_000,
+        refetchInterval: 3_000,
       },
     ),
   );
@@ -93,7 +95,7 @@ export function ActiveBeeps() {
               <TableCell />
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody ref={parent}>
             {isLoading && <TableLoading colSpan={8} />}
             {error && <TableError colSpan={8} error={error.message} />}
             {data?.results === 0 && <TableEmpty colSpan={8} />}
