@@ -156,15 +156,14 @@ export const riderRouter = router({
         end: null,
       } as const;
 
-      const r = await db.query.beep.findFirst({
-        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] },
-        with: { beeper: { columns: { first: true, last: true } } },
+      const currentRide = await db.query.beep.findFirst({
+        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] }
       });
 
-      if (r) {
+      if (currentRide) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: `You are already in an active beep with ${r.beeper.first} ${r.beeper.last}. You can't begin another beep until you end that one...`,
+          message: "You are already in an active beep. You can't start another beep until your current one is done."
         });
       }
 
