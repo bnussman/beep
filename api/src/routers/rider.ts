@@ -106,7 +106,7 @@ export const riderRouter = router({
         longitude: input.longitude,
       };
 
-      db.update(user).set({ location }).where(eq(user.id, ctx.user.id));
+      await db.update(user).set({ location }).where(eq(user.id, ctx.user.id));
 
       pubSub.publish("user", ctx.user.id, { user: { ...ctx.user, location } });
 
