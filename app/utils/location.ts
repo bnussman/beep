@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import * as Sentry from "@sentry/react-native";
+import * as TaskManager from "expo-task-manager";
+import { captureException } from "@sentry/react-native";
+import { trpcClient } from "./trpc";
 
 export function useLocation(enabled = true) {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -139,6 +142,32 @@ export function useLocationPermissions() {
     requestLocationPermission,
   };
 }
+
+TaskManager.defineTask<{ locations: Location.LocationObject[] }>(
+  LOCATION_TRACKING,
+  async ({ data, error }) => {
+    if (error) {
+      console.error(error);
+      captureException(error);
+      return;
+    }
+
+    if (data) {
+      try {
+        await trpcClient.user.edit.mutate({
+          location: data.locations[0].coords,
+        });
+      } catch (e) {
+        captureException(e);
+        console.error(
+          "Background task errored when sending location to the API",
+          e,
+        );
+      }
+    }
+  },
+);
+
 
 /**
  * Full credit to https://github.com/huextrat/react-native-maps-routes/blob/main/src/utils/decoder.ts

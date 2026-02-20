@@ -5,7 +5,7 @@ import { Stack } from "expo-router";
 export default function Layout() {
   return (
     <Stack screenOptions={{
-      headerBackButtonDisplayMode: 'generic'
+      headerBackButtonDisplayMode: 'generic',
     }}>
       <Stack.Screen
         options={{ headerShown: false }}

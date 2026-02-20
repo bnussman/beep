@@ -1,19 +1,17 @@
 import React, { useEffect } from "react";
 import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
 import { useNavigation } from "@react-navigation/native";
 import { Alert, View, Switch, ActivityIndicator } from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { trpcClient, useTRPC } from "@/utils/trpc";
+import { useTRPC } from "@/utils/trpc";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { captureException } from "@sentry/react-native";
 import { getTimeRemainingString } from "@/components/CountDown";
 import { isAndroid, isWeb } from "@/utils/constants";
 import { useActivePayments } from "@/app/(app)/(drawer)/premium";
@@ -23,7 +21,6 @@ import { Beep } from "@/components/beeper/Beep";
 import { Queue } from "@/components/beeper/Queue";
 import { SplashScreen } from "expo-router";
 import {
-  LOCATION_TRACKING,
   startLocationTracking,
   stopLocationTracking,
   useLocationPermissions,
@@ -348,27 +345,3 @@ export default function StartBeepingScreen() {
   );
 }
 
-TaskManager.defineTask<{ locations: Location.LocationObject[] }>(
-  LOCATION_TRACKING,
-  async ({ data, error }) => {
-    if (error) {
-      console.error(error);
-      captureException(error);
-      return;
-    }
-
-    if (data) {
-      try {
-        await trpcClient.user.edit.mutate({
-          location: data.locations[0].coords,
-        });
-      } catch (e) {
-        captureException(e);
-        console.error(
-          "Background task errored when sending location to the API",
-          e,
-        );
-      }
-    }
-  },
-);
