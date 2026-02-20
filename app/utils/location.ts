@@ -47,16 +47,7 @@ export function useLocation(enabled = true) {
       throw new Error("Permission for location not granted.");
     }
 
-    let location = await Location.getLastKnownPositionAsync({
-      maxAge: 180000,
-      requiredAccuracy: 800,
-    });
-
-    if (!location) {
-      location = await Location.getCurrentPositionAsync();
-    }
-
-    return location;
+    return await Location.getCurrentPositionAsync();
   };
 
   useEffect(() => {

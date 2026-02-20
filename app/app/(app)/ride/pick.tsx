@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { Avatar } from "@/components/Avatar";
 import { useLocation } from "@/utils/location";
 import { Text } from "@/components/Text";
@@ -11,9 +11,11 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { printStars } from "@/components/Stars";
 import { useLocalSearchParams } from "expo-router";
+import { tryCatch } from "@/utils/errors";
+import { captureException } from "@sentry/react-native";
 
 export default function PickBeepScreen() {
-  const { location } = useLocation();
+  const { location, getLocation } = useLocation();
   const trpc = useTRPC();
   const navigation = useNavigation();
   const queryClient = useQueryClient();
@@ -72,8 +74,11 @@ export default function PickBeepScreen() {
       return;
     }
 
-    if (!location) {
-      alert("We can't identiy your location. We need it to start a beep. Please check your location settings.");
+    const { data: location, error } = await tryCatch(getLocation());
+
+    if (error) {
+      alert(error.message);
+      captureException(error);
       return;
     }
 
