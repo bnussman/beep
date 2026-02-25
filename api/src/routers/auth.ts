@@ -240,11 +240,7 @@ export const authRouter = router({
       }
     }),
   forgotPassword: publicProcedure
-    .input(
-      z.object({
-        email: z.string().email(),
-      }),
-    )
+    .input(z.object({ email: z.email() }))
     .mutation(async ({ input }) => {
       const u = await db.query.user.findFirst({
         where: { email: input.email },

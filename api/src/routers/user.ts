@@ -76,7 +76,6 @@ export const userRouter = router({
           first: z.string().refine(isAlpha, "Must be letters only.").min(1),
           last: z.string().refine(isAlpha, "Must be letters only.").min(1),
           email: z
-            .string()
             .email()
             .endsWith(".edu", "Email must end with .edu"),
           phone: z.string().refine(isMobilePhone, "Not a valid phone number."),
