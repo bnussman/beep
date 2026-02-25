@@ -1,3 +1,5 @@
+name: migrate
+
 on:
   workflow_dispatch:
     inputs:
@@ -28,5 +30,9 @@ jobs:
           cache: pnpm
           node-version: latest
       - run: pnpm i --frozen-lockfile
+      - name: Set up WireGuard Connection
+        uses: niklaskeerl/easy-wireguard-action@v2
+        with:
+          WG_CONFIG_FILE: ${{ secrets.WG_CONFIG_FILE }}
       - run: pnpm drizzle-kit migrate
         working-directory: api
