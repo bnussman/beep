@@ -1,0 +1,1 @@
+CREATE INDEX "is_beeping_idx" ON "user" ("is_beeping");
