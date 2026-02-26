@@ -120,7 +120,7 @@ export function setupNotifications() {
       response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER
     ) {
       trpcClient.beeper.updateBeep.mutate({
-        beepId: response.notification.request.content.data.id as string,
+        beepId: response.notification.request.content.data?.id as string,
         data: {
           status:
             response.actionIdentifier === "accept" ? "accepted" : "denied",
