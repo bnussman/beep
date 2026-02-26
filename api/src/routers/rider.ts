@@ -91,7 +91,7 @@ export const riderRouter = router({
     .use(withLock)
     .input(
       z.object({
-        beeperId: z.string(),
+        beeperId: z.string().optional(),
         origin: z.string(),
         destination: z.string(),
         groupSize: z.number().min(1).max(25),
@@ -117,45 +117,6 @@ export const riderRouter = router({
         });
       }
 
-      const beeper = await db.query.user.findFirst({
-        where: { id: input.beeperId },
-      });
-
-      const queue = await getBeeperQueue(input.beeperId);
-
-      if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Beeper not found",
-        });
-      }
-
-      if (!beeper.isBeeping) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "That user is not beeping. Maybe they stopped beeping.",
-        });
-      }
-
-      if (queue.some((beep) => beep.rider_id === ctx.user.id)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You are already in that beeper's queue.",
-        });
-      }
-
-      const newBeep = {
-        beeper_id: beeper.id,
-        rider_id: ctx.user.id,
-        destination: input.destination,
-        origin: input.origin,
-        groupSize: input.groupSize,
-        id: crypto.randomUUID(),
-        start: new Date(),
-        status: "waiting",
-        end: null,
-      } as const;
-
       const currentRide = await db.query.beep.findFirst({
         where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] }
       });
@@ -167,37 +128,101 @@ export const riderRouter = router({
         });
       }
 
+      if (input.beeperId) {
+        const beeper = await db.query.user.findFirst({
+          where: { id: input.beeperId },
+        });
+
+        const queue = await getBeeperQueue(input.beeperId);
+
+        if (!beeper) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Beeper not found",
+          });
+        }
+
+        if (!beeper.isBeeping) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "That user is not beeping. Maybe they stopped beeping.",
+          });
+        }
+
+        if (queue.some((beep) => beep.rider_id === ctx.user.id)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You are already in that beeper's queue.",
+          });
+        }
+
+
+        const newBeep = {
+          beeper_id: beeper.id,
+          rider_id: ctx.user.id,
+          destination: input.destination,
+          origin: input.origin,
+          groupSize: input.groupSize,
+          id: crypto.randomUUID(),
+          start: new Date(),
+          status: "waiting",
+          end: null,
+        } as const;
+
+
+        await db.insert(beep).values(newBeep);
+
+        queue.push({
+          ...newBeep,
+          rider: ctx.user,
+          beeper,
+        });
+
+        pubSub.publish("queue", beeper.id, { queue });
+
+        for (const beep of queue) {
+          pubSub.publish("ride", beep.rider_id, {
+            ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
+          });
+        }
+
+        if (beeper.pushToken) {
+          sendNotification({
+            to: beeper.pushToken,
+            title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
+            body: "Please accept or deny this rider.",
+            categoryId: "newbeep",
+            data: { id: newBeep.id },
+          });
+        }
+
+        return {
+          ...newBeep,
+          ...getDerivedRiderFields(newBeep, queue),
+          beeper,
+        };
+      }
+
+      const newBeep = {
+        beeper_id: null,
+        rider_id: ctx.user.id,
+        destination: input.destination,
+        origin: input.origin,
+        groupSize: input.groupSize,
+        id: crypto.randomUUID(),
+        start: new Date(),
+        status: "waiting",
+        end: null,
+      } as const;
+
+
       await db.insert(beep).values(newBeep);
 
-      queue.push({
-        ...newBeep,
-        rider: ctx.user,
-        beeper,
-      });
+      const ride = { ...beep, ...getDerivedRiderFields(newBeep, []), beeper: null };
 
-      pubSub.publish("queue", beeper.id, { queue });
+      pubSub.publish("ride", ctx.user.id, { ride });
 
-      for (const beep of queue) {
-        pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
-        });
-      }
-
-      if (beeper.pushToken) {
-        sendNotification({
-          to: beeper.pushToken,
-          title: `${ctx.user.first} ${ctx.user.last} has entered your queue 🚕`,
-          body: "Please accept or deny this rider.",
-          categoryId: "newbeep",
-          data: { id: newBeep.id },
-        });
-      }
-
-      return {
-        ...newBeep,
-        ...getDerivedRiderFields(newBeep, queue),
-        beeper,
-      };
+      return ride;
     }),
   currentRide: authedProcedure
     .input(z.string().optional())
@@ -206,7 +231,7 @@ export const riderRouter = router({
       const userId = input ?? ctx.user.id;
 
       if (ctx.user.role === 'user' && userId !== ctx.user.id) {
-        throw new TRPCError({ code: "FORBIDDEN", message: "You must be an admin to view the current ride of another user"});
+        throw new TRPCError({ code: "FORBIDDEN", message: "You must be an admin to view the current ride of another user" });
       }
 
       return getRidersCurrentRide(userId);

@@ -18,7 +18,7 @@ export const rideResponseSchema = z.object({
     groupRate: z.number(),
     singlesRate: z.number(),
     photo: z.string().nullable(),
-  }),
+  }).nullable(),
   position: z.number(),
   queue: z.array(z.object({ status: z.enum(beepStatuses) })),
   riders_waiting: z.number()
