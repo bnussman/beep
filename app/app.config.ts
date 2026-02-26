@@ -15,10 +15,6 @@ const config: ExpoConfig = {
   primaryColor: "#575A62",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",
-  newArchEnabled: true,
-  notification: {
-    iosDisplayInForeground: true,
-  },
   updates: {
     url: "https://u.expo.dev/2c7a6adb-2579-43f1-962e-b23c7e541ec4",
     fallbackToCacheTimeout: 10_000,
@@ -37,6 +33,7 @@ const config: ExpoConfig = {
     bundler: "metro",
   },
   plugins: [
+    ["expo-router"],
     ["expo-notifications"],
     [
       "react-native-maps",
