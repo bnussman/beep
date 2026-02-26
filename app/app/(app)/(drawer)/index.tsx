@@ -49,7 +49,7 @@ export default function MainFindBeepScreen() {
 
   const { data: beepersLocation } = useSubscription(
     trpc.rider.beeperLocationUpdates.subscriptionOptions(
-      beep ? beep.beeper.id : skipToken,
+      beep?.beeper ? beep.beeper.id : skipToken,
       {
         enabled: isAcceptedBeep,
       },

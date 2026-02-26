@@ -26,11 +26,11 @@ export function Beep({ item }: Props) {
 
   const otherUser = user?.id === item.rider.id ? item.beeper : item.rider;
   const isRider = user?.id === item.rider.id;
-  const isBeeper = user?.id === item.beeper.id;
+  const isBeeper = item.beeper !== null && user?.id === item.beeper.id;
 
   const myRating = item.ratings.find((r) => r.rater_id === user?.id);
   const otherUsersRating = item.ratings.find(
-    (r) => r.rater_id === otherUser.id,
+    (r) => otherUser && r.rater_id === otherUser.id,
   );
 
   const isAcceptedOrComplete =

@@ -218,7 +218,7 @@ export const riderRouter = router({
 
       await db.insert(beep).values(newBeep);
 
-      const ride = { ...beep, ...getDerivedRiderFields(newBeep, []), beeper: null };
+      const ride = { ...newBeep, ...getDerivedRiderFields(newBeep, []), beeper: null };
 
       pubSub.publish("ride", ctx.user.id, { ride });
 
@@ -379,69 +379,78 @@ export const riderRouter = router({
       }
     }),
   leaveQueue: authedProcedure
-    .input(
-      z.object({
-        beeperId: z.string(),
-      }),
-    )
     .mutation(async ({ ctx, input }) => {
-      const beeper = await db.query.user.findFirst({
-        where: { id: input.beeperId },
+      const ride = await db.query.beep.findFirst({
+        where: { AND: [{ rider_id: ctx.user.id }, inProgressBeepNew] },
       });
 
-      if (!beeper) {
+      if (!ride) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Beeper not found.",
+          message: "You are not in a beep.",
         });
       }
 
-      let queue = await getBeeperQueue(input.beeperId);
+      if (ride.beeper_id) {
 
-      if (!beeper) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Beeper not found.",
-        });
+        let queue = await getBeeperQueue(ride.beeper_id);
+
+        const beeper = await db.query.user.findFirst({
+          where: { id: ride.beeper_id }
+        })
+
+        if (!beeper) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Beeper not found.",
+          });
+        }
+
+        const entry = queue.find((beep) => beep.rider.id === ctx.user.id);
+
+        if (!entry) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "You are not in that beepers queue.",
+          });
+        }
+
+        if (beeper.pushToken) {
+          sendNotification({
+            to: beeper.pushToken,
+            title: `${ctx.user.first} ${ctx.user.last} left your queue 🥹`,
+            body: "They decided they did not want a beep from you!",
+          });
+        }
+
+        await db
+          .update(beep)
+          .set({ status: "canceled", end: new Date() })
+          .where(eq(beep.id, entry.id));
+
+        queue = queue.filter((beep) => beep.id !== entry.id);
+
+        pubSub.publish("ride", ctx.user.id, { ride: null });
+        pubSub.publish("queue", beeper.id, { queue });
+
+        for (const beep of queue) {
+          pubSub.publish("ride", beep.rider_id, {
+            ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
+          });
+        }
+
+        await db
+          .update(user)
+          .set({ queueSize: getQueueSize(queue) })
+          .where(eq(user.id, beeper.id));
+      } else {
+        await db
+          .update(beep)
+          .set({ status: "canceled", end: new Date() })
+          .where(eq(beep.id, ride.id));
+
+        pubSub.publish("ride", ctx.user.id, { ride: null });
       }
-
-      const entry = queue.find((beep) => beep.rider.id === ctx.user.id);
-
-      if (!entry) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "You are not in that beepers queue.",
-        });
-      }
-
-      if (beeper.pushToken) {
-        sendNotification({
-          to: beeper.pushToken,
-          title: `${ctx.user.first} ${ctx.user.last} left your queue 🥹`,
-          body: "They decided they did not want a beep from you!",
-        });
-      }
-
-      await db
-        .update(beep)
-        .set({ status: "canceled", end: new Date() })
-        .where(eq(beep.id, entry.id));
-
-      queue = queue.filter((beep) => beep.id !== entry.id);
-
-      pubSub.publish("ride", ctx.user.id, { ride: null });
-      pubSub.publish("queue", beeper.id, { queue });
-
-      for (const beep of queue) {
-        pubSub.publish("ride", beep.rider_id, {
-          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
-        });
-      }
-
-      await db
-        .update(user)
-        .set({ queueSize: getQueueSize(queue) })
-        .where(eq(user.id, beeper.id));
 
       return true;
     }),

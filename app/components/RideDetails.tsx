@@ -33,13 +33,41 @@ export function RideDetails(props: Props) {
 
   const { data: car } = useQuery(
     trpc.user.getUsersDefaultCar.queryOptions(
-      beep ? beep.beeper.id : skipToken,
+      beep?.beeper ? beep.beeper.id : skipToken,
       { enabled: isAcceptedBeep },
     ),
   );
 
   if (!beep) {
     return null;
+  }
+
+  if (beep && !beep.beeper) {
+    return (
+      <View
+        style={{
+          height: "100%",
+          padding: 16,
+          gap: 16,
+          paddingBottom: 32,
+          paddingTop: 0,
+        }}
+      >
+        <Text>Waiting on a beeper to claim your ride request.</Text>
+        <View>
+          <Text weight="800">Pick Up </Text>
+          <Text selectable>{beep.origin}</Text>
+        </View>
+        <View>
+          <Text weight="800">Destination </Text>
+          <Text selectable>{beep.destination}</Text>
+        </View>
+        <View>
+          <Text weight="800">Number of Riders </Text>
+          <Text>{beep.groupSize}</Text>
+        </View>
+      </View>
+    );
   }
 
   return (

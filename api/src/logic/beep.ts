@@ -83,7 +83,7 @@ export async function getRidersCurrentRide(userId: string) {
     return null;
   }
 
-  const queue = await getBeeperQueue(beep.beeper_id)
+  const queue = beep.beeper_id ? await getBeeperQueue(beep.beeper_id) : [];
 
   return { ...beep, ...getDerivedRiderFields(beep, queue) };
 }
