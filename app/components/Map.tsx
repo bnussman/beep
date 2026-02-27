@@ -8,5 +8,5 @@ interface Props extends MapViewProps {
 export function Map(props: Props) {
   const colorScheme = useColorScheme();
 
-  return <MapView userInterfaceStyle={colorScheme ?? "light"} {...props} />;
+  return <MapView userInterfaceStyle={colorScheme === "dark" ? "dark" : "light"} {...props} />;
 }
