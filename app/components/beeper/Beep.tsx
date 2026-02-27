@@ -15,7 +15,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { decodePolyline, getMiles } from "@/utils/location";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
-import { isMobile } from "@/utils/constants";
+import { isMobile, isWeb } from "@/utils/constants";
 import { Menu } from "@/components/Menu";
 import {
   call,
@@ -221,6 +221,8 @@ export function Beep(props: Props) {
       <View style={{ flexDirection: "row", gap: 8 }}>
         <Menu
           trigger={
+            isWeb ?
+            <Elipsis /> :
             <Button
               style={{ paddingHorizontal: 16, paddingVertical: 6 }}
               size="md"
