@@ -118,7 +118,7 @@ export const relations = defineRelations(
         from: r.beep.beeper_id,
         to: r.user.id,
         alias: "beeper",
-        optional: false,
+        optional: true,
       }),
       rider: r.one.user({
         from: r.beep.rider_id,

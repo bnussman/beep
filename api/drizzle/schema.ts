@@ -173,7 +173,6 @@ export const beep = pgTable(
   {
     id: varchar("id", { length: 255 }).primaryKey().notNull(),
     beeper_id: varchar("beeper_id", { length: 255 })
-      .notNull()
       .references(() => user.id, { onUpdate: "cascade", onDelete: "cascade" }),
     rider_id: varchar("rider_id", { length: 255 })
       .notNull()

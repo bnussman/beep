@@ -40,7 +40,7 @@ export function Beep() {
   } = useQuery(trpc.beep.beep.queryOptions(beepId));
 
   const { data: beeper } = useSubscription(
-    trpc.user.updates.subscriptionOptions(beep ? beep.beeper_id : skipToken)
+    trpc.user.updates.subscriptionOptions(beep?.beeper ? beep.beeper.id : skipToken)
   );
 
   const { data: route } = useQuery(

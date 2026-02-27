@@ -8,11 +8,22 @@ interface Props {
     photo: string | null | undefined;
     first: string;
     last: string;
-  };
+  } | null;
 }
 
 export function BasicUser(props: Props) {
   const { user } = props;
+
+  if (!user) {
+    return (
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Typography>
+          None
+        </Typography>
+        <Avatar sx={{ width: 32, height: 32 }} />
+      </Stack>
+    );
+  }
 
   return (
     <Link component={RouterLink} to={`/admin/users/${user.id}`}>

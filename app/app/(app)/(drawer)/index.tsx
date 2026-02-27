@@ -1,15 +1,15 @@
 import React, { useEffect } from "react";
 import { useTRPC } from "@/utils/trpc";
-import { skipToken, useQuery } from "@tanstack/react-query";
+import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { RideDetails } from "../../../components/RideDetails";
 import { BottomSheet } from "@/components/BottomSheet";
-import { View } from "react-native";
+import { Switch, View } from "react-native";
 import { RideMap } from "../../../components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { SplashScreen, useLocalSearchParams, useRouter } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
@@ -18,10 +18,12 @@ import { LocationInput } from "@/components/LocationInput";
 import { Button } from "@/components/Button";
 import { BeepersMap } from "@/components/BeepersMap";
 import { RateLastBeeper } from "@/components/RateLastBeeper";
+import { useLocation } from "@/utils/location";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const { getLocation } = useLocation(false);
 
   const { data: beep } = useQuery(trpc.rider.currentRide.queryOptions());
 
@@ -47,7 +49,7 @@ export default function MainFindBeepScreen() {
 
   const { data: beepersLocation } = useSubscription(
     trpc.rider.beeperLocationUpdates.subscriptionOptions(
-      beep ? beep.beeper.id : skipToken,
+      beep?.beeper ? beep.beeper.id : skipToken,
       {
         enabled: isAcceptedBeep,
       },
@@ -69,17 +71,42 @@ export default function MainFindBeepScreen() {
     control,
     handleSubmit,
     setFocus,
+    watch,
     formState: { errors },
   } = useForm({
     values: {
       groupSize: params.groupSize ? String(params.groupSize) : "",
       origin: params.origin ?? "",
       destination: params.destination ?? "",
+      chooseBeeper: true,
     },
   });
 
-  const findBeep = handleSubmit((values) => {
-    router.navigate({ pathname: '/ride/pick', params: values });
+  const { mutate: startBeep, isPending } = useMutation(
+    trpc.rider.startBeep.mutationOptions({
+      onSuccess(data) {
+        queryClient.setQueryData(trpc.rider.currentRide.queryKey(), data);
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
+
+  const chooseBeeper = watch('chooseBeeper');
+
+  const findBeep = handleSubmit(async ({ chooseBeeper, ...values }) => {
+    if (chooseBeeper) {
+      router.navigate({ pathname: '/ride/pick', params: values });
+    } else {
+      const location = await getLocation();
+
+      startBeep({
+        ...values,
+        groupSize: Number(values.groupSize),
+        ...location.coords,
+      });
+    }
   });
 
   if (!beep) {
@@ -158,7 +185,17 @@ export default function MainFindBeepScreen() {
           />
           <Text color="error">{errors.destination?.message}</Text>
         </View>
-        <Button onPress={() => findBeep()}>Find Beep</Button>
+        <View style={{ display: "flex", flexDirection: "row", justifyContent: 'space-between' }}>
+          <Text>Choose a beeper</Text>
+          <Controller
+            name="chooseBeeper"
+            control={control}
+            render={({ field }) => (
+              <Switch value={chooseBeeper} onValueChange={field.onChange} />
+            )}
+          />
+        </View>
+        <Button onPress={() => findBeep()} isLoading={isPending}>Find Beep</Button>
         <BeepersMap />
         <RateLastBeeper />
       </KeyboardAwareScrollView>

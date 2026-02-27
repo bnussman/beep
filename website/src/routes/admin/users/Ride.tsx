@@ -34,7 +34,7 @@ export function Ride() {
   );
 
   const { data: beeper } = useSubscription(
-    trpc.user.updates.subscriptionOptions(ride ? ride.beeper.id : skipToken)
+    trpc.user.updates.subscriptionOptions(ride?.beeper ? ride.beeper.id : skipToken)
   );
 
   const { data: route } = useQuery(

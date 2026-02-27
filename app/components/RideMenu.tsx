@@ -30,7 +30,7 @@ export function RideMenu() {
 
     if (isMobile) {
       const message = [
-        `Are you sure you want to cancel your ride with ${beep.beeper.first}?`,
+        `Are you sure you want to cancel your ride?`,
       ];
 
       const messageMap = {
@@ -63,14 +63,14 @@ export function RideMenu() {
           },
           {
             text: "Yes",
-            onPress: () => mutate({ beeperId: beep.beeper.id }),
+            onPress: () => mutate(),
             style: "destructive",
           },
         ],
         { cancelable: true },
       );
     } else {
-      mutate({ beeperId: beep.beeper.id });
+      mutate();
     }
   };
 
@@ -83,12 +83,13 @@ export function RideMenu() {
       <Menu
         trigger={<Elipsis />}
         options={[
+          ...(beep.beeper ? [
           {
             title: "Contact",
             show: beep.status !== "waiting",
             options: [
-              { title: "Call", onClick: () => call(beep.beeper.id) },
-              { title: "Text", onClick: () => sms(beep.beeper.id) },
+              { title: "Call", onClick: () => call(beep.beeper!.id) },
+              { title: "Text", onClick: () => sms(beep.beeper!.id) },
             ],
           },
           {
@@ -100,10 +101,10 @@ export function RideMenu() {
                 show: Boolean(beep.beeper.venmo),
                 onClick: () =>
                   openVenmo(
-                    beep.beeper.venmo,
+                    beep.beeper!.venmo,
                     beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate,
+                    beep.beeper!.groupRate,
+                    beep.beeper!.singlesRate,
                     "pay",
                   ),
               },
@@ -112,14 +113,15 @@ export function RideMenu() {
                 show: Boolean(beep.beeper.cashapp),
                 onClick: () =>
                   openCashApp(
-                    beep.beeper.cashapp,
+                    beep.beeper!.cashapp,
                     beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate,
+                    beep.beeper!.groupRate,
+                    beep.beeper!.singlesRate,
                   ),
               },
             ],
           },
+        ] : []),
           {
             title: "Cancel Ride",
             destructive: true,

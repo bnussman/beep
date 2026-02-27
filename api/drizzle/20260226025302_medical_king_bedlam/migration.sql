@@ -1,0 +1,1 @@
+ALTER TABLE "beep" ALTER COLUMN "beeper_id" DROP NOT NULL;
