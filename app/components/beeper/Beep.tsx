@@ -115,7 +115,7 @@ export function Beep(props: Props) {
   };
 
   return (
-    <View style={{ gap: 8, height: "100%", paddingBottom: 76 }}>
+    <View style={{ gap: 8, height: "100%" }}>
       <Card
         variant="filled"
         style={{ padding: 16, gap: 16 }}

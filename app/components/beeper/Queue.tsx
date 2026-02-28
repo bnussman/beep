@@ -1,7 +1,7 @@
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Text } from "@/components/Text";
 import { QueueItem } from "./QueueItem";
-import { Pressable } from "react-native";
+import { FlatList, Pressable } from "react-native";
 import { View } from "react-native";
 import { useRef } from "react";
 import { isWeb } from "@/utils/constants";
@@ -18,81 +18,33 @@ interface Props {
 export function Queue(props: Props) {
   const { beeps, onRefresh, refreshing } = props;
 
-  const ref = useRef<BottomSheetRef>(null);
-  const drawerPositionIndex = useRef<number>(0);
-
-  const hasUnacceptedBeep = beeps.some((beep) => beep.status === "waiting");
-
   return (
-    <BottomSheet
-      ref={ref}
-      onChange={(index) => {
-        drawerPositionIndex.current = index;
-      }}
-      enableDynamicSizing={false}
-      snapPoints={["10%", "50%", isWeb ? "90%" : "100%"]}
-    >
-      <Pressable
-        style={{
-          paddingHorizontal: 16,
-          paddingBottom: 16,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-        onPress={() => {
-          if (drawerPositionIndex.current > 0) {
-            ref.current?.snapToIndex(0);
-            drawerPositionIndex.current = 0;
-          } else {
-            ref.current?.snapToIndex(2);
-            drawerPositionIndex.current = 2;
-          }
-        }}
-      >
-        <Text size="3xl" weight="800">
-          Queue
-        </Text>
-        {hasUnacceptedBeep && (
-          <View
-            style={{
-              borderRadius: 16 / 2,
-              backgroundColor: "#1f75ed",
-              width: 16,
-              height: 16,
-            }}
-          />
-        )}
-      </Pressable>
-      <BottomSheetFlatList
-        data={beeps}
-        // @ts-expect-error bottom sheet types are broken
-        keyExtractor={(beep) => beep.id}
-        // @ts-expect-error bottom sheet types are broken
-        renderItem={({ item, index }) => (
-          <QueueItem item={item} index={index} />
-        )}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
-        contentContainerStyle={{ gap: 4, paddingHorizontal: 8 }}
-        ListEmptyComponent={
-          <View
-            style={{
-              padding: 16,
-              gap: 4,
-              alignItems: "center",
-            }}
-          >
-            <Text size="5xl">⏳</Text>
-            <Text weight="800" size="lg">
-              Your queue is empty!
-            </Text>
-            <Text style={{ textAlign: "center", maxWidth: "80%" }}>
-              If additional riders join your queue, they will show up here!
-            </Text>
-          </View>
-        }
-      />
-    </BottomSheet>
+    <FlatList
+      data={beeps}
+      keyExtractor={(beep) => beep.id}
+      renderItem={({ item, index }) => (
+        <QueueItem item={item} index={index} />
+      )}
+      onRefresh={onRefresh}
+      refreshing={refreshing}
+      contentContainerStyle={{ gap: 4, paddingHorizontal: 8 }}
+      ListEmptyComponent={
+        <View
+          style={{
+            padding: 16,
+            gap: 4,
+            alignItems: "center",
+          }}
+        >
+          <Text size="5xl">⏳</Text>
+          <Text weight="800" size="lg">
+            Your queue is empty!
+          </Text>
+          <Text style={{ textAlign: "center", maxWidth: "80%" }}>
+            If additional riders join your queue, they will show up here!
+          </Text>
+        </View>
+      }
+    />
   );
 }
