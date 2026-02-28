@@ -4,6 +4,7 @@ import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Stack } from "expo-router";
 import { Alert, View } from "react-native";
 
 export function RideMenu() {
@@ -79,54 +80,45 @@ export function RideMenu() {
   }
 
   return (
-    <View style={{ marginRight: 8 }}>
-      <Menu
-        trigger={<Elipsis />}
-        options={[
-          {
-            title: "Contact",
-            show: beep.status !== "waiting",
-            options: [
-              { title: "Call", onClick: () => call(beep.beeper.id) },
-              { title: "Text", onClick: () => sms(beep.beeper.id) },
-            ],
-          },
-          {
-            title: "Pay",
-            show: beep.status !== "waiting",
-            options: [
-              {
-                title: "Venmo",
-                show: Boolean(beep.beeper.venmo),
-                onClick: () =>
-                  openVenmo(
-                    beep.beeper.venmo,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate,
-                    "pay",
-                  ),
-              },
-              {
-                title: "Cash app",
-                show: Boolean(beep.beeper.cashapp),
-                onClick: () =>
-                  openCashApp(
-                    beep.beeper.cashapp,
-                    beep.groupSize,
-                    beep.beeper.groupRate,
-                    beep.beeper.singlesRate,
-                  ),
-              },
-            ],
-          },
-          {
-            title: "Cancel Ride",
-            destructive: true,
-            onClick: leaveQueue,
-          },
-        ]}
-      />
-    </View>
+    <Stack.Toolbar placement="right">
+      <Stack.Toolbar.Menu icon="ellipsis">
+        {beep.status !== "waiting" && (
+          <Stack.Toolbar.Menu inline title="Contact">
+            <Stack.Toolbar.MenuAction onPress={() => call(beep.beeper.id)}>
+              Call
+            </Stack.Toolbar.MenuAction>
+            <Stack.Toolbar.MenuAction onPress={() => sms(beep.beeper.id)}>
+              Text
+            </Stack.Toolbar.MenuAction>
+          </Stack.Toolbar.Menu>
+        )}
+        {beep.status !== "waiting" && (
+          <Stack.Toolbar.Menu inline title="Pay">
+            <Stack.Toolbar.MenuAction onPress={() =>
+              openVenmo(
+                beep.beeper.venmo,
+                beep.groupSize,
+                beep.beeper.groupRate,
+                beep.beeper.singlesRate,
+                "pay",
+              )}>
+              Venmo
+            </Stack.Toolbar.MenuAction>
+            <Stack.Toolbar.MenuAction onPress={() =>
+              openCashApp(
+                beep.beeper.cashapp,
+                beep.groupSize,
+                beep.beeper.groupRate,
+                beep.beeper.singlesRate,
+              )}>
+              Cashapp
+            </Stack.Toolbar.MenuAction>
+          </Stack.Toolbar.Menu>
+        )}
+        <Stack.Toolbar.MenuAction onPress={leaveQueue} destructive>
+          Cancel Ride
+        </Stack.Toolbar.MenuAction>
+      </Stack.Toolbar.Menu>
+    </Stack.Toolbar>
   );
 }

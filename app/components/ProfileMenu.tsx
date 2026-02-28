@@ -1,15 +1,13 @@
 import * as Location from "expo-location";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Menu } from "@/components/Menu";
-import { Alert, View } from "react-native";
+import { Alert } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LOCATION_TRACKING } from "@/utils/location";
 import { isMobile } from "@/utils/constants";
-import { Elipsis } from "@/components/Elipsis";
 import { useRouter } from "expo-router";
 
-export function ProfileMenu() {
+export function useProfileMenu() {
   const trpc = useTRPC();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -52,22 +50,15 @@ export function ProfileMenu() {
     }
   };
 
-  return (
-    <View style={{ marginRight: 8 }}>
-      <Menu
-        trigger={<Elipsis />}
-        options={[
-          {
-            title: "Change Password",
-            onClick: () => router.navigate("/profile/change-password"),
-          },
-          {
-            title: "Delete Account",
-            onClick: handleDeleteWrapper,
-            destructive: true,
-          },
-        ]}
-      />
-    </View>
-  );
+  return [
+    {
+      title: "Change Password",
+      onClick: () => router.navigate("/profile/change-password"),
+    },
+    {
+      title: "Delete Account",
+      onClick: handleDeleteWrapper,
+      destructive: true,
+    },
+  ]
 }
