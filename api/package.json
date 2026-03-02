@@ -25,7 +25,7 @@
     "@sentry/bun": "^10.39.0",
     "@trpc/server": "^11.10.0",
     "@types/pg": "^8.16.0",
-    "car-info": "0.2.2",
+    "car-info": "0.2.4",
     "drizzle-orm": "1.0.0-beta.8-734e789",
     "ioredis": "^5.9.3",
     "nodemailer": "^8.0.1",
