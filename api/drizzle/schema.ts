@@ -90,7 +90,6 @@ export const user = pgTable(
   (table) => [
     unique("user_username_unique").on(table.username),
     unique("user_email_unique").on(table.email),
-    index('is_beeping_idx').on(table.isBeeping),
   ],
 );
 
