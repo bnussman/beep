@@ -8,7 +8,8 @@ export default function Layout() {
 
   return (
     <Stack screenOptions={{ headerTransparent: true }}>
-      <Stack.Screen name="index" options={{ unstable_headerRightItems: () => getNavigationMenuFromOptions(menu), headerRight: () => <Menu trigger="..." options={menu} /> }} />
+      <Stack.Screen name="index" options={{ headerTitle: "Profile" }} />
+      <Stack.Screen name="edit" options={{ unstable_headerRightItems: () => getNavigationMenuFromOptions(menu), headerRight: () => <Menu trigger="..." options={menu} /> }} />
     </Stack>
   );
 }

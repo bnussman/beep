@@ -33,7 +33,7 @@ export function PremiumBanner() {
           <Text>
             Jump to the top of the beeper list
           </Text>
-          <Button onPress={() => router.push('/premium')}>
+          <Button onPress={() => router.navigate('/profile/premium')}>
             Get Promoted 👑
           </Button>
         </>

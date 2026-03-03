@@ -73,30 +73,6 @@ export function useProfileMenu() {
       onClick: () => router.navigate("/profile/change-password"),
     },
     {
-      title: "Cars",
-      onClick: () => router.navigate("/(app)/(tabs)/profile/cars"),
-    },
-    {
-      title: "Beeps",
-      onClick: () => router.navigate("/(app)/(tabs)/profile/beeps"),
-    },
-    {
-      title: "Ratings",
-      onClick: () => router.navigate("/(app)/(tabs)/profile/ratings"),
-    },
-    {
-      title: "Premium",
-      onClick: () => router.navigate("/(app)/(tabs)/profile/premium"),
-    },
-    {
-      title: "Edit Profile",
-      onClick: () => router.navigate("/(app)/(tabs)/profile/edit"),
-    },
-    {
-      title: "Provide Feedback",
-      onClick: () => router.navigate("/(app)/(tabs)/profile/feedback"),
-    },
-    {
       title: "Logout",
       onClick: () => logout({ isApp: true }),
     },
