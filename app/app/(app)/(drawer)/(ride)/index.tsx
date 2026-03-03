@@ -85,91 +85,91 @@ export default function MainFindBeepScreen() {
 
   if (!beep) {
     return (
-        <KeyboardAwareScrollView
-          scrollEnabled={false}
-          contentContainerStyle={{ padding: 16, gap: 12 }}
-          contentInsetAdjustmentBehavior="automatic"
-        >
-          <View style={{ gap: 4 }}>
-            <Label htmlFor="groupSize">Group Size</Label>
-            <Controller
-              name="groupSize"
-              rules={{
-                required: "Group size is required",
-                min: { value: 1, message: "Too small" },
-                max: { value: 100, message: "Too large" },
-                pattern: { value: /\d+/, message: "Must be a number" },
-              }}
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  id="groupSize"
-                  inputMode="numeric"
-                  onBlur={onBlur}
-                  onChangeText={(value) => onChange(value)}
-                  value={value}
-                  ref={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("origin")}
-                />
-              )}
-            />
-            <Text color="error">{errors.groupSize?.message}</Text>
-            <Text color="error">{errors.groupSize?.root?.message}</Text>
-          </View>
-          <View style={{ gap: 4 }}>
-            <Label htmlFor="origin">Pick Up Location</Label>
-            <Controller
-              name="origin"
-              rules={{ required: "Pick up location is required" }}
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <LocationInput
-                  id="origin"
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value}
-                  inputRef={ref}
-                  returnKeyLabel="next"
-                  returnKeyType="next"
-                  onSubmitEditing={() => setFocus("destination")}
-                />
-              )}
-            />
-            <Text color="error">{errors.origin?.message}</Text>
-          </View>
-          <View style={{ gap: 4 }}>
-            <Label htmlFor="destination">Destination Location</Label>
-            <Controller
-              name="destination"
-              rules={{ required: "Destination location is required" }}
-              control={control}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <Input
-                  id="destination"
-                  onBlur={onBlur}
-                  onChangeText={(val) => onChange(val)}
-                  value={value}
-                  ref={ref}
-                  returnKeyType="go"
-                  onSubmitEditing={() => findBeep()}
-                  textContentType="fullStreetAddress"
-                />
-              )}
-            />
-            <Text color="error">{errors.destination?.message}</Text>
-          </View>
-          <Button onPress={() => findBeep()}>Find Beep</Button>
-          <BeepersMap />
-          <RateLastBeeper />
-        </KeyboardAwareScrollView>
+      <KeyboardAwareScrollView
+        scrollEnabled={false}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <View style={{ gap: 4 }}>
+          <Label htmlFor="groupSize">Group Size</Label>
+          <Controller
+            name="groupSize"
+            rules={{
+              required: "Group size is required",
+              min: { value: 1, message: "Too small" },
+              max: { value: 100, message: "Too large" },
+              pattern: { value: /\d+/, message: "Must be a number" },
+            }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                id="groupSize"
+                inputMode="numeric"
+                onBlur={onBlur}
+                onChangeText={(value) => onChange(value)}
+                value={value}
+                ref={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("origin")}
+              />
+            )}
+          />
+          <Text color="error">{errors.groupSize?.message}</Text>
+          <Text color="error">{errors.groupSize?.root?.message}</Text>
+        </View>
+        <View style={{ gap: 4 }}>
+          <Label htmlFor="origin">Pick Up Location</Label>
+          <Controller
+            name="origin"
+            rules={{ required: "Pick up location is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <LocationInput
+                id="origin"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                inputRef={ref}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => setFocus("destination")}
+              />
+            )}
+          />
+          <Text color="error">{errors.origin?.message}</Text>
+        </View>
+        <View style={{ gap: 4 }}>
+          <Label htmlFor="destination">Destination Location</Label>
+          <Controller
+            name="destination"
+            rules={{ required: "Destination location is required" }}
+            control={control}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <Input
+                id="destination"
+                onBlur={onBlur}
+                onChangeText={(val) => onChange(val)}
+                value={value}
+                ref={ref}
+                returnKeyType="go"
+                onSubmitEditing={() => findBeep()}
+                textContentType="fullStreetAddress"
+              />
+            )}
+          />
+          <Text color="error">{errors.destination?.message}</Text>
+        </View>
+        <Button onPress={() => findBeep()}>Find Beep</Button>
+        <BeepersMap />
+        <RateLastBeeper />
+      </KeyboardAwareScrollView>
     );
   }
 
   return (
     <View style={{ flex: 1 }}>
-      <RideMenu /> 
+      <RideMenu />
       <RideMap beepersLocation={beepersLocation} />
       <BottomSheet enableDynamicSizing snapPoints={["30%", "50%"]}>
         <BottomSheetView>

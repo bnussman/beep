@@ -139,10 +139,16 @@ export default function StartBeepingScreen() {
 
   const toolbar = (
     <Stack.Toolbar placement="right">
+      {user?.isBeeping && (
+        <Stack.Toolbar.Button onPress={() => router.push('/(app)/(drawer)/beep/queue')}>
+          <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
+          {queue && queue.length > 1 && <Stack.Toolbar.Badge>{String(queue.length - 1)}</Stack.Toolbar.Badge>}
+        </Stack.Toolbar.Button>
+      )}
       <Stack.Toolbar.View>
         <View
           style={{
-            marginRight: 8,
+            paddingHorizontal: 6,
             display: "flex",
             flexDirection: "row",
             gap: 8,
@@ -170,10 +176,7 @@ export default function StartBeepingScreen() {
           />
         </View>
       </Stack.Toolbar.View>
-      <Stack.Toolbar.Button onPress={() => router.push('/(app)/(drawer)/beep/queue')}>
-        <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
-        {queue && queue.length > 1 && <Stack.Toolbar.Badge>{String(queue.length - 1)}</Stack.Toolbar.Badge>}
-      </Stack.Toolbar.Button>
+
     </Stack.Toolbar>
   );
 
@@ -228,7 +231,8 @@ export default function StartBeepingScreen() {
   return (
     <KeyboardAwareScrollView
       scrollEnabled={false}
-      contentContainerStyle={{ padding: 16, height: "100%", gap: 8 }}
+      contentContainerStyle={{ paddingHorizontal: 16, height: "100%", gap: 8 }}
+      contentInsetAdjustmentBehavior="automatic"
     >
       {toolbar}
       <View style={{ gap: 4 }}>

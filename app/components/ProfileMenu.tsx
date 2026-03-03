@@ -27,6 +27,23 @@ export function useProfileMenu() {
     }),
   );
 
+  const { mutate: logout, isPending } = useMutation(
+    trpc.auth.logout.mutationOptions({
+      onSuccess() {
+        AsyncStorage.clear();
+
+        if (!__DEV__) {
+          Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
+        }
+
+        queryClient.resetQueries();
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
+  );
+
   const handleDeleteWrapper = () => {
     if (isMobile) {
       Alert.alert(
@@ -54,6 +71,10 @@ export function useProfileMenu() {
     {
       title: "Change Password",
       onClick: () => router.navigate("/profile/change-password"),
+    },
+    {
+      title: "Logout",
+      onClick: () => logout({ isApp: true }),
     },
     {
       title: "Delete Account",

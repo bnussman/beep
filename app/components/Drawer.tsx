@@ -1,14 +1,11 @@
 import * as React from "react";
-import * as Location from "expo-location";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Href, usePathname, useRouter } from "expo-router";
 import { capitalize } from "@/utils/strings";
 import { useUser } from "../utils/useUser";
 import { Avatar } from "./Avatar";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
-import { queryClient, useTRPC } from "@/utils/trpc";
-import { LOCATION_TRACKING } from "@/utils/location";
+import { useTRPC } from "@/utils/trpc";
 import { Pressable, View, ActivityIndicator } from "react-native";
 import { useTheme } from "@/utils/theme";
 import { useMutation } from "@tanstack/react-query";
@@ -83,23 +80,6 @@ export function BeepDrawer(props: DrawerContentComponentProps) {
   const trpc = useTRPC();
   const router = useRouter();
   const { user } = useUser();
-
-  const { mutate: logout, isPending } = useMutation(
-    trpc.auth.logout.mutationOptions({
-      onSuccess() {
-        AsyncStorage.clear();
-
-        if (!__DEV__) {
-          Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
-        }
-
-        queryClient.resetQueries();
-      },
-      onError(error) {
-        alert(error.message);
-      },
-    }),
-  );
 
   const { mutate: resend, isPending: resendLoading } = useMutation(
     trpc.auth.resendVerification.mutationOptions({

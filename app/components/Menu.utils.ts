@@ -14,6 +14,7 @@ export function getNavigationMenuFromOptions(
         items: options.map((option) => ({
           label: option.title,
           type: "action",
+          destructive: option.destructive,
           onPress: option.onClick ?? (() => {}),
         })),
       },
