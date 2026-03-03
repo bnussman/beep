@@ -2,7 +2,9 @@ import React from "react";
 import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/utils/useUser";
-import { Queue } from "@/components/beeper/Queue";
+import { Text } from "@/components/Text";
+import { FlatList, View } from "react-native";
+import { QueueItem } from "@/components/beeper/QueueItem";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -19,10 +21,31 @@ export default function StartBeepingScreen() {
   );
 
   return (
-    <Queue
-      beeps={queue?.filter((beep) => beep.id !== queue[0]?.id) ?? []}
+    <FlatList
+      data={queue?.filter((beep) => beep.id !== queue[0]?.id) ?? []}
+      keyExtractor={(beep) => beep.id}
+      renderItem={({ item, index }) => <QueueItem item={item} index={index} />}
       onRefresh={refetch}
       refreshing={isRefetching}
+      contentInsetAdjustmentBehavior="always"
+      ListEmptyComponent={
+        <View
+          style={{
+            gap: 4,
+            paddingTop: '60%',
+            paddingBottom: '50%',
+            alignItems: "center",
+          }}
+        >
+          <Text size="5xl">⏳</Text>
+          <Text weight="800" size="lg">
+            Your queue is empty!
+          </Text>
+          <Text style={{ textAlign: "center", maxWidth: "80%" }}>
+            If additional riders join your queue, they will show up here!
+          </Text>
+        </View>
+      }
     />
   );
 }

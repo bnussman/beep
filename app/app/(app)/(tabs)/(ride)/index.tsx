@@ -80,7 +80,7 @@ export default function MainFindBeepScreen() {
   });
 
   const findBeep = handleSubmit((values) => {
-    router.navigate({ pathname: '/ride/pick', params: values });
+    router.navigate({ pathname: '/(app)/(tabs)/(ride)/pick', params: values });
   });
 
   if (!beep) {

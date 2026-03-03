@@ -48,7 +48,8 @@ export function Beep({ item }: Props) {
   );
 
   return (
-    <Link href={{ pathname: '/(app)/(tabs)/profile/beeps/[id]', params: { id: item.id } }} asChild>
+    <Link href={{ pathname: '/profile/beeps/[id]', params: { id: item.id } }} asChild>
+      <Link.Preview />
       <Link.Trigger withAppleZoom>
         <Card style={{ padding: 16, gap: 8 }} pressable>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -128,7 +129,6 @@ export function Beep({ item }: Props) {
           </View>
         </Card>
       </Link.Trigger>
-      <Link.Preview />
     </Link>
   );
 }

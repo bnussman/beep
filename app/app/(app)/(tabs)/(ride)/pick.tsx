@@ -187,6 +187,7 @@ export default function PickBeepScreen() {
       keyExtractor={(beeper) => beeper.id}
       refreshing={isRefetching}
       onRefresh={refetch}
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={
         beepers?.length === 0
           ? { flex: 1, alignItems: "center", justifyContent: "center" }
