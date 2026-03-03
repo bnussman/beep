@@ -1,6 +1,6 @@
 import React from "react";
 import { useUser } from "@/utils/useUser";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 
@@ -12,9 +12,9 @@ export default function EditProfileScreen() {
   }
 
   return (
-    <View>
+    <SafeAreaView>
       <Avatar src={user.photo ?? undefined} />
       <Text>{user.first}</Text>
-    </View>
+    </SafeAreaView>
   );
 }

@@ -13,7 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTimeRemainingString } from "@/components/CountDown";
 import { isAndroid, isWeb } from "@/utils/constants";
-import { useActivePayments } from "@/app/(app)/(drawer)/premium";
+import { useActivePayments } from "@/app/(app)/(tabs)/profile/premium";
 import { useUser } from "@/utils/useUser";
 import { PremiumBanner } from "@/components/PremiumBanner";
 import { Beep } from "@/components/beeper/Beep";
@@ -140,7 +140,7 @@ export default function StartBeepingScreen() {
   const toolbar = (
     <Stack.Toolbar placement="right">
       {user?.isBeeping && (
-        <Stack.Toolbar.Button onPress={() => router.push('/(app)/(drawer)/beep/queue')}>
+        <Stack.Toolbar.Button onPress={() => router.push('/(app)/(tabs)/beep/queue')}>
           <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
           {queue && queue.length > 1 && <Stack.Toolbar.Badge>{String(queue.length - 1)}</Stack.Toolbar.Badge>}
         </Stack.Toolbar.Button>

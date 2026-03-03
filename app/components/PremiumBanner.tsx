@@ -4,7 +4,7 @@ import { Card } from "@/components/Card";
 import { Countdown } from "@/components/CountDown";
 import { Text } from "@/components/Text";
 import { useNavigation } from "@react-navigation/native";
-import { useActivePayments } from '@/app/(app)/(drawer)/premium';
+import { useActivePayments } from '@/app/(app)/(tabs)/profile/premium';
 import { useRouter } from 'expo-router';
 
 export function PremiumBanner() {

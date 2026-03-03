@@ -9,11 +9,7 @@ export default function Layout() {
     }}>
       <Stack.Screen
         options={{ headerShown: false }}
-        name="(drawer)"
-      />
-      <Stack.Screen
-        options={{ headerTransparent: true, title: '' }}
-        name="beeps/[id]"
+        name="(tabs)"
       />
       <Stack.Screen
         options={(route) => {
@@ -32,14 +28,6 @@ export default function Layout() {
         name="user/[id]/index"
       />
       <Stack.Screen
-        options={{ headerTitle: "Change Password"}}
-        name="profile/change-password"
-      />
-      <Stack.Screen
-        options={{ headerTitle: "Create Car" }}
-        name="cars/create"
-      />
-      <Stack.Screen
         options={{ headerTitle: "Report" }}
         name="user/[id]/report"
       />
@@ -52,5 +40,5 @@ export default function Layout() {
 }
 
 export const unstable_settings = {
-  initialRouteName: '(drawer)',
+  initialRouteName: '(tabs)',
 };

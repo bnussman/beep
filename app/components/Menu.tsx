@@ -1,5 +1,7 @@
 import * as DropdownMenu from "zeego/dropdown-menu";
 import * as ContextMenu from "zeego/context-menu";
+import { isWeb } from "@/utils/constants";
+import { useTheme } from "@/utils/theme";
 
 export interface Option {
   /**
@@ -51,6 +53,8 @@ export interface MenuProps {
 }
 
 export const Menu = (props: MenuProps) => {
+  const theme = useTheme();
+
   if (props.disabled) {
     return props.trigger;
   }
@@ -82,6 +86,7 @@ export const Menu = (props: MenuProps) => {
         destructive={option.destructive}
         disabled={option.disabled}
         onSelect={option.onClick}
+        style={isWeb ? { color: theme.text.primary } : {}}
       >
         {option.title}
       </Component.Item>
