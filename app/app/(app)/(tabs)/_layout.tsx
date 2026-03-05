@@ -3,8 +3,6 @@ import { useUser } from '@/utils/useUser';
 import { useQuery } from '@tanstack/react-query';
 import { queryClient, useTRPC } from '@/utils/trpc';
 import { useSubscription } from '@trpc/tanstack-react-query';
-import { Text } from '@/components/Text'
-import { View } from 'react-native';
 
 export default function Layout() {
   const trpc = useTRPC();
@@ -41,6 +39,10 @@ export default function Layout() {
         <NativeTabs.Trigger.Icon sf="person.fill" />
         {/* <NativeTabs.Trigger.Icon src={{ uri: user?.photo ?? undefined, width: 24, height: 24,  }} /> */}
       </NativeTabs.Trigger>
+      {/* <NativeTabs.Trigger name="queue" unstable_nativeProps={{}} role="search" hidden={!user?.isBeeping}>
+        <NativeTabs.Trigger.Label>Queue</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: "list.bullet", selected: 'list.bullet' }} />
+      </NativeTabs.Trigger> */}
     </NativeTabs>
   );
 }
