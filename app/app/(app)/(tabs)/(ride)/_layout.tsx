@@ -4,7 +4,7 @@ import { Stack } from "expo-router"
 
 export default function Layout() {
   return (
-    <Stack screenOptions={{ headerTransparent: true }}>
+    <Stack screenOptions={{ headerTransparent: true, contentStyle: isWeb ? { paddingTop: 72 } : {} }}>
       <Stack.Screen
         name="index"
         options={{

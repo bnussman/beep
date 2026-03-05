@@ -5,7 +5,6 @@ import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { Link, LinkProps } from "expo-router";
-import { isWeb } from "@/utils/constants";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "@/utils/trpc";
 import { Button } from "@/components/Button";
@@ -65,7 +64,7 @@ export default function EditProfileScreen() {
 
   return (
     <SafeAreaView>
-      <View style={{ paddingHorizontal: 16, paddingTop: isWeb ? 64 : 0, gap: 8 }}>
+      <View style={{ paddingHorizontal: 16, gap: 8 }}>
         <Link href="/(app)/(tabs)/profile/edit" asChild>
           <Link.Trigger>
             <Card pressable style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12 }}>

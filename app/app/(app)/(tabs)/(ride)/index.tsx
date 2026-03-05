@@ -88,7 +88,7 @@ export default function MainFindBeepScreen() {
     return (
       <KeyboardAwareScrollView
         scrollEnabled={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: isWeb ? 64 : 0, gap: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
         contentInsetAdjustmentBehavior="automatic"
       >
         <View style={{ gap: 4 }}>
