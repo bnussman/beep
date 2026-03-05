@@ -80,7 +80,7 @@ export default function MainFindBeepScreen() {
   });
 
   const findBeep = handleSubmit((values) => {
-    router.navigate({ pathname: '/(app)/(tabs)/(ride)/pick', params: values });
+    router.navigate({ pathname: '/ride/pick', params: values });
   });
 
   if (!beep) {
@@ -161,7 +161,7 @@ export default function MainFindBeepScreen() {
           <Text color="error">{errors.destination?.message}</Text>
         </View>
         <Button onPress={() => findBeep()}>Find Beep</Button>
-        <Link asChild href="/map">
+        <Link asChild href="/ride/map">
           <Link.Trigger withAppleZoom>
             <BeepersMap />
           </Link.Trigger>

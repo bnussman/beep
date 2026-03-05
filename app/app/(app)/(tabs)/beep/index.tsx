@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert, View, Switch, ActivityIndicator} from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
@@ -349,7 +348,7 @@ export default function StartBeepingScreen() {
         />
       </View>
       <View style={{ flexGrow: 1 }} />
-      <Text size="sm" style={{ textAlign: "center", marginBottom: 18 }}>
+      <Text size="sm" style={{ textAlign: "center", marginBottom: 205 }}>
         Use the toggle in the top right to start beeping
       </Text>
     </KeyboardAwareScrollView>

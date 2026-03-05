@@ -27,7 +27,7 @@ export default function Layout() {
 
   return (
    <NativeTabs minimizeBehavior="onScrollDown">
-      <NativeTabs.Trigger name="(ride)">
+      <NativeTabs.Trigger name="ride">
         <NativeTabs.Trigger.Label>Ride</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="car.fill" />
       </NativeTabs.Trigger>

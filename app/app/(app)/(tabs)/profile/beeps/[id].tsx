@@ -115,7 +115,7 @@ export default function BeepDetails() {
         <BottomSheetView
           style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
         >
-          <Link href={{pathname: "/user/[id]", params: { id: otherUser?.id ?? '' }}} asChild>
+          <Link href={{pathname: "/profile/user/[id]", params: { id: otherUser?.id ?? '' }}} asChild>
             <Link.Trigger>
               <Pressable>
                 <Text weight="800">
