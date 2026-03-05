@@ -18,12 +18,13 @@ import { useActivePayments } from "@/app/(app)/(tabs)/profile/premium";
 import { useUser } from "@/utils/useUser";
 import { PremiumBanner } from "@/components/PremiumBanner";
 import { Beep } from "@/components/beeper/Beep";
-import { SplashScreen, Stack, useRouter } from "expo-router";
+import { Link, SplashScreen, Stack, useRouter } from "expo-router";
 import {
   startLocationTracking,
   stopLocationTracking,
   useLocationPermissions,
 } from "@/utils/location";
+import { Button } from "@/components/Button";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -152,6 +153,15 @@ export default function StartBeepingScreen() {
               alignItems: "center",
             }}
           >
+            <Link href="/(app)/(tabs)/beep/queue" asChild>
+              <Link.Trigger>
+                <Button>
+                  <Text>
+                    Queue {queue && queue.length > 1 ? `(${String(queue.length - 1)})` : ''}
+                  </Text>
+                </Button>
+              </Link.Trigger>
+            </Link>
             {payments?.[0] && (
               <Text
                 size="xl"

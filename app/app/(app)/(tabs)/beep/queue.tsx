@@ -5,6 +5,7 @@ import { useUser } from "@/utils/useUser";
 import { Text } from "@/components/Text";
 import { FlatList, View } from "react-native";
 import { QueueItem } from "@/components/beeper/QueueItem";
+import { isWeb } from "@/utils/constants";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -28,6 +29,7 @@ export default function StartBeepingScreen() {
       onRefresh={refetch}
       refreshing={isRefetching}
       contentInsetAdjustmentBehavior="always"
+      contentContainerStyle={isWeb ? { marginTop: 56 } : {}}
       ListEmptyComponent={
         <View
           style={{
