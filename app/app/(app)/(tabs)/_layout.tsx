@@ -25,16 +25,16 @@ export default function Layout() {
 
   return (
    <NativeTabs minimizeBehavior="onScrollDown">
-      <NativeTabs.Trigger name="ride">
+      <NativeTabs.Trigger name="(ride)">
         <NativeTabs.Trigger.Label>Ride</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="car.fill" />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="beep">
+      <NativeTabs.Trigger name="(beep)">
         <NativeTabs.Trigger.Label>Beep</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="steeringwheel" />
         {user?.isBeeping && <NativeTabs.Trigger.Badge>{queue?.length ? String(queue.length) : ''}</NativeTabs.Trigger.Badge>}
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="profile">
+      <NativeTabs.Trigger name="(profile)">
         <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="person.fill" />
         {/* <NativeTabs.Trigger.Icon src={{ uri: user?.photo ?? undefined, width: 24, height: 24,  }} /> */}

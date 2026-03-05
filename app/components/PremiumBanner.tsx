@@ -3,8 +3,7 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { Countdown } from "@/components/CountDown";
 import { Text } from "@/components/Text";
-import { useNavigation } from "@react-navigation/native";
-import { useActivePayments } from '@/app/(app)/(tabs)/profile/premium';
+import { useActivePayments } from '@/app/(app)/(tabs)/(profile)/profile/premium';
 import { useRouter } from 'expo-router';
 
 export function PremiumBanner() {

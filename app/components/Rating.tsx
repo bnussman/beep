@@ -68,7 +68,7 @@ export function Rating(props: Props) {
           pressable
           style={{ padding: 16, gap: 16, display: "flex" }}
           onLongPress={() => {}}
-          onPress={() => router.push({ pathname: '/profile/user/[id]', params: { id: otherUser.id }})}
+          onPress={() => router.push({ pathname: '/user/[id]', params: { id: otherUser.id }})}
         >
           <View
             style={{

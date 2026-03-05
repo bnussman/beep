@@ -7,7 +7,7 @@ import { Input } from "@/components/Input";
 import { Image } from "@/components/Image";
 import { Button } from "@/components/Button";
 import { Text } from "@/components/Text";
-import { years } from "../../../../../utils/cars";
+import { years } from "@/utils/cars";
 import { Pressable, SafeAreaView, View } from "react-native";
 import { useTRPC } from "@/utils/trpc";
 import { useTheme } from "@/utils/theme";

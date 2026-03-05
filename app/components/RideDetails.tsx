@@ -53,7 +53,7 @@ export function RideDetails(props: Props) {
       }}
     >
       <Pressable
-        onPress={() => router.push({ pathname: '/ride/user/[id]', params: { id: beep.beeper.id }})}
+        onPress={() => router.push({ pathname: '/user/[id]', params: { id: beep.beeper.id }})}
       >
         <Text weight="800">Beeper</Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
