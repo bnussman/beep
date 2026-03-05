@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
-import { Alert, View, Switch, ActivityIndicator, SafeAreaView } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, View, Switch, ActivityIndicator} from "react-native";
 import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { Text } from "@/components/Text";
@@ -23,11 +24,11 @@ import {
   stopLocationTracking,
   useLocationPermissions,
 } from "@/utils/location";
-import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
   const router = useRouter();
+  const navigation = useNavigation();
   const queryClient = useQueryClient();
 
   const { user } = useUser();
@@ -136,6 +137,45 @@ export default function StartBeepingScreen() {
       stopLocationTracking();
     }
   }, [user?.isBeeping]);
+
+
+  React.useLayoutEffect(() => {
+    if (isAndroid || isWeb) {
+      navigation.setOptions({
+        headerRight: () => (
+          <View
+            style={{
+              marginRight: 8,
+              display: "flex",
+              flexDirection: "row",
+              gap: 8,
+              alignItems: "center",
+            }}
+          >
+            {payments?.[0] && (
+              <Text
+                size="xl"
+                onPress={() =>
+                  Alert.alert(
+                    "You are premium!",
+                    `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+                  )
+                }
+              >
+                👑
+              </Text>
+            )}
+            {form.formState.isSubmitting && <ActivityIndicator size="small" />}
+            <Switch
+              disabled={form.formState.isSubmitting}
+              value={user?.isBeeping ?? false}
+              onValueChange={onToggleIsBeeping}
+            />
+          </View>
+        ),
+      });
+    }
+  }, [navigation, user?.isBeeping, form.formState.isSubmitting, payments]);
 
   const toolbar = (
     <Stack.Toolbar placement="right">
