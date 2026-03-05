@@ -83,7 +83,7 @@ export const Menu = (props: MenuProps) => {
     return (
       <Component.Item
         key={option.title}
-        destructive={option.destructive}
+        destructive={isWeb ? undefined : option.destructive}
         disabled={option.disabled}
         onSelect={option.onClick}
         style={isWeb ? { color: theme.text.primary } : {}}

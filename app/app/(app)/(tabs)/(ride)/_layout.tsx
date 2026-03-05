@@ -1,9 +1,17 @@
-import { Stack, Slot } from "expo-router"
+import { RideMenu } from "@/components/RideMenu";
+import { isAndroid, isWeb } from "@/utils/constants";
+import { Stack } from "expo-router"
 
 export default function Layout() {
   return (
     <Stack screenOptions={{ headerTransparent: true }}>
-      <Stack.Screen name="index" options={{ headerTitle: "Ride" }} />
+      <Stack.Screen
+        name="index"
+        options={{
+          headerTitle: "Ride",
+          ...(isWeb || isAndroid ? { headerRight: () => <RideMenu /> } : {})
+        }}
+      />
     </Stack>
   );
 }

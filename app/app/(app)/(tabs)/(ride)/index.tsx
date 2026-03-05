@@ -18,7 +18,8 @@ import { LocationInput } from "@/components/LocationInput";
 import { Button } from "@/components/Button";
 import { BeepersMap } from "@/components/BeepersMap";
 import { RateLastBeeper } from "@/components/RateLastBeeper";
-import { RideMenu } from "@/components/RideMenu";
+import { RideMenu } from "@/components/RideToolbar";
+import { isWeb } from "@/utils/constants";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -87,7 +88,7 @@ export default function MainFindBeepScreen() {
     return (
       <KeyboardAwareScrollView
         scrollEnabled={false}
-        contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: isWeb ? 56 : 0, gap: 12 }}
         contentInsetAdjustmentBehavior="automatic"
       >
         <View style={{ gap: 4 }}>

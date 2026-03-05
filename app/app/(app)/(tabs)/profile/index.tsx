@@ -60,9 +60,9 @@ export default function EditProfileScreen() {
           <Link.Preview />
         </Link>
         {links.map((link) => (
-          <Link href={link.href} asChild>
+          <Link href={link.href} asChild key={link.title}>
             <Link.Trigger>
-              <Card pressable key={link.title} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <Card pressable style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <Text size="2xl">{link.icon}</Text>
                 <Text>{link.title}</Text>
               </Card>

@@ -7,7 +7,7 @@ export function AddCarButton() {
 
   return (
     <Pressable
-      onPress={() => router.push("/(app)/cars/create")}
+      onPress={() => router.push("/(app)/(tabs)/profile/cars/create")}
       aria-label="Add a car"
       style={{ paddingRight: 12, transform: [{ translateY: -4 }] }}
     >

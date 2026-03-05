@@ -15,6 +15,7 @@ import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { Menu } from "@/components/Menu";
+import { isWeb } from "@/utils/constants";
 
 interface Values {
   year: number;
@@ -111,7 +112,7 @@ export default function AddCar() {
 
   return (
     <SafeAreaView>
-    <View style={{ paddingHorizontal: 16, gap: 8 }}>
+    <View style={{ paddingHorizontal: 16, paddingTop: isWeb ? 56 : 0, gap: 8 }}>
       <View style={{ gap: 4 }}>
         <Label htmlFor="make">Make</Label>
         <Controller

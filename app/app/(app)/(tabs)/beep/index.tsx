@@ -222,18 +222,7 @@ export default function StartBeepingScreen() {
 
   if (user?.isBeeping && queue?.[0]) {
     return (
-      <SafeAreaView>
-        <View
-          style={{
-            display: "flex",
-            height: "100%",
-            padding: 12,
-          }}
-        >
-          {toolbar}
-          <Beep beep={queue[0]} />
-        </View>
-      </SafeAreaView>
+      <Beep beep={queue[0]} />
     );
   }
 
