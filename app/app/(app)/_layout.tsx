@@ -12,27 +12,11 @@ export default function Layout() {
         name="(tabs)"
       />
       <Stack.Screen
-        options={(route) => {
-          const params = route.route.params as { id: string };
-          return {
-            headerRight: () => {
-              return <UserMenu userId={params.id} />;
-            },
-            unstable_headerRightItems: () => {
-              const options = useUserMenuOptions(params.id);
-              return getNavigationMenuFromOptions(options);
-            },
-            headerBackButtonDisplayMode: 'minimal',
-          }
-        }}
-        name="user/[id]/index"
-      />
-      <Stack.Screen
-        options={{ headerTitle: "Report" }}
+        options={{ headerTitle: "Report", presentation: 'formSheet' }}
         name="user/[id]/report"
       />
       <Stack.Screen
-        options={{ headerTitle: "Rate" }}
+        options={{ headerTitle: "Rate", presentation: 'formSheet' }}
         name="user/[id]/rate"
       />
     </Stack>

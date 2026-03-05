@@ -2,6 +2,7 @@ import { AddCarButton } from "@/components/AddCarButton";
 import { Menu } from "@/components/Menu";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { useProfileMenu } from "@/components/ProfileMenu"
+import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { isWeb } from "@/utils/constants";
 import { Stack } from "expo-router"
 
@@ -18,7 +19,22 @@ export default function Layout() {
       <Stack.Screen name="cars/create" options={{ headerTitle: "Add Car" }} />
       <Stack.Screen name="beeps/index" options={{ headerTitle: "Beeps" }} />
       <Stack.Screen name="ratings" options={{ headerTitle: "Ratings" }} />
-      <Stack.Screen name="user/[id]/index" options={{ headerTitle: "User" }} />
+      <Stack.Screen
+        options={(route) => {
+          const params = route.route.params as { id: string };
+          return {
+            headerRight: () => {
+              return <UserMenu userId={params.id} />;
+            },
+            unstable_headerRightItems: () => {
+              const options = useUserMenuOptions(params.id);
+              return getNavigationMenuFromOptions(options);
+            },
+            headerTitle: "User"
+          }
+        }}
+        name="user/[id]/index"
+      />
     </Stack>
   );
 }

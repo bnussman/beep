@@ -167,7 +167,7 @@ export default function MainFindBeepScreen() {
           </Link.Trigger>
           <Link.Preview />
         </Link>
-        <RateLastBeeper />
+        {/* <RateLastBeeper /> */}
       </KeyboardAwareScrollView>
     );
   }
