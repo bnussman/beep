@@ -1,11 +1,29 @@
+import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
+import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
 import { isWeb } from "@/utils/constants";
 import { Stack } from "expo-router"
 
 export default function Layout() {
   return (
     <Stack screenOptions={{ headerTransparent: true, contentStyle: isWeb ? { paddingTop: 72 } : {} }}>
-      <Stack.Screen name="index" options={{ headerTitle: "Beep" }} />
-      <Stack.Screen name="queue" />
+      <Stack.Screen name="beep/index" options={{ headerTitle: "Beep" }} />
+      <Stack.Screen name="beep/queue" options={{ headerTitle: "Queue" }} />
+      <Stack.Screen
+        options={(route) => {
+          const params = route.route.params as { id: string };
+          return {
+            headerRight: () => {
+              return <UserMenu userId={params.id} />;
+            },
+            unstable_headerRightItems: () => {
+              const options = useUserMenuOptions(params.id);
+              return getNavigationMenuFromOptions(options);
+            },
+            headerTitle: "User"
+          }
+        }}
+        name="user/[id]/index"
+      />
     </Stack>
   );
 }

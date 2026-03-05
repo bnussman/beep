@@ -33,7 +33,7 @@ export default function Layout() {
             headerTitle: "User"
           }
         }}
-        name="profile/user/[id]/index"
+        name="user/[id]/index"
       />
     </Stack>
   );

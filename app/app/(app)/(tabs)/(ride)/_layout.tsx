@@ -16,6 +16,22 @@ export default function Layout() {
       />
       <Stack.Screen name="ride/map" options={{ headerTitle: "Beeper Map" }} />
       <Stack.Screen name="ride/pick" options={{ headerTitle: "Choose Beeper" }} />
+      <Stack.Screen
+        options={(route) => {
+          const params = route.route.params as { id: string };
+          return {
+            headerRight: () => {
+              return <UserMenu userId={params.id} />;
+            },
+            unstable_headerRightItems: () => {
+              const options = useUserMenuOptions(params.id);
+              return getNavigationMenuFromOptions(options);
+            },
+            headerTitle: "User"
+          }
+        }}
+        name="user/[id]/index"
+      />
     </Stack>
   );
 }
