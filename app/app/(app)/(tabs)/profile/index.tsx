@@ -19,10 +19,6 @@ export default function EditProfileScreen() {
   const trpc = useTRPC();
   const { user } = useUser();
 
-  if (!user) {
-    return null;
-  }
-
   const links: LinkItem[] = [
     {
       icon: '🚕',
@@ -68,8 +64,8 @@ export default function EditProfileScreen() {
         <Link href="/(app)/(tabs)/profile/edit" asChild>
           <Link.Trigger>
             <Card pressable style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <Avatar src={user.photo ?? undefined} size="sm" />
-              <Text size="xl" weight="bold">{user.first} {user.last}</Text>
+              <Avatar src={user?.photo ?? undefined} size="sm" />
+              <Text size="xl" weight="bold">{user?.first} {user?.last}</Text>
             </Card>
           </Link.Trigger>
           <Link.Preview />

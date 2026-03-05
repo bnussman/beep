@@ -116,7 +116,7 @@ export function Beep(props: Props) {
   };
 
   return (
-    <SafeAreaView style={{ gap: 8, height: '100%', paddingBottom: 64 }}>
+    <SafeAreaView style={{ padding: 16, gap: 8, height: '100%', paddingBottom: isWeb ? 64: 12, paddingTop: 64 }}>
       <Card
         variant="filled"
         style={{ padding: 16, gap: 16 }}

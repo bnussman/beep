@@ -231,7 +231,10 @@ export default function StartBeepingScreen() {
 
   if (user?.isBeeping && queue?.[0]) {
     return (
-      <Beep beep={queue[0]} />
+      <>
+        {toolbar}
+        <Beep beep={queue[0]} />
+      </>
     );
   }
 
@@ -273,6 +276,9 @@ export default function StartBeepingScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       {toolbar}
+      <Text size="sm" style={{ marginBottom: 24 }}>
+        Use the toggle in the top right to start beeping
+      </Text>
       <View style={{ gap: 4 }}>
         <Label htmlFor="capacity">Max Rider Capacity</Label>
         <Controller
@@ -348,9 +354,6 @@ export default function StartBeepingScreen() {
         />
       </View>
       <View style={{ flexGrow: 1 }} />
-      <Text size="sm" style={{ textAlign: "center", marginBottom: 205 }}>
-        Use the toggle in the top right to start beeping
-      </Text>
     </KeyboardAwareScrollView>
   );
 }
