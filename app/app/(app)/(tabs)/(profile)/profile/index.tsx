@@ -23,27 +23,27 @@ export default function EditProfileScreen() {
     {
       icon: '🚕',
       title: 'Beeps',
-      href: '/(app)/(tabs)/profile/beeps',
+      href: "/profile/beeps",
     },
     {
       icon: '⭐️',
       title: 'Ratings',
-      href: '/(app)/(tabs)/profile/ratings',
+      href: "/profile/ratings",
     },
     {
       icon: '🚙',
       title: 'Cars',
-      href: '/(app)/(tabs)/profile/cars',
+      href: "/profile/cars",
     },
     {
       icon: '👑',
       title: 'Premium',
-      href: '/(app)/(tabs)/profile/premium',
+      href: "/profile/premium",
     },
     {
       icon: '💬',
       title: 'Feedback',
-      href: '/(app)/(tabs)/profile/feedback',
+      href: '/profile/feedback',
     },
   ]
 
@@ -61,7 +61,7 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaView>
       <View style={{ paddingHorizontal: 16, gap: 8 }}>
-        <Link href="/(app)/(tabs)/profile/edit" asChild>
+        <Link href="/profile/edit" asChild>
           <Link.Trigger>
             <Card pressable style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <Avatar src={user?.photo ?? undefined} size="sm" />

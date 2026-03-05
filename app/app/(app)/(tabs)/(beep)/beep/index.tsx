@@ -152,7 +152,7 @@ export default function StartBeepingScreen() {
               alignItems: "center",
             }}
           >
-            <Link href="/(app)/(tabs)/beep/queue" asChild>
+            <Link href="/beep/queue" asChild>
               <Link.Trigger>
                 <Button>
                   <Text>
@@ -189,7 +189,7 @@ export default function StartBeepingScreen() {
   const toolbar = (
     <Stack.Toolbar placement="right">
       {user?.isBeeping && (
-        <Stack.Toolbar.Button onPress={() => router.push('/(app)/(tabs)/beep/queue')}>
+        <Stack.Toolbar.Button onPress={() => router.push('/beep/queue')}>
           <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
           {queue && queue.length > 1 && <Stack.Toolbar.Badge>{String(queue.length - 1)}</Stack.Toolbar.Badge>}
         </Stack.Toolbar.Button>
