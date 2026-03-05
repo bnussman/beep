@@ -34,7 +34,7 @@ export default function StartBeepingScreen() {
         <View
           style={{
             gap: 4,
-            paddingTop: '60%',
+            paddingTop: isWeb ? '20%' :'60%',
             paddingBottom: '50%',
             alignItems: "center",
           }}

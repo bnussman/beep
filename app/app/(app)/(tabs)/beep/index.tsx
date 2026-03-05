@@ -270,7 +270,7 @@ export default function StartBeepingScreen() {
   return (
     <KeyboardAwareScrollView
       scrollEnabled={false}
-      contentContainerStyle={{ paddingHorizontal: 16, height: "100%", gap: 8 }}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: isWeb ? 64 : 0, height: "100%", gap: 8 }}
       contentInsetAdjustmentBehavior="automatic"
     >
       {toolbar}

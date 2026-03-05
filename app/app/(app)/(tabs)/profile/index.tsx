@@ -5,6 +5,10 @@ import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
 import { Link, LinkProps } from "expo-router";
+import { isWeb } from "@/utils/constants";
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "@/utils/trpc";
+import { Button } from "@/components/Button";
 
 interface LinkItem {
   icon: string | React.JSX.Element;
@@ -13,6 +17,7 @@ interface LinkItem {
 }
 
 export default function EditProfileScreen() {
+  const trpc = useTRPC();
   const { user } = useUser();
 
   if (!user) {
@@ -47,9 +52,20 @@ export default function EditProfileScreen() {
     },
   ]
 
+  const { mutate: resend, isPending: resendLoading } = useMutation(
+    trpc.auth.resendVerification.mutationOptions({
+      onSuccess() {
+        alert("Successfully resent verification email. Please check your email for further instructions.");
+      },
+      onError(error) {
+        alert(error.message) ;
+      },
+    }),
+  );
+
   return (
     <SafeAreaView>
-      <View style={{ paddingHorizontal: 16, gap: 8 }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: isWeb ? 64 : 0, gap: 8 }}>
         <Link href="/(app)/(tabs)/profile/edit" asChild>
           <Link.Trigger>
             <Card pressable style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -59,6 +75,14 @@ export default function EditProfileScreen() {
           </Link.Trigger>
           <Link.Preview />
         </Link>
+        {!user?.isEmailVerified && (
+          <Button
+            onPress={() => resend()}
+            isLoading={resendLoading}
+          >
+            Resend Verification Email
+          </Button>
+        )}
         {links.map((link) => (
           <Link href={link.href} asChild key={link.title}>
             <Link.Trigger>

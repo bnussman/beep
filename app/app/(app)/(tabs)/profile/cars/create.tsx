@@ -112,7 +112,7 @@ export default function AddCar() {
 
   return (
     <SafeAreaView>
-    <View style={{ paddingHorizontal: 16, paddingTop: isWeb ? 56 : 0, gap: 8 }}>
+    <View style={{ paddingHorizontal: 16, paddingTop: isWeb ? 64 : 0, gap: 8 }}>
       <View style={{ gap: 4 }}>
         <Label htmlFor="make">Make</Label>
         <Controller
