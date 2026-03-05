@@ -1,11 +1,10 @@
-import { Elipsis } from "@/components/Elipsis";
-import { Menu } from "@/components/Menu";
 import { isMobile } from "@/utils/constants";
 import { call, openCashApp, openVenmo, sms } from "@/utils/links";
+import { useTheme } from "@/utils/theme";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "expo-router";
-import { Alert, View } from "react-native";
+import { Alert } from "react-native";
 
 export function RideMenu() {
   const trpc = useTRPC();
@@ -75,50 +74,42 @@ export function RideMenu() {
     }
   };
 
-  if (!beep) {
-    return null;
-  }
-
   return (
     <Stack.Toolbar placement="right">
-      <Stack.Toolbar.Menu icon="ellipsis">
-        {beep.status !== "waiting" && (
-          <Stack.Toolbar.Menu inline title="Contact">
-            <Stack.Toolbar.MenuAction onPress={() => call(beep.beeper.id)}>
-              Call
-            </Stack.Toolbar.MenuAction>
-            <Stack.Toolbar.MenuAction onPress={() => sms(beep.beeper.id)}>
-              Text
-            </Stack.Toolbar.MenuAction>
-          </Stack.Toolbar.Menu>
-        )}
-        {beep.status !== "waiting" && (
-          <Stack.Toolbar.Menu inline title="Pay">
-            <Stack.Toolbar.MenuAction onPress={() =>
-              openVenmo(
-                beep.beeper.venmo,
-                beep.groupSize,
-                beep.beeper.groupRate,
-                beep.beeper.singlesRate,
-                "pay",
-              )}>
-              Venmo
-            </Stack.Toolbar.MenuAction>
-            <Stack.Toolbar.MenuAction onPress={() =>
-              openCashApp(
-                beep.beeper.cashapp,
-                beep.groupSize,
-                beep.beeper.groupRate,
-                beep.beeper.singlesRate,
-              )}>
-              Cashapp
-            </Stack.Toolbar.MenuAction>
-          </Stack.Toolbar.Menu>
-        )}
-        <Stack.Toolbar.MenuAction onPress={leaveQueue} destructive>
-          Cancel Ride
-        </Stack.Toolbar.MenuAction>
-      </Stack.Toolbar.Menu>
+      {beep && (
+        <Stack.Toolbar.Button icon="xmark" variant="prominent" tintColor="#cf2f32" onPress={leaveQueue}>
+          Cancel
+        </Stack.Toolbar.Button>
+      )}
+      {beep && beep.status !== "waiting" && (
+        <Stack.Toolbar.Button icon="phone.fill" onPress={() => call(beep.beeper.id)} />
+      )}
+      {beep && beep.status !== "waiting" && (
+        <Stack.Toolbar.Button icon="message.fill" onPress={() => sms(beep.beeper.id)} />
+      )}
+      {beep && beep.status !== "waiting" && (
+        <Stack.Toolbar.Menu title="Pay" icon="creditcard.fill">
+          <Stack.Toolbar.MenuAction onPress={() =>
+            openVenmo(
+              beep.beeper.venmo,
+              beep.groupSize,
+              beep.beeper.groupRate,
+              beep.beeper.singlesRate,
+              "pay",
+            )}>
+            Venmo
+          </Stack.Toolbar.MenuAction>
+          <Stack.Toolbar.MenuAction onPress={() =>
+            openCashApp(
+              beep.beeper.cashapp,
+              beep.groupSize,
+              beep.beeper.groupRate,
+              beep.beeper.singlesRate,
+            )}>
+            Cashapp
+          </Stack.Toolbar.MenuAction>
+        </Stack.Toolbar.Menu>
+      )}
     </Stack.Toolbar>
   );
 }

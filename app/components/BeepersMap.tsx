@@ -68,7 +68,8 @@ export function BeepersMap() {
       showsUserLocation
       style={{
         width: "100%",
-        height: 250,
+        minHeight: 250,
+        flex: 1,
         borderRadius: 15,
         overflow: "hidden",
       }}

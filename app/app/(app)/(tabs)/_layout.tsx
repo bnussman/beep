@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { queryClient, useTRPC } from '@/utils/trpc';
 import { useSubscription } from '@trpc/tanstack-react-query';
 import { Text } from '@/components/Text'
+import { View } from 'react-native';
 
 export default function Layout() {
   const trpc = useTRPC();
