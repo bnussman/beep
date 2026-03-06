@@ -114,7 +114,7 @@ export default function EditProfileScreen() {
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
                   <Text size="2xl">{link.icon}</Text>
                   <View>
-                    <Text>{link.title}</Text>
+                    <Text weight="500">{link.title}</Text>
                     <Text color="subtle" size="xs">{link.description}</Text>
                   </View>
                   <View style={{ flex: 1 }} />

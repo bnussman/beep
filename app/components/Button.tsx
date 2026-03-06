@@ -55,7 +55,7 @@ export function Button(props: Props) {
   const getStyle = (state: PressableStateCallbackType): ViewStyle[] => {
     const style = [
       {
-        borderRadius: 20,
+        borderRadius: 50,
         alignItems: "center",
         justifyContent: "center",
         cursor: props.disabled ? "auto" : "pointer",
@@ -116,7 +116,7 @@ export function Button(props: Props) {
       {isLoading ? (
         <ActivityIndicator {...activityIndicatorProps} />
       ) : typeof children === "string" ? (
-        <Text weight="800" style={color ? {} : {}}>
+        <Text weight="600">
           {children}
         </Text>
       ) : (
