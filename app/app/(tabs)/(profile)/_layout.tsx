@@ -20,6 +20,7 @@ export default function Layout() {
       <Stack.Screen name="profile/beeps/index" options={{ headerTitle: "Beeps" }} />
       <Stack.Screen name="profile/beeps/[id]" options={{ headerTitle: "Beep" }} />
       <Stack.Screen name="profile/ratings" options={{ headerTitle: "Ratings" }} />
+      <Stack.Screen name="profile/feedback" options={{ headerTitle: "Feedback" }} />
       <Stack.Screen
         options={(route) => {
           const params = route.route.params as { id: string };

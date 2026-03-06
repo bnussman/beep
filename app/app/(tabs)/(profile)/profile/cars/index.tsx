@@ -1,6 +1,5 @@
-import React, { useLayoutEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { ActivityIndicator, FlatList, Pressable } from "react-native";
+import React from "react";
+import { ActivityIndicator, FlatList } from "react-native";
 import { PAGE_SIZE } from "@/utils/constants";
 import { useUser } from "@/utils/useUser";
 import { Image } from "@/components/Image";
@@ -15,6 +14,22 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "@/components/Menu";
 import { Stack, useRouter } from "expo-router";
 import { getContentContainerStyle } from "@/utils/styles";
+
+const colorMap = {
+  "red": '#ca3f3f',
+  "green": '#62be62',
+  "blue": '#2f69d5',
+  "purple": '#a837b7',
+  "black": '#2b2b2b',
+  "gray": '#a8a8a8',
+  "pink": '#d36ecb',
+  "white": '#e2e2e2',
+  "orange": '#d8670a',
+  "tan": '#c69567',
+  "brown": '#78513edd',
+  "silver": '#7e7e7e',
+  "yellow": '#d9af3d',
+}
 
 export default function Cars() {
   const trpc = useTRPC();
@@ -147,13 +162,21 @@ export default function Cars() {
                 <View style={{ gap: 8, flexShrink: 1 }}>
                   <Text
                     weight="bold"
-                    style={{ textTransform: "capitalize", flexWrap: "wrap" }}
+                    style={{ flexWrap: "wrap" }}
                   >
-                    {car.color} {car.make} {car.model} {car.year}
+                    {car.make} {car.model} {car.year}
                   </Text>
                   <View
-                    style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+                    style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 8 }}
                   >
+                    <View
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: 16 / 2,
+                        backgroundColor: colorMap[car.color as keyof typeof colorMap] ?? car.color,
+                      }}
+                    />
                     {car.default && (
                       <View
                         style={{

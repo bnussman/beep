@@ -15,7 +15,7 @@ import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getFile } from "@/utils/files";
 import { Menu } from "@/components/Menu";
-import { isWeb } from "@/utils/constants";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 interface Values {
   year: number;
@@ -111,8 +111,7 @@ export default function AddCar() {
   });
 
   return (
-    <SafeAreaView>
-    <View style={{ paddingHorizontal: 16, gap: 8 }}>
+    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 8 }} contentInsetAdjustmentBehavior="automatic">
       <View style={{ gap: 4 }}>
         <Label htmlFor="make">Make</Label>
         <Controller
@@ -164,7 +163,6 @@ export default function AddCar() {
             />
           )}
         />
-
         <Text color="error">{errors.model?.message}</Text>
       </View>
       <View style={{ gap: 4 }}>
@@ -190,7 +188,6 @@ export default function AddCar() {
             />
           )}
         />
-
           <Text color="error">{errors.year?.message}</Text>
         </View>
         <View style={{ gap: 4 }}>
@@ -219,13 +216,13 @@ export default function AddCar() {
           />
           <Text color="error">{errors.color?.message}</Text>
         </View>
-        <View style={{ gap: 4 }}>
+        <View style={{ gap: 4, marginVertical: 8 }}>
           <Controller
             name="photo"
             rules={{ required: "Photo is required" }}
             control={control}
             render={() => (
-              <Pressable onPress={choosePhoto}>
+              <Pressable onPress={choosePhoto} style={({ pressed }) => pressed ? { opacity: 0.8 } : {}}>
                 {photo ? (
                   <Image
                     style={{ borderRadius: 12, height: 192, width: "100%" }}
@@ -261,7 +258,6 @@ export default function AddCar() {
         >
           Add Car
         </Button>
-      </View>
-    </SafeAreaView>
+    </KeyboardAwareScrollView>
   );
 }
