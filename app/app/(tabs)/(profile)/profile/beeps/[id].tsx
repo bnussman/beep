@@ -8,7 +8,6 @@ import { decodePolyline, getMiles } from "@/utils/location";
 import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useNavigation } from "@react-navigation/native";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
@@ -114,7 +113,7 @@ export default function BeepDetails() {
       </Map>
       <BottomSheet snapPoints={["20%"]} enableDynamicSizing>
         <BottomSheetView
-          style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
+          style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 110 }}
         >
           <Link href={{pathname: "/user/[id]", params: { id: otherUser?.id ?? '' }}} asChild>
             <Link.Trigger>
@@ -144,11 +143,11 @@ export default function BeepDetails() {
           </Link>
           <View>
             <Text weight="800">Origin</Text>
-            <Text>{beep.origin}</Text>
+            <Text>{beep?.origin}</Text>
           </View>
           <View>
             <Text weight="800">Destination</Text>
-            <Text>{beep.destination}</Text>
+            <Text>{beep?.destination}</Text>
           </View>
           {route && (
             <View>
@@ -161,19 +160,19 @@ export default function BeepDetails() {
           )}
           <View>
             <Text weight="800">Group Size</Text>
-            <Text>{beep.groupSize}</Text>
+            <Text>{beep?.groupSize}</Text>
           </View>
           <View>
             <Text weight="800">Status</Text>
             <Text style={{ textTransform: "capitalize" }}>
-              {beep.status.replaceAll("_", " ")}
+              {beep?.status.replaceAll("_", " ")}
             </Text>
           </View>
           <View>
             <Text weight="800">Started</Text>
-            <Text>{new Date(beep.start).toLocaleString()}</Text>
+            {beep && <Text>{new Date(beep.start).toLocaleString()}</Text>}
           </View>
-          {beep.end && (
+          {beep?.end && (
             <View>
               <Text weight="800">Ended</Text>
               <Text>{new Date(beep.end).toLocaleString()}</Text>

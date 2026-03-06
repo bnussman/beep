@@ -9,7 +9,7 @@ import type {
   PurchasesOffering,
   PurchasesPackage,
 } from "react-native-purchases";
-import PremiumImage from "../../../assets/premium.png";
+import PremiumImage from "@/assets/premium.png";
 import { Countdown } from "@/components/CountDown";
 import { FlatList } from "react-native";
 import { useTRPC } from "@/utils/trpc";
@@ -93,6 +93,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
       style={{
         paddingHorizontal: 8,
         paddingVertical: 8,
+        paddingLeft: 16,
         gap: 8,
         flexDirection: "row",
         alignItems: "center",
@@ -237,6 +238,7 @@ export default function Premium() {
     <FlatList
       data={offerings}
       contentContainerStyle={{ padding: 16 }}
+      contentInsetAdjustmentBehavior="automatic"
       renderItem={({ item }) => (
         <Offering item={item} disabled={numberOfActivePayments > 0} />
       )}

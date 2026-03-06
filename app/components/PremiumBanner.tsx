@@ -3,9 +3,8 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { Countdown } from "@/components/CountDown";
 import { Text } from "@/components/Text";
-import { useNavigation } from "@react-navigation/native";
-import { useActivePayments } from '@/app/(app)/(drawer)/premium';
 import { useRouter } from 'expo-router';
+import { useActivePayments } from '@/app/(tabs)/(profile)/profile/premium';
 
 export function PremiumBanner() {
   const router = useRouter();
@@ -33,7 +32,7 @@ export function PremiumBanner() {
           <Text>
             Jump to the top of the beeper list
           </Text>
-          <Button onPress={() => router.push('/premium')}>
+          <Button onPress={() => router.navigate('/profile/premium')}>
             Get Promoted 👑
           </Button>
         </>

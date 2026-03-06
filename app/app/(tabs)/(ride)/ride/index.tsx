@@ -3,12 +3,12 @@ import { useTRPC } from "@/utils/trpc";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import { RideDetails } from "../../../components/RideDetails";
+import { RideDetails } from "@/components/RideDetails";
 import { BottomSheet } from "@/components/BottomSheet";
 import { View } from "react-native";
-import { RideMap } from "../../../components/RideMap";
+import { RideMap } from "@/components/RideMap";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { SplashScreen, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, SplashScreen, useLocalSearchParams, useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Label } from "@/components/Label";
@@ -18,6 +18,7 @@ import { LocationInput } from "@/components/LocationInput";
 import { Button } from "@/components/Button";
 import { BeepersMap } from "@/components/BeepersMap";
 import { RateLastBeeper } from "@/components/RateLastBeeper";
+import { RideMenu } from "@/components/RideToolbar";
 
 export default function MainFindBeepScreen() {
   const trpc = useTRPC();
@@ -86,7 +87,8 @@ export default function MainFindBeepScreen() {
     return (
       <KeyboardAwareScrollView
         scrollEnabled={false}
-        contentContainerStyle={{ padding: 16, gap: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+        contentInsetAdjustmentBehavior="automatic"
       >
         <View style={{ gap: 4 }}>
           <Label htmlFor="groupSize">Group Size</Label>
@@ -159,14 +161,20 @@ export default function MainFindBeepScreen() {
           <Text color="error">{errors.destination?.message}</Text>
         </View>
         <Button onPress={() => findBeep()}>Find Beep</Button>
-        <BeepersMap />
-        <RateLastBeeper />
+        <Link asChild href="/ride/map">
+          <Link.Trigger withAppleZoom>
+            <BeepersMap />
+          </Link.Trigger>
+          <Link.Preview />
+        </Link>
+        {/* <RateLastBeeper /> */}
       </KeyboardAwareScrollView>
     );
   }
 
   return (
     <View style={{ flex: 1 }}>
+      <RideMenu />
       <RideMap beepersLocation={beepersLocation} />
       <BottomSheet enableDynamicSizing snapPoints={["30%", "50%"]}>
         <BottomSheetView>

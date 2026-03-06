@@ -10,7 +10,7 @@ import { printStars } from "./Stars";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "./Menu";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 
 interface Props {
   item: RouterOutput["beep"]["beeps"]["beeps"][number];
@@ -48,80 +48,10 @@ export function Beep({ item }: Props) {
   );
 
   return (
-    <Menu
-      options={[
-        {
-          onClick: () => call(otherUser.id),
-          title: "Call",
-          show: isAcceptedOrComplete,
-        },
-        {
-          onClick: () => sms(otherUser.id),
-          title: "Text",
-          show: isAcceptedOrComplete,
-        },
-        {
-          title: "Pay Beeper With Venmo",
-          show: isRider && Boolean(item.beeper.venmo) && isAcceptedOrComplete,
-          onClick: () =>
-            openVenmo(
-              item.beeper.venmo,
-              item.groupSize,
-              item.beeper.groupRate,
-              item.beeper.singlesRate,
-              "pay",
-            ),
-        },
-        {
-          title: "Charge Rider with Venmo",
-          show: isBeeper && Boolean(item.rider.venmo) && isAcceptedOrComplete,
-          onClick: () =>
-            openVenmo(
-              item.rider.venmo,
-              item.groupSize,
-              item.beeper.groupRate,
-              item.beeper.singlesRate,
-              "charge",
-            ),
-        },
-        {
-          title: "Rate",
-          show: !myRating && item.status === "complete", // only allow rating if you haven't already left a rating and the beep is complete
-          onClick: () =>
-            router.push({
-              pathname: "/user/[id]/rate",
-              params: {
-                id: otherUser.id,
-                beepId: item.id,
-              }
-            }),
-        },
-        {
-          title: "Report",
-          onClick: () =>
-            router.push({
-              pathname: '/user/[id]/report',
-              params: {
-                id: otherUser.id,
-                beepId: item.id,
-              }
-            }),
-        },
-        {
-          onClick: () => deleteRating({ ratingId: myRating!.id }),
-          show: Boolean(myRating),
-          destructive: true,
-          title: "Delete Rating",
-        },
-      ]}
-      activationMethod="longPress"
-      trigger={
-        <Card
-          style={{ padding: 16, gap: 8 }}
-          pressable
-          onLongPress={() => {}}
-          onPress={() => router.navigate(`/beeps/${item.id}`)}
-        >
+    <Link href={{ pathname: '/profile/beeps/[id]', params: { id: item.id } }} asChild>
+      <Link.Preview />
+      <Link.Trigger withAppleZoom>
+        <Card style={{ padding: 16, gap: 8 }} pressable>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Avatar size="xs" src={otherUser.photo ?? undefined} />
             <View style={{ flexShrink: 1 }}>
@@ -198,7 +128,7 @@ export function Beep({ item }: Props) {
             )}
           </View>
         </Card>
-      }
-    />
+      </Link.Trigger>
+    </Link>
   );
 }

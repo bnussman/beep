@@ -28,6 +28,7 @@ import {
 import { Elipsis } from "@/components/Elipsis";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -115,7 +116,7 @@ export function Beep(props: Props) {
   };
 
   return (
-    <View style={{ gap: 8, height: "100%", paddingBottom: 76 }}>
+    <SafeAreaView style={{ padding: 16, gap: 8, height: '100%', paddingBottom: isWeb ? 64: 12, paddingTop: 64 }}>
       <Card
         variant="filled"
         style={{ padding: 16, gap: 16 }}
@@ -297,6 +298,6 @@ export function Beep(props: Props) {
           <ActionButton beep={beep} />
         )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

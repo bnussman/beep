@@ -3,14 +3,15 @@ import { Image } from "react-native";
 import type { ImageProps } from "react-native";
 import AvatarImage from "../assets/avatar.png";
 
-type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+type Size = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 const SIZE_MAP: Record<Size, number> = {
+  xxs: 32,
   xs: 48,
   sm: 56,
   md: 64,
   lg: 80,
-  xl: 128,
+  xl: 112,
   '2xl': 192,
 };
 

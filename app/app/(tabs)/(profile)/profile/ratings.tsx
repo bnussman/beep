@@ -1,8 +1,8 @@
 import React from "react";
 import { FlatList, View, ActivityIndicator } from "react-native";
-import { useUser } from "../../../utils/useUser";
-import { Rating } from "../../../components/Rating";
-import { PAGE_SIZE } from "../../../utils/constants";
+import { useUser } from "@/utils/useUser";
+import { Rating } from "@/components/Rating";
+import { isIOS, PAGE_SIZE } from "@/utils/constants";
 import { Text } from "@/components/Text";
 import { useTRPC } from "@/utils/trpc";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -51,7 +51,7 @@ export default function RatingsScreen() {
   if (isLoading) {
     return (
       <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator />
       </View>
     );
   }
@@ -59,6 +59,9 @@ export default function RatingsScreen() {
   if (error) {
     return (
       <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <Text weight="800" size="3xl">
+          Error
+        </Text>
         <Text>{error.message}</Text>
       </View>
     );
@@ -68,15 +71,20 @@ export default function RatingsScreen() {
     <FlatList
       contentContainerStyle={
         ratings?.length === 0 ? {
+          flex: 1,
           display: 'flex',
-          height: '100%',
           alignItems: 'center',
           justifyContent: 'center',
+          ...(isIOS && ({
+            flex: undefined,
+            height: '75%'
+          }))
         } : {
-          padding: 8,
-          gap: 8,
+          paddingHorizontal: 16,
+          gap: 8
         }
       }
+      contentInsetAdjustmentBehavior="automatic"
       data={ratings}
       renderItem={(data) => <Rating {...data} />}
       keyExtractor={(rating) => rating.id}

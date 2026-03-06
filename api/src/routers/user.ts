@@ -147,7 +147,7 @@ export const userRouter = router({
       }
 
       if (input.isBeeping) {
-        if (!ctx.user.isStudent && !ctx.user.isEmailVerified) {
+        if (!ctx.user.isEmailVerified) {
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "You must confirm your email to beep.",

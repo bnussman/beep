@@ -55,7 +55,7 @@ export function Button(props: Props) {
   const getStyle = (state: PressableStateCallbackType): ViewStyle[] => {
     const style = [
       {
-        borderRadius: 12,
+        borderRadius: 20,
         alignItems: "center",
         justifyContent: "center",
         cursor: props.disabled ? "auto" : "pointer",

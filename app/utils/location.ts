@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/react-native";
 import * as TaskManager from "expo-task-manager";
 import { captureException } from "@sentry/react-native";
 import { trpcClient } from "./trpc";
+import { isWeb } from "./constants";
 
 export function useLocation(enabled = true) {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -86,7 +87,9 @@ export async function startLocationTracking() {
       },
     });
   } catch (error) {
-    console.error("Unable to start location tracking", error);
+    if (!isWeb) {
+      console.error("Unable to start location tracking", error);
+    }
     Sentry.captureException(error);
   }
 }
@@ -100,7 +103,9 @@ export async function stopLocationTracking() {
       await Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
     }
   } catch (error) {
-    console.error("Unable to stop location tracking", error);
+    if (!isWeb) {
+      console.error("Unable to stop location tracking", error);
+    }
     Sentry.captureException(error);
   }
 }

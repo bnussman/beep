@@ -1,5 +1,7 @@
 import * as DropdownMenu from "zeego/dropdown-menu";
 import * as ContextMenu from "zeego/context-menu";
+import { isWeb } from "@/utils/constants";
+import { useTheme } from "@/utils/theme";
 
 export interface Option {
   /**
@@ -28,6 +30,7 @@ export interface Option {
    * If you want the item to be a submenu, provide options
    */
   options?: Option[];
+  checked?: boolean;
 }
 
 export interface MenuProps {
@@ -51,6 +54,8 @@ export interface MenuProps {
 }
 
 export const Menu = (props: MenuProps) => {
+  const theme = useTheme();
+
   if (props.disabled) {
     return props.trigger;
   }
@@ -76,15 +81,20 @@ export const Menu = (props: MenuProps) => {
       );
     }
 
+    const C = option.checked !== undefined ? Component.CheckboxItem : Component.Item;
+
     return (
-      <Component.Item
+      <C
+        value={option.checked ? "on" : 'off'}
         key={option.title}
-        destructive={option.destructive}
+        destructive={isWeb ? undefined : option.destructive}
         disabled={option.disabled}
         onSelect={option.onClick}
+        onValueChange={option.onClick}
+        style={isWeb ? { color: theme.text.primary } : {}}
       >
         {option.title}
-      </Component.Item>
+      </C>
     );
   };
 
