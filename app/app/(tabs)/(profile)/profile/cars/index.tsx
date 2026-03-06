@@ -126,6 +126,9 @@ export default function Cars() {
   if (error) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text size="3xl" weight="800">
+          Error
+        </Text>
         <Text>{error.message}</Text>
       </View>
     );
@@ -161,7 +164,7 @@ export default function Cars() {
               >
                 <View style={{ gap: 8, flexShrink: 1 }}>
                   <Text
-                    weight="bold"
+                    weight="500"
                     style={{ flexWrap: "wrap" }}
                   >
                     {car.make} {car.model} {car.year}
@@ -183,10 +186,10 @@ export default function Cars() {
                           paddingHorizontal: 8,
                           paddingVertical: 4,
                           borderRadius: 16,
-                          backgroundColor: "#737373",
+                          backgroundColor: "#2e2e2e",
                         }}
                       >
-                        <Text size="xs" weight="800" style={{ color: "white" }}>
+                        <Text size="xs" weight="500" style={{ color: "white" }}>
                           Default
                         </Text>
                       </View>

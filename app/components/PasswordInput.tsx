@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button } from "./Button";
+import { Text } from "./Text";
 import { Input } from "./Input";
-import { TextInputProps, View } from "react-native";
+import { Pressable, TextInputProps, View } from "react-native";
 
 interface Props extends TextInputProps {
   inputRef: any;
@@ -15,13 +15,19 @@ export function PasswordInput({ inputRef, ...props }: Props) {
   return (
     <View style={{ flexDirection: 'row', gap: 8 }}>
       <Input
-        style={{ flexGrow: 1 }}
+        style={{ flexGrow: 1, paddingRight: 52 }}
         ref={inputRef}
         textContentType="password"
         secureTextEntry={!show}
         {...props}
       />
-      <Button onPress={toggleShow}>{show ? "🙈" : "👁️"}</Button>
+      <View style={{ position: 'absolute', right: 16, top: 12, display: 'flex', alignContent: 'center', justifyContent: 'center', width: 28, height: 24 }}>
+        <Pressable onPress={toggleShow} hitSlop={24}>
+          <Text size="2xl">
+            {show ? "🙈" : "👁️"}
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
