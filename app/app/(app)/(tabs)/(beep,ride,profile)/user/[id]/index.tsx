@@ -39,7 +39,7 @@ export default function User() {
           height: "100%",
         }}
       >
-        <ActivityIndicator size="large" />
+        <ActivityIndicator />
       </View>
     );
   }

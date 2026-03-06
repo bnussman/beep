@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "@/components/Menu";
 import { Stack, useRouter } from "expo-router";
+import { getContentContainerStyle } from "@/utils/styles";
 
 export default function Cars() {
   const trpc = useTRPC();
@@ -127,9 +128,7 @@ export default function Cars() {
         data={cars}
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={
-          cars?.length === 0
-            ? { alignItems: "center", justifyContent: "center", height: "100%" }
-            : { flex: 1, padding: 12, gap: 8 }
+          getContentContainerStyle(cars?.length === 0)
         }
         renderItem={({ item: car }) => (
           <Menu

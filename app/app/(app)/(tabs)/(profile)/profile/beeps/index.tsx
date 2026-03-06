@@ -2,10 +2,11 @@ import React from "react";
 import { Text } from "@/components/Text";
 import { useUser } from "@/utils/useUser";
 import { Beep } from "@/components/Beep";
-import { PAGE_SIZE } from "@/utils/constants";
+import { PAGE_SIZE } from "../../../../../../utils/constants";
 import { useTRPC } from "@/utils/trpc";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ActivityIndicator, FlatList, View } from "react-native";
+import { getContentContainerStyle } from "@/utils/styles";
 
 export default function BeepsScreen() {
   const trpc = useTRPC();
@@ -61,7 +62,7 @@ export default function BeepsScreen() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator />
       </View>
     );
   }
@@ -69,6 +70,9 @@ export default function BeepsScreen() {
   if (error) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text size="3xl" weight="800">
+          Error
+        </Text>
         <Text>{error.message}</Text>
       </View>
     );
@@ -77,12 +81,7 @@ export default function BeepsScreen() {
   return (
     <FlatList
       data={beeps}
-      style={{ padding: 8 }}
-      contentContainerStyle={
-        beeps?.length === 0
-          ? { flex: 1, alignItems: "center", justifyContent: "center" }
-          : { gap: 8 }
-      }
+      contentContainerStyle={getContentContainerStyle(beeps?.length === 0)}
       renderItem={(data) => <Beep {...data} />}
       keyExtractor={(beep) => beep.id}
       onEndReached={() => fetchNextPage()}

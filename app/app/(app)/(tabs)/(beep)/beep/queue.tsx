@@ -5,14 +5,14 @@ import { useUser } from "@/utils/useUser";
 import { Text } from "@/components/Text";
 import { FlatList, View } from "react-native";
 import { QueueItem } from "@/components/beeper/QueueItem";
-import { isIOS, isWeb } from "@/utils/constants";
+import { getContentContainerStyle } from "@/utils/styles";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
   const { user } = useUser();
 
   const {
-    data: queue,
+    data,
     refetch,
     isRefetching,
   } = useQuery(
@@ -21,26 +21,17 @@ export default function StartBeepingScreen() {
     }),
   );
 
+  const [currentBeep, ...queue] = data ?? [];
+
   return (
     <FlatList
-      data={queue?.filter((beep) => beep.id !== queue[0]?.id) ?? []}
+      data={queue}
       keyExtractor={(beep) => beep.id}
       renderItem={({ item, index }) => <QueueItem item={item} index={index} />}
       onRefresh={refetch}
       refreshing={isRefetching}
-      contentInsetAdjustmentBehavior="always"
-      contentContainerStyle={
-        queue?.length === 0 ? {
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          ...(isIOS && ({
-            flex: undefined,
-            height: '70%'
-          }))
-        } : {}
-      }
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={getContentContainerStyle(queue.length === 0)}
       ListEmptyComponent={
         <View style={{ gap: 8, alignItems: 'center' }}>
           <Text size="5xl">⏳</Text>

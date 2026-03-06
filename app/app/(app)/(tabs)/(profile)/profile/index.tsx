@@ -64,19 +64,32 @@ export default function EditProfileScreen() {
         <Link href="/profile/edit" asChild>
           <Link.Trigger>
             <Card pressable style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <Avatar src={user?.photo ?? undefined} size="sm" />
+              <Avatar src={user?.photo ?? undefined} size="xs" />
               <Text size="xl" weight="bold">{user?.first} {user?.last}</Text>
             </Card>
           </Link.Trigger>
           <Link.Preview />
         </Link>
         {!user?.isEmailVerified && (
-          <Button
-            onPress={() => resend()}
-            isLoading={resendLoading}
-          >
-            Resend Verification Email
-          </Button>
+          <Card style={{ gap: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Text size="2xl">📧</Text>
+              <Text weight="bold">Your email is not verified </Text>
+            </View>
+            <View>
+              <Text>You must verify your email to access all features.</Text>
+              <Text>Check your email <Text color="subtle" style={{ fontStyle: 'italic' }}>{user?.email}</Text> for a verification link.</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
+              <Text>Didn't receive the email?</Text>
+              <Button
+                onPress={() => resend()}
+                isLoading={resendLoading}
+              >
+                Resend it!
+              </Button>
+            </View>
+          </Card>
         )}
         {links.map((link) => (
           <Link href={link.href} asChild key={link.title}>

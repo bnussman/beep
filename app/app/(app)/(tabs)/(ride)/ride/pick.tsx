@@ -14,6 +14,7 @@ import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
 import { captureException, captureMessage } from "@sentry/react-native";
 import { isIOS } from "@/utils/constants";
+import { getContentContainerStyle } from "@/utils/styles";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
@@ -155,18 +156,9 @@ export default function PickBeepScreen() {
     );
   };
 
-  if (isLoading) {
+  if (isLoading || !location) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-
-  if (!location) {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text weight="800">Loading Location</Text>
         <ActivityIndicator />
       </View>
     );
@@ -175,7 +167,9 @@ export default function PickBeepScreen() {
   if (error) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text weight="800">Error</Text>
+        <Text weight="800" size="2xl">
+          Error
+        </Text>
         <Text>{error.message}</Text>
       </View>
     );
@@ -190,16 +184,7 @@ export default function PickBeepScreen() {
       onRefresh={refetch}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={
-       beepers?.length === 0 ? {
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          ...(isIOS && ({
-            flex: undefined,
-            height: '75%'
-          }))
-        } : {}
+        getContentContainerStyle(beepers?.length === 0)
       }
       ListEmptyComponent={
         <View style={{ alignItems: "center" }}>

@@ -37,7 +37,7 @@ export default function UserDetailsPage({ id }: Props) {
           height: "100%",
         }}
       >
-        <ActivityIndicator size="large" />
+        <ActivityIndicator />
       </View>
     );
   }

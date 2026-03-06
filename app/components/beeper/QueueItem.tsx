@@ -15,6 +15,7 @@ import { Map } from "@/components/Map";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { Menu } from "@/components/Menu";
+import { Link } from "expo-router";
 
 interface Props {
   item: RouterOutput["beeper"]["queue"][number];
@@ -103,26 +104,30 @@ export function QueueItem({ item: beep }: Props) {
       activationMethod="longPress"
       trigger={
         <Card variant="filled" style={{ padding: 16, gap: 16 }} pressable>
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 16,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <View>
-              <Text weight="800" size="xl">
-                {beep.rider.first} {beep.rider.last}
-              </Text>
-              <Text color="subtle" style={{ fontSize: 10 }}>
-                {beep.rider.rating
-                  ? printStars(Number(beep.rider.rating))
-                  : "No Rating"}
-              </Text>
-            </View>
-            <Avatar size="xs" src={beep.rider.photo ?? undefined} />
-          </View>
+          <Link href={{ pathname: '/user/[id]', params: { id: beep.rider.id } }} asChild>
+            <Link.Trigger>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 16,
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <View>
+                  <Text weight="800" size="xl">
+                    {beep.rider.first} {beep.rider.last}
+                  </Text>
+                  <Text color="subtle" style={{ fontSize: 10 }}>
+                    {beep.rider.rating
+                      ? printStars(Number(beep.rider.rating))
+                      : "No Rating"}
+                  </Text>
+                </View>
+                <Avatar size="xs" src={beep.rider.photo ?? undefined} />
+              </View>
+            </Link.Trigger>
+          </Link>
           <View style={{ gap: 4 }}>
             <View
               style={{
