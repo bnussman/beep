@@ -11,14 +11,6 @@ export default function Layout() {
         options={{ headerShown: false }}
         name="(tabs)"
       />
-      {/* <Stack.Screen
-        options={{ headerTitle: "Report", presentation: 'formSheet' }}
-        name="user/[id]/report"
-      />
-      <Stack.Screen
-        options={{ headerTitle: "Rate", presentation: 'formSheet' }}
-        name="user/[id]/rate"
-      /> */}
     </Stack>
   );
 }

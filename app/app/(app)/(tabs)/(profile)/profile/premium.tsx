@@ -93,6 +93,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
       style={{
         paddingHorizontal: 8,
         paddingVertical: 8,
+        paddingLeft: 16,
         gap: 8,
         flexDirection: "row",
         alignItems: "center",

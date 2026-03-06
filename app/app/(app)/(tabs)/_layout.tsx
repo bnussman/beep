@@ -32,11 +32,12 @@ export default function Layout() {
       <NativeTabs.Trigger name="(beep)">
         <NativeTabs.Trigger.Label>Beep</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="steeringwheel" />
-        {user?.isBeeping && <NativeTabs.Trigger.Badge>{queue?.length ? String(queue.length) : ''}</NativeTabs.Trigger.Badge>}
+        <NativeTabs.Trigger.Badge hidden={!user?.isBeeping}>{queue?.length ? String(queue.length) : ''}</NativeTabs.Trigger.Badge>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="(profile)">
         <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="person.fill" />
+        {!user?.isEmailVerified && <NativeTabs.Trigger.Badge />}
         {/* <NativeTabs.Trigger.Icon src={{ uri: user?.photo ?? undefined, width: 24, height: 24,  }} /> */}
       </NativeTabs.Trigger>
       {/* <NativeTabs.Trigger name="queue" unstable_nativeProps={{}} role="search" hidden={!user?.isBeeping}>

@@ -11,7 +11,7 @@ const SIZE_MAP: Record<Size, number> = {
   sm: 56,
   md: 64,
   lg: 80,
-  xl: 124,
+  xl: 112,
   '2xl': 192,
 };
 
