@@ -4,9 +4,9 @@ import { db } from "../utils/db";
 import { count, eq, and } from "drizzle-orm";
 import { beep, user } from "../../drizzle/schema";
 import { TRPCError } from "@trpc/server";
-import { PushNotification, sendNotifications } from "../utils/notifications";
+import { PushNotification, sendNotification, sendNotifications } from "../utils/notifications";
 import { pubSub } from "../utils/pubsub";
-import { inProgressBeep, inProgressBeepNew } from "../logic/beep";
+import { getBeeperQueue, getDerivedRiderFields, getIsInProgressBeep, inProgressBeep, inProgressBeepNew } from "../logic/beep";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
 
 export const beepRouter = router({
@@ -132,6 +132,75 @@ export const beepRouter = router({
   deleteBeep: adminProcedure.input(z.string()).mutation(async ({ input }) => {
     await db.delete(beep).where(eq(beep.id, input));
   }),
+  editBeep: authedProcedure
+    .input(
+      z.object({
+        beepId: z.string(),
+        data: z.object({
+          origin: z.string(),
+          destination: z.string(),
+          groupSize: z.number().min(1).max(25),
+        }).partial(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const b = await db.query.beep.findFirst({
+        where: { id: input.beepId },
+      });
+
+      if (!b) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Beep not found" });
+      }
+
+      if (b.rider_id !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can't edit a beep that you are not involved in.",
+        });
+      }
+
+      if (!getIsInProgressBeep(b)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `You can't edit beep with status ${beep.status}.`,
+        });
+      }
+
+      await db.update(beep).set(input.data).where(eq(beep.id, input.beepId));
+
+      const beeper = await db.query.user.findFirst({
+        where: { id: b.beeper_id },
+      });
+
+      const keyToFieldMap = {
+        origin: "pick up location",
+        destination: "destination location",
+        groupSize: "group size"
+      }
+
+      const fieldNames = Object.keys(input.data).map((key) => keyToFieldMap[key as keyof typeof keyToFieldMap]).join(", ");
+
+      if (beeper?.pushToken) {
+        await sendNotification({
+          to: beeper.pushToken,
+          title: "Rider updated their ride details",
+          body: `${ctx.user.first} updated their ${fieldNames}`,
+        });
+      }
+
+      // publish updated queue to beeper
+      const queue = await getBeeperQueue(b.beeper_id);
+
+      for (const beep of queue) {
+        pubSub.publish("ride", beep.rider_id, {
+          ride: { ...beep, ...getDerivedRiderFields(beep, queue) },
+        });
+      }
+
+      pubSub.publish("queue", b.beeper_id, { queue });
+
+      return b;
+    }),
   clearQueue: adminProcedure
     .input(
       z.object({

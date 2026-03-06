@@ -73,18 +73,86 @@ export function RideMenu() {
     }
   };
 
-  const onEdit = () => {
+  const { mutate: updateBeep } = useMutation(
+    trpc.beep.editBeep.mutationOptions({
+      onError(error) {
+        alert(error.message)
+      }
+    })
+  );
+
+  const onEditOrigin = () => {
     if (!beep) {
       return;
     }
 
-    Alert.prompt("Pick Up", "Enter your new pick up location", (newPickUp) => {
-      if (!newPickUp) {
-        return alert("Pick up location cannot be empty");
-      }
-      
-      alert(newPickUp)
-    }, "plain-text", beep.origin);
+    Alert.prompt(
+      "Pick up",
+      "Update pick up location",
+      (newPickUp) => {
+        if (newPickUp === beep.origin) {
+          return;
+        }
+        updateBeep({
+          beepId: beep.id,
+          data: {
+            origin: newPickUp
+          }
+        })
+      },
+      "plain-text",
+      beep.origin
+    );
+  };
+
+  const onEditDestination = () => {
+    if (!beep) {
+      return;
+    }
+
+    Alert.prompt(
+      "Destination",
+      "Update destination location",
+      (newDestination) => {
+        if (newDestination === beep.destination) {
+          return;
+        }
+        updateBeep({
+          beepId: beep.id,
+          data: {
+            destination: newDestination
+          }
+        })
+      },
+      "plain-text",
+      beep.destination
+    );
+  };
+
+
+  const onEditGroupSize = () => {
+    if (!beep) {
+      return;
+    }
+
+    Alert.prompt(
+      "Group Size",
+      "Enter your group size",
+      (newGroupSize) => {
+        if (Number(newGroupSize) === beep.groupSize) {
+          return;
+        }
+        updateBeep({
+          beepId: beep.id,
+          data: {
+            groupSize: Number(newGroupSize)
+          }
+        })
+      },
+      "plain-text",
+      beep.groupSize.toString(),
+      "number-pad"
+    );
   };
 
   return (
@@ -122,13 +190,13 @@ export function RideMenu() {
           </Stack.Toolbar.Menu>
         )}
         <Stack.Toolbar.Menu icon="pencil">
-            <Stack.Toolbar.MenuAction icon="mappin" onPress={onEdit}>
+            <Stack.Toolbar.MenuAction icon="mappin" onPress={onEditOrigin}>
               Pick Up
             </Stack.Toolbar.MenuAction>
-            <Stack.Toolbar.MenuAction icon="mappin.and.ellipse" onPress={onEdit}>
+            <Stack.Toolbar.MenuAction icon="mappin.and.ellipse" onPress={onEditDestination}>
               Destination
             </Stack.Toolbar.MenuAction>
-            <Stack.Toolbar.MenuAction icon="person.2.fill" onPress={onEdit}>
+            <Stack.Toolbar.MenuAction icon="person.2.fill" onPress={onEditGroupSize}>
               Group Size
             </Stack.Toolbar.MenuAction>
         </Stack.Toolbar.Menu>
