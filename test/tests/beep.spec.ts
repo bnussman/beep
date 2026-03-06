@@ -92,7 +92,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await beeperPage.getByText("Done beeping this rider").click();
 
   await expect(riderPage.getByLabel("Group Size")).toBeVisible();
-  await expect(beeperPage.getByText("Your queue is empty")).toBeVisible();
+  await expect(beeperPage.getByText("Waiting for riders")).toBeVisible();
 });
 
 test("a beeper can beep multiple riders", async ({ browser }) => {

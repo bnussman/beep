@@ -191,44 +191,30 @@ export default function StartBeepingScreen() {
 
   const toolbar = (
     <Stack.Toolbar placement="right">
+      {payments?.[0] && (
+        <Stack.Toolbar.Button onPress={() =>
+          Alert.alert(
+            "You are premium!",
+            `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
+          )
+        }>
+          👑
+        </Stack.Toolbar.Button>
+      )}
       {user?.isBeeping && (
         <Stack.Toolbar.Button onPress={() => router.push('/beep/queue')}>
           <Stack.Toolbar.Label>Queue</Stack.Toolbar.Label>
           {queue && queue.length > 1 && <Stack.Toolbar.Badge>{String(queue.length - 1)}</Stack.Toolbar.Badge>}
         </Stack.Toolbar.Button>
       )}
-      <Stack.Toolbar.View>
-        <View
-          style={{
-            paddingHorizontal: 6,
-            display: "flex",
-            flexDirection: "row",
-            gap: 8,
-            alignItems: "center",
-          }}
-        >
-          {payments?.[0] && (
-            <Text
-              size="xl"
-              onPress={() =>
-                Alert.alert(
-                  "You are premium!",
-                  `Your premium status will expire in ${getTimeRemainingString(new Date(payments[0].expires))}`,
-                )
-              }
-            >
-              👑
-            </Text>
-          )}
-          {form.formState.isSubmitting && <ActivityIndicator size="small" />}
-          <Switch
-            disabled={form.formState.isSubmitting}
-            value={user?.isBeeping ?? false}
-            onValueChange={onToggleIsBeeping}
-          />
-        </View>
-      </Stack.Toolbar.View>
-
+      <Stack.Toolbar.Button
+        onPress={handleIsBeepingChange}
+        variant="prominent"
+        disabled={form.formState.isSubmitting}
+        tintColor={user?.isBeeping ? "red" : undefined}
+      >
+        {user?.isBeeping ? "Stop" : "Start"} Beeping
+      </Stack.Toolbar.Button>
     </Stack.Toolbar>
   );
 
@@ -254,7 +240,7 @@ export default function StartBeepingScreen() {
       >
         {toolbar}
         <Text size="2xl" weight="800">
-          Your queue is empty
+          Waiting for riders
         </Text>
         <Text
           style={{
@@ -262,12 +248,15 @@ export default function StartBeepingScreen() {
             paddingLeft: 8,
             paddingRight: 8,
             marginBottom: 16,
+            maxWidth: '90%'
           }}
         >
           If a rider wants a ride, it will appear here. If your app is closed,
           you will receive a push notification.
         </Text>
-        <PremiumBanner />
+        {!payments || payments?.length === 0 && (
+          <PremiumBanner />
+        )}
       </View>
     );
   }
