@@ -92,11 +92,6 @@ export function RideMenu() {
       <Stack.Toolbar placement="left">
       </Stack.Toolbar>
       <Stack.Toolbar placement="right">
-        {beep && (
-          <Stack.Toolbar.Button variant="prominent" tintColor="#cf2f32" onPress={leaveQueue}>
-            Cancel
-          </Stack.Toolbar.Button>
-        )}
         {beep && beep.status !== "waiting" && (
           <Stack.Toolbar.Button icon="phone.fill" onPress={() => call(beep.beeper.id)} />
         )}
@@ -104,8 +99,8 @@ export function RideMenu() {
           <Stack.Toolbar.Button icon="message.fill" onPress={() => sms(beep.beeper.id)} />
         )}
         {beep && beep.status !== "waiting" && (
-          <Stack.Toolbar.Menu title="Pay" icon="creditcard.fill">
-            <Stack.Toolbar.MenuAction onPress={() =>
+          <Stack.Toolbar.Menu icon="creditcard.fill">
+            <Stack.Toolbar.MenuAction icon="creditcard.and.123" onPress={() =>
               openVenmo(
                 beep.beeper.venmo,
                 beep.groupSize,
@@ -115,19 +110,18 @@ export function RideMenu() {
               )}>
               Venmo
             </Stack.Toolbar.MenuAction>
-            <Stack.Toolbar.MenuAction onPress={() =>
+            <Stack.Toolbar.MenuAction icon="dollarsign" onPress={() =>
               openCashApp(
                 beep.beeper.cashapp,
                 beep.groupSize,
                 beep.beeper.groupRate,
                 beep.beeper.singlesRate,
               )}>
-              Cashapp
+              Cash App
             </Stack.Toolbar.MenuAction>
           </Stack.Toolbar.Menu>
         )}
-        <Stack.Toolbar.Menu icon="ellipsis">
-          <Stack.Toolbar.Menu inline title="Edit Ride Details">
+        <Stack.Toolbar.Menu icon="pencil">
             <Stack.Toolbar.MenuAction icon="mappin" onPress={onEdit}>
               Pick Up
             </Stack.Toolbar.MenuAction>
@@ -137,8 +131,10 @@ export function RideMenu() {
             <Stack.Toolbar.MenuAction icon="person.2.fill" onPress={onEdit}>
               Group Size
             </Stack.Toolbar.MenuAction>
-          </Stack.Toolbar.Menu>
         </Stack.Toolbar.Menu>
+        {beep && (
+          <Stack.Toolbar.Button icon="xmark" variant="prominent" tintColor="#cf2f32" onPress={leaveQueue} />
+        )}
       </Stack.Toolbar>
     </>
   );
