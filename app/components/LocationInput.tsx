@@ -3,7 +3,7 @@ import * as Location from "expo-location";
 import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
 import { Button } from "@/components/Button";
-import { TextInputProps, View } from "react-native";
+import { ActivityIndicator, Pressable, TextInputProps, View } from "react-native";
 
 interface Props extends TextInputProps {
   inputRef: any;
@@ -73,9 +73,15 @@ export function LocationInput({ inputRef, ...props }: Props) {
         textContentType="fullStreetAddress"
         {...props}
       />
-      <Button isLoading={isLoading} onPress={handleGetCurrentLocation}>
-        📍
-      </Button>
+      <View style={{ position: 'absolute', right: 16, top: 12, display: 'flex', alignContent: 'center', justifyContent: 'center', width: 24, height: 24 }}>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <Pressable onPress={handleGetCurrentLocation}>
+            <Text size="2xl" weight="bold">🗺️</Text>
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }
