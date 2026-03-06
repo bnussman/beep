@@ -8,7 +8,7 @@ import { useTRPC } from "@/utils/trpc";
 import { getCurrentStatusMessage, statusToDescription } from "../utils/utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { isIOS } from "@/utils/constants";
 
 interface Props {
@@ -53,20 +53,23 @@ export function RideDetails(props: Props) {
         paddingTop: 0,
       }}
     >
-      <Pressable
-        onPress={() => router.push({ pathname: '/user/[id]', params: { id: beep.beeper.id }})}
-      >
-        <Text weight="800">Beeper</Text>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Text>
-            {beep.beeper.first} {beep.beeper.last}
-          </Text>
-          <Avatar
-            style={{ width: 24, height: 24 }}
-            src={beep.beeper.photo ?? undefined}
-          />
-        </View>
-      </Pressable>
+      <Link href={{ pathname: "/user/[id]", params: { id: beep.beeper.id } }} asChild>
+        <Link.Trigger>
+          <Pressable>
+            <Text weight="800">Beeper</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <Text>
+                {beep.beeper.first} {beep.beeper.last}
+              </Text>
+              <Avatar
+                style={{ width: 24, height: 24 }}
+                src={beep.beeper.photo ?? undefined}
+              />
+            </View>
+          </Pressable>
+        </Link.Trigger>
+        <Link.Preview />
+      </Link>
       <View>
         <Text weight="800">Status</Text>
         {beep.status === "waiting" ? (

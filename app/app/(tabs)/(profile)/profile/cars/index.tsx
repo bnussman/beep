@@ -18,7 +18,7 @@ import { getContentContainerStyle } from "@/utils/styles";
 const colorMap = {
   "red": '#ca3f3f',
   "green": '#62be62',
-  "blue": '#2f69d5',
+  "blue": '#4285ea',
   "purple": '#a837b7',
   "black": '#2b2b2b',
   "gray": '#a8a8a8',
@@ -28,7 +28,7 @@ const colorMap = {
   "tan": '#c69567',
   "brown": '#78513edd',
   "silver": '#7e7e7e',
-  "yellow": '#d9af3d',
+  "yellow": '#ffc72f',
 }
 
 export default function Cars() {
