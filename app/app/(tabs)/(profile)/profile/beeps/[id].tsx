@@ -113,7 +113,7 @@ export default function BeepDetails() {
       </Map>
       <BottomSheet snapPoints={["20%"]} enableDynamicSizing>
         <BottomSheetView
-          style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 32 }}
+          style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 110 }}
         >
           <Link href={{pathname: "/user/[id]", params: { id: otherUser?.id ?? '' }}} asChild>
             <Link.Trigger>

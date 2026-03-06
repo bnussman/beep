@@ -9,6 +9,7 @@ import { getCurrentStatusMessage, statusToDescription } from "../utils/utils";
 import { ETA } from "./ETA";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
+import { isIOS } from "@/utils/constants";
 
 interface Props {
   beepersLocation:
@@ -48,7 +49,7 @@ export function RideDetails(props: Props) {
         height: "100%",
         padding: 16,
         gap: 16,
-        paddingBottom: 32,
+        paddingBottom: isIOS ? 110 : 32,
         paddingTop: 0,
       }}
     >
