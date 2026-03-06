@@ -275,7 +275,7 @@ export default function StartBeepingScreen() {
   return (
     <KeyboardAwareScrollView
       scrollEnabled={false}
-      contentContainerStyle={{ paddingHorizontal: 16, height: "100%", gap: 16 }}
+      contentContainerStyle={{ paddingHorizontal: 16, gap: 16 }}
       contentInsetAdjustmentBehavior="automatic"
     >
       {toolbar}
@@ -291,8 +291,12 @@ export default function StartBeepingScreen() {
                 id="capacity"
                 placeholder="Max Capacity"
                 inputMode="numeric"
+                ref={field.ref}
                 value={String(field.value)}
                 onChangeText={(value) => field.onChange(Number(value))}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus("singlesRate")}
               />
               <Text color="subtle" size="sm">
                 Maximum number of riders you can safely fit in your car
@@ -316,8 +320,12 @@ export default function StartBeepingScreen() {
                 id="singles"
                 placeholder="Singles Rate"
                 keyboardType="numeric"
+                ref={field.ref}
                 value={String(field.value)}
                 onChangeText={(value) => field.onChange(Number(value))}
+                returnKeyLabel="next"
+                returnKeyType="next"
+                onSubmitEditing={() => form.setFocus("groupRate")}
               />
               <Text color="subtle" size="sm">
                 Price for a single person riding alone
@@ -341,8 +349,12 @@ export default function StartBeepingScreen() {
                 id="groups"
                 placeholder="Group Rate"
                 keyboardType="numeric"
+                ref={field.ref}
                 value={String(field.value)}
                 onChangeText={(value) => field.onChange(Number(value))}
+                returnKeyLabel="Start Beeping"
+                returnKeyType="go"
+                onSubmitEditing={() => handleIsBeepingChange()}
               />
               <Text color="subtle" size="sm">
                 Price per person in a group

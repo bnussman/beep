@@ -286,7 +286,7 @@ export default function SignUpScreen() {
               onBlur={onBlur}
               onChangeText={(val) => onChange(val)}
               value={value}
-              inputRef={ref}
+              ref={ref}
               returnKeyLabel="sign up"
               returnKeyType="go"
               onSubmitEditing={onSubmit}

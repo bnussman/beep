@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Text } from "./Text";
 import { Input } from "./Input";
-import { Pressable, TextInputProps, View } from "react-native";
+import { Pressable, TextInput, TextInputProps, View } from "react-native";
 
 interface Props extends TextInputProps {
-  inputRef: any;
+  ref: React.Ref<TextInput>;
 }
 
-export function PasswordInput({ inputRef, ...props }: Props) {
+export function PasswordInput(props: Props) {
   const [show, setShow] = useState(false);
 
   const toggleShow = () => setShow((prev) => !prev);
@@ -16,7 +16,6 @@ export function PasswordInput({ inputRef, ...props }: Props) {
     <View style={{ flexDirection: 'row', gap: 8 }}>
       <Input
         style={{ flexGrow: 1, paddingRight: 52 }}
-        ref={inputRef}
         textContentType="password"
         secureTextEntry={!show}
         {...props}

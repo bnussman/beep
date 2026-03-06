@@ -1,9 +1,13 @@
 import React from "react";
 import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
-import { TextInputProps, View } from "react-native";
+import { TextInput, TextInputProps, View } from "react-native";
 
-export function MoneyInput(props: TextInputProps) {
+interface Props extends TextInputProps {
+  ref: React.Ref<TextInput>;
+}
+
+export function MoneyInput(props: Props) {
   return (
     <View>
       <Input {...props} keyboardType="numeric" style={{ paddingLeft: 38 }} />

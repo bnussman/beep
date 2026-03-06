@@ -1,6 +1,6 @@
 import React from "react";
 import { useUser } from "@/utils/useUser";
-import { Pressable, SafeAreaView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { Card } from "@/components/Card";
@@ -8,6 +8,7 @@ import { Link, LinkProps } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "@/utils/trpc";
 import { Button } from "@/components/Button";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface LinkItem {
   icon: string | React.JSX.Element;
@@ -71,7 +72,7 @@ export default function EditProfileScreen() {
   );
 
   return (
-    <SafeAreaView>
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
       <View style={{ paddingHorizontal: 16, gap: user?.isEmailVerified ? 32 : 24 }}>
         <Link href={{ pathname: "/user/[id]", params: { id: user?.id ?? '' } }} asChild>
           <Link.Trigger>
@@ -126,6 +127,6 @@ export default function EditProfileScreen() {
           </Link>
         ))}
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }

@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
-import { ActivityIndicator, Pressable, TextInputProps, View } from "react-native";
+import { ActivityIndicator, Pressable, TextInput, TextInputProps, View } from "react-native";
 
 interface Props extends TextInputProps {
-  inputRef: any;
+  ref: React.Ref<TextInput>;
 }
 
-export function LocationInput({ inputRef, ...props }: Props) {
+export function LocationInput(props: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGetCurrentLocation = async () => {
@@ -67,7 +67,6 @@ export function LocationInput({ inputRef, ...props }: Props) {
     <View style={{ flexDirection: "row", gap: 8 }}>
       <Input
         placeholder={isLoading ? "Loading" : undefined}
-        ref={inputRef}
         style={{ flex: 1, flexGrow: 1 }}
         textContentType="fullStreetAddress"
         {...props}

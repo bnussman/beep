@@ -106,7 +106,7 @@ export default function MainFindBeepScreen() {
                 id="groupSize"
                 inputMode="numeric"
                 onBlur={onBlur}
-                onChangeText={(value) => onChange(value)}
+                onChangeText={onChange}
                 value={value}
                 ref={ref}
                 returnKeyLabel="next"
@@ -128,9 +128,9 @@ export default function MainFindBeepScreen() {
               <LocationInput
                 id="origin"
                 onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
+                onChangeText={onChange}
                 value={value}
-                inputRef={ref}
+                ref={ref}
                 returnKeyLabel="next"
                 returnKeyType="next"
                 onSubmitEditing={() => setFocus("destination")}
@@ -149,7 +149,7 @@ export default function MainFindBeepScreen() {
               <Input
                 id="destination"
                 onBlur={onBlur}
-                onChangeText={(val) => onChange(val)}
+                onChangeText={onChange}
                 value={value}
                 ref={ref}
                 returnKeyType="go"

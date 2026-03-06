@@ -112,7 +112,7 @@ export default function LoginScreen() {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              inputRef={ref}
+              ref={ref}
               returnKeyLabel="login"
               returnKeyType="go"
               onSubmitEditing={onLogin}
