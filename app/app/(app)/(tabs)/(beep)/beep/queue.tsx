@@ -5,7 +5,7 @@ import { useUser } from "@/utils/useUser";
 import { Text } from "@/components/Text";
 import { FlatList, View } from "react-native";
 import { QueueItem } from "@/components/beeper/QueueItem";
-import { isWeb } from "@/utils/constants";
+import { isIOS, isWeb } from "@/utils/constants";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -29,16 +29,20 @@ export default function StartBeepingScreen() {
       onRefresh={refetch}
       refreshing={isRefetching}
       contentInsetAdjustmentBehavior="always"
-      contentContainerStyle={isWeb ? { marginTop: 56 } : {}}
+      contentContainerStyle={
+        queue?.length === 0 ? {
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...(isIOS && ({
+            flex: undefined,
+            height: '70%'
+          }))
+        } : {}
+      }
       ListEmptyComponent={
-        <View
-          style={{
-            gap: 4,
-            paddingTop: isWeb ? '20%' :'60%',
-            paddingBottom: '50%',
-            alignItems: "center",
-          }}
-        >
+        <View style={{ gap: 8, alignItems: 'center' }}>
           <Text size="5xl">⏳</Text>
           <Text weight="800" size="lg">
             Your queue is empty!

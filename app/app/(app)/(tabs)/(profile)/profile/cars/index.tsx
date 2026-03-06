@@ -120,7 +120,7 @@ export default function Cars() {
       <Stack.Toolbar placement="right">
         <Stack.Toolbar.Button
           icon="plus"
-          onPress={() => router.push('/(app)/(tabs)/profile/cars/create')}
+          onPress={() => router.push('/profile/cars/create')}
         />
       </Stack.Toolbar>
       <FlatList

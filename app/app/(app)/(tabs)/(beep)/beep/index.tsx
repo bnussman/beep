@@ -24,6 +24,9 @@ import {
   useLocationPermissions,
 } from "@/utils/location";
 import { Button } from "@/components/Button";
+import { Menu } from "@/components/Menu";
+import { MoneyInput } from "@/components/MoneyInput";
+import { CarSelect } from "@/components/CarSelect";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
@@ -32,6 +35,7 @@ export default function StartBeepingScreen() {
   const queryClient = useQueryClient();
 
   const { user } = useUser();
+
 
   const form = useForm({
     values: {
@@ -272,13 +276,11 @@ export default function StartBeepingScreen() {
   return (
     <KeyboardAwareScrollView
       scrollEnabled={false}
-      contentContainerStyle={{ paddingHorizontal: 16, height: "100%", gap: 8 }}
+      contentContainerStyle={{ paddingHorizontal: 16, height: "100%", gap: 16 }}
       contentInsetAdjustmentBehavior="automatic"
     >
       {toolbar}
-      <Text size="sm" style={{ marginBottom: 24 }}>
-        Use the toggle in the top right to start beeping
-      </Text>
+      <CarSelect />
       <View style={{ gap: 4 }}>
         <Label htmlFor="capacity">Max Rider Capacity</Label>
         <Controller
@@ -311,7 +313,7 @@ export default function StartBeepingScreen() {
           name="singlesRate"
           render={({ field, fieldState }) => (
             <>
-              <Input
+              <MoneyInput
                 id="singles"
                 placeholder="Singles Rate"
                 keyboardType="numeric"
@@ -336,7 +338,7 @@ export default function StartBeepingScreen() {
           name="groupRate"
           render={({ field, fieldState }) => (
             <>
-              <Input
+              <MoneyInput
                 id="groups"
                 placeholder="Group Rate"
                 keyboardType="numeric"
@@ -353,7 +355,9 @@ export default function StartBeepingScreen() {
           )}
         />
       </View>
-      <View style={{ flexGrow: 1 }} />
+      {/* <Text size="sm" style={{ marginTop: 24, textAlign: 'center' }}>
+        Use the toggle in the top right to start beeping
+      </Text> */}
     </KeyboardAwareScrollView>
   );
 }

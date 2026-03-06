@@ -32,6 +32,8 @@ export default function Layout() {
         }}
         name="user/[id]/index"
       />
+      <Stack.Screen options={{ headerTitle: "Report" }} name="user/[id]/report" />
+      <Stack.Screen options={{ headerTitle: "Rate" }} name="user/[id]/rate" />
     </Stack>
   );
 }

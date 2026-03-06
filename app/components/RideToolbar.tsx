@@ -75,41 +75,45 @@ export function RideMenu() {
   };
 
   return (
-    <Stack.Toolbar placement="right">
-      {beep && (
-        <Stack.Toolbar.Button icon="xmark" variant="prominent" tintColor="#cf2f32" onPress={leaveQueue}>
-          Cancel
-        </Stack.Toolbar.Button>
-      )}
-      {beep && beep.status !== "waiting" && (
-        <Stack.Toolbar.Button icon="phone.fill" onPress={() => call(beep.beeper.id)} />
-      )}
-      {beep && beep.status !== "waiting" && (
-        <Stack.Toolbar.Button icon="message.fill" onPress={() => sms(beep.beeper.id)} />
-      )}
-      {beep && beep.status !== "waiting" && (
-        <Stack.Toolbar.Menu title="Pay" icon="creditcard.fill">
-          <Stack.Toolbar.MenuAction onPress={() =>
-            openVenmo(
-              beep.beeper.venmo,
-              beep.groupSize,
-              beep.beeper.groupRate,
-              beep.beeper.singlesRate,
-              "pay",
-            )}>
-            Venmo
-          </Stack.Toolbar.MenuAction>
-          <Stack.Toolbar.MenuAction onPress={() =>
-            openCashApp(
-              beep.beeper.cashapp,
-              beep.groupSize,
-              beep.beeper.groupRate,
-              beep.beeper.singlesRate,
-            )}>
-            Cashapp
-          </Stack.Toolbar.MenuAction>
-        </Stack.Toolbar.Menu>
-      )}
-    </Stack.Toolbar>
+    <>
+      <Stack.Toolbar placement="left">
+        {beep && (
+          <Stack.Toolbar.Button variant="prominent" tintColor="#cf2f32" onPress={leaveQueue}>
+            Cancel
+          </Stack.Toolbar.Button>
+        )}
+      </Stack.Toolbar>
+      <Stack.Toolbar placement="right">
+        {beep && beep.status !== "waiting" && (
+          <Stack.Toolbar.Button icon="phone.fill" onPress={() => call(beep.beeper.id)} />
+        )}
+        {beep && beep.status !== "waiting" && (
+          <Stack.Toolbar.Button icon="message.fill" onPress={() => sms(beep.beeper.id)} />
+        )}
+        {beep && beep.status !== "waiting" && (
+          <Stack.Toolbar.Menu title="Pay" icon="creditcard.fill">
+            <Stack.Toolbar.MenuAction onPress={() =>
+              openVenmo(
+                beep.beeper.venmo,
+                beep.groupSize,
+                beep.beeper.groupRate,
+                beep.beeper.singlesRate,
+                "pay",
+              )}>
+              Venmo
+            </Stack.Toolbar.MenuAction>
+            <Stack.Toolbar.MenuAction onPress={() =>
+              openCashApp(
+                beep.beeper.cashapp,
+                beep.groupSize,
+                beep.beeper.groupRate,
+                beep.beeper.singlesRate,
+              )}>
+              Cashapp
+            </Stack.Toolbar.MenuAction>
+          </Stack.Toolbar.Menu>
+        )}
+      </Stack.Toolbar>
+    </>
   );
 }

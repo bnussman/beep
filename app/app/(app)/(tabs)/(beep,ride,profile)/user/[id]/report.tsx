@@ -42,30 +42,26 @@ export default function ReportScreen() {
 
   return (
     <SafeAreaView>
-      <KeyboardAwareScrollView>
-        <View style={{ paddingHorizontal: 16, gap: 8 }}>
-          {user && (
-            <UserHeader
-              username={user.username}
-              name={`${user.first} ${user.last}`}
-              picture={user.photo}
-            />
-          )}
-          <View style={{ gap: 4 }}>
-            <Label>Reason</Label>
-            <Input
-              multiline
-              numberOfLines={4}
-              // autoFocus
-              placeholder="Your reason for reporting here"
-              style={{ minHeight: 150 }}
-              onChangeText={(text) => setReason(text)}
-            />
-          </View>
-          <Button onPress={handleReport} disabled={!reason} isLoading={isPending}>
-            Report User
-          </Button>
+      <KeyboardAwareScrollView style={{ height: '100%'}} scrollEnabled={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
+        {user && (
+          <UserHeader
+            name={`${user.first} ${user.last}`}
+            picture={user.photo}
+          />
+        )}
+        <View style={{ gap: 4 }}>
+          <Label>Reason</Label>
+          <Input
+            multiline
+            numberOfLines={4}
+            placeholder="Your reason for reporting here"
+            style={{ minHeight: 150 }}
+            onChangeText={(text) => setReason(text)}
+          />
         </View>
+        <Button onPress={handleReport} disabled={!reason} isLoading={isPending}>
+          Report User
+        </Button>
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );

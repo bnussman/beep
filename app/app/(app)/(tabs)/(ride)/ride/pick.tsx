@@ -13,6 +13,7 @@ import { printStars } from "@/components/Stars";
 import { useLocalSearchParams } from "expo-router";
 import { tryCatch } from "@/utils/errors";
 import { captureException, captureMessage } from "@sentry/react-native";
+import { isIOS } from "@/utils/constants";
 
 export default function PickBeepScreen() {
   const { location, getLocation } = useLocation();
@@ -189,9 +190,16 @@ export default function PickBeepScreen() {
       onRefresh={refetch}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={
-        beepers?.length === 0
-          ? { flex: 1, alignItems: "center", justifyContent: "center" }
-          : { padding: 10, gap: 8 }
+       beepers?.length === 0 ? {
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...(isIOS && ({
+            flex: undefined,
+            height: '75%'
+          }))
+        } : {}
       }
       ListEmptyComponent={
         <View style={{ alignItems: "center" }}>

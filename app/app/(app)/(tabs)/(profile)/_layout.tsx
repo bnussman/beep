@@ -18,6 +18,7 @@ export default function Layout() {
       <Stack.Screen name="profile/cars/index" options={{ headerTitle: "Cars", headerRight: () => <AddCarButton /> }} />
       <Stack.Screen name="profile/cars/create" options={{ headerTitle: "Add Car" }} />
       <Stack.Screen name="profile/beeps/index" options={{ headerTitle: "Beeps" }} />
+      <Stack.Screen name="profile/beeps/[id]" options={{ headerTitle: "Beep" }} />
       <Stack.Screen name="profile/ratings" options={{ headerTitle: "Ratings" }} />
       <Stack.Screen
         options={(route) => {
@@ -35,6 +36,8 @@ export default function Layout() {
         }}
         name="user/[id]/index"
       />
+      <Stack.Screen options={{ headerTitle: "Report" }} name="user/[id]/report" />
+      <Stack.Screen options={{ headerTitle: "Rate" }} name="user/[id]/rate" />
     </Stack>
   );
 }

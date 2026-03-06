@@ -28,7 +28,6 @@ export function BeepersMap() {
     trpc.rider.beepersLocations.subscriptionOptions(input, {
       enabled: location !== undefined,
       onData(locationUpdate) {
-        console.log(locationUpdate);
         queryClient.setQueryData(
           trpc.rider.beepersNearMe.queryKey(input),
           (prev) => {
