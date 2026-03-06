@@ -13,7 +13,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTimeRemainingString } from "@/components/CountDown";
 import { isAndroid, isWeb } from "@/utils/constants";
-import { useActivePayments } from "@/app/(app)/(tabs)/(profile)/profile/premium";
 import { useUser } from "@/utils/useUser";
 import { PremiumBanner } from "@/components/PremiumBanner";
 import { Beep } from "@/components/beeper/Beep";
@@ -24,9 +23,9 @@ import {
   useLocationPermissions,
 } from "@/utils/location";
 import { Button } from "@/components/Button";
-import { Menu } from "@/components/Menu";
 import { MoneyInput } from "@/components/MoneyInput";
 import { CarSelect } from "@/components/CarSelect";
+import { useActivePayments } from "../../(profile)/profile/premium";
 
 export default function StartBeepingScreen() {
   const trpc = useTRPC();
