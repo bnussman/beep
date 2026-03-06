@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import * as Location from "expo-location";
 import { Input } from "@/components/Input";
 import { Text } from "@/components/Text";
-import { Button } from "@/components/Button";
 import { ActivityIndicator, Pressable, TextInputProps, View } from "react-native";
 
 interface Props extends TextInputProps {

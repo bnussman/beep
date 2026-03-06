@@ -66,7 +66,7 @@ export default function User() {
     <SafeAreaView>
       <View style={{ padding: 16, gap: 8 }}>
         <Avatar src={user.photo ?? undefined} size="xl" style={{ position: 'absolute', right: 16 }} />
-        <Text size="3xl" weight="800" style={{ letterSpacing: 0.2, maxWidth: '60%', marginBottom: 16 }}>
+        <Text size="2xl" weight="800" style={{ letterSpacing: 0.2, maxWidth: '60%', marginBottom: 16 }}>
           {user.first} {user.last}
         </Text>
         <View style={{ gap: 24 }}>
