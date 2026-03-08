@@ -63,7 +63,7 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - run: pnpm i --frozen-lockfile
-      - run: eas update --auto
+      - run: eas update --auto --environment production
         env:
           EAS_SKIP_AUTO_FINGERPRINT: 1
         working-directory: ./app
