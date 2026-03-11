@@ -56,8 +56,15 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
   const trpc = useTRPC();
   const [isPurchasing, setIsPurchasing] = useState(false);
 
-  const { mutateAsync: checkVerificationStatus } = useMutation(
-    trpc.user.syncMyPayments.mutationOptions(),
+  const { mutateAsync: syncPayments } = useMutation(
+    trpc.payment.sync.mutationOptions({
+      onSuccess(activePayments, vars, result, context) {
+        context.client.setQueryData(
+          trpc.payment.activePayments.queryOptions().queryKey,
+          activePayments,
+        );
+      },
+    }),
   );
 
   const { data, refetch } = useActivePayments();
@@ -75,7 +82,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
       const Purchases: typeof import("react-native-purchases").default =
         require("react-native-purchases").default;
       await Purchases.purchasePackage(item);
-      await checkVerificationStatus();
+      await syncPayments();
     } catch (e: any) {
       if (!e.userCancelled) {
         captureException(e);

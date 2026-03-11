@@ -25,6 +25,7 @@ import {
 } from "../utils/constants";
 import { userSchema } from "../schemas/user";
 import { zAsyncIterable } from "../utils/zAsyncIterable";
+import { getActivePayments } from "../logic/payments";
 
 export const userRouter = router({
   me: authedProcedure.output(userSchema).query(async ({ ctx }) => {
@@ -266,10 +267,35 @@ export const userRouter = router({
   syncMyPayments: authedProcedure.mutation(async ({ ctx }) => {
     return await syncUserPayments(ctx.user.id);
   }),
-  syncPayments: authedProcedure
-    .input(z.string())
+  sync: authedProcedure
+    .input(
+      z.object({ userId: z.string() }).optional()
+    )
     .mutation(async ({ ctx, input }) => {
-      return await syncUserPayments(input);
+      const userId = input?.userId ?? ctx.user.id;
+
+      if (ctx.user.role === "user" && userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must be an admin to sync purchases for other users.",
+        });
+      }
+
+      return await syncUserPayments(userId);
+    }),
+  activePayments: authedProcedure
+    .input(z.object({ userId: z.string() }).optional())
+    .query(async ({ ctx, input }) => {
+      const userId = input?.userId ?? ctx.user.id;
+
+      if (ctx.user.role === "user" && userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must be an admin to get active payments for other users.",
+        });
+      }
+
+      return await getActivePayments(ctx.user.id);
     }),
   updatePicture: authedProcedure
     .input(z.instanceof(FormData))

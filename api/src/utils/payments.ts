@@ -3,6 +3,7 @@ import { REVENUE_CAT_SECRET, REVENUE_CAT_WEBHOOK_TOKEN } from "./constants";
 import { db } from "./db";
 import { productEnum, payment, storeEnum } from "../../drizzle/schema";
 import { SubscriberResponse, Webhook } from "./revenuecat";
+import { getActivePayments } from "../logic/payments";
 
 type Product = (typeof productEnum.enumValues)[number];
 type Store = (typeof storeEnum.enumValues)[number];
@@ -19,6 +20,10 @@ export const productExpireTimes: Record<Product, number> = {
   top_of_beeper_list_3_hours: 3 * 60 * 60 * 1000,
 };
 
+/**
+ * Syncs a user's payments from RevenueCat
+ * @returns the user's active payments
+ */
 export async function syncUserPayments(userId: string) {
   if (!userId) {
     throw new Error("No user id provided when syncing payments.");
@@ -68,11 +73,7 @@ export async function syncUserPayments(userId: string) {
     }
   }
 
-  const activePayments = await db.query.payment.findMany({
-    where: { user_id: userId, expires: { gte: new Date() } },
-  });
-
-  return activePayments;
+  return await getActivePayments(userId);
 }
 
 /**

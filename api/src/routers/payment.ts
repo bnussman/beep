@@ -4,6 +4,7 @@ import { db } from "../utils/db";
 import { count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { DEFAULT_PAGE_SIZE } from "../utils/constants";
+import { getActivePayments } from "../logic/payments";
 
 export const paymentRouter = router({
   payments: authedProcedure
@@ -62,9 +63,19 @@ export const paymentRouter = router({
         results,
       };
     }),
-  activePayments: authedProcedure.query(async ({ ctx }) => {
-    return await db.query.payment.findMany({
-      where: { user_id: ctx.user.id, expires: { gte: new Date() } },
-    });
-  }),
+  activePayments:
+    authedProcedure
+    .input(z.object({ userId: z.string() }).optional())
+    .query(async ({ ctx, input }) => {
+      const userId = input?.userId ?? ctx.user.id;
+
+      if (ctx.user.role === "user" && userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must be an admin to get active payments for other users.",
+        });
+      }
+
+      return await getActivePayments(ctx.user.id);
+    }),
 });
