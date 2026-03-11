@@ -52,7 +52,7 @@ export function User() {
   );
 
   const { mutate: syncPayments, isPending: isSyncingPayments } = useMutation(
-    trpc.payment.sync.mutationOptions({
+    trpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments) {
         notifications.show(
           `Payments synced. The user has ${activePayments.length} active payments.`,
