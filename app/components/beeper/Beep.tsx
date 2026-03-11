@@ -3,7 +3,7 @@ import MapView from "react-native-maps";
 import { useUser } from "../../utils/useUser";
 import { ActionButton } from "../../components/ActionButton";
 import { AcceptDenyButton } from "../../components/AcceptDenyButton";
-import { Alert, View } from "react-native";
+import { Alert, Pressable, View } from "react-native";
 import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
@@ -27,7 +27,7 @@ import {
 } from "../../utils/links";
 import { Elipsis } from "@/components/Elipsis";
 import { useNavigation } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
@@ -116,61 +116,47 @@ export function Beep(props: Props) {
   };
 
   return (
-    <SafeAreaView style={{ padding: 16, gap: 8, height: '100%', paddingBottom: isWeb ? 64: 12, paddingTop: 64 }}>
-      <Card
-        variant="filled"
-        style={{ padding: 16, gap: 16 }}
-        pressable
-        onPress={() => router.push({ pathname: '/user/[id]', params: { id: beep.rider.id } })}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 16,
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <View style={{ flexShrink: 1 }}>
-            <Text color="subtle">Your current rider is</Text>
-            <Text weight="800" size="2xl">
-              {beep.rider.first} {beep.rider.last}
-            </Text>
-          </View>
-          <Avatar size="md" src={beep.rider.photo ?? undefined} />
-        </View>
-      </Card>
-      <View
-        style={{
-          flexDirection: "row",
-          gap: 8,
-        }}
-      >
-        <Card style={{ flex: 1, justifyContent: "center" }}>
+    <SafeAreaView style={{ padding: 16, gap: 18, height: '100%', paddingBottom: isWeb ? 64: 12, paddingTop: 64 }}>
+      <Link href={{ pathname: '/user/[id]', params: { id: beep.rider.id } }} asChild>
+        <Link.Trigger>
+          <Pressable>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <View style={{ flexShrink: 1 }}>
+                <Text weight="800" size="xl">
+                  {beep.rider.first} {beep.rider.last}
+                </Text>
+                <Text color="subtle" size="xs">is your current rider</Text>
+              </View>
+              <Avatar size="md" src={beep.rider.photo ?? undefined} />
+            </View>
+          </Pressable>
+        </Link.Trigger>
+      </Link>
+      <View style={{ flexDirection: "row", gap: 8 }} >
+        <View style={{ flex: 1, justifyContent: "center" }}>
           <Text weight="bold">Group Size</Text>
-          <Text>{beep.groupSize}</Text>
-        </Card>
-        <Card style={{ flex: 1, justifyContent: "center" }}>
+          <Text>{beep.groupSize} {beep.groupSize === 1 ? "person" : "people"}</Text>
+        </View>
+        <View style={{ flex: 1, justifyContent: "center" }}>
           <Text weight="bold">Started at</Text>
           <Text>
             {new Date(beep.start).toLocaleTimeString(undefined, {
               timeStyle: "short",
             })}
           </Text>
-        </Card>
+        </View>
         {route && (
-          <Card style={{ flexShrink: 1, justifyContent: "center" }}>
+          <View style={{ flexShrink: 1, justifyContent: "center" }}>
             <Text weight="bold" style={{ flexShrink: 1 }}>
               Beep Distance
             </Text>
             <Text style={{ flexShrink: 1 }}>
               {Math.round(route.duration / 60)} min
             </Text>
-          </Card>
+          </View>
         )}
       </View>
-      <Card
-        pressable
+      <Pressable
         onPress={() => openMaps(beep.origin)}
         onLongPress={() => null}
       >
@@ -178,9 +164,8 @@ export function Beep(props: Props) {
         <Text style={{ flexShrink: 1 }} selectable>
           {beep.origin}
         </Text>
-      </Card>
-      <Card
-        pressable
+      </Pressable>
+      <Pressable
         onPress={() => openMaps(beep.destination)}
         onLongPress={() => null}
       >
@@ -188,7 +173,7 @@ export function Beep(props: Props) {
         <Text style={{ flexShrink: 1 }} selectable>
           {beep.destination}
         </Text>
-      </Card>
+      </Pressable>
       <View style={{ flexGrow: 1 }}>
         {polylineCoordinates && origin && destination && (
           <Map
