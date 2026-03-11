@@ -57,7 +57,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
   const [isPurchasing, setIsPurchasing] = useState(false);
 
   const { mutateAsync: syncPayments } = useMutation(
-    trpc.payment.sync.mutationOptions({
+    trpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments, vars, result, context) {
         context.client.setQueryData(
           trpc.payment.activePayments.queryOptions().queryKey,
@@ -258,7 +258,7 @@ export default function Premium() {
 export function useActivePayments() {
   const trpc = useTRPC();
   const query = useQuery(
-    trpc.payment.activePayments.queryOptions(undefined, {
+    trpc.user.activePayments.queryOptions(undefined, {
       // Refetches payments when the user's first payment expires so the UI updates
       // to reflect that their premium expired
       refetchInterval(query) {
