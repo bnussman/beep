@@ -38,7 +38,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   ).toBeVisible();
 
   await expect(beeperPage.getByText(rider.name)).toBeVisible();
-  await expect(beeperPage.getByText("3", { exact: true })).toBeVisible();
+  await expect(beeperPage.getByText("3 people")).toBeVisible();
   await expect(beeperPage.getByText("The Cottages")).toBeVisible();
   await expect(beeperPage.getByText("Boone Saloon")).toBeVisible();
 
@@ -142,7 +142,7 @@ test("a beeper can beep multiple riders", async ({ browser }) => {
 
   // As the beeper, verify rider 1 shows up
   await expect(beeperPage.getByText(rider1.name)).toBeVisible();
-  await expect(beeperPage.getByText("3", { exact: true })).toBeVisible();
+  await expect(beeperPage.getByText("3 people")).toBeVisible();
   await expect(beeperPage.getByText("The Cottages")).toBeVisible();
   await expect(beeperPage.getByText("Boone Saloon")).toBeVisible();
 
