@@ -4,24 +4,24 @@ import { Input } from "@/components/Input";
 import { Label } from "@/components/Label";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useTRPC } from "@/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
-
 import { useMutation } from "@tanstack/react-query";
 import { View } from "react-native";
 
 export default function ForgotPasswordScreen() {
   const trpc = useTRPC();
-  const { mutateAsync: sendForgotEmail, isPending } = useMutation(
-    trpc.auth.forgotPassword.mutationOptions(),
+
+  const { mutate: sendForgotEmail, isPending } = useMutation(
+    trpc.auth.forgotPassword.mutationOptions({
+      onSuccess() {
+        alert("Check your email for a link to reset your password!");
+      },
+      onError(error) {
+        alert(error.message);
+      },
+    }),
   );
 
   const [email, setEmail] = useState<string>("");
-
-  const handleForgotPassword = () => {
-    sendForgotEmail({ email })
-      .then(() => alert("Check your email for a link to reset your password!"))
-      .catch((error: TRPCClientError<any>) => alert(error.message));
-  };
 
   return (
     <KeyboardAwareScrollView
@@ -35,13 +35,13 @@ export default function ForgotPasswordScreen() {
           placeholder="example@ridebeep.app"
           returnKeyType="go"
           onChangeText={(text) => setEmail(text)}
-          onSubmitEditing={handleForgotPassword}
+          onSubmitEditing={() => sendForgotEmail({ email })}
         />
       </View>
       <Button
         isLoading={isPending}
         disabled={!email}
-        onPress={handleForgotPassword}
+        onPress={() => sendForgotEmail({ email })}
       >
         Send Password Reset Email
       </Button>
