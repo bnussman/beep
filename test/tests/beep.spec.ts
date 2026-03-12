@@ -61,7 +61,7 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   // await expect(riderPage.getByText("Share Venmo")).toBeVisible(); removed for now
 
   await beeperPage.getByText("...").click();
-  await expect(beeperPage.getByText("Directions to Rider")).toBeVisible();
+  await expect(beeperPage.getByText("Directions")).toBeVisible();
   await expect(beeperPage.getByText("Cancel Beep")).toBeVisible();
   await beeperPage.getByText("...").click({ force: true });
 
@@ -75,8 +75,8 @@ test("a beep can happen between a rider and driver", async ({ browser }) => {
   await beeperPage.getByText("I'm here").click();
 
   await beeperPage.getByText("...").click();
-  await expect(beeperPage.getByText("Directions for Beep")).toBeVisible();
-  await expect(beeperPage.getByText("Request Money with Venmo")).toBeVisible();
+  await expect(beeperPage.getByText("Directions")).toBeVisible();
+  await expect(beeperPage.getByText("Request Money")).toBeVisible();
   await beeperPage.getByText("...").click({ force: true });
 
   await expect(riderPage.getByText("Beeper is here to pick you up")).toBeVisible();

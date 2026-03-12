@@ -8,15 +8,16 @@ import { Button } from "@/components/Button";
 import { Avatar } from "@/components/Avatar";
 import { Text } from "@/components/Text";
 import { Map } from "@/components/Map";
-import { printStars } from "../../components/Stars";
 import { useTRPC, type RouterOutput } from "@/utils/trpc";
-import { Card } from "@/components/Card";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { decodePolyline, getMiles } from "@/utils/location";
+import { decodePolyline } from "@/utils/location";
 import { Marker } from "@/components/Marker";
 import { Polyline } from "@/components/Polyline";
 import { isMobile, isWeb } from "@/utils/constants";
 import { Menu } from "@/components/Menu";
+import { Elipsis } from "@/components/Elipsis";
+import { Link, useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   call,
   openCashApp,
@@ -25,10 +26,6 @@ import {
   openVenmo,
   sms,
 } from "../../utils/links";
-import { Elipsis } from "@/components/Elipsis";
-import { useNavigation } from "@react-navigation/native";
-import { Link, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -37,7 +34,6 @@ interface Props {
 export function Beep(props: Props) {
   const { beep } = props;
   const { user } = useUser();
-  const router = useRouter();
   const trpc = useTRPC();
 
   const { data: beepRoute } = useQuery(
@@ -122,7 +118,7 @@ export function Beep(props: Props) {
           <Pressable>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <View style={{ flexShrink: 1 }}>
-                <Text weight="800" size="xl">
+                <Text weight="800" size="2xl">
                   {beep.rider.first} {beep.rider.last}
                 </Text>
                 <Text color="subtle" size="xs">is your current rider</Text>
@@ -218,49 +214,62 @@ export function Beep(props: Props) {
           }
           options={[
             {
-              title: "Call",
+              title: "Contact",
               show: beep.status !== "waiting",
-              onClick: () => call(beep.rider.id),
+              options: [
+                {
+                  title: "Call",
+                  show: beep.status !== "waiting",
+                  onClick: () => call(beep.rider.id),
+                },
+                {
+                  title: "Text",
+                  show: beep.status !== "waiting",
+                  onClick: () => sms(beep.rider.id),
+                },
+              ],
             },
             {
-              title: "Text",
-              show: beep.status !== "waiting",
-              onClick: () => sms(beep.rider.id),
+              title: "Directions",
+              options: [
+                {
+                  title: "Directions to Rider",
+                  onClick: () => openDirections("Current+Location", beep.origin),
+                },
+                {
+                  title: "Directions for Beep",
+                  onClick: () => openDirections(beep.origin, beep.destination),
+                },
+              ],
             },
             {
-              title: "Directions to Rider",
-              onClick: () => openDirections("Current+Location", beep.origin),
-            },
-            {
-              title: "Directions for Beep",
-              onClick: () => openDirections(beep.origin, beep.destination),
-            },
-            {
-              title: "Request Money with Venmo",
-              show:
-                (beep.status === "here" || beep.status === "in_progress") &&
-                Boolean(beep.rider.venmo),
-              onClick: () =>
-                openVenmo(
-                  beep.rider.venmo,
-                  beep.groupSize,
-                  user?.groupRate,
-                  user?.singlesRate,
-                  "charge",
-                ),
-            },
-            {
-              title: "Request Money with Cash App",
-              show:
-                (beep.status === "here" || beep.status === "in_progress") &&
-                Boolean(beep.rider.cashapp),
-              onClick: () =>
-                openCashApp(
-                  beep.rider.cashapp,
-                  beep.groupSize,
-                  user?.groupRate,
-                  user?.singlesRate,
-                ),
+              title: "Request Money",
+              show: beep.status === "here" || beep.status === "in_progress",
+              options: [
+                {
+                  title: "Venmo",
+                  show: Boolean(beep.rider.venmo),
+                  onClick: () =>
+                    openVenmo(
+                      beep.rider.venmo,
+                      beep.groupSize,
+                      user?.groupRate,
+                      user?.singlesRate,
+                      "charge",
+                    ),
+                },
+                {
+                  title: "Cash App",
+                  show: Boolean(beep.rider.cashapp),
+                  onClick: () =>
+                    openCashApp(
+                      beep.rider.cashapp,
+                      beep.groupSize,
+                      user?.groupRate,
+                      user?.singlesRate,
+                    ),
+                },
+              ],
             },
             {
               title: "Cancel Beep",

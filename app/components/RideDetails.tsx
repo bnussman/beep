@@ -113,11 +113,7 @@ export function RideDetails(props: Props) {
             {car.year} {car.make} {car.model}
           </Text>
           <Image
-            style={{
-              borderRadius: 10,
-              width: "100%",
-              height: 150,
-            }}
+            style={{ borderRadius: 10, height: 150 }}
             resizeMode="cover"
             src={car.photo}
             alt={`car-${car.id}`}
