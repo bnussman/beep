@@ -26,6 +26,7 @@ import {
   openVenmo,
   sms,
 } from "../../utils/links";
+import { printStars } from "../Stars";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -121,55 +122,73 @@ export function Beep(props: Props) {
                 <Text weight="800" size="2xl">
                   {beep.rider.first} {beep.rider.last}
                 </Text>
-                <Text color="subtle" size="xs">is your current rider</Text>
+                {beep.rider.rating && (
+                  <Text size="xs">
+                    {printStars(Number(beep.rider.rating))}
+                  </Text>
+                )}
               </View>
               <Avatar size="md" src={beep.rider.photo ?? undefined} />
             </View>
           </Pressable>
         </Link.Trigger>
       </Link>
-      <View style={{ flexDirection: "row", gap: 8 }} >
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text weight="bold">Group Size</Text>
+      <View style={{ flexDirection: "row", flexShrink: 1  }}>
+        <Pressable
+          onPress={() => openMaps(beep.origin)}
+          onLongPress={() => null}
+          style={{ width: '50%', gap: 4 }}
+        >
+          <Text weight="800">Pick Up</Text>
+          <Text style={{ flexShrink: 1 }} selectable>
+            {beep.origin}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => openMaps(beep.destination)}
+          onLongPress={() => null}
+          style={{ width: '50%', gap: 4 }}
+        >
+          <Text weight="800">Drop Off</Text>
+          <Text style={{ flexShrink: 1 }} selectable>
+            {beep.destination}
+          </Text>
+        </Pressable>
+      </View>
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ width: '50%', gap: 4 }}>
+          <Text weight="800">Group Size</Text>
           <Text>{beep.groupSize} {beep.groupSize === 1 ? "person" : "people"}</Text>
         </View>
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text weight="bold">Started at</Text>
+        <View style={{ gap: 4 }}>
+          <Text weight="800">Started at</Text>
           <Text>
             {new Date(beep.start).toLocaleTimeString(undefined, {
               timeStyle: "short",
             })}
           </Text>
         </View>
-        {route && (
-          <View style={{ flexShrink: 1, justifyContent: "center" }}>
+      </View>
+      {route && (
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flexShrink: 1, justifyContent: "center", gap: 4, width: '50%' }}>
             <Text weight="bold" style={{ flexShrink: 1 }}>
-              Beep Distance
+              Duration
             </Text>
             <Text style={{ flexShrink: 1 }}>
               {Math.round(route.duration / 60)} min
             </Text>
           </View>
-        )}
-      </View>
-      <Pressable
-        onPress={() => openMaps(beep.origin)}
-        onLongPress={() => null}
-      >
-        <Text weight="bold">Pick Up</Text>
-        <Text style={{ flexShrink: 1 }} selectable>
-          {beep.origin}
-        </Text>
-      </Pressable>
-      <Pressable
-        onPress={() => openMaps(beep.destination)}
-        onLongPress={() => null}
-      >
-        <Text weight="bold">Drop Off</Text>
-        <Text style={{ flexShrink: 1 }} selectable>
-          {beep.destination}
-        </Text>
-      </Pressable>
+          <View style={{ flexShrink: 1, justifyContent: "center", gap: 4 }}>
+            <Text weight="bold" style={{ flexShrink: 1 }}>
+              Distance
+            </Text>
+            <Text style={{ flexShrink: 1 }}>
+              {Math.round(route.distance * 0.000621371)} miles
+            </Text>
+          </View>
+        </View>
+      )}
       <View style={{ flexGrow: 1 }}>
         {polylineCoordinates && origin && destination && (
           <Map
@@ -204,13 +223,13 @@ export function Beep(props: Props) {
         <Menu
           trigger={
             isWeb ?
-            <Elipsis /> :
-            <Button
-              style={{ paddingHorizontal: 16, paddingVertical: 6 }}
-              size="md"
-            >
-              <Elipsis />
-            </Button>
+              <Elipsis /> :
+              <Button
+                style={{ paddingHorizontal: 16, paddingVertical: 6 }}
+                size="md"
+              >
+                <Elipsis />
+              </Button>
           }
           options={[
             {
