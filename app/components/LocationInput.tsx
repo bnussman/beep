@@ -76,7 +76,7 @@ export function LocationInput(props: Props) {
           <ActivityIndicator />
         ) : (
           <Pressable onPress={handleGetCurrentLocation}>
-            <Text size="2xl" weight="bold">️🔍</Text>
+            <Text size="2xl">️📍</Text>
           </Pressable>
         )}
       </View>
