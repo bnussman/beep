@@ -76,7 +76,8 @@ export function RideMenu() {
   const { mutate: updateBeep } = useMutation(
     trpc.beep.editBeep.mutationOptions({
       onError(error) {
-        alert(error.message)
+        const errorMessage = error.data?.fieldErrors ? Object.values(error.data.fieldErrors).flat().join("\n") : error.message;
+        alert(errorMessage);
       }
     })
   );

@@ -42,7 +42,8 @@ export function openCashApp(
     return;
   }
 
-  Linking.openURL(getCashAppLink(username, groupSize, groupRate, singlesRate));
+  Linking.openURL(getCashAppLink(username, groupSize, groupRate, singlesRate))
+  .catch((error) => alert("Unable to open Cash App. Please make sure you have the app installed."));
 }
 
 export function getVenmoLink(
@@ -74,7 +75,7 @@ export function openVenmo(
 
   Linking.openURL(
     getVenmoLink(username, groupSize, groupRate, singlesRate, transaction),
-  );
+  ).catch((error) => alert("Unable to open Venmo. Please make sure you have the app installed."));
 }
 
 export function shareVenmoInformation(

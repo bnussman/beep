@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function RateScreen() {
   const trpc = useTRPC();
@@ -56,7 +57,7 @@ export default function RateScreen() {
   }
 
   return (
-    <View style={{ padding: 16, gap: 16 }}>
+    <KeyboardAwareScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
       <View
         style={{
           display: "flex",
@@ -89,6 +90,6 @@ export default function RateScreen() {
       <Button onPress={onSubmit} disabled={stars < 1} isLoading={isPending}>
         Rate User
       </Button>
-    </View>
+    </KeyboardAwareScrollView>
   );
 }

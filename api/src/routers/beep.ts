@@ -52,6 +52,7 @@ export const beepRouter = router({
                 last: true,
                 photo: true,
                 venmo: true,
+                cashapp: true,
                 groupRate: true,
                 singlesRate: true,
               },
@@ -63,6 +64,7 @@ export const beepRouter = router({
                 last: true,
                 photo: true,
                 venmo: true,
+                cashapp: true,
               },
             },
             ratings: true,
@@ -137,8 +139,8 @@ export const beepRouter = router({
       z.object({
         beepId: z.string(),
         data: z.object({
-          origin: z.string(),
-          destination: z.string(),
+          origin: z.string().min(2),
+          destination: z.string().min(2),
           groupSize: z.number().min(1).max(25),
         }).partial(),
       })
