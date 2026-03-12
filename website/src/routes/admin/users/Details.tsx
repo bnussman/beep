@@ -5,7 +5,6 @@ import { createRoute, useParams } from "@tanstack/react-router";
 import { userRoute } from "./User";
 import { useTRPC } from "../../../utils/trpc";
 import { Alert, Stack, Typography, Tooltip, Box, Link } from "@mui/material";
-
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedRating } from "../../../utils/utils";
 
@@ -36,54 +35,61 @@ export function Details() {
   return (
     <Stack spacing={2}>
       <Box>
-        <strong>Email:</strong>
+        <strong>Email</strong>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Indicator mr={2} color={user.isEmailVerified ? "green" : "red"} />
           <Link href={`mailto:${user.email}`}>{user.email}</Link>
         </Stack>
       </Box>
-      {/* <Box>
-        <strong>Push Notification Token:</strong>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Indicator mr={2} color={user.pushToken ? "green" : "red"} />
-          <Typography>{user.pushToken ?? "N/A"}</Typography>
-        </Stack>
-      </Box> */}
       <Box>
-        <strong>Rating:</strong>
+        <strong>Student</strong>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Indicator mr={2} color={user.isStudent ? "green" : "red"} />
+          <Typography>{user.isStudent ? "Yes" : "No"}</Typography>
+        </Stack>
+      </Box>
+      <Box>
+        <strong>Beeping</strong>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Indicator mr={2} color={user.isBeeping ? "green" : "red"} />
+          <Typography>{user.isBeeping ? "Yes" : "No"}</Typography>
+        </Stack>
+      </Box>
+      <Box>
+        <strong>Rating</strong>
         {user.rating ? (
           <Typography>
             {printStars(Number(user.rating))} ({getFormattedRating(user.rating)}
             )
           </Typography>
         ) : (
-          <Typography>No Rating</Typography>
+          <Typography>N/A</Typography>
         )}
       </Box>
       <Box>
-        <strong>Phone:</strong>
+        <strong>Phone</strong>
         <Typography>{user.phone}</Typography>
       </Box>
       <Box>
-        <strong>Queue Size:</strong>
+        <strong>Queue Size</strong>
         <Typography>{user.queueSize}</Typography>
       </Box>
       <Box>
-        <strong>Capacity:</strong>
+        <strong>Capacity</strong>
         <Typography>{user.capacity}</Typography>
       </Box>
       <Box>
-        <strong>Rate:</strong>
+        <strong>Rate</strong>
         <Typography>
           ${user.singlesRate} / ${user.groupRate}
         </Typography>
       </Box>
       <Box>
-        <strong>Venmo usename:</strong>
+        <strong>Venmo usename</strong>
         <Typography>{user.venmo || "N/A"}</Typography>
       </Box>
       <Box>
-        <strong>CashApp usename:</strong>
+        <strong>CashApp usename</strong>
         <Typography>{user.cashapp || "N/A"}</Typography>
       </Box>
     </Stack>
