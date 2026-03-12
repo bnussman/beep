@@ -139,8 +139,8 @@ export const ratingRouter = router({
       z.object({
         stars: z.number().min(1).max(5),
         message: z.string().max(255).optional(),
-        beepId: z.string().uuid(),
-        userId: z.string().uuid(),
+        beepId: z.uuid(),
+        userId: z.uuid(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

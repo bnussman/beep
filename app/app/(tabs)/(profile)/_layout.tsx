@@ -3,7 +3,7 @@ import { Menu } from "@/components/Menu";
 import { getNavigationMenuFromOptions } from "@/components/Menu.utils";
 import { useProfileMenu } from "@/components/ProfileMenu"
 import { UserMenu, useUserMenuOptions } from "@/components/UserMenu";
-import { isWeb } from "@/utils/constants";
+import { isIOS, isWeb } from "@/utils/constants";
 import { Stack } from "expo-router"
 
 export default function Layout() {
@@ -15,7 +15,7 @@ export default function Layout() {
       <Stack.Screen name="profile/premium" options={{ headerTitle: "Premium" }} />
       <Stack.Screen name="profile/edit" options={{ headerTitle: 'Edit', unstable_headerRightItems: () => getNavigationMenuFromOptions(menu), headerRight: () => <Menu trigger="..." options={menu} /> }} />
       <Stack.Screen name="profile/change-password" options={{ headerTitle: 'Change Password' }} />
-      <Stack.Screen name="profile/cars/index" options={{ headerTitle: "Cars", headerRight: () => <AddCarButton /> }} />
+      <Stack.Screen name="profile/cars/index" options={{ headerTitle: "Cars", headerRight: !isIOS ? () => <AddCarButton />  : undefined }} />
       <Stack.Screen name="profile/cars/create" options={{ headerTitle: "Add Car" }} />
       <Stack.Screen name="profile/beeps/index" options={{ headerTitle: "Beeps" }} />
       <Stack.Screen name="profile/beeps/[id]" options={{ headerTitle: "Beep" }} />

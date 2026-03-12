@@ -264,9 +264,6 @@ export const userRouter = router({
 
       return u[0];
     }),
-  syncMyPayments: authedProcedure.mutation(async ({ ctx }) => {
-    return await syncUserPayments(ctx.user.id);
-  }),
   syncPayments: authedProcedure
     .input(
       z.object({ userId: z.string() }).optional()

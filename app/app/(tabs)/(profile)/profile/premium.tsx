@@ -60,7 +60,7 @@ function Package({ p, disabled }: { p: PurchasesPackage; disabled: boolean }) {
     trpc.user.syncPayments.mutationOptions({
       onSuccess(activePayments, vars, result, context) {
         context.client.setQueryData(
-          trpc.payment.activePayments.queryOptions().queryKey,
+          trpc.user.activePayments.queryOptions().queryKey,
           activePayments,
         );
       },
