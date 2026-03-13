@@ -220,6 +220,10 @@ export const report = pgTable("report", {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
+  rating_id: varchar("rating_id", { length: 255 }).references(() => rating.id, {
+    onDelete: "set null",
+    onUpdate: "cascade",
+  }),
 });
 
 export const rating = pgTable(

@@ -142,9 +142,10 @@ export const reportRouter = router({
   createReport: authedProcedure
     .input(
       z.object({
-        userId: z.string(),
+        userId: z.uuid(),
         reason: z.string(),
-        beepId: z.string().optional(),
+        beepId: z.uuid().optional(),
+        ratingId: z.uuid().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -157,6 +158,7 @@ export const reportRouter = router({
           reported_id: input.userId,
           reporter_id: ctx.user.id,
           beep_id: input.beepId,
+          rating_id: input.ratingId,
         })
         .returning();
 

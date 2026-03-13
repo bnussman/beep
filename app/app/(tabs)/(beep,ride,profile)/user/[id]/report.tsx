@@ -13,7 +13,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function ReportScreen() {
   const trpc = useTRPC();
-  const { id, beepId } = useLocalSearchParams<{ id: string, beepId: string }>();
+  const { id, beepId, ratingId } = useLocalSearchParams<{ id: string, beepId: string, ratingId: string }>();
   const [reason, setReason] = useState<string>("");
   const { goBack } = useNavigation();
 
@@ -36,6 +36,7 @@ export default function ReportScreen() {
     report({
       userId: id,
       beepId,
+      ratingId,
       reason: reason,
     });
   };

@@ -80,6 +80,7 @@ export function Reports() {
             <TableRow>
               <TableCell>Reporter</TableCell>
               <TableCell>Reported</TableCell>
+              <TableCell>Type</TableCell>
               <TableCell>Reason</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Handled</TableCell>
@@ -94,6 +95,7 @@ export function Reports() {
               <TableRow key={report.id}>
                 <TableCellUser user={report.reporter} />
                 <TableCellUser user={report.reported} />
+                <TableCell>{report.rating_id ? 'Rating' : report.beep_id ? "Beep" : "General"}</TableCell>
                 <TableCell>{report.reason}</TableCell>
                 <TableCell>
                   {DateTime.fromISO(report.timestamp).toRelative()}

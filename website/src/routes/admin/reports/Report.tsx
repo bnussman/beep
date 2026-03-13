@@ -139,6 +139,16 @@ export function Report() {
               }
             </Typography>
           </Stack>
+          <Stack spacing={1}>
+            <Typography fontWeight="bold">Rating</Typography>
+            <Typography>
+              {report.rating_id ? (
+                <Link to="/admin/ratings/$ratingId" params={{ ratingId: report.rating_id }}>{report.rating_id}</Link>
+              )
+                : 'N/A'
+              }
+            </Typography>
+          </Stack>
         </Stack>
       </Card>
       <Card sx={{ p: 2 }}>

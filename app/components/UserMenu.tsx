@@ -12,7 +12,7 @@ interface Props {
 export function useUserMenuOptions(userId: string) {
   const router = useRouter();
   const trpc = useTRPC();
-  const { beepId } = useGlobalSearchParams<{ beepId: string }>();
+  const { beepId, ratingId } = useGlobalSearchParams<{ beepId: string, ratingId: string }>();
 
   const { data: userDetails } = useQuery(
     trpc.user.getUserPrivateDetails.queryOptions(userId),
@@ -31,7 +31,7 @@ export function useUserMenuOptions(userId: string) {
     },
     {
       title: "Report",
-      onClick: () => router.push({ pathname: '/user/[id]/report', params: { id: userId, beepId } }),
+      onClick: () => router.push({ pathname: '/user/[id]/report', params: { id: userId, beepId, ratingId } }),
     },
   ];
 }

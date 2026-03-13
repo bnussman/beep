@@ -148,6 +148,7 @@ export const relations = defineRelations(
         alias: "handler",
       }),
       beep: r.one.beep({ from: r.report.beep_id, to: r.beep.id }),
+      rating: r.one.rating({ from: r.report.rating_id, to: r.rating.id }),
     },
     rating: {
       rater: r.one.user({
