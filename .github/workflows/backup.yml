@@ -10,10 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Set up WireGuard Connection
-        uses: niklaskeerl/easy-wireguard-action@v2
+      - uses: tailscale/github-action@v4
         with:
-          WG_CONFIG_FILE: ${{ secrets.WG_CONFIG_FILE }}
+          authkey: ${{ secrets.TS_AUTHKEY }}
 
       - name: Checkout code
         uses: actions/checkout@v4

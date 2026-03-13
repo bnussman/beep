@@ -31,8 +31,7 @@ jobs:
           cache: pnpm
           node-version: latest
       - run: pnpm i --frozen-lockfile
-      - name: Tailscale
-        uses: tailscale/github-action@v4
+      - uses: tailscale/github-action@v4
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
       - uses: pulumi/actions@v4
