@@ -2,17 +2,14 @@ import React from "react";
 import { ActivityIndicator, SafeAreaView, View } from "react-native";
 import { Text } from "@/components/Text";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigation } from "@react-navigation/native";
 import { useTRPC } from "@/utils/trpc";
 import { getFormattedRatingString, printStars } from "@/components/Stars";
 import { Image } from "@/components/Image";
 import { useLocalSearchParams } from "expo-router";
 import { Avatar } from "@/components/Avatar";
-// import { SafeAreaView } from 'react-native-screens/experimental';
 
 export default function User() {
   const trpc = useTRPC();
-  const navigation = useNavigation();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const {

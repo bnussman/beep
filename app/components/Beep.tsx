@@ -124,7 +124,7 @@ export function Beep({ item }: Props) {
         },
         {
           title: "Report",
-          onClick: () => router.navigate({ pathname: '/user/[id]/report', params: { id: otherUser.id } }),
+          onClick: () => router.navigate({ pathname: '/user/[id]/report', params: { id: otherUser.id, beepId: item.id  } }),
         },
         {
           onClick: () => deleteRating({ ratingId: myRating!.id }),

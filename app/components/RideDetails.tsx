@@ -53,7 +53,7 @@ export function RideDetails(props: Props) {
         paddingTop: 0,
       }}
     >
-      <Link href={{ pathname: "/user/[id]", params: { id: beep.beeper.id } }} asChild>
+      <Link href={{ pathname: "/user/[id]", params: { id: beep.beeper.id, beepId: beep.id } }} asChild>
         <Link.Trigger>
           <Pressable>
             <Text weight="800">Beeper</Text>

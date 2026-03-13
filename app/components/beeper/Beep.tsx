@@ -16,8 +16,9 @@ import { Polyline } from "@/components/Polyline";
 import { isMobile, isWeb } from "@/utils/constants";
 import { Menu } from "@/components/Menu";
 import { Elipsis } from "@/components/Elipsis";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { printStars } from "../Stars";
 import {
   call,
   openCashApp,
@@ -26,7 +27,6 @@ import {
   openVenmo,
   sms,
 } from "../../utils/links";
-import { printStars } from "../Stars";
 
 interface Props {
   beep: RouterOutput["beeper"]["queue"][number];
@@ -114,7 +114,7 @@ export function Beep(props: Props) {
 
   return (
     <SafeAreaView style={{ padding: 16, gap: 18, height: '100%', paddingBottom: isWeb ? 64: 12, paddingTop: 64 }}>
-      <Link href={{ pathname: '/user/[id]', params: { id: beep.rider.id } }} asChild>
+      <Link href={{ pathname: '/user/[id]', params: { id: beep.rider.id, beepId: beep.id } }} asChild>
         <Link.Trigger>
           <Pressable>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
