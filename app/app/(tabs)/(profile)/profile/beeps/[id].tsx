@@ -9,7 +9,7 @@ import { useTRPC } from "@/utils/trpc";
 import { useUser } from "@/utils/useUser";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { skipToken, useQuery } from "@tanstack/react-query";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import MapView from "react-native-maps";
@@ -18,8 +18,6 @@ export default function BeepDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const trpc = useTRPC();
   const mapRef = useRef<MapView>(null);
-  const router = useRouter();
-
   const { user } = useUser();
 
   const {
@@ -115,7 +113,7 @@ export default function BeepDetails() {
         <BottomSheetView
           style={{ gap: 8, paddingHorizontal: 16, paddingBottom: 110 }}
         >
-          <Link href={{pathname: "/user/[id]", params: { id: otherUser?.id ?? '' }}} asChild>
+          <Link href={{pathname: "/user/[id]", params: { id: otherUser?.id ?? '', beepId: id }}} asChild>
             <Link.Trigger>
               <Pressable>
                 <Text weight="800">

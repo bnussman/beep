@@ -3,7 +3,7 @@ import { Menu } from "@/components/Menu";
 import { call, sms } from "@/utils/links";
 import { useTRPC } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 
 interface Props {
   userId: string;
@@ -12,6 +12,7 @@ interface Props {
 export function useUserMenuOptions(userId: string) {
   const router = useRouter();
   const trpc = useTRPC();
+  const { beepId } = useGlobalSearchParams<{ beepId: string }>();
 
   const { data: userDetails } = useQuery(
     trpc.user.getUserPrivateDetails.queryOptions(userId),
@@ -30,7 +31,7 @@ export function useUserMenuOptions(userId: string) {
     },
     {
       title: "Report",
-      onClick: () => router.push({ pathname: '/user/[id]/report', params: { id: userId  } }),
+      onClick: () => router.push({ pathname: '/user/[id]/report', params: { id: userId, beepId } }),
     },
   ];
 }

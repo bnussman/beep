@@ -156,6 +156,7 @@ export const reportRouter = router({
           timestamp: new Date(),
           reported_id: input.userId,
           reporter_id: ctx.user.id,
+          beep_id: input.beepId,
         })
         .returning();
 
