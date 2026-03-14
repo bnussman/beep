@@ -12,7 +12,6 @@ import {
   Stack,
 } from "@mui/material";
 
-
 export const Route = createFileRoute('/password/reset/$id')({
   component: ResetPassword,
 });
@@ -21,7 +20,7 @@ interface Values {
   password: string;
 }
 
-export function ResetPassword() {
+function ResetPassword() {
   const trpc = useTRPC();
   const { id } = Route.useParams();
 

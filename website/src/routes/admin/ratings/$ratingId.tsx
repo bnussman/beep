@@ -13,7 +13,7 @@ export const Route = createFileRoute("/admin/ratings/$ratingId")({
   component: Rating,
 });
 
-export function Rating() {
+function Rating() {
   const trpc = useTRPC();
   const { ratingId } = Route.useParams();
   const router = useRouter();

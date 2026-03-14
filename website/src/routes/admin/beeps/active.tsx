@@ -34,7 +34,7 @@ export const Route = createFileRoute("/admin/beeps/active")({
   },
 });
 
-export function ActiveBeeps() {
+function ActiveBeeps() {
   const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });

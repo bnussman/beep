@@ -17,7 +17,7 @@ export const Route = createFileRoute('/login')({
   component: Login
 });
 
-export function Login() {
+function Login() {
   const trpc = useTRPC();
   const navigate = useNavigate();
   const queryClient = useQueryClient();

@@ -224,7 +224,7 @@ const Cookies = () => {
   );
 }
 
-export function Privacy() {
+function Privacy() {
   return (
     <Stack spacing={2}>
       <Typography variant='h4' fontWeight="bold">

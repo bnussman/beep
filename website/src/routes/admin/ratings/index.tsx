@@ -33,7 +33,7 @@ export const Route = createFileRoute('/admin/ratings/')({
   }),
 });
 
-export function Ratings() {
+function Ratings() {
   const trpc = useTRPC();
   const { page } = Route.useSearch();
 

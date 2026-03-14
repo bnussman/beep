@@ -22,7 +22,7 @@ interface Values {
   confirmPassword: string;
 }
 
-export function ChangePassword() {
+function ChangePassword() {
   const trpc = useTRPC();
   const form = useForm<Values>({
     defaultValues: {

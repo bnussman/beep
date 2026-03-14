@@ -10,7 +10,7 @@ export const Route = createFileRoute('/account/verify/$id')({
   component: VerifyAccount,
 });
 
-export function VerifyAccount() {
+function VerifyAccount() {
   const trpc = useTRPC();
   const { id } = Route.useParams();
 

@@ -6,7 +6,7 @@ export const Route = createFileRoute('/terms')({
   component: Terms,
 });
 
-export function Terms() {
+function Terms() {
   return (
     <Stack spacing={2}>
       <Typography variant="h4" fontWeight="bold">Terms of Service</Typography>

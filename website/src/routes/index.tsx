@@ -17,7 +17,7 @@ export const Route = createFileRoute('/')({
   component: Home
 });
 
-export function Home() {
+function Home() {
   const { colorScheme } = useColorScheme();
 
   return (

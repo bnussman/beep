@@ -9,7 +9,7 @@ export const Route = createFileRoute("/admin/health")({
   component: Health,
 });
 
-export function Health() {
+function Health() {
   const trpc = useTRPC();
   const { data, isLoading, error } = useQuery(trpc.health.healthcheck.queryOptions(
     undefined,

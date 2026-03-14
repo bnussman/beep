@@ -27,7 +27,7 @@ export const Route = createFileRoute("/admin/users/$userId/queue")({
   component: QueueTable,
 });
 
-export function QueueTable() {
+function QueueTable() {
   const trpc = useTRPC();
   const { userId } = Route.useParams();
 

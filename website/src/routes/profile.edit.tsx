@@ -23,7 +23,7 @@ export const Route = createFileRoute('/profile/edit')({
   component: EditProfile,
 });
 
-export function EditProfile() {
+function EditProfile() {
   const trpc = useTRPC();
   const { data: user } = useQuery(trpc.user.me.queryOptions(undefined, { enabled: false }));
   const notifications = useNotifications();

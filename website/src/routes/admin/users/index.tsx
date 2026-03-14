@@ -26,7 +26,7 @@ import {
   Link,
 } from "@mui/material";
 
-export interface PaginationSearchParams {
+interface PaginationSearchParams {
   page: number;
   query?: string;
 }

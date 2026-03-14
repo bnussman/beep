@@ -10,7 +10,7 @@ export const Route = createFileRoute("/admin/users/domain")({
   component: UsersByDomain,
 });
 
-export function UsersByDomain() {
+function UsersByDomain() {
   const trpc = useTRPC();
   const { data, isLoading, error } = useQuery(trpc.user.usersByDomain.queryOptions());
 

@@ -29,7 +29,7 @@ export const Route = createFileRoute('/admin/leaderboards/rides')({
   },
 });
 
-export function Rides() {
+function Rides() {
   const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });

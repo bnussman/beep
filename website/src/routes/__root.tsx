@@ -13,7 +13,7 @@ export const Route = createRootRoute({
   component: RootComponent,
 })
 
-export function RootComponent() {
+function RootComponent() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 

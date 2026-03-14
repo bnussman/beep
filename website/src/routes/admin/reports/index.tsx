@@ -31,7 +31,7 @@ export const Route = createFileRoute('/admin/reports/')({
   }),
 });
 
-export function Reports() {
+function Reports() {
   const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });

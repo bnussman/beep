@@ -21,7 +21,7 @@ export const Route = createFileRoute('/admin/notifications/')({
   component: Notifications,
 });
 
-export function Notifications() {
+function Notifications() {
   const trpc = useTRPC();
   const notifications = useNotifications();
 

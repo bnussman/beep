@@ -33,7 +33,7 @@ export const Route = createFileRoute("/admin/cars/")({
   }),
 });
 
-export function Cars() {
+function Cars() {
   const trpc = useTRPC();
   const { page } = Route.useSearch();
 

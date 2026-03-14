@@ -7,7 +7,7 @@ export const Route = createFileRoute('/download')({
   component: Download,
 });
 
-export function Download() {
+function Download() {
   useEffect(() => {
     window.location.href = getDownloadLink();
   }, []);

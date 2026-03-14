@@ -18,7 +18,7 @@ export const Route = createFileRoute('/admin/users/$userId/ride')({
   component: Ride,
 });
 
-export function Ride() {
+function Ride() {
   const trpc = useTRPC();
   const theme = useTheme();
 

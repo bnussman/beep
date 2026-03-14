@@ -27,7 +27,7 @@ export const Route = createFileRoute("/admin/users/$userId/beeps")({
   component: BeepsTable,
 });
 
-export function BeepsTable() {
+function BeepsTable() {
   const trpc = useTRPC();
   const [currentPage, setCurrentPage] = useState<number>(1);
 

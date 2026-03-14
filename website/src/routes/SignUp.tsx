@@ -32,7 +32,7 @@ interface SignUpFormValues {
   photo: FileList;
 }
 
-export function SignUp() {
+function SignUp() {
   const trpc = useTRPC();
   const navigate = useNavigate();
 

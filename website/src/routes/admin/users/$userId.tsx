@@ -27,7 +27,7 @@ export const Route = createFileRoute("/admin/users/$userId")({
   component: User,
 });
 
-export function User() {
+function User() {
   const trpc = useTRPC();
   const { userId } = Route.useParams();
 

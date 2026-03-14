@@ -13,7 +13,7 @@ export const Route = createFileRoute('/admin/users/$userId/edit/location')({
   component: EditLocation
 })
 
-export function EditLocation() {
+function EditLocation() {
   const trpc = useTRPC();
   const { userId } = Route.useParams();
 

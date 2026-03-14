@@ -9,7 +9,7 @@ export const Route = createFileRoute('/admin/redis')({
   component: Redis,
 });
 
-export function Redis() {
+function Redis() {
   const trpc = useTRPC();
   const { data, isLoading, error } = useQuery(trpc.redis.channels.queryOptions(undefined, {
     refetchInterval: 2_000,

@@ -26,7 +26,7 @@ export const Route = createFileRoute("/admin/users/$userId/ratings")({
   component: RatingsTable,
 });
 
-export function RatingsTable() {
+function RatingsTable() {
   const trpc = useTRPC();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedRatingId, setSelectedRatingId] = useState<string>();

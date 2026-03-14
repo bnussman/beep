@@ -24,7 +24,7 @@ export const Route = createFileRoute('/admin/beeps/$beepId')({
   component: Beep,
 });
 
-export function Beep() {
+function Beep() {
   const trpc = useTRPC();
   const theme = useTheme();
 

@@ -34,7 +34,7 @@ export const Route = createFileRoute("/admin/feedback/")({
   }),
 });
 
-export function Feedback() {
+function Feedback() {
   const trpc = useTRPC();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });

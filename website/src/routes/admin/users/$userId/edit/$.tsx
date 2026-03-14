@@ -20,7 +20,7 @@ export const Route = createFileRoute("/admin/users/$userId/edit/$")({
   component: EditDetails
 })
 
-export function EditDetails() {
+function EditDetails() {
   const trpc = useTRPC();
   const notifications = useNotifications();
 

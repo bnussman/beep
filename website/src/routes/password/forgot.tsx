@@ -17,7 +17,7 @@ export const Route = createFileRoute("/password/forgot")({
   component: ForgotPassword,
 });
 
-export function ForgotPassword() {
+function ForgotPassword() {
   const trpc = useTRPC();
   const form = useForm({
     defaultValues: {

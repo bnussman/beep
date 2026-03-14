@@ -27,7 +27,7 @@ export const Route = createFileRoute("/admin/payments")({
   }),
 });
 
-export function Payments() {
+function Payments() {
   const trpc = useTRPC();
   const { page } = Route.useSearch();
 

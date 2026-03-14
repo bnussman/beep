@@ -11,7 +11,7 @@ export const Route = createFileRoute('/admin/leaderboards/')({
   component: Leaderboards,
 });
 
-export function Leaderboards() {
+function Leaderboards() {
   const pathname = useLocation({
     select: (location) => location.pathname,
   })

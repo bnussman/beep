@@ -31,7 +31,7 @@ export const Route = createFileRoute('/admin/beepers/')({
   component: Beepers,
 });
 
-export function Beepers() {
+function Beepers() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 

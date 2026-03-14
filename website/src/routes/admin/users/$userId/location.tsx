@@ -11,7 +11,7 @@ export const Route = createFileRoute('/admin/users/$userId/location')({
   component: LocationView,
 });
 
-export function LocationView() {
+function LocationView() {
   const trpc = useTRPC();
   const { userId } = Route.useParams();
 
